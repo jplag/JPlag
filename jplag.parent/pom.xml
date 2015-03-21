@@ -283,7 +283,11 @@
 				<artifactId>jplag</artifactId>
 				<version>2.11.8-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>java-1.5</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<name>JPlag</name>
 </project>

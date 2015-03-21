@@ -107,12 +107,8 @@
 		</dependency>
 	</dependencies>
 	<parent>
-		<groupId>edu.kit.ipd.jplag.frontend</groupId>
-		<artifactId>frontend-parent</artifactId>
+		<groupId>edu.kit.ipd.jplag</groupId>
+		<artifactId>parent</artifactId>
 		<version>0.3-SNAPSHOT</version>
 	</parent>
-	<properties>
-		<project.build.source>1.6</project.build.source>
-		<project.build.target>1.6</project.build.target>
-	</properties>
 </project>

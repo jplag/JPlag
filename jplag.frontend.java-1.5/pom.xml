@@ -72,12 +72,11 @@
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
 			<artifactId>frontend-utils</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<parent>
-		<groupId>edu.kit.ipd.jplag.frontend</groupId>
-		<artifactId>frontend-parent</artifactId>
+		<groupId>edu.kit.ipd.jplag</groupId>
+		<artifactId>parent</artifactId>
 		<version>0.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>java-1.5</artifactId>
