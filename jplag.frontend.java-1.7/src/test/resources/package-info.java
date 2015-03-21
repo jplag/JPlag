@@ -1,0 +1,2 @@
+@SuppressWarnings("unused")
+package foo;
