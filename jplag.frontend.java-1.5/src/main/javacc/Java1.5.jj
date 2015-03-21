@@ -1,0 +1,1556 @@
+/* Hey Emacs, this is -*- mode: java; page-delimiter: "^%%$"; -*- */
+
+/*
+ * Copyright © 2002 Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
+ * California 95054, U.S.A. All rights reserved.  Sun Microsystems, Inc. has
+ * intellectual property rights relating to technology embodied in the product
+ * that is described in this document. In particular, and without limitation,
+ * these intellectual property rights may include one or more of the U.S.
+ * patents listed at http://www.sun.com/patents and one or more additional
+ * patents or pending patent applications in the U.S. and in other countries.
+ * U.S. Government Rights - Commercial software. Government users are subject
+ * to the Sun Microsystems, Inc. standard license agreement and applicable
+ * provisions of the FAR and its supplements.  Use is subject to license terms.
+ * Sun,  Sun Microsystems,  the Sun logo and  Java are trademarks or registered
+ * trademarks of Sun Microsystems, Inc. in the U.S. and other countries.  This
+ * product is covered and controlled by U.S. Export Control laws and may be
+ * subject to the export or import laws in other countries.  Nuclear, missile,
+ * chemical biological weapons or nuclear maritime end uses or end users,
+ * whether direct or indirect, are strictly prohibited.  Export or reexport
+ * to countries subject to U.S. embargo or to entities identified on U.S.
+ * export exclusion lists, including, but not limited to, the denied persons
+ * and specially designated nationals lists is strictly prohibited.
+ */
+
+options {
+  JAVA_UNICODE_ESCAPE = true;
+  ERROR_REPORTING = false;
+  STATIC = false;
+  USER_CHAR_STREAM = true;
+}
+
+PARSER_BEGIN(JavaParser)
+package jplag.java15.grammar;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import jplag.UnicodeReader;
+import jplag.java15.JavaTokenConstants;
+
+/**
+ * Grammar to parse Java version 1.5
+ * @author Sreenivasa Viswanadha - Simplified and enhanced for 1.5
+ */
+public class JavaParser implements JavaTokenConstants
+{
+    /**
+     * Class to hold modifiers.
+     */
+  
+    private jplag.java15.Parser parser2;
+    static public final class ModifierSet
+    {
+        /* Definitions of the bits in the modifiers field.  */
+        public static final int PUBLIC = 0x0001;
+        public static final int PROTECTED = 0x0002;
+        public static final int PRIVATE = 0x0004;
+        public static final int ABSTRACT = 0x0008;
+        public static final int STATIC = 0x0010;
+        public static final int FINAL = 0x0020;
+        public static final int SYNCHRONIZED = 0x0040;
+        public static final int NATIVE = 0x0080;
+        public static final int TRANSIENT = 0x0100;
+        public static final int VOLATILE = 0x0200;
+        public static final int STRICTFP = 0x1000;
+
+        /** A set of accessors that indicate whether the specified modifier is in the set. */
+
+        public boolean isPublic(int modifiers)
+        {
+            return (modifiers & PUBLIC) != 0;
+        }
+
+        public boolean isProtected(int modifiers)
+        {
+            return (modifiers & PROTECTED) != 0;
+        }
+
+        public boolean isPrivate(int modifiers)
+        {
+            return (modifiers & PRIVATE) != 0;
+        }
+
+        public boolean isStatic(int modifiers)
+        {
+            return (modifiers & STATIC) != 0;
+        }
+
+        public boolean isAbstract(int modifiers)
+        {
+            return (modifiers & ABSTRACT) != 0;
+        }
+
+        public boolean isFinal(int modifiers)
+        {
+            return (modifiers & FINAL) != 0;
+        }
+
+        public boolean isNative(int modifiers)
+        {
+            return (modifiers & NATIVE) != 0;
+        }
+
+        public boolean isStrictfp(int modifiers)
+        {
+            return (modifiers & STRICTFP) != 0;
+        }
+
+        public boolean isSynchronized(int modifiers)
+        {
+            return (modifiers & SYNCHRONIZED) != 0;
+        }
+
+        public boolean isTransient(int modifiers)
+        {
+            return (modifiers & TRANSIENT) != 0;
+        }
+
+        public boolean isVolatile(int modifiers)
+        {
+            return (modifiers & VOLATILE) != 0;
+        }
+
+        /**
+          * Removes the given modifier.
+          */
+        static int removeModifier(int modifiers, int mod) {
+            return modifiers & ~mod;
+        }
+    }
+
+    //JavaParser parser = null;
+    JavaTabModCharStream charStream = null;
+
+    public static boolean parseFile(File dir, String fileName, JavaParser parser, jplag.java15.Parser parserX)
+    {
+        try {
+            FileInputStream in = new FileInputStream(new File(dir,fileName));
+            if (parser == null) {
+                JavaTabModCharStream charStream = new JavaTabModCharStream(new UnicodeReader(in, "ISO-8859-1"));
+                parser = new JavaParser(charStream);
+                parser.charStream = charStream;
+            } else {
+                parser.charStream.ReInit(new UnicodeReader(in, "ISO-8859-1"));
+                parser.ReInit(parser.charStream);
+            }
+            parser.parser2 = parserX;
+        } catch (FileNotFoundException e) {
+            System.out.println("Java Parser: File " + fileName + " not found.");
+            return false;
+        }
+        try {
+            parser.CompilationUnit();
+        } catch (ParseException e) {
+            parserX.getProgram().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
+            return false;
+        } catch (TokenMgrError e) {
+            parserX.getProgram().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
+            return false;
+        } catch (Exception e) {
+            parserX.getProgram().addError("  General error in '" + fileName + "':\n  " + e.getMessage() + "\n");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+}
+
+PARSER_END(JavaParser)
+
+/* WHITE SPACE */
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+/* COMMENTS */
+
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "//" (~["\n", "\r"])* ("\n" | "\r" | "\r\n")? >
+}
+
+MORE :
+{
+  <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+/* RESERVED WORDS AND LITERALS */
+
+TOKEN :
+{
+  < ABSTRACT: "abstract" >
+| < ASSERT: "assert" >
+| < BOOLEAN: "boolean" >
+| < BREAK: "break" >
+| < BYTE: "byte" >
+| < CASE: "case" >
+| < CATCH: "catch" >
+| < CHAR: "char" >
+| < CLASS: "class" >
+| < CONST: "const" >
+| < CONTINUE: "continue" >
+| < _DEFAULT: "default" >
+| < DO: "do" >
+| < DOUBLE: "double" >
+| < ELSE: "else" >
+| < ENUM: "enum" >
+| < EXTENDS: "extends" >
+| < FALSE: "false" >
+| < FINAL: "final" >
+| < FINALLY: "finally" >
+| < FLOAT: "float" >
+| < FOR: "for" >
+| < GOTO: "goto" >
+| < IF: "if" >
+| < IMPLEMENTS: "implements" >
+| < IMPORT: "import" >
+| < INSTANCEOF: "instanceof" >
+| < INT: "int" >
+| < INTERFACE: "interface" >
+| < LONG: "long" >
+| < NATIVE: "native" >
+| < NEW: "new" >
+| < NULL: "null" >
+| < PACKAGE: "package">
+| < PRIVATE: "private" >
+| < PROTECTED: "protected" >
+| < PUBLIC: "public" >
+| < RETURN: "return" >
+| < SHORT: "short" >
+| < STATIC: "static" >
+| < STRICTFP: "strictfp" >
+| < SUPER: "super" >
+| < SWITCH: "switch" >
+| < SYNCHRONIZED: "synchronized" >
+| < THIS: "this" >
+| < THROW: "throw" >
+| < THROWS: "throws" >
+| < TRANSIENT: "transient" >
+| < TRUE: "true" >
+| < TRY: "try" >
+| < VOID: "void" >
+| < VOLATILE: "volatile" >
+| < WHILE: "while" >
+}
+
+/* LITERALS */
+
+TOKEN :
+{
+  < INTEGER_LITERAL:
+        <DECIMAL_LITERAL> (["l","L"])?
+      | <HEX_LITERAL> (["l","L"])?
+      | <OCTAL_LITERAL> (["l","L"])?
+  >
+|
+  < #DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+|
+  < #HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+|
+  < #OCTAL_LITERAL: "0" (["0"-"7"])* >
+|
+  < FLOATING_POINT_LITERAL:
+        (["0"-"9"])+ "." (["0"-"9"])* (<EXPONENT>)? (["f","F","d","D"])?
+      | "." (["0"-"9"])+ (<EXPONENT>)? (["f","F","d","D"])?
+      | (["0"-"9"])+ <EXPONENT> (["f","F","d","D"])?
+      | (["0"-"9"])+ (<EXPONENT>)? ["f","F","d","D"]
+  >
+|
+  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+|
+  < CHARACTER_LITERAL:
+      "'"
+      (   (~["'","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )
+      "'"
+  >
+|
+  < STRING_LITERAL:
+      "\""
+      (   (~["\"","\\","\n","\r"])
+        | ("\\"
+            ( ["n","t","b","r","f","\\","'","\""]
+            | ["0"-"7"] ( ["0"-"7"] )?
+            | ["0"-"3"] ["0"-"7"] ["0"-"7"]
+            )
+          )
+      )*
+      "\""
+  >
+}
+
+/* IDENTIFIERS */
+
+TOKEN :
+{
+  < IDENTIFIER: <LETTER> (<LETTER>|<DIGIT>)* >
+|
+  < #LETTER:
+      [
+       "\u0024",
+       "\u0041"-"\u005a",
+       "\u005f",
+       "\u0061"-"\u007a",
+       "\u00c0"-"\u00d6",
+       "\u00d8"-"\u00f6",
+       "\u00f8"-"\u00ff",
+       "\u0100"-"\u1fff",
+       "\u3040"-"\u318f",
+       "\u3300"-"\u337f",
+       "\u3400"-"\u3d2d",
+       "\u4e00"-"\u9fff",
+       "\uf900"-"\ufaff"
+      ]
+  >
+|
+  < #DIGIT:
+      [
+       "\u0030"-"\u0039",
+       "\u0660"-"\u0669",
+       "\u06f0"-"\u06f9",
+       "\u0966"-"\u096f",
+       "\u09e6"-"\u09ef",
+       "\u0a66"-"\u0a6f",
+       "\u0ae6"-"\u0aef",
+       "\u0b66"-"\u0b6f",
+       "\u0be7"-"\u0bef",
+       "\u0c66"-"\u0c6f",
+       "\u0ce6"-"\u0cef",
+       "\u0d66"-"\u0d6f",
+       "\u0e50"-"\u0e59",
+       "\u0ed0"-"\u0ed9",
+       "\u1040"-"\u1049"
+      ]
+  >
+}
+
+/* SEPARATORS */
+
+TOKEN :
+{
+  < LPAREN: "(" >
+| < RPAREN: ")" >
+| < LBRACE: "{" >
+| < RBRACE: "}" >
+| < LBRACKET: "[" >
+| < RBRACKET: "]" >
+| < SEMICOLON: ";" >
+| < COMMA: "," >
+| < DOT: "." >
+| < AT: "@" >
+}
+
+/* OPERATORS */
+
+TOKEN :
+{
+  < ASSIGN: "=" >
+| < LT: "<" >
+| < BANG: "!" >
+| < TILDE: "~" >
+| < HOOK: "?" >
+| < COLON: ":" >
+| < EQ: "==" >
+| < LE: "<=" >
+| < GE: ">=" >
+| < NE: "!=" >
+| < SC_OR: "||" >
+| < SC_AND: "&&" >
+| < INCR: "++" >
+| < DECR: "--" >
+| < PLUS: "+" >
+| < MINUS: "-" >
+| < STAR: "*" >
+| < SLASH: "/" >
+| < BIT_AND: "&" >
+| < BIT_OR: "|" >
+| < XOR: "^" >
+| < REM: "%" >
+| < LSHIFT: "<<" >
+| < PLUSASSIGN: "+=" >
+| < MINUSASSIGN: "-=" >
+| < STARASSIGN: "*=" >
+| < SLASHASSIGN: "/=" >
+| < ANDASSIGN: "&=" >
+| < ORASSIGN: "|=" >
+| < XORASSIGN: "^=" >
+| < REMASSIGN: "%=" >
+| < LSHIFTASSIGN: "<<=" >
+| < RSIGNEDSHIFTASSIGN: ">>=" >
+| < RUNSIGNEDSHIFTASSIGN: ">>>=" >
+| < ELLIPSIS: "..." >
+}
+
+/* >'s need special attention due to generics syntax. */
+TOKEN :
+{
+  < RUNSIGNEDSHIFT: ">>>" >
+  {
+     matchedToken.kind = GT;
+     ((Token.GTToken)matchedToken).realKind = RUNSIGNEDSHIFT;
+     input_stream.backup(2);
+  }
+| < RSIGNEDSHIFT: ">>" >
+  {
+     matchedToken.kind = GT;
+     ((Token.GTToken)matchedToken).realKind = RSIGNEDSHIFT;
+     input_stream.backup(1);
+  }
+| < GT: ">" >
+}
+
+
+/*****************************************
+ * THE JAVA LANGUAGE GRAMMAR STARTS HERE *
+ *****************************************/
+
+/*
+ * Program structuring syntax follows.
+ */
+
+void CompilationUnit():
+{}
+{
+  [ PackageDeclaration() ]
+  ( ImportDeclaration() )*
+  ( TypeDeclaration() )*
+  <EOF>
+}
+
+void PackageDeclaration():
+{}
+{
+  "package" { parser2.add(J_PACKAGE, token); }
+  Name() ";"
+    
+}
+
+void ImportDeclaration():
+{}
+{
+  "import" { parser2.add(J_IMPORT, token); }
+  [ "static" ] Name() [ "." "*" ] ";"
+}
+
+/*
+ * Modifiers. We match all modifiers in a single rule to reduce the chances of
+ * syntax errors for simple modifier mistakes. It will also enable us to give
+ * better error messages.
+ */
+
+int Modifiers():
+{
+   int modifiers = 0;
+}
+{
+ (
+  LOOKAHEAD(2)
+  (
+   "public" { modifiers |= ModifierSet.PUBLIC; }
+  |
+   "static" { modifiers |= ModifierSet.STATIC; }
+  |
+   "protected" { modifiers |= ModifierSet.PROTECTED; }
+  |
+   "private" { modifiers |= ModifierSet.PRIVATE; }
+  |
+   "final" { modifiers |= ModifierSet.FINAL; }
+  |
+   "abstract" { modifiers |= ModifierSet.ABSTRACT; }
+  |
+   "synchronized" { modifiers |= ModifierSet.SYNCHRONIZED; }
+  |
+   "native" { modifiers |= ModifierSet.NATIVE; }
+  |
+   "transient" { modifiers |= ModifierSet.TRANSIENT; }
+  |
+   "volatile" { modifiers |= ModifierSet.VOLATILE; }
+  |
+   "strictfp" { modifiers |= ModifierSet.STRICTFP; }
+  |
+   Annotation()
+  )
+ )*
+
+ {
+    return modifiers;
+ }
+}
+
+/*
+ * Declaration syntax follows.
+ */
+void TypeDeclaration():
+{
+   int modifiers;
+}
+{
+  ";"
+|
+  modifiers = Modifiers()
+  (
+     ClassOrInterfaceDeclaration(modifiers)
+   |
+     EnumDeclaration(modifiers)
+   |
+     AnnotationTypeDeclaration(modifiers)
+  )
+}
+
+
+void ClassOrInterfaceDeclaration(int modifiers):
+{
+   boolean isInterface = false;
+}
+{
+  ( "class" | "interface" { isInterface = true; } )
+        { parser2.add((isInterface ? J_INTERFACE_BEGIN : J_CLASS_BEGIN), token); }
+  <IDENTIFIER>
+  [ TypeParameters() ]
+  [ ExtendsList(isInterface) ]
+  [ ImplementsList(isInterface) ]
+  ClassOrInterfaceBody(isInterface)
+      { parser2.add((isInterface ? J_INTERFACE_END : J_CLASS_END), token); }
+}
+
+void ExtendsList(boolean isInterface):
+{
+   boolean extendsMoreThanOne = false;
+}
+{
+   "extends" ClassOrInterfaceType()
+   ( "," ClassOrInterfaceType() { extendsMoreThanOne = true; } )*
+   {
+      if (extendsMoreThanOne && !isInterface)
+         throw new ParseException("A class cannot extend more than one other class");
+   }
+}
+
+void ImplementsList(boolean isInterface):
+{}
+{
+   "implements" ClassOrInterfaceType()
+   ( "," ClassOrInterfaceType() )*
+   {
+      if (isInterface)
+         throw new ParseException("An interface cannot implement other interfaces");
+   }
+}
+
+void EnumDeclaration(int modifiers):
+{}
+{
+  "enum"							  { parser2.add(J_ENUM_BEGIN, token); }
+  <IDENTIFIER>
+  [ ImplementsList(false) ]
+  EnumBody()                          { parser2.add(J_ENUM_END, token); }
+}
+
+void EnumBody():
+{}
+{
+   "{"
+   EnumConstant() ( "," EnumConstant() )*
+   [ ";"                             { parser2.add(J_ENUM_CLASS_BEGIN, token); }
+     ( ClassOrInterfaceBodyDeclaration(false) )* ]
+   "}"
+}
+
+void EnumConstant():
+{}
+{
+  <IDENTIFIER> [ Arguments() ] [ ClassOrInterfaceBody(false) ]
+}
+
+void TypeParameters():
+{}
+{
+   "<" TypeParameter() ( "," TypeParameter() )* ">"
+}
+
+void TypeParameter():
+{}
+{
+   <IDENTIFIER> [ TypeBound() ]
+}
+
+void TypeBound():
+{}
+{
+   "extends" ClassOrInterfaceType() ( "&" ClassOrInterfaceType() )*
+}
+
+void ClassOrInterfaceBody(boolean isInterface):
+{}
+{
+  "{" ( ClassOrInterfaceBodyDeclaration(isInterface) )* "}"
+}
+
+void ClassOrInterfaceBodyDeclaration(boolean isInterface):
+{
+   boolean isNestedInterface = false;
+   int modifiers;
+}
+{
+  LOOKAHEAD(2)
+  Initializer()
+  {
+     if (isInterface)
+        throw new ParseException("An interface cannot have initializers");
+  }
+|
+  modifiers = Modifiers() // Just get all the modifiers out of the way. If you want to do
+              // more checks, pass the modifiers down to the member
+  (
+      ClassOrInterfaceDeclaration(modifiers)
+    |
+      EnumDeclaration(modifiers)
+    |
+      LOOKAHEAD( [ TypeParameters() ] <IDENTIFIER> "(" )
+      ConstructorDeclaration()
+    |
+      LOOKAHEAD( Type() <IDENTIFIER> ( "[" "]" )* ( "," | "=" | ";" ) )
+      FieldDeclaration(modifiers)
+    |
+      MethodDeclaration(modifiers)
+  )
+|
+  ";"
+}
+
+void FieldDeclaration(int modifiers):
+{}
+{
+  // Modifiers are already matched in the caller
+  Type() VariableDeclarator() ( "," VariableDeclarator() )* ";"
+}
+
+void VariableDeclarator():
+{}
+{
+  <IDENTIFIER>                  		  { parser2.add(J_VARDEF, token); }
+  ( "[" "]" )*
+  [ "="                                   { parser2.add(J_ASSIGN, token); }
+  VariableInitializer() ]
+}
+
+void VariableDeclaratorId():
+{}
+{
+  <IDENTIFIER> ( "[" "]" )*
+}
+
+void VariableInitializer():
+{}
+{
+  ArrayInitializer()
+|
+  Expression()
+}
+
+void ArrayInitializer():
+{}
+{
+  "{"								{ parser2.add(J_ARRAY_INIT_BEGIN, token); }
+  [ VariableInitializer() ( LOOKAHEAD(2) "," VariableInitializer() )* ] [ "," ]
+  "}"								{ parser2.add(J_ARRAY_INIT_END, token); }
+}
+
+void MethodDeclaration(int modifiers):
+{}
+{
+  // Modifiers already matched in the caller!
+  [ TypeParameters() ]
+  ResultType()
+  MethodDeclarator() [ "throws" NameList() ]
+      ( Block() | ";" )                 { parser2.add(J_METHOD_END, token); parser2.add(SEPARATOR_TOKEN, token); }
+}
+
+void MethodDeclarator():
+{}
+{
+  <IDENTIFIER>                          { parser2.add(SEPARATOR_TOKEN, token); parser2.add(J_METHOD_BEGIN, token); }
+  FormalParameters() ( "[" "]" )*
+}
+
+void FormalParameters():
+{}
+{
+  "(" [ FormalParameter() ( "," FormalParameter() )* ] ")"
+}
+
+void FormalParameter():
+{}
+{
+  ("final" | Annotation())* Type() [ "..." ] VariableDeclaratorId()
+}
+
+void ConstructorDeclaration():
+{}
+{
+  [ TypeParameters() ]
+  // Modifiers matched in the caller
+  <IDENTIFIER>                         { parser2.add(SEPARATOR_TOKEN, token); parser2.add(J_CONSTR_BEGIN, token); }
+  FormalParameters() [ "throws" NameList() ]
+  "{"
+    [ LOOKAHEAD(ExplicitConstructorInvocation()) ExplicitConstructorInvocation() ]
+    ( BlockStatement() )*
+  "}"                                  { parser2.add(J_CONSTR_END, token); parser2.add(SEPARATOR_TOKEN, token); }
+}
+
+void ExplicitConstructorInvocation():
+{}
+{
+  LOOKAHEAD("this" Arguments() ";")
+  "this"                               { parser2.add(J_APPLY, token); }
+  Arguments() ";"
+|
+  [ LOOKAHEAD(2) PrimaryExpression() "." ]
+  "super"                              { parser2.add(J_APPLY, token); }
+  Arguments() ";"
+}
+
+void Initializer():
+{}
+{
+  InitializerBegin()
+  ( BlockStatement() )* "}"            { parser2.add(J_INIT_END, token); }
+}
+
+void InitializerBegin():
+{}
+{
+  "static"							   { parser2.add(J_INIT_BEGIN, token); }
+  "{"
+|
+  "{"								   { parser2.add(J_INIT_BEGIN, token); }
+}
+
+/*
+ * Type, name and expression syntax follows.
+ */
+
+void Type():
+{}
+{
+   LOOKAHEAD(2) ReferenceType()
+ |
+   PrimitiveType()
+}
+
+void ReferenceType():
+{}
+{
+   PrimitiveType() ( LOOKAHEAD(2) "[" "]" )+
+  |
+   ( ClassOrInterfaceType() ) ( LOOKAHEAD(2) "[" "]" )*
+}
+
+void ClassOrInterfaceType():
+{}
+{
+  <IDENTIFIER> [ LOOKAHEAD(2) TypeArguments() ]
+  ( LOOKAHEAD(2) "." <IDENTIFIER> [ LOOKAHEAD(2) TypeArguments() ] )*
+}
+
+void TypeArguments():
+{}
+{
+   "<" TypeArgument()                  { parser2.add(J_GENERIC, token); }
+   ( "," TypeArgument()                { parser2.add(J_GENERIC, token); }
+   )* ">"
+}
+
+void TypeArgument():
+{}
+{
+   ReferenceType()
+ |
+   "?" [ WildcardBounds() ]
+}
+
+void WildcardBounds():
+{}
+{
+   "extends" ReferenceType()
+ |
+   "super" ReferenceType()
+}
+
+
+void PrimitiveType():
+{}
+{
+  "boolean"
+|
+  "char"
+|
+  "byte"
+|
+  "short"
+|
+  "int"
+|
+  "long"
+|
+  "float"
+|
+  "double"
+}
+
+void ResultType():
+{}
+{
+  "void"                               { parser2.add(J_VOID, token); }
+|
+  Type()
+}
+
+void Name():
+/*
+ * A lookahead of 2 is required below since "Name" can be followed
+ * by a ".*" when used in the context of an "ImportDeclaration".
+ */
+{}
+{
+  <IDENTIFIER>
+  ( LOOKAHEAD(2) "." <IDENTIFIER>
+  )*
+}
+
+void NameList():
+{}
+{
+  Name() ( "," Name() )*
+}
+
+
+/*
+ * Expression syntax follows.
+ */
+
+void Expression():
+/*
+ * This expansion has been written this way instead of:
+ *   Assignment() | ConditionalExpression()
+ * for performance reasons.
+ * However, it is a weakening of the grammar for it allows the LHS of
+ * assignments to be any conditional expression whereas it can only be
+ * a primary expression.  Consider adding a semantic predicate to work
+ * around this.
+ */
+{}
+{
+  ConditionalExpression()
+  [
+    LOOKAHEAD(2)
+    AssignmentOperator() Expression()
+  ]
+}
+
+void AssignmentOperator():
+{}
+{
+    ("=" | "*=" | "/=" | "%=" | "+=" | "-=" | "<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|=")                                  { parser2.add(J_ASSIGN, token); }
+}
+
+void ConditionalExpression():
+{}
+{
+  ConditionalOrExpression()
+  [ "?"                                     { parser2.add(J_COND, token); }
+    Expression() ":" Expression() ]
+}
+
+void ConditionalOrExpression():
+{}
+{
+  ConditionalAndExpression() ( "||" ConditionalAndExpression() )*
+}
+
+void ConditionalAndExpression():
+{}
+{
+  InclusiveOrExpression() ( "&&" InclusiveOrExpression() )*
+}
+
+void InclusiveOrExpression():
+{}
+{
+  ExclusiveOrExpression() ( "|" ExclusiveOrExpression() )*
+}
+
+void ExclusiveOrExpression():
+{}
+{
+  AndExpression() ( "^" AndExpression() )*
+}
+
+void AndExpression():
+{}
+{
+  EqualityExpression() ( "&" EqualityExpression() )*
+}
+
+void EqualityExpression():
+{}
+{
+  InstanceOfExpression() ( ( "==" | "!=" ) InstanceOfExpression() )*
+}
+
+void InstanceOfExpression():
+{}
+{
+  RelationalExpression() [ "instanceof" Type() ]
+}
+
+void RelationalExpression():
+{}
+{
+  ShiftExpression() ( ( "<" | ">" | "<=" | ">=" ) ShiftExpression() )*
+}
+
+void ShiftExpression():
+{}
+{
+  AdditiveExpression() ( ( "<<" | RSIGNEDSHIFT() | RUNSIGNEDSHIFT() ) AdditiveExpression() )*
+}
+
+void AdditiveExpression():
+{}
+{
+  MultiplicativeExpression() ( ( "+" | "-" ) MultiplicativeExpression() )*
+}
+
+void MultiplicativeExpression():
+{}
+{
+  UnaryExpression() ( ( "*" | "/" | "%" ) UnaryExpression() )*
+}
+
+void UnaryExpression():
+{}
+{
+  ( "+" | "-" ) UnaryExpression()
+|
+  PreIncrementExpression()
+|
+  PreDecrementExpression()
+|
+  UnaryExpressionNotPlusMinus()
+}
+
+void PreIncrementExpression():
+{}
+{
+  "++"                                    { parser2.add(J_ASSIGN, token); }
+  PrimaryExpression()
+}
+
+void PreDecrementExpression():
+{}
+{
+  "--"                                    { parser2.add(J_ASSIGN, token); }
+  PrimaryExpression()
+}
+
+void UnaryExpressionNotPlusMinus():
+{}
+{
+  ( "~" | "!" ) UnaryExpression()
+|
+  LOOKAHEAD( CastLookahead() )
+  CastExpression()
+|
+  PostfixExpression()
+}
+
+// This production is to determine lookahead only.  The LOOKAHEAD specifications
+// below are not used, but they are there just to indicate that we know about
+// this.
+void CastLookahead():
+{}
+{
+  LOOKAHEAD(2)
+  "(" PrimitiveType()
+|
+  LOOKAHEAD("(" Type() "[")
+  "(" Type() "[" "]"
+|
+  "(" Type() ")" ( "~" | "!" | "(" | <IDENTIFIER> | "this" | "super" | "new" | Literal() )
+}
+
+void PostfixExpression():
+{}
+{
+  PrimaryExpression()
+  [ ( "++" | "--" )                       { parser2.add(J_ASSIGN, token); }
+  ]
+}
+
+void CastExpression():
+{}
+{
+  LOOKAHEAD("(" PrimitiveType())
+  "(" Type() ")" UnaryExpression()
+|
+  "(" Type() ")" UnaryExpressionNotPlusMinus()
+}
+
+void PrimaryExpression():
+{}
+{
+  PrimaryPrefix() ( LOOKAHEAD(2) PrimarySuffix() )*
+}
+
+void MemberSelector():
+{}
+{
+  "." TypeArguments() <IDENTIFIER>
+}
+
+void PrimaryPrefix():
+{}
+{
+  Literal()
+|
+  "this"
+|
+  "super" "." <IDENTIFIER>
+|
+  "(" Expression() ")"
+|
+  AllocationExpression()
+|
+  LOOKAHEAD( ResultType() "." "class" )
+  ResultType() "." "class"
+|
+  Name()
+}
+
+void PrimarySuffix():
+{}
+{
+(
+  LOOKAHEAD(2)
+  "." "this"
+|
+  LOOKAHEAD(2)
+  "." "super" "." <IDENTIFIER>
+|
+  LOOKAHEAD(2)
+  "." AllocationExpression()
+|
+  LOOKAHEAD(3)
+  MemberSelector()
+|
+  "[" Expression() "]"
+|
+  "." <IDENTIFIER>
+|
+  	{ parser2.add(J_APPLY, token); }
+  Arguments()
+)
+}
+
+void Literal():
+{}
+{
+  <INTEGER_LITERAL>
+|
+  <FLOATING_POINT_LITERAL>
+|
+  <CHARACTER_LITERAL>
+|
+  <STRING_LITERAL>
+|
+  BooleanLiteral()
+|
+  NullLiteral()
+}
+
+void BooleanLiteral():
+{}
+{
+  "true"
+|
+  "false"
+}
+
+void NullLiteral():
+{}
+{
+  "null"
+}
+
+void Arguments():
+{}
+{
+  "(" [ ArgumentList() ] ")"
+}
+
+void ArgumentList():
+{}
+{
+  Expression() ( "," Expression() )*
+}
+
+void AllocationExpression():
+{
+  Token x;
+}
+{
+  LOOKAHEAD(2)
+  "new"                                     { parser2.add(J_NEWARRAY, token); }
+  PrimitiveType() ArrayDimsAndInits()
+|
+  x="new"
+  ClassOrInterfaceType() [ TypeArguments() ]
+    (                                       { parser2.add(J_NEWARRAY, x); }
+      ArrayDimsAndInits()
+    |										{ parser2.add(J_NEWCLASS, x); }
+      Arguments()
+      [
+        "{"                           { parser2.add(J_IN_CLASS_BEGIN, token); }
+        ( ClassOrInterfaceBodyDeclaration(false) )* "}"
+        							  { parser2.add(J_IN_CLASS_END, token); }
+      ]
+    )
+}
+
+/*
+ * The third LOOKAHEAD specification below is to parse to PrimarySuffix
+ * if there is an expression between the "[...]".
+ */
+void ArrayDimsAndInits():
+{}
+{
+  LOOKAHEAD(2)
+  ( LOOKAHEAD(2) "[" Expression() "]" )+ ( LOOKAHEAD(2) "[" "]" )*
+|
+  ( "[" "]" )+ ArrayInitializer()
+}
+
+
+/*
+ * Statement syntax follows.
+ */
+
+void Statement():
+{}
+{
+  LOOKAHEAD(2)
+  LabeledStatement()
+|
+  AssertStatement()
+|
+  Block()
+|
+  EmptyStatement()
+|
+  StatementExpression() ";"
+|
+  SwitchStatement()
+|
+  IfStatement()
+|
+  WhileStatement()
+|
+  DoStatement()
+|
+  ForStatement()
+|
+  BreakStatement()
+|
+  ContinueStatement()
+|
+  ReturnStatement()
+|
+  ThrowStatement()
+|
+  SynchronizedStatement()
+|
+  TryStatement()
+}
+
+void AssertStatement():
+{}
+{
+  "assert"                                  { parser2.add(J_ASSERT, token); }
+  Expression() [ ":" Expression() ] ";"
+}
+
+void LabeledStatement():
+{}
+{
+  <IDENTIFIER> ":" Statement()
+}
+
+void Block():
+{}
+{
+  "{" ( BlockStatement() )* "}"
+}
+
+void BlockStatement():
+{}
+{
+  LOOKAHEAD(("final" | Annotation())* Type() <IDENTIFIER>)
+  LocalVariableDeclaration() ";"
+|
+  Statement()
+|
+  ClassOrInterfaceDeclaration(0)
+}
+
+void LocalVariableDeclaration():
+{}
+{
+  ("final" | Annotation())* Type() VariableDeclarator() ( "," VariableDeclarator() )*
+}
+
+void EmptyStatement():
+{}
+{
+  ";"
+}
+
+void StatementExpression():
+/*
+ * The last expansion of this production accepts more than the legal
+ * Java expansions for StatementExpression.  This expansion does not
+ * use PostfixExpression for performance reasons.
+ */
+{}
+{
+  PreIncrementExpression()
+|
+  PreDecrementExpression()
+|
+  PrimaryExpression()
+  [
+    "++"                               { parser2.add(J_ASSIGN, token); }
+  |
+    "--"                               { parser2.add(J_ASSIGN, token); }
+  |
+    AssignmentOperator() Expression()
+  ]
+}
+
+void SwitchStatement():
+{}
+{
+  "switch"                             { parser2.add(J_SWITCH_BEGIN, token); }
+  "(" Expression() ")" "{"
+    ( SwitchLabel()
+      ( BlockStatement() )*
+    )*
+  "}"                                  { parser2.add(J_SWITCH_END, token); }
+}
+
+void SwitchLabel():
+{}
+{
+  "case"							   { parser2.add(J_CASE, token); }
+  Expression() ":"
+|
+  "default"							   { parser2.add(J_CASE, token); }
+  ":"
+}
+
+void IfStatement():
+/*
+ * The disambiguating algorithm of JavaCC automatically binds dangling
+ * else's to the innermost if statement.  The LOOKAHEAD specification
+ * is to tell JavaCC that we know what we are doing.
+ */
+{}
+{
+  "if"                                 { parser2.add(J_IF_BEGIN, token); }
+  "(" Expression() ")" Statement()
+  [ LOOKAHEAD(1) "else"                { parser2.add(J_ELSE, token); }
+    Statement() ]
+                                       { parser2.add(J_IF_END, token); }
+}
+
+void WhileStatement():
+{}
+{
+  "while"                              { parser2.add(J_WHILE_BEGIN, token); }
+  "(" Expression() ")" Statement()     { parser2.add(J_WHILE_END, token); }
+}
+
+void DoStatement():
+{}
+{
+  "do"                                 { parser2.add(J_DO_BEGIN, token); }
+  Statement() "while" "(" Expression() ")" ";"
+                                       { parser2.add(J_DO_END, token); }
+}
+
+void ForStatement():
+{}
+{
+  "for"                                { parser2.add(J_FOR_BEGIN, token); }
+  "("
+  (
+      LOOKAHEAD(("final" | Annotation())* Type() <IDENTIFIER> ":")
+      ("final" | Annotation())* Type() <IDENTIFIER>
+      ":" Expression() 
+    |
+     [ ForInit() ] ";" [ Expression() ] ";" [ ForUpdate() ]
+  )
+
+  ")" Statement()
+                                       { parser2.add(J_FOR_END, token); }
+}
+
+void ForInit():
+{}
+{
+  LOOKAHEAD( [ "final" ] Type() <IDENTIFIER> )
+  LocalVariableDeclaration()
+|
+  StatementExpressionList()
+}
+
+void StatementExpressionList():
+{}
+{
+  StatementExpression() ( "," StatementExpression() )*
+}
+
+void ForUpdate():
+{}
+{
+  StatementExpressionList()
+}
+
+void BreakStatement():
+{}
+{
+  "break"                              { parser2.add(J_BREAK, token); }
+  [ <IDENTIFIER> ] ";"
+}
+
+void ContinueStatement():
+{}
+{
+  "continue"                           { parser2.add(J_CONTINUE, token); }
+  [ <IDENTIFIER> ] ";"
+}
+
+void ReturnStatement():
+{}
+{
+  "return"							   { parser2.add(J_RETURN, token); }
+  [ Expression() ] ";"
+}
+
+void ThrowStatement():
+{}
+{
+  "throw"                              { parser2.add(J_THROW, token); }
+  Expression() ";"
+}
+
+void SynchronizedStatement():
+{}
+{
+  "synchronized"                       { parser2.add(J_SYNC_BEGIN, token); }
+  "(" Expression() ")" Block()         { parser2.add(J_SYNC_END, token); }
+}
+
+void TryStatement():
+/*
+ * Semantic check required here to make sure that at least one
+ * finally/catch is present.
+ */
+{}
+{
+  "try"                                { parser2.add(J_TRY_BEGIN, token); }
+  Block()
+  ( "catch"                            { parser2.add(J_CATCH_BEGIN, token); }
+    "(" FormalParameter() ")" Block() )*
+  [ "finally"                          { parser2.add(J_FINALLY, token); }
+    Block() ]                          { parser2.add(J_CATCH_END, token); }
+}
+
+/* We use productions to match >>>, >> and > so that we can keep the
+ * type declaration syntax with generics clean
+ */
+
+void RUNSIGNEDSHIFT():
+{}
+{
+  ( LOOKAHEAD({ getToken(1).kind == GT &&
+                ((Token.GTToken)getToken(1)).realKind == RUNSIGNEDSHIFT} )
+   ">" ">" ">"
+  )
+}
+
+void RSIGNEDSHIFT():
+{}
+{
+  ( LOOKAHEAD({ getToken(1).kind == GT &&
+                ((Token.GTToken)getToken(1)).realKind == RSIGNEDSHIFT} )
+  ">" ">"
+  )
+}
+
+/* Annotation syntax follows. */
+
+void Annotation():
+{}
+{
+   LOOKAHEAD( "@" Name() "(" ( <IDENTIFIER> "=" | ")" ))
+   NormalAnnotation()
+ |
+   LOOKAHEAD( "@" Name() "(" )
+   SingleMemberAnnotation()
+ |
+   MarkerAnnotation()
+}
+
+void NormalAnnotation():
+{}
+{
+   "@"                                  { parser2.add(J_ANNO, token); }
+   Name()
+   "(" [ MemberValuePairs() ] ")"
+}
+
+void MarkerAnnotation():
+{}
+{
+  "@"                                   { parser2.add(J_ANNO_MARKER, token); }
+  Name()
+}
+
+void SingleMemberAnnotation():
+{}
+{
+  "@"                                   { parser2.add(J_ANNO, token); }
+  Name() "(" MemberValue() ")"
+}
+
+void MemberValuePairs():
+{}
+{
+   MemberValuePair() ( "," MemberValuePair() )*
+}
+
+void MemberValuePair():
+{}
+{
+    <IDENTIFIER> "=" MemberValue()
+}
+
+void MemberValue():
+{}
+{
+   Annotation()
+ |
+   MemberValueArrayInitializer()
+ |
+   ConditionalExpression()
+}
+
+void  MemberValueArrayInitializer():
+{}
+{
+  "{"                                   { parser2.add(J_ANNO_M_BEGIN, token); }
+  MemberValue() ( LOOKAHEAD(2) "," MemberValue() )* [ "," ]
+  "}"                                   { parser2.add(J_ANNO_M_END, token); }
+}
+
+
+/* Annotation Types. */
+
+void AnnotationTypeDeclaration(int modifiers):
+{}
+{
+  "@"                                   { parser2.add(J_ANNO_T_BEGIN, token); }
+  "interface" <IDENTIFIER> AnnotationTypeBody()
+                                        { parser2.add(J_ANNO_T_END, token); }
+}
+
+void AnnotationTypeBody():
+{}
+{
+  "{" ( AnnotationTypeMemberDeclaration() )* "}"
+}
+
+void AnnotationTypeMemberDeclaration():
+{
+   int modifiers;
+}
+{
+ modifiers = Modifiers()
+ (
+   LOOKAHEAD(Type() <IDENTIFIER> "(")
+   Type() <IDENTIFIER>
+   "(" ")" [ DefaultValue() ] ";"
+  |
+                                        { parser2.add(J_ANNO_C_BEGIN, token); }
+   ClassOrInterfaceDeclaration(modifiers)
+                                        { parser2.add(J_ANNO_C_END, token); }
+  |
+   EnumDeclaration(modifiers)
+  |
+   AnnotationTypeDeclaration(modifiers)
+  |
+   FieldDeclaration(modifiers)
+ )
+ |
+   ( ";" )
+}
+
+void DefaultValue():
+{}
+{
+  "default" MemberValue()
+}
