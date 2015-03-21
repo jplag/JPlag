@@ -1,0 +1,182 @@
+/* Hey Emacs, this is -*- mode: java; page-delimiter: "^%%$"; -*- */
+
+options {
+  JAVA_UNICODE_ESCAPE = true;
+  FORCE_LA_CHECK = true;
+}
+
+PARSER_BEGIN(FilterParser)
+package jplag.filter;
+import java.io.*;
+import java.util.*;
+
+public class FilterParser {
+  private static jplag.Token javatoken;
+  private static int[] table;
+  private static boolean[] abgebildet;
+ 
+  public static int[] parse(String fileName, jplag.Token token,FilterParser parser) {
+    javatoken = token;
+    table = new int[token.numberOfTokens()];
+    abgebildet = new boolean[javatoken.numberOfTokens()];
+    for (int i=0; i<javatoken.numberOfTokens(); i++) {
+      table[i] = i;
+      abgebildet[i] = false;
+    }
+    parseFile(fileName,parser);
+    return table;
+  }
+
+  public static void add(Token pToken, Token pGoalToken) {
+    int aInt = -2;
+    int bInt = -2;
+    String a = pToken.image;
+    String b = (pGoalToken==null ? "" : pGoalToken.image);
+    // Tokennummer feststellen:
+    for (int i=0; 
+	 ((i<javatoken.numberOfTokens()) && ((aInt==-2) || (bInt==-2)));
+	 i++) {
+      String str = javatoken.type2string(i);
+      //      System.out.print("  "+str);
+      if (str.equals(a))
+	aInt = i;
+      if (str.equals(b))
+	bInt = i;
+    }
+    if (b.equals("")) bInt = -1;   // == auf "nichts" abbilden
+    // Nummer ueberpruefen:
+    if (aInt==-2) {
+      System.out.println("Fehler: '"+a+"' ist kein erlaubtes Symbol! (Zeile: "+
+			 pToken.beginLine+")");
+      return;
+    }
+    if (bInt==-2) {
+      System.out.println("Fehler: '"+b+"' ist kein erlaubtes Symbol! (Zeile: "+
+			 pGoalToken.beginLine+")");
+      return;
+    }
+    if (abgebildet[aInt]) {
+      System.out.println("Warnung: '"+a+
+			 "' wird ein zweites Mal abgebildet in Zeile: "+
+			 pToken.beginLine);
+    }
+    table[aInt] = bInt;
+    abgebildet[aInt] = true;
+    //System.out.println("Abbildung: "+a+" -> "+b+";\t\t("+aInt+"->"+bInt+")");
+  }
+
+  /* // nur zum test
+  public static void main(String[] args) {
+  
+    parse(args[0], new jplag.javax.JavaToken(0,null,0),new FilterParser());
+  }
+  
+  */
+
+  // PARSER:
+
+ // private static FilterParser parser = null;
+  private static boolean parseFile(String fileName,FilterParser parser) {
+    File file=null;
+    try {
+      FileInputStream in = new FileInputStream(file=new File(fileName));
+      if (parser==null) {
+	parser = new FilterParser(in);
+      } else {
+	parser.ReInit(in);
+      }
+    } catch (FileNotFoundException e) {
+      System.out.println("FilterParser: File " + fileName +
+			 " not found.");
+      return false;
+    }
+    try {
+      parser.File();
+    } catch (ParseException e) {
+      System.out.println("Parsing Error in '"+
+			 (file==null ? fileName : file.toString())+
+			 "':\n"+e.getMessage());
+      return false;
+    } catch (TokenMgrError e) {
+      System.out.println("Scanning Error in '"+
+			 (file==null ? fileName : file.toString())+
+			 "':\n"+e.getMessage());
+      return true; //false;
+    }
+    return true;
+  }
+}
+
+PARSER_END(FilterParser)
+
+
+/* WHITE SPACE */
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+| "\u001a"
+
+}
+
+/* COMMENTS */
+
+MORE :
+{
+  "#" : IN_SINGLE_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n"> : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+/* IDENTIFIERS */
+
+TOKEN :
+{
+  < ID: (["A"-"Z","_"])+ >
+}
+
+TOKEN :
+{
+  < COMMA: "," >
+| < PROD: "->" >
+| < SEMICOLON: ";" >
+}
+
+void File() :
+{}
+{
+  ( Line() )*
+  <EOF>
+}
+
+void Line() :
+{
+  Vector tokens = new Vector();
+  Token goal = null; }
+{  
+  <ID>         { tokens.addElement(token); }
+  ("," <ID>    { tokens.addElement(token); } )*
+  "->"
+    [<ID>      { goal = token; } ] ";"
+    { 
+      Enumeration enum1 = tokens.elements();
+      while (enum1.hasMoreElements()) {
+	Token t = (Token)enum1.nextElement();
+	add(t,goal);
+      }
+    }
+}

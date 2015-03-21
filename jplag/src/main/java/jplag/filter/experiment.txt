@@ -1,0 +1,165 @@
+Syntax fuer JPlag
+=================
+
+java JPlag -vs [-f <filterdatei>] [-t <MML>] [-x exclude_file] <rootdir>
+
+Die Option "-vs" startet JPlag in dem speziellen Modus, der keine
+unnoetigen Ausgaben macht (vielleicht noch schwerwiegende Fehler, aber
+die auf StdErr). Einzige Ausgabe ist die folgende Zeile:
+
+<root_dir> <exclude_file> <MML> <filterdatei> <time> <sim(1,2)> <sim(1,3)> .. <sim(2,3)> .. <sim(n-1,n)>
+
+Wobei <time> die Gesamtlaufzeit des Vergleichs ist (in msec).
+
+Die <filterdatei> ist die Datei, mit der man die Token aufeinander
+abbilden kann. Weil es sich dabei um 90 verschiedene Token handelt,
+habe ich nicht den Vorschlag aufgegriffen, dies mittels einer
+kryptischen Datei zu machen, sondern habe stattdessen ein Dateiformat
+entwickelt, das eine einfache Manipulation zulaesst. Mehr dazu weiter
+unten.
+
+<MML> ist die Minimum Match length.
+
+<rootdir> muss die Unterverzeichnisse mit den Abgaben enthalten.
+
+<exclude_file> ist die Datei mit den Unterverzeichnissen, die von der
+Untersuchung ausgenommen werden. Die Datei enthaelt in jeder Zeile die
+Endung eine Pfades, der ausgeschlossen werden soll. "151" schliesst
+zum Beispiel alle Verzeichniss aus, die mit "151" enden. Eine
+Rueckmeldung ueber die ausgeschlossenen Verzeichnisse wird ueber den
+Standard-Error ausgegeben.
+
+
+Syntax fuer die Filterdatei:
+============================
+
+- Einzeilige Kommentare: Alles nach "#" wird ignoriert.
+- Die Datei kann beliebig viele Abbildungen enthalten.
+- Ein Abbildung hat folgende Form:
+     tokenliste "->" (token)? ";"
+
+     tokenliste: token ("," token)*
+     token: ["A"-"B","_"]+
+
+Beispiel siehe "test.filter"
+
+
+Liste aller Token
+=================
+
+FILE_END		Spezielles Token, das nicht gematcht wird!
+
+J_PACKAGE		"package" Name() ";" §
+
+J_IMPORT		"import" Name() [".*"] ";" §
+
+J_CLASS_BEGIN
+J_CLASS_END		Begrenzen eine Klasse
+
+J_METHOD_BEGIN
+J_METHOD_END		Begrenzen eine Methode
+
+J_SYNC_BEGIN
+J_SYNC_END		Begrenzen einen "synchronized" Block
+
+J_DO_BEGIN
+J_DO_END		Begrenzen einen "do" Block
+
+J_WHILE_BEGIN
+J_WHILE_END		Begrenzen einen "while" Block
+
+J_FOR_BEGIN
+J_FOR_END		Begrenzen einen "for" Block
+                                   
+J_SWITCH_BEGIN
+J_CASE
+J_SWITCH_END		Begrenzen einen "switch" Block und markieren
+			die "case" Label
+J_TRY_BEGIN
+J_CATCH_BEGIN
+J_FINALLY
+J_CATCH_END		Begrenzen einen "try" Block und den
+			zugehoerigen "catch" und "finally" Block
+J_IF_BEGIN
+J_ELSE
+J_IF_END		Begrenzen einen "if" und "else" Block
+
+J_IN_CLASS_BEGIN
+J_IN_CLASS_END		Begrenzen die Definition einer inneren Klasse
+
+J_INTERFACE_BEGIN
+J_INTERFACE_END		Begrenzt eine Interface Deklaration
+
+J_CONSTR_BEGIN
+J_CONSTR_END		Begrenzen einen Konstruktor
+
+J_INIT_BEGIN
+J_INIT_END		Begrenzen die Initialisierungsblock einer Klasse
+
+J_COND			"bed ? A : B"
+J_NEWARRAY		Ueberall, wo ein Array instanziiert wird
+J_APPLY			Ueberall, wo eine Liste von Argumenten auftaucht
+J_ASSIGN		Ueberall, wo einer Variable ein Wert zugewiesen wird.
+J_VARDEF		Ueberall wo eine Variable deklariert wird
+J_NEWCLASS		Ueberall, wo eine Klasse instanziiert wird
+J_ARRAY_INIT		Wenn ein Array initialisiert wird
+J_ASSIGNOP		"*=" | "/=" | "%=" | "+=" | "-="
+J_ASSIGNBITOP		"<<=" | ">>=" | ">>>=" | "&=" | "^=" | "|="
+J_COND_OR		"||"
+J_COND_AND		"&&"
+J_COND_IOR		"|"
+J_COND_XOR		"^"
+J_AND			"&"
+J_EQUALITY		"==" | "!="
+J_SHIFT			"<<" | ">>" | ">>>"
+J_RELATIONAL		"<" | ">" | "<=" | ">="
+J_ADD			"+" | "-"
+J_MULT			"*" | "/" | "%"
+J_DECINC		"++" | "--"
+J_CAST			Ueberall, wo ge"cast"et wird
+J_LABEL			Ueberall, wo ein Label definiert wird
+
+Folgende Token kommen ueberall dort vor, wo entsprechende Literale auftauchen:
+J_INT			(Beinhaltet auch byte, short, long)
+J_FLOAT			(Beinhaltet auch double)
+J_CHAR
+J_STRING
+J_BOOLEAN		"true" | "false"
+
+Folgende Token treten ueberall dort auf, wo Grundtypen deklariert werden:
+J_BOOLEAN_TYPE
+J_CHAR_TYPE
+J_BYTE_TYPE
+J_SHORT_TYPE
+J_INT_TYPE
+J_LONG_TYPE
+J_FLOAT_TYPE
+J_DOUBLE_TYPE
+
+Folgende Token treten ueberall dort auf, wo die entsprechenden
+Schluesselworte auftauchen:
+J_VOID
+J_ABSTRACT
+J_FINAL
+J_PUBLIC
+J_STATIC
+J_PROTECTED
+J_PRIVATE
+J_EXTENDS
+J_TRANSIENT
+J_VOLANTILE
+J_NATIVE
+J_SYNCHRONIZED
+J_THROWS
+J_THIS
+J_SUPER
+J_NULL
+J_INSTANCEOF
+J_BREAK
+J_CONTINUE
+J_RETURN
+J_THROW
+
+
+
+
