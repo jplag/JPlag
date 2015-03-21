@@ -1,0 +1,734 @@
+/* Hey Emacs, this is -*- mode: java; page-delimiter: "^%%$"; -*- */
+
+/*
+ * Scheme.jj
+ * =========
+ * This is a parser for scheme written for JavaCC.
+ * The grammar is far from optimal (it uses a lot of lookaheads),
+ * but that is because it follows almost exactly the grammar given
+ * in "Revised4 Report on the Algorithmic Language Scheme" (R4RS).
+ *
+ * SKIP has been used for whitespaces, leaving out the lexemes for
+ * <intertoken space> and similar.
+ *
+ * The lexemes <identifier> and <syntactic keyword> has been written
+ * as production rules to avoid conflicting lexemes.
+ *
+ * The <sequence> production rule has been slighly altered as
+ * a workaround for some problems I had with the original
+ * production rule. (Is this a bug in JavaCC?)
+ * In R4RS the rule is
+ *   <sequence> --> <command>* <expression>
+ * here it is
+ *   <sequence> --> <expression>+
+ *
+ * The non-context-free grammar for quasiquotations has been written
+ * with use of semantic lookahead to handle the <template 0> production
+ * rule.
+ *
+ * The special construct (...)? has been used in several locations
+ * to join two or more alternatives into one without altering
+ * the structure of the grammar.
+ *
+ * To anyone who reads or uses this code, note the following:
+ *  - The code is public domain.
+ *  - It has not been heavily tested and I leave no guarantees
+ *    whatsoever that it works properly.
+ *  - If you make any changes, or find it useful in any way, I
+ *    would appreaciate to hear from you.
+ *
+ * Author: Lorens Younes (d93-hyo@nada.kth.se)
+ */
+
+options
+{
+  IGNORE_CASE = true;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+}
+
+
+PARSER_BEGIN(SchemeParser)
+package jplag.scheme;
+import java.io.*;
+
+public class SchemeParser implements SchemeTokenConstants {
+    /* used for context in the template production rule */
+    private static int templateParam;
+    private jplag.scheme.Parser parser2 ;
+    //static SchemeParser parser = null;
+
+    public static boolean parseFile(File dir, String fileName,
+        SchemeParser parser,jplag.scheme.Parser parserX)
+    {
+        File file=null;
+        try {
+            FileInputStream in = new FileInputStream(file=new File(dir,fileName));
+            if (parser==null) {
+                parser = new SchemeParser(in);
+            } else {
+                parser.ReInit(in);
+            }
+            parser.parser2=parserX;
+        } catch (FileNotFoundException e) {
+            System.out.println("Scheme Parser R4RS:  File " + fileName +
+                " not found.");
+            return false;
+        }
+        try {
+            parser.Program();
+        } catch (ParseException e) {
+            parserX.getProgram().addError("  Parsing Error in '" + fileName
+                + "':\n  " + e.getMessage() + "\n");
+            return false;
+        } catch (TokenMgrError e) {
+            parserX.getProgram().addError("  Scanning Error in '" + fileName
+                + "':\n  " + e.getMessage() + "\n");
+            return false;
+        }
+        return true;
+    }
+
+/*    public static void main(String args[]) {
+        parseFile(new File("."),args[0]);
+    }*/
+}
+
+PARSER_END(SchemeParser)
+
+
+/*
+ * Lexical structure
+ */
+
+SKIP : /* whitespace */
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| "\f"
+}
+
+SPECIAL_TOKEN : /* comment */
+{
+  <COMMENT : ";" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+
+TOKEN : /* syntactic keywords */
+{
+  <ELSE : "else">
+| <ARROW : "=>">
+| <DEFINE : "define">
+| <UNQUOTE : "unquote">
+| <UNQUOTE_SPLICING : "unquote-splicing">
+| <QUOTE : "quote">
+| <LAMBDA : "lambda">
+| <IF : "if">
+| <SET : "set!">
+| <BEGIN : "begin">
+| <COND : "cond">
+| <AND : "and">
+| <OR : "or">
+| <CASE : "case">
+| <LET : "let">
+| <LETSTAR : "let*">
+| <LETREC : "letrec">
+| <DO : "do">
+| <DELAY : "delay">
+| <QUASIQUOTE : "quasiquote">
+}
+
+TOKEN : /* variable */
+{
+  <VARIABLE :
+    <INITIAL> (<SUBSEQUENT>)*
+  | <PECULIAR_IDENTIFIER>
+  >
+| <#INITIAL :
+    <LETTER>
+  | <SPECIAL_INITIAL>
+  >
+| <#LETTER :
+    ["a"-"z"]
+  >
+| <#SPECIAL_INITIAL :
+    ["!","$","%","&","*","/",":","<","=",">","?","~","_","^"]
+  >
+| <#SUBSEQUENT :
+    <INITIAL>
+  | <DIGIT>
+  | <SPECIAL_SUBSEQUENT>
+  >
+| <#DIGIT :
+    ["0"-"9"]
+  >
+| <#SPECIAL_SUBSEQUENT :
+    [".","+","-"]
+  >
+| <#PECULIAR_IDENTIFIER :
+    ["+","-"]
+  | "..."
+  >
+}
+
+TOKEN : /* boolean */
+{
+  <BOOLEAN :
+    "#" ["t","f"]
+  >
+}
+
+TOKEN : /* character */
+{
+  <CHARACTER :
+    "#\\" ~[" ","\n"]
+  | "#\\" <CHARACTER_NAME>
+  >
+| <#CHARACTER_NAME :
+    "space"
+  | "newline"
+  >
+}
+
+TOKEN : /* string */
+{
+  <STRING :
+    "\"" (<STRING_ELEMENT>)* "\""
+  >
+| <#STRING_ELEMENT :
+    ~["\"","\\"]
+     | "\\" ["\"","\\","n"]      // addition by guido ("n")
+  >
+}
+
+TOKEN : /* number */
+{
+  <NUMBER :
+    <NUM_2>
+  | <NUM_8>
+  | <NUM_10>
+  | <NUM_16>
+  >
+| <#NUM_2 :
+    <PREFIX_2> <COMPLEX_2>
+  >
+| <#NUM_8 :
+    <PREFIX_8> <COMPLEX_8>
+  >
+| <#NUM_10 :
+    <PREFIX_10> <COMPLEX_10>
+  >
+| <#NUM_16 :
+    <PREFIX_16> <COMPLEX_16>
+  >
+| <#COMPLEX_2 :
+    <REAL_2> ("@" <REAL_2>)?
+  | (<REAL_2>)? ("+" | "-") (<UREAL_2>)? "i"
+  >
+| <#COMPLEX_8 :
+    <REAL_8> ("@" <REAL_8>)?
+  | (<REAL_8>)? ("+" | "-") (<UREAL_8>)? "i"
+  >
+| <#COMPLEX_10 :
+    <REAL_10> ("@" <REAL_10>)?
+  | (<REAL_10>)? ("+" | "-") (<UREAL_10>)? "i"
+  >
+| <#COMPLEX_16 :
+    <REAL_16> ("@" <REAL_16>)?
+  | (<REAL_16>)? ("+" | "-") (<UREAL_16>)? "i"
+  >
+| <#REAL_2 :
+    <SIGN> <UREAL_2>
+  >
+| <#REAL_8 :
+    <SIGN> <UREAL_8>
+  >
+| <#REAL_10 :
+    <SIGN> <UREAL_10>
+  >
+| <#REAL_16 :
+    <SIGN> <UREAL_16>
+  >
+| <#UREAL_2 :
+    <UINTEGER_2> ("/" <UINTEGER_2>)?
+  >
+| <#UREAL_8 :
+    <UINTEGER_8> ("/" <UINTEGER_8>)?
+  >
+| <#UREAL_10 :
+    <UINTEGER_10> ("/" <UINTEGER_10>)?
+  | <DECIMAL_10>
+  >
+| <#UREAL_16 :
+    <UINTEGER_16> ("/" <UINTEGER_16>)?
+  >
+| <#DECIMAL_10 :
+    <UINTEGER_10> <SUFFIX>
+  | "." (<DIGIT_10>)+ ("#")* <SUFFIX>
+  | (<DIGIT_10>)+ "." (<DIGIT_10>)* ("#")* <SUFFIX>
+  | (<DIGIT_10>)+ ("#")+ "." ("#")* <SUFFIX>
+  >
+| <#UINTEGER_2 :
+    (<DIGIT_2>)+ ("#")*
+  >
+| <#UINTEGER_8 :
+    (<DIGIT_8>)+ ("#")*
+  >
+| <#UINTEGER_10 :
+    (<DIGIT_10>)+ ("#")*
+  >
+| <#UINTEGER_16 :
+    (<DIGIT_16>)+ ("#")*
+  >
+| <#PREFIX_2 :
+    <RADIX_2> <EXACTNESS>
+  | <EXACTNESS> <RADIX_2>
+  >
+| <#PREFIX_8 :
+    <RADIX_8> <EXACTNESS>
+  | <EXACTNESS> <RADIX_8>
+  >
+| <#PREFIX_10 :
+    <RADIX_10> <EXACTNESS>
+  | <EXACTNESS> <RADIX_10>
+  >
+| <#PREFIX_16 :
+    <RADIX_16> <EXACTNESS>
+  | <EXACTNESS> <RADIX_16>
+  >
+| <#SUFFIX :
+    (<EXPONENT_MARKER> <SIGN> (<DIGIT>)+)?
+  >
+| <#EXPONENT_MARKER :
+    ["e","s","f","d","l"]
+  >
+| <#SIGN :
+    ("+" | "-")?
+  >
+| <#EXACTNESS :
+    ("#" ["i","e"])?
+  >
+| <#RADIX_2 :
+    "#b"
+  >
+| <#RADIX_8 :
+    "#o"
+  >
+| <#RADIX_10 :
+    ("#d")?
+  >
+| <#RADIX_16 :
+    "#x"
+  >
+| <#DIGIT_2 :
+    ["0","1"]
+  >
+| <#DIGIT_8 :
+    ["0"-"7"]
+  >
+| <#DIGIT_10 :
+    ["0"-"9"]
+  >
+| <#DIGIT_16 :
+    <DIGIT_10>
+  | ["a","b","c","d","e","f"]
+  >
+}
+
+void Identifier() :
+{}
+{
+  SyntacticKeyword()
+| <VARIABLE>                        { parser2.add(S_VAR,token); }
+}
+
+void SyntacticKeyword() :
+{}
+{
+  <ELSE>
+| <ARROW>
+| <DEFINE>
+| <UNQUOTE>
+| <UNQUOTE_SPLICING>
+| <QUOTE>
+| <LAMBDA>
+| <IF>
+| <SET>
+| <BEGIN>
+| <COND>
+| <AND>
+| <OR>
+| <CASE>
+| <LET>
+| <LETSTAR>
+| <LETREC>
+| <DO>
+| <DELAY>
+| <QUASIQUOTE>
+}
+
+/*
+ * External representations
+ */
+
+void Datum() :
+{}
+{
+  SimpleDatum()
+| CompoundDatum()
+}
+
+void SimpleDatum() :
+{}
+{
+  <BOOLEAN>                       { parser2.add(S_BOOL,token); }
+| <NUMBER>                        { parser2.add(S_NUMBER,token); }
+| <CHARACTER>                     { parser2.add(S_CHAR,token); }
+| <STRING>                        { parser2.add(S_STRING,token); }
+| Symbol()
+}
+
+void Symbol() :
+{}
+{
+  Identifier()                    { parser2.add(S_ID,token); }
+}
+
+void CompoundDatum() :
+{}
+{
+  List()
+| Vector()
+}
+
+void List() :
+{}
+{
+                                  { parser2.add(S_LIST_BEGIN,token); }
+  (
+   "(" ((Datum())+ ("." Datum())? ")" | ")")
+   | Abbreviation()
+  )                               { parser2.add(S_LIST_END,token); }
+}
+
+void Abbreviation() :
+{}
+{
+  AbbrevPrefix() Datum()
+}
+
+void AbbrevPrefix() :
+{}
+{
+  "'"
+| "`"
+| ","
+| ",@"
+}
+
+void Vector() :
+{}
+{
+  "#("                            { parser2.add(S_VECTOR_BEGIN,token); }
+  (Datum())* ")"                  { parser2.add(S_VECTOR_END,token); }
+}
+
+/*
+ * Expressions
+ */
+
+void Expression() :
+{}
+{
+  <VARIABLE>
+| LOOKAHEAD(2) Literal()
+| LOOKAHEAD(2) ProcedureCall()
+| LOOKAHEAD(2) LambdaExpression()
+| LOOKAHEAD(2) Conditional()
+| LOOKAHEAD(2) Assignment()
+| DerivedExpression()
+}
+
+void Literal() :
+{}
+{
+  (Quotation() | SelfEvaluating())
+                                  { parser2.add(S_LITERAL,token); }
+}
+
+void SelfEvaluating() :
+{}
+{
+  <BOOLEAN>                       { parser2.add(S_BOOL,token); }
+| <NUMBER>                        { parser2.add(S_NUMBER,token); }
+| <CHARACTER>                     { parser2.add(S_CHAR,token); }
+| <STRING>                        { parser2.add(S_STRING,token); }
+}
+
+void Quotation() :
+{}
+{
+  ("'" { parser2.add(S_QUOT_BEGIN,token); } Datum()
+ | "(" { parser2.add(S_QUOT_BEGIN,token); } <QUOTE> Datum() ")")
+                                  { parser2.add(S_QUOT_END,token); }
+}
+
+void ProcedureCall() :
+{}
+{
+  "(" Operator() { parser2.add(S_CALL,token); } (Operand())* ")"
+}
+
+void Operator() :
+{}
+{
+  Expression()
+}
+
+void Operand() :
+{}
+{
+  Expression()
+}
+
+void LambdaExpression() :
+{}
+{
+  "("                             { parser2.add(S_LAMBDA_BEGIN,token); }
+    <LAMBDA> Formals() Body() ")" { parser2.add(S_LAMBDA_END,token); }
+}
+
+void Formals() :
+{}
+{
+  "("                             { parser2.add(S_FORMAL_BEGIN,token); }
+    ((<VARIABLE>)+ ("." <VARIABLE>)? ")" | ")")
+                                  { parser2.add(S_FORMAL_END,token); }
+| <VARIABLE>
+}
+
+void Body() :
+{}
+{
+  (LOOKAHEAD(4) Definition())*     { parser2.add(S_BODY_BEGIN,token); }
+  Sequence()                       { parser2.add(S_BODY_END,token); }
+}
+
+void Sequence() :
+{}
+{
+( LOOKAHEAD(2) Expression()           // addition by guido:
+| "(" { parser2.add(S_DEF_BEGIN,token); } <DEFINE> <VARIABLE>
+               Expression() ")"      // bis hierher
+)+
+}
+
+void Command() :
+{}
+{
+                                   { parser2.add(S_COMMAND,token); }
+  Expression()
+}
+
+void Conditional() :
+{}
+{
+  "("                              { parser2.add(S_IF_BEGIN,token); }
+    <IF> Test() Consequent() Alternate()
+  ")"                              { parser2.add(S_IF_END,token); }
+}
+
+void Test() :
+{}
+{
+  Expression()
+}
+
+void Consequent() :
+{}
+{
+  LOOKAHEAD(2) Expression()
+| "(" ")"           // addition by guido           
+}
+
+void Alternate() :
+{}
+{
+  ( { parser2.add(S_ALTERN,token); } Expression() )?
+}
+
+void Assignment() :
+{}
+{
+  "("                              { parser2.add(S_ASSIGN_BEGIN,token); }
+    <SET> <VARIABLE> Expression()
+  ")"                              { parser2.add(S_ASSIGN_END,token); }
+}
+
+void DerivedExpression() :
+{}
+{
+  LOOKAHEAD(2) "(" { parser2.add(S_COND_BEGIN,token); }
+    <COND> (LOOKAHEAD(2) CondClause())*
+    (LOOKAHEAD(2) CondClause() | "(" { parser2.add(S_ELSE,token); } <ELSE> Sequence() ")")? ")" { parser2.add(S_COND_END,token); }
+
+| LOOKAHEAD(2) "(" { parser2.add(S_CASE_BEGIN,token); } <CASE> Expression()
+    (LOOKAHEAD(2) CaseClause())*
+    (LOOKAHEAD(2) CaseClause() | "(" <ELSE> { parser2.add(S_ELSE,token); }
+     Sequence() ")")? ")" { parser2.add(S_CASE_END,token); }
+
+| LOOKAHEAD(2) "(" { parser2.add(S_AND,token); } <AND> (Test())* ")"
+| LOOKAHEAD(2) "(" { parser2.add(S_OR,token); } <OR> (Test())* ")"
+| LOOKAHEAD(2) "(" { parser2.add(S_LET,token); } <LET> (<VARIABLE>)?
+    "(" (BindingSpec())* ")" Body() ")"
+| LOOKAHEAD(2) "(" { parser2.add(S_LET,token); } <LETSTAR>
+    "(" (BindingSpec())* ")" Body() ")"
+| LOOKAHEAD(2) "(" { parser2.add(S_LET,token); } <LETREC>
+    "(" (BindingSpec())* ")" Body() ")"
+| LOOKAHEAD(2) "(" { parser2.add(S_BEGIN,token); } <BEGIN> Sequence() ")"
+                   { parser2.add(S_END,token); } 
+| LOOKAHEAD(2) "(" { parser2.add(S_DO_BEGIN,token); } <DO>
+    "(" (IterationSpec())* ")" "(" Test() Sequence() ")" (Command())* ")"
+                   { parser2.add(S_DO_END,token); }
+| LOOKAHEAD(2) "(" { parser2.add(S_DELAY,token); } <DELAY> Expression() ")"
+| Quasiquotation()
+}
+
+void CondClause() :
+{}
+{
+  "(" Test() (Sequence() | <ARROW> Recipient())? ")"
+}
+
+void Recipient() :
+{}
+{
+  Expression()
+}
+
+void CaseClause() :
+{}
+{
+  "(" "(" (Datum())* ")" Sequence() ")"
+}
+
+void BindingSpec() :
+{}
+{
+  "(" <VARIABLE> Expression() ")"
+}
+
+void IterationSpec() :
+{}
+{
+  "(" <VARIABLE> Init() (Step())? ")"
+}
+
+void Init() :
+{}
+{
+  Expression()
+}
+
+void Step() :
+{}
+{
+  Expression()
+}
+
+/*
+ * Quasiquotations
+ */
+
+void Quasiquotation() :
+{}
+{
+  QuasiquotationD(1)
+}
+
+void Template(int d) :
+{ templateParam = d; }
+{
+  LOOKAHEAD({ templateParam == 0 }) Expression()
+| SimpleDatum()
+| LOOKAHEAD(2) ListTemplate(d)
+| VectorTemplate(d)
+| Unquotation(d)
+}
+
+void QuasiquotationD(int d) :
+{}
+{
+  "`" Template(d)
+| "(" <QUASIQUOTE> Template(d) ")"
+}
+
+void ListTemplate(int d) :
+{}
+{
+  LOOKAHEAD(2) "(" ((TemplateOrSplice(d))+ ("." Template(d))? ")" | ")")
+| "'" Template(d)
+| QuasiquotationD(d + 1)
+}
+
+void VectorTemplate(int d) :
+{}
+{
+  "#(" (TemplateOrSplice(d))* ")"
+}
+
+void Unquotation(int d) :
+{}
+{
+  "," Template(d - 1)
+| "(" <UNQUOTE> Template(d - 1) ")"
+}
+
+void TemplateOrSplice(int d) :
+{}
+{
+  LOOKAHEAD(2) Template(d)
+| SplicingUnquotation(d)
+}
+
+void SplicingUnquotation(int d) :
+{}
+{
+  ",@" Template(d - 1)
+| "(" <UNQUOTE_SPLICING> Template(d - 1) ")"
+}
+
+/*
+ * Programs and definitions
+ */
+
+void Program() :
+{}
+{
+  (CommandOrDefinition())* <EOF>
+}
+
+void CommandOrDefinition() :
+{}
+{
+  LOOKAHEAD(3) Command() | Definition()
+}
+
+void Definition() :
+{}
+{
+( LOOKAHEAD(3) "(" { parser2.add(S_DEF_BEGIN,token); } <DEFINE> <VARIABLE>
+               Expression() ")"
+| LOOKAHEAD(2) "(" { parser2.add(S_DEF_BEGIN,token); } <DEFINE>
+               "(" <VARIABLE> DefFormals() ")" Body() ")"
+| "(" { parser2.add(S_DEF_BEGIN,token); } <BEGIN> (Definition())* ")"
+) { parser2.add(S_DEF_END,token); }
+}
+
+void DefFormals() :
+{}
+{
+  ((<VARIABLE>)+ ("." <VARIABLE>)?)?
+}
