@@ -44,7 +44,7 @@
 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>
-				<version>4.0</version>
+				<version>4.2</version>
 				<configuration>
 					<!-- Comma separated list of grammar files or pattern grammar files 
 						By default, grammar file(s) is in ${basedir}/src/main/antlr -->
