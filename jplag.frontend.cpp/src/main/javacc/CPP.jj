@@ -1,0 +1,456 @@
+/* Hey Emacs, this is -*- mode: java; page-delimiter: "^%%$"; -*- */
+
+/* Ein C/C++ Scanner.
+ * ...weil Parsen zu schwierig ist.
+ */
+
+options
+{
+  STATIC = false;
+  IGNORE_CASE = true;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+}
+
+PARSER_BEGIN(CPPScanner)
+package jplag.cpp;
+import java.io.*;
+import jplag.*;
+
+public class CPPScanner implements CPPTokenConstants {
+    private static Scanner scanner2;
+    public static boolean scanFile(File dir, String fileName,
+        jplag.cpp.CPPScanner scanner, jplag.cpp.Scanner scannerX)
+    {
+        try {
+            InputStream in = new NewlineStream(
+                new FileInputStream(new File(dir,fileName)));
+              if (scanner==null) {
+                scanner = new CPPScanner(in);
+              } else {
+                scanner.ReInit(in);
+              }
+              scanner.scanner2=scannerX;
+        } catch (FileNotFoundException e) {
+              System.out.println("C/C++ Scanner:  File " + fileName + " not found.");
+              return false;
+        }
+        try {
+              scanner.scan();
+        } catch (ParseException e) {
+              scannerX.getProgram().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
+              return false;
+        } catch (TokenMgrError e) {
+              scannerX.getProgram().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
+              return false;
+        }
+        return true;
+    }
+
+/*    public static void main(String args[]) {
+        scanFile(new File("."),args[0]);
+    }*/
+}
+PARSER_END(CPPScanner)
+
+
+
+
+SKIP :
+{
+  " "
+| "\t"
+| "\f"
+| "\n"
+| "\r"
+| "\u001a"
+
+| "//" : IN_LINE_COMMENT
+| "/*" : IN_COMMENT
+| "#" : PREPROCESSOR_OUTPUT
+}
+
+<IN_LINE_COMMENT> SKIP:
+{
+   "\n" : DEFAULT
+}
+<IN_LINE_COMMENT> MORE:
+{
+  < ~[] >
+}
+
+<IN_COMMENT> SKIP:
+{
+   "*/" : DEFAULT
+}
+<IN_COMMENT> MORE:
+{
+  < ~[] >
+}
+
+<PREPROCESSOR_OUTPUT> SKIP:
+{
+  "\\" : PREPROCESSOR_OUTPUT2
+}
+<PREPROCESSOR_OUTPUT2> MORE:
+{
+  "\\" : PREPROCESSOR_OUTPUT
+}
+<PREPROCESSOR_OUTPUT> SKIP:
+{
+  "\n" : DEFAULT
+}
+<PREPROCESSOR_OUTPUT2> SKIP:
+{
+  "\n" : PREPROCESSOR_OUTPUT
+}
+<PREPROCESSOR_OUTPUT, PREPROCESSOR_OUTPUT2> MORE:
+{
+  < ~[] >
+}
+
+
+TOKEN :
+{
+  < LCURLYBRACE: "{" >
+| < RCURLYBRACE: "}" >
+| < LSQUAREBRACKET: "[" >
+| < RSQUAREBRACKET: "]" >
+| < LPARENTHESIS: "(" >
+| < RPARENTHESIS: ")" >
+| < SCOPE: "::" >
+| < COLON: ":" >
+| < SEMICOLON: ";" >
+| < COMMA: "," >
+| < QUESTIONMARK: "?" >
+| < ELLIPSIS: "..." >
+| < ASSIGNEQUAL: "=" >
+| < TIMESEQUAL: "*=" >
+| < DIVIDEEQUAL: "/=" >
+| < MODEQUAL: "%=" >
+| < PLUSEQUAL: "+=" >
+| < MINUSEQUAL: "-=" >
+| < SHIFTLEFTEQUAL: "<<=" >
+| < SHIFTRIGHTEQUAL: ">>=" >
+| < BITWISEANDEQUAL: "&=" >
+| < BITWISEXOREQUAL: "^=" >
+| < BITWISEOREQUAL: "|=" >
+| < OR: "||" >
+| < AND: "&&" >
+| < BITWISEOR: "|" >
+| < BITWISEXOR: "^" >
+| < AMPERSAND: "&" >
+| < EQUAL: "==" >
+| < NOTEQUAL: "!=" >
+| < LESSTHAN: "<" >
+| < GREATERTHAN: ">" >
+| < LESSTHANOREQUALTO: "<=" >
+| < GREATERTHANOREQUALTO: ">=" >
+| < SHIFTLEFT: "<<" >
+| < SHIFTRIGHT: ">>" >
+| < PLUS: "+" >
+| < MINUS: "-" >
+| < STAR: "*" >
+| < DIVIDE: "/" >
+| < MOD: "%" >
+| < PLUSPLUS: "++" >
+| < MINUSMINUS: "--" >
+| < TILDE: "~" >
+| < NOT: "!" >
+| < DOT: "." >
+| < POINTERTO: "->" >
+| < DOTSTAR: ".*" >
+| < ARROWSTAR: "->*" >
+| < AUTO: "auto" >
+| < BREAK: "break" >
+| < CASE: "case" >
+| < CATCH: "catch" >
+| < CHAR: "char" >
+| < CONST: "const" >
+| < CONTINUE: "continue" >
+| < _DEFAULT: "default" >
+| < DELETE: "delete" >
+| < DO: "do" >
+| < DOUBLE: "double" >
+| < ELSE: "else" >
+| < ENUM: "enum" >
+| < EXTERN: "extern" >
+| < FLOAT: "float" >
+| < FOR: "for" >
+| < FRIEND: "friend" >
+| < GOTO: "goto" >
+| < IF: "if" >
+| < INLINE: "inline" >
+| < INT: "int" >
+| < LONG: "long" >
+| < NEW: "new" >
+| < PRIVATE: "private" >
+| < PROTECTED: "protected" >
+| < PUBLIC: "public" >
+| < REDECLARED: "redeclared" >
+| < REGISTER: "register" >
+| < RETURN: "return" >
+| < SHORT: "short" >
+| < SIGNED: "signed" >
+| < SIZEOF: "sizeof" >
+| < STATIC: "static" >
+| < STRUCT: "struct" >
+| < CLASS : "class" >
+| < SWITCH: "switch" >
+| < TEMPLATE: "template" >
+| < THIS: "this" >
+| < TRY: "try" >
+| < TYPEDEF: "typedef" >
+| < UNION: "union" >
+| < UNSIGNED: "unsigned" >
+| < VIRTUAL: "virtual" >
+| < VOID: "void" >
+| < VOLATILE: "volatile" >
+| < WHILE: "while" >
+| < OPERATOR: "operator" >
+| < TRUETOK: "true" >
+| < FALSETOK: "false" >
+| < THROW: "throw" >
+| < NULL: "NULL" >
+| < BACKSLASH: "\\">
+}
+
+TOKEN [IGNORE_CASE] :
+{
+  <  OCTALINT : "0" (["0"-"7"])* >
+| <  OCTALLONG : <OCTALINT> "l" >
+| <  UNSIGNED_OCTALINT : <OCTALINT> "u" >
+| <  UNSIGNED_OCTALLONG : <OCTALINT> ("ul" | "lu") >
+
+| <  DECIMALINT : ["1"-"9"] (["0"-"9"])* >
+| <  DECIMALLONG : <DECIMALINT> ["u","l"] >
+| <  UNSIGNED_DECIMALINT : <DECIMALINT> "u" >
+| <  UNSIGNED_DECIMALLONG : <DECIMALINT> ("ul" | "lu") >
+
+| <  HEXADECIMALINT : "0x" (["0"-"9","a"-"f"])+ >
+| <  HEXADECIMALLONG : <HEXADECIMALINT> (["u","l"])? >
+| <  UNSIGNED_HEXADECIMALINT : <HEXADECIMALINT> "u" >
+| <  UNSIGNED_HEXADECIMALLONG : <HEXADECIMALINT> ("ul" | "lu") >
+
+
+| <  FLOATONE : ((["0"-"9"])+ "." (["0"-"9"])* | (["0"-"9"])* "." (["0"-"9"])+)
+              ("e" (["-","+"])? (["0"-"9"])+)? (["f","l"])? >
+
+| <  FLOATTWO : (["0"-"9"])+ "e" (["-","+"])?  (["0"-"9"])+ (["f","l"])? >
+}
+
+TOKEN :
+{
+  <  CHARACTER : ("L")? "'"
+   (   (~["'","\\","\n","\r"])
+   | ("\\" (
+             ["n","t","v","b","r","f","a","\\","?","'","\""]
+           | "0" (["0"-"7"])*
+           | ["1"-"9"] (["0"-"9"])*
+           | ("0x" | "0X") (["0"-"9","a"-"f","A"-"F"])+
+           )
+     )
+   )
+   "'" >
+
+| <  STRING : ("L")? "\""
+   ( ( ~["\"","\\"])
+   | ("\\" (
+             ["n","t","v","b","r","f","a","\\","?","'","\""]
+           | "0" (["0"-"7"])*
+           | ["1"-"9"] (["0"-"9"])*
+           | ("0")? ("X" | "x" | "u") (["0"-"9","a"-"f","A"-"F"])+
+	   | "\n"
+           )
+     )
+   )*
+   "\"" >
+}
+
+TOKEN :
+{
+  <  ID : ["a"-"z","A"-"Z", "_"] (["a"-"z","A"-"Z","0"-"9","_"])* >
+}
+
+
+
+void scan(): {}
+{
+  (token())* <EOF>
+}
+
+void token(): {}
+{
+  "{"            { scanner2.add(C_BLOCK_BEGIN,token); }
+| "}"            { scanner2.add(C_BLOCK_END,token); }
+| "["
+| "]"
+| "("
+| ")"
+| "::"           { scanner2.add(C_SCOPE,token); }
+| ":"
+| ";"
+| ","
+| "?"            { scanner2.add(C_QUESTIONMARK,token); }
+| "..."          { scanner2.add(C_ELLIPSIS,token); }
+| "="            { scanner2.add(C_ASSIGN,token); }
+| "*="           { scanner2.add(C_ASSIGN,token); }
+| "/="           { scanner2.add(C_ASSIGN,token); }
+| "%="           { scanner2.add(C_ASSIGN,token); }
+| "+="           { scanner2.add(C_ASSIGN,token); }
+| "-="           { scanner2.add(C_ASSIGN,token); }
+| "<<="          { scanner2.add(C_ASSIGN,token); }
+| ">>="          { scanner2.add(C_ASSIGN,token); }
+| "&="           { scanner2.add(C_ASSIGN,token); }
+| "^="           { scanner2.add(C_ASSIGN,token); }
+| "|="           { scanner2.add(C_ASSIGN,token); }
+| "||"
+| "&&"
+| "|"
+| "^"
+| "&"
+| "=="
+| "!="
+| "<"
+| ">"
+| "<="
+| ">="
+| "<<"
+| ">>"
+| "+" 
+| "-" 
+| "*" 
+| "/" 
+| "%" 
+| "++"           { scanner2.add(C_ASSIGN,token); }
+| "--"           { scanner2.add(C_ASSIGN,token); }
+| "~" 
+| "!" 
+| "auto"         { scanner2.add(C_AUTO,token); }
+| "break"        { scanner2.add(C_BREAK,token); }
+| "case"         { scanner2.add(C_CASE,token); }
+| "catch"        { scanner2.add(C_CATCH,token); }
+| "char"         { scanner2.add(C_CHAR,token); }
+| "const"        { scanner2.add(C_CONST,token); }
+| "continue"     { scanner2.add(C_CONTINUE,token); }
+| "default"      { scanner2.add(C_DEFAULT,token); }
+| "delete"       { scanner2.add(C_DELETE,token); }
+| "do"           { scanner2.add(C_DO,token); }
+| "double"       { scanner2.add(C_DOUBLE,token); }
+| "else"         { scanner2.add(C_ELSE,token); }
+| "enum"         { scanner2.add(C_ENUM,token); }
+| "extern"       { scanner2.add(C_EXTERN,token); }
+| "float"        { scanner2.add(C_FLOAT,token); }
+| "for"          { scanner2.add(C_FOR,token); }
+| "friend"       { scanner2.add(C_FRIEND,token); }
+| "goto"         { scanner2.add(C_GOTO,token); }
+| "if"           { scanner2.add(C_IF,token); }
+| "inline"       { scanner2.add(C_INLINE,token); }
+| "int"          { scanner2.add(C_INT,token); }
+| "long"         { scanner2.add(C_LONG,token); }
+| "new"          { scanner2.add(C_NEW,token); }
+| "private"      { scanner2.add(C_PRIVATE,token); }
+| "protected"    { scanner2.add(C_PROTECTED,token); }
+| "public"       { scanner2.add(C_PUBLIC,token); }
+| "redeclared"   { scanner2.add(C_REDECLARED,token); }
+| "register"     { scanner2.add(C_REGISTER,token); }
+| "return"       { scanner2.add(C_RETURN,token); }
+| "short"        { scanner2.add(C_SHORT,token); }
+| "signed"       { scanner2.add(C_SIGNED,token); }
+| "sizeof"       { scanner2.add(C_SIZEOF,token); }
+| "static"       { scanner2.add(C_STATIC,token); }
+| "struct"       { scanner2.add(C_STRUCT,token); }
+| "class"        { scanner2.add(C_CLASS,token); }
+| "switch"       { scanner2.add(C_SWITCH,token); }
+| "template"     { scanner2.add(C_TEMPLATE,token); }
+| "this"         { scanner2.add(C_THIS,token); }
+| "try"          { scanner2.add(C_TRY,token); }
+| "typedef"      { scanner2.add(C_TYPEDEF,token); }
+| "union"        { scanner2.add(C_UNION,token); }
+| "unsigned"     { scanner2.add(C_UNSIGNED,token); }
+| "virtual"      { scanner2.add(C_VIRTUAL,token); }
+| "void"         { scanner2.add(C_VOID,token); }
+| "volatile"     { scanner2.add(C_VOLANTILE,token); }
+| "while"        { scanner2.add(C_WHILE,token); }
+| "operator"     { scanner2.add(C_OPERATOR,token); }
+| "true"         
+| "false"        
+| "throw"        { scanner2.add(C_THROW,token); }
+| "NULL"         { scanner2.add(C_NULL,token); }
+
+| <OCTALINT>                  
+| <OCTALLONG>                 
+| <UNSIGNED_OCTALINT>         
+| <UNSIGNED_OCTALLONG>        
+| <DECIMALINT>                
+| <DECIMALLONG>               
+| <UNSIGNED_DECIMALINT>       
+| <UNSIGNED_DECIMALLONG>      
+
+| <HEXADECIMALINT>            
+| <HEXADECIMALLONG>           
+| <UNSIGNED_HEXADECIMALINT>   
+| <UNSIGNED_HEXADECIMALLONG>  
+
+| <FLOATONE>                  
+| <FLOATTWO>                  
+
+| <CHARACTER>                 
+| <STRING>                    
+
+| <BACKSLASH>
+
+       //| var() [LOOKAHEAD(2) "("        { scanner2.add(C_FUN,token); } ]
+| "."
+| "->" 
+| ".*" 
+| "->*"
+| <ID>
+}
+
+void var(): {}
+{
+    <ID> [LOOKAHEAD(2) "[" [index()] "]"] [var1()]
+}
+
+void var1(): {}
+{
+  ("." | "->" | ".*" | "->*") <ID> [LOOKAHEAD(2) "[" [index()] "]"] [var2()]
+}
+
+void var2(): {}
+{
+  ("." | "->" | ".*" | "->*") <ID> [LOOKAHEAD(2) "[" [index()] "]"] [var3()]
+}
+
+void var3(): {}
+{
+  ("." | "->" | ".*" | "->*") <ID> [LOOKAHEAD(2) "[" [index()] "]"]
+    (("." | "->" | ".*" | "->*") <ID> [LOOKAHEAD(2) "[" [index()] "]"])*
+}
+
+
+void index(): {}
+{
+  var()
+| <OCTALINT>                  
+| <OCTALLONG>                 
+| <UNSIGNED_OCTALINT>         
+| <UNSIGNED_OCTALLONG>        
+| <DECIMALINT>                
+| <DECIMALLONG>               
+| <UNSIGNED_DECIMALINT>       
+| <UNSIGNED_DECIMALLONG>      
+
+| <HEXADECIMALINT>            
+| <HEXADECIMALLONG>           
+| <UNSIGNED_HEXADECIMALINT>   
+| <UNSIGNED_HEXADECIMALLONG>  
+
+}
+
+
+
+
+
