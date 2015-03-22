@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="$encoding"?>
+<jnlp spec="$jnlpspec" codebase="$jnlpCodebase" href="$outputFile">
+  <information>
+#if($project.Name)
+    <title>$project.Name</title>
+#end
+#if($project.Organization.Name)
+    <vendor>$project.Organization.Name</vendor>
+#end
+#if($project.Url)
+    <homepage href="$project.Url"/>
+#end
+#if($project.Description)
+    <description>$project.Description</description>
+#end
+#if($jnlpIcon32x32)
+    <icon kind="shortcut" href="$jnlpIcon32x32" width="32" height="32"/>
+#end
+#if($jnlpIcon64x64)
+    <icon href="$jnlpIcon64x64" width="64" height="64"/>
+    <icon kind="shortcut" href="$jnlpIcon64x64" width="64" height="64"/>
+#end
+#if($jnlpSplash)
+    <icon kind="splash" href="$jnlpSplash" />
+#end
+
+#if($offlineAllowed)
+    <offline-allowed/>
+#end
+  </information>
+#if($allPermissions)
+  <security>
+     <all-permissions/>
+  </security>
+#end
+  <resources>
+    <j2se version="$j2seVersion"/>
+     $dependencies
+  </resources>
+  <application-desc main-class="$mainClass"/>
+</jnlp>

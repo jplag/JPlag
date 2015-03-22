@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <title>How to submit files to JPlag</title>
+    <meta content="">
+    <style></style>
+  </head>
+<body>
+<h2><a name="chapter1"> How to submit files to JPlag?</a></h2>
+In this section you will learn about all options of the JPlag . You will also learn how 
+this powerfull JPlag Client analyses&nbsp; your options and detects errors, 
+preventing you to send bad submissions to&nbsp; JPlag. We assume that you have 
+successfully <a href="main.html#kapitel2_account">installed and started this JPlag client.</a>. 
+<h3>Description of JPlag general options.</h3>
+The JPlag general options are the common and most used options and are required. Some advanced options could also be 
+required,&nbsp; but this JPlag client will set those options to the default values. 
+ <a name="chapter1_title"/>
+<h4>Submission title selection.</h4>
+The submission title is the name of your submission. Here, submission means the set of files and directories that will be send to the Jplag server 
+to be compared to each oders .Each element of this set of files is also named 
+submision. In this way, a JPlag submission is a set of directories and files 
+also named submissions that can be compared to each oders.<br>A submission 
+title should not have any space betwenn characters.It will be used by JPlag client as the name of the result directory.
+In this way if your submission title is "assignment1" , the JPlag result will be stored in /PATH/TO 
+REPORT&nbsp; LOCATION /assignment1/  
+ <a name="chapter1_Submission_directory"/>  
+<h4>Submission directory selection.</h4> 
+<a name="chapter1_Submission_directory"/>The submission directory is the lowest level directory containing 
+all files that will be submitted. In the example in <a href="main.html#fig1.1">"figure 1.1</a> , if you want to compare the programs of the students
+student1, student2, student3, student4 and student5 wich are respectively located in directories with the same name,
+you must select the directory Student_prog as submission directory. Setting 
+aDocument as root directory would lead JPlag to compare the documents: 
+Student_prog , document1 and documentn.<p> 
+ <a name="fig1.1"/>
+<img border="0" src="images/fig1.GIF" width="512" height="384">
+</p>
+ <a name="chapter1_language"/>
+<h4>Language (programming language) selection.</h4> 
+One of the most important options. Selecting a bad or unsuitable language lead JPlag to not or unsuccessfully
+parses files from submissions. Especially for the programming language Java(TM),using of java15 is advisable because
+some students can use java 1.4 syntax while anothers use java 5.0 syntax.<br>
+When selecting a language, corresponding default options for this language are automatically setted.  
+ <a name="chapter1_report_directory"/>
+<h4>Report directory selection.</h4>
+The directory containing JPlag results will be stored in the report directory. 
+ <a name="chapter1_recurse"/> 
+<h4>Usage of option: recurse into directories.</h4> 
+This option allow JPlag to recurse into all directories or (students) submissions. 
+For the example below, if the option recurse into directories is set to false, 
+then the package myPackage of the submission student1_programs will not be taken 
+in account.
+<p> 
+ <a name="fig1.2"/>
+<img border="0" src="images/fig2.GIF" width="512" height="384">
+</p>
+<hr>
+<p align="center">Copyright  1996-2005 Guido Malpohl University of Karlsruhe.</p>
+</body>

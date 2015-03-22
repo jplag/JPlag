@@ -1,0 +1,8 @@
+<!-- Sets up a wscompile task which allows untrusted certificates
+     to be used for SSL -->
+<taskdef name="wscompile" classname="wscompileSSLLauncher">
+	<classpath>
+		<path refid="client.classpath" />
+		<pathelement path="${basedir}/classes/util"/>
+	</classpath>
+</taskdef>
