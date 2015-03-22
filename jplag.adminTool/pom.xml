@@ -19,7 +19,7 @@
 		<repository>
 			<id>projectLocal</id>
 			<name>Local Repository</name>
-			<url>file://${project.basedir}/../../maven-libs</url>
+			<url>file://${project.basedir}/../maven-libs</url>
 		</repository>
 	</repositories>
 
