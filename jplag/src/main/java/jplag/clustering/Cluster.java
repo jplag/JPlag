@@ -139,6 +139,11 @@ public class Cluster implements Comparable<Cluster> {
                     other.getSubmissionAt(b));
         return summedSim / (float) (sizeThis * sizeOther);
     }
+    
+    public Clusters getClusters()
+    {
+    	return this.clusters;
+    }
 
     public String toString() {
         String text = (submissionNr == -1 ? "Similarity: " + similarity + ":"

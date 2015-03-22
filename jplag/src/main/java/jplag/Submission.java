@@ -265,10 +265,24 @@ public class Submission implements Comparable<Submission> {
 		return result;
 	}
 
+	@Override
 	public int compareTo(Submission other) {
 		return name.compareTo(other.name);
 	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof Submission)
+		{
+			Submission sub = (Submission) o;
+			return this.name.equals(sub);
+		}
+	
+		return false;
+	}
 
+	@Override
 	public String toString() {
 		return name;
 	}

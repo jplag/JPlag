@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://jplag.ipd.kit.edu/JPlagService/JPlagXMLResult" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://jplag.ipd.kit.edu/JPlagService/JPlagXMLResult">
+
+    <xsd:complexType name="JPlagHeaderType">
+        <xsd:annotation>
+        	<xsd:documentation>The class JPlagHeaderType saves information which is assigned to the entire submission and does not belong to a single submission program (SubmissionProgramType). Most parameters which were set on the first request through the web serivce call like title, sourceDirectory, language, basecode submission, etc. Those are copies of the input values of the web service: title, sourceDirectory, basecodeSubmission, limitEntries, minTokenLength, pathToFiles, readSubdirs, comparisonMode.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+        	<xsd:element name="title" type="xsd:string" minOccurs="1"
+        		maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>The title of the result. This value is a copy of the corresponding input value of the Web Service.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="sourceDirectory" type="xsd:string"
+        		minOccurs="1" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>The directory of the submission were it originaly was stored on the client. This value is a copy of the corresponding input value of the Web Service.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="language" type="xsd:string" minOccurs="1"
+        		maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>The used programming language in the submission.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="basecodeSubmission" type="xsd:IDREF"
+        		minOccurs="0" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>A reference to the corresponding SubmissionProgramType object if there is a basecode submission.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="limitEntries" minOccurs="1" maxOccurs="1"
+        		type="LimitEntriesType">
+        	</xsd:element>
+        	<xsd:element name="date" type="xsd:date" minOccurs="1"
+        		maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>The date when the XML file was created.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="minTokenLength" type="xsd:int"
+        		minOccurs="1" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>The value which was set to control the sensitivity of the compare algorithm. This value is a copy of the corresponding input value of the Web Service.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="languageSuffix" type="xsd:string"
+        		minOccurs="1" maxOccurs="unbounded">
+        		<xsd:annotation>
+        			<xsd:documentation>A list of file suffixes which was used by the comparison algorithm. (e.g. .java and .JAVA).</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="pathToFiles" type="xsd:string"
+        		minOccurs="0" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>The corresponding pathToFiles value which was set in the web service. This value is a copy of the corresponding input value of the Web Service. It specifies a directory where to look for source code in every single submission. When every student has got a 'code' subfolder in his submission folder where JPlag has to scan for source code files the value of this variable must be 'code'.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="readSubdirs" type="xsd:boolean"
+        		minOccurs="1" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>A flag which controls whether the scanning algorithm of the programs should look inside the subdirectories of each program. This value is a copy of the corresponding input value of the Web Service.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="comparisonMode" type="xsd:int"
+        		minOccurs="1" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>The executed method of comparison. 0 means that every program was compared pairwise. 1 means that a program was only compared to its next valid program. This value is a copy of the corresponding input value of the Web Service.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="SubmissionProgramType">
+        <xsd:annotation>
+        	<xsd:documentation>SubmissionProgramType is one program of the entire submission. It contains the output of the parser which was made for this program. If applicable it contains a percentage of the match between the basecode program and this program.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+        	<xsd:element name="parser" type="ParserLogEntryType"
+        		minOccurs="0" maxOccurs="unbounded">
+        		<xsd:annotation>
+        			<xsd:documentation>A parser log entry.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="basecodeMatchPercentage" type="xsd:float"
+        		minOccurs="0" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>A percentage which shows the accordance between this program and the basecode program (reference to the basecode program stored in the JPlagHeaderType).        			</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="parsedSuccessfully" type="xsd:boolean"
+        		minOccurs="1" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>An information whether the parser log of this program contains any errors.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="basecodeMatch" type="xsd:IDREF" minOccurs="0" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>A referenceto the basecode ComparisonType.</xsd:documentation>
+        		</xsd:annotation></xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required">
+    		<xsd:annotation>
+    			<xsd:documentation>The name of the program (folder name will be used).</xsd:documentation>
+    		</xsd:annotation></xsd:attribute>
+    	<xsd:attribute name="id" type="xsd:ID" use="required">
+    		<xsd:annotation>
+    			<xsd:documentation>An identification which will be used from other types such as ComparisonType to have a reference to this program element. An extra id attribute is needed because an ID value must not start with a number.</xsd:documentation>
+    		</xsd:annotation></xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="ParserLogEntryType">
+        <xsd:annotation>
+        	<xsd:documentation>This type represents one protocol entry of a parser log with a message and a type.
+The type is a signed byte (in Java byte primitive data type) which allows the following values: 1, 2, 4, 8, 16, 32, 64.
+1: ERROR
+2: INFORMATION
+4: WARNING
+8: DEBUG
+16: VERBOSE_PARSER
+32: COMPILE_ERROR
+64: Currently not in use.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+    		<xsd:element name="message" type="xsd:string" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>The message of the protocol entry.</xsd:documentation>
+    			</xsd:annotation></xsd:element>
+    	</xsd:sequence>
+    	<xsd:attribute name="type" use="required">
+            <xsd:annotation>
+            	<xsd:documentation>The type is a signed byte (in Java byte primitive data type) which allows the following values: 1, 2, 4, 8, 16, 32, 64.
+1: ERROR
+2: INFORMATION
+4: WARNING
+8: DEBUG
+16: VERBOSE_PARSER
+32: COMPILE_ERROR
+64: Currently not in use.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:annotation>
+                	<xsd:documentation>The type is a signed byte (in Java byte primitive data type) which allows the following values: 1, 2, 4, 8, 16, 32, 64.
+1: ERROR
+2: INFORMATION
+4: WARNING
+8: DEBUG
+16: VERBOSE_PARSER
+32: COMPILE_ERROR
+64: Currently not in use.</xsd:documentation></xsd:annotation>
+                <xsd:restriction base="xsd:int">
+    				<xsd:enumeration value="1"></xsd:enumeration>
+    				<xsd:enumeration value="2"></xsd:enumeration>
+    				<xsd:enumeration value="4"></xsd:enumeration>
+    				<xsd:enumeration value="8"></xsd:enumeration>
+    				<xsd:enumeration value="16"></xsd:enumeration>
+    				<xsd:enumeration value="32"></xsd:enumeration>
+    				<xsd:enumeration value="64"></xsd:enumeration>
+    			</xsd:restriction>
+    		</xsd:simpleType>
+    	</xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="SubmissionProgramsType">
+        <xsd:annotation>
+        	<xsd:documentation>The SubmissionProgramsType must contain at least two program elements (Type SubmissionProgramType).</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+    		<xsd:element name="program" type="SubmissionProgramType" minOccurs="2" maxOccurs="unbounded"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="ComparisonsType">
+        <xsd:annotation>
+        	<xsd:documentation>The ComparisonsType will contain all comparisons which were made during the plagiarism search.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+    		<xsd:element name="comparison" type="ComparisonType" minOccurs="1" maxOccurs="unbounded"></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ComparisonType">
+        <xsd:annotation>
+        	<xsd:documentation>A ComparisonType represents a comparison between two programs out of the submission. So it contains two program references, the avarage percentage of all single Matches of this comparison.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+    		<xsd:element name="programA" type="xsd:IDREF"
+    			minOccurs="1" maxOccurs="1">
+    		</xsd:element>
+    		<xsd:element name="programB" type="xsd:IDREF"
+    			minOccurs="1" maxOccurs="1">
+    		</xsd:element>
+    		<xsd:element name="percentA" type="xsd:float" minOccurs="1"
+    			maxOccurs="1">
+                <xsd:annotation>
+                	<xsd:documentation>The percentage is an average value of all found matches in comparison to the entire token size of the corresponding program.</xsd:documentation>
+                </xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="percentB" type="xsd:float" minOccurs="1"
+    			maxOccurs="1">
+                <xsd:annotation>
+                	<xsd:documentation>The percentage is an average value of all found matches in comparison to the entire token size of the corresponding program.</xsd:documentation>
+                </xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="percentAverage" type="xsd:float"
+    			minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                	<xsd:documentation>An average percent value of percentA and percentB.</xsd:documentation>
+                </xsd:annotation>
+    		</xsd:element>
+    		<xsd:element name="singleMatch" type="SingleMatchType"
+    			minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                	<xsd:documentation>A comparison can contain multiple matches.</xsd:documentation>
+                </xsd:annotation>
+    		</xsd:element>
+    	</xsd:sequence>
+    	<xsd:attribute name="id" type="xsd:ID" use="required"></xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:complexType name="SingleMatchType">
+        <xsd:annotation>
+        	<xsd:documentation>A singleMatchType represents one single match out of all found matches through the algorithm. Every match begins at a specific file location and ends at a specific file location. Additionaly there is also a numeric value which represents the number of tokens which matched in this match.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+        	<xsd:element name="beginA" type="MatchLocationType">
+        		<xsd:annotation>
+        			<xsd:documentation>
+        				The location where the match starts in program
+        				A.
+        			</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="beginB" type="MatchLocationType">
+        		<xsd:annotation>
+        			<xsd:documentation>
+        				The location where the match starts in program
+        				B.
+        			</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="endA" type="MatchLocationType">
+        		<xsd:annotation>
+        			<xsd:documentation>
+        				The location where the match ends in program A.
+        			</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="endB" type="MatchLocationType">
+        		<xsd:annotation>
+        			<xsd:documentation>
+        				The location where the match ends in program B.
+        			</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="tokenCount" type="xsd:int">
+        		<xsd:annotation>
+        			<xsd:documentation>This numeric value represents the number of tokens which are matched in this match.</xsd:documentation>
+        		</xsd:annotation></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="MatchLocationType">
+        <xsd:annotation>
+        	<xsd:documentation>matchLocationType represents one location in a file. It contains a fileName element, a line number of the Token which was matched and a column number which shows the starting character index of the token.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+    		<xsd:element name="fileName" type="xsd:string" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>The corresponding file.</xsd:documentation>
+    			</xsd:annotation></xsd:element>
+    		<xsd:element name="line" type="xsd:int" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>The line in the file "fileName".</xsd:documentation>
+    			</xsd:annotation></xsd:element>
+    		<xsd:element name="column" type="xsd:int" minOccurs="1" maxOccurs="1">
+    			<xsd:annotation>
+    				<xsd:documentation>The column number is the starting character index of the token</xsd:documentation>
+    			</xsd:annotation></xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="LimitEntriesType">
+        <xsd:annotation>
+        	<xsd:documentation>An information how many and what values are stored in the sets avgmatches, maxmatches and minmatches (see JPlagHeaderType).
+The type field can either be number or percent.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+    		<xsd:element name="value" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                	<xsd:documentation>Described in attribute "type".</xsd:documentation>
+                </xsd:annotation>
+                <xsd:simpleType>
+                    <xsd:annotation>
+                    	<xsd:documentation>Described in attribute &quot;type&quot;.</xsd:documentation></xsd:annotation>
+                    <xsd:restriction base="xsd:int">
+    					<xsd:maxInclusive value="1000"></xsd:maxInclusive>
+    					<xsd:minInclusive value="0"></xsd:minInclusive>
+    				</xsd:restriction>
+    			</xsd:simpleType>
+    		</xsd:element>
+    	</xsd:sequence>
+    	<xsd:attribute name="type" use="required">
+            <xsd:annotation>
+            	<xsd:documentation>The value can either be number or percent. Number means that the comparison stored in avgmatches, maxmatches and minmatches are limited to the top # entries. Percent means that all elements in avgmatches, maxmatches and minmatches have a percentage of # and above. comparisons with a lower percentage are not listed here.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:simpleType>
+                <xsd:annotation>
+                	<xsd:documentation>The value can either be number or percent. Number means that the comparison stored in avgmatches, maxmatches and minmatches are limited to the top # entries. Percent means that all elements in avgmatches, maxmatches and minmatches have a percentage of # and above. comparisons with a lower percentage are not listed here.</xsd:documentation></xsd:annotation>
+                <xsd:restriction base="xsd:string">
+    				<xsd:enumeration value="number"></xsd:enumeration>
+    				<xsd:enumeration value="percent"></xsd:enumeration>
+    			</xsd:restriction>
+    		</xsd:simpleType>
+    	</xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="ClusterType">
+        <xsd:annotation>
+        	<xsd:documentation>This type represents a single cluster. A cluster will contain a set of programs which are part of this specific cluster. This cluster also has got a threshold. It also has got a list of most frequent used words / tokens. If there is more than one program in the programs list the programs will added into new different clusters (left and right element). For example if there are two programs p1 and p2 in cluster A then there will be a cluster A-left and A-right. Cluster A-left will contain program p1 and cluster A-right will contain program p2.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+        	<xsd:element name="threshold" type="xsd:float" minOccurs="1"
+        		maxOccurs="1">
+        	</xsd:element>
+        	<xsd:element name="programs" type="xsd:IDREFS" minOccurs="1"
+        		maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>
+        				The programs (SubmissionProgramType) which are
+        				part of this cluster.
+        			</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="mostFrequentWords" type="xsd:string"
+        		minOccurs="0" maxOccurs="1">
+        		<xsd:annotation>
+        			<xsd:documentation>The most frequent words / tokens of this cluster.</xsd:documentation>
+        		</xsd:annotation>
+        	</xsd:element>
+        	<xsd:element name="left" type="ClusterType" minOccurs="0" maxOccurs="1"></xsd:element>
+        	<xsd:element name="right" type="ClusterType" minOccurs="0" maxOccurs="1"></xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="clusterID" type="xsd:ID" use="required"></xsd:attribute>
+    </xsd:complexType>
+    
+
+
+    <xsd:complexType name="ClusterTreeType">
+    	<xsd:annotation>
+    		<xsd:documentation>This type contains a root element of type ClusterType. Every ClusterType has got a left or a right child unless it contains only one program.</xsd:documentation>
+    	</xsd:annotation>
+    	<xsd:sequence>
+    		<xsd:element name="root" type="ClusterType" minOccurs="1"
+    			maxOccurs="1">
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+    
+
+    <xsd:element name="result">
+    	<xsd:complexType>
+            <xsd:annotation>
+            	<xsd:documentation>resultType is the root element. The result will contain a header, all the programs which are inside the submission, all comparisons which were made and up to three lists which contain the comparisons in a sorted order respecting the limits which were set through the web service in the Option type.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:sequence>
+            	<xsd:element name="header" type="JPlagHeaderType"
+            		minOccurs="1" maxOccurs="1">
+            		<xsd:annotation>
+            			<xsd:documentation></xsd:documentation>
+            		</xsd:annotation>
+            	</xsd:element>
+            	<xsd:element name="submissionPrograms"
+            		type="SubmissionProgramsType" minOccurs="1"
+            		maxOccurs="1">
+            	</xsd:element>
+            	<xsd:element name="comparisons" type="ComparisonsType"
+            		minOccurs="1" maxOccurs="1">
+            	</xsd:element>
+            	<xsd:element name="clusterTree" type="ClusterTreeType"
+            		minOccurs="0" maxOccurs="1">
+            		<xsd:annotation>
+            			<xsd:documentation>
+            				All available clusters will be in here.
+            			</xsd:documentation>
+            		</xsd:annotation>
+            	</xsd:element>
+            	<xsd:element name="avgMatches" minOccurs="1"
+            		maxOccurs="1">
+            		<xsd:annotation>
+            			<xsd:documentation>
+            				A set of comparisons sorted descending by
+            				the average percentage value of the
+            				comparison. The number of entries is limited
+            				to the limitEntries value (see
+            				JPlagHeaderType).
+            			</xsd:documentation>
+            		</xsd:annotation>
+            		<xsd:complexType>
+            			<xsd:annotation>
+            				<xsd:documentation>
+            					A set of comparisons sorted descending
+            					by the average percentage value of the
+            					comparison. The number of entries is
+            					limited to the limitEntries value (see
+            					JPlagHeaderType).
+            				</xsd:documentation>
+            			</xsd:annotation>
+            			<xsd:sequence>
+            				<xsd:element name="comparison"
+            					type="xsd:IDREFS" minOccurs="1" maxOccurs="1">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:complexType>
+            	</xsd:element>
+            	<xsd:element name="minMatches" minOccurs="0"
+            		maxOccurs="1">
+            		<xsd:annotation>
+            			<xsd:documentation>
+            				A set of comparisons sorted descending by
+            				the minimum percentage value of the
+            				comparison. The number of entries is limited
+            				to the limitEntries value (see
+            				JPlagHeaderType). This set will only show up
+            				when the comparison type is 1.
+            			</xsd:documentation>
+            		</xsd:annotation>
+            		<xsd:complexType>
+            			<xsd:annotation>
+            				<xsd:documentation>
+            					A set of comparisons sorted descending
+            					by the minimum percentage value of the
+            					comparison. The number of entries is
+            					limited to the limitEntries value (see
+            					JPlagHeaderType). This set will only
+            					show up when the comparison type is 1.
+            				</xsd:documentation>
+            			</xsd:annotation>
+            			<xsd:sequence>
+            				<xsd:element name="comparison"
+            					type="xsd:IDREFS" minOccurs="1" maxOccurs="1">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:complexType>
+            	</xsd:element>
+            	<xsd:element name="maxMatches" minOccurs="1"
+            		maxOccurs="1">
+            		<xsd:annotation>
+            			<xsd:documentation>
+            				A set of comparisons sorted descending by
+            				the maximum percentage value of the
+            				comparison. The number of entries is limited
+            				to the limitEntries value (see
+            				JPlagHeaderType).
+            			</xsd:documentation>
+            		</xsd:annotation>
+            		<xsd:complexType>
+            			<xsd:annotation>
+            				<xsd:documentation>
+            					A set of comparisons sorted descending
+            					by the maximum percentage value of the
+            					comparison. The number of entries is
+            					limited to the limitEntries value (see
+            					JPlagHeaderType).
+            				</xsd:documentation>
+            			</xsd:annotation>
+            			<xsd:sequence>
+            				<xsd:element name="comparison"
+            					type="xsd:IDREFS" minOccurs="1" maxOccurs="1">
+            				</xsd:element>
+            			</xsd:sequence>
+            		</xsd:complexType>
+            	</xsd:element>
+            	<xsd:element name="generalLog" type="ParserLogEntryType" minOccurs="0" maxOccurs="unbounded">
+            		<xsd:annotation>
+            			<xsd:documentation>These are log entries which do not belong to a specific submission.</xsd:documentation>
+            		</xsd:annotation></xsd:element>
+            </xsd:sequence>
+    	</xsd:complexType></xsd:element> 
+    	
+</xsd:schema>

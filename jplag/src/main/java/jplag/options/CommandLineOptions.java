@@ -170,6 +170,12 @@ public class CommandLineOptions extends Options {
         } else if (arg.equals("-r") && i + 1 < args.length) {
             result_dir = args[i + 1];
             i++;
+        } else if (arg.equals("-R") && i + 1 < args.length) {
+            reportType = Integer.parseInt(args[i + 1]);            
+            if ( (reportType != Options.REPORT_TYPE_HTML) && (reportType != Options.REPORT_TYPE_XML) )
+            	throw new jplag.ExitException("Unknown report type was set", ExitException.BAD_PARAMETER);
+
+            i++;
         } else if (arg.equals("-l") && i + 1 < args.length) {
 			// Will be validated later when the language routines are chosen
             languageIsFound = true;

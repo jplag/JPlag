@@ -314,6 +314,13 @@ public class AccessStructure {
 		vec.add("-title");
 		vec.add(usr_opt.getTitle());
 		
+		//New Result Type
+		if (usr_opt.getReportType() != null)
+		{
+			vec.add("-R");
+			vec.add(usr_opt.getReportType().toString());
+		}
+		
         // Root_dir
         
         vec.add(JPLAG_ENTRIES_DIRECTORY + File.separator + submissiondir);

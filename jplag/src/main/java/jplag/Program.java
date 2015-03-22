@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -16,10 +18,14 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import net.s_nt.schuhmam.logger.Logger;
+import net.s_nt.schuhmam.logger.LoggingManager;
 import jplag.clustering.Cluster;
 import jplag.clustering.Clusters;
 import jplag.clustering.SimilarityMatrix;
@@ -27,13 +33,38 @@ import jplag.options.Options;
 import jplag.options.util.Messages;
 import jplagUtils.PropertiesLoader;
 
-/*
+/**
  * This class coordinates the whole program flow.
  * The revision history can be found on https://svn.ipd.kit.edu/trac/jplag/wiki/JPlag/History 
  *
  */
-
 public class Program implements ProgramI {
+	/**
+	 * This class catches all the println messages, stores them into a List<String> and redirects them into the Outstream out.<br />
+	 * Proposed usage in JPlag is to store the stderr messages to put them into a Logger later.
+	 * @author Markus.Schuhmacher
+	 *
+	 */
+	private final class Interceptor extends PrintStream
+	{
+		private List<String> _messages = new LinkedList<String>();
+		
+		public Interceptor(OutputStream out) { super(out); }
+		
+		@Override
+		public void println(String x)
+		{
+			_messages.add(x);
+			super.println(x);
+		}
+		
+		/**
+		 * 
+		 * @return Returns a List<String> which contains all messages previously sent to the OutputStream.
+		 */
+		public List<String> getMessages() { return this._messages; }
+	}
+	
 	private static final Properties versionProps = PropertiesLoader.loadProps("jplag/version.properties");
 	public static final String name = "JPlag" + versionProps.getProperty("version", "devel");
 	public static final String name_long = "JPlag (Version " + versionProps.getProperty("version", "devel") + ")";
@@ -43,19 +74,50 @@ public class Program implements ProgramI {
 
 	public String currentSubmissionName = "<Unknown submission>";
 	public Vector<String> errorVector = new Vector<String>();
+	private final List<Submission> allSubmissions = new LinkedList<>(); //a list with ALL submissions...
 
-	public void addError(String errorMsg) {
+	@Override
+	public void addError(String errorMsg)
+	{
 		errorVector.add("[" + currentSubmissionName + "]\n" + errorMsg);
-		print(errorMsg, null);
+				
+		if(options.reportType == Options.REPORT_TYPE_HTML)
+			LoggingManager.createOrGetLogger("legacy").add(Logger.ERROR, "[" + currentSubmissionName + "]\n" + errorMsg);
+		else if (options.reportType == Options.REPORT_TYPE_XML)
+			LoggingManager.createOrGetLogger(currentSubmissionName).add(Logger.ERROR, "[" + currentSubmissionName + "]\n" + errorMsg);
 	}
 
-	public void print(String normal, String lng) {
-		if (options.verbose_parser) {
+	/**
+	 * This method extends the old {@link Program#print(String, String)} method with the byte messageType attribute. Now the information are stored in the {@link Logger} instead of printing them directly into the parser-log.txt 
+	 * @param normal
+	 * @param lng
+	 * @param messageType The type which classifies the message. For a list of defined types please look at the public static attributes in {@link Logger}
+	 */
+	public void printWithLogger(String normal, String lng, byte messageType)
+	{
+		if (options.verbose_parser)
+		{
+			String msg = null;
 			if (lng != null)
-				myWrite(lng);
+				msg = lng;
 			else if (normal != null)
-				myWrite(normal);
+				msg = normal;
+			
+			if (msg != null)
+			{
+				if(options.reportType == Options.REPORT_TYPE_HTML)
+					LoggingManager.createOrGetLogger("legacy").add(messageType, msg);
+				else if (options.reportType == Options.REPORT_TYPE_XML)
+					if (currentSubmissionName.equals("<Unknown submission>"))
+					{
+						LoggingManager.createOrGetLogger("xmlGeneral").add(messageType, msg);
+					} else {
+						LoggingManager.createOrGetLogger(currentSubmissionName).add(messageType, msg);
+					}
+			}
+
 		}
+		
 		if (options.verbose_quiet)
 			return;
 		try {
@@ -71,11 +133,16 @@ public class Program implements ProgramI {
 			System.out.println(e.getMessage());
 		}
 	}
+	
+	@Override
+	public void print(String normal, String lng)
+	{
+		this.printWithLogger(normal, lng, Logger.VERBOSE_PARSER);
+	}
 
 	private Submission basecodeSubmission = null;
 
-	// Used Objects of anothers jplag.Classes ,they muss be just one time
-	// instantiate
+	// Used Objects of anothers jplag.Classes, they muss be just one time instantiate
 	public Clusters clusters = null;
 
 	private int errors = 0;
@@ -92,16 +159,21 @@ public class Program implements ProgramI {
 	// experiment end
 
 	private jplag.options.Options options;
-
-	public Report report;
-
+	public IReport report;
 	public Messages msg;
 
 	private Runtime runtime = Runtime.getRuntime();
 
-	private Vector<Submission> submissions;
-
+	private Vector<Submission> submissions = new Vector<Submission>();
+	/**
+	 * @author Markus Schuhmacher<br />
+	 * A new List, which stores ALL {@link AllMatches}. The AllMatches objects will be added in the {@link Program#registerMatch(Submission, AllMatches, int[], SortedVector, SortedVector, SortedVector, int, int)} method
+	 */
+	private final List<AllMatches> allMatchesList = new LinkedList<>();
+	
 	private FileWriter writer = null;
+	
+	
 
 	public Program(Options options) throws jplag.ExitException {
 		this.options = options;
@@ -110,7 +182,7 @@ public class Program implements ProgramI {
 			throw new ExitException("Language not initialized!", ExitException.BAD_LANGUAGE_ERROR);
 
 		msg = new Messages(this.options.getCountryTag());
-
+		
 		if (this.options.getCountryTag().equals("de")) {
 			dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 			dateTimeFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss 'GMT'");
@@ -121,7 +193,10 @@ public class Program implements ProgramI {
 		dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 		dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-		report = new Report(this, get_language());
+		if (this.options.isReportType(Options.REPORT_TYPE_HTML))
+			report = new ReportHTML(this, get_language());
+		else if (this.options.isReportType(Options.REPORT_TYPE_XML))
+			report = new ReportXML(allSubmissions, submissions, allMatchesList, htBasecodeMatches);
 	}
 
 	/**
@@ -274,8 +349,8 @@ public class Program implements ProgramI {
 					match.bcmatchesB = htBasecodeMatches.get(match.subB.name);
 				}
 
-				registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
 				count++;
+				registerMatch(s1, match, dist, avgmatches, maxmatches, null, i, j);
 				options.setProgress(count * 100 / totalcomps);
 			}
 		}
@@ -368,7 +443,7 @@ public class Program implements ProgramI {
 				match.bcmatchesB = htBasecodeMatches.get(match.subB.name);
 			}
 
-			registerMatch(match, dist, avgmatches, maxmatches, minmatches, i, j);
+			registerMatch(s1, match, dist, avgmatches, maxmatches, minmatches, i, j);
 			count++;
 			options.setProgress(count * 100 / totalcomps);
 
@@ -389,7 +464,6 @@ public class Program implements ProgramI {
 	}
 
 	private void createSubmissions() throws jplag.ExitException {
-		submissions = new Vector<Submission>();
 		File f = new File(options.root_dir);
 		if (f == null || !f.isDirectory()) {
 			throw new jplag.ExitException("\"" + options.root_dir + "\" is not a directory!");
@@ -419,7 +493,9 @@ public class Program implements ProgramI {
 				if (!ok)
 					continue;
 
-				submissions.addElement(new Submission(name, f, this, get_language()));
+				Submission subm = new Submission(name, f, this, get_language());
+				this.allSubmissions.add(subm);
+				submissions.addElement(subm);
 				continue;
 			}
 			if (options.exp && excludeFile(subm_dir.toString())) { // EXPERIMENT
@@ -432,10 +508,15 @@ public class Program implements ProgramI {
 			subm_dir
 					: new File(subm_dir, options.sub_dir));
 			if (file_dir.isDirectory()) {
-				if (options.basecode.equals(subm_dir.getName())) {
-					basecodeSubmission = new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this, get_language());
+				if (options.basecode.equals(subm_dir.getName()))
+				{
+					Submission subm = new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this, get_language());
+					this.allSubmissions.add(subm);
+					basecodeSubmission = subm;
 				} else {
-					submissions.addElement(new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this, get_language())); // -s
+					Submission subm = new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this, get_language());
+					this.allSubmissions.add(subm);
+					submissions.addElement(subm); // -s
 				}
 			} else
 				throw new ExitException("Cannot find directory: " + file_dir.toString());
@@ -448,7 +529,6 @@ public class Program implements ProgramI {
 	private void createSubmissionsExp() throws jplag.ExitException {
 		// ES IST SICHER, DASS EIN INCLUDE-FILE ANGEGEBEN WURDE!
 		readIncludeFile();
-		submissions = new Vector<Submission>();
 		File f = new File(options.root_dir);
 		if (f == null || !f.isDirectory()) {
 			throw new jplag.ExitException(options.root_dir + " is not a directory!");
@@ -526,6 +606,11 @@ public class Program implements ProgramI {
 	 * This is the special external comparison routine
 	 */
 	private void externalCompare() throws jplag.ExitException {
+		/*
+		 * Because -external parameter is not used by Web Service I (Markus Schuhmacher) assume that this method is not used
+		 * So we might be lucky here and it can be deleted.
+		 */
+		
 		int size = submissions.size();
 		// Progress progress;
 		// Result vector
@@ -579,7 +664,7 @@ public class Program implements ProgramI {
 					}
 
 					match = this.gSTiling.compare(s1, s2);
-					registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
+					registerMatch(s1, match, dist, avgmatches, maxmatches, null, i, j);
 					comparisons++;
 					count++;
 				}
@@ -628,7 +713,7 @@ public class Program implements ProgramI {
 						}
 
 						match = this.gSTiling.compare(s1, s2);
-						registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
+						registerMatch(s1, match, dist, avgmatches, maxmatches, null, i, j);
 						comparisons++;
 						count++;
 					}
@@ -870,15 +955,32 @@ public class Program implements ProgramI {
 		}
 	}
 
-	private void myWrite(String str) {
-		if (writer != null) {
-			try {
-				writer.write(str);
+	private void myWrite()
+	{
+		StringBuilder sb = new StringBuilder();
+		List<Logger.Entry> l;
+		
+		if (options.verbose_details)
+			l = LoggingManager.createOrGetLogger("legacy").getMessages(Logger.MASK_ALL);
+		else
+			l = LoggingManager.createOrGetLogger("legacy").getMessages(Logger.MASK_ERROR_WARNING_VERBOSE);
+		
+		for (Logger.Entry entry : l)
+		{
+			sb.append(entry._msg);
+			//sb.append(System.getProperty("line.separator"));
+		}
+		
+		if (writer != null)
+		{
+			try 
+			{
+				writer.write(sb.toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else
-			System.out.print(str);
+			System.out.print(sb.toString());
 	}
 
 	// PARSE
@@ -901,21 +1003,34 @@ public class Program implements ProgramI {
 		if (options.externalSearch)
 			makeTempDir();
 		int invalid = 0;
-		while (iter.hasNext()) {
+		PrintStream oldErr = System.err;
+		while (iter.hasNext())
+		{
 			boolean ok = true;
 			boolean removed = false;
 			Submission subm = iter.next();
-			print(null, "------ Parsing submission: " + subm.name + "\n");
 			currentSubmissionName = subm.name;
+			print(null, "------ Parsing submission: " + subm.name + "\n");
 			options.setProgress(count * 100 / totalcount);
+			
+			//Redirect the System.err to the interceptor to catch thrown compiler errors from the language to protocol them
+			Interceptor interceptor = new Interceptor(oldErr);
+			System.setErr(interceptor);
+			
 			if (!(ok = subm.parse()))
 				errors++;
+			
+			for(String s : interceptor.getMessages())
+				LoggingManager.createOrGetLogger(currentSubmissionName).add(Logger.COMPILE_ERROR, s);
 
+			//Set everything back to the old Err
+			System.setErr(oldErr);
+			
 			if (options.exp && options.filter != null)
 				subm.struct = options.filter.filter(subm.struct); // EXPERIMENT
 			count++;
 			if (subm.struct != null && subm.size() < options.min_token_match) {
-				print(null, "Submission contains fewer tokens than minimum match " + "length allows!\n");
+				printWithLogger(null, "Submission contains fewer tokens than minimum match " + "length allows!\n", Logger.ERROR);
 				subm.struct = null;
 				invalid++;
 				removed = true;
@@ -932,10 +1047,12 @@ public class Program implements ProgramI {
 				iter.remove();
 			}
 			if (ok && !removed)
-				print(null, "OK\n");
+				printWithLogger(null, "OK\n", Logger.INFO);
 			else
-				print(null, "ERROR -> Submission removed\n");
+				printWithLogger(null, "ERROR -> Submission removed\n", Logger.ERROR);
 		}
+		
+		currentSubmissionName = "<Unknown submission>";
 
 		options.setProgress(100);
 		print("\n" + (count - errors - invalid) + " submissions parsed successfully!\n" + errors + " parser error"
@@ -958,6 +1075,7 @@ public class Program implements ProgramI {
 			return;
 		}
 		long msec = System.currentTimeMillis();
+		currentSubmissionName = subm.name;
 		print("----- Parsing basecode submission: " + subm.name + "\n", null);
 
 		// lets go:
@@ -987,6 +1105,8 @@ public class Program implements ProgramI {
 		long time = System.currentTimeMillis() - msec;
 		print("\n", "\nTime for parsing Basecode: " + ((time / 3600000 > 0) ? (time / 3600000) + " h " : "")
 				+ ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60) + " sec\n");
+		
+		currentSubmissionName = "<Unknown submission>";
 	}
 
 	// Excluded files:
@@ -1047,12 +1167,14 @@ public class Program implements ProgramI {
 		}
 	}
 
-	private void registerMatch(AllMatches match, int[] dist, SortedVector<AllMatches> avgmatches, SortedVector<AllMatches> maxmatches,
+	private void registerMatch(Submission s, AllMatches match, int[] dist, SortedVector<AllMatches> avgmatches, SortedVector<AllMatches> maxmatches,
 			SortedVector<AllMatches> minmatches, int a, int b) {
 		float avgpercent = match.percent();
 		float maxpercent = match.percentMaxAB();
 		float minpercent = match.percentMinAB();
 
+		allMatchesList.add(match); //Later used by the ReportXML class to add ALL AllMatches Object into the XML datastructure
+		
 		dist[((((int) avgpercent) / 10) == 10) ? 9 : (((int) avgpercent) / 10)]++;
 		if (!options.store_percent) {
 			if ((avgmatches.size() < options.store_matches || avgpercent > avgmatches.lastElement().percent()) && avgpercent > 0) {
@@ -1108,7 +1230,8 @@ public class Program implements ProgramI {
 	/* THE MAIN PROCEDURE */
 	/** *************************** */
 	public void run() throws jplag.ExitException {
-		if (options.output_file != null) {
+		if (options.output_file != null && options.reportType == Options.REPORT_TYPE_HTML)
+		{
 			try {
 				writer = new FileWriter(new File(options.output_file));
 				writer.write(name_long + "\n");
@@ -1188,42 +1311,47 @@ public class Program implements ProgramI {
 				}
 			}
 		}
-		closeWriter();
+		
+		if (options.reportType == Options.REPORT_TYPE_HTML)
+		{
+			myWrite();
+			
+			String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
+			str += "<jplag_infos>\n";
+			str += "<infos \n";
 
-		String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-		str += "<jplag_infos>\n";
-		str += "<infos \n";
+			String sp = "\"";
+			str += " title = " + sp + toUTF8(options.getTitle()) + sp;
+			str += " source = " + sp + (get_original_dir() != null ? toUTF8(get_original_dir()) : "") + sp;
+			str += " n_of_programs = " + sp + submissions.size() + sp;
+			str += " errors = " + sp + get_language().errorsCount() + sp;
+			str += " path_to_files = " + sp + toUTF8((options.sub_dir != null) ? options.sub_dir : "") + sp;
+			str += " basecode_dir = " + sp + toUTF8((options.basecode != null) ? options.basecode : "") + sp;
+			str += " read_subdirs = " + sp + this.options.read_subdirs + sp;
+			str += " clustertype = " + sp + this.options.getClusterTyp() + sp;
+			str += " store_matches = " + sp + this.options.store_matches + ((this.options.store_percent) ? "%" : "") + sp;
+			String suf = "";
+			for (int s = 0; s < this.options.suffixes.length; s++)
+				suf += "," + this.options.suffixes[s];
+			str += " suffixes = " + sp + suf.substring(1) + sp;
+			str += " language_name = " + sp + this.options.languageName + sp;
+			str += " comparison_mode = " + sp + this.options.comparisonMode + sp;
+			str += " country_tag = " + sp + this.options.getCountryTag() + sp;
+			str += " min_token = " + sp + this.options.min_token_match + sp;
+			str += " date = " + sp + System.currentTimeMillis() + sp;
 
-		String sp = "\"";
-		str += " title = " + sp + toUTF8(options.getTitle()) + sp;
-		str += " source = " + sp + (get_original_dir() != null ? toUTF8(get_original_dir()) : "") + sp;
-		str += " n_of_programs = " + sp + submissions.size() + sp;
-		str += " errors = " + sp + get_language().errorsCount() + sp;
-		str += " path_to_files = " + sp + toUTF8((options.sub_dir != null) ? options.sub_dir : "") + sp;
-		str += " basecode_dir = " + sp + toUTF8((options.basecode != null) ? options.basecode : "") + sp;
-		str += " read_subdirs = " + sp + this.options.read_subdirs + sp;
-		str += " clustertype = " + sp + this.options.getClusterTyp() + sp;
-		str += " store_matches = " + sp + this.options.store_matches + ((this.options.store_percent) ? "%" : "") + sp;
-		String suf = "";
-		for (int s = 0; s < this.options.suffixes.length; s++)
-			suf += "," + this.options.suffixes[s];
-		str += " suffixes = " + sp + suf.substring(1) + sp;
-		str += " language_name = " + sp + this.options.languageName + sp;
-		str += " comparison_mode = " + sp + this.options.comparisonMode + sp;
-		str += " country_tag = " + sp + this.options.getCountryTag() + sp;
-		str += " min_token = " + sp + this.options.min_token_match + sp;
-		str += " date = " + sp + System.currentTimeMillis() + sp;
+			str += "/>\n";
+			str += "</jplag_infos>";
 
-		str += "/>\n";
-		str += "</jplag_infos>";
-
-		try {
-			FileWriter fw = new FileWriter(new File(this.options.result_dir + File.separator + "result.xml"));
-			fw.write(str);
-			fw.close();
-		} catch (IOException ex) {
-			System.out.println("Unable to create result.xml");
+			try {
+				FileWriter fw = new FileWriter(new File(this.options.result_dir + File.separator + "result.xml"));
+				fw.write(str);
+				fw.close();
+			} catch (IOException ex) {
+				System.out.println("Unable to create result.xml");
+			}
 		}
+		closeWriter();
 	}
 
 	public void set_result_dir(String result_dir) {
@@ -1234,11 +1362,16 @@ public class Program implements ProgramI {
 	 * Now the special comparison:
 	 */
 	private void specialCompare() throws jplag.ExitException {
+		/*
+		 * those ugly cast were neccessary because ReportHTML specific methods are called HERE in the logic
+		 * Anyways. This method will never be executed because the Web Service is not setting the parameter -compare n at any time 
+		 */
+		
 		File root = new File(options.result_dir);
-		HTMLFile f = this.report.openHTMLFile(root, "index.html");
-		this.report.copyFixedFiles(root);
+		HTMLFile f = ((ReportHTML)this.report).openHTMLFile(root, "index.html");
 
-		this.report.writeIndexBegin(f, "Special Search Results"); // start HTML
+		((ReportHTML)this.report).copyFixedFiles(root);
+		((ReportHTML)this.report).writeIndexBegin(f, "Special Search Results"); // start HTML
 		f.println("<P><A NAME=\"matches\"><H4>Matches:</H4><P>");
 
 		int size = submissions.size();
@@ -1250,11 +1383,12 @@ public class Program implements ProgramI {
 		options.setState(Options.COMPARING);
 		options.setProgress(0);
 		int totalcomps = size * size;
-		int i, j, anz = 0, count = 0;
+		int anz = 0, count = 0;
 		AllMatches match;
 		Submission s1, s2;
 		long msec = System.currentTimeMillis();
-		for (i = 0; i < (size - 1); i++) {
+		for (int i = 0; i < (size - 1); ++i)
+		{
 			// Result vector
 			SortedVector<AllMatches> matches = new SortedVector<AllMatches>(new AllMatches.AvgComparator());
 
@@ -1263,7 +1397,7 @@ public class Program implements ProgramI {
 				count += (size - 1);
 				continue;
 			}
-			for (j = 0; j < size; j++) {
+			for (int j = 0; j < size; ++j) {
 				s2 = submissions.elementAt(j);
 				if ((i == j) || (s2.struct == null)) {
 					count++;
@@ -1295,22 +1429,22 @@ public class Program implements ProgramI {
 			for (Iterator<AllMatches> iter = matches.iterator(); iter.hasNext();) {
 				match = iter.next();
 				if (once) {
-					f.println("<TR><TD BGCOLOR=" + this.report.color(match.percent(), 128, 192, 128, 192, 255, 255) + ">" + s1.name
+					f.println("<TR><TD BGCOLOR=" + ((ReportHTML)this.report).color(match.percent(), 128, 192, 128, 192, 255, 255) + ">" + s1.name
 							+ "<TD WIDTH=\"10\">-&gt;");
 					once = false;
 				}
 
 				int other = (match.subName(0).equals(s1.name) ? 1 : 0);
-				f.println(" <TD BGCOLOR=" + this.report.color(match.percent(), 128, 192, 128, 192, 255, 255)
+				f.println(" <TD BGCOLOR=" + ((ReportHTML)this.report).color(match.percent(), 128, 192, 128, 192, 255, 255)
 						+ " ALIGN=center><A HREF=\"match" + matchIndex + ".html\">" + match.subName(other) + "</A><BR><FONT COLOR=\""
-						+ this.report.color(match.percent(), 0, 255, 0, 0, 0, 0) + "\"><B>(" + match.roundedPercent() + "%)</B></FONT>");
-				this.report.writeMatch(root, matchIndex++, match);
+						+ ((ReportHTML)this.report).color(match.percent(), 0, 255, 0, 0, 0, 0) + "\"><B>(" + match.roundedPercent() + "%)</B></FONT>");
+				((ReportHTML)this.report).writeMatch(root, matchIndex++, match);
 			}
 			f.println("</TR>");
 		}
 		f.println("</TABLE><P>\n");
 		f.println("<!---->");
-		this.report.writeIndexEnd(f);
+		((ReportHTML)this.report).writeIndexEnd(f);
 		f.close();
 
 		options.setProgress(100);
@@ -1409,7 +1543,7 @@ public class Program implements ProgramI {
 
 		this.report.write(f, dist, avgmatches, maxmatches, minmatches, clustering, options);
 
-		if (options.externalSearch)
+		if (options.externalSearch) //also here: Web Serviec will not set the parameter which will cause externalSearch to be set
 			writeTextResult(f, avgmatches);
 	}
 

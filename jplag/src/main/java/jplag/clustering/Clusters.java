@@ -102,7 +102,7 @@ public class Clusters {
 		return clusters.get(0);
 	}
 
-	private ArrayList<Cluster> getClusters(Cluster clustering, float threshold) {
+	public ArrayList<Cluster> getClusters(Cluster clustering, float threshold) {
 		ArrayList<Cluster> clusters = new ArrayList<Cluster>();
 		
 		// First determine the clusters
@@ -243,9 +243,10 @@ public class Clusters {
 	}
 
 	/* Dendrograms... */
-	public int makeDendrograms(File root, Cluster clustering)
-				throws jplag.ExitException {
-		HTMLFile f = this.program.report.openHTMLFile(root, "dendro.html");
+	public int makeDendrograms(File root, Cluster clustering) throws jplag.ExitException
+	{
+		//This method will be only called from the HTML Report class 
+		HTMLFile f = ((ReportHTML)this.program.report).openHTMLFile(root, "dendro.html");
 		f.println("<!DOCTYPE HTML PUBLIC \"-//DTD HTML 3.2//EN\">");
 		f.println("<HTML>\n<HEAD>\n<TITLE>"
 			+ msg.getString("Clusters.Dendrogram") + "</TITLE>\n"
@@ -420,5 +421,10 @@ public class Clusters {
 //			mapString += "href=\"submission"+cluster.getSubmissionAt(0)+".html\">\n";
 //		else
 		mapString += "nohref>\n";
+	}
+	
+	public String generateThemes(Set<Submission> subSet)
+	{
+		return ThemeGenerator.generateThemes(subSet, this.program.get_themewords(), false, this.program);
 	}
 }

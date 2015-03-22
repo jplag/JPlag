@@ -95,24 +95,33 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
 	if(bcmatchesB != null && bcmatchesA != null){
 		sa = subA.size() - subA.files.length - bcmatchesA.tokensMatched();
     	sb = subB.size() - subB.files.length - bcmatchesB.tokensMatched();
-	}
-	else{
+	} else {
 		sa = subA.size() - subA.files.length;
 		sb = subB.size() - subB.files.length;
 	}
-    return (200*(float)tokensMatched())/(sa+sb);
+    return (200* (float)tokensMatched()) / (sa+sb);
   }
-  public final float percentA() {
-  	int divisor;
-  	if(bcmatchesA != null) divisor = subA.size()-subA.files.length-bcmatchesA.tokensMatched();
-    else divisor = subA.size()-subA.files.length;
-    return (divisor == 0 ? 0 : (tokensMatched()*100 / divisor));
+  
+  public final float percentA()
+  {
+	  int divisor;
+	  if(bcmatchesA != null)
+		  divisor = subA.size() - subA.files.length - bcmatchesA.tokensMatched();
+	  else
+		  divisor = subA.size() - subA.files.length;
+    
+	  return (divisor == 0 ? 0 : (tokensMatched() * 100.0f / divisor));
   }
-  public final float percentB() {
-    int divisor;
-	if(bcmatchesB != null) divisor = subB.size()-subB.files.length-bcmatchesB.tokensMatched();
-	else divisor = subB.size()-subB.files.length;
-    return (divisor == 0 ? 0 : (tokensMatched()*100 / divisor));
+  
+  public final float percentB()
+  {
+	  int divisor;
+	  if(bcmatchesB != null)
+		  divisor = subB.size() - subB.files.length-bcmatchesB.tokensMatched();
+	  else
+		  divisor = subB.size()-subB.files.length;
+	  
+	  return (divisor == 0 ? 0 : (tokensMatched() * 100.0f / divisor));
   }
 
   public final float roundedPercentMaxAB() {

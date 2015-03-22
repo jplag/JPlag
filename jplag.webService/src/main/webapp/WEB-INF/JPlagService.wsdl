@@ -91,104 +91,138 @@
 			<xsd:complexType name="Option">
 				<xsd:sequence>
 					<xsd:element name="language" type="xsd:string">
-						<xsd:annotation><xsd:documentation>
-							Programming language.
-							See getServerInfo response for available languages.
-						</xsd:documentation></xsd:annotation>
+						<xsd:annotation>
+							<xsd:documentation>
+								Programming language. See getServerInfo
+								response for available languages.
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
-					
-					<xsd:element name="comparisonMode" type="xsd:int" minOccurs="0" maxOccurs="1" default="0">
-						<xsd:annotation><xsd:documentation>
-							Possible values are
-								- 0: Normal pairwise comparison between all programs,
-								     looks for maximum similarity (default).
-								- 1: Revision comparison: Only adjacent programs are compared,
-								     looks for minimum similarity
-								     ("adjacent" according to their lexicographically ordered names).
-						</xsd:documentation></xsd:annotation>
+
+					<xsd:element name="comparisonMode" type="xsd:int"
+						minOccurs="0" maxOccurs="1" default="0">
+						<xsd:annotation>
+							<xsd:documentation>
+								Possible values are - 0: Normal pairwise
+								comparison between all programs, looks
+								for maximum similarity (default). - 1:
+								Revision comparison: Only adjacent
+								programs are compared, looks for minimum
+								similarity ("adjacent" according to
+								their lexicographically ordered names).
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
-					
+
 					<xsd:element name="minimumMatchLength"
-								 type="xsd:int">
-						<xsd:annotation><xsd:documentation>
-							Minimum match length in tokens.
-							A smaller value increases the sensitivity of
-							the comparison.
-							If set to 0 or below, a language specific
-							default value is used.
-						</xsd:documentation></xsd:annotation>
+						type="xsd:int">
+						<xsd:annotation>
+							<xsd:documentation>
+								Minimum match length in tokens. A
+								smaller value increases the sensitivity
+								of the comparison. If set to 0 or below,
+								a language specific default value is
+								used.
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
-					
+
 					<xsd:element name="suffixes" type="xsd:string"
-							minOccurs="0" maxOccurs="unbounded">
-						<xsd:annotation><xsd:documentation>
-							List of case sensitive file suffixes
-							(e.g. {".c", ".C"})
-							(default: language specific, if empty)
-						</xsd:documentation></xsd:annotation>
+						minOccurs="0" maxOccurs="unbounded">
+						<xsd:annotation>
+							<xsd:documentation>
+								List of case sensitive file suffixes
+								(e.g. {".c", ".C"}) (default: language
+								specific, if empty)
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
-					<xsd:element name="readSubdirs" type="xsd:boolean">
-						<xsd:annotation><xsd:documentation>
-							If true, also looks at files in subdirectories.
-						</xsd:documentation></xsd:annotation>
+					<xsd:element name="readSubdirs"
+						type="xsd:boolean">
+						<xsd:annotation>
+							<xsd:documentation>
+								If true, also looks at files in
+								subdirectories.
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
 					<xsd:element name="pathToFiles" type="xsd:string"
-								 nillable="true">
-						<xsd:annotation><xsd:documentation>
-        					Look in directories <root-dir/>/*/<pathToFiles/>
-        					for files (default: <root-dir/>/*, if null or "").
-						</xsd:documentation></xsd:annotation>
+						nillable="true">
+						<xsd:annotation>
+							<xsd:documentation>
+								Look in directories
+								<root-dir />
+								/*/
+								<pathToFiles />
+								for files (default:
+								<root-dir />
+								/*, if null or "").
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
-					<xsd:element name="basecodeDir" type="xsd:string" 
-								 nillable="true">
-						<xsd:annotation><xsd:documentation>
-							Name of directory containing the basecode
-							(common framework) (null or "", if unused)
-						</xsd:documentation></xsd:annotation>
+					<xsd:element name="basecodeDir" type="xsd:string"
+						nillable="true">
+						<xsd:annotation>
+							<xsd:documentation>
+								Name of directory containing the
+								basecode (common framework) (null or "",
+								if unused)
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
-					
+
 					<xsd:element name="storeMatches" type="xsd:string"
-								 nillable="true">
-						<xsd:annotation><xsd:documentation>
-							This can be either
-								- the number of matches being saved (default
-								  is 20, if null or "") or
-								- the minimum similarity percentage to be
-								  saved as a match (with a trailing "%")
-						</xsd:documentation></xsd:annotation>
+						nillable="true">
+						<xsd:annotation>
+							<xsd:documentation>
+								This can be either - the number of
+								matches being saved (default is 20, if
+								null or "") or - the minimum similarity
+								percentage to be saved as a match (with
+								a trailing "%")
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
 					<xsd:element name="clustertype" type="xsd:string"
-								 nillable="true">
-						<xsd:annotation><xsd:documentation>
-							Possible values are
-								- null or "" : no clustering (default)
-								- "min"
-								- "avr"
-								- "max"
-						</xsd:documentation></xsd:annotation>
+						nillable="true">
+						<xsd:annotation>
+							<xsd:documentation>
+								Possible values are - null or "" : no
+								clustering (default) - "min" - "avr" -
+								"max"
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
-					
+
 					<xsd:element name="countryLang" type="xsd:string">
-						<xsd:annotation><xsd:documentation>
-							Country language the result files will be written
-							in.
-							See getServerInfo response for available country
-							languages.
-						</xsd:documentation></xsd:annotation>
+						<xsd:annotation>
+							<xsd:documentation>
+								Country language the result files will
+								be written in. See getServerInfo
+								response for available country
+								languages.
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
-					
+
 					<xsd:element name="title" type="xsd:string">
-						<xsd:annotation><xsd:documentation>
-							Title describing the submission and being displayed
-							in the result files.
-						</xsd:documentation></xsd:annotation>
+						<xsd:annotation>
+							<xsd:documentation>
+								Title describing the submission and
+								being displayed in the result files.
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
 					<xsd:element name="originalDir" type="xsd:string">
-						<xsd:annotation><xsd:documentation>
-							String to be displayed in the result files as the
-							directory where the source code comes from.
-						</xsd:documentation></xsd:annotation>
+						<xsd:annotation>
+							<xsd:documentation>
+								String to be displayed in the result
+								files as the directory where the source
+								code comes from.
+							</xsd:documentation>
+						</xsd:annotation>
 					</xsd:element>
+					<xsd:element name="reportType" type="xsd:int" minOccurs="0" maxOccurs="1"></xsd:element>
 				</xsd:sequence>
 			</xsd:complexType>
 

@@ -41,34 +41,25 @@ public abstract class Options {
 
 	// Program OPTIONS
 	public boolean verbose_quiet = false;
-
 	public boolean verbose_long = false;
-
 	public boolean verbose_parser = false;
-
 	public boolean verbose_details = false;
 
 	// use to detect a language in the initilalisation
 	public boolean languageIsFound = false;
 
 	public String sub_dir = null;
-
 	public String root_dir = "";
-
 	public String original_dir = null;
 	
 	public String title = "";
 
 	public String output_file = null;
-
 	public String exclude_file = null;
-
 	public String include_file = null;
 
 	public boolean read_subdirs = false;
-
 	public int store_matches = 30;
-
 	public boolean store_percent = false; // is the number "store_matches"
 
 	// a percentage?
@@ -80,7 +71,6 @@ public abstract class Options {
 
 	public static final int COMPMODE_NORMAL = 0;
 	public static final int COMPMODE_REVISION = 1;
-
 	public int comparisonMode = COMPMODE_NORMAL;
 
 	public int min_token_match;
@@ -88,11 +78,8 @@ public abstract class Options {
 	public String[] suffixes;
 
 	public boolean exp = false; // EXPERIMENT
-
 	public boolean diff_report = false; // special "diff" report
-
 	public jplag.filter.Filter filter = null;
-
 	public String filtername = "."; // == no filter
 
 	public String basecode = "";
@@ -101,28 +88,25 @@ public abstract class Options {
 
 	// "Ronald Kostoff" specials
 	public boolean externalSearch = false;
-
 	public boolean skipParse = false;
-
+	
 	public boolean clustering = false;
-
 	public boolean useBasecode = false;
-
 	public String languageName = null;
-
 	public String countryTag = "en";
-
 	public float[] threshold = null;
-
 	public int[] themewords = { 15 };
-
 	public int clusterType = 0;
 
 	public int compare = 0; // 0 = deactivated
 
 	public SimilarityMatrix similarity = null;
-
 	public jplag.Language language;
+	
+	//Options for the new report output
+	public static final int REPORT_TYPE_HTML = 0;
+	public static final int REPORT_TYPE_XML = 1;
+	public int reportType = Options.REPORT_TYPE_HTML;
 
 	// "FINAL" OPTIONS
 	public boolean debugParser = false;
@@ -198,6 +182,9 @@ public abstract class Options {
 						+ " -m <p>%         All matches with more than <p>% similarity will be saved.\n"
 						+ " -r <dir>        (Result) Name of directory in which the web pages will be\n"
 						+ "                 stored (default: result)\n"
+						+ " -R <0 | 1>\n"
+						+ "                 0: Report in HTML format\n"
+						+ "                 1: Report in XML format\n"
 						+ " -bc <dir>       Name of the directory which contains the basecode (common framework)\n"
 						+ " -l <language>   (Language) Supported Languages:\n                 ");
 		for (int i = 0; i < languages.length - 2; i += 2)
@@ -248,5 +235,10 @@ public abstract class Options {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+	public boolean isReportType(int reportType)
+	{
+		return (this.reportType == reportType);
 	}
 }
