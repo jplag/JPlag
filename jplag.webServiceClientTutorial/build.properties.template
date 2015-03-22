@@ -1,0 +1,27 @@
+<!--
+	Copy this template to "build.properties" and make the needed modifications
+    for your system there. The build.xml will need it.
+  -->
+
+	<!--
+		the clientlibs folder must contain the following libraries:
+		
+		JWSDP 2.0:
+			fastinfoset/lib:
+				- FastInfoset.jar
+			jaxrpc/lib:
+				- jaxrpc-api.jar
+				- jaxrpc-imp.jar
+				- jaxrpc-spi.jar
+			jwsdp-shared/lib:
+				- activation.jar
+				- mail.jar
+			saaj/lib:
+				- saaj-api.jar
+				- saaj-impl.jar
+			sjsxp/lib:
+				- jsr173_api.jar
+				- sjsxp.jar
+	 -->	
+
+  	<property name="clientlibs" value="<path to clientlibs folder>" />

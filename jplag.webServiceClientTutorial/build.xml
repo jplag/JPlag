@@ -1,0 +1,220 @@
+<?xml version = '1.0'?>
+<!DOCTYPE project [ 
+	<!ENTITY buildProbs SYSTEM "./build.properties">
+	<!ENTITY wscompile SYSTEM "./wscompile-config.xml">
+ ]>
+<project basedir="." name="jplagTutorial" default="cnj-client">
+	&buildProbs;  
+    <property name="compile.debug" value="true" />
+	
+	<path id="app.classpath">
+		<fileset dir="${clientlibs}"/>
+  	</path>
+	
+	<path id="client.classpath">
+		<path refid="app.classpath" />
+		<pathelement location="${basedir}/classes"/>
+	</path>  
+	
+	<!-- Generate the JPlag stub -->
+
+	<target name="prepare-client">
+		<mkdir dir="${basedir}/classes" />
+		<mkdir dir="${basedir}/connectclasses" />
+		<mkdir dir="${basedir}/dist" />
+	</target>
+
+	<target name="prepare-wscompile" depends="prepare-client">
+		<javac destdir="${basedir}/classes"
+			   includes="util/wscompileSSLLauncher.java" srcdir="${basedir}"
+			   debug="${compile.debug}">
+			<classpath refid="app.classpath" />
+		</javac>
+		&wscompile;
+	</target>
+
+	<target name="compile-client-handler" depends="prepare-client">
+		<javac destdir="${basedir}/classes"
+			   includes="util/JPlagClientAccessHandler.java"
+			   srcdir="${basedir}" debug="${compile.debug}">
+			<classpath refid="client.classpath" />
+		</javac>
+	</target>
+	
+	<target name="generate-client" depends="compile-client-handler, prepare-wscompile">
+		<wscompile base="${basedir}/classes" features="wsi"
+				config="${basedir}/config-client.xml" xPrintStackTrace="true"
+				keep="true" sourcebase="${basedir}/.."
+				client="true" verbose="true">
+			<classpath>
+				<path refid="client.classpath" />
+			</classpath>
+		</wscompile>
+	</target>
+	
+	<!-- Create the ExampleConnect application -->
+
+	<target name="compile-exampleconnect" depends="prepare-client">
+		<available file="${basedir}/jplagClient" type="dir" property="client-built"/>
+		<fail unless="client-built">
+JPlag stub is not built yet!
+			
+Please call 'generate-client' first!
+		</fail>
+		
+		<javac destdir="${basedir}/connectclasses" srcdir="${basedir}"
+			   includes="ExampleConnect.java jplagClient/*.java"
+			   debug="${compile.debug}" deprecation="on">
+			<classpath refid="client.classpath" />
+		</javac>
+	</target>
+	
+	<target name="jar-exampleconnect">
+		<jar destfile="${basedir}/dist/exampleConnect.jar">
+			<zipfileset dir="${basedir}/classes"
+				includes="jplagTutorial/util/JPlagClientAccessHandler.class" />
+			<zipfileset dir="${basedir}/connectclasses"
+				excludes="jplagTutorial/util/*.class" />
+			<zipfileset src="${clientlibs}/jaxrpc-api.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/jaxrpc-impl.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/jaxrpc-spi.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/activation.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/mail.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/saaj-api.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/saaj-impl.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/jsr173_api.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/sjsxp.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/FastInfoset.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<manifest>
+				<attribute name="Main-Class"
+					value="jplagTutorial.ExampleConnect" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="cnj-exampleconnect"
+			depends="compile-exampleconnect, jar-exampleconnect"/>
+	
+	<!-- Create the ExampleClient application -->
+
+	<target name="compile-client" depends="prepare-client">
+		<available file="${basedir}/jplagClient" type="dir" property="client-built"/>
+		<fail unless="client-built">
+JPlag stub is not built yet!
+			
+Please call 'generate-client' first!
+		</fail>
+		
+		<javac destdir="${basedir}/classes" srcdir="${basedir}"
+				debug="${compile.debug}" deprecation="on">
+			<classpath refid="client.classpath" />
+		</javac>
+	</target>
+	
+	<!--
+		Generates a jar file including all needed libraries. As the resulting
+		file is over 3 MB, this isn't very useful for an application which gets
+		updated regularly, as this would require the whole file to be downloaded
+		again, instead of only the real application.
+		The advantage is, that you only need to supply one single file, which
+		is fully functional (except for the JRE of course).
+		Note: Use "java -jar dist/exampleClient.jar" to start the application.
+			It will show you, which parameters are required.		
+		Note: The 'excludes="META-INF/WEBSTART.*"' is only needed, if the
+			libraries have been signed, because, if these files exist in the
+			final jar file, the program will abort with a SecurityException.
+	-->
+	
+	<target name="jar-client">
+		<jar destfile="${basedir}/dist/exampleClient.jar">
+			<zipfileset dir="${basedir}/classes"
+				excludes="jplagTutorial/util/wscompile*.class" />
+			<zipfileset src="${clientlibs}/jaxrpc-api.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/jaxrpc-impl.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/jaxrpc-spi.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/activation.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/mail.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/saaj-api.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/saaj-impl.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/jsr173_api.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/sjsxp.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<zipfileset src="${clientlibs}/FastInfoset.jar" includes="**/*"
+				excludes="META-INF/WEBSTART.*" />
+			<manifest>
+				<attribute name="Main-Class"
+					value="jplagTutorial.ExampleClient" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="cnj-client" depends="compile-client, jar-client"/>
+	
+<!--
+	If you want to use create a Web Start application with this, you'll have
+	to sign your jar as well as the libraries you provide with the same key.
+	The key may either be a correct key from a certification authority or a
+	self-created key. You can create a self-created by invoking something like
+	the following command on your shell prompt:
+		keytool -genkey -keystore jplagClient -alias webstart
+		
+	This jar can also be used for a command line version, if you provide a
+	bat file and a sh file to call the application with the correct classpath.
+	Of course you'll also have to provide the libraries.
+-->        
+	
+	<target name="jar-webstart" depends="compile-client">
+		<jar destfile="${basedir}/dist/exampleClient.jar">
+			<zipfileset dir="${basedir}/classes" excludes="util/*.class" />
+		</jar>
+		<signjar keystore="jplagClient.key" alias="webstart"
+				storepass="your_keystore_password">
+			<fileset dir="${basedir}/dist" includes="*.jar" />
+		</signjar>
+	</target>
+	
+	<!--
+		Signs all libraries in the ${clientlibs} folder	with the current
+		jplagClient.key. These libraries can then be copied to the server
+		to be used for a Web Start application
+	-->
+	
+	<target name="signlibs">
+    	<signjar keystore="jplagClient.key" alias="webstart"
+    			storepass="your_keystore_password">
+	  		<fileset dir="${clientlibs}" includes="*.jar" />
+    	</signjar>
+	</target>
+	
+
+	<target name="run-client">
+		<java fork="true" classpathref="client.classpath"
+			  classname="jplagTutorial.ExampleClient" />
+	</target>
+	
+	<target name="cnr-client" depends="compile-client, run-client"/>
+	
+	<target name="clean">
+		<delete dir="${basedir}/classes" />
+		<delete dir="${basedir}/dist" />
+	</target>
+</project>
+

@@ -1,0 +1,18 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<configuration xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
+    <wsdl xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config"
+    	  packageName="jplagTutorial.jplagClient"
+          location="https://www.ipd.kit.edu/jplag/JPlagService.wsdl" >
+<!--		  location="https://localhost:8443/JPlagService/service?WSDL" > -->
+<!--          location="https://swt.ira.uka.de:2222/JPlagService/service?WSDL" >-->
+        <handlerChains xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
+            <chain xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config"
+            	   runAt="client" >
+                <handler xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config"
+                		 className="jplagTutorial.util.JPlagClientAccessHandler" />
+<!--                <handler xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config"
+                		 className="atujplag.util.LoggingHandler" /> -->
+            </chain>
+        </handlerChains>
+    </wsdl>
+</configuration>
