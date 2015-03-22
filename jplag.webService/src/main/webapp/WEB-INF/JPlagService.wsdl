@@ -1,0 +1,1318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+				  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+				  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+				  xmlns:types="http://jplag.ipd.kit.edu/JPlagService/types"
+				  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+				  xmlns:tns="http://jplag.ipd.kit.edu/JPlagService"
+				  name="JPlagService"
+				  targetNamespace="http://jplag.ipd.kit.edu/JPlagService">
+				  
+	<wsdl:documentation>
+		Compatibility level: 4
+		
+		Simple lifecycle example (using 80 kB packets for file transfer.
+					This method allows to show the file transfer progress and
+					to abort the transfer and is .NET compatible):
+			Call "startSubmissionUpload" with a correct set of parameters
+				and the first 80 kB part of the zip file containing the files
+				and "continueSubmissionUpload" for all remaining 80 kB parts
+			Optionally call "getStatus" at a minimum intervall of 10 seconds
+				to get status information
+			Call "startResultDownload" to download the first 80 kB part of the
+				result zip file and "continueResultDownload" for all remaining
+				80 kB parts
+			 OR call "cancelSubmission" to cancel the submission if the
+				result is not needed anymore or the submission was aborted
+				because of an error
+	
+		Simple lifecycle example (using unabortable MIME file transfer):
+			Call "compareSource" with a correct set of parameters to let
+				the server work on a zipped submission
+			Optionally call "getStatus" at a minimum intervall of 10 seconds
+				to get status information
+			Call "getResult" to get the zipped HTML result files
+				and "cancelSubmission" to delete the submission from the server
+				afterwards
+			 OR call "cancelSubmission" to cancel the submission if the
+				result is not needed anymore or the submission was aborted
+				because of an error
+	</wsdl:documentation>
+				  
+	<wsdl:types>
+		<xsd:schema xmlns:wsi="http://ws-i.org/profiles/basic/1.1/xsd"
+				targetNamespace="http://jplag.ipd.kit.edu/JPlagService/types"
+				xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+
+			<xsd:element name="JPlagException">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="exceptionType" type="xsd:string" />
+						<xsd:element name="description"	type="xsd:string">
+							<xsd:annotation><xsd:documentation>
+								This describes what the user has to do when
+							 	an error or exception happens
+							</xsd:documentation></xsd:annotation>
+						</xsd:element>
+						<xsd:element name="repair" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="Status">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="state" type="xsd:int">
+							<xsd:annotation><xsd:documentation>
+								state values:
+									  0 = uploading
+									 50 = in queue -> progress=position in queue
+									      0 being next in queue
+									100 = parsing -> progress=percentage
+									200 = comparing -> progress=percentage
+									230 = generating result files
+									250 = packaging result
+									300 = done, result is ready for download
+									400 = general error
+									401 = error = Bad language
+									402 = error = Not enough submissions
+									403 = error = Submission aborted
+								A state greater or equal 400 indicates an error.
+								The report field will then provide more details.
+							</xsd:documentation></xsd:annotation>
+						</xsd:element>
+						<xsd:element name="progress" type="xsd:int" />
+						<xsd:element name="report" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:complexType name="Option">
+				<xsd:sequence>
+					<xsd:element name="language" type="xsd:string">
+						<xsd:annotation><xsd:documentation>
+							Programming language.
+							See getServerInfo response for available languages.
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					
+					<xsd:element name="comparisonMode" type="xsd:int" minOccurs="0" maxOccurs="1" default="0">
+						<xsd:annotation><xsd:documentation>
+							Possible values are
+								- 0: Normal pairwise comparison between all programs,
+								     looks for maximum similarity (default).
+								- 1: Revision comparison: Only adjacent programs are compared,
+								     looks for minimum similarity
+								     ("adjacent" according to their lexicographically ordered names).
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					
+					<xsd:element name="minimumMatchLength"
+								 type="xsd:int">
+						<xsd:annotation><xsd:documentation>
+							Minimum match length in tokens.
+							A smaller value increases the sensitivity of
+							the comparison.
+							If set to 0 or below, a language specific
+							default value is used.
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					
+					<xsd:element name="suffixes" type="xsd:string"
+							minOccurs="0" maxOccurs="unbounded">
+						<xsd:annotation><xsd:documentation>
+							List of case sensitive file suffixes
+							(e.g. {".c", ".C"})
+							(default: language specific, if empty)
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					<xsd:element name="readSubdirs" type="xsd:boolean">
+						<xsd:annotation><xsd:documentation>
+							If true, also looks at files in subdirectories.
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					<xsd:element name="pathToFiles" type="xsd:string"
+								 nillable="true">
+						<xsd:annotation><xsd:documentation>
+        					Look in directories <root-dir/>/*/<pathToFiles/>
+        					for files (default: <root-dir/>/*, if null or "").
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					<xsd:element name="basecodeDir" type="xsd:string" 
+								 nillable="true">
+						<xsd:annotation><xsd:documentation>
+							Name of directory containing the basecode
+							(common framework) (null or "", if unused)
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					
+					<xsd:element name="storeMatches" type="xsd:string"
+								 nillable="true">
+						<xsd:annotation><xsd:documentation>
+							This can be either
+								- the number of matches being saved (default
+								  is 20, if null or "") or
+								- the minimum similarity percentage to be
+								  saved as a match (with a trailing "%")
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					<xsd:element name="clustertype" type="xsd:string"
+								 nillable="true">
+						<xsd:annotation><xsd:documentation>
+							Possible values are
+								- null or "" : no clustering (default)
+								- "min"
+								- "avr"
+								- "max"
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					
+					<xsd:element name="countryLang" type="xsd:string">
+						<xsd:annotation><xsd:documentation>
+							Country language the result files will be written
+							in.
+							See getServerInfo response for available country
+							languages.
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					
+					<xsd:element name="title" type="xsd:string">
+						<xsd:annotation><xsd:documentation>
+							Title describing the submission and being displayed
+							in the result files.
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+					<xsd:element name="originalDir" type="xsd:string">
+						<xsd:annotation><xsd:documentation>
+							String to be displayed in the result files as the
+							directory where the source code comes from.
+						</xsd:documentation></xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:element name="eOption" type="types:Option" />
+			
+			<xsd:element name="StartSubmissionParams">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="userInfo" type="types:UserInfo" />
+						<xsd:element name="languageInfos"
+							type="types:LanguageInfo" maxOccurs="unbounded" />
+						<xsd:element name="submissions" type="types:Submission"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="Access">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="username" type="xsd:string" />
+						<xsd:element name="password" type="xsd:string" />
+						<xsd:element name="compatLevel" type="xsd:int" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:complexType name="Submission">
+				<xsd:sequence>
+					<xsd:element name="submissionID" type="xsd:string" />
+					<xsd:element name="title" type="xsd:string" />
+					<xsd:element name="date" type="xsd:string" />
+					<xsd:element name="lastState" type="xsd:int" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:complexType name="UserInfo">
+				<xsd:sequence>
+					<xsd:element name="leftSubmissionSlots" type="xsd:int" />
+					<xsd:element name="expires" type="xsd:dateTime"
+								 nillable="true" />
+					<xsd:element name="email" type="xsd:string" />
+					<xsd:element name="emailSecond" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="homepage" type="xsd:string"
+								 nillable="true" />
+				</xsd:sequence>
+			</xsd:complexType>
+			
+			<xsd:complexType name="LanguageInfo">
+				<xsd:sequence>
+					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="suffixes" type="xsd:string"
+						maxOccurs="unbounded" />
+					<xsd:element name="defMinMatchLen" type="xsd:int" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:element name="ServerInfo">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="userInfo" type="types:UserInfo" />
+						<xsd:element name="languageInfos"
+							type="types:LanguageInfo" maxOccurs="unbounded" />
+						<xsd:element name="countryLanguages"
+							type="xsd:string" maxOccurs="unbounded"/>
+						<xsd:element name="submissions" type="types:Submission"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:complexType name="UserData">
+				<xsd:sequence>
+					<xsd:element name="username" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="password" type="xsd:string" />
+					<xsd:element name="created" type="xsd:dateTime" />
+					<xsd:element name="createdBy" type="xsd:string" />
+					<xsd:element name="expires" type="xsd:dateTime"
+								 nillable="true" />
+					<xsd:element name="lastUsage" type="xsd:dateTime"
+								 nillable="true" />
+					<xsd:element name="numOfSubs" type="xsd:int" />
+					<xsd:element name="realName" type="xsd:string" />
+					<xsd:element name="email" type="xsd:string" />
+					<xsd:element name="emailSecond" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="homepage" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="reason" type="xsd:string" />
+					<xsd:element name="notes" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="state" type="xsd:int" />
+				</xsd:sequence>
+			</xsd:complexType>
+			
+			<xsd:element name="eUserData" type="types:UserData" />
+			
+			<xsd:element name="UserDataArray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="items" type="types:UserData"
+							minOccurs="0" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>		
+			
+			<xsd:element name="setUserDataParams">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="userdata" type="types:UserData" />
+						<xsd:element name="oldUsername" type="xsd:string"
+									 nillable="true" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="updateUserInfoParams">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="newPassword" type="xsd:string"
+									 nillable="true" />
+						<xsd:element name="newEmailSecond" type="xsd:string"
+									 nillable="true" />
+						<xsd:element name="newHomepage" type="xsd:string"
+									 nillable="true" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:complexType name="RequestData">
+				<xsd:sequence>
+					<xsd:element name="validateTime" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="username" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="password" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="realName" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="email" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="emailSecond" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="homepage" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="reason" type="xsd:string"
+								 nillable="true" />
+					<xsd:element name="notes" type="xsd:string"
+								 nillable="true" />
+				</xsd:sequence>
+			</xsd:complexType>
+			
+			<xsd:element name="RequestDataArray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="items" type="types:RequestData"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="eRequestData" type="types:RequestData" />
+
+			<xsd:element name="FinishRequestData">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="oldUsername" type="xsd:string" />
+						<xsd:element name="username" type="xsd:string" />
+						<xsd:element name="password" type="xsd:string"
+									 nillable="true" />
+						<xsd:element name="expires" type="xsd:dateTime" 
+									 nillable="true" />
+						<xsd:element name="realName" type="xsd:string" />
+						<xsd:element name="email" type="xsd:string" />
+						<xsd:element name="emailSecond" type="xsd:string"
+									 nillable="true" />
+						<xsd:element name="homepage" type="xsd:string"
+									 nillable="true" />
+						<xsd:element name="reason" type="xsd:string"
+									 nillable="true" />
+						<xsd:element name="notes" type="xsd:string"
+									 nillable="true" />
+						<xsd:element name="state" type="xsd:int"
+									 nillable="true" />
+						<xsd:element name="mailSubject" type="xsd:string"
+									 nillable="true" />
+						<xsd:element name="mailMessage" type="xsd:string"
+									 nillable="true" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:complexType name="MailTemplate">
+				<xsd:sequence>
+					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="subject" type="xsd:string" />
+					<xsd:element name="data" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:element name="MailTemplateArray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="items" type="types:MailTemplate"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="setMailTemplateParams">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="type" type="xsd:int" />
+						<xsd:element name="template"
+							type="types:MailTemplate" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="notifyDevelopersParams">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="subject" type="xsd:string" />
+						<xsd:element name="message" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="setDeveloperStateParams">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="username" type="xsd:string" />
+						<xsd:element name="password" type="xsd:string" />
+						<xsd:element name="developer" type="xsd:boolean" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="startSubmissionUploadParams">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="submissionParams"
+							type="types:Option" />
+						<xsd:element name="filesize" type="xsd:int" />
+						<xsd:element name="data" type="xsd:base64Binary" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="startResultDownloadData">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="filesize" type="xsd:int" />
+						<xsd:element name="data" type="xsd:base64Binary" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="continueSubmissionUploadData"
+				type="xsd:base64Binary" />
+
+			<xsd:element name="compareSourceResponseString" type="xsd:string" />
+			<xsd:element name="startSubmissionUploadResponseString"
+				type="xsd:string" />
+			<xsd:element name="continueSubmissionUploadDummyInt"
+				type="xsd:int" />
+			<xsd:element name="startResultDownloadRequestString"
+				type="xsd:string" />
+			<xsd:element name="continueResultDownloadDummyInt" type="xsd:int" />
+			<xsd:element name="continueResultDownloadData"
+				type="xsd:base64Binary" />
+			<xsd:element name="getResultRequestString" type="xsd:string" />
+			<xsd:element name="getStatusRequestString" type="xsd:string" />
+			<xsd:element name="cancelSubmissionRequestString"
+				type="xsd:string" />
+			<xsd:element name="cancelSubmissionDummyInt" type="xsd:int" />
+			<xsd:element name="getUserDataArrayDummyInt" type="xsd:int" />
+			<xsd:element name="setUserDataUsernameN" type="xsd:string"/>
+			<xsd:element name="setUserDataStringN" type="xsd:string"/>
+			<xsd:element name="updateUserInfoDummyInt" type="xsd:int" />
+			<xsd:element name="setUserDataDummyInt" type="xsd:int" />
+			<xsd:element name="requestAccountBoolean" type="xsd:boolean" />
+			<xsd:element name="getAccountRequestsLenOnlyBoolean"
+				type="xsd:boolean" />
+			<xsd:element name="finishAccountRequestDummyInt" type="xsd:int" />
+			<xsd:element name="extendAccountString" type="xsd:string" />
+			<xsd:element name="extendAccountDummyInt" type="xsd:int" />
+			<xsd:element name="getMailTemplatesInt" type="xsd:int" />
+			<xsd:element name="setMailTemplateDummyInt" type="xsd:int" />
+			<xsd:element name="notifyDevelopersDummyInt" type="xsd:int" />
+			<xsd:element name="setDeveloperStateDummyInt" type="xsd:int" />
+		</xsd:schema>
+	</wsdl:types>
+
+<!--=========================================================================-->
+
+	<wsdl:message name="jplagException">
+		<wsdl:part name="faultDetail" element="types:JPlagException" />
+	</wsdl:message>
+
+ 	<wsdl:message name="accessHeader">
+		<wsdl:part name="access" element="types:Access" />
+	</wsdl:message>
+	
+	<wsdl:message name="getServerInfoRequest" />
+	<wsdl:message name="getServerInfoResponse">
+		<wsdl:part name="infos" element="types:ServerInfo" />
+	</wsdl:message>
+
+	<wsdl:message name="compareSourceRequest">
+		<wsdl:part name="arguments" element="types:eOption" />
+		<wsdl:part name="inputZipFile" type="xsd:hexBinary" />
+	</wsdl:message>
+	<wsdl:message name="compareSourceResponse">
+		<wsdl:part name="submissionID"
+			element="types:compareSourceResponseString" />
+	</wsdl:message>
+	
+	<wsdl:message name="startSubmissionUploadRequest">
+		<wsdl:part name="params" element="types:startSubmissionUploadParams" />
+	</wsdl:message>
+	<wsdl:message name="startSubmissionUploadResponse">
+		<wsdl:part name="submissionID"
+			element="types:startSubmissionUploadResponseString" />
+	</wsdl:message>
+
+	<wsdl:message name="continueSubmissionUploadRequest">
+		<wsdl:part name="data" element="types:continueSubmissionUploadData" />
+	</wsdl:message>
+	<wsdl:message name="continueSubmissionUploadResponse">
+		<wsdl:part name="dummy"
+			element="types:continueSubmissionUploadDummyInt" />
+	</wsdl:message>
+
+	<wsdl:message name="getStatusRequest">
+		<wsdl:part name="submissionID" element="types:getStatusRequestString" />
+	</wsdl:message>
+	<wsdl:message name="getStatusResponse">
+		<wsdl:part name="status" element="types:Status" />
+	</wsdl:message>
+
+	<wsdl:message name="getResultRequest">
+		<wsdl:part name="submissionID" element="types:getResultRequestString" />
+	</wsdl:message>
+	<wsdl:message name="getResultResponse">
+		<wsdl:part name="zippedResult" type="xsd:hexBinary" />
+	</wsdl:message>
+
+	<wsdl:message name="startResultDownloadRequest">
+		<wsdl:part name="submissionID"
+			element="types:startResultDownloadRequestString" />
+	</wsdl:message>
+	<wsdl:message name="startResultDownloadResponse">
+		<wsdl:part name="data" element="types:startResultDownloadData" />
+	</wsdl:message>
+
+	<wsdl:message name="continueResultDownloadRequest">
+		<wsdl:part name="dummy"
+			element="types:continueResultDownloadDummyInt" />
+	</wsdl:message>
+	<wsdl:message name="continueResultDownloadResponse">
+		<wsdl:part name="data" element="types:continueResultDownloadData" />
+	</wsdl:message>
+	
+ 	<wsdl:message name="cancelSubmissionRequest">
+		<wsdl:part name="submissionID"
+			element="types:cancelSubmissionRequestString" />
+	</wsdl:message>
+ 	<wsdl:message name="cancelSubmissionResponse">
+		<wsdl:part name="dummy" element="types:cancelSubmissionDummyInt" />
+	</wsdl:message>
+	
+	<wsdl:message name="updateUserInfoRequest">
+		<wsdl:part name="params" element="types:updateUserInfoParams" />
+	</wsdl:message>
+	<wsdl:message name="updateUserInfoResponse">
+		<wsdl:part name="dummy" element="types:updateUserInfoDummyInt" />
+	</wsdl:message>
+	
+	<wsdl:message name="getUserDataArrayRequest">
+		<wsdl:part name="dummy" element="types:getUserDataArrayDummyInt" />
+	</wsdl:message>
+	<wsdl:message name="getUserDataArrayResponse">
+		<wsdl:part name="userdataarray" element="types:UserDataArray" />
+	</wsdl:message>
+
+	<wsdl:message name="setUserDataRequest">
+		<wsdl:part name="params" element="types:setUserDataParams" />
+	</wsdl:message>
+	<wsdl:message name="setUserDataResponse">
+		<wsdl:part name="dummy" element="types:setUserDataDummyInt" />
+	</wsdl:message>
+	
+	<wsdl:message name="requestAccountRequest">
+		<wsdl:part name="params" element="types:eRequestData" />
+	</wsdl:message>
+	<wsdl:message name="requestAccountResponse">
+		<wsdl:part name="noerror" element="types:requestAccountBoolean" />
+	</wsdl:message>
+
+	<wsdl:message name="getAccountRequestsRequest">
+		<wsdl:part name="lengthOnly"
+				   element="types:getAccountRequestsLenOnlyBoolean" />
+	</wsdl:message>
+	<wsdl:message name="getAccountRequestsResponse">
+		<wsdl:part name="requestArray" element="types:RequestDataArray" />
+	</wsdl:message>
+
+	<wsdl:message name="finishAccountRequestRequest">
+		<wsdl:part name="finishData" element="types:FinishRequestData" />
+	</wsdl:message>
+	<wsdl:message name="finishAccountRequestResponse">
+		<wsdl:part name="dummy" element="types:finishAccountRequestDummyInt" />
+	</wsdl:message>
+
+	<wsdl:message name="extendAccountRequest">
+		<wsdl:part name="extendCode" element="types:extendAccountString" />
+	</wsdl:message>
+	<wsdl:message name="extendAccountResponse">
+		<wsdl:part name="dummy" element="types:extendAccountDummyInt" />
+	</wsdl:message>
+	
+	<wsdl:message name="getMailTemplatesRequest">
+		<wsdl:part name="type" element="types:getMailTemplatesInt" />
+	</wsdl:message>
+	<wsdl:message name="getMailTemplatesResponse">
+		<wsdl:part name="templateArray" element="types:MailTemplateArray" />
+	</wsdl:message>
+
+	<wsdl:message name="setMailTemplateRequest">
+		<wsdl:part name="params" element="types:setMailTemplateParams" />
+	</wsdl:message>
+	<wsdl:message name="setMailTemplateResponse">
+		<wsdl:part name="dummy" element="types:setMailTemplateDummyInt" />
+	</wsdl:message>
+
+	<wsdl:message name="notifyDevelopersRequest">
+		<wsdl:part name="params" element="types:notifyDevelopersParams" />
+	</wsdl:message>
+	<wsdl:message name="notifyDevelopersResponse">
+		<wsdl:part name="dummy" element="types:notifyDevelopersDummyInt" />
+	</wsdl:message>
+	
+	<wsdl:message name="setDeveloperStateRequest">
+		<wsdl:part name="params" element="types:setDeveloperStateParams" />
+	</wsdl:message>
+	<wsdl:message name="setDeveloperStateResponse">
+		<wsdl:part name="dummy" element="types:setDeveloperStateDummyInt" />
+	</wsdl:message>
+		
+<!--=========================================================================-->
+
+	<wsdl:portType name="JPlagTyp">
+		<wsdl:operation name="getServerInfo">
+			<wsdl:documentation>
+				Returns some user account informations, the available languages
+				including default values for suffixes and minimum match length,
+				the available country languages and a list of own submissions
+				on the server.
+			</wsdl:documentation>
+			<wsdl:input message="tns:getServerInfoRequest" />
+			<wsdl:output message="tns:getServerInfoResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+	
+		<wsdl:operation name="compareSource">
+			<wsdl:documentation>
+				Quickchecks the parameters and adds the given submission to the
+				working queue. It takes an Option object and a MimeMultipart
+				object containing a zup file with all the files to be compared
+				in the structure specified by the Option object.
+				Returns the submission identification string.
+				This function is not .NET compatible!
+			</wsdl:documentation>
+			<wsdl:input message="tns:compareSourceRequest" />
+			<wsdl:output message="tns:compareSourceResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+
+		<wsdl:operation name="startSubmissionUpload">
+			<wsdl:documentation>
+				Quickchecks the parameters and starts taking a submission upload
+				with the first 80 kB part of the zipped submission.
+				If the submission file size is less than or equal to 80 kB, the
+				submission is added to the working queue.
+				The part size may not be less than 80 kB, if there is more than
+				one part to be sent.
+				Returns the submission identification string
+			</wsdl:documentation>
+			<wsdl:input message="tns:startSubmissionUploadRequest" />
+			<wsdl:output message="tns:startSubmissionUploadResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+
+		<wsdl:operation name="continueSubmissionUpload">
+			<wsdl:documentation>
+				Used to send the next 80 kB part to the server. If the remaining
+				file size is less than or equal to 80 kB, the submission is
+				added to the working queue.
+				The part size may not be less than 80 kB, if this part is not
+				the last part to be sent.				
+			</wsdl:documentation>
+			<wsdl:input message="tns:continueSubmissionUploadRequest" />
+			<wsdl:output message="tns:continueSubmissionUploadResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="getStatus">
+			<wsdl:documentation>
+				Returns the current state and progress of the submission
+				identified by the submissionID as described above
+			</wsdl:documentation>
+			<wsdl:input message="tns:getStatusRequest" />
+			<wsdl:output message="tns:getStatusResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="getResult">
+			<wsdl:documentation>
+				Returns the zipped HTML result files of the requested submission
+				in a MimeMultipart object. You have to call cancelSubmission
+				afterwards to delete the files from the server.
+				This function is not .NET compatible!
+			</wsdl:documentation>
+			<wsdl:input message="tns:getResultRequest" />
+			<wsdl:output message="tns:getResultResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="startResultDownload">
+			<wsdl:documentation>
+				Starts the download of the requested submission and returns the
+				total size of the zipped result files and its first 80 kB part.
+				If it is the only part of the download, the file is deleted from
+				the server afterwards.
+			</wsdl:documentation>
+			<wsdl:input message="tns:startResultDownloadRequest" />
+			<wsdl:output message="tns:startResultDownloadResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+
+		<wsdl:operation name="continueResultDownload">
+			<wsdl:documentation>
+				Returns the next 80 kB part of the current download.
+				If it is the last part of the download, the size might be less
+				than 80 kB and the file is deleted from the server.
+				The dummy parameter should just be zero.
+			</wsdl:documentation>
+			<wsdl:input message="tns:continueResultDownloadRequest" />
+			<wsdl:output message="tns:continueResultDownloadResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+
+ 		<wsdl:operation name="cancelSubmission">
+			<wsdl:documentation>
+				Cancels a submission and removes all related files from
+				the server
+			</wsdl:documentation>
+  			<wsdl:input	message="tns:cancelSubmissionRequest" />
+  			<wsdl:output message="tns:cancelSubmissionResponse" />
+ 			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="updateUserInfo">
+			<wsdl:documentation>
+				Allows the user to change his password, update his alternative
+				email address and his homepage.
+				A null value means, that the value should remain unchanged.
+				An empty string removes the attribute.
+				The password must have at least 6 characters.
+			</wsdl:documentation>
+			<wsdl:input message="tns:updateUserInfoRequest" />
+			<wsdl:output message="tns:updateUserInfoResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="getUserDataArray">
+			<wsdl:documentation>
+				For JPlag and group admins only:
+					Returns an array of UserData elements containing all
+					information about the users.
+					The dummy parameter can be any int and will be ignored.
+					For JPlag admins all users are returned, for group admins
+					only the users they created are returned and the passwords
+					are empty.
+			</wsdl:documentation>
+			<wsdl:input message="tns:getUserDataArrayRequest" />
+			<wsdl:output message="tns:getUserDataArrayResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+
+		<wsdl:operation name="setUserData">
+			<wsdl:documentation>
+				For JPlag and group admins only:
+					Changes a single user's data.
+					Group admins can only change users they created and can not
+					change "created", "createdBy", "lastUsage" and "numOfSubs" 
+					(these fields become ignored, though they may not be null).
+					They can also change the user state only to "Normal" and
+					"Deactivated".
+					For JPlag admins, the "createdBy" field has to point to a
+					valid user.
+					If userdata.username==null: User oldUsername becomes
+						permamently removed from the server including
+						all his files.
+					Else if oldUsername==null: A new user userdata.username
+						will be generated.
+					Else: The user oldUsername becomes updated (including a
+						possible name change to userdata.username).
+						If the password is empty, the password field becomes
+						ignored.
+					The usernames must match the pattern "^[\\w\\@\\.]+$".
+			</wsdl:documentation>
+			<wsdl:input message="tns:setUserDataRequest" />
+			<wsdl:output message="tns:setUserDataResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="requestAccount">
+			<wsdl:documentation>
+				For server page use only:
+					- The validateTime field will always be ignored.
+					- If everything but username is null, it returns, whether
+					  the username is OK (true) or it is already used (false).
+					- If everything but password is null and password is the
+					  email validation code sent to the user, the request
+					  becomes available to the AdminTool and an email is
+					  sent to the administrator, if the code is wrong, false is
+					  returned.
+					- If username, password, realname, email and reason is not
+					  null, it saves the data and sends a validation email
+					  to the user.
+					- Otherwise an exception is thrown.
+					The usernames must match the pattern "^[\\w\\@\\.]+$".
+			</wsdl:documentation>
+			<wsdl:input message="tns:requestAccountRequest" />
+			<wsdl:output message="tns:requestAccountResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="getAccountRequests">
+			<wsdl:documentation>
+				For administrational use only:
+					Returns a list of validated account requests.
+					If lengthOnly is true, the array elements will be empty,
+					but represent the number of requests waiting.
+			</wsdl:documentation>
+			<wsdl:input message="tns:getAccountRequestsRequest" />
+			<wsdl:output message="tns:getAccountRequestsResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+
+		<wsdl:operation name="finishAccountRequest">
+			<wsdl:documentation>
+				For administrational use only:
+					Accepts or dismisses the given users account request and
+					informs the user about it. The request corresponding to the
+					username becomes deleted.
+					An email containing the given message will be sent to the
+					user's primary email address. If the subject is null or
+					empty, no email will be sent.
+					- If the password is null, the request becomes dismissed.
+					- Otherwise the request becomes accepted.
+			</wsdl:documentation>
+			<wsdl:input message="tns:finishAccountRequestRequest" />
+			<wsdl:output message="tns:finishAccountRequestResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="extendAccount">
+			<wsdl:documentation>
+				For server page use only:
+					Extends the account given by the account extending code.
+			</wsdl:documentation>
+			<wsdl:input message="tns:extendAccountRequest" />
+			<wsdl:output message="tns:extendAccountResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+
+		<wsdl:operation name="getMailTemplates">
+			<wsdl:documentation>
+				For administrational use only:
+					Returns a list of mail templates for the given type.
+					Available types are:
+					  - 0: Accepted request mail
+					  - 1: Declined request mail
+					  - 2: Server mail templates
+					  - 3: Others
+			</wsdl:documentation>
+			<wsdl:input message="tns:getMailTemplatesRequest" />
+			<wsdl:output message="tns:getMailTemplatesResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="setMailTemplate">
+			<wsdl:documentation>
+				For administrational use only:
+					Sets a mail template for the given type (for available
+					types see getMailTemplates).
+					If a mail template with the same type and name already
+					exists, it will be overwritten. If the subject is empty,
+					the template will be removed. If the data is empty, the
+					template will be renamed from name to subject.
+			</wsdl:documentation>
+			<wsdl:input message="tns:setMailTemplateRequest" />
+			<wsdl:output message="tns:setMailTemplateResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="notifyDevelopers">
+			<wsdl:documentation>
+				For administrational use:
+					Sends a mail to all developers.
+			</wsdl:documentation>
+			<wsdl:input message="tns:notifyDevelopersRequest" />
+			<wsdl:output message="tns:notifyDevelopersResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="setDeveloperState">
+			<wsdl:documentation>
+				For server page use only:
+					Sets whether a given user should be considered as a
+					developer or not.
+			</wsdl:documentation>
+			<wsdl:input message="tns:setDeveloperStateRequest" />
+			<wsdl:output message="tns:setDeveloperStateResponse" />
+			<wsdl:fault message="tns:jplagException" name="ExceptionDetail" />
+		</wsdl:operation>
+	</wsdl:portType>
+
+<!--=========================================================================-->
+
+	<wsdl:binding name="JPlagServiceBinding" type="tns:JPlagTyp">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+
+  		<wsdl:operation name="getServerInfo">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/getServerInfo" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+ 				<soap:body use="literal" />
+			</wsdl:input>
+
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+			
+		<wsdl:operation name="compareSource">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/compareSource" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<mime:multipartRelated>
+					<mime:part>
+						<soap:body parts="arguments" use="literal" />
+					</mime:part>
+					<mime:part>
+						<mime:content part="inputZipFile"
+							type="multipart/zip" />
+					</mime:part>
+				</mime:multipartRelated>
+			</wsdl:input>
+
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="startSubmissionUpload">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/startSubmissionUpload" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="continueSubmissionUpload">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/continueSubmissionUpload"
+				/>
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		
+		<wsdl:operation name="getStatus">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/getStatus" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="getResult">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/getResult" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+
+			<wsdl:output>
+				<mime:multipartRelated>
+					<mime:part>
+						<soap:body use="literal" />
+					</mime:part>
+					<mime:part>
+						<mime:content part="zippedResult"
+							type="multipart/zip" />
+					</mime:part>
+				</mime:multipartRelated>
+			</wsdl:output>
+			
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="startResultDownload">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/startResultDownload" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="continueResultDownload">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/continueResultDownload"
+				/>
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		
+		<wsdl:operation name="cancelSubmission">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/cancelSubmission" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		
+		<wsdl:operation name="updateUserInfo">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/updateUserInfo" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="getUserDataArray">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/getUserDataArray" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="setUserData">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/setUserData" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="requestAccount">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/requestAccount" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="getAccountRequests">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/getAccountRequests" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="finishAccountRequest">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/finishAccountRequest" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		
+		<wsdl:operation name="extendAccount">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/extendAccount" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="getMailTemplates">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/getMailTemplates" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="setMailTemplate">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/setMailTemplate" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="notifyDevelopers">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/notifyDevelopers" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+
+		<wsdl:operation name="setDeveloperState">
+			<soap:operation	soapAction=
+				"http://jplag.ipd.kit.edu/JPlagService/setDeveloperState" />
+			<wsdl:input>
+   				<soap:header message="tns:accessHeader"
+   							 part="access" use="literal"/>
+				<soap:body use="literal" />
+			</wsdl:input>
+			
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+
+			<wsdl:fault name="ExceptionDetail">
+ 				<soap:fault name="ExceptionDetail" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+
+<!--=========================================================================-->
+
+	<wsdl:service name="JPlagService">
+		<wsdl:port name="JPlagServicePort" binding="tns:JPlagServiceBinding">
+			<soap:address location="https://jplag.ipd.kit.edu/JPlagService/service" />
+			<!-- <soap:address location="http://localhost:2222/JPlagService/service" /> -->
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

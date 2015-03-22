@@ -1,0 +1,165 @@
+Installation notes:
+
+- Create a home directory for the JPlag web service.
+- Create a file named "jplag_users.xml" in it with content of the following form
+  (this case creates two admins having quite some not so valid (say missing)
+   entries, but they can be just added with the AdminTool):
+
+<?xml version="1.0" encoding="UTF-8"?>
+<jplag-users>
+	<user username="mo" password="om" state="192" />
+	<user username="emeric" password="emeric" state="192" />
+</jplag-users>
+
+
+
+VERY IMPORTANT: If you're using Java 1.4.2_06, you'll probably need to use
+				the -server option,otherwise the complete server will crash
+				during comparison because of a bug in the VM.
+
+================================================================================
+				
+"SUN One Application Server 8" install notes:
+
+- Home directory setup:
+  In the JVM Options page on the admin console add
+     "-Djava_home=<path to jplag home directory>"
+  Also replace the "-client" option by "-server" if you're using Java 1.4.2_06
+  Additionally make sure that -Xmx1024M is set to avoid "Out of memory" errors.
+
+- Permission setup:
+  Add the following lines to the end of the domain's server.policy file to
+  allow the JPlag web service to create, use and delete files in its home dir:
+
+--------------------------------------------------------------------------------
+
+// These permissions apply to the JPlag web service
+grant codeBase "file:${com.sun.aas.instanceRoot}/applications/j2ee-modules/JplagService/WEB-INF/-" {
+    permission java.io.FilePermission "${jplag_home}${/}-", "read,write,delete";
+};
+
+--------------------------------------------------------------------------------
+
+- Copy "jplag.jar" and "antlr.jar" to the "lib/ext" directory inside the used
+  domain directory
+- Copy the "JplagService.war" file to the domains "autodeploy" directory
+- (Re-)Start the server (you may try without restarting, though you probably get
+  problems, if the server doesn't update it's libraries because of antlr.jar,
+  which is packed inside a server library)
+  
+- SSL setup
+
+  Go into the domains's "config" directory and execute the following command:
+  
+    keytool -genkey -alias jplag-server -keystore keystore.jks
+
+  Use "changeit" (really "changeit") as keystore and key password.    
+
+  In the "domain.xml" in the domain's config directory you should also change
+  the http-listener ports to 2222 for the unsecured one (port 8080) and to
+  2223 for the secured one (port 8181) to have the same settings as the
+  JPlag server.
+  Additionally you NEED to add the following line inside the 2223-http-listener:
+  
+     <ssl cert-nickname="jplag-server" client-auth-enabled="false"
+     	  ssl2-enabled="false" ssl3-enabled="true" tls-enabled="true"
+     	  tls-rollback-enabled="true"/>
+  
+  There might be more to do because of the JplagBean stuff, but this application
+  server is currently not supported anymore, although it shouldn't be a problem
+  to get it to work ;)
+
+
+================================================================================
+
+"Tomcat" install notes:
+
+You'll probably need Sun's Tomcat version "Tomcat 5.0 for WSDP 1.5" available at
+"http://java.sun.com/webservices/containers/", but other versions may work, too.
+
+Install Java Web Services Developer Pack 2.0 (JWSDP) onto Tomcat (will install
+both into Tomcat and into a separate folder) (This needs Java 1.5 and above!)
+(available at "http://java.sun.com/webservices/downloads/webservicespack.html"):
+  
+- Set the following environment variable before starting the server
+  (if you know a better way to define a home directory from outside the service
+   please let us know, as I think, this is a quite ugly solution...)
+
+CATALINA_OPTS="-Djplag_home=<path to jplag home directory> -server -Xmx1024M"
+
+  (-Xmx1024M is set to avoid "Out of memory" errors for larger submissions)
+  (The "-server" option is only needed for Java 1.4.2_06)
+
+- Due to class loader issues,
+  "jplagWebService/serverAccess/TrustSSLSocketFactor.class" and
+  "jplagWebService/serverAccess/TrustSSLSocketFactor$1.class" need to be copied
+  (including their directory structure) into the Tomcat's "common/classes"
+  folder.
+
+- Permission setup (if required!)
+
+  WARNING: This has NOT been tested yet, as my server doesn't start when I
+           use the "-security" option! You may need to change the codeBase!
+           
+  Add the following lines to the end of the catalina.policy file to
+  allow the JPlag web service to create, use and delete files in its home dir:
+
+--------------------------------------------------------------------------------
+
+// These permissions apply to the JPlag web service
+grant codeBase "file:${catalina.home}/webapps/JplagService/WEB-INF/-" {
+    permission java.io.FilePermission "${jplag_home}${/}-", "read,write,delete";
+};
+
+--------------------------------------------------------------------------------
+
+- SSL setup
+
+  If you don't have a keystore yet, you'll have to execute the following lines,
+  which can also be found in the bash script "generatecerts.sh":
+  
+    keytool -genkey -dname "CN=swt.ira.uka.de, OU=[IPD] JPlag Team, O=Uni Karlsruhe, L=Karlsruhe, S=Baden-Wuerttemberg, C=DE" -alias tomcat -keyalg RSA -keystore server.keystore -storepass gulpie! -keypass gulpie!
+    keytool -export -alias tomcat -keystore server.keystore -file tomcat.cer -storepass gulpie!
+    keytool -import -alias tomcat-server -keystore server.trust -trustcacerts -file tomcat.cer -storepass gulpie! -noprompt
+    
+  The "fore- and surname" must be the servers domain name (i.e. swt.ira.uka.de)!
+  You MUST use the same key password and keystore password!
+  
+  Add the following lines to the "server.xml" file inside Tomcat's "conf" folder
+
+    <Connector port="2223" disableUploadTimeout="true" acceptCount="100"
+    		   scheme="https" secure="true" clientAuth="false" sslProtocol="TLS"
+    		   keystoreFile="<full path to your server.keystore>"
+    		   keystorePass="<your keystore password>" />
+  
+  Of course you've got to replace the <...> stuff with the correct values.
+  
+  You'll also need the above mentioned script (which also deletes the old files)
+  to >>update the certificates<<, as those self-signed certificates only last 3
+  months. After executing that script you'll need to restart the server.
+  
+  Well, with the new configuration you additionally need to import apache's
+  certificate found here (change year as needed):
+    "/etc/apache2/ssl.crt/www-07.crt"
+  So the following additional line is required:
+
+    keytool -import -alias apache-server -keystore server.trust -trustcacerts -file /etc/apache2/ssl.crt/www-07.crt -storepass gulpie! -noprompt
+    
+  May be the "tomcat-server" import is not needed anymore...
+
+--------------------------------------------------------------------------------
+
+- Updating the www certificate
+  (when the register page throws RemoteExceptions with SSLHandshakeException)
+
+  This happens, when the www server gets a new SSL certificate.
+  In this case execute the following commands to introduce the new certificate
+  to our Tomcat server (replacing www-07.crt with the new filename):
+  
+    In ~jplag/jplag_webservice/tomcat50-jwsdp:
+      keytool -delete -alias apache-server -keystore server.trust -storepass gulpie! -noprompt
+      keytool -import -alias apache-server -keystore server.trust -trustcacerts -file /etc/apache2/ssl.crt/www-07.crt -storepass gulpie! -noprompt
+
+    In ~jplag/jplag_webservice:
+      ./stopserver.sh
+      ./startserver.sh

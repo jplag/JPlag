@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+
+<!--
+ Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+
+<!-- 
+	July, 2002
+
+	(c) Copyright 2003, The Web Services-Interoperability Organization (WS-I)
+	Download or use of this file is governed by the Policies and Bylaws of WS-I.
+
+	For more information, send email info@ws-i.org. 	
+--> 
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+ targetNamespace="http://ws-i.org/profiles/basic/1.1/xsd"
+ xmlns:tns="http://ws-i.org/profiles/basic/1.1/xsd"> 
+	<xsd:simpleType name="swaRef"> 
+		<xsd:restriction base="xsd:anyURI" /> 
+	</xsd:simpleType> 
+</xsd:schema>

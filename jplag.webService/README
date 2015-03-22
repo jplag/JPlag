@@ -1,0 +1,67 @@
+<html>
+  <head>
+    <title>JPLAG INFO</title>
+    <meta content="">
+    <style></style>
+  </head>
+  <body>
+  <H>
+  This File Contains Information about Jplag  WEb Service : Please when you
+   adds some interressant or important code  in the repository ,just notify
+    how to build it at the top of this file ,please do not forget to add  the DATE!!! 
+    
+      before doing anything  , please let  export the JAVA_HOME location on
+       your environement    variables and add the location of  ant/bin  to
+        your environement Path.
+  </H>
+  <pre>
+  
+ 
+  
+   <div style="color:blue;">
+   
+ Date:25-02-05:........</div>
+ build.xml is now able to deploy JplagService on a web container
+  (Sun java System Application server oder tomcat)
+  
+  ..before you deploy JplagService ,please start you server .
+  and set build properties in build.propreties
+  
+  then run ant deploy-war
+   
+   
+   
+   
+  
+<div style="color:blue;"> 
+Date:24-02-05:</div>
+  
+  Web service Description and configuration files  are now available. please
+  use the build.xml Ant file to build the WSDL file.
+  
+  before doing it , please let set up   the properties in the file
+   build.properties band export the JAVA_HOME location on your environement 
+  <h3> variables and add the location of  ant/bin  to your environement Path.</h3>
+  
+   
+  Important: Only the Targets :"prepare" and "generate-server" are up to run .
+  to use another Targets , you must edit it . 
+  
+  config-server.xml is used by the wscompile tool to generate the server
+  If you want to know wich options are used, please look in  build.xml the
+   target "generate-server"  and the task "wscompile".
+  
+  in the directory util,you can write all java codes that will be usefull the 
+  run the service .
+  The wscompile will also generate the directory server/jplag in  util.
+ <H3> Just the service implementation have to be edited in the directory server/jplag </H3> 
+  
+  Thank You Emeric .
+  
+  
+  
+    
+   
+  </pre>
+  </body>
+</html>

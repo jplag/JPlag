@@ -1,0 +1,24 @@
+<html>
+<head>
+<title>Simple JPlag web service page</title>
+</head>
+<body>
+<center>Welcome to our JPlag web service!</center><br><br>
+This is just a totally basic web page to make it easier to access the Web Start client:<br><br>
+<center><a href="jplagClient.jnlp">Sample Web Start client for JPlag web service</a></center>
+<br><br>
+There's a big load of libraries, which will be downloaded together with the client
+(7.3 MB). I only uploaded a minimum set of libraries, but perhaps there are
+smaller ones available for this perpose.<br>
+The client will ask for full access to your computer, as the original version did,
+because it zips up a directory (I didn't check whether there are better security
+settings for that than there were when the original version was developed...).<br>
+If you submit files, the client seems to hang, because the zipping, sending and
+waiting for a response are stupidly executed in Swing's interaction thread. This
+will be subject of change ;)<br>
+Also there may be problems when sending bigger submissions, when the SOAP messages
+become too big. This hasn't been correctly tested yet!<br><br>
+But we still hope, that you can enjoy playing around with this application ;D<br><br>
+PS: The "Advanced options" button is a fake currently...
+</body>
+</html>

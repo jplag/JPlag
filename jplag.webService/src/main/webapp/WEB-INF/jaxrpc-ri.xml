@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Author Emeric Kwemou
+	 This file is the deployment descriptor of the
+	 JPlag web service used in war files  
+-->
+<webServices
+    xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/dd"
+    version="1.0"
+    targetNamespaceBase="urn:jplag"
+    typeNamespaceBase="urn:jplag:types"
+    urlPatternBase="/ws">
+
+    <endpoint
+        name="jplag"
+        displayName="JPlag web service"
+        description="Web service interface for JPlag" 
+        wsdl="/WEB-INF/JPlagService.wsdl"
+        interface="jplagWebService.server.JPlagTyp"  
+        implementation="jplagWebService.serverImpl.JPlagTypImpl" 
+	    model="/WEB-INF/model-wsdl-doclit.xml.gz"/>
+ 
+    <endpointMapping
+        endpointName="jplag"
+        urlPattern="/service"/>
+
+</webServices>

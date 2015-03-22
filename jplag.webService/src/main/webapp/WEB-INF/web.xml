@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2_3.dtd">
+
+<web-app>
+	<display-name>JPlag web service</display-name>
+	<description>Web service interface for JPlag </description>
+
+	<session-config>
+		<session-timeout>100</session-timeout>
+	</session-config>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>JPlag
+				WSDL file</web-resource-name>
+			<url-pattern>/service*</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Entire
+				JPlag application</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<user-data-constraint>
+		<!--  was CONFIDENTIAL  -->
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+</web-app>

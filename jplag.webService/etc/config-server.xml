@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
+    <wsdl xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config" 
+    	  packageName="jplagWebService.server" 
+    	  location="./src/main/webapp/WEB-INF/JPlagService.wsdl">
+    	<handlerChains xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
+            <chain xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config"
+            	   runAt="server">
+                <handler xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config"
+                		 className="jplagWebService.serverAccess.JPlagServerAccessHandler" />
+            </chain>
+        </handlerChains>
+    </wsdl>
+</configuration>
