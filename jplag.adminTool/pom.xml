@@ -1,0 +1,181 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>adminTool</artifactId>
+	<version>1.0.317-SNAPSHOT</version>
+
+	<parent>
+		<groupId>edu.kit.ipd.jplag</groupId>
+		<artifactId>parent</artifactId>
+		<version>0.3-SNAPSHOT</version>
+	</parent>
+
+	<repositories>
+		<repository>
+			<id>ipdNexus</id>
+			<name>Recaa Repository</name>
+			<url>http://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
+		</repository>
+		<repository>
+			<id>projectLocal</id>
+			<name>Local Repository</name>
+			<url>file://${project.basedir}/../../maven-libs</url>
+		</repository>
+	</repositories>
+
+	<properties>
+		<!-- Properties for keystore generation -->
+		<webstart.keystore>overwrite_in_settings.xml</webstart.keystore>
+		<webstart.keypass>overwrite_in_settings.xml</webstart.keypass>
+		<webstart.storepass>overwrite_in_settins.xml</webstart.storepass>
+		<webstart.alias>jplag</webstart.alias>
+		<webstart.keystore.delete>false</webstart.keystore.delete>
+		<webstart.keystore.gen>false</webstart.keystore.gen>
+		<jnlpIcon64x64>admintool.icon.ico</jnlpIcon64x64>
+		<jnlpSplash>admintool.splash.gif</jnlpSplash>
+	</properties>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>jplagAdminTool/version.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>jplagAdminTool/version.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>jplagAdminTool.AdminTool</mainClass>
+							<packageName>jplagAdminTool</packageName>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+
+					<archive>
+						<manifest>
+							<mainClass>jplagAdminTool.AdminTool</mainClass>
+							<packageName>jplagAdminTool</packageName>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>webstart-maven-plugin</artifactId>
+				<version>1.0-beta-6</version>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>jnlp</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<!-- http://mojo.codehaus.org/webstart/webstart-maven-plugin/jnlp-mojos-overview.html -->
+				<configuration>
+					<verbose>true</verbose>
+					<jnlp>
+						<mainClass>jplagAdminTool.AdminTool</mainClass>
+					</jnlp>
+					<codebase>https://jplag.ipd.kit.edu/admintool</codebase>
+					<j2seVersion>${project.build.target}+</j2seVersion>
+
+					<updateManifestEntries>
+						<Permissions>all-permissions</Permissions>
+						<Codebase>*</Codebase>
+					</updateManifestEntries>
+
+					<!-- SIGNING -->
+					<!-- defining this will automatically sign the jar and its dependencies, 
+						if necessary -->
+					<sign>
+						<keystore>${webstart.keystore}</keystore>
+						<storetype>${webstart.storetype}</storetype>
+						<keypass>${webstart.keypass}</keypass> <!-- we need to override passwords easily from the command line. ${keypass} -->
+						<storepass>${webstart.storepass}</storepass> <!-- ${storepass} -->
+						<alias>${webstart.alias}</alias>
+
+						<validity>1095</validity>
+
+						<!-- only required for generating the keystore -->
+						<dnameCn>jplag.ipd.kit.edu</dnameCn>
+						<dnameOu>IPD Tichy</dnameOu>
+						<dnameO>Karlsruhe Institute of Technology</dnameO>
+						<dnameL>Karlsruhe</dnameL>
+						<dnameSt>Baden-Wuerttemberg</dnameSt>
+						<dnameC>Germany</dnameC>
+
+						<!-- verify that the signing operation succeeded -->
+						<verify>true</verify>
+
+						<!-- KEYSTORE MANAGEMENT -->
+						<keystoreConfig>
+							<delete>${webstart.keystore.delete}</delete> <!-- delete the keystore -->
+							<gen>${webstart.keystore.generate}</gen>       <!-- optional shortcut to generate the store. -->
+						</keystoreConfig>
+					</sign>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.sun</groupId>
+			<artifactId>javaws</artifactId>
+			<version>1.7.0_40</version>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxrpc-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.sun.xml.rpc</groupId>
+			<artifactId>jaxrpc-impl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.kit.ipd.jplag</groupId>
+			<artifactId>wsClient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>edu.kit.ipd.jplag</groupId>
+			<artifactId>utils</artifactId>
+		</dependency>
+	</dependencies>
+
+	<description>Tool to change, add or delete user accounts  for the JPlag WebService.</description>
+	<name>JPlag AdminTool</name>
+	<url>http://www.jplag.de</url>
+</project>
