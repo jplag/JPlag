@@ -6,10 +6,6 @@
 	<version>0.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<scm>
-		<connection>scm:svn:https://svn.ipd.kit.edu/repos/jplag/jplag.parent/trunk</connection>
-		<tag>HEAD</tag>
-	</scm>
 	<url>http://jplag.ipd.kit.edu</url>
 
 	<issueManagement>
