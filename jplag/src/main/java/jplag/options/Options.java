@@ -23,17 +23,21 @@ public abstract class Options {
 
 	protected boolean min_token_match_set = false;
 
+	/**
+	 * The available languages - the first language in the array is the default language.
+	 */
 	protected static String[] languages = {// @formatter:off
-			"java12", "jplag.java.Language",
+			"java17", "jplag.java17.Language",
 			"java15", "jplag.java15.Language",
 			"java15dm", "jplag.java15.LanguageWithDelimitedMethods",
-			"java17", "jplag.java17.Language",
-			"scheme", "jplag.scheme.Language",
-			"c/c++", "jplag.cpp.Language",
+			"java12", "jplag.java.Language",
 			"java11", "jplag.javax.Language",
-			"text", "jplag.text.Language",
+			"c/c++", "jplag.cpp.Language",
+			"c#-1.2", "jplag.csharp.Language",
 			"char", "jplag.chars.Language",
-			"c#-1.2", "jplag.csharp.Language", };// @formatter:on
+			"text", "jplag.text.Language",
+			"scheme", "jplag.scheme.Language",
+			};// @formatter:on
 
 	public static final int MIN_CLUSTER = 1;
 	public static final int MAX_CLUSTER = 2;
