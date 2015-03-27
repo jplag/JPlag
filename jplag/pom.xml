@@ -187,7 +187,6 @@
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
 			<artifactId>java-1.1exp</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
@@ -196,37 +195,30 @@
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
 			<artifactId>text</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
 			<artifactId>java-1.5</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
 			<artifactId>java-1.7</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
 			<artifactId>csharp-1.2</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
 			<artifactId>cpp</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
 			<artifactId>scheme</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.kit.ipd.jplag</groupId>
 			<artifactId>chars</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

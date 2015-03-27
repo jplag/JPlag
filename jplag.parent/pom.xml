@@ -204,6 +204,42 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>java-1.1exp</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>text</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>java-1.7</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>csharp-1.2</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>cpp</artifactId>
+				<version>0.0.2-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>scheme</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>chars</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+
+			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>4.11</version>
