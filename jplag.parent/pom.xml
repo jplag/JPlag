@@ -6,11 +6,11 @@
 	<version>0.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<url>https://svn.ipd.kit.edu/trac/jplag</url>
 	<scm>
 		<connection>scm:svn:https://svn.ipd.kit.edu/repos/jplag/jplag.parent/trunk</connection>
 		<tag>HEAD</tag>
 	</scm>
+	<url>http://jplag.ipd.kit.edu</url>
 
 	<issueManagement>
 		<system>Github</system>
@@ -326,4 +326,5 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<name>JPlag Plagiarism Detector</name>
 </project>
