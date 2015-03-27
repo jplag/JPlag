@@ -1,12 +1,9 @@
 package jplag.text;
 
-//import java.util.*;
-import java.io.IOException;
-
 public class TextToken extends jplag.Token {
-//    private Parser parser;
+	private static final long serialVersionUID = 4301179216570538972L;
 
-    public static int getSerial(String text, Parser parser) {
+	public static int getSerial(String text, Parser parser) {
         text = text.toLowerCase();
         Integer obj = (Integer) parser.tokenStructure.table.get(text);
         if(obj == null) {
@@ -16,7 +13,6 @@ public class TextToken extends jplag.Token {
             else
                 parser.tokenStructure.serial++;
             parser.tokenStructure.table.put(text, obj);
-            // System.out.println(text+" -> \t"+obj);
             if(parser.tokenStructure.reverseMapping != null)
                 parser.tokenStructure.reverseMapping = null;
         }
@@ -38,8 +34,6 @@ public class TextToken extends jplag.Token {
 
     public TextToken(int type, String file, Parser parser) {
         super(type, file, -1, -1, -1);
-
-//        this.parser = parser;
     }
 
     public TextToken(String text, String file, int line, int column,
@@ -47,9 +41,6 @@ public class TextToken extends jplag.Token {
         super(-1, file, line, column, length);
         this.type = getSerial(text, parser);
         this.text = text.toLowerCase();
-
-        // System.out.println("Constructor called!\n");
-//        this.parser = parser;
     }
 
     public int getLine() {
@@ -79,20 +70,6 @@ public class TextToken extends jplag.Token {
     public String getText() {
         return this.text;
     }
-
-    // private void writeObject(java.io.ObjectOutputStream out) throws
-    // IOException {
-    // out.defaultWriteObject();
-    // out.writeObject(null);
-    // }
-
-/*    private void readObject(java.io.ObjectInputStream in)
-        throws IOException, ClassNotFoundException
-    {
-        in.defaultReadObject();
-        if(text != null)
-            this.parser.tokenStructure.table.put(text, new Integer(type));
-    }*/
 
     public static int numberOfTokens(TokenStructure tokenStructure) {
         return tokenStructure.table.size();
