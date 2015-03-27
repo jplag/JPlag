@@ -3,7 +3,8 @@ package jplag.scheme;
 //import java.io.*;
 
 public class SchemeToken extends jplag.Token implements SchemeTokenConstants {
-  private int line;
+	private static final long serialVersionUID = -143418583849687339L;
+	private int line;
 
   public SchemeToken(int type, String file, int zeile) {
     super(type,file,zeile);
