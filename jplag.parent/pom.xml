@@ -13,8 +13,8 @@
 	</scm>
 
 	<issueManagement>
-		<system>Trac</system>
-		<url>https://svn.ipd.kit.edu/trac/jplag</url>
+		<system>Github</system>
+		<url>https://github.com/jplag/jplag</url>
 	</issueManagement>
 	<ciManagement>
 		<system>Jenkins</system>
