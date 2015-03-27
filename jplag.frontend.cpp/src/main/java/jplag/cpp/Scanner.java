@@ -20,7 +20,7 @@ public class Scanner extends Parser implements CPPTokenConstants {
 		Scanner scanner = new Scanner();
 		scanner.setProgram(new StrippedProgram());
 
-		jplag.Structure s = scanner.scan(new File("."), args);
+		scanner.scan(new File("."), args);
 	}
 
 	public jplag.Structure scan(File dir, String files[]) {
