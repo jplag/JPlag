@@ -1,7 +1,7 @@
 # Building and Running JPlag
 To build and run a local installation of JPlag, you can use the pom.xml in this directory (aggregator). It builds JPlag and the available frontends. 
 
-To generate single modules run `mvn clean generate-sources package`; if you want a single file then run `mvn clean generate-sources assembly:assembly`. You will find the JARs in the respective `target` directories. If you build a single JAR, it will be generated in `jplag/target`.
+To generate single modules run `mvn clean generate-sources package` in the base directory; if you want a single file then run `mvn clean generate-sources assembly:assembly` inside the `jplag` directory. You will find the JARs in the respective `target` directories. If you build a single JAR, it will be generated in `jplag/target`.
 
 ## Web Service
 Installing, running and maintaining a local web service is not recommended as the web service uses outdated libraries and (really) needs polishing.
