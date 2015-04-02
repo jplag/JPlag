@@ -41,7 +41,7 @@
 					<grammarEncoding>${project.build.sourceEncoding}</grammarEncoding>
 					<debugparser>false</debugparser>
 					<isStatic>false</isStatic>
-					<outputDirectory>src/main/java/jplag/java15/grammar</outputDirectory>
+					<outputDirectory>${project.basedir}/src/main/java/jplag/java15/grammar</outputDirectory>
 				</configuration>
 				<executions>
 					<execution>
