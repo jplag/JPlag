@@ -22,8 +22,8 @@ public class Language implements jplag.Language {
 	}
 
 	public String[] suffixes() {
-		String[] res = { ".cpp", ".CPP", "c++", "C++", ".c", ".C", ".h", ".H",
-				".hpp", ".HPP" };
+		String[] res = { ".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H",
+				".hpp", ".HPP", ".hh", ".HH" };
 		return res;
 	}
 
