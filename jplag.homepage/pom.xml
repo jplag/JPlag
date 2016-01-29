@@ -9,6 +9,7 @@
 		<groupId>edu.kit.ipd.jplag</groupId>
 		<version>0.3-SNAPSHOT</version>
 		<artifactId>parent</artifactId>
+		<relativePath>../jplag.parent/pom.xml</relativePath>
 	</parent>
 
 	<repositories>
