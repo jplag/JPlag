@@ -78,6 +78,7 @@
 		<groupId>edu.kit.ipd.jplag</groupId>
 		<artifactId>parent</artifactId>
 		<version>0.3-SNAPSHOT</version>
+		<relativePath>../jplag.parent/pom.xml</relativePath>
 	</parent>
 	<artifactId>java-1.5</artifactId>
 </project>
