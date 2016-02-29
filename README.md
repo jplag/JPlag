@@ -15,6 +15,9 @@ To run JPlag, simply type `java -jar jplag-yourVersion.jar -l java17 -r /tmp/jpl
 - `-s` tells JPlag to reccurse into subdirectories; as we assume Java projects, we'll very likely encounter subdirectories such as `student1/src/`
 - `-r /tmp/jplag_results_exercise1` tells JPlag to store the results in the directory `/tmp/jplag_results_exercise1`
 
+**Note:** You have to specify the language exactly as they are printed by JPlag (running JPlag without command line arguments prints all available languages - and other options).
+E.g., if you want to process C++ files, you have specify `-l c/c++` as language option.
+
 # Building JPlag
 To build and run a local installation of JPlag, you can use the pom.xml in this directory (aggregator). It builds JPlag and the available frontends. 
 
@@ -23,7 +26,7 @@ To generate single modules run `mvn clean generate-sources package` in the base 
 ## Web Service
 Installing, running and maintaining a local web service is not recommended as the web service uses outdated libraries and (really) needs polishing.
 
-If you want to do it anyway: atujplag is the client, webservice is the - yepp - web service.
+If you want to do it anyway: `atujplag` is the client, `webservice` is the - yepp - web service.
 
 # Improving JPlag
 We're happy to incorporate all improvements to JPlag into this code base. Feel free to fork the project and send pull requests.
