@@ -2,6 +2,39 @@
 Download a released version - all releases ar single-JAR releases.
 
 Type `java -jar jplag-yourVersion.jar` in a console to see the command line options.
+The options as of 2016/02/29 are:
+
+```
+JPlag (Version 2.11.8-SNAPSHOT), Copyright (c) 2004-2015 KIT - IPD Tichy, Guido Malpohl, and others.
+Usage: JPlag [ options ] <root-dir>
+ <root-dir>        The root-directory that contains all submissions
+
+options are:
+ -v[qlpd]        (Verbose)
+                 q: (Quiet) no output
+                 l: (Long) detailed output
+                 p: print all (p)arser messages
+                 d: print (d)etails about each submission
+ -d              (Debug) parser. Non-parsable files will be stored.
+ -S <dir>        Look in directories <root-dir>/*/<dir> for programs.
+                 (default: <root-dir>/*)
+ -s              (Subdirs) Look at files in subdirs too (default: deactivated)
+
+ -p <suffixes>   <suffixes> is a comma-separated list of all filename suffixes
+                 that are included. ("-p ?" for defaults)
+
+ -o <file>       (Output) The Parserlog will be saved to <file>
+ -x <file>       (eXclude) All files named in <file> will be ignored
+ -t <n>          (Token) Tune the sensitivity of the comparison. A smaller
+                 <n> increases the sensitivity.
+ -m <n>          (Matches) Number of matches that will be saved (default:20)
+ -m <p>%         All matches with more than <p>% similarity will be saved.
+ -r <dir>        (Result) Name of directory in which the web pages will be
+                 stored (default: result)
+ -bc <dir>       Name of the directory which contains the basecode (common framework)
+ -l <language>   (Language) Supported Languages:
+                 java17 (default), java15, java15dm, java12, java11, c/c++, c#-1.2, char, text, scheme
+```
 
 ## Example
 Assume that we want to check students' solutions that are written in Java 1.7.
