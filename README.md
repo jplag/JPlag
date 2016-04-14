@@ -1,5 +1,5 @@
 # Download and Run JPlag
-Download a released version - all releases ar single-JAR releases.
+Download a released version - all releases are single-JAR releases.
 
 Type `java -jar jplag-yourVersion.jar` in a console to see the command line options.
 The options as of 2016/02/29 are:
@@ -45,7 +45,7 @@ All solutions are in a common directory, say `exercise1`.
 To run JPlag, simply type `java -jar jplag-yourVersion.jar -l java17 -r /tmp/jplag_results_exerise1/ -s /path/to/exercise1`
 
 - `-l java17` tells JPlag to use the frontend for Java 1.7
-- `-s` tells JPlag to reccurse into subdirectories; as we assume Java projects, we'll very likely encounter subdirectories such as `student1/src/`
+- `-s` tells JPlag to recurse into subdirectories; as we assume Java projects, we'll very likely encounter subdirectories such as `student1/src/`
 - `-r /tmp/jplag_results_exercise1` tells JPlag to store the results in the directory `/tmp/jplag_results_exercise1`
 
 **Note:** You have to specify the language exactly as they are printed by JPlag (running JPlag without command line arguments prints all available languages - and other options).
