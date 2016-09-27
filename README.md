@@ -51,6 +51,13 @@ To run JPlag, simply type `java -jar jplag-yourVersion.jar -l java17 -r /tmp/jpl
 **Note:** You have to specify the language exactly as they are printed by JPlag (running JPlag without command line arguments prints all available languages - and other options).
 E.g., if you want to process C++ files, you have specify `-l c/c++` as language option.
 
+## Options
+### `-x <file>`   (eXclude) All files named in `<file>` will be ignored
+The option `-x` requires an exclusion list saved as `<file>`.
+The exclusion list contains a  number of suffixes.
+JPlag will ignore all files that end with one of the suffixes.
+
+
 # Building JPlag
 To build and run a local installation of JPlag, you can use the pom.xml in this directory (aggregator). It builds JPlag and the available frontends. 
 
