@@ -31,7 +31,7 @@ public class Language implements jplag.Language {
     }
 
     public int min_token_match() {
-        return 9;
+        return 12;
     }
 
     public jplag.Structure parse(File dir, String[] files) {
@@ -43,7 +43,7 @@ public class Language implements jplag.Language {
     }
 
     public boolean supportsColumns() {
-        return false;
+        return true;
     }
 
     public boolean isPreformated() {

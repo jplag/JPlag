@@ -20,12 +20,11 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 public class Parser extends jplag.Parser implements Python3TokenConstants {
 
     private Structure struct = new Structure();
-    ;
-	private String currentFile;
+    private String currentFile;
 
     public static void main(String args[]) {
         if (args.length < 1) {
-            System.out.println("Only one ore more files as parameter allowed.");
+            System.out.println("Only one or more files as parameter allowed.");
             System.exit(-1);
         }
         Parser parser = new Parser();
@@ -117,7 +116,7 @@ public class Parser extends jplag.Parser implements Python3TokenConstants {
     //		struct.addToken(new JavaToken(type, (currentFile == null ? "null" : currentFile), line, start, text.length()));
     //	}
     public void add(int type, org.antlr.v4.runtime.Token tok) {
-        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), tok.getStartIndex(),
+        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), tok.getCharPositionInLine()+1,
                 tok.getText().length()));
     }
 }
