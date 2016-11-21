@@ -21,7 +21,7 @@ public class Language implements jplag.Language {
 									   // Konstruktor
 
 	public String[] suffixes() {
-		String[] res = { ".scm", ".SCM", "ss" };
+		String[] res = { ".scm", ".SCM", ".ss", ".SS" };
 		return res;
 	}
 
