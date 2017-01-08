@@ -94,7 +94,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitDecorated(@NotNull Python3Parser.DecoratedContext ctx) {
-        jplagParser.add(DEC_END, ctx.getStart());
+        jplagParser.addEnd(DEC_END, ctx.getStart());
     }
 
     @Override
@@ -129,7 +129,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitExcept_clause(@NotNull Python3Parser.Except_clauseContext ctx) {
-        jplagParser.add(EXCEPT_END, ctx.getStart());
+        jplagParser.addEnd(EXCEPT_END, ctx.getStart());
     }
 
     @Override
@@ -205,7 +205,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitWhile_stmt(@NotNull Python3Parser.While_stmtContext ctx) {
-        jplagParser.add(WHILE_END, ctx.getStart());
+        jplagParser.addEnd(WHILE_END, ctx.getStart());
     }
 
     @Override
@@ -391,7 +391,9 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterTestlist_comp(@NotNull Python3Parser.Testlist_compContext ctx) {
-        jplagParser.add(ARRAY, ctx.getStart());
+        if (ctx.getText().contains(",")) {
+            jplagParser.add(ARRAY, ctx.getStart());
+        }
     }
 
     @Override
@@ -405,7 +407,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitIf_stmt(@NotNull Python3Parser.If_stmtContext ctx) {
-        jplagParser.add(IF_END, ctx.getStart());
+        jplagParser.addEnd(IF_END, ctx.getStart());
     }
 
     @Override
@@ -415,7 +417,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitWith_stmt(@NotNull Python3Parser.With_stmtContext ctx) {
-        jplagParser.add(WITH_END, ctx.getStart());
+        jplagParser.addEnd(WITH_END, ctx.getStart());
     }
 
     @Override
@@ -425,7 +427,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitClassdef(@NotNull Python3Parser.ClassdefContext ctx) {
-        jplagParser.add(CLASS_END, ctx.getStart());
+        jplagParser.addEnd(CLASS_END, ctx.getStart());
     }
 
     @Override
@@ -446,7 +448,11 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterTrailer(@NotNull Python3Parser.TrailerContext ctx) {
-        jplagParser.add(APPLY, ctx.getStart());
+        if (ctx.getText().charAt(0)=='(') {
+            jplagParser.add(APPLY, ctx.getStart());
+        } else {
+            jplagParser.add(ARRAY, ctx.getStart());
+        }
     }
 
     @Override
@@ -548,7 +554,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitFuncdef(@NotNull Python3Parser.FuncdefContext ctx) {
-        jplagParser.add(METHOD_END, ctx.getStart());
+        jplagParser.addEnd(METHOD_END, ctx.getStart());
     }
 
     @Override
@@ -689,7 +695,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitFor_stmt(@NotNull Python3Parser.For_stmtContext ctx) {
-        jplagParser.add(FOR_END, ctx.getStart());
+        jplagParser.addEnd(FOR_END, ctx.getStart());
     }
 
     @Override
@@ -729,7 +735,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
     public void visitTerminal(@NotNull TerminalNode node) {
         if (node.getText().equals("=")) {
             jplagParser.add(ASSIGN, node.getSymbol());
-        }else  if (node.getText().equals("finally")) {
+        } else if (node.getText().equals("finally")) {
             jplagParser.add(FINALLY, node.getSymbol());
         }
     }
