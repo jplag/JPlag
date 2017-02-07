@@ -42,7 +42,7 @@ Assume that we want to check students' solutions that are written in Java 1.7.
 Each student solution is in its own directory, say `student1`, `student2`, and so on.
 All solutions are in a common directory, say `exercise1`.
 
-To run JPlag, simply type `java -jar jplag-yourVersion.jar -l java17 -r /tmp/jplag_results_exerise1/ -s /path/to/exercise1`
+To run JPlag, simply type `java -jar jplag-yourVersion.jar -l java17 -r /tmp/jplag_results_exercise1/ -s /path/to/exercise1`
 
 - `-l java17` tells JPlag to use the frontend for Java 1.7
 - `-s` tells JPlag to recurse into subdirectories; as we assume Java projects, we'll very likely encounter subdirectories such as `student1/src/`
