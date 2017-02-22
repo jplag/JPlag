@@ -42,7 +42,7 @@ public class Language implements jplag.Language {
 	}
 
 	public boolean supportsColumns() {
-		return false; // was true - should be true :/
+		return true;
 	}
 
 	public boolean isPreformated() {

@@ -32,6 +32,7 @@ public abstract class Options {
 			"java15dm", "jplag.java15.LanguageWithDelimitedMethods",
 			"java12", "jplag.java.Language",
 			"java11", "jplag.javax.Language",
+			"python3","jplag.python3.Language",
 			"c/c++", "jplag.cpp.Language",
 			"c#-1.2", "jplag.csharp.Language",
 			"char", "jplag.chars.Language",
