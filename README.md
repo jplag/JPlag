@@ -5,7 +5,7 @@ Type `java -jar jplag-yourVersion.jar` in a console to see the command line opti
 The options as of 2016/02/29 are:
 
 ```
-JPlag (Version 2.11.8-SNAPSHOT), Copyright (c) 2004-2015 KIT - IPD Tichy, Guido Malpohl, and others.
+JPlag (Version 2.11.9-SNAPSHOT), Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.
 Usage: JPlag [ options ] <root-dir>
  <root-dir>        The root-directory that contains all submissions
 
@@ -33,7 +33,7 @@ options are:
                  stored (default: result)
  -bc <dir>       Name of the directory which contains the basecode (common framework)
  -l <language>   (Language) Supported Languages:
-                 java17 (default), java15, java15dm, java12, java11, c/c++, c#-1.2, char, text, scheme
+                 java17 (default), java15, java15dm, java12, java11, python3, c/c++, c#-1.2, char, text, scheme
 ```
 
 ## Example

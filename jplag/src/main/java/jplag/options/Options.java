@@ -180,7 +180,7 @@ public abstract class Options {
 
 	public static void usage() {
 		System.out.print(Program.name_long
-						+ ", Copyright (c) 2004-2015 KIT - IPD Tichy, Guido Malpohl, and others.\n"
+						+ ", Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.\n"
 						+ "Usage: JPlag [ options ] <root-dir>\n"
 						+ " <root-dir>        The root-directory that contains all submissions\n\n"
 						+ "options are:\n"
