@@ -103,13 +103,13 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
     return (200*(float)tokensMatched())/(sa+sb);
   }
   public final float percentA() {
-  	int divisor;
+    float divisor;
   	if(bcmatchesA != null) divisor = subA.size()-subA.files.length-bcmatchesA.tokensMatched();
     else divisor = subA.size()-subA.files.length;
     return (divisor == 0 ? 0f : (tokensMatched()*100 / (float) divisor));
   }
   public final float percentB() {
-    int divisor;
+    float divisor;
 	if(bcmatchesB != null) divisor = subB.size()-subB.files.length-bcmatchesB.tokensMatched();
 	else divisor = subB.size()-subB.files.length;
     return (divisor == 0 ? 0f : (tokensMatched()*100 / (float) divisor));
