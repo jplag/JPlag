@@ -64,14 +64,6 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
     }
 
     @Override
-    public void enterInteger(@NotNull Python3Parser.IntegerContext ctx) {
-    }
-
-    @Override
-    public void exitInteger(@NotNull Python3Parser.IntegerContext ctx) {
-    }
-
-    @Override
     public void enterImport_from(@NotNull Python3Parser.Import_fromContext ctx) {
     }
 
@@ -138,14 +130,6 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitCompound_stmt(@NotNull Python3Parser.Compound_stmtContext ctx) {
-    }
-
-    @Override
-    public void enterNumber(@NotNull Python3Parser.NumberContext ctx) {
-    }
-
-    @Override
-    public void exitNumber(@NotNull Python3Parser.NumberContext ctx) {
     }
 
     @Override
@@ -379,14 +363,6 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void exitTfpdef(@NotNull Python3Parser.TfpdefContext ctx) {
-    }
-
-    @Override
-    public void enterString(@NotNull Python3Parser.StringContext ctx) {
-    }
-
-    @Override
-    public void exitString(@NotNull Python3Parser.StringContext ctx) {
     }
 
     @Override
@@ -743,4 +719,44 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
     @Override
     public void visitErrorNode(@NotNull ErrorNode node) {
     }
+
+	@Override
+	public void enterAnnassign(Python3Parser.AnnassignContext ctx) {
+	}
+
+	@Override
+	public void exitAnnassign(Python3Parser.AnnassignContext ctx) {
+	}
+
+	@Override
+	public void enterEncoding_decl(Python3Parser.Encoding_declContext ctx) {
+	}
+
+	@Override
+	public void exitEncoding_decl(Python3Parser.Encoding_declContext ctx) {
+	}
+
+	@Override
+	public void enterAtom_expr(Python3Parser.Atom_exprContext ctx) {
+	}
+
+	@Override
+	public void exitAtom_expr(Python3Parser.Atom_exprContext ctx) {
+	}
+
+	@Override
+	public void enterAsync_funcdef(Python3Parser.Async_funcdefContext ctx) {
+	}
+
+	@Override
+	public void exitAsync_funcdef(Python3Parser.Async_funcdefContext ctx) {
+	}
+
+	@Override
+	public void enterAsync_stmt(Python3Parser.Async_stmtContext ctx) {
+	}
+
+	@Override
+	public void exitAsync_stmt(Python3Parser.Async_stmtContext ctx) {
+	}
 }
