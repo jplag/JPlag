@@ -170,9 +170,9 @@ decorated
  : decorators ( classdef | funcdef )
  ;
 
-/// funcdef: 'def' NAME parameters ['->' test] ':' suite
+/// funcdef: 'async'? 'def' NAME parameters ['->' test] ':' suite
 funcdef
- : DEF NAME parameters ( '->' test )? ':' suite
+ : ASYNC? DEF NAME parameters ( '->' test )? ':' suite
  ;
 
 /// parameters: '(' [typedargslist] ')'
@@ -399,9 +399,9 @@ while_stmt
  : WHILE test ':' suite ( ELSE ':' suite )?
  ;
 
-/// for_stmt: 'for' exprlist 'in' testlist ':' suite ['else' ':' suite]
+/// for_stmt: 'async'? 'for' exprlist 'in' testlist ':' suite ['else' ':' suite]
 for_stmt
- : FOR exprlist IN testlist ':' suite ( ELSE ':' suite )?
+ : ASYNC? FOR exprlist IN testlist ':' suite ( ELSE ':' suite )?
  ;
 
 /// try_stmt: ('try' ':' suite
@@ -417,9 +417,9 @@ try_stmt
                  )
  ;
 
-/// with_stmt: 'with' with_item (',' with_item)*  ':' suite
+/// with_stmt: 'async'? 'with' with_item (',' with_item)*  ':' suite
 with_stmt
- : WITH with_item ( ',' with_item )* ':' suite
+ : ASYNC? WITH with_item ( ',' with_item )* ':' suite
  ;
 
 /// with_item: test ['as' expr]
@@ -553,7 +553,7 @@ factor
 
 /// power: atom trailer* ['**' factor]
 power
- : atom trailer* ( '**' factor )?
+ : AWAIT? atom trailer* ( '**' factor )?
  ;
 
 /// atom: ('(' [yield_expr|testlist_comp] ')' |
@@ -730,6 +730,8 @@ DEL : 'del';
 PASS : 'pass';
 CONTINUE : 'continue';
 BREAK : 'break';
+ASYNC : 'async';
+AWAIT : 'await';
 
 NEWLINE
  : ( {atStartOfInput()}?   SPACES
@@ -776,15 +778,16 @@ NAME
  ;
 
 /// stringliteral   ::=  [stringprefix](shortstring | longstring)
-/// stringprefix    ::=  "r" | "R"
+/// stringprefix    ::=  "r" | "u" | "R" | "U" | "f" | "F"
+///                      | "fr" | "Fr" | "fR" | "FR" | "rf" | "rF" | "Rf" | "RF"
 STRING_LITERAL
- : [uU]? [rR]? ( SHORT_STRING | LONG_STRING )
+ : ( [rR] | [uU] | [fF] | ( [fF] [rR] ) | ( [rR] [fF] ) )? ( SHORT_STRING | LONG_STRING )
  ;
 
 /// bytesliteral   ::=  bytesprefix(shortbytes | longbytes)
-/// bytesprefix    ::=  "b" | "B" | "br" | "Br" | "bR" | "BR"
+/// bytesprefix    ::=  "b" | "B" | "br" | "Br" | "bR" | "BR" | "rb" | "rB" | "Rb" | "RB"
 BYTES_LITERAL
- : [bB] [rR]? ( SHORT_BYTES | LONG_BYTES )
+ : ( [bB] | ( [bB] [rR] ) | ( [rR] [bB] ) ) ( SHORT_BYTES | LONG_BYTES )
  ;
 
 /// decimalinteger ::=  nonzerodigit digit* | "0"+
