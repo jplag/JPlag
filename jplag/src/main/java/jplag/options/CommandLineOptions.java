@@ -321,6 +321,7 @@ public class CommandLineOptions extends Options {
                 throw new jplag.ExitException("Title is empty!");
             }
             this.title = args[i+1];
+            i++;
         } else if (!scanOption(arg))
             throw new jplag.ExitException("Unknown option: " + arg,
                     ExitException.BAD_PARAMETER);
