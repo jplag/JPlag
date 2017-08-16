@@ -98,14 +98,14 @@ public class Report implements TokenConstants {
 	public void writeHTMLHeader(HTMLFile file, String title) {
 		file.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
 		file.println("<HTML><HEAD><TITLE>" + title + "</TITLE>");
-		file.println("<META http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
+		file.println("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
 		file.println("</HEAD>");
 	}
 
 	public void writeHTMLHeaderWithScript(HTMLFile file, String title) {
 		file.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
 		file.println("<HTML>\n<HEAD>\n <TITLE>" + title + "</TITLE>");
-		file.println("<META http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">");
+		file.println("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
 		file.println("  <script type=\"text/javascript\">\n  <!--");
 		file.println("   function ZweiFrames(URL1,F1,URL2,F2)\n   {");
 		file.println("    parent.frames[F1].location.href=URL1;");

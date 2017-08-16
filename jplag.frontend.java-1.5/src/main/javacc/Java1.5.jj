@@ -137,11 +137,11 @@ public class JavaParser implements JavaTokenConstants
         try {
             FileInputStream in = new FileInputStream(new File(dir,fileName));
             if (parser == null) {
-                JavaTabModCharStream charStream = new JavaTabModCharStream(new UnicodeReader(in, "ISO-8859-1"));
+                JavaTabModCharStream charStream = new JavaTabModCharStream(new UnicodeReader(in, "UTF-8"));
                 parser = new JavaParser(charStream);
                 parser.charStream = charStream;
             } else {
-                parser.charStream.ReInit(new UnicodeReader(in, "ISO-8859-1"));
+                parser.charStream.ReInit(new UnicodeReader(in, "UTF-8"));
                 parser.ReInit(parser.charStream);
             }
             parser.parser2 = parserX;

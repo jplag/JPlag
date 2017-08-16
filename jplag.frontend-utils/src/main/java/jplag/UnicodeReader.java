@@ -27,7 +27,7 @@ import java.io.Reader;
  * default is used if: BOM mark is not found and defaultEnc is NULL.<br />
  * 
  * Usage pattern:<pre>
- * String defaultEnc = "ISO-8859-1"; // or NULL to use system default
+ * String defaultEnc = "UTF-8"; // or NULL to use system default
  * FileInputStream fis = new FileInputStream(file);
  * Reader in = new UnicodeReader(fis, defaultEnc);</pre>
  */

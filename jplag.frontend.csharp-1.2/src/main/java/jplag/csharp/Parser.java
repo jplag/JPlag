@@ -72,7 +72,7 @@ public class Parser extends jplag.Parser implements CSharpTokenConstants {
 			FileInputStream fis = new FileInputStream(new File(dir, file));
 			currentFile = file;
 			// Create a scanner that reads from the input stream passed to us
-			CSharpLexer lexer = new CSharpLexer(new UnicodeReader(fis, "ISO-8859-1"));
+			CSharpLexer lexer = new CSharpLexer(new UnicodeReader(fis, "UTF-8"));
 			lexer.setFilename(file);
 			lexer.setTabSize(1);
 

@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Vector;
@@ -81,7 +82,7 @@ public class Submission implements Comparable<Submission> {
 			return;
 		if (readSubDirs) {
 			String[] dirs = aktDir.list();
-			if (subDir != "")
+			if (!subDir.equals(""))
 				for (int i = 0; i < dirs.length; i++)
 					lookupDir(dir, subDir + File.separator + dirs[i]);
 			else
@@ -214,7 +215,10 @@ public class Submission implements Comparable<Submission> {
 		for (int i = 0; i < files.length; i++) {
 			text.removeAllElements();
 			try {
-				BufferedReader in = new BufferedReader(new FileReader(new File(dir, files[i])));
+				/* file encoding = "UTF-8" */
+				FileInputStream fileInputStream = new FileInputStream(new File(dir, files[i]));
+				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+				BufferedReader in = new BufferedReader(inputStreamReader);
 				while ((help = in.readLine()) != null) {
 					help = help.replaceAll("&", "&amp;");
 					help = help.replaceAll("<", "&lt;");
@@ -223,6 +227,8 @@ public class Submission implements Comparable<Submission> {
 					text.addElement(help);
 				}
 				in.close();
+				inputStreamReader.close();
+				fileInputStream.close();
 			} catch (FileNotFoundException e) {
 				System.out.println("File not found: " + ((new File(dir, files[i])).toString()));
 			} catch (IOException e) {
