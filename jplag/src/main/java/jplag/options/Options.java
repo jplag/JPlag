@@ -12,6 +12,9 @@ import jplag.Language;
 import jplag.Program;
 import jplag.clustering.SimilarityMatrix;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Author Emeric Kwemou 30.01.2005
  *  
@@ -129,6 +132,11 @@ public abstract class Options {
 
 	public jplag.Language language;
 
+	//compare two files options
+	public boolean fileListMode = false;
+
+	public List<String> fileList = new ArrayList<String>();
+
 	// "FINAL" OPTIONS
 	public boolean debugParser = false;
 
@@ -181,8 +189,9 @@ public abstract class Options {
 	public static void usage() {
 		System.out.print(Program.name_long
 						+ ", Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.\n"
-						+ "Usage: JPlag [ options ] <root-dir>\n"
-						+ " <root-dir>        The root-directory that contains all submissions\n\n"
+						+ "Usage: JPlag [ options ] <root-dir> or JPlag [ options ] <file1> <file2>\n"
+						+ " <root-dir>        The root-directory that contains all submissions. \n"
+						+ "                   Mandatory unless -c flag is provided.\n\n"
 						+ "options are:\n"
 						+ " -v[qlpd]        (Verbose)\n"
 						+ "                 q: (Quiet) no output\n"
@@ -204,6 +213,7 @@ public abstract class Options {
 						+ " -r <dir>        (Result) Name of directory in which the web pages will be\n"
 						+ "                 stored (default: result)\n"
 						+ " -bc <dir>       Name of the directory which contains the basecode (common framework)\n"
+						+ " -c [files]      Compare a list of files. \n"
 						+ " -l <language>   (Language) Supported Languages:\n                 ");
 		for (int i = 0; i < languages.length - 2; i += 2)
 			System.out.print(languages[i] + (i == 0 ? " (default), " : ", "));
