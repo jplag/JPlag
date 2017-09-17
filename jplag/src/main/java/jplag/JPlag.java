@@ -17,6 +17,7 @@ public class JPlag {
             }
             catch(ExitException ex) {
                 System.out.println("Error: "+ex.getReport());
+		System.exit(1);
             }
 		}
 	}
