@@ -444,9 +444,12 @@ public class Program implements ProgramI {
 
 	private void createSubmissionsFileList() throws jplag.ExitException {
 		submissions = new Vector<Submission>();
-		File f = new File(options.root_dir);
-		if (f == null || !f.isDirectory()) {
-			throw new jplag.ExitException(options.root_dir + " is not a directory!");
+		File f = null;
+		if (options.root_dir != null) {
+			f = new File(options.root_dir);
+			if (!f.isDirectory()) {
+				throw new jplag.ExitException(options.root_dir + " is not a directory!");
+			}
 		}
 		for (String file : options.fileList){
 			submissions.addElement(new Submission(file, f, this, get_language()));

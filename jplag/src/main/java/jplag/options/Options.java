@@ -61,7 +61,7 @@ public abstract class Options {
 
 	public String sub_dir = null;
 
-	public String root_dir = "";
+	public String root_dir = null;
 
 	public String original_dir = null;
 	

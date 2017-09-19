@@ -6,7 +6,7 @@ The options as of 2017/09/17 are:
 
 ```
 JPlag (Version 2.11.9-SNAPSHOT), Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.
-Usage: JPlag [ options ] <root-dir>
+Usage: JPlag [ options ] [<root-dir>] [-c file1 file2 ...]
  <root-dir>        The root-directory that contains all submissions
 
 options are:
@@ -59,8 +59,8 @@ The exclusion list contains a  number of suffixes.
 JPlag will ignore all files that end with one of the suffixes.
 
 ### `-c [files]`   (Compare) Compare a list of files
-Example: `java -jar jplag-yourVersion.jar root_dir -l java17 -c student1_file student2_file student3_file`
-This option should be the last one.
+Example: `java -jar jplag-yourVersion.jar -l java17 -c student1_file student2_file student3_file`
+This option must be the last one.
 JPlag will compare just a list of files pairwise.
 
 # Building JPlag
