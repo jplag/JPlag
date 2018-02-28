@@ -27,11 +27,11 @@ import atujplag.view.JPlagCreator;
 
 /**
  * @author Emeric Kwemou 19-03-05
- *  
+ *
  */
 public class SimpleClient extends Client {
 	private Vector<SubmissionManager> submissions = null;
-    
+
 	/**
 	 * @param clientName
 	 *            the name given to the project to be compared with jplag
@@ -49,7 +49,7 @@ public class SimpleClient extends Client {
             System.exit(2);     // TODO: hmmm.... exit?
         }
 	}
-	
+
     protected JPlagTyp_Stub getJPlagStub() {
         if (stub == null) {
             stub = (JPlagTyp_Stub) (new JPlagService_Impl()
@@ -76,44 +76,44 @@ public class SimpleClient extends Client {
     public boolean compareSource() {
 		if (isForceStop())
 			return false;
-		
+
         this.setState(Messages.getString("SimpleClient.Packing_files"), //$NON-NLS-1$
             "", 0,Client.PACKING, true); //$NON-NLS-1$
 
         Vector<File> submissionFiles = collectValidSubmission();
-        
+
 		if (isForceStop() || stub == null && getJPlagStub() == null) {
 			return false;
 		}
-		
+
 		// Preparing file
 		File zippedfile = null;
 		try {
 			zippedfile = new File(atujplag.getResultLocation()
 				+ File.separator + "atujplag_tmp_zipped_entry_" //$NON-NLS-1$
 				+ this.clientName + ".zip"); //$NON-NLS-1$
-			
+
             ZipUtil.zipFilesTo(submissionFiles, submissionDirectory, zippedfile);
 
             if (isForceStop()) {
                 zippedfile.delete();
                 return false;
             }
-            
+
             FileInputStream input = new FileInputStream(zippedfile);
-            
+
             int filesize = (int) zippedfile.length();
-            
+
             setState(Messages.getString(
                 "SimpleClient.Sending_files_to_JPlag_server"), //$NON-NLS-1$
                 "(0 kB / " + (filesize+1023)/1024 //$NON-NLS-1$
                 + " kB)", 0, Client.SENDING, true); //$NON-NLS-1$
-            
+
             int sentsize = 0;
             int partsize = (filesize<81920) ? filesize : 81920;
             byte[] data = new byte[partsize];
             input.read(data);
-            
+
             this.internalState = Client.SENDING;
             submissionID = stub.startSubmissionUpload(
                 new StartSubmissionUploadParams(options, filesize, data));
@@ -132,9 +132,9 @@ public class SimpleClient extends Client {
             }
             input.close();
             setTransferProgress(filesize, filesize);
-			
+
 			zippedfile.delete();
-			
+
 			System.gc();
 			if(isForceStop()) {
 				return false;
@@ -147,9 +147,9 @@ public class SimpleClient extends Client {
                     "SimpleClient.Sending_files_{1_DESC}_ERROR"), //$NON-NLS-1$
 					new String[]{e.getDescription() + "\n" + e.getRepair()}), //$NON-NLS-1$
 				e.getMessage(), 100, internalState, false);
-			
+
 			if(zippedfile != null) zippedfile.delete();
-			
+
 			return false;
 		} catch (Exception e) {
 			this.setState(TagParser.parse(Messages.getString(
@@ -160,11 +160,11 @@ public class SimpleClient extends Client {
 					new String[]{e.getCause()==null ? Messages.getString(
 						"SimpleClient.UNKNOWN") : e.getCause().toString()}), //$NON-NLS-1$
 				100, internalState, false);
-            
+
             e.printStackTrace();
-			
+
 			if(zippedfile != null) zippedfile.delete();
-			
+
 			return false;
 		}
 		return true;
@@ -213,7 +213,7 @@ public class SimpleClient extends Client {
 				return null;
 			}
 		} catch (JPlagException e) {
-			JPlagCreator.showError(parent, 
+			JPlagCreator.showError(parent,
                 Messages.getString("SimpleClient.JPlag_error"), //$NON-NLS-1$
 				TagParser.parse(Messages.getString(
 					"SimpleClient.JPlag_server_access_{1_DESC}_{2_DETAIL}_ERROR"), //$NON-NLS-1$
@@ -231,7 +231,7 @@ public class SimpleClient extends Client {
 		this.stub = getJPlagStub();
 		return super.cancelSubmission(parent);
 	}
-    
+
     private Vector<File> collectValidSubmission() {
         Vector<File> fileVector = new Vector<File>();
         for(int i=0; i<submissions.size(); i++) {
@@ -245,7 +245,7 @@ public class SimpleClient extends Client {
 	public void setSubmissions(Vector<SubmissionManager> submissions) {
 		this.submissions = submissions;
 	}
-    
+
     public static String startSubmissionUpload(ATUJPLAG atujplag, Option params,
             int filesize, byte[] data) {
         SimpleClient client = new SimpleClient(atujplag);

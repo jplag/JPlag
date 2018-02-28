@@ -43,7 +43,7 @@ class SubmissionTree extends JFrame implements ActionListener, WindowListener {
 
 	private JTree invalidTree;
 	private DefaultMutableTreeNode invalidRoot = null;
-	
+
 	private JTree validTree;
 	private DefaultMutableTreeNode validRoot = null;
 
@@ -74,10 +74,10 @@ class SubmissionTree extends JFrame implements ActionListener, WindowListener {
 		validTree = new JTree(validRoot, true);
 		validTree.setName("JPlag Preview tree"); //$NON-NLS-1$
 
-		// This workaround removes all expand controls from empty nodes		
+		// This workaround removes all expand controls from empty nodes
 		expandAll();
 		collapseAll();
-		
+
 		JScrollPane validScroll = new JScrollPane(validTree);
 		validScroll.setBackground(JPlagCreator.SYSTEMCOLOR);
 		validScroll.getViewport().setBackground(JPlagCreator.SYSTEMCOLOR);
@@ -92,7 +92,7 @@ class SubmissionTree extends JFrame implements ActionListener, WindowListener {
 		mainPanel.setBackground(JPlagCreator.SYSTEMCOLOR);
         JPanel pan = JPlagCreator.createPanelWithoutBorder(350,50,10,0,FlowLayout.CENTER);
 		JPanel buttons = JPlagCreator.createPanelWithoutBorder(350, 30, 0, 15,FlowLayout.CENTER);
-		
+
 		JButton button = JPlagCreator.createButton(
 			Messages.getString("SubmissionTree.Expand_all"), //$NON-NLS-1$
 			Messages.getString("SubmissionTree.Expand_all_TIP"), //$NON-NLS-1$
@@ -100,7 +100,7 @@ class SubmissionTree extends JFrame implements ActionListener, WindowListener {
 		button.setActionCommand("expand"); //$NON-NLS-1$
 		button.addActionListener(this);
 		buttons.add(button);
-		
+
 		button = JPlagCreator.createButton(
 			Messages.getString("SubmissionTree.Collapse_all"), //$NON-NLS-1$
 			Messages.getString("SubmissionTree.Collapse_all_TIP"), //$NON-NLS-1$
@@ -116,7 +116,7 @@ class SubmissionTree extends JFrame implements ActionListener, WindowListener {
 		button.setActionCommand("close"); //$NON-NLS-1$
 		button.addActionListener(this);
 		buttons.add(button);
-		
+
 		pan.add(buttons);
 		contentPane.add(mainPanel, BorderLayout.CENTER);
 		contentPane.add(pan, BorderLayout.SOUTH);
@@ -139,10 +139,10 @@ class SubmissionTree extends JFrame implements ActionListener, WindowListener {
             		gui.previewClosed();
                 }
             }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        
+
         return rootPane;
     }
-	
+
 	protected void expandAll() {
 		invalidTree.expandRow(0);
 		validTree.expandRow(0);
@@ -153,7 +153,7 @@ class SubmissionTree extends JFrame implements ActionListener, WindowListener {
 			validTree.expandRow(row);
 		}
 	}
-	
+
 	protected void collapseAll() {
 		int nrRows = invalidTree.getRowCount();
 		for (int row = 1; row < nrRows; row++)
@@ -162,7 +162,7 @@ class SubmissionTree extends JFrame implements ActionListener, WindowListener {
 		for (int row = 1; row < nrRows2; row++)
 			validTree.collapseRow(row);
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
 		if (command.equals("expand")) { //$NON-NLS-1$
@@ -193,7 +193,7 @@ class SubmissionTree extends JFrame implements ActionListener, WindowListener {
 					subNodeName);
 			invalidRoot.add(subNode);
 		}
-        
+
         // Add all invalid files
         for (Iterator<SubmissionManager> i = subs.iterator(); i.hasNext();) {
             SubmissionManager sub = i.next();

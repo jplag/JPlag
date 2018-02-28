@@ -93,17 +93,17 @@ public class Command {
 
 	public void run() {
 		client.setGui(gui);
-		
+
 		if (action == COMPARE_SOURCE || action == ALL_STEPS) {
 			compareSource();
 			setNextAction(GET_STATUS_AND_RESULT);
 		}
-		
+
 		if (action == GET_STATUS_AND_RESULT) {
 			getStatus_and_Result();
 			action = DELETE_SUBMISSION;
 		}
-		
+
 		if (action == DELETE_SUBMISSION) {
 			delete();
 		}

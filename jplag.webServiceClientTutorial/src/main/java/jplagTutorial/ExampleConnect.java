@@ -54,7 +54,7 @@ public class ExampleConnect {
             e.printStackTrace();
         }
     }
-    
+
     public static void main(String[] args) {
         String username = null, password = null;
         for(int i=0; i<args.length; i++) {
@@ -74,7 +74,7 @@ public class ExampleConnect {
                 + " -pass <password>      Sets the password (required)\n");
             return;
         }
-        
+
         // Create a trust manager that does not validate certificate chains
         TrustManager[] trustAllCerts = new TrustManager[] {
             new X509TrustManager() {
@@ -89,7 +89,7 @@ public class ExampleConnect {
                 }
             }
         };
-        
+
         // Install the all-trusting trust manager
         try {
             SSLContext sc = SSLContext.getInstance("SSL");
@@ -99,12 +99,12 @@ public class ExampleConnect {
             System.out.println("Warning: Unable to install all-trusting trust "
                 + "manager! SSL connection may not work!");
         }
-        
+
         // Get JPlag client stub
-        
+
         JPlagTyp_Stub stub = (JPlagTyp_Stub) (new JPlagService_Impl()
                 .getJPlagServicePort());
-                
+
         // Search for the JPlagClientAccessHandler in the handler chain
 
         HandlerChain handlerchain = stub._getHandlerChain();
@@ -117,32 +117,32 @@ public class ExampleConnect {
                 break;
             }
         }
-        
+
         if(accessHandler == null) {
             System.out.println("Unable to find access handler!");
             return;
         }
-        
+
         // Initialize access handler
-        
+
         accessHandler.setUserPassObjects(username, password);
-        
+
         // Get ServerInfo and print out some infos
-        
+
         ServerInfo info;
-        
+
         try {
             info = stub.getServerInfo();
         } catch(Exception e) {
             checkException(e);
             return;
         }
-        
+
         UserInfo userinfo = info.getUserInfo();
         System.out.println("User info:\n Email: " + userinfo.getEmail()
             + "\n Alternative email: " + userinfo.getEmailSecond()
             + "\n Homepage: " + userinfo.getHomepage());
-        
+
         System.out.println("\nAvailable languages:");
         LanguageInfo[] languages = info.getLanguageInfos();
         for(int i=0; i<languages.length; i++) {
@@ -161,7 +161,7 @@ public class ExampleConnect {
         String[] countryLangs = info.getCountryLanguages();
         for(int i=0; i<countryLangs.length; i++)
             System.out.println(" - \"" + countryLangs[i] + "\"");
-        
+
         Submission[] subs = info.getSubmissions();
         if(subs.length == 0) {
             System.out.println("\nCurrently there are no submissions on the "

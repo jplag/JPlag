@@ -46,7 +46,7 @@ public class MailDialog extends JDialog {
 	public static final int MAIL_DECLINED = 1;
 	public static final int MAIL_SERVER = 2;
     public static final int MAIL_ALL = 3;
-	
+
 	public static final int USERNAME=0;
 	public static final int PASSWORD=1;
 	public static final int EXPIRES=2;
@@ -55,7 +55,7 @@ public class MailDialog extends JDialog {
 	public static final int EMAILSECOND=5;
 	public static final int HOMEPAGE=6;
 	public static final int SERVER=7;
-	
+
 	private static final String[] tagNames = { "username", "password", "expires", "realname", "email", "emailSecond", "homepage", "server" };
 
 	/*
@@ -65,14 +65,14 @@ public class MailDialog extends JDialog {
 	 * final int S_REALNAME=5; public static final int S_EMAIL=6; public static
 	 * final int S_EMAILSECOND=7; public static final int S_HOMEPAGE=8; public
 	 * static final int S_SERVER=9;
-	 * 
+	 *
 	 * private static final String[] serverTagNames = { "username", "password",
 	 * "expires", "lastUsage", "numOfSubs", "realname", "email", "emailSecond",
 	 * "homepage", "server" };
 	 */
-    
+
 	private static final String[] typeNames = { "accepted", "declined", "serverMail" };
-	
+
 	private javax.swing.JPanel jContentPane = null;
 	private JTextArea jTemplateTextArea = null;
 	private JPanel jPanel = null;
@@ -89,13 +89,13 @@ public class MailDialog extends JDialog {
 	private JComboBox<String> jTemplateComboBox = null;
 	private JLabel jLabel2 = null;
 	private JComboBox<String> jTagComboBox = null;
-	
+
     private Vector<MailTemplate> templates = null;
 	private AdminTool adminTool = null;
 	private int type = 0;
 	private RequestData reqData = null;
     private boolean showSendButtons = true;
-	
+
 	private boolean cancelled = true;
 	private String preview = "";
 	private String subject = "";
@@ -107,18 +107,18 @@ public class MailDialog extends JDialog {
     private JButton jCopyTemplateButton = null;
     private JButton jRenameTemplateButton = null;
     private JButton jDeleteTemplateButton = null;
-	
+
 	public MailDialog(int typ, String title, RequestData rd, JDialog parent,
 			AdminTool at) {
 		super(parent,true);		 // make modal
         init(typ,title,rd,at);
     }
-        
+
 	public MailDialog(int typ, String title, RequestData rd, AdminTool at) {
 		super(at,true);		     // make modal
         init(typ,title,rd,at);
 	}
-	
+
     private void init(int typ, String title, RequestData rd, AdminTool at) {
         adminTool = at;
         type = typ;
@@ -149,25 +149,25 @@ public class MailDialog extends JDialog {
                     dispose();
 				}
 			}, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		
+
 		return rootPane;
 	}
 
 	public boolean isCancelled() {
 		return cancelled;
 	}
-	
+
 	public String getMailString() {
 		return preview;
 	}
-	
+
 	public String getMailSubjectString() {
 		return subject;
 	}
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize(String title) {
@@ -178,7 +178,7 @@ public class MailDialog extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -195,10 +195,10 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel() {
 		if (jPanel == null) {
 			GridBagConstraints gridBagConstraints10 = new GridBagConstraints();
@@ -295,10 +295,10 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTemplateScrollPane	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
+	 * This method initializes jTemplateScrollPane
+	 *
+	 * @return javax.swing.JScrollPane
+	 */
 	private JScrollPane getJTemplateScrollPane() {
 		if (jTemplateScrollPane == null) {
 			jTemplateScrollPane = new JScrollPane();
@@ -308,10 +308,10 @@ public class MailDialog extends JDialog {
 	}
 
     /**
-     * This method initializes jTextArea    
-     *  
-     * @return javax.swing.JTextArea    
-     */    
+     * This method initializes jTextArea
+     *
+     * @return javax.swing.JTextArea
+     */
 	private JTextArea getJTemplateTextArea() {
 		if (jTemplateTextArea == null) {
 			jTemplateTextArea = new JTextArea();
@@ -349,12 +349,12 @@ public class MailDialog extends JDialog {
 		}
 		return jTemplateTextArea;
     }
-    
+
 	/**
-	 * This method initializes jPreviewScrollPane	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
+	 * This method initializes jPreviewScrollPane
+	 *
+	 * @return javax.swing.JScrollPane
+	 */
 	private JScrollPane getJPreviewScrollPane() {
 		if (jPreviewScrollPane == null) {
 			jPreviewScrollPane = new JScrollPane();
@@ -364,10 +364,10 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPreviewTextArea	
-	 * 	
-	 * @return javax.swing.JTextArea	
-	 */    
+	 * This method initializes jPreviewTextArea
+	 *
+	 * @return javax.swing.JTextArea
+	 */
 	private JTextArea getJPreviewTextArea() {
 		if (jPreviewTextArea == null) {
 			jPreviewTextArea = new JTextArea();
@@ -379,10 +379,10 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButtonPanel	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jButtonPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJButtonPanel() {
 		if (jButtonPanel == null) {
 			jButtonPanel = new JPanel();
@@ -403,17 +403,17 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJSaveAndSendButton() {
 		if (jSaveAndSendButton == null) {
 			jSaveAndSendButton = new JButton();
 			jSaveAndSendButton.setText("Save and send");
 			jSaveAndSendButton.addActionListener(
-                new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+                new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					subject=getJSubjectField().getText();
 					saveTemplate();
 					cancelled = false;
@@ -426,15 +426,15 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton2	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton2
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJSendButton() {
 		if (jSendButton == null) {
 			jSendButton = new JButton();
 			jSendButton.setText("Send");
-			jSendButton.addActionListener(new java.awt.event.ActionListener() { 
+			jSendButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					subject=getJSubjectField().getText();
 					cancelled = false;
@@ -447,17 +447,17 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton1	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton1
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJCancelButton() {
 		if (jCancelButton == null) {
 			jCancelButton = new JButton();
 			jCancelButton.setText(showSendButtons ? "Cancel" : "Close");
 			jCancelButton.addActionListener(
-                new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+                new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					setVisible(false);
                     dispose();
 				}
@@ -465,7 +465,7 @@ public class MailDialog extends JDialog {
 		}
 		return jCancelButton;
 	}
-	
+
     private void setMailTemplate(String name, String subject, String data) {
         try {
             adminTool.getJPlagStub().setMailTemplate(new SetMailTemplateParams(
@@ -475,18 +475,18 @@ public class MailDialog extends JDialog {
             adminTool.CheckException(ex,this);
         }
     }
-    
+
 	private void saveTemplate() {
         String name = (String) getJTemplateComboBox().getSelectedItem();
         String data = getJTemplateTextArea().getText();
         setMailTemplate(name, subject, data);
 
         // Update template object
-        
+
         int tempNum = jTemplateComboBox.getSelectedIndex();
         if(tempNum < 0)     // if no name selected don't update...
             return;         // (this shouldn't happen...)
-        
+
         MailTemplate tmpl = templates.get(tempNum);
         tmpl.setName(name);
         tmpl.setSubject(subject);
@@ -494,16 +494,16 @@ public class MailDialog extends JDialog {
     }
 
 	/**
-	 * This method initializes jButton3	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton3
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJSaveButton() {
 		if (jSaveButton == null) {
 			jSaveButton = new JButton();
 			jSaveButton.setText("Save");
-			jSaveButton.addActionListener(new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+			jSaveButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					subject=getJSubjectField().getText();
 					saveTemplate();
                 }
@@ -511,7 +511,7 @@ public class MailDialog extends JDialog {
 		}
 		return jSaveButton;
 	}
-	
+
 	private void updatePreview() {
 		String template = getJTemplateTextArea().getText();
 		String[] tokens = template.split("[{}]");
@@ -541,12 +541,12 @@ public class MailDialog extends JDialog {
 		getJPreviewTextArea().setText(preview);
 		try
 		{
-			// Set preview cursor into the same line as the template cursor  
+			// Set preview cursor into the same line as the template cursor
 			int viewline=getJTemplateTextArea().getLineOfOffset(
 					getJTemplateTextArea().getCaretPosition());
 			getJPreviewTextArea().setCaretPosition(
 					getJPreviewTextArea().getLineStartOffset(viewline));
-			
+
 			// Let preview viewport start painting at the same line as
 			// the template viewport
 			Point p=getJTemplateScrollPane().getViewport().getViewPosition();
@@ -556,10 +556,10 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jComboBox	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */    
+	 * This method initializes jComboBox
+	 *
+	 * @return javax.swing.JComboBox
+	 */
 	private JComboBox<String> getJTemplateComboBox() {
 		if (jTemplateComboBox == null) {
 			String[] templateNames = new String[templates.size()];
@@ -567,8 +567,8 @@ public class MailDialog extends JDialog {
 				templateNames[i] = templates.get(i).getName();
 			jTemplateComboBox = new JComboBox<String>(templateNames);
 			jTemplateComboBox.addActionListener(
-                new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+                new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					int tempNum = jTemplateComboBox.getSelectedIndex();
 					if(tempNum < 0)		// if new name selected
 						return;			// don't change the text
@@ -586,14 +586,14 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jComboBox1	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */    
+	 * This method initializes jComboBox1
+	 *
+	 * @return javax.swing.JComboBox
+	 */
 	private JComboBox<String> getJTagComboBox() {
 		if (jTagComboBox == null) {
 			jTagComboBox = new JComboBox<String>(tagNames);
-			jTagComboBox.addActionListener(new java.awt.event.ActionListener() { 
+			jTagComboBox.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					JTextArea ta = getJTemplateTextArea();
 					ta.insert("{" + (String) jTagComboBox.getSelectedItem() +
@@ -605,10 +605,10 @@ public class MailDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJSubjectField() {
 		if (jSubjectField == null) {
 			jSubjectField = new JTextField();
@@ -618,9 +618,9 @@ public class MailDialog extends JDialog {
 	}
 
     /**
-     * This method initializes jTypeChoosePanel	
-     * 	
-     * @return javax.swing.JPanel	
+     * This method initializes jTypeChoosePanel
+     *
+     * @return javax.swing.JPanel
      */
     private JPanel getJTypeChoosePanel() {
         if(jTypeChoosePanel == null) {
@@ -639,7 +639,7 @@ public class MailDialog extends JDialog {
         }
         return jTypeChoosePanel;
     }
-    
+
     private void setButtonsEnabled(boolean enabled) {
         if(showSendButtons) {
             getJSendButton().setEnabled(enabled);
@@ -649,9 +649,9 @@ public class MailDialog extends JDialog {
     }
 
     /**
-     * This method initializes jTypeComboBox	
-     * 	
-     * @return javax.swing.JComboBox	
+     * This method initializes jTypeComboBox
+     *
+     * @return javax.swing.JComboBox
      */
     private JComboBox<String> getJTypeComboBox() {
         if(jTypeComboBox == null) {
@@ -675,7 +675,7 @@ public class MailDialog extends JDialog {
                             }
                             return null;
                         }
-                        
+
                         public void finished() {
                             jTemplateComboBox.removeAllItems();
                             for(int i=0;i<templates.size();i++)
@@ -684,7 +684,7 @@ public class MailDialog extends JDialog {
 
                             if(templates.size()>0)
                                 jTemplateComboBox.setSelectedIndex(0);
-                            
+
                             setButtonsEnabled(true);
                         }
                     };
@@ -700,9 +700,9 @@ public class MailDialog extends JDialog {
     }
 
     /**
-     * This method initializes jCopyTemplateButton	
-     * 	
-     * @return javax.swing.JButton	
+     * This method initializes jCopyTemplateButton
+     *
+     * @return javax.swing.JButton
      */
     private JButton getJCopyTemplateButton() {
         if(jCopyTemplateButton == null) {
@@ -736,9 +736,9 @@ public class MailDialog extends JDialog {
     }
 
     /**
-     * This method initializes jRenameTemplateButton	
-     * 	
-     * @return javax.swing.JButton	
+     * This method initializes jRenameTemplateButton
+     *
+     * @return javax.swing.JButton
      */
     private JButton getJRenameTemplateButton() {
         if(jRenameTemplateButton == null) {
@@ -751,7 +751,7 @@ public class MailDialog extends JDialog {
                     if(tempNum < 0)     // if no name selected
                         return;         // don't rename
                     MailTemplate tmpl = templates.get(tempNum);
-                    
+
                     String newname = JOptionPane.showInputDialog(
                         MailDialog.this, "The old template name is:\n     "
                             + tmpl.getName() + "\nPlease enter the new "
@@ -770,9 +770,9 @@ public class MailDialog extends JDialog {
     }
 
     /**
-     * This method initializes jDeleteTemplateButton	
-     * 	
-     * @return javax.swing.JButton	
+     * This method initializes jDeleteTemplateButton
+     *
+     * @return javax.swing.JButton
      */
     private JButton getJDeleteTemplateButton() {
         if(jDeleteTemplateButton == null) {
@@ -785,14 +785,14 @@ public class MailDialog extends JDialog {
                     if(tempNum < 0)     // if no name selected
                         return;         // don't rename
                     MailTemplate tmpl = templates.get(tempNum);
-                    
+
                     if(JOptionPane.showConfirmDialog(MailDialog.this,
                             "Do you really want to delete this template:\n     "
                             + tmpl.getName() + "?", "Delete template",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.WARNING_MESSAGE)==JOptionPane.NO_OPTION)
                         return;
-                    
+
                     setMailTemplate(tmpl.getName(),"","");
                     jTemplateComboBox.removeItemAt(tempNum);
                     templates.remove(tempNum);

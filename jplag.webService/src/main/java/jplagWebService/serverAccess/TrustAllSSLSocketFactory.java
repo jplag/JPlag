@@ -40,7 +40,7 @@ public class TrustAllSSLSocketFactory extends SSLSocketFactory
 					}
 				}
 			};
-			
+
 			try {
 				SSLContext sc = SSLContext.getInstance("SSL");
 				sc.init(null, trustAllCerts, new java.security.SecureRandom());

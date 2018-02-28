@@ -55,7 +55,7 @@ public class ZipUtil {
                     ops.close();
             } catch(IOException e) {
                 e.printStackTrace();
-            }            
+            }
         }
     }
 
@@ -99,7 +99,7 @@ public class ZipUtil {
             }
         }
     }
-    
+
     /**
      * Zips all files in "fileVector" to the zipfile "destFile".
      * The pathnames of all files in fileVector must start with baseDir!
@@ -116,7 +116,7 @@ public class ZipUtil {
         try {
             ops = new FileOutputStream(destFile);
             zos = new ZipOutputStream(ops);
-            
+
             Iterator<File> iter = fileVector.iterator();
             while(iter.hasNext()) {
                 File file = iter.next();
@@ -150,7 +150,7 @@ public class ZipUtil {
                     ops.close();
             } catch(IOException e) {
                 e.printStackTrace();
-            }            
+            }
         }
     }
 
@@ -211,7 +211,7 @@ public class ZipUtil {
         while((len = in.read(buffer)) >= 0)
             out.write(buffer, 0, len);
     }
-    
+
     public static void main(String[] args) {
         // zip(new File("/home/bikiri/Desktop/jplag-old"),
         // "/home/bikiri/Desktop");

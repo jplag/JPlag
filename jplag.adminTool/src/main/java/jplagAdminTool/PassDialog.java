@@ -27,7 +27,7 @@ public class PassDialog extends JDialog {
 	private JLabel jLabel = null;
 	private JLabel jLabel1 = null;
 	private javax.swing.JPanel jPanel = null;
-	
+
 	private String oldpassword;
 	private BackedUserData data;
 	private AdminTool adminTool;
@@ -44,7 +44,7 @@ public class PassDialog extends JDialog {
         if(oldpassword.length()==0) oldpassword="*********";
 		initialize();
 	}
-	
+
 	protected JRootPane createRootPane() {
 		KeyStroke stroke=KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		JRootPane rootPane=new JRootPane();
@@ -54,13 +54,13 @@ public class PassDialog extends JDialog {
                     dispose();
 				}
 			}, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		
+
 		return rootPane;
 	}
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -68,12 +68,12 @@ public class PassDialog extends JDialog {
 		this.setTitle("Change password for user");
 		this.setContentPane(getJContentPane());
 	}
-	
+
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJOldPassTextField() {
 		if (jOldPassTextField == null) {
 			jOldPassTextField = new JTextField();
@@ -92,10 +92,10 @@ public class PassDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField1	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField1
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJNewPassTextField() {
 		if (jNewPassTextField == null) {
 			jNewPassTextField = new JTextField();
@@ -104,15 +104,15 @@ public class PassDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJButton() {
 		if (jButton == null) {
 			jButton = new JButton();
 			jButton.setText("Apply");
-			jButton.addActionListener(new java.awt.event.ActionListener() { 
+			jButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					data.setPassword(getJNewPassTextField().getText());
 					if(adminTool.userDataChanged(data)) {
@@ -127,16 +127,16 @@ public class PassDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton1	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton1
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJButton1() {
 		if (jButton1 == null) {
 			jButton1 = new JButton();
 			jButton1.setText("Cancel");
-			jButton1.addActionListener(new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+			jButton1.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					setVisible(false);
                     dispose();
 				}
@@ -147,7 +147,7 @@ public class PassDialog extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -159,7 +159,7 @@ public class PassDialog extends JDialog {
 		}
 		return jContentPane;
 	}
-	
+
 	private JPanel getJPanel() {
 		if(jPanel == null) {
 			GridBagConstraints gridBagConstraints8 = new GridBagConstraints();
@@ -198,10 +198,10 @@ public class PassDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel1	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel1
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel1() {
 		if (jPanel1 == null) {
 			jPanel1 = new JPanel();

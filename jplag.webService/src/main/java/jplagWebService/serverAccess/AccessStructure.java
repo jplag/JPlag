@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 
 public class AccessStructure {
 	public static final int MAX_UNZIPPED_SIZE = 60 * 1024 * 1024;
-    
+
     /*
      * Directory settings
      */
@@ -143,7 +143,7 @@ public class AccessStructure {
 
         return result;
     }
-	
+
 	/**
 	 * @return True, if the given string is not a null or empty string.
 	 * 		   False, otherwise
@@ -155,7 +155,7 @@ public class AccessStructure {
     /**
      * This method is used to translate a jplag.server.Option object to a
      * jplag.options.CommandLineOptions object
-     * 
+     *
      * @param usr_opt
      * @param argsInString
      * @throws JPlagException, if the options are not valid
@@ -167,10 +167,10 @@ public class AccessStructure {
         vec.add("JPlag");
 
         // Verbose parser and verbose quiet (don't fill server logs)
-		
+
 		vec.add("-vp");
         vec.add("-vq");
-		
+
         if (usr_opt.isReadSubdirs())
             vec.add("-s");
 
@@ -213,7 +213,7 @@ public class AccessStructure {
             }
             vec.add(tmpmatch);
         }
-        
+
         // Comparison mode
         vec.add("-compmode");
         if(usr_opt.getComparisonMode() == null)
@@ -230,7 +230,7 @@ public class AccessStructure {
 
         if (usr_opt.getSuffixes().length != 0) {
             vec.add("-p");
-            
+
             String str = "";
             String[] suffixes = usr_opt.getSuffixes();
             for(int i=0; i<suffixes.length; i++) {
@@ -249,7 +249,7 @@ public class AccessStructure {
         }
 
         // Clustering
-		
+
         if (isSet(usr_opt.getClustertype())) {
             vec.add("-clustertype");
             vec.add(usr_opt.getClustertype());
@@ -279,11 +279,11 @@ public class AccessStructure {
 
         // Detecting sensitivity
         // TODO: Should there be a minimal minimum match length being accepted??
-		
+
 		int mintoklen = usr_opt.getMinimumMatchLength();
         if (mintoklen <= 0)
             mintoklen = JPlagTypImpl.languageInfos[languagenum].getDefMinMatchLen();
-		
+
         vec.add("-t");
 		vec.add(mintoklen + "");
 
@@ -305,19 +305,19 @@ public class AccessStructure {
         vec.add(tmp11st);
 
 		// Original dir
-		
+
 		vec.add("-d");
 		vec.add(usr_opt.getOriginalDir());
-		
+
 		// Title
-		
+
 		vec.add("-title");
 		vec.add(usr_opt.getTitle());
-		
+
         // Root_dir
-        
+
         vec.add(JPLAG_ENTRIES_DIRECTORY + File.separator + submissiondir);
-        
+
         /**
          * All command line options have now been set and a first option
          * validation has been done
@@ -343,7 +343,7 @@ public class AccessStructure {
         return JPLAG_ENTRIES_DIRECTORY + File.separator + getSubmissionID()
                 + getUsername() + ".zip";
     }
-    
+
     /**
      * Saves the zip file inside the entries directory
      */
@@ -361,10 +361,10 @@ public class AccessStructure {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Deletes a whole directory including subdirectories
-     * 
+     *
      * XXX: Recursive routine! Beware stack overflows!?
      */
     public static void deleteDir(File dir) {
@@ -386,7 +386,7 @@ public class AccessStructure {
 
     /**
      * Deletes the submission input zip file and the unpacked contents
-     * 
+     *
      * @return True, if server allowed to delete the files
      */
     public boolean deleteEntryFiles() {
@@ -408,7 +408,7 @@ public class AccessStructure {
 
     /**
      * Deletes the submission result zip file
-     * 
+     *
      * @return True, if server allowed to delete the files
      */
     public boolean deleteResultFiles() {
@@ -436,7 +436,7 @@ public class AccessStructure {
 
     /**
      * Deletes all files from this submission
-     * 
+     *
      * @return True, if server allowed to delete the files
      */
     public boolean delete() {
@@ -494,7 +494,7 @@ public class AccessStructure {
             throw new jplag.ExitException("Submission too big! It may be "
                 + (MAX_UNZIPPED_SIZE / 1024) + " kB at maximum, but it is "
                 + (totalsize / 1024) + " kB!");
-        
+
         File unzipped = new File(JPLAG_ENTRIES_DIRECTORY + File.separator + tmp2);
 
         // Searching root dir
@@ -694,7 +694,7 @@ public class AccessStructure {
                     + submission.getAttribute("laststate") + ")");
             laststate = 499;
         }
-        
+
         String report = submission.getAttribute("report");
 
         return new AccessStructure(subID, null, username, title, date,

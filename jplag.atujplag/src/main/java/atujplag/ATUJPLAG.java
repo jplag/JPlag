@@ -77,7 +77,7 @@ public class ATUJPLAG {
             Messages.getString("ATUJPLAG.French"), //$NON-NLS-1$
             Messages.getString("ATUJPLAG.Spanish"), //$NON-NLS-1$
 			Messages.getString("ATUJPLAG.BrazilianPortuguese") }; //$NON-NLS-1$
-	
+
 	public static final String[] COMPARE_MODES = new String[] {
 		"Normal",
 		"Revision"
@@ -90,21 +90,21 @@ public class ATUJPLAG {
 
 	private JFrame owner = null;
 	private JDialog dialog = null;
-	
+
 	private Document baseConfigDoc = null;
 	private Element baseRootElem = null;
 	private Document userConfigDoc = null;
 	private Element userRootElem = null;
-	
+
 	private String username = null;
-	private String password = null;	
+	private String password = null;
 	private boolean savePassword = false;
 	private String resultLocation = "";
 	private String lastSubmissionLocation = "";
 	private String countryLanguage = null;
-	
+
 	private ServerInfo serverInfo = null;
-	
+
 	/**
 	 * Contains LanguageSetting elements
 	 */
@@ -139,7 +139,7 @@ public class ATUJPLAG {
 				this.countryLanguage = baseRootElem.getAttribute("lastCountryLanguage");
 				if(countryLanguage!=null && !countryLanguage.equals(""))
 				    Messages.setBUNDLE_NAME(getCountryLanguageValue());
-                
+
 				loginDialog = new LoginDialog(
 						baseRootElem.getAttribute("lastUsername"), //$NON-NLS-1$
 						baseRootElem.getAttribute("lastPassword"), //$NON-NLS-1$
@@ -159,7 +159,7 @@ public class ATUJPLAG {
 				baseConfigDoc = null;
 				loginDialog = new LoginDialog(this, owner);
 			}
-			
+
 			if(baseConfigDoc == null) {
 				try {
 					ps.create(jplagURL, 1024);
@@ -179,7 +179,7 @@ public class ATUJPLAG {
 					return;
 				}
 			}
-			
+
 			dialog.dispose();
 			loginDialog.pack();
 			loginDialog.setModal(true);
@@ -209,7 +209,7 @@ public class ATUJPLAG {
 		dialog.setLocationRelativeTo(null);
 		dialog.setVisible(true);
 	}
-	
+
 	public boolean login(String username, String password, boolean savePass, Component parent) {
 		this.username = username;
 		this.password = password;
@@ -217,27 +217,27 @@ public class ATUJPLAG {
 
 		updateServerInfo(parent);
 		if(serverInfo == null) return false;
-				
+
 		baseRootElem.setAttribute("lastUsername", username); //$NON-NLS-1$
 		if(!savePassword && baseRootElem.hasAttribute("lastPassword")) //$NON-NLS-1$
 			baseRootElem.removeAttribute("lastPassword"); //$NON-NLS-1$
 		else if(savePassword) baseRootElem.setAttribute("lastPassword", password); //$NON-NLS-1$
-				
+
 		PersistenceService ps = ServiceManager.lookupPersistenceService();
 		BasicService bs = ServiceManager.lookupBasicService();
 		URL baseURL = bs.getCodeBase();
-		
+
 		languageMap = new HashMap<String,LanguageSetting>();
 		LanguageInfo[] langInfos=serverInfo.getLanguageInfos();
 		boolean[] found = new boolean[langInfos.length]; //defaults to false
-		
+
 		boolean userConfigChanged = false;
 		URL userConfigURL = null;
 		resultLocation = null;
 		lastSubmissionLocation = "";
 		userConfigDoc = null;
 		userRootElem = null;
-		
+
 		try {
 			// username has been validated by the server,
 			// so the characters are valid
@@ -250,11 +250,11 @@ public class ATUJPLAG {
 			userConfigDoc = builder.parse(xmlStream);
             xmlStream.close();
 			userRootElem = userConfigDoc.getDocumentElement();
-			
+
 			resultLocation = userRootElem.getAttribute("resultLocation");
 			lastSubmissionLocation = userRootElem.getAttribute("lastSubmissionLocation");
 			countryLanguage = userRootElem.getAttribute("countryLanguage");
-			
+
 			NodeList langList = userRootElem.getChildNodes();
 			for(int i=0;i<langList.getLength();i++) {
 				Element langelem = (Element) langList.item(i);
@@ -288,9 +288,9 @@ public class ATUJPLAG {
 				userConfigDoc = docBuild.newDocument();
 				userRootElem = userConfigDoc.createElement("userConfig");
 				userConfigDoc.appendChild(userRootElem);
-				
+
 				countryLanguage = "English";
-				userRootElem.setAttribute("countryLanguage",countryLanguage);	
+				userRootElem.setAttribute("countryLanguage",countryLanguage);
 				userConfigChanged = true;
 				printUserInXML();
 			}
@@ -302,12 +302,12 @@ public class ATUJPLAG {
 			}
 		}
 		catch(Exception e) {} // ignore parsing errors
-		
+
 		if(userRootElem == null) {
 			System.out.println("Unable to open/create user root element!");
 			System.exit(0);
 		}
-		
+
 		if(resultLocation == null || !new File(resultLocation).isDirectory()) {
 			WelcomeOptionsDialog welcomeDlg = new WelcomeOptionsDialog(owner);
             welcomeDlg.setVisible(true);
@@ -318,7 +318,7 @@ public class ATUJPLAG {
             setCountryLanguage(welcomeDlg.getLanguage(), false);
 			userConfigChanged = true;
 		}
-		
+
 		//
 		// Fill remaining language settings with default values
 		// and fill languageNames array
@@ -343,11 +343,11 @@ public class ATUJPLAG {
 			printUserInXML();
 		return true;
 	}
-	
+
 	public String[] getLanguageNames() {
 		return languageNames;
 	}
-	
+
 	public LanguageSetting getLastLanguageSetting() {
 		return getLanguageSettingForName(getLastLanguageName());
 	}
@@ -359,11 +359,11 @@ public class ATUJPLAG {
 			return serverInfo.getLanguageInfos()[0].getName();
 		return lastlang;
 	}
-	
+
 	public LanguageSetting getLanguageSettingForName(String name) {
 		return languageMap.get(name);
 	}
-	
+
 	public LanguageSetting getDefaultLanguageSettingForName(String name) {
 		LanguageInfo[] langInfos=serverInfo.getLanguageInfos();
 		for(int i=0;i<langInfos.length;i++) {
@@ -377,18 +377,18 @@ public class ATUJPLAG {
 		}
 		return null;
 	}
-	
+
 	public void updateLastSubmissionInfos(Option option) {
 		lastSubmissionLocation = option.getOriginalDir();
 		userRootElem.setAttribute("lastSubmissionLocation", lastSubmissionLocation);
 		userRootElem.setAttribute("lastLanguage", option.getLanguage());
-		
+
 		LanguageSetting lang = languageMap.get(option.getLanguage());
 		if(lang == null) {
 			System.out.println("Unable to find language settings! Not updated!");
 			return;
 		}
-		
+
 		lang.setClusterType(option.getClustertype());
 		lang.setMinMatchLen(option.getMinimumMatchLength());
 		lang.setReadSubdirs(option.isReadSubdirs());
@@ -448,7 +448,7 @@ public class ATUJPLAG {
         }
 		Messages.setBUNDLE_NAME(getCountryLanguageValue());
 	}
-	
+
 	public String getCountryLanguage() {
 		return countryLanguage;
 	}
@@ -467,18 +467,18 @@ public class ATUJPLAG {
 			c_lang = "en"; //$NON-NLS-1$
 		return c_lang;
 	}
-	
+
 	public String getResultLocation() {
 		return resultLocation;
 	}
-	
+
 	public void setResultLocation(String location) {
 		resultLocation = location;
 		Element root = userConfigDoc.getDocumentElement();
 		root.setAttribute("resultLocation", location);
 		printUserInXML();
 	}
-	
+
 	public String getLastSubmissionLocation() {
 		return lastSubmissionLocation;
 	}
@@ -535,7 +535,7 @@ public class ATUJPLAG {
 				.getString("ATUJPLAG.Confirm_delete"), //$NON-NLS-1$
 				TagParser.parse(Messages
 					.getString("ATUJPLAG.Confirm_delete_{1_TITLE}_DESC"), //$NON-NLS-1$
-					new String[] { elem.getAttribute("title") })); //$NON-NLS-1$ 
+					new String[] { elem.getAttribute("title") })); //$NON-NLS-1$
 			if(confirm == JOptionPane.YES_OPTION) {
 				delete(file);
 				return true;
@@ -603,7 +603,7 @@ public class ATUJPLAG {
             try { if(os!=null) os.close(); } catch(Exception e) {}
         }
 	}
-	
+
 	private synchronized void printBaseInXML() {
 		PersistenceService ps = ServiceManager.lookupPersistenceService();
 		BasicService bs = ServiceManager.lookupBasicService();
@@ -692,33 +692,33 @@ public class ATUJPLAG {
 	public void updateServerInfo(Component parent) {
 		serverInfo = SimpleClient.serverInfo(this, parent);
 	}
-	
+
 	public ServerInfo getServerInfo() {
 		return serverInfo;
 	}
-	
+
 	public String getUsername() {
 		return username;
 	}
-	
+
 	/**
 	 * Only updates the internal username value!
 	 */
 	public void setUsername(String newusername) {
 		username = newusername;
 	}
-	
+
 	public String getPassword() {
 		return password;
 	}
-	
+
 	/**
 	 * Only updates the internal password value!
 	 */
 	public void setPassword(String newpassword) {
 		password = newpassword;
 	}
-	
+
 	/**
 	 * Sets the password which is to be entered automatically into the login
 	 * dialog. If remember is false, the password will be set to empty.
@@ -779,7 +779,7 @@ public class ATUJPLAG {
 
     static final char[] hexchars = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
             '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-    
+
     /**
      * Escapes special characters not suitable for URLs with "%xx"
      * @param str String to be encoded in UTF-8 format
@@ -858,7 +858,7 @@ public class ATUJPLAG {
 			DesktopUtils.openWebpage(file.toURI());
 		} else {
 			JPlagCreator.showMessageDialog(Messages.getString("ATUJPLAG.JPlag_warning"), //$NON-NLS-1$
-					TagParser.parse(Messages.getString("ATUJPLAG.JPlag_warning_{1_URL}_DESC"), //$NON-NLS-1$ 
+					TagParser.parse(Messages.getString("ATUJPLAG.JPlag_warning_{1_URL}_DESC"), //$NON-NLS-1$
 							new String[] { file.toString() }));
 		}
 

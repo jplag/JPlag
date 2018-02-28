@@ -6,7 +6,7 @@ public interface CSharpTokenConstants extends jplag.TokenConstants {
   // Used to optionally separate methods from each other
   // with an always marked token
   final static int SEPARATOR_TOKEN = 1;
-  
+
   final static int _INVOCATION =       2;
   final static int _OBJECT_CREATION =  3;
   final static int _ARRAY_CREATION =   4;

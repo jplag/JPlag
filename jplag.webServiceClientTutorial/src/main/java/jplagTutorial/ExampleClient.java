@@ -38,33 +38,33 @@ public class ExampleClient {
     public static final int JPLAG_PACKRESULT = 250;
     public static final int JPLAG_DONE = 300;
     public static final int JPLAG_ERROR = 400;
-    
+
     /*
      * Login data
      */
     private String username = null;
     private String password = null;
-    
+
     /**
      * Options for JPlag specified by the command line
      */
     private Option option = new Option();
-    
+
     /**
      * Name of directory where the result pages will be stored
      */
     private String resultDirName = "result";
-    
+
     /**
      * True, if the user wants to get a list of his submissions on the server
      */
     private boolean listSubmissions = false;
-    
+
     /**
      * The number of the submission to be downloaded plus 1 or 0
      */
     private int downloadResultNumber = 0;
-    
+
     /**
      * The number of the submission to be cancelled plus 1 or 0
      */
@@ -80,22 +80,22 @@ public class ExampleClient {
      * Filename filter used by collectInDir()
      */
     private FilenameFilter subdirFileFilter = null;
-    
+
     /**
      * Current position of progress bar
      */
     private int progressPos;
-    
+
     /**
      * Maximum position of progress bar
      */
     private int progressMax;
-    
+
     /**
      * The stub for the JPlag Web Service
      */
     private JPlagTyp_Stub stub = null;
-    
+
     /**
      * Helper function to easily evaluate web service related exceptions
      * @param e Exception thrown by a stub method
@@ -126,7 +126,7 @@ public class ExampleClient {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Initializes the JPlag stub, by installing an all-trusting trust manager
      * for the SSL connection to the server, instantiating a stub object and
@@ -148,7 +148,7 @@ public class ExampleClient {
                         String authType) {}
             }
         };
-        
+
         /*
          * Install the all-trusting trust manager
          */
@@ -160,13 +160,13 @@ public class ExampleClient {
             System.out.println("Warning: Unable to install all-trusting trust "
                 + "manager! SSL connection may not work!");
         }
-        
+
         /*
-         * Get JPlag client stub 
+         * Get JPlag client stub
          */
         stub = (JPlagTyp_Stub) (new JPlagService_Impl()
                 .getJPlagServicePort());
-                
+
         /*
          * Search for the JPlagClientAccessHandler in the handler chain
          */
@@ -180,18 +180,18 @@ public class ExampleClient {
                 break;
             }
         }
-        
+
         if(accessHandler == null) {
             System.out.println("Unable to find access handler! Cannot set "
                 + "username and password!");
             return false;
         }
-        
+
         /*
          * Initialize access handler
          */
         accessHandler.setUserPassObjects(username, password);
-        
+
         return true;
     }
 
@@ -201,7 +201,7 @@ public class ExampleClient {
     private class RecursiveFilenameFilter implements FilenameFilter {
         public boolean accept(File dir, String name) {
             if(new File(dir, name).isDirectory()) return true;
-            
+
             for(int i=0; i<suffixes.length; i++) {
                 if(name.endsWith(suffixes[i]))
                     return true;
@@ -209,7 +209,7 @@ public class ExampleClient {
             return false;
         }
     }
-    
+
     /**
      * Only accepts files with one of the given suffixes
      */
@@ -224,7 +224,7 @@ public class ExampleClient {
             return false;
         }
     }
-        
+
     /**
      * Collects all valid files inside a directory. If subdirFileFilter also
      * accepts directories, subdirectories are included in the search
@@ -233,9 +233,9 @@ public class ExampleClient {
      */
     private void collectInDir(Vector<File> colfiles, File dir) {
         if(!dir.exists()) return;
-        
+
         File[] files = dir.listFiles(subdirFileFilter);
-        
+
         for(int i=0; i<files.length; i++) {
             if(files[i].isDirectory()) {
                 collectInDir(colfiles, files[i]);
@@ -243,28 +243,28 @@ public class ExampleClient {
             else colfiles.add(files[i]);
         }
     }
-    
+
     /**
      * Collects all valid files according to the set options
      * @return A Vector object of all valid files
      */
     private Vector<File> collectFiles() {
         Vector<File> colfiles = new Vector<File>();
-        
+
         File[] files = new File(option.getOriginalDir()).listFiles(
             new RecursiveFilenameFilter());
-        
+
         if(files == null) {
             System.out.println("\"" + option.getOriginalDir()
                 + "\" is not a directory or an I/O error occurred!");
             return null;
         }
-        
+
         if(option.isReadSubdirs())
             subdirFileFilter = new RecursiveFilenameFilter();
         else
             subdirFileFilter = new NonRecursiveFilenameFilter();
-        
+
         for(int i=0; i<files.length; i++) {
             if(files[i].isDirectory()) {
                 if(option.getPathToFiles()!=null)
@@ -275,7 +275,7 @@ public class ExampleClient {
             }
             else colfiles.add(files[i]);
         }
-        
+
         if(colfiles.size() <= 1) {
             System.out.println("\"" + option.getOriginalDir()
                 + "\" didn't contain at least two files\n"
@@ -284,7 +284,7 @@ public class ExampleClient {
         }
         return colfiles;
     }
-    
+
     /**
      * Creates a temporary zip file containing all files specified by the Option
      * object and sends it to the server in 80 kB parts
@@ -293,32 +293,32 @@ public class ExampleClient {
     private String sendSubmission() {
         Vector<File> submissionFiles = collectFiles();
         if(submissionFiles == null) return null;
-        
+
         File zipfile = null;
         FileInputStream input = null;
         String submissionID = null;
-        
+
         try {
             zipfile = File.createTempFile("jplagtmp",".zip");
             ZipUtil.zipFilesTo(submissionFiles, option.getOriginalDir(),
                 zipfile);
 
             input = new FileInputStream(zipfile);
-            
+
             int filesize = (int) zipfile.length();
             int sentsize = 0;
             int partsize = (filesize<81920) ? filesize : 81920;
-            
+
             byte[] data = new byte[partsize];
             input.read(data);
-            
+
             initProgressBar(filesize);
-            
+
             StartSubmissionUploadParams params =
                 new StartSubmissionUploadParams(option, filesize, data);
-            
+
             submissionID = stub.startSubmissionUpload(params);
-            
+
             sentsize += partsize;
             while(sentsize<filesize-partsize) {
                 setProgressBarValue(sentsize);
@@ -348,7 +348,7 @@ public class ExampleClient {
         }
         return submissionID;
     }
-    
+
     /**
      * Retrieves the status of the given submission
      * @param submissionID submission ID identifying the submission
@@ -365,7 +365,7 @@ public class ExampleClient {
         }
         return status;
     }
-    
+
     /**
      * Waits until either the submission has been finished or an error occurred
      * @param submissionID String identifying the submission
@@ -376,12 +376,12 @@ public class ExampleClient {
         try {
             while(true) {
                 status = stub.getStatus(submissionID);
-                
+
                 /*
                  * Here you could print out more details about the status of
-                 * the submission, but it's left out here... 
+                 * the submission, but it's left out here...
                  */
-                
+
                 if(status.getState() >= JPLAG_DONE) break;
                 Thread.sleep(10000);    // wait 10 seconds
                 System.out.print(".");  // tell user something's happening
@@ -403,7 +403,7 @@ public class ExampleClient {
         }
         return true;
     }
-    
+
     /**
      * Downloads and unzips the result
      * @param submissionID The submission id String
@@ -412,12 +412,12 @@ public class ExampleClient {
     private boolean receiveResult(String submissionID) {
         File zipfile = null;
         FileOutputStream output = null;
-        
+
         try {
             File resultDir = new File(resultDirName);
             if(!resultDir.exists()) resultDir.mkdirs();
             zipfile = File.createTempFile("jplagtmpresult",".zip");
-            
+
             output = new FileOutputStream(zipfile);
 
             StartResultDownloadData srdd = stub.startResultDownload(
@@ -429,7 +429,7 @@ public class ExampleClient {
             initProgressBar(srdd.getFilesize());
             output.write(srdd.getData());
             setProgressBarValue(loadedsize);
-            
+
             while(loadedsize<filesize) {
                 byte[] data = stub.continueResultDownload(0);
                 output.write(data);
@@ -437,11 +437,11 @@ public class ExampleClient {
                 setProgressBarValue(loadedsize);
             }
             output.close();
-            
+
             /*
              * Unzip result archive and delete the zip file
              */
-            
+
             ZipUtil.unzip(zipfile, resultDir);
             zipfile.delete();
         }
@@ -452,11 +452,11 @@ public class ExampleClient {
             if(zipfile != null) zipfile.delete();
             checkException(e);
             return false;
-        }            
-            
+        }
+
         return true;
     }
-    
+
     /**
      * Cancels the submission identified by submissionID
      * @param submissionID The submission id string
@@ -472,7 +472,7 @@ public class ExampleClient {
         }
         return true;
     }
-    
+
     /**
      * Checks the current options for validity using the information provided
      * by the ServerInfo object and fills remaining empty fields with defaults.
@@ -485,7 +485,7 @@ public class ExampleClient {
         LanguageInfo[] languages = info.getLanguageInfos();
         String[] countryLangs = info.getCountryLanguages();
         int i;
-        
+
         if(option.getLanguage() == null) {
             i = 0;
             option.setLanguage(languages[0].getName());
@@ -517,11 +517,11 @@ public class ExampleClient {
             System.out.println("Using default suffixes: "
                 + arrayToString(suffixes));
         }
-        
-        if(option.getTitle() == null) 
+
+        if(option.getTitle() == null)
             option.setTitle("submission-"
                 + new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-        
+
         if(option.getCountryLang() == null)
             option.setCountryLang("en");
         else {
@@ -542,7 +542,7 @@ public class ExampleClient {
         }
         return true;
     }
-    
+
     /**
      * Parses the arguments and sets the appropriate attributes
      * @param args Array of argument strings
@@ -673,7 +673,7 @@ public class ExampleClient {
         }
         return valid;
     }
-    
+
     /**
      * Initializes a text progress bar
      */
@@ -683,7 +683,7 @@ public class ExampleClient {
         System.out.println(
             "0%----------+----------50%-----------+--------100%");
     }
-    
+
     /**
      * Sets the current value of the progress bar updating the current position
      * The progress may only increase, not decrease!
@@ -691,12 +691,12 @@ public class ExampleClient {
     public void setProgressBarValue(int val) {
         int pos = (val*50)/progressMax;
         if(pos <= progressPos) return;
-        
+
         System.out.print("##################################################"
             .substring(progressPos, pos));
         progressPos = pos;
     }
-    
+
     /**
      * Prints out how to use the program
      */
@@ -735,7 +735,7 @@ public class ExampleClient {
             + " -cancel [<n>]     Cancels the <n>-th submission on server.\n"
             + "                   All non required options will be ignored.\n");
     }
-    
+
     /**
      * Concatenates the string representations of objects in an array
      * @param array Object array
@@ -749,7 +749,7 @@ public class ExampleClient {
         }
         return str;
     }
-    
+
     /**
      * The main routine
      * @param args Array of command line parameters
@@ -759,16 +759,16 @@ public class ExampleClient {
             printUsage();
             return;
         }
-        
+
         if(!initJPlagStub()) {
             System.out.println("Unable to initialize JPlag stub!");
             return;
         }
-        
+
         /*
          * Get a ServerInfo object
          */
-        
+
         ServerInfo info;
         try {
             info = stub.getServerInfo();
@@ -777,14 +777,14 @@ public class ExampleClient {
             checkException(e);
             return;
         }
-        
+
         /*
          * Check for submissions on server by looking at submissions field
          * in the ServerInfo object
-         */ 
-        
+         */
+
         Submission[] subs = info.getSubmissions();
-        
+
         if(subs.length > 0) {
             System.out.println("\nSubmissions on server with states:\n");
             for(int i=0; i<subs.length; i++) {
@@ -816,9 +816,9 @@ public class ExampleClient {
                 }
                 System.out.println("    (" + stateString + ")");
             }
-            
+
             if(listSubmissions) return;
-            
+
             /*
              * If "-download" is used, download the n-th submission
              */
@@ -842,7 +842,7 @@ public class ExampleClient {
                     + " in \"" + resultDirName + "\"");
                 return;
             }
-            
+
             /*
              * If "-cancel" is used, cancel the n-th submission
              */
@@ -868,21 +868,21 @@ public class ExampleClient {
         }
 
         if(!checkOptions(info)) return;
-        
+
         System.out.println("\nSending files...");
         String submissionID = sendSubmission();
         if(submissionID == null) return;
-        
+
         System.out.print("\n\nWaiting for result...");
         if(!waitForResult(submissionID)) return;
-        
+
         System.out.println(" result available.\n\nDownloading...");
         if(!receiveResult(submissionID)) return;
-        
+
         System.out.println("\n\nThe result files are available in \""
             + resultDirName + "\"");
     }
-    
+
     public static void main(String[] args) {
         new ExampleClient().run(args);
     }

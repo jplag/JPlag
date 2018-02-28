@@ -117,7 +117,7 @@ public class JavaToken extends jplag.Token implements JavaTokenConstants {
 	    case J_CHAR:            return "J_CHAR";
 	    case J_STRING:          return "J_STRING";
 	    case J_BOOLEAN:         return "J_BOOLEAN";
-	
+
 	    default:           return "<UNBEKANNT>";
 		}
 	}

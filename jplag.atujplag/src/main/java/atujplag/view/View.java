@@ -56,12 +56,12 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	private ATUJPLAG atujplag = null;
 	private ServerInfo serverInfo = null;
-	
+
 	private JMenuBar jJMenuBar = null;
 	private JMenu extraMenu = null;
 	private JPopupMenu jPopupMenu = null;
 	private JMenu optionsMenu = null;
-	
+
 	private JMenuItem openItem = null;
 	private JMenuItem aboutItem = null;
 	private JMenuItem helpItem = null;
@@ -123,10 +123,10 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 	 */
 	public View(ATUJPLAG atu) {
 		super();
-		
+
 		atujplag = atu;
 		serverInfo = atu.getServerInfo();
-        
+
 		initialize();
 
 		if (serverInfo.getSubmissions().length > 0) {
@@ -136,10 +136,10 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 		}
 		enableButtons(false);
 	}
-    
+
     /**
      * This method initializes this
-     * 
+     *
      * @return void
      */
     private void initialize() {
@@ -204,8 +204,8 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
         hideInfoPanel.addActionListener(this);
         this.addComponentListener(this);
     }
-    
-	
+
+
 	public ATUJPLAG getATUJPLAG() {
 		return atujplag;
 	}
@@ -325,12 +325,12 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 	public void blink() {
 		if (infoPanel == null || infoPanel.isVisible() || isHideButtonBlinking)
 			return;
-        
+
         isHideButtonBlinking = true;
-		
+
 		Thread t = new Thread() {
             boolean buttonLit = false;
-            
+
             final Runnable doUpdateBackground = new Runnable() {
                 public void run() {
                     hideInfoPanel.setBackground(buttonLit
@@ -338,7 +338,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
                         : JPlagCreator.BUTTON_BACKGROUND);
                 }
             };
-            
+
 			public void run() {
 				for(int i = 0; i < 4; i++) {
                     if(infoPanel.isVisible())
@@ -391,7 +391,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getChangeButton() {
@@ -407,7 +407,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getCommandPanel() {
@@ -425,7 +425,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getDeleteSubButton() {
@@ -448,7 +448,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jJMenuBar
-	 * 
+	 *
 	 * @return javax.swing.JMenuBar
 	 */
 	private JMenuBar getJJMenuBar() {
@@ -535,7 +535,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel() {
@@ -551,7 +551,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jPanel1
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel1() {
@@ -566,7 +566,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jPanel2
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel2() {
@@ -581,38 +581,38 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jPopupMenu
-	 * 
+	 *
 	 * @return javax.swing.JPopupMenu
 	 */
 	private JPopupMenu getJPopupMenu() {
 		if (jPopupMenu == null) {
 			jPopupMenu = new JPopupMenu();
             jPopupMenu.setBackground(JPlagCreator.SYSTEMCOLOR);
-            
+
             openItem = JPlagCreator.createJMenuItem(
                     Messages.getString("View.View_result")); //$NON-NLS-1$
             openItem.addActionListener(this);
 			jPopupMenu.add(openItem);
-            
+
             logItem = JPlagCreator.createJMenuItem(
                     Messages.getString("View.View_parser_log")); //$NON-NLS-1$
             logItem.addActionListener(this);
 			jPopupMenu.add(logItem);
-            
+
 			jPopupMenu.addSeparator();
-            
+
             renameItem = JPlagCreator.createJMenuItem(
                     Messages.getString("View.Rename_result")); //$NON-NLS-1$
             renameItem.addActionListener(this);
 			jPopupMenu.add(renameItem);
-            
+
             changeItem = JPlagCreator.createJMenuItem(
                     Messages.getString("View.Change_options")); //$NON-NLS-1$
             changeItem.addActionListener(this);
 			jPopupMenu.add(changeItem);
-            
+
 			jPopupMenu.addSeparator();
-            
+
             deleteItem = JPlagCreator.createJMenuItem(
                     Messages.getString("View.Delete_result")); //$NON-NLS-1$
             deleteItem.addActionListener(this);
@@ -623,7 +623,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jScrollPane
-	 * 
+	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPane() {
@@ -641,7 +641,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jTable
-	 * 
+	 *
 	 * @return javax.swing.JTable
 	 */
 	private ResultsTable getJTable() {
@@ -669,7 +669,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jButton3
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getNewSubButton() {
@@ -685,7 +685,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jButton2
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getRenameButton() {
@@ -701,7 +701,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes userTableModel
-	 * 
+	 *
 	 * @return atujplag.view.UserTableModel
 	 */
 	private ResultsTableModel getResultTableModel() {
@@ -717,7 +717,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jButton1
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getShowParserLogButton() {
@@ -732,7 +732,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 
 	/**
 	 * This method initializes jPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getTopPanel() {
@@ -825,7 +825,7 @@ public class View extends JFrame implements ActionListener, ListSelectionListene
 		hideInfoPanel.setVisible(true);
 		infoPanel.run();
 	}
-	
+
 	public void unblockNewSubmissions() {
 		block_all_newSubmission = false;
 		this.changeItem.setEnabled(true);

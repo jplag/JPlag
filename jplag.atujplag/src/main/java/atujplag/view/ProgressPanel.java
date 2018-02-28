@@ -37,7 +37,7 @@ public class ProgressPanel extends JPanel {
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -106,7 +106,7 @@ public class ProgressPanel extends JPanel {
 	private void setError() {
 		JLabel[] labels = { packing, sending, waiting, parsing, comparing,
 	            loading };
-        
+
         int label = active;
         if(label>5) label = 5;
 
@@ -122,5 +122,5 @@ public class ProgressPanel extends JPanel {
 		setActive(state);
 		if(!noError) setError();
 	}
-    
+
 } //  @jve:decl-index=0:visual-constraint="52,10"

@@ -23,9 +23,9 @@ import jplagWsClient.jplagClient.UserDataArray;
 public class UserTableModel extends AbstractTableModel {
 
 	private static final long serialVersionUID = 1L;
-    
+
     private static final long MILLISECS_PER_DAY = 1000 * 60 * 60 * 24;
-	
+
 	public static final int USERNAME=0;
 	public static final int CREATED=1;
 	public static final int CREATEDBY=2;
@@ -36,18 +36,18 @@ public class UserTableModel extends AbstractTableModel {
 	public static final int REALNAME=7;
 	public static final int EMAIL=8;
 	public static final int STATE=9;
-	
+
 	private int userstate=0;
-	
+
 	private String[] columnNames = { "Username", "Created", "CreatedBy",
 			"Expires", "Duration", "Last usage", "Subs", "Realname", "EMail", "State"};
-	
+
 	Vector<BackedUserData> userDataVector = null;
-	
+
 	public void setAdminState(int ustate) {
 		userstate=ustate;
 	}
-	
+
 	public int getAdminState() {
 		return userstate;
 	}
@@ -60,18 +60,18 @@ public class UserTableModel extends AbstractTableModel {
 		if(userDataVector == null) return 0;
 		return userDataVector.size();
 	}
-	
+
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
-    
+
     @SuppressWarnings("unchecked")
     public Class getColumnClass(int col) {
         if(isDate(col)) return Date.class;
         if(col==NUMSUBS || col==DURATION) return Integer.class;
         return Object.class;
     }
-	
+
 	public boolean isCellEditable(int row, int col) {
         if(col == DURATION) return false;
 		if((userstate & BackedUserData.MASK_JPLAGADMIN)==0)
@@ -123,7 +123,7 @@ public class UserTableModel extends AbstractTableModel {
 		cal.setTime(date);
 		return cal;
 	}
-    
+
 	public Object getValueAt(int row, int col) {
 		if(userDataVector==null || row>=userDataVector.size())
 			return "Illegal getValueAt call";
@@ -143,7 +143,7 @@ public class UserTableModel extends AbstractTableModel {
                 return (int)((ud.getExpires().getTimeInMillis()
                         - ud.getCreated().getTimeInMillis()) / MILLISECS_PER_DAY);
 //			case LASTUSAGE: return formatCalendar(ud.getLastUsage());
-			case LASTUSAGE: 
+			case LASTUSAGE:
 				return (ud.getLastUsage()==null ? null
 						  : ud.getLastUsage().getTime());
 			case NUMSUBS: return new Integer(ud.getNumOfSubs());
@@ -153,13 +153,13 @@ public class UserTableModel extends AbstractTableModel {
 			default: return "Illegal column";
 		}
 	}
-	
+
 	public boolean isChanged(String orig,String newone) {
 		if((orig==null || orig.length()==0)!=(newone.length()==0)) return true;
 		if(orig==null || orig.length()==0) return false;
 		return !orig.equals(newone);
 	}
-	
+
 	public void setValueAt(Object val, int row, int col) {
 		if(userDataVector==null)
 		{
@@ -250,14 +250,14 @@ public class UserTableModel extends AbstractTableModel {
 				case REALNAME:
 					if(isChanged(ud.getRealName(),(String) val))
 					{
-						ud.setRealName((String) val); 
+						ud.setRealName((String) val);
 						changed=true;
 					}
 					break;
-				case EMAIL: 
+				case EMAIL:
 					if(isChanged(ud.getEmail(),(String) val))
 					{
-						ud.setEmail((String) val); 
+						ud.setEmail((String) val);
 						changed=true;
 					}
 					break;
@@ -266,7 +266,7 @@ public class UserTableModel extends AbstractTableModel {
 					int newval=BackedUserData.getStateInt((String)val);
 					if(ud.getState()!=newval)
 					{
-						if((newval & BackedUserData.MASK_DEACTIVATED) == 0 && 
+						if((newval & BackedUserData.MASK_DEACTIVATED) == 0 &&
 								ud.getExpires()!=null)
 						{
 							Calendar cal=Calendar.getInstance(
@@ -295,7 +295,7 @@ public class UserTableModel extends AbstractTableModel {
 		catch(ParseException ex) {} // replace wrong cells by orginal ones
 		catch(NumberFormatException ex) {} // dito
 	}
-	
+
 	public boolean isValid(int row, int col) {
 		if(col==USERNAME || col==CREATEDBY || col==REALNAME || col==EMAIL)
 		{
@@ -304,7 +304,7 @@ public class UserTableModel extends AbstractTableModel {
 		}
 		return true;
 	}
-	
+
 	public void setUserDataArray(UserDataArray userarray) {
 		UserData[] dataArray=userarray.getItems();
 		userDataVector=new Vector<BackedUserData>(dataArray.length,3);
@@ -314,7 +314,7 @@ public class UserTableModel extends AbstractTableModel {
 		}
 		fireTableDataChanged();
 	}
-	
+
 	public void addNewUser(UserData data) {
 		if(userDataVector==null)
 		{
@@ -337,28 +337,28 @@ public class UserTableModel extends AbstractTableModel {
 			}
 		}
 	}
-	
+
 	public boolean existsDoubled(String user) {
 		int numfound=0;
 		for(int i=0;i<userDataVector.size();i++)
 		{
 			if(((BackedUserData) userDataVector.get(i)).getUsername().
-					equals(user)) 
+					equals(user))
 				numfound++;
 		}
 		return numfound>=2;
 	}
-	
+
 	public int getUserState(String user) {
 		for(int i=0;i<userDataVector.size();i++)
 		{
 			BackedUserData data=(BackedUserData) userDataVector.get(i);
-			if(data.getUsername().equals(user)) 
+			if(data.getUsername().equals(user))
 				return data.getState();
 		}
 		return 0;
 	}
-	
+
 	public BackedUserData getBackedUserData(int index) {
 		return (BackedUserData) userDataVector.get(index);
 	}

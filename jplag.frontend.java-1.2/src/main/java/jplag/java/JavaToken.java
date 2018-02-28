@@ -85,8 +85,8 @@ public class JavaToken extends jplag.Token implements JavaTokenConstants {
     default:           return "<UNBEKANNT>";
     }
   }
-  
-  public static int numberOfTokens() { 
+
+  public static int numberOfTokens() {
     return NUM_DIFF_TOKENS;
-  } 
+  }
 }

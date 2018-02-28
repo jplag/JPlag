@@ -48,7 +48,7 @@ public class ResultsTableModel extends AbstractTableModel {
 			fireTableRowsDeleted(row, row);
 		}
 	}
-	
+
 	/*
 	 * JTable uses this method to determine the default renderer/ editor for
 	 * each cell.
@@ -64,7 +64,7 @@ public class ResultsTableModel extends AbstractTableModel {
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
-	
+
 	private Element getRowInfoElement(int row) {
 		return (Element) results.get(row).getElementsByTagName("infos").item(0); //$NON-NLS-1$
 	}
@@ -82,7 +82,7 @@ public class ResultsTableModel extends AbstractTableModel {
 		if (!loc.exists()) {
 			JPlagCreator.showError(view,
 				Messages.getString("ResultsTableModel.Parser_log_not_available"), //$NON-NLS-1$
-				TagParser.parse( 
+				TagParser.parse(
 					Messages.getString("ResultsTableModel.Parser_log_not_available_DESC_{1_PATH}"), //$NON-NLS-1$
 					new String []{loc.getPath()}));
 			return null;
@@ -124,7 +124,7 @@ public class ResultsTableModel extends AbstractTableModel {
 
 	public void setValueAt(Object value, int row, int col) {
 		if (col != 0) return;
-		
+
 		Element elem = getRowInfoElement(row);
 		if(!elem.getAttribute("title").equals(value)) { //$NON-NLS-1$
 			if(atujplag.manageResults(ATUJPLAG.RENAME, (String) value,
@@ -135,7 +135,7 @@ public class ResultsTableModel extends AbstractTableModel {
 			}
 		}
 	}
-    
+
 	public void showResult(int row) {
 		// Search result file
 		Element elem = getRowInfoElement(row);
@@ -160,7 +160,7 @@ public class ResultsTableModel extends AbstractTableModel {
 	public String[] getColumnNames() {
 		return columnNames;
 	}
-	
+
 	/**
 	 * @return The row for a given submission title
 	 */

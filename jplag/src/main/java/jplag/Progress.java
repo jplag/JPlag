@@ -12,7 +12,7 @@ public class Progress {
 
   static private final String progress_string =
     "0%---------------+----------------50%---------------+-------------100%\n";
-  
+
   public Progress(int size, Program p) {
     this.program = p;
     this.size = size;

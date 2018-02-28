@@ -35,39 +35,39 @@ public class JPlagCentral extends Thread {
 	public static final int READYQUEUE = ResultAdmin.SEARCH_ENTRIES;
 	public static final int TERMINATEDQUEUE = ResultAdmin.SEARCH_RESULTS;
 	public static final int ALLQUEUES = ResultAdmin.SEARCH_ALL;
-	
+
 	private static final int MAX_SUBMISSIONS_ON_SERVER=5;
 
 	/**
 	 * The currently processed submission structure
 	 */
 	protected static AccessStructure activeStruct = null;
-	
+
 	/**
 	 * If set to true forces the main thread to be ended
 	 */
 	private static boolean doStopCentral = false;
-	
+
 	/**
 	 * A singleton ResultAdministration object
 	 */
     private static ResultAdmin resultAdmin = null;
-    
+
     /**
      * A singleton UserAdmin object
      */
     private static UserAdmin userAdmin = null;
-	
+
 	/**
 	 * A singleton MailTemplateAdmin object
 	 */
 	private static MailTemplateAdmin mailTemplateAdmin = null;
-    
+
     /**
      * A singleton TransferManager object
      */
     private static TransferManager transferManager = null;
-    
+
     private MemoryManager memoryManager;
 
     /**
@@ -92,15 +92,15 @@ public class JPlagCentral extends Thread {
 		if (JPLAG_CENTRAL == null) JPLAG_CENTRAL = new JPlagCentral();
 		return JPLAG_CENTRAL;
 	}
-	
+
 	public UserAdmin getUserAdmin() {
 		return userAdmin;
 	}
-	
+
 	public MailTemplateAdmin getMailTemplateAdmin() {
 		return mailTemplateAdmin;
 	}
-    
+
     public TransferManager getTransferManager() {
         return transferManager;
     }
@@ -139,7 +139,7 @@ public class JPlagCentral extends Thread {
 		struct.getDecorator().add(state,progress,message);
 		if(struct==activeStruct) activeStruct=null;
 	}
-	
+
 	private static synchronized AccessStructure getNextReadyEntry() {
 		activeStruct = resultAdmin.getNextEntry();
 		return activeStruct;
@@ -155,7 +155,7 @@ public class JPlagCentral extends Thread {
 			return activeStruct.getOption().getState();
 		return 0;
 	}
-	
+
 	/**
 	 * Stops the JPlagCentral by setting some stop flags
 	 */
@@ -171,15 +171,15 @@ public class JPlagCentral extends Thread {
 		memoryManager.setManager_enabled(false);
 		userAdmin.stopUserAdmin();
         transferManager.stopTransferManager();
-		
+
 		// give threads time to complete their current work
 		try { Thread.sleep(1000); } catch(Exception e) {}
-		
+
 		// if still alive, interrupt any sleep loops
 		if(memoryManager.isAlive())	memoryManager.interrupt();
 		if(userAdmin.isAlive()) userAdmin.interrupt();
         if(transferManager.isAlive()) transferManager.interrupt();
-		
+
 		memoryManager = null;
 		userAdmin = null;
         transferManager = null;
@@ -310,24 +310,24 @@ public class JPlagCentral extends Thread {
     public static boolean cancelSubmission(AccessStructure struct){
         if(struct==activeStruct) activeStruct.getOption().forceProgramToStop();
         resultAdmin.deleteSubmission(struct);
-        return struct.delete();        
+        return struct.delete();
     }
-    
+
     protected static jplagWebService.server.Submission[] listSubmissions(String username){
         return resultAdmin.listSubmissions(username);
     }
-    
+
     public static AccessStructure[] listAccessStructures(String username){
         return resultAdmin.listAccessStructures(username);
     }
-    
+
     public static String getNextSubmissionID(){
         return resultAdmin.getNextSubmissionID();
     }
     public static String[] usersList(){
         return resultAdmin.usersList();
     }
-    
+
     public static void checkQuota(String username) throws JPlagException {
     	int numentries=resultAdmin.getNumUserEntries(username);
     	int numresults=resultAdmin.getNumUserResults(username);
@@ -352,7 +352,7 @@ public class JPlagCentral extends Thread {
 				+ "a waiting submission.");
 		}
     }
-    
+
 	public static UserInfo getUserInfo(String username) {
     	int numentries=resultAdmin.getNumUserEntries(username);
     	int numresults=resultAdmin.getNumUserResults(username);

@@ -13,7 +13,7 @@ public class MailTemplateData extends HashMap<String,String> {
 		super();
 		put("server",UserAdmin.JPLAG_SERVER);
 	}
-	
+
 	public MailTemplateData(RequestData rd) {
 		super();
 		put("username",rd.getUsername());
@@ -25,10 +25,10 @@ public class MailTemplateData extends HashMap<String,String> {
 		put("reason",rd.getReason());
 		put("notes",rd.getNotes());
 		put("validateTime",rd.getValidateTime());
-		
+
 		put("server",UserAdmin.JPLAG_SERVER);
 	}
-	
+
 	public MailTemplateData(Element elem) {
 		super();
 		put("username",elem.getAttribute("username"));
@@ -42,7 +42,7 @@ public class MailTemplateData extends HashMap<String,String> {
 		put("email",elem.getAttribute("email"));
 		put("emailSecond",elem.getAttribute("emailSecond"));
 		put("homepage",elem.getAttribute("homepage"));
-		
+
 		put("server",UserAdmin.JPLAG_SERVER);
 	}
 }

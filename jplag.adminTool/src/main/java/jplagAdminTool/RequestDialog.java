@@ -67,13 +67,13 @@ public class RequestDialog extends JDialog {
 	private String[] expireStrs;
     private String[] notesStrs;
 	private AdminTool adminTool;
-	
+
 	private int reqind=0;
 	private JTextField jExpireTextField = null;
 	private JLabel jStateLabel = null;
-    
+
 	private enum RequestState { open, accepted, declined, processing }
-	
+
 	private RequestState[] states=null;
 	private JTextArea jReasonTextArea = null;
 	private JTextArea jNotesTextArea = null;
@@ -91,7 +91,7 @@ public class RequestDialog extends JDialog {
     private JButton jShowMailProviderButton = null;
     private JLabel jUserStateLabel = null;
     private JComboBox<String> jStateComboBox = null;
-	
+
 	/**
 	 * This is the default constructor
 	 */
@@ -116,7 +116,7 @@ public class RequestDialog extends JDialog {
 		initialize();
 		setData();
 	}
-    
+
     private void doClose() {
         setVisible(false);
         dispose();
@@ -131,13 +131,13 @@ public class RequestDialog extends JDialog {
                     doClose();
 				}
 			}, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		
+
 		return rootPane;
 	}
-	
+
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -149,7 +149,7 @@ public class RequestDialog extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -164,10 +164,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel2	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel2
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel2() {
 		if (jPanel2 == null) {
 			jRequestNumLabel = new JLabel();
@@ -186,10 +186,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jProgressBar	
-	 * 	
-	 * @return javax.swing.JProgressBar	
-	 */    
+	 * This method initializes jProgressBar
+	 *
+	 * @return javax.swing.JProgressBar
+	 */
 	private JProgressBar getJProgressBar() {
 		if (jProgressBar == null) {
 			jProgressBar = new JProgressBar();
@@ -197,12 +197,12 @@ public class RequestDialog extends JDialog {
 		}
 		return jProgressBar;
 	}
-	
+
 	/**
-	 * This method initializes jPanel3	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel3
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel3() {
 		if (jPanel3 == null) {
 			jPanel3 = new JPanel();
@@ -213,12 +213,12 @@ public class RequestDialog extends JDialog {
 		}
 		return jPanel3;
 	}
-	
+
 	/**
-	 * This method initializes jPanel	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel() {
 		if (jPanel == null) {
 			GridBagConstraints gridBagConstraints19 = new GridBagConstraints();
@@ -378,10 +378,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jRequestTimeField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jRequestTimeField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJRequestTimeField() {
 		if (jRequestTimeField == null) {
 			jRequestTimeField = new JTextField();
@@ -389,12 +389,12 @@ public class RequestDialog extends JDialog {
 		}
 		return jRequestTimeField;
 	}
-	
+
 	/**
-	 * This method initializes jRealNameTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jRealNameTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJRealNameTextField() {
 		if (jRealNameTextField == null) {
 			jRealNameTextField = new JTextField();
@@ -404,9 +404,9 @@ public class RequestDialog extends JDialog {
 
 	/**
 	 * This method initializes jUsernameTextField
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJUsernameTextField() {
 		if (jUsernameTextField == null) {
 			jUsernameTextField = new JTextField();
@@ -415,10 +415,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPasswordTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jPasswordTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJPasswordTextField() {
 		if (jPasswordTextField == null) {
 			jPasswordTextField = new JTextField();
@@ -427,10 +427,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jEmailTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jEmailTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJEmailTextField() {
 		if (jEmailTextField == null) {
 			jEmailTextField = new JTextField();
@@ -439,10 +439,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jEmailSecondTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jEmailSecondTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJEmailSecondTextField() {
 		if (jEmailSecondTextField == null) {
 			jEmailSecondTextField = new JTextField();
@@ -451,10 +451,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jHomepageTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jHomepageTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJHomepageTextField() {
 		if (jHomepageTextField == null) {
 			jHomepageTextField = new JTextField();
@@ -463,10 +463,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jScrollPane	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
+	 * This method initializes jScrollPane
+	 *
+	 * @return javax.swing.JScrollPane
+	 */
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
@@ -476,10 +476,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jReasonTextArea	
-	 * 	
-	 * @return javax.swing.JTextArea	
-	 */    
+	 * This method initializes jReasonTextArea
+	 *
+	 * @return javax.swing.JTextArea
+	 */
 	private JTextArea getJReasonTextArea() {
 		if (jReasonTextArea == null) {
 			jReasonTextArea = new JTextArea();
@@ -494,10 +494,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jScrollPane1	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
+	 * This method initializes jScrollPane1
+	 *
+	 * @return javax.swing.JScrollPane
+	 */
 	private JScrollPane getJScrollPane1() {
 		if (jScrollPane1 == null) {
 			jScrollPane1 = new JScrollPane();
@@ -505,12 +505,12 @@ public class RequestDialog extends JDialog {
 		}
 		return jScrollPane1;
 	}
-	
+
 	/**
 	 * This method initializes jNotesTextArea
-	 * 	
-	 * @return javax.swing.JTextArea	
-	 */    
+	 *
+	 * @return javax.swing.JTextArea
+	 */
 	private JTextArea getJNotesTextArea() {
 		if (jNotesTextArea == null) {
 			jNotesTextArea = new JTextArea();
@@ -525,10 +525,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel4	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel4
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel4() {
 		if (jPanel4 == null) {
 			GridBagConstraints gridBagConstraints26 = new GridBagConstraints();
@@ -579,10 +579,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jExpireTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jExpireTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJExpireTextField() {
 		if (jExpireTextField == null) {
 			jExpireTextField = new JTextField();
@@ -591,10 +591,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel1	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel1
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel1() {
 		if (jPanel1 == null) {
 			jPanel1 = new JPanel();
@@ -611,7 +611,7 @@ public class RequestDialog extends JDialog {
 		throws ParseException
 	{
 		if(string.length()==0) return null;
-		
+
 		Calendar cal=new GregorianCalendar(TimeZone.getTimeZone("GMT"));
 		SimpleDateFormat sdf2=new SimpleDateFormat("dd.MM.yy");
 		SimpleDateFormat sdf4=new SimpleDateFormat("dd.MM.yyyy");
@@ -635,27 +635,27 @@ public class RequestDialog extends JDialog {
 		DateFormat df=DateFormat.getDateInstance(DateFormat.MEDIUM,Locale.GERMAN);
 		return df.format(cal.getTime());
 	}
-	
+
 	/**
-	 * This method initializes jAcceptButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jAcceptButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJAcceptButton() {
 		if (jAcceptButton == null) {
 			jAcceptButton = new JButton();
 			jAcceptButton.setText("Accept request...");
-			jAcceptButton.addActionListener(new java.awt.event.ActionListener() { 
+			jAcceptButton.addActionListener(new java.awt.event.ActionListener() {
 				private String mailString;
 				private String mailSubjectString;
 				private Calendar expires;
                 private int userstate;
-				
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					final SwingWorker worker = new SwingWorker() {
 						private FinishRequestData finishData;
 						private int curReqInd;
-						
+
 						public Object construct() {
 							try
 							{
@@ -671,7 +671,7 @@ public class RequestDialog extends JDialog {
                                         userstate,
                                         mailSubjectString,
                                         mailString);
-								
+
                                 adminTool.getJPlagStub().finishAccountRequest(
 										finishData);
 								return new Object();
@@ -679,10 +679,10 @@ public class RequestDialog extends JDialog {
 							catch(Exception ex)
 							{
 								adminTool.CheckException(ex,RequestDialog.this);
-							}							
+							}
 							return null;
 						}
-						
+
 						public void finished() {
 							if(get()!=null)
 							{
@@ -715,7 +715,7 @@ public class RequestDialog extends JDialog {
                             }
 						}
 					};
-					
+
 					// check and set expires
 					try
 					{
@@ -745,7 +745,7 @@ public class RequestDialog extends JDialog {
 								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					
+
 					RequestData rd = new RequestData(null,
 							getJUsernameTextField().getText(),
 							getJPasswordTextField().getText(),
@@ -755,14 +755,14 @@ public class RequestDialog extends JDialog {
 							strToN(getJHomepageTextField().getText()),
 							getJReasonTextArea().getText(),
 							strToN(getJNotesServerTextArea().getText()));
-					
+
 					// Let user choose the message to be sent to the user
 					MailDialog md = new MailDialog(MailDialog.MAIL_ACCEPTED,
 							"Choose mail to be sent to the accepted user...",
 							rd, RequestDialog.this, adminTool);
 					md.setLocationRelativeTo(RequestDialog.this);
 					md.setVisible(true);
-					
+
 					if(!md.isCancelled())
 					{
 						mailString = md.getMailString();
@@ -781,21 +781,21 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jDeclineButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jDeclineButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJDeclineButton() {
 		if (jDeclineButton == null) {
 			jDeclineButton = new JButton();
 			jDeclineButton.setText("Decline request...");
-			jDeclineButton.addActionListener(new java.awt.event.ActionListener() { 
+			jDeclineButton.addActionListener(new java.awt.event.ActionListener() {
 				private String mailString;
 				private String mailSubjectString;
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					final SwingWorker worker = new SwingWorker() {
 						private int curReqInd;
-						
+
 						public Object construct() {
 							try
 							{
@@ -811,17 +811,17 @@ public class RequestDialog extends JDialog {
                                         null,
                                         mailSubjectString,
                                         mailString);
-										
+
 								adminTool.getJPlagStub().finishAccountRequest(fd);
 								return new Object();
 							}
 							catch(Exception ex)
 							{
 								adminTool.CheckException(ex,RequestDialog.this);
-							}							
+							}
 							return null;
 						}
-						
+
 						public void finished() {
 							if(get()!=null)
 							{
@@ -850,7 +850,7 @@ public class RequestDialog extends JDialog {
 							rd, RequestDialog.this, adminTool);
                     md.setLocationRelativeTo(RequestDialog.this);
 					md.setVisible(true);
-                    
+
 					if(!md.isCancelled())
 					{
 						mailString = md.getMailString();
@@ -865,7 +865,7 @@ public class RequestDialog extends JDialog {
 		}
 		return jDeclineButton;
 	}
-	
+
 	/**
 	 * "Nillable to string"
 	 * @return "" if str==null, str otherwise
@@ -874,7 +874,7 @@ public class RequestDialog extends JDialog {
 		if(str==null) return "";
 		else return str;
 	}
-	
+
 	/**
 	 * "String to nillable"
 	 * @return null if str=="", str otherwise
@@ -883,7 +883,7 @@ public class RequestDialog extends JDialog {
 		if(str.length()==0) return null;
 		else return str;
 	}
-	
+
 	private void updateState() {
 		String stateText;
 		switch(states[reqind]) {
@@ -911,7 +911,7 @@ public class RequestDialog extends JDialog {
 		getJAcceptButton().setEnabled(states[reqind]==RequestState.open);
 		getJDeclineButton().setEnabled(states[reqind]==RequestState.open);
 	}
-	
+
 	private void setData() {
 		RequestData rd = reqdatas[reqind];
 		getJRequestTimeField().setText(rd.getValidateTime());
@@ -928,7 +928,7 @@ public class RequestDialog extends JDialog {
         getJNotesServerTextArea().setText(notesStrs[reqind]);
         getJNotesServerTextArea().setCaretPosition(0);
 		getJExpireTextField().setText(expireStrs[reqind]);
-		
+
 		jRequestNumLabel.setText("Request " + (reqind+1) + "/"
 				+ reqdatas.length);
 		updateState();
@@ -949,16 +949,16 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPreviousButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jPreviousButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJPreviousButton() {
 		if (jPreviousButton == null) {
 			jPreviousButton = new JButton();
 			jPreviousButton.setText("Show previous");
-			jPreviousButton.addActionListener(new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+			jPreviousButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if(reqind>0)
 					{
 						updateChanges();
@@ -972,16 +972,16 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jNextButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jNextButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJNextButton() {
 		if (jNextButton == null) {
 			jNextButton = new JButton();
 			jNextButton.setText("Show next");
-			jNextButton.addActionListener(new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+			jNextButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					if(reqind<reqdatas.length-1)
 					{
 						updateChanges();
@@ -995,16 +995,16 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jCloseButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jCloseButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJCloseButton() {
 		if (jCloseButton == null) {
 			jCloseButton = new JButton();
 			jCloseButton.setText("Close");
-			jCloseButton.addActionListener(new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+			jCloseButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
                     doClose();
 				}
 			});
@@ -1013,10 +1013,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jNotesServerScrollPane	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
+	 * This method initializes jNotesServerScrollPane
+	 *
+	 * @return javax.swing.JScrollPane
+	 */
 	private JScrollPane getJNotesServerScrollPane() {
 		if (jNotesServerScrollPane == null) {
 			jNotesServerScrollPane = new JScrollPane();
@@ -1026,10 +1026,10 @@ public class RequestDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jNotesServerTextArea	
-	 * 	
-	 * @return javax.swing.JTextArea	
-	 */    
+	 * This method initializes jNotesServerTextArea
+	 *
+	 * @return javax.swing.JTextArea
+	 */
 	private JTextArea getJNotesServerTextArea() {
 		if (jNotesServerTextArea == null) {
 			jNotesServerTextArea = new JTextArea();
@@ -1041,9 +1041,9 @@ public class RequestDialog extends JDialog {
 	}
 
     /**
-     * This method initializes jShowHomepageButton	
-     * 	
-     * @return javax.swing.JButton	
+     * This method initializes jShowHomepageButton
+     *
+     * @return javax.swing.JButton
      */
     private JButton getJShowHomepageButton() {
         if(jShowHomepageButton == null) {
@@ -1063,9 +1063,9 @@ public class RequestDialog extends JDialog {
     }
 
     /**
-     * This method initializes jShowMailProviderButton	
-     * 	
-     * @return javax.swing.JButton	
+     * This method initializes jShowMailProviderButton
+     *
+     * @return javax.swing.JButton
      */
     private JButton getJShowMailProviderButton() {
         if(jShowMailProviderButton == null) {
@@ -1087,9 +1087,9 @@ public class RequestDialog extends JDialog {
     }
 
     /**
-     * This method initializes jStateComboBox	
-     * 	
-     * @return javax.swing.JComboBox	
+     * This method initializes jStateComboBox
+     *
+     * @return javax.swing.JComboBox
      */
     private JComboBox<String> getJStateComboBox() {
         if(jStateComboBox == null) {

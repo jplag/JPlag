@@ -2,7 +2,7 @@ package jplag.java15;
 
 public interface JavaTokenConstants extends jplag.TokenConstants {
   final static int FILE_END = 0;
-  
+
   // Used to optionally separate methods from each other
   // with an always marked token
   final static int SEPARATOR_TOKEN = 1;
@@ -67,6 +67,6 @@ public interface JavaTokenConstants extends jplag.TokenConstants {
   final static int J_ANNO_T_END = 57;           //
   final static int J_ANNO_C_BEGIN = 58;         //
   final static int J_ANNO_C_END = 59;           //
-  
+
   final static int NUM_DIFF_TOKENS = 60;
 }

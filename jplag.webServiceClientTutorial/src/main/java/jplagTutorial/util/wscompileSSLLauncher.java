@@ -13,7 +13,7 @@ import com.sun.xml.rpc.tools.ant.Wscompile;
 public class wscompileSSLLauncher extends Wscompile {
 	public wscompileSSLLauncher() {
 		super();
-        
+
 		// Create a trust manager that does not validate certificate chains
 	    TrustManager[] trustAllCerts = new TrustManager[]{
 	        new X509TrustManager() {
@@ -28,7 +28,7 @@ public class wscompileSSLLauncher extends Wscompile {
 	            }
 	        }
 	    };
-	    
+
 	    // Install the all-trusting trust manager
 	    try {
 	        SSLContext sc = SSLContext.getInstance("SSL");

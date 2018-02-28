@@ -8,7 +8,7 @@ public class Matches {
 
   private int anzahl;
   private final int increment = 20;
-  
+
   public Matches() {
     matches = new Match[10];
     for (int i=0; i<10; i++) matches[i] = new Match();

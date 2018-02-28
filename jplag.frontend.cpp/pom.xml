@@ -4,14 +4,6 @@
 	<artifactId>cpp</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
 
-	<repositories>
-		<repository>
-			<id>ipdNexus</id>
-			<name>Recaa Repository</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
-		</repository>
-	</repositories>
-
 	<build>
 		<plugins>
 			<plugin>

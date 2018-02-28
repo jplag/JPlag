@@ -94,20 +94,20 @@ public class LoginDialog	extends JDialog {
                     jCancelButton.doClick();
                 }
             }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        
+
         return rootPane;
     }
-    
+
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return
 	 */
 	private void initialize() {
 		this.setTitle(Messages.getString("LoginDialog.JPlag_login_dialog_TITLE") + " v" + ATUJPLAG.VERSION_STRING); //$NON-NLS-1$
 		this.setResizable(false);
 		this.setContentPane(getJContentPane());
-		
+
 		// Emulate a click on the cancel button, when the dialog is closed
 		addWindowListener(new WindowListener() {
 			public void windowActivated(WindowEvent arg0) {}
@@ -123,7 +123,7 @@ public class LoginDialog	extends JDialog {
 
 	/**
 	 * This method initializes jPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -133,7 +133,7 @@ public class LoginDialog	extends JDialog {
 			jContentPane.setBackground(JPlagCreator.SYSTEMCOLOR);
 			jContentPane.setBorder(JPlagCreator.LINE);
 			jContentPane.setPreferredSize(new java.awt.Dimension(400,135));
-		
+
 			jContentPane.add(JPlagCreator.createLabel(
 				Messages.getString("LoginDialog.Username_label") + ":", //$NON-NLS-1$ //$NON-NLS-2$
 				170, 20), null);
@@ -154,7 +154,7 @@ public class LoginDialog	extends JDialog {
 
 	/**
 	 * This method initializes jUsernameField
-	 * 
+	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJUsernameField() {
@@ -166,7 +166,7 @@ public class LoginDialog	extends JDialog {
 
 	/**
 	 * This method initializes jPasswordField
-	 * 
+	 *
 	 * @return javax.swing.JPasswordField
 	 */
 	private JPasswordField getJPasswordField() {
@@ -176,7 +176,7 @@ public class LoginDialog	extends JDialog {
 		}
 		return jPasswordField;
 	}
-	
+
 	private JProgressBar getJProgressBar() {
 		if(jProgressBar == null) {
 			jProgressBar = new JProgressBar();
@@ -188,7 +188,7 @@ public class LoginDialog	extends JDialog {
 
 	/**
 	 * This method initializes jOKButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJOKButton() {
@@ -198,7 +198,7 @@ public class LoginDialog	extends JDialog {
 					Messages.getString("LoginDialog.OK_button_TIP"),150,20); //$NON-NLS-1$
 			jOKButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (getJUsernameField().getText().length() == 0 
+					if (getJUsernameField().getText().length() == 0
 							|| getJPasswordField().getPassword().length == 0) {
 						JPlagCreator.showError(LoginDialog.this,
 							Messages.getString("LoginDialog.No_username_or_password"), //$NON-NLS-1$
@@ -208,13 +208,13 @@ public class LoginDialog	extends JDialog {
 					final SwingWorker worker = new SwingWorker() {
 						View mainWindow = null;
 						boolean loginOK = false;
-						
+
 						public Object construct() {
 							if(!atujplag.login(getJUsernameField().getText(),
 								new String(getJPasswordField().getPassword()),
 								getJCheckBox().isSelected(), LoginDialog.this))
                                 return null;
-							
+
 							mainWindow = new View(atujplag);
 							loginOK = true;
 							return null;
@@ -248,10 +248,10 @@ public class LoginDialog	extends JDialog {
                                 getJPasswordField().setEnabled(true);
                                 getJCheckBox().setEnabled(true);
                                 getJOKButton().setEnabled(true);
-                                
+
                                 // transfer focus from cancel button to
                                 // password field
-                                
+
                                 getJCancelButton().transferFocus();
                                 getJUsernameField().transferFocus();
 							}
@@ -262,9 +262,9 @@ public class LoginDialog	extends JDialog {
                     getJOKButton().setEnabled(false);
                     getJUsernameField().setEnabled(false);
                     getJPasswordField().setEnabled(false);
-                    
+
                     // now cancel button will have the focus
-                    
+
 					worker.start();
 				}
 			});
@@ -275,7 +275,7 @@ public class LoginDialog	extends JDialog {
 
 	/**
 	 * This method initializes jCancelButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJCancelButton() {
@@ -296,15 +296,15 @@ public class LoginDialog	extends JDialog {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void setSavePassword(boolean save) {
 		getJCheckBox().setSelected(save);
 	}
-	
+
 	/**
 	 * This method initializes jCheckBox
-	 * 
+	 *
 	 * @return javax.swing.JCheckBox
 	 */
 	private JCheckBox getJCheckBox() {
@@ -328,7 +328,7 @@ public class LoginDialog	extends JDialog {
 	public String getPassword() {
 		return new String(getJPasswordField().getPassword());
 	}
-	
+
 	public ServerInfo getServerInfo() {
 		return serverInfo;
 	}

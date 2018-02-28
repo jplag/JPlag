@@ -24,7 +24,7 @@ public class Language implements jplag.Language {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see jplag.Language#errorsCount()
 	 */
 	public int errorsCount() {

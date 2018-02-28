@@ -31,19 +31,19 @@ public class MailTemplateAdmin {
 	public static final int MAIL_DECLINED = 1;
 	public static final int MAIL_SERVER = 2;
     public static final int MAIL_OTHERS = 3;
-	
+
 	private static final String[] mailTypes={ "accepted", "declined",
 		"serverMail", "others" };
-	
+
 	public static final String SERVER_VERIFICATION = "verification";
 	public static final String SERVER_WARNEXPIRE = "warnExpire";
     public static final String SERVER_ASKEXTEND = "askExtend";
 	public static final String SERVER_EXPIRED = "expired";
 	public static final String SERVER_REQUESTNOTIFY = "requestNotify";
-	
+
     private Document doc = null;
     private Element rootElement = null;
-	
+
 	private File mailTemplateFile;
 
 	public MailTemplateAdmin(String jplagHome) {
@@ -93,9 +93,9 @@ public class MailTemplateAdmin {
         }
         rootElement = doc.createElement("mailTemplates");
         doc.appendChild(rootElement);
-		
+
 		// Add Standard messages
-		
+
 		Element newelem = doc.createElement("accepted");
 		newelem.setAttribute("name","Standard");
 		newelem.setAttribute("subject","[JPlag] Account request accepted");
@@ -105,11 +105,11 @@ public class MailTemplateAdmin {
                 "Website: {server}\nUsername: {username}\n\n" +
 				"Best regards\nThe JPlag administration");
 		rootElement.appendChild(newelem);
-		
+
 		newelem = doc.createElement("accepted");
 		newelem.setAttribute("name","No email");
 		rootElement.appendChild(newelem);
-		
+
 		newelem = doc.createElement("declined");
 		newelem.setAttribute("name","Standard");
 		newelem.setAttribute("subject","[JPlag] Account request rejected");
@@ -118,7 +118,7 @@ public class MailTemplateAdmin {
 				" because\n\n<ENTER REASON HERE>\n\nBest regards\nThe JPlag" +
 				" administration");
 		rootElement.appendChild(newelem);
-        
+
         newelem = doc.createElement("declined");
         newelem.setAttribute("name","No comparison to the Internet");
         newelem.setAttribute("subject","[JPlag] Account request denied");
@@ -130,7 +130,7 @@ public class MailTemplateAdmin {
                 " so that we can give you an account.\n\n" +
                 "Best regards\nThe JPlag administration");
         rootElement.appendChild(newelem);
-        
+
         newelem = doc.createElement("declined");
         newelem.setAttribute("name","No teacher");
         newelem.setAttribute("subject","[JPlag] Account request denied");
@@ -189,11 +189,11 @@ public class MailTemplateAdmin {
             "the Website properly.\nPlease apply with your full name and " +
             "correct email address of your school/university.\n\n" +
             "Best regards\nThe JPlag administration");
-        
+
 		newelem = doc.createElement("declined");
 		newelem.setAttribute("name","No email");
 		rootElement.appendChild(newelem);
-		
+
 		newelem = doc.createElement("serverMail");
 		newelem.setAttribute("name","verification");
 		newelem.setAttribute("subject","[JPlag] Email address verification");
@@ -205,7 +205,7 @@ public class MailTemplateAdmin {
 				"administrator who will then decide on your application.\n\n" +
 				"Best regards\nThe JPlag administration");
 		rootElement.appendChild(newelem);
-		
+
 		newelem = doc.createElement("serverMail");
 		newelem.setAttribute("name","warnExpire");
 		newelem.setAttribute("subject","[JPlag] Your account expires within two weeks!");
@@ -236,7 +236,7 @@ public class MailTemplateAdmin {
 				"today.\nPlease contact us, if you want to reactivate your " +
 				"account.\n\nBest regards\nThe JPlag administration");
 		rootElement.appendChild(newelem);
-		
+
 		newelem = doc.createElement("serverMail");
 		newelem.setAttribute("name","requestNotify");
 		newelem.setAttribute("subject","[JPlag] New request notification");
@@ -247,7 +247,7 @@ public class MailTemplateAdmin {
 				"\nHomepage: {homepage}\nReason: {reason}" +
 				"\nAdditional notes: {notes}");
 		rootElement.appendChild(newelem);
-		
+
         writeXMLFile();
     }
 
@@ -284,7 +284,7 @@ public class MailTemplateAdmin {
 	public synchronized MailTemplate getMailTemplate(int type, String name)
 	{
 		if(type<0 || type>=mailTypes.length) return null;
-		
+
         NodeList list = rootElement.getElementsByTagName(mailTypes[type]);
 		for(int i=0;i<list.getLength();i++)
 		{
@@ -297,7 +297,7 @@ public class MailTemplateAdmin {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return An array of all mail templates of the given type
 	 */
@@ -307,7 +307,7 @@ public class MailTemplateAdmin {
 		if(type<0 || type>=mailTypes.length)
 			throw new JPlagException("getMailTemplates", "Type index out of" +
 					" bounds", "Please check the type parameter!");
-		
+
         NodeList list = rootElement.getElementsByTagName(mailTypes[type]);
 		MailTemplate[] templates = new MailTemplate[list.getLength()];
 		for(int i=0;i<list.getLength();i++)
@@ -318,9 +318,9 @@ public class MailTemplateAdmin {
 		}
 		return templates;
 	}
-	
+
 	/**
-	 * Updates or adds the given mail template for the given type 
+	 * Updates or adds the given mail template for the given type
 	 */
 	public synchronized void setMailTemplate(int type, MailTemplate template)
 			throws JPlagException
@@ -357,7 +357,7 @@ public class MailTemplateAdmin {
                 || template.getData().length()==0)
             throw new JPlagException("setMailTemplate", "Name, subject or data"
                 + " is empty!", "Please check the parameters!");
-        
+
 		Element newelem = doc.createElement(mailTypes[type]);
 		newelem.setAttribute("name",template.getName());
 		newelem.setAttribute("subject",template.getSubject());
@@ -365,7 +365,7 @@ public class MailTemplateAdmin {
 		rootElement.appendChild(newelem);
 		writeXMLFile();
 	}
-	
+
 	/**
 	 * Replaces all keys of the form "{<keyname>}" in the template string
 	 * by the appropriate string given by the MailTemplateData object

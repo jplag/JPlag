@@ -29,7 +29,7 @@ import jplagUtils.PropertiesLoader;
 
 /*
  * This class coordinates the whole program flow.
- * The revision history can be found on https://svn.ipd.kit.edu/trac/jplag/wiki/JPlag/History 
+ * The revision history can be found on https://svn.ipd.kit.edu/trac/jplag/wiki/JPlag/History
  *
  */
 
@@ -773,9 +773,9 @@ public class Program implements ProgramI {
 
 	/*
 	 * Distribution: Program given away to:
-	 * 
+	 *
 	 * 0: Server version
-	 * 
+	 *
 	 * 1: David Klausner 2: Ronald Kostoff 3: Bob Carlson 4: Neville Newman
 	 */
 

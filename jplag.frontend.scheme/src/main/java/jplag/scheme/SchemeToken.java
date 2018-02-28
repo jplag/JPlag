@@ -61,12 +61,12 @@ public class SchemeToken extends jplag.Token implements SchemeTokenConstants {
     case S_LET:              return "LET     ";
     case S_DELAY:            return "DELAY   ";
     case S_VAR:              return "VAR     ";
-      
+
     default:                 return "<?????> ";
     }
   }
-  
-  public static int numberOfTokens() { 
+
+  public static int numberOfTokens() {
     return NUM_DIFF_TOKENS;
-  } 
+  }
 }

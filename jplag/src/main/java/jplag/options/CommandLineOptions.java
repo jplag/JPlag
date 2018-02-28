@@ -176,7 +176,7 @@ public class CommandLineOptions extends Options {
             languageName = args[i + 1].toLowerCase();
             i++;
         } else if (arg.equals("-p") && i + 1 < args.length) {
-            String suffixstr = args[i + 1];          
+            String suffixstr = args[i + 1];
             if (suffixstr.equals("")) {
             	i++;
             }
@@ -231,10 +231,10 @@ public class CommandLineOptions extends Options {
                 this.clusterType = MAX_CLUSTER;
             else if (tmp.equals("avr"))
                 this.clusterType = AVR_CLUSTER;
-            else 
+            else
                 throw new jplag.ExitException("Illegal clustertype: \"" + tmp
                         + "\"\nAvailable types are 'min', 'max' and 'avr'!");
-			
+
             System.out.println("Clustering activated; type: "
                     + args[i + 1].toUpperCase());
             i++;
@@ -370,7 +370,7 @@ public class CommandLineOptions extends Options {
 			this.suffixes = this.language.suffixes();
 		checkBasecodeOption();
 	}
-	
+
     /**
      * This method checks whether the basecode directory value is valid
      */

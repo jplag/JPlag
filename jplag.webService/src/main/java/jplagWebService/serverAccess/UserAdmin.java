@@ -358,7 +358,7 @@ public class UserAdmin extends Thread {
 	 * If isGroupAdmin is false, it returns a list of all users.<br>
 	 * If isGroupAdmin is true, it returns a list of all users he created with
 	 * the password set to an empty string.<br>
-	 * 
+	 *
 	 * @return A list of userdata elements in form of an ArrayOfUserData element
 	 */
 	public synchronized UserDataArray getUserDataArray(String calling_username, boolean isGroupAdmin) throws JPlagException {
@@ -731,7 +731,7 @@ public class UserAdmin extends Thread {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param elem
 	 *            User element to be checked
 	 * @param cal
@@ -805,7 +805,7 @@ public class UserAdmin extends Thread {
 		System.out.println("[" + new Date() + "] UserAdministration started");
 		try {
 			while (!doStopUserAdmin) {
-				// remove expired users				
+				// remove expired users
 				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 				Calendar next2Week = (Calendar) cal.clone();
 				next2Week.add(Calendar.DATE, 14);
@@ -909,7 +909,7 @@ public class UserAdmin extends Thread {
 
 	public void sendMail(String destMail, String subject, String message) throws JPlagException {
 		Properties mailProps = PropertiesLoader.loadProps("jplagWebService/serverAccess/mailconfig.properties");
-		
+
 		// Gets the System properties
 		Properties l_props = System.getProperties();
 

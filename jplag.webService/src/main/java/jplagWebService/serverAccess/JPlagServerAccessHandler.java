@@ -127,7 +127,7 @@ public class JPlagServerAccessHandler extends GenericHandler {
 			 * { String propname = (String) iter.next();
 			 * System.out.println(propname + " = " +
 			 * context.getProperty(propname).toString()); }
-			 * 
+			 *
 			 * HttpServletRequest request = (HttpServletRequest)
 			 * context.getProperty(
 			 * "com.sun.xml.rpc.server.http.HttpServletRequest");

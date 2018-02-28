@@ -43,14 +43,14 @@ public class BackedUserData extends UserData {
         USER_JPLAGADMIN, USER_JPLAGADMIN | MASK_DEVELOPER,
         USER_JPLAGADMINNOTIFY, USER_JPLAGADMINNOTIFY | MASK_DEVELOPER,
 		USER_SERVERPAGE };
-	
+
 	public static final String[] stateStringsGrpAdmin = { "Normal", "NormalDev",
         "Expired", "ExpiredDev", "Deactivated", "DeactivDev" };
-	
+
 	private UserData backup = new UserData();
 
     public BackedUserData(String username, String password, Calendar created,
-			String createdBy, Calendar expires, Calendar lastUsage, 
+			String createdBy, Calendar expires, Calendar lastUsage,
 			int numOfSubs, String realName, String email, String emailSecond,
 			String homepage, String reason, String notes, int state) {
         this.username = username;
@@ -69,29 +69,29 @@ public class BackedUserData extends UserData {
         this.state = state;
 		updateBackup();
     }
-	
+
 	public BackedUserData(UserData data) {
 		setData(data);
 		updateBackup();
 	}
-	
+
 	public static String[] getStateNameArray(int adminstate) {
 		if((adminstate & MASK_JPLAGADMIN)!=0) return stateStrings;
 		else return stateStringsGrpAdmin;
 	}
-	
+
 	public static String getStateName(int state) {
 		for(int i=0;i<stateInts.length;i++)
 			if(stateInts[i]==state) return stateStrings[i];
 		return "INVALID (" + state + ")";
 	}
-	
+
 	public static int getStateInt(String str) {
 		for(int i=0;i<stateInts.length;i++)
 			if(stateStrings[i].equals(str)) return stateInts[i];
 		return USER_INVALID;
 	}
-	
+
 	private void setData(UserData data) {
 		this.username = data.getUsername();
         this.password = data.getPassword();
@@ -108,7 +108,7 @@ public class BackedUserData extends UserData {
         this.notes = data.getNotes();
         this.state = data.getState();
 	}
-	
+
 	public void updateBackup() {
 		backup.setUsername(username);
 		backup.setPassword(password);
@@ -125,15 +125,15 @@ public class BackedUserData extends UserData {
 		backup.setNotes(notes);
 		backup.setState(state);
 	}
-	
+
 	public void resetChanges() {
 		setData(backup);
 	}
-	
+
 	public String getOrigUsername() {
 		return backup.getUsername();
 	}
-	
+
 	public boolean checkValid(UserTableModel utm, Component comp,
 			boolean reset) {
 		if(username.length()==0)
@@ -229,7 +229,7 @@ public class BackedUserData extends UserData {
 					JOptionPane.ERROR_MESSAGE);
 				if(reset) emailSecond=backup.getEmailSecond();
 				return false;
-			}	
+			}
 		}
 		switch(state & ~(MASK_DEVELOPER | MASK_NOAUTOASKEXTEND))
 		{

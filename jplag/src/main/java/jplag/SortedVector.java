@@ -7,7 +7,7 @@ import java.util.Comparator;
 public class SortedVector<T> extends Vector<T> {
     private static final long serialVersionUID = 1L;
     private Comparator<T> cmp;
-    
+
     public SortedVector(Comparator<T> comparator) {
         cmp = comparator;
     }

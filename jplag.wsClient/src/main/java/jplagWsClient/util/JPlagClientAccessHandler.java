@@ -1,6 +1,6 @@
 /*
  * Created on 15.03.2005
- * 
+ *
  * For more information about SOAP headers see:
  *   http://java.sun.com/webservices/docs/1.3/tutorial/doc/JAXRPC7.html#wp122942
  */
@@ -46,15 +46,15 @@ public class JPlagClientAccessHandler extends GenericHandler {
 	public void init(HandlerInfo arg) {
 		info = arg;
 	}
-	
+
 	/**
 	 * Used to set the username and password
 	 * Use something like the following to access this function:
-	 * 
+	 *
 	 * 	private JPlagClientAccessHandler accessHandler=null;
-	 * 
+	 *
 	 * 	[...]
-	 * 
+	 *
 	 * 		HandlerChain handlerchain=stub._getHandlerChain();
 	 *		Iterator handlers=handlerchain.iterator();
 	 *		while(handlers.hasNext())
@@ -76,7 +76,7 @@ public class JPlagClientAccessHandler extends GenericHandler {
 		this.username = username;
 		this.password = password;
 	}
-	
+
 	/**
 	 * Adds an "Access" element to the SOAP header
 	 */

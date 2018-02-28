@@ -14,7 +14,7 @@ import jplag.Structure;
 
 /**
  * @Changed by Emeric Kwemou 29.01.2005
- *  
+ *
  */
 public class Parser extends jplag.Parser implements jplag.TokenConstants {
 

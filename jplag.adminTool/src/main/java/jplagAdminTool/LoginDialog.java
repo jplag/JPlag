@@ -39,7 +39,7 @@ public class LoginDialog extends JDialog {
 	private JPanel jPanel1 = null;
 	private JButton jOKButton = null;
 	private JButton jCancelButton = null;
-	
+
 	private AdminTool adminTool = null;
 	private JProgressBar jProgressBar = null;
 	/**
@@ -55,7 +55,7 @@ public class LoginDialog extends JDialog {
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -64,10 +64,10 @@ public class LoginDialog extends JDialog {
 		this.setTitle("Login dialog...");
 		this.setContentPane(getJContentPane());
 	}
-	
+
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -81,10 +81,10 @@ public class LoginDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel() {
 		if (jPanel == null) {
 			GridBagConstraints gridBagConstraints4 = new GridBagConstraints();
@@ -135,7 +135,7 @@ public class LoginDialog extends JDialog {
 		}
 		return jPanel;
 	}
-	
+
 	private String readUsername() {
 		String str="";
 		try {
@@ -154,10 +154,10 @@ public class LoginDialog extends JDialog {
 		// if an exception is thrown, the username just can't be set
 		catch(UnavailableServiceException e) {}
 		catch(Exception e) {}
-		
+
 		return str;
 	}
-	
+
 	private void storeUsername()
 	{
 		try {
@@ -167,7 +167,7 @@ public class LoginDialog extends JDialog {
 				lookup("javax.jnlp.BasicService");
 			URL baseURL = bs.getCodeBase();
 			URL admintoolURL = new URL(baseURL,"AdminTool.cfg");
-			
+
 			// delete file if already exists
 			try { ps.delete(admintoolURL); } catch(Exception e) {}
 			ps.create(admintoolURL,1024);
@@ -183,10 +183,10 @@ public class LoginDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJUsernameField() {
 		if (jUsernameField == null) {
 			jUsernameField = new JTextField();
@@ -196,10 +196,10 @@ public class LoginDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPasswordField	
-	 * 	
-	 * @return javax.swing.JPasswordField	
-	 */    
+	 * This method initializes jPasswordField
+	 *
+	 * @return javax.swing.JPasswordField
+	 */
 	private JPasswordField getJPasswordField() {
 		if (jPasswordField == null) {
 			jPasswordField = new JPasswordField();
@@ -208,10 +208,10 @@ public class LoginDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel1	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel1
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel1() {
 		if (jPanel1 == null) {
 			jPanel1 = new JPanel();
@@ -223,17 +223,17 @@ public class LoginDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJOKButton() {
 		if (jOKButton == null) {
 			jOKButton = new JButton();
 			jOKButton.setText("OK");
 			jOKButton.setPreferredSize(new java.awt.Dimension(70,26));
 			jOKButton.setMargin(new java.awt.Insets(2,10,2,10));
-			jOKButton.addActionListener(new ActionListener() { 
+			jOKButton.addActionListener(new ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
 					final SwingWorker worker = new SwingWorker() {
 						public Object construct() {
@@ -247,17 +247,17 @@ public class LoginDialog extends JDialog {
 									new String(
                                         getJPasswordField().getPassword()),
                                     LoginDialog.this))
-							{		
+							{
 								storeUsername();
 								setVisible(false);
 								adminTool.setLocationRelativeTo(null);
 								adminTool.setVisible(true);
 								getOwner().dispose();
 							}
-							
+
 							return null;
 						}
-						
+
 						public void finished() {
 							getJProgressBar().setIndeterminate(false);
 						}
@@ -272,18 +272,18 @@ public class LoginDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton1	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton1
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJCancelButton() {
 		if (jCancelButton == null) {
 			jCancelButton = new JButton();
 			jCancelButton.setText("Cancel");
 			jCancelButton.setPreferredSize(new java.awt.Dimension(70,26));
 			jCancelButton.setMargin(new java.awt.Insets(2,10,2,10));
-			jCancelButton.addActionListener(new ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+			jCancelButton.addActionListener(new ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					System.exit(0);
 				}
 			});
@@ -292,10 +292,10 @@ public class LoginDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jProgressBar	
-	 * 	
-	 * @return javax.swing.JProgressBar	
-	 */    
+	 * This method initializes jProgressBar
+	 *
+	 * @return javax.swing.JProgressBar
+	 */
 	private JProgressBar getJProgressBar() {
 		if (jProgressBar == null) {
 			jProgressBar = new JProgressBar();

@@ -7,7 +7,7 @@ import jplagWebService.server.Status;
 
 /**
  * Redirects status changes to AccessStructure.status object
- * 
+ *
  * @author Emeric Kwemou
  */
 
@@ -17,7 +17,7 @@ public class StatusDecorator {
 	public static final int COMPARE_SOURCE_DONE = 300;
 
 	private Status status;
-	
+
 	public StatusDecorator(Status status) {
 		this.status = status;
 		ensureSerializable();
@@ -26,7 +26,7 @@ public class StatusDecorator {
 	public Status getStatus() {
 		return status;
 	}
-	
+
 	public int getState() {
 		return status.getState();
 	}
@@ -50,10 +50,10 @@ public class StatusDecorator {
 	public void setReport(java.lang.String report) {
 		this.status.setReport(report);
 	}
-	
+
 	public void addReport(String report) {
 		if(status.getReport().length()==0) status.setReport(report);
-		else status.setReport(status.getReport() + "\n" + report); 
+		else status.setReport(status.getReport() + "\n" + report);
 	}
 
 	/**

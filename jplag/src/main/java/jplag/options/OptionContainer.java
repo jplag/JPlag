@@ -1,7 +1,7 @@
 /*
  * @Author  Emeric Kwemou on 12.02.2005
  *
- * 
+ *
  */
 package jplag.options;
 
@@ -12,7 +12,7 @@ import jplag.Program;
 
 /**
  * @Changed by Emeric Kwemou 12.02.2005
- * 
+ *
  */
 
 public class OptionContainer extends Options {

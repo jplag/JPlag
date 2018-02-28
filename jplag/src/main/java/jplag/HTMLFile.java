@@ -6,7 +6,7 @@ import java.io.*;
 //  FILE HANDLING
 public class HTMLFile extends PrintWriter {
   private BufferedCounter bc;
-  
+
   /* This static method has to be used to instanciate HTMLFile objects. */
   public static HTMLFile createHTMLFile(File f) throws IOException {
     BufferedCounter new_bc = new BufferedCounter(
@@ -17,14 +17,14 @@ public class HTMLFile extends PrintWriter {
 //        Program.print(null,f.toString()+"  ");
     return htmlfile;
   }
-  
+
   private HTMLFile(BufferedWriter bw) throws IOException {
     super(bw);
   }
 
   public void close() {
     super.close();
-  }    
+  }
 
   public int bytesWritten() {
     return bc.bytesWritten();

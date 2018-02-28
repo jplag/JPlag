@@ -46,10 +46,10 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 	private static final long serialVersionUID = 6779125008336844277L;
 	private View view = null;
 	private ATUJPLAG atujplag = null;
-	
+
 	private Vector<Client> clients = null;
     private Client activeClient = null;
-    
+
     private int currentState = 0;
     private boolean cancelling = false;
 
@@ -84,7 +84,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 	/**
 	 * This constructor constructs an infoPanel used when loading all
 	 * submissions from the server at once
-	 * 
+	 *
 	 * @param serverinfo
 	 *            contains all submissions to be loaded
 	 */
@@ -102,7 +102,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -112,9 +112,9 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 	}
 
 	/**
-	 * This method initializes jTopPanel	
-	 * 	
-	 * @return javax.swing.JPanel	
+	 * This method initializes jTopPanel
+	 *
+	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJTopPanel() {
 		if (jTopPanel == null) {
@@ -138,7 +138,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 
 	/**
 	 * This method initializes jPanel2
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel2() {
@@ -147,14 +147,14 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 					FlowLayout.CENTER);
 			jPanel2.setBorder(BorderFactory.createEmptyBorder(-8,0,0,0));
 			jPanel2.add(getJPanel1());
-			
+
 			cancelButton = JPlagCreator.createButton(
 					Messages.getString("InfoPanel.Cancel_submission"), //$NON-NLS-1$
 					Messages.getString("InfoPanel.Cancel_submission_TIP"),//$NON-NLS-1$
 					160, 20);
 			cancelButton.addActionListener(this);
 			jPanel2.add(cancelButton);
-			
+
 			closeButton = JPlagCreator.createButton(
 					Messages.getString("InfoPanel.Close"), //$NON-NLS-1$
 					Messages.getString("InfoPanel.Close_TIP"), 110, 20); //$NON-NLS-1$
@@ -172,7 +172,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 
 	/**
 	 * This method initializes jPanel1
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel1() {
@@ -191,7 +191,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 
 	/**
 	 * This method initializes jScrollPane
-	 * 
+	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPane() {
@@ -205,7 +205,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 
 	/**
 	 * This method initializes jEditorPane
-	 * 
+	 *
 	 * @return javax.swing.JEditorPane
 	 */
 	private JEditorPane getJEditorPane() {
@@ -214,7 +214,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 			jEditorPane.setPreferredSize(new java.awt.Dimension(290, 120));
 			jEditorPane.setEditable(false);
 			jEditorPane.setBackground(Color.WHITE);
-			
+
 			StyleSheet styleSheet = new StyleSheet();
 			styleSheet.addRule("body { font-family: Dialog; font-size: 12; }"); //$NON-NLS-1$
 			styleSheet.addRule("a { font-size: 12; font-weight: normal; " //$NON-NLS-1$
@@ -222,7 +222,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 			HTMLEditorKit htmlKit = (HTMLEditorKit)(jEditorPane.
 					getEditorKitForContentType("text/html")); //$NON-NLS-1$
 			htmlKit.setStyleSheet(styleSheet);
-			
+
 			jEditorPane.setContentType("text/html"); //$NON-NLS-1$
 			jEditorPane.addHyperlinkListener(new HyperlinkListener() {
 				public void hyperlinkUpdate(HyperlinkEvent arg0) {
@@ -238,7 +238,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 
 	/**
 	 * This method initializes jProgressBar
-	 * 
+	 *
 	 * @return javax.swing.JProgressBar
 	 */
 	private JProgressBar getJProgressBar() {
@@ -253,13 +253,13 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
 		}
 		return jProgressBar;
 	}
-	
+
 	public void actionPerformed(ActionEvent arg0) {
 		Object source = arg0.getSource();
 		if (source == cancelButton) {
 			if (activeClient == null)
 				return;
-            
+
             cancelling = true;
             setClientState(Messages.getString("InfoPanel.Cancelling"),
                 "", 0, Client.CANCELLING, true);
@@ -269,9 +269,9 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
             submissionWorker.interrupt();
 		}
 	}
-    
+
     SwingWorker submissionWorker = null;
-    
+
 	public void run() {
         submissionWorker = new SwingWorker() {
             public Object construct() {
@@ -317,7 +317,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
             }
         });
 	}
-    
+
     public void invokeSetTextAndProgress(final String message,
             final String details, final int progress) {
         EventQueue.invokeLater(new Runnable() {
@@ -336,7 +336,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
             int state, boolean noError) {
         progressPan.setState(state, noError);
         message = message.replaceAll("\n", "<br>");
-        if(detail != null) 
+        if(detail != null)
             detail = detail.replaceAll("\n", "<br>");
         getJEditorPane().setText(
             Messages.getString("InfoPanel.Submission") //$NON-NLS-1$
@@ -356,7 +356,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
             currentState = state;
             view.blink();
         }
-        
+
         getJProgressBar().setValue(progress);
     }
 
@@ -383,7 +383,7 @@ public class InfoPanel extends JWindow implements ActionListener, WindowFocusLis
             activeClient.getDetails(),activeClient.getProgress(),
             activeClient.getState(), !activeClient.isErrorOccurred());
 	}
-    
+
 	public void destroy() {
 		stop = true;
         if(activeClient!=null) activeClient.forceStop();

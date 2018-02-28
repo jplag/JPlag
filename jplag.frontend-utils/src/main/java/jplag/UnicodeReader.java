@@ -25,7 +25,7 @@ import java.io.Reader;
  * Generic unicode text reader, which will use BOM mark to identify the encoding
  * to be used. If BOM is not found then use a given default encoding. System
  * default is used if: BOM mark is not found and defaultEnc is NULL.<br />
- * 
+ *
  * Usage pattern:<pre>
  * String defaultEnc = "ISO-8859-1"; // or NULL to use system default
  * FileInputStream fis = new FileInputStream(file);

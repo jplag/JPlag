@@ -85,7 +85,7 @@ public class CPPToken extends jplag.Token implements CPPTokenConstants {
 		}
 	}
 
-	public static int numberOfTokens() { 
+	public static int numberOfTokens() {
 		return NUM_DIFF_TOKENS;
-	} 
+	}
 }

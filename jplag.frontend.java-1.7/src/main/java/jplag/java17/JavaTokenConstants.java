@@ -19,7 +19,7 @@ public interface JavaTokenConstants extends jplag.TokenConstants {
 	final static int J_DO_BEGIN = 11;			//
 	final static int J_DO_END = 12;				//
 	final static int J_WHILE_BEGIN = 13;		//
-	final static int J_WHILE_END = 14;			//		
+	final static int J_WHILE_END = 14;			//
 	final static int J_FOR_BEGIN = 15;			//
 	final static int J_FOR_END = 16;			//
 	final static int J_SWITCH_BEGIN = 17;		//

@@ -4,7 +4,7 @@ package jplag.java15.grammar;
 /**
  * An implementation of interface CharStream, where the stream is assumed to
  * contain only ASCII characters (with java-like unicode escape processing).
- * 
+ *
  * Modification: Tabs are kept as single characters in column calculation
  */
 
@@ -168,7 +168,7 @@ public class JavaTabModCharStream implements CharStream
   }
 
   public char BeginToken() throws java.io.IOException
-  {     
+  {
      if (inBuf > 0)
      {
         --inBuf;
@@ -184,7 +184,7 @@ public class JavaTabModCharStream implements CharStream
      bufpos = -1;
 
      return readChar();
-  }     
+  }
 
   protected void AdjustBuffSize()
   {
@@ -335,7 +335,7 @@ public class JavaTabModCharStream implements CharStream
   }
 
   /**
-   * @deprecated 
+   * @deprecated
    * @see #getEndColumn
    */
 
@@ -344,7 +344,7 @@ public class JavaTabModCharStream implements CharStream
   }
 
   /**
-   * @deprecated 
+   * @deprecated
    * @see #getEndLine
    */
 
@@ -522,7 +522,7 @@ public class JavaTabModCharStream implements CharStream
         bufcolumn[j] = newCol + columnDiff;
         columnDiff = nextColDiff;
         i++;
-     } 
+     }
 
      if (i < len)
      {

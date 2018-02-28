@@ -30,7 +30,7 @@ public class InputState extends LexerSharedInputState {
     column = 1;
     line = 1;
   }
-  
+
   public int getLine() { return line; }
 }
 

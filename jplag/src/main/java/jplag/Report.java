@@ -84,7 +84,7 @@ public class Report implements TokenConstants {
 		if (!root.canWrite()) {
 			throw new jplag.ExitException("Cannot write directory: " + root);
 		}
-		// now the actual file creation:    
+		// now the actual file creation:
 		File f = new File(root, name);
 		HTMLFile res = null;
 		try {
@@ -667,7 +667,7 @@ public class Report implements TokenConstants {
 	/*
 	 * i is the number of the match j == 0 if subA is considered, otherwise it
 	 * is subB
-	 * 
+	 *
 	 * This procedure uses only the getIndex() method of the token. It is meant
 	 * to be used with the Character front end
 	 */
@@ -740,7 +740,7 @@ public class Report implements TokenConstants {
 	/*
 	 * i is the number of the match j == 0 if subA is considered, otherwise (j
 	 * must then be 1) it is subB
-	 * 
+	 *
 	 * This procedure makes use of the column and length information!
 	 */
 	private int writeImprovedSubmission(int i, AllMatches match, int j) throws jplag.ExitException {
@@ -813,7 +813,7 @@ public class Report implements TokenConstants {
 			MarkupText markup = iter.next();
 			//System.out.println(markup);
 			String tmp = text[markup.fileIndex][markup.lineIndex];
-			// is there any &quot;, &amp;, &gt; or &lt; in the String? 
+			// is there any &quot;, &amp;, &gt; or &lt; in the String?
 			if (tmp.indexOf('&') >= 0) {
 				Vector<String> tmpV = new Vector<String>();
 				// convert the string into a vector
