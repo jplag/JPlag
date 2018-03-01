@@ -49,9 +49,9 @@ Liste aller Token
 
 FILE_END		Spezielles Token, das nicht gematcht wird!
 
-J_PACKAGE		"package" Name() ";" ง
+J_PACKAGE		"package" Name() ";" ยง
 
-J_IMPORT		"import" Name() [".*"] ";" ง
+J_IMPORT		"import" Name() [".*"] ";" ยง
 
 J_CLASS_BEGIN
 J_CLASS_END		Begrenzen eine Klasse
