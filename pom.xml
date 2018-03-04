@@ -13,9 +13,6 @@
 		<module>jplag.frontend.chars</module>
 		<module>jplag.frontend.cpp</module>
 		<module>jplag.frontend.csharp-1.2</module>
-		<module>jplag.frontend.java-1.1exp</module>
-		<module>jplag.frontend.java-1.2</module>
-		<module>jplag.frontend.java-1.5</module>
 		<module>jplag.frontend.java-1.7</module>
 		<module>jplag.frontend.python-3</module>
 		<module>jplag.frontend.scheme</module>
