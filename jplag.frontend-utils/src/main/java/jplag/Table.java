@@ -27,7 +27,7 @@ public class Table {
   public final void add(int hash, int datum) {
     addTo(hash % size, datum);
   }
-  
+
   public final int[] get(int hash) {
     return data[hash % size];
   }
@@ -36,7 +36,7 @@ public class Table {
     if (data[index]==null) {  // new element
       data[index] = new int[4];
       data[index][0] = 0;
-    } else 
+    } else
       ensureCapacity(index, data[index][0] + 2);
 
     data[index][++data[index][0]] = datum;

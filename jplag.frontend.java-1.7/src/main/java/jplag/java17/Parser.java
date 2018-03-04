@@ -60,7 +60,7 @@ public class Parser extends jplag.Parser implements JavaTokenConstants {
 			System.out.println(e);
 		}
 	}
-	
+
 	public jplag.Structure parse(File dir, String files[]) {
 		struct = new Structure();
 		errors = 0;
@@ -111,9 +111,9 @@ public class Parser extends jplag.Parser implements JavaTokenConstants {
 	//	public void addTerminal(int type, int line, int start, String text) {
 	//		struct.addToken(new JavaToken(type, (currentFile == null ? "null" : currentFile), line, start, text.length()));
 	//	}
-	
+
 	public void add(int type, org.antlr.v4.runtime.Token tok) {
-		struct.addToken(new JavaToken(type, (currentFile == null ? "null" : currentFile), tok.getLine(), tok.getCharPositionInLine() + 1, 
+		struct.addToken(new JavaToken(type, (currentFile == null ? "null" : currentFile), tok.getLine(), tok.getCharPositionInLine() + 1,
 				tok.getText().length()));
 	}
 }

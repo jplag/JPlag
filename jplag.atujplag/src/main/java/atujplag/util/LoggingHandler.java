@@ -11,13 +11,13 @@ import javax.xml.rpc.handler.HandlerInfo;
 import javax.xml.rpc.handler.MessageContext;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import javax.xml.soap.SOAPMessage;
- 
+
 //import atujplag.view2.LogOutputStream;
 
 public class LoggingHandler extends GenericHandler {
 
 //    String[] MIME_HEADERS = { "Server", "Date", "Content-length", "Content-type", "SOAPAction" };
-	
+
 	protected HandlerInfo info=null;
 
 	public boolean handleRequest(MessageContext context) {
@@ -32,7 +32,7 @@ public class LoggingHandler extends GenericHandler {
 			{
 				header=envelope.addHeader();
 			}
-		
+
 			SOAPHeaderElement accessElement=header.addHeaderElement(
 					envelope.createName("logged","ns1",
 					"http://example.com/jplag"));
@@ -75,7 +75,7 @@ public class LoggingHandler extends GenericHandler {
             out.flush();
 			out.close();
         }
-    }	
+    }
 	private String logSOAPMessage(MessageContext context) {
 		StringBuffer stringBuffer = new StringBuffer();
 		SOAPMessageContext smc = (SOAPMessageContext) context;
@@ -99,7 +99,7 @@ public class LoggingHandler extends GenericHandler {
 		stringBuffer.append(bout.toString() + "\n");
 
 		return stringBuffer.toString();
-	} 
+	}
 
 	public FileOutputStream createFile() {
 		FileOutputStream fout = null;
@@ -114,11 +114,11 @@ public class LoggingHandler extends GenericHandler {
 		}
 		return fout;
 	}
-	
+
 	public void init(HandlerInfo arg) {
 		info=arg;
 	}
-	
+
    	public QName[] getHeaders() {
    		return info.getHeaders();
    	}

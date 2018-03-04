@@ -32,7 +32,7 @@ public class ParserTest {
 	 * that I was able to find so far. The output is not compared to anything.
 	 * This test should only assure that we have covered all new features with
 	 * the grammar.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	@Test
@@ -231,7 +231,7 @@ public class ParserTest {
 	 * Compare results (token sequence) with Java 1.5 parser (without method
 	 * separators ; if you know why they exist, PLEASE tell us or document at
 	 * https://svn.ipd.kit.edu/trac/jplag/wiki/Server/Frontends/Java-1.5)
-	 * 
+	 *
 	 * @param javaFile
 	 * @throws IOException
 	 */
@@ -260,9 +260,9 @@ public class ParserTest {
 	 * assumes that the token types have not changed from java 1.5 to Java 1.7
 	 * (meaning the integer values are the same but Java 1.7 has more than Java
 	 * 1.5)
-	 * 
+	 *
 	 * @see jplag.java17.JavaToken
-	 * 
+	 *
 	 * @param oldStruct
 	 * @param withDetails
 	 * @return
@@ -272,7 +272,7 @@ public class ParserTest {
 		for (int i = 0; i < oldStruct.size(); i++) {
 			sb.append(jplag.java17.JavaToken.type2string(oldStruct.tokens[i].type));
 			if (withDetails) {
-				sb.append(" L:" + oldStruct.tokens[i].getLine()  
+				sb.append(" L:" + oldStruct.tokens[i].getLine()
 				+ " C:" + oldStruct.tokens[i].getLine()
 				+ " l:" + oldStruct.tokens[i].getLine());
 			}

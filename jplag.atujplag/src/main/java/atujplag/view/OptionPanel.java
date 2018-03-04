@@ -60,12 +60,12 @@ public class OptionPanel extends JDialog implements ActionListener,
     /*
      * Constants describing error messages of validateOptions()
      */
-    
+
 	private static final long serialVersionUID = -6556063048578752374L;
 	private static final int NOERROR = 0;
     private static final int GENOPTERROR = 1;
     private static final int ADVOPTERROR = 2;
-    
+
 	private static final int SCAN_DELAY = 500; // in milliseconds
 
     private ATUJPLAG atujplag = null;
@@ -87,25 +87,25 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     private Timer validateTitleTimer = null;
     private Timer updatePreviewTimer = null;
-    
+
     /*
      * GUI components
      */
-    
+
     // Content panel
 
 	private JPanel jContentPane = null;
     private JPanel jOptionPanel = null;
     private JPanel jOptionButtonsPanel = null;
     private JPanel jControlPanel = null;
-    
+
     // Option panel
-    
+
     private JPanel jGeneralOptionsPanel = null;
     private JPanel jAdvancedOptionsPanel = null;
-    
+
     // General options panel
-    
+
 	private JComboBox<String> jLanguageCB = null;
 	private JComboBox<String> jCompModeCB = null;
     private ItemListener languageItemListener = null;
@@ -115,7 +115,7 @@ public class OptionPanel extends JDialog implements ActionListener,
     private JButton jFileChooserButton = null;
     private JCheckBox jRecurseDirCBBox = null;
     private ItemListener recurseDirCBListener = null;
-    
+
     // Advanced options panel
 
     private JTextField jSuffixesField = null;
@@ -132,23 +132,23 @@ public class OptionPanel extends JDialog implements ActionListener,
     private JButton jApplyDefaultsButton = null;
 
     // Option buttons panel
-    
+
 	private JButton jGeneralOptionsButton = null;
     private JButton jAdvancedOptionsButton = null;
     private JButton jCancelButton = null;
 
     // Control panel
-    
+
     private JPanel jStatusCardPanel = null;
     private JProgressBar jProgressBar = null;
-    
+
     // Status card panel
-    
+
     private JPanel jStatusPanel = null;
     private JPanel jErrorPanel = null;
-    
+
     // Status panel
-    
+
     private JTextField jStatusTextField = null;
     private JTextField jNumValidProgramsField = null;
     private JTextField jNumFilesField = null;
@@ -157,7 +157,7 @@ public class OptionPanel extends JDialog implements ActionListener,
     private JButton submitButton = null;
 
     // Error panel
-    
+
     private JTextArea jErrorArea = null;
     private JButton jOverwriteDirButton = null;
 
@@ -197,10 +197,10 @@ public class OptionPanel extends JDialog implements ActionListener,
                 	jCancelButton.doClick();
                 }
             }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        
+
         return rootPane;
     }
-    
+
     /**
      * This method initializes this
      */
@@ -208,7 +208,7 @@ public class OptionPanel extends JDialog implements ActionListener,
         view.blockNewSubmissions();   // TODO: this shouldn't be done here!
         setResizable(false);
         setContentPane(getJContentPane());
-        
+
         addWindowListener(new WindowListener() {
             public void windowClosing(WindowEvent arg0) {
                 if (!OptionPanel.this.isSubmitted)
@@ -222,7 +222,7 @@ public class OptionPanel extends JDialog implements ActionListener,
             public void windowIconified(WindowEvent arg0) {}
             public void windowOpened(WindowEvent arg0) {}
         });
-        
+
         // TODO: Just make the dialog modal?? Would this work with treePreview?
         addWindowFocusListener(new WindowFocusListener() {
             public void windowGainedFocus(WindowEvent arg0) {
@@ -240,7 +240,7 @@ public class OptionPanel extends JDialog implements ActionListener,
             }
         });
     }
-    
+
     /**
      * @return Returns the jContentPane.
      */
@@ -257,7 +257,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jOptionPanel
-     * 
+     *
      * @return javax.swing.JPanel
      */
     private JPanel getJOptionPanel() {
@@ -342,7 +342,7 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return jGeneralOptionsPanel;
     }
-    
+
     private JCheckBox getJRecurseDirCBBox() {
         if (jRecurseDirCBBox == null) {
             jRecurseDirCBBox = JPlagCreator.createCheckBox(
@@ -353,7 +353,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jOptionButtonsPanel
-     * 
+     *
      * @return javax.swing.JPanel
      */
     private JPanel getJOptionButtonsPanel() {
@@ -369,7 +369,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jGeneralOptionsButton
-     * 
+     *
      * @return javax.swing.JButton
      */
     private JButton getJGeneralOptionsButton() {
@@ -383,10 +383,10 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return jGeneralOptionsButton;
     }
-    
+
     /**
      * This method initializes jAdvancedOptionsButton
-     * 
+     *
      * @return javax.swing.JButton
      */
     private JButton getJAdvancedOptionsButton() {
@@ -400,10 +400,10 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return jAdvancedOptionsButton;
     }
-    
+
     /**
      * This method initializes jCancelButton
-     * 
+     *
      * @return javax.swing.JButton
      */
     private JButton getJCancelButton() {
@@ -419,7 +419,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jAdvancedOptionsPanel
-     * 
+     *
      * @return javax.swing.JPanel
      */
     private JPanel getJAdvancedOptionsPanel() {
@@ -454,7 +454,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jSufAndBCPanel
-     * 
+     *
      * @return javax.swing.JPanel
      */
     private JPanel getJSufAndBCPanel() {
@@ -489,10 +489,10 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return this.jBasecodeCB;
     }
-    
+
     /**
      * This method initializes jMmlAndClusterPanel
-     * 
+     *
      * @return javax.swing.JPanel
      */
     private JPanel getJMmlAndClusterPanel() {
@@ -540,10 +540,10 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return jSubdirCB;
     }
-    
+
     /**
      * This method initializes jApplyDefaultsButton
-     * 
+     *
      * @return javax.swing.JButton
      */
     private JButton getJApplyDefaultsButton() {
@@ -555,10 +555,10 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return jApplyDefaultsButton;
     }
-    
+
     /**
      * This method initializes jControlPanel
-     * 
+     *
      * @return javax.swing.JPanel
      */
     private JPanel getJControlPanel() {
@@ -573,7 +573,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jStatusCardPanel
-     * 
+     *
      * @return javax.swing.JPanel
      */
     private JPanel getJStatusCardPanel() {
@@ -585,10 +585,10 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return jStatusCardPanel;
     }
-    
+
     /**
      * This method initializes jStatusPanel
-     * 
+     *
      * @return javax.swing.JPanel
      */
     private JPanel getJStatusPanel() {
@@ -620,7 +620,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jStatusTextField
-     * 
+     *
      * @return javax.swing.JTextField
      */
     private JTextField getStatusTextField() {
@@ -635,7 +635,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jNumValidProgramsField
-     * 
+     *
      * @return javax.swing.JTextField
      */
     private JTextField getJNumValidProgramsField() {
@@ -647,10 +647,10 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return jNumValidProgramsField;
     }
-    
+
     /**
      * This method initializes jNumFilesField
-     * 
+     *
      * @return javax.swing.JTextField
      */
     private JTextField getJNumFilesField() {
@@ -666,7 +666,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jSubmissionSizeField
-     * 
+     *
      * @return javax.swing.JTextField
      */
     private JTextField getJSubmissionSizeField() {
@@ -679,10 +679,10 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return jSubmissionSizeField;
     }
-    
+
     /**
      * This method initializes previewButton
-     * 
+     *
      * @return javax.swing.JButton
      */
     private JButton getPreviewButton() {
@@ -700,7 +700,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes submitButton
-     * 
+     *
      * @return javax.swing.JButton
      */
     private JButton getSubmitButton() {
@@ -716,7 +716,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jErrorPanel
-     * 
+     *
      * @return javax.swing.JPanel
      */
     private JPanel getJErrorPanel() {
@@ -732,7 +732,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jErrorArea
-     * 
+     *
      * @return javax.swing.JEditorPane
      */
     private JTextArea getJErrorArea() {
@@ -752,7 +752,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jOverwriteDirButton
-     * 
+     *
      * @return javax.swing.JButton
      */
     private JButton getJOverwriteDirButton() {
@@ -772,7 +772,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 
     /**
      * This method initializes jProgressBar
-     * 
+     *
      * @return javax.swing.JProgressBar
      */
     private JProgressBar getJProgressBar() {
@@ -786,7 +786,7 @@ public class OptionPanel extends JDialog implements ActionListener,
         }
         return jProgressBar;
     }
-    
+
     private void selectLanguageCB(String lang) {
         for(int i=0; i<jLanguageCB.getItemCount(); i++) {
             if(jLanguageCB.getItemAt(i).toString().equals(lang)) {
@@ -795,7 +795,7 @@ public class OptionPanel extends JDialog implements ActionListener,
             }
         }
     }
-    
+
     public void initOptions(boolean isChangingOptions) {
         Option options = client.getOptions();
 
@@ -806,8 +806,8 @@ public class OptionPanel extends JDialog implements ActionListener,
             jTitleField.setEditable(false);
             jTitleField.setBackground(JPlagCreator.SYSTEMCOLOR);
             selectLanguageCB(options.getLanguage());
-            
-            Integer compmode = options.getComparisonMode(); 
+
+            Integer compmode = options.getComparisonMode();
             if(compmode != null && compmode >= 0 && compmode < ATUJPLAG.COMPARE_MODES.length)
                 jCompModeCB.setSelectedIndex(compmode);
 
@@ -819,7 +819,7 @@ public class OptionPanel extends JDialog implements ActionListener,
             firstScan = true;
             oldBasecodeDir = options.getBasecodeDir();
             if(oldBasecodeDir == null) oldBasecodeDir = ""; //$NON-NLS-1$
-            
+
             String path = options.getPathToFiles();
             if (path != null && path.length()!=0) {
                 for (int i = 0; i < getJSubdirCB().getItemCount(); i++) {
@@ -836,12 +836,12 @@ public class OptionPanel extends JDialog implements ActionListener,
             changeOptions(atujplag.getLastLanguageSetting());
             options.setTitle(client.getClientName());
         }
-        
+
         validateTitleTimer = new Timer(SCAN_DELAY, new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
                 if(OptionPanel.this.checkOptions() && previewSubs == null) {
                     // options were invalid before -> update preview
-                    applyOptions();    
+                    applyOptions();
                 }
             }
         });
@@ -853,7 +853,7 @@ public class OptionPanel extends JDialog implements ActionListener,
             }
         });
         updatePreviewTimer.setRepeats(false);
-        
+
         createListeners();
 
         jTitleField.getDocument().addDocumentListener(titleListener);
@@ -890,7 +890,7 @@ public class OptionPanel extends JDialog implements ActionListener,
                 }
             }
         };
-        
+
         titleListener = new DocumentListener() {
             public void changedUpdate(DocumentEvent arg0) {
                 overwrite = false;
@@ -905,7 +905,7 @@ public class OptionPanel extends JDialog implements ActionListener,
                 this.changedUpdate(arg0);
             }
         };
-        
+
         subdirCBListener = new ItemListener() {
             public void itemStateChanged(ItemEvent arg0) {
             	if(!updatingSubDirCB && arg0.getStateChange() == ItemEvent.SELECTED)
@@ -950,7 +950,7 @@ public class OptionPanel extends JDialog implements ActionListener,
     public void removeUpdate(DocumentEvent arg0) {
         changedUpdate(arg0);
     }
-    
+
     private void changeOptions(LanguageSetting lang) {
         int setCTyp = 0;
         String clusterType = lang.getClusterType();
@@ -983,7 +983,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 		getJSuffixesField().setCaretPosition(0);
 		jClusterTypeCB.setSelectedIndex(setCTyp);
     }
-    
+
 	public void actionPerformed(ActionEvent arg0) {
 		Object source = arg0.getSource();
 
@@ -1011,7 +1011,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 				chooser = new JFileChooser();
 			else
 				chooser = new JFileChooser(new File(file));
-            
+
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 /*			chooser.setBackground(JPlagCreator.SYSTEMCOLOR);
@@ -1062,10 +1062,10 @@ public class OptionPanel extends JDialog implements ActionListener,
 					jLanguageCB.getSelectedItem().toString());
 			client.getOptions().setReadSubdirs(
 					getJRecurseDirCBBox().isSelected());*/
-            
+
 			getJGeneralOptionsButton().setEnabled(true);
 			getJAdvancedOptionsButton().setEnabled(false);
-            
+
 			CardLayout layout = (CardLayout) this.getJOptionPanel().getLayout();
 			generateAdvancedOptions();
 			layout.next(getJOptionPanel());
@@ -1076,7 +1076,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 					jLanguageCB.getSelectedItem().toString()));
 		}
 	}
-	
+
 	private void submit() {
 		if (treePreview != null)
 			treePreview.dispose();
@@ -1084,7 +1084,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 		client.getOptions().setLanguage(
 				jLanguageCB.getSelectedItem().toString());
 		client.setClientName(jTitleField.getText());
-		
+
 		option.setComparisonMode(jCompModeCB.getSelectedIndex());
 
 		// Cluster type
@@ -1098,7 +1098,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 		if (bc.equals(Messages.getString("OptionPanel.none"))) //$NON-NLS-1$
 			bc = ""; //$NON-NLS-1$
 		option.setBasecodeDir(bc);
-		
+
 		// Minimum match length
 		int value = ((Integer) getJMinMatchLenSpinner().getModel().getValue())
 				.intValue();
@@ -1148,26 +1148,26 @@ public class OptionPanel extends JDialog implements ActionListener,
 			getClient().getOptions().setPathToFiles(subdir);
 		} else
 			getClient().getOptions().setPathToFiles(""); //$NON-NLS-1$
-		
+
 		if(!firstScan)
 			oldBasecodeDir = getJBasecodeCB().getSelectedItem().toString();
 		else
 			firstScan = false;
-		
+
 		previewSubs = null;
 		updateBasecodeCombo();
 		updateSubdirCombo();
-		
+
 		updateScanThread();
 	}
 
     private void requestPreviewUpdate() {
         this.updatePreviewTimer.restart();
     }
-    
+
     /**
      * Invalidates status infos and requests preview update
-     */ 
+     */
     private void invalidatePreview() {
         updatePreviewTimer.stop();
         if(scanThread != null) {
@@ -1177,7 +1177,7 @@ public class OptionPanel extends JDialog implements ActionListener,
             } catch(InterruptedException e) {}
             scanThread = null;
         }
-        
+
         getSubmitButton().setEnabled(false);
         getPreviewButton().setEnabled(false);
 
@@ -1185,14 +1185,14 @@ public class OptionPanel extends JDialog implements ActionListener,
         getJNumFilesField().setText(""); //$NON-NLS-1$
         getJSubmissionSizeField().setText(""); //$NON-NLS-1$
         getJProgressBar().setValue(0);
-        
+
         if(treePreview != null) {
             treePreview.dispose();
             treePreview = null;
             reopenPreview = true;
         }
         else reopenPreview = false;
-        
+
         previewSubs = null;
 
         if(!checkOptions()) {     // invalid options?
@@ -1201,13 +1201,13 @@ public class OptionPanel extends JDialog implements ActionListener,
         getStatusTextField().setText(Messages.getString("OptionPanel.OK")); //$NON-NLS-1$
         requestPreviewUpdate();
     }
-    
+
 	private void updateBasecodeCombo() {
 		int selindex = 0, numadded = 1;
 		JComboBox<String> cb = getJBasecodeCB();
 		cb.removeAllItems();
 		cb.addItem(Messages.getString("OptionPanel.none")); //$NON-NLS-1$
-		
+
 		if(previewSubs == null) return;
 		for(int i = 0; i < previewSubs.size(); i++) {
 			SubmissionManager sub = previewSubs.get(i);
@@ -1219,7 +1219,7 @@ public class OptionPanel extends JDialog implements ActionListener,
 		}
 		cb.setSelectedIndex(selindex);
 	}
-    
+
 	/**
 	 * Updates the subdirectory combo box.
 	 * The data depends on the following options:
@@ -1229,12 +1229,12 @@ public class OptionPanel extends JDialog implements ActionListener,
 	 */
     private void updateSubdirCombo() {
     	updatingSubDirCB = true;
-    	
+
     	JComboBox<String> cb = getJSubdirCB();
     	String selItem = (String) cb.getSelectedItem();       // will be null, if none selected
         cb.removeAllItems();
         cb.addItem(Messages.getString("OptionPanel.none")); //$NON-NLS-1$
-        
+
 		File[] files = (new File(client.getSubmissionDirectory())).listFiles();
 		if(files == null) {
 			System.out.println("No file found");
@@ -1250,7 +1250,7 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
 						if(subfiles[j].isDirectory()) {
 		                    // Check whether this directory is already in subdircb
 							String dirname = subfiles[j].getName();
-		                    
+
 							for(int k = 0; k < cb.getItemCount(); k++) {
 								if(dirname.equals(cb.getItemAt(k).toString()))
 									continue subfilesloop;		// already in combo box
@@ -1267,12 +1267,12 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
 			}
 			cb.setSelectedIndex(selIndex);
 		}
-		
+
 		updatingSubDirCB = false;
     }
 
 	String[] genAOSuffixes;
-	
+
 	private boolean hasDirValidFiles(File aktDir) {
 		String[] newFiles = aktDir.list(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
@@ -1300,7 +1300,7 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
 		}
 		return false;
 	}
-	
+
 	private void doGenerateAdvancedOptions() {
 		if(advOptionsUpToDate) return;
 
@@ -1310,7 +1310,7 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
 		updateBasecodeCombo();
 
         updateSubdirCombo();
-		
+
         advOptionsUpToDate = true;
 	}
 
@@ -1323,11 +1323,11 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
 	public SimpleClient getClient() {
 		return client;
 	}
-    
+
 	public Vector<SubmissionManager> getSubmissions() {
 		return previewSubs;
 	}
-    
+
     private String[] parseCommaString(String str) {
         String tmp;
         if (str.length() == 0)
@@ -1357,40 +1357,40 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
      * @return true and shows the status panel, if options are valid.
      *         false and shows the general options panel and error panel with
      *         an error message, otherwise
-     */    
+     */
 	private boolean checkOptions() {
 		CardLayout layout = (CardLayout) getJStatusCardPanel().getLayout();
 
         int error = validateOptions();
 		if (error == NOERROR) {
 			layout.show(getJStatusCardPanel(), getJStatusPanel().getName());
-            
+
             // Activate advanced options button, if general options were not
             // valid before
-            
+
             if(!getJGeneralOptionsButton().isEnabled()
                     && !getJAdvancedOptionsButton().isEnabled())
                 getJAdvancedOptionsButton().setEnabled(true);
-            
+
             return true;
 		} else {
 			// Do not overwrite if change options called //TODO was will dieser kommentar sagen??
-            
+
             // General options are invalid -> show error and general options
             // panel and disable option buttons
-            
+
 			layout.show(getJStatusCardPanel(), getJErrorPanel().getName());
-            
+
             layout = (CardLayout) getJOptionPanel().getLayout();
             layout.show(getJOptionPanel(), (error == GENOPTERROR)
                     ? getJGeneralOptionsPanel().getName()
                     : getJAdvancedOptionsPanel().getName());
-            
+
             if(error == GENOPTERROR) {
                 getJGeneralOptionsButton().setEnabled(false);
                 getJAdvancedOptionsButton().setEnabled(false);
             }
-            
+
             return false;
 		}
 	}
@@ -1471,7 +1471,7 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
 
         this.client.getOptions().setLanguage(
                 this.jLanguageCB.getSelectedItem().toString());
-        
+
         // check suffixes
         if(getJSuffixesField().getText().length()==0) {
             getJErrorArea().setText(Messages.getString(
@@ -1481,7 +1481,7 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
         }
         getClient().getOptions().setSuffixes(parseCommaString(
             getJSuffixesField().getText()));
-        
+
         return NOERROR;
     }
 
@@ -1578,13 +1578,13 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
         for (int i = 0; i < list.length; i++) {
             if (Thread.currentThread().isInterrupted())
                 throw new InterruptedException();
-            
+
             File subm_dir = new File(f, list[i]);
             getJProgressBar().setValue((i + 1) * 100 / list.length);
             getStatusTextField().setText(TagParser.parse(
                     Messages.getString("OptionPanel.Scanning_directory_{1_DIR}"), //$NON-NLS-1$
                     new String[] { list[i] }));
-            
+
             if (!subm_dir.isDirectory()) {
                 boolean ok = false;
                 String name = subm_dir.getName();
@@ -1617,7 +1617,7 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
 
         return res;
     }
-    
+
     private void scanThreadEnds(Vector<SubmissionManager> subs, String[] result) {
         int t = Integer.parseInt(result[4]);
         if (subs != null) {
@@ -1643,7 +1643,7 @@ subfilesloop:		for(int j = 0; j < subfiles.length; j++) {
             System.out.println("scanThread != currentThread !?!?!"); // TODO: hmm...
         }
     }
-    
+
 	class ScanThread extends Thread {
 		private static final long FILE_LIMIT = 10000;
 		private static final long SIZE_LIMIT = 100 * 1024 * 1024;

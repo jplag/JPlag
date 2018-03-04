@@ -53,7 +53,7 @@ import java.io.OutputStream;
  * Phone: +47 2 230539<BR>
  * <A HREF="mailto:sverrehu@ifi.uio.no">sverrehu@ifi.uio.no</A><BR>
  * </DIV>
- * 
+ *
  * @author Adam Doppelt (dead link <A
  * @author Greg Faron - Integre Technical Publishing -
  * @version 0.90 21 Apr 1996
@@ -80,7 +80,7 @@ public class GIFEncoder extends Object {
 	 * Convenience constructor for class <CODE>GIFEncoder</CODE>. The argument
 	 * will be converted to an indexed color array. <B>This may take some
 	 * time.</B>
-	 * 
+	 *
 	 * @param image
 	 *            The image to encode. The image <B>must</B> be completely
 	 *            loaded.
@@ -126,7 +126,7 @@ public class GIFEncoder extends Object {
 	 * intensity values for the image. In other words, <NOBR>
 	 * <CODE>r[x][y]</CODE></NOBR> refers to the red intensity of the pixel at
 	 * column <CODE>x</CODE>, row <CODE>y</CODE>.
-	 * 
+	 *
 	 * @param r
 	 *            A 2-dimensional array containing the red intensity values.
 	 * @param g
@@ -147,7 +147,7 @@ public class GIFEncoder extends Object {
 	 * Writes the image out to a stream in the <CODE>GIF</CODE> file format.
 	 * This will be a single GIF87a image, non-interlaced, with no background
 	 * color. <B>This may take some time.</B>
-	 * 
+	 *
 	 * @param output
 	 *            The stream to which to output. This should probably be a
 	 *            buffered stream.
@@ -180,7 +180,7 @@ public class GIFEncoder extends Object {
 	/**
 	 * Converts rgb desrcription of image to colour number description used by
 	 * GIF.
-	 * 
+	 *
 	 * @param r
 	 *            red array of pixels
 	 * @param g
@@ -247,7 +247,7 @@ class BitFile extends Object {
 
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @param output
 	 *            Where image will be written
 	 */
@@ -260,7 +260,7 @@ class BitFile extends Object {
 
 	/**
 	 * Ensures image in ram gets to disk.
-	 * 
+	 *
 	 * @exception IOException
 	 */
 	public void flush() throws IOException {
@@ -277,12 +277,12 @@ class BitFile extends Object {
 
 	/**
 	 * Write bits to stream.
-	 * 
+	 *
 	 * @param bits
 	 *            source of bits, low/high order?
 	 * @param numbits
 	 *            how many bits to write.
-	 * 
+	 *
 	 * @exception IOException
 	 */
 	public void writeBits(int bits, int numbits) throws IOException {
@@ -450,7 +450,7 @@ class ScreenDescriptor extends Object {
 
 	/**
 	 * tool for dumping current screen image??
-	 * 
+	 *
 	 * @param width
 	 * @param height
 	 * @param numColors
@@ -501,7 +501,7 @@ class ImageDescriptor extends Object {
 
 	/**
 	 * ???
-	 * 
+	 *
 	 * @param width
 	 * @param height
 	 * @param separator

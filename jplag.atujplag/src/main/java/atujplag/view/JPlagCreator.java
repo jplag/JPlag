@@ -164,7 +164,7 @@ public class JPlagCreator {
 
 	/**
 	 * This method initializes jMenuItem
-	 * 
+	 *
 	 * @return javax.swing.JMenuItem
 	 */
 	public static JMenuItem createJMenuItem(String text) {

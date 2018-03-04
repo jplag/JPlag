@@ -33,7 +33,7 @@ public class Bug58 {
 	/**
 	 * Uses the actual parser component (not only the antlr parser but the jplag
 	 * frontend) to parse a file. Should throw no errors and exceptions :)
-	 * 
+	 *
 	 * @param file
 	 *            file to parse
 	 */

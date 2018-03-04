@@ -57,7 +57,7 @@ public abstract class Client {
     protected String index_html_enc = null;     // for URL encoded version
 
     protected InfoPanel gui = null;
-    
+
 	private int state = -1;
 	private String message = ""; //$NON-NLS-1$
 	private String details = ""; //$NON-NLS-1$
@@ -105,7 +105,7 @@ public abstract class Client {
 
 		initSSL();
 	}
-	
+
 	public Client(ATUJPLAG atujplag) {//String username, String password) {
 		this.atujplag = atujplag;
 		this.is_for_general_purpose = true;
@@ -142,7 +142,7 @@ public abstract class Client {
 		}
 		if(isForceStop())
 			return false;
-        
+
         String stateStr = stateInterpreter();
 		if(status.getState() < SERVICE_ERROR) {
 			setState(stateStr, "", status.getProgress(), //$NON-NLS-1$
@@ -184,7 +184,7 @@ public abstract class Client {
 
 	/**
 	 * @return the status of this client without invoking the RPC getStatus
-	 *  
+	 *
 	 */
 	public Status get_getStatusResult() {
 		//this.stateInterpreter();
@@ -197,7 +197,7 @@ public abstract class Client {
 	public String getClientName() {
 		return clientName;
 	}
-    
+
     public String getIndex_html() {
         return index_html;
     }
@@ -219,7 +219,7 @@ public abstract class Client {
             // Extract part
             File resultdir = new File(atujplag.getResultLocation()
                     + File.separator + this.clientName);
-           
+
             if (!resultdir.exists())
                 resultdir.mkdir();
             else {
@@ -231,20 +231,20 @@ public abstract class Client {
             }
             tmp = new File(atujplag.getResultLocation()+ File.separator
                     + this.clientName + ".zip"); //$NON-NLS-1$
-            
+
             FileOutputStream output = new FileOutputStream(tmp);
 
             StartResultDownloadData srdd = stub.startResultDownload(
                 submissionID);
-            
+
             if(!isForceStop())
                 output.write(srdd.getData());
 
             int filesize = srdd.getFilesize();
             int loadedsize = srdd.getData().length;
-            
+
             setTransferProgress(loadedsize, filesize);
-            
+
             while(loadedsize<filesize && !isForceStop()) {
                 byte[] data = stub.continueResultDownload(0);
                 output.write(data);
@@ -252,26 +252,26 @@ public abstract class Client {
                 setTransferProgress(loadedsize, filesize);
             }
             output.close();
-            
+
             if(isForceStop()) {
                 System.gc();
                 tmp.delete();
                 return false;
             }
-            
+
 			// unzip part
 			File f = new File(atujplag.getResultLocation(), clientName);
             ZipUtil.unzip(tmp, f);
 			System.gc();
 			tmp.delete();	// TODO: Why does this only work after a gc?
-            
+
 			this.index_html = f.getPath() + File.separator + "index.html"; //$NON-NLS-1$
             this.index_html_enc = ATUJPLAG.encodePathForURL(
                         atujplag.getResultLocation()) + File.separator
                     + ATUJPLAG.encodeForURL(clientName) + File.separator
                     + "index.html"; //$NON-NLS-1$
 			this.parserlog = f.getPath() + File.separator + "parser-log.txt"; //$NON-NLS-1$
-            
+
 			setState(Messages.getString("Client.Operation_successful") //$NON-NLS-1$
 					+ "<br>" //$NON-NLS-1$
 					+ Messages.getString("Client.Result_location") //$NON-NLS-1$
@@ -285,7 +285,7 @@ public abstract class Client {
 					new String[] {e.getDescription() + "\n" + e.getRepair()}), //$NON-NLS-1$
 				TagParser.parse(
 					Messages.getString("Client.Caused_by_{1_CAUSE}"), //$NON-NLS-1$
-                    new String[] {(cause!=null)?cause.toString():"unknown"}),   
+                    new String[] {(cause!=null)?cause.toString():"unknown"}),
 				100, internalState, false);
 			return false;
 		} catch (Exception e) {
@@ -295,7 +295,7 @@ public abstract class Client {
 					new String[] {e.getMessage()}),
 				TagParser.parse(
 					Messages.getString("Client.Caused_by_{1_CAUSE}"), //$NON-NLS-1$
-					new String[] {(cause!=null)?cause.toString():"unknown"}),	
+					new String[] {(cause!=null)?cause.toString():"unknown"}),
 				100, internalState, false);
 			e.printStackTrace();
 			return false;
@@ -332,7 +332,7 @@ public abstract class Client {
 
 	/**
 	 * Author Moritz Kroll
-	 *  
+	 *
 	 */
 	private void initSSL() {
 		// Create a trust manager that does not validate certificate chains
@@ -380,7 +380,7 @@ public abstract class Client {
             } else if (tmp == SERVICE_WAITING_IN_QUEUE) {
                 war = TagParser.parse(Messages.getString(
                     "Client.Submission_is_waiting_in_queue_at_position_{1_POS}"), //$NON-NLS-1$
-                    new String[] { (status.getProgress()+1)+"" });                    
+                    new String[] { (status.getProgress()+1)+"" });
                 this.internalState = Client.WAITING;
             } else if (tmp == SERVICE_PARSING) {
                 war = Messages.getString("Client.Submission_is_being_parsed"); //$NON-NLS-1$
@@ -394,15 +394,15 @@ public abstract class Client {
 				this.internalState = Client.LOADING;
 			} else if (tmp == SERVICE_ERROR) {
 				war = Messages.getString("Client.Error_occured") + ":<br>" //$NON-NLS-1$ //$NON-NLS-2$
-					+ this.status.getReport(); 
+					+ this.status.getReport();
 			} else if (tmp == SERVICE_BAD_LANGUAGE_ERROR) {
 				war = Messages.getString("Client.Error") + ": " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					+ Messages.getString("Client.Bad_language") + "<br>"  //$NON-NLS-1$ //$NON-NLS-2$
-					+ this.status.getReport(); 
+					+ this.status.getReport();
 				this.internalState = Client.PARSING;
 			} else if (tmp == SERVICE_BAD_PARAMETER) {
 				war = Messages.getString("Client.Error") + ": " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					+ Messages.getString("Client.Bad_parameter") + "<br>"  //$NON-NLS-1$ //$NON-NLS-2$ 
+					+ Messages.getString("Client.Bad_parameter") + "<br>"  //$NON-NLS-1$ //$NON-NLS-2$
 					+ this.status.getReport();
 				this.internalState = Client.PARSING;
 			} else if (tmp == SERVICE_BAD_SENSITIVITY_OF_COMPARISON) {
@@ -440,7 +440,7 @@ public abstract class Client {
 	protected void setForceStop(boolean forceStop) {
 		this.forceStop = forceStop;
 	}
-	
+
 	public void forceStop() {
 		forceStop = true;
 	}
@@ -499,7 +499,7 @@ public abstract class Client {
 		this.details = details;
 		this.progress = progress;
 		this.message = message;
-        
+
         if(gui != null)
             gui.updateStatus();
 	}

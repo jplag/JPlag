@@ -775,8 +775,8 @@ public class JplagJava7Listener implements Java7Listener, JavaTokenConstants {
 		if (ctx.classCreatorRest() != null) {
 			if (// @formatter:off
 				// "normal" generic
-				ctx.createdName().typeArguments().size() > 0 
-				// allow diamond operator 
+				ctx.createdName().typeArguments().size() > 0
+				// allow diamond operator
 				|| ctx.createdName().children.size() > 1 && (ctx.createdName().getChild(1).getText().equals("<") && ctx.createdName().getChild(2).getText().equals(">"))
 				|| ctx.createdName().children.size() > 3 && (ctx.createdName().getChild(3).getText().equals("<") && ctx.createdName().getChild(4).getText().equals(">"))) {
 			    // @formatter: on
@@ -845,7 +845,7 @@ public class JplagJava7Listener implements Java7Listener, JavaTokenConstants {
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -1071,7 +1071,7 @@ public class JplagJava7Listener implements Java7Listener, JavaTokenConstants {
 
 	@Override
 	public void enterTypeArgument(TypeArgumentContext ctx) {
-		if ( ctx.parent.parent instanceof CreatedNameContext) {	
+		if ( ctx.parent.parent instanceof CreatedNameContext) {
 			// the generic token has already been emitted by the class emitter
 		} else {
 			jplagParser.add(J_GENERIC, ctx.getStart());

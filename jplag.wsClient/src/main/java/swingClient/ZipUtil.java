@@ -1,7 +1,7 @@
 /*
  * @Author  Emeric Kwemou on 10.02.2005
  *
- * 
+ *
  */
 package swingClient;
 
@@ -20,11 +20,11 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * @Changed by Emeric Kwemou 10.02.2005
- * 
+ *
  */
 public class ZipUtil {
 	/**
-	 * 
+	 *
 	 * @param file
 	 * @param dest
 	 *            Where the zipped file will be stored
@@ -110,7 +110,7 @@ public class ZipUtil {
 	 * @param destination
 	 *            where the file will be stored
 	 * @return unzipped file
-	 * 
+	 *
 	 */
 
 	public static File unzip(File file, String destination, String container) {

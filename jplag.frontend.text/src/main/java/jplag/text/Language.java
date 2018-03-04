@@ -7,7 +7,7 @@ import jplag.ProgramI;
 
 /**
  * @Changed by Emeric Kwemou 29.01.2005
- *  
+ *
  */
 public class Language implements jplag.Language {
 

@@ -7,7 +7,7 @@ public class InnerClass {
 		public void bar() {
 		}
 	}
-	
+
 	public class Bar {
 		public class BBar {}
 		private class BFoo {}

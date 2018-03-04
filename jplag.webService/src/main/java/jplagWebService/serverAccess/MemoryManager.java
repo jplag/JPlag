@@ -13,13 +13,13 @@ public class MemoryManager extends Thread {
     private static final long LOW_SUB_SIZE = 102400;    // 100kB
     private static final long MIN_TIME_ON_SERVER = 1;   // in days
     private static final long MAX_TIME_ON_SERVER = 7;   // in days
-    
-    /* 
+
+    /*
      * constants for linear interpolation between MINIMAL_TIME_ON_SERVER
      * at MAX_SUB_SIZE and MAXIMAL_TIME_ON_SERVER at LOW_SUB_SIZE
      */
-    
-    private static final float a = 
+
+    private static final float a =
         -(MAX_TIME_ON_SERVER-MIN_TIME_ON_SERVER) / (MAX_SUB_SIZE-LOW_SUB_SIZE);
     private static final float b = MIN_TIME_ON_SERVER - a * MAX_SUB_SIZE;
 
@@ -36,18 +36,18 @@ public class MemoryManager extends Thread {
      * All submissions at this time.
      */
     private Vector<AccessStructure> submissions = new Vector<AccessStructure>();
-    
+
     /**
      * Memory manager will react every SLEEP_TIME millisecond
      */
     private static final long SLEEP_TIME = 600000;// 10 min
- 
+
 
     private MemoryManager() {
     }// cannot be instantiated out of this.
 
     /**
-     * 
+     *
      * @return unique instance of the memory manager.
      */
     public static MemoryManager giveInstance() {
@@ -65,14 +65,14 @@ public class MemoryManager extends Thread {
         String result_loc = struct.getResultPath();
         File res_file = new File(result_loc);
         long size = Math.max(res_file.length(), 1);
-        
+
         /**
          * Check whether the file is bigger than the maximal one authorized
          */
         if(size>MAX_SUB_SIZE) return true;
-        
+
         float time_diff = (System.currentTimeMillis()-struct.getDate())/ONEDAY;
-        
+
         if (time_diff < MIN_TIME_ON_SERVER) return false;
         else if (time_diff >= MAX_TIME_ON_SERVER) return true;
         else if (time_diff >= a * size + b) return true;
@@ -81,7 +81,7 @@ public class MemoryManager extends Thread {
 
     /**
      * Mechanism to delete a submission from the Terminated Queue.
-     * 
+     *
      * @param struct
      *            submission to be deleted
      */
@@ -94,16 +94,16 @@ public class MemoryManager extends Thread {
                 + struct.getSubmissionID() + " saved on "
                 + new Date(struct.getDate()) + " has been deleted");
     }
- 
+
     /**
      * Used to actualize the vector containing all submissions
      */
     private void loadSubmissions() {
         submissions.clear();
-        
+
         // Collect all usernames on the server
         String[] users = JPlagCentral.usersList();
-        
+
         // Collect all submissions for each user
         for (int i = 0; i < users.length; i++) {
         	AccessStructure[] subm = JPlagCentral.listAccessStructures(users[i]);
@@ -133,7 +133,7 @@ public class MemoryManager extends Thread {
    					AccessStructure struct = (AccessStructure) submissions.get(i);
 
    					if (isErasable(struct))
-    				{	
+    				{
     					manageDeletion(struct);
     					submissions.remove(i);
     				}
@@ -155,7 +155,7 @@ public class MemoryManager extends Thread {
     public boolean isManager_enabled() {
         return manager_enabled;
     }
-    
+
     /**
      * @param manager_enabled New MemoryManager state. Must be set to true
      *            before starting the memory manager.

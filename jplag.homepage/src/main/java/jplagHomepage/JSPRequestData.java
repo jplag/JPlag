@@ -10,57 +10,57 @@ public class JSPRequestData {
 	private static final String errorBegin="<font color=\"red\">";
 	private static final String errorEnd="</font>";
 	private static final String[] invalidMailProvider = { "hotmail", "yahoo", "gmail", "gmx", "web", "lycos" };
-	
+
 	JPlagBean jplagBean=null;
-	
+
 	private boolean understand=false;
 	private String understandError="";
-	
+
 	private String username="";
 	private String usernameError="";
 	private String oldUsername="";
-	
+
 	private String password="";
 	private String passwordSame="";
 	private String passwordError="";
-	
+
 	private String realname="";
 	private String realnameError="";
-	
+
 	private String email="";
 	private String emailError="";
-	
+
 	private String altEmail="";
-	
+
 	private String homepage="";
 	private String homepageError="";
-	
+
 	private String uniSchool="";
 	private String uniSchoolError="";
-	
+
 	private String reason="";
 	private String reasonError="";
-	
+
 	private String notes="";
-	
+
 	public boolean getUnderstand() { return understand; }
 	public void setUnderstand(boolean val) { understand=val; }
-	
+
 	public String getUsername() { return username; }
 	public void setUsername(String val) { username=val; }
-	
+
 	public String getPassword() { return password; }
 	public void setPassword(String val) { password=val; }
-	
+
 	public String getPasswordSame() { return passwordSame; }
 	public void setPasswordSame(String val) { passwordSame=val; }
-	
+
 	public String getRealname() { return realname; }
 	public void setRealname(String val) { realname = val; }
-	
+
 	public String getEmail() { return email; }
 	public void setEmail(String val) { email = val; }
-	
+
 	public String getAltEmail() { return altEmail; }
 	public void setAltEmail(String val) { altEmail = val; }
 
@@ -72,24 +72,24 @@ public class JSPRequestData {
 
 	public String getReason() { return reason; }
 	public void setReason(String val) { reason = val; }
-	
+
 	public String getNotes() { return notes; }
 	public void setNotes(String val) { notes = val; }
 
 	private static String error(String str) {
 		return errorBegin + str + errorEnd;
 	}
-	
+
 	private static String checkString(String str,String name) {
 		if(str!=null && str.length()!=0) return "";
 		return error("You have to provide " + name + "!");
 	}
-	
+
 	private JPlagBean getJPlagBean() {
 		if(jplagBean==null) jplagBean = new JPlagBean();
 		return jplagBean;
 	}
-	
+
 	public boolean checkUnderstand() {
 		if(understand) {
 			understandError = "";
@@ -100,11 +100,11 @@ public class JSPRequestData {
 			return false;
 		}
 	}
-	
+
 	public String getUnderstandError() {
 		return understandError;
 	}
-	
+
 	public boolean checkUsername() {
 		usernameError=checkString(username,"an username");
 		if(usernameError.length()!=0) return false;
@@ -114,7 +114,7 @@ public class JSPRequestData {
 				+ "and '.'");
 			return false;
 		}
-		
+
 		if(oldUsername!=username)
 		{
 			usernameError=getJPlagBean().existsUsername(username);
@@ -127,11 +127,11 @@ public class JSPRequestData {
 		}
 		return true;
 	}
-	
+
 	public String getUsernameError() {
 		return usernameError;
 	}
-	
+
 	public boolean checkPassword() {
 		if(password!=null && passwordSame!=null && password.length()>0)
 		{
@@ -167,15 +167,15 @@ public class JSPRequestData {
 		passwordSame="";
 		return false;
 	}
-	
+
 	public String getPasswordError() {
 		return passwordError;
 	}
-	
+
 	public boolean checkRealname() {
 		realnameError=checkString(realname,"a real name");
 		if(realnameError.length()!=0) return false;
-		
+
 		String tokens[]=realname.split(" ");
 		if(tokens.length<2) {
 			realnameError=error("You have to provide a fore- <b>and</b> surename!");
@@ -183,19 +183,19 @@ public class JSPRequestData {
 		}
 		return true;
 	}
-	
+
 	public String getRealnameError() {
 		return realnameError;
 	}
-    
+
     /*
      * Email verification pattern for RFC 2822 by Les Hazlewood:
      * http://www.leshazlewood.com/?p=5
      */
-    
+
 	/*
      * RFC 2822 token definitions for valid email - only used together to form a java Pattern object:
-	 */  
+	 */
     private static final String sp = "!#$%&'*+-/=?^_`{|}~";
     private static final String atext = "[a-zA-Z0-9" + sp + "]";
     private static final String atom = atext + "+"; //one or more atext chars
@@ -217,11 +217,11 @@ public class JSPRequestData {
     private static final String addrSpec = "^" + localPart + "@" + domain + "$";
 
 	public static final Pattern VALID_EMAIL_PATTERN = Pattern.compile( addrSpec );
-	
+
 	public boolean checkEmail() {
 		emailError=checkString(email,"a primary email address");
 		if(emailError.length()!=0) return false;
-		
+
 		if(VALID_EMAIL_PATTERN.matcher(email).matches())
 		{
 			String tokens[]=email.split("@");
@@ -232,7 +232,7 @@ public class JSPRequestData {
 				for(int i=0;i<invalidMailProvider.length;i++) {
 					if(invalidMailProvider[i].equals(lowermail))
 					{
-						emailError=error(invalidMailProvider[i] + 
+						emailError=error(invalidMailProvider[i] +
 							" will not be accepted!");
 						return false;
 					}
@@ -240,48 +240,48 @@ public class JSPRequestData {
 				return true;
 			}
 		}
-		
+
 		emailError=error(email + " is not a valid email" +
 			" address!");
 		return false;
 	}
-	
+
 	public String getEmailError() {
 		return emailError;
 	}
-	
+
 	public boolean checkUniSchool() {
 		uniSchoolError = checkString(uniSchool, "an university or school");
 		return uniSchoolError.length()==0;
 	}
-	
+
 	public String getUniSchoolError() {
 		return uniSchoolError;
 	}
-	
+
 	public boolean checkHomepage() {
 		homepageError = checkString(homepage, "an official web page showing your email address");
 		return homepageError.length()==0;
 	}
-	
+
 	public String getHomepageError() {
 		return homepageError;
 	}
-	
+
 	public boolean checkReason() {
 		reasonError=checkString(reason,"a reason for using JPlag");
 		return reasonError.length()==0;
 	}
-	
+
 	public String getReasonError() {
 		return reasonError;
 	}
-	
+
 	public boolean checkAll() {
 		return checkUnderstand() & checkUsername() & checkPassword() & checkRealname()
 			& checkEmail() & checkUniSchool() & checkHomepage() & checkReason();
 	}
-	
+
 	public String sendRequest() {
 		String str=getJPlagBean().requestAccount(this);
 		if(str==null || str.length()==0) str="Account requested, check your" +
@@ -289,7 +289,7 @@ public class JSPRequestData {
 				" time depending on the providers)!";
 		return str;
 	}
-	
+
 	/**
 	 * This is a workaround to allow the user to clear out fields...
 	 * Stupid JSP spec...

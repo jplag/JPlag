@@ -21,7 +21,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipUtil {
   /**
-   * 
+   *
    * @param file
    * @param dest
    *          Where the zipped file will be stored
@@ -108,7 +108,7 @@ public class ZipUtil {
 	 * @param destination
 	 *            where the file will be stored
 	 * @return total size of all unzipped files
-	 * 
+	 *
 	 */
 	public static int unzip(File file, String destination, String container) {
 		int totalsize = 0;

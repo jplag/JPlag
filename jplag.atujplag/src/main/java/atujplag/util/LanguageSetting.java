@@ -14,9 +14,9 @@ public class LanguageSetting {
 	private String clusterType;
 	private boolean readSubdirs;
 	private String storeMatches;
-	
+
 	private Element elem;
-	
+
 	/**
 	 * Adds a new language element with the given name "name" to the
 	 * document's root element. Unset attributes stay as default values
@@ -31,7 +31,7 @@ public class LanguageSetting {
 		suffixes = "";
 		doc.getDocumentElement().appendChild(elem);
 	}
-	
+
 	public LanguageSetting(Element elem) {
 		this.elem = elem;
 		name = elem.getAttribute("name");
@@ -42,7 +42,7 @@ public class LanguageSetting {
 		readSubdirs = parseElemBoolean("readSubdirs"); //$NON-NLS-1$
 		storeMatches = elem.getAttribute("storeMatches"); //$NON-NLS-1$
 	}
-    
+
     /**
      * Constructs an element-less LanguageSetting object out of a Option object.
      * The set methods may not be used for the resulting object!
@@ -50,7 +50,7 @@ public class LanguageSetting {
     public LanguageSetting(Option opt) {
         elem = null;
         name = opt.getLanguage();
-        
+
         String[] suffixArray = opt.getSuffixes();
         StringBuffer strbuf = new StringBuffer();
         for(int i=0;i<suffixArray.length;i++) {
@@ -58,13 +58,13 @@ public class LanguageSetting {
             if(i!=suffixArray.length-1) strbuf.append(',');
         }
         this.suffixes = strbuf.toString();
-        
+
         minMatchLen = opt.getMinimumMatchLength();
         clusterType = opt.getClustertype();
         readSubdirs = opt.isReadSubdirs();
         storeMatches = opt.getStoreMatches();
     }
-    
+
     /**
      * Constructs an element-less LanguageSetting object using the specified
      * parameters. "storeMatches" will be initialised to "20" and clusterType
@@ -77,7 +77,7 @@ public class LanguageSetting {
 		this.minMatchLen = minMatchLen;
 		storeMatches = "20";
 		clusterType = "";
-		
+
 		StringBuffer strbuf = new StringBuffer();
 		for(int i=0;i<suffixArray.length;i++) {
 			strbuf.append(suffixArray[i]);
@@ -85,15 +85,15 @@ public class LanguageSetting {
 		}
 		this.suffixes = strbuf.toString();
 	}
-    
+
 	private void setElemString(String name, String str) {
 		elem.setAttribute(name, (str == null) ? "" : str); //$NON-NLS-1$
 	}
-	
+
 	private void setElemInt(String name, int val) {
 		setElemString(name, val + ""); //$NON-NLS-1$
 	}
-	
+
 	private int parseElemInt(String name) {
 		try {
 			return Integer.parseInt(elem.getAttribute(name));
@@ -104,11 +104,11 @@ public class LanguageSetting {
 			return 0;
 		}
 	}
-	
+
 	private boolean parseElemBoolean(String name) {
 		return elem.getAttribute(name).equals("true"); //$NON-NLS-1$
 	}
-	
+
 	public String getClusterType() {
 		return clusterType;
 	}
@@ -116,7 +116,7 @@ public class LanguageSetting {
 		this.clusterType = clusterType;
 		setElemString("clusterType", clusterType); //$NON-NLS-1$
 	}
-	
+
 	public int getMinMatchLen() {
 		return minMatchLen;
 	}
@@ -124,11 +124,11 @@ public class LanguageSetting {
 		this.minMatchLen = minMatchLen;
 		setElemInt("minMatchLen", minMatchLen); //$NON-NLS-1$
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public boolean isReadSubdirs() {
 		return readSubdirs;
 	}
@@ -136,7 +136,7 @@ public class LanguageSetting {
 		this.readSubdirs = readSubdirs;
 		setElemString("readSubdirs", (readSubdirs?"true":"false")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-	
+
 	public String getStoreMatches() {
 		return storeMatches;
 	}
@@ -144,7 +144,7 @@ public class LanguageSetting {
 		this.storeMatches = storeMatches;
 		setElemString("storeMatches", storeMatches); //$NON-NLS-1$
 	}
-	
+
 	public String getSuffixes() {
 		return suffixes;
 	}

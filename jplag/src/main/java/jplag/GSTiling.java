@@ -91,7 +91,7 @@ public class GSTiling implements TokenConstants {
 		return compare(A, B, this.program.get_min_token_match());
 	}
 
-	// first parameter should contain the smaller sequence!!! 
+	// first parameter should contain the smaller sequence!!!
 	private final AllMatches compare(Submission subA, Submission subB, int mml) {
 		Structure structA = subA.struct;
 		Structure structB = subB.struct;

@@ -13,7 +13,7 @@ import com.sun.xml.rpc.tools.ant.Wscompile;
  */
 /* DEACTIVATED by lama ... What do we need that for?!?
 public class wscompileSSLLauncher extends Wscompile {
-	
+
 	public wscompileSSLLauncher()
 	{
 		super();
@@ -31,7 +31,7 @@ public class wscompileSSLLauncher extends Wscompile {
 	            }
 	        }
 	    };
-	    
+
 	    // Install the all-trusting trust manager
 	    try {
 	        SSLContext sc = SSLContext.getInstance("SSL");

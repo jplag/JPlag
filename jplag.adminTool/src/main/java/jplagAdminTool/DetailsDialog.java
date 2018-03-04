@@ -53,7 +53,7 @@ public class DetailsDialog extends JDialog {
 	private JButton jCancelButton = null;
 
     private JButton jShowHomepageButton = null;
-	
+
 	/**
 	 * This is the default constructor
 	 */
@@ -73,13 +73,13 @@ public class DetailsDialog extends JDialog {
                     dispose();
 				}
 			}, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		
+
 		return rootPane;
 	}
-	
+
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -90,7 +90,7 @@ public class DetailsDialog extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -172,10 +172,10 @@ public class DetailsDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJEmail2ndTextField() {
 		if (jEmail2ndTextField == null) {
 			jEmail2ndTextField = new JTextField();
@@ -186,10 +186,10 @@ public class DetailsDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJHomepageTextField() {
 		if (jHomepageTextField == null) {
 			jHomepageTextField = new JTextField();
@@ -199,10 +199,10 @@ public class DetailsDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jScrollPane	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
+	 * This method initializes jScrollPane
+	 *
+	 * @return javax.swing.JScrollPane
+	 */
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
@@ -212,10 +212,10 @@ public class DetailsDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextArea	
-	 * 	
-	 * @return javax.swing.JTextArea	
-	 */    
+	 * This method initializes jTextArea
+	 *
+	 * @return javax.swing.JTextArea
+	 */
 	private JTextArea getJReasonTextArea() {
 		if (jReasonTextArea == null) {
 			jReasonTextArea = new JTextArea();
@@ -229,10 +229,10 @@ public class DetailsDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jScrollPane1	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
+	 * This method initializes jScrollPane1
+	 *
+	 * @return javax.swing.JScrollPane
+	 */
 	private JScrollPane getJScrollPane1() {
 		if (jScrollPane1 == null) {
 			jScrollPane1 = new JScrollPane();
@@ -242,10 +242,10 @@ public class DetailsDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextArea1	
-	 * 	
-	 * @return javax.swing.JTextArea	
-	 */    
+	 * This method initializes jTextArea1
+	 *
+	 * @return javax.swing.JTextArea
+	 */
 	private JTextArea getJNotesTextArea() {
 		if (jNotesTextArea == null) {
 			jNotesTextArea = new JTextArea();
@@ -259,10 +259,10 @@ public class DetailsDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel() {
 		if (jPanel == null) {
 			FlowLayout flowLayout12 = new FlowLayout();
@@ -276,16 +276,16 @@ public class DetailsDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJApplyButton() {
 		if (jApplyButton == null) {
 			jApplyButton = new JButton();
 			jApplyButton.setText("Apply");
-			jApplyButton.addActionListener(new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+			jApplyButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					data.setEmailSecond(getJEmail2ndTextField().getText());
 					data.setHomepage(getJHomepageTextField().getText());
 					data.setReason(getJReasonTextArea().getText());
@@ -301,16 +301,16 @@ public class DetailsDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton1	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton1
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJCancelButton() {
 		if (jCancelButton == null) {
 			jCancelButton = new JButton();
 			jCancelButton.setText("Cancel");
-			jCancelButton.addActionListener(new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+			jCancelButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					setVisible(false);
                     dispose();
 				}
@@ -320,9 +320,9 @@ public class DetailsDialog extends JDialog {
 	}
 
     /**
-     * This method initializes jShowHomepageButton	
-     * 	
-     * @return javax.swing.JButton	
+     * This method initializes jShowHomepageButton
+     *
+     * @return javax.swing.JButton
      */
     private JButton getJShowHomepageButton() {
         if(jShowHomepageButton == null) {

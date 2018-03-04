@@ -211,7 +211,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -222,7 +222,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -244,7 +244,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jLanguageField
-	 * 
+	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJResultDir() {
@@ -258,7 +258,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jPanel3
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getSubmissionPanel() {
@@ -294,7 +294,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jTextField2
-	 * 
+	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getSourceDir() {
@@ -308,7 +308,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jPanel1
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel1() {
@@ -333,7 +333,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getGetServerInfoButton() {
@@ -554,7 +554,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jButton2
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getGetStatusButton() {
@@ -574,7 +574,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jButton3
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getGetResultsButton() {
@@ -629,7 +629,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jProgressBar
-	 * 
+	 *
 	 * @return javax.swing.JProgressBar
 	 */
 	private JProgressBar getJProgressBar() {
@@ -641,7 +641,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jUsernameField
-	 * 
+	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJSubmissionNum() {
@@ -653,7 +653,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jPanel4
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel4() {
@@ -667,7 +667,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jTextField3
-	 * 
+	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getStatusTextfield() {
@@ -680,7 +680,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel() {
@@ -699,11 +699,11 @@ public class JplagSwingClient extends JFrame {
 	 * serviceManagerClass=Class.forName("javax.jnlp.ServiceManager");
 	 * java.lang.reflect.Method lookupMethod=serviceManagerClass.getMethod(
 	 * "lookup",new Class [] { String.class });
-	 * 
+	 *
 	 * return lookupMethod.invoke(null, new Object [] {
 	 * "javax.jnlp.BasicService" } ); } catch(Exception ex) {
 	 * ex.printStackTrace(); return null; } }
-	 * 
+	 *
 	 * private static Class getBasicServiceClass() { try { return
 	 * Class.forName("javax.jnlp.BasicService"); } catch(Exception ex) {
 	 * ex.printStackTrace(); return null; } }
@@ -711,7 +711,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jButton4
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getShowResultsButton() {
@@ -760,7 +760,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jScrollPane
-	 * 
+	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPane() {
@@ -783,7 +783,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jEditorPane
-	 * 
+	 *
 	 * @return javax.swing.JEditorPane
 	 */
 	private JEditorPane getJEditorPane() {
@@ -828,7 +828,7 @@ public class JplagSwingClient extends JFrame {
 									 * File.separator+"jplagResult"+
 									 * File.separator)
 									 * .toURI().toString()+params[1]));
-									 * 
+									 *
 									 * System.out.println(new
 									 * java.net.URL("file:\\\\\\" +
 									 * getJResultDir
@@ -884,7 +884,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jButton5
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getFileOpenButton() {
@@ -908,7 +908,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jPanel2
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel2() {
@@ -923,7 +923,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jPanel5
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getConfigPanel() {
@@ -948,7 +948,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jUsernameField
-	 * 
+	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJUsernameField() {
@@ -961,7 +961,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jPasswordField
-	 * 
+	 *
 	 * @return javax.swing.JPasswordField
 	 */
 	private JPasswordField getJPasswordField() {
@@ -974,7 +974,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jButton6
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getAdvancedOptionsButton() {
@@ -998,7 +998,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jTitleField
-	 * 
+	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJTitleField() {
@@ -1010,7 +1010,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jComboBox
-	 * 
+	 *
 	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox<String> getJLanguageCB() {
@@ -1026,7 +1026,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes jButton7
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getDeleteSubmissionButton() {
@@ -1052,7 +1052,7 @@ public class JplagSwingClient extends JFrame {
 
 	/**
 	 * This method initializes the text field for the log messages
-	 * 
+	 *
 	 * @return javax.swing.JTextField
 	 */
 	private JTextField getJLogFilePane() {

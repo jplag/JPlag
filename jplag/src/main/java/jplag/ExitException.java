@@ -23,23 +23,23 @@ public class ExitException extends Exception
 	private static final long serialVersionUID = 1L;
 	private int state = 0;
 	private String report ="";
-	
+
 	public ExitException(String msg) {
 		super(msg);
 		this.state=UNKNOWN_ERROR_OCCURRED;
 		this.report=msg;
 	}
-	
+
 	public ExitException(String msg, int errorcode) {
 		super(msg);
 		this.state=errorcode;
 		this.report=msg;
 	}
-	
+
 	public ExitException(String msg, Throwable cause) {
 		super(msg,cause);
 	}
-	
+
 	public int getState() { return this.state; }
 	public String getReport() { return this.report; }
 }

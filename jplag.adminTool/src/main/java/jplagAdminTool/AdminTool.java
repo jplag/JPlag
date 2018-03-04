@@ -131,7 +131,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -150,7 +150,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * Returns a singleton JPlag stub
-	 * 
+	 *
 	 * @return The JPlag stub object
 	 */
 	public JPlagTyp_Stub getJPlagStub() {
@@ -188,7 +188,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 	 * Sets the login data in the access handler, gets the user data array and
 	 * for JPlag admins the account requests and initializes the main window
 	 * starting the real application
-	 * 
+	 *
 	 * @param user
 	 *            The username
 	 * @param pass
@@ -378,7 +378,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jUserTable
-	 * 
+	 *
 	 * @return javax.swing.JTable
 	 */
 	@SuppressWarnings("serial")
@@ -471,7 +471,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -487,7 +487,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel() {
@@ -504,7 +504,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jRefreshButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJRefreshButton() {
@@ -561,7 +561,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jChangePassButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJChangePassButton() {
@@ -590,7 +590,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jPanel1
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel1() {
@@ -606,7 +606,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jScrollPane
-	 * 
+	 *
 	 * @return javax.swing.JScrollPane
 	 */
 	private JScrollPane getJScrollPane() {
@@ -619,7 +619,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jAddUserButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJAddUserButton() {
@@ -641,7 +641,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jDeleteUserButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJDeleteUserButton() {
@@ -689,7 +689,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jRequestButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJRequestButton() {
@@ -767,7 +767,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jServerMailsButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJServerMailsButton() {
@@ -788,7 +788,7 @@ public class AdminTool extends JFrame implements TableModelListener {
 
 	/**
 	 * This method initializes jDetailsButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJDetailsButton() {

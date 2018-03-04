@@ -13,11 +13,6 @@
 
 	<repositories>
 		<repository>
-			<id>ipdNexus</id>
-			<name>Recaa Repository</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
-		</repository>
-		<repository>
 			<id>projectLocal</id>
 			<name>Local Repository</name>
 			<url>file://${project.basedir}/../maven-libs</url>

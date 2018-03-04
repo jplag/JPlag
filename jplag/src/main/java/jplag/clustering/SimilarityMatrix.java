@@ -6,7 +6,7 @@ public class SimilarityMatrix {
   private int size;
   private float [] matrix;
 //   private float maximum = 0;
-  
+
   /** The parameter is the number of submissions. */
   public SimilarityMatrix(int size) {
     this.size = size;

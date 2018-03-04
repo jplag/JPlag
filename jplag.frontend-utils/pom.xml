@@ -9,14 +9,6 @@
   	<relativePath>../jplag.parent/pom.xml</relativePath>
   </parent>
 
-  	<repositories>
-		<repository>
-			<id>ipdNexus</id>
-			<name>Recaa Repository</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
-		</repository>
-	</repositories>
-
   <dependencies>
   	<dependency>
   		<groupId>antlr</groupId>

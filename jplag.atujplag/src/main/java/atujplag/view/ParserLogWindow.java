@@ -55,23 +55,23 @@ public class ParserLogWindow extends JDialog {
                     dispose();
                 }
             }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        
+
         return rootPane;
     }
-    
+
     /**
      * This method initializes this
-     * 
+     *
      * @return void
      */
     private void initialize() {
         this.setContentPane(getJContentPane());
         this.setResizable(true);
     }
-    
+
     /**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -87,7 +87,7 @@ public class ParserLogWindow extends JDialog {
 
     /**
      * This method initializes jScrollPane
-     * 
+     *
      * @return javax.swing.JScrollPane
      */
     private JScrollPane getJScrollPane() {
@@ -101,7 +101,7 @@ public class ParserLogWindow extends JDialog {
 
     /**
 	 * This method initializes jEditorPane
-	 * 
+	 *
 	 * @return javax.swing.JEditorPane
 	 */
 	private JEditorPane getJEditorPane() {
@@ -116,7 +116,7 @@ public class ParserLogWindow extends JDialog {
 
 	/**
 	 * This method initializes jPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJPanel() {
@@ -131,7 +131,7 @@ public class ParserLogWindow extends JDialog {
 
 	/**
 	 * This method initializes jButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getOKButton() {

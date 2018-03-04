@@ -53,7 +53,7 @@ public class JPlagTypImpl implements JPlagTyp, Remote, ServiceLifecycle {
 	private static final String[] csuffixes = { ".cpp", ".CPP", ".c++", ".C++", ".c", ".C", ".h", ".H", ".hpp", ".HPP" };
 	private static final String[] textsuffixes = { ".txt", ".TXT", ".asc", ".ASC", ".tex", ".TEX" };
 	private static final String[] cssuffixes = { ".cs", ".CS" };// @formatter:off
-	
+
 	public static final LanguageInfo[] languageInfos = {
 //		new LanguageInfo("java12", javasuffixes, 9),
 		new LanguageInfo("java15", javasuffixes, 8),
@@ -292,7 +292,7 @@ public class JPlagTypImpl implements JPlagTyp, Remote, ServiceLifecycle {
 	/**
 	 * Checks whether the current user has enough rights (mask parameter) to
 	 * access the function with the given name
-	 * 
+	 *
 	 * @throws JPlagException
 	 *             when the user doesn't have those rights. The access will also
 	 *             be logged and the user has to wait 10 seconds.

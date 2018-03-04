@@ -4,7 +4,7 @@
  * all type of options will be derivated from the abstract class Options. A simple implementation
  * is for exmaple a class that initialize commandline options.
  *
- * 
+ *
  */
 package jplag.options;
 
@@ -14,7 +14,7 @@ import jplag.clustering.SimilarityMatrix;
 
 /**
  * @Author Emeric Kwemou 30.01.2005
- *  
+ *
  */
 public abstract class Options {
 	protected String langs = "jplag.options.util.messages_en";
@@ -61,7 +61,7 @@ public abstract class Options {
 	public String root_dir = "";
 
 	public String original_dir = null;
-	
+
 	public String title = "";
 
 	public String output_file = null;

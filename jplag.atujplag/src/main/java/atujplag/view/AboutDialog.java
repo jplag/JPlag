@@ -39,14 +39,14 @@ public class AboutDialog extends JDialog {
 	private JButton jCloseButton = null;
     private JPanel jTranslationPanel = null;
     private JLabel jTranslationLabel = null;
-    
+
     private String[][] translations = {
             { "French", "Emeric Kwemou" },
             { "German", "Moritz Kroll" },
 			{ "Spanish", "Ruben David Gil Ramos" },
             { "BrazilianPortuguese", "Rodrigo Flores" }
     };
-    
+
     /**
 	 * This is the default constructor
 	 */
@@ -67,13 +67,13 @@ public class AboutDialog extends JDialog {
                     dispose();
                 }
             }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        
+
         return rootPane;
     }
 
     /**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -85,7 +85,7 @@ public class AboutDialog extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJContentPane() {
@@ -117,9 +117,9 @@ public class AboutDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jCloseButton	
-	 * 	
-	 * @return javax.swing.JButton	
+	 * This method initializes jCloseButton
+	 *
+	 * @return javax.swing.JButton
 	 */
 	private JButton getJCloseButton() {
 		if(jCloseButton == null) {
@@ -140,9 +140,9 @@ public class AboutDialog extends JDialog {
 	}
 
     /**
-     * This method initializes jTranslationPanel	
-     * 	
-     * @return javax.swing.JPanel	
+     * This method initializes jTranslationPanel
+     *
+     * @return javax.swing.JPanel
      */
     private JPanel getJTranslationPanel() {
         if(jTranslationPanel == null) {
@@ -187,7 +187,7 @@ public class AboutDialog extends JDialog {
             gridBagConstraints.gridy = 0;
             gridBagConstraints.insets = new java.awt.Insets(0,0,0,20);
             jTranslationPanel.add(jTranslationLabel, gridBagConstraints);
-            
+
             Insets langInsets = new Insets(0, 0, 0, 40);
             Insets nameInsets = new Insets(0, 0, 0, 30);
 			for (int i = 0; i < translations.length; i++) {

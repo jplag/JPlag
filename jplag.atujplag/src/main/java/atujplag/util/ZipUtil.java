@@ -21,7 +21,7 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtil {
 	/**
 	 * Zips the given directory "dir" into a zip file in "dest"
-	 * 
+	 *
 	 * @param dir
 	 *            File denoting the directory to be zipped
 	 * @param dest
@@ -38,7 +38,7 @@ public class ZipUtil {
 	/**
 	 * Zips the given directory "dir" into the zip file "destFile". If
 	 * "destFile" already exists, it will be overwritten
-	 * 
+	 *
 	 * @param dir
 	 *            Directory to be zipped
 	 * @param destFile
@@ -108,7 +108,7 @@ public class ZipUtil {
 	/**
 	 * Zips all files in "fileVector" to the zipfile "destFile". The pathnames
 	 * of all files in fileVector must start with baseDir!
-	 * 
+	 *
 	 * @param fileVector
 	 *            Files to be zipped
 	 * @param baseDir
@@ -166,7 +166,7 @@ public class ZipUtil {
 
 	/**
 	 * Unzips the zip file "file" into the directory "dest"
-	 * 
+	 *
 	 * @param file
 	 *            The zip file
 	 * @param destDir
@@ -214,7 +214,7 @@ public class ZipUtil {
 
 	/**
 	 * Copies the input stream to the output stream using a 1 kB buffer
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	private static void copystream(InputStream in, OutputStream out) throws IOException {

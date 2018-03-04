@@ -15,17 +15,17 @@ public class ThemeGenerator {
 		sub.struct = new Structure();
 		sub.struct.load(new File("temp", sub.dir.getName() + sub.name));
 	}
-	
+
 	static public String generateThemes(Set<Submission> submissions, int[] themewords,
 			boolean generateHTML,Program program) {
 		int thLength = themewords.length;
 		int[][][] results = new int[thLength][][];
-		
+
 		for (int i=0; i<thLength; i++)
 			results[i] = (i != 0)
 					? generateTheme(submissions, themewords[i], i+1,program)
 					: generateTheme(submissions, themewords[i],program);
-		
+
 		String[][][] words = new String[thLength][][];
 		for (int i=0; i<thLength; i++) {
 			if (results[i] != null) {
@@ -34,7 +34,7 @@ public class ThemeGenerator {
 					words[i][j] = new String[i+1];
 			}
 		}
-		
+
 		/* old!  new one below!
 		 // now get the actual strings out of the hashtable (which is not so easy)
 		  // -> very inefficient ! (iterates through all the words in the hashtable)
@@ -50,16 +50,16 @@ public class ThemeGenerator {
 		   words[j][k/2][l] = (String)entry.getKey();
 		   }
 		   */
-		
+
 		Language language = program.get_language();
 		for (int j=0; j<thLength; j++)
 			if (results[j] != null)
 				for (int k=0; k<results[j].length; k+=2)
 					for (int l=0; l<=j; l++)
 						words[j][k/2][l] = language.type2string(results[j][k][l]).trim();
-		
+
 		String result = "";
-		
+
 		for (int i=0; i<thLength; i++) {
 			if (results[i] != null)
 				for (int j=0; j<results[i].length; j+=2) {
@@ -76,10 +76,10 @@ public class ThemeGenerator {
 						result += ", ";
 				}
 		}
-		
+
 		return result;
 	}
-	
+
 	/* result setup: {{word_nr_1_1, word_nr_1_2, ...}, {frequency_1},
 	 *                {word_nr_2_1, word_nr_2_2, ...}, {frequency_2}, ...}
 	 */
@@ -87,14 +87,14 @@ public class ThemeGenerator {
 			Program program) {
 		if (themewords == 0)
 			return null;
-		
+
 		int noOfWords =program.get_language().noOfTokens();
 		int[] tokenFrequency = new int[noOfWords + 1];
-		
+
 		// initialize
 		for (int i=0; i<noOfWords; i++)
 			tokenFrequency[i] = 0;
-		
+
 		// count frequency
 		for (Iterator<Submission> i = submissions.iterator(); i.hasNext(); ) {
 			Submission submission = i.next();
@@ -110,7 +110,7 @@ public class ThemeGenerator {
 				submission.struct = null;
 			}
 		}
-		
+
 		// Data structures for the "Top-Ten"
 		int[] number = new int[themewords+1];
 		int[] index = new int[themewords+1];
@@ -118,7 +118,7 @@ public class ThemeGenerator {
 			index[i] = -1;
 			number[i] = 0;
 		}
-		
+
 		// Create the "Top-Ten"
 		for (int i=0; i<noOfWords; i++) {
 			int num = tokenFrequency[i];
@@ -139,7 +139,7 @@ public class ThemeGenerator {
 				} else break;
 			}
 		}
-		
+
 		int actual_nr = themewords;
 		// cut of the tail - if there is one.
 		if (number[themewords] == number[themewords-1]) {
@@ -151,7 +151,7 @@ public class ThemeGenerator {
 			}
 			actual_nr = i+1;
 		}
-		
+
 		// result setup: {{word_nr_1_1, word_nr_1_2, ...}, {frequency_1},
 		//                {word_nr_2_1, word_nr_2_2, ...}, {frequency_2}, ...}
 		int[][] result = new int[actual_nr * 2][];
@@ -161,10 +161,10 @@ public class ThemeGenerator {
 			result[2*i+1] = new int[1];
 			result[2*i+1][0] = number[i];
 		}
-		
+
 		return result;
 	}
-	
+
 	/* result setup: {{word_nr_1_1, word_nr_1_2, ...}, {frequency_1},
 	 *                {word_nr_2_1, word_nr_2_2, ...}, {frequency_2}, ...}
 	 */
@@ -172,17 +172,17 @@ public class ThemeGenerator {
 			int length, Program program) {
 		if (themewords == 0)
 			return null;
-		
+
 		// initialize
 		int hashtableSize = 0;
 		for (Iterator<Submission> i=submissions.iterator(); i.hasNext();) {
 			Submission submission = i.next();
 			hashtableSize += submission.size();
 		}
-		
+
 		Hashtable<IntArray, IntValue> table =
             new Hashtable<IntArray, IntValue>((int)(0.75*hashtableSize));
-		
+
 		// count frequency
 		for (Iterator<Submission> i=submissions.iterator(); i.hasNext();) {
 			Submission submission = i.next();
@@ -213,7 +213,7 @@ out:  		for (int j=0; j<=size-length; j++) {
 				submission.struct = null;
 			}
 		}
-		
+
 		// Data structures for the "Top-Ten"
 		int[] number = new int[themewords+1];
 		int[][] index = new int[themewords+1][];
@@ -221,7 +221,7 @@ out:  		for (int j=0; j<=size-length; j++) {
 			number[i] = 0;
 			index[i] = null;
 		}
-		
+
 		// Create the "Top-Ten"
 		for (Enumeration<IntArray> e=table.keys(); e.hasMoreElements();) {
 			IntArray subArray = e.nextElement();
@@ -243,7 +243,7 @@ out:  		for (int j=0; j<=size-length; j++) {
 				} else break;
 			}
 		}
-		
+
 		int actual_nr = themewords;
 		// cut of the tail - if there is one.
 		if (number[themewords] == number[themewords-1]) {
@@ -255,7 +255,7 @@ out:  		for (int j=0; j<=size-length; j++) {
 			}
 			actual_nr = i+1;
 		}
-		
+
 		// result setup: {{word_nr_1_1, word_nr_1_2, ...}, {frequency_1},
 		//                {word_nr_2_1, word_nr_2_2, ...}, {frequency_2}, ...}
 		int[][] result = new int[actual_nr * 2][];
@@ -265,7 +265,7 @@ out:  		for (int j=0; j<=size-length; j++) {
 			result[2*i+1] = new int[1];
 			result[2*i+1][0] = number[i];
 		}
-		
+
 		return result;
 	}
 }
@@ -273,21 +273,21 @@ out:  		for (int j=0; j<=size-length; j++) {
 
 class IntArray {
 	int[] array;
-	
+
 	public IntArray(int length) {
 		array = new int[length];
 		for (int i=0; i<length; i++)
 			array[i] = -1;
 	}
-	
+
 	public void setField(int index, int value) {
 		array[index] = value;
 	}
-	
+
 	public int[] getFields() {
 		return array;
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (!(obj instanceof IntArray))
 			return false;
@@ -300,7 +300,7 @@ class IntArray {
 				return false;
 		return true;
 	}
-	
+
 	public int hashCode() {
 		int hash = array[0];
 		for (int i=1; i<array.length; i++)
@@ -311,15 +311,15 @@ class IntArray {
 
 class IntValue {
 	int value;
-	
+
 	public IntValue(int value) {
 		this.value = value;
 	}
-	
+
 	public int getValue() {
 		return value;
 	}
-	
+
 	public void inc() {
 		value++;
 	}

@@ -39,7 +39,7 @@ public class RequestAdmin {
 	private Element validatedRequestsElement = null;
 
     private File requestFile = null;
-	
+
     public RequestAdmin(String jplagHome) {
         requestFile = new File(jplagHome + File.separator +
 				"account_requests.xml");
@@ -48,7 +48,7 @@ public class RequestAdmin {
         else
             parse();
     }
-	
+
     /**
      * Writes the "account-requests" data to an XML file
      */
@@ -70,7 +70,7 @@ public class RequestAdmin {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Creates a new "account-request database" XML file
      */
@@ -124,12 +124,12 @@ public class RequestAdmin {
             e.printStackTrace();
         }
     }
-	
+
 	private void setString(Element elem, String attr, String str) {
 		if(str!=null && str.length()!=0)
 			elem.setAttribute(attr,str);
 	}
-	
+
 	public static String getRandomCode() {
 		char[] code=new char[11];
 		for(int i=0;i<11;i++) {
@@ -144,11 +144,11 @@ public class RequestAdmin {
 		DateFormat df=DateFormat.getDateInstance(DateFormat.MEDIUM,Locale.GERMAN);
 		return df.format(cal.getTime());
 	}
-	
+
 /*	private void setCalendar(Element user, Calendar cal, String attr) {
 		user.setAttribute(attr,formatCalendar(cal));
 	}*/
-	
+
     private Calendar parseCalendar(String str)
     {
 		Calendar cal=new GregorianCalendar(TimeZone.getTimeZone("GMT"));
@@ -170,7 +170,7 @@ public class RequestAdmin {
     private Calendar parseCalendar(Element elem, String attrname) {
 		return parseCalendar(elem.getAttribute(attrname));
 	}
-	
+
 	public synchronized String addRequest(RequestData rd) {
 		Element elem=doc.createElement("request");
 		setString(elem,"username",rd.getUsername());
@@ -189,12 +189,12 @@ public class RequestAdmin {
 		writeXMLFile();
 		return code;
 	}
-	
+
 	/**
 	 * Checks the email verification and moves the request from "non-validated"
 	 * to "validated" status, if the verification is valid. Otherwise it throws
 	 * an exception.
-	 * 
+	 *
 	 * @return The username corresponding to the verification code
 	 * @throws JPlagException when the username wasn't found, the code is not
 	 * 		  correct or the request has already been verified
@@ -246,7 +246,7 @@ public class RequestAdmin {
 				"Please check the correct spelling of the username! "
                 + "The request may also have expired.");
 	}
-	
+
 	public synchronized void removeRequest(String username) {
 		NodeList reqs=validatedRequestsElement.getElementsByTagName("request");
 		for(int i=0;i<reqs.getLength();i++) {
@@ -259,7 +259,7 @@ public class RequestAdmin {
 			}
 		}
 	}
-	
+
 	public synchronized void removeExpiredUnvalidatedRequests() {
 		boolean changed=false;
 		NodeList reqs=nonValidatedRequestsElement.getElementsByTagName("request");
@@ -281,13 +281,13 @@ public class RequestAdmin {
 		}
 		if(changed) writeXMLFile();
 	}
-	
+
 	private String parseNillableString(Element elem, String attrname) {
 		String str=elem.getAttribute(attrname);
 		if(str.length()==0) return null;
 		else return str;
 	}
-	
+
 	private RequestData getRequestDataFromElement(Element elem) {
 		RequestData rd=new RequestData();
 		rd.setValidateTime(elem.getAttribute("validated"));
@@ -301,7 +301,7 @@ public class RequestAdmin {
 		rd.setNotes(parseNillableString(elem,"notes"));
 		return rd;
 	}
-	
+
 	public synchronized RequestData getRequestData(String username) {
 		NodeList reqs=validatedRequestsElement.getElementsByTagName("request");
 		for(int i=0;i<reqs.getLength();i++) {
@@ -311,7 +311,7 @@ public class RequestAdmin {
 		}
 		return null;
 	}
-	
+
 	public synchronized RequestData[] getRequests(boolean lengthOnly) {
 		NodeList reqs=validatedRequestsElement.getElementsByTagName("request");
 		RequestData[] rds=new RequestData[reqs.getLength()];
@@ -328,7 +328,7 @@ public class RequestAdmin {
 		}
 		return rds;
 	}
-	
+
 	/**
 	 * @return whether there is a request for the given username
 	 */

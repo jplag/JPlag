@@ -79,7 +79,7 @@ public class JPlagBean {
 
 	/**
 	 * Sends an account request to the server
-	 * 
+	 *
 	 * @return An empty string on success, an error string on failure
 	 */
 	public String requestAccount(JSPRequestData reqd) {
@@ -99,7 +99,7 @@ public class JPlagBean {
 	/**
 	 * Sends a provided account activation code to the server validating it. The
 	 * username is part of the code.
-	 * 
+	 *
 	 * @return An empty string on success, an error string on failure
 	 */
 	public String validateEmail(String code) {

@@ -100,13 +100,13 @@ public class Preferences extends JDialog {
                     dispose();
                 }
             }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-        
+
         return rootPane;
     }
-    
+
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -117,7 +117,7 @@ public class Preferences extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -133,7 +133,7 @@ public class Preferences extends JDialog {
 
 	/**
 	 * This method initializes jButtonPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getJButtonPanel() {
@@ -169,17 +169,17 @@ public class Preferences extends JDialog {
 		mainWindow.setVisible(true);
 		return mainWindow;
 	}
-	
+
 	/**
 	 * This method initializes jButton
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJOK() {
 		if (jOK == null) {
 			jOK = JPlagCreator.createButton(
 				Messages.getString("Preferences.OK"), //$NON-NLS-1$
-				Messages.getString("Preferences.OK_TIP"), //$NON-NLS-1$ 
+				Messages.getString("Preferences.OK_TIP"), //$NON-NLS-1$
 				150, 20);
 
 			jOK.addActionListener(new java.awt.event.ActionListener() {
@@ -197,7 +197,7 @@ public class Preferences extends JDialog {
 
 	/**
 	 * This method initializes jApply
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJApply() {
@@ -217,13 +217,13 @@ public class Preferences extends JDialog {
 		}
 		return jApply;
 	}
-	
+
 	private void updateApplyButton() {
 		jApply.setEnabled(languageChanged || resultLocationChanged
 			|| secondEmailChanged || homepageChanged || passwordChanged
 			|| savePassChanged);
 	}
-	
+
 	private JButton getResultDirButton() {
 		if(jResultDirButton == null) {
 			jResultDirButton = JPlagCreator.createOpenFileButton(
@@ -242,10 +242,10 @@ public class Preferences extends JDialog {
 		}
 		return jResultDirButton;
 	}
-	
+
 	/**
 	 * This method initializes jCancel
-	 * 
+	 *
 	 * @return javax.swing.JButton
 	 */
 	private JButton getJCancel() {
@@ -262,10 +262,10 @@ public class Preferences extends JDialog {
 		}
 		return jCancel;
 	}
-	
+
 	/**
 	 * This method initializes jTabbedPane
-	 * 
+	 *
 	 * @return javax.swing.JTabbedPane
 	 */
 	private JTabbedPane getJTabbedPane() {
@@ -277,7 +277,7 @@ public class Preferences extends JDialog {
                 getReportLocPanel());
 			jTabbedPane.add(Messages.getString(
 				"Preferences.Change_password"), //$NON-NLS-1$
-				getPasswordPanel()); 
+				getPasswordPanel());
 			jTabbedPane.add(Messages.getString(
 				"Preferences.User_information"), //$NON-NLS-1$
                 getEmailPanel());
@@ -288,7 +288,7 @@ public class Preferences extends JDialog {
 
 	/**
 	 * This method initializes jPanel2
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
     private JPanel getReportLocPanel() {
@@ -299,13 +299,13 @@ public class Preferences extends JDialog {
                     "Preferences.Report_location_DESC") + ":");  //$NON-NLS-1$  //$NON-NLS-2$
             reportLocLabel.setPreferredSize(new Dimension(440 + 10 + 24,20));
             reportLocPanel.add(reportLocLabel);
-            
+
             resultDirField = JPlagCreator.createTextField(440, 20, null);
             resultDirField.setText(atujplag.getResultLocation());
             resultDirField.getDocument().addDocumentListener(
                 new DocumentListener() {
                     public void changedUpdate(DocumentEvent arg0) {
-                        resultLocationChanged = 
+                        resultLocationChanged =
                             !atujplag.getResultLocation().equals(
                                 resultDirField.getText());
                         updateApplyButton();
@@ -320,14 +320,14 @@ public class Preferences extends JDialog {
                     }
                 });
             reportLocPanel.add(resultDirField);
-            
+
             reportLocPanel.add(getResultDirButton());
-            
+
             JLabel jLanguageLabel = new JLabel(Messages.getString(
                     "Preferences.Language") + ":");  //$NON-NLS-1$  //$NON-NLS-2$
             jLanguageLabel.setPreferredSize(new Dimension(90 + 150 + 24,20));
             reportLocPanel.add(jLanguageLabel, null);
-            
+
             jLanguageCB = JPlagCreator.createJComboBox(
                     ATUJPLAG.COUNTRY_LANGUAGES, 200, 20,
                     Messages.getString("Preferences.Language_TIP")); //$NON-NLS-1$
@@ -344,23 +344,23 @@ public class Preferences extends JDialog {
 
         return reportLocPanel;
     }
-    
+
 	private JPanel getEmailPanel() {
 		if (this.emailPanel == null) {
 			this.emailPanel = JPlagCreator.createPanelWithoutBorder(500, 100, 10, 10,
 					FlowLayout.CENTER);
-            
+
 			this.emailPanel.add(JPlagCreator.createLabel(
                     Messages.getString("Preferences.Email") + ":", //$NON-NLS-1$ //$NON-NLS-2$
 					214, 20));
-            
+
 			this.emailPanel.add(JPlagCreator.createLabel(
                     view.getServerInfos().getUserInfo().getEmail(), 250, 20));
-            
+
 			this.emailPanel.add(JPlagCreator.createLabel(
                     Messages.getString("Preferences.Second_email") + ":", //$NON-NLS-1$ //$NON-NLS-2$
 					214, 20));
-            
+
 			this.emailField = JPlagCreator.createTextField(250, 20,
 				    Messages.getString("Preferences.Second_email_TIP")); //$NON-NLS-1$
 			this.emailField.setText(
@@ -389,7 +389,7 @@ public class Preferences extends JDialog {
 			this.emailPanel.add(JPlagCreator.createLabel(
                     Messages.getString("Preferences.Homepage") + ":", //$NON-NLS-1$ //$NON-NLS-2$
 					214, 20));
-			
+
 			this.homepageField = JPlagCreator.createTextField(250, 20,
 					Messages.getString("Preferences.Homepage_TIP")); //$NON-NLS-1$
 			this.homepageField.setText(
@@ -419,7 +419,7 @@ public class Preferences extends JDialog {
 
 	/**
 	 * This method initializes jPanel
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private JPanel getPasswordPanel() {
@@ -435,7 +435,7 @@ public class Preferences extends JDialog {
 					Messages.getString("Preferences.Old_password_TIP")); //$NON-NLS-1$
 			getOldJPasswordField().getDocument().addDocumentListener(
 				new PasswordDocumentListener());
-			
+
 			passwordPanel.add(JPlagCreator.createLabel(
 					Messages.getString("Preferences.New_password") + ":", //$NON-NLS-1$ //$NON-NLS-2$
 					264, 20));
@@ -444,7 +444,7 @@ public class Preferences extends JDialog {
 				Messages.getString("Preferences.New_password_TIP")); //$NON-NLS-1$
 			getJPasswordField2().getDocument().addDocumentListener(
 				new PasswordDocumentListener());
-			
+
 			passwordPanel.add(JPlagCreator.createLabel(
 					Messages.getString("Preferences.Reenter_password") + ":", //$NON-NLS-1$ //$NON-NLS-2$
 					264, 20));
@@ -453,7 +453,7 @@ public class Preferences extends JDialog {
 				Messages.getString("Preferences.Reenter_password_TIP")); //$NON-NLS-1$
 			getJPasswordField2().getDocument().addDocumentListener(
 					new PasswordDocumentListener());
-			
+
 			passwordPanel.add(getSavePassCB(), null);
             Dimension dim=getSavePassCB().getPreferredSize();
             passwordPanel.add(javax.swing.Box.createHorizontalStrut(464-dim.width));
@@ -465,7 +465,7 @@ public class Preferences extends JDialog {
 		public void changedUpdate(DocumentEvent arg0) {
 			String newPass=new String(
 				getJPasswordField1().getPassword());
-			passwordChanged = 
+			passwordChanged =
 				new String(getOldJPasswordField().getPassword())
 					.length()>0 && newPass.length()>0
 					&& newPass.equals(new String(
@@ -484,7 +484,7 @@ public class Preferences extends JDialog {
 
 	/**
 	 * This method initializes jPasswordField1
-	 * 
+	 *
 	 * @return javax.swing.JPasswordField
 	 */
 	private JPasswordField getJPasswordField1() {
@@ -497,7 +497,7 @@ public class Preferences extends JDialog {
 
 	/**
 	 * This method initializes jPasswordField2
-	 * 
+	 *
 	 * @return javax.swing.JPasswordField
 	 */
 	private JPasswordField getJPasswordField2() {
@@ -510,7 +510,7 @@ public class Preferences extends JDialog {
 
 	/**
 	 * This method initializes jPasswordField
-	 * 
+	 *
 	 * @return javax.swing.JPasswordField
 	 */
 	private JPasswordField getOldJPasswordField() {
@@ -520,10 +520,10 @@ public class Preferences extends JDialog {
 		}
 		return jPasswordField;
 	}
-	
+
 	/**
 	 * This method initializes jSavePassCB
-	 * 
+	 *
 	 * @return javax.swing.JCheckBox
 	 */
 	private JCheckBox getSavePassCB() {
@@ -546,7 +546,7 @@ public class Preferences extends JDialog {
 		}
 		return jSavePassCB;
 	}
-	
+
 	/**
 	 * @return True, if the email address fits the pattern "*@*.*"
 	 */
@@ -560,7 +560,7 @@ public class Preferences extends JDialog {
 		}
 		return false;
 	}
-	
+
 	private boolean applyChanges() {
 		if (resultLocationChanged) {
 			File f = new File(resultDirField.getText());
@@ -588,11 +588,11 @@ public class Preferences extends JDialog {
 			resultLocationChanged = false;
 			view.updateTable(null);
 		}
-		
+
 		if(languageChanged)
 			atujplag.setCountryLanguage(
                 jLanguageCB.getSelectedItem().toString(), true);
-		
+
 		UpdateUserInfoParams para = new UpdateUserInfoParams(null, null, null);
         boolean doUpdate = false;
 		if (secondEmailChanged) {
@@ -645,7 +645,7 @@ public class Preferences extends JDialog {
 			atujplag.setPassword(para.getNewPassword());
 		if(savePassChanged)
 			atujplag.setRememberPassword(getSavePassCB().isSelected());
-		
+
 		secondEmailChanged = false;
 		homepageChanged = false;
 		passwordChanged = false;
@@ -655,7 +655,7 @@ public class Preferences extends JDialog {
 			UserInfo userInfo = view.getServerInfos().getUserInfo();
 			if(para.getNewEmailSecond() != null)
 				userInfo.setEmailSecond(para.getNewEmailSecond());
-		
+
 			if(para.getNewHomepage() != null)
 				userInfo.setHomepage(para.getNewHomepage());
 		}

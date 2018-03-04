@@ -10,16 +10,16 @@ public class TagParser {
 	/**
 	 * Replaces all "{<index>_description}" tags inside the message string
 	 * with params[<index>-1].
-	 * 
+	 *
 	 * Example:
 	 * 		parse("blb {1_n/a} d {3_desc} sf {2_bla} d",
 	 * 				new String[] {"#", blabla(), null});
 	 * 		returns "blb # d null sf blab d", if blabla() returns "blab"
-	 */	
+	 */
 	public static String parse(String message, String[] params) {
 		String[] tokens = message.split("[{}]",-1);
 		String result = tokens[0];
-		
+
 		for(int i=1;i<tokens.length;i+=2)		// Go to next tag position
 		{
 			try	{
@@ -33,7 +33,7 @@ public class TagParser {
 				{
 					ex.printStackTrace();
 					result += "{ILLEGAL PARAMETER INDEX \"" + tokens[i] + "\"}";
-				} 
+				}
 				else throw (RuntimeException) ex;
 			}
 			if(i+1 < tokens.length) result += tokens[i+1];

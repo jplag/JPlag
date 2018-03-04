@@ -48,31 +48,6 @@
 		<project.build.optimize>true</project.build.optimize>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>ipdNexus</id>
-			<name>Recaa Repository</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
-		</repository>
-	</repositories>
-
-	<distributionManagement>
-		<!-- use the following if you're not using a snapshot version. -->
-		<repository>
-			<id>ipdNexus-repo</id>
-			<name>IPD-Tichy-Releases</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/releases</url>
-			<layout>default</layout>
-		</repository>
-		<!-- use the following if you ARE using a snapshot version. -->
-		<snapshotRepository>
-			<id>ipdNexus-snapshots</id>
-			<name>IPD-Tichy-Snapshots</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/snapshots</url>
-			<layout>default</layout>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<build>
 		<plugins>
 			<plugin>

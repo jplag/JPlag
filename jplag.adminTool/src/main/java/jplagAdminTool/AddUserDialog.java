@@ -49,7 +49,7 @@ public class AddUserDialog extends JDialog {
 	private JPanel jPanel1 = null;
 	private JButton jOKButton = null;
 	private JButton jCancelButton = null;
-	
+
 	private AdminTool adminTool = null;
 	private JLabel jLabel8 = null;
 	private JTextField jExpiresField = null;
@@ -74,13 +74,13 @@ public class AddUserDialog extends JDialog {
 					setVisible(false);
 				}
 			}, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
-		
+
 		return rootPane;
 	}
-	
+
 	/**
 	 * This method initializes this
-	 * 
+	 *
 	 * @return void
 	 */
 	private void initialize() {
@@ -91,7 +91,7 @@ public class AddUserDialog extends JDialog {
 
 	/**
 	 * This method initializes jContentPane
-	 * 
+	 *
 	 * @return javax.swing.JPanel
 	 */
 	private javax.swing.JPanel getJContentPane() {
@@ -105,10 +105,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel() {
 		if (jPanel == null) {
 			GridBagConstraints gridBagConstraints23 = new GridBagConstraints();
@@ -252,10 +252,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJUsernameField() {
 		if (jUsernameField == null) {
 			jUsernameField = new JTextField();
@@ -265,10 +265,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJPasswordField() {
 		if (jPasswordField == null) {
 			jPasswordField = new JTextField();
@@ -277,10 +277,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJRealnameField() {
 		if (jRealnameField == null) {
 			jRealnameField = new JTextField();
@@ -289,10 +289,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJEmailField() {
 		if (jEmailField == null) {
 			jEmailField = new JTextField();
@@ -301,10 +301,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJEmailSecondField() {
 		if (jEmailSecondField == null) {
 			jEmailSecondField = new JTextField();
@@ -313,10 +313,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJHomepageField() {
 		if (jHomepageField == null) {
 			jHomepageField = new JTextField();
@@ -325,10 +325,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextArea	
-	 * 	
-	 * @return javax.swing.JTextArea	
-	 */    
+	 * This method initializes jTextArea
+	 *
+	 * @return javax.swing.JTextArea
+	 */
 	private JTextArea getJNotesTextArea() {
 		if (jNotesTextArea == null) {
 			jNotesTextArea = new JTextArea();
@@ -340,10 +340,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextField	
-	 * 	
-	 * @return javax.swing.JTextField	
-	 */    
+	 * This method initializes jTextField
+	 *
+	 * @return javax.swing.JTextField
+	 */
 	private JTextField getJExpiresField() {
 		if (jExpiresField == null) {
 			jExpiresField = new JTextField();
@@ -353,12 +353,12 @@ public class AddUserDialog extends JDialog {
 		}
 		return jExpiresField;
 	}
-	
+
 	/**
-	 * This method initializes jComboBox	
-	 * 	
-	 * @return javax.swing.JComboBox	
-	 */    
+	 * This method initializes jComboBox
+	 *
+	 * @return javax.swing.JComboBox
+	 */
 	private JComboBox<String> getJStateComboBox() {
 		if (jStateComboBox == null) {
 			jStateComboBox = new JComboBox<String>(
@@ -368,10 +368,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jPanel1	
-	 * 	
-	 * @return javax.swing.JPanel	
-	 */    
+	 * This method initializes jPanel1
+	 *
+	 * @return javax.swing.JPanel
+	 */
 	private JPanel getJPanel1() {
 		if (jPanel1 == null) {
 			jPanel1 = new JPanel();
@@ -382,17 +382,17 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJOKButton() {
 		if (jOKButton == null) {
 			jOKButton = new JButton();
 			jOKButton.setText("OK");
-			jOKButton.addActionListener(new java.awt.event.ActionListener() { 
+			jOKButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent e) {
-					String username=getJUsernameField().getText(); 
+					String username=getJUsernameField().getText();
 					if(username.length()<4)
 					{
 						javax.swing.JOptionPane.showMessageDialog(
@@ -441,7 +441,7 @@ public class AddUserDialog extends JDialog {
 									javax.swing.JOptionPane.ERROR_MESSAGE);
 							return;
 					}*/
-                    
+
 					Calendar expires;
 					Calendar cal=Calendar.getInstance(
 							TimeZone.getTimeZone("GMT"));
@@ -473,15 +473,15 @@ public class AddUserDialog extends JDialog {
 						return;
 					}
 
-					
+
 					// Create BackedUserData object and check the rest
-					
+
 					BackedUserData data=new BackedUserData(username,password,
 							cal,adminTool.getUsername(),expires,null,0,realname,
 							email,emailsecond,homepage,reason,notes,state);
 					if(!data.checkValid(adminTool.getUserTableModel(),
 							AddUserDialog.this,false)) return;
-					
+
 					try
 					{
 						adminTool.getJPlagStub().setUserData(
@@ -503,16 +503,16 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jButton1	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */    
+	 * This method initializes jButton1
+	 *
+	 * @return javax.swing.JButton
+	 */
 	private JButton getJCancelButton() {
 		if (jCancelButton == null) {
 			jCancelButton = new JButton();
 			jCancelButton.setText("Cancel");
-			jCancelButton.addActionListener(new java.awt.event.ActionListener() { 
-				public void actionPerformed(java.awt.event.ActionEvent e) {    
+			jCancelButton.addActionListener(new java.awt.event.ActionListener() {
+				public void actionPerformed(java.awt.event.ActionEvent e) {
 					setVisible(false);
 				}
 			});
@@ -521,10 +521,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jScrollPane	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
+	 * This method initializes jScrollPane
+	 *
+	 * @return javax.swing.JScrollPane
+	 */
 	private JScrollPane getJScrollPane() {
 		if (jScrollPane == null) {
 			jScrollPane = new JScrollPane();
@@ -534,10 +534,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jScrollPane1	
-	 * 	
-	 * @return javax.swing.JScrollPane	
-	 */    
+	 * This method initializes jScrollPane1
+	 *
+	 * @return javax.swing.JScrollPane
+	 */
 	private JScrollPane getJScrollPane1() {
 		if (jScrollPane1 == null) {
 			jScrollPane1 = new JScrollPane();
@@ -547,10 +547,10 @@ public class AddUserDialog extends JDialog {
 	}
 
 	/**
-	 * This method initializes jTextArea	
-	 * 	
-	 * @return javax.swing.JTextArea	
-	 */    
+	 * This method initializes jTextArea
+	 *
+	 * @return javax.swing.JTextArea
+	 */
 	private JTextArea getJReasonTextArea() {
 		if (jReasonTextArea == null) {
 			jReasonTextArea = new JTextArea();

@@ -16,7 +16,7 @@ public class SubmissionManager {
     public static final int NOFILES = 1;
     public static final int FILENOTINSUBDIR = 2;
     public static final int DIRHASNOTSUBDIR = 3;
-    
+
 	public String name;
 
 	public File dir;
@@ -52,7 +52,7 @@ public class SubmissionManager {
 		files = new String[1];
 		files[0] = name;
 	}
-    
+
     public SubmissionManager(String name, int error) {
         dir = null;
         this.name = name;
@@ -130,7 +130,7 @@ public class SubmissionManager {
 	public boolean isValid() {
 		return errorCode == VALID;
 	}
-    
+
     public String getErrorString() {
         String msg;
         switch(errorCode) {
