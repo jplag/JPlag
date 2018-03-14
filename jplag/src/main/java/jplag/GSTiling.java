@@ -79,7 +79,7 @@ public class GSTiling implements TokenConstants {
 		if (subA.struct.size() > subB.struct.size()) {
 			A = subB;  B = subA;
 		} else {
-			A = subB;  B = subA;
+			A = subA;  B = subB;
 		}
 		// if hashtable exists in first but not in second structure: flip around!
 		if (B.struct.table == null && A.struct.table != null) {
