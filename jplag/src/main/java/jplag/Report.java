@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.awt.Color;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
@@ -126,8 +127,8 @@ public class Report implements TokenConstants {
 		f.println("<H4>" + this.msg.getString("Report.Distribution") + ":</H4>\n<CENTER>");
 		f.println("<TABLE CELLPADDING=1 CELLSPACING=1>");
 		for (int i = 9; i >= 0; i--) {
-			f.print("<TR BGCOLOR=" + color(i * 10 + 10, 128, 192, 128, 192, 255, 255) + "><TD ALIGN=center>" + (i * 10) + "% - "
-					+ (i * 10 + 10) + "%" + "</TD><TD ALIGN=right>" + dist[i] + "</TD><TD>");
+			f.print("<TR BGCOLOR=" + color(i * 10 + 10, SubmissionType.REGULAR) + "><TD ALIGN=center>"
+				+ (i * 10) + "% - " + (i * 10 + 10) + "%" + "</TD><TD ALIGN=right>" + dist[i] + "</TD><TD>");
 			for (int j = (dist[i] * bar_length / max); j > 0; j--)
 				f.print("#");
 			if (dist[i] * bar_length / max == 0) {
@@ -154,13 +155,13 @@ public class Report implements TokenConstants {
 		public abstract float getPercent(AllMatches matches);
 	}
 
-	private void writeLinksToMatches(HTMLFile f, SortedVector<AllMatches> matches, MatchesHelper helper, String headerStr, String csvfile) {
-		//		output all the matches
-		//		Set<String> namesPrinted = new Set();
+	private void writeLinksToMatches(HTMLFile f, SortedVector<AllMatches> matches, MatchesHelper helper,
+		String headerStr, String csvfile) {
+
 		Set<AllMatches> matchesPrinted = new HashSet<AllMatches>();
 
-		f.println(headerStr + " (<a href=\"help-sim-" + program.getCountryTag() + ".html\"><small><font color=\"#000088\">"
-				+ msg.getString("Report.WhatIsThis") + "</font></small></a>):</H4>");
+		f.println(headerStr + " (<A HREF=\"help-sim-" + program.getCountryTag() + ".html\">"
+			+ "<SMALL>" + msg.getString("Report.WhatIsThis") + "</SMALL></A>):</H4>");
 		f.println("<p><a href=\"" + csvfile + "\">download csv</a></p>");
 		f.println("<TABLE CELLPADDING=3 CELLSPACING=2>");
 
@@ -168,41 +169,45 @@ public class Report implements TokenConstants {
 		for (int i = 0; ((i < anz) && (matchesPrinted.size() != anz)); i++) {
 			AllMatches match = matches.elementAt(i);
 			if (!matchesPrinted.contains(match)) {
-				//				!namesPrinted.contains(match.subName(j))) {
-				int a = 0, b = 0;
-				String nameA = match.subName(0);
-				String nameB = match.subName(1);
-				//				Which of both submissions is referenced more often in "matches"?
+				Submission subA = match.subA, subB = match.subB;
+
+				// Swap if needed, so that A is referenced more often in not printed matches than B
+				int totalA = 0, totalB = 0;
 				for (int x = 0; x < anz; x++) {
 					AllMatches tmp = matches.elementAt(x);
 					if (tmp != match && !matchesPrinted.contains(tmp)) {
-						String tmpA = tmp.subName(0);
-						String tmpB = tmp.subName(1);
-						if (nameA.equals(tmpA) || nameA.equals(tmpB))
-							a += helper.getPercent(tmp);
-						if (nameB.equals(tmpA) || nameB.equals(tmpB))
-							b += helper.getPercent(tmp);
+						Submission subC = tmp.subA, subD = tmp.subB;
+						if (subA == subC || subA == subD)
+							totalA += helper.getPercent(tmp);
+						if (subB == subC || subB == subD)
+							totalB += helper.getPercent(tmp);
 					}
 				}
-				String name = (a >= b ? nameA : nameB);
-				boolean header = false;
-				//				namesPrinted.put(name);
+				
+				if (totalA < totalB) {
+					Submission subTemp = subA;
+					subA = subB;
+					subB = subTemp;
+				}
 
-				AllMatches output;
-				for (int x = 0; x < anz; x++) {
-					output = matches.elementAt(x);
-					if (!matchesPrinted.contains(output) && (output.subName(0).equals(name) || output.subName(1).equals(name))) {
-						matchesPrinted.add(output);
-						int other = (output.subName(0).equals(name) ? 1 : 0);
+				boolean header = false;
+				for (int x = i; x < anz; x++) {
+					AllMatches output = matches.elementAt(x);
+					if (!matchesPrinted.contains(output) && (output.subA == subA || output.subB == subA)) {
+						Submission subOther = (subA == output.subA ? output.subB : output.subA);
+
 						if (!header) { // only print header when necessary!
+							f.print("<TR><TD BGCOLOR=" + color(helper.getPercent(match), subA.type) + ">"
+								+ subA.name + "</TD><TD><nobr>-&gt;</nobr>");
 							header = true;
-							f.print("<TR><TD BGCOLOR=" + color(helper.getPercent(match), 128, 192, 128, 192, 255, 255) + ">" + name
-									+ "</TD><TD><nobr>-&gt;</nobr>");
 						}
-						float percent = helper.getPercent(output);
-						f.print("</TD><TD BGCOLOR=" + color(percent, 128, 192, 128, 192, 255, 255) + " ALIGN=center><A HREF=\"match"
-								+ getMatchIndex(output) + ".html\">" + output.subName(other) + "</A><BR><FONT COLOR=\""
-								+ color(percent, 0, 255, 0, 0, 0, 0) + "\">(" + (((int) (percent * 10)) / (float) 10) + "%)</FONT>");
+
+						float p = helper.getPercent(output);
+						f.printf("</TD><TD BGCOLOR=" + color(p, subOther.type) + " ALIGN=center><A HREF=\"match"
+							+ getMatchIndex(output) + ".html\">" + subOther.name + "</A><BR><FONT COLOR=\""
+							+ color(p, Color.BLACK, Color.RED) + "\">(%.1f%%)</FONT>", p);
+
+						matchesPrinted.add(output);
 					}
 				}
 				if (header)
@@ -403,18 +408,35 @@ public class Report implements TokenConstants {
 
 		f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Programs") + ":</TD><TD>");
 		f.println("<CODE>" + program.allValidSubmissions(" - ") + "</CODE></TD></TR>");
+		if (program.useArchivalSubmissions() && program.validArchivalSubmissions() > 0) {
+			f.println("<TR BGCOLOR=#bbbbc6 VALIGN=top><TD>" + msg.getString("Report.ArchivalPrograms") + ":</TD><TD>");
+			f.println("<CODE>" + program.allValidArchivalSubmissions(" - ") + "</CODE></TD></TR>");
+		}
 		f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Language") + ":</TD><TD>" + this.language.name()
 				+ "</TD></TR>");
 		f.print("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Submissions") + ":</TD><TD>"
 				+ this.program.validSubmissions());
+		if (program.useArchivalSubmissions()) {
+			f.print(" (" + this.program.validArchivalSubmissions() + " " + msg.getString("Report.archival"));
+
+			if (program.getErrors() == 0)
+				f.printf(")");
+			else
+				f.printf(", ");
+		}
 		if (program.getErrors() != 0) {
+			if (!this.program.useArchivalSubmissions())
+				f.printf(" (");
+
 			if (this.program.getErrors() == 1)
-				f.print(" <b>(" + msg.getString("Report.1_has_not_been_parsed_successfully") + ")</b>");
+				f.print("<b>" + msg.getString("Report.1_has_not_been_parsed_successfully") + "</b>)");
 			else if (this.program.getErrors() > 1)
-				f.print(" <b>("
+				f.print("<b>"
 						+ TagParser.parse(msg.getString("Report.X_have_not_been_parsed_successfully"), new String[] { program.getErrors()
-								+ "" }) + ")</b>");
-			f.println("</TD></TR>");
+						+ "" }) + "</b>)");
+		}
+		f.println("</TD></TR>");
+		if (program.getErrors() != 0) {
 			f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Invalid_submissions"));
 			if (options.output_file != null) {
 				f.println(" "
@@ -424,8 +446,8 @@ public class Report implements TokenConstants {
 			}
 			f.println(":</TD><TD>");
 			f.println("<CODE>" + this.program.allInvalidSubmissions() + "</CODE>");
+			f.println("</TD></TR>");
 		}
-		f.println("</TD></TR>");
 		if (this.program.useBasecode()) {
 			f.print("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Basecode_submission") + ":</TD>" + "<TD>"
 					+ this.program.get_basecode() + "</TD></TR>");
@@ -557,17 +579,21 @@ public class Report implements TokenConstants {
 	}
 
 	/*
-	 * Two colors, represented by Rl,Gl,Bl and Rh,Gh,Bh respectively are mixed
-	 * according to the percentage "percent"
+	 * Two Colors are mixed according to the percentage "percent" and converted to HTML format
 	 */
-	public final String color(float percent, int Rl, int Rh, int Gl, int Gh, int Bl, int Bh) {
-		int farbeR = (int) (Rl + (Rh - Rl) * percent / 100);
-		int farbeG = (int) (Gl + (Gh - Gl) * percent / 100);
-		int farbeB = (int) (Bl + (Bh - Bl) * percent / 100);
-		String helpR = (farbeR < 16 ? "0" : "") + Integer.toHexString(farbeR);
-		String helpG = (farbeG < 16 ? "0" : "") + Integer.toHexString(farbeG);
-		String helpB = (farbeB < 16 ? "0" : "") + Integer.toHexString(farbeB);
-		return "#" + helpR + helpG + helpB;
+	public static String color(float percent, Color l, Color h) {
+		int red = (int) (l.getRed() + (h.getRed() - l.getRed()) * percent / 100),
+			green = (int) (l.getGreen() + (h.getGreen() - l.getGreen()) * percent / 100),
+			blue = (int) (l.getBlue() + (h.getBlue() - l.getBlue()) * percent / 100);
+
+		return "#"
+			+ (red < 16 ? "0" : "") + Integer.toHexString(red)
+			+ (green < 16 ? "0" : "") + Integer.toHexString(green)
+			+ (blue < 16 ? "0" : "") + Integer.toHexString(blue);
+	}
+
+	public static String color(float percent, SubmissionType type) {
+		return color(percent, type.lColor, type.hColor);
 	}
 
 	// MATCHES
@@ -728,8 +754,8 @@ public class Report implements TokenConstants {
 			}
 		}
 
-		if (this.program.useBasecode() && match.bcmatchesA != null && match.bcmatchesB != null) {
-			AllBasecodeMatches bcmatch = (j == 0 ? match.bcmatchesA : match.bcmatchesB);
+		if (program.useBasecode()) {
+			AllBasecodeMatches bcmatch = (j == 0 ? match.getBcMatchesA() : match.getBcMatchesB());
 			for (int x = 0; x < bcmatch.size(); x++) {
 				onematch = bcmatch.matches[x];
 				Token start = tokens[onematch.startA];
@@ -902,8 +928,8 @@ public class Report implements TokenConstants {
 			}
 		}
 
-		if (this.program.useBasecode() && match.bcmatchesA != null && match.bcmatchesB != null) {
-			AllBasecodeMatches bcmatch = (j == 0 ? match.bcmatchesA : match.bcmatchesB);
+		if (program.useBasecode()) {
+			AllBasecodeMatches bcmatch = (j == 0 ? match.getBcMatchesA() : match.getBcMatchesB());
 			for (int x = 0; x < bcmatch.size(); x++) {
 				Match onematch = bcmatch.matches[x];
 				Token start = tokens[onematch.startA];

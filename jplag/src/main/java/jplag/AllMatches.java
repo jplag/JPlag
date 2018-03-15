@@ -13,10 +13,6 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   public Submission subA;
   public Submission subB;
 
-  public AllBasecodeMatches bcmatchesA = null;
-  public AllBasecodeMatches bcmatchesB = null;
-
-
   public AllMatches(Submission subA, Submission subB) {
     super();
     this.subA = subA;
@@ -92,9 +88,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   }
   public final float percent() {
 	float sa, sb;
-	if(bcmatchesB != null && bcmatchesA != null){
-		sa = subA.size() - subA.files.length - bcmatchesA.tokensMatched();
-    	sb = subB.size() - subB.files.length - bcmatchesB.tokensMatched();
+	if(subA.bcMatches != null && subB.bcMatches != null){
+		sa = subA.size() - subA.files.length - subA.bcMatches.tokensMatched();
+    	sb = subB.size() - subB.files.length - subB.bcMatches.tokensMatched();
 	}
 	else{
 		sa = subA.size() - subA.files.length;
@@ -104,14 +100,22 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   }
   public final float percentA() {
   	int divisor;
-  	if(bcmatchesA != null) divisor = subA.size()-subA.files.length-bcmatchesA.tokensMatched();
-    else divisor = subA.size()-subA.files.length;
+
+  	if (subA.bcMatches != null)
+		divisor = subA.size() - subA.files.length - subA.bcMatches.tokensMatched();
+    else
+		divisor = subA.size() - subA.files.length;
+
     return (divisor == 0 ? 0f : (tokensMatched()*100 / (float) divisor));
   }
   public final float percentB() {
     int divisor;
-	if(bcmatchesB != null) divisor = subB.size()-subB.files.length-bcmatchesB.tokensMatched();
-	else divisor = subB.size()-subB.files.length;
+
+	if (subB.bcMatches != null)
+		divisor = subB.size() - subB.files.length - subB.bcMatches.tokensMatched();
+	else
+		divisor = subB.size() - subB.files.length;
+
     return (divisor == 0 ? 0f : (tokensMatched()*100 / (float) divisor));
   }
 
@@ -139,11 +143,11 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
 
   public final float percentBasecodeA(){
 	float sa = subA.size() - subA.files.length;
-	return bcmatchesA.tokensMatched() * 100 / sa;
+	return subA.bcMatches.tokensMatched() * 100 / sa;
   }
   public final float percentBasecodeB(){
 	float sb = subB.size() - subB.files.length;
-	return bcmatchesB.tokensMatched() * 100 / sb;
+	return subB.bcMatches.tokensMatched() * 100 / sb;
   }
   public final float roundedPercentBasecodeA() {
 	float percent = percentBasecodeA();
@@ -152,6 +156,14 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   public final float roundedPercentBasecodeB() {
 	float percent = percentBasecodeB();
 	return ((int)(percent * 10)) / (float)10;
+  }
+
+  public AllBasecodeMatches getBcMatchesA() {
+    return subA.bcMatches;
+  }
+
+  public AllBasecodeMatches getBcMatchesB() {
+    return subB.bcMatches;
   }
 
   /* Returns the name of the submissions which were compared

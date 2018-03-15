@@ -123,10 +123,13 @@ public class CommandLineOptions extends Options {
         } else if (arg.equals("-o") && i + 1 < args.length) {
             output_file = args[i + 1];
             i++;
+        } else if (arg.equals("-a") && i + 1 < args.length) {
+            useArchivalSubmissions = true;
+            archivalSubmissions = args[i + 1]; // will be validated in initializeSecondStep()
+            i++;
         } else if (arg.equals("-bc") && i + 1 < args.length) {
-			// Will be validated later as root_dir is not set yet
             useBasecode = true;
-            basecode = args[i + 1];
+            basecode = args[i + 1]; // will be validated in initializeSecondStep()
             i++;
         } else if (arg.equals("-d") && i + 1 < args.length) {
             // original directory - when used in the server environment.
@@ -374,39 +377,75 @@ public class CommandLineOptions extends Options {
 			this.min_token_match = this.language.min_token_match();
 		if (!suffixes_set)
 			this.suffixes = this.language.suffixes();
-		checkBasecodeOption();
+
+        checkDirectories();
 	}
-	
+
+    private void checkDirectories() throws jplag.ExitException {
+        File f = new File(root_dir);
+
+        if (!f.exists() || !f.isDirectory()) {
+            throw new jplag.ExitException("\"" + root_dir + "\" does not exist or is not a"
+                    + " directory!",
+                    ExitException.BAD_PARAMETER);
+        }
+
+        if (useBasecode)
+            checkBasecodeOption();
+        if (useArchivalSubmissions)
+            checkArchivalSubmissionsOption();
+    }
+
     /**
      * This method checks whether the basecode directory value is valid
      */
     private void checkBasecodeOption() throws jplag.ExitException {
-        if (useBasecode) {
-            if (basecode == null || basecode.equals("")) {
-				throw new ExitException("Basecode option used but none " +
-						"specified!",ExitException.BAD_PARAMETER);
-            }
-            String baseC = root_dir + File.separator + basecode;
-            if (!(new File(root_dir)).exists()) {
-				throw new ExitException("Root directory \"" + root_dir
-						+ "\" doesn't exist!",ExitException.BAD_PARAMETER);
-            }
-            File f = new File(baseC);
-            if (!f.exists()) {	// Basecode dir doesn't exist.
-				throw new ExitException("Basecode directory \"" + baseC
-						+ "\" doesn't exist!",ExitException.BAD_PARAMETER);
-            }
-            if(sub_dir != null && sub_dir.length()!=0) {
-            	f = new File(baseC, sub_dir);
-            	if(!f.exists()) {
-            		throw new ExitException("Basecode directory doesn't contain"
-            				+ " the subdirectory \"" + sub_dir + "\"!",
-            				ExitException.BAD_PARAMETER);
-            	}
-            }
-            System.out.println("Basecode directory \"" + baseC
-            		+ "\" will be used");
+        if (basecode == null || basecode.equals("")) {
+            throw new ExitException("Basecode option used but none "
+                + "specified!", ExitException.BAD_PARAMETER);
         }
+
+        String baseC = root_dir + File.separator + basecode;
+        File f = new File(baseC);
+        if (!f.exists() || !f.isDirectory()) { // Basecode dir doesn't exist.
+			throw new ExitException("Basecode directory \"" + baseC
+					+ "\" doesn't exist!", ExitException.BAD_PARAMETER);
+        }
+        if(sub_dir != null && sub_dir.length()!=0) {
+        	f = new File(baseC, sub_dir);
+        	if(!f.exists()) {
+        		throw new ExitException("Basecode directory doesn't contain"
+        				+ " the subdirectory \"" + sub_dir + "\"!",
+        				ExitException.BAD_PARAMETER);
+        	}
+        }
+        System.out.println("Basecode directory \"" + baseC
+            + "\" will be used");
     }
 
+    private void checkArchivalSubmissionsOption() throws jplag.ExitException {
+        if (archivalSubmissions == null || archivalSubmissions.equals("")) {
+            throw new ExitException("Archival submissions option used but none specified!",
+                ExitException.BAD_PARAMETER);
+        }
+
+        File f = new File(archivalSubmissions);
+        if (!f.exists()) {
+            throw new ExitException("Archival submissions directory \"" + archivalSubmissions
+                + "\" doesn't exist!",
+                ExitException.BAD_PARAMETER);
+        }
+
+        if (sub_dir != null && sub_dir.length() != 0) {
+            f = new File(archivalSubmissions, sub_dir);
+            if (!f.exists()) {
+                throw new ExitException("Archival submissions directory doesn't contain"
+                    + " the subdirectory \"" + sub_dir + "\"!",
+                    ExitException.BAD_PARAMETER);
+            }
+        }
+
+        System.out.println("Archival submissions directory \"" + archivalSubmissions
+            + "\" will be used");
+    }
 }
