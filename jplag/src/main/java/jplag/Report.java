@@ -3,6 +3,7 @@ package jplag;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Comparator;
@@ -153,13 +154,14 @@ public class Report implements TokenConstants {
 		public abstract float getPercent(AllMatches matches);
 	}
 
-	private void writeLinksToMatches(HTMLFile f, SortedVector<AllMatches> matches, MatchesHelper helper, String headerStr) {
+	private void writeLinksToMatches(HTMLFile f, SortedVector<AllMatches> matches, MatchesHelper helper, String headerStr, String csvfile) {
 		//		output all the matches
 		//		Set<String> namesPrinted = new Set();
 		Set<AllMatches> matchesPrinted = new HashSet<AllMatches>();
 
 		f.println(headerStr + " (<a href=\"help-sim-" + program.getCountryTag() + ".html\"><small><font color=\"#000088\">"
 				+ msg.getString("Report.WhatIsThis") + "</font></small></a>):</H4>");
+		f.println("<p><a href=\"" + csvfile + "\">download csv</a></p>");
 		f.println("<TABLE CELLPADDING=3 CELLSPACING=2>");
 
 		int anz = matches.size();
@@ -212,6 +214,85 @@ public class Report implements TokenConstants {
 		f.println("<!---->"); // important for front end
 	}
 
+
+	private void writeMatchesCSV( File root, String filename, SortedVector<AllMatches> matches, MatchesHelper helper) {
+
+		// quick and very dirty csv export of results
+
+		FileWriter writer = null;
+		File f = new File(root, filename);
+
+		try{
+
+			f.createNewFile();
+			writer = new FileWriter(f);
+
+			//		output all the matches
+			//		Set<String> namesPrinted = new Set();
+			Set<AllMatches> matchesPrinted = new HashSet<AllMatches>();
+
+
+			int anz = matches.size();
+			for (int i = 0; ((i < anz) && (matchesPrinted.size() != anz)); i++) {
+				AllMatches match = matches.elementAt(i);
+				if (!matchesPrinted.contains(match)) {
+					//				!namesPrinted.contains(match.subName(j))) {
+					int a = 0, b = 0;
+					String nameA = match.subName(0);
+					String nameB = match.subName(1);
+					//				Which of both submissions is referenced more often in "matches"?
+					for (int x = 0; x < anz; x++) {
+						AllMatches tmp = matches.elementAt(x);
+						if (tmp != match && !matchesPrinted.contains(tmp)) {
+							String tmpA = tmp.subName(0);
+							String tmpB = tmp.subName(1);
+							if (nameA.equals(tmpA) || nameA.equals(tmpB))
+								a += helper.getPercent(tmp);
+							if (nameB.equals(tmpA) || nameB.equals(tmpB))
+								b += helper.getPercent(tmp);
+						}
+					}
+					String name = (a >= b ? nameA : nameB);
+					boolean header = false;
+					//				namesPrinted.put(name);
+
+					AllMatches output;
+					for (int x = 0; x < anz; x++) {
+						output = matches.elementAt(x);
+						if (!matchesPrinted.contains(output) && (output.subName(0).equals(name) || output.subName(1).equals(name))) {
+							matchesPrinted.add(output);
+							int other = (output.subName(0).equals(name) ? 1 : 0);
+							if (!header) { // only print header when necessary!
+								header = true;
+								writer.write(name + ";");
+							}
+							float percent = helper.getPercent(output);
+							writer.write(getMatchIndex(output) + ";");
+							writer.write(output.subName(other) + ";");
+							writer.write( (((int) (percent * 10)) / (float) 10) + ";");
+
+						}
+					}
+					if (header)
+						writer.write("\n");
+				}
+			}
+
+			writer.flush();
+
+		} catch (Exception e) {
+			// POC: ignore all errors
+			e.printStackTrace();
+		} finally {
+			try {
+				writer.close();
+			} catch (Exception e) {
+			}
+		}
+
+
+	}
+
 	private int writeIndex(boolean includeClusterLink) throws jplag.ExitException {
 		HTMLFile f = openHTMLFile(root, "index.html");
 
@@ -219,23 +300,56 @@ public class Report implements TokenConstants {
 
 		writeDistribution(f);
 
+		String csvfile="matches_avg.csv";
 		writeLinksToMatches(f, avgmatches, new MatchesHelper() {
 			public float getPercent(AllMatches matches) {
 				return matches.percent();
 			}
-		}, "<H4>" + msg.getString("Report.MatchesAvg"));
-		if (minmatches != null)
+		}, "<H4>" + msg.getString("Report.MatchesAvg"), csvfile);
+
+		writeMatchesCSV(root, csvfile, avgmatches,
+			new MatchesHelper() {
+				 public float getPercent(AllMatches matches) {
+				   return matches.percent();
+				 }
+			}
+		 );
+
+		if (minmatches != null){
+			csvfile="matches_min.csv";
 			writeLinksToMatches(f, minmatches, new MatchesHelper() {
 				public float getPercent(AllMatches matches) {
 					return matches.percentMinAB();
 				}
-			}, "<HR><H4>" + msg.getString("Report.MatchesMin"));
-		if (maxmatches != null)
+			}, "<HR><H4>" + msg.getString("Report.MatchesMin"), csvfile);
+
+			writeMatchesCSV(root, csvfile, avgmatches,
+				new MatchesHelper() {
+					 public float getPercent(AllMatches matches) {
+					   return matches.percentMinAB();
+					 }
+				}
+			 );
+		};
+
+
+		if (maxmatches != null){
+			csvfile="matches_max.csv";
 			writeLinksToMatches(f, maxmatches, new MatchesHelper() {
 				public float getPercent(AllMatches matches) {
 					return matches.percentMaxAB();
 				}
-			}, "<HR><H4>" + msg.getString("Report.MatchesMax"));
+			}, "<HR><H4>" + msg.getString("Report.MatchesMax"), csvfile);
+
+			writeMatchesCSV(root, csvfile, avgmatches,
+				new MatchesHelper() {
+					 public float getPercent(AllMatches matches) {
+					   return matches.percentMaxAB();
+					 }
+				}
+			 );
+		};
+
 
 		if (includeClusterLink) {
 			f.println("<HR><H4><A HREF=\"cluster.html\">" + msg.getString("Report.Clustering_Results") + "</A></H4>");
