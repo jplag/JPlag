@@ -443,6 +443,21 @@ public class Program implements ProgramI {
         }
     }
 
+	private void createSubmissionsFileList() throws jplag.ExitException {
+		submissions = new Vector<Submission>();
+		File f = null;
+		if (options.root_dir != null) {
+			f = new File(options.root_dir);
+			if (!f.isDirectory()) {
+				throw new jplag.ExitException(options.root_dir + " is not a directory!");
+			}
+		}
+		for (String file : options.fileList){
+			submissions.addElement(new Submission(file, f, this, get_language()));
+		}
+	}
+
+
     /**
      * THIS IS FOR THE EMPIRICAL STUDY
      */
@@ -1128,7 +1143,10 @@ public class Program implements ProgramI {
             print(null, "Root-dir: " + options.root_dir + "\n"); // server
         // this file contains all files names which are excluded
         readExclusionFile();
-        if (options.include_file == null) {
+
+        if (options.fileListMode) {
+	        createSubmissionsFileList();
+        } else if (options.include_file == null) {
             createSubmissions();
             System.out.println(submissions.size() + " submissions");
         } else
