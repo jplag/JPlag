@@ -10,7 +10,7 @@ public class HTMLFile extends PrintWriter {
   /* This static method has to be used to instanciate HTMLFile objects. */
   public static HTMLFile createHTMLFile(File f) throws IOException {
     BufferedCounter new_bc = new BufferedCounter(
-        new OutputStreamWriter(new FileOutputStream(f), "ISO-8859-1"));
+        new OutputStreamWriter(new FileOutputStream(f), "UTF-8"));
     HTMLFile htmlfile = new HTMLFile(new_bc);
     htmlfile.bc = new_bc;
 //      if (Program.verbose_details)
