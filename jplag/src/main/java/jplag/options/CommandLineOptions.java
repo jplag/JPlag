@@ -317,11 +317,17 @@ public class CommandLineOptions extends Options {
             System.out.println();
             i++;
         } else if (arg.equals("-title") && i+1 < args.length) {
-            if (args[i+1].equals("")) {
+            if (args[i + 1].equals("")) {
                 throw new jplag.ExitException("Title is empty!");
             }
-            this.title = args[i+1];
+            this.title = args[i + 1];
             i++;
+        } else if (arg.equals("-c") && i + 2 < args.length){
+            this.fileListMode = true;
+            while (i + 1 < args.length){
+                this.fileList.add(args[i + 1]);
+                i++;
+            }
         } else if (!scanOption(arg))
             throw new jplag.ExitException("Unknown option: " + arg,
                     ExitException.BAD_PARAMETER);
