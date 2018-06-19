@@ -237,7 +237,7 @@ public class CommandLineOptions extends Options {
             else 
                 throw new jplag.ExitException("Illegal clustertype: \"" + tmp
                         + "\"\nAvailable types are 'min', 'max' and 'avr'!");
-			
+
             System.out.println("Clustering activated; type: "
                     + args[i + 1].toUpperCase());
             i++;
@@ -325,7 +325,7 @@ public class CommandLineOptions extends Options {
             }
             this.title = args[i + 1];
             i++;
-        } else if (arg.equals("-c") && i + 2 < args.length){
+        } else if (arg.equals("-c") && i + 1 < args.length) {
             this.fileListMode = true;
             while (i + 1 < args.length){
                 this.fileList.add(args[i + 1]);

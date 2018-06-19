@@ -429,19 +429,23 @@ public class Program implements ProgramI {
         return result;
     }
 
-	private void createSubmissionsFileList() throws jplag.ExitException {
-		submissions = new Vector<Submission>();
-		File f = null;
-		if (options.root_dir != null) {
-			f = new File(options.root_dir);
-			if (!f.isDirectory()) {
-				throw new jplag.ExitException(options.root_dir + " is not a directory!");
-			}
-		}
-		for (String file : options.fileList){
-			submissions.addElement(new Submission(file, f, this, get_language(), SubmissionType.REGULAR));
-		}
-	}
+    private Vector<Submission> createSubmissionsFileList() throws jplag.ExitException {
+        Vector<Submission> result = new Vector<Submission>();
+        File f = null;
+
+        if (options.root_dir != null) {
+            f = new File(options.root_dir);
+            if (!f.isDirectory()) {
+                throw new jplag.ExitException(options.root_dir + " is not a directory!");
+            }
+        }
+
+        for (String file : options.fileList){
+            result.addElement(new Submission(file, f, this, get_language(), SubmissionType.REGULAR));
+        }
+
+        return result;
+    }
 
     private Submission createBasecodeSubmission() throws jplag.ExitException {
         if (!options.useBasecode)
@@ -1162,13 +1166,20 @@ public class Program implements ProgramI {
         readExclusionFile();
 
         if (options.fileListMode) {
-	        createSubmissionsFileList();
+            submissions = createSubmissionsFileList();
+            basecodeSubmission = createBasecodeSubmission();
         } else if (options.include_file == null) {
             submissions = createSubmissions(new File(options.root_dir), SubmissionType.REGULAR);
             basecodeSubmission = createBasecodeSubmission();
             System.out.println(submissions.size() + " submissions\n");
         } else
             createSubmissionsExp();
+
+        if (options.useArchivalSubmissions) {
+            archivalSubmissions = createSubmissions(new File(options.archivalSubmissions),
+                SubmissionType.ARCHIVAL);
+            System.out.println(archivalSubmissions.size() + " archival submissions\n");
+        }
 
         if (!options.skipParse) {
             try {
