@@ -836,6 +836,10 @@ public class Program implements ProgramI {
         return this.options.sub_dir;
     }
 
+    public boolean getIgnoreSuffixes() {
+        return this.options.ignoreSuffixes;
+    }
+
     public String[] get_suffixes() {
         return this.options.suffixes;
     }
@@ -924,11 +928,13 @@ public class Program implements ProgramI {
             print(null, "------ Parsing submission: " + subm.name + "\n");
             currentSubmissionName = subm.name;
             options.setProgress(count * 100 / totalcount);
-            if (!(ok = subm.parse()))
+            if (!subm.parse()) {
                 errors++;
+            }
 
-            if (options.exp && options.filter != null)
+            if (options.exp && options.filter != null) {
                 subm.struct = options.filter.filter(subm.struct); // EXPERIMENT
+            }
             count++;
             if (subm.struct != null && subm.size() < options.min_token_match) {
                 print(null, "Submission contains fewer tokens than minimum match " + "length allows!\n");

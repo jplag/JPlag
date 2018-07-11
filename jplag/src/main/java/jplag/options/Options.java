@@ -130,6 +130,8 @@ public abstract class Options {
 
 	public SimilarityMatrix similarity = null;
 
+        public boolean ignoreSuffixes = false;
+
 	public jplag.Language language;
 
 	//compare list of files options

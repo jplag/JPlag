@@ -61,7 +61,7 @@ public class Language implements jplag.Language {
 	}
 
 	public boolean usesIndex() {
-		return true;
+		return false;
 	}
 
 	public int noOfTokens() {

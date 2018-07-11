@@ -95,6 +95,9 @@ public class Submission implements Comparable<Submission> {
 					return false;
 				if (program.excludeFile(name))
 					return false;
+                                if (program.getIgnoreSuffixes()) {
+                                    return true;
+                                }
 				String[] suffies = program.get_suffixes();
 				for (int i = 0; i < suffies.length; i++)
 					if (exact_match) {
@@ -146,10 +149,11 @@ public class Submission implements Comparable<Submission> {
 			return true;
 		}
 
-		struct = null;
-		errors = true; // invalidate submission
-		if (program.use_debugParser())
-			copySubmission();
+		// struct = null;
+		// errors = true; // invalidate submission
+                // if (program.use_debugParser()) {
+                //     copySubmission();
+                // }
 		return false;
 	}
 

@@ -68,6 +68,8 @@ public class CommandLineOptions extends Options {
     private boolean scanOption(String arg) throws jplag.ExitException {
         if (arg.equals("-s")) {
             this.read_subdirs = true;
+        } else if (arg.equals("-ignore-suffixes")) {
+            this.ignoreSuffixes = true;
         } else if (arg.equals("-external")) { // hidden option!
             System.out.println("External search activated!");
             this.externalSearch = true;
