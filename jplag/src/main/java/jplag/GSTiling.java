@@ -75,20 +75,27 @@ public class GSTiling implements TokenConstants {
 	}
 
 	public final AllMatches compare(Submission subA, Submission subB) {
+		if (subA.struct == null || subB.struct == null) {
+			return null;
+		}
+
 		Submission A, B, tmp;
+		AllMatches matches;
+
 		if (subA.struct.size() > subB.struct.size()) {
 			A = subB;  B = subA;
 		} else {
-			A = subB;  B = subA;
+			A = subA;  B = subB;
 		}
 		// if hashtable exists in first but not in second structure: flip around!
 		if (B.struct.table == null && A.struct.table != null) {
-			tmp = A;
-			A = B;
-			B = tmp;
+			matches = compare(B, A, this.program.get_min_token_match());
+		} else {
+			matches = compare(A, B, this.program.get_min_token_match());
 		}
 
-		return compare(A, B, this.program.get_min_token_match());
+		System.out.println("Comparing " + subA.name + "-" + subB.name + ": " + matches.percent());
+		return matches;
 	}
 
 	// first parameter should contain the smaller sequence!!! 
@@ -180,19 +187,19 @@ inner:			for (int i = 1; i <= elemsB[0]; i++) { // elemsB[0] contains the length
 
 	public final AllBasecodeMatches compareWithBasecode(Submission subA, Submission subB) {
 		Submission A, B, tmp;
+
 		if (subA.struct.size() > subB.struct.size()) {
 			A = subB;  B = subA;
 		} else {
-			A = subB;  B = subA;
-		}
-		// if hashtable exists in first but not in second structure: flip around!
-		if (B.struct.table == null && A.struct.table != null) {
-			tmp = A;
-			A = B;
-			B = tmp;
+			A = subA;  B = subB;
 		}
 
-		return compareWithBasecode(A, B, this.program.get_min_token_match());
+		// if hashtable exists in first but not in second structure: flip around!
+		if (B.struct.table == null && A.struct.table != null) {
+			return compareWithBasecode(B, A, program.get_min_token_match());
+		} else {
+			return compareWithBasecode(A, B, program.get_min_token_match());
+		}
 	}
 
 	private final AllBasecodeMatches compareWithBasecode(Submission subA, Submission subB, int mml) {

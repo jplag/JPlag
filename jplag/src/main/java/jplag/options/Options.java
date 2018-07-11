@@ -105,6 +105,8 @@ public abstract class Options {
 
 	public String basecode = "";
 
+	public String archivalSubmissions = "";
+
 	public String commandLine = "";
 
 	// "Ronald Kostoff" specials
@@ -115,6 +117,8 @@ public abstract class Options {
 	public boolean clustering = false;
 
 	public boolean useBasecode = false;
+
+	public boolean useArchivalSubmissions = false;
 
 	public String languageName = null;
 
@@ -192,7 +196,7 @@ public abstract class Options {
 		System.out.print(Program.name_long
 						+ ", Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.\n"
 						+ "Usage: JPlag [ options ] <root-dir> [-c file1 file2 ...]\n"
-						+ " <root-dir>        The root-directory that contains all submissions.\n\n"
+						+ " <root-dir>      The root-directory that contains all submissions\n\n"
 						+ "options are:\n"
 						+ " -v[qlpd]        (Verbose)\n"
 						+ "                 q: (Quiet) no output\n"
@@ -213,7 +217,9 @@ public abstract class Options {
 						+ " -m <p>%         All matches with more than <p>% similarity will be saved.\n"
 						+ " -r <dir>        (Result) Name of directory in which the web pages will be\n"
 						+ "                 stored (default: result)\n"
-						+ " -bc <dir>       Name of the directory which contains the basecode (common framework)\n"
+						+ " -a <dir>        (Archival) Directory containing archived submissions, which\n"
+						+ "                 will be only compared against\n"
+						+ " -bc <dir>       Directory which contains the basecode (common framework)\n"
 						+ " -c [files]      Compare a list of files. Should be the last one.\n"
 						+ " -l <language>   (Language) Supported Languages:\n                 ");
 		for (int i = 0; i < languages.length - 2; i += 2)

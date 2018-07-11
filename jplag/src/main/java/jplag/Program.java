@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.awt.Color;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -85,8 +86,6 @@ public class Program implements ProgramI {
 
     protected GSTiling gSTiling = new GSTiling(this);
 
-    private Hashtable<String, AllBasecodeMatches> htBasecodeMatches = new Hashtable<String, AllBasecodeMatches>(30);
-
     private Vector<String> included = null;
 
     // experiment end
@@ -99,7 +98,7 @@ public class Program implements ProgramI {
 
     private Runtime runtime = Runtime.getRuntime();
 
-    private Vector<Submission> submissions;
+    private Vector<Submission> submissions, archivalSubmissions;
 
     private FileWriter writer = null;
 
@@ -139,6 +138,17 @@ public class Program implements ProgramI {
         return size;
     }
 
+    protected int validArchivalSubmissions() {
+        if (archivalSubmissions == null)
+            return 0;
+        int archSize = 0;
+        for (int i = archivalSubmissions.size() - 1; i >= 0; i--) {
+            if (!archivalSubmissions.elementAt(i).errors)
+                archSize++;
+        }
+        return archSize;
+    }
+
     /**
      * Like the validSubmissions(), but this time all the submissions are
      * returned as a string, separated by "separator".
@@ -151,6 +161,20 @@ public class Program implements ProgramI {
             Submission subm = submissions.elementAt(i);
             if (!subm.errors) {
                 res += ((!firsterr) ? separator : "") + subm.name;
+                firsterr = false;
+            }
+        }
+        return res;
+    }
+
+    protected String allValidArchivalSubmissions(String separator) {
+        String res = "";
+        int size = archivalSubmissions.size();
+        boolean firsterr = true;
+        for (int i = 0; i < size; i++) {
+            Submission archSubm = archivalSubmissions.elementAt(i);
+            if (!archSubm.errors) {
+                res += ((!firsterr) ? separator : "") + archSubm.name;
                 firsterr = false;
             }
         }
@@ -174,15 +198,20 @@ public class Program implements ProgramI {
         writer = null;
     }
 
-    private void throwNotEnoughSubmissions() throws jplag.ExitException {
-        StringBuilder errorStr = new StringBuilder();
-        for (String str : errorVector) {
-            errorStr.append(str);
-            errorStr.append('\n');
-        }
+    private void terminateIfNotEnoughSubmissions() throws jplag.ExitException {
+        int allValidSubmissions = validSubmissions() + validArchivalSubmissions();
 
-        throw new ExitException("Not enough valid submissions! (only " + validSubmissions() + " "
-                + (validSubmissions() != 1 ? "are" : "is") + " valid):\n" + errorStr.toString(), ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
+        if (validSubmissions() == 0 || allValidSubmissions < 2) {
+            StringBuilder errorStr = new StringBuilder();
+            for (String str : errorVector) {
+                errorStr.append(str);
+                errorStr.append('\n');
+            }
+    
+            throw new ExitException("Not enough valid submissions! (only " + allValidSubmissions + " "
+                    + (allValidSubmissions != 1 ? "are" : "is") + " valid):\n" + errorStr.toString(),
+                    ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
+        }
     }
 
     private void throwBadBasecodeSubmission() throws jplag.ExitException {
@@ -201,90 +230,56 @@ public class Program implements ProgramI {
      * Now the actual comparison: All submissions are compared pairwise.
      */
     private void compare() throws jplag.ExitException {
-        int size = submissions.size();
+        int size = submissions.size(), archSize = 0, dist[] = new int[10];
+        SortedVector<AllMatches> avgmatches = new SortedVector<AllMatches>(new AllMatches.AvgComparator()),
+            maxmatches = new SortedVector<AllMatches>(new AllMatches.MaxComparator());
 
-        SortedVector<AllMatches> avgmatches, maxmatches;
-        int[] dist = new int[10];
-
-        // Result vector
-        avgmatches = new SortedVector<AllMatches>(new AllMatches.AvgComparator());
-        maxmatches = new SortedVector<AllMatches>(new AllMatches.MaxComparator());
-
-        long msec;
-
-        AllBasecodeMatches bcmatch;
-        Submission s1, s2;
+        if (archivalSubmissions != null)
+            archSize = archivalSubmissions.size();
 
         options.setState(Options.COMPARING);
-        options.setProgress(0);
+        compareWithBasecode(size + archSize);
 
-        if (this.options.useBasecode) {
-            //			print("\nComparing with Basecode:\n", validSubmissions()
-            //					+ " submissions");
-            int countBC = 0;
-            // System.out.println("BC size: "+basecodeSubmission.size());
-            msec = System.currentTimeMillis();
-            for (int i = 0; i < (size); i++) {
-                s1 = submissions.elementAt(i);
-                // System.out.println("basecode recognition for: "+s1.name);
-                bcmatch = this.gSTiling.compareWithBasecode(s1, basecodeSubmission);
-                htBasecodeMatches.put(s1.name, bcmatch);
-                this.gSTiling.resetBaseSubmission(basecodeSubmission);
-                countBC++;
-                options.setProgress(countBC * 100 / size);
-            }
-            long timebc = System.currentTimeMillis() - msec;
-            print("\n\n", "\nTime for comparing with Basecode: " + ((timebc / 3600000 > 0) ? (timebc / 3600000) + " h " : "")
-                    + ((timebc / 60000 > 0) ? ((timebc / 60000) % 60000) + " min " : "") + (timebc / 1000 % 60) + " sec\n"
-                    + "Time per basecode comparison: " + (timebc / size) + " msec\n\n");
-        }
-
-        //		print("\nComparing:\n", validSubmissions() + " submissions");
-
-        int totalcomps = (size - 1) * size / 2;
-        int i, j, anz = 0, count = 0;
+        long startMillis = System.currentTimeMillis();
+        int compsTotal = (size - 1) * size / 2 + size * archSize,
+            i, j, compsDone = 0, count = 0;
+        Submission s1, s2;
         AllMatches match;
 
         options.setProgress(0);
-        msec = System.currentTimeMillis();
 
-        for (i = 0; i < (size - 1); i++) {
-            s1 = submissions.elementAt(i);
-            if (s1.struct == null) {
-                count += (size - i - 1);
-                continue;
-            }
+        for (i = 0; i < archSize; i++) {
+            for (j = 0; j < size; j++) {
+                match = gSTiling.compare(archivalSubmissions.elementAt(i), submissions.elementAt(j));
 
-            for (j = (i + 1); j < size; j++) {
-                s2 = submissions.elementAt(j);
-                if (s2.struct == null) {
-                    count++;
-                    continue;
+                if (match != null) {
+                    compsDone++;
+                    registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
                 }
 
-                match = this.gSTiling.compare(s1, s2);
-
-                anz++;
-
-                System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
-
-                // histogram:
-                if (options.useBasecode) {
-                    match.bcmatchesA = htBasecodeMatches.get(match.subA.name);
-                    match.bcmatchesB = htBasecodeMatches.get(match.subB.name);
-                }
-
-                registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
-                count++;
-                options.setProgress(count * 100 / totalcomps);
+                options.setProgress(count++ * 100 / compsTotal);
             }
         }
+
+        for (i = 0; i < (size - 1); i++) {
+            for (j = (i + 1); j < size; j++) {
+                match = gSTiling.compare(submissions.elementAt(i), submissions.elementAt(j));
+
+                if (match != null) {
+                    compsDone++;
+                    registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
+                }
+                
+                options.setProgress(count++ * 100 / compsTotal);
+            }
+        }
+
         options.setProgress(100);
-        long time = System.currentTimeMillis() - msec;
+        long time = System.currentTimeMillis() - startMillis;
 
         print("\n", "Total time for comparing submissions: " + ((time / 3600000 > 0) ? (time / 3600000) + " h " : "")
                 + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60) + " sec\n" + "Time per comparison: "
-                + (time / anz) + " msec\n");
+                + (time / compsDone) + " msec\n");
 
         Cluster cluster = null;
         if (options.clustering)
@@ -320,8 +315,7 @@ public class Program implements ProgramI {
             msec = System.currentTimeMillis();
             for (int i = 0; i < size; i++) {
                 s1 = submissions.elementAt(i);
-                bcmatch = gSTiling.compareWithBasecode(s1, basecodeSubmission);
-                htBasecodeMatches.put(s1.name, bcmatch);
+                s1.bcMatches = gSTiling.compareWithBasecode(s1, basecodeSubmission);
                 gSTiling.resetBaseSubmission(basecodeSubmission);
                 options.setProgress((i + 1) * 100 / size);
             }
@@ -359,16 +353,6 @@ public class Program implements ProgramI {
 
             anz++;
 
-            /*
-             * System.out.println("Comparing "+s1.name+"-"+s2.name+": "+
-             * match.percent());
-             */
-            // histogram:
-            if (options.useBasecode) {
-                match.bcmatchesA = htBasecodeMatches.get(match.subA.name);
-                match.bcmatchesB = htBasecodeMatches.get(match.subB.name);
-            }
-
             registerMatch(match, dist, avgmatches, maxmatches, minmatches, i, j);
             count++;
             options.setProgress(count * 100 / totalcomps);
@@ -389,12 +373,8 @@ public class Program implements ProgramI {
         writeResults(dist, avgmatches, maxmatches, minmatches, cluster);
     }
 
-    private void createSubmissions() throws jplag.ExitException {
-        submissions = new Vector<Submission>();
-        File f = new File(options.root_dir);
-        if (f == null || !f.isDirectory()) {
-            throw new jplag.ExitException("\"" + options.root_dir + "\" is not a directory!");
-        }
+    private Vector<Submission> createSubmissions(File f, SubmissionType type) throws jplag.ExitException {
+        Vector<Submission> result = new Vector<Submission>();
         String[] list = null;
         try {
             list = f.list();
@@ -420,43 +400,64 @@ public class Program implements ProgramI {
                 if (!ok)
                     continue;
 
-                submissions.addElement(new Submission(name, f, this, get_language()));
+                result.addElement(new Submission(name, f, this, get_language(), type));
                 continue;
             }
-            if (options.exp && excludeFile(subm_dir.toString())) { // EXPERIMENT
-                // !!
+            if (options.exp && excludeFile(subm_dir.toString())) { // EXPERIMENT !!
                 System.err.println("excluded: " + subm_dir);
                 continue;
             }
 
-            File file_dir = ((options.sub_dir == null) ? // - S option
-                    subm_dir
-                    : new File(subm_dir, options.sub_dir));
+            File file_dir = ((options.sub_dir == null) ? // -S option
+                subm_dir : new File(subm_dir, options.sub_dir));
             if (file_dir.isDirectory()) {
-                if (options.basecode.equals(subm_dir.getName())) {
-                    basecodeSubmission = new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this, get_language());
-                } else {
-                    submissions.addElement(new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this, get_language())); // -s
+              System.out.println(subm_dir.getName());
+                if (options.root_dir.equals(options.archivalSubmissions + File.separator + subm_dir.getName())
+                    || options.archivalSubmissions.equals(options.root_dir + File.separator + subm_dir.getName())
+                    || options.basecode.equals(subm_dir.getName())) {
+                    /* TODO These checks can be fooled e.g. by mixing relative and absolute paths
+                       when specifying root_dir/-a/-bc. AFAIK getCanonicalPath() should do better */
+                    continue;
                 }
+
+                result.addElement(new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this,
+                    get_language(), type)); // -s option
             } else
                 throw new ExitException("Cannot find directory: " + file_dir.toString());
         }
+
+        return result;
     }
 
-	private void createSubmissionsFileList() throws jplag.ExitException {
-		submissions = new Vector<Submission>();
-		File f = null;
-		if (options.root_dir != null) {
-			f = new File(options.root_dir);
-			if (!f.isDirectory()) {
-				throw new jplag.ExitException(options.root_dir + " is not a directory!");
-			}
-		}
-		for (String file : options.fileList){
-			submissions.addElement(new Submission(file, f, this, get_language()));
-		}
-	}
+    private Vector<Submission> createSubmissionsFileList() throws jplag.ExitException {
+        Vector<Submission> result = new Vector<Submission>();
+        File f = null;
 
+        if (options.root_dir != null) {
+            f = new File(options.root_dir);
+            if (!f.isDirectory()) {
+                throw new jplag.ExitException(options.root_dir + " is not a directory!");
+            }
+        }
+
+        for (String file : options.fileList){
+            result.addElement(new Submission(file, f, this, get_language(), SubmissionType.REGULAR));
+        }
+
+        return result;
+    }
+
+    private Submission createBasecodeSubmission() throws jplag.ExitException {
+        if (!options.useBasecode)
+            return null;
+
+        File basecode_dir = new File(options.root_dir + File.separator + options.basecode);
+        File file_dir = ((options.sub_dir == null) ? // - S option
+            basecode_dir : new File(basecode_dir, options.sub_dir));
+
+        return new Submission(basecode_dir.getName(), file_dir, options.read_subdirs, this,
+            get_language(), SubmissionType.BASECODE);
+    }
 
     /**
      * THIS IS FOR THE EMPIRICAL STUDY
@@ -484,7 +485,8 @@ public class Program implements ProgramI {
                     subm_dir
                     : new File(subm_dir, options.sub_dir));
             if (file_dir != null && file_dir.isDirectory())
-                submissions.addElement(new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this, this.get_language())); // -s
+                submissions.addElement(new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this,
+                    this.get_language(), SubmissionType.REGULAR)); // -s option
             else if (options.sub_dir == null) {
                 throw new jplag.ExitException(options.root_dir + " is not a directory!");
             }
@@ -570,7 +572,7 @@ public class Program implements ProgramI {
         int startB = endA + 1;
         int endB = index;
         int i, j;
-        //		long progStart;
+        //        long progStart;
 
         do {
             // compare A to A
@@ -771,6 +773,34 @@ public class Program implements ProgramI {
         return index;
     }
 
+    void compareWithBasecode(int allSize) throws jplag.ExitException {
+        if (options.useBasecode) {
+            int count = 0;
+            long startMillis = System.currentTimeMillis(), timebc;
+
+            options.setProgress(0);
+
+            if (options.useArchivalSubmissions) {
+                for (Submission as : archivalSubmissions) {
+                    as.bcMatches = gSTiling.compareWithBasecode(as, basecodeSubmission);
+                    gSTiling.resetBaseSubmission(basecodeSubmission);
+                    options.setProgress(++count * 100 / allSize);
+                }
+            }
+
+            for (Submission s : submissions) {
+                s.bcMatches = gSTiling.compareWithBasecode(s, basecodeSubmission);
+                gSTiling.resetBaseSubmission(basecodeSubmission);
+                options.setProgress(++count * 100 / allSize);
+            }
+
+            timebc = System.currentTimeMillis() - startMillis;
+            print("\n\n", "\nTime for comparing with Basecode: " + ((timebc / 3600000 > 0) ? (timebc / 3600000) + " h " : "")
+                    + ((timebc / 60000 > 0) ? ((timebc / 60000) % 60000) + " min " : "") + (timebc / 1000 % 60) + " sec\n"
+                    + "Time per basecode comparison: " + (timebc / allSize) + " msec\n\n");
+        }
+    }
+
     public String get_basecode() {
         return this.options.basecode;
     }
@@ -905,14 +935,8 @@ public class Program implements ProgramI {
     /*
      * Compiles all "submissions"
      */
-    private void parseAll() throws jplag.ExitException {
-        if (submissions == null) {
-            System.out.println("  Nothing to parse!");
-            return;
-        }
-        // lets go:)
+    private void parseAll(Vector<Submission> submissions) throws jplag.ExitException {
         int count = 0;
-        int totalcount = submissions.size();
         options.setState(Options.PARSING);
         options.setProgress(0);
         long msec = System.currentTimeMillis();
@@ -1070,7 +1094,7 @@ public class Program implements ProgramI {
     }
 
     private void registerMatch(AllMatches match, int[] dist, SortedVector<AllMatches> avgmatches, SortedVector<AllMatches> maxmatches,
-                               SortedVector<AllMatches> minmatches, int a, int b) {
+            SortedVector<AllMatches> minmatches, int a, int b) {
         float avgpercent = match.percent();
         float maxpercent = match.percentMaxAB();
         float minpercent = match.percentMinAB();
@@ -1128,10 +1152,7 @@ public class Program implements ProgramI {
 
     /** *************************** */
     /* THE MAIN PROCEDURE */
-
-    /**
-     * **************************
-     */
+    /** *************************** */
     public void run() throws jplag.ExitException {
         if (options.output_file != null) {
             try {
@@ -1151,20 +1172,30 @@ public class Program implements ProgramI {
         readExclusionFile();
 
         if (options.fileListMode) {
-	        createSubmissionsFileList();
+            submissions = createSubmissionsFileList();
+            basecodeSubmission = createBasecodeSubmission();
         } else if (options.include_file == null) {
-            createSubmissions();
-            System.out.println(submissions.size() + " submissions");
+            submissions = createSubmissions(new File(options.root_dir), SubmissionType.REGULAR);
+            basecodeSubmission = createBasecodeSubmission();
+            System.out.println(submissions.size() + " submissions\n");
         } else
             createSubmissionsExp();
 
+        if (options.useArchivalSubmissions) {
+            archivalSubmissions = createSubmissions(new File(options.archivalSubmissions),
+                SubmissionType.ARCHIVAL);
+            System.out.println(archivalSubmissions.size() + " archival submissions\n");
+        }
+
         if (!options.skipParse) {
             try {
-                parseAll();
+                parseAll(submissions);
+                if (options.useArchivalSubmissions)
+                  parseAll(archivalSubmissions);
                 System.gc();
                 parseBasecodeSubmission();
             } catch (OutOfMemoryError e) {
-                submissions = null;
+                submissions = archivalSubmissions = null;
                 System.gc();
                 System.out.println("[" + new Date() + "] OutOfMemoryError " + "during parsing of submission \"" + currentSubmissionName
                         + "\"");
@@ -1180,9 +1211,7 @@ public class Program implements ProgramI {
         } else
             print("Skipping parsing...\n", null);
 
-        if (validSubmissions() < 2) {
-            throwNotEnoughSubmissions();
-        }
+        terminateIfNotEnoughSubmissions();
         errorVector = null; // errorVector is not needed anymore
 
         if (options.clustering) {
@@ -1190,31 +1219,22 @@ public class Program implements ProgramI {
             options.similarity = new SimilarityMatrix(submissions.size());
         }
         System.gc();
-        if (options.exp) { // EXPERIMENT
-            expCompare();
-        } else if (options.externalSearch) {
-            try {
+
+        try {
+            if (options.exp) // EXPERIMENT
+                expCompare();
+            else if (options.externalSearch)
                 externalCompare();
-            } catch (OutOfMemoryError e) {
-                e.printStackTrace();
-            }
-        } else {
-            if (options.compare > 0)
+            else if (options.compare > 0)
                 specialCompare(); // compare every submission to x others
-            else {
-                switch (options.comparisonMode) {
-                    case Options.COMPMODE_NORMAL:
-                        compare();
-                        break;
-
-                    case Options.COMPMODE_REVISION:
-                        revisionCompare();
-                        break;
-
-                    default:
-                        throw new ExitException("Illegal comparison mode: \"" + options.comparisonMode + "\"");
-                }
-            }
+            else if (options.comparisonMode == Options.COMPMODE_NORMAL)
+                compare();
+            else if (options.comparisonMode == Options.COMPMODE_REVISION)
+                revisionCompare();
+            else
+                throw new ExitException("Illegal comparison mode: \"" + options.comparisonMode + "\"");
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
         }
         closeWriter();
 
@@ -1228,6 +1248,8 @@ public class Program implements ProgramI {
         str += " n_of_programs = " + sp + submissions.size() + sp;
         str += " errors = " + sp + get_language().errorsCount() + sp;
         str += " path_to_files = " + sp + toUTF8((options.sub_dir != null) ? options.sub_dir : "") + sp;
+        str += " archival_dir = " + sp + toUTF8((options.archivalSubmissions != null)
+                ? options.archivalSubmissions : "") + sp;
         str += " basecode_dir = " + sp + toUTF8((options.basecode != null) ? options.basecode : "") + sp;
         str += " read_subdirs = " + sp + this.options.read_subdirs + sp;
         str += " clustertype = " + sp + this.options.getClusterTyp() + sp;
@@ -1320,18 +1342,18 @@ public class Program implements ProgramI {
             // now output matches:
             f.println("<TABLE CELLPADDING=3 CELLSPACING=2>");
             boolean once = true;
-            for (Iterator<AllMatches> iter = matches.iterator(); iter.hasNext(); ) {
+            for (Iterator<AllMatches> iter = matches.iterator(); iter.hasNext();) {
                 match = iter.next();
                 if (once) {
-                    f.println("<TR><TD BGCOLOR=" + this.report.color(match.percent(), 128, 192, 128, 192, 255, 255) + ">" + s1.name
+                    f.println("<TR><TD BGCOLOR=" + report.color(match.percent(), SubmissionType.REGULAR) + ">" + s1.name
                             + "<TD WIDTH=\"10\">-&gt;");
                     once = false;
                 }
 
                 int other = (match.subName(0).equals(s1.name) ? 1 : 0);
-                f.println(" <TD BGCOLOR=" + this.report.color(match.percent(), 128, 192, 128, 192, 255, 255)
+                f.println(" <TD BGCOLOR=" + report.color(match.percent(), SubmissionType.REGULAR)
                         + " ALIGN=center><A HREF=\"match" + matchIndex + ".html\">" + match.subName(other) + "</A><BR><FONT COLOR=\""
-                        + this.report.color(match.percent(), 0, 255, 0, 0, 0, 0) + "\"><B>(" + match.roundedPercent() + "%)</B></FONT>");
+                        + report.color(match.percent(), Color.BLACK, Color.RED) + "\"><B>(" + match.roundedPercent() + "%)</B></FONT>");
                 this.report.writeMatch(root, matchIndex++, match);
             }
             f.println("</TR>");
@@ -1351,8 +1373,8 @@ public class Program implements ProgramI {
 
     // DEBUG !!!
     public void token_distribution() {
-        int[] count = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0}; // to
+        int[] count = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0 }; // to
         // count
         // the
         // distribution
@@ -1407,6 +1429,10 @@ public class Program implements ProgramI {
         return this.options.verbose_quiet;
     }
 
+    public boolean useArchivalSubmissions() {
+        return this.options.useArchivalSubmissions;
+    }
+
     public boolean useBasecode() {
         return this.options.useBasecode;
     }
@@ -1418,7 +1444,7 @@ public class Program implements ProgramI {
      * wird die Erstellung der Dateien durch die Klasse "Report" erledigt.
      */
     private void writeResults(int[] dist, SortedVector<AllMatches> avgmatches, SortedVector<AllMatches> maxmatches,
-                              SortedVector<AllMatches> minmatches, Cluster clustering) throws jplag.ExitException {
+            SortedVector<AllMatches> minmatches, Cluster clustering) throws jplag.ExitException {
         options.setState(Options.GENERATING_RESULT_FILES);
         options.setProgress(0);
         if (options.original_dir == null)
