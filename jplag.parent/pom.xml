@@ -236,6 +236,11 @@
 			</dependency>
 			<dependency>
 				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>R</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
 				<artifactId>chars</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
