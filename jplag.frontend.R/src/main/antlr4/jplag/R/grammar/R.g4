@@ -37,12 +37,12 @@ $ java TestR sample.R
 ... prints parse tree ...
 */
 
-/**
+/*
 Modified version of the original in https://github.com/antlr/grammars-v4/blob/master/r/R.g4 so that I can separate the most relevant tokens of R in 
 the JplagRListenter.java file.
-
 Author of the modification: Antonio Javier Rodriguez Perez
 */
+
 grammar R;
 
 prog:   (   expr (';'|NL)
