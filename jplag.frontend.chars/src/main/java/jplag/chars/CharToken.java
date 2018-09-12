@@ -14,7 +14,7 @@ public class CharToken extends jplag.Token {
     }
 
     public CharToken(int type, String file, Parser parser, int line) {
-        this(type, file, line, parser);
+        this(type, file, line, parser, line);
     }
 
     public int getLine() {

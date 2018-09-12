@@ -86,7 +86,7 @@ public class Report implements TokenConstants {
         if (!root.canWrite()) {
             throw new jplag.ExitException("Cannot write directory: " + root);
         }
-        // now the actual file creation:    
+        // now the actual file creation:
         File f = new File(root, name);
         HTMLFile res = null;
         try {
@@ -246,26 +246,26 @@ public class Report implements TokenConstants {
                 for (int i = 0; i < all_matches.size(); i++) {
                     Match match = all_matches.matches[i];
                     Token startA = A[match.startA];
-                    Token endeA = A[match.startA + match.length - 1];
+                    Token endA = A[match.startA + match.length - 1];
 
                     Token startB = B[match.startB];
-                    Token endeB = B[match.startB + match.length - 1];
+                    Token endB = B[match.startB + match.length - 1];
 
-                    writer.write(new String(startA.file.getBytes()) + ";");
+                    writer.write((new String(startA.file.getBytes())).replace(";", "\\;") + ";");
 
                     if (program.get_language().usesIndex()) {
-                        writer.write(startA.getIndex() + ";"+endeA.getIndex());
+                        writer.write(startA.getIndex() + ";"+endA.getIndex());
                     } else {
-                        writer.write(startA.getLine() + ";"+endeA.getLine());
+                        writer.write((startA.getLine() - 1) + ";" + (endA.getLine() - 1));
                     }
                     writer.write(";");
 
-                    writer.write(new String(startB.file.getBytes()) + ";");
-                    
+                    writer.write((new String(startB.file.getBytes())).replace(";", "\\;") + ";");
+
                     if (program.get_language().usesIndex()) {
-                        writer.write(startB.getIndex() + ";"+endeB.getIndex());
+                        writer.write(startB.getIndex() + ";"+endB.getIndex());
                     } else {
-                        writer.write(startB.getLine() + ";"+endeB.getLine());
+                        writer.write((startB.getLine() - 1) + ";" + (endB.getLine() - 1));
                     }
                     writer.write(";");
                 }
@@ -285,7 +285,7 @@ public class Report implements TokenConstants {
 
 
     }
-    
+
 
     private void writeMatchesCSV( File root, String filename, SortedVector<AllMatches> matches, MatchesHelper helper) {
 
@@ -807,33 +807,6 @@ public class Report implements TokenConstants {
             }
         }
 
-        if (this.program.useBasecode() && match.bcmatchesA != null && match.bcmatchesB != null) {
-            AllBasecodeMatches bcmatch = (j == 0 ? match.bcmatchesA : match.bcmatchesB);
-            for (int x = 0; x < bcmatch.size(); x++) {
-                onematch = bcmatch.matches[x];
-                Token start = tokens[onematch.startA];
-                Token ende = tokens[onematch.startA + onematch.length - 1];
-
-                for (int y = 0; y < files.length; y++) {
-                    if (start.file.equals(files[y]) && text[y] != null) {
-                        hilf = ("<font color=\"#C0C0C0\"><EM>");
-                        // position the icon and the beginning of the colorblock
-                        if (text[y][start.getLine() - 1].endsWith("<font color=\"#000000\">"))
-                            text[y][start.getLine() - 1] += hilf;
-                        else
-                            text[y][start.getLine() - 1] = hilf + text[y][start.getLine() - 1];
-
-                        // mark the end
-                        if (start.getLine() != ende.getLine() && // match is only one line
-                            text[y][ende.getLine() - 1].startsWith("<font color=\"#C0C0C0\">"))
-                            text[y][ende.getLine() - 1] = "</EM><font color=\"#000000\">" + text[y][ende.getLine() - 1];
-                        else
-                            text[y][ende.getLine() - 1] += "</EM><font color=\"#000000\">";
-                    }
-                }
-            }
-        }
-
         HTMLFile f = openHTMLFile(root, "match" + i + "-" + j + ".html");
         writeHTMLHeaderWithScript(f, (j == 0 ? match.subA : match.subB).name);
         f.println("<BODY BGCOLOR=\"#ffffff\"" + (j == 1 ? " style=\"margin-left:25\">" : ">"));
@@ -860,7 +833,7 @@ public class Report implements TokenConstants {
     /*
      * i is the number of the match j == 0 if subA is considered, otherwise it
      * is subB
-     * 
+     *
      * This procedure uses only the getIndex() method of the token. It is meant
      * to be used with the Character front end
      */
@@ -933,7 +906,7 @@ public class Report implements TokenConstants {
     /*
      * i is the number of the match j == 0 if subA is considered, otherwise (j
      * must then be 1) it is subB
-     * 
+     *
      * This procedure makes use of the column and length information!
      */
     private int writeImprovedSubmission(int i, AllMatches match, int j) throws jplag.ExitException {
@@ -981,32 +954,12 @@ public class Report implements TokenConstants {
             }
         }
 
-        if (this.program.useBasecode() && match.bcmatchesA != null && match.bcmatchesB != null) {
-            AllBasecodeMatches bcmatch = (j == 0 ? match.bcmatchesA : match.bcmatchesB);
-            for (int x = 0; x < bcmatch.size(); x++) {
-                Match onematch = bcmatch.matches[x];
-                Token start = tokens[onematch.startA];
-                Token end = tokens[onematch.startA + onematch.length - 1];
-
-                for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
-                    if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
-                        String tmp = "<font color=\"#C0C0C0\"><EM>";
-                        // beginning of the colorblock
-                        markupList.put(new MarkupText(fileIndex, start.getLine() - 1, start.getColumn() - 1, tmp, false), null);
-                        // mark the end
-                        markupList.put(new MarkupText(fileIndex, end.getLine() - 1, end.getColumn() + end.getLength() - 1, "</EM></font>",
-                                                      true), null);
-                    }
-                }
-            }
-        }
-
         // Apply changes:
         for (Iterator<MarkupText> iter = markupList.keySet().iterator(); iter.hasNext();) {
             MarkupText markup = iter.next();
             //System.out.println(markup);
             String tmp = text[markup.fileIndex][markup.lineIndex];
-            // is there any &quot;, &amp;, &gt; or &lt; in the String? 
+            // is there any &quot;, &amp;, &gt; or &lt; in the String?
             if (tmp.indexOf('&') >= 0) {
                 Vector<String> tmpV = new Vector<String>();
                 // convert the string into a vector

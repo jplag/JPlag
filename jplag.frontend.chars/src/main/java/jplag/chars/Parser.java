@@ -16,7 +16,7 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 	}
 
 	public jplag.Structure parse(File dir, String files[]) {
-		struct = new Structure();
+		this.struct = new Structure();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
 			getProgram().print(null, "Parsing file " + files[i] + "\n");
@@ -25,7 +25,7 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
                         
                         int endLine = -1;
                         if (this.struct.tokens.length > 0) {
-                            endLine = this.struct.tokens(struct.tokens.length - 1).getLine();
+                            endLine = this.struct.tokens[this.struct.tokens.length - 1].getLine();
                         }
 			struct.addToken(new CharToken(FILE_END, files[i], this, endLine));
 		}
@@ -36,7 +36,7 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 			program.print(null, errors + " ERROR" + (errors > 1 ? "S" : ""));
 
 		this.parseEnd();
-		return struct;
+		return this.struct;
 	}
 
 	public boolean parseFile(File dir, String file) {

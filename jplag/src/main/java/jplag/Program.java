@@ -207,7 +207,7 @@ public class Program implements ProgramI {
                 errorStr.append(str);
                 errorStr.append('\n');
             }
-    
+
             throw new ExitException("Not enough valid submissions! (only " + allValidSubmissions + " "
                     + (allValidSubmissions != 1 ? "are" : "is") + " valid):\n" + errorStr.toString(),
                     ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
@@ -269,7 +269,7 @@ public class Program implements ProgramI {
                     compsDone++;
                     registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
                 }
-                
+
                 options.setProgress(count++ * 100 / compsTotal);
             }
         }
@@ -951,7 +951,7 @@ public class Program implements ProgramI {
             Submission subm = iter.next();
             print(null, "------ Parsing submission: " + subm.name + "\n");
             currentSubmissionName = subm.name;
-            options.setProgress(count * 100 / totalcount);
+            // options.setProgress(count * 100 / totalcount);
             if (!subm.parse()) {
                 errors++;
             }
@@ -1345,15 +1345,10 @@ public class Program implements ProgramI {
             for (Iterator<AllMatches> iter = matches.iterator(); iter.hasNext();) {
                 match = iter.next();
                 if (once) {
-                    f.println("<TR><TD BGCOLOR=" + report.color(match.percent(), SubmissionType.REGULAR) + ">" + s1.name
-                            + "<TD WIDTH=\"10\">-&gt;");
                     once = false;
                 }
 
                 int other = (match.subName(0).equals(s1.name) ? 1 : 0);
-                f.println(" <TD BGCOLOR=" + report.color(match.percent(), SubmissionType.REGULAR)
-                        + " ALIGN=center><A HREF=\"match" + matchIndex + ".html\">" + match.subName(other) + "</A><BR><FONT COLOR=\""
-                        + report.color(match.percent(), Color.BLACK, Color.RED) + "\"><B>(" + match.roundedPercent() + "%)</B></FONT>");
                 this.report.writeMatch(root, matchIndex++, match);
             }
             f.println("</TR>");
