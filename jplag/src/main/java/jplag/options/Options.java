@@ -80,7 +80,7 @@ public abstract class Options {
 	public boolean store_percent = false; // is the number "store_matches"
 
 	// a percentage?
-	public static final int MAX_RESULT_PAIRS = 1000;
+	public static final int MAX_RESULT_PAIRS = 1000000;
 
 	public String result_dir = "result";
 
