@@ -10,8 +10,26 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.Vector;
+
+/*
+ * Following enumeration serves as a type-tag, distinguishing archival submissions (loaded with
+ * the -a option) from regular ones
+ */
+enum SubmissionType { 
+	REGULAR(new Color(128, 128, 255), new Color(192, 192, 255)),
+	ARCHIVAL(new Color(144, 144, 176), new Color(208, 208, 208)),
+	BASECODE(Color.BLACK, Color.BLACK);
+
+	final Color lColor, hColor;
+
+	SubmissionType(Color lColor, Color hColor) {
+		this.lColor = lColor;
+		this.hColor = hColor;
+	}
+}
 
 /*
  * Everything about a single submission is stored in this object. (directory,
@@ -41,12 +59,20 @@ public class Submission implements Comparable<Submission> {
 
 	public DecimalFormat format = new DecimalFormat("0000");
 
-	public Submission(String name, File dir, boolean readSubDirs, Program p, Language language) {
+	public SubmissionType type;
+
+	AllBasecodeMatches bcMatches = null;
+
+	public Submission(String name, File dir, boolean readSubDirs, Program p, Language language,
+		SubmissionType type) {
+
 		this.program = p;
 		this.language = language;
 		this.dir = dir;
 		this.name = name;
 		this.readSubDirs = readSubDirs;
+		this.type = type;
+
 		try {
 			lookupDir(dir, "");
 		} catch (Throwable b) {
@@ -58,12 +84,13 @@ public class Submission implements Comparable<Submission> {
 		}
 	}
 
-	public Submission(String name, File dir, Program p, Language language) {
+	public Submission(String name, File dir, Program p, Language language, SubmissionType type) {
 		this.language = language;
 		this.program = p;
 		this.dir = dir;
 		this.name = name;
 		this.readSubDirs = false;
+		this.type = type;
 
 		files = new String[1];
 		files[0] = name;
@@ -95,6 +122,9 @@ public class Submission implements Comparable<Submission> {
 					return false;
 				if (program.excludeFile(name))
 					return false;
+                                if (program.getIgnoreSuffixes()) {
+                                    return true;
+                                }
 				String[] suffies = program.get_suffixes();
 				for (int i = 0; i < suffies.length; i++)
 					if (exact_match) {
@@ -146,10 +176,11 @@ public class Submission implements Comparable<Submission> {
 			return true;
 		}
 
-		struct = null;
-		errors = true; // invalidate submission
-		if (program.use_debugParser())
-			copySubmission();
+		// struct = null;
+		// errors = true; // invalidate submission
+                // if (program.use_debugParser()) {
+                //     copySubmission();
+                // }
 		return false;
 	}
 

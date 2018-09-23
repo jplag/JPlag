@@ -5,7 +5,7 @@ Type `java -jar jplag-yourVersion.jar` in a console to see the command line opti
 The options as of 2017/09/17 are:
 
 ```
-JPlag (Version 2.11.9-SNAPSHOT), Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.
+JPlag (Version 2.12.0-SNAPSHOT), Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.
 Usage: JPlag [ options ] [<root-dir>] [-c file1 file2 ...]
  <root-dir>        The root-directory that contains all submissions
 

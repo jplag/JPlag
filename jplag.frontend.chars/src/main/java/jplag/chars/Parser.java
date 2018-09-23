@@ -16,13 +16,18 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 	}
 
 	public jplag.Structure parse(File dir, String files[]) {
-		struct = new Structure();
+		this.struct = new Structure();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
 			getProgram().print(null, "Parsing file " + files[i] + "\n");
 			if (!parseFile(dir, files[i]))
 				errors++;
-			struct.addToken(new CharToken(FILE_END, files[i], this));
+                        
+                        int endLine = -1;
+                        if (this.struct.tokens.length > 0) {
+                            endLine = this.struct.tokens[this.struct.tokens.length - 1].getLine();
+                        }
+			struct.addToken(new CharToken(FILE_END, files[i], this, endLine));
 		}
 		//System.err.println(struct.toString());
 		if (errors == 0)
@@ -31,7 +36,7 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 			program.print(null, errors + " ERROR" + (errors > 1 ? "S" : ""));
 
 		this.parseEnd();
-		return struct;
+		return this.struct;
 	}
 
 	public boolean parseFile(File dir, String file) {
@@ -39,6 +44,7 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 		int type;
 		int length;
 		int offset = 0;
+                int lineNr = 1;
 
 		try {
 			FileReader fis = new FileReader(new File(dir, file));
@@ -49,8 +55,11 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 				for (int i = 0; i < length; i++) {
 					if (buffer[i] <= 127 && (type = mapping[buffer[i]]) > 1) {
 						struct.addToken(new CharToken(type, file, offset + i,
-								this));
+                                                                              this, lineNr));
 					}
+                                        if (buffer[i] == '\n') {
+                                            lineNr += 1;
+                                        }
 					//System.out.print(buffer[i]);
 				}
 				offset += length;
