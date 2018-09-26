@@ -413,8 +413,7 @@ public class Program implements ProgramI {
             if (file_dir.isDirectory()) {
               System.out.println(subm_dir.getName());
                 if (options.root_dir.equals(options.archivalSubmissions + File.separator + subm_dir.getName())
-                    || options.archivalSubmissions.equals(options.root_dir + File.separator + subm_dir.getName())
-                    || options.basecode.equals(subm_dir.getName())) {
+                    || options.archivalSubmissions.equals(options.root_dir + File.separator + subm_dir.getName())) {
                     /* TODO These checks can be fooled e.g. by mixing relative and absolute paths
                        when specifying root_dir/-a/-bc. AFAIK getCanonicalPath() should do better */
                     continue;
@@ -451,7 +450,7 @@ public class Program implements ProgramI {
         if (!options.useBasecode)
             return null;
 
-        File basecode_dir = new File(options.root_dir + File.separator + options.basecode);
+        File basecode_dir = new File(options.basecode);
         File file_dir = ((options.sub_dir == null) ? // - S option
             basecode_dir : new File(basecode_dir, options.sub_dir));
 

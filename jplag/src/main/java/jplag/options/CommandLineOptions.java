@@ -181,7 +181,7 @@ public class CommandLineOptions extends Options {
             languageName = args[i + 1].toLowerCase();
             i++;
         } else if (arg.equals("-p") && i + 1 < args.length) {
-            String suffixstr = args[i + 1];          
+            String suffixstr = args[i + 1];
             if (suffixstr.equals("")) {
             	i++;
             }
@@ -236,7 +236,7 @@ public class CommandLineOptions extends Options {
                 this.clusterType = MAX_CLUSTER;
             else if (tmp.equals("avr"))
                 this.clusterType = AVR_CLUSTER;
-            else 
+            else
                 throw new jplag.ExitException("Illegal clustertype: \"" + tmp
                         + "\"\nAvailable types are 'min', 'max' and 'avr'!");
 
@@ -407,7 +407,7 @@ public class CommandLineOptions extends Options {
                 + "specified!", ExitException.BAD_PARAMETER);
         }
 
-        String baseC = root_dir + File.separator + basecode;
+        String baseC = basecode;
         File f = new File(baseC);
         if (!f.exists() || !f.isDirectory()) { // Basecode dir doesn't exist.
 			throw new ExitException("Basecode directory \"" + baseC
