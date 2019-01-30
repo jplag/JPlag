@@ -32,4 +32,54 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+  <properties>
+    <javac.version>9+181-r4173-1</javac.version>
+  </properties>
+  <build>
+    <plugins>
+    <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.5.1</version>
+    <configuration>
+      <source>8</source>
+      <target>8</target>
+      <showWarnings>true</showWarnings>
+      <compilerArgs>
+        <arg>-XDcompilePolicy=simple</arg>
+        <arg>-Xplugin:ErrorProne -XepAllErrorsAsWarnings -Xep:AndroidJdkLibsChecker:WARN -Xep:AssistedInjectAndInjectOnSameConstructor:WARN -Xep:AutoFactoryAtInject:WARN -Xep:ClassName:WARN -Xep:ComparisonContractViolated:WARN -Xep:DepAnn:WARN -Xep:DivZero:WARN -Xep:EmptyIf:WARN -Xep:FuzzyEqualsShouldNotBeUsedInEqualsMethod:WARN -Xep:InjectInvalidTargetingOnScopingAnnotation:WARN -Xep:InjectMoreThanOneQualifier:WARN -Xep:InjectScopeAnnotationOnInterfaceOrAbstractClass:WARN -Xep:InjectScopeOrQualifierAnnotationRetention:WARN -Xep:InjectedConstructorAnnotations:WARN -Xep:InsecureCryptoUsage:WARN -Xep:IterablePathParameter:WARN -Xep:JMockTestWithoutRunWithOrRuleAnnotation:WARN -Xep:Java7ApiChecker:WARN -Xep:JavaxInjectOnFinalField:WARN -Xep:LockMethodChecker:WARN -Xep:LongLiteralLowerCaseSuffix:WARN -Xep:NoAllocation:WARN -Xep:NumericEquality:WARN -Xep:ParameterPackage:WARN -Xep:RestrictTo:WARN -Xep:StaticOrDefaultInterfaceMethod:WARN -Xep:UnlockMethod:WARN -Xep:AnnotateFormatMethod:WARN -Xep:AnnotationPosition:WARN -Xep:AssertFalse:WARN -Xep:AssistedInjectAndInjectOnConstructors:WARN -Xep:BinderIdentityRestoredDangerously:WARN -Xep:BindingToUnqualifiedCommonType:WARN -Xep:ConstructorInvokesOverridable:WARN -Xep:ConstructorLeaksThis:WARN -Xep:EmptyTopLevelDeclaration:WARN -Xep:EqualsBrokenForNull:WARN -Xep:ExpectedExceptionChecker:WARN -Xep:FunctionalInterfaceClash:WARN -Xep:HardCodedSdCardPath:WARN -Xep:InconsistentOverloads:WARN -Xep:InvalidParam:WARN -Xep:InvalidTag:WARN -Xep:InvalidThrows:WARN -Xep:MissingDefault:WARN -Xep:MutableMethodReturnType:WARN -Xep:NoFunctionalReturnType:WARN -Xep:NonCanonicalStaticMemberImport:WARN -Xep:NullableDereference:WARN -Xep:PrimitiveArrayPassedToVarargsMethod:WARN -Xep:ProtosAsKeyOfSetOrMap:WARN -Xep:ProvidesFix:WARN -Xep:QualifierWithTypeUse:WARN -Xep:RedundantThrows:WARN -Xep:ReturnFromVoid:WARN -Xep:StaticQualifiedUsingExpression:WARN -Xep:StringEquality:WARN -Xep:SystemExitOutsideMain:WARN -Xep:TestExceptionChecker:WARN -Xep:UnnecessaryDefaultInEnumSwitch:WARN -Xep:Unused:WARN -Xep:UnusedException:WARN -Xep:Var:WARN -Xep:BooleanParameter:WARN -Xep:ClassNamedLikeTypeParameter:WARN -Xep:ConstantField:WARN -Xep:EmptySetMultibindingContributions:WARN -Xep:ExpectedExceptionRefactoring:WARN -Xep:FieldCanBeFinal:WARN -Xep:FieldMissingNullable:WARN -Xep:ImmutableRefactoring:WARN -Xep:LambdaFunctionalInterface:WARN -Xep:MethodCanBeStatic:WARN -Xep:MixedArrayDimensions:WARN -Xep:MultiVariableDeclaration:WARN -Xep:MultipleTopLevelClasses:WARN -Xep:MultipleUnaryOperatorsInMethodCall:WARN -Xep:PackageLocation:WARN-Xep:ParameterComment:WARN -Xep:ParameterNotNullable:WARN -Xep:PrivateConstructorForNoninstantiableModule:WARN -Xep:PrivateConstructorForUtilityClass:WARN -Xep:RemoveUnusedImports:WARN -Xep:ReturnMissingNullable:WARN -Xep:ScopeOnModule:WARN -Xep:SwitchDefault:WARN -Xep:TestExceptionRefactoring:WARN -Xep:ThrowsUncheckedException:WARN -Xep:TryFailRefactoring:WARN -Xep:TypeParameterNaming:WARN -Xep:UngroupedOverloads:WARN -Xep:UnnecessarySetDefault:WARN -Xep:UnnecessaryStaticImport:WARN -Xep:UseBinds:WARN -Xep:WildcardImport:WARN</arg>
+      </compilerArgs>
+      <annotationProcessorPaths>
+        <path>
+          <groupId>com.google.errorprone</groupId>
+          <artifactId>error_prone_core</artifactId>
+          <version>2.3.2</version>
+        </path>
+      </annotationProcessorPaths>
+    </configuration>
+  </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+    <id>jdk8</id>
+    <activation>
+      <jdk>1.8</jdk>
+    </activation>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <fork>true</fork>
+            <compilerArgs combine.children="append">
+              <arg>-J-Xbootclasspath/p:${settings.localRepository}/com/google/errorprone/javac/${javac.version}/javac-${javac.version}.jar</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+  </profiles>
 </project>
