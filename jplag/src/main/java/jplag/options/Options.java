@@ -143,6 +143,10 @@ public abstract class Options {
 
 	public List<String> fileList = new ArrayList<String>();
 
+	public boolean showProgress = false;
+
+	public String progressToken = "";
+
 	// "FINAL" OPTIONS
 	public boolean debugParser = false;
 
