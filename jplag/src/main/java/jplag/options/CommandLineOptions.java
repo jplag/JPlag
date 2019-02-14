@@ -200,6 +200,10 @@ public class CommandLineOptions extends Options {
                 suffixes_set = true;
                 i++;
             }
+        } else if (arg.equals("-progress") && i + 1 < args.length) {
+            this.showProgress = true;
+            this.progressToken = args[i + 1];
+            i++;
         } else if (arg.equals("-f") && i + 1 < args.length && this.exp) {
             this.filter = new jplag.filter.Filter(args[i + 1]);
             this.filtername = args[i + 1];

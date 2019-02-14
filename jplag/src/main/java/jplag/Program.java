@@ -248,21 +248,12 @@ public class Program implements ProgramI {
 
         options.setProgress(0);
 
-        for (i = 0; i < archSize; i++) {
-            for (j = 0; j < size; j++) {
-                match = gSTiling.compare(archivalSubmissions.elementAt(i), submissions.elementAt(j));
+        boolean showProgress = options.progressToken.length() > 0;
 
-                if (match != null) {
-                    compsDone++;
-                    registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
-                }
+        printProgress(0, size);
 
-                options.setProgress(count++ * 100 / compsTotal);
-            }
-        }
-
-        for (i = 0; i < (size - 1); i++) {
-            for (j = (i + 1); j < size; j++) {
+        for (i = 0; i < size; i++) {
+            for (j = i + 1; j < size; j++) {
                 match = gSTiling.compare(submissions.elementAt(i), submissions.elementAt(j));
 
                 if (match != null) {
@@ -272,6 +263,19 @@ public class Program implements ProgramI {
 
                 options.setProgress(count++ * 100 / compsTotal);
             }
+
+            for (j = 0; j < archSize; j++) {
+                match = gSTiling.compare(archivalSubmissions.elementAt(i), submissions.elementAt(j));
+
+                if (match != null) {
+                    compsDone++;
+                    registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
+                }
+
+                options.setProgress(count++ * 100 / compsTotal);
+            }
+
+            printProgress(i + 1, size);
         }
 
         options.setProgress(100);
@@ -286,6 +290,11 @@ public class Program implements ProgramI {
             cluster = this.clusters.calculateClustering(submissions);
 
         writeResults(dist, avgmatches, maxmatches, null, cluster);
+    }
+
+    private void printProgress(int i, int n) {
+        if (options.showProgress)
+            System.out.println(options.progressToken + " " + i + "/" + n);
     }
 
     /**
