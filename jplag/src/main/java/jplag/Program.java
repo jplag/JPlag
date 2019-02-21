@@ -265,7 +265,7 @@ public class Program implements ProgramI {
             }
 
             for (j = 0; j < archSize; j++) {
-                match = gSTiling.compare(archivalSubmissions.elementAt(i), submissions.elementAt(j));
+                match = gSTiling.compare(archivalSubmissions.elementAt(j), submissions.elementAt(i));
 
                 if (match != null) {
                     compsDone++;
@@ -943,17 +943,22 @@ public class Program implements ProgramI {
     /*
      * Compiles all "submissions"
      */
-    private void parseAll(Vector<Submission> submissions) throws jplag.ExitException {
+    private void parseAll(Vector<Submission> submissions, boolean printProgress) throws jplag.ExitException {
         int count = 0;
         options.setState(Options.PARSING);
         options.setProgress(0);
         long msec = System.currentTimeMillis();
         Iterator<Submission> iter = submissions.iterator();
+        int size = submissions.size();
+
+        if (printProgress) {
+            printProgress(0, size);
+        }
 
         if (options.externalSearch)
             makeTempDir();
         int invalid = 0;
-        while (iter.hasNext()) {
+        for (int i = 0; iter.hasNext(); i++) {
             boolean ok = true;
             boolean removed = false;
             Submission subm = iter.next();
@@ -985,10 +990,14 @@ public class Program implements ProgramI {
                 invalidSubmissionNames = (invalidSubmissionNames == null) ? subm.name : invalidSubmissionNames + " - " + subm.name;
                 iter.remove();
             }
-            if (ok && !removed)
+            if (ok && !removed) {
                 print(null, "OK\n");
-            else
+            } else {
                 print(null, "ERROR -> Submission removed\n");
+            }
+            if (printProgress) {
+                printProgress(i + 1, size);
+            }
         }
 
         options.setProgress(100);
@@ -1197,9 +1206,10 @@ public class Program implements ProgramI {
 
         if (!options.skipParse) {
             try {
-                parseAll(submissions);
-                if (options.useArchivalSubmissions)
-                  parseAll(archivalSubmissions);
+                parseAll(submissions, true);
+                if (options.useArchivalSubmissions) {
+                    parseAll(archivalSubmissions, false);
+                }
                 System.gc();
                 parseBasecodeSubmission();
             } catch (OutOfMemoryError e) {
