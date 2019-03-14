@@ -34,7 +34,7 @@ options are:
  -bc <dir>       Name of the directory which contains the basecode (common framework)
  -c [files]      Compare a list of files.
  -l <language>   (Language) Supported Languages:
-                 java17 (default), java15, java15dm, java12, java11, python3, c/c++, c#-1.2, char, text, scheme
+                 java19 (default), java 17, java15, java15dm, java12, java11, python3, c/c++, c#-1.2, char, text, scheme
 ```
 
 ## Example
