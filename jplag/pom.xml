@@ -208,6 +208,10 @@
         </dependency>
         <dependency>
             <groupId>edu.kit.ipd.jplag</groupId>
+            <artifactId>java-1.9</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.kit.ipd.jplag</groupId>
             <artifactId>python-3</artifactId>
         </dependency>
         <dependency>

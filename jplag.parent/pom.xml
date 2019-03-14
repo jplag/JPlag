@@ -216,6 +216,11 @@
 			</dependency>
 			<dependency>
 				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>java-1.9</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
 				<artifactId>python-3</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>

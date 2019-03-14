@@ -30,6 +30,7 @@ public abstract class Options {
 	 * The available languages - the first language in the array is the default language.
 	 */
 	protected static String[] languages = {// @formatter:off
+			"java19", "jplag.java19.Language",
 			"java17", "jplag.java17.Language",
 			"java15", "jplag.java15.Language",
 			"java15dm", "jplag.java15.LanguageWithDelimitedMethods",

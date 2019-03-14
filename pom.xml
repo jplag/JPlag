@@ -17,6 +17,7 @@
 		<module>jplag.frontend.java-1.2</module>
 		<module>jplag.frontend.java-1.5</module>
 		<module>jplag.frontend.java-1.7</module>
+		<module>jplag.frontend.java-1.9</module>
 		<module>jplag.frontend.python-3</module>
 		<module>jplag.frontend.scheme</module>
 		<module>jplag.frontend.text</module>
