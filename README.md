@@ -63,6 +63,11 @@ Example: `java -jar jplag-yourVersion.jar -l java17 -c student1_file student2_fi
 This option must be the last one.
 JPlag will compare just a list of files pairwise.
 
+### `-bc <dir>`   (common framework) Name of the directory which contains the basecode
+Example: `java -jar jplag-yourVersion.jar -s -l java19  ./submissions -bc template`
+This option includes files that were given out to students as a framework or to fill in blanks - the content is compared with each submission and matching parts are excluded from mutual student matching.
+`<dir>` is considered to be the name of a subdirectory residing somewhere in the submission directory, on the same level as student submissions.
+
 # Building JPlag
 To build and run a local installation of JPlag, you can use the pom.xml in this directory (aggregator). It builds JPlag and the available frontends. 
 
