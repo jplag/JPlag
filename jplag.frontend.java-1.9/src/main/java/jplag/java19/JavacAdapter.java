@@ -22,15 +22,19 @@ import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ContinueTree;
 import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
+import com.sun.source.tree.ExportsTree;
 import com.sun.source.tree.ForLoopTree;
 import com.sun.source.tree.IfTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.ModuleTree;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.PackageTree;
+import com.sun.source.tree.ProvidesTree;
+import com.sun.source.tree.RequiresTree;
 import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.SwitchTree;
 import com.sun.source.tree.SynchronizedTree;
@@ -303,6 +307,33 @@ public class JavacAdapter {
 					long n = positions.getStartPosition(ast, node);
 					parser.add(JavaTokenConstants.J_ANNO,filename,map.getLineNumber(n),map.getColumnNumber(n),1);
 					return super.visitAnnotation(node, p);
+				}
+				@Override
+				public Object visitModule(ModuleTree node, Object p) {
+					long n = positions.getStartPosition(ast, node);
+					long m = positions.getEndPosition(ast, node);
+					parser.add(JavaTokenConstants.J_MODULE_BEGIN,filename,map.getLineNumber(n),map.getColumnNumber(n),6);
+					Object ret =  super.visitModule(node, p);
+					parser.add(JavaTokenConstants.J_MODULE_END,filename,map.getLineNumber(m-1),map.getColumnNumber(m-1),1);
+					return ret;
+				}
+				@Override
+				public Object visitRequires(RequiresTree node, Object p) {
+					long n = positions.getStartPosition(ast, node);
+					parser.add(JavaTokenConstants.J_REQUIRES,filename,map.getLineNumber(n),map.getColumnNumber(n),8);
+					return super.visitRequires(node, p);
+				}
+				@Override
+				public Object visitProvides(ProvidesTree node, Object p) {
+					long n = positions.getStartPosition(ast, node);
+					parser.add(JavaTokenConstants.J_PROVIDES,filename,map.getLineNumber(n),map.getColumnNumber(n),8);
+					return super.visitProvides(node, p);
+				}
+				@Override
+				public Object visitExports(ExportsTree node, Object p) {
+					long n = positions.getStartPosition(ast, node);
+					parser.add(JavaTokenConstants.J_EXPORTS,filename,map.getLineNumber(n),map.getColumnNumber(n),7);
+					return super.visitExports(node, p);
 				}
 			}, null);
 			long n = positions.getEndPosition(last, last);
