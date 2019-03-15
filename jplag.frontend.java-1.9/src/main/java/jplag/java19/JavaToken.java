@@ -154,6 +154,16 @@ public class JavaToken extends jplag.Token implements JavaTokenConstants {
 			return "ANNO_C{ ";
 		case J_ANNO_C_END:
 			return "}ANNO_C ";
+		case J_MODULE_BEGIN:
+			return "MODULE{ ";
+		case J_MODULE_END:
+			return "}MODULE ";
+		case J_EXPORTS:
+			return "EXPORTS ";
+		case J_PROVIDES:
+			return "PROVIDES";
+		case J_REQUIRES:
+			return "REQUIRES";
 
 		case J_TRY_WITH_RESOURCE:
 			return "TRY_RES ";
