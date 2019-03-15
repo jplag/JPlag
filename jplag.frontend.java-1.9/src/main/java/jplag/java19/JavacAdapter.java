@@ -5,7 +5,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
@@ -52,9 +56,10 @@ import com.sun.source.util.JavacTask;
 public class JavacAdapter {
 	private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 
-	public void parseFiles(File dir,File[] pathedFiles, final Parser parser) {
+	public int parseFiles(File dir,File[] pathedFiles, final Parser parser) {
 		final StandardJavaFileManager jfm = javac.getStandardFileManager(null, null, null);
-		final JavaCompiler.CompilationTask task = javac.getTask(null, jfm, null, null, null,
+		DiagnosticCollector<? super JavaFileObject> diagListen = new DiagnosticCollector<>();
+		final JavaCompiler.CompilationTask task = javac.getTask(null, jfm, diagListen, null, null,
 				jfm.getJavaFileObjects(pathedFiles));
 		Iterable<? extends CompilationUnitTree> asts = null;
 		try {
@@ -339,7 +344,20 @@ public class JavacAdapter {
 			long n = positions.getEndPosition(last, last);
 			parser.add(JavaTokenConstants.FILE_END,filename,1,-1,-1);
 		}
-		
+		int errors = 0;
+		for ( Diagnostic<?> diagItem : diagListen.getDiagnostics())
+		{
+			if (diagItem.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
+				errors++;
+			}
+			if (diagItem.getKind() == javax.tools.Diagnostic.Kind.WARNING) {
+				
+			}
+			if (diagItem.getKind() == javax.tools.Diagnostic.Kind.MANDATORY_WARNING) {
+				
+			}
+		}
+		return errors;
 	}
 
 }

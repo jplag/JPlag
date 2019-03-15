@@ -64,8 +64,7 @@ public class Language implements jplag.Language {
 	}
 
 	public int errorsCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.parser.errorsCount();
 	}
 
 }

@@ -15,12 +15,13 @@ public class Parser  extends jplag.Parser {
 			pathedFiles[i]=new File(dir,files[i]);
 		}
 		JavacAdapter javac = new JavacAdapter();
-		javac.parseFiles(dir,pathedFiles,this);
-		// errors?
+		errors += javac.parseFiles(dir,pathedFiles,this);
+		
 		
 		this.parseEnd();
 		return struct;
 	}
+	
 	public void add(int type,String filename, long line, long col, long length) {
 		struct.addToken(new JavaToken(type, filename, (int) line, (int)col,(int)length));
 	}
