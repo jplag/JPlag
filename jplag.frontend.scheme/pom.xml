@@ -7,7 +7,7 @@
 	<repositories>
 		<repository>
 			<id>ipdNexus</id>
-			<name>Recaa Repository</name>
+			<name>IPD-Nexus-Public</name>
 			<url>https://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
 		</repository>
 	</repositories>

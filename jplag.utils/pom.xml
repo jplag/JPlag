@@ -14,8 +14,8 @@
 	<repositories>
 		<repository>
 			<id>ipdNexus</id>
-			<name>Recaa Repository</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
+			<name>IPD-Nexus-Public</name>
+			<url>http://bob.ipd.kit.edu/nexus/repository/maven-public-all/</url>
 		</repository>
 	</repositories>
 </project>
