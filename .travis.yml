@@ -1,2 +1,9 @@
 jdk: openjdk11
 language: java
+deploy:
+  provider: releases
+  api_key: "$OAUTH"
+  file: "jplag/target/jplag*with-dependencies*.jar"
+  skip_cleanup: true
+  on:
+    tags: true
