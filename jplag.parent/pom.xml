@@ -23,6 +23,15 @@
 
 	<developers>
 		<developer>
+			<id>sw</id>
+			<name>Sebastian Weigelt</name>
+			<email>weigelt@kit.edu</email>
+			<url>https://ps.ipd.kit.edu/176_347.php</url>
+			<organization>IPD Tichy</organization>
+			<organizationUrl>https://ps.ipd.kit.edu/</organizationUrl>
+			<timezone>GMT+1</timezone>
+		</developer>
+		<developer>
 			<id>lama</id>
 			<name>Mathias Landhäußer</name>
 			<email>mathias.landhaeusser@kit.edu</email>
