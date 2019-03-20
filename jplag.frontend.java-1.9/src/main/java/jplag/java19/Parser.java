@@ -25,4 +25,8 @@ public class Parser  extends jplag.Parser {
 	public void add(int type,String filename, long line, long col, long length) {
 		struct.addToken(new JavaToken(type, filename, (int) line, (int)col,(int)length));
 	}
+
+	public void errorsInc() {
+		errors++;
+	}
 }

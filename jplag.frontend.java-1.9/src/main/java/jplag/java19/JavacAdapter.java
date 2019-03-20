@@ -27,6 +27,7 @@ import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ContinueTree;
 import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
+import com.sun.source.tree.ErroneousTree;
 import com.sun.source.tree.ExportsTree;
 import com.sun.source.tree.ForLoopTree;
 import com.sun.source.tree.IfTree;
@@ -341,6 +342,11 @@ public class JavacAdapter {
 					long n = positions.getStartPosition(ast, node);
 					parser.add(JavaTokenConstants.J_EXPORTS,filename,map.getLineNumber(n),map.getColumnNumber(n),7);
 					return super.visitExports(node, p);
+				}
+				@Override
+				public Object visitErroneous(ErroneousTree node, Object p) {
+					parser.errorsInc();
+					return super.visitErroneous(node, p);
 				}
 			}, null);
 			long n = positions.getEndPosition(last, last);
