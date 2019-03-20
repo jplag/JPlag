@@ -3,7 +3,7 @@ language: java
 cache:
   directories:
     - $HOME/.m2
-script:
+before_deploy:
   - mvn clean generate-sources assembly:assembly -f jplag/pom.xml -U
 deploy:
   provider: release 
