@@ -60,24 +60,24 @@
 	<repositories>
 		<repository>
 			<id>ipdNexus</id>
-			<name>Recaa Repository</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
+			<name>IPD-Nexus-Public</name>
+			<url>http://bob.ipd.kit.edu/nexus/repository/maven-public-all</url>
 		</repository>
 	</repositories>
 
 	<distributionManagement>
 		<!-- use the following if you're not using a snapshot version. -->
 		<repository>
-			<id>ipdNexus-repo</id>
+			<id>ipdNexus-jplag-releases</id>
 			<name>IPD-Tichy-Releases</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/releases</url>
+			<url>http://bob.ipd.kit.edu/nexus/repository/maven-jplag-releases</url>
 			<layout>default</layout>
 		</repository>
 		<!-- use the following if you ARE using a snapshot version. -->
 		<snapshotRepository>
-			<id>ipdNexus-snapshots</id>
+			<id>ipdNexus-jplag-snapshots</id>
 			<name>IPD-Tichy-Snapshots</name>
-			<url>http://bob.ipd.kit.edu/nexus/content/repositories/snapshots</url>
+			<url>http://bob.ipd.kit.edu/nexus/repository/maven-jplag-snapshots</url>
 			<layout>default</layout>
 		</snapshotRepository>
 	</distributionManagement>
