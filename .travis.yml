@@ -6,7 +6,7 @@ cache:
 before_deploy:
   - mvn clean generate-sources assembly:assembly -f jplag/pom.xml -U
 deploy:
-  provider: release 
+  provider: releases
   api_key: $OAUTH
   file_glob: true
   file: jplag/target/jplag*with-dependencies*.jar
