@@ -32,7 +32,7 @@ public class Language implements jplag.Language {
 	}
 
 	public int min_token_match() {
-		return 12;
+		return 9;
 	}
 	public boolean supportsColumns() {
 		return true;
