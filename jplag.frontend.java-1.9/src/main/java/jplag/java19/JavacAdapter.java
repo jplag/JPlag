@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -71,10 +72,11 @@ public class JavacAdapter {
 		final SourcePositions positions = trees.getSourcePositions();
 		CompilationUnitTree last = null;
 		for (final CompilationUnitTree ast : asts) {
-			Path absolute = Paths.get(ast.getSourceFile().getName());
-			Path base = Paths.get(dir.getName());
-			Path relative = base.relativize(absolute);
-			final String filename = relative.toString();
+			final String filename;
+			if (dir==null)
+				filename=ast.getSourceFile().getName();
+			else
+				filename=dir.toURI().relativize(ast.getSourceFile().toUri()).toString();
 			final LineMap map = ast.getLineMap();
 			last=ast;
 			ast.accept(new TreeScanner<Object,Object>() {
