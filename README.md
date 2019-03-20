@@ -2,10 +2,10 @@
 Download a released version - all releases are single-JAR releases.
 
 Type `java -jar jplag-yourVersion.jar` in a console to see the command line options.
-The options as of 2017/09/17 are:
+The options as of 2019/03/20 are:
 
 ```
-JPlag (Version 2.11.9-SNAPSHOT), Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.
+JPlag (Version 2.12.0-SNAPSHOT), Copyright (c) 2004-2019 KIT - IPD Tichy, Guido Malpohl, and others.
 Usage: JPlag [ options ] [<root-dir>] [-c file1 file2 ...]
  <root-dir>        The root-directory that contains all submissions
 
@@ -37,15 +37,17 @@ options are:
                  java19 (default), java 17, java15, java15dm, java12, java11, python3, c/c++, c#-1.2, char, text, scheme
 ```
 
+**Note:** java19 refers to all java version from 9 on (currently 9 - 12).
+
 ## Example
-Assume that we want to check students' solutions that are written in Java 1.7.
+Assume that we want to check students' solutions that are written in Java 11.
 
 Each student solution is in its own directory, say `student1`, `student2`, and so on.
 All solutions are in a common directory, say `exercise1`.
 
-To run JPlag, simply type `java -jar jplag-yourVersion.jar -l java17 -r /tmp/jplag_results_exercise1/ -s /path/to/exercise1`
+To run JPlag, simply type `java -jar jplag-yourVersion.jar -l java19 -r /tmp/jplag_results_exercise1/ -s /path/to/exercise1`
 
-- `-l java17` tells JPlag to use the frontend for Java 1.7
+- `-l java19` tells JPlag to use the frontend for Java 9+
 - `-s` tells JPlag to recurse into subdirectories; as we assume Java projects, we'll very likely encounter subdirectories such as `student1/src/`
 - `-r /tmp/jplag_results_exercise1` tells JPlag to store the results in the directory `/tmp/jplag_results_exercise1`
 
@@ -59,7 +61,7 @@ The exclusion list contains a  number of suffixes.
 JPlag will ignore all files that end with one of the suffixes.
 
 ### `-c [files]`   (Compare) Compare a list of files
-Example: `java -jar jplag-yourVersion.jar -l java17 -c student1_file student2_file student3_file`
+Example: `java -jar jplag-yourVersion.jar -l java19 -c student1_file student2_file student3_file`
 This option must be the last one.
 JPlag will compare just a list of files pairwise.
 
