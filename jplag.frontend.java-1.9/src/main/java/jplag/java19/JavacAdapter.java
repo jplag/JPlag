@@ -2,6 +2,8 @@ package jplag.java19;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -76,8 +78,9 @@ public class JavacAdapter {
 			final String filename;
 			if (dir==null)
 				filename=ast.getSourceFile().getName();
-			else
-				filename=dir.toURI().relativize(ast.getSourceFile().toUri()).toString();
+			else {
+				filename=Paths.get(dir.toURI()).relativize(Paths.get(ast.getSourceFile().toUri())).toString();
+			}
 			final LineMap map = ast.getLineMap();
 			last=ast;
 			ast.accept(new TreeScanner<Object,Object>() {
