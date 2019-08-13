@@ -47,8 +47,9 @@ public class Structure implements TokenConstants {
 		ensureCapacity(anzahl + 1);
 		if (anzahl > 0 && tokens[anzahl - 1].file.equals(token.file))
 			token.file = tokens[anzahl - 1].file; // To save memory ...
-		if ((anzahl > 0) && (token.getLine() < tokens[anzahl - 1].getLine()) && (token.file.equals(tokens[anzahl - 1].file)))
+		if ((anzahl > 0) && (token.getLine() < tokens[anzahl - 1].getLine()) && (token.file.equals(tokens[anzahl - 1].file))) {
 			token.setLine(tokens[anzahl - 1].getLine());
+		}
 		// just to make sure
 
 		tokens[anzahl++] = token;

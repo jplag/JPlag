@@ -997,8 +997,8 @@ public class Report implements TokenConstants {
                     tmpVStr = tmpVStr + tmpV.elementAt(k);
                 text[markup.fileIndex][markup.lineIndex] = tmpVStr;
             } else {
-                text[markup.fileIndex][markup.lineIndex] = tmp.substring(0, (tmp.length() > markup.column ? markup.column : tmp.length()))
-                    + markup.text + tmp.substring((tmp.length() > markup.column ? markup.column : tmp.length()));
+                text[markup.fileIndex][markup.lineIndex] = tmp.substring(0, Math.max(0, (tmp.length() > markup.column ? markup.column : tmp.length())))
+                    + markup.text + tmp.substring(Math.max(0, (tmp.length() > markup.column ? markup.column : tmp.length())));
             }
         }
 

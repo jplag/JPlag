@@ -239,6 +239,11 @@
 				<artifactId>chars</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>edu.kit.ipd.jplag</groupId>
+				<artifactId>scala</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+			</dependency>
 
 			<dependency>
 				<groupId>junit</groupId>
