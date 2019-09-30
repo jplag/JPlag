@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import org.jetbrains.annotations.NotNull;
+
 
 //import java.util.zip.*;
 
@@ -43,7 +45,7 @@ public class Structure implements TokenConstants {
 		}
 	}
 
-	public final void addToken(Token token) {
+	public final void addToken(@NotNull Token token) {
 		ensureCapacity(anzahl + 1);
 		if (anzahl > 0 && tokens[anzahl - 1].file.equals(token.file))
 			token.file = tokens[anzahl - 1].file; // To save memory ...

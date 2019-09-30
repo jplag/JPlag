@@ -991,10 +991,7 @@ public class Report implements TokenConstants {
                     tmpV.addElement(markup.text);
                 }
 
-                String tmpVStr = "";
-                // reconvert the Vector into a String
-                for (int k = 0; k < tmpV.size(); k++)
-                    tmpVStr = tmpVStr + tmpV.elementAt(k);
+                String tmpVStr = String.join("", tmpV);
                 text[markup.fileIndex][markup.lineIndex] = tmpVStr;
             } else {
                 text[markup.fileIndex][markup.lineIndex] = tmp.substring(0, Math.max(0, (tmp.length() > markup.column ? markup.column : tmp.length())))

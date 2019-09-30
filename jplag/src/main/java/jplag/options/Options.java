@@ -42,6 +42,7 @@ public abstract class Options {
 			"text", "jplag.text.Language",
 			"scheme", "jplag.scheme.Language",
 			"scala", "jplag.scala.Language",
+			"json", "jplag.json.Language",
 			};// @formatter:on
 
 	public static final int MIN_CLUSTER = 1;

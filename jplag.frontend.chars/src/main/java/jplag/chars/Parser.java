@@ -2,32 +2,35 @@ package jplag.chars;
 
 import java.io.*;
 import jplag.Structure;
+import org.jetbrains.annotations.NotNull;
 
 public class Parser extends jplag.Parser implements jplag.TokenConstants {
 
 	private Structure struct;
 
-	public static void main(String args[]) {
-		System.out.println("parsing: " + args[0]);
+	public static void main(@NotNull String args[]) {
 		Parser parser = new Parser();
 		parser.struct = new Structure();
-		parser.parseFile(new File("."), args[0]);
-		System.out.println(parser.struct);
+		String[] files = {"Exercise1.json"};
+		parser.parse(new File("/home/thomas/downloads/top"), files);
+		System.out.println(parser.struct.tokens[parser.struct.size() - 1].getLine());
 	}
 
-	public jplag.Structure parse(File dir, String files[]) {
+	public jplag.Structure parse(File dir, @NotNull String[] files) {
 		this.struct = new Structure();
 		errors = 0;
-		for (int i = 0; i < files.length; i++) {
-			getProgram().print(null, "Parsing file " + files[i] + "\n");
-			if (!parseFile(dir, files[i]))
+		for (String file : files) {
+
+			getProgram().print(null, "Parsing file " + file + "\n");
+			if (!parseFile(dir, file)) {
 				errors++;
-                        
-                        int endLine = -1;
-                        if (this.struct.tokens.length > 0) {
-                            endLine = this.struct.tokens[this.struct.tokens.length - 1].getLine();
-                        }
-			struct.addToken(new CharToken(FILE_END, files[i], this, endLine));
+			}
+
+			int endLine = -1;
+			if (this.struct.size() > 0) {
+				endLine = this.struct.tokens[this.struct.size() - 1].getLine();
+			}
+			struct.addToken(new CharToken(FILE_END, file, this, endLine));
 		}
 		//System.err.println(struct.toString());
 		if (errors == 0)
@@ -41,10 +44,10 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 
 	public boolean parseFile(File dir, String file) {
 		char[] buffer = new char[4096];
-		int type;
+		int type = 0;
 		int length;
 		int offset = 0;
-                int lineNr = 1;
+		int lineNr = 1;
 
 		try {
 			FileReader fis = new FileReader(new File(dir, file));
@@ -55,12 +58,12 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 				for (int i = 0; i < length; i++) {
 					if (buffer[i] <= 127 && (type = mapping[buffer[i]]) > 1) {
 						struct.addToken(new CharToken(type, file, offset + i,
-                                                                              this, lineNr));
+								this, lineNr));
 					}
-                                        if (buffer[i] == '\n') {
-                                            lineNr += 1;
-                                        }
-					//System.out.print(buffer[i]);
+					if (buffer[i] == '\n') {
+						lineNr += 1;
+					}
+					// System.out.print(buffer[i]);
 				}
 				offset += length;
 			} while (length != -1);

@@ -4,6 +4,7 @@ public class CharToken extends jplag.Token {
     private static final long serialVersionUID = 1L;
 
     private int index;
+    private int line;
 
     private Parser parser;
 
@@ -18,7 +19,11 @@ public class CharToken extends jplag.Token {
     }
 
     public int getLine() {
-        return index; // so that the result-index is sorted correctly
+        return line;
+    }
+
+    protected void setLine(int line) {
+        this.line = line;
     }
 
     public int getColumn() { return 0; }
