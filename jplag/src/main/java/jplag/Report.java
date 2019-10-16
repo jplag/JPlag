@@ -1,48 +1,44 @@
 package jplag;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.awt.Color;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Vector;
-
 import jplag.clustering.Cluster;
 import jplag.clustering.ThemeGenerator;
 import jplag.options.Options;
 import jplag.options.util.Messages;
 import jplag.options.util.TagParser;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.*;
+import java.util.*;
+
 
 /**
  * This class writes all the HTML pages
  */
 public class Report implements TokenConstants {
+    //  INDEX
+    private final int bar_length = 75;
+    // SUBMISSION - here it comes...
+    private final String[] pics = {"forward.gif", "back.gif"};
+    SortedVector<AllMatches> avgmatches;
+    SortedVector<AllMatches> maxmatches;
+    SortedVector<AllMatches> minmatches;
+    SortedVector<AllMatches> bcmatches;
+    Map<AllMatches, Integer> matchesIndexMap = new HashMap<AllMatches, Integer>();
+    int curMatchIndex = 0;
     private Program program;
     private Messages msg;
     private File root;
     private int[] dist;
     private Options options;
-    SortedVector<AllMatches> avgmatches;
-    SortedVector<AllMatches> maxmatches;
-    SortedVector<AllMatches> minmatches;
-    SortedVector<AllMatches> bcmatches;
-
-    Map<AllMatches, Integer> matchesIndexMap = new HashMap<AllMatches, Integer>();
-    int curMatchIndex = 0;
-
     // how much did we save?
     private Language language;
+    /*
+     * This procedure copies all the data from "data/" into the
+     * result-directory.
+     */
+    private String[] fileList = {"back.gif", "forward.gif", "help-en.html", "help-sim-en.html", "logo.gif", "fields.js"};
 
     public Report(Program program, Language language) {
         this.program = program;
@@ -115,9 +111,6 @@ public class Report implements TokenConstants {
         file.println("  </script>\n</HEAD>");
     }
 
-    //  INDEX
-    private final int bar_length = 75;
-
     private void writeDistribution(HTMLFile f) {
         // Die Verteilung:
         int max = 0;
@@ -145,14 +138,10 @@ public class Report implements TokenConstants {
     private int getMatchIndex(AllMatches match) {
         Object obj = matchesIndexMap.get(match);
         if (obj == null) {
-            matchesIndexMap.put(match, new Integer(curMatchIndex++));
+            matchesIndexMap.put(match, curMatchIndex++);
             return curMatchIndex - 1;
         } else
-            return ((Integer) obj).intValue();
-    }
-
-    abstract class MatchesHelper {
-        public abstract float getPercent(AllMatches matches);
+            return (int)obj;
     }
 
     private void writeLinksToMatches(HTMLFile f, SortedVector<AllMatches> matches, MatchesHelper helper, String headerStr, String csvfile) {
@@ -161,7 +150,7 @@ public class Report implements TokenConstants {
         Set<AllMatches> matchesPrinted = new HashSet<AllMatches>();
 
         f.println(headerStr + " (<a href=\"help-sim-" + program.getCountryTag() + ".html\"><small><font color=\"#000088\">"
-                  + msg.getString("Report.WhatIsThis") + "</font></small></a>):</H4>");
+                + msg.getString("Report.WhatIsThis") + "</font></small></a>):</H4>");
         f.println("<p><a href=\"" + csvfile + "\">download csv</a></p>");
         f.println("<TABLE CELLPADDING=3 CELLSPACING=2>");
 
@@ -215,8 +204,110 @@ public class Report implements TokenConstants {
         f.println("<!---->"); // important for front end
     }
 
+    private void writeJsonMatches(@NotNull File root, @NotNull String filename, @NotNull SortedVector<AllMatches> matches) {
 
-    private void writeBetterMatchesCSV( File root, String filename, SortedVector<AllMatches> matches, MatchesHelper helper) {
+        // quick and very dirty csv export of results
+
+        FileWriter writer = null;
+        File f = new File(root, filename);
+
+        JSONArray resultList = new JSONArray();
+        JSONObject res = new JSONObject();
+        boolean usesIndex = program.get_language().usesIndex();
+        res.put("usesIndex", usesIndex);
+        res.put("results", resultList);
+
+        for (AllMatches all_matches : matches) {
+            if (all_matches.matches.length < 1) {
+                continue;
+            }
+            Token[] A = all_matches.subA.struct.tokens;
+            Token[] B = all_matches.subB.struct.tokens;
+            JSONObject result = new JSONObject();
+            resultList.put(result);
+
+            // First write the names of the two students in this match
+            result.put("names", new JSONObject().put(
+                    "a", all_matches.subName(0)
+            ).put(
+                    "b", all_matches.subName(1)
+            ));
+
+
+            result.put("averageMatch", new JSONObject().put(
+                    "a", all_matches.percentA()
+            ).put(
+                    "b", all_matches.percentB()
+            ));
+            JSONArray jsonMatches = new JSONArray();
+            result.put("matches", jsonMatches);
+
+            for (int i = 0; i < all_matches.size(); i++) {
+                JSONObject singleMatch = new JSONObject();
+                jsonMatches.put(singleMatch);
+
+                Match match = all_matches.matches[i];
+                Token startA = A[match.startA];
+                Token endA = A[match.startA + match.length - 1];
+
+                Token startB = B[match.startB];
+                Token endB = B[match.startB + match.length - 1];
+
+                singleMatch.put("files", new JSONObject().put(
+                        "a", new String(startA.file.getBytes())
+                ).put(
+                        "b", new String(startB.file.getBytes())
+                ));
+
+                singleMatch.put("lines", new JSONObject().put(
+                        "start", new JSONObject().put(
+                                "a", usesIndex ? startA.getIndex() : startA.getLine() - 1
+                        ).put(
+                                "b", usesIndex ? startB.getIndex() : startB.getLine() - 1
+                        )
+                ).put(
+                        "end", new JSONObject().put(
+                                "a", usesIndex ? endA.getIndex() : endA.getLine() - 1
+                        ).put(
+                                "b", usesIndex ? endB.getIndex() : endB.getLine() - 1
+                        )
+                ));
+                singleMatch.put("columns", new JSONObject().put(
+                        "start", new JSONObject().put(
+                                "a", startA.getColumn() -1
+                        ).put(
+                                "b", startB.getColumn() -1
+                        )
+                ).put(
+                        "end", new JSONObject().put(
+                                "a", endA.getColumn() + endA.getLength() -1
+                        ).put(
+                                "b", endB.getColumn() + endB.getLength() -1
+                        )
+                ));
+
+            }
+
+            try {
+                f.createNewFile();
+                writer = new FileWriter(f);
+                writer.write(res.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (writer != null){
+                        writer.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
+
+    private void writeBetterMatchesCSV(File root, String filename, SortedVector<AllMatches> matches) {
 
         // quick and very dirty csv export of results
 
@@ -240,8 +331,8 @@ public class Report implements TokenConstants {
                 String nameB = all_matches.subName(1).replace(";", "\\;");
                 writer.write(nameA + ";" + nameB + ";");
 
-                writer.write(Float.toString(all_matches.percentA()) + ";" +
-                             Float.toString(all_matches.percentB()) + ";");
+                writer.write(all_matches.percentA() + ";" +
+                        all_matches.percentB() + ";");
 
                 for (int i = 0; i < all_matches.size(); i++) {
                     Match match = all_matches.matches[i];
@@ -254,7 +345,7 @@ public class Report implements TokenConstants {
                     writer.write((new String(startA.file.getBytes())).replace(";", "\\;") + ";");
 
                     if (program.get_language().usesIndex()) {
-                        writer.write(startA.getIndex() + ";"+endA.getIndex());
+                        writer.write(startA.getIndex() + ";" + endA.getIndex());
                     } else {
                         writer.write((startA.getLine() - 1) + ";" + (endA.getLine() - 1));
                     }
@@ -263,7 +354,7 @@ public class Report implements TokenConstants {
                     writer.write((new String(startB.file.getBytes())).replace(";", "\\;") + ";");
 
                     if (program.get_language().usesIndex()) {
-                        writer.write(startB.getIndex() + ";"+endB.getIndex());
+                        writer.write(startB.getIndex() + ";" + endB.getIndex());
                     } else {
                         writer.write((startB.getLine() - 1) + ";" + (endB.getLine() - 1));
                     }
@@ -286,15 +377,14 @@ public class Report implements TokenConstants {
 
     }
 
-
-    private void writeMatchesCSV( File root, String filename, SortedVector<AllMatches> matches, MatchesHelper helper) {
+    private void writeMatchesCSV(File root, String filename, SortedVector<AllMatches> matches, MatchesHelper helper) {
 
         // quick and very dirty csv export of results
 
         FileWriter writer = null;
         File f = new File(root, filename);
 
-        try{
+        try {
 
             f.createNewFile();
             writer = new FileWriter(f);
@@ -341,7 +431,7 @@ public class Report implements TokenConstants {
                             float percent = helper.getPercent(output);
                             writer.write(getMatchIndex(output) + ";");
                             writer.write(output.subName(other) + ";");
-                            writer.write( (((int) (percent * 10)) / (float) 10) + ";");
+                            writer.write((((int) (percent * 10)) / (float) 10) + ";");
 
                         }
                     }
@@ -372,62 +462,57 @@ public class Report implements TokenConstants {
 
         writeDistribution(f);
 
-        String csvfile="matches_avg.csv";
+        String csvfile = "matches_avg.csv";
         writeLinksToMatches(f, avgmatches, new MatchesHelper() {
-                public float getPercent(AllMatches matches) {
-                    return matches.percent();
-                }
-            }, "<H4>" + msg.getString("Report.MatchesAvg"), csvfile);
+            public float getPercent(AllMatches matches) {
+                return matches.percent();
+            }
+        }, "<H4>" + msg.getString("Report.MatchesAvg"), csvfile);
 
         writeMatchesCSV(root, csvfile, avgmatches,
-                              new MatchesHelper() {
-                                  public float getPercent(AllMatches matches) {
-                                      return matches.percent();
-                                  }
-                              }
-            );
-        writeBetterMatchesCSV(root, "computer_matches.csv", avgmatches,
-                              new MatchesHelper() {
-                                  public float getPercent(AllMatches matches) {
-                                      return matches.percent();
-                                  }
-                              }
-            );
+                new MatchesHelper() {
+                    public float getPercent(AllMatches matches) {
+                        return matches.percent();
+                    }
+                }
+        );
+        writeBetterMatchesCSV(root, "computer_matches.csv", avgmatches);
+        writeJsonMatches(root, "computer_matches.json", avgmatches);
 
-        if (minmatches != null){
-            csvfile="matches_min.csv";
+        if (minmatches != null) {
+            csvfile = "matches_min.csv";
             writeLinksToMatches(f, minmatches, new MatchesHelper() {
-                    public float getPercent(AllMatches matches) {
-                        return matches.percentMinAB();
-                    }
-                }, "<HR><H4>" + msg.getString("Report.MatchesMin"), csvfile);
+                public float getPercent(AllMatches matches) {
+                    return matches.percentMinAB();
+                }
+            }, "<HR><H4>" + msg.getString("Report.MatchesMin"), csvfile);
 
             writeMatchesCSV(root, csvfile, avgmatches,
-                            new MatchesHelper() {
-                                public float getPercent(AllMatches matches) {
-                                    return matches.percentMinAB();
-                                }
-                            }
-                );
-        };
+                    new MatchesHelper() {
+                        public float getPercent(AllMatches matches) {
+                            return matches.percentMinAB();
+                        }
+                    }
+            );
+        }
 
 
-        if (maxmatches != null){
-            csvfile="matches_max.csv";
+        if (maxmatches != null) {
+            csvfile = "matches_max.csv";
             writeLinksToMatches(f, maxmatches, new MatchesHelper() {
-                    public float getPercent(AllMatches matches) {
-                        return matches.percentMaxAB();
-                    }
-                }, "<HR><H4>" + msg.getString("Report.MatchesMax"), csvfile);
+                public float getPercent(AllMatches matches) {
+                    return matches.percentMaxAB();
+                }
+            }, "<HR><H4>" + msg.getString("Report.MatchesMax"), csvfile);
 
             writeMatchesCSV(root, csvfile, avgmatches,
-                            new MatchesHelper() {
-                                public float getPercent(AllMatches matches) {
-                                    return matches.percentMaxAB();
-                                }
-                            }
-                );
-        };
+                    new MatchesHelper() {
+                        public float getPercent(AllMatches matches) {
+                            return matches.percentMaxAB();
+                        }
+                    }
+            );
+        }
 
 
         if (includeClusterLink) {
@@ -444,7 +529,7 @@ public class Report implements TokenConstants {
         if (this.program.get_original_dir() != null) {
             f = openHTMLFile(root, "info.txt");
             f.println("directory" + "\t" + program.get_original_dir()
-                      + (program.get_sub_dir() != null ? File.separator + "*" + File.separator + program.get_sub_dir() : ""));
+                    + (program.get_sub_dir() != null ? File.separator + "*" + File.separator + program.get_sub_dir() : ""));
             f.println("language" + "\t" + language.name());
             f.println("submissions" + "\t" + program.validSubmissions());
             f.println("errors" + "\t" + program.getErrors());
@@ -463,27 +548,27 @@ public class Report implements TokenConstants {
 
         if (program.get_title() != null) {
             f.println("<TR BGCOLOR=\"#aaaaff\" VALIGN=\"top\"><TD>" + "<BIG><BIG>" + msg.getString("Report.Title")
-                      + ":</BIG></BIG><TD><BIG><BIG><CODE>" + program.get_title() + "</CODE></BIG></BIG></TD></TR>");
+                    + ":</BIG></BIG><TD><BIG><BIG><CODE>" + program.get_title() + "</CODE></BIG></BIG></TD></TR>");
             if (program.get_original_dir() != null)
                 f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + "<BIG>" + msg.getString("Report.Directory")
-                          + ":</BIG></TD><TD><BIG><CODE>" + program.get_original_dir()
-                          + (program.get_sub_dir() == null ? "" : File.separator + "*" + File.separator + program.get_sub_dir())
-                          + "</CODE></BIG></TD></TR>");
+                        + ":</BIG></TD><TD><BIG><CODE>" + program.get_original_dir()
+                        + (program.get_sub_dir() == null ? "" : File.separator + "*" + File.separator + program.get_sub_dir())
+                        + "</CODE></BIG></TD></TR>");
         } else {
             if (this.program.get_original_dir() == null)
                 f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + "<BIG><BIG>" + msg.getString("Report.Directory")
-                          + ":</BIG></BIG><TD><BIG><BIG><CODE>" + msg.getString("Report.Not_available") + "</CODE></BIG></BIG></TD></TR>");
+                        + ":</BIG></BIG><TD><BIG><BIG><CODE>" + msg.getString("Report.Not_available") + "</CODE></BIG></BIG></TD></TR>");
             else
                 f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + "<BIG><BIG>" + msg.getString("Report.Directory")
-                          + ":</BIG></BIG></TD><TD><BIG><BIG><CODE>" + program.get_original_dir()
-                          + (program.get_sub_dir() == null ? "" : File.separator + "*" + File.separator + program.get_sub_dir())
-                          + "</CODE></BIG></BIG></TD></TR>");
+                        + ":</BIG></BIG></TD><TD><BIG><BIG><CODE>" + program.get_original_dir()
+                        + (program.get_sub_dir() == null ? "" : File.separator + "*" + File.separator + program.get_sub_dir())
+                        + "</CODE></BIG></BIG></TD></TR>");
         }
 
         f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Programs") + ":</TD><TD>");
         f.println("<CODE>" + program.allValidSubmissions(" - ") + "</CODE></TD></TR>");
         f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Language") + ":</TD><TD>" + this.language.name()
-                  + "</TD></TR>");
+                + "</TD></TR>");
         f.print("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Submissions") + ":</TD><TD>"
                 + this.program.validSubmissions());
         if (program.getErrors() != 0) {
@@ -491,15 +576,15 @@ public class Report implements TokenConstants {
                 f.print(" <b>(" + msg.getString("Report.1_has_not_been_parsed_successfully") + ")</b>");
             else if (this.program.getErrors() > 1)
                 f.print(" <b>("
-                        + TagParser.parse(msg.getString("Report.X_have_not_been_parsed_successfully"), new String[] { program.getErrors()
-                                                                                                                      + "" }) + ")</b>");
+                        + TagParser.parse(msg.getString("Report.X_have_not_been_parsed_successfully"), new String[]{program.getErrors()
+                        + ""}) + ")</b>");
             f.println("</TD></TR>");
             f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Invalid_submissions"));
             if (options.output_file != null) {
                 f.println(" "
-                          + TagParser.parse(msg.getString("Report.see_LOGBEG_log_file_LOGEND"), new String[] {
-                                  "<a href=\"" + options.output_file.substring(options.output_file.lastIndexOf(File.separatorChar) + 1)
-                                  + "\">", "</a>" }));
+                        + TagParser.parse(msg.getString("Report.see_LOGBEG_log_file_LOGEND"), new String[]{
+                        "<a href=\"" + options.output_file.substring(options.output_file.lastIndexOf(File.separatorChar) + 1)
+                                + "\">", "</a>"}));
             }
             f.println(":</TD><TD>");
             f.println("<CODE>" + this.program.allInvalidSubmissions() + "</CODE>");
@@ -510,20 +595,20 @@ public class Report implements TokenConstants {
                     + this.program.get_basecode() + "</TD></TR>");
         }
         if (avgmatches != null && avgmatches.size() > 0 || minmatches != null && minmatches.size() > 0 || maxmatches != null
-            && maxmatches.size() > 0) {
+                && maxmatches.size() > 0) {
             f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Matches_displayed") + ":</TD>" + "<TD>");
             if (avgmatches != null && avgmatches.size() > 0)
                 f.println(avgmatches.size() + " (" + msg.getString("Report.Treshold") + ": "
-                          + avgmatches.elementAt(avgmatches.size() - 1).roundedPercent() + "%) ("
-                          + msg.getString("Report.average_similarity") + ")<br>");
+                        + avgmatches.elementAt(avgmatches.size() - 1).roundedPercent() + "%) ("
+                        + msg.getString("Report.average_similarity") + ")<br>");
             if (minmatches != null && minmatches.size() > 0)
                 f.println(minmatches.size() + " (" + msg.getString("Report.Treshold") + ": "
-                          + minmatches.elementAt(minmatches.size() - 1).roundedPercentMinAB() + "%) ("
-                          + msg.getString("Report.minimum_similarity") + ")<br>");
+                        + minmatches.elementAt(minmatches.size() - 1).roundedPercentMinAB() + "%) ("
+                        + msg.getString("Report.minimum_similarity") + ")<br>");
             if (maxmatches != null && maxmatches.size() > 0)
                 f.println(maxmatches.size() + " (" + msg.getString("Report.Treshold") + ": "
-                          + maxmatches.elementAt(maxmatches.size() - 1).roundedPercentMaxAB() + "%) ("
-                          + msg.getString("Report.maximum_similarity") + ")<br>");
+                        + maxmatches.elementAt(maxmatches.size() - 1).roundedPercentMaxAB() + "%) ("
+                        + msg.getString("Report.maximum_similarity") + ")<br>");
             f.println("</TD></TR>");
         }
 
@@ -533,9 +618,9 @@ public class Report implements TokenConstants {
          */
 
         f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Date") + ":</TD><TD>"
-                  + program.dateFormat.format(new Date()) + "</TD></TR>");
+                + program.dateFormat.format(new Date()) + "</TD></TR>");
         f.println("<TR BGCOLOR=#aaaaff>" + "<TD><EM>" + msg.getString("Report.Minimum_Match_Length") + "</EM> ("
-                  + msg.getString("Report.sensitivity") + "):</TD><TD>" + program.get_min_token_match() + "</TD></TR>");
+                + msg.getString("Report.sensitivity") + "):</TD><TD>" + program.get_min_token_match() + "</TD></TR>");
 
         f.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Suffixes") + ":</TD><TD>");
         for (int i = 0; i < this.program.get_suffixes().length; i++)
@@ -551,7 +636,7 @@ public class Report implements TokenConstants {
     /* this function copies all submissions into the result directory */
     private int copySubmissions() throws jplag.ExitException {
         int bytes = 0;
-        for (Iterator<Submission> i = program.clusters.neededSubmissions.iterator(); i.hasNext();) {
+        for (Iterator<Submission> i = program.clusters.neededSubmissions.iterator(); i.hasNext(); ) {
             Submission sub = i.next();
             int index = this.program.clusters.submissions.indexOf(sub);
 
@@ -560,7 +645,7 @@ public class Report implements TokenConstants {
             f.println("<BODY BGCOLOR=\"#ffffff\">");
 
             String[] files = sub.files;
-            String text[][] = sub.readFiles(files);
+            String[][] text = sub.readFiles(files);
 
             for (int j = 0; j < files.length; j++) {
                 f.println("<HR>\n<H3><CENTER>" + files[j] + "</CENTER></H3><HR>");
@@ -598,7 +683,7 @@ public class Report implements TokenConstants {
             for (int i = 0; i < this.program.get_threshold().length; i++) {
                 float threshold = this.program.get_threshold()[i];
                 String clustertitle = TagParser.parse(msg.getString("Report.Clusters_for_Xpercent_treshold"),
-                                                      new String[] { threshold + "" });
+                        new String[]{threshold + ""});
                 f.println("<H3><A HREF=\"cluster" + threshold + ".html\">" + clustertitle + "</A></H3>");
                 HTMLFile f2 = openHTMLFile(root, "cluster" + threshold + ".html");
                 writeHTMLHeader(f2, clustertitle);
@@ -615,7 +700,7 @@ public class Report implements TokenConstants {
                 increase = 5;
             for (float threshold = increase; threshold <= program.clusters.maxMergeValue; threshold += increase) {
                 String clustertitle = TagParser.parse(msg.getString("Report.Clusters_for_Xpercent_treshold"),
-                                                      new String[] { threshold + "" });
+                        new String[]{threshold + ""});
                 f.println("<H3><A HREF=\"cluster" + (int) threshold + ".html\">" + clustertitle + "</A></H3>");
                 HTMLFile f2 = openHTMLFile(root, "cluster" + (int) threshold + ".html");
                 writeHTMLHeader(f2, clustertitle);
@@ -706,7 +791,7 @@ public class Report implements TokenConstants {
     private int writeFrames(int i, AllMatches match) throws jplag.ExitException {
         HTMLFile f = openHTMLFile(root, "match" + i + ".html");
         writeHTMLHeader(f,
-                        TagParser.parse(msg.getString("Report.Matches_for_X1_AND_X2"), new String[] { match.subName(0), match.subName(1) }));
+                TagParser.parse(msg.getString("Report.Matches_for_X1_AND_X2"), new String[]{match.subName(0), match.subName(1)}));
         f.println("<FRAMESET ROWS=\"130,*\">\n <FRAMESET COLS=\"30%,70%\">");
         f.println("  <FRAME SRC=\"match" + i + "-link.html\" NAME=\"link\" " + "FRAMEBORDER=0>");
         f.println("  <FRAME SRC=\"match" + i + "-top.html\" NAME=\"top\" " + "FRAMEBORDER=0>");
@@ -723,12 +808,12 @@ public class Report implements TokenConstants {
         HTMLFile f = openHTMLFile(root, "match" + i + "-link.html");
         writeHTMLHeader(f, msg.getString("Report.Links"));
         f.println("<BODY>\n <H3 ALIGN=\"center\">"
-                  + TagParser.parse(msg.getString("Report.Matches_for_X1_AND_X2"), new String[] { match.subName(0), match.subName(1) })
-                  + "</H3>");
+                + TagParser.parse(msg.getString("Report.Matches_for_X1_AND_X2"), new String[]{match.subName(0), match.subName(1)})
+                + "</H3>");
         f.println(" <H1 align=\"center\">" + match.roundedPercent() + "%</H1>\n<CENTER>");
         f.println(" <A HREF=\"index.html#matches\" TARGET=\"_top\">" + msg.getString("Report.INDEX") + "</A> - ");
         f.println(" <A HREF=\"help-" + program.getCountryTag() + ".html\" TARGET=\"_top\">" + msg.getString("Report.HELP")
-                  + "</A></CENTER>");
+                + "</A></CENTER>");
         f.println("</BODY>\n</HTML>");
         f.close();
         return f.bytesWritten();
@@ -760,16 +845,13 @@ public class Report implements TokenConstants {
         return f.bytesWritten();
     }
 
-    // SUBMISSION - here it comes...
-    private final String[] pics = { "forward.gif", "back.gif" };
-
     /*
      * i is the number of the match j == 0 if subA is considered, otherwise (j
      * must then be 1) it is subB
      */
     private int writeNormalSubmission(int i, AllMatches match, int j) throws jplag.ExitException {
         Submission sub = (j == 0 ? match.subA : match.subB);
-        String files[] = match.files(j);
+        String[] files = match.files(j);
 
         String[][] text = sub.readFiles(files);
 
@@ -786,9 +868,9 @@ public class Report implements TokenConstants {
             for (int y = 0; y < files.length; y++) {
                 if (start.file.equals(files[y]) && text[y] != null) {
                     hilf = "<FONT color=\"" + Colors.getColor(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
-                        + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
-                        + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
-                        + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";
+                            + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
+                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
+                            + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";
                     // position the icon and the beginning of the colorblock
                     if (text[y][start.getLine() - 1].endsWith("</FONT>"))
                         text[y][start.getLine() - 1] += hilf;
@@ -799,7 +881,7 @@ public class Report implements TokenConstants {
                     text[y][h] = "<A NAME=\"" + x + "\"></A>" + text[y][h];
                     // mark the end
                     if (start.getLine() != ende.getLine() && // if match is only one line
-                        text[y][ende.getLine() - 1].startsWith("<FONT "))
+                            text[y][ende.getLine() - 1].startsWith("<FONT "))
                         text[y][ende.getLine() - 1] = "</B></FONT>" + text[y][ende.getLine() - 1];
                     else
                         text[y][ende.getLine() - 1] += "</B></FONT>";
@@ -839,7 +921,7 @@ public class Report implements TokenConstants {
      */
     private int writeIndexedSubmission(int i, AllMatches match, int j) throws jplag.ExitException {
         Submission sub = (j == 0 ? match.subA : match.subB);
-        String files[] = match.files(j);
+        String[] files = match.files(j);
         char[][] text = sub.readFilesChar(files);
         Token[] tokens = (j == 0 ? match.subA : match.subB).struct.tokens;
 
@@ -911,22 +993,22 @@ public class Report implements TokenConstants {
      */
     private int writeImprovedSubmission(int i, AllMatches match, int j) throws jplag.ExitException {
         Submission sub = (j == 0 ? match.subA : match.subB);
-        String files[] = match.files(j);
+        String[] files = match.files(j);
         String[][] text = sub.readFiles(files);
         Token[] tokens = (j == 0 ? match.subA : match.subB).struct.tokens;
 
         // Markup list:
         Comparator<MarkupText> comp = new Comparator<MarkupText>() {
-                public int compare(MarkupText mo1, MarkupText mo2) {
-                    int col1 = mo1.column;
-                    int col2 = mo2.column;
-                    if (col1 > col2)
-                        return -1;
-                    else if (col1 < col2)
-                        return 1;
-                    return (mo1.frontMarkup ? -1 : 1);
-                }
-            };
+            public int compare(MarkupText mo1, MarkupText mo2) {
+                int col1 = mo1.column;
+                int col2 = mo2.column;
+                if (col1 > col2)
+                    return -1;
+                else if (col1 < col2)
+                    return 1;
+                return (mo1.frontMarkup ? -1 : 1);
+            }
+        };
         TreeMap<MarkupText, Object> markupList = new TreeMap<MarkupText, Object>(comp);
 
         for (int x = 0; x < match.size(); x++) {
@@ -937,15 +1019,15 @@ public class Report implements TokenConstants {
             for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
                 if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
                     String tmp = "<FONT color=\"" + Colors.getColor(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
-                        + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
-                        + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
-                        + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";
+                            + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
+                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
+                            + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";
                     // position the icon and the beginning of the colorblock
                     markupList.put(new MarkupText(fileIndex, start.getLine() - 1, start.getColumn() - 1, tmp, true), null);
                     // mark the end
                     markupList
-                        .put(new MarkupText(fileIndex, end.getLine() - 1, end.getColumn() + end.getLength() - 1, "</B></FONT>", false),
-                             null);
+                            .put(new MarkupText(fileIndex, end.getLine() - 1, end.getColumn() + end.getLength() - 1, "</B></FONT>", false),
+                                    null);
 
                     // the link location is placed 3 lines before the start of a block
                     int linkLine = (start.getLine() - 4 < 0 ? 0 : start.getLine() - 4);
@@ -955,7 +1037,7 @@ public class Report implements TokenConstants {
         }
 
         // Apply changes:
-        for (Iterator<MarkupText> iter = markupList.keySet().iterator(); iter.hasNext();) {
+        for (Iterator<MarkupText> iter = markupList.keySet().iterator(); iter.hasNext(); ) {
             MarkupText markup = iter.next();
             //System.out.println(markup);
             String tmp = text[markup.fileIndex][markup.lineIndex];
@@ -995,7 +1077,7 @@ public class Report implements TokenConstants {
                 text[markup.fileIndex][markup.lineIndex] = tmpVStr;
             } else {
                 text[markup.fileIndex][markup.lineIndex] = tmp.substring(0, Math.max(0, (tmp.length() > markup.column ? markup.column : tmp.length())))
-                    + markup.text + tmp.substring(Math.max(0, (tmp.length() > markup.column ? markup.column : tmp.length())));
+                        + markup.text + tmp.substring(Math.max(0, (tmp.length() > markup.column ? markup.column : tmp.length())));
             }
         }
 
@@ -1028,22 +1110,22 @@ public class Report implements TokenConstants {
      */
     private int writeSubmissionDiff(int i, AllMatches match, int j) throws jplag.ExitException {
         Submission sub = (j == 0 ? match.subA : match.subB);
-        String files[] = match.allFiles(j);
+        String[] files = match.allFiles(j);
 
         String[][] text = sub.readFiles(files);
         for (int x = 0; x < text.length; x++) {
             for (int line = 0; line < text[x].length; line++) {
                 switch (match.diffType(files[x], line + 1, j)) {
-                case 0:
-                    text[x][line] = "<FONT COLOR=\"#000000\">" + text[x][line] + "</FONT>";
-                    break;
-                case 1:
-                    text[x][line] = "<FONT COLOR=\"#0000FF\">" + text[x][line] + "</FONT>";
-                    break;
-                case 2:
-                default:
-                    text[x][line] = "<FONT COLOR=\"#FF0000\">" + text[x][line] + "</FONT>";
-                    break;
+                    case 0:
+                        text[x][line] = "<FONT COLOR=\"#000000\">" + text[x][line] + "</FONT>";
+                        break;
+                    case 1:
+                        text[x][line] = "<FONT COLOR=\"#0000FF\">" + text[x][line] + "</FONT>";
+                        break;
+                    case 2:
+                    default:
+                        text[x][line] = "<FONT COLOR=\"#FF0000\">" + text[x][line] + "</FONT>";
+                        break;
                 }
             }
         }
@@ -1062,12 +1144,6 @@ public class Report implements TokenConstants {
         f.close();
         return f.bytesWritten();
     }
-
-    /*
-     * This procedure copies all the data from "data/" into the
-     * result-directory.
-     */
-    private String[] fileList = { "back.gif", "forward.gif", "help-en.html", "help-sim-en.html", "logo.gif", "fields.js" };
 
     public void copyFixedFiles(File root) {
         fileList[2] = "help-" + program.getCountryTag() + ".html";
@@ -1096,6 +1172,10 @@ public class Report implements TokenConstants {
             }
         }
     }
+
+    abstract class MatchesHelper {
+        public abstract float getPercent(AllMatches matches);
+    }
 }
 
 /**
@@ -1104,19 +1184,19 @@ public class Report implements TokenConstants {
  * the original position can be found.
  */
 class MarkupText {
-	public int fileIndex, lineIndex, column;
-	public String text;
-	public boolean frontMarkup = false;
+    public int fileIndex, lineIndex, column;
+    public String text;
+    public boolean frontMarkup = false;
 
-	public MarkupText(int fileIndex, int lineIndex, int column, String text, boolean frontMarkup) {
-		this.fileIndex = fileIndex;
-		this.lineIndex = lineIndex;
-		this.column = column;
-		this.text = text;
-		this.frontMarkup = frontMarkup;
-	}
+    public MarkupText(int fileIndex, int lineIndex, int column, String text, boolean frontMarkup) {
+        this.fileIndex = fileIndex;
+        this.lineIndex = lineIndex;
+        this.column = column;
+        this.text = text;
+        this.frontMarkup = frontMarkup;
+    }
 
-	public String toString() {
-		return "MarkUp - file: " + fileIndex + " line: " + lineIndex + " column: " + column + " text: " + text;
-	}
+    public String toString() {
+        return "MarkUp - file: " + fileIndex + " line: " + lineIndex + " column: " + column + " text: " + text;
+    }
 }

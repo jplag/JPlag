@@ -43,6 +43,8 @@ public abstract class Options {
 			"scheme", "jplag.scheme.Language",
 			"scala", "jplag.scala.Language",
 			"json", "jplag.json.Language",
+			"php", "jplag.generic.PhpLanguage",
+			"javascript", "jplag.generic.JavascriptLanguage",
 			};// @formatter:on
 
 	public static final int MIN_CLUSTER = 1;

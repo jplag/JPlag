@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jplag</artifactId>
-    <version>2.14.1-SNAPSHOT</version>
+    <version>2.14.2-SNAPSHOT</version>
 
     <parent>
         <groupId>edu.kit.ipd.jplag</groupId>
@@ -233,6 +233,15 @@
         <dependency>
             <groupId>edu.kit.ipd.jplag</groupId>
             <artifactId>json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.kit.ipd.jplag</groupId>
+            <artifactId>generic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20190722</version>
         </dependency>
     </dependencies>
 </project>
