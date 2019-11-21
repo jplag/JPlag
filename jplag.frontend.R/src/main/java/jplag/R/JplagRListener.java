@@ -1,6 +1,7 @@
 package jplag.R;
 
 import jplag.R.grammar.*;
+import jplag.TokenAdder;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -9,16 +10,16 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 /*
 Esta clase se encarga de implementar los métodos clase RListener que se genera por ANTLR4 de forma que cada vez que se reconozca un Token del lenguaje
 se entrará en su "enter<NombredelToken>" y "exit<NombredelToken>" y en caso de ser un token importante (es decir, que sea relevante considerarlo a la hora de identificar plagio)
-tan solo tendremos que irnos a su método he implementarlo haciendo un jplagParser.add o un jplagParser.addEnd (en caso de que sea un exit) con el nombre del token que le hayamos 
+tan solo tendremos que irnos a su método he implementarlo haciendo un creator.add o un creator.addEnd (en caso de que sea un exit) con el nombre del token que le hayamos 
 asociado en RToken.java y RTokenConstants.java .
 */
 
 public class JplagRListener implements RListener,RFilterListener, RTokenConstants {
 
-    private jplag.R.Parser jplagParser;
+    private RTokenCreator creator;
 
-    public JplagRListener(jplag.R.Parser jplag) {
-        jplagParser = jplag;
+    public JplagRListener(RTokenCreator creator) {
+        this.creator = creator;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterIndex_statement(RParser.Index_statementContext ctx){
-		jplagParser.add(INDEX, ctx.getStart());
+		creator.add(INDEX, ctx.getStart());
 	}
 	
 	@Override
@@ -53,7 +54,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterAccess_package(RParser.Access_packageContext ctx){
-		jplagParser.add(PACKAGE, ctx.getStart());
+		creator.add(PACKAGE, ctx.getStart());
 	}
 	
 	@Override
@@ -63,17 +64,17 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterFunction_definition(RParser.Function_definitionContext ctx){
-		jplagParser.add(BEGIN_FUNCTION, ctx.getStart());
+		creator.add(BEGIN_FUNCTION, ctx.getStart());
 	}
 	
 	@Override
 	public void exitFunction_definition(RParser.Function_definitionContext ctx){
-		jplagParser.addEnd(END_FUNCTION, ctx.getStart());
+		creator.addEnd(END_FUNCTION, ctx.getStart());
 	}
 	
 	@Override
 	public void enterFunction_call(RParser.Function_callContext ctx){
-		jplagParser.add(FUNCTION_CALL, ctx.getStart());
+		creator.add(FUNCTION_CALL, ctx.getStart());
 	}
 	
 	@Override
@@ -93,7 +94,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterConstant_number(RParser.Constant_numberContext ctx){
-		jplagParser.add(NUMBER, ctx.getStart());
+		creator.add(NUMBER, ctx.getStart());
 	}
 	
 	@Override
@@ -103,7 +104,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterConstant_string(RParser.Constant_stringContext ctx){
-		jplagParser.add(STRING, ctx.getStart());
+		creator.add(STRING, ctx.getStart());
 	}
 	
 	@Override
@@ -113,7 +114,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterConstant_bool(RParser.Constant_boolContext ctx){
-		jplagParser.add(BOOL, ctx.getStart());
+		creator.add(BOOL, ctx.getStart());
 	}
 	
 	@Override
@@ -123,7 +124,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterHelp(RParser.HelpContext ctx){
-		jplagParser.add(HELP, ctx.getStart());
+		creator.add(HELP, ctx.getStart());
 	}
 	
 	@Override
@@ -133,47 +134,47 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterIf_statement(RParser.If_statementContext ctx){
-		jplagParser.add(IF_BEGIN, ctx.getStart());
+		creator.add(IF_BEGIN, ctx.getStart());
 	}
 	
 	@Override
 	public void exitIf_statement(RParser.If_statementContext ctx){
-		jplagParser.addEnd(IF_END, ctx.getStart());
+		creator.addEnd(IF_END, ctx.getStart());
 	}
 	
 	@Override
 	public void enterFor_statement(RParser.For_statementContext ctx){
-		jplagParser.add(FOR_BEGIN, ctx.getStart());
+		creator.add(FOR_BEGIN, ctx.getStart());
 	}
 	
 	@Override
 	public void exitFor_statement(RParser.For_statementContext ctx){
-		jplagParser.addEnd(FOR_END, ctx.getStart());
+		creator.addEnd(FOR_END, ctx.getStart());
 	}
 	
 	@Override
 	public void enterWhile_statement(RParser.While_statementContext ctx){
-		jplagParser.add(WHILE_BEGIN, ctx.getStart());
+		creator.add(WHILE_BEGIN, ctx.getStart());
 	}
 	
 	@Override
 	public void exitWhile_statement(RParser.While_statementContext ctx){
-		jplagParser.addEnd(WHILE_END, ctx.getStart());
+		creator.addEnd(WHILE_END, ctx.getStart());
 	}
 	
 	@Override
 	public void enterRepeat_statement(RParser.Repeat_statementContext ctx){
-		jplagParser.add(REPEAT_BEGIN, ctx.getStart());
+		creator.add(REPEAT_BEGIN, ctx.getStart());
 	}
 	
 	@Override
 	public void exitRepeat_statement(RParser.Repeat_statementContext ctx){
-		jplagParser.addEnd(REPEAT_END, ctx.getStart());
+		creator.addEnd(REPEAT_END, ctx.getStart());
 	}
 	
 	@Override
 	public void enterNext_statement(RParser.Next_statementContext ctx){
-		jplagParser.add(NEXT, ctx.getStart());
+		creator.add(NEXT, ctx.getStart());
 	}
 	
 	@Override
@@ -183,7 +184,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterBreak_statement(RParser.Break_statementContext ctx){
-		jplagParser.add(BREAK, ctx.getStart());
+		creator.add(BREAK, ctx.getStart());
 	}
 	
 	@Override
@@ -193,12 +194,12 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterCompound_statement(RParser.Compound_statementContext ctx){
-		jplagParser.add(COMPOUND_BEGIN, ctx.getStart());
+		creator.add(COMPOUND_BEGIN, ctx.getStart());
 	}
 	
 	@Override
 	public void exitCompound_statement(RParser.Compound_statementContext ctx){
-		jplagParser.addEnd(COMPOUND_END, ctx.getStart());
+		creator.addEnd(COMPOUND_END, ctx.getStart());
 	}
 	
 	@Override
@@ -253,7 +254,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterAssign_value(RParser.Assign_valueContext ctx){
-		jplagParser.add(ASSIGN, ctx.getStart());
+		creator.add(ASSIGN, ctx.getStart());
 	}
 	
 	@Override
@@ -263,7 +264,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterAssign_func_declaration(RParser.Assign_func_declarationContext ctx){
-		jplagParser.add(ASSIGN_FUNC, ctx.getStart());
+		creator.add(ASSIGN_FUNC, ctx.getStart());
 	}
 	
 	@Override
@@ -273,7 +274,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	
 	@Override
 	public void enterAssign_value_list(RParser.Assign_value_listContext ctx){
-		jplagParser.add(ASSIGN_LIST, ctx.getStart());
+		creator.add(ASSIGN_LIST, ctx.getStart());
 	}
 	
 	@Override
@@ -346,7 +347,7 @@ public class JplagRListener implements RListener,RFilterListener, RTokenConstant
 	@Override
 	public void visitTerminal(TerminalNode node){
 		if (node.getText().equals("=")) {
-            jplagParser.add(ASSIGN, node.getSymbol());
+            creator.add(ASSIGN, node.getSymbol());
         }
 	}
 	

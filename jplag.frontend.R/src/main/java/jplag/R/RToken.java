@@ -97,8 +97,10 @@ public class RToken extends jplag.Token implements RTokenConstants {
     }
   }
   
-  public static int numberOfTokens() { 
+  public int numberOfTokens() {
     return NUM_DIFF_TOKENS;
-  } 
+  }
+
+  static public int staticNumberOfTokens() { return NUM_DIFF_TOKENS; }
 }
 
