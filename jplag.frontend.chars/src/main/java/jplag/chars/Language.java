@@ -65,7 +65,7 @@ public class Language implements jplag.Language {
 	}
 
 	public int noOfTokens() {
-		return jplag.chars.CharToken.numberOfTokens();
+		return CharToken.staticNmberOfTokens();
 	}
 
 	public String type2string(int type) {

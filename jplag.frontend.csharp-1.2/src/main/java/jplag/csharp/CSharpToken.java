@@ -76,8 +76,9 @@ public class CSharpToken extends jplag.Token implements CSharpTokenConstants {
     default:                      return "<UNKNOWN> ";
     }
   }
-  
-  public static int numberOfTokens() { 
+
+  @Override
+  public int numberOfTokens() {
     return NUM_DIFF_TOKENS;
   } 
 }

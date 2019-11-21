@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>json</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<repositories>
+		<repository>
+			<id>ipdNexus</id>
+			<name>Recaa Repository</name>
+			<url>http://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<configuration>
+					<sources>
+						<source>target/generated-sources/antlr4</source>
+					</sources>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate-antlr-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>compile-with-antlr-sources</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>4.2</version>
+				<configuration>
+					<!-- Comma separated list of grammar files or pattern grammar files
+						By default, grammar file(s) is in ${basedir}/src/main/antlr -->
+					<!-- <grammars>*.g</grammars> -->
+					<grammars>Json.g4</grammars>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>jplag.json.Parser</mainClass>
+							<packageName>jplag.json</packageName>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>edu.kit.ipd.jplag</groupId>
+			<artifactId>frontend-utils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+		</dependency>
+	</dependencies>
+	<parent>
+		<groupId>edu.kit.ipd.jplag</groupId>
+		<artifactId>parent</artifactId>
+		<version>0.3-SNAPSHOT</version>
+		<relativePath>../jplag.parent/pom.xml</relativePath>
+	</parent>
+</project>

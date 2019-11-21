@@ -1,20 +1,21 @@
 package jplag.csharp;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
-import jplag.StrippedProgram;
-import jplag.Structure;
-import jplag.UnicodeReader;
+import jplag.*;
 import jplag.csharp.grammar.CSharpLexer;
 import jplag.csharp.grammar.CSharpParser;
+import org.jetbrains.annotations.NotNull;
 
-public class Parser extends jplag.Parser implements CSharpTokenConstants {
+public class Parser extends StreamParser implements CSharpTokenConstants {
 	private Structure struct;
 	private String currentFile;
+
+	@NotNull
+	@Override
+	public Token getEndOfFileToken(String file) {
+		return new CSharpToken(FILE_END, file, -1, -1, -1);
+	}
 
 	public static void main(String args[]) {
 		if (args.length != 1) {
@@ -54,55 +55,24 @@ public class Parser extends jplag.Parser implements CSharpTokenConstants {
 		}
 	}
 
-	public jplag.Structure parse(File dir, String files[]) {
-		struct = new Structure();
-		errors = 0;
-		for (int i = 0; i < files.length; i++) {
-			//			getProgram().print(null, "Parsing file " + files[i] + "\n");
-			if (!parseFile(dir, files[i]))
-				errors++;
-			struct.addToken(new CSharpToken(FILE_END, files[i], -1, -1, -1));
-		}
-		this.parseEnd();
-		return struct;
-	}
-
-	private boolean parseFile(File dir, String file) {
+	@Override
+	public boolean parseStream(@NotNull InputStream stream, @NotNull final TokenAdder adder) throws IOException {
 		try {
-			FileInputStream fis = new FileInputStream(new File(dir, file));
-			currentFile = file;
-			// Create a scanner that reads from the input stream passed to us
-			CSharpLexer lexer = new CSharpLexer(new UnicodeReader(fis, "UTF-8"));
-			lexer.setFilename(file);
+			CSharpLexer lexer = new CSharpLexer(new UnicodeReader(stream, "UTF-8"));
+			lexer.setFilename(adder.currentFile);
 			lexer.setTabSize(1);
 
 			// Create a parser that reads from the scanner
 			CSharpParser parser = new CSharpParser(lexer);
-			parser.setFilename(file);
-			parser.parser = this;//Added by emeric 22.01.05
+			parser.setFilename(adder.currentFile);
+			parser.parser = new CSharpTokenAdder(adder);//Added by emeric 22.01.05
 			// start parsing at the compilationUnit rule
 			parser.compilation_unit();
-
-			// close file
-			fis.close();
 		} catch (Exception e) {
-			getProgram().addError("  Parsing Error in '" + file + "':\n  " + e.toString() + "\n");
+			getProgram().addError("  Parsing Error in '" + adder.currentFile + "':\n  " + e.toString() + "\n");
 			return false;
 		}
+
 		return true;
-	}
-
-	public void add(int type, antlr.Token tok) {
-		if (tok == null) {
-			System.out.println("tok == null  ERROR!");
-			return;
-		}
-		struct.addToken(new CSharpToken(type, currentFile, tok.getLine(), tok.getColumn(), tok.getText().length()));
-		//     System.out.println("type: " + CSharpToken.type2string(type) +
-		// 		       " text: '"+tok.getText()+"'");
-	}
-
-	public void add(int type, CSharpParser p) {
-		add(type, p.getLastConsumedToken());
 	}
 }

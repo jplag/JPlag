@@ -149,7 +149,7 @@ tokens
 	
 // extended consume routine:
 {
-public jplag.csharp.Parser parser ;
+public jplag.csharp.CSharpTokenAdder parser ;
     private Token lastConsumedToken = null;
     public void consume() {
         try {

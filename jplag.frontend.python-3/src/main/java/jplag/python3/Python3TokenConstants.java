@@ -35,6 +35,7 @@ public interface Python3TokenConstants extends jplag.TokenConstants {
     final static int DEL = 30;
     final static int WITH_BEGIN = 31;
     final static int WITH_END = 32;
+    int MAGIC_STMT = 33;
 
-    final static int NUM_DIFF_TOKENS = 33;
+    final static int NUM_DIFF_TOKENS = 34;
 }

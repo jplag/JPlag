@@ -58,7 +58,7 @@ public class Language implements jplag.Language {
 	}
 
 	public int noOfTokens() {
-		return jplag.scheme.SchemeToken.numberOfTokens();
+		return jplag.scheme.SchemeToken.staticNumberOfTokens();
 	}
 
 	public String type2string(int type) {

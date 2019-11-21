@@ -19,7 +19,7 @@ abstract public class Token implements TokenConstants, Serializable {
 	public Token(int type, String file, int line, int column, int length) {
 		this.type = type;
 		this.file = file;
-		setLine(line>0 ? line : 1);
+		setLine(line > 0 ? line : 1);
 		setColumn(column);
 		setLength(length);
 	}
@@ -44,7 +44,5 @@ abstract public class Token implements TokenConstants, Serializable {
 		return type2string(type);
 	}
 	
-	public static int numberOfTokens() { 
-		return 1;
-	} 
+	abstract public int numberOfTokens();
 }

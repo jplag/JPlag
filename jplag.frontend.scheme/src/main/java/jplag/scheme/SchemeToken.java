@@ -65,8 +65,11 @@ public class SchemeToken extends jplag.Token implements SchemeTokenConstants {
     default:                 return "<?????> ";
     }
   }
-  
-  public static int numberOfTokens() { 
+
+  @Override
+  public int numberOfTokens() {
     return NUM_DIFF_TOKENS;
-  } 
+  }
+
+  public static int staticNumberOfTokens() { return NUM_DIFF_TOKENS; }
 }

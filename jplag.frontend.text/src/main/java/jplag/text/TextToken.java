@@ -2,13 +2,14 @@ package jplag.text;
 
 public class TextToken extends jplag.Token {
 	private static final long serialVersionUID = 4301179216570538972L;
+	private static final int MAX_AMOUNT_TOKENS = Integer.MAX_VALUE / 4;
 
 	public static int getSerial(String text, Parser parser) {
         text = text.toLowerCase();
         Integer obj = parser.tokenStructure.table.get(text);
         if(obj == null) {
             obj = parser.tokenStructure.serial;
-            if (parser.tokenStructure.serial == Integer.MAX_VALUE)
+            if (parser.tokenStructure.serial == MAX_AMOUNT_TOKENS)
                 parser.outOfSerials();
             else
                 parser.tokenStructure.serial++;
@@ -71,7 +72,8 @@ public class TextToken extends jplag.Token {
         return this.text;
     }
 
-    public static int numberOfTokens(TokenStructure tokenStructure) {
-        return tokenStructure.table.size();
+    @Override
+    public int numberOfTokens() {
+        return MAX_AMOUNT_TOKENS;
     }
 }

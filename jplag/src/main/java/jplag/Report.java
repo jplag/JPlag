@@ -62,12 +62,16 @@ public class Report implements TokenConstants {
         if (this.program.use_clustering())
             writeClusters(clustering);
 
-        copyFixedFiles(f);
-        writeMatches(avgmatches);
-        if (maxmatches != null)
-            writeMatches(maxmatches);
-        if (minmatches != null)
-            writeMatches(minmatches);
+        try {
+            copyFixedFiles(f);
+            writeMatches(avgmatches);
+            if (maxmatches != null)
+                writeMatches(maxmatches);
+            if (minmatches != null)
+                writeMatches(minmatches);
+        } catch (Exception ignored) {
+            // OK
+        }
     }
 
     // open file

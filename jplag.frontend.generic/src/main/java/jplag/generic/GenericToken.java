@@ -1,6 +1,9 @@
 package jplag.generic;
 
+import jplag.CommandExecutor;
+import jplag.Tuple3;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public abstract class GenericToken extends jplag.Token implements GenericTokenConstants {
     private static final long serialVersionUID = -383581430479870696L;
@@ -12,7 +15,7 @@ public abstract class GenericToken extends jplag.Token implements GenericTokenCo
         super(type, file, line, column, length);
     }
 
-//    abstract protected String getCommand();
+    abstract protected String getCommand();
 //
 //    public static String type2string(int type) {
 //        try {
@@ -26,18 +29,20 @@ public abstract class GenericToken extends jplag.Token implements GenericTokenCo
 //
 //        }
 //    }
-//
-//    public static int numberOfTokens() {
-//        if (amountOfTokens == null) {
-//            try {
-//                Tuple3<Integer, String, String> res = CommandExecutor.execute(getCommand(), "", "AMOUNT");
-//                amountOfTokens = Integer.parseInt(res.getB(), 10);
-//            } catch (Exception e) {
-//                return 1000;  // Simply do something
-//            }
-//        }
-//        return amountOfTokens;
-//    }
+
+    @Override
+    public int numberOfTokens() {
+        if (amountOfTokens == null) {
+            try {
+                Tuple3<Integer, String, String> res = CommandExecutor.execute(getCommand(), "", "AMOUNT");
+                amountOfTokens = Integer.parseInt(res.getB().trim(), 10);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 1000;  // Simply do something
+            }
+        }
+        return amountOfTokens;
+    }
 
     public int getLine() {
         return line;

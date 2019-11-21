@@ -19,38 +19,39 @@ import java.io.*;
 import jplag.*;
 
 public class CPPScanner implements CPPTokenConstants {
-    private static Scanner scanner2;
-    public static boolean scanFile(File dir, String fileName,
-        jplag.cpp.CPPScanner scanner, jplag.cpp.Scanner scannerX)
-    {
+    private static CPPTokenCreator scanner2;
+
+    public static boolean scanStream(
+            InputStream stream,
+            jplag.cpp.CPPScanner scanner,
+            String fileName,
+            jplag.cpp.CPPTokenCreator scannerX,
+            ProgramI program
+    ) {
         try {
-            InputStream in = new NewlineStream(
-                new FileInputStream(new File(dir,fileName)));
-              if (scanner==null) {
-                scanner = new CPPScanner(in);
+            InputStream in = new NewlineStream(stream);
+              if (scanner == null) {
+                  scanner = new CPPScanner(in);
               } else {
-                scanner.ReInit(in);
+                  scanner.ReInit(in);
               }
-              scanner.scanner2=scannerX;
-        } catch (FileNotFoundException e) {
-              System.out.println("C/C++ Scanner:  File " + fileName + " not found.");
+
+              scanner.scanner2 = scannerX;
+        } catch (Exception e) {
               return false;
         }
+
         try {
               scanner.scan();
         } catch (ParseException e) {
-              scannerX.getProgram().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
+              program.addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
               return false;
         } catch (TokenMgrError e) {
-              scannerX.getProgram().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
+              program.addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
               return false;
         }
         return true;
     }
-
-/*    public static void main(String args[]) {
-        scanFile(new File("."),args[0]);
-    }*/
 }
 PARSER_END(CPPScanner)
 

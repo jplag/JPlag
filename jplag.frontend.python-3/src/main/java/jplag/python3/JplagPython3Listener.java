@@ -1,5 +1,6 @@
 package jplag.python3;
 
+import jplag.TokenAdder;
 import jplag.python3.grammar.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
@@ -8,10 +9,10 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class JplagPython3Listener implements Python3Listener, Python3TokenConstants {
 
-    private jplag.python3.Parser jplagParser;
+    private PythonTokenCreator creator;
 
-    public JplagPython3Listener(jplag.python3.Parser jplag) {
-        jplagParser = jplag;
+    JplagPython3Listener(PythonTokenCreator creator) {
+        this.creator = creator;
     }
 
     @Override
@@ -24,7 +25,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterAssert_stmt(@NotNull Python3Parser.Assert_stmtContext ctx) {
-        jplagParser.add(ASSERT, ctx.getStart());
+        this.creator.add(ASSERT, ctx.getStart());
     }
 
     @Override
@@ -81,12 +82,12 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterDecorated(@NotNull Python3Parser.DecoratedContext ctx) {
-        jplagParser.add(DEC_BEGIN, ctx.getStart());
+        this.creator.add(DEC_BEGIN, ctx.getStart());
     }
 
     @Override
     public void exitDecorated(@NotNull Python3Parser.DecoratedContext ctx) {
-        jplagParser.addEnd(DEC_END, ctx.getStart());
+        this.creator.addEnd(DEC_END, ctx.getStart());
     }
 
     @Override
@@ -99,7 +100,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterRaise_stmt(@NotNull Python3Parser.Raise_stmtContext ctx) {
-        jplagParser.add(RAISE, ctx.getStart());
+        this.creator.add(RAISE, ctx.getStart());
     }
 
     @Override
@@ -116,12 +117,12 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterExcept_clause(@NotNull Python3Parser.Except_clauseContext ctx) {
-        jplagParser.add(EXCEPT_BEGIN, ctx.getStart());
+        this.creator.add(EXCEPT_BEGIN, ctx.getStart());
     }
 
     @Override
     public void exitExcept_clause(@NotNull Python3Parser.Except_clauseContext ctx) {
-        jplagParser.addEnd(EXCEPT_END, ctx.getStart());
+        this.creator.addEnd(EXCEPT_END, ctx.getStart());
     }
 
     @Override
@@ -150,7 +151,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterDictorsetmaker(@NotNull Python3Parser.DictorsetmakerContext ctx) {
-        jplagParser.add(ARRAY, ctx.getStart());
+        this.creator.add(ARRAY, ctx.getStart());
     }
 
     @Override
@@ -159,7 +160,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterReturn_stmt(@NotNull Python3Parser.Return_stmtContext ctx) {
-        jplagParser.add(RETURN, ctx.getStart());
+        this.creator.add(RETURN, ctx.getStart());
     }
 
     @Override
@@ -184,12 +185,12 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterWhile_stmt(@NotNull Python3Parser.While_stmtContext ctx) {
-        jplagParser.add(WHILE_BEGIN, ctx.getStart());
+        this.creator.add(WHILE_BEGIN, ctx.getStart());
     }
 
     @Override
     public void exitWhile_stmt(@NotNull Python3Parser.While_stmtContext ctx) {
-        jplagParser.addEnd(WHILE_END, ctx.getStart());
+        this.creator.addEnd(WHILE_END, ctx.getStart());
     }
 
     @Override
@@ -234,7 +235,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterYield_arg(@NotNull Python3Parser.Yield_argContext ctx) {
-        jplagParser.add(YIELD, ctx.getStart());
+        this.creator.add(YIELD, ctx.getStart());
     }
 
     @Override
@@ -251,7 +252,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterImport_stmt(@NotNull Python3Parser.Import_stmtContext ctx) {
-        jplagParser.add(IMPORT, ctx.getStart());
+        this.creator.add(IMPORT, ctx.getStart());
     }
 
     @Override
@@ -268,7 +269,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterLambdef(@NotNull Python3Parser.LambdefContext ctx) {
-        jplagParser.add(LAMBDA, ctx.getStart());
+        this.creator.add(LAMBDA, ctx.getStart());
     }
 
     @Override
@@ -309,7 +310,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterTry_stmt(@NotNull Python3Parser.Try_stmtContext ctx) {
-        jplagParser.add(TRY_BEGIN, ctx.getStart());
+        this.creator.add(TRY_BEGIN, ctx.getStart());
     }
 
     @Override
@@ -334,7 +335,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterBreak_stmt(@NotNull Python3Parser.Break_stmtContext ctx) {
-        jplagParser.add(BREAK, ctx.getStart());
+        this.creator.add(BREAK, ctx.getStart());
     }
 
     @Override
@@ -368,7 +369,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
     @Override
     public void enterTestlist_comp(@NotNull Python3Parser.Testlist_compContext ctx) {
         if (ctx.getText().contains(",")) {
-            jplagParser.add(ARRAY, ctx.getStart());
+            this.creator.add(ARRAY, ctx.getStart());
         }
     }
 
@@ -378,32 +379,32 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterIf_stmt(@NotNull Python3Parser.If_stmtContext ctx) {
-        jplagParser.add(IF_BEGIN, ctx.getStart());
+        this.creator.add(IF_BEGIN, ctx.getStart());
     }
 
     @Override
     public void exitIf_stmt(@NotNull Python3Parser.If_stmtContext ctx) {
-        jplagParser.addEnd(IF_END, ctx.getStart());
+        this.creator.addEnd(IF_END, ctx.getStart());
     }
 
     @Override
     public void enterWith_stmt(@NotNull Python3Parser.With_stmtContext ctx) {
-        jplagParser.add(WITH_BEGIN, ctx.getStart());
+        this.creator.add(WITH_BEGIN, ctx.getStart());
     }
 
     @Override
     public void exitWith_stmt(@NotNull Python3Parser.With_stmtContext ctx) {
-        jplagParser.addEnd(WITH_END, ctx.getStart());
+        this.creator.addEnd(WITH_END, ctx.getStart());
     }
 
     @Override
     public void enterClassdef(@NotNull Python3Parser.ClassdefContext ctx) {
-        jplagParser.add(CLASS_BEGIN, ctx.getStart());
+        this.creator.add(CLASS_BEGIN, ctx.getStart());
     }
 
     @Override
     public void exitClassdef(@NotNull Python3Parser.ClassdefContext ctx) {
-        jplagParser.addEnd(CLASS_END, ctx.getStart());
+        this.creator.addEnd(CLASS_END, ctx.getStart());
     }
 
     @Override
@@ -425,9 +426,9 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
     @Override
     public void enterTrailer(@NotNull Python3Parser.TrailerContext ctx) {
         if (ctx.getText().charAt(0)=='(') {
-            jplagParser.add(APPLY, ctx.getStart());
-        } else {
-            jplagParser.add(ARRAY, ctx.getStart());
+            this.creator.add(APPLY, ctx.getStart());
+        } else if (ctx.getText().charAt(0) == '['){
+            this.creator.add(ARRAY, ctx.getStart());
         }
     }
 
@@ -525,12 +526,12 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterFuncdef(@NotNull Python3Parser.FuncdefContext ctx) {
-        jplagParser.add(METHOD_BEGIN, ctx.getStart());
+        this.creator.add(METHOD_BEGIN, ctx.getStart());
     }
 
     @Override
     public void exitFuncdef(@NotNull Python3Parser.FuncdefContext ctx) {
-        jplagParser.addEnd(METHOD_END, ctx.getStart());
+        this.creator.addEnd(METHOD_END, ctx.getStart());
     }
 
     @Override
@@ -599,7 +600,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterAugassign(@NotNull Python3Parser.AugassignContext ctx) {
-        jplagParser.add(ASSIGN, ctx.getStart());
+        this.creator.add(ASSIGN, ctx.getStart());
     }
 
     @Override
@@ -624,7 +625,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterYield_stmt(@NotNull Python3Parser.Yield_stmtContext ctx) {
-        jplagParser.add(YIELD, ctx.getStart());
+        this.creator.add(YIELD, ctx.getStart());
     }
 
     @Override
@@ -641,7 +642,7 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterContinue_stmt(@NotNull Python3Parser.Continue_stmtContext ctx) {
-        jplagParser.add(CONTINUE, ctx.getStart());
+        this.creator.add(CONTINUE, ctx.getStart());
     }
 
     @Override
@@ -666,17 +667,17 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 
     @Override
     public void enterFor_stmt(@NotNull Python3Parser.For_stmtContext ctx) {
-        jplagParser.add(FOR_BEGIN, ctx.getStart());
+        this.creator.add(FOR_BEGIN, ctx.getStart());
     }
 
     @Override
     public void exitFor_stmt(@NotNull Python3Parser.For_stmtContext ctx) {
-        jplagParser.addEnd(FOR_END, ctx.getStart());
+        this.creator.addEnd(FOR_END, ctx.getStart());
     }
 
     @Override
     public void enterDel_stmt(@NotNull Python3Parser.Del_stmtContext ctx) {
-        jplagParser.add(DEL, ctx.getStart());
+        this.creator.add(DEL, ctx.getStart());
     }
 
     @Override
@@ -710,14 +711,15 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
     @Override
     public void visitTerminal(@NotNull TerminalNode node) {
         if (node.getText().equals("=")) {
-            jplagParser.add(ASSIGN, node.getSymbol());
+            this.creator.add(ASSIGN, node.getSymbol());
         } else if (node.getText().equals("finally")) {
-            jplagParser.add(FINALLY, node.getSymbol());
+            this.creator.add(FINALLY, node.getSymbol());
         }
     }
 
     @Override
     public void visitErrorNode(@NotNull ErrorNode node) {
+        System.err.println("Error " + node.toString());
     }
 
 	@Override
@@ -759,4 +761,14 @@ public class JplagPython3Listener implements Python3Listener, Python3TokenConsta
 	@Override
 	public void exitAsync_stmt(Python3Parser.Async_stmtContext ctx) {
 	}
+
+	@Override
+    public void enterMagic_stmt(Python3Parser.Magic_stmtContext ctx) {
+        this.creator.add(MAGIC_STMT, ctx.getStart());
+    }
+
+    @Override
+    public void exitMagic_stmt(Python3Parser.Magic_stmtContext ctx) {
+
+    }
 }

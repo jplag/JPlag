@@ -105,7 +105,8 @@ public class Python3Token extends jplag.Token implements Python3TokenConstants {
         }
     }
 
-    public static int numberOfTokens() {
+    @Override
+    public int numberOfTokens() {
         return NUM_DIFF_TOKENS;
     }
 }

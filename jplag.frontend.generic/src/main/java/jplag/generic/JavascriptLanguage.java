@@ -6,17 +6,10 @@ class JavascriptToken extends GenericToken {
     public JavascriptToken(int type, String file, int line, int column, int length) {
         super(type, file, line, column, length);
     }
-}
-
-class JavascriptParser extends GenericParser {
-    @Override
-    protected GenericToken makeToken(int type, String file, int line, int column, int length) {
-        return new JavascriptToken(type, file, line, column, length);
-    }
 
     @Override
-    protected String getCommandLineProgram() {
-        return "javascript_to_jplag_parser";
+    protected String getCommand() {
+        return JavascriptParser.command;
     }
 }
 

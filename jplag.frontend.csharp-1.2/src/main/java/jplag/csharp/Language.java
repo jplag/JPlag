@@ -56,7 +56,7 @@ public class Language implements jplag.Language {
 	}
 
 	public int noOfTokens() {
-		return jplag.csharp.CSharpToken.numberOfTokens();
+		return parser.getEndOfFileToken("").numberOfTokens();
 	}
 
 	public String type2string(int type) {

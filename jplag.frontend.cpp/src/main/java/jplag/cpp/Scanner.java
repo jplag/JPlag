@@ -1,15 +1,16 @@
 package jplag.cpp;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import jplag.Parser;
+import jplag.StreamParser;
 import jplag.StrippedProgram;
+import jplag.TokenAdder;
+import org.jetbrains.annotations.NotNull;
 
-public class Scanner extends Parser implements CPPTokenConstants {
-	private String actFile;
-
-	private jplag.Structure struct;
-
+public class Scanner extends StreamParser implements CPPTokenConstants {
 	public static void main(String args[]) {
 		System.out.print("File: ");
 		for (int i = 0; i < args.length; i++) {
@@ -20,25 +21,25 @@ public class Scanner extends Parser implements CPPTokenConstants {
 		Scanner scanner = new Scanner();
 		scanner.setProgram(new StrippedProgram());
 
-		scanner.scan(new File("."), args);
+		scanner.parse(new File("."), args);
 	}
 
-	public jplag.Structure scan(File dir, String files[]) {
-		struct = new jplag.Structure();
-		errors = 0;
+	@NotNull
+	@Override
+	public jplag.Token getEndOfFileToken(String file) {
+		return new CPPToken(FILE_END, file, 1);
+	}
+
+	@Override
+	public boolean parseStream(@NotNull InputStream stream, @NotNull TokenAdder adder) throws IOException {
 		CPPScanner scanner = null;// will be initialized in Method scanFile
-		for (int i = 0; i < files.length; i++) {
-			actFile = files[i];
-		    getProgram().print(null, "Scanning file " + files[i] + "\n");
-			if (!CPPScanner.scanFile(dir, files[i], scanner, this))
-				errors++;
-			struct.addToken(new CPPToken(FILE_END, actFile, 1));
-		}
-		this.parseEnd();
-		return struct;
-	}
 
-	public void add(int type, Token token) {
-		struct.addToken(new CPPToken(type, actFile, token.beginLine));
+		return CPPScanner.scanStream(
+				stream,
+				scanner,
+				adder.currentFile,
+				new CPPTokenCreator(adder),
+				this.getProgram()
+		);
 	}
 }

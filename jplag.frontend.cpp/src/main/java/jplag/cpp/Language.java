@@ -52,7 +52,7 @@ public class Language implements jplag.Language {
 	}
 
 	public jplag.Structure parse(File dir, String[] files) {
-		return this.scanner.scan(dir, files);
+		return this.scanner.parse(dir, files);
 	}
 
 	public boolean errors() {
@@ -60,7 +60,7 @@ public class Language implements jplag.Language {
 	}
 
 	public int noOfTokens() {
-		return jplag.cpp.CPPToken.numberOfTokens();
+		return scanner.getEndOfFileToken("").numberOfTokens();
 	}
 
 	public String type2string(int type) {

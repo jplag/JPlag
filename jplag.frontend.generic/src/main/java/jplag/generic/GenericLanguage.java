@@ -46,13 +46,12 @@ abstract public class GenericLanguage implements jplag.Language {
 	}
 
 	public int noOfTokens() {
-		return GenericToken.numberOfTokens();
+		return this.parser.getEndOfFileToken("").numberOfTokens();
 	}
 
 	public String type2string(int type) {
 		return GenericToken.type2string(type);
 	}
-
 
 	public static void debugWithFile(GenericParser parser, String filePath) {
 		String[] args = new String[]{filePath};
@@ -87,7 +86,7 @@ abstract public class GenericLanguage implements jplag.Language {
 			}
 			reader.close();
 		} catch (IOException e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 }

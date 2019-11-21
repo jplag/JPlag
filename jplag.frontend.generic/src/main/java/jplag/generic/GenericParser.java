@@ -1,6 +1,8 @@
 package jplag.generic;
 
 import jplag.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -8,35 +10,17 @@ import org.json.JSONTokener;
 import java.io.*;
 import java.util.Iterator;
 
-public abstract class GenericParser extends jplag.Parser implements GenericTokenConstants {
-    private Structure struct = new Structure();
-    private String currentFile;
-
+public abstract class GenericParser extends StreamParser implements GenericTokenConstants {
     protected abstract GenericToken makeToken(int type, String file, int line, int column, int lengt);
     protected abstract String getCommandLineProgram();
 
-    public jplag.Structure parse(File dir, String[] files) {
-        struct = new Structure();
-        errors = 0;
-        for (int i = 0; i < files.length; i++) {
-            getProgram().print(null, "Parsing file " + files[i] + "\n");
-            if (!parseFile(dir, files[i]))
-                errors++;
-            System.gc();
-            struct.addToken(this.makeToken(FILE_END, files[i], -1, -1, -1));
-        }
-        this.parseEnd();
-        return struct;
-    }
-
-    public boolean parseFile(File dir, String file) {
-        currentFile = file;
-        Tuple3<Integer, String, String> cmdRes = CommandExecutor.execute(getCommandLineProgram(), new File(dir, file).getAbsolutePath());
+    private boolean processOutput(Tuple3<Integer, String, String> cmdRes, @NotNull TokenAdder adder) {
         Integer exitValue = cmdRes.getA();
         String stdout = cmdRes.getB();
         String stderr = cmdRes.getC();
+        System.out.println(stdout);
 
-        if (!stderr.startsWith("[]")) {
+        if (!stderr.isEmpty() && !stderr.startsWith("[]")) {
             System.err.println(stderr);
         }
         if (exitValue != 0) {
@@ -63,12 +47,12 @@ public abstract class GenericParser extends jplag.Parser implements GenericToken
                 if (type == GenericTokenConstants.FILE_END) {
                     getProgram().print(null, "Command outputted file end token");
                 } else {
-                    this.add(
+                    adder.addToken(this.makeToken(
                             type,
+                            adder.currentFile,
                             token.getInt("line"),
                             token.getInt("column"),
-                            token.getInt("length")
-                    );
+                            token.getInt("length")));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -78,7 +62,34 @@ public abstract class GenericParser extends jplag.Parser implements GenericToken
         return true;
     }
 
-    private void add(int type, int line, int column, int length) {
-        struct.addToken(this.makeToken(type, (currentFile == null ? "null" : currentFile), line, column, length));
+
+    @NotNull
+    @Override
+    public Token getEndOfFileToken(String file) {
+        return this.makeToken(FILE_END, file, -1, -1, -1);
+    }
+
+    @Override
+    public boolean parseStream(@NotNull InputStream stream, @NotNull TokenAdder adder) throws IOException {
+        Tuple3<Integer, String, String> cmdRes = CommandExecutor.execute(stream,getCommandLineProgram(), "/dev/stdin");
+        return this.processOutput(cmdRes, adder);
+    }
+
+    @Override
+    public boolean parseFile(File dir, String file) {
+        String currentFile = new File(dir, file).getAbsolutePath();
+        Tuple3<Integer, String, String> cmdRes = CommandExecutor.execute(getCommandLineProgram(), currentFile);
+        return this.processOutput(cmdRes, new TokenAdder(file) {
+            @Nullable
+            @Override
+            public Token getLast() {
+                return struct.tokens[struct.size() - 1];
+            }
+
+            @Override
+            public void addToken(@NotNull Token token) {
+                struct.addToken(token);
+            }
+        });
     }
 }

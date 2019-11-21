@@ -6,17 +6,10 @@ class PhpToken extends GenericToken {
     public PhpToken(int type, String file, int line, int column, int length) {
         super(type, file, line, column, length);
     }
-}
-
-class PhpParser extends GenericParser {
-    @Override
-    protected GenericToken makeToken(int type, String file, int line, int column, int length) {
-        return new PhpToken(type, file, line, column, length);
-    }
 
     @Override
-    protected String getCommandLineProgram() {
-        return "php_parser_to_jplag";
+    protected String getCommand() {
+        return PhpParser.command;
     }
 }
 

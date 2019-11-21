@@ -36,5 +36,8 @@ public class CharToken extends jplag.Token {
         return "" + parser.reverseMapping(type);
     }
 
-    public static int numberOfTokens() { return 36; }
+    @Override
+    public int numberOfTokens() { return 36; }
+
+    public static int staticNmberOfTokens() { return 36; }
 }

@@ -21,7 +21,7 @@ public class StreamGobbler extends Thread {
     @Override
     public void run() {
         StringBuilder builder = new StringBuilder();
-        char[] buffer = new char[4096];
+        char[] buffer = new char[8192];
         this.res = null;
 
         InputStreamReader isr = null;
@@ -29,9 +29,10 @@ public class StreamGobbler extends Thread {
         try {
             isr = new InputStreamReader(is);
             br = new BufferedReader(isr);
+            int len = 0;
 
-            while (br.read(buffer) != -1) {
-                builder.append(buffer);
+            while ((len = br.read(buffer)) != -1) {
+                builder.append(buffer, 0, len);
             }
 
             this.res = builder.toString();

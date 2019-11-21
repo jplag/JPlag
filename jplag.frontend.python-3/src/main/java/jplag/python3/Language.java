@@ -55,7 +55,7 @@ public class Language implements jplag.Language {
     }
 
     public int noOfTokens() {
-        return jplag.python3.Python3Token.numberOfTokens();
+        return parser.getEndOfFileToken("").numberOfTokens();
     }
 
     public String type2string(int type) {

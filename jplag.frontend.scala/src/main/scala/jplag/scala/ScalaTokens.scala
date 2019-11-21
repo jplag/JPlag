@@ -99,4 +99,6 @@ class ScalaToken(t: Integer,
   override def getColumn: Int = this.column
 
   override def getLength: Int = this.length
+
+  override def numberOfTokens: Int = ScalaTokens.maxId
 }

@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ipython</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<repositories>
+		<repository>
+			<id>ipdNexus</id>
+			<name>Recaa Repository</name>
+			<url>http://bob.ipd.kit.edu/nexus/content/repositories/public/</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>jplag.ipython.IPython</mainClass>
+							<packageName>jplag.ipython</packageName>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>edu.kit.ipd.jplag</groupId>
+			<artifactId>frontend-utils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20190722</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.kit.ipd.jplag</groupId>
+			<artifactId>python-3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>edu.kit.ipd.jplag</groupId>
+			<artifactId>cpp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>edu.kit.ipd.jplag</groupId>
+			<artifactId>generic</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>edu.kit.ipd.jplag</groupId>
+			<artifactId>csharp-1.2</artifactId>
+		</dependency>
+	</dependencies>
+	<parent>
+		<groupId>edu.kit.ipd.jplag</groupId>
+		<artifactId>parent</artifactId>
+		<version>0.3-SNAPSHOT</version>
+		<relativePath>../jplag.parent/pom.xml</relativePath>
+	</parent>
+</project>

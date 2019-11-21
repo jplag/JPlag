@@ -45,6 +45,7 @@ public abstract class Options {
 			"json", "jplag.json.Language",
 			"php", "jplag.generic.PhpLanguage",
 			"javascript", "jplag.generic.JavascriptLanguage",
+			"jupyter", "jplag.ipython.IPythonLanguage",
 			};// @formatter:on
 
 	public static final int MIN_CLUSTER = 1;
