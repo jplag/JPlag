@@ -32,7 +32,7 @@ public interface Language {
 	public boolean supportsColumns();
 
 	/** Whether JPlag should use a fixed-width font in its reports. */
-	public boolean isPreformated();
+	public boolean isPreformatted();
 
 	/** Whether tokens from the scanner are indexed. */
 	public boolean usesIndex();

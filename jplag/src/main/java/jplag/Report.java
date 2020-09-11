@@ -485,16 +485,16 @@ public class Report implements TokenConstants {
 
 			for (int j = 0; j < files.length; j++) {
 				f.println("<HR>\n<H3><CENTER>" + files[j] + "</CENTER></H3><HR>");
-				if (this.language.isPreformated())
+				if (this.language.isPreformatted())
 					f.println("<PRE>");
 				for (int k = 0; k < text[j].length; k++) {
 					f.print(text[j][k]);
-					if (!this.language.isPreformated())
+					if (!this.language.isPreformatted())
 						f.println("<BR>");
 					else
 						f.println();
 				}
-				if (language.isPreformated())
+				if (language.isPreformatted())
 					f.println("</PRE>");
 			}
 
@@ -761,16 +761,16 @@ public class Report implements TokenConstants {
 
 		for (int x = 0; x < text.length; x++) {
 			f.println("<HR>\n<H3><CENTER>" + files[x] + "</CENTER></H3><HR>");
-			if (this.language.isPreformated())
+			if (this.language.isPreformatted())
 				f.println("<PRE>");
 			for (int y = 0; y < text[x].length; y++) {
 				f.print(text[x][y]);
-				if (!this.language.isPreformated())
+				if (!this.language.isPreformatted())
 					f.println("<BR>");
 				else
 					f.println();
 			}
-			if (this.language.isPreformated())
+			if (this.language.isPreformatted())
 				f.println("</PRE>");
 		}
 		f.println("</BODY>\n</HTML>");
@@ -976,16 +976,16 @@ public class Report implements TokenConstants {
 
 		for (int x = 0; x < text.length; x++) {
 			f.println("<HR>\n<H3><CENTER>" + files[x] + "</CENTER></H3><HR>");
-			if (this.language.isPreformated())
+			if (this.language.isPreformatted())
 				f.println("<PRE>");
 			for (int y = 0; y < text[x].length; y++) {
 				f.print(text[x][y]);
-				if (!this.language.isPreformated())
+				if (!this.language.isPreformatted())
 					f.println("<BR>");
 				else
 					f.println();
 			}
-			if (this.language.isPreformated())
+			if (this.language.isPreformatted())
 				f.println("</PRE>");
 		}
 		f.println("\n</BODY>\n</HTML>");

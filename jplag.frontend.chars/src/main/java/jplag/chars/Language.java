@@ -56,7 +56,7 @@ public class Language implements jplag.Language {
 		return false;
 	}
 
-	public boolean isPreformated() {
+	public boolean isPreformatted() {
 		return false;
 	}
 
