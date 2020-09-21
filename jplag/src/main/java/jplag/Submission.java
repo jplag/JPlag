@@ -214,9 +214,15 @@ public class Submission implements Comparable<Submission> {
 		Vector<String> text = new Vector<String>();
 		for (int i = 0; i < files.length; i++) {
 			text.removeAllElements();
+
+			// If the token path is absolute, ignore the provided directory.
+			File path = new File(files[i]);
+			if (!path.isAbsolute())
+				path = new File(dir, files[i]);
+
 			try {
 				/* file encoding = "UTF-8" */
-				FileInputStream fileInputStream = new FileInputStream(new File(dir, files[i]));
+				FileInputStream fileInputStream = new FileInputStream(path);
 				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
 				BufferedReader in = new BufferedReader(inputStreamReader);
 				while ((help = in.readLine()) != null) {
@@ -230,7 +236,7 @@ public class Submission implements Comparable<Submission> {
 				inputStreamReader.close();
 				fileInputStream.close();
 			} catch (FileNotFoundException e) {
-				System.out.println("File not found: " + ((new File(dir, files[i])).toString()));
+				System.out.println("File not found: " + path.getPath());
 			} catch (IOException e) {
 				throw new jplag.ExitException("I/O exception!");
 			}
