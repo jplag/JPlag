@@ -20,8 +20,6 @@ import java.util.List;
  *  
  */
 public abstract class Options {
-	protected String langs = "jplag.options.util.messages_en";
-
 	protected boolean suffixes_set = false;
 
 	protected boolean min_token_match_set = false;
@@ -84,8 +82,6 @@ public abstract class Options {
 	public static final int MAX_RESULT_PAIRS = 1000;
 
 	public String result_dir = "result";
-
-	public String helper[] = new String[1];
 
 	public static final int COMPMODE_NORMAL = 0;
 	public static final int COMPMODE_REVISION = 1;
@@ -178,10 +174,6 @@ public abstract class Options {
 					SUBMISSION_ABORTED);
 	}
 
-	public void setState(int state) {
-		this.state = state;
-	}
-
 	public abstract void initializeSecondStep(Program program)
 			throws jplag.ExitException;
 
@@ -236,17 +228,6 @@ public abstract class Options {
 			} catch (InstantiationException e) {
 			}
 		throw new jplag.ExitException("printAllLanguages exited");
-	}
-
-	public String getClusterTyp() {
-		if (this.clusterType == MIN_CLUSTER)
-			return "min";
-		else if (this.clusterType == MAX_CLUSTER)
-			return "max";
-		else if (this.clusterType == AVR_CLUSTER)
-			return "avr";
-		else
-			return "";
 	}
 
 	public String getCountryTag() {
