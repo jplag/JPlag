@@ -88,7 +88,7 @@ public class GSTiling implements TokenConstants {
 			B = tmp;
 		}
 
-		return compare(A, B, this.program.get_min_token_match());
+		return compare(A, B, this.program.getOptions().getMinTokenMatch());
 	}
 
 	// first parameter should contain the smaller sequence!!! 
@@ -109,7 +109,7 @@ public class GSTiling implements TokenConstants {
 			return allMatches;
 
 		// Initialize
-		if(!program.useBasecode()) {
+		if(!program.getOptions().hasBaseCode()) {
 			for(int i = 0; i <= lengthA; i++)
 				A[i].marked = A[i].type == FILE_END || A[i].type == SEPARATOR_TOKEN;
 
@@ -124,10 +124,10 @@ public class GSTiling implements TokenConstants {
 		}
 
 		// start:
-		if (structA.hash_length != this.program.get_min_token_match()) {
+		if (structA.hash_length != this.program.getOptions().getMinTokenMatch()) {
 			create_hashes(structA, mml, false);
 		}
-		if (structB.hash_length != this.program.get_min_token_match()
+		if (structB.hash_length != this.program.getOptions().getMinTokenMatch()
 				|| structB.table == null) {
 			create_hashes(structB, mml, true);
 		}
@@ -192,7 +192,7 @@ inner:			for (int i = 1; i <= elemsB[0]; i++) { // elemsB[0] contains the length
 			B = tmp;
 		}
 
-		return compareWithBasecode(A, B, this.program.get_min_token_match());
+		return compareWithBasecode(A, B, this.program.getOptions().getMinTokenMatch());
 	}
 
 	private final AllBasecodeMatches compareWithBasecode(Submission subA, Submission subB, int mml) {
@@ -220,10 +220,10 @@ inner:			for (int i = 1; i <= elemsB[0]; i++) { // elemsB[0] contains the length
 
 
 		// start:
-		if (structA.hash_length != this.program.get_min_token_match()) {
+		if (structA.hash_length != this.program.getOptions().getMinTokenMatch()) {
 			create_hashes(structA, mml, true);
 		}
-		if (structB.hash_length != this.program.get_min_token_match()
+		if (structB.hash_length != this.program.getOptions().getMinTokenMatch()
 				|| structB.table == null) {
 			create_hashes(structB, mml, true);
 		}

@@ -17,13 +17,13 @@ public enum Language {
   TEXT("jplag.text.Language"),
   SCHEME("jplag.scheme.Language");
 
-  private final String value;
+  private final String className;
 
-  Language(String value) {
-    this.value = value;
+  Language(String className) {
+    this.className = className;
   }
 
-  public String getValue() {
-    return this.value;
+  public String getClassName() {
+    return this.className;
   }
 }
