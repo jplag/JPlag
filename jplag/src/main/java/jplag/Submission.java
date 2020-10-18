@@ -17,7 +17,7 @@ public class Submission implements Comparable<Submission> {
 
   public String name;
 
-  private Program program;
+  private JPlag program;
 
   private boolean readSubDirs;
 
@@ -38,7 +38,7 @@ public class Submission implements Comparable<Submission> {
 
   public DecimalFormat format = new DecimalFormat("0000");
 
-  public Submission(String name, File dir, boolean readSubDirs, Program p, Language language) {
+  public Submission(String name, File dir, boolean readSubDirs, JPlag p, Language language) {
     this.program = p;
     this.language = language;
     this.dir = dir;
@@ -56,7 +56,7 @@ public class Submission implements Comparable<Submission> {
     }
   }
 
-  public Submission(String name, File dir, Program p, Language language) {
+  public Submission(String name, File dir, JPlag p, Language language) {
     this.language = language;
     this.program = p;
     this.dir = dir;

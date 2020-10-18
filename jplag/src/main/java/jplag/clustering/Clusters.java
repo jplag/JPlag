@@ -13,9 +13,9 @@ public class Clusters {
 
   public Vector<Submission> submissions;
   public float maxMergeValue = 0;
-  private Program program;
+  private JPlag program;
 
-  public Clusters(Program program) {
+  public Clusters(JPlag program) {
     this.program = program;
   }
 

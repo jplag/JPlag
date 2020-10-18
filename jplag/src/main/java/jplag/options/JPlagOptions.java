@@ -6,7 +6,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.List;
 import jplag.ExitException;
-import jplag.Program;
+import jplag.JPlag;
 import jplag.clustering.SimilarityMatrix;
 import jplag.filter.Filter;
 
@@ -27,7 +27,7 @@ public class JPlagOptions {
 
   // Copied from CommandLineOptions.java
 
-  public void initializeSecondStep(Program program) throws ExitException {
+  public void initializeSecondStep(JPlag program) throws ExitException {
     try {
       Constructor<?>[] languageConstructors = Class.forName(language.getClassName())
           .getDeclaredConstructors();
@@ -256,7 +256,7 @@ public class JPlagOptions {
   }
 
   public static void usage() {
-    System.out.print(Program.name_long
+    System.out.print(JPlag.name_long
         + ", Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.\n"
         + "Usage: JPlag [ options ] <root-dir> [-c file1 file2 ...]\n"
         + " <root-dir>        The root-directory that contains all submissions.\n\n"

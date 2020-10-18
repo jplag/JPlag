@@ -85,7 +85,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>jplag.JPlag</mainClass>
+                            <mainClass>jplag.CLI</mainClass>
                             <packageName>jplag</packageName>
                         </manifest>
                     </archive>
@@ -102,7 +102,7 @@
 
                     <archive>
                         <manifest>
-                            <mainClass>jplag.JPlag</mainClass>
+                            <mainClass>jplag.CLI</mainClass>
                             <packageName>jplag</packageName>
                         </manifest>
                     </archive>

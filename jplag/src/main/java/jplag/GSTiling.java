@@ -8,9 +8,9 @@ package jplag;
  */
 public class GSTiling implements TokenConstants {
 	private Matches matches = new Matches();
-	private Program program;
+	private JPlag program;
 
-	public GSTiling(Program program){
+	public GSTiling(JPlag program){
 		this.program=program;
 	}
 
