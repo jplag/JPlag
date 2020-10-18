@@ -1,6 +1,6 @@
 package jplag.options;
 
-public enum JPlagComparisonMode {
+public enum ComparisonMode {
   NORMAL,
   REVISION,
   SPECIAL,

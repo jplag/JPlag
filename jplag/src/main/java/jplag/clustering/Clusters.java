@@ -1,7 +1,7 @@
 package jplag.clustering;
 
 import jplag.*;
-import jplag.options.JPlagClusterType;
+import jplag.options.ClusterType;
 
 import java.util.*;
 
@@ -40,8 +40,8 @@ public class Clusters {
    */
   public Cluster minMaxAvrClustering() {
     int nrOfSubmissions = submissions.size();
-    boolean minClustering = (this.program.getOptions().getClusterType() == JPlagClusterType.MIN);
-    boolean maxClustering = (this.program.getOptions().getClusterType() == JPlagClusterType.MAX);
+    boolean minClustering = (this.program.getOptions().getClusterType() == ClusterType.MIN);
+    boolean maxClustering = (this.program.getOptions().getClusterType() == ClusterType.MAX);
     SimilarityMatrix simMatrix = this.program.getOptions().similarity;
 
     ArrayList<Cluster> clusters = new ArrayList<Cluster>(submissions.size());

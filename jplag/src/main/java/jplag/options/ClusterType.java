@@ -1,6 +1,6 @@
 package jplag.options;
 
-public enum JPlagClusterType {
+public enum ClusterType {
   NONE,
   MIN,
   MAX,

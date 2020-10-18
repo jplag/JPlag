@@ -21,8 +21,7 @@ import java.util.Vector;
 import jplag.clustering.Cluster;
 import jplag.clustering.Clusters;
 import jplag.clustering.SimilarityMatrix;
-import jplag.options.JPlagClusterType;
-import jplag.options.JPlagOptions;
+import jplag.options.ClusterType;
 import jplagUtils.PropertiesLoader;
 
 /*
@@ -86,7 +85,7 @@ public class JPlag implements ProgramI {
   /**
    * Main procedure
    */
-  public void run() throws jplag.ExitException {
+  public JPlagResult run() throws jplag.ExitException {
     // This file contains all files names which are excluded
     readExclusionFile();
 
@@ -111,7 +110,7 @@ public class JPlag implements ProgramI {
 
     errorVector = null; // errorVector is not needed anymore
 
-    if (options.getClusterType() != JPlagClusterType.NONE) {
+    if (options.getClusterType() != ClusterType.NONE) {
       clusters = new Clusters(this);
       options.similarity = new SimilarityMatrix(submissions.size());
     }
@@ -145,6 +144,9 @@ public class JPlag implements ProgramI {
     }
 
     closeWriter();
+
+    // TODO: Return an actual result.
+    return new JPlagResult();
   }
 
   public void doParse() throws ExitException {
@@ -349,7 +351,7 @@ public class JPlag implements ProgramI {
 
     Cluster cluster = null;
 
-    if (options.getClusterType() != JPlagClusterType.NONE) {
+    if (options.getClusterType() != ClusterType.NONE) {
       cluster = this.clusters.calculateClustering(submissions);
     }
 
@@ -460,7 +462,7 @@ public class JPlag implements ProgramI {
 
     Cluster cluster = null;
 
-    if (options.getClusterType() != JPlagClusterType.NONE) {
+    if (options.getClusterType() != ClusterType.NONE) {
       cluster = this.clusters.calculateClustering(submissions);
     }
 
@@ -709,7 +711,7 @@ public class JPlag implements ProgramI {
 
     Cluster cluster = null;
 
-    if (options.getClusterType() == JPlagClusterType.NONE) {
+    if (options.getClusterType() == ClusterType.NONE) {
       cluster = this.clusters.calculateClustering(submissions);
     }
 
@@ -772,7 +774,7 @@ public class JPlag implements ProgramI {
           }
         }
 
-        if (options.getClusterType() != JPlagClusterType.NONE) {
+        if (options.getClusterType() != ClusterType.NONE) {
           options.similarity.setSimilarity(i, j, percent);
         }
 
@@ -1312,7 +1314,7 @@ public class JPlag implements ProgramI {
       }
     }
 
-    if (options.getClusterType() != JPlagClusterType.NONE) {
+    if (options.getClusterType() != ClusterType.NONE) {
       options.similarity.setSimilarity(a, b, avgPercent);
     }
   }

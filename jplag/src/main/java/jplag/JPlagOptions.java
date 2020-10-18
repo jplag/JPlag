@@ -1,14 +1,15 @@
-package jplag.options;
+package jplag;
 
-import static jplag.options.JPlagComparisonMode.NORMAL;
+import static jplag.options.ComparisonMode.NORMAL;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.List;
-import jplag.ExitException;
-import jplag.JPlag;
 import jplag.clustering.SimilarityMatrix;
 import jplag.filter.Filter;
+import jplag.options.ClusterType;
+import jplag.options.ComparisonMode;
+import jplag.options.Verbosity;
 
 public class JPlagOptions {
 
@@ -149,7 +150,7 @@ public class JPlagOptions {
   /**
    * Clustering option.
    */
-  private JPlagClusterType clusterType;
+  private ClusterType clusterType;
 
   /**
    * TODO: Don't know what the title is used for.
@@ -159,7 +160,7 @@ public class JPlagOptions {
   /**
    * Determine which mode to use for the comparison of submissions.
    */
-  private JPlagComparisonMode comparisonMode = NORMAL;
+  private ComparisonMode comparisonMode = NORMAL;
 
   /**
    * TODO: Don't know what this is used for. Seems to be experimental only.
@@ -239,7 +240,7 @@ public class JPlagOptions {
    * TODO: Rename (conflicts with jplag.Language) Selected language to process the submissions
    * with.
    */
-  private Language language;
+  private jplag.options.Language language;
 
   /**
    * The actual language instance used by JPlag to process the submissions.
@@ -285,7 +286,7 @@ public class JPlagOptions {
         + " -l <language>   (Language) Supported Languages:\n                 ");
   }
 
-  public Language getLanguage() {
+  public jplag.options.Language getLanguage() {
     return language;
   }
 
@@ -337,7 +338,7 @@ public class JPlagOptions {
     return fileList;
   }
 
-  public JPlagClusterType getClusterType() {
+  public ClusterType getClusterType() {
     return clusterType;
   }
 
@@ -345,7 +346,7 @@ public class JPlagOptions {
     return title;
   }
 
-  public JPlagComparisonMode getComparisonMode() {
+  public ComparisonMode getComparisonMode() {
     return comparisonMode;
   }
 

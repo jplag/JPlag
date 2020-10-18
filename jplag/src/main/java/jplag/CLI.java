@@ -1,7 +1,5 @@
 package jplag;
 
-import jplag.options.JPlagOptions;
-
 public class CLI {
 
   public static void main(String[] args) {
