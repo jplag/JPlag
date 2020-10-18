@@ -16,6 +16,6 @@ public class JPlag {
       System.out.println("Error: " + ex.getReport());
       System.exit(1);
     }
-    
+
   }
 }

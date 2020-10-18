@@ -1,7 +1,7 @@
 package jplag;
 
-
-/* Minimal class that stores "Match" objects.
+/**
+ * Minimal class that stores "Match" objects.
  */
 public class Matches {
   public Match[] matches;
