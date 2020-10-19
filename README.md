@@ -83,15 +83,10 @@ It builds JPlag and the available frontends.
 To generate single modules run `mvn clean generate-sources package` in the base directory.
 
 To generate a single JAR file with all dependencies, perform the following steps:
-1. Installing all submodules with `mvn clean install` from the base directory. You will find the JARs in the respective `target` directories.
+1. Install all submodules with `mvn clean install` from the base directory. You will find the JARs in the respective `target` directories.
 2. Run `mvn clean generate-sources assembly:single` inside the `jplag` directory 
 
 You'll find the generated JAR in  `jplag/target`.
-
-### Web Service
-Installing, running and maintaining a local web service is not recommended as the web service uses outdated libraries and (really) needs polishing.
-
-If you want to do it anyway: `atujplag` is the client, `webservice` is the - yepp - web service.
 
 ## Improving JPlag
 We're happy to incorporate all improvements to JPlag into this code base. Feel free to fork the project and send pull requests.
