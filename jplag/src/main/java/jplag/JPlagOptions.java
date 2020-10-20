@@ -15,6 +15,17 @@ public class JPlagOptions {
 
   // --------------------------------------------------------------------------
 
+  public void setLanguageDefaults(jplag.Language language) {
+    // Set language-specific default options
+    if (!this.hasMinTokenMatch()) {
+      this.minTokenMatch = language.min_token_match();
+    }
+
+    if (!this.hasFileSuffixes()) {
+      this.fileSuffixes = language.suffixes();
+    }
+  }
+
   // List of unidentified options:
 
   public boolean exp = false; // EXPERIMENT
@@ -23,88 +34,6 @@ public class JPlagOptions {
 
   // TODO: I think this should be an attribute of Program.java
   public SimilarityMatrix similarity = null;
-
-  // --------------------------------------------------------------------------
-
-  // Copied from CommandLineOptions.java
-
-  public void initializeSecondStep(JPlag program) throws ExitException {
-    try {
-      Constructor<?>[] languageConstructors = Class.forName(language.getClassName())
-          .getDeclaredConstructors();
-      Constructor<?> cons = languageConstructors[0];
-      Object[] ob = {program};
-      // All Language have to have a program as Constructor Parameter
-      // -> public Language(ProgramI prog)
-      this.languageInstance = (jplag.Language) cons.newInstance(ob);
-      System.out.println("Language accepted: " + languageInstance.name());
-    } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-      System.out.println(e.getMessage());
-    } catch (Exception e) {
-      e.printStackTrace();
-
-      throw new ExitException(
-          "Illegal value: Language instantiation failed",
-          ExitException.BAD_LANGUAGE_ERROR
-      );
-    }
-
-    // Set language-specific defaults:
-    if (!hasMinTokenMatch()) {
-      this.minTokenMatch = this.languageInstance.min_token_match();
-    }
-
-    if (!hasFileSuffixes()) {
-      this.fileSuffixes = this.languageInstance.suffixes();
-    }
-
-    checkBaseCodeOption();
-  }
-
-  /**
-   * This method checks whether the basecode directory value is valid
-   */
-  private void checkBaseCodeOption() throws ExitException {
-    if (hasBaseCode()) {
-      if (baseCode == null || baseCode.equals("")) {
-        throw new ExitException(
-            "Base code option used but none specified!",
-            ExitException.BAD_PARAMETER
-        );
-      }
-
-      String baseC = rootDir + File.separator + baseCode;
-
-      if (!(new File(rootDir)).exists()) {
-        throw new ExitException(
-            "Root directory \"" + rootDir + "\" doesn't exist!",
-            ExitException.BAD_PARAMETER
-        );
-      }
-      File f = new File(baseC);
-
-      if (!f.exists()) {
-        // Base code dir doesn't exist
-        throw new ExitException("Basecode directory \"" + baseC
-            + "\" doesn't exist!", ExitException.BAD_PARAMETER);
-      }
-
-      if (subDir != null && subDir.length() != 0) {
-        f = new File(baseC, subDir);
-
-        if (!f.exists()) {
-          throw new ExitException(
-              "Basecode directory doesn't contain" + " the subdirectory \"" + subDir + "\"!",
-              ExitException.BAD_PARAMETER
-          );
-        }
-      }
-
-      System.out.println("Basecode directory \"" + baseC + "\" will be used");
-    }
-  }
-
-  // --------------------------------------------------------------------------
 
   /**
    * This is related to `storeMatches`.

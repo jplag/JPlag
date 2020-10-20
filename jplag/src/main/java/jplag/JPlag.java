@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
@@ -48,6 +50,8 @@ public class JPlag implements ProgramI {
   private int errors = 0;
   private String invalidSubmissionNames = null;
 
+  private Language language;
+
   /**
    * Set of file names to be excluded in comparison.
    */
@@ -75,7 +79,79 @@ public class JPlag implements ProgramI {
   public JPlag(JPlagOptions options) throws ExitException {
     this.options = options;
 
-    this.options.initializeSecondStep(this);
+    this.initialize();
+  }
+
+  public void initialize() throws ExitException {
+    this.initializeLanguage();
+    this.checkBaseCodeOption();
+  }
+
+  public void initializeLanguage() throws ExitException {
+    jplag.options.Language language = this.options.getLanguage();
+
+    try {
+      Class<?> languageClass = Class.forName(language.getClassPath());
+      Constructor<?>[] languageConstructors = languageClass.getDeclaredConstructors();
+
+      // TODO: Verify that only one constructor exists
+      Constructor<?> constructor = languageConstructors[0];
+      Object[] constructorParams = {this};
+
+      this.language = (jplag.Language) constructor.newInstance(constructorParams);
+    } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+      e.printStackTrace();
+
+      throw new ExitException("Language instantiation failed", ExitException.BAD_LANGUAGE_ERROR);
+    }
+
+    this.options.setLanguageDefaults(this.language);
+
+    System.out.println("Initialized language " + this.language.name());
+  }
+
+  /**
+   * This method checks whether the basecode directory value is valid
+   */
+  private void checkBaseCodeOption() throws ExitException {
+    if (this.options.hasBaseCode()) {
+      if (this.options.getBaseCode() == null || this.options.getBaseCode().equals("")) {
+        throw new ExitException(
+            "Base code option used but none specified!",
+            ExitException.BAD_PARAMETER
+        );
+      }
+
+      String baseC = this.options.getRootDir() + File.separator + this.options.getBaseCode();
+
+      if (!(new File(this.options.getRootDir())).exists()) {
+        throw new ExitException(
+            "Root directory \"" + this.options.getRootDir() + "\" doesn't exist!",
+            ExitException.BAD_PARAMETER
+        );
+      }
+      File f = new File(baseC);
+
+      if (!f.exists()) {
+        // Base code dir doesn't exist
+        throw new ExitException("Basecode directory \"" + baseC
+            + "\" doesn't exist!", ExitException.BAD_PARAMETER);
+      }
+
+      if (this.options.getSubDir() != null && this.options.getSubDir().length() != 0) {
+        f = new File(baseC, this.options.getSubDir());
+
+        if (!f.exists()) {
+          throw new ExitException(
+              "Basecode directory doesn't contain" + " the subdirectory \"" + this.options
+                  .getSubDir() + "\"!",
+              ExitException.BAD_PARAMETER
+          );
+        }
+      }
+
+      System.out.println("Basecode directory \"" + baseC + "\" will be used");
+    }
   }
 
   public JPlagOptions getOptions() {
