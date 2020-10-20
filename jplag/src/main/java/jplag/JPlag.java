@@ -24,6 +24,7 @@ import jplag.clustering.Cluster;
 import jplag.clustering.Clusters;
 import jplag.clustering.SimilarityMatrix;
 import jplag.options.ClusterType;
+import jplag.options.ComparisonMode;
 import jplagUtils.PropertiesLoader;
 
 /*
@@ -195,10 +196,17 @@ public class JPlag implements ProgramI {
 
     System.gc();
 
-    switch (options.getComparisonMode()) {
+    JPlagResult result = compareSubmissions(options.getComparisonMode());
+
+    closeWriter();
+
+    return result;
+  }
+
+  public JPlagResult compareSubmissions(ComparisonMode mode) throws ExitException {
+    switch (mode) {
       case NORMAL:
         compare();
-        break;
       case REVISION:
         revisionCompare();
         break;
@@ -221,9 +229,6 @@ public class JPlag implements ProgramI {
         );
     }
 
-    closeWriter();
-
-    // TODO: Return an actual result.
     return new JPlagResult();
   }
 
@@ -1393,7 +1398,7 @@ public class JPlag implements ProgramI {
     }
 
     if (options.getClusterType() != ClusterType.NONE) {
-      options.similarity.setSimilarity(a, b, avgPercent);
+      similarity.setSimilarity(a, b, avgPercent);
     }
   }
 }
