@@ -52,6 +52,8 @@ public class JPlag implements ProgramI {
 
   private Language language;
 
+  public SimilarityMatrix similarity = null;
+
   /**
    * Set of file names to be excluded in comparison.
    */
@@ -188,7 +190,7 @@ public class JPlag implements ProgramI {
 
     if (options.getClusterType() != ClusterType.NONE) {
       clusters = new Clusters(this);
-      options.similarity = new SimilarityMatrix(submissions.size());
+      similarity = new SimilarityMatrix(submissions.size());
     }
 
     System.gc();
@@ -851,7 +853,7 @@ public class JPlag implements ProgramI {
         }
 
         if (options.getClusterType() != ClusterType.NONE) {
-          options.similarity.setSimilarity(i, j, percent);
+          similarity.setSimilarity(i, j, percent);
         }
 
         count++;

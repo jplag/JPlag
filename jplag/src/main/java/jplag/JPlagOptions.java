@@ -32,9 +32,6 @@ public class JPlagOptions {
 
   public int compare = 0; // 0 = deactivated
 
-  // TODO: I think this should be an attribute of Program.java
-  public SimilarityMatrix similarity = null;
-
   /**
    * This is related to `storeMatches`.
    */

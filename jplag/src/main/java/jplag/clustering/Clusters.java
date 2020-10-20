@@ -42,7 +42,7 @@ public class Clusters {
     int nrOfSubmissions = submissions.size();
     boolean minClustering = (this.program.getOptions().getClusterType() == ClusterType.MIN);
     boolean maxClustering = (this.program.getOptions().getClusterType() == ClusterType.MAX);
-    SimilarityMatrix simMatrix = this.program.getOptions().similarity;
+    SimilarityMatrix simMatrix = this.program.similarity;
 
     ArrayList<Cluster> clusters = new ArrayList<Cluster>(submissions.size());
     for (int i = 0; i < nrOfSubmissions; i++) {
