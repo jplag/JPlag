@@ -67,7 +67,10 @@ public class JPlag implements ProgramI {
 
   protected GSTiling gSTiling = new GSTiling(this);
 
-  private Hashtable<String, AllBasecodeMatches> htBasecodeMatches = new Hashtable<>(30);
+  /**
+   * Hashtable that maps the name of a submissions to its matches with the provided base code.
+   */
+  private Hashtable<String, AllBasecodeMatches> baseCodeMatches = new Hashtable<>(30);
 
   // experiment end
 
@@ -206,7 +209,7 @@ public class JPlag implements ProgramI {
   public JPlagResult compareSubmissions(ComparisonMode mode) throws ExitException {
     switch (mode) {
       case NORMAL:
-        compare();
+        return compare();
       case REVISION:
         revisionCompare();
         break;
@@ -340,97 +343,93 @@ public class JPlag implements ProgramI {
     throw new ExitException("Bad basecode submission:\n" + errorStr.toString());
   }
 
+  private void compareWithBaseCode() {
+    int numberOfSubmissions = submissions.size();
+
+    AllBasecodeMatches bcMatch;
+    Submission currentSubmission;
+
+    long msec = System.currentTimeMillis();
+
+    for (int i = 0; i < (numberOfSubmissions); i++) {
+      currentSubmission = submissions.elementAt(i);
+
+      bcMatch = this.gSTiling.compareWithBasecode(currentSubmission, baseCodeSubmission);
+      baseCodeMatches.put(currentSubmission.name, bcMatch);
+
+      this.gSTiling.resetBaseSubmission(baseCodeSubmission);
+    }
+
+    long timebc = System.currentTimeMillis() - msec;
+
+    print("\n\n",
+        "\nTime for comparing with Basecode: " + ((timebc / 3600000 > 0) ? (timebc / 3600000)
+            + " h " : "")
+            + ((timebc / 60000 > 0) ? ((timebc / 60000) % 60000) + " min " : "") + (timebc / 1000
+            % 60) + " sec\n"
+            + "Time per basecode comparison: " + (timebc / numberOfSubmissions) + " msec\n\n");
+  }
+
   /**
    * Now the actual comparison: All submissions are compared pairwise.
    */
-  private void compare() {
-    int size = submissions.size();
+  private JPlagResult compare() {
+    if (this.options.hasBaseCode()) {
+      compareWithBaseCode();
+    }
 
     // Result vectors
     SortedVector<AllMatches> avgMatches = new SortedVector<>(new AllMatches.AvgComparator());
     SortedVector<AllMatches> maxMatches = new SortedVector<>(new AllMatches.MaxComparator());
+    // TODO: Why is minMatches missing?
+
+    // Similarity distribution
     int[] dist = new int[10];
 
-    long msec;
+    int numberOfSubmissions = submissions.size();
+    int i, j, numberOfComparisons = 0;
 
-    AllBasecodeMatches bcMatch;
     Submission s1, s2;
-
-    // ------------------------------------------------------------------------
-
-    if (this.options.hasBaseCode()) {
-      int countBC = 0;
-      msec = System.currentTimeMillis();
-
-      for (int i = 0; i < (size); i++) {
-        s1 = submissions.elementAt(i);
-
-        bcMatch = this.gSTiling.compareWithBasecode(s1, baseCodeSubmission);
-        htBasecodeMatches.put(s1.name, bcMatch);
-        this.gSTiling.resetBaseSubmission(baseCodeSubmission);
-
-        countBC++;
-      }
-
-      long timebc = System.currentTimeMillis() - msec;
-
-      print("\n\n",
-          "\nTime for comparing with Basecode: " + ((timebc / 3600000 > 0) ? (timebc / 3600000)
-              + " h " : "")
-              + ((timebc / 60000 > 0) ? ((timebc / 60000) % 60000) + " min " : "") + (timebc / 1000
-              % 60) + " sec\n"
-              + "Time per basecode comparison: " + (timebc / size) + " msec\n\n");
-    }
-
-    // ------------------------------------------------------------------------
-
-    int totalComps = (size - 1) * size / 2;
-    int i, j, anz = 0, count = 0;
     AllMatches match;
 
-    msec = System.currentTimeMillis();
+    long timeMillis = System.currentTimeMillis();
 
-    for (i = 0; i < (size - 1); i++) {
+    for (i = 0; i < (numberOfSubmissions - 1); i++) {
       s1 = submissions.elementAt(i);
+
       if (s1.struct == null) {
-        count += (size - i - 1);
         continue;
       }
 
-      for (j = (i + 1); j < size; j++) {
+      for (j = (i + 1); j < numberOfSubmissions; j++) {
         s2 = submissions.elementAt(j);
+
         if (s2.struct == null) {
-          count++;
           continue;
         }
 
         match = this.gSTiling.compare(s1, s2);
-
-        anz++;
+        numberOfComparisons++;
 
         System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
 
-        // histogram:
         if (options.hasBaseCode()) {
-          match.bcmatchesA = htBasecodeMatches.get(match.subA.name);
-          match.bcmatchesB = htBasecodeMatches.get(match.subB.name);
+          match.bcmatchesA = baseCodeMatches.get(match.subA.name);
+          match.bcmatchesB = baseCodeMatches.get(match.subB.name);
         }
 
         registerMatch(match, dist, avgMatches, maxMatches, null, i, j);
-        count++;
       }
     }
 
-    long time = System.currentTimeMillis() - msec;
+    long time = System.currentTimeMillis() - timeMillis;
 
     print("\n",
         "Total time for comparing submissions: " + ((time / 3600000 > 0) ? (time / 3600000) + " h "
             : "")
             + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60)
             + " sec\n" + "Time per comparison: "
-            + (time / anz) + " msec\n");
-
-    // ------------------------------------------------------------------------
+            + (time / numberOfComparisons) + " msec\n");
 
     Cluster cluster = null;
 
@@ -438,9 +437,7 @@ public class JPlag implements ProgramI {
       cluster = this.clusters.calculateClustering(submissions);
     }
 
-    // Deprecated:
-    // writeResults(dist, avgmatches, maxmatches, null, cluster);
-    // TODO: Replace writeResults(...)
+    return new JPlagResult(cluster, avgMatches, maxMatches, null, dist);
   }
 
   /**
@@ -459,34 +456,11 @@ public class JPlag implements ProgramI {
     int[] dist = new int[10];
 
     long msec;
-
-    AllBasecodeMatches bcmatch;
     Submission s1, s2;
 
-    // ------------------------------------------------------------------------
-
     if (options.hasBaseCode()) {
-      msec = System.currentTimeMillis();
-
-      for (int i = 0; i < size; i++) {
-        s1 = submissions.elementAt(i);
-        bcmatch = gSTiling.compareWithBasecode(s1, baseCodeSubmission);
-
-        htBasecodeMatches.put(s1.name, bcmatch);
-        gSTiling.resetBaseSubmission(baseCodeSubmission);
-      }
-
-      long timebc = System.currentTimeMillis() - msec;
-
-      print("\n\n",
-          "\nTime for comparing with Basecode: " + ((timebc / 3600000 > 0) ? (timebc / 3600000)
-              + " h " : "")
-              + ((timebc / 60000 > 0) ? ((timebc / 60000) % 60000) + " min " : "") + (timebc / 1000
-              % 60) + " sec\n"
-              + "Time per basecode comparison: " + (timebc / size) + " msec\n\n");
+      compareWithBaseCode();
     }
-
-    // ------------------------------------------------------------------------
 
     int totalcomps = size - 1;
     int anz = 0, count = 0;
@@ -522,8 +496,8 @@ public class JPlag implements ProgramI {
        */
       // histogram:
       if (options.hasBaseCode()) {
-        match.bcmatchesA = htBasecodeMatches.get(match.subA.name);
-        match.bcmatchesB = htBasecodeMatches.get(match.subB.name);
+        match.bcmatchesA = baseCodeMatches.get(match.subA.name);
+        match.bcmatchesB = baseCodeMatches.get(match.subB.name);
       }
 
       registerMatch(match, dist, avgmatches, maxmatches, minmatches, i, j);
@@ -1341,12 +1315,14 @@ public class JPlag implements ProgramI {
       SortedVector<AllMatches> maxMatches,
       SortedVector<AllMatches> minMatches,
       int a,
-      int b) {
+      int b
+  ) {
     float avgPercent = match.percent();
     float maxPercent = match.percentMaxAB();
     float minPercent = match.percentMinAB();
 
-    dist[((((int) avgPercent) / 10) == 10) ? 9 : (((int) avgPercent) / 10)]++;
+    int i = ((int) avgPercent) / 10;
+    dist[(i == 10) ? 9 : i]++;
 
     if (!options.isStorePercent()) {
       if ((avgMatches.size() < options.getStoreMatches() || avgPercent > avgMatches.lastElement()
