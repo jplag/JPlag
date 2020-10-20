@@ -335,4 +335,108 @@ public class JPlagOptions {
   public jplag.Language getLanguageInstance() {
     return languageInstance;
   }
+
+  public void setThreshold(float[] threshold) {
+    this.threshold = threshold;
+  }
+
+  public void setUseDiffReport(boolean useDiffReport) {
+    this.useDiffReport = useDiffReport;
+  }
+
+  public void setUseExternalSearch(boolean useExternalSearch) {
+    this.useExternalSearch = useExternalSearch;
+  }
+
+  public void setRecursive(boolean recursive) {
+    this.recursive = recursive;
+  }
+
+  public void setSkipParse(boolean skipParse) {
+    this.skipParse = skipParse;
+  }
+
+  public void setFileList(List<String> fileList) {
+    this.fileList = fileList;
+  }
+
+  public void setClusterType(ClusterType clusterType) {
+    this.clusterType = clusterType;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public void setComparisonMode(ComparisonMode comparisonMode) {
+    this.comparisonMode = comparisonMode;
+  }
+
+  public void setFilter(Filter filter) {
+    this.filter = filter;
+  }
+
+  public void setFileSuffixes(String[] fileSuffixes) {
+    this.fileSuffixes = fileSuffixes;
+  }
+
+  public void setResultDir(String resultDir) {
+    this.resultDir = resultDir;
+  }
+
+  public void setStoreMatches(int storeMatches) {
+    this.storeMatches = storeMatches;
+  }
+
+  public void setStorePercent(boolean storePercent) {
+    this.storePercent = storePercent;
+  }
+
+  public void setMinTokenMatch(Integer minTokenMatch) {
+    this.minTokenMatch = minTokenMatch;
+  }
+
+  public void setIncludeFile(String includeFile) {
+    this.includeFile = includeFile;
+  }
+
+  public void setExcludeFile(String excludeFile) {
+    this.excludeFile = excludeFile;
+  }
+
+  public void setRootDir(String rootDir) {
+    this.rootDir = rootDir;
+  }
+
+  public void setOriginalDir(String originalDir) {
+    this.originalDir = originalDir;
+  }
+
+  public void setUseDebugParser(boolean useDebugParser) {
+    this.useDebugParser = useDebugParser;
+  }
+
+  public void setBaseCode(String baseCode) {
+    this.baseCode = baseCode;
+  }
+
+  public void setOutputFile(String outputFile) {
+    this.outputFile = outputFile;
+  }
+
+  public void setSubDir(String subDir) {
+    this.subDir = subDir;
+  }
+
+  public void setLanguage(jplag.options.Language language) {
+    this.language = language;
+  }
+
+  public void setLanguageInstance(Language languageInstance) {
+    this.languageInstance = languageInstance;
+  }
+
+  public void setVerbosity(Verbosity verbosity) {
+    this.verbosity = verbosity;
+  }
 }
