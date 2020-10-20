@@ -117,47 +117,43 @@ public class JPlag implements ProgramI {
   }
 
   /**
-   * This method checks whether the basecode directory value is valid
+   * This method checks whether the base code directory value is valid.
    */
   private void checkBaseCodeOption() throws ExitException {
-    if (this.options.hasBaseCode()) {
-      if (this.options.getBaseCode() == null || this.options.getBaseCode().equals("")) {
-        throw new ExitException(
-            "Base code option used but none specified!",
-            ExitException.BAD_PARAMETER
-        );
-      }
+    if (!this.options.hasBaseCode()) {
+      return;
+    }
 
-      String baseC = this.options.getRootDir() + File.separator + this.options.getBaseCode();
+    String baseCodePath = this.options.getRootDir() + File.separator + this.options.getBaseCode();
 
-      if (!(new File(this.options.getRootDir())).exists()) {
-        throw new ExitException(
-            "Root directory \"" + this.options.getRootDir() + "\" doesn't exist!",
-            ExitException.BAD_PARAMETER
-        );
-      }
-      File f = new File(baseC);
+    if (!(new File(this.options.getRootDir())).exists()) {
+      throw new ExitException(
+          "Root directory \"" + this.options.getRootDir() + "\" doesn't exist!",
+          ExitException.BAD_PARAMETER
+      );
+    }
+
+    File f = new File(baseCodePath);
+
+    if (!f.exists()) {
+      // Base code dir doesn't exist
+      throw new ExitException("Basecode directory \"" + baseCodePath
+          + "\" doesn't exist!", ExitException.BAD_PARAMETER);
+    }
+
+    if (this.options.getSubDir() != null && this.options.getSubDir().length() != 0) {
+      f = new File(baseCodePath, this.options.getSubDir());
 
       if (!f.exists()) {
-        // Base code dir doesn't exist
-        throw new ExitException("Basecode directory \"" + baseC
-            + "\" doesn't exist!", ExitException.BAD_PARAMETER);
+        throw new ExitException(
+            "Basecode directory doesn't contain" + " the subdirectory \"" + this.options
+                .getSubDir() + "\"!",
+            ExitException.BAD_PARAMETER
+        );
       }
-
-      if (this.options.getSubDir() != null && this.options.getSubDir().length() != 0) {
-        f = new File(baseC, this.options.getSubDir());
-
-        if (!f.exists()) {
-          throw new ExitException(
-              "Basecode directory doesn't contain" + " the subdirectory \"" + this.options
-                  .getSubDir() + "\"!",
-              ExitException.BAD_PARAMETER
-          );
-        }
-      }
-
-      System.out.println("Basecode directory \"" + baseC + "\" will be used");
     }
+
+    System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
   }
 
   public JPlagOptions getOptions() {
