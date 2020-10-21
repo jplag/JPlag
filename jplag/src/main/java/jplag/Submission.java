@@ -161,7 +161,7 @@ public class Submission implements Comparable<Submission> {
 
     struct = null;
     errors = true; // invalidate submission
-    if (program.getOptions().isUseDebugParser()) {
+    if (program.getOptions().isDebugParser()) {
       copySubmission();
     }
     return false;

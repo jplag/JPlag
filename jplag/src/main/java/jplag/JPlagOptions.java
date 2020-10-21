@@ -2,26 +2,12 @@ package jplag;
 
 import static jplag.strategy.ComparisonMode.NORMAL;
 
-import java.util.List;
 import jplag.filter.Filter;
 import jplag.options.ClusterType;
 import jplag.strategy.ComparisonMode;
 import jplag.options.Verbosity;
 
 public class JPlagOptions {
-
-  // --------------------------------------------------------------------------
-
-  public void setLanguageDefaults(jplag.Language language) {
-    // Set language-specific default options
-    if (!this.hasMinTokenMatch()) {
-      this.minTokenMatch = language.min_token_match();
-    }
-
-    if (!this.hasFileSuffixes()) {
-      this.fileSuffixes = language.suffixes();
-    }
-  }
 
   // List of unidentified options:
 
@@ -35,25 +21,6 @@ public class JPlagOptions {
   public static final int MAX_RESULT_PAIRS = 1000;
 
   /**
-   * TODO: No idea how this works.
-   * <p>
-   * Clustering threshold.
-   */
-  private float[] threshold = null;
-
-  /**
-   * TODO: What does this mean?
-   * <p>
-   * Generate a special "diff" report.
-   */
-  private boolean useDiffReport = false;
-
-  /**
-   * TODO: What does this mean?
-   */
-  private boolean useExternalSearch = false;
-
-  /**
    * Related to -s CLI option.
    * <p>
    * Read subdirectories recursively.
@@ -61,14 +28,9 @@ public class JPlagOptions {
   public boolean recursive = false;
 
   /**
-   * TODO: What does this mean?
+   *
    */
   private boolean skipParse = false;
-
-  /**
-   * List of files to compare.
-   */
-  private List<String> fileList;
 
   /**
    * Clustering option.
@@ -76,14 +38,14 @@ public class JPlagOptions {
   private ClusterType clusterType;
 
   /**
-   * TODO: Don't know what the title is used for.
-   */
-  private String title = "";
-
-  /**
-   * Determine which mode to use for the comparison of submissions.
+   * Determines which strategy to use for the comparison of submissions.
    */
   private ComparisonMode comparisonMode = NORMAL;
+
+  /**
+   * If true, submissions that cannot be parsed will be stored in a separate directory.
+   */
+  private boolean debugParser = false;
 
   /**
    * TODO: Don't know what this is used for. Seems to be experimental only.
@@ -94,11 +56,6 @@ public class JPlagOptions {
    * Array of file suffixes that should be included.
    */
   private String[] fileSuffixes;
-
-  /**
-   * Directory in which the web pages will be stored.
-   */
-  private String resultDir = "result";
 
   /**
    * TODO: Find a better name for this variable.
@@ -118,11 +75,6 @@ public class JPlagOptions {
   private Integer minTokenMatch;
 
   /**
-   * TODO: No idea what this is for.
-   */
-  private String includeFile = null;
-
-  /**
    * // TODO: Should be a list. Files with this name will be ignored.
    */
   private String excludeFile;
@@ -133,24 +85,9 @@ public class JPlagOptions {
   private String rootDirName;
 
   /**
-   * Directory to store non-parsable files.
-   */
-  private String originalDir;
-
-  /**
-   * True, if the debug parser should be used; false otherwise.
-   */
-  private boolean useDebugParser;
-
-  /**
    * Name of the directory which contains the base code.
    */
   private String baseCode;
-
-  /**
-   * Name of the file to save the logger output to.
-   */
-  private String outputFile;
 
   /**
    * Name of the directory in which to look for submissions.
@@ -166,17 +103,23 @@ public class JPlagOptions {
   private jplag.options.Language language;
 
   /**
-   * The actual language instance used by JPlag to process the submissions.
-   */
-  private jplag.Language languageInstance;
-
-  /**
    * Level of output verbosity.
    */
   private Verbosity verbosity;
 
   public static JPlagOptions fromArgs(String[] args) {
     return new JPlagOptions();
+  }
+
+  public void setLanguageDefaults(jplag.Language language) {
+    // Set language-specific default options
+    if (!this.hasMinTokenMatch()) {
+      this.minTokenMatch = language.min_token_match();
+    }
+
+    if (!this.hasFileSuffixes()) {
+      this.fileSuffixes = language.suffixes();
+    }
   }
 
   public static void usage() {
@@ -190,7 +133,6 @@ public class JPlagOptions {
         + "                 l: (Long) detailed output\n"
         + "                 p: print all (p)arser messages\n"
         + "                 d: print (d)etails about each submission\n"
-        + " -d              (Debug) parser. Non-parsable files will be stored.\n"
         + " -S <dir>        Look in directories <root-dir>/*/<dir> for programs.\n"
         + "                 (default: <root-dir>/*)\n"
         + " -s              (Subdirs) Look at files in subdirs too (default: deactivated)\n\n"
@@ -202,11 +144,8 @@ public class JPlagOptions {
         + "                 <n> increases the sensitivity.\n"
         + " -m <n>          (Matches) Number of matches that will be saved (default:20)\n"
         + " -m <p>%         All matches with more than <p>% similarity will be saved.\n"
-        + " -r <dir>        (Result) Name of directory in which the web pages will be\n"
-        + "                 stored (default: result)\n"
         + " -bc <dir>       Name of the directory which contains the basecode (common framework)\n"
-        + " -c [files]      Compare a list of files. Should be the last one.\n"
-        + " -l <language>   (Language) Supported Languages:\n                 ");
+        + " -l <language>   (Language) Supported Languages:\n");
   }
 
   public jplag.options.Language getLanguage() {
@@ -221,10 +160,6 @@ public class JPlagOptions {
     return this.baseCode != null;
   }
 
-  public boolean hasFileList() {
-    return this.fileList != null && this.fileList.size() > 0;
-  }
-
   public boolean hasFileSuffixes() {
     return this.fileSuffixes != null && this.fileSuffixes.length > 0;
   }
@@ -235,190 +170,104 @@ public class JPlagOptions {
 
   // --------------------------------------------------------------------------
 
-  // GETTERS
-
-  public float[] getThreshold() {
-    return threshold;
-  }
-
-  public boolean isUseDiffReport() {
-    return useDiffReport;
-  }
-
-  public boolean isUseExternalSearch() {
-    return useExternalSearch;
-  }
-
   public boolean isRecursive() {
     return recursive;
-  }
-
-  public boolean isSkipParse() {
-    return skipParse;
-  }
-
-  public List<String> getFileList() {
-    return fileList;
-  }
-
-  public ClusterType getClusterType() {
-    return clusterType;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public ComparisonMode getComparisonMode() {
-    return comparisonMode;
-  }
-
-  public Filter getFilter() {
-    return filter;
-  }
-
-  public String[] getFileSuffixes() {
-    return fileSuffixes;
-  }
-
-  public String getResultDir() {
-    return resultDir;
-  }
-
-  public int getStoreMatches() {
-    return storeMatches;
-  }
-
-  public boolean isStorePercent() {
-    return storePercent;
-  }
-
-  public Integer getMinTokenMatch() {
-    return minTokenMatch;
-  }
-
-  public String getIncludeFile() {
-    return includeFile;
-  }
-
-  public String getExcludeFile() {
-    return excludeFile;
-  }
-
-  public String getRootDirName() {
-    return rootDirName;
-  }
-
-  public String getOriginalDir() {
-    return originalDir;
-  }
-
-  public boolean isUseDebugParser() {
-    return useDebugParser;
-  }
-
-  public String getBaseCode() {
-    return baseCode;
-  }
-
-  public String getOutputFile() {
-    return outputFile;
-  }
-
-  public String getSubDir() {
-    return subDir;
-  }
-
-  public jplag.Language getLanguageInstance() {
-    return languageInstance;
-  }
-
-  public void setThreshold(float[] threshold) {
-    this.threshold = threshold;
-  }
-
-  public void setUseDiffReport(boolean useDiffReport) {
-    this.useDiffReport = useDiffReport;
-  }
-
-  public void setUseExternalSearch(boolean useExternalSearch) {
-    this.useExternalSearch = useExternalSearch;
   }
 
   public void setRecursive(boolean recursive) {
     this.recursive = recursive;
   }
 
+  public boolean isSkipParse() {
+    return skipParse;
+  }
+
   public void setSkipParse(boolean skipParse) {
     this.skipParse = skipParse;
   }
 
-  public void setFileList(List<String> fileList) {
-    this.fileList = fileList;
+  public ClusterType getClusterType() {
+    return clusterType;
   }
 
   public void setClusterType(ClusterType clusterType) {
     this.clusterType = clusterType;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
+  public ComparisonMode getComparisonMode() {
+    return comparisonMode;
   }
 
   public void setComparisonMode(ComparisonMode comparisonMode) {
     this.comparisonMode = comparisonMode;
   }
 
+  public Filter getFilter() {
+    return filter;
+  }
+
   public void setFilter(Filter filter) {
     this.filter = filter;
+  }
+
+  public String[] getFileSuffixes() {
+    return fileSuffixes;
   }
 
   public void setFileSuffixes(String[] fileSuffixes) {
     this.fileSuffixes = fileSuffixes;
   }
 
-  public void setResultDir(String resultDir) {
-    this.resultDir = resultDir;
+  public int getStoreMatches() {
+    return storeMatches;
   }
 
   public void setStoreMatches(int storeMatches) {
     this.storeMatches = storeMatches;
   }
 
+  public boolean isStorePercent() {
+    return storePercent;
+  }
+
   public void setStorePercent(boolean storePercent) {
     this.storePercent = storePercent;
+  }
+
+  public Integer getMinTokenMatch() {
+    return minTokenMatch;
   }
 
   public void setMinTokenMatch(Integer minTokenMatch) {
     this.minTokenMatch = minTokenMatch;
   }
 
-  public void setIncludeFile(String includeFile) {
-    this.includeFile = includeFile;
+  public String getExcludeFile() {
+    return excludeFile;
   }
 
   public void setExcludeFile(String excludeFile) {
     this.excludeFile = excludeFile;
   }
 
+  public String getRootDirName() {
+    return rootDirName;
+  }
+
   public void setRootDirName(String rootDirName) {
     this.rootDirName = rootDirName;
   }
 
-  public void setOriginalDir(String originalDir) {
-    this.originalDir = originalDir;
-  }
-
-  public void setUseDebugParser(boolean useDebugParser) {
-    this.useDebugParser = useDebugParser;
+  public String getBaseCode() {
+    return baseCode;
   }
 
   public void setBaseCode(String baseCode) {
     this.baseCode = baseCode;
   }
 
-  public void setOutputFile(String outputFile) {
-    this.outputFile = outputFile;
+  public String getSubDir() {
+    return subDir;
   }
 
   public void setSubDir(String subDir) {
@@ -429,11 +278,15 @@ public class JPlagOptions {
     this.language = language;
   }
 
-  public void setLanguageInstance(Language languageInstance) {
-    this.languageInstance = languageInstance;
-  }
-
   public void setVerbosity(Verbosity verbosity) {
     this.verbosity = verbosity;
+  }
+
+  public boolean isDebugParser() {
+    return debugParser;
+  }
+
+  public void setDebugParser(boolean debugParser) {
+    this.debugParser = debugParser;
   }
 }

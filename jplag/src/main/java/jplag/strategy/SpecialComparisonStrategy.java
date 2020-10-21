@@ -25,7 +25,7 @@ public class SpecialComparisonStrategy extends AbstractComparisonStrategy {
       Vector<Submission> submissions,
       Submission baseCodeSubmission
   ) {
-    File root = new File(options.getResultDir());
+    File root = new File(options.getRootDirName());
 
     int size = submissions.size();
     int matchIndex = 0;

@@ -210,11 +210,11 @@ public class JPlag implements ProgramI {
     File rootDir = new File(options.getRootDirName());
 
     if (!rootDir.exists()) {
-      throw new ExitException("Root directory " + options.getResultDir() + " does not exist!");
+      throw new ExitException("Root directory " + options.getRootDirName() + " does not exist!");
     }
 
     if (!rootDir.isDirectory()) {
-      throw new ExitException(options.getResultDir() + " is not a directory!");
+      throw new ExitException(options.getRootDirName() + " is not a directory!");
     }
 
     // This file contains all files names which are excluded
@@ -504,7 +504,7 @@ public class JPlag implements ProgramI {
     long msec = System.currentTimeMillis();
     Iterator<Submission> iter = submissions.iterator();
 
-    if (options.isUseExternalSearch()) {
+    if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
       makeTempDir();
     }
 
@@ -534,7 +534,7 @@ public class JPlag implements ProgramI {
         removed = true;
       }
 
-      if (options.isUseExternalSearch()) {
+      if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
         if (subm.struct != null) {
           this.gSTiling.create_hashes(subm.struct, options.getMinTokenMatch(), false);
           subm.struct.save(new File("temp", subm.dir.getName() + subm.name));
@@ -542,7 +542,7 @@ public class JPlag implements ProgramI {
         }
       }
 
-      if (!options.isUseExternalSearch() && subm.struct == null) {
+      if (options.getComparisonMode() != ComparisonMode.EXTERNAL && subm.struct == null) {
         invalidSubmissionNames = (invalidSubmissionNames == null) ? subm.name
             : invalidSubmissionNames + " - " + subm.name;
         iter.remove();
@@ -589,7 +589,7 @@ public class JPlag implements ProgramI {
     print("----- Parsing basecode submission: " + subm.name + "\n", null);
 
     // lets go:
-    if (options.isUseExternalSearch()) {
+    if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
       makeTempDir();
     }
 
@@ -611,7 +611,7 @@ public class JPlag implements ProgramI {
       gSTiling.create_hashes(subm.struct, options.getMinTokenMatch(), true);
     }
 
-    if (options.isUseExternalSearch()) {
+    if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
       if (subm.struct != null) {
         gSTiling.create_hashes(subm.struct, options.getMinTokenMatch(), false);
         subm.struct.save(new File("temp", subm.dir.getName() + subm.name));
