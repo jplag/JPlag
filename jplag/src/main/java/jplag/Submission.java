@@ -94,10 +94,11 @@ public class Submission implements Comparable<Submission> {
     }
     String[] newFiles = aktDir.list(new FilenameFilter() {
       public boolean accept(File dir, String name) {
-        if (!new File(dir, name).isFile()) {
+        File file = new File(dir, name);
+        if (!file.isFile()) {
           return false;
         }
-        if (program.isFileExcluded(name)) {
+        if (program.isFileExcluded(file)) {
           return false;
         }
         String[] suffies = program.getOptions().getFileSuffixes();

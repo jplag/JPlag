@@ -343,6 +343,20 @@ public class JPlag implements ProgramI {
     writer = null;
   }
 
+  public boolean hasValidSuffix(File file) {
+    boolean hasValidSuffix = false;
+    String name = file.getName();
+
+    for (String suffix : options.getFileSuffixes()) {
+      if (name.endsWith(suffix)) {
+        hasValidSuffix = true;
+        break;
+      }
+    }
+
+    return hasValidSuffix;
+  }
+
   /**
    * Find all submissions in the given root directory.
    */
@@ -358,66 +372,71 @@ public class JPlag implements ProgramI {
           "Unable to retrieve directory: " + options.getRootDirName() + " Cause : " + e.toString());
     }
 
+    if (fileNamesInRootDir == null) {
+      return submissions;
+    }
+
     Arrays.sort(fileNamesInRootDir);
 
-    // ------------------------------------------------------------------------
-
     for (String fileName : fileNamesInRootDir) {
-      File subm_dir = new File(rootDir, fileName);
+      File submissionFile = new File(rootDir, fileName);
 
-      if (!subm_dir.isDirectory()) {
+      if (isFileExcluded(submissionFile)) {
+        System.out.println("Exclude submission: " + submissionFile.getName());
+        continue;
+      }
+
+      Submission submission;
+
+      if (submissionFile.isDirectory()) {
+        if (options.getSubDir() != null) {
+          submissionFile = new File(submissionFile, options.getSubDir());
+        }
+
+        if (!submissionFile.exists()) {
+          throw new ExitException(
+              String.format(
+                  "Submission %s does not contain a subdirectory called '%s'",
+                  fileName,
+                  options.getSubDir()
+              )
+          );
+        }
+
+        if (!submissionFile.isDirectory()) {
+          throw new ExitException(
+              String.format(
+                  "The given subdirectory '%s' is not a directory!",
+                  options.getSubDir()
+              )
+          );
+        }
+
+        submission = new Submission(
+            fileName,
+            submissionFile,
+            options.isRecursive(),
+            this,
+            this.language
+        );
+      } else {
         // If subDir option is set, a submission can't be a single file -> ignore.
         if (options.getSubDir() != null) {
           continue;
         }
 
-        boolean hasValidSuffix = false;
-        String name = subm_dir.getName();
-
-        // Make sure the single-file submission has a valid suffix
-        for (String suffix : options.getFileSuffixes()) {
-          if (name.endsWith(suffix)) {
-            hasValidSuffix = true;
-            break;
-          }
-        }
-
         // Ignore single-file submissions with an invalid file suffix.
-        if (!hasValidSuffix) {
+        if (!hasValidSuffix(submissionFile)) {
           continue;
         }
 
-        submissions.addElement(new Submission(name, rootDir, this, this.language));
+        submission = new Submission(fileName, rootDir, this, this.language);
+      }
 
-      } else if (options.exp && isFileExcluded(subm_dir.toString())) {
-        // EXPERIMENT !!
-        System.err.println("excluded: " + subm_dir);
-
+      if (options.getBaseCode().equals(fileName)) {
+        baseCodeSubmission = submission;
       } else {
-        File file_dir = ((options.getSubDir() == null) ?
-            subm_dir : new File(subm_dir, options.getSubDir()));
-
-        if (file_dir.isDirectory()) {
-          if (options.getBaseCode().equals(subm_dir.getName())) {
-            baseCodeSubmission = new Submission(
-                subm_dir.getName(),
-                file_dir,
-                options.isRecursive(),
-                this,
-                this.language
-            );
-          } else {
-            submissions.addElement(new Submission(
-                subm_dir.getName(),
-                file_dir,
-                options.isRecursive(),
-                this,
-                this.language
-            ));
-          }
-        } else {
-          throw new ExitException("Cannot find directory: " + file_dir.toString());
-        }
+        submissions.addElement(submission);
       }
     }
 
@@ -427,13 +446,15 @@ public class JPlag implements ProgramI {
   /**
    * Check if a file is excluded or not.
    */
-  protected boolean isFileExcluded(String file) {
+  protected boolean isFileExcluded(File file) {
     if (excludedFileNames == null) {
       return false;
     }
 
+    String fileName = file.getName();
+
     for (String s : excludedFileNames) {
-      if (file.endsWith(s)) {
+      if (fileName.endsWith(s)) {
         return true;
       }
     }
