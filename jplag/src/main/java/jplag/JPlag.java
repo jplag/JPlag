@@ -390,6 +390,7 @@ public class JPlag implements ProgramI {
       File subm_dir = new File(rootDir, fileName);
 
       if (!subm_dir.isDirectory()) {
+        // If subDir option is set, a submission can't be a single file -> ignore.
         if (options.getSubDir() != null) {
           continue;
         }
@@ -397,6 +398,7 @@ public class JPlag implements ProgramI {
         boolean hasValidSuffix = false;
         String name = subm_dir.getName();
 
+        // Make sure the single-file submission has a valid suffix
         for (String suffix : options.getFileSuffixes()) {
           if (name.endsWith(suffix)) {
             hasValidSuffix = true;
@@ -404,11 +406,12 @@ public class JPlag implements ProgramI {
           }
         }
 
+        // Ignore single-file submissions with an invalid file suffix.
         if (!hasValidSuffix) {
           continue;
         }
 
-        submissions.addElement(new Submission(name, rootDir, this, options.getLanguageInstance()));
+        submissions.addElement(new Submission(name, rootDir, this, this.language));
 
       } else if (options.exp && isFileExcluded(subm_dir.toString())) {
         // EXPERIMENT !!
@@ -425,7 +428,7 @@ public class JPlag implements ProgramI {
                 file_dir,
                 options.isRecursive(),
                 this,
-                options.getLanguageInstance()
+                this.language
             );
           } else {
             submissions.addElement(new Submission(
@@ -433,7 +436,7 @@ public class JPlag implements ProgramI {
                 file_dir,
                 options.isRecursive(),
                 this,
-                options.getLanguageInstance()
+                this.language
             ));
           }
         } else {

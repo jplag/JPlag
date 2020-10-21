@@ -75,24 +75,25 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
       if ((avgMatches.size() < options.getStoreMatches() || avgPercent > avgMatches.lastElement()
           .percent()) && avgPercent > 0) {
         avgMatches.insert(match);
+
         if (avgMatches.size() > options.getStoreMatches()) {
           avgMatches.removeElementAt(options.getStoreMatches());
         }
       }
 
       if (maxMatches != null && (maxMatches.size() < options.getStoreMatches()
-          || maxPercent > maxMatches.lastElement().percent())
-          && maxPercent > 0) {
+          || maxPercent > maxMatches.lastElement().percent()) && maxPercent > 0) {
         maxMatches.insert(match);
+
         if (maxMatches.size() > options.getStoreMatches()) {
           maxMatches.removeElementAt(options.getStoreMatches());
         }
       }
 
       if (minMatches != null && (minMatches.size() < options.getStoreMatches()
-          || minPercent > minMatches.lastElement().percent())
-          && minPercent > 0) {
+          || minPercent > minMatches.lastElement().percent()) && minPercent > 0) {
         minMatches.insert(match);
+
         if (minMatches.size() > options.getStoreMatches()) {
           minMatches.removeElementAt(options.getStoreMatches());
         }
@@ -100,6 +101,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     } else { // store_percent
       if (avgPercent > options.getStoreMatches()) {
         avgMatches.insert(match);
+
         if (avgMatches.size() > JPlagOptions.MAX_RESULT_PAIRS) {
           avgMatches.removeElementAt(JPlagOptions.MAX_RESULT_PAIRS);
         }
@@ -107,6 +109,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
       if (maxMatches != null && maxPercent > options.getStoreMatches()) {
         maxMatches.insert(match);
+
         if (maxMatches.size() > JPlagOptions.MAX_RESULT_PAIRS) {
           maxMatches.removeElementAt(JPlagOptions.MAX_RESULT_PAIRS);
         }
@@ -114,6 +117,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
       if (minMatches != null && minPercent > options.getStoreMatches()) {
         minMatches.insert(match);
+
         if (minMatches.size() > JPlagOptions.MAX_RESULT_PAIRS) {
           minMatches.removeElementAt(JPlagOptions.MAX_RESULT_PAIRS);
         }
