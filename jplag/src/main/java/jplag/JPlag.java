@@ -15,16 +15,20 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
-import jplag.clustering.Cluster;
 import jplag.clustering.Clusters;
 import jplag.clustering.SimilarityMatrix;
 import jplag.options.ClusterType;
-import jplag.options.ComparisonMode;
+import jplag.strategy.ComparisonMode;
+import jplag.strategy.ComparisonStrategy;
+import jplag.strategy.ExperimentalComparisonStrategy;
+import jplag.strategy.ExternalComparisonStrategy;
+import jplag.strategy.NormalComparisonStrategy;
+import jplag.strategy.RevisionComparisonStrategy;
+import jplag.strategy.SpecialComparisonStrategy;
 import jplagUtils.PropertiesLoader;
 
 /*
@@ -33,16 +37,18 @@ import jplagUtils.PropertiesLoader;
  */
 public class JPlag implements ProgramI {
 
-  private static final Properties versionProps = PropertiesLoader
-      .loadProps("jplag/version.properties");
-  public static final String name = "JPlag" + versionProps.getProperty("version", "devel");
+  private static final Properties versionProps =
+      PropertiesLoader.loadProps("jplag/version.properties");
+
+  public static final String name =
+      "JPlag" + versionProps.getProperty("version", "devel");
+
   public static final String name_long =
       "JPlag (Version " + versionProps.getProperty("version", "devel") + ")";
 
   public String currentSubmissionName = "<Unknown submission>";
-  public Vector<String> errorVector = new Vector<>();
 
-  private Submission baseCodeSubmission = null;
+  public Vector<String> errorVector = new Vector<>();
 
   // Used Objects of anothers jplag.Classes ,they muss be just one time
   // instantiate
@@ -56,6 +62,16 @@ public class JPlag implements ProgramI {
   public SimilarityMatrix similarity = null;
 
   /**
+   * The base code directory is considered a separate submission.
+   */
+  private Submission baseCodeSubmission = null;
+
+  /**
+   * Comparison strategy to use.
+   */
+  public ComparisonStrategy comparisonStrategy;
+
+  /**
    * Set of file names to be excluded in comparison.
    */
   private HashSet<String> excludedFileNames = null;
@@ -65,21 +81,26 @@ public class JPlag implements ProgramI {
    */
   private Vector<String> includedFileNames = null;
 
+  /**
+   * Contains the comparison logic.
+   */
   protected GSTiling gSTiling = new GSTiling(this);
 
   /**
-   * Hashtable that maps the name of a submissions to its matches with the provided base code.
+   * JPlag configuration options.
    */
-  private Hashtable<String, AllBasecodeMatches> baseCodeMatches = new Hashtable<>(30);
-
-  // experiment end
-
   private final JPlagOptions options;
 
-  private final Runtime runtime = Runtime.getRuntime();
-
+  /**
+   * TODO: Check whether only valid submissions should be stored here.
+   * <p>
+   * Vector of (valid?)submissions.
+   */
   private Vector<Submission> submissions;
 
+  /**
+   * File writer.
+   */
   private FileWriter writer = null;
 
   public JPlag(JPlagOptions options) throws ExitException {
@@ -90,7 +111,32 @@ public class JPlag implements ProgramI {
 
   public void initialize() throws ExitException {
     this.initializeLanguage();
+    this.initializeComparisonStrategy();
     this.checkBaseCodeOption();
+  }
+
+  public void initializeComparisonStrategy() throws ExitException {
+    ComparisonMode mode = options.getComparisonMode();
+
+    switch (mode) {
+      case NORMAL:
+        this.comparisonStrategy = new NormalComparisonStrategy(options, gSTiling);
+        return;
+      case REVISION:
+        this.comparisonStrategy = new RevisionComparisonStrategy(options, gSTiling);
+        return;
+      case SPECIAL:
+        this.comparisonStrategy = new SpecialComparisonStrategy(options, gSTiling);
+        return;
+      case EXTERNAL:
+        this.comparisonStrategy = new ExternalComparisonStrategy(options, gSTiling);
+        return;
+      case EXPERIMENTAL:
+        this.comparisonStrategy = new ExperimentalComparisonStrategy(options, gSTiling);
+        return;
+      default:
+        throw new ExitException("Illegal comparison mode: " + options.getComparisonMode());
+    }
   }
 
   public void initializeLanguage() throws ExitException {
@@ -195,40 +241,27 @@ public class JPlag implements ProgramI {
 
     System.gc();
 
-    JPlagResult result = compareSubmissions(options.getComparisonMode());
+    JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
 
     closeWriter();
 
     return result;
   }
 
-  public JPlagResult compareSubmissions(ComparisonMode mode) throws ExitException {
-    switch (mode) {
-      case NORMAL:
-        return compare();
-      case REVISION:
-        revisionCompare();
-        break;
-      case SPECIAL:
-        specialCompare();
-        break;
-      case EXTERNAL:
-        try {
-          externalCompare();
-        } catch (OutOfMemoryError e) {
-          e.printStackTrace();
-        }
-        break;
-      case EXPERIMENTAL:
-        expCompare();
-        break;
-      default:
-        throw new ExitException(
-            "Illegal comparison mode: \"" + options.getComparisonMode() + "\""
-        );
+  /**
+   * All submission with no errors are counted. (unsure if this is still necessary.)
+   */
+  protected int countValidSubmissions() {
+    if (submissions == null) {
+      return 0;
     }
-
-    return new JPlagResult();
+    int size = 0;
+    for (int i = submissions.size() - 1; i >= 0; i--) {
+      if (!submissions.elementAt(i).errors) {
+        size++;
+      }
+    }
+    return size;
   }
 
   public void doParse() throws ExitException {
@@ -290,22 +323,6 @@ public class JPlag implements ProgramI {
     }
   }
 
-  /**
-   * All submission with no errors are counted. (unsure if this is still necessary.)
-   */
-  protected int countValidSubmissions() {
-    if (submissions == null) {
-      return 0;
-    }
-    int size = 0;
-    for (int i = submissions.size() - 1; i >= 0; i--) {
-      if (!submissions.elementAt(i).errors) {
-        size++;
-      }
-    }
-    return size;
-  }
-
   public void closeWriter() {
     try {
       if (writer != null) {
@@ -337,509 +354,6 @@ public class JPlag implements ProgramI {
     }
 
     throw new ExitException("Bad basecode submission:\n" + errorStr.toString());
-  }
-
-  private void compareWithBaseCode() {
-    int numberOfSubmissions = submissions.size();
-
-    AllBasecodeMatches bcMatch;
-    Submission currentSubmission;
-
-    long msec = System.currentTimeMillis();
-
-    for (int i = 0; i < (numberOfSubmissions); i++) {
-      currentSubmission = submissions.elementAt(i);
-
-      bcMatch = this.gSTiling.compareWithBasecode(currentSubmission, baseCodeSubmission);
-      baseCodeMatches.put(currentSubmission.name, bcMatch);
-
-      this.gSTiling.resetBaseSubmission(baseCodeSubmission);
-    }
-
-    long timebc = System.currentTimeMillis() - msec;
-
-    print("\n\n",
-        "\nTime for comparing with Basecode: " + ((timebc / 3600000 > 0) ? (timebc / 3600000)
-            + " h " : "")
-            + ((timebc / 60000 > 0) ? ((timebc / 60000) % 60000) + " min " : "") + (timebc / 1000
-            % 60) + " sec\n"
-            + "Time per basecode comparison: " + (timebc / numberOfSubmissions) + " msec\n\n");
-  }
-
-  /**
-   * Now the actual comparison: All submissions are compared pairwise.
-   */
-  private JPlagResult compare() {
-    if (this.options.hasBaseCode()) {
-      compareWithBaseCode();
-    }
-
-    // Result vectors
-    SortedVector<AllMatches> avgMatches = new SortedVector<>(new AllMatches.AvgComparator());
-    SortedVector<AllMatches> maxMatches = new SortedVector<>(new AllMatches.MaxComparator());
-    // TODO: Why is minMatches missing?
-
-    // Similarity distribution
-    int[] dist = new int[10];
-
-    int numberOfSubmissions = submissions.size();
-    int i, j, numberOfComparisons = 0;
-
-    Submission s1, s2;
-    AllMatches match;
-
-    long timeMillis = System.currentTimeMillis();
-
-    for (i = 0; i < (numberOfSubmissions - 1); i++) {
-      s1 = submissions.elementAt(i);
-
-      if (s1.struct == null) {
-        continue;
-      }
-
-      for (j = (i + 1); j < numberOfSubmissions; j++) {
-        s2 = submissions.elementAt(j);
-
-        if (s2.struct == null) {
-          continue;
-        }
-
-        match = this.gSTiling.compare(s1, s2);
-        numberOfComparisons++;
-
-        System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
-
-        if (options.hasBaseCode()) {
-          match.bcmatchesA = baseCodeMatches.get(match.subA.name);
-          match.bcmatchesB = baseCodeMatches.get(match.subB.name);
-        }
-
-        registerMatch(match, dist, avgMatches, maxMatches, null, i, j);
-      }
-    }
-
-    long time = System.currentTimeMillis() - timeMillis;
-
-    print("\n",
-        "Total time for comparing submissions: " + ((time / 3600000 > 0) ? (time / 3600000) + " h "
-            : "")
-            + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60)
-            + " sec\n" + "Time per comparison: "
-            + (time / numberOfComparisons) + " msec\n");
-
-    Cluster cluster = null;
-
-    if (options.getClusterType() != ClusterType.NONE) {
-      cluster = this.clusters.calculateClustering(submissions);
-    }
-
-    return new JPlagResult(cluster, avgMatches, maxMatches, null, dist);
-  }
-
-  /**
-   * Revision compare mode: Compare each submission only with its next submission.
-   */
-  private void revisionCompare() {
-    int size = submissions.size();
-
-    // Result vectors
-    SortedVector<AllMatches> avgmatches = new SortedVector<>(
-        new AllMatches.AvgReversedComparator());
-    SortedVector<AllMatches> maxmatches = new SortedVector<>(
-        new AllMatches.MaxReversedComparator());
-    SortedVector<AllMatches> minmatches = new SortedVector<>(
-        new AllMatches.MinReversedComparator());
-    int[] dist = new int[10];
-
-    long msec;
-    Submission s1, s2;
-
-    if (options.hasBaseCode()) {
-      compareWithBaseCode();
-    }
-
-    int totalcomps = size - 1;
-    int anz = 0, count = 0;
-    AllMatches match;
-
-    msec = System.currentTimeMillis();
-
-    s1loop:
-    for (int i = 0; i < size - 1; ) {
-      s1 = submissions.elementAt(i);
-      if (s1.struct == null) {
-        count++;
-        continue;
-      }
-
-      // Find next valid submission
-      int j = i;
-      do {
-        j++;
-        if (j >= size) {
-          break s1loop; // no more comparison pairs available
-        }
-        s2 = submissions.elementAt(j);
-      } while (s2.struct == null);
-
-      match = this.gSTiling.compare(s1, s2);
-
-      anz++;
-
-      /*
-       * System.out.println("Comparing "+s1.name+"-"+s2.name+": "+
-       * match.percent());
-       */
-      // histogram:
-      if (options.hasBaseCode()) {
-        match.bcmatchesA = baseCodeMatches.get(match.subA.name);
-        match.bcmatchesB = baseCodeMatches.get(match.subB.name);
-      }
-
-      registerMatch(match, dist, avgmatches, maxmatches, minmatches, i, j);
-      count++;
-
-      i = j;
-    }
-
-    long time = System.currentTimeMillis() - msec;
-
-    print("\n",
-        "Total time for comparing submissions: " + ((time / 3600000 > 0) ? (time / 3600000) + " h "
-            : "")
-            + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60)
-            + " sec\n" + "Time per comparison: "
-            + (time / anz) + " msec\n");
-
-    // ------------------------------------------------------------------------
-
-    Cluster cluster = null;
-
-    if (options.getClusterType() != ClusterType.NONE) {
-      cluster = this.clusters.calculateClustering(submissions);
-    }
-
-    // Deprecated:
-    // writeResults(dist, avgmatches, maxmatches, minmatches, cluster);
-    // TODO: Replace writeResults(...)
-  }
-
-  // EXPERIMENT !!!!! special compare routine!
-  private void expCompare() {
-    int size = countValidSubmissions();
-    int[] similarity = new int[(size * size - size) / 2];
-
-    int anzSub = submissions.size();
-    int i, j, count = 0;
-    Submission s1, s2;
-    AllMatches match;
-    long msec = System.currentTimeMillis();
-
-    for (i = 0; i < (anzSub - 1); i++) {
-      s1 = submissions.elementAt(i);
-      if (s1.struct == null) {
-        continue;
-      }
-      for (j = (i + 1); j < anzSub; j++) {
-        s2 = submissions.elementAt(j);
-        if (s2.struct == null) {
-          continue;
-        }
-
-        match = this.gSTiling.compare(s1, s2);
-        similarity[count++] = (int) match.percent();
-      }
-    }
-
-    long time = System.currentTimeMillis() - msec;
-
-    // output
-    System.out.print(options.getRootDir() + " ");
-    System.out.print(options.getMinTokenMatch() + " ");
-    System.out.print(options.getFilter() + " ");
-    System.out.print((time) + " ");
-
-    for (i = 0; i < similarity.length; i++) {
-      System.out.print(similarity[i] + " ");
-    }
-
-    System.out.println();
-  }
-
-  /**
-   * This is the special external comparison routine
-   */
-  private void externalCompare() {
-    int size = submissions.size();
-
-    // Result vector
-    SortedVector<AllMatches> avgmatches = new SortedVector<>(
-        new AllMatches.AvgComparator());
-    SortedVector<AllMatches> maxmatches = new SortedVector<>(
-        new AllMatches.MaxComparator());
-    int[] dist = new int[10];
-
-    print("Comparing: " + size + " submissions\n", null);
-
-    long totalComparisons = (size * (size - 1)) / 2, count = 0, comparisons = 0;
-    int index;
-    AllMatches match;
-    Submission s1, s2;
-    long remain;
-    String totalTimeStr, remainTime;
-
-    print("Checking memory size...\n", null);
-
-    // First try to load as many submissions as possible
-    index = fillMemory(0, size);
-
-    long startTime;
-    long totalTime = 0;
-    int startA = 0;
-    int endA = index / 2;
-    int startB = endA + 1;
-    int endB = index;
-    int i, j;
-    // long progStart;
-
-    do {
-      // compare A to A
-      startTime = System.currentTimeMillis();
-      print("Comparing block A (" + startA + "-" + endA + ") to block A\n", null);
-
-      for (i = startA; i <= endA; i++) {
-        s1 = submissions.elementAt(i);
-
-        if (s1.struct == null) {
-          count += (endA - i);
-          continue;
-        }
-
-        for (j = (i + 1); j <= endA; j++) {
-          s2 = submissions.elementAt(j);
-
-          if (s2.struct == null) {
-            count++;
-            continue;
-          }
-
-          match = this.gSTiling.compare(s1, s2);
-          registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
-          comparisons++;
-          count++;
-        }
-      }
-
-      print("\n", null);
-      totalTime += System.currentTimeMillis() - startTime;
-
-      // Are we finished?
-      if (startA == startB) {
-        break;
-      }
-
-      do {
-        totalTimeStr = "" + ((totalTime / 3600000 > 0) ? (totalTime / 3600000) + " h " : "")
-            + ((totalTime / 60000 > 0) ? ((totalTime / 60000) % 60) + " min " : "") + (
-            totalTime / 1000 % 60) + " sec";
-
-        if (comparisons != 0) {
-          remain = totalTime * (totalComparisons - count) / comparisons;
-        } else {
-          remain = 0;
-        }
-
-        remainTime = "" + ((remain / 3600000 > 0) ? (remain / 3600000) + " h " : "")
-            + ((remain / 60000 > 0) ? ((remain / 60000) % 60) + " min " : "") + (remain / 1000 % 60)
-            + " sec";
-
-        print("Progress: " + (100 * count) / totalComparisons + "%\nTime used for comparisons: "
-            + totalTimeStr
-            + "\nRemaining time (estimate): " + remainTime + "\n", null);
-
-        // compare A to B
-        startTime = System.currentTimeMillis();
-        print("Comparing block A (" + startA + "-" + endA + ") to block B (" + startB + "-" + endB
-            + ")\n", null);
-
-        for (i = startB; i <= endB; i++) {
-          s1 = submissions.elementAt(i);
-
-          if (s1.struct == null) {
-            count += (endA - startA + 1);
-            continue;
-          }
-
-          for (j = startA; j <= endA; j++) {
-            s2 = submissions.elementAt(j);
-
-            if (s2.struct == null) {
-              count++;
-              continue;
-            }
-
-            match = this.gSTiling.compare(s1, s2);
-            registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
-            comparisons++;
-            count++;
-          }
-
-          s1.struct = null; // remove B
-        }
-
-        print("\n", null);
-        totalTime += System.currentTimeMillis() - startTime;
-
-        if (endB == size - 1) {
-          totalTimeStr = "" + ((totalTime / 3600000 > 0) ? (totalTime / 3600000) + " h " : "")
-              + ((totalTime / 60000 > 0) ? ((totalTime / 60000) % 60) + " min " : "") + (
-              totalTime / 1000 % 60) + " sec";
-          remain = totalTime * (totalComparisons - count) / comparisons;
-          remainTime = "" + ((remain / 3600000 > 0) ? (remain / 3600000) + " h " : "")
-              + ((remain / 60000 > 0) ? ((remain / 60000) % 60) + " min " : "") + (remain / 1000
-              % 60) + " sec";
-
-          print("Progress: " + (100 * count) / totalComparisons + "%\nTime used for comparisons: "
-              + totalTimeStr
-              + "\nRemaining time (estimate): " + remainTime + "\n", null);
-          break;
-        }
-
-        runtime.runFinalization();
-        runtime.gc();
-        Thread.yield();
-
-        // Try to find the next B
-        print("Finding next B\n", null);
-
-        index = fillMemory(endB + 1, size);
-
-        startB = endB + 1;
-        endB = index;
-
-      } while (true);
-
-      // Remove A
-      for (i = startA; i <= endA; i++) {
-        submissions.elementAt(i).struct = null;
-      }
-
-      runtime.runFinalization();
-      runtime.gc();
-      Thread.yield();
-
-      print("Find next A.\n", null);
-      // First try to load as many submissions as possible
-
-      index = fillMemory(endA + 1, size);
-
-      if (index != size - 1) {
-        startA = endA + 1;
-        endA = startA + (index - startA + 1) / 2;
-        startB = endA + 1;
-        endB = index;
-      } else {
-        startA = startB; // last block
-        endA = endB = index;
-      }
-    } while (true);
-
-    totalTime += System.currentTimeMillis() - startTime;
-    totalTimeStr = "" + ((totalTime / 3600000 > 0) ? (totalTime / 3600000) + " h " : "")
-        + ((totalTime / 60000 > 0) ? ((totalTime / 60000) % 60000) + " min " : "") + (
-        totalTime / 1000 % 60) + " sec";
-
-    print("Total comparison time: " + totalTimeStr + "\nComparisons: " + count + "/" + comparisons
-            + "/" + totalComparisons + "\n",
-        null);
-
-    // free remaining memory
-    for (i = startA; i <= endA; i++) {
-      submissions.elementAt(i).struct = null;
-    }
-
-    runtime.runFinalization();
-    runtime.gc();
-    Thread.yield();
-
-    Cluster cluster = null;
-
-    if (options.getClusterType() == ClusterType.NONE) {
-      cluster = this.clusters.calculateClustering(submissions);
-    }
-
-    // TODO: Replace writeResults(...)
-    // Deprecated:
-    // writeResults(dist, avgmatches, maxmatches, null, cluster);
-  }
-
-  /*
-   * Now the special comparison
-   * TODO: Previously, this comparison created a `Report.java` (removed)
-   * TODO: Check whether this comparison is now any different than the others after the report has been removed
-   */
-  private void specialCompare() {
-    File root = new File(options.getResultDir());
-
-    int size = submissions.size();
-    int matchIndex = 0;
-
-    print("Comparing: ", countValidSubmissions() + " submissions");
-    print("\n(Writing results at the same time.)\n", null);
-
-    int totalcomps = size * size;
-    int i, j, anz = 0, count = 0;
-    AllMatches match;
-    Submission s1, s2;
-    long msec = System.currentTimeMillis();
-
-    for (i = 0; i < (size - 1); i++) {
-      // Result vector
-      SortedVector<AllMatches> matches = new SortedVector<>(
-          new AllMatches.AvgComparator());
-
-      s1 = submissions.elementAt(i);
-
-      if (s1.struct == null) {
-        count += (size - 1);
-        continue;
-      }
-
-      for (j = 0; j < size; j++) {
-        s2 = submissions.elementAt(j);
-
-        if ((i == j) || (s2.struct == null)) {
-          count++;
-          continue;
-        }
-
-        match = this.gSTiling.compare(s1, s2);
-        anz++;
-
-        float percent = match.percent();
-
-        if ((matches.size() < options.compare || matches.size() == 0 || match
-            .moreThan(matches.lastElement().percent()))
-            && match.moreThan(0)) {
-          matches.insert(match);
-          if (matches.size() > options.compare) {
-            matches.removeElementAt(options.compare);
-          }
-        }
-
-        if (options.getClusterType() != ClusterType.NONE) {
-          similarity.setSimilarity(i, j, percent);
-        }
-
-        count++;
-      }
-    }
-
-    long time = System.currentTimeMillis() - msec;
-    print("\n", "Total time: " + ((time / 3600000 > 0) ? (time / 3600000) + " h " : "")
-        + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60)
-        + " sec\n" + "Time per comparison: "
-        + (time / anz) + " msec\n");
   }
 
   /**
@@ -1020,53 +534,6 @@ public class JPlag implements ProgramI {
     }
 
     return false;
-  }
-
-  private int fillMemory(int from, int size) {
-    Submission sub = null;
-    int index = from;
-
-    runtime.runFinalization();
-    runtime.gc();
-    Thread.yield();
-    long freeBefore = runtime.freeMemory();
-    try {
-      for (; index < size; index++) {
-        sub = submissions.elementAt(index);
-        sub.struct = new Structure();
-        if (!sub.struct.load(new File("temp", sub.dir.getName() + sub.name))) {
-          sub.struct = null;
-        }
-      }
-    } catch (java.lang.OutOfMemoryError e) {
-      sub.struct = null;
-      print("Memory overflow after loading " + (index - from + 1) + " submissions.\n", null);
-    }
-    if (index >= size) {
-      index = size - 1;
-    }
-
-    if (freeBefore / runtime.freeMemory() <= 2) {
-      return index;
-    }
-    for (int i = (index - from) / 2; i > 0; i--) {
-      submissions.elementAt(index--).struct = null;
-    }
-    runtime.runFinalization();
-    runtime.gc();
-    Thread.yield();
-
-    // make sure we freed half of the "available" memory.
-    long free;
-    while (freeBefore / (free = runtime.freeMemory()) > 2) {
-      submissions.elementAt(index--).struct = null;
-      runtime.runFinalization();
-      runtime.gc();
-      Thread.yield();
-    }
-    print(free / 1024 / 1024 + "MByte freed. Current index: " + index + "\n", null);
-
-    return index;
   }
 
   private void makeTempDir() throws jplag.ExitException {
@@ -1301,76 +768,6 @@ public class JPlag implements ProgramI {
       while (enum1.hasMoreElements()) {
         print(null, "  " + enum1.nextElement() + "\n");
       }
-    }
-  }
-
-  private void registerMatch(
-      AllMatches match,
-      int[] dist,
-      SortedVector<AllMatches> avgMatches,
-      SortedVector<AllMatches> maxMatches,
-      SortedVector<AllMatches> minMatches,
-      int a,
-      int b
-  ) {
-    float avgPercent = match.percent();
-    float maxPercent = match.percentMaxAB();
-    float minPercent = match.percentMinAB();
-
-    int i = ((int) avgPercent) / 10;
-    dist[(i == 10) ? 9 : i]++;
-
-    if (!options.isStorePercent()) {
-      if ((avgMatches.size() < options.getStoreMatches() || avgPercent > avgMatches.lastElement()
-          .percent()) && avgPercent > 0) {
-        avgMatches.insert(match);
-        if (avgMatches.size() > options.getStoreMatches()) {
-          avgMatches.removeElementAt(options.getStoreMatches());
-        }
-      }
-
-      if (maxMatches != null && (maxMatches.size() < options.getStoreMatches()
-          || maxPercent > maxMatches.lastElement().percent())
-          && maxPercent > 0) {
-        maxMatches.insert(match);
-        if (maxMatches.size() > options.getStoreMatches()) {
-          maxMatches.removeElementAt(options.getStoreMatches());
-        }
-      }
-
-      if (minMatches != null && (minMatches.size() < options.getStoreMatches()
-          || minPercent > minMatches.lastElement().percent())
-          && minPercent > 0) {
-        minMatches.insert(match);
-        if (minMatches.size() > options.getStoreMatches()) {
-          minMatches.removeElementAt(options.getStoreMatches());
-        }
-      }
-    } else { // store_percent
-      if (avgPercent > options.getStoreMatches()) {
-        avgMatches.insert(match);
-        if (avgMatches.size() > JPlagOptions.MAX_RESULT_PAIRS) {
-          avgMatches.removeElementAt(JPlagOptions.MAX_RESULT_PAIRS);
-        }
-      }
-
-      if (maxMatches != null && maxPercent > options.getStoreMatches()) {
-        maxMatches.insert(match);
-        if (maxMatches.size() > JPlagOptions.MAX_RESULT_PAIRS) {
-          maxMatches.removeElementAt(JPlagOptions.MAX_RESULT_PAIRS);
-        }
-      }
-
-      if (minMatches != null && minPercent > options.getStoreMatches()) {
-        minMatches.insert(match);
-        if (minMatches.size() > JPlagOptions.MAX_RESULT_PAIRS) {
-          minMatches.removeElementAt(JPlagOptions.MAX_RESULT_PAIRS);
-        }
-      }
-    }
-
-    if (options.getClusterType() != ClusterType.NONE) {
-      similarity.setSimilarity(a, b, avgPercent);
     }
   }
 }

@@ -1,14 +1,11 @@
 package jplag;
 
-import static jplag.options.ComparisonMode.NORMAL;
+import static jplag.strategy.ComparisonMode.NORMAL;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.List;
-import jplag.clustering.SimilarityMatrix;
 import jplag.filter.Filter;
 import jplag.options.ClusterType;
-import jplag.options.ComparisonMode;
+import jplag.strategy.ComparisonMode;
 import jplag.options.Verbosity;
 
 public class JPlagOptions {

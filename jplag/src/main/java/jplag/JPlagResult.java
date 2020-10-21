@@ -30,11 +30,11 @@ public class JPlagResult {
    */
   private int[] similarityDistribution = null;
 
-  JPlagResult() {
+  public JPlagResult() {
 
   }
 
-  JPlagResult(
+  public JPlagResult(
       Cluster cluster,
       SortedVector<AllMatches> avgMatches,
       SortedVector<AllMatches> maxMatches,
