@@ -9,7 +9,7 @@ public class CLI {
     try {
       JPlagOptions options = JPlagOptions.fromArgs(args);
       options.setLanguage(Language.JAVA_1_9);
-      options.setRootDir("/Users/philippbauch/Develop/jplag-test");
+      options.setRootDirName("/Users/philippbauch/Develop/jplag-test");
       options.setBaseCode("base-code");
 
       JPlag program = new JPlag(options);

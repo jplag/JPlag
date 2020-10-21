@@ -12,13 +12,12 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
 
+import java.util.stream.Collectors;
 import jplag.clustering.Clusters;
 import jplag.clustering.SimilarityMatrix;
 import jplag.options.ClusterType;
@@ -46,12 +45,21 @@ public class JPlag implements ProgramI {
   public static final String name_long =
       "JPlag (Version " + versionProps.getProperty("version", "devel") + ")";
 
+  /**
+   * This stores the name of the submission that is currently parsed.
+   * <p>
+   * TODO: This should be moved to parseSubmissions(...)
+   */
   public String currentSubmissionName = "<Unknown submission>";
 
+  /**
+   * Vector of errors that occurred during the execution of the program.
+   */
   public Vector<String> errorVector = new Vector<>();
 
-  // Used Objects of anothers jplag.Classes ,they muss be just one time
-  // instantiate
+  /**
+   * Used Objects of anothers jplag.Classes, they muss be just one time instantiate TODO: What?
+   */
   public Clusters clusters = null;
 
   private int errors = 0;
@@ -77,11 +85,6 @@ public class JPlag implements ProgramI {
   private HashSet<String> excludedFileNames = null;
 
   /**
-   * Vector of file name to be included in comparison.
-   */
-  private Vector<String> includedFileNames = null;
-
-  /**
    * Contains the comparison logic.
    */
   protected GSTiling gSTiling = new GSTiling(this);
@@ -90,13 +93,6 @@ public class JPlag implements ProgramI {
    * JPlag configuration options.
    */
   private final JPlagOptions options;
-
-  /**
-   * TODO: Check whether only valid submissions should be stored here.
-   * <p>
-   * Vector of (valid?)submissions.
-   */
-  private Vector<Submission> submissions;
 
   /**
    * File writer.
@@ -170,11 +166,12 @@ public class JPlag implements ProgramI {
       return;
     }
 
-    String baseCodePath = this.options.getRootDir() + File.separator + this.options.getBaseCode();
+    String baseCodePath =
+        this.options.getRootDirName() + File.separator + this.options.getBaseCode();
 
-    if (!(new File(this.options.getRootDir())).exists()) {
+    if (!(new File(this.options.getRootDirName())).exists()) {
       throw new ExitException(
-          "Root directory \"" + this.options.getRootDir() + "\" doesn't exist!",
+          "Root directory \"" + this.options.getRootDirName() + "\" doesn't exist!",
           ExitException.BAD_PARAMETER
       );
     }
@@ -209,30 +206,40 @@ public class JPlag implements ProgramI {
   /**
    * Main procedure
    */
-  public JPlagResult run() throws jplag.ExitException {
+  public JPlagResult run() throws ExitException {
+    File rootDir = new File(options.getRootDirName());
+
+    if (!rootDir.exists()) {
+      throw new ExitException("Root directory " + options.getResultDir() + " does not exist!");
+    }
+
+    if (!rootDir.isDirectory()) {
+      throw new ExitException(options.getResultDir() + " is not a directory!");
+    }
+
     // This file contains all files names which are excluded
     readExclusionFile();
 
-    if (options.hasFileList()) {
-      createSubmissionsFileList();
-    } else if (options.getIncludeFile() == null) {
-      createSubmissions();
-      System.out.println(submissions.size() + " submissions");
-    } else {
-      createSubmissionsExp();
-    }
+    Vector<Submission> submissions = findSubmissions(rootDir);
 
-    if (!options.isSkipParse()) {
-      doParse();
-    } else {
+    if (options.isSkipParse()) {
       print("Skipping parsing...\n", null);
+    } else {
+      parseAllSubmissions(submissions, baseCodeSubmission);
     }
 
-    if (countValidSubmissions() < 2) {
-      throwNotEnoughSubmissions();
+    submissions = filterValidSubmissions(submissions);
+
+    if (submissions.size() < 2) {
+      printErrors();
+      throw new ExitException(
+          "Not enough valid submissions! (found " + submissions.size() + " valid submissions)",
+          ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR
+      );
     }
 
-    errorVector = null; // errorVector is not needed anymore
+    // errorVector is not needed anymore
+    errorVector = null;
 
     if (options.getClusterType() != ClusterType.NONE) {
       clusters = new Clusters(this);
@@ -248,53 +255,55 @@ public class JPlag implements ProgramI {
     return result;
   }
 
-  /**
-   * All submission with no errors are counted. (unsure if this is still necessary.)
-   */
-  protected int countValidSubmissions() {
-    if (submissions == null) {
-      return 0;
-    }
-    int size = 0;
-    for (int i = submissions.size() - 1; i >= 0; i--) {
-      if (!submissions.elementAt(i).errors) {
-        size++;
-      }
-    }
-    return size;
+  private Vector<Submission> filterValidSubmissions(Vector<Submission> submissions) {
+    return submissions.stream()
+        .filter(submission -> !submission.errors)
+        .collect(Collectors.toCollection(Vector::new));
   }
 
-  public void doParse() throws ExitException {
+  /**
+   * TODO: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
+   */
+  public void parseAllSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission)
+      throws ExitException {
     try {
-      parseAll();
+      parseSubmissions(submissions);
       System.gc();
-      parseBaseCodeSubmission();
+      parseBaseCodeSubmission(baseCodeSubmission);
     } catch (OutOfMemoryError e) {
-      submissions = null;
       System.gc();
-      System.out.println(
-          "[" + new Date() + "] OutOfMemoryError " + "during parsing of submission \""
-              + currentSubmissionName
-              + "\"");
+
       throw new ExitException(
           "Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
-    } catch (ExitException e) {
-      throw e;
     } catch (Throwable e) {
-      System.out.println(
-          "[" + new Date() + "] Unknown exception " + "during parsing of submission \""
-              + currentSubmissionName
-              + "\"");
       e.printStackTrace();
+
       throw new ExitException(
           "Unknown exception during parsing of " + "submission \"" + currentSubmissionName
               + "\"");
     }
   }
 
+  /**
+   * Add an error to the errorVector.
+   */
   public void addError(String errorMsg) {
     errorVector.add("[" + currentSubmissionName + "]\n" + errorMsg);
     print(errorMsg, null);
+  }
+
+  /**
+   * Print all errors from the errorVector.
+   */
+  private void printErrors() {
+    StringBuilder errorStr = new StringBuilder();
+
+    for (String str : errorVector) {
+      errorStr.append(str);
+      errorStr.append('\n');
+    }
+
+    System.out.println(errorStr.toString());
   }
 
   public void print(String normal, String lng) {
@@ -334,44 +343,11 @@ public class JPlag implements ProgramI {
     writer = null;
   }
 
-  private void throwNotEnoughSubmissions() throws jplag.ExitException {
-    StringBuilder errorStr = new StringBuilder();
-    for (String str : errorVector) {
-      errorStr.append(str);
-      errorStr.append('\n');
-    }
-
-    throw new ExitException("Not enough valid submissions! (only " + countValidSubmissions() + " "
-        + (countValidSubmissions() != 1 ? "are" : "is") + " valid):\n" + errorStr.toString(),
-        ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
-  }
-
-  private void throwBadBaseCodeSubmission() throws jplag.ExitException {
-    StringBuilder errorStr = new StringBuilder();
-    for (String str : errorVector) {
-      errorStr.append(str);
-      errorStr.append('\n');
-    }
-
-    throw new ExitException("Bad basecode submission:\n" + errorStr.toString());
-  }
-
   /**
-   * Parse all submissions in the given `options.rootDir`. This method is called from
-   * Program.run(...).
+   * Find all submissions in the given root directory.
    */
-  private void createSubmissions() throws jplag.ExitException {
-    submissions = new Vector<>();
-
-    // ------------------------------------------------------------------------
-
-    File rootDir = new File(options.getRootDir());
-
-    if (!rootDir.isDirectory()) {
-      throw new jplag.ExitException("\"" + options.getResultDir() + "\" is not a directory!");
-    }
-
-    // ------------------------------------------------------------------------
+  private Vector<Submission> findSubmissions(File rootDir) throws jplag.ExitException {
+    Vector<Submission> submissions = new Vector<>();
 
     String[] fileNamesInRootDir;
 
@@ -379,7 +355,7 @@ public class JPlag implements ProgramI {
       fileNamesInRootDir = rootDir.list();
     } catch (SecurityException e) {
       throw new jplag.ExitException(
-          "Unable to retrieve directory: " + options.getRootDir() + " Cause : " + e.toString());
+          "Unable to retrieve directory: " + options.getRootDirName() + " Cause : " + e.toString());
     }
 
     Arrays.sort(fileNamesInRootDir);
@@ -444,82 +420,8 @@ public class JPlag implements ProgramI {
         }
       }
     }
-  }
 
-  /**
-   * Parse submissions from the given `options.fileList` only. This method is called from
-   * Program.run(...).
-   */
-  private void createSubmissionsFileList() throws jplag.ExitException {
-    submissions = new Vector<>();
-
-    File rootDir = null;
-
-    if (options.getRootDir() != null) {
-      rootDir = new File(options.getRootDir());
-
-      if (!rootDir.isDirectory()) {
-        throw new jplag.ExitException(options.getRootDir() + " is not a directory!");
-      }
-    }
-
-    for (String file : options.getFileList()) {
-      submissions.addElement(new Submission(file, rootDir, this, options.getLanguageInstance()));
-    }
-  }
-
-
-  /**
-   * THIS IS FOR THE EMPIRICAL STUDY
-   */
-  private void createSubmissionsExp() throws jplag.ExitException {
-    // ES IST SICHER, DASS EIN INCLUDE-FILE ANGEGEBEN WURDE!
-    readIncludeFile();
-
-    submissions = new Vector<>();
-
-    // ------------------------------------------------------------------------
-
-    File rootDir = new File(options.getRootDir());
-
-    if (!rootDir.isDirectory()) {
-      throw new jplag.ExitException(options.getRootDir() + " is not a directory!");
-    }
-
-    // ------------------------------------------------------------------------
-
-    String[] list = new String[includedFileNames.size()];
-    includedFileNames.copyInto(list);
-
-    // ------------------------------------------------------------------------
-
-    for (String s : list) {
-      File submissionDir = new File(rootDir, s);
-
-      if (!submissionDir.isDirectory()) {
-        continue;
-      }
-
-      if (options.exp && isFileExcluded(submissionDir.toString())) { // EXPERIMENT
-        System.err.println("excluded: " + submissionDir);
-        continue;
-      }
-
-      File file_dir = ((options.getSubDir() == null) ? submissionDir
-          : new File(submissionDir, options.getSubDir()));
-
-      if (file_dir.isDirectory()) {
-        submissions.addElement(new Submission(
-            submissionDir.getName(),
-            file_dir,
-            options.isRecursive(),
-            this,
-            this.options.getLanguageInstance()
-        ));
-      } else if (options.getSubDir() == null) {
-        throw new ExitException(options.getRootDir() + " is not a directory!");
-      }
-    }
+    return submissions;
   }
 
   /**
@@ -567,18 +469,16 @@ public class JPlag implements ProgramI {
     }
   }
 
-  /*
-   * Compiles all "submissions"
+  /**
+   * Parse all given submissions.
    */
-  private void parseAll() throws jplag.ExitException {
+  private void parseSubmissions(Vector<Submission> submissions) throws jplag.ExitException {
     if (submissions == null) {
       System.out.println("Nothing to parse!");
       return;
     }
 
-    // lets go:)
     int count = 0;
-    int totalcount = submissions.size();
 
     long msec = System.currentTimeMillis();
     Iterator<Submission> iter = submissions.iterator();
@@ -654,9 +554,10 @@ public class JPlag implements ProgramI {
             + "Time per parsed submission: " + (count > 0 ? (time / count) : "n/a") + " msec\n\n");
   }
 
-  private void parseBaseCodeSubmission() throws jplag.ExitException {
-    Submission subm = baseCodeSubmission;
-
+  /**
+   * Parse the given base code submission.
+   */
+  private void parseBaseCodeSubmission(Submission subm) throws jplag.ExitException {
     if (subm == null) {
       // TODO:
       // options.useBasecode = false;
@@ -672,7 +573,8 @@ public class JPlag implements ProgramI {
     }
 
     if (!subm.parse()) {
-      throwBadBaseCodeSubmission();
+      printErrors();
+      throw new ExitException("Bad basecode submission");
     }
 
     if (options.exp && options.getFilter() != null) {
@@ -735,41 +637,6 @@ public class JPlag implements ProgramI {
 
       for (String excludedFileName : excludedFileNames) {
         print(null, "  " + excludedFileName + "\n");
-      }
-    }
-  }
-
-  /*
-   * If an include file is given, read it in and store all the strings in
-   * "included".
-   */
-  private void readIncludeFile() {
-    if (options.getIncludeFile() == null) {
-      return;
-    }
-
-    includedFileNames = new Vector<>();
-
-    try {
-      BufferedReader in = new BufferedReader(new FileReader(options.getIncludeFile()));
-      String line;
-
-      while ((line = in.readLine()) != null) {
-        includedFileNames.addElement(line.trim());
-      }
-
-      in.close();
-    } catch (IOException e) {
-      System.out.println("Could not read include file: " + options.getIncludeFile());
-    }
-
-    if (options.getVerbosity() == LONG) {
-      print(null, "Included dirs:\n");
-
-      Enumeration<String> enum1 = includedFileNames.elements();
-
-      while (enum1.hasMoreElements()) {
-        print(null, "  " + enum1.nextElement() + "\n");
       }
     }
   }

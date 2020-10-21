@@ -47,7 +47,7 @@ public class ExperimentalComparisonStrategy extends AbstractComparisonStrategy {
     long time = System.currentTimeMillis() - msec;
 
     // output
-    System.out.print(options.getRootDir() + " ");
+    System.out.print(options.getRootDirName() + " ");
     System.out.print(options.getMinTokenMatch() + " ");
     System.out.print(options.getFilter() + " ");
     System.out.print((time) + " ");

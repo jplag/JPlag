@@ -130,7 +130,7 @@ public class JPlagOptions {
   /**
    * Directory that contains all submissions.
    */
-  private String rootDir;
+  private String rootDirName;
 
   /**
    * Directory to store non-parsable files.
@@ -305,8 +305,8 @@ public class JPlagOptions {
     return excludeFile;
   }
 
-  public String getRootDir() {
-    return rootDir;
+  public String getRootDirName() {
+    return rootDirName;
   }
 
   public String getOriginalDir() {
@@ -401,8 +401,8 @@ public class JPlagOptions {
     this.excludeFile = excludeFile;
   }
 
-  public void setRootDir(String rootDir) {
-    this.rootDir = rootDir;
+  public void setRootDirName(String rootDirName) {
+    this.rootDirName = rootDirName;
   }
 
   public void setOriginalDir(String originalDir) {
