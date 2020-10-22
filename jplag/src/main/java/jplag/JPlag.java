@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import jplag.clustering.Clusters;
 import jplag.clustering.SimilarityMatrix;
 import jplag.options.ClusterType;
+import jplag.options.LanguageOption;
 import jplag.strategy.ComparisonMode;
 import jplag.strategy.ComparisonStrategy;
 import jplag.strategy.ExperimentalComparisonStrategy;
@@ -137,17 +138,17 @@ public class JPlag implements ProgramI {
   }
 
   public void initializeLanguage() throws ExitException {
-    jplag.options.Language language = this.options.getLanguage();
+    LanguageOption languageOption = this.options.getLanguageOption();
 
     try {
-      Class<?> languageClass = Class.forName(language.getClassPath());
+      Class<?> languageClass = Class.forName(languageOption.getClassPath());
       Constructor<?>[] languageConstructors = languageClass.getDeclaredConstructors();
 
       // TODO: Verify that only one constructor exists
       Constructor<?> constructor = languageConstructors[0];
       Object[] constructorParams = {this};
 
-      this.language = (jplag.Language) constructor.newInstance(constructorParams);
+      this.language = (Language) constructor.newInstance(constructorParams);
     } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
       e.printStackTrace();
 

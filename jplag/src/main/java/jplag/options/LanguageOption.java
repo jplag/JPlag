@@ -3,7 +3,7 @@ package jplag.options;
 /**
  * The available languages.
  */
-public enum Language {
+public enum LanguageOption {
   JAVA_1_1("jplag.javax.Language"),
   JAVA_1_2("jplag.java.Language"),
   JAVA_1_5("jplag.java15.Language"),
@@ -19,7 +19,7 @@ public enum Language {
 
   private final String classPath;
 
-  Language(String classPath) {
+  LanguageOption(String classPath) {
     this.classPath = classPath;
   }
 

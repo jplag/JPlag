@@ -4,6 +4,7 @@ import static jplag.strategy.ComparisonMode.NORMAL;
 
 import jplag.filter.Filter;
 import jplag.options.ClusterType;
+import jplag.options.LanguageOption;
 import jplag.strategy.ComparisonMode;
 import jplag.options.Verbosity;
 
@@ -100,7 +101,7 @@ public class JPlagOptions {
    * TODO: Rename (conflicts with jplag.Language) Selected language to process the submissions
    * with.
    */
-  private jplag.options.Language language;
+  private LanguageOption languageOption;
 
   /**
    * Level of output verbosity.
@@ -148,8 +149,8 @@ public class JPlagOptions {
         + " -l <language>   (Language) Supported Languages:\n");
   }
 
-  public jplag.options.Language getLanguage() {
-    return language;
+  public LanguageOption getLanguageOption() {
+    return languageOption;
   }
 
   public Verbosity getVerbosity() {
@@ -274,8 +275,8 @@ public class JPlagOptions {
     this.subDir = subDir;
   }
 
-  public void setLanguage(jplag.options.Language language) {
-    this.language = language;
+  public void setLanguageOption(LanguageOption languageOption) {
+    this.languageOption = languageOption;
   }
 
   public void setVerbosity(Verbosity verbosity) {
