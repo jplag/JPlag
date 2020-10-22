@@ -7,6 +7,5 @@ public enum ComparisonMode {
   NORMAL,
   REVISION,
   SPECIAL,
-  EXTERNAL,
-  EXPERIMENTAL
+  EXTERNAL
 }

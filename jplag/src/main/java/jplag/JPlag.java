@@ -24,7 +24,6 @@ import jplag.options.ClusterType;
 import jplag.options.LanguageOption;
 import jplag.strategy.ComparisonMode;
 import jplag.strategy.ComparisonStrategy;
-import jplag.strategy.ExperimentalComparisonStrategy;
 import jplag.strategy.ExternalComparisonStrategy;
 import jplag.strategy.NormalComparisonStrategy;
 import jplag.strategy.RevisionComparisonStrategy;
@@ -128,9 +127,6 @@ public class JPlag implements ProgramI {
         return;
       case EXTERNAL:
         this.comparisonStrategy = new ExternalComparisonStrategy(options, gSTiling);
-        return;
-      case EXPERIMENTAL:
-        this.comparisonStrategy = new ExperimentalComparisonStrategy(options, gSTiling);
         return;
       default:
         throw new ExitException("Illegal comparison mode: " + options.getComparisonMode());
