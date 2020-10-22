@@ -13,28 +13,35 @@ import java.util.List;
 import jplag.options.Verbosity;
 
 /**
- * Everything about a single submission is stored in this object. (directory, files, ...)
+ * Represents a single submission. A submission can contain multiple files.
  */
 public class Submission implements Comparable<Submission> {
 
-  public Structure struct;
-
-  public int structSize = 0;
-
-  public boolean errors = false;
-
-  public DecimalFormat format = new DecimalFormat("0000");
-
   /**
-   * Name that uniquely identifies this submission. Will most commonly be the directory name.
+   * Name that uniquely identifies this submission. Will most commonly be the directory or file name.
    */
   public String name;
 
-  private JPlag program;
+  public File submissionFile;
 
+  /**
+   * List of files this submission consists of.
+   */
   public List<File> files;
 
-  public File submissionFile;
+  /**
+   * List of tokens that have been parsed from the files this submission contains.
+   * <p>
+   * TODO: The name 'Structure' is very generic and should be changed to something more descriptive.
+   */
+  public Structure tokenList;
+
+  /**
+   * True, if at least one error occurred while parsing this submission; false otherwise.
+   */
+  public boolean hasErrors = false;
+
+  private final JPlag program;
 
   public Submission(
       String name,
@@ -84,6 +91,24 @@ public class Submission implements Comparable<Submission> {
     return files;
   }
 
+  public int getNumberOfTokens() {
+    if (tokenList == null) {
+      return 0;
+    }
+
+    return tokenList.size();
+  }
+
+  @Override
+  public int compareTo(Submission other) {
+    return name.compareTo(other.name);
+  }
+
+  @Override
+  public String toString() {
+    return name;
+  }
+
   /**
    * Map all files of this submission to their path relative to the submission directory.
    * <p>
@@ -117,19 +142,19 @@ public class Submission implements Comparable<Submission> {
 
     String[] relativeFilePaths = getRelativeFilePaths(submissionFile, files);
 
-    struct = this.program.language.parse(submissionFile, relativeFilePaths);
+    tokenList = this.program.language.parse(submissionFile, relativeFilePaths);
     if (!program.language.errors()) {
-      if (struct.size() < 3) {
+      if (tokenList.size() < 3) {
         program.print("Submission \"" + name + "\" is too short!\n", null);
-        struct = null;
-        errors = true; // invalidate submission
+        tokenList = null;
+        hasErrors = true; // invalidate submission
         return false;
       }
       return true;
     }
 
-    struct = null;
-    errors = true; // invalidate submission
+    tokenList = null;
+    hasErrors = true; // invalidate submission
     if (program.getOptions().isDebugParser()) {
       copySubmission();
     }
@@ -143,22 +168,30 @@ public class Submission implements Comparable<Submission> {
    */
   private void copySubmission() {
     File errorDir = null;
+    DecimalFormat format = new DecimalFormat("0000");
+
     try {
       URL url = Submission.class.getResource("errors");
       errorDir = new File(url.getFile());
     } catch (NullPointerException e) {
       return;
     }
+
     errorDir = new File(errorDir, this.program.language.getShortName());
+
     if (!errorDir.exists()) {
       errorDir.mkdir();
     }
+
     int i = 0;
     File destDir;
+
     while ((destDir = new File(errorDir, format.format(i))).exists()) {
       i++;
     }
+
     destDir.mkdir();
+
     for (i = 0; i < files.size(); i++) {
       copyFile(new File(files.get(i).getAbsolutePath()), new File(destDir, files.get(i).getName()));
     }
@@ -182,20 +215,5 @@ public class Submission implements Comparable<Submission> {
     } catch (IOException e) {
       program.print("Error copying file: " + e.toString() + "\n", null);
     }
-  }
-
-  public int size() {
-    if (struct != null) {
-      return structSize = struct.size();
-    }
-    return structSize;
-  }
-
-  public int compareTo(Submission other) {
-    return name.compareTo(other.name);
-  }
-
-  public String toString() {
-    return name;
   }
 }

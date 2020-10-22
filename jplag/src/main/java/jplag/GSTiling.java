@@ -76,13 +76,13 @@ public class GSTiling implements TokenConstants {
 
 	public final AllMatches compare(Submission subA, Submission subB) {
 		Submission A, B, tmp;
-		if (subA.struct.size() > subB.struct.size()) {
+		if (subA.tokenList.size() > subB.tokenList.size()) {
 			A = subB;  B = subA;
 		} else {
 			A = subB;  B = subA;
 		}
 		// if hashtable exists in first but not in second structure: flip around!
-		if (B.struct.table == null && A.struct.table != null) {
+		if (B.tokenList.table == null && A.tokenList.table != null) {
 			tmp = A;
 			A = B;
 			B = tmp;
@@ -93,8 +93,8 @@ public class GSTiling implements TokenConstants {
 
 	// first parameter should contain the smaller sequence!!! 
 	private final AllMatches compare(Submission subA, Submission subB, int mml) {
-		Structure structA = subA.struct;
-		Structure structB = subB.struct;
+		Structure structA = subA.tokenList;
+		Structure structB = subB.tokenList;
 
 		// FILE_END used as pivot
 
@@ -180,13 +180,13 @@ inner:			for (int i = 1; i <= elemsB[0]; i++) { // elemsB[0] contains the length
 
 	public final AllBasecodeMatches compareWithBasecode(Submission subA, Submission subB) {
 		Submission A, B, tmp;
-		if (subA.struct.size() > subB.struct.size()) {
+		if (subA.tokenList.size() > subB.tokenList.size()) {
 			A = subB;  B = subA;
 		} else {
 			A = subB;  B = subA;
 		}
 		// if hashtable exists in first but not in second structure: flip around!
-		if (B.struct.table == null && A.struct.table != null) {
+		if (B.tokenList.table == null && A.tokenList.table != null) {
 			tmp = A;
 			A = B;
 			B = tmp;
@@ -196,8 +196,8 @@ inner:			for (int i = 1; i <= elemsB[0]; i++) { // elemsB[0] contains the length
 	}
 
 	private final AllBasecodeMatches compareWithBasecode(Submission subA, Submission subB, int mml) {
-		Structure structA = subA.struct;
-		Structure structB = subB.struct;
+		Structure structA = subA.tokenList;
+		Structure structB = subB.tokenList;
 
 		// FILE_END used as pivot
 
@@ -275,7 +275,7 @@ inner:			for (int i = 1; i <= elemsB[0]; i++) {// elemsB[0] contains the length 
 	}
 
 	public void resetBaseSubmission(Submission sub){
-		Structure tmpStruct = sub.struct;
+		Structure tmpStruct = sub.tokenList;
 		Token[] tok = tmpStruct.tokens;
 		for (int z = 0; z < tmpStruct.size()-1;z++){
 			tok[z].basecode = false;

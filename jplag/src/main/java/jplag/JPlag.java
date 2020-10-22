@@ -258,7 +258,7 @@ public class JPlag implements ProgramI {
 
   private Vector<Submission> filterValidSubmissions(Vector<Submission> submissions) {
     return submissions.stream()
-        .filter(submission -> !submission.errors)
+        .filter(submission -> !submission.hasErrors)
         .collect(Collectors.toCollection(Vector::new));
   }
 
@@ -436,27 +436,27 @@ public class JPlag implements ProgramI {
       }
 
       if (options.exp && options.getFilter() != null) {
-        subm.struct = options.getFilter().filter(subm.struct); // EXPERIMENT
+        subm.tokenList = options.getFilter().filter(subm.tokenList); // EXPERIMENT
       }
 
       count++;
 
-      if (subm.struct != null && subm.size() < options.getMinTokenMatch()) {
+      if (subm.tokenList != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
         print(null, "Submission contains fewer tokens than minimum match " + "length allows!\n");
-        subm.struct = null;
+        subm.tokenList = null;
         invalid++;
         removed = true;
       }
 
       if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
-        if (subm.struct != null) {
-          this.gSTiling.create_hashes(subm.struct, options.getMinTokenMatch(), false);
-          subm.struct.save(new File("temp", subm.submissionFile.getName() + subm.name));
-          subm.struct = null;
+        if (subm.tokenList != null) {
+          this.gSTiling.create_hashes(subm.tokenList, options.getMinTokenMatch(), false);
+          subm.tokenList.save(new File("temp", subm.submissionFile.getName() + subm.name));
+          subm.tokenList = null;
         }
       }
 
-      if (options.getComparisonMode() != ComparisonMode.EXTERNAL && subm.struct == null) {
+      if (options.getComparisonMode() != ComparisonMode.EXTERNAL && subm.tokenList == null) {
         invalidSubmissionNames = (invalidSubmissionNames == null) ? subm.name
             : invalidSubmissionNames + " - " + subm.name;
         iter.remove();
@@ -513,23 +513,23 @@ public class JPlag implements ProgramI {
     }
 
     if (options.exp && options.getFilter() != null) {
-      subm.struct = options.getFilter().filter(subm.struct); // EXPERIMENT
+      subm.tokenList = options.getFilter().filter(subm.tokenList); // EXPERIMENT
     }
 
-    if (subm.struct != null && subm.size() < options.getMinTokenMatch()) {
+    if (subm.tokenList != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
       throw new ExitException(
           "Basecode submission contains fewer tokens " + "than minimum match length allows!\n");
     }
 
     if (options.hasBaseCode()) {
-      gSTiling.create_hashes(subm.struct, options.getMinTokenMatch(), true);
+      gSTiling.create_hashes(subm.tokenList, options.getMinTokenMatch(), true);
     }
 
     if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
-      if (subm.struct != null) {
-        gSTiling.create_hashes(subm.struct, options.getMinTokenMatch(), false);
-        subm.struct.save(new File("temp", subm.submissionFile.getName() + subm.name));
-        subm.struct = null;
+      if (subm.tokenList != null) {
+        gSTiling.create_hashes(subm.tokenList, options.getMinTokenMatch(), false);
+        subm.tokenList.save(new File("temp", subm.submissionFile.getName() + subm.name));
+        subm.tokenList = null;
       }
     }
 

@@ -8,7 +8,6 @@ import jplag.JPlagResult;
 import jplag.SortedVector;
 import jplag.Submission;
 import jplag.clustering.Cluster;
-import jplag.options.ClusterType;
 
 public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 
@@ -44,14 +43,14 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     for (i = 0; i < (numberOfSubmissions - 1); i++) {
       s1 = submissions.elementAt(i);
 
-      if (s1.struct == null) {
+      if (s1.tokenList == null) {
         continue;
       }
 
       for (j = (i + 1); j < numberOfSubmissions; j++) {
         s2 = submissions.elementAt(j);
 
-        if (s2.struct == null) {
+        if (s2.tokenList == null) {
           continue;
         }
 

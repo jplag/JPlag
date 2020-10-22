@@ -48,7 +48,7 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
     s1loop:
     for (int i = 0; i < size - 1; ) {
       s1 = submissions.elementAt(i);
-      if (s1.struct == null) {
+      if (s1.tokenList == null) {
         count++;
         continue;
       }
@@ -61,7 +61,7 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
           break s1loop; // no more comparison pairs available
         }
         s2 = submissions.elementAt(j);
-      } while (s2.struct == null);
+      } while (s2.tokenList == null);
 
       match = this.gSTiling.compare(s1, s2);
 

@@ -2,9 +2,6 @@ package jplag;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.io.*;
-
-import jplag.options.util.Messages;
 
 /* This class extends "Matches" to represent the whole result of a comparison.
  * Methods to ease the presentation of the result are added.
@@ -110,11 +107,11 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   public final float percent() {
     float sa, sb;
     if (bcmatchesB != null && bcmatchesA != null) {
-      sa = subA.size() - subA.files.size() - bcmatchesA.tokensMatched();
-      sb = subB.size() - subB.files.size() - bcmatchesB.tokensMatched();
+      sa = subA.getNumberOfTokens() - subA.files.size() - bcmatchesA.tokensMatched();
+      sb = subB.getNumberOfTokens() - subB.files.size() - bcmatchesB.tokensMatched();
     } else {
-      sa = subA.size() - subA.files.size();
-      sb = subB.size() - subB.files.size();
+      sa = subA.getNumberOfTokens() - subA.files.size();
+      sb = subB.getNumberOfTokens() - subB.files.size();
     }
     return (200 * (float) tokensMatched()) / (sa + sb);
   }
@@ -122,9 +119,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   public final float percentA() {
     int divisor;
     if (bcmatchesA != null) {
-      divisor = subA.size() - subA.files.size() - bcmatchesA.tokensMatched();
+      divisor = subA.getNumberOfTokens() - subA.files.size() - bcmatchesA.tokensMatched();
     } else {
-      divisor = subA.size() - subA.files.size();
+      divisor = subA.getNumberOfTokens() - subA.files.size();
     }
     return (divisor == 0 ? 0f : (tokensMatched() * 100 / (float) divisor));
   }
@@ -132,9 +129,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   public final float percentB() {
     int divisor;
     if (bcmatchesB != null) {
-      divisor = subB.size() - subB.files.size() - bcmatchesB.tokensMatched();
+      divisor = subB.getNumberOfTokens() - subB.files.size() - bcmatchesB.tokensMatched();
     } else {
-      divisor = subB.size() - subB.files.size();
+      divisor = subB.getNumberOfTokens() - subB.files.size();
     }
     return (divisor == 0 ? 0f : (tokensMatched() * 100 / (float) divisor));
   }
@@ -170,12 +167,12 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   }
 
   public final float percentBasecodeA() {
-    float sa = subA.size() - subA.files.size();
+    float sa = subA.getNumberOfTokens() - subA.files.size();
     return bcmatchesA.tokensMatched() * 100 / sa;
   }
 
   public final float percentBasecodeB() {
-    float sb = subB.size() - subB.files.size();
+    float sb = subB.getNumberOfTokens() - subB.files.size();
     return bcmatchesB.tokensMatched() * 100 / sb;
   }
 
@@ -202,7 +199,7 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
    *            j != 0   submission B.
    */
   public final String[] files(int j) {
-    Token[] tokens = (j == 0 ? subA : subB).struct.tokens;
+    Token[] tokens = (j == 0 ? subA : subB).tokenList.tokens;
     int i, h, starti, starth, count = 1;
     o1:
     for (i = 1; i < size(); i++) {
@@ -240,7 +237,7 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   /* This method returns the name of all files that are represented by
    * at least one token. */
   public final String[] allFiles(int sub) {
-    Structure struct = (sub == 0 ? subA : subB).struct;
+    Structure struct = (sub == 0 ? subA : subB).tokenList;
     int count = 1;
     for (int i = 1; i < struct.size(); i++) {
       if (!struct.tokens[i].file.equals(struct.tokens[i - 1].file)) {

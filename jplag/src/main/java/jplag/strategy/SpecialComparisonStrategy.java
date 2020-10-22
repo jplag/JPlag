@@ -47,7 +47,7 @@ public class SpecialComparisonStrategy extends AbstractComparisonStrategy {
 
       s1 = submissions.elementAt(i);
 
-      if (s1.struct == null) {
+      if (s1.tokenList == null) {
         count += (size - 1);
         continue;
       }
@@ -55,7 +55,7 @@ public class SpecialComparisonStrategy extends AbstractComparisonStrategy {
       for (j = 0; j < size; j++) {
         s2 = submissions.elementAt(j);
 
-        if ((i == j) || (s2.struct == null)) {
+        if ((i == j) || (s2.tokenList == null)) {
           count++;
           continue;
         }

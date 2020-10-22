@@ -30,12 +30,12 @@ public class ExperimentalComparisonStrategy extends AbstractComparisonStrategy {
 
     for (i = 0; i < (anzSub - 1); i++) {
       s1 = submissions.elementAt(i);
-      if (s1.struct == null) {
+      if (s1.tokenList == null) {
         continue;
       }
       for (j = (i + 1); j < anzSub; j++) {
         s2 = submissions.elementAt(j);
-        if (s2.struct == null) {
+        if (s2.tokenList == null) {
           continue;
         }
 

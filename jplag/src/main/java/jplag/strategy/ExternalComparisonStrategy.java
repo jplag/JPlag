@@ -68,7 +68,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
         for (i = startA; i <= endA; i++) {
           s1 = submissions.elementAt(i);
 
-          if (s1.struct == null) {
+          if (s1.tokenList == null) {
             count += (endA - i);
             continue;
           }
@@ -76,7 +76,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
           for (j = (i + 1); j <= endA; j++) {
             s2 = submissions.elementAt(j);
 
-            if (s2.struct == null) {
+            if (s2.tokenList == null) {
               count++;
               continue;
             }
@@ -124,7 +124,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
           for (i = startB; i <= endB; i++) {
             s1 = submissions.elementAt(i);
 
-            if (s1.struct == null) {
+            if (s1.tokenList == null) {
               count += (endA - startA + 1);
               continue;
             }
@@ -132,7 +132,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
             for (j = startA; j <= endA; j++) {
               s2 = submissions.elementAt(j);
 
-              if (s2.struct == null) {
+              if (s2.tokenList == null) {
                 count++;
                 continue;
               }
@@ -143,7 +143,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
               count++;
             }
 
-            s1.struct = null; // remove B
+            s1.tokenList = null; // remove B
           }
 
           // print("\n", null);
@@ -180,7 +180,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
 
         // Remove A
         for (i = startA; i <= endA; i++) {
-          submissions.elementAt(i).struct = null;
+          submissions.elementAt(i).tokenList = null;
         }
 
         runtime.runFinalization();
@@ -215,7 +215,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
 
       // free remaining memory
       for (i = startA; i <= endA; i++) {
-        submissions.elementAt(i).struct = null;
+        submissions.elementAt(i).tokenList = null;
       }
 
       runtime.runFinalization();
@@ -251,13 +251,13 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
     try {
       for (; index < size; index++) {
         sub = submissions.elementAt(index);
-        sub.struct = new Structure();
-        if (!sub.struct.load(new File("temp", sub.submissionFile.getName() + sub.name))) {
-          sub.struct = null;
+        sub.tokenList = new Structure();
+        if (!sub.tokenList.load(new File("temp", sub.submissionFile.getName() + sub.name))) {
+          sub.tokenList = null;
         }
       }
     } catch (java.lang.OutOfMemoryError e) {
-      sub.struct = null;
+      sub.tokenList = null;
       // print("Memory overflow after loading " + (index - from + 1) + " submissions.\n", null);
     }
     if (index >= size) {
@@ -268,7 +268,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
       return index;
     }
     for (int i = (index - from) / 2; i > 0; i--) {
-      submissions.elementAt(index--).struct = null;
+      submissions.elementAt(index--).tokenList = null;
     }
     runtime.runFinalization();
     runtime.gc();
@@ -277,7 +277,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
     // make sure we freed half of the "available" memory.
     long free;
     while (freeBefore / (free = runtime.freeMemory()) > 2) {
-      submissions.elementAt(index--).struct = null;
+      submissions.elementAt(index--).tokenList = null;
       runtime.runFinalization();
       runtime.gc();
       Thread.yield();
