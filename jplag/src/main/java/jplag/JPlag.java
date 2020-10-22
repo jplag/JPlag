@@ -63,6 +63,7 @@ public class JPlag implements ProgramI {
   public Clusters clusters = null;
 
   private int errors = 0;
+
   private String invalidSubmissionNames = null;
 
   public Language language;
@@ -363,28 +364,30 @@ public class JPlag implements ProgramI {
     return hasValidSuffix;
   }
 
-  /**
-   * Find all submissions in the given root directory.
-   */
-  private Vector<Submission> findSubmissions(File rootDir) throws jplag.ExitException {
-    Vector<Submission> submissions = new Vector<>();
-
+  private String[] getFileNamesInRootDir(File rootDir) throws ExitException {
     String[] fileNamesInRootDir;
 
     try {
       fileNamesInRootDir = rootDir.list();
     } catch (SecurityException e) {
-      throw new jplag.ExitException(
-          "Unable to retrieve directory: " + options.getRootDirName() + " Cause : " + e.toString());
+      throw new ExitException("Cannot list files of the root directory! " + e.getMessage());
     }
 
     if (fileNamesInRootDir == null) {
-      return submissions;
+      throw new ExitException("Cannot list files of the root directory! " +
+          "Make sure the specified root directory is in fact a directory.");
     }
 
     Arrays.sort(fileNamesInRootDir);
 
-    for (String fileName : fileNamesInRootDir) {
+    return fileNamesInRootDir;
+  }
+
+  private Vector<Submission> mapFileNamesInRootDirToSubmissions(String[] fileNames, File rootDir)
+      throws ExitException {
+    Vector<Submission> submissions = new Vector<>();
+
+    for (String fileName : fileNames) {
       File submissionFile = new File(rootDir, fileName);
 
       if (isFileExcluded(submissionFile)) {
@@ -392,17 +395,19 @@ public class JPlag implements ProgramI {
         continue;
       }
 
-      Submission submission;
+      if (submissionFile.isFile() && !hasValidSuffix(submissionFile)) {
+        System.out.println("Ignore submission with invalid suffix: " + submissionFile.getName());
+        continue;
+      }
 
-      if (submissionFile.isDirectory()) {
-        if (options.getSubDir() != null) {
-          submissionFile = new File(submissionFile, options.getSubDir());
-        }
+      if (submissionFile.isDirectory() && options.getSubDir() != null) {
+        // Use subdirectory instead
+        submissionFile = new File(submissionFile, options.getSubDir());
 
         if (!submissionFile.exists()) {
           throw new ExitException(
               String.format(
-                  "Submission %s does not contain a subdirectory called '%s'",
+                  "Submission %s does not contain the given subdirectory '%s'",
                   fileName,
                   options.getSubDir()
               )
@@ -417,21 +422,9 @@ public class JPlag implements ProgramI {
               )
           );
         }
-
-        submission = new Submission(fileName, submissionFile, this);
-      } else {
-        // If subDir option is set, a submission can't be a single file -> ignore.
-        if (options.getSubDir() != null) {
-          continue;
-        }
-
-        // Ignore single-file submissions with an invalid file suffix.
-        if (!hasValidSuffix(submissionFile)) {
-          continue;
-        }
-
-        submission = new Submission(fileName, submissionFile, this);
       }
+
+      Submission submission = new Submission(fileName, submissionFile, this);
 
       if (options.getBaseCode().equals(fileName)) {
         baseCodeSubmission = submission;
@@ -441,6 +434,14 @@ public class JPlag implements ProgramI {
     }
 
     return submissions;
+  }
+
+  /**
+   * Find all submissions in the given root directory.
+   */
+  private Vector<Submission> findSubmissions(File rootDir) throws ExitException {
+    String[] fileNamesInRootDir = getFileNamesInRootDir(rootDir);
+    return mapFileNamesInRootDirToSubmissions(fileNamesInRootDir, rootDir);
   }
 
   /**
