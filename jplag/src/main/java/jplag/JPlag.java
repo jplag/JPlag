@@ -65,7 +65,7 @@ public class JPlag implements ProgramI {
   private int errors = 0;
   private String invalidSubmissionNames = null;
 
-  private Language language;
+  public Language language;
 
   public SimilarityMatrix similarity = null;
 
@@ -344,11 +344,17 @@ public class JPlag implements ProgramI {
   }
 
   public boolean hasValidSuffix(File file) {
-    boolean hasValidSuffix = false;
-    String name = file.getName();
+    String[] validSuffixes = options.getFileSuffixes();
 
-    for (String suffix : options.getFileSuffixes()) {
-      if (name.endsWith(suffix)) {
+    if (validSuffixes == null || validSuffixes.length == 0) {
+      return true;
+    }
+
+    boolean hasValidSuffix = false;
+    String fileName = file.getName();
+
+    for (String validSuffix : validSuffixes) {
+      if (fileName.endsWith(validSuffix)) {
         hasValidSuffix = true;
         break;
       }
@@ -412,13 +418,7 @@ public class JPlag implements ProgramI {
           );
         }
 
-        submission = new Submission(
-            fileName,
-            submissionFile,
-            options.isRecursive(),
-            this,
-            this.language
-        );
+        submission = new Submission(fileName, submissionFile, this);
       } else {
         // If subDir option is set, a submission can't be a single file -> ignore.
         if (options.getSubDir() != null) {
@@ -430,7 +430,7 @@ public class JPlag implements ProgramI {
           continue;
         }
 
-        submission = new Submission(fileName, rootDir, this, this.language);
+        submission = new Submission(fileName, submissionFile, this);
       }
 
       if (options.getBaseCode().equals(fileName)) {
@@ -537,7 +537,7 @@ public class JPlag implements ProgramI {
       if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
         if (subm.struct != null) {
           this.gSTiling.create_hashes(subm.struct, options.getMinTokenMatch(), false);
-          subm.struct.save(new File("temp", subm.dir.getName() + subm.name));
+          subm.struct.save(new File("temp", subm.submissionFile.getName() + subm.name));
           subm.struct = null;
         }
       }
@@ -614,7 +614,7 @@ public class JPlag implements ProgramI {
     if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
       if (subm.struct != null) {
         gSTiling.create_hashes(subm.struct, options.getMinTokenMatch(), false);
-        subm.struct.save(new File("temp", subm.dir.getName() + subm.name));
+        subm.struct.save(new File("temp", subm.submissionFile.getName() + subm.name));
         subm.struct = null;
       }
     }

@@ -252,7 +252,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
       for (; index < size; index++) {
         sub = submissions.elementAt(index);
         sub.struct = new Structure();
-        if (!sub.struct.load(new File("temp", sub.dir.getName() + sub.name))) {
+        if (!sub.struct.load(new File("temp", sub.submissionFile.getName() + sub.name))) {
           sub.struct = null;
         }
       }

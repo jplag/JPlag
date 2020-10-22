@@ -110,11 +110,11 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   public final float percent() {
     float sa, sb;
     if (bcmatchesB != null && bcmatchesA != null) {
-      sa = subA.size() - subA.files.length - bcmatchesA.tokensMatched();
-      sb = subB.size() - subB.files.length - bcmatchesB.tokensMatched();
+      sa = subA.size() - subA.files.size() - bcmatchesA.tokensMatched();
+      sb = subB.size() - subB.files.size() - bcmatchesB.tokensMatched();
     } else {
-      sa = subA.size() - subA.files.length;
-      sb = subB.size() - subB.files.length;
+      sa = subA.size() - subA.files.size();
+      sb = subB.size() - subB.files.size();
     }
     return (200 * (float) tokensMatched()) / (sa + sb);
   }
@@ -122,9 +122,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   public final float percentA() {
     int divisor;
     if (bcmatchesA != null) {
-      divisor = subA.size() - subA.files.length - bcmatchesA.tokensMatched();
+      divisor = subA.size() - subA.files.size() - bcmatchesA.tokensMatched();
     } else {
-      divisor = subA.size() - subA.files.length;
+      divisor = subA.size() - subA.files.size();
     }
     return (divisor == 0 ? 0f : (tokensMatched() * 100 / (float) divisor));
   }
@@ -132,9 +132,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   public final float percentB() {
     int divisor;
     if (bcmatchesB != null) {
-      divisor = subB.size() - subB.files.length - bcmatchesB.tokensMatched();
+      divisor = subB.size() - subB.files.size() - bcmatchesB.tokensMatched();
     } else {
-      divisor = subB.size() - subB.files.length;
+      divisor = subB.size() - subB.files.size();
     }
     return (divisor == 0 ? 0f : (tokensMatched() * 100 / (float) divisor));
   }
@@ -170,12 +170,12 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   }
 
   public final float percentBasecodeA() {
-    float sa = subA.size() - subA.files.length;
+    float sa = subA.size() - subA.files.size();
     return bcmatchesA.tokensMatched() * 100 / sa;
   }
 
   public final float percentBasecodeB() {
-    float sb = subB.size() - subB.files.length;
+    float sb = subB.size() - subB.files.size();
     return bcmatchesB.tokensMatched() * 100 / sb;
   }
 
