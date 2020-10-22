@@ -11,27 +11,23 @@ import jplag.options.Verbosity;
 public class JPlagOptions {
 
   /**
-   * TODO: Decide what to do with this.
-   * <p>
-   * Note: I think this option tells JPlag to compare each submission to only `compare` other
-   * submissions. Previously, if `compare` > 0, the special comparison strategy was used.
-   */
-  public int compare = 0; // 0 = deactivated
-
-  /**
    * This is related to `storeMatches`.
    */
   public static final int MAX_RESULT_PAIRS = 1000;
 
   /**
-   * Related to -s CLI option.
+   * TODO: Decide what to do with this.
    * <p>
-   * Read subdirectories recursively.
+   * Note: Previously, this option had two effects:
+   * <ol>
+   *   <li>If this option was > 0, it told JPlag to use the 'special' comparison strategy</li>
+   *   <li>It specifies the number of submissions to compare each submission to during the 'special' comparison</li>
+   * </ol>
    */
-  public boolean recursive = false;
+  public int numberOfSubmissionsToCompareTo = 0; // 0 = deactivated
 
   /**
-   *
+   * TODO: Check how this option was set in the previous version.
    */
   private boolean skipParse = false;
 
@@ -125,32 +121,6 @@ public class JPlagOptions {
     }
   }
 
-  public static void usage() {
-    System.out.print(JPlag.name_long
-        + ", Copyright (c) 2004-2017 KIT - IPD Tichy, Guido Malpohl, and others.\n"
-        + "Usage: JPlag [ options ] <root-dir> [-c file1 file2 ...]\n"
-        + " <root-dir>        The root-directory that contains all submissions.\n\n"
-        + "options are:\n"
-        + " -v[qlpd]        (Verbose)\n"
-        + "                 q: (Quiet) no output\n"
-        + "                 l: (Long) detailed output\n"
-        + "                 p: print all (p)arser messages\n"
-        + "                 d: print (d)etails about each submission\n"
-        + " -S <dir>        Look in directories <root-dir>/*/<dir> for programs.\n"
-        + "                 (default: <root-dir>/*)\n"
-        + " -s              (Subdirs) Look at files in subdirs too (default: deactivated)\n\n"
-        + " -p <suffixes>   <suffixes> is a comma-separated list of all filename suffixes\n"
-        + "                 that are included. (\"-p ?\" for defaults)\n\n"
-        + " -o <file>       (Output) The Parserlog will be saved to <file>\n"
-        + " -x <file>       (eXclude) All files named in <file> will be ignored\n"
-        + " -t <n>          (Token) Tune the sensitivity of the comparison. A smaller\n"
-        + "                 <n> increases the sensitivity.\n"
-        + " -m <n>          (Matches) Number of matches that will be saved (default:20)\n"
-        + " -m <p>%         All matches with more than <p>% similarity will be saved.\n"
-        + " -bc <dir>       Name of the directory which contains the basecode (common framework)\n"
-        + " -l <language>   (Language) Supported Languages:\n");
-  }
-
   public LanguageOption getLanguageOption() {
     return languageOption;
   }
@@ -169,16 +139,6 @@ public class JPlagOptions {
 
   public boolean hasMinTokenMatch() {
     return this.minTokenMatch != null;
-  }
-
-  // --------------------------------------------------------------------------
-
-  public boolean isRecursive() {
-    return recursive;
-  }
-
-  public void setRecursive(boolean recursive) {
-    this.recursive = recursive;
   }
 
   public boolean isSkipParse() {
