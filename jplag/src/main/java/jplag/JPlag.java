@@ -285,65 +285,6 @@ public class JPlag implements ProgramI {
     }
   }
 
-  /**
-   * Add an error to the errorVector.
-   */
-  public void addError(String errorMsg) {
-    errorVector.add("[" + currentSubmissionName + "]\n" + errorMsg);
-    print(errorMsg, null);
-  }
-
-  /**
-   * Print all errors from the errorVector.
-   */
-  private void printErrors() {
-    StringBuilder errorStr = new StringBuilder();
-
-    for (String str : errorVector) {
-      errorStr.append(str);
-      errorStr.append('\n');
-    }
-
-    System.out.println(errorStr.toString());
-  }
-
-  public void print(String normal, String lng) {
-    if (options.getVerbosity() == PARSER) {
-      if (lng != null) {
-        myWrite(lng);
-      } else if (normal != null) {
-        myWrite(normal);
-      }
-    }
-    if (options.getVerbosity() == QUIET) {
-      return;
-    }
-    try {
-      if (normal != null) {
-        System.out.print(normal);
-      }
-
-      if (lng != null) {
-        if (options.getVerbosity() == LONG) {
-          System.out.print(lng);
-        }
-      }
-    } catch (Throwable e) {
-      System.out.println(e.getMessage());
-    }
-  }
-
-  public void closeWriter() {
-    try {
-      if (writer != null) {
-        writer.close();
-      }
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    }
-    writer = null;
-  }
-
   public boolean hasValidSuffix(File file) {
     String[] validSuffixes = options.getFileSuffixes();
 
@@ -364,7 +305,15 @@ public class JPlag implements ProgramI {
     return hasValidSuffix;
   }
 
-  private String[] getFileNamesInRootDir(File rootDir) throws ExitException {
+  /**
+   * Find all submissions in the given root directory.
+   */
+  private Vector<Submission> findSubmissions(File rootDir) throws ExitException {
+    String[] fileNamesInRootDir = getSortedFileNamesInRootDir(rootDir);
+    return mapFileNamesInRootDirToSubmissions(fileNamesInRootDir, rootDir);
+  }
+
+  private String[] getSortedFileNamesInRootDir(File rootDir) throws ExitException {
     String[] fileNamesInRootDir;
 
     try {
@@ -437,14 +386,6 @@ public class JPlag implements ProgramI {
   }
 
   /**
-   * Find all submissions in the given root directory.
-   */
-  private Vector<Submission> findSubmissions(File rootDir) throws ExitException {
-    String[] fileNamesInRootDir = getFileNamesInRootDir(rootDir);
-    return mapFileNamesInRootDirToSubmissions(fileNamesInRootDir, rootDir);
-  }
-
-  /**
    * Check if a file is excluded or not.
    */
   protected boolean isFileExcluded(File file) {
@@ -463,38 +404,10 @@ public class JPlag implements ProgramI {
     return false;
   }
 
-  private void makeTempDir() throws jplag.ExitException {
-    print(null, "Creating temporary dir.\n");
-    File f = new File("temp");
-    if (!f.exists()) {
-      if (!f.mkdirs()) {
-        throw new jplag.ExitException("Cannot create temporary directory!");
-      }
-    }
-    if (!f.isDirectory()) {
-      throw new ExitException("'temp' is not a directory!");
-    }
-    if (!f.canWrite()) {
-      throw new ExitException("Cannot write directory: 'temp'");
-    }
-  }
-
-  private void myWrite(String str) {
-    if (writer != null) {
-      try {
-        writer.write(str);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    } else {
-      System.out.print(str);
-    }
-  }
-
   /**
    * Parse all given submissions.
    */
-  private void parseSubmissions(Vector<Submission> submissions) throws jplag.ExitException {
+  private void parseSubmissions(Vector<Submission> submissions) throws ExitException {
     if (submissions == null) {
       System.out.println("Nothing to parse!");
       return;
@@ -579,7 +492,7 @@ public class JPlag implements ProgramI {
   /**
    * Parse the given base code submission.
    */
-  private void parseBaseCodeSubmission(Submission subm) throws jplag.ExitException {
+  private void parseBaseCodeSubmission(Submission subm) throws ExitException {
     if (subm == null) {
       // TODO:
       // options.useBasecode = false;
@@ -660,6 +573,93 @@ public class JPlag implements ProgramI {
       for (String excludedFileName : excludedFileNames) {
         print(null, "  " + excludedFileName + "\n");
       }
+    }
+  }
+
+  private void makeTempDir() throws ExitException {
+    print(null, "Creating temporary dir.\n");
+    File f = new File("temp");
+    if (!f.exists()) {
+      if (!f.mkdirs()) {
+        throw new jplag.ExitException("Cannot create temporary directory!");
+      }
+    }
+    if (!f.isDirectory()) {
+      throw new ExitException("'temp' is not a directory!");
+    }
+    if (!f.canWrite()) {
+      throw new ExitException("Cannot write directory: 'temp'");
+    }
+  }
+
+  private void myWrite(String str) {
+    if (writer != null) {
+      try {
+        writer.write(str);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } else {
+      System.out.print(str);
+    }
+  }
+
+  public void closeWriter() {
+    try {
+      if (writer != null) {
+        writer.close();
+      }
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+    writer = null;
+  }
+
+  /**
+   * Add an error to the errorVector.
+   */
+  public void addError(String errorMsg) {
+    errorVector.add("[" + currentSubmissionName + "]\n" + errorMsg);
+    print(errorMsg, null);
+  }
+
+  /**
+   * Print all errors from the errorVector.
+   */
+  private void printErrors() {
+    StringBuilder errorStr = new StringBuilder();
+
+    for (String str : errorVector) {
+      errorStr.append(str);
+      errorStr.append('\n');
+    }
+
+    System.out.println(errorStr.toString());
+  }
+
+  public void print(String normal, String lng) {
+    if (options.getVerbosity() == PARSER) {
+      if (lng != null) {
+        myWrite(lng);
+      } else if (normal != null) {
+        myWrite(normal);
+      }
+    }
+    if (options.getVerbosity() == QUIET) {
+      return;
+    }
+    try {
+      if (normal != null) {
+        System.out.print(normal);
+      }
+
+      if (lng != null) {
+        if (options.getVerbosity() == LONG) {
+          System.out.print(lng);
+        }
+      }
+    } catch (Throwable e) {
+      System.out.println(e.getMessage());
     }
   }
 }
