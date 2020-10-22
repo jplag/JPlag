@@ -10,10 +10,12 @@ import jplag.options.Verbosity;
 
 public class JPlagOptions {
 
-  // List of unidentified options:
-
-  public boolean exp = false; // EXPERIMENT
-
+  /**
+   * TODO: Decide what to do with this.
+   * <p>
+   * Note: I think this option tells JPlag to compare each submission to only `compare` other
+   * submissions. Previously, if `compare` > 0, the special comparison strategy was used.
+   */
   public int compare = 0; // 0 = deactivated
 
   /**

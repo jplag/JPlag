@@ -432,10 +432,6 @@ public class JPlag implements ProgramI {
         errors++;
       }
 
-      if (options.exp && options.getFilter() != null) {
-        subm.tokenList = options.getFilter().filter(subm.tokenList); // EXPERIMENT
-      }
-
       count++;
 
       if (subm.tokenList != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
@@ -507,10 +503,6 @@ public class JPlag implements ProgramI {
     if (!subm.parse()) {
       printErrors();
       throw new ExitException("Bad basecode submission");
-    }
-
-    if (options.exp && options.getFilter() != null) {
-      subm.tokenList = options.getFilter().filter(subm.tokenList); // EXPERIMENT
     }
 
     if (subm.tokenList != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
