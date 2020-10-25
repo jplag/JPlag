@@ -20,7 +20,9 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
       Vector<Submission> submissions,
       Submission baseCodeSubmission
   ) {
-    int size = submissions.size();
+    if (baseCodeSubmission != null) {
+      compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
+    }
 
     // Result vectors
     SortedVector<AllMatches> avgMatches = new SortedVector<>(
@@ -30,60 +32,54 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
     SortedVector<AllMatches> minMatches = new SortedVector<>(
         new AllMatches.MinReversedComparator());
 
+    // Similarity distribution
     int[] dist = new int[10];
 
-    long msec;
+    int numberOfSubmissions = submissions.size();
+    int numberOfComparisons = 0;
+
     Submission s1, s2;
-
-    if (options.hasBaseCode()) {
-      compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
-    }
-
-    int totalcomps = size - 1;
-    int anz = 0, count = 0;
     AllMatches match;
 
-    msec = System.currentTimeMillis();
+    long timeMillis = System.currentTimeMillis();
 
     s1loop:
-    for (int i = 0; i < size - 1; ) {
+    for (int i = 0; i < numberOfSubmissions - 1; ) {
       s1 = submissions.elementAt(i);
+
       if (s1.tokenList == null) {
-        count++;
         continue;
       }
 
       // Find next valid submission
       int j = i;
+
       do {
         j++;
-        if (j >= size) {
+
+        if (j >= numberOfSubmissions) {
           break s1loop; // no more comparison pairs available
         }
+
         s2 = submissions.elementAt(j);
       } while (s2.tokenList == null);
 
       match = this.gSTiling.compare(s1, s2);
+      numberOfComparisons++;
 
-      anz++;
+      System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
 
-      /*
-       * System.out.println("Comparing "+s1.name+"-"+s2.name+": "+
-       * match.percent());
-       */
-      // histogram:
-      if (options.hasBaseCode()) {
+      if (baseCodeSubmission != null) {
         match.bcmatchesA = baseCodeMatches.get(match.subA.name);
         match.bcmatchesB = baseCodeMatches.get(match.subB.name);
       }
 
       registerMatch(match, dist, avgMatches, maxMatches, minMatches, i, j);
-      count++;
 
       i = j;
     }
 
-    long time = System.currentTimeMillis() - msec;
+    long time = System.currentTimeMillis() - timeMillis;
 
     // TODO
 //    print("\n",
@@ -92,8 +88,6 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
 //            + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60)
 //            + " sec\n" + "Time per comparison: "
 //            + (time / anz) + " msec\n");
-
-    // ------------------------------------------------------------------------
 
     Cluster cluster = null;
 

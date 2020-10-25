@@ -59,7 +59,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 
         System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
 
-        if (options.hasBaseCode()) {
+        if (baseCodeSubmission != null) {
           match.bcmatchesA = baseCodeMatches.get(match.subA.name);
           match.bcmatchesB = baseCodeMatches.get(match.subB.name);
         }
@@ -67,6 +67,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         registerMatch(match, dist, avgMatches, maxMatches, null, i, j);
       }
     }
+
 
     long time = System.currentTimeMillis() - timeMillis;
 
