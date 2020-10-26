@@ -32,6 +32,11 @@ public class JPlagResult {
 
   }
 
+  public JPlagResult(List<JPlagComparison> comparisons) {
+    this.comparisons = comparisons;
+    this.similarityDistribution = calculateSimilarityDistribution(comparisons);
+  }
+
   public JPlagResult(
       Cluster cluster,
       SortedVector<JPlagComparison> avgMatches,

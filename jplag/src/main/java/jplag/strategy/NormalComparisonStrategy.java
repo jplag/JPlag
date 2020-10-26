@@ -1,5 +1,7 @@
 package jplag.strategy;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import jplag.JPlagComparison;
 import jplag.GSTiling;
@@ -37,6 +39,8 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     Submission s1, s2;
     JPlagComparison comparison;
 
+    List<JPlagComparison> comparisons = new ArrayList<>();
+
     long timeMillis = System.currentTimeMillis();
 
     for (i = 0; i < (numberOfSubmissions - 1); i++) {
@@ -63,7 +67,10 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
           comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
         }
 
-        registerMatch(comparison, avgMatches, maxMatches, null, i, j);
+        comparisons.add(comparison);
+
+        // Previously:
+        // registerMatch(comparison, avgMatches, maxMatches, null, i, j);
       }
     }
 
@@ -84,7 +91,9 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 //      cluster = this.clusters.calculateClustering(submissions);
 //    }
 
-    return new JPlagResult(cluster, avgMatches, maxMatches, null);
+    // return new JPlagResult(cluster, avgMatches, maxMatches, null);
+
+    return new JPlagResult(comparisons);
   }
 
 }
