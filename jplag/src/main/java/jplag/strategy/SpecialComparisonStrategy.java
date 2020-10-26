@@ -65,12 +65,12 @@ public class SpecialComparisonStrategy extends AbstractComparisonStrategy {
 
         float percent = match.percent();
 
-        if ((matches.size() < options.numberOfSubmissionsToCompareTo || matches.size() == 0 || match
+        if ((matches.size() < options.getNumberOfSubmissionsToCompareTo() || matches.size() == 0 || match
             .moreThan(matches.lastElement().percent()))
             && match.moreThan(0)) {
           matches.insert(match);
-          if (matches.size() > options.numberOfSubmissionsToCompareTo) {
-            matches.removeElementAt(options.numberOfSubmissionsToCompareTo);
+          if (matches.size() > options.getNumberOfSubmissionsToCompareTo()) {
+            matches.removeElementAt(options.getNumberOfSubmissionsToCompareTo());
           }
         }
 

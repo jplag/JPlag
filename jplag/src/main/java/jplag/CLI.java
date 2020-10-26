@@ -7,9 +7,11 @@ public class CLI {
   public static void main(String[] args) {
 
     try {
-      JPlagOptions options = JPlagOptions.fromArgs(args);
-      options.setLanguageOption(LanguageOption.JAVA_1_9);
-      options.setRootDirName("/Users/philippbauch/Develop/jplag-test");
+
+      JPlagOptions options = new JPlagOptions(
+          "/Users/philippbauch/Develop/jplag-test",
+          LanguageOption.JAVA_1_9
+      );
       options.setBaseCodeSubmissionName("base-code");
 
       JPlag program = new JPlag(options);

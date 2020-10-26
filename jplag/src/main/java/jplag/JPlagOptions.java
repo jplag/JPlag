@@ -23,7 +23,7 @@ public class JPlagOptions {
    *   <li>It specifies the number of submissions to compare each submission to during the 'special' comparison</li>
    * </ol>
    */
-  public int numberOfSubmissionsToCompareTo = 0; // 0 = deactivated
+  private int numberOfSubmissionsToCompareTo = 0; // 0 = deactivated
 
   /**
    * Clustering option.
@@ -93,12 +93,21 @@ public class JPlagOptions {
    */
   private Verbosity verbosity;
 
-  public static JPlagOptions fromArgs(String[] args) {
-    return new JPlagOptions();
+  /**
+   * Constructor with required attributes.
+   */
+  public JPlagOptions(String rootDirName, LanguageOption languageOption) {
+    this.rootDirName = rootDirName;
+    this.languageOption = languageOption;
   }
 
-  public void setLanguageDefaults(jplag.Language language) {
-    // Set language-specific default options
+  /**
+   * After the selected language has been initialized, this method is called by JPlag to set default
+   * values for options not set by the user.
+   *
+   * @param language - initialized language instance
+   */
+  void setLanguageDefaults(Language language) {
     if (!this.hasMinTokenMatch()) {
       this.minTokenMatch = language.min_token_match();
     }
@@ -132,76 +141,92 @@ public class JPlagOptions {
     return clusterType;
   }
 
-  public void setClusterType(ClusterType clusterType) {
-    this.clusterType = clusterType;
-  }
-
   public ComparisonMode getComparisonMode() {
     return comparisonMode;
-  }
-
-  public void setComparisonMode(ComparisonMode comparisonMode) {
-    this.comparisonMode = comparisonMode;
   }
 
   public String[] getFileSuffixes() {
     return fileSuffixes;
   }
 
-  public void setFileSuffixes(String[] fileSuffixes) {
-    this.fileSuffixes = fileSuffixes;
-  }
-
   public int getStoreMatches() {
     return storeMatches;
-  }
-
-  public void setStoreMatches(int storeMatches) {
-    this.storeMatches = storeMatches;
   }
 
   public boolean isStorePercent() {
     return storePercent;
   }
 
-  public void setStorePercent(boolean storePercent) {
-    this.storePercent = storePercent;
-  }
-
   public Integer getMinTokenMatch() {
     return minTokenMatch;
-  }
-
-  public void setMinTokenMatch(Integer minTokenMatch) {
-    this.minTokenMatch = minTokenMatch;
   }
 
   public String getExclusionFileName() {
     return exclusionFileName;
   }
 
-  public void setExclusionFileName(String exclusionFileName) {
-    this.exclusionFileName = exclusionFileName;
-  }
-
   public String getRootDirName() {
     return rootDirName;
-  }
-
-  public void setRootDirName(String rootDirName) {
-    this.rootDirName = rootDirName;
   }
 
   public String getBaseCodeSubmissionName() {
     return baseCodeSubmissionName;
   }
 
-  public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
-    this.baseCodeSubmissionName = baseCodeSubmissionName;
-  }
-
   public String getSubdirectoryName() {
     return subdirectoryName;
+  }
+
+  public boolean isDebugParser() {
+    return debugParser;
+  }
+
+  public int getNumberOfSubmissionsToCompareTo() {
+    return numberOfSubmissionsToCompareTo;
+  }
+
+  public void setNumberOfSubmissionsToCompareTo(int numberOfSubmissionsToCompareTo) {
+    this.numberOfSubmissionsToCompareTo = numberOfSubmissionsToCompareTo;
+  }
+
+  public void setClusterType(ClusterType clusterType) {
+    this.clusterType = clusterType;
+  }
+
+  public void setComparisonMode(ComparisonMode comparisonMode) {
+    this.comparisonMode = comparisonMode;
+  }
+
+  public void setDebugParser(boolean debugParser) {
+    this.debugParser = debugParser;
+  }
+
+  public void setFileSuffixes(String[] fileSuffixes) {
+    this.fileSuffixes = fileSuffixes;
+  }
+
+  public void setStoreMatches(int storeMatches) {
+    this.storeMatches = storeMatches;
+  }
+
+  public void setStorePercent(boolean storePercent) {
+    this.storePercent = storePercent;
+  }
+
+  public void setMinTokenMatch(Integer minTokenMatch) {
+    this.minTokenMatch = minTokenMatch;
+  }
+
+  public void setExclusionFileName(String exclusionFileName) {
+    this.exclusionFileName = exclusionFileName;
+  }
+
+  public void setRootDirName(String rootDirName) {
+    this.rootDirName = rootDirName;
+  }
+
+  public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
+    this.baseCodeSubmissionName = baseCodeSubmissionName;
   }
 
   public void setSubdirectoryName(String subdirectoryName) {
@@ -214,13 +239,5 @@ public class JPlagOptions {
 
   public void setVerbosity(Verbosity verbosity) {
     this.verbosity = verbosity;
-  }
-
-  public boolean isDebugParser() {
-    return debugParser;
-  }
-
-  public void setDebugParser(boolean debugParser) {
-    this.debugParser = debugParser;
   }
 }
