@@ -30,7 +30,7 @@ public class Submission implements Comparable<Submission> {
   public List<File> files;
 
   /**
-   * List of tokens that have been parsed from the files this submission contains.
+   * List of tokens that have been parsed from the files this submission consists of.
    * <p>
    * TODO: The name 'Structure' is very generic and should be changed to something more descriptive.
    */
