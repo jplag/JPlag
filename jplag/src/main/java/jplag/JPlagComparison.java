@@ -336,33 +336,4 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
   }
 
-  public static class MaxReversedComparator implements Comparator<JPlagComparison> {
-
-    public int compare(JPlagComparison o1, JPlagComparison o2) {
-      float p1 = o1.percentMaxAB();
-      float p2 = o2.percentMaxAB();
-      return Float.compare(p1, p2);
-    }
-
-  }
-
-  public static class MinComparator implements Comparator<JPlagComparison> {
-
-    public int compare(JPlagComparison o1, JPlagComparison o2) {
-      float p1 = o1.percentMinAB();
-      float p2 = o2.percentMinAB();
-      return Float.compare(p2, p1);
-    }
-
-  }
-
-  public static class MinReversedComparator implements Comparator<JPlagComparison> {
-
-    public int compare(JPlagComparison o1, JPlagComparison o2) {
-      float p1 = o1.percentMinAB();
-      float p2 = o2.percentMinAB();
-      return Float.compare(p1, p2);
-    }
-
-  }
 }
