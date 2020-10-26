@@ -1,5 +1,6 @@
 package jplag;
 
+import java.util.List;
 import jplag.clustering.Cluster;
 
 public class JPlagResult {
@@ -10,6 +11,8 @@ public class JPlagResult {
   // --------------------------------------------------------------------------
 
   private Cluster cluster;
+
+  private List<JPlagComparison> comparisons;
 
   private SortedVector<JPlagComparison> avgMatches;
 

@@ -3,8 +3,8 @@ package jplag;
 import java.util.Arrays;
 import java.util.Comparator;
 
-/* This class extends "Matches" to represent the whole result of a comparison.
- * Methods to ease the presentation of the result are added.
+/**
+ * This method represents the whole result of a comparison between two submissions.
  */
 public class JPlagComparison extends Matches implements Comparator<JPlagComparison> {
 
@@ -13,7 +13,6 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
 
   public AllBasecodeMatches bcmatchesA = null;
   public AllBasecodeMatches bcmatchesB = null;
-
 
   public JPlagComparison(Submission subA, Submission subB) {
     super();
@@ -77,7 +76,11 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
 
   /* A few methods to calculate some statistical data
    */
-  public final int tokensMatched() {
+
+  /**
+   * Get the total number of matched tokens for this comparison.
+   */
+  public final int getNumberOfMatchedTokens() {
     int erg = 0;
     for (int i = 0; i < size(); i++) {
       erg += matches[i].length;
@@ -85,7 +88,7 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
     return erg;
   }
 
-  private final int biggestMatch() {
+  private int biggestMatch() {
     int erg = 0;
     for (int i = 0; i < size(); i++) {
       if (matches[i].length > erg) {
@@ -107,33 +110,33 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
   public final float percent() {
     float sa, sb;
     if (bcmatchesB != null && bcmatchesA != null) {
-      sa = subA.getNumberOfTokens() - subA.files.size() - bcmatchesA.tokensMatched();
-      sb = subB.getNumberOfTokens() - subB.files.size() - bcmatchesB.tokensMatched();
+      sa = subA.getNumberOfTokens() - subA.files.size() - bcmatchesA.getNumberOfMatchedTokens();
+      sb = subB.getNumberOfTokens() - subB.files.size() - bcmatchesB.getNumberOfMatchedTokens();
     } else {
       sa = subA.getNumberOfTokens() - subA.files.size();
       sb = subB.getNumberOfTokens() - subB.files.size();
     }
-    return (200 * (float) tokensMatched()) / (sa + sb);
+    return (200 * (float) getNumberOfMatchedTokens()) / (sa + sb);
   }
 
   public final float percentA() {
     int divisor;
     if (bcmatchesA != null) {
-      divisor = subA.getNumberOfTokens() - subA.files.size() - bcmatchesA.tokensMatched();
+      divisor = subA.getNumberOfTokens() - subA.files.size() - bcmatchesA.getNumberOfMatchedTokens();
     } else {
       divisor = subA.getNumberOfTokens() - subA.files.size();
     }
-    return (divisor == 0 ? 0f : (tokensMatched() * 100 / (float) divisor));
+    return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
   }
 
   public final float percentB() {
     int divisor;
     if (bcmatchesB != null) {
-      divisor = subB.getNumberOfTokens() - subB.files.size() - bcmatchesB.tokensMatched();
+      divisor = subB.getNumberOfTokens() - subB.files.size() - bcmatchesB.getNumberOfMatchedTokens();
     } else {
       divisor = subB.getNumberOfTokens() - subB.files.size();
     }
-    return (divisor == 0 ? 0f : (tokensMatched() * 100 / (float) divisor));
+    return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
   }
 
   public final float roundedPercentMaxAB() {
@@ -168,12 +171,12 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
 
   public final float percentBasecodeA() {
     float sa = subA.getNumberOfTokens() - subA.files.size();
-    return bcmatchesA.tokensMatched() * 100 / sa;
+    return bcmatchesA.getNumberOfMatchedTokens() * 100 / sa;
   }
 
   public final float percentBasecodeB() {
     float sb = subB.getNumberOfTokens() - subB.files.size();
-    return bcmatchesB.tokensMatched() * 100 / sb;
+    return bcmatchesB.getNumberOfMatchedTokens() * 100 / sb;
   }
 
   public final float roundedPercentBasecodeA() {
@@ -184,14 +187,6 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
   public final float roundedPercentBasecodeB() {
     float percent = percentBasecodeB();
     return ((int) (percent * 10)) / (float) 10;
-  }
-
-  /* Returns the name of the submissions which were compared
-   * Parameter: i == 0   submission A,
-   *            i != 0   submission B.
-   */
-  public final String subName(int i) {
-    return (i == 0 ? subA.name : subB.name);
   }
 
   /* This method returns all the files which contributed to a match.
