@@ -5,11 +5,6 @@ import jplag.clustering.Cluster;
 
 public class JPlagResult {
 
-  // TODO: Only for debugging purposes.
-  private String test = "Works";
-
-  // --------------------------------------------------------------------------
-
   private Cluster cluster;
 
   private List<JPlagComparison> comparisons;
