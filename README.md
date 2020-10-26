@@ -84,7 +84,7 @@ To generate single modules run `mvn clean generate-sources package` in the base 
 
 To generate a single JAR file with all dependencies, perform the following steps:
 1. Install all submodules with `mvn clean install` from the base directory. You will find the JARs in the respective `target` directories.
-2. Run `mvn clean generate-sources assembly:single` inside the `jplag` directory 
+2. Run `mvn clean generate-sources package assembly:single` inside the `jplag` directory 
 
 You'll find the generated JAR in  `jplag/target`.
 
