@@ -8,6 +8,7 @@ import jplag.GSTiling;
 import jplag.JPlagOptions;
 import jplag.SortedVector;
 import jplag.Submission;
+import jplag.options.SimilarityMetric;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
@@ -53,6 +54,22 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 //            + ((timebc / 60000 > 0) ? ((timebc / 60000) % 60000) + " min " : "") + (timebc / 1000
 //            % 60) + " sec\n"
 //            + "Time per basecode comparison: " + (timebc / numberOfSubmissions) + " msec\n\n");
+  }
+
+  protected boolean isAboveSimilarityThreshold(JPlagComparison comparison) {
+    float similarityThreshold = this.options.getSimilarityThreshold();
+    SimilarityMetric similarityMetric = this.options.getSimilarityMetric();
+
+    switch (similarityMetric) {
+      case AVG:
+        return comparison.percent() >= similarityThreshold;
+      case MAX:
+        return comparison.percentMaxAB() >= similarityThreshold;
+      case MIN:
+        return comparison.percentMinAB() >= similarityThreshold;
+      default:
+        return true;
+    }
   }
 
   protected void registerMatch(

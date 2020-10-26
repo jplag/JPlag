@@ -63,10 +63,10 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
           comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
         }
 
-        if (comparison.percent() >= this.options.getSimilarityThreshold()) {
+        if (isAboveSimilarityThreshold(comparison)) {
           comparisons.add(comparison);
         }
-        
+
         // Previously:
         // registerMatch(comparison, avgMatches, maxMatches, null, i, j);
       }

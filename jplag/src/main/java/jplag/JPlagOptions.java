@@ -4,6 +4,7 @@ import static jplag.strategy.ComparisonMode.NORMAL;
 
 import jplag.options.ClusterType;
 import jplag.options.LanguageOption;
+import jplag.options.SimilarityMetric;
 import jplag.strategy.ComparisonMode;
 import jplag.options.Verbosity;
 
@@ -62,6 +63,11 @@ public class JPlagOptions {
    * will be ignored. The default value of 0 allows all matches to be stored.
    */
   private float similarityThreshold = 0;
+
+  /**
+   * TODO: Not happy with the name yet.
+   */
+  private SimilarityMetric similarityMetric = SimilarityMetric.AVG;
 
   /**
    * Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity
@@ -195,6 +201,10 @@ public class JPlagOptions {
     return similarityThreshold;
   }
 
+  public SimilarityMetric getSimilarityMetric() {
+    return similarityMetric;
+  }
+
   public void setNumberOfSubmissionsToCompareTo(int numberOfSubmissionsToCompareTo) {
     this.numberOfSubmissionsToCompareTo = numberOfSubmissionsToCompareTo;
   }
@@ -259,5 +269,9 @@ public class JPlagOptions {
     } else {
       this.similarityThreshold = similarityThreshold;
     }
+  }
+
+  public void setSimilarityMetric(SimilarityMetric similarityMetric) {
+    this.similarityMetric = similarityMetric;
   }
 }
