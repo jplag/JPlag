@@ -201,7 +201,7 @@ public class GSTiling implements TokenConstants {
     return comparison;
   }
 
-  public final AllBasecodeMatches compareWithBasecode(Submission subA, Submission subB) {
+  public final JPlagBaseCodeComparison compareWithBaseCode(Submission subA, Submission subB) {
     Submission A, B, tmp;
     if (subA.tokenList.size() > subB.tokenList.size()) {
       A = subB;
@@ -217,10 +217,10 @@ public class GSTiling implements TokenConstants {
       B = tmp;
     }
 
-    return compareWithBasecode(A, B, this.program.getOptions().getMinTokenMatch());
+    return compareWithBaseCode(A, B, this.program.getOptions().getMinTokenMatch());
   }
 
-  private final AllBasecodeMatches compareWithBasecode(Submission subA, Submission subB, int mml) {
+  private JPlagBaseCodeComparison compareWithBaseCode(Submission subA, Submission subB, int mml) {
     Structure structA = subA.tokenList;
     Structure structB = subB.tokenList;
 
@@ -231,10 +231,10 @@ public class GSTiling implements TokenConstants {
     Token[] B = structB.tokens;
     int lengthA = structA.size() - 1;  // minus pivots!
     int lengthB = structB.size() - 1;  // minus pivots!
-    AllBasecodeMatches allBasecodeMatches = new AllBasecodeMatches(subA, subB);
+    JPlagBaseCodeComparison baseCodeComparison = new JPlagBaseCodeComparison(subA, subB);
 
 		if (lengthA < mml || lengthB < mml) {
-			return allBasecodeMatches;
+			return baseCodeComparison;
 		}
 
     // Initialize
@@ -294,7 +294,7 @@ public class GSTiling implements TokenConstants {
       for (int i = matches.size() - 1; i >= 0; i--) {
         int x = matches.matches[i].startA;  // beginning in sequence A
         int y = matches.matches[i].startB;  // beginning in sequence B
-        allBasecodeMatches.addMatch(x, y, matches.matches[i].length);
+        baseCodeComparison.addMatch(x, y, matches.matches[i].length);
         //in order that "Match" will be newly build     (because reusing)
         for (int j = matches.matches[i].length; j > 0; j--) {
           A[x].marked = B[y].marked = true;   // mark all Token!
@@ -305,7 +305,7 @@ public class GSTiling implements TokenConstants {
       }
     } while (maxmatch != mml);
 
-    return allBasecodeMatches;
+    return baseCodeComparison;
   }
 
   public void resetBaseSubmission(Submission sub) {

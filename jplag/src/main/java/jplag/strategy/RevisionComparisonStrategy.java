@@ -70,8 +70,8 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
       System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
 
       if (baseCodeSubmission != null) {
-        match.bcmatchesA = baseCodeMatches.get(match.subA.name);
-        match.bcmatchesB = baseCodeMatches.get(match.subB.name);
+        match.bcMatchesA = baseCodeMatches.get(match.subA.name);
+        match.bcMatchesB = baseCodeMatches.get(match.subB.name);
       }
 
       registerMatch(match, dist, avgMatches, maxMatches, minMatches, i, j);

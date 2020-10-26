@@ -2,7 +2,7 @@ package jplag.strategy;
 
 import java.util.Hashtable;
 import java.util.Vector;
-import jplag.AllBasecodeMatches;
+import jplag.JPlagBaseCodeComparison;
 import jplag.JPlagComparison;
 import jplag.GSTiling;
 import jplag.JPlagOptions;
@@ -14,7 +14,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
   /**
    * Hashtable that maps the name of a submissions to its matches with the provided base code.
    */
-  protected Hashtable<String, AllBasecodeMatches> baseCodeMatches = new Hashtable<>(30);
+  protected Hashtable<String, JPlagBaseCodeComparison> baseCodeMatches = new Hashtable<>(30);
 
   protected GSTiling gSTiling;
 
@@ -31,7 +31,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
   ) {
     int numberOfSubmissions = submissions.size();
 
-    AllBasecodeMatches bcMatch;
+    JPlagBaseCodeComparison bcMatch;
     Submission currentSubmission;
 
 //    long msec = System.currentTimeMillis();
@@ -39,7 +39,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     for (int i = 0; i < (numberOfSubmissions); i++) {
       currentSubmission = submissions.elementAt(i);
 
-      bcMatch = this.gSTiling.compareWithBasecode(currentSubmission, baseCodeSubmission);
+      bcMatch = this.gSTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
       baseCodeMatches.put(currentSubmission.name, bcMatch);
 
       this.gSTiling.resetBaseSubmission(baseCodeSubmission);

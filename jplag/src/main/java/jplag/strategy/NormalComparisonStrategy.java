@@ -60,8 +60,8 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + comparison.percent());
 
         if (baseCodeSubmission != null) {
-          comparison.bcmatchesA = baseCodeMatches.get(comparison.subA.name);
-          comparison.bcmatchesB = baseCodeMatches.get(comparison.subB.name);
+          comparison.bcMatchesA = baseCodeMatches.get(comparison.subA.name);
+          comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
         }
 
         registerMatch(comparison, dist, avgMatches, maxMatches, null, i, j);
