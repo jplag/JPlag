@@ -1,13 +1,13 @@
 package jplag.strategy;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import jplag.JPlagComparison;
 import jplag.GSTiling;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
-import jplag.SortedVector;
 import jplag.Submission;
-import jplag.clustering.Cluster;
 
 public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
 
@@ -24,21 +24,13 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
       compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
     }
 
-    // Result vectors
-    SortedVector<JPlagComparison> avgMatches = new SortedVector<>(
-        new JPlagComparison.AvgReversedComparator());
-    SortedVector<JPlagComparison> maxMatches = new SortedVector<>(
-        new JPlagComparison.MaxReversedComparator());
-    SortedVector<JPlagComparison> minMatches = new SortedVector<>(
-        new JPlagComparison.MinReversedComparator());
-
-    int numberOfSubmissions = submissions.size();
+    long timeBeforeStartInMillis = System.currentTimeMillis();
     int numberOfComparisons = 0;
-
+    int numberOfSubmissions = submissions.size();
     Submission s1, s2;
-    JPlagComparison match;
+    JPlagComparison comparison;
 
-    long timeMillis = System.currentTimeMillis();
+    List<JPlagComparison> comparisons = new ArrayList<>();
 
     s1loop:
     for (int i = 0; i < numberOfSubmissions - 1; ) {
@@ -61,38 +53,32 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
         s2 = submissions.elementAt(j);
       } while (s2.tokenList == null);
 
-      match = this.gSTiling.compare(s1, s2);
+      comparison = this.gSTiling.compare(s1, s2);
       numberOfComparisons++;
 
-      System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
+      System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + comparison.percent());
 
       if (baseCodeSubmission != null) {
-        match.bcMatchesA = baseCodeMatches.get(match.subA.name);
-        match.bcMatchesB = baseCodeMatches.get(match.subB.name);
+        comparison.bcMatchesA = baseCodeMatches.get(comparison.subA.name);
+        comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
       }
 
-      registerMatch(match, avgMatches, maxMatches, minMatches, i, j);
+      if (isAboveSimilarityThreshold(comparison)) {
+        comparisons.add(comparison);
+      }
 
       i = j;
     }
 
-    long time = System.currentTimeMillis() - timeMillis;
+    long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
 
-    // TODO
-//    print("\n",
-//        "Total time for comparing submissions: " + ((time / 3600000 > 0) ? (time / 3600000) + " h "
-//            : "")
-//            + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60)
-//            + " sec\n" + "Time per comparison: "
-//            + (time / anz) + " msec\n");
+    // TODO:
+    // Cluster cluster = null;
+    //
+    // if (options.getClusterType() != ClusterType.NONE) {
+    //     cluster = this.clusters.calculateClustering(submissions);
+    // }
 
-    Cluster cluster = null;
-
-    // TODO
-//    if (options.getClusterType() != ClusterType.NONE) {
-//      cluster = this.clusters.calculateClustering(submissions);
-//    }
-
-    return new JPlagResult(cluster, avgMatches, maxMatches, minMatches);
+    return new JPlagResult(comparisons, numberOfComparisons, durationInMillis);
   }
 }

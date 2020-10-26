@@ -5,15 +5,6 @@ import jplag.clustering.Cluster;
 
 public class JPlagResult {
 
-  private Cluster cluster;
-
-  private SortedVector<JPlagComparison> avgMatches;
-
-  private SortedVector<JPlagComparison> maxMatches;
-
-  private SortedVector<JPlagComparison> minMatches;
-
-  private List<JPlagComparison> comparisons;
 
   /**
    * 10-element array representing the similarity distribution of the detected matches.
@@ -28,32 +19,34 @@ public class JPlagResult {
   private int[] similarityDistribution = null;
 
   /**
+   * Total number of comparisons. This number also takes into account the comparisons that were
+   * ignored due to their too low similarity.
+   */
+  private int totalNumberOfComparisons;
+
+  /**
    * Duration of the JPlag run in milliseconds.
    */
   private long durationInMillis;
 
+  /**
+   * List of detected comparisons whose similarity was about the specified threshold.
+   */
+  private List<JPlagComparison> comparisons;
+
   public JPlagResult() {
   }
 
-  public JPlagResult(List<JPlagComparison> comparisons, long durationInMillis) {
+  public JPlagResult(
+      List<JPlagComparison> comparisons,
+      int totalNumberOfComparisons,
+      long durationInMillis
+  ) {
     this.comparisons = comparisons;
     this.durationInMillis = durationInMillis;
+    this.totalNumberOfComparisons = totalNumberOfComparisons;
+
     this.similarityDistribution = calculateSimilarityDistribution(comparisons);
-  }
-
-  @Deprecated
-  public JPlagResult(
-      Cluster cluster,
-      SortedVector<JPlagComparison> avgMatches,
-      SortedVector<JPlagComparison> maxMatches,
-      SortedVector<JPlagComparison> minMatches
-  ) {
-    this.cluster = cluster;
-    this.avgMatches = avgMatches;
-    this.maxMatches = maxMatches;
-    this.minMatches = minMatches;
-
-    this.similarityDistribution = calculateSimilarityDistribution(avgMatches);
   }
 
   /**
@@ -81,6 +74,10 @@ public class JPlagResult {
     return durationInMillis;
   }
 
+  public int getTotalNumberOfComparisons() {
+    return totalNumberOfComparisons;
+  }
+
   public int getNumberOfComparisons() {
     return comparisons.size();
   }
@@ -92,8 +89,9 @@ public class JPlagResult {
   @Override
   public String toString() {
     return String.format(
-        "JPlagResult { duration: %d ms, comparisons: %d }",
+        "JPlagResult { duration: %d ms, totalComparisons: %d, detectedComparisons: %d }",
         getDuration(),
+        getTotalNumberOfComparisons(),
         getNumberOfComparisons()
     );
   }
