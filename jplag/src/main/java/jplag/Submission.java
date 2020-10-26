@@ -52,10 +52,6 @@ public class Submission implements Comparable<Submission> {
     this.submissionFile = submissionFile;
     this.program = program;
     this.files = parseFilesRecursively(submissionFile);
-
-    System.out.println("--- " + name + " ---");
-    this.files.forEach(file -> System.out.println(file.getAbsolutePath()));
-    System.out.println("\n");
   }
 
   /**
