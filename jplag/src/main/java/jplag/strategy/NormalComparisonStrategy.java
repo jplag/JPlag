@@ -1,7 +1,7 @@
 package jplag.strategy;
 
 import java.util.Vector;
-import jplag.AllMatches;
+import jplag.JPlagComparison;
 import jplag.GSTiling;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
@@ -25,8 +25,8 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     // Result vectors
-    SortedVector<AllMatches> avgMatches = new SortedVector<>(new AllMatches.AvgComparator());
-    SortedVector<AllMatches> maxMatches = new SortedVector<>(new AllMatches.MaxComparator());
+    SortedVector<JPlagComparison> avgMatches = new SortedVector<>(new JPlagComparison.AvgComparator());
+    SortedVector<JPlagComparison> maxMatches = new SortedVector<>(new JPlagComparison.MaxComparator());
     // TODO: Why is minMatches missing?
 
     // Similarity distribution
@@ -36,7 +36,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     int i, j, numberOfComparisons = 0;
 
     Submission s1, s2;
-    AllMatches match;
+    JPlagComparison match;
 
     long timeMillis = System.currentTimeMillis();
 

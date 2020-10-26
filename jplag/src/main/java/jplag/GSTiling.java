@@ -83,7 +83,7 @@ public class GSTiling implements TokenConstants {
     s.hash_length = hashLength;
   }
 
-  public final AllMatches compare(Submission subA, Submission subB) {
+  public final JPlagComparison compare(Submission subA, Submission subB) {
     Submission A, B, tmp;
     if (subA.tokenList.size() > subB.tokenList.size()) {
       A = subB;
@@ -103,7 +103,7 @@ public class GSTiling implements TokenConstants {
   }
 
   // first parameter should contain the smaller sequence!!!
-  private final AllMatches compare(Submission subA, Submission subB, int mml) {
+  private final JPlagComparison compare(Submission subA, Submission subB, int mml) {
     Structure structA = subA.tokenList;
     Structure structB = subB.tokenList;
 
@@ -114,10 +114,10 @@ public class GSTiling implements TokenConstants {
     Token[] B = structB.tokens;
     int lengthA = structA.size() - 1;  // minus pivots!
     int lengthB = structB.size() - 1;  // minus pivots!
-    AllMatches allMatches = new AllMatches(subA, subB);
+    JPlagComparison comparison = new JPlagComparison(subA, subB);
 
 		if (lengthA < mml || lengthB < mml) {
-			return allMatches;
+			return comparison;
 		}
 
     // Initialize
@@ -189,7 +189,7 @@ public class GSTiling implements TokenConstants {
       for (int i = matches.size() - 1; i >= 0; i--) {
         int x = matches.matches[i].startA;  // begining of sequence A
         int y = matches.matches[i].startB;  // begining of sequence B
-        allMatches.addMatch(x, y, matches.matches[i].length);
+        comparison.addMatch(x, y, matches.matches[i].length);
         //in order that "Match" will be newly build     (because reusing)
 				for (int j = matches.matches[i].length; j > 0; j--) {
 					A[x++].marked = B[y++].marked = true;   // mark all Token!
@@ -198,7 +198,7 @@ public class GSTiling implements TokenConstants {
 
     } while (maxmatch != mml);
 
-    return allMatches;
+    return comparison;
   }
 
   public final AllBasecodeMatches compareWithBasecode(Submission subA, Submission subB) {

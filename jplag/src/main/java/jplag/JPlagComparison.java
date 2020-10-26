@@ -6,7 +6,7 @@ import java.util.Comparator;
 /* This class extends "Matches" to represent the whole result of a comparison.
  * Methods to ease the presentation of the result are added.
  */
-public class AllMatches extends Matches implements Comparator<AllMatches> {
+public class JPlagComparison extends Matches implements Comparator<JPlagComparison> {
 
   public Submission subA;
   public Submission subB;
@@ -15,7 +15,7 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   public AllBasecodeMatches bcmatchesB = null;
 
 
-  public AllMatches(Submission subA, Submission subB) {
+  public JPlagComparison(Submission subA, Submission subB) {
     super();
     this.subA = subA;
     this.subB = subB;
@@ -270,7 +270,7 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
     return res;
   }
 
-  public int compare(AllMatches o1, AllMatches o2) {
+  public int compare(JPlagComparison o1, JPlagComparison o2) {
     float p1 = o1.percent();
     float p2 = o2.percent();
     if (p1 == p2) {
@@ -284,19 +284,19 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
   }
 
   public boolean equals(Object obj) {
-    if (!(obj instanceof AllMatches)) {
+    if (!(obj instanceof JPlagComparison)) {
       return false;
     }
-    return (compare(this, (AllMatches) obj) == 0);
+    return (compare(this, (JPlagComparison) obj) == 0);
   }
 
   public String toString() {
     return subA.name + " <-> " + subB.name;
   }
 
-  public static class AvgComparator implements Comparator<AllMatches> {
+  public static class AvgComparator implements Comparator<JPlagComparison> {
 
-    public int compare(AllMatches o1, AllMatches o2) {
+    public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percent();
       float p2 = o2.percent();
       if (p1 == p2) {
@@ -310,9 +310,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
     }
   }
 
-  public static class AvgReversedComparator implements Comparator<AllMatches> {
+  public static class AvgReversedComparator implements Comparator<JPlagComparison> {
 
-    public int compare(AllMatches o1, AllMatches o2) {
+    public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percent();
       float p2 = o2.percent();
       if (p1 == p2) {
@@ -326,9 +326,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
     }
   }
 
-  public static class MaxComparator implements Comparator<AllMatches> {
+  public static class MaxComparator implements Comparator<JPlagComparison> {
 
-    public int compare(AllMatches o1, AllMatches o2) {
+    public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percentMaxAB();
       float p2 = o2.percentMaxAB();
       if (p1 == p2) {
@@ -342,9 +342,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
     }
   }
 
-  public static class MaxReversedComparator implements Comparator<AllMatches> {
+  public static class MaxReversedComparator implements Comparator<JPlagComparison> {
 
-    public int compare(AllMatches o1, AllMatches o2) {
+    public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percentMaxAB();
       float p2 = o2.percentMaxAB();
       if (p1 == p2) {
@@ -358,9 +358,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
     }
   }
 
-  public static class MinComparator implements Comparator<AllMatches> {
+  public static class MinComparator implements Comparator<JPlagComparison> {
 
-    public int compare(AllMatches o1, AllMatches o2) {
+    public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percentMinAB();
       float p2 = o2.percentMinAB();
       if (p1 == p2) {
@@ -374,9 +374,9 @@ public class AllMatches extends Matches implements Comparator<AllMatches> {
     }
   }
 
-  public static class MinReversedComparator implements Comparator<AllMatches> {
+  public static class MinReversedComparator implements Comparator<JPlagComparison> {
 
-    public int compare(AllMatches o1, AllMatches o2) {
+    public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percentMinAB();
       float p2 = o2.percentMinAB();
       if (p1 == p2) {

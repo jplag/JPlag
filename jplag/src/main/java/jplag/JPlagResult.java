@@ -11,11 +11,11 @@ public class JPlagResult {
 
   private Cluster cluster;
 
-  private SortedVector<AllMatches> avgMatches;
+  private SortedVector<JPlagComparison> avgMatches;
 
-  private SortedVector<AllMatches> maxMatches;
+  private SortedVector<JPlagComparison> maxMatches;
 
-  private SortedVector<AllMatches> minMatches;
+  private SortedVector<JPlagComparison> minMatches;
 
 
   /**
@@ -36,9 +36,9 @@ public class JPlagResult {
 
   public JPlagResult(
       Cluster cluster,
-      SortedVector<AllMatches> avgMatches,
-      SortedVector<AllMatches> maxMatches,
-      SortedVector<AllMatches> minMatches,
+      SortedVector<JPlagComparison> avgMatches,
+      SortedVector<JPlagComparison> maxMatches,
+      SortedVector<JPlagComparison> minMatches,
       int[] similarityDistribution
   ) {
     this.cluster = cluster;

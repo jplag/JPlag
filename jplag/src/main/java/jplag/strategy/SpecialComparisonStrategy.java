@@ -2,7 +2,7 @@ package jplag.strategy;
 
 import java.io.File;
 import java.util.Vector;
-import jplag.AllMatches;
+import jplag.JPlagComparison;
 import jplag.GSTiling;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
@@ -36,14 +36,14 @@ public class SpecialComparisonStrategy extends AbstractComparisonStrategy {
 
     int totalcomps = size * size;
     int i, j, anz = 0, count = 0;
-    AllMatches match;
+    JPlagComparison match;
     Submission s1, s2;
     long msec = System.currentTimeMillis();
 
     for (i = 0; i < (size - 1); i++) {
       // Result vector
-      SortedVector<AllMatches> matches = new SortedVector<>(
-          new AllMatches.AvgComparator());
+      SortedVector<JPlagComparison> matches = new SortedVector<>(
+          new JPlagComparison.AvgComparator());
 
       s1 = submissions.elementAt(i);
 

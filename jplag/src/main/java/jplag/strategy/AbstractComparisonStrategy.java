@@ -3,7 +3,7 @@ package jplag.strategy;
 import java.util.Hashtable;
 import java.util.Vector;
 import jplag.AllBasecodeMatches;
-import jplag.AllMatches;
+import jplag.JPlagComparison;
 import jplag.GSTiling;
 import jplag.JPlagOptions;
 import jplag.SortedVector;
@@ -56,11 +56,11 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
   }
 
   protected void registerMatch(
-      AllMatches match,
+      JPlagComparison match,
       int[] dist,
-      SortedVector<AllMatches> avgMatches,
-      SortedVector<AllMatches> maxMatches,
-      SortedVector<AllMatches> minMatches,
+      SortedVector<JPlagComparison> avgMatches,
+      SortedVector<JPlagComparison> maxMatches,
+      SortedVector<JPlagComparison> minMatches,
       int a,
       int b
   ) {

@@ -1,7 +1,7 @@
 package jplag.strategy;
 
 import java.util.Vector;
-import jplag.AllMatches;
+import jplag.JPlagComparison;
 import jplag.GSTiling;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
@@ -25,12 +25,12 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     // Result vectors
-    SortedVector<AllMatches> avgMatches = new SortedVector<>(
-        new AllMatches.AvgReversedComparator());
-    SortedVector<AllMatches> maxMatches = new SortedVector<>(
-        new AllMatches.MaxReversedComparator());
-    SortedVector<AllMatches> minMatches = new SortedVector<>(
-        new AllMatches.MinReversedComparator());
+    SortedVector<JPlagComparison> avgMatches = new SortedVector<>(
+        new JPlagComparison.AvgReversedComparator());
+    SortedVector<JPlagComparison> maxMatches = new SortedVector<>(
+        new JPlagComparison.MaxReversedComparator());
+    SortedVector<JPlagComparison> minMatches = new SortedVector<>(
+        new JPlagComparison.MinReversedComparator());
 
     // Similarity distribution
     int[] dist = new int[10];
@@ -39,7 +39,7 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
     int numberOfComparisons = 0;
 
     Submission s1, s2;
-    AllMatches match;
+    JPlagComparison match;
 
     long timeMillis = System.currentTimeMillis();
 

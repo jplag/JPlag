@@ -9,7 +9,7 @@ package jplag;
  * @author Michael Cocheteau
  *
  */
-public class AllBasecodeMatches extends AllMatches{
+public class AllBasecodeMatches extends JPlagComparison {
 	
 	public AllBasecodeMatches(Submission subA, Submission subB) {
 		super(subA, subB);
