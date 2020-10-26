@@ -36,14 +36,31 @@ public class JPlagResult {
       Cluster cluster,
       SortedVector<JPlagComparison> avgMatches,
       SortedVector<JPlagComparison> maxMatches,
-      SortedVector<JPlagComparison> minMatches,
-      int[] similarityDistribution
+      SortedVector<JPlagComparison> minMatches
   ) {
     this.cluster = cluster;
     this.avgMatches = avgMatches;
     this.maxMatches = maxMatches;
     this.minMatches = minMatches;
-    this.similarityDistribution = similarityDistribution;
+
+    this.similarityDistribution = calculateSimilarityDistribution(avgMatches);
+  }
+
+  /**
+   * Note: Before, comparisons with a similarity below the given threshold were also included in the
+   * similarity matrix.
+   */
+  private int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
+    int[] similarityDistribution = new int[10];
+
+    comparisons.stream()
+        .map(JPlagComparison::percent)
+        .map(percent -> percent / 10)
+        .map(Float::intValue)
+        .map(index -> index == 10 ? 9 : index)
+        .forEach(index -> similarityDistribution[index]++);
+
+    return similarityDistribution;
   }
 
   public int[] getSimilarityDistribution() {

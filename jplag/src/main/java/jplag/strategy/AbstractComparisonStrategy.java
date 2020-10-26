@@ -57,7 +57,6 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
   protected void registerMatch(
       JPlagComparison match,
-      int[] dist,
       SortedVector<JPlagComparison> avgMatches,
       SortedVector<JPlagComparison> maxMatches,
       SortedVector<JPlagComparison> minMatches,
@@ -67,9 +66,6 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     float avgPercent = match.percent();
     float maxPercent = match.percentMaxAB();
     float minPercent = match.percentMinAB();
-
-    int i = ((int) avgPercent) / 10;
-    dist[(i == 10) ? 9 : i]++;
 
     if (!options.isStorePercent()) {
       if ((avgMatches.size() < options.getStoreMatches() || avgPercent > avgMatches.lastElement()

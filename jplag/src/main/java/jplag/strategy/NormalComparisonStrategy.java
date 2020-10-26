@@ -25,12 +25,11 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     // Result vectors
-    SortedVector<JPlagComparison> avgMatches = new SortedVector<>(new JPlagComparison.AvgComparator());
-    SortedVector<JPlagComparison> maxMatches = new SortedVector<>(new JPlagComparison.MaxComparator());
+    SortedVector<JPlagComparison> avgMatches = new SortedVector<>(
+        new JPlagComparison.AvgComparator());
+    SortedVector<JPlagComparison> maxMatches = new SortedVector<>(
+        new JPlagComparison.MaxComparator());
     // TODO: Why is minMatches missing?
-
-    // Similarity distribution
-    int[] dist = new int[10];
 
     int numberOfSubmissions = submissions.size();
     int i, j, numberOfComparisons = 0;
@@ -64,10 +63,9 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
           comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
         }
 
-        registerMatch(comparison, dist, avgMatches, maxMatches, null, i, j);
+        registerMatch(comparison, avgMatches, maxMatches, null, i, j);
       }
     }
-
 
     long time = System.currentTimeMillis() - timeMillis;
 
@@ -86,7 +84,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 //      cluster = this.clusters.calculateClustering(submissions);
 //    }
 
-    return new JPlagResult(cluster, avgMatches, maxMatches, null, dist);
+    return new JPlagResult(cluster, avgMatches, maxMatches, null);
   }
 
 }

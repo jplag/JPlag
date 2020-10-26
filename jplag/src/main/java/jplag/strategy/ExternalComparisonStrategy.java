@@ -82,7 +82,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
             }
 
             match = this.gSTiling.compare(s1, s2);
-            registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
+            registerMatch(match, avgmatches, maxmatches, null, i, j);
             comparisons++;
             count++;
           }
@@ -138,7 +138,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
               }
 
               match = this.gSTiling.compare(s1, s2);
-              registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
+              registerMatch(match, avgmatches, maxmatches, null, i, j);
               comparisons++;
               count++;
             }

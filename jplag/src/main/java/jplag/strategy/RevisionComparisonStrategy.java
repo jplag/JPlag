@@ -32,9 +32,6 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
     SortedVector<JPlagComparison> minMatches = new SortedVector<>(
         new JPlagComparison.MinReversedComparator());
 
-    // Similarity distribution
-    int[] dist = new int[10];
-
     int numberOfSubmissions = submissions.size();
     int numberOfComparisons = 0;
 
@@ -74,7 +71,7 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
         match.bcMatchesB = baseCodeMatches.get(match.subB.name);
       }
 
-      registerMatch(match, dist, avgMatches, maxMatches, minMatches, i, j);
+      registerMatch(match, avgMatches, maxMatches, minMatches, i, j);
 
       i = j;
     }
@@ -96,6 +93,6 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
 //      cluster = this.clusters.calculateClustering(submissions);
 //    }
 
-    return new JPlagResult(cluster, avgMatches, maxMatches, minMatches, dist);
+    return new JPlagResult(cluster, avgMatches, maxMatches, minMatches);
   }
 }
