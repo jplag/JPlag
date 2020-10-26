@@ -311,15 +311,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percent();
       float p2 = o2.percent();
-      if (p1 == p2) {
-        return 0;
-      }
-      if (p1 > p2) {
-        return -1;
-      } else {
-        return 1;
-      }
+      return Float.compare(p2, p1);
     }
+
   }
 
   public static class AvgReversedComparator implements Comparator<JPlagComparison> {
@@ -327,15 +321,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percent();
       float p2 = o2.percent();
-      if (p1 == p2) {
-        return 0;
-      }
-      if (p1 < p2) {
-        return -1;
-      } else {
-        return 1;
-      }
+      return Float.compare(p1, p2);
     }
+
   }
 
   public static class MaxComparator implements Comparator<JPlagComparison> {
@@ -343,15 +331,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percentMaxAB();
       float p2 = o2.percentMaxAB();
-      if (p1 == p2) {
-        return 0;
-      }
-      if (p1 > p2) {
-        return -1;
-      } else {
-        return 1;
-      }
+      return Float.compare(p2, p1);
     }
+
   }
 
   public static class MaxReversedComparator implements Comparator<JPlagComparison> {
@@ -359,15 +341,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percentMaxAB();
       float p2 = o2.percentMaxAB();
-      if (p1 == p2) {
-        return 0;
-      }
-      if (p1 < p2) {
-        return -1;
-      } else {
-        return 1;
-      }
+      return Float.compare(p1, p2);
     }
+
   }
 
   public static class MinComparator implements Comparator<JPlagComparison> {
@@ -375,15 +351,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percentMinAB();
       float p2 = o2.percentMinAB();
-      if (p1 == p2) {
-        return 0;
-      }
-      if (p1 > p2) {
-        return -1;
-      } else {
-        return 1;
-      }
+      return Float.compare(p2, p1);
     }
+
   }
 
   public static class MinReversedComparator implements Comparator<JPlagComparison> {
@@ -391,14 +361,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percentMinAB();
       float p2 = o2.percentMinAB();
-      if (p1 == p2) {
-        return 0;
-      }
-      if (p1 < p2) {
-        return -1;
-      } else {
-        return 1;
-      }
+      return Float.compare(p1, p2);
     }
+
   }
 }
