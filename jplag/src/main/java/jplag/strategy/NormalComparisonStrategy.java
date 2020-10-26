@@ -7,9 +7,7 @@ import jplag.JPlagComparison;
 import jplag.GSTiling;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
-import jplag.SortedVector;
 import jplag.Submission;
-import jplag.clustering.Cluster;
 
 public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 
@@ -25,13 +23,6 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     if (baseCodeSubmission != null) {
       compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
     }
-
-    // Result vectors
-    SortedVector<JPlagComparison> avgMatches = new SortedVector<>(
-        new JPlagComparison.AvgComparator());
-    SortedVector<JPlagComparison> maxMatches = new SortedVector<>(
-        new JPlagComparison.MaxComparator());
-    // TODO: Why is minMatches missing?
 
     long timeBeforeStartInMillis = System.currentTimeMillis();
     int i, j, numberOfSubmissions = submissions.size();
@@ -66,22 +57,17 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         if (isAboveSimilarityThreshold(comparison)) {
           comparisons.add(comparison);
         }
-
-        // Previously:
-        // registerMatch(comparison, avgMatches, maxMatches, null, i, j);
       }
     }
 
     long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
 
-    Cluster cluster = null;
-
-    // TODO
-//    if (options.getClusterType() != ClusterType.NONE) {
-//      cluster = this.clusters.calculateClustering(submissions);
-//    }
-
-    // return new JPlagResult(cluster, avgMatches, maxMatches, null);
+    // TODO:
+    // Cluster cluster = null;
+    //
+    // if (options.getClusterType() != ClusterType.NONE) {
+    //     cluster = this.clusters.calculateClustering(submissions);
+    // }
 
     return new JPlagResult(comparisons, durationInMillis);
   }
