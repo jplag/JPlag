@@ -49,8 +49,4 @@ public class JPlagResult {
   public int[] getSimilarityDistribution() {
     return similarityDistribution;
   }
-
-  public String getTest() {
-    return test;
-  }
 }
