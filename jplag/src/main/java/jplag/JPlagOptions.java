@@ -16,6 +16,23 @@ public class JPlagOptions {
   public static final int MAX_RESULT_PAIRS = 1000;
 
   /**
+   * Deprecated - use similarityThreshold instead!
+   *
+   * Maximum number of comparisons to store per run.
+   */
+  @Deprecated
+  private int storeMatches = 30;
+
+  /**
+   * Deprecated - use similarityThreshold instead!
+   * <p>
+   * True, if `storeMatches` should be interpreted as a percentage threshold for the similarity of a
+   * comparison; false otherwise;
+   */
+  @Deprecated
+  private boolean storePercent = false;
+
+  /**
    * TODO: Decide what to do with this.
    * <p>
    * Note: Previously, this option had two effects:
@@ -45,18 +62,6 @@ public class JPlagOptions {
    * Array of file suffixes that should be included.
    */
   private String[] fileSuffixes;
-
-  /**
-   * TODO: Find a better name for this variable.
-   */
-  private int storeMatches = 30;
-
-  /**
-   * TODO: Find a better name for this variable;
-   * <p>
-   * True, if `storeMatches` should be interpreted as a percentage; false otherwise;
-   */
-  private boolean storePercent = false;
 
   /**
    * Percentage value (must be between 0 and 100). Matches with a similarity below this threshold
@@ -161,10 +166,12 @@ public class JPlagOptions {
     return fileSuffixes;
   }
 
+  @Deprecated
   public int getStoreMatches() {
     return storeMatches;
   }
 
+  @Deprecated
   public boolean isStorePercent() {
     return storePercent;
   }
@@ -225,10 +232,12 @@ public class JPlagOptions {
     this.fileSuffixes = fileSuffixes;
   }
 
+  @Deprecated
   public void setStoreMatches(int storeMatches) {
     this.storeMatches = storeMatches;
   }
 
+  @Deprecated
   public void setStorePercent(boolean storePercent) {
     this.storePercent = storePercent;
   }
