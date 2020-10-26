@@ -58,6 +58,12 @@ public class JPlagOptions {
   private boolean storePercent = false;
 
   /**
+   * Percentage value (must be between 0 and 100). Matches with a similarity below this threshold
+   * will be ignored. The default value of 0 allows all matches to be stored.
+   */
+  private float similarityThreshold = 0;
+
+  /**
    * Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity
    */
   private Integer minTokenMatch;
@@ -185,6 +191,10 @@ public class JPlagOptions {
     return numberOfSubmissionsToCompareTo;
   }
 
+  public float getSimilarityThreshold() {
+    return similarityThreshold;
+  }
+
   public void setNumberOfSubmissionsToCompareTo(int numberOfSubmissionsToCompareTo) {
     this.numberOfSubmissionsToCompareTo = numberOfSubmissionsToCompareTo;
   }
@@ -239,5 +249,15 @@ public class JPlagOptions {
 
   public void setVerbosity(Verbosity verbosity) {
     this.verbosity = verbosity;
+  }
+
+  public void setSimilarityThreshold(float similarityThreshold) {
+    if (similarityThreshold > 100) {
+      this.similarityThreshold = 100;
+    } else if (similarityThreshold < 0) {
+      this.similarityThreshold = 0;
+    } else {
+      this.similarityThreshold = similarityThreshold;
+    }
   }
 }
