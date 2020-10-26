@@ -53,11 +53,10 @@ public class Matches {
       }
       // no overlaps!
     }
+
     ensureCapacity(anzahl + 1);
-    //if (matches[anzahl] != null)  // object recycling...
+
     matches[anzahl].set(startA, startB, length);
-    //else
-    //matches[anzahl ] = new Match(startA,startB,length);
     anzahl++;
   }
 
