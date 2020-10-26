@@ -1,12 +1,14 @@
 package jplag;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * This method represents the whole result of a comparison between two submissions.
  */
-public class JPlagComparison extends Matches implements Comparator<JPlagComparison> {
+public class JPlagComparison implements Comparator<JPlagComparison> {
 
   public Submission subA;
   public Submission subB;
@@ -14,16 +16,28 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
   public AllBasecodeMatches bcmatchesA = null;
   public AllBasecodeMatches bcmatchesB = null;
 
+  public List<Match> matches = new ArrayList<>();
+
   public JPlagComparison(Submission subA, Submission subB) {
     super();
     this.subA = subA;
     this.subB = subB;
   }
 
+  public final void addMatch(int startA, int startB, int length) {
+    for (Match match : matches) {
+      if (match.overlap(startA, startB, length)) {
+        return;
+      }
+    }
+
+    matches.add(new Match(startA, startB, length));
+  }
+
   /* s==0 uses the start indexes of subA as key for the sorting algorithm.
    * Otherwise the start indexes of subB are used. */
   public final int[] sort_permutation(int s) {   // bubblesort!!!
-    int size = size();
+    int size = matches.size();
     int[] perm = new int[size];
     int i, j, tmp;
 
@@ -35,7 +49,7 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
     if (s == 0) {     // submission A
       for (i = 1; i < size; i++) {
         for (j = 0; j < (size - i); j++) {
-          if (matches[perm[j]].startA > matches[perm[j + 1]].startA) {
+          if (matches.get(perm[j]).startA > matches.get(perm[j + 1]).startA) {
             tmp = perm[j];
             perm[j] = perm[j + 1];
             perm[j + 1] = tmp;
@@ -45,7 +59,7 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
     } else {        // submission B
       for (i = 1; i < size; i++) {
         for (j = 0; j < (size - i); j++) {
-          if (matches[perm[j]].startB > matches[perm[j + 1]].startB) {
+          if (matches.get(perm[j]).startB > matches.get(perm[j + 1]).startB) {
             tmp = perm[j];
             perm[j] = perm[j + 1];
             perm[j + 1] = tmp;
@@ -60,15 +74,15 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
    */
   public final void sort() {   // bubblesort!!!
     Match tmp;
-    int size = size();
+    int size = matches.size();
     int i, j;
 
     for (i = 1; i < size; i++) {
       for (j = 0; j < (size - i); j++) {
-        if (matches[j].startA > matches[j + 1].startA) {
-          tmp = matches[j];
-          matches[j] = matches[j + 1];
-          matches[j + 1] = tmp;
+        if (matches.get(j).startA > matches.get(j + 1).startA) {
+          tmp = matches.get(j);
+          matches.set(j, matches.get(j + 1));
+          matches.set(j + 1, tmp);
         }
       }
     }
@@ -81,20 +95,24 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
    * Get the total number of matched tokens for this comparison.
    */
   public final int getNumberOfMatchedTokens() {
-    int erg = 0;
-    for (int i = 0; i < size(); i++) {
-      erg += matches[i].length;
+    int numberOfMatchedTokens = 0;
+
+    for (Match match : matches) {
+      numberOfMatchedTokens += match.length;
     }
-    return erg;
+
+    return numberOfMatchedTokens;
   }
 
   private int biggestMatch() {
     int erg = 0;
-    for (int i = 0; i < size(); i++) {
-      if (matches[i].length > erg) {
-        erg = matches[i].length;
+
+    for (Match match : matches) {
+      if (match.length > erg) {
+        erg = match.length;
       }
     }
+
     return erg;
   }
 
@@ -197,10 +215,10 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
     Token[] tokens = (j == 0 ? subA : subB).tokenList.tokens;
     int i, h, starti, starth, count = 1;
     o1:
-    for (i = 1; i < size(); i++) {
-      starti = (j == 0 ? matches[i].startA : matches[i].startB);
+    for (i = 1; i < matches.size(); i++) {
+      starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
       for (h = 0; h < i; h++) {
-        starth = (j == 0 ? matches[h].startA : matches[h].startB);
+        starth = (j == 0 ? matches.get(h).startA : matches.get(h).startB);
         if (tokens[starti].file.equals(tokens[starth].file)) {
           continue o1;
         }
@@ -208,13 +226,13 @@ public class JPlagComparison extends Matches implements Comparator<JPlagComparis
       count++;
     }
     String[] res = new String[count];
-    res[0] = tokens[(j == 0 ? matches[0].startA : matches[0].startB)].file;
+    res[0] = tokens[(j == 0 ? matches.get(0).startA : matches.get(0).startB)].file;
     count = 1;
     o2:
-    for (i = 1; i < size(); i++) {
-      starti = (j == 0 ? matches[i].startA : matches[i].startB);
+    for (i = 1; i < matches.size(); i++) {
+      starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
       for (h = 0; h < i; h++) {
-        starth = (j == 0 ? matches[h].startA : matches[h].startB);
+        starth = (j == 0 ? matches.get(h).startA : matches.get(h).startB);
         if (tokens[starti].file.equals(tokens[starth].file)) {
           continue o2;
         }

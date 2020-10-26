@@ -1,7 +1,9 @@
 package jplag;
 
 /**
- * Minimal class that stores "Match" objects.
+ * Minimal data structure that stores "Match" objects.
+ * <p>
+ * Note: This class is only used by GSTiling as a data structure to store matches.
  */
 public class Matches {
 
@@ -22,7 +24,7 @@ public class Matches {
     return anzahl;
   }
 
-  public final void ensureCapacity(int minCapacity) {
+  private void ensureCapacity(int minCapacity) {
     int oldCapacity = matches.length;
     if (minCapacity > oldCapacity) {
       Match[] oldMatches = matches;

@@ -36,7 +36,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     int i, j, numberOfComparisons = 0;
 
     Submission s1, s2;
-    JPlagComparison match;
+    JPlagComparison comparison;
 
     long timeMillis = System.currentTimeMillis();
 
@@ -54,17 +54,17 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
           continue;
         }
 
-        match = this.gSTiling.compare(s1, s2);
+        comparison = this.gSTiling.compare(s1, s2);
         numberOfComparisons++;
 
-        System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
+        System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + comparison.percent());
 
         if (baseCodeSubmission != null) {
-          match.bcmatchesA = baseCodeMatches.get(match.subA.name);
-          match.bcmatchesB = baseCodeMatches.get(match.subB.name);
+          comparison.bcmatchesA = baseCodeMatches.get(comparison.subA.name);
+          comparison.bcmatchesB = baseCodeMatches.get(comparison.subB.name);
         }
 
-        registerMatch(match, dist, avgMatches, maxMatches, null, i, j);
+        registerMatch(comparison, dist, avgMatches, maxMatches, null, i, j);
       }
     }
 
