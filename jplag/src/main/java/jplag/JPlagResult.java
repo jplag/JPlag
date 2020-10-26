@@ -7,14 +7,13 @@ public class JPlagResult {
 
   private Cluster cluster;
 
-  private List<JPlagComparison> comparisons;
-
   private SortedVector<JPlagComparison> avgMatches;
 
   private SortedVector<JPlagComparison> maxMatches;
 
   private SortedVector<JPlagComparison> minMatches;
 
+  private List<JPlagComparison> comparisons;
 
   /**
    * 10-element array representing the similarity distribution of the detected matches.
@@ -28,15 +27,21 @@ public class JPlagResult {
    */
   private int[] similarityDistribution = null;
 
-  public JPlagResult() {
+  /**
+   * Duration of the JPlag run in milliseconds.
+   */
+  private long durationInMillis;
 
+  public JPlagResult() {
   }
 
-  public JPlagResult(List<JPlagComparison> comparisons) {
+  public JPlagResult(List<JPlagComparison> comparisons, long durationInMillis) {
     this.comparisons = comparisons;
+    this.durationInMillis = durationInMillis;
     this.similarityDistribution = calculateSimilarityDistribution(comparisons);
   }
 
+  @Deprecated
   public JPlagResult(
       Cluster cluster,
       SortedVector<JPlagComparison> avgMatches,
@@ -68,7 +73,28 @@ public class JPlagResult {
     return similarityDistribution;
   }
 
+  public List<JPlagComparison> getComparisons() {
+    return comparisons;
+  }
+
+  public long getDuration() {
+    return durationInMillis;
+  }
+
+  public int getNumberOfComparisons() {
+    return comparisons.size();
+  }
+
   public int[] getSimilarityDistribution() {
     return similarityDistribution;
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "JPlagResult { duration: %d ms, comparisons: %d }",
+        getDuration(),
+        getNumberOfComparisons()
+    );
   }
 }

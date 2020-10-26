@@ -33,15 +33,12 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         new JPlagComparison.MaxComparator());
     // TODO: Why is minMatches missing?
 
-    int numberOfSubmissions = submissions.size();
-    int i, j, numberOfComparisons = 0;
-
+    long timeBeforeStartInMillis = System.currentTimeMillis();
+    int i, j, numberOfSubmissions = submissions.size();
     Submission s1, s2;
     JPlagComparison comparison;
 
     List<JPlagComparison> comparisons = new ArrayList<>();
-
-    long timeMillis = System.currentTimeMillis();
 
     for (i = 0; i < (numberOfSubmissions - 1); i++) {
       s1 = submissions.elementAt(i);
@@ -58,7 +55,6 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         }
 
         comparison = this.gSTiling.compare(s1, s2);
-        numberOfComparisons++;
 
         System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + comparison.percent());
 
@@ -74,15 +70,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
       }
     }
 
-    long time = System.currentTimeMillis() - timeMillis;
-
-    // TODO
-//    print("\n",
-//        "Total time for comparing submissions: " + ((time / 3600000 > 0) ? (time / 3600000) + " h "
-//            : "")
-//            + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60)
-//            + " sec\n" + "Time per comparison: "
-//            + (time / numberOfComparisons) + " msec\n");
+    long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
 
     Cluster cluster = null;
 
@@ -93,7 +81,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 
     // return new JPlagResult(cluster, avgMatches, maxMatches, null);
 
-    return new JPlagResult(comparisons);
+    return new JPlagResult(comparisons, durationInMillis);
   }
 
 }
