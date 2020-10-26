@@ -2,7 +2,6 @@ package jplag;
 
 import static jplag.strategy.ComparisonMode.NORMAL;
 
-import jplag.filter.Filter;
 import jplag.options.ClusterType;
 import jplag.options.LanguageOption;
 import jplag.strategy.ComparisonMode;
@@ -27,11 +26,6 @@ public class JPlagOptions {
   public int numberOfSubmissionsToCompareTo = 0; // 0 = deactivated
 
   /**
-   * TODO: Check how this option was set in the previous version.
-   */
-  private boolean skipParse = false;
-
-  /**
    * Clustering option.
    */
   private ClusterType clusterType;
@@ -45,11 +39,6 @@ public class JPlagOptions {
    * If true, submissions that cannot be parsed will be stored in a separate directory.
    */
   private boolean debugParser = false;
-
-  /**
-   * TODO: Don't know what this is used for. Seems to be experimental only.
-   */
-  private Filter filter = null;
 
   /**
    * Array of file suffixes that should be included.
@@ -74,9 +63,9 @@ public class JPlagOptions {
   private Integer minTokenMatch;
 
   /**
-   * // TODO: Should be a list. Files with this name will be ignored.
+   * Name of the file that contains the names of files to exclude from comparison.
    */
-  private String excludeFile;
+  private String exclusionFileName;
 
   /**
    * Directory that contains all submissions.
@@ -86,18 +75,16 @@ public class JPlagOptions {
   /**
    * Name of the directory which contains the base code.
    */
-  private String baseCode;
+  private String baseCodeSubmissionName;
 
   /**
-   * Name of the directory in which to look for submissions.
-   * <p>
-   * Seems to refer to a subdirectory in the base code.
+   * Example: If the subdirectoryName is 'src', only the code inside submissionDir/src of each
+   * submission will be used for comparison.
    */
-  private String subDir;
+  private String subdirectoryName;
 
   /**
-   * TODO: Rename (conflicts with jplag.Language) Selected language to process the submissions
-   * with.
+   * Language to use when parsing the submissions.
    */
   private LanguageOption languageOption;
 
@@ -130,7 +117,7 @@ public class JPlagOptions {
   }
 
   public boolean hasBaseCode() {
-    return this.baseCode != null;
+    return this.baseCodeSubmissionName != null;
   }
 
   public boolean hasFileSuffixes() {
@@ -139,14 +126,6 @@ public class JPlagOptions {
 
   public boolean hasMinTokenMatch() {
     return this.minTokenMatch != null;
-  }
-
-  public boolean isSkipParse() {
-    return skipParse;
-  }
-
-  public void setSkipParse(boolean skipParse) {
-    this.skipParse = skipParse;
   }
 
   public ClusterType getClusterType() {
@@ -163,14 +142,6 @@ public class JPlagOptions {
 
   public void setComparisonMode(ComparisonMode comparisonMode) {
     this.comparisonMode = comparisonMode;
-  }
-
-  public Filter getFilter() {
-    return filter;
-  }
-
-  public void setFilter(Filter filter) {
-    this.filter = filter;
   }
 
   public String[] getFileSuffixes() {
@@ -205,12 +176,12 @@ public class JPlagOptions {
     this.minTokenMatch = minTokenMatch;
   }
 
-  public String getExcludeFile() {
-    return excludeFile;
+  public String getExclusionFileName() {
+    return exclusionFileName;
   }
 
-  public void setExcludeFile(String excludeFile) {
-    this.excludeFile = excludeFile;
+  public void setExclusionFileName(String exclusionFileName) {
+    this.exclusionFileName = exclusionFileName;
   }
 
   public String getRootDirName() {
@@ -221,20 +192,20 @@ public class JPlagOptions {
     this.rootDirName = rootDirName;
   }
 
-  public String getBaseCode() {
-    return baseCode;
+  public String getBaseCodeSubmissionName() {
+    return baseCodeSubmissionName;
   }
 
-  public void setBaseCode(String baseCode) {
-    this.baseCode = baseCode;
+  public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
+    this.baseCodeSubmissionName = baseCodeSubmissionName;
   }
 
-  public String getSubDir() {
-    return subDir;
+  public String getSubdirectoryName() {
+    return subdirectoryName;
   }
 
-  public void setSubDir(String subDir) {
-    this.subDir = subDir;
+  public void setSubdirectoryName(String subdirectoryName) {
+    this.subdirectoryName = subdirectoryName;
   }
 
   public void setLanguageOption(LanguageOption languageOption) {

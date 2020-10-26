@@ -10,7 +10,7 @@ public class CLI {
       JPlagOptions options = JPlagOptions.fromArgs(args);
       options.setLanguageOption(LanguageOption.JAVA_1_9);
       options.setRootDirName("/Users/philippbauch/Develop/jplag-test");
-      options.setBaseCode("base-code");
+      options.setBaseCodeSubmissionName("base-code");
 
       JPlag program = new JPlag(options);
 

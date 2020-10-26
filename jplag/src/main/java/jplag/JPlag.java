@@ -165,7 +165,7 @@ public class JPlag implements ProgramI {
     }
 
     String baseCodePath =
-        this.options.getRootDirName() + File.separator + this.options.getBaseCode();
+        this.options.getRootDirName() + File.separator + this.options.getBaseCodeSubmissionName();
 
     if (!(new File(this.options.getRootDirName())).exists()) {
       throw new ExitException(
@@ -182,13 +182,13 @@ public class JPlag implements ProgramI {
           + "\" doesn't exist!", ExitException.BAD_PARAMETER);
     }
 
-    if (this.options.getSubDir() != null && this.options.getSubDir().length() != 0) {
-      f = new File(baseCodePath, this.options.getSubDir());
+    if (this.options.getSubdirectoryName() != null && this.options.getSubdirectoryName().length() != 0) {
+      f = new File(baseCodePath, this.options.getSubdirectoryName());
 
       if (!f.exists()) {
         throw new ExitException(
             "Basecode directory doesn't contain" + " the subdirectory \"" + this.options
-                .getSubDir() + "\"!",
+                .getSubdirectoryName() + "\"!",
             ExitException.BAD_PARAMETER
         );
       }
@@ -219,13 +219,7 @@ public class JPlag implements ProgramI {
     readExclusionFile();
 
     Vector<Submission> submissions = findSubmissions(rootDir);
-
-    if (options.isSkipParse()) {
-      print("Skipping parsing...\n", null);
-    } else {
-      parseAllSubmissions(submissions, baseCodeSubmission);
-    }
-
+    parseAllSubmissions(submissions, baseCodeSubmission);
     submissions = filterValidSubmissions(submissions);
 
     if (submissions.size() < 2) {
@@ -346,16 +340,16 @@ public class JPlag implements ProgramI {
         continue;
       }
 
-      if (submissionFile.isDirectory() && options.getSubDir() != null) {
+      if (submissionFile.isDirectory() && options.getSubdirectoryName() != null) {
         // Use subdirectory instead
-        submissionFile = new File(submissionFile, options.getSubDir());
+        submissionFile = new File(submissionFile, options.getSubdirectoryName());
 
         if (!submissionFile.exists()) {
           throw new ExitException(
               String.format(
                   "Submission %s does not contain the given subdirectory '%s'",
                   fileName,
-                  options.getSubDir()
+                  options.getSubdirectoryName()
               )
           );
         }
@@ -364,7 +358,7 @@ public class JPlag implements ProgramI {
           throw new ExitException(
               String.format(
                   "The given subdirectory '%s' is not a directory!",
-                  options.getSubDir()
+                  options.getSubdirectoryName()
               )
           );
         }
@@ -372,7 +366,7 @@ public class JPlag implements ProgramI {
 
       Submission submission = new Submission(fileName, submissionFile, this);
 
-      if (options.getBaseCode().equals(fileName)) {
+      if (options.getBaseCodeSubmissionName().equals(fileName)) {
         baseCodeSubmission = submission;
       } else {
         submissions.addElement(submission);
@@ -537,14 +531,14 @@ public class JPlag implements ProgramI {
    * the set "excluded".
    */
   private void readExclusionFile() {
-    if (options.getExcludeFile() == null) {
+    if (options.getExclusionFileName() == null) {
       return;
     }
 
     excludedFileNames = new HashSet<>();
 
     try {
-      BufferedReader in = new BufferedReader(new FileReader(options.getExcludeFile()));
+      BufferedReader in = new BufferedReader(new FileReader(options.getExclusionFileName()));
       String line;
 
       while ((line = in.readLine()) != null) {
@@ -553,7 +547,7 @@ public class JPlag implements ProgramI {
 
       in.close();
     } catch (IOException e) {
-      System.out.println("Could not read exclusion file: " + options.getExcludeFile());
+      System.out.println("Could not read exclusion file: " + options.getExclusionFileName());
     }
 
     if (options.getVerbosity() == LONG) {
