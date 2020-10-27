@@ -1,94 +1,86 @@
+# JPlag - Detecting Software Plagiarism
+
 [![Build Status](https://travis-ci.org/jplag/jplag.svg?branch=master)](https://travis-ci.org/jplag/)
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
 
+This fork focuses on the development of a new major release for JPlag, including the following changes:
 
-## Download and Run JPlag
-Download a released version - all releases are single-JAR releases.
+* *Work in progress.*
 
-Type `java -jar jplag-yourVersion.jar` in a console to see the command line options.
-The options as of 2019/03/20 are:
+**Note:** Due to the early stage of development, many details documented below might change before the official release of version 3.0.
 
+## Download and Installation
+
+### Building from sources 
+
+1. Download or clone the code from this repository.
+2. Run `mvn clean install` from the root of the repository to install all submodules. You will find the JARs in the respective `target` directories.
+3. Inside the `jplag` directory run `mvn clean generate-sources package assembly:single`. 
+
+You'll find the generated JAR with all dependencies in  `jplag/target`.
+
+## Usage
+
+### CLI
+
+*Work in progress.*
+
+### Java API
+
+The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects.
+
+#### Example 
+
+```java
+JPlagOptions options = new JPlagOptions("/path/to/rootDir", LanguageOption.JAVA_1_9);
+
+JPlag jplag = new JPlag(options);
+JPlagResult result = jplag.run();
+
+List<JPlagComparison> comparisons = result.getComparisons();
+
+// Optional
+result.export();
 ```
-JPlag (Version 2.12.0-SNAPSHOT), Copyright (c) 2004-2019 KIT - IPD Tichy, Guido Malpohl, and others.
-Usage: JPlag [ options ] [<root-dir>] [-c file1 file2 ...]
- <root-dir>        The root-directory that contains all submissions
 
-options are:
- -v[qlpd]        (Verbose)
-                 q: (Quiet) no output
-                 l: (Long) detailed output
-                 p: print all (p)arser messages
-                 d: print (d)etails about each submission
- -d              (Debug) parser. Non-parsable files will be stored.
- -S <dir>        Look in directories <root-dir>/*/<dir> for programs.
-                 (default: <root-dir>/*)
- -s              (Subdirs) Look at files in subdirs too (default: deactivated)
+#### Classes
 
- -p <suffixes>   <suffixes> is a comma-separated list of all filename suffixes
-                 that are included. ("-p ?" for defaults)
+##### JPlag
 
- -o <file>       (Output) The Parserlog will be saved to <file>
- -x <file>       (eXclude) All files named in <file> will be ignored
- -t <n>          (Token) Tune the sensitivity of the comparison. A smaller
-                 <n> increases the sensitivity.
- -m <n>          (Matches) Number of matches that will be saved (default:20)
- -m <p>%         All matches with more than <p>% similarity will be saved.
- -r <dir>        (Result) Name of directory in which the web pages will be
-                 stored (default: result)
- -bc <dir>       Name of the directory which contains the basecode (common framework)
- -c [files]      Compare a list of files.
- -l <language>   (Language) Supported Languages:
-                 java19 (default), java 17, java15, java15dm, java12, java11, python3, c/c++, c#-1.2, char, text, scheme
-```
+##### JPlagOptions
+
+##### JPlagResult
+
+##### JPlagComparison
+
+### Configuration Options
+
+#### Required
+
+##### Root directory
+
+##### Language
 
 **Note:** java19 refers to all java version from 9 on (currently 9 - 12).
 
-### Example
-Assume that we want to check students' solutions that are written in Java 11.
+#### Optional
 
-Each student solution is in its own directory, say `student1`, `student2`, and so on.
-All solutions are in a common directory, say `exercise1`.
+*Work in progess.*
 
-To run JPlag, simply type `java -jar jplag-yourVersion.jar -l java19 -r /tmp/jplag_results_exercise1/ -s /path/to/exercise1`
+## Concepts
 
-- `-l java19` tells JPlag to use the frontend for Java 9+
-- `-s` tells JPlag to recurse into subdirectories; as we assume Java projects, we'll very likely encounter subdirectories such as `student1/src/`
-- `-r /tmp/jplag_results_exercise1` tells JPlag to store the results in the directory `/tmp/jplag_results_exercise1`
+This section explains some fundamental concepts about JPlag that make it easier to understand. aims to provide you with some additional information about how JPlag works.
 
-**Note:** You have to specify the language exactly as they are printed by JPlag (running JPlag without command line arguments prints all available languages - and other options).
-E.g., if you want to process C++ files, you have specify `-l c/c++` as language option.
+### Root directory
 
-### Options
-#### `-x <file>`   (eXclude) All files named in `<file>` will be ignored
-The option `-x` requires an exclusion list saved as `<file>`.
-The exclusion list contains a  number of suffixes.
-JPlag will ignore all files that end with one of the suffixes.
+*Work in progress.*
 
-#### `-c [files]`   (Compare) Compare a list of files
-Example: `java -jar jplag-yourVersion.jar -l java19 -c student1_file student2_file student3_file`
-This option must be the last one.
-JPlag will compare just a list of files pairwise.
+### Submissions
 
-#### `-bc <dir>`   (common framework) Name of the directory which contains the basecode
-Example: `java -jar jplag-yourVersion.jar -s -l java19  ./submissions -bc template`
-This option includes files that were given out to students as a framework or to fill in blanks - the content is compared with each submission and matching parts are excluded from mutual student matching.
-`<dir>` is considered to be the name of a subdirectory, i.e. relative path from `<root-dir>`, residing somewhere in the submission directory, on the same level as student submissions.
-**Note:** Due to a bug in all versions you have to provide the base directory without a slash at the end (e.g template, **not** template/).
+*Work in progress.*
 
-## Building JPlag
-To build and run a local installation of JPlag, you can use the pom.xml in this directory (aggregator). 
-It builds JPlag and the available frontends. 
-
-To generate single modules run `mvn clean generate-sources package` in the base directory.
-
-To generate a single JAR file with all dependencies, perform the following steps:
-1. Install all submodules with `mvn clean install` from the base directory. You will find the JARs in the respective `target` directories.
-2. Run `mvn clean generate-sources package assembly:single` inside the `jplag` directory 
-
-You'll find the generated JAR in  `jplag/target`.
-
-## Improving JPlag
+## Contributing
 We're happy to incorporate all improvements to JPlag into this code base. Feel free to fork the project and send pull requests.
 
 ### Adding new languages
