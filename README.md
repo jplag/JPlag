@@ -70,7 +70,7 @@ result.export();
 
 ## Concepts
 
-This section explains some fundamental concepts about JPlag that make it easier to understand. aims to provide you with some additional information about how JPlag works.
+This section explains some fundamental concepts about JPlag that make it easier to understand and use.
 
 ### Root directory
 
