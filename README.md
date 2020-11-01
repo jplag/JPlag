@@ -106,7 +106,7 @@ JPlag will read submission directories recursively, so they can contain multiple
         └── Utils.java
 ```
 
-If you want JPlag to scan only one specific subdirectory for source code files (e.g. `src`), you can pass the `--subDir` option:
+If you want JPlag to scan only one specific subdirectory of a submission for source code files (e.g. `src`), you can pass the `--subDir` option:
 
 ```
 With option --subDir=src
