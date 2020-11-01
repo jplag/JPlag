@@ -74,9 +74,56 @@ This section explains some fundamental concepts about JPlag that make it easier 
 
 ### Root directory
 
-*Work in progress.*
+This is the directory in which JPlag will scan for submissions.
 
 ### Submissions
+
+Submissions contain the source code that JPlag will parse and compare. They have to be direct children of the root directory and can either be single files or directories.
+
+#### Example: Single-file submissions
+
+```
+/path/to/root-directory
+├── Submission-1.java
+├── ...
+└── Submission-n.java
+```
+
+#### Example: Directory submissions
+
+JPlag will read submission directories recursively, so they can contain multiple (nested) source code files.
+
+```
+/path/to/root-directory
+├── Submission-1
+│   ├── Main.java
+│   └── util
+│       └── Utils.java
+├── ...
+└── Submission-n
+    ├── Main.java
+    └── util
+        └── Utils.java
+```
+
+If you want JPlag to scan only one specific subdirectory for source code files (e.g. `src`), you can pass the `--subDir` option:
+
+```
+With option --subDir=src
+
+/path/to/root-directory
+├── Submission-1
+│   ├── src                 
+│   │   ├── Main.java       # Included
+│   │   └── util            
+│   │       └── Utils.java  # Included
+│   ├── lib                 
+│   │   └── Library.java    # Ignored
+│   └── Other.java          # Ignored
+└── ...
+```
+
+### Base Code
 
 *Work in progress.*
 
