@@ -125,7 +125,44 @@ With option --subDir=src
 
 ### Base Code
 
-*Work in progress.*
+The base code is a special kind of submission. It is the template that all other submissions are based on. JPlag will ignore any match between two submissions that is also part of the base code.
+
+Like any other submission, the base code has to be a single file or directory in the root directory.
+
+```
+/path/to/root-directory
+├── BaseCode
+│   └── Solution.java
+├── Submission-1
+│   └── Solution.java
+├── ...
+└── Submission-n
+    └── Solution.java
+```
+
+#### Example
+
+In this example, students have to solve a given problem by implementing the `run` method in the template below. Because they are not supposed to modify the `main` function, it will be identical for each student. 
+
+```java
+// BaseCode/Solution.java
+public class Solution {
+
+    // DO NOT MODIFY
+    public static void main(String[] args) {
+        Solution solution = new Solution();  
+        solution.run();
+    }
+    
+    public void run() {
+        // TODO: Implement your solution here.
+    }
+}
+```
+
+To prevent JPlag from detecting similarities in the `main` function (and other parts of the template), we can instruct JPlag to ignore matches with the given base code by providing the `--baseCode=<base-code-name>` option. 
+
+The `<base-code-name>` in the example above is `BaseCode`.
 
 ## Contributing
 We're happy to incorporate all improvements to JPlag into this code base. Feel free to fork the project and send pull requests.
