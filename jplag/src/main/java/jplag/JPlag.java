@@ -182,7 +182,8 @@ public class JPlag implements ProgramI {
           + "\" doesn't exist!", ExitException.BAD_PARAMETER);
     }
 
-    if (this.options.getSubdirectoryName() != null && this.options.getSubdirectoryName().length() != 0) {
+    if (this.options.getSubdirectoryName() != null
+        && this.options.getSubdirectoryName().length() != 0) {
       f = new File(baseCodePath, this.options.getSubdirectoryName());
 
       if (!f.exists()) {
@@ -366,7 +367,7 @@ public class JPlag implements ProgramI {
 
       Submission submission = new Submission(fileName, submissionFile, this);
 
-      if (options.getBaseCodeSubmissionName().equals(fileName)) {
+      if (options.hasBaseCode() && options.getBaseCodeSubmissionName().equals(fileName)) {
         baseCodeSubmission = submission;
       } else {
         submissions.addElement(submission);
