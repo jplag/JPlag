@@ -34,7 +34,7 @@ abstract public class Token implements TokenConstants, Serializable {
 	
 	// this is made to distinguish the character front end.
 	// maybe other front ends can use it too?
-	protected int getIndex() { return -1; }
+  public int getIndex() { return -1; }
 	
 	public static String type2string(int type) {
 		return "<abstract>";

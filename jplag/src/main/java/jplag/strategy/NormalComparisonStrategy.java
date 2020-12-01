@@ -25,7 +25,6 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     long timeBeforeStartInMillis = System.currentTimeMillis();
-    int numberOfComparisons = 0;
     int i, j, numberOfSubmissions = submissions.size();
     Submission s1, s2;
     JPlagComparison comparison;
@@ -47,7 +46,6 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         }
 
         comparison = this.gSTiling.compare(s1, s2);
-        numberOfComparisons++;
 
         System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + comparison.percent());
 
@@ -71,7 +69,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     //     cluster = this.clusters.calculateClustering(submissions);
     // }
 
-    return new JPlagResult(comparisons, numberOfComparisons, durationInMillis);
+    return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
   }
 
 }

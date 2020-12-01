@@ -144,7 +144,10 @@ public class JPlag implements ProgramI {
       Constructor<?> constructor = languageConstructors[0];
       Object[] constructorParams = {this};
 
-      this.language = (Language) constructor.newInstance(constructorParams);
+      Language language = (Language) constructor.newInstance(constructorParams);
+
+      this.language = language;
+      this.options.setLanguage(language);
     } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
       e.printStackTrace();
 

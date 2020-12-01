@@ -25,7 +25,6 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     long timeBeforeStartInMillis = System.currentTimeMillis();
-    int numberOfComparisons = 0;
     int numberOfSubmissions = submissions.size();
     Submission s1, s2;
     JPlagComparison comparison;
@@ -54,7 +53,6 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
       } while (s2.tokenList == null);
 
       comparison = this.gSTiling.compare(s1, s2);
-      numberOfComparisons++;
 
       System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + comparison.percent());
 
@@ -79,6 +77,6 @@ public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
     //     cluster = this.clusters.calculateClustering(submissions);
     // }
 
-    return new JPlagResult(comparisons, numberOfComparisons, durationInMillis);
+    return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
   }
 }

@@ -16,6 +16,11 @@ public class JPlagOptions {
   public static final int MAX_RESULT_PAIRS = 1000;
 
   /**
+   * Language used to parse the submissions.
+   */
+  private Language language;
+
+  /**
    * Deprecated - use similarityThreshold instead!
    *
    * Maximum number of comparisons to store per run.
@@ -176,6 +181,10 @@ public class JPlagOptions {
     return storePercent;
   }
 
+  public Language getLanguage() {
+    return language;
+  }
+
   public Integer getMinTokenMatch() {
     return minTokenMatch;
   }
@@ -210,6 +219,10 @@ public class JPlagOptions {
 
   public SimilarityMetric getSimilarityMetric() {
     return similarityMetric;
+  }
+
+  void setLanguage(Language language) {
+    this.language = language;
   }
 
   public void setNumberOfSubmissionsToCompareTo(int numberOfSubmissionsToCompareTo) {

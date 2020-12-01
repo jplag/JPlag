@@ -1,15 +1,21 @@
 package jplag;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 import jplag.options.Verbosity;
 
 /**
@@ -18,7 +24,8 @@ import jplag.options.Verbosity;
 public class Submission implements Comparable<Submission> {
 
   /**
-   * Name that uniquely identifies this submission. Will most commonly be the directory or file name.
+   * Name that uniquely identifies this submission. Will most commonly be the directory or file
+   * name.
    */
   public String name;
 
@@ -32,7 +39,8 @@ public class Submission implements Comparable<Submission> {
   /**
    * List of tokens that have been parsed from the files this submission consists of.
    * <p>
-   * TODO: The name 'Structure' is very generic and should be changed to something more descriptive.
+   * TODO: The name 'Structure' is very generic and should be changed to something more
+   * descriptive.
    */
   public Structure tokenList;
 
@@ -155,6 +163,82 @@ public class Submission implements Comparable<Submission> {
       copySubmission();
     }
     return false;
+  }
+
+  /**
+   * Used by the "Report" class. All source files are returned as an array of an array of strings.
+   */
+  public String[][] readFiles(String[] files) throws jplag.ExitException {
+    String[][] result = new String[files.length][];
+    String help;
+    Vector<String> text = new Vector<>();
+
+    for (int i = 0; i < files.length; i++) {
+      text.removeAllElements();
+
+      try {
+        /* file encoding = "UTF-8" */
+        FileInputStream fileInputStream = new FileInputStream(new File(submissionFile, files[i]));
+        InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream,
+            StandardCharsets.UTF_8);
+        BufferedReader in = new BufferedReader(inputStreamReader);
+
+        while ((help = in.readLine()) != null) {
+          help = help.replaceAll("&", "&amp;");
+          help = help.replaceAll("<", "&lt;");
+          help = help.replaceAll(">", "&gt;");
+          help = help.replaceAll("\"", "&quot;");
+          text.addElement(help);
+        }
+
+        in.close();
+        inputStreamReader.close();
+        fileInputStream.close();
+      } catch (FileNotFoundException e) {
+        System.out.println("File not found: " + ((new File(submissionFile, files[i])).toString()));
+      } catch (IOException e) {
+        throw new jplag.ExitException("I/O exception!");
+      }
+
+      result[i] = new String[text.size()];
+      text.copyInto(result[i]);
+    }
+
+    return result;
+  }
+
+  /**
+   * Used by the "Report" class. All source files are returned as an array of an array of chars.
+   */
+  public char[][] readFilesChar(String[] files) throws jplag.ExitException {
+    char[][] result = new char[files.length][];
+
+    for (int i = 0; i < files.length; i++) {
+      try {
+        File file = new File(submissionFile, files[i]);
+        int size = (int) file.length();
+        char[] buffer = new char[size];
+
+        FileReader fis = new FileReader(file);
+
+        if (size != fis.read(buffer)) {
+          System.out
+              .println("Not right size read from the file, " + "but I will still continue...");
+        }
+
+        result[i] = buffer;
+        fis.close();
+      } catch (FileNotFoundException e) {
+        // TODO: Should an ExitException be thrown here?
+        System.out.println("File not found: " + ((new File(submissionFile, files[i])).toString()));
+      } catch (IOException e) {
+        throw new jplag.ExitException(
+            "I/O exception reading file \"" + (new File(submissionFile, files[i])).toString()
+                + "\"!", e);
+      }
+    }
+    
+    return result;
   }
 
   /*

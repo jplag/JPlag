@@ -1,10 +1,28 @@
 package jplag;
 
 import java.util.List;
-import jplag.clustering.Cluster;
 
 public class JPlagResult {
 
+  /**
+   * List of detected comparisons whose similarity was about the specified threshold.
+   */
+  private List<JPlagComparison> comparisons;
+
+  /**
+   * Duration of the JPlag run in milliseconds.
+   */
+  private long durationInMillis;
+
+  /**
+   * Total number of submissions that have been compared.
+   */
+  private int numberOfSubmissions;
+
+  /**
+   * Options for the plagiarism detection run.
+   */
+  private JPlagOptions options;
 
   /**
    * 10-element array representing the similarity distribution of the detected matches.
@@ -18,33 +36,19 @@ public class JPlagResult {
    */
   private int[] similarityDistribution = null;
 
-  /**
-   * Total number of comparisons. This number also takes into account the comparisons that were
-   * ignored due to their too low similarity.
-   */
-  private int totalNumberOfComparisons;
-
-  /**
-   * Duration of the JPlag run in milliseconds.
-   */
-  private long durationInMillis;
-
-  /**
-   * List of detected comparisons whose similarity was about the specified threshold.
-   */
-  private List<JPlagComparison> comparisons;
-
   public JPlagResult() {
   }
 
   public JPlagResult(
       List<JPlagComparison> comparisons,
-      int totalNumberOfComparisons,
-      long durationInMillis
+      long durationInMillis,
+      int numberOfSubmissions,
+      JPlagOptions options
   ) {
     this.comparisons = comparisons;
     this.durationInMillis = durationInMillis;
-    this.totalNumberOfComparisons = totalNumberOfComparisons;
+    this.numberOfSubmissions = numberOfSubmissions;
+    this.options = options;
 
     this.similarityDistribution = calculateSimilarityDistribution(comparisons);
   }
@@ -74,12 +78,12 @@ public class JPlagResult {
     return durationInMillis;
   }
 
-  public int getTotalNumberOfComparisons() {
-    return totalNumberOfComparisons;
+  public JPlagOptions getOptions() {
+    return options;
   }
 
-  public int getNumberOfComparisons() {
-    return comparisons.size();
+  public int getNumberOfSubmissions() {
+    return numberOfSubmissions;
   }
 
   public int[] getSimilarityDistribution() {
@@ -89,10 +93,11 @@ public class JPlagResult {
   @Override
   public String toString() {
     return String.format(
-        "JPlagResult { duration: %d ms, totalComparisons: %d, detectedComparisons: %d }",
+        "JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }",
+        getComparisons().size(),
         getDuration(),
-        getTotalNumberOfComparisons(),
-        getNumberOfComparisons()
+        getOptions().getLanguageOption(),
+        getNumberOfSubmissions()
     );
   }
 }

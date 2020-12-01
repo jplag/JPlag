@@ -139,7 +139,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
   public final float percentA() {
     int divisor;
     if (bcMatchesA != null) {
-      divisor = subA.getNumberOfTokens() - subA.files.size() - bcMatchesA.getNumberOfMatchedTokens();
+      divisor =
+          subA.getNumberOfTokens() - subA.files.size() - bcMatchesA.getNumberOfMatchedTokens();
     } else {
       divisor = subA.getNumberOfTokens() - subA.files.size();
     }
@@ -149,7 +150,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
   public final float percentB() {
     int divisor;
     if (bcMatchesB != null) {
-      divisor = subB.getNumberOfTokens() - subB.files.size() - bcMatchesB.getNumberOfMatchedTokens();
+      divisor =
+          subB.getNumberOfTokens() - subB.files.size() - bcMatchesB.getNumberOfMatchedTokens();
     } else {
       divisor = subB.getNumberOfTokens() - subB.files.size();
     }
@@ -206,13 +208,18 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     return ((int) (percent * 10)) / (float) 10;
   }
 
-  /* This method returns all the files which contributed to a match.
-   * Parameter: j == 0   submission A,
-   *            j != 0   submission B.
+  /**
+   * This method returns all the files which contributed to a match.
+   * Parameter: j == 0 submission A, j != 0   submission B.
    */
   public final String[] files(int j) {
+    if (matches.size() == 0) {
+      return new String[]{};
+    }
+
     Token[] tokens = (j == 0 ? subA : subB).tokenList.tokens;
     int i, h, starti, starth, count = 1;
+
     o1:
     for (i = 1; i < matches.size(); i++) {
       starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
@@ -224,9 +231,11 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
       }
       count++;
     }
+
     String[] res = new String[count];
     res[0] = tokens[(j == 0 ? matches.get(0).startA : matches.get(0).startB)].file;
     count = 1;
+
     o2:
     for (i = 1; i < matches.size(); i++) {
       starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
@@ -244,6 +253,16 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     Arrays.sort(res);
 
     return res;
+  }
+
+  /**
+   * The bigger a match (length "anz") is relatively to the biggest match the redder is the color
+   * returned by this method.
+   */
+  public String color(int anz) {
+    int farbe = 255 * anz / biggestMatch();
+    String help = (farbe < 16 ? "0" : "") + Integer.toHexString(farbe);
+    return "#" + help + "0000";
   }
 
   /* This method returns the name of all files that are represented by
