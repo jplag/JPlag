@@ -4,11 +4,9 @@
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
 
-This fork focuses on the development of a new major release for JPlag, including the following changes:
+This fork focuses on the development of a new Java API for JPlag.
 
-* *Work in progress.*
-
-**Note:** Due to the early stage of development, many details documented below might change before the official release of version 3.0.
+**Note:** Due to the early stage of development, some details documented below might change before the official release of version 3.0.
 
 ## Download and Installation
 
@@ -34,6 +32,7 @@ The new API makes it easy to integrate JPlag's plagiarism detection into externa
 
 ```java
 JPlagOptions options = new JPlagOptions("/path/to/rootDir", LanguageOption.JAVA_1_9);
+options.setBaseCodeSubmissionName("template");
 
 JPlag jplag = new JPlag(options);
 JPlagResult result = jplag.run();
@@ -41,32 +40,11 @@ JPlagResult result = jplag.run();
 List<JPlagComparison> comparisons = result.getComparisons();
 
 // Optional
-result.export();
+File outputDir = new File("/path/to/output");
+Report report = new Report(outputDir);
+
+report.writeResult(result);
 ```
-
-#### Classes
-
-##### JPlag
-
-##### JPlagOptions
-
-##### JPlagResult
-
-##### JPlagComparison
-
-### Configuration Options
-
-#### Required
-
-##### Root directory
-
-##### Language
-
-**Note:** java19 refers to all java version from 9 on (currently 9 - 12).
-
-#### Optional
-
-*Work in progess.*
 
 ## Concepts
 
@@ -149,7 +127,7 @@ In this example, students have to solve a given problem by implementing the `run
 public class Solution {
 
     // DO NOT MODIFY
-    public static void main(String[] args) {
+    public static void main(String[] args) {
         Solution solution = new Solution();  
         solution.run();
     }
