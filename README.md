@@ -46,6 +46,10 @@ Report report = new Report(outputDir);
 report.writeResult(result);
 ```
 
+#### Class Diagram
+
+![UMLClassDiagram.png](UMLClassDiagram.png)
+
 ## Concepts
 
 This section explains some fundamental concepts about JPlag that make it easier to understand and use.
