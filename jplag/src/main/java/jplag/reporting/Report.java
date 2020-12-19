@@ -267,7 +267,7 @@ public class Report {
     int barLength = 75;
     int[] similarityDistribution = result.getSimilarityDistribution();
 
-    int max = 0;
+    int max = 1;
 
     for (int i = 0; i < 10; i++) {
       if (similarityDistribution[i] > max) {
