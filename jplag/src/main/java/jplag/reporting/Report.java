@@ -375,39 +375,15 @@ public class Report {
   private void writeMatches(List<JPlagComparison> comparisons) {
     comparisons.forEach(comparison -> {
       try {
-        writeMatch(comparison);
+        int i = getComparisonIndex(comparison);
+        writeMatch(comparison, i);
       } catch (ExitException e) {
         e.printStackTrace();
       }
     });
   }
 
-  private void writeMatch(JPlagComparison comparison) throws ExitException {
-    int i = getComparisonIndex(comparison);
-
-    // match???.html
-    writeFrames(i, comparison);
-
-    // match???-link.html
-    writeLink(i, comparison);
-
-    // match???-top.html
-    writeTop(i, comparison);
-
-    // match???-?.html
-    if (result.getOptions().getLanguage().usesIndex()) {
-      writeIndexedSubmission(i, comparison, 0);
-      writeIndexedSubmission(i, comparison, 1);
-    } else if (result.getOptions().getLanguage().supportsColumns()) {
-      writeImprovedSubmission(i, comparison, 0);
-      writeImprovedSubmission(i, comparison, 1);
-    } else {
-      writeNormalSubmission(i, comparison, 0);
-      writeNormalSubmission(i, comparison, 1);
-    }
-  }
-
-  private void writeFrames(int i, JPlagComparison comparison) throws ExitException {
+  private void writeMatch(JPlagComparison comparison, int i) throws ExitException {
     HTMLFile htmlFile = createHTMLFile("match" + i + ".html");
 
     writeHTMLHeader(
@@ -418,47 +394,58 @@ public class Report {
         )
     );
 
-    htmlFile.println("<FRAMESET ROWS=\"130,*\">\n <FRAMESET COLS=\"30%,70%\">");
-    htmlFile.println("  <FRAME SRC=\"match" + i + "-link.html\" NAME=\"link\" " + "FRAMEBORDER=0>");
-    htmlFile.println("  <FRAME SRC=\"match" + i + "-top.html\" NAME=\"top\" " + "FRAMEBORDER=0>");
-    htmlFile.println(" </FRAMESET>");
-    htmlFile.println(" <FRAMESET COLS=\"50%,50%\">");
-    htmlFile.println("  <FRAME SRC=\"match" + i + "-0.html\" NAME=\"0\">");
-    htmlFile.println("  <FRAME SRC=\"match" + i + "-1.html\" NAME=\"1\">");
-    htmlFile.println(" </FRAMESET>\n</FRAMESET>\n</HTML>");
-    htmlFile.close();
-  }
+    htmlFile.println("<body>");
+    htmlFile.println(
+        "  <div style=\"align-items: center; display: flex; justify-content: space-around;\">");
 
-  private void writeLink(int i, JPlagComparison comparison) throws jplag.ExitException {
-    HTMLFile htmlFile = createHTMLFile("match" + i + "-link.html");
+    htmlFile.println("    <div>");
+    htmlFile.println("      <h3 align=\"center\">");
+    htmlFile.println(
+        TagParser.parse(
+            msg.getString("Report.Matches_for_X1_AND_X2"),
+            new String[]{comparison.subA.name, comparison.subB.name}
+        )
+    );
+    htmlFile.println("      </h3>");
+    htmlFile.println("      <h1 align=\"center\">");
+    htmlFile.println("        " + comparison.roundedPercent() + "%");
+    htmlFile.println("      </h1>");
+    htmlFile.println("      <center>");
+    htmlFile.println("        <a href=\"index.html\" target=\"_top\">");
+    htmlFile.println("          " + msg.getString("Report.INDEX"));
+    htmlFile.println("        </a>");
+    htmlFile.println("        <span>-</span>");
+    htmlFile.println("        <a href=\"help-en.html\" target=\"_top\">");
+    htmlFile.println("          " + msg.getString("Report.HELP"));
+    htmlFile.println("        </a>");
+    htmlFile.println("      </center>");
+    htmlFile.println("    </div>");
 
-    writeHTMLHeader(htmlFile, msg.getString("Report.Links"));
-
-    htmlFile.println("<BODY>\n <H3 ALIGN=\"center\">"
-        + TagParser.parse(msg.getString("Report.Matches_for_X1_AND_X2"),
-        new String[]{comparison.subA.name, comparison.subB.name})
-        + "</H3>");
-    htmlFile.println(" <H1 align=\"center\">" + comparison.roundedPercent() + "%</H1>\n<CENTER>");
-    htmlFile
-        .println(" <A HREF=\"index.html#matches\" TARGET=\"_top\">" + msg.getString("Report.INDEX")
-            + "</A> - ");
-    htmlFile.println(" <A HREF=\"help-" + "en" + ".html\" TARGET=\"_top\">" + msg
-        .getString("Report.HELP")
-        + "</A></CENTER>");
-    htmlFile.println("</BODY>\n</HTML>");
-    htmlFile.close();
-  }
-
-  private void writeTop(int i, JPlagComparison comparison) throws jplag.ExitException {
-    HTMLFile htmlFile = createHTMLFile("match" + i + "-top.html");
-
-    writeHTMLHeaderWithScript(htmlFile, "Top");
-
-    htmlFile.println("<BODY BGCOLOR=\"#ffffff\">");
-
+    htmlFile.println("    <div>");
     reportComparison(htmlFile, comparison, i);
+    htmlFile.println("    </div>");
 
-    htmlFile.println("</BODY>\n</HTML>\n");
+    htmlFile.println("  </div>");
+
+    htmlFile.println("  <hr>");
+
+    htmlFile.println("  <div style=\"display: flex;\">");
+
+    if (result.getOptions().getLanguage().usesIndex()) {
+      writeIndexedSubmission(htmlFile, i, comparison, 0);
+      writeIndexedSubmission(htmlFile, i, comparison, 1);
+    } else if (result.getOptions().getLanguage().supportsColumns()) {
+      writeImprovedSubmission(htmlFile, i, comparison, 0);
+      writeImprovedSubmission(htmlFile, i, comparison, 1);
+    } else {
+      writeNormalSubmission(htmlFile, i, comparison, 0);
+      writeNormalSubmission(htmlFile, i, comparison, 1);
+    }
+
+    htmlFile.println("  </div>");
+
+    htmlFile.println("</body>");
+    htmlFile.println("</html>");
     htmlFile.close();
   }
 
@@ -471,8 +458,7 @@ public class Report {
     Token[] tokensB = comparison.subB.tokenList.tokens;
     // sort();
 
-    htmlFile.println("<CENTER>\n<TABLE BORDER=\"1\" CELLSPACING=\"0\" " +
-        "BGCOLOR=\"#d0d0d0\">");
+    htmlFile.println("<TABLE BORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#d0d0d0\">");
     htmlFile
         .println("<TR><TH><TH>" + comparison.subA.name + " (" + comparison.percentA() + "%)<TH>" +
             comparison.subB.name + " (" + comparison.percentB() + "%)<TH>" + msg
@@ -524,7 +510,7 @@ public class Report {
           + comparison.roundedPercentBasecodeB() + "%<TD>&nbsp;");
     }
 
-    htmlFile.println("</TABLE>\n</CENTER>");
+    htmlFile.println("</TABLE>");
   }
 
   // --------------------------------------------------------------------------
@@ -636,7 +622,7 @@ public class Report {
    * i is the number of the match j == 0 if subA is considered, otherwise (j
    * must then be 1) it is subB
    */
-  private void writeNormalSubmission(int i, JPlagComparison comparison, int j)
+  private void writeNormalSubmission(HTMLFile f, int i, JPlagComparison comparison, int j)
       throws ExitException {
     Submission sub = (j == 0 ? comparison.subA : comparison.subB);
     String[] files = comparison.files(j);
@@ -716,12 +702,17 @@ public class Report {
       }
     }
 
-    HTMLFile f = createHTMLFile("match" + i + "-" + j + ".html");
-    writeHTMLHeaderWithScript(f, (j == 0 ? comparison.subA : comparison.subB).name);
-    f.println("<BODY BGCOLOR=\"#ffffff\"" + (j == 1 ? " style=\"margin-left:25\">" : ">"));
+    f.println("<div style=\"flex-grow: 1;\">");
 
     for (int x = 0; x < text.length; x++) {
-      f.println("<HR>\n<H3><CENTER>" + files[x] + "</CENTER></H3><HR>");
+      f.println("<h3>");
+      f.println("<center>");
+      f.println("<span>" + sub.name + "</span>");
+      f.println("<span> - </span>");
+      f.println("<span>" + files[x] + "</span>");
+      f.println("</center>");
+      f.println("</h3>");
+      f.println("<HR>");
       if (result.getOptions().getLanguage().isPreformated()) {
         f.println("<PRE>");
       }
@@ -738,8 +729,7 @@ public class Report {
       }
     }
 
-    f.println("</BODY>\n</HTML>");
-    f.close();
+    f.println("</div>");
   }
 
   /*
@@ -749,7 +739,7 @@ public class Report {
    * This procedure uses only the getIndex() method of the token. It is meant
    * to be used with the Character front end
    */
-  private void writeIndexedSubmission(int i, JPlagComparison comparison, int j)
+  private void writeIndexedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j)
       throws ExitException {
     Submission sub = (j == 0 ? comparison.subA : comparison.subB);
     String[] files = comparison.files(j);
@@ -759,18 +749,22 @@ public class Report {
     // get index array with matches sorted in ascending order.
     int[] perm = comparison.sort_permutation(j);
 
-    // HTML intro
-    HTMLFile f = createHTMLFile("match" + i + "-" + j + ".html");
-    writeHTMLHeaderWithScript(f, (j == 0 ? comparison.subA : comparison.subB).name);
-    f.println("<BODY BGCOLOR=\"#ffffff\">");
-
     int index = 0; // match index
     Match onematch = null;
     Token start = null;
     Token end = null;
+
+    f.println("<div style=\"flex-grow: 1;\">");
+
     for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
-      // print filename
-      f.println("<HR>\n<H3><CENTER>" + files[fileIndex] + "</CENTER></H3><HR>");
+      f.println("<h3>");
+      f.println("<center>");
+      f.println("<span>" + sub.name + "</span>");
+      f.println("<span> - </span>");
+      f.println("<span>" + files[fileIndex] + "</span>");
+      f.println("</center>");
+      f.println("</h3>");
+      f.println("<HR>");
       char[] buffer = text[fileIndex];
 
       for (int charNr = 0; charNr < buffer.length; charNr++) {
@@ -812,8 +806,7 @@ public class Report {
       }
     }
 
-    f.println("\n</BODY>\n</HTML>");
-    f.close();
+    f.println("</div>");
   }
 
   /*
@@ -822,7 +815,7 @@ public class Report {
    *
    * This procedure makes use of the column and length information!
    */
-  private int writeImprovedSubmission(int i, JPlagComparison comparison, int j)
+  private int writeImprovedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j)
       throws jplag.ExitException {
     Submission sub = (j == 0 ? comparison.subA : comparison.subB);
     String[] files = comparison.files(j);
@@ -953,12 +946,17 @@ public class Report {
       }
     }
 
-    HTMLFile f = createHTMLFile("match" + i + "-" + j + ".html");
-    writeHTMLHeaderWithScript(f, (j == 0 ? comparison.subA : comparison.subB).name);
-    f.println("<BODY BGCOLOR=\"#ffffff\"" + (j == 1 ? " style=\"margin-left:25\">" : ">"));
+    f.println("<div style=\"flex-grow: 1;\">");
 
     for (int x = 0; x < text.length; x++) {
-      f.println("<HR>\n<H3><CENTER>" + files[x] + "</CENTER></H3><HR>");
+      f.println("<h3>");
+      f.println("<center>");
+      f.println("<span>" + sub.name + "</span>");
+      f.println("<span> - </span>");
+      f.println("<span>" + files[x] + "</span>");
+      f.println("</center>");
+      f.println("</h3>");
+      f.println("<HR>");
       if (result.getOptions().getLanguage().isPreformated()) {
         f.println("<PRE>");
       }
@@ -974,8 +972,9 @@ public class Report {
         f.println("</PRE>");
       }
     }
-    f.println("\n</BODY>\n</HTML>");
-    f.close();
+
+    f.println("</div>");
+
     return f.bytesWritten();
   }
 }

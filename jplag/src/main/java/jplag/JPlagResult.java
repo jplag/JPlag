@@ -1,5 +1,6 @@
 package jplag;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JPlagResult {
