@@ -328,7 +328,12 @@ public class CommandLineOptions extends Options {
                 this.fileList.add(args[i + 1]);
                 i++;
             }
-        } else if (!scanOption(arg))
+        }
+        else if (arg.equals("-prior") && i + 1 < args.length) {
+        	this.prior_submissions = args[i+1];
+        	i++;
+        }
+        else if (!scanOption(arg))
             throw new jplag.ExitException("Unknown option: " + arg,
                     ExitException.BAD_PARAMETER);
 

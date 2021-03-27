@@ -101,6 +101,8 @@ public class Program implements ProgramI {
 
     private Vector<Submission> submissions;
 
+    private Vector<Submission> prior_submissions;
+
     private FileWriter writer = null;
 
     public Program(Options options) throws jplag.ExitException {
@@ -217,15 +219,20 @@ public class Program implements ProgramI {
 
         options.setState(Options.COMPARING);
         options.setProgress(0);
-
+        int prior_size = prior_submissions.size();
         if (this.options.useBasecode) {
             //			print("\nComparing with Basecode:\n", validSubmissions()
             //					+ " submissions");
             int countBC = 0;
             // System.out.println("BC size: "+basecodeSubmission.size());
             msec = System.currentTimeMillis();
-            for (int i = 0; i < (size); i++) {
-                s1 = submissions.elementAt(i);
+            for (int i = 0; i < (size + prior_size); i++) {
+            	if (i < size) {
+            		s1 = submissions.elementAt(i);
+            	}
+            	else {
+            		s1 = prior_submissions.elementAt(i - size);
+            	}
                 // System.out.println("basecode recognition for: "+s1.name);
                 bcmatch = this.gSTiling.compareWithBasecode(s1, basecodeSubmission);
                 htBasecodeMatches.put(s1.name, bcmatch);
@@ -241,9 +248,10 @@ public class Program implements ProgramI {
 
         //		print("\nComparing:\n", validSubmissions() + " submissions");
 
-        int totalcomps = (size - 1) * size / 2;
+       
+        int totalcomps = (size - 1) * (size / 2 + prior_size);
         int i, j, anz = 0, count = 0;
-        AllMatches match;
+
 
         options.setProgress(0);
         msec = System.currentTimeMillis();
@@ -257,26 +265,17 @@ public class Program implements ProgramI {
 
             for (j = (i + 1); j < size; j++) {
                 s2 = submissions.elementAt(j);
-                if (s2.struct == null) {
+                if (singleCompare(count, totalcomps, dist, s1, s2, avgmatches, maxmatches, i, j)) {
+                	anz++;
+                }
                     count++;
-                    continue;
                 }
-
-                match = this.gSTiling.compare(s1, s2);
-
+            for (j = 0; j < prior_size; j++) {
+                s2 = prior_submissions.elementAt(j);
+                if (singleCompare(count, totalcomps, dist, s1, s2, avgmatches, maxmatches, i, j)) {
                 anz++;
-
-                System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
-
-                // histogram:
-                if (options.useBasecode) {
-                    match.bcmatchesA = htBasecodeMatches.get(match.subA.name);
-                    match.bcmatchesB = htBasecodeMatches.get(match.subB.name);
                 }
-
-                registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
                 count++;
-                options.setProgress(count * 100 / totalcomps);
             }
         }
         options.setProgress(100);
@@ -291,6 +290,29 @@ public class Program implements ProgramI {
             cluster = this.clusters.calculateClustering(submissions);
 
         writeResults(dist, avgmatches, maxmatches, null, cluster);
+    }
+
+    private boolean singleCompare(int count, int totalcomps, int [] dist, Submission s1, Submission s2,SortedVector<AllMatches> avgmatches, SortedVector<AllMatches>  maxmatches, int i, int j) throws ExitException {
+        if (s2.struct == null) {
+            count++;
+            return false;
+        }
+
+        AllMatches match = this.gSTiling.compare(s1, s2);
+
+
+        System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + match.percent());
+
+        // histogram:
+        if (options.useBasecode) {
+            match.bcmatchesA = htBasecodeMatches.get(match.subA.name);
+            match.bcmatchesB = htBasecodeMatches.get(match.subB.name);
+        }
+
+        registerMatch(match, dist, avgmatches, maxmatches, null, i, j);
+        count++;
+        options.setProgress(count * 100 / totalcomps);
+        return true;
     }
 
     /**
@@ -390,16 +412,29 @@ public class Program implements ProgramI {
     }
 
     private void createSubmissions() throws jplag.ExitException {
-        submissions = new Vector<Submission>();
-        File f = new File(options.root_dir);
+    	submissions = createSubmissionVector(options.root_dir, options.read_subdirs);
+    }
+    
+    private void createPriorSubmissions() throws jplag.ExitException {
+    	if (options.prior_submissions.length() > 0) {
+    		prior_submissions = createSubmissionVector(options.prior_submissions, options.read_subdirs);
+    	}
+    	else {
+    		prior_submissions = new Vector<Submission>();
+    	}
+    } 
+
+    private Vector<Submission> createSubmissionVector(String root_dir, boolean read_subdirs) throws jplag.ExitException {
+    	Vector<Submission> submissions = new Vector<Submission>();
+        File f = new File(root_dir);
         if (f == null || !f.isDirectory()) {
-            throw new jplag.ExitException("\"" + options.root_dir + "\" is not a directory!");
+            throw new jplag.ExitException("\"" + root_dir + "\" is not a directory!");
         }
         String[] list = null;
         try {
             list = f.list();
         } catch (SecurityException e) {
-            throw new jplag.ExitException("Unable to retrieve directory: " + options.root_dir + " Cause : " + e.toString());
+            throw new jplag.ExitException("Unable to retrieve directory: " + root_dir + " Cause : " + e.toString());
         }
         Arrays.sort(list);
 
@@ -434,13 +469,14 @@ public class Program implements ProgramI {
                     : new File(subm_dir, options.sub_dir));
             if (file_dir.isDirectory()) {
                 if (options.basecode.equals(subm_dir.getName())) {
-                    basecodeSubmission = new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this, get_language());
+                    basecodeSubmission = new Submission(subm_dir.getName(), file_dir, read_subdirs, this, get_language());
                 } else {
-                    submissions.addElement(new Submission(subm_dir.getName(), file_dir, options.read_subdirs, this, get_language())); // -s
+                    submissions.addElement(new Submission(subm_dir.getName(), file_dir, read_subdirs, this, get_language())); // -s
                 }
             } else
                 throw new ExitException("Cannot find directory: " + file_dir.toString());
         }
+        return submissions;
     }
 
 	private void createSubmissionsFileList() throws jplag.ExitException {
@@ -908,15 +944,38 @@ public class Program implements ProgramI {
         }
         // lets go:)
         int count = 0;
-        int totalcount = submissions.size();
+        int totalcount = submissions.size() + prior_submissions.size();
         options.setState(Options.PARSING);
         options.setProgress(0);
         long msec = System.currentTimeMillis();
-        Iterator<Submission> iter = submissions.iterator();
+        
 
         if (options.externalSearch)
             makeTempDir();
         int invalid = 0;
+        Iterator<Submission> prior_iter = prior_submissions.iterator();
+        invalid += parseComponent(prior_iter, 0, totalcount);
+        Iterator<Submission> iter = submissions.iterator();
+        invalid += parseComponent(iter, prior_submissions.size(), totalcount);
+        count = totalcount;
+
+
+        options.setProgress(100);
+        print("\n" + (count - errors - invalid) + " submissions parsed successfully!\n" + errors + " parser error"
+                + (errors != 1 ? "s!\n" : "!\n"), null);
+        if (invalid != 0) {
+            print(null, invalid
+                    + ((invalid == 1) ? " submission is not valid because it contains" : " submissions are not valid because they contain")
+                    + " fewer tokens\nthan minimum match length allows.\n");
+        }
+        long time = System.currentTimeMillis() - msec;
+        print("\n\n", "\nTotal time for parsing: " + ((time / 3600000 > 0) ? (time / 3600000) + " h " : "")
+                + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60) + " sec\n"
+                + "Time per parsed submission: " + (count > 0 ? (time / count) : "n/a") + " msec\n\n");
+    }
+    
+    private int parseComponent(Iterator<Submission> iter, int count, int totalcount) throws ExitException {
+    	int invalid = 0;
         while (iter.hasNext()) {
             boolean ok = true;
             boolean removed = false;
@@ -952,19 +1011,8 @@ public class Program implements ProgramI {
             else
                 print(null, "ERROR -> Submission removed\n");
         }
+        return invalid;
 
-        options.setProgress(100);
-        print("\n" + (count - errors - invalid) + " submissions parsed successfully!\n" + errors + " parser error"
-                + (errors != 1 ? "s!\n" : "!\n"), null);
-        if (invalid != 0) {
-            print(null, invalid
-                    + ((invalid == 1) ? " submission is not valid because it contains" : " submissions are not valid because they contain")
-                    + " fewer tokens\nthan minimum match length allows.\n");
-        }
-        long time = System.currentTimeMillis() - msec;
-        print("\n\n", "\nTotal time for parsing: " + ((time / 3600000 > 0) ? (time / 3600000) + " h " : "")
-                + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60) + " sec\n"
-                + "Time per parsed submission: " + (count > 0 ? (time / count) : "n/a") + " msec\n\n");
     }
 
     private void parseBasecodeSubmission() throws jplag.ExitException {
@@ -1144,6 +1192,7 @@ public class Program implements ProgramI {
         // this file contains all files names which are excluded
         readExclusionFile();
 
+        createPriorSubmissions();
         if (options.fileListMode) {
 	        createSubmissionsFileList();
         } else if (options.include_file == null) {
@@ -1159,6 +1208,7 @@ public class Program implements ProgramI {
                 parseBasecodeSubmission();
             } catch (OutOfMemoryError e) {
                 submissions = null;
+                prior_submissions = null;
                 System.gc();
                 System.out.println("[" + new Date() + "] OutOfMemoryError " + "during parsing of submission \"" + currentSubmissionName
                         + "\"");

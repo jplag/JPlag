@@ -129,6 +129,8 @@ public abstract class Options {
 
 	public int compare = 0; // 0 = deactivated
 
+	public String prior_submissions = "";
+
 	public SimilarityMatrix similarity = null;
 
 	public jplag.Language language;
@@ -210,6 +212,9 @@ public abstract class Options {
 						+ "                 <n> increases the sensitivity.\n"
 						+ " -m <n>          (Matches) Number of matches that will be saved (default:20)\n"
 						+ " -m <p>%         All matches with more than <p>% similarity will be saved.\n"
+						+ " -prior <dir>    Search the subdirectories of the directory passed in for files from\n"
+						+ "                 students in prior classes. Compare all other source to these students,\n"
+						+ "                 but do not compare prior students to each other."
 						+ " -r <dir>        (Result) Name of directory in which the web pages will be\n"
 						+ "                 stored (default: result)\n"
 						+ " -bc <dir>       Name of the directory which contains the basecode (common framework)\n"
