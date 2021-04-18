@@ -15,11 +15,12 @@ public class CLI {
         .defaultHelp(true)
         .description("JPlag - Detecting Software Plagiarism");
 
+    String[] languageOptions = {"java_1_1", "java_1_2", "java_1_5", "java_1_5_dm", "java_1_7", "java_1_9", "python_3", "c_cpp", "c_sharp", "char", "text", "scheme"};
+
     parser.addArgument("rootDir")
         .help("The root-directory that contains all submissions");
     parser.addArgument("-l", "--language")
-        //  Supported Languages: java19 (default), java 17, java15, java15dm, java12, java11, python3, c/c++, c#-1.2, char, text, scheme");
-        .choices("java", "python3").setDefault("java")
+        .choices(languageOptions).setDefault("java_1_9")
         .help("Select the language to parse the submissions");
     parser.addArgument("-b", "--baseCode")
         .help("Name of the directory which contains the base code (common framework)");
@@ -34,13 +35,12 @@ public class CLI {
     }
 
     String rootDir = ns.getString("rootDir");
-    String language = ns.getString("language");
+    String languageOption = ns.getString("language");
+
+    LanguageOption language = LanguageOption.fromOption(languageOption);
 
     try {
-      JPlagOptions options = new JPlagOptions(
-          rootDir,
-          LanguageOption.JAVA_1_9
-      );
+      JPlagOptions options = new JPlagOptions(rootDir, language);
       options.setBaseCodeSubmissionName("base-code");
 
       JPlag program = new JPlag(options);

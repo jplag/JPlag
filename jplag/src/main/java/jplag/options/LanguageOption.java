@@ -26,4 +26,22 @@ public enum LanguageOption {
   public String getClassPath() {
     return this.classPath;
   }
+
+  public static LanguageOption fromOption(String optionName) {
+    switch(optionName) {
+      case "java_1_1": return JAVA_1_1;
+      case "java_1_2": return JAVA_1_2;
+      case "java_1_5": return JAVA_1_5;
+      case "java_1_5_dm": return JAVA_1_5_DM;
+      case "java_1_7": return JAVA_1_7;
+      case "java_1_9": return JAVA_1_9;
+      case "python_3": return PYTHON_3;
+      case "c_cpp": return C_CPP;
+      case "c_sharp": return C_SHARP;
+      case "char": return CHAR;
+      case "text": return TEXT;
+      case "scheme": return SCHEME;
+      default: return JAVA_1_9;
+    }
+  }
 }
