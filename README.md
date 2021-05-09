@@ -18,6 +18,12 @@ This fork focuses on the development of a new Java API for JPlag.
 
 You'll find the generated JAR with all dependencies in  `jplag/target`.
 
+## (Breaking) Changes
+
+* A
+* B
+* C
+
 ## Usage
 
 ### CLI
