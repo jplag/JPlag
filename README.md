@@ -22,7 +22,40 @@ You'll find the generated JAR with all dependencies in  `jplag/target`.
 
 ### CLI
 
-*Work in progress.*
+```
+usage: jplag [-h]
+             [-l {java_1_1,java_1_2,java_1_5,java_1_5_dm,java_1_7,java_1_9,python_3,c_cpp,c_sharp,char,text,scheme}]
+             [-bc BC] [-v {parser,quiet,long,details}] [-d] [-S S] [-p P]
+             [-x X] [-t T] [-s S] [-r R] rootDir
+
+JPlag - Detecting Software Plagiarism
+
+positional arguments:
+  rootDir                The root-directory that contains all submissions
+
+named arguments:
+  -h, --help             show this help message and exit
+  -l {java_1_1,java_1_2,java_1_5,java_1_5_dm,java_1_7,java_1_9,python_3,c_cpp,c_sharp,char,text,scheme}
+                         Select  the  language  to  parse  the  submissions
+                         (default: java_1_9)
+  -bc BC                 Name of  the  directory  which  contains  the base
+                         code (common framework)
+  -v {parser,quiet,long,details}
+                         Verbosity (default: quiet)
+  -d                     (Debug) parser. Non-parsable files  will be stored
+                         (default: false)
+  -S S                   Look   in   directories   <root-dir>/*/<dir>   for
+                         programs
+  -p P                   comma-separated  list  of  all  filename  suffixes
+                         that are included
+  -x X                   All files named in <file> will be ignored
+  -t T                   Tune the sensitivity of  the comparison. A smaller
+                         <n> increases the sensitivity
+  -s S                   Similarity  Threshold:  all   matches  above  this
+                         threshold will be saved
+  -r R                   Name of directory in which  the  web pages will be
+                         stored (default: result)
+```
 
 ### Java API
 
