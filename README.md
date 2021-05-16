@@ -6,8 +6,6 @@
 
 This fork focuses on the development of a new Java API for JPlag.
 
-**Note:** Due to the early stage of development, some details documented below might change before the official release of version 3.0.
-
 ## Download and Installation
 
 ### Building from sources 
@@ -20,9 +18,26 @@ You'll find the generated JAR with all dependencies in  `jplag/target`.
 
 ## (Breaking) Changes
 
-* A
-* B
-* C
+> Note: The following list of changes doesn't claim to be complete and is intended to give a rough overview of the changes introduced with this fork.
+
+This fork made the following (breaking) changes to the JPlag repository:
+
+* Removed folders related to (deprecated) web services: `adminTool`, `atujplag`, `homepage`, `maven-libs`, `webService`, and `wsClient`
+* Deleted unnecessary resources from `jplag/src/main/resources`
+* All Cluster-related code fragments are commented and marked as `TODO`
+* The new `JPlagOptions` class replaces all previous Options-related classes and manages all available program options
+* Added the `argparse4j` package to properly parse CLI arguments
+* Renamed the `Program` class to `JPlag`. It contains the main logic the parse submissions and delegate the comparison of files to one of the new `ComparisonStrategy` implementing classes.
+* Deleted the **experimental** comparison mode. The **external** and **special** comparsion strategies are commented and marked as `TODO`. The **Normal** and **Revision** strategy should work as intended.
+* The new `JPlagResult` class is supposed to bundle all results of a plagiarism detection run. An instance of this class can optionally be passed to the new `Report` class to generate web pages of the results
+* While re-implementing the CLI, we renamed/removed some arguments to adapt the CLI to the new code structure. A detailed description of all available options of the new CLI can be found below.
+* The new `JPlagComparison` class replaces the old `AllMatches` class.
+* We removed `AvgComparator`, `AvgReversedComparator`, `MaxComparator`, `MaxReversedComparator`, `MinComparator`, and `MinReversedComparator` from the `JPlagComparison` (previously `AllMatches`) class. All comparisons are now sorted by average similarity. The `JPlagResult` and `JPlagComparison` classes should make adding a custom sorting logic very straightforward if that's required.
+
+In addition, without referring to any specifics, this fork also includes:
+* Tons of code formatting & restructuring
+* Renaming of classes, files, and functions 
+* Deletion of unused code
 
 ## Usage
 
