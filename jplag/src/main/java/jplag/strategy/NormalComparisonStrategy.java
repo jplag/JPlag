@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import jplag.JPlagComparison;
-import jplag.GSTiling;
+import jplag.GreedyStringTiling;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
 import jplag.Submission;
 
 public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 
-    public NormalComparisonStrategy(JPlagOptions options, GSTiling gSTiling) {
+    public NormalComparisonStrategy(JPlagOptions options, GreedyStringTiling gSTiling) {
         super(options, gSTiling);
     }
 

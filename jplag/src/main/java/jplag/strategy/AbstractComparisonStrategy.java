@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import jplag.JPlagBaseCodeComparison;
 import jplag.JPlagComparison;
-import jplag.GSTiling;
+import jplag.GreedyStringTiling;
 import jplag.JPlagOptions;
 import jplag.Submission;
 import jplag.options.SimilarityMetric;
@@ -15,11 +15,11 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     // Hashtable that maps the name of a submissions to its matches with the provided base code.
     protected Hashtable<String, JPlagBaseCodeComparison> baseCodeMatches = new Hashtable<>(30);
 
-    protected GSTiling gSTiling;
+    protected GreedyStringTiling gSTiling;
 
     protected JPlagOptions options;
 
-    public AbstractComparisonStrategy(JPlagOptions options, GSTiling gSTiling) {
+    public AbstractComparisonStrategy(JPlagOptions options, GreedyStringTiling gSTiling) {
         this.gSTiling = gSTiling;
         this.options = options;
     }

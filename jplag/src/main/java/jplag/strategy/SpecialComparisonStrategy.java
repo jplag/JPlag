@@ -3,7 +3,7 @@ package jplag.strategy;
 import java.io.File;
 import java.util.Vector;
 import jplag.JPlagComparison;
-import jplag.GSTiling;
+import jplag.GreedyStringTiling;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
 import jplag.SortedVector;
@@ -12,7 +12,7 @@ import jplag.Submission;
 @SuppressWarnings("unused") // TODO TS: Special comparison strategy currently not supported
 public class SpecialComparisonStrategy extends AbstractComparisonStrategy {
 
-    public SpecialComparisonStrategy(JPlagOptions options, GSTiling gSTiling) {
+    public SpecialComparisonStrategy(JPlagOptions options, GreedyStringTiling gSTiling) {
         super(options, gSTiling);
     }
 

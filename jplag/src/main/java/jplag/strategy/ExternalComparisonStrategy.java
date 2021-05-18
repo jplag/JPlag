@@ -3,7 +3,7 @@ package jplag.strategy;
 import java.io.File;
 import java.util.Vector;
 import jplag.JPlagComparison;
-import jplag.GSTiling;
+import jplag.GreedyStringTiling;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
 import jplag.SortedVector;
@@ -16,7 +16,7 @@ public class ExternalComparisonStrategy extends AbstractComparisonStrategy {
 
     private final Runtime runtime = Runtime.getRuntime();
 
-    public ExternalComparisonStrategy(JPlagOptions options, GSTiling gSTiling) {
+    public ExternalComparisonStrategy(JPlagOptions options, GreedyStringTiling gSTiling) {
         super(options, gSTiling);
     }
 
