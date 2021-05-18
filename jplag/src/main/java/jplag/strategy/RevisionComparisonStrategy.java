@@ -11,72 +11,68 @@ import jplag.Submission;
 
 public class RevisionComparisonStrategy extends AbstractComparisonStrategy {
 
-  public RevisionComparisonStrategy(JPlagOptions options, GSTiling gSTiling) {
-    super(options, gSTiling);
-  }
-
-  @Override
-  public JPlagResult compareSubmissions(
-      Vector<Submission> submissions,
-      Submission baseCodeSubmission
-  ) {
-    if (baseCodeSubmission != null) {
-      compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
+    public RevisionComparisonStrategy(JPlagOptions options, GSTiling gSTiling) {
+        super(options, gSTiling);
     }
 
-    long timeBeforeStartInMillis = System.currentTimeMillis();
-    int numberOfSubmissions = submissions.size();
-    Submission s1, s2;
-    JPlagComparison comparison;
-
-    List<JPlagComparison> comparisons = new ArrayList<>();
-
-    s1loop:
-    for (int i = 0; i < numberOfSubmissions - 1; ) {
-      s1 = submissions.elementAt(i);
-
-      if (s1.tokenList == null) {
-        continue;
-      }
-
-      // Find next valid submission
-      int j = i;
-
-      do {
-        j++;
-
-        if (j >= numberOfSubmissions) {
-          break s1loop; // no more comparison pairs available
+    @Override
+    public JPlagResult compareSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) {
+        if (baseCodeSubmission != null) {
+            compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
         }
 
-        s2 = submissions.elementAt(j);
-      } while (s2.tokenList == null);
+        long timeBeforeStartInMillis = System.currentTimeMillis();
+        int numberOfSubmissions = submissions.size();
+        Submission first, second;
+        JPlagComparison comparison;
 
-      comparison = this.gSTiling.compare(s1, s2);
+        List<JPlagComparison> comparisons = new ArrayList<>();
 
-      System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + comparison.percent());
+        s1loop: for (int i = 0; i < numberOfSubmissions - 1;) {
+            first = submissions.elementAt(i);
 
-      if (baseCodeSubmission != null) {
-        comparison.bcMatchesA = baseCodeMatches.get(comparison.subA.name);
-        comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
-      }
+            if (first.tokenList == null) {
+                continue;
+            }
 
-      if (isAboveSimilarityThreshold(comparison)) {
-        comparisons.add(comparison);
-      }
+            // Find next valid submission
+            int j = i;
 
-      i = j;
+            do {
+                j++;
+
+                if (j >= numberOfSubmissions) {
+                    break s1loop; // no more comparison pairs available
+                }
+
+                second = submissions.elementAt(j);
+            } while (second.tokenList == null);
+
+            comparison = this.gSTiling.compare(first, second);
+
+            System.out.println("Comparing " + first.name + "-" + second.name + ": " + comparison.percent());
+
+            if (baseCodeSubmission != null) {
+                comparison.bcMatchesA = baseCodeMatches.get(comparison.subA.name);
+                comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
+            }
+
+            if (isAboveSimilarityThreshold(comparison)) {
+                comparisons.add(comparison);
+            }
+
+            i = j;
+        }
+
+        long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
+
+        // TODO TS: Cluster currently not supported
+        // Cluster cluster = null;
+        //
+        // if (options.getClusterType() != ClusterType.NONE) {
+        // cluster = this.clusters.calculateClustering(submissions);
+        // }
+
+        return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
     }
-
-    long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-
-    // TODO:
-    // Cluster cluster = null;
-    //
-    // if (options.getClusterType() != ClusterType.NONE) {
-    //     cluster = this.clusters.calculateClustering(submissions);
-    // }
-
-    return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
-  }
 }

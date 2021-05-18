@@ -11,65 +11,62 @@ import jplag.Submission;
 
 public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 
-  public NormalComparisonStrategy(JPlagOptions options, GSTiling gSTiling) {
-    super(options, gSTiling);
-  }
-
-  @Override
-  public JPlagResult compareSubmissions(
-      Vector<Submission> submissions,
-      Submission baseCodeSubmission
-  ) {
-    if (baseCodeSubmission != null) {
-      compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
+    public NormalComparisonStrategy(JPlagOptions options, GSTiling gSTiling) {
+        super(options, gSTiling);
     }
 
-    long timeBeforeStartInMillis = System.currentTimeMillis();
-    int i, j, numberOfSubmissions = submissions.size();
-    Submission s1, s2;
-    JPlagComparison comparison;
-
-    List<JPlagComparison> comparisons = new ArrayList<>();
-
-    for (i = 0; i < (numberOfSubmissions - 1); i++) {
-      s1 = submissions.elementAt(i);
-
-      if (s1.tokenList == null) {
-        continue;
-      }
-
-      for (j = (i + 1); j < numberOfSubmissions; j++) {
-        s2 = submissions.elementAt(j);
-
-        if (s2.tokenList == null) {
-          continue;
-        }
-
-        comparison = this.gSTiling.compare(s1, s2);
-
-        System.out.println("Comparing " + s1.name + "-" + s2.name + ": " + comparison.percent());
-
+    @Override
+    public JPlagResult compareSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) {
         if (baseCodeSubmission != null) {
-          comparison.bcMatchesA = baseCodeMatches.get(comparison.subA.name);
-          comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
+            compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
         }
 
-        if (isAboveSimilarityThreshold(comparison)) {
-          comparisons.add(comparison);
+        long timeBeforeStartInMillis = System.currentTimeMillis();
+        int i, j, numberOfSubmissions = submissions.size();
+        Submission first, second;
+        JPlagComparison comparison;
+
+        List<JPlagComparison> comparisons = new ArrayList<>();
+
+        for (i = 0; i < (numberOfSubmissions - 1); i++) {
+            first = submissions.elementAt(i);
+
+            if (first.tokenList == null) {
+                continue;
+            }
+
+            for (j = (i + 1); j < numberOfSubmissions; j++) {
+                second = submissions.elementAt(j);
+
+                if (second.tokenList == null) {
+                    continue;
+                }
+
+                comparison = this.gSTiling.compare(first, second);
+
+                System.out.println("Comparing " + first.name + "-" + second.name + ": " + comparison.percent());
+
+                if (baseCodeSubmission != null) {
+                    comparison.bcMatchesA = baseCodeMatches.get(comparison.subA.name);
+                    comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
+                }
+
+                if (isAboveSimilarityThreshold(comparison)) {
+                    comparisons.add(comparison);
+                }
+            }
         }
-      }
+
+        long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
+
+        // TODO TS: Cluster currently not supported
+        // Cluster cluster = null;
+        //
+        // if (options.getClusterType() != ClusterType.NONE) {
+        // cluster = this.clusters.calculateClustering(submissions);
+        // }
+
+        return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
     }
-
-    long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-
-    // TODO:
-    // Cluster cluster = null;
-    //
-    // if (options.getClusterType() != ClusterType.NONE) {
-    //     cluster = this.clusters.calculateClustering(submissions);
-    // }
-
-    return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
-  }
 
 }
