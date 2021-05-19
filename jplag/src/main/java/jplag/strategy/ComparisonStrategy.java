@@ -1,6 +1,7 @@
 package jplag.strategy;
 
 import java.util.Vector;
+
 import jplag.JPlagResult;
 import jplag.Submission;
 

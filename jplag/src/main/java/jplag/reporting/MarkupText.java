@@ -18,7 +18,8 @@ public class MarkupText {
     this.frontMarkup = frontMarkup;
   }
 
-  public String toString() {
+  @Override
+public String toString() {
     return "MarkUp - file: " + fileIndex + " line: " + lineIndex + " column: " + column + " text: " + text;
   }
 }

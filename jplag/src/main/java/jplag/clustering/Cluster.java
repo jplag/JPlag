@@ -147,10 +147,11 @@ public class Cluster implements Comparable<Cluster> {
             other.getSubmissionAt(b));
       }
     }
-    return summedSim / (float) (sizeThis * sizeOther);
+    return summedSim / (sizeThis * sizeOther);
   }
 
-  public String toString() {
+  @Override
+public String toString() {
     String text = (submissionNr == -1 ? "Similarity: " + similarity + ":"
         : "Submission:");
     for (int i = 0; i < size(); i++) {
@@ -166,7 +167,8 @@ public class Cluster implements Comparable<Cluster> {
     return text;
   }
 
-  public int compareTo(Cluster cluster2) {
+  @Override
+public int compareTo(Cluster cluster2) {
     if (equals(cluster2)) {
       return 0;
     }

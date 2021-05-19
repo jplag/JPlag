@@ -3,6 +3,7 @@ package jplag;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
 import java.io.File;
+
 import jplag.options.LanguageOption;
 import jplag.options.Verbosity;
 import jplag.reporting.Report;

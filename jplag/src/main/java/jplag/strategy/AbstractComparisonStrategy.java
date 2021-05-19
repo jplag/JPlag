@@ -2,9 +2,10 @@ package jplag.strategy;
 
 import java.util.Hashtable;
 import java.util.Vector;
+
+import jplag.GreedyStringTiling;
 import jplag.JPlagBaseCodeComparison;
 import jplag.JPlagComparison;
-import jplag.GreedyStringTiling;
 import jplag.JPlagOptions;
 import jplag.Submission;
 import jplag.options.SimilarityMetric;

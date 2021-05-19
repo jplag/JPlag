@@ -2,8 +2,9 @@ package jplag.strategy;
 
 import java.io.File;
 import java.util.Vector;
-import jplag.JPlagComparison;
+
 import jplag.GreedyStringTiling;
+import jplag.JPlagComparison;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
 import jplag.SortedVector;

@@ -3,8 +3,9 @@ package jplag.strategy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-import jplag.JPlagComparison;
+
 import jplag.GreedyStringTiling;
+import jplag.JPlagComparison;
 import jplag.JPlagOptions;
 import jplag.JPlagResult;
 import jplag.Submission;

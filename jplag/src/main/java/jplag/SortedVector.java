@@ -1,7 +1,7 @@
 package jplag;
 
-import java.util.Vector;
 import java.util.Comparator;
+import java.util.Vector;
 
 public class SortedVector<T> extends Vector<T> {
 

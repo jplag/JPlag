@@ -20,22 +20,26 @@ public class BufferedCounter extends BufferedWriter {
     count = 0;
   }
 
-  public void write(int c) throws IOException {
+  @Override
+public void write(int c) throws IOException {
     super.write(c);
     count++;
   }
 
-  public void write(char[] cbuf, int off, int len) throws IOException {
+  @Override
+public void write(char[] cbuf, int off, int len) throws IOException {
     super.write(cbuf, off, len);
     count += len;
   }
 
-  public void write(String s, int off, int len) throws IOException {
+  @Override
+public void write(String s, int off, int len) throws IOException {
     super.write(s, off, len);
     count += len;
   }
 
-  public void newLine() throws IOException {
+  @Override
+public void newLine() throws IOException {
     super.newLine();
     count++;
   }

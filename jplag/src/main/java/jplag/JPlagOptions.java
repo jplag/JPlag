@@ -5,8 +5,8 @@ import static jplag.strategy.ComparisonMode.NORMAL;
 import jplag.options.ClusterType;
 import jplag.options.LanguageOption;
 import jplag.options.SimilarityMetric;
-import jplag.strategy.ComparisonMode;
 import jplag.options.Verbosity;
+import jplag.strategy.ComparisonMode;
 
 public class JPlagOptions {
 

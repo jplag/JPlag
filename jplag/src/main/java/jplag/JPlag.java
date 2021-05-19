@@ -16,8 +16,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Vector;
-
 import java.util.stream.Collectors;
+
 import jplag.clustering.Clusters;
 import jplag.clustering.SimilarityMatrix;
 import jplag.options.ClusterType;
@@ -607,7 +607,8 @@ public class JPlag implements ProgramI {
   /**
    * Add an error to the errorVector.
    */
-  public void addError(String errorMsg) {
+  @Override
+public void addError(String errorMsg) {
     errorVector.add("[" + currentSubmissionName + "]\n" + errorMsg);
     print(errorMsg, null);
   }
@@ -626,7 +627,8 @@ public class JPlag implements ProgramI {
     System.out.println(errorStr.toString());
   }
 
-  public void print(String normal, String lng) {
+  @Override
+public void print(String normal, String lng) {
     if (options.getVerbosity() == PARSER) {
       if (lng != null) {
         myWrite(lng);

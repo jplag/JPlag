@@ -301,7 +301,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     return res;
   }
 
-  public int compare(JPlagComparison o1, JPlagComparison o2) {
+  @Override
+public int compare(JPlagComparison o1, JPlagComparison o2) {
     float p1 = o1.percent();
     float p2 = o2.percent();
     if (p1 == p2) {
@@ -314,19 +315,22 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
   }
 
-  public boolean equals(Object obj) {
+  @Override
+public boolean equals(Object obj) {
     if (!(obj instanceof JPlagComparison)) {
       return false;
     }
     return (compare(this, (JPlagComparison) obj) == 0);
   }
 
-  public String toString() {
+  @Override
+public String toString() {
     return firstSubmission.name + " <-> " + secondSubmission.name;
   }
 
   public static class AvgComparator implements Comparator<JPlagComparison> {
 
+    @Override
     public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percent();
       float p2 = o2.percent();
@@ -337,6 +341,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
   public static class AvgReversedComparator implements Comparator<JPlagComparison> {
 
+    @Override
     public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percent();
       float p2 = o2.percent();
@@ -347,6 +352,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
   public static class MaxComparator implements Comparator<JPlagComparison> {
 
+    @Override
     public int compare(JPlagComparison o1, JPlagComparison o2) {
       float p1 = o1.percentMaxAB();
       float p2 = o2.percentMaxAB();

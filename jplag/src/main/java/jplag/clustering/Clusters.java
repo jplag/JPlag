@@ -1,9 +1,11 @@
 package jplag.clustering;
 
-import jplag.*;
-import jplag.options.ClusterType;
+import java.util.ArrayList;
+import java.util.Vector;
 
-import java.util.*;
+import jplag.JPlag;
+import jplag.Submission;
+import jplag.options.ClusterType;
 
 /**
  * This class calculates, based on the similarity matrix, the hierarchical clustering of the

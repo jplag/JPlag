@@ -49,7 +49,8 @@ public class SimilarityMatrix {
     return matrix[a + (b * (b - 1) / 2)];
   }
 
-  public String toString() {
+  @Override
+public String toString() {
     String tmp = "";
     for (int a = 0; a < size; a++) {
       for (int b = a + 1; b < size; b++) {
