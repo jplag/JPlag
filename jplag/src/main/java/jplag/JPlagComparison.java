@@ -10,17 +10,17 @@ import java.util.List;
  */
 public class JPlagComparison implements Comparator<JPlagComparison> {
 
-  public Submission subA;
-  public Submission subB;
+  public Submission firstSubmission;
+  public Submission secondSubmission;
 
   public JPlagBaseCodeComparison bcMatchesA = null;
   public JPlagBaseCodeComparison bcMatchesB = null;
 
   public List<Match> matches = new ArrayList<>();
 
-  public JPlagComparison(Submission subA, Submission subB) {
-    this.subA = subA;
-    this.subB = subB;
+  public JPlagComparison(Submission firstSubmission, Submission secondSubmission) {
+    this.firstSubmission = firstSubmission;
+    this.secondSubmission = secondSubmission;
   }
 
   public final void addMatch(int startA, int startB, int length) {
@@ -127,11 +127,11 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
   public final float percent() {
     float sa, sb;
     if (bcMatchesB != null && bcMatchesA != null) {
-      sa = subA.getNumberOfTokens() - subA.files.size() - bcMatchesA.getNumberOfMatchedTokens();
-      sb = subB.getNumberOfTokens() - subB.files.size() - bcMatchesB.getNumberOfMatchedTokens();
+      sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - bcMatchesA.getNumberOfMatchedTokens();
+      sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - bcMatchesB.getNumberOfMatchedTokens();
     } else {
-      sa = subA.getNumberOfTokens() - subA.files.size();
-      sb = subB.getNumberOfTokens() - subB.files.size();
+      sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
+      sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
     }
     return (200 * (float) getNumberOfMatchedTokens()) / (sa + sb);
   }
@@ -140,9 +140,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     int divisor;
     if (bcMatchesA != null) {
       divisor =
-          subA.getNumberOfTokens() - subA.files.size() - bcMatchesA.getNumberOfMatchedTokens();
+          firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - bcMatchesA.getNumberOfMatchedTokens();
     } else {
-      divisor = subA.getNumberOfTokens() - subA.files.size();
+      divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
     }
     return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
   }
@@ -151,9 +151,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     int divisor;
     if (bcMatchesB != null) {
       divisor =
-          subB.getNumberOfTokens() - subB.files.size() - bcMatchesB.getNumberOfMatchedTokens();
+          secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - bcMatchesB.getNumberOfMatchedTokens();
     } else {
-      divisor = subB.getNumberOfTokens() - subB.files.size();
+      divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
     }
     return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
   }
@@ -189,12 +189,12 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
   }
 
   public final float percentBasecodeA() {
-    float sa = subA.getNumberOfTokens() - subA.files.size();
+    float sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
     return bcMatchesA.getNumberOfMatchedTokens() * 100 / sa;
   }
 
   public final float percentBasecodeB() {
-    float sb = subB.getNumberOfTokens() - subB.files.size();
+    float sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
     return bcMatchesB.getNumberOfMatchedTokens() * 100 / sb;
   }
 
@@ -217,7 +217,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
       return new String[]{};
     }
 
-    Token[] tokens = (j == 0 ? subA : subB).tokenList.tokens;
+    Token[] tokens = (j == 0 ? firstSubmission : secondSubmission).tokenList.tokens;
     int i, h, starti, starth, count = 1;
 
     o1:
@@ -268,7 +268,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
   /* This method returns the name of all files that are represented by
    * at least one token. */
   public final String[] allFiles(int sub) {
-    Structure struct = (sub == 0 ? subA : subB).tokenList;
+    Structure struct = (sub == 0 ? firstSubmission : secondSubmission).tokenList;
     int count = 1;
     for (int i = 1; i < struct.size(); i++) {
       if (!struct.tokens[i].file.equals(struct.tokens[i - 1].file)) {
@@ -322,7 +322,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
   }
 
   public String toString() {
-    return subA.name + " <-> " + subB.name;
+    return firstSubmission.name + " <-> " + secondSubmission.name;
   }
 
   public static class AvgComparator implements Comparator<JPlagComparison> {

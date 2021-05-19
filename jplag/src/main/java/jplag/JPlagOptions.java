@@ -38,7 +38,7 @@ public class JPlagOptions {
   private boolean storePercent = false;
 
   /**
-   * TODO: Decide what to do with this.
+   * TODO PB: Decide what to do with this.
    * <p>
    * Note: Previously, this option had two effects:
    * <ol>
@@ -75,7 +75,7 @@ public class JPlagOptions {
   private float similarityThreshold = 0;
 
   /**
-   * TODO: Not happy with the name yet.
+   * TODO PB: Not happy with the name yet.
    */
   private SimilarityMetric similarityMetric = SimilarityMetric.AVG;
 

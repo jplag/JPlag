@@ -39,7 +39,7 @@ public class Submission implements Comparable<Submission> {
   /**
    * List of tokens that have been parsed from the files this submission consists of.
    * <p>
-   * TODO: The name 'Structure' is very generic and should be changed to something more
+   * TODO PB: The name 'Structure' is very generic and should be changed to something more
    * descriptive.
    */
   public Structure tokenList;
@@ -229,7 +229,7 @@ public class Submission implements Comparable<Submission> {
         result[i] = buffer;
         fis.close();
       } catch (FileNotFoundException e) {
-        // TODO: Should an ExitException be thrown here?
+        // TODO PB: Should an ExitException be thrown here?
         System.out.println("File not found: " + ((new File(submissionFile, files[i])).toString()));
       } catch (IOException e) {
         throw new jplag.ExitException(

@@ -30,9 +30,8 @@ import jplag.strategy.RevisionComparisonStrategy;
 import jplag.strategy.SpecialComparisonStrategy;
 import jplagUtils.PropertiesLoader;
 
-/*
+/**
  * This class coordinates the whole program flow.
- * The revision history can be found on https://svn.ipd.kit.edu/trac/jplag/wiki/JPlag/History
  */
 public class JPlag implements ProgramI {
 
@@ -48,7 +47,7 @@ public class JPlag implements ProgramI {
   /**
    * This stores the name of the submission that is currently parsed.
    * <p>
-   * TODO: This should be moved to parseSubmissions(...)
+   * TODO PB: This should be moved to parseSubmissions(...)
    */
   public String currentSubmissionName = "<Unknown submission>";
 
@@ -58,7 +57,7 @@ public class JPlag implements ProgramI {
   public Vector<String> errorVector = new Vector<>();
 
   /**
-   * Used Objects of anothers jplag.Classes, they muss be just one time instantiate TODO: What?
+   * Used Objects of anothers jplag.Classes, they muss be just one time instantiate TODO PB: What?
    */
   public Clusters clusters = null;
 
@@ -88,7 +87,7 @@ public class JPlag implements ProgramI {
   /**
    * Contains the comparison logic.
    */
-  protected GSTiling gSTiling = new GSTiling(this);
+  protected GreedyStringTiling gSTiling = new GreedyStringTiling(this);
 
   /**
    * JPlag configuration options.
@@ -100,9 +99,13 @@ public class JPlag implements ProgramI {
    */
   private FileWriter writer = null;
 
+  /**
+   * Creates and initializes a JPlag instance, parameterized by a set of options.
+   * @param options determines the parameterization.
+   * @throws ExitException if the initialization fails.
+   */
   public JPlag(JPlagOptions options) throws ExitException {
     this.options = options;
-
     this.initialize();
   }
 
@@ -137,18 +140,15 @@ public class JPlag implements ProgramI {
     LanguageOption languageOption = this.options.getLanguageOption();
 
     try {
-      Class<?> languageClass = Class.forName(languageOption.getClassPath());
-      Constructor<?>[] languageConstructors = languageClass.getDeclaredConstructors();
-
-      // TODO: Verify that only one constructor exists
-      Constructor<?> constructor = languageConstructors[0];
+      Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ProgramI.class);
       Object[] constructorParams = {this};
 
       Language language = (Language) constructor.newInstance(constructorParams);
 
       this.language = language;
       this.options.setLanguage(language);
-    } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+    } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
+            | IllegalArgumentException | InvocationTargetException e) {
       e.printStackTrace();
 
       throw new ExitException("Language instantiation failed", ExitException.BAD_LANGUAGE_ERROR);
@@ -206,7 +206,9 @@ public class JPlag implements ProgramI {
   }
 
   /**
-   * Main procedure
+   * Main procedure, executes the comparison of source code submissions.
+   * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
+   * @throws ExitException if the JPlag exits preemptively.
    */
   public JPlagResult run() throws ExitException {
     File rootDir = new File(options.getRootDirName());
@@ -258,7 +260,7 @@ public class JPlag implements ProgramI {
   }
 
   /**
-   * TODO: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
+   * TODO PB: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
    */
   public void parseAllSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission)
       throws ExitException {
@@ -441,7 +443,7 @@ public class JPlag implements ProgramI {
 
       if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
         if (subm.tokenList != null) {
-          this.gSTiling.create_hashes(subm.tokenList, options.getMinTokenMatch(), false);
+          this.gSTiling.createHashes(subm.tokenList, options.getMinTokenMatch(), false);
           subm.tokenList.save(new File("temp", subm.submissionFile.getName() + subm.name));
           subm.tokenList = null;
         }
@@ -509,12 +511,12 @@ public class JPlag implements ProgramI {
     }
 
     if (options.hasBaseCode()) {
-      gSTiling.create_hashes(subm.tokenList, options.getMinTokenMatch(), true);
+      gSTiling.createHashes(subm.tokenList, options.getMinTokenMatch(), true);
     }
 
     if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
       if (subm.tokenList != null) {
-        gSTiling.create_hashes(subm.tokenList, options.getMinTokenMatch(), false);
+        gSTiling.createHashes(subm.tokenList, options.getMinTokenMatch(), false);
         subm.tokenList.save(new File("temp", subm.submissionFile.getName() + subm.name));
         subm.tokenList = null;
       }

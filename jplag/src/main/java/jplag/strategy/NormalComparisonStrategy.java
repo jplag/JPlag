@@ -47,8 +47,8 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
                 System.out.println("Comparing " + first.name + "-" + second.name + ": " + comparison.percent());
 
                 if (baseCodeSubmission != null) {
-                    comparison.bcMatchesA = baseCodeMatches.get(comparison.subA.name);
-                    comparison.bcMatchesB = baseCodeMatches.get(comparison.subB.name);
+                    comparison.bcMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
+                    comparison.bcMatchesB = baseCodeMatches.get(comparison.secondSubmission.name);
                 }
 
                 if (isAboveSimilarityThreshold(comparison)) {

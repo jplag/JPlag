@@ -125,7 +125,7 @@ public class Report {
 
     writeIndex();
 
-    // TODO:
+    // TODO TS: Cluster currently not supported
     // if (result.getOptions().getClusterType() != ClusterType.NONE) {
     //   writeClusters(clustering);
     // }
@@ -153,17 +153,6 @@ public class Report {
     file.println("<HTML><HEAD><TITLE>" + title + "</TITLE>");
     file.println("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
     file.println("</HEAD>");
-  }
-
-  private void writeHTMLHeaderWithScript(HTMLFile file, String title) {
-    file.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-    file.println("<HTML>\n<HEAD>\n <TITLE>" + title + "</TITLE>");
-    file.println("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
-    file.println("  <script type=\"text/javascript\">\n  <!--");
-    file.println("   function ZweiFrames(URL1,F1,URL2,F2)\n   {");
-    file.println("    parent.frames[F1].location.href=URL1;");
-    file.println("    parent.frames[F2].location.href=URL2;\n   }\n  //-->");
-    file.println("  </script>\n</HEAD>");
   }
 
   /**
@@ -317,8 +306,8 @@ public class Report {
     htmlFile.println("<TABLE CELLPADDING=3 CELLSPACING=2>");
 
     for (JPlagComparison comparison : comparisons) {
-      String submissionNameA = comparison.subA.name;
-      String submissionNameB = comparison.subB.name;
+      String submissionNameA = comparison.firstSubmission.name;
+      String submissionNameB = comparison.secondSubmission.name;
 
       htmlFile.print(
           "<TR><TD BGCOLOR=" + color(comparison.percentA(), 128, 192, 128, 192, 255, 255)
@@ -351,8 +340,8 @@ public class Report {
       writer = new FileWriter(csvFile);
 
       for (JPlagComparison comparison : comparisons) {
-        String submissionNameA = comparison.subA.name;
-        String submissionNameB = comparison.subB.name;
+        String submissionNameA = comparison.firstSubmission.name;
+        String submissionNameB = comparison.secondSubmission.name;
 
         writer.write(getComparisonIndex(comparison) + ";");
         writer.write(submissionNameA + ";");
@@ -390,7 +379,7 @@ public class Report {
         htmlFile,
         TagParser.parse(
             msg.getString("Report.Matches_for_X1_AND_X2"),
-            new String[]{comparison.subA.name, comparison.subB.name}
+            new String[]{comparison.firstSubmission.name, comparison.secondSubmission.name}
         )
     );
 
@@ -403,7 +392,7 @@ public class Report {
     htmlFile.println(
         TagParser.parse(
             msg.getString("Report.Matches_for_X1_AND_X2"),
-            new String[]{comparison.subA.name, comparison.subB.name}
+            new String[]{comparison.firstSubmission.name, comparison.secondSubmission.name}
         )
     );
     htmlFile.println("      </h3>");
@@ -454,14 +443,14 @@ public class Report {
    */
   private void reportComparison(HTMLFile htmlFile, JPlagComparison comparison, int index) {
     Match match;
-    Token[] tokensA = comparison.subA.tokenList.tokens;
-    Token[] tokensB = comparison.subB.tokenList.tokens;
+    Token[] tokensA = comparison.firstSubmission.tokenList.tokens;
+    Token[] tokensB = comparison.secondSubmission.tokenList.tokens;
     // sort();
 
     htmlFile.println("<TABLE BORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#d0d0d0\">");
     htmlFile
-        .println("<TR><TH><TH>" + comparison.subA.name + " (" + comparison.percentA() + "%)<TH>" +
-            comparison.subB.name + " (" + comparison.percentB() + "%)<TH>" + msg
+        .println("<TR><TH><TH>" + comparison.firstSubmission.name + " (" + comparison.percentA() + "%)<TH>" +
+            comparison.secondSubmission.name + " (" + comparison.percentB() + "%)<TH>" + msg
             .getString("AllMatches.Tokens"));
 
     for (int i = 0; i < comparison.matches.size(); i++) {
@@ -557,7 +546,7 @@ public class Report {
 //    return bytes;
 //  }
 
-//  TODO:
+//  TODO TS: Cluster currently not supported
 //  private int writeClusters(Cluster clustering) throws jplag.ExitException {
 //    int bytes = 0;
 //
@@ -624,12 +613,12 @@ public class Report {
    */
   private void writeNormalSubmission(HTMLFile f, int i, JPlagComparison comparison, int j)
       throws ExitException {
-    Submission sub = (j == 0 ? comparison.subA : comparison.subB);
+    Submission sub = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission);
     String[] files = comparison.files(j);
 
     String[][] text = sub.readFiles(files);
 
-    Token[] tokens = (j == 0 ? comparison.subA : comparison.subB).tokenList.tokens;
+    Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.tokens;
     Match currentMatch;
     String hilf;
     int h;
@@ -741,10 +730,10 @@ public class Report {
    */
   private void writeIndexedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j)
       throws ExitException {
-    Submission sub = (j == 0 ? comparison.subA : comparison.subB);
+    Submission sub = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission);
     String[] files = comparison.files(j);
     char[][] text = sub.readFilesChar(files);
-    Token[] tokens = (j == 0 ? comparison.subA : comparison.subB).tokenList.tokens;
+    Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.tokens;
 
     // get index array with matches sorted in ascending order.
     int[] perm = comparison.sort_permutation(j);
@@ -817,10 +806,10 @@ public class Report {
    */
   private int writeImprovedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j)
       throws jplag.ExitException {
-    Submission sub = (j == 0 ? comparison.subA : comparison.subB);
+    Submission sub = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission);
     String[] files = comparison.files(j);
     String[][] text = sub.readFiles(files);
-    Token[] tokens = (j == 0 ? comparison.subA : comparison.subB).tokenList.tokens;
+    Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.tokens;
 
     // Markup list:
     Comparator<MarkupText> comp = (mo1, mo2) -> {
