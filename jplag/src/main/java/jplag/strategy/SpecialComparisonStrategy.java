@@ -18,8 +18,8 @@ public class SpecialComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     /*
-     * Now the special comparison TODO PB: Previously, this comparison created a `Report.java` (removed) 
-     * TODO PB: Check whether this comparison is now any different than the others after the report has been removed
+     * Now the special comparison TODO PB: Previously, this comparison created a `Report.java` (removed) TODO PB: Check
+     * whether this comparison is now any different than the others after the report has been removed
      */
     @Override
     public JPlagResult compareSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) {

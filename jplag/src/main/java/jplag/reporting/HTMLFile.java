@@ -10,29 +10,25 @@ import java.nio.charset.StandardCharsets;
 
 public class HTMLFile extends PrintWriter {
 
-  private BufferedCounter bc;
+    private BufferedCounter bc;
 
-  /**
-   * Static factory method to instantiate an HTMLFile objects.
-   */
-  public static HTMLFile fromFile(File file) throws IOException {
-    BufferedCounter bc = new BufferedCounter(new OutputStreamWriter(
-        new FileOutputStream(file),
-        StandardCharsets.UTF_8
-    ));
+    /**
+     * Static factory method to instantiate an HTMLFile objects.
+     */
+    public static HTMLFile fromFile(File file) throws IOException {
+        BufferedCounter bc = new BufferedCounter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
 
-    HTMLFile htmlFile = new HTMLFile(bc);
-    htmlFile.bc = bc;
+        HTMLFile htmlFile = new HTMLFile(bc);
+        htmlFile.bc = bc;
 
-    return htmlFile;
-  }
+        return htmlFile;
+    }
 
-  private HTMLFile(BufferedWriter writer) {
-    super(writer);
-  }
+    private HTMLFile(BufferedWriter writer) {
+        super(writer);
+    }
 
-  public int bytesWritten() {
-    return bc.bytesWritten();
-  }
+    public int bytesWritten() {
+        return bc.bytesWritten();
+    }
 }
-

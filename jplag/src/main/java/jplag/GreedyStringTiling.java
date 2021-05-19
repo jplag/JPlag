@@ -3,9 +3,9 @@ package jplag;
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
  * to the classes {@link Structure}, {@link Token}, as well as {@link Matches} and {@link Match}.
- * @see <a href="https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
- *          String Similarity via Greedy String Tiling and Running Karp−Rabin Matching
- *      </a>
+ * @see <a href=
+ * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
+ * String Similarity via Greedy String Tiling and Running Karp−Rabin Matching </a>
  */
 public class GreedyStringTiling implements TokenConstants {
 
@@ -15,10 +15,10 @@ public class GreedyStringTiling implements TokenConstants {
     public GreedyStringTiling(JPlag program) {
         this.program = program;
     }
-    
+
     /**
-     * Creating hashes in linear time. The hash-code will be written in every Token for the next <hash_length> token (includes the Token
-     * itself).
+     * Creating hashes in linear time. The hash-code will be written in every Token for the next <hash_length> token
+     * (includes the Token itself).
      * @param structure contains the tokens.
      * @param hashLength is the hash length (condition: 1 < hashLength < 26)
      * @param makeTable determines if a simple hash table is created in the structure.
