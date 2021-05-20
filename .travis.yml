@@ -1,0 +1,15 @@
+jdk: openjdk11
+language: java
+cache:
+  directories:
+    - $HOME/.m2
+before_deploy:
+  - mvn clean generate-sources assembly:assembly -f jplag/pom.xml -U
+deploy:
+  provider: releases
+  api_key: $OAUTH
+  file_glob: true
+  file: jplag/target/jplag*with-dependencies*.jar
+  skip_cleanup: true
+  on:
+    tags: true
