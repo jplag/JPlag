@@ -10,7 +10,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +43,6 @@ jobs:
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         draft: true
-        title: 'Staging Release (WIP)'
         files: |
           jplag/target/jplag-*-jar-with-dependencies.jar
       
