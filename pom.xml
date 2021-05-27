@@ -1,36 +1,37 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>edu.kit.ipd.jplag</groupId>
-	<artifactId>aggregator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.kit.ipd.jplag</groupId>
+  <artifactId>aggregator</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-	<name>JPlag Aggregator</name>
-	<modules>
-		<module>jplag.parent</module>
-		<module>jplag.frontend-utils</module>
-		<module>jplag.frontend.chars</module>
-		<module>jplag.frontend.cpp</module>
-		<module>jplag.frontend.csharp-1.2</module>
-		<module>jplag.frontend.java-1.1exp</module>
-		<module>jplag.frontend.java-1.2</module>
-		<module>jplag.frontend.java-1.5</module>
-		<module>jplag.frontend.java-1.7</module>
-		<module>jplag.frontend.java-1.9</module>
-		<module>jplag.frontend.python-3</module>
-		<module>jplag.frontend.scheme</module>
-		<module>jplag.frontend.text</module>
-		<module>jplag.utils</module>
-		<module>jplag</module>
-	</modules>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>edu.kit.ipd.jplag</groupId>
-				<artifactId>java-1.5</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+  <name>JPlag Aggregator</name>
+  <modules>
+    <module>jplag.parent</module>
+    <module>jplag.frontend-utils</module>
+    <module>jplag.frontend.chars</module>
+    <module>jplag.frontend.cpp</module>
+    <module>jplag.frontend.csharp-1.2</module>
+    <module>jplag.frontend.java-1.1exp</module>
+    <module>jplag.frontend.java-1.2</module>
+    <module>jplag.frontend.java-1.5</module>
+    <module>jplag.frontend.java-1.7</module>
+    <module>jplag.frontend.java-1.9</module>
+    <module>jplag.frontend.python-3</module>
+    <module>jplag.frontend.scheme</module>
+    <module>jplag.frontend.text</module>
+    <module>jplag.utils</module>
+    <module>jplag</module>
+  </modules>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>edu.kit.ipd.jplag</groupId>
+        <artifactId>java-1.5</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>

@@ -8,7 +8,7 @@ names, and comments are ignored, etc. Only some kind of program structure
 remains, which is then compared to other source files.
 
 This package contains a minimal set of files required to build our 
-Java 1.4 frontend (including ANTLR 2.7.7). The jplag.Program class has been
+Java 1.4 frontend (including ANTLR 2.7.7). The jplag.JPlag class has been
 reduced to only two functions.
 The grammar is specified with ANTLR 2.7.7 (src/main/antlr/java.g). In 
 some productions the parser adds tokens to the above mentioned token stream. 

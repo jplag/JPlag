@@ -1,6 +1,7 @@
 package jplag.clustering;
 
 public class Cluster implements Comparable<Cluster> {
+
     private float similarity; // similarity threshold for this cluster
 
     private int submissionNr = -1;
@@ -9,8 +10,7 @@ public class Cluster implements Comparable<Cluster> {
     private Cluster left, right;
 
     private int[] allSubmissions = null;
-    private Clusters clusters;// Warum habe ich nicht instanziert? ist es
-                                // schon woanders instanziert? Emeric
+    private Clusters clusters;// Warum habe ich nicht instanziert? ist es schon woanders instanziert? Emeric
     public int x = -1, y = -1; // Coordinates for the dendrogram
 
     public Cluster(int submissionNr, Clusters clusters) {
@@ -18,13 +18,12 @@ public class Cluster implements Comparable<Cluster> {
         this.submissionNr = submissionNr;
         left = right = null;
         similarity = 100;
-  }
+    }
 
     // changed by Emeric Kwemou now, a cluster muss belong to a specific Objekt
     // of Type Clusters ->Clusters object added in Constructor
 
-    public Cluster(Cluster left, Cluster right, float similarity,
-            Clusters clusters) {
+    public Cluster(Cluster left, Cluster right, float similarity, Clusters clusters) {
         this.clusters = clusters;
         this.submissionNr = -1;
         this.left = left;
@@ -55,22 +54,22 @@ public class Cluster implements Comparable<Cluster> {
     }
 
     private void calculateAllSubmissions() {
-        if(submissionNr == -1) {
+        if (submissionNr == -1) {
             int rSize = right.size();
             int lSize = left.size();
             allSubmissions = new int[lSize + rSize];
 
-            if(left.allSubmissions != null)
-                System.arraycopy(left.allSubmissions, 0, allSubmissions, 0,
-                    lSize);
-            else
+            if (left.allSubmissions != null) {
+                System.arraycopy(left.allSubmissions, 0, allSubmissions, 0, lSize);
+            } else {
                 allSubmissions[0] = left.submissionNr;
+            }
 
-            if(right.allSubmissions != null)
-                System.arraycopy(right.allSubmissions, 0, allSubmissions,
-                    lSize, rSize);
-            else
+            if (right.allSubmissions != null) {
+                System.arraycopy(right.allSubmissions, 0, allSubmissions, lSize, rSize);
+            } else {
                 allSubmissions[lSize] = right.submissionNr;
+            }
 
             // int i, li, ri;
             // i = ri = li = 0;
@@ -89,8 +88,9 @@ public class Cluster implements Comparable<Cluster> {
             // else
             // allSubmissions[i++] = right.getSubmissionAt(ri++);
             // }
-        } else
+        } else {
             allSubmissions = null;
+        }
     }
 
     // for MIN clustering
@@ -99,13 +99,14 @@ public class Cluster implements Comparable<Cluster> {
         int sizeOther = other.size();
         float maxSim = -1;
 
-        for(int a = 0; a < sizeThis; a++)
-            for(int b = 0; b < sizeOther; b++) {
-                float sim = simMatrix.getSimilarity(this.getSubmissionAt(a),
-                    other.getSubmissionAt(b));
-                if(sim > maxSim)
+        for (int a = 0; a < sizeThis; a++) {
+            for (int b = 0; b < sizeOther; b++) {
+                float sim = simMatrix.getSimilarity(this.getSubmissionAt(a), other.getSubmissionAt(b));
+                if (sim > maxSim) {
                     maxSim = sim;
+                }
             }
+        }
 
         return maxSim;
     }
@@ -116,13 +117,14 @@ public class Cluster implements Comparable<Cluster> {
         int sizeOther = other.size();
         float minSim = 100;
 
-        for(int a = 0; a < sizeThis; a++)
-            for(int b = 0; b < sizeOther; b++) {
-                float sim = simMatrix.getSimilarity(this.getSubmissionAt(a),
-                    other.getSubmissionAt(b));
-                if(sim < minSim)
+        for (int a = 0; a < sizeThis; a++) {
+            for (int b = 0; b < sizeOther; b++) {
+                float sim = simMatrix.getSimilarity(this.getSubmissionAt(a), other.getSubmissionAt(b));
+                if (sim < minSim) {
                     minSim = sim;
+                }
             }
+        }
 
         return minSim;
     }
@@ -133,42 +135,50 @@ public class Cluster implements Comparable<Cluster> {
         int sizeOther = other.size();
         float summedSim = 0;
 
-        for(int a = 0; a < sizeThis; a++)
-            for(int b = 0; b < sizeOther; b++)
-                summedSim += simMatrix.getSimilarity(this.getSubmissionAt(a),
-                    other.getSubmissionAt(b));
-        return summedSim / (float) (sizeThis * sizeOther);
+        for (int a = 0; a < sizeThis; a++) {
+            for (int b = 0; b < sizeOther; b++) {
+                summedSim += simMatrix.getSimilarity(this.getSubmissionAt(a), other.getSubmissionAt(b));
+            }
+        }
+        return summedSim / (sizeThis * sizeOther);
     }
 
+    @Override
     public String toString() {
-        String text = (submissionNr == -1 ? "Similarity: " + similarity + ":"
-                : "Submission:");
-        for(int i = 0; i < size(); i++)
+        String text = (submissionNr == -1 ? "Similarity: " + similarity + ":" : "Submission:");
+        for (int i = 0; i < size(); i++) {
             text += " " + clusters.submissions.elementAt(getSubmissionAt(i)).name;
+        }
         text += "\n\n";
-        if(left != null)
+        if (left != null) {
             text += left.toString();
-        if(right != null)
+        }
+        if (right != null) {
             text += right.toString();
+        }
         return text;
     }
 
+    @Override
     public int compareTo(Cluster cluster2) {
-        if(equals(cluster2))
+        if (equals(cluster2)) {
             return 0;
+        }
 
         int s1Size = size();
         int s2Size = cluster2.size();
 
-        if(s1Size != s2Size)
+        if (s1Size != s2Size) {
             return (s1Size < s2Size ? +1 : -1);
+        }
 
         int size = 0;
-        for(int i = 0; i < s1Size; i++) {
+        for (int i = 0; i < s1Size; i++) {
             String name1 = clusters.submissions.elementAt(getSubmissionAt(i)).name;
             String name2 = clusters.submissions.elementAt(cluster2.getSubmissionAt(i)).name;
-            if(name1.compareTo(name2) != 0)
+            if (name1.compareTo(name2) != 0) {
                 return name1.compareTo(name2);
+            }
             size += name1.length();
             size -= name2.length();
         }

@@ -1,92 +1,206 @@
+# JPlag - Detecting Software Plagiarism
+
 [![Build Status](https://travis-ci.org/jplag/jplag.svg?branch=master)](https://travis-ci.org/jplag/)
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
 
+This fork focuses on the development of a new Java API for JPlag.
 
-## Download and Run JPlag
-Download a released version - all releases are single-JAR releases.
+## Download and Installation
 
-Type `java -jar jplag-yourVersion.jar` in a console to see the command line options.
-The options as of 2019/03/20 are:
+### Building from sources 
+
+1. Download or clone the code from this repository.
+2. Run `mvn clean install` from the root of the repository to install all submodules. You will find the JARs in the respective `target` directories.
+3. Inside the `jplag` directory run `mvn clean generate-sources package assembly:single`. 
+
+You'll find the generated JAR with all dependencies in  `jplag/target`.
+
+## (Breaking) Changes
+
+> Note: The following list of changes doesn't claim to be complete and is intended to give a rough overview of the changes introduced with this fork.
+
+This fork made the following (breaking) changes to the JPlag repository:
+
+* Removed folders related to (deprecated) web services: `adminTool`, `atujplag`, `homepage`, `maven-libs`, `webService`, and `wsClient`
+* Deleted unnecessary resources from `jplag/src/main/resources`
+* All Cluster-related code fragments are commented and marked as `TODO`
+* The new `JPlagOptions` class replaces all previous Options-related classes and manages all available program options
+* Added the `argparse4j` package to properly parse CLI arguments
+* Renamed the `Program` class to `JPlag`. It contains the main logic the parse submissions and delegate the comparison of files to one of the new `ComparisonStrategy` implementing classes.
+* Deleted the **experimental** comparison mode. The **external** and **special** comparsion strategies are commented and marked as `TODO`. The **Normal** and **Revision** strategy should work as intended.
+* The new `JPlagResult` class is supposed to bundle all results of a plagiarism detection run. An instance of this class can optionally be passed to the new `Report` class to generate web pages of the results
+* While re-implementing the CLI, we renamed/removed some arguments to adapt the CLI to the new code structure. A detailed description of all available options of the new CLI can be found below.
+* The new `JPlagComparison` class replaces the old `AllMatches` class.
+* We removed `AvgComparator`, `AvgReversedComparator`, `MaxComparator`, `MaxReversedComparator`, `MinComparator`, and `MinReversedComparator` from the `JPlagComparison` (previously `AllMatches`) class. All comparisons are now sorted by average similarity. The `JPlagResult` and `JPlagComparison` classes should make adding a custom sorting logic very straightforward if that's required.
+
+In addition, without referring to any specifics, this fork also includes:
+* Tons of code formatting & restructuring
+* Renaming of classes, files, and functions 
+* Deletion of unused code
+
+## Usage
+
+### CLI
 
 ```
-JPlag (Version 2.12.0-SNAPSHOT), Copyright (c) 2004-2019 KIT - IPD Tichy, Guido Malpohl, and others.
-Usage: JPlag [ options ] [<root-dir>] [-c file1 file2 ...]
- <root-dir>        The root-directory that contains all submissions
+usage: jplag [-h]
+             [-l {java_1_1,java_1_2,java_1_5,java_1_5_dm,java_1_7,java_1_9,python_3,c_cpp,c_sharp,char,text,scheme}]
+             [-bc BC] [-v {parser,quiet,long,details}] [-d] [-S S] [-p P]
+             [-x X] [-t T] [-s S] [-r R] rootDir
 
-options are:
- -v[qlpd]        (Verbose)
-                 q: (Quiet) no output
-                 l: (Long) detailed output
-                 p: print all (p)arser messages
-                 d: print (d)etails about each submission
- -d              (Debug) parser. Non-parsable files will be stored.
- -S <dir>        Look in directories <root-dir>/*/<dir> for programs.
-                 (default: <root-dir>/*)
- -s              (Subdirs) Look at files in subdirs too (default: deactivated)
+JPlag - Detecting Software Plagiarism
 
- -p <suffixes>   <suffixes> is a comma-separated list of all filename suffixes
-                 that are included. ("-p ?" for defaults)
+positional arguments:
+  rootDir                The root-directory that contains all submissions
 
- -o <file>       (Output) The Parserlog will be saved to <file>
- -x <file>       (eXclude) All files named in <file> will be ignored
- -t <n>          (Token) Tune the sensitivity of the comparison. A smaller
-                 <n> increases the sensitivity.
- -m <n>          (Matches) Number of matches that will be saved (default:20)
- -m <p>%         All matches with more than <p>% similarity will be saved.
- -r <dir>        (Result) Name of directory in which the web pages will be
-                 stored (default: result)
- -bc <dir>       Name of the directory which contains the basecode (common framework)
- -c [files]      Compare a list of files.
- -l <language>   (Language) Supported Languages:
-                 java19 (default), java 17, java15, java15dm, java12, java11, python3, c/c++, c#-1.2, char, text, scheme
+named arguments:
+  -h, --help             show this help message and exit
+  -l {java_1_1,java_1_2,java_1_5,java_1_5_dm,java_1_7,java_1_9,python_3,c_cpp,c_sharp,char,text,scheme}
+                         Select  the  language  to  parse  the  submissions
+                         (default: java_1_9)
+  -bc BC                 Name of  the  directory  which  contains  the base
+                         code (common framework)
+  -v {parser,quiet,long,details}
+                         Verbosity (default: quiet)
+  -d                     (Debug) parser. Non-parsable files  will be stored
+                         (default: false)
+  -S S                   Look   in   directories   <root-dir>/*/<dir>   for
+                         programs
+  -p P                   comma-separated  list  of  all  filename  suffixes
+                         that are included
+  -x X                   All files named in <file> will be ignored
+  -t T                   Tune the sensitivity of  the comparison. A smaller
+                         <n> increases the sensitivity
+  -s S                   Similarity  Threshold:  all   matches  above  this
+                         threshold will be saved
+  -r R                   Name of directory in which  the  web pages will be
+                         stored (default: result)
 ```
 
-**Note:** java19 refers to all java version from 9 on (currently 9 - 12).
+### Java API
 
-### Example
-Assume that we want to check students' solutions that are written in Java 11.
+The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects.
 
-Each student solution is in its own directory, say `student1`, `student2`, and so on.
-All solutions are in a common directory, say `exercise1`.
+#### Example 
 
-To run JPlag, simply type `java -jar jplag-yourVersion.jar -l java19 -r /tmp/jplag_results_exercise1/ -s /path/to/exercise1`
+```java
+JPlagOptions options = new JPlagOptions("/path/to/rootDir", LanguageOption.JAVA_1_9);
+options.setBaseCodeSubmissionName("template");
 
-- `-l java19` tells JPlag to use the frontend for Java 9+
-- `-s` tells JPlag to recurse into subdirectories; as we assume Java projects, we'll very likely encounter subdirectories such as `student1/src/`
-- `-r /tmp/jplag_results_exercise1` tells JPlag to store the results in the directory `/tmp/jplag_results_exercise1`
+JPlag jplag = new JPlag(options);
+JPlagResult result = jplag.run();
 
-**Note:** You have to specify the language exactly as they are printed by JPlag (running JPlag without command line arguments prints all available languages - and other options).
-E.g., if you want to process C++ files, you have specify `-l c/c++` as language option.
+List<JPlagComparison> comparisons = result.getComparisons();
 
-### Options
-#### `-x <file>`   (eXclude) All files named in `<file>` will be ignored
-The option `-x` requires an exclusion list saved as `<file>`.
-The exclusion list contains a  number of suffixes.
-JPlag will ignore all files that end with one of the suffixes.
+// Optional
+File outputDir = new File("/path/to/output");
+Report report = new Report(outputDir);
 
-#### `-c [files]`   (Compare) Compare a list of files
-Example: `java -jar jplag-yourVersion.jar -l java19 -c student1_file student2_file student3_file`
-This option must be the last one.
-JPlag will compare just a list of files pairwise.
+report.writeResult(result);
+```
 
-#### `-bc <dir>`   (common framework) Name of the directory which contains the basecode
-Example: `java -jar jplag-yourVersion.jar -s -l java19  ./submissions -bc template`
-This option includes files that were given out to students as a framework or to fill in blanks - the content is compared with each submission and matching parts are excluded from mutual student matching.
-`<dir>` is considered to be the name of a subdirectory, i.e. relative path from `<root-dir>`, residing somewhere in the submission directory, on the same level as student submissions.
-**Note:** Due to a bug in all versions you have to provide the base directory without a slash at the end (e.g template, **not** template/).
+#### Class Diagram
 
-## Building JPlag
-To build and run a local installation of JPlag, you can use the pom.xml in this directory (aggregator). It builds JPlag and the available frontends. 
+![UMLClassDiagram.png](UMLClassDiagram.png)
 
-To generate single modules run `mvn clean generate-sources package` in the base directory; if you want a single file then run `mvn clean generate-sources assembly:assembly` inside the `jplag` directory after installing all submodules with `mvn clean install` from the base directory. You will find the JARs in the respective `target` directories. If you build a single JAR, it will be generated in `jplag/target`.
+## Concepts
 
-### Web Service
-Installing, running and maintaining a local web service is not recommended as the web service uses outdated libraries and (really) needs polishing.
+This section explains some fundamental concepts about JPlag that make it easier to understand and use.
 
-If you want to do it anyway: `atujplag` is the client, `webservice` is the - yepp - web service.
+### Root directory
 
-## Improving JPlag
+This is the directory in which JPlag will scan for submissions.
+
+### Submissions
+
+Submissions contain the source code that JPlag will parse and compare. They have to be direct children of the root directory and can either be single files or directories.
+
+#### Example: Single-file submissions
+
+```
+/path/to/root-directory
+├── Submission-1.java
+├── ...
+└── Submission-n.java
+```
+
+#### Example: Directory submissions
+
+JPlag will read submission directories recursively, so they can contain multiple (nested) source code files.
+
+```
+/path/to/root-directory
+├── Submission-1
+│   ├── Main.java
+│   └── util
+│       └── Utils.java
+├── ...
+└── Submission-n
+    ├── Main.java
+    └── util
+        └── Utils.java
+```
+
+If you want JPlag to scan only one specific subdirectory of a submission for source code files (e.g. `src`), you can pass the `--subDir` option:
+
+```
+With option --subDir=src
+
+/path/to/root-directory
+├── Submission-1
+│   ├── src                 
+│   │   ├── Main.java       # Included
+│   │   └── util            
+│   │       └── Utils.java  # Included
+│   ├── lib                 
+│   │   └── Library.java    # Ignored
+│   └── Other.java          # Ignored
+└── ...
+```
+
+### Base Code
+
+The base code is a special kind of submission. It is the template that all other submissions are based on. JPlag will ignore any match between two submissions that is also part of the base code.
+
+Like any other submission, the base code has to be a single file or directory in the root directory.
+
+```
+/path/to/root-directory
+├── BaseCode
+│   └── Solution.java
+├── Submission-1
+│   └── Solution.java
+├── ...
+└── Submission-n
+    └── Solution.java
+```
+
+#### Example
+
+In this example, students have to solve a given problem by implementing the `run` method in the template below. Because they are not supposed to modify the `main` function, it will be identical for each student. 
+
+```java
+// BaseCode/Solution.java
+public class Solution {
+
+    // DO NOT MODIFY
+    public static void main(String[] args) {
+        Solution solution = new Solution();  
+        solution.run();
+    }
+    
+    public void run() {
+        // TODO: Implement your solution here.
+    }
+}
+```
+
+To prevent JPlag from detecting similarities in the `main` function (and other parts of the template), we can instruct JPlag to ignore matches with the given base code by providing the `--baseCode=<base-code-name>` option. 
+
+The `<base-code-name>` in the example above is `BaseCode`.
+
+## Contributing
 We're happy to incorporate all improvements to JPlag into this code base. Feel free to fork the project and send pull requests.
 
 ### Adding new languages

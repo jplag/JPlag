@@ -7,7 +7,7 @@
 		<repository>
 			<id>ipdNexus</id>
 			<name>IPD-Nexus-Public</name>
-			<url>http://bob.ipd.kit.edu/nexus/repository/maven-public-all/</url>
+			<url>https://bob.ipd.kit.edu/nexus/repository/maven-public-all/</url>
 		</repository>
 	</repositories>
 
