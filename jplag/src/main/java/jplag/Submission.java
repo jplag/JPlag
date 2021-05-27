@@ -6,276 +6,277 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
-/*
- * Everything about a single submission is stored in this object. (directory,
- * files, ...)
+import jplag.options.Verbosity;
+
+/**
+ * Represents a single submission. A submission can contain multiple files.
  */
 public class Submission implements Comparable<Submission> {
-	public String name;
 
-	private Program program;
+    /**
+     * Name that uniquely identifies this submission. Will most commonly be the directory or file name.
+     */
+    public String name;
 
-	private boolean readSubDirs;
+    public File submissionFile;
 
-	private Language language;
+    /**
+     * List of files this submission consists of.
+     */
+    public List<File> files;
 
-	public File dir;
+    /**
+     * List of tokens that have been parsed from the files this submission consists of.
+     * <p>
+     * TODO PB: The name 'Structure' is very generic and should be changed to something more descriptive.
+     */
+    public Structure tokenList;
 
-	public String[] files = null; // = new String[0];
+    /**
+     * True, if at least one error occurred while parsing this submission; false otherwise.
+     */
+    public boolean hasErrors = false;
 
-	public Structure struct;
+    private final JPlag program;
 
-	public int structSize = 0;
+    public Submission(String name, File submissionFile, JPlag program) {
+        this.name = name;
+        this.submissionFile = submissionFile;
+        this.program = program;
+        this.files = parseFilesRecursively(submissionFile);
+    }
 
-	// public long structMem;
-	boolean exact_match = false; // used for fallback
+    /**
+     * Recursively scan the given directory for nested files. Excluded files and files with an invalid suffix are ignored.
+     * <p>
+     * If the given file is not a directory, the input will be returned as a singleton list.
+     * @param file - File to start the scan from.
+     * @return a list of nested files.
+     */
+    private List<File> parseFilesRecursively(File file) {
+        if (program.isFileExcluded(file)) {
+            return Collections.emptyList();
+        }
 
-	public boolean errors = false;
+        if (file.isFile() && program.hasValidSuffix(file)) {
+            return Collections.singletonList(file);
+        }
 
-	public DecimalFormat format = new DecimalFormat("0000");
+        String[] nestedFileNames = file.list();
 
-	public Submission(String name, File dir, boolean readSubDirs, Program p, Language language) {
-		this.program = p;
-		this.language = language;
-		this.dir = dir;
-		this.name = name;
-		this.readSubDirs = readSubDirs;
-		try {
-			lookupDir(dir, "");
-		} catch (Throwable b) {
-		}
-		if (program.use_verbose_details()) {
-			program.print("Files in submission '" + name + "':\n", null);
-			for (int i = 0; i < files.length; i++)
-				program.print("  " + files[i] + '\n', null);
-		}
-	}
+        if (nestedFileNames == null) {
+            return Collections.emptyList();
+        }
 
-	public Submission(String name, File dir, Program p, Language language) {
-		this.language = language;
-		this.program = p;
-		this.dir = dir;
-		this.name = name;
-		this.readSubDirs = false;
+        List<File> files = new ArrayList<>();
 
-		files = new String[1];
-		files[0] = name;
+        for (String fileName : nestedFileNames) {
+            files.addAll(parseFilesRecursively(new File(file, fileName)));
+        }
 
-		if (program.use_verbose_details()) {
-			program.print("Files in submission '" + name + "':\n", null);
-			for (int i = 0; i < files.length; i++)
-				program.print("  " + files[i] + '\n', null);
-		}
-	}
+        return files;
+    }
 
-	// recursively read in all the files
-	private void lookupDir(File dir, String subDir) throws Throwable {
-		File aktDir = new File(dir, subDir);
-		if (!aktDir.isDirectory())
-			return;
-		if (readSubDirs) {
-			String[] dirs = aktDir.list();
-			if (!subDir.equals(""))
-				for (int i = 0; i < dirs.length; i++)
-					lookupDir(dir, subDir + File.separator + dirs[i]);
-			else
-				for (int i = 0; i < dirs.length; i++)
-					lookupDir(dir, dirs[i]);
-		}
-		String[] newFiles = aktDir.list(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				if (!new File(dir, name).isFile())
-					return false;
-				if (program.excludeFile(name))
-					return false;
-				String[] suffies = program.get_suffixes();
-				for (int i = 0; i < suffies.length; i++)
-					if (exact_match) {
-						if (name.equals(suffies[i]))
-							return true;
-					} else {
-						if (name.endsWith(suffies[i]))
-							return true;
-					}
-				return false;
-			}
-		});
-		if (files != null) {
-			String[] oldFiles = files;
-			files = new String[oldFiles.length + newFiles.length];
-			if (subDir != "")
-				for (int i = 0; i < newFiles.length; i++)
-					files[i] = subDir + File.separator + newFiles[i];
-			else
-				System.arraycopy(newFiles, 0, files, 0, newFiles.length);
-			System.arraycopy(oldFiles, 0, files, newFiles.length, oldFiles.length);
-		} else {
-			if (subDir != "") {
-				files = new String[newFiles.length];
-				for (int i = 0; i < newFiles.length; i++)
-					files[i] = subDir + File.separator + newFiles[i];
-			} else
-				files = newFiles;
-		}
-	}
+    public int getNumberOfTokens() {
+        if (tokenList == null) {
+            return 0;
+        }
 
-	/* parse all the files... */
-	public boolean parse() throws jplag.ExitException {
-		if (!program.use_verbose_parser()) {
-			if (files == null || files.length == 0) {
-				program.print("ERROR: nothing to parse for submission \"" + name + "\"\n", null);
-				return false;
-			}
-		}
+        return tokenList.size();
+    }
 
-		struct = this.language.parse(dir, files);
-		if (!language.errors()) {
-			if (struct.size() < 3) {
-				program.print("Submission \"" + name + "\" is too short!\n", null);
-				struct = null;
-				errors = true; // invalidate submission
-				return false;
-			}
-			return true;
-		}
+    @Override
+    public int compareTo(Submission other) {
+        return name.compareTo(other.name);
+    }
 
-		struct = null;
-		errors = true; // invalidate submission
-		if (program.use_debugParser())
-			copySubmission();
-		return false;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 
-	/*
-	 * This method is used to copy files that can not be parsed to a special
-	 * folder: jplag/errors/java old_java scheme cpp /001/(...files...)
-	 * /002/(...files...)
-	 */
-	private void copySubmission() {
-		File errorDir = null;
-		try {
-			URL url = Submission.class.getResource("errors");
-			errorDir = new File(url.getFile());
-		} catch (NullPointerException e) {
-			return;
-		}
-		errorDir = new File(errorDir, this.language.getShortName());
-		if (!errorDir.exists())
-			errorDir.mkdir();
-		int i = 0;
-		File destDir;
-		while ((destDir = new File(errorDir, format.format(i))).exists())
-			i++;
-		destDir.mkdir();
-		for (i = 0; i < files.length; i++)
-			copyFile(new File(dir, files[i]), new File(destDir, files[i]));
-	}
+    /**
+     * Map all files of this submission to their path relative to the submission directory.
+     * <p>
+     * This method is required to stay compatible with `program.language.parse(...)` as it requires the given file paths to
+     * be relative to the submission directory.
+     * <p>
+     * In a future update, `program.language.parse(...)` should probably just take a list of files.
+     * @param baseFile - File to base all relative file paths on.
+     * @param files - List of files to map.
+     * @return an array of file paths relative to the submission directory.
+     */
+    public String[] getRelativeFilePaths(File baseFile, List<File> files) {
+        Path baseFilePath = baseFile.toPath();
 
-	/* Physical copy. :-) */
-	private void copyFile(File in, File out) {
-		byte[] buffer = new byte[10000];
-		try {
-			FileInputStream dis = new FileInputStream(in);
-			FileOutputStream dos = new FileOutputStream(out);
-			int count;
-			do {
-				count = dis.read(buffer);
-				if (count != -1)
-					dos.write(buffer, 0, count);
-			} while (count != -1);
-			dis.close();
-			dos.close();
-		} catch (IOException e) {
-			program.print("Error copying file: " + e.toString() + "\n", null);
-		}
-	}
+        return files.stream().map(File::toPath).map(baseFilePath::relativize).map(Path::toString).toArray(String[]::new);
+    }
 
-	public int size() {
-		if (struct != null)
-			return structSize = struct.size();
-		return structSize;
-	}
+    /* parse all the files... */
+    public boolean parse() {
+        if (program.getOptions().getVerbosity() != Verbosity.PARSER) {
+            if (files == null || files.size() == 0) {
+                program.print("ERROR: nothing to parse for submission \"" + name + "\"\n", null);
+                return false;
+            }
+        }
 
-	/*
-	 * Used by the "Report" class. All source files are returned as an array of
-	 * an array of strings.
-	 */
-	public String[][] readFiles(String[] files) throws jplag.ExitException {
-		String[][] result = new String[files.length][];
-		String help;
+        String[] relativeFilePaths = getRelativeFilePaths(submissionFile, files);
 
-		Vector<String> text = new Vector<String>();
-		for (int i = 0; i < files.length; i++) {
-			text.removeAllElements();
-			try {
-				/* file encoding = "UTF-8" */
-				FileInputStream fileInputStream = new FileInputStream(new File(dir, files[i]));
-				InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
-				BufferedReader in = new BufferedReader(inputStreamReader);
-				while ((help = in.readLine()) != null) {
-					help = help.replaceAll("&", "&amp;");
-					help = help.replaceAll("<", "&lt;");
-					help = help.replaceAll(">", "&gt;");
-					help = help.replaceAll("\"", "&quot;");
-					text.addElement(help);
-				}
-				in.close();
-				inputStreamReader.close();
-				fileInputStream.close();
-			} catch (FileNotFoundException e) {
-				System.out.println("File not found: " + ((new File(dir, files[i])).toString()));
-			} catch (IOException e) {
-				throw new jplag.ExitException("I/O exception!");
-			}
-			result[i] = new String[text.size()];
-			text.copyInto(result[i]);
-		}
-		return result;
-	}
+        tokenList = this.program.language.parse(submissionFile, relativeFilePaths);
+        if (!program.language.errors()) {
+            if (tokenList.size() < 3) {
+                program.print("Submission \"" + name + "\" is too short!\n", null);
+                tokenList = null;
+                hasErrors = true; // invalidate submission
+                return false;
+            }
+            return true;
+        }
 
-	/*
-	 * Used by the "Report" class. All source files are returned as an array of
-	 * an array of chars.
-	 */
-	public char[][] readFilesChar(String[] files) throws jplag.ExitException {
-		char[][] result = new char[files.length][];
+        tokenList = null;
+        hasErrors = true; // invalidate submission
+        if (program.getOptions().isDebugParser()) {
+            copySubmission();
+        }
+        return false;
+    }
 
-		for (int i = 0; i < files.length; i++) {
-			try {
-				File file = new File(dir, files[i]);
-				int size = (int) file.length();
-				char[] buffer = new char[size];
+    /**
+     * Used by the "Report" class. All source files are returned as an array of an array of strings.
+     */
+    public String[][] readFiles(String[] files) throws jplag.ExitException {
+        String[][] result = new String[files.length][];
+        String help;
+        Vector<String> text = new Vector<>();
 
-				FileReader fis = new FileReader(file);
+        for (int i = 0; i < files.length; i++) {
+            text.removeAllElements();
 
-				if (size != fis.read(buffer)) {
-					System.out.println("Not right size read from the file, " + "but I will still continue...");
-				}
+            try {
+                /* file encoding = "UTF-8" */
+                FileInputStream fileInputStream = new FileInputStream(new File(submissionFile, files[i]));
+                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+                BufferedReader in = new BufferedReader(inputStreamReader);
 
-				result[i] = buffer;
-				fis.close();
-			} catch (FileNotFoundException e) {
-				// TODO: Should an ExitException be thrown here?
-				System.out.println("File not found: " + ((new File(dir, files[i])).toString()));
-			} catch (IOException e) {
-				throw new jplag.ExitException("I/O exception reading file \"" + (new File(dir, files[i])).toString() + "\"!", e);
-			}
-		}
-		return result;
-	}
+                while ((help = in.readLine()) != null) {
+                    help = help.replaceAll("&", "&amp;");
+                    help = help.replaceAll("<", "&lt;");
+                    help = help.replaceAll(">", "&gt;");
+                    help = help.replaceAll("\"", "&quot;");
+                    text.addElement(help);
+                }
 
-	public int compareTo(Submission other) {
-		return name.compareTo(other.name);
-	}
+                in.close();
+                inputStreamReader.close();
+                fileInputStream.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found: " + ((new File(submissionFile, files[i])).toString()));
+            } catch (IOException e) {
+                throw new jplag.ExitException("I/O exception!");
+            }
 
-	public String toString() {
-		return name;
-	}
+            result[i] = new String[text.size()];
+            text.copyInto(result[i]);
+        }
+
+        return result;
+    }
+
+    /**
+     * Used by the "Report" class. All source files are returned as an array of an array of chars.
+     */
+    public char[][] readFilesChar(String[] files) throws jplag.ExitException {
+        char[][] result = new char[files.length][];
+
+        for (int i = 0; i < files.length; i++) {
+            try {
+                File file = new File(submissionFile, files[i]);
+                int size = (int) file.length();
+                char[] buffer = new char[size];
+
+                FileReader fis = new FileReader(file);
+
+                if (size != fis.read(buffer)) {
+                    System.out.println("Not right size read from the file, " + "but I will still continue...");
+                }
+
+                result[i] = buffer;
+                fis.close();
+            } catch (FileNotFoundException e) {
+                // TODO PB: Should an ExitException be thrown here?
+                System.out.println("File not found: " + ((new File(submissionFile, files[i])).toString()));
+            } catch (IOException e) {
+                throw new jplag.ExitException("I/O exception reading file \"" + (new File(submissionFile, files[i])).toString() + "\"!", e);
+            }
+        }
+
+        return result;
+    }
+
+    /*
+     * This method is used to copy files that can not be parsed to a special folder: jplag/errors/java old_java scheme cpp
+     * /001/(...files...) /002/(...files...)
+     */
+    private void copySubmission() {
+        File errorDir = null;
+        DecimalFormat format = new DecimalFormat("0000");
+
+        try {
+            URL url = Submission.class.getResource("errors");
+            errorDir = new File(url.getFile());
+        } catch (NullPointerException e) {
+            return;
+        }
+
+        errorDir = new File(errorDir, this.program.language.getShortName());
+
+        if (!errorDir.exists()) {
+            errorDir.mkdir();
+        }
+
+        int i = 0;
+        File destDir;
+
+        while ((destDir = new File(errorDir, format.format(i))).exists()) {
+            i++;
+        }
+
+        destDir.mkdir();
+
+        for (i = 0; i < files.size(); i++) {
+            copyFile(new File(files.get(i).getAbsolutePath()), new File(destDir, files.get(i).getName()));
+        }
+    }
+
+    /* Physical copy. :-) */
+    private void copyFile(File in, File out) {
+        byte[] buffer = new byte[10000];
+        try {
+            FileInputStream dis = new FileInputStream(in);
+            FileOutputStream dos = new FileOutputStream(out);
+            int count;
+            do {
+                count = dis.read(buffer);
+                if (count != -1) {
+                    dos.write(buffer, 0, count);
+                }
+            } while (count != -1);
+            dis.close();
+            dos.close();
+        } catch (IOException e) {
+            program.print("Error copying file: " + e.toString() + "\n", null);
+        }
+    }
 }

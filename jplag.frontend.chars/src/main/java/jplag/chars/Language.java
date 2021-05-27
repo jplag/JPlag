@@ -28,7 +28,6 @@ public class Language implements jplag.Language {
 	 * @see jplag.Language#errorsCount()
 	 */
 	public int errorsCount() {
-		// TODO Auto-generated method stub
 		return this.parser.errorsCount();
 	}
 

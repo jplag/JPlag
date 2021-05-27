@@ -2,15 +2,10 @@ package jplag.java19;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
-import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -52,10 +47,10 @@ import com.sun.source.tree.TryTree;
 import com.sun.source.tree.TypeParameterTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.WhileLoopTree;
+import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 import com.sun.source.util.Trees;
-import com.sun.source.util.JavacTask;
 
 public class JavacAdapter {
 	private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();

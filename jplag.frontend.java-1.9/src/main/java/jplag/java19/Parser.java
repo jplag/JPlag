@@ -2,8 +2,6 @@ package jplag.java19;
 
 import java.io.File;
 
-import jplag.java19.JavaToken;
-
 public class Parser  extends jplag.Parser {
 	private jplag.Structure struct;
 
