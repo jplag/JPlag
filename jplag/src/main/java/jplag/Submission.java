@@ -200,31 +200,30 @@ public class Submission implements Comparable<Submission> {
     public char[][] readFilesChar(String[] files) throws jplag.ExitException {
         char[][] result = new char[files.length][];
 
-        for (int i = 0; i < files.length; i++) 
-           // If the token path is absolute, ignore the provided directory.
-			      File path = new File(files[i]);
-			      if (!path.isAbsolute()) {
-				        path = new File(dir, files[i]);
+        for (int i = 0; i < files.length; i++) {
+            // If the token path is absolute, ignore the provided directory
+            File file = new File(files[i]);
+            if (!file.isAbsolute()) {
+                file = new File(submissionFile, files[i]);
             }
             
             try {
-                File file = new File(path);
                 int size = (int) file.length();
                 char[] buffer = new char[size];
 
-                FileReader fis = new FileReader(file);
+                FileReader reader = new FileReader(file);
 
-                if (size != fis.read(buffer)) {
+                if (size != reader.read(buffer)) {
                     System.out.println("Not right size read from the file, " + "but I will still continue...");
                 }
 
                 result[i] = buffer;
-                fis.close();
+                reader.close();
             } catch (FileNotFoundException e) {
                 // TODO PB: Should an ExitException be thrown here?
-                System.out.println("File not found: " + ((new File(submissionFile, files[i])).toString()));
+                System.out.println("File not found: " + file.getPath());
             } catch (IOException e) {
-                throw new jplag.ExitException("I/O exception reading file \"" + (new File(submissionFile, files[i])).toString() + "\"!", e);
+                throw new jplag.ExitException("I/O exception reading file \"" + file.getPath() + "\"!", e);
             }
         }
 
