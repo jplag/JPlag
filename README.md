@@ -18,7 +18,7 @@ You'll find the generated JAR with all dependencies in  `jplag/target`.
 
 ## (Breaking) Changes coming with the v3.0.0 release
 
-> Note: The following list of changes doesn't claim to be complete and is intended to give a rough overview of the changes.
+> Note: The following list is incomplete and gives a rough overview of the changes. In case you depend on missing features we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
 
 * Removed folders related to (deprecated) web services: `adminTool`, `atujplag`, `homepage`, `maven-libs`, `webService`, and `wsClient`
 * Deleted unnecessary resources from `jplag/src/main/resources`
