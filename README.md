@@ -4,8 +4,6 @@
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
 
-This fork focuses on the development of a new Java API for JPlag.
-
 ## Download and Installation
 
 ### Building from sources 
