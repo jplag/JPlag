@@ -1,0 +1,49 @@
+name: Maven Workflow
+
+on:
+  push: 
+  pull_request:
+    types: [opened, synchronize, reopened]
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.3.4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: 11
+        distribution: 'zulu'
+        
+    - name: Run Maven Install
+      run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+    
+    - name: Run Tests
+      run: mvn test -B
+      
+    - name: Build Assembly
+      working-directory: jplag
+      run: mvn clean generate-sources package assembly:single
+      
+    - name: Upload Assembly
+      uses: actions/upload-artifact@v2
+      with:
+        name: "JPlag"
+        path: "jplag/target/jplag-*-jar-with-dependencies.jar"
+        
+    - name: Publish Release
+      uses: marvinpinto/action-automatic-releases@latest
+      if: startsWith(github.ref, 'refs/tags/v')
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        draft: true
+        files: |
+          jplag/target/jplag-*-jar-with-dependencies.jar
+      
+

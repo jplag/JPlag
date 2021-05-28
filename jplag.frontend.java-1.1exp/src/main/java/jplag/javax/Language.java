@@ -1,9 +1,8 @@
 package jplag.javax;
 
-import java.io.*;
+import java.io.File;
 
 import jplag.ProgramI;
-import jplag.javax.Parser;
 
 public class Language implements jplag.Language {
 	private Parser parser;
