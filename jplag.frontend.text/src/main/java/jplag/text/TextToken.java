@@ -7,7 +7,7 @@ public class TextToken extends jplag.Token {
         text = text.toLowerCase();
         Integer obj = (Integer) parser.tokenStructure.table.get(text);
         if(obj == null) {
-            obj = new Integer(parser.tokenStructure.serial);
+            obj = Integer.valueOf(parser.tokenStructure.serial);
             if(parser.tokenStructure.serial == Integer.MAX_VALUE)
                 parser.outOfSerials();
             else

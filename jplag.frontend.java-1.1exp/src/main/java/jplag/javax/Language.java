@@ -1,9 +1,8 @@
 package jplag.javax;
 
-import java.io.*;
+import java.io.File;
 
 import jplag.ProgramI;
-import jplag.javax.Parser;
 
 public class Language implements jplag.Language {
 	private Parser parser;
@@ -39,7 +38,7 @@ public class Language implements jplag.Language {
 		return false;
 	}
 
-	public boolean isPreformated() {
+	public boolean isPreformatted() {
 		return true;
 	}
 

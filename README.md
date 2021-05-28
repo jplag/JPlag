@@ -16,11 +16,9 @@ This fork focuses on the development of a new Java API for JPlag.
 
 You'll find the generated JAR with all dependencies in  `jplag/target`.
 
-## (Breaking) Changes
+## (Breaking) Changes coming with the v3.0.0 release
 
-> Note: The following list of changes doesn't claim to be complete and is intended to give a rough overview of the changes introduced with this fork.
-
-This fork made the following (breaking) changes to the JPlag repository:
+> Note: The following list is incomplete and gives a rough overview of the changes. In case you depend on missing features we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
 
 * Removed folders related to (deprecated) web services: `adminTool`, `atujplag`, `homepage`, `maven-libs`, `webService`, and `wsClient`
 * Deleted unnecessary resources from `jplag/src/main/resources`
@@ -33,11 +31,6 @@ This fork made the following (breaking) changes to the JPlag repository:
 * While re-implementing the CLI, we renamed/removed some arguments to adapt the CLI to the new code structure. A detailed description of all available options of the new CLI can be found below.
 * The new `JPlagComparison` class replaces the old `AllMatches` class.
 * We removed `AvgComparator`, `AvgReversedComparator`, `MaxComparator`, `MaxReversedComparator`, `MinComparator`, and `MinReversedComparator` from the `JPlagComparison` (previously `AllMatches`) class. All comparisons are now sorted by average similarity. The `JPlagResult` and `JPlagComparison` classes should make adding a custom sorting logic very straightforward if that's required.
-
-In addition, without referring to any specifics, this fork also includes:
-* Tons of code formatting & restructuring
-* Renaming of classes, files, and functions 
-* Deletion of unused code
 
 ## Usage
 
@@ -101,8 +94,9 @@ report.writeResult(result);
 ```
 
 #### Class Diagram
-
-![UMLClassDiagram.png](UMLClassDiagram.png)
+<p align="center">
+	<img alt="UMLClassDiagram.png" src="UMLClassDiagram.png?raw=true" width="800">
+</p>
 
 ## Concepts
 
