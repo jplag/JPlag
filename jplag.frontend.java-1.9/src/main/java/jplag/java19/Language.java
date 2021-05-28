@@ -6,65 +6,75 @@ import jplag.ProgramI;
 import jplag.Structure;
 
 /**
- * Hello world!
- *
+ * Language for Java 9 and newer.
  */
 public class Language implements jplag.Language {
-	private Parser parser;
+    private Parser parser;
 
-	public Language(ProgramI program) {
-		this.parser = new Parser();
-		this.parser.setProgram(program);
+    public Language(ProgramI program) {
+        this.parser = new Parser();
+        this.parser.setProgram(program);
+    }
 
-	}
-	
+    @Override
     public String[] suffixes() {
-    	String[] res = { ".java", ".JAVA" };
-		return res;
-	}
+        String[] res = {".java", ".JAVA"};
+        return res;
+    }
 
-	public String name() {
-		return "Javac 1.9+ based AST plugin";
-	}
+    @Override
+    public String name() {
+        return "Javac 1.9+ based AST plugin";
+    }
 
-	public String getShortName() {
-		return "java19";
-	}
+    @Override
+    public String getShortName() {
+        return "java19";
+    }
 
-	public int min_token_match() {
-		return 9;
-	}
-	public boolean supportsColumns() {
-		return true;
-	}
+    @Override
+    public int min_token_match() {
+        return 9;
+    }
 
-	public boolean isPreformatted() {
-		return true;
-	}
+    @Override
+    public boolean supportsColumns() {
+        return true;
+    }
 
-	public boolean usesIndex() {
-		return false;
-	}
+    @Override
+    public boolean isPreformatted() {
+        return true;
+    }
 
-	public int noOfTokens() {
-		return JavaToken.numberOfTokens();
-	}
+    @Override
+    public boolean usesIndex() {
+        return false;
+    }
 
-	public String type2string(int type) {
-		return JavaToken.type2string(type);
-	}
+    @Override
+    public int noOfTokens() {
+        return JavaToken.numberOfTokens();
+    }
 
+    @Override
+    public String type2string(int type) {
+        return JavaToken.type2string(type);
+    }
 
-	public Structure parse(File dir, String[] files) {
-		return this.parser.parse(dir, files);
-	}
+    @Override
+    public Structure parse(File dir, String[] files) {
+        return this.parser.parse(dir, files);
+    }
 
-	public boolean errors() {
-		return this.parser.getErrors();
-	}
+    @Override
+    public boolean errors() {
+        return this.parser.getErrors();
+    }
 
-	public int errorsCount() {
-		return this.parser.errorsCount();
-	}
+    @Override
+    public int errorsCount() {
+        return this.parser.errorsCount();
+    }
 
 }
