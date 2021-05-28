@@ -68,7 +68,6 @@ public class JavacAdapter {
 		}
 		final Trees trees = Trees.instance(task);
 		final SourcePositions positions = trees.getSourcePositions();
-		CompilationUnitTree last = null;
 		for (final CompilationUnitTree ast : asts) {
 			final String filename;
 			if (dir==null)
@@ -77,7 +76,6 @@ public class JavacAdapter {
 				filename=Paths.get(dir.toURI()).relativize(Paths.get(ast.getSourceFile().toUri())).toString();
 			}
 			final LineMap map = ast.getLineMap();
-			last=ast;
 			ast.accept(new TreeScanner<Object,Object>() {
 				@Override
 				public Object visitBlock(BlockTree node, Object p) {
@@ -347,7 +345,6 @@ public class JavacAdapter {
 					return super.visitErroneous(node, p);
 				}
 			}, null);
-			long n = positions.getEndPosition(last, last);
 			parser.add(JavaTokenConstants.FILE_END,filename,1,-1,-1);
 		}
 		int errors = 0;
@@ -355,12 +352,6 @@ public class JavacAdapter {
 		{
 			if (diagItem.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
 				errors++;
-			}
-			if (diagItem.getKind() == javax.tools.Diagnostic.Kind.WARNING) {
-				
-			}
-			if (diagItem.getKind() == javax.tools.Diagnostic.Kind.MANDATORY_WARNING) {
-				
 			}
 		}
 		return errors;

@@ -2,6 +2,8 @@ package jplag.python3;
 
 public class Python3Token extends jplag.Token implements Python3TokenConstants {
 
+    private static final long serialVersionUID = 1485877548175917943L;
+    
     private int line, column, length;
 
     public Python3Token(int type, String file, int line, int column, int length) {
