@@ -39,14 +39,14 @@ import com.sun.source.tree.WhileLoopTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
-class TreeScannerExtension extends TreeScanner<Object, Object> {
+final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     private final String filename;
     private final Parser parser;
     private final LineMap map;
     private final SourcePositions positions;
     private final CompilationUnitTree ast;
 
-    private TreeScannerExtension(String filename, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
+    public TokenGeneratingTreeScanner(String filename, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
         this.filename = filename;
         this.parser = parser;
         this.map = map;
@@ -66,36 +66,36 @@ class TreeScannerExtension extends TreeScanner<Object, Object> {
 
     @Override
     public Object visitClass(ClassTree node, Object p) {
-        boolean enu = false;
-        boolean interf = false;
-        boolean anno = false;
+        boolean isEnum = false;
+        boolean isInterface = false;
+        boolean isAnnotation = false;
         long n = positions.getStartPosition(ast, node);
         long m = positions.getEndPosition(ast, node);
 
         if (node.getKind() == Tree.Kind.ENUM)
-            enu = true;
+            isEnum = true;
         if (node.getKind() == Tree.Kind.INTERFACE)
-            interf = true;
+            isInterface = true;
         if (node.getKind() == Tree.Kind.ANNOTATION_TYPE)
-            anno = true;
-        if (enu)
+            isAnnotation = true;
+        if (isEnum)
             parser.add(JavaTokenConstants.J_ENUM_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 4);
-        if (interf)
+        if (isInterface)
             parser.add(JavaTokenConstants.J_INTERFACE_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 9);
-        if (anno)
+        if (isAnnotation)
             parser.add(JavaTokenConstants.J_ANNO_T_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 10);
-        if (!enu && !interf && !anno)
+        if (!isEnum && !isInterface && !isAnnotation)
             parser.add(JavaTokenConstants.J_CLASS_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 5);
-        Object ret = super.visitClass(node, p);
-        if (!enu && !interf && !anno)
+        Object result = super.visitClass(node, p);
+        if (!isEnum && !isInterface && !isAnnotation)
             parser.add(JavaTokenConstants.J_CLASS_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        if (anno)
+        if (isAnnotation)
             parser.add(JavaTokenConstants.J_ANNO_T_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        if (enu)
+        if (isEnum)
             parser.add(JavaTokenConstants.J_ENUM_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        if (interf)
+        if (isInterface)
             parser.add(JavaTokenConstants.J_INTERFACE_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        return result;
     }
 
     @Override
