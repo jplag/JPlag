@@ -636,18 +636,18 @@ public class Report {
             f.println("</center>");
             f.println("</h3>");
             f.println("<HR>");
-            if (result.getOptions().getLanguage().isPreformated()) {
+            if (result.getOptions().getLanguage().isPreformatted()) {
                 f.println("<PRE>");
             }
             for (int y = 0; y < text[x].length; y++) {
                 f.print(text[x][y]);
-                if (!result.getOptions().getLanguage().isPreformated()) {
+                if (!result.getOptions().getLanguage().isPreformatted()) {
                     f.println("<BR>");
                 } else {
                     f.println();
                 }
             }
-            if (result.getOptions().getLanguage().isPreformated()) {
+            if (result.getOptions().getLanguage().isPreformatted()) {
                 f.println("</PRE>");
             }
         }
@@ -855,18 +855,18 @@ public class Report {
             f.println("</center>");
             f.println("</h3>");
             f.println("<HR>");
-            if (result.getOptions().getLanguage().isPreformated()) {
+            if (result.getOptions().getLanguage().isPreformatted()) {
                 f.println("<PRE>");
             }
             for (int y = 0; y < text[x].length; y++) {
                 f.print(text[x][y]);
-                if (!result.getOptions().getLanguage().isPreformated()) {
+                if (!result.getOptions().getLanguage().isPreformatted()) {
                     f.println("<BR>");
                 } else {
                     f.println();
                 }
             }
-            if (result.getOptions().getLanguage().isPreformated()) {
+            if (result.getOptions().getLanguage().isPreformatted()) {
                 f.println("</PRE>");
             }
         }
