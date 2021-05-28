@@ -1,6 +1,6 @@
 # JPlag - Detecting Software Plagiarism
 
-[![Build Status](https://travis-ci.org/jplag/jplag.svg?branch=master)](https://travis-ci.org/jplag/)
+[![Maven Workflow](https://github.com/jplag/jplag/actions/workflows/maven.yml/badge.svg)](https://github.com/jplag/jplag/actions/workflows/maven.yml)
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
 
