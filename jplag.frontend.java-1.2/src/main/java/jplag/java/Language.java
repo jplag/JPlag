@@ -12,52 +12,64 @@ public class Language implements jplag.Language {
 		this.parser.setProgram(program);
 	}
 
-	public String[] suffixes() {
+	@Override
+    public String[] suffixes() {
 		String[] res = { ".java", ".jav", ".JAVA", ".JAV" };
 		return res;
 	}
 
-	public int errorsCount() {
+	@Override
+    public int errorsCount() {
 		return this.parser.errorsCount();
 	}
 
-	public String name() {
+	@Override
+    public String name() {
 		return "Java1.2 Parser";
 	}
 
-	public String getShortName() {
+	@Override
+    public String getShortName() {
 		return "java12";
 	}
 
-	public int min_token_match() {
+	@Override
+    public int min_token_match() {
 		return 9;
 	}
 
-	public jplag.Structure parse(File dir, String[] files) {
+	@Override
+    public jplag.Structure parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
-	public boolean errors() {
+	@Override
+    public boolean errors() {
 		return this.parser.getErrors();
 	}
 
-	public boolean supportsColumns() {
+	@Override
+    public boolean supportsColumns() {
 		return true;
 	}
 
-	public boolean isPreformatted() {
+	@Override
+    public boolean isPreformatted() {
 		return true;
 	}
 
-	public boolean usesIndex() {
+	@Override
+    public boolean usesIndex() {
 		return false;
 	}
 
-	public int noOfTokens() {
+	@Override
+    public int noOfTokens() {
 		return jplag.java.JavaToken.numberOfTokens();
 	}
 
-	public String type2string(int type) {
+	@Override
+    public String type2string(int type) {
 		return jplag.java.JavaToken.type2string(type);
 	}
 }

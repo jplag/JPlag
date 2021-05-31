@@ -40,7 +40,8 @@ abstract public class Token implements TokenConstants, Serializable {
 		return "<abstract>";
 	}
 	
-	public String toString() {
+	@Override
+    public String toString() {
 		return type2string(type);
 	}
 	

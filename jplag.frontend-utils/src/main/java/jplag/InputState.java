@@ -31,7 +31,8 @@ public class InputState extends LexerSharedInputState {
     line = 1;
   }
   
-  public int getLine() { return line; }
+  @Override
+public int getLine() { return line; }
 }
 
 

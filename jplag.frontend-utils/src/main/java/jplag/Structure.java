@@ -56,7 +56,8 @@ public class Structure implements TokenConstants {
 			files++;
 	}
 
-	public final String toString() {
+	@Override
+    public final String toString() {
 		StringBuffer buf = new StringBuffer();
 
 		try {

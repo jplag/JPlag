@@ -13,52 +13,64 @@ public class Language implements jplag.Language {
 
 	}
 
-	public String[] suffixes() {
+	@Override
+    public String[] suffixes() {
 		String[] res = { ".cs", ".CS" };
 		return res;
 	}
 
-	public int errorsCount() {
+	@Override
+    public int errorsCount() {
 		return this.parser.errorsCount();
 	}
 
-	public String name() {
+	@Override
+    public String name() {
 		return "C# 1.2 Parser";
 	}
 
-	public String getShortName() {
+	@Override
+    public String getShortName() {
 		return "c#-1.2";
 	}
 
-	public int min_token_match() {
+	@Override
+    public int min_token_match() {
 		return 8;
 	}
 
-	public jplag.Structure parse(File dir, String[] files) {
+	@Override
+    public jplag.Structure parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
-	public boolean errors() {
+	@Override
+    public boolean errors() {
 		return parser.getErrors();
 	}
 
-	public boolean supportsColumns() {
+	@Override
+    public boolean supportsColumns() {
 		return true;
 	}
 
-	public boolean isPreformatted() {
+	@Override
+    public boolean isPreformatted() {
 		return true;
 	}
 
-	public boolean usesIndex() {
+	@Override
+    public boolean usesIndex() {
 		return false;
 	}
 
-	public int noOfTokens() {
+	@Override
+    public int noOfTokens() {
 		return jplag.csharp.CSharpToken.numberOfTokens();
 	}
 
-	public String type2string(int type) {
+	@Override
+    public String type2string(int type) {
 		return jplag.csharp.CSharpToken.type2string(type);
 	}
 }

@@ -104,11 +104,13 @@ public class UnicodeReader extends Reader {
         }
     }
 
+    @Override
     public void close() throws IOException {
         init();
         internalIn2.close();
     }
 
+    @Override
     public int read(char[] cbuf, int off, int len) throws IOException {
         init();
         return internalIn2.read(cbuf, off, len);

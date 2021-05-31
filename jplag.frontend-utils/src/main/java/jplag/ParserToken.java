@@ -29,21 +29,28 @@ public class ParserToken extends antlr.Token {
     super(type, text); setText(text);
   }
 
-  public void setLine(int line) { _line = line;}
-  public void setColumn(int column) { _column = column; }
+  @Override
+public void setLine(int line) { _line = line;}
+  @Override
+public void setColumn(int column) { _column = column; }
   public void setID(int id) { _id = id; }
-  public void setText(String text) {
+  @Override
+public void setText(String text) {
     _text = (text!=null ? text.intern() : null);
   }
 
-  public int getColumn() { return _column; }
-  public int getLine() { return _line; }
-  public String getText() { return _text; }
+  @Override
+public int getColumn() { return _column; }
+  @Override
+public int getLine() { return _line; }
+  @Override
+public String getText() { return _text; }
   public int getID() { return _id; }
 
   public int getLength() { return _text.length(); }
 
-  public String toString()
+  @Override
+public String toString()
   {
     return "{\"" + getText() + "\", <" + getType() + ">, " +
       getLine() + " " + getColumn() + "}";

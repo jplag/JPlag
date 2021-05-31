@@ -5,11 +5,13 @@ package jplag;
  * front end development only.
  */
 public class StrippedProgram implements ProgramI {
-	public void addError(String errorMsg) {
+	@Override
+    public void addError(String errorMsg) {
 		System.err.println(errorMsg);
 	}
 
-	public void print(String normalMsg, String longMsg) {
+	@Override
+    public void print(String normalMsg, String longMsg) {
 		if (longMsg != null) {
 			System.out.println(longMsg);
 		} else if (normalMsg != null) {

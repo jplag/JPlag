@@ -167,7 +167,8 @@ public class JavaTabModCharStream implements CharStream
      return nextCharBuf[nextCharInd];
   }
 
-  public char BeginToken() throws java.io.IOException
+  @Override
+public char BeginToken() throws java.io.IOException
   {     
      if (inBuf > 0)
      {
@@ -242,7 +243,8 @@ public class JavaTabModCharStream implements CharStream
      bufcolumn[bufpos] = column;
   }
 
-  public char readChar() throws java.io.IOException
+  @Override
+public char readChar() throws java.io.IOException
   {
      if (inBuf > 0)
      {
@@ -339,7 +341,9 @@ public class JavaTabModCharStream implements CharStream
    * @see #getEndColumn
    */
 
-  public int getColumn() {
+  @Deprecated
+@Override
+public int getColumn() {
      return bufcolumn[bufpos];
   }
 
@@ -348,27 +352,34 @@ public class JavaTabModCharStream implements CharStream
    * @see #getEndLine
    */
 
-  public int getLine() {
+  @Deprecated
+@Override
+public int getLine() {
      return bufline[bufpos];
   }
 
-  public int getEndColumn() {
+  @Override
+public int getEndColumn() {
      return bufcolumn[bufpos];
   }
 
-  public int getEndLine() {
+  @Override
+public int getEndLine() {
      return bufline[bufpos];
   }
 
-  public int getBeginColumn() {
+  @Override
+public int getBeginColumn() {
      return bufcolumn[tokenBegin];
   }
 
-  public int getBeginLine() {
+  @Override
+public int getBeginLine() {
      return bufline[tokenBegin];
   }
 
-  public void backup(int amount) {
+  @Override
+public void backup(int amount) {
 
     inBuf += amount;
     if ((bufpos -= amount) < 0)
@@ -461,7 +472,8 @@ public class JavaTabModCharStream implements CharStream
      ReInit(dstream, 1, 1, 4096);
   }
 
-  public String GetImage()
+  @Override
+public String GetImage()
   {
      if (bufpos >= tokenBegin)
         return new String(buffer, tokenBegin, bufpos - tokenBegin + 1);
@@ -470,7 +482,8 @@ public class JavaTabModCharStream implements CharStream
                               new String(buffer, 0, bufpos + 1);
   }
 
-  public char[] GetSuffix(int len)
+  @Override
+public char[] GetSuffix(int len)
   {
      char[] ret = new char[len];
 
@@ -486,7 +499,8 @@ public class JavaTabModCharStream implements CharStream
      return ret;
   }
 
-  public void Done()
+  @Override
+public void Done()
   {
      nextCharBuf = null;
      buffer = null;
