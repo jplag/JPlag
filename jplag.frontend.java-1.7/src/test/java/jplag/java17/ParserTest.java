@@ -7,16 +7,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import jplag.StrippedProgram;
-import jplag.java17.grammar.Java7Lexer;
-import jplag.java17.grammar.Java7Parser;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import jplag.StrippedProgram;
+import jplag.java17.grammar.Java7Lexer;
+import jplag.java17.grammar.Java7Parser;
 
 public class ParserTest {
 

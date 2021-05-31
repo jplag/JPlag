@@ -7,15 +7,15 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
-import jplag.Structure;
-import jplag.python3.grammar.Python3Lexer;
-import jplag.python3.grammar.Python3Parser;
-import jplag.python3.grammar.Python3Parser.File_inputContext;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
+import jplag.Structure;
+import jplag.python3.grammar.Python3Lexer;
+import jplag.python3.grammar.Python3Parser;
+import jplag.python3.grammar.Python3Parser.File_inputContext;
 
 public class Parser extends jplag.Parser implements Python3TokenConstants {
 

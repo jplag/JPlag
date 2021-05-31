@@ -1,6 +1,10 @@
 package jplag.scheme;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class InsertStream extends FileInputStream {
   public InsertStream(File file) throws FileNotFoundException {

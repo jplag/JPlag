@@ -1,7 +1,8 @@
 package jplag;
 
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 /* This stream adds a newline to the end of a file.
  * this is a proxy

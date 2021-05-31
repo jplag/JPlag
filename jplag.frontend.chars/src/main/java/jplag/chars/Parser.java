@@ -1,6 +1,8 @@
 package jplag.chars;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+
 import jplag.Structure;
 
 public class Parser extends jplag.Parser implements jplag.TokenConstants {
