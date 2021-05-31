@@ -18,16 +18,10 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
-import jplag.clustering.Clusters;
-import jplag.clustering.SimilarityMatrix;
-import jplag.options.ClusterType;
 import jplag.options.LanguageOption;
 import jplag.strategy.ComparisonMode;
 import jplag.strategy.ComparisonStrategy;
-import jplag.strategy.ExternalComparisonStrategy;
 import jplag.strategy.NormalComparisonStrategy;
-import jplag.strategy.RevisionComparisonStrategy;
-import jplag.strategy.SpecialComparisonStrategy;
 import jplagUtils.PropertiesLoader;
 
 /**
@@ -53,18 +47,10 @@ public class JPlag implements ProgramI {
      */
     public Vector<String> errorVector = new Vector<>();
 
-    /**
-     * Used Objects of anothers jplag.Classes, they muss be just one time instantiate TODO PB: What?
-     */
-    public Clusters clusters = null;
 
     private int errors = 0;
 
-    private String invalidSubmissionNames = null;
-
     public Language language;
-
-    public SimilarityMatrix similarity = null;
 
     /**
      * The base code directory is considered a separate submission.
@@ -114,19 +100,9 @@ public class JPlag implements ProgramI {
 
     public void initializeComparisonStrategy() throws ExitException {
         ComparisonMode mode = options.getComparisonMode();
-
-        switch (mode) {
+        switch (mode) { // TODO TS: Currently only one comparison strategy supported
         case NORMAL:
             this.comparisonStrategy = new NormalComparisonStrategy(options, gSTiling);
-            return;
-        case REVISION:
-            this.comparisonStrategy = new RevisionComparisonStrategy(options, gSTiling);
-            return;
-        case SPECIAL:
-            this.comparisonStrategy = new SpecialComparisonStrategy(options, gSTiling);
-            return;
-        case EXTERNAL:
-            this.comparisonStrategy = new ExternalComparisonStrategy(options, gSTiling);
             return;
         default:
             throw new ExitException("Illegal comparison mode: " + options.getComparisonMode());
@@ -224,11 +200,6 @@ public class JPlag implements ProgramI {
 
         // errorVector is not needed anymore
         errorVector = null;
-
-        if (options.getClusterType() != ClusterType.NONE) {
-            clusters = new Clusters(this);
-            similarity = new SimilarityMatrix(submissions.size());
-        }
 
         System.gc();
 
@@ -383,10 +354,6 @@ public class JPlag implements ProgramI {
         long msec = System.currentTimeMillis();
         Iterator<Submission> iter = submissions.iterator();
 
-        if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
-            makeTempDir();
-        }
-
         int invalid = 0;
         while (iter.hasNext()) {
             boolean ok;
@@ -407,19 +374,6 @@ public class JPlag implements ProgramI {
                 subm.tokenList = null;
                 invalid++;
                 removed = true;
-            }
-
-            if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
-                if (subm.tokenList != null) {
-                    this.gSTiling.createHashes(subm.tokenList, options.getMinTokenMatch(), false);
-                    subm.tokenList.save(new File("temp", subm.submissionFile.getName() + subm.name));
-                    subm.tokenList = null;
-                }
-            }
-
-            if (options.getComparisonMode() != ComparisonMode.EXTERNAL && subm.tokenList == null) {
-                invalidSubmissionNames = (invalidSubmissionNames == null) ? subm.name : invalidSubmissionNames + " - " + subm.name;
-                iter.remove();
             }
 
             if (ok && !removed) {
@@ -460,9 +414,6 @@ public class JPlag implements ProgramI {
         print("----- Parsing basecode submission: " + subm.name + "\n", null);
 
         // lets go:
-        if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
-            makeTempDir();
-        }
 
         if (!subm.parse()) {
             printErrors();
@@ -475,14 +426,6 @@ public class JPlag implements ProgramI {
 
         if (options.hasBaseCode()) {
             gSTiling.createHashes(subm.tokenList, options.getMinTokenMatch(), true);
-        }
-
-        if (options.getComparisonMode() == ComparisonMode.EXTERNAL) {
-            if (subm.tokenList != null) {
-                gSTiling.createHashes(subm.tokenList, options.getMinTokenMatch(), false);
-                subm.tokenList.save(new File("temp", subm.submissionFile.getName() + subm.name));
-                subm.tokenList = null;
-            }
         }
 
         print("\nBasecode submission parsed!\n", null);
@@ -522,22 +465,6 @@ public class JPlag implements ProgramI {
             for (String excludedFileName : excludedFileNames) {
                 print(null, "  " + excludedFileName + "\n");
             }
-        }
-    }
-
-    private void makeTempDir() throws ExitException {
-        print(null, "Creating temporary dir.\n");
-        File f = new File("temp");
-        if (!f.exists()) {
-            if (!f.mkdirs()) {
-                throw new jplag.ExitException("Cannot create temporary directory!");
-            }
-        }
-        if (!f.isDirectory()) {
-            throw new ExitException("'temp' is not a directory!");
-        }
-        if (!f.canWrite()) {
-            throw new ExitException("Cannot write directory: 'temp'");
         }
     }
 

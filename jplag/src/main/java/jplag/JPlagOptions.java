@@ -2,7 +2,6 @@ package jplag;
 
 import static jplag.strategy.ComparisonMode.NORMAL;
 
-import jplag.options.ClusterType;
 import jplag.options.LanguageOption;
 import jplag.options.SimilarityMetric;
 import jplag.options.Verbosity;
@@ -45,11 +44,6 @@ public class JPlagOptions {
      * </ol>
      */
     private int numberOfSubmissionsToCompareTo = 0; // 0 = deactivated
-
-    /**
-     * Clustering option.
-     */
-    private ClusterType clusterType;
 
     /**
      * Determines which strategy to use for the comparison of submissions.
@@ -155,11 +149,7 @@ public class JPlagOptions {
     public boolean hasMinTokenMatch() {
         return this.minTokenMatch != null;
     }
-
-    public ClusterType getClusterType() {
-        return clusterType;
-    }
-
+    
     public ComparisonMode getComparisonMode() {
         return comparisonMode;
     }
@@ -224,10 +214,6 @@ public class JPlagOptions {
 
     public void setNumberOfSubmissionsToCompareTo(int numberOfSubmissionsToCompareTo) {
         this.numberOfSubmissionsToCompareTo = numberOfSubmissionsToCompareTo;
-    }
-
-    public void setClusterType(ClusterType clusterType) {
-        this.clusterType = clusterType;
     }
 
     public void setComparisonMode(ComparisonMode comparisonMode) {

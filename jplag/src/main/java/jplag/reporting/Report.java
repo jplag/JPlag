@@ -122,11 +122,6 @@ public class Report {
 
         writeIndex();
 
-        // TODO TS: Cluster currently not supported
-        // if (result.getOptions().getClusterType() != ClusterType.NONE) {
-        // writeClusters(clustering);
-        // }
-
         copyStaticFiles();
 
         writeMatches(result.getComparisons());
@@ -444,108 +439,6 @@ public class Report {
 
         htmlFile.println("</TABLE>");
     }
-
-    // --------------------------------------------------------------------------
-    // ==========================================================================
-    // --------------------------------------------------------------------------
-
-    // TODO:
-    // /* this function copies all submissions into the result directory */
-    // private int copySubmissions() throws jplag.ExitException {
-    // int bytes = 0;
-    // for (Iterator<Submission> i = program.clusters.neededSubmissions.iterator(); i.hasNext(); ) {
-    // Submission sub = i.next();
-    // int index = this.program.clusters.submissions.indexOf(sub);
-    //
-    // HTMLFile f = createHTMLFile(reportDir, "submission" + index + ".html");
-    // writeHTMLHeader(f, sub.name);
-    // f.println("<BODY BGCOLOR=\"#ffffff\">");
-    //
-    // String[] files = sub.files;
-    // String text[][] = sub.readFiles(files);
-    //
-    // for (int j = 0; j < files.length; j++) {
-    // f.println("<HR>\n<H3><CENTER>" + files[j] + "</CENTER></H3><HR>");
-    // if (this.language.isPreformated()) {
-    // f.println("<PRE>");
-    // }
-    // for (int k = 0; k < text[j].length; k++) {
-    // f.print(text[j][k]);
-    // if (!this.language.isPreformated()) {
-    // f.println("<BR>");
-    // } else {
-    // f.println();
-    // }
-    // }
-    // if (language.isPreformated()) {
-    // f.println("</PRE>");
-    // }
-    // }
-    //
-    // f.println("</BODY>\n</HTML>");
-    // f.close();
-    // bytes += f.bytesWritten();
-    // }
-    // return bytes;
-    // }
-
-    // TODO TS: Cluster currently not supported
-    // private int writeClusters(Cluster clustering) throws jplag.ExitException {
-    // int bytes = 0;
-    //
-    // HTMLFile f = createHTMLFile("cluster.html");
-    // writeHTMLHeader(f, msg.getString("Report.Clustering_Results"));
-    // String clustertype = msg.getString("Report.Type") + ": " + program.clusters.getType();
-    // f.println("<BODY>\n<H2>" + msg.getString("Report.Clustering_Results") + " (" + clustertype
-    // + ")</H2>");
-    // f.println("<H3><A HREF=\"dendro.html\">" + msg.getString("Report.Dendrogram") + "</A></H3>");
-    // bytes += this.program.clusters.makeDendrograms(reportDir, clustering);
-    //
-    // if (this.program.get_threshold() != null) {
-    // for (int i = 0; i < this.program.get_threshold().length; i++) {
-    // float threshold = this.program.get_threshold()[i];
-    // String clustertitle = TagParser
-    // .parse(msg.getString("Report.Clusters_for_Xpercent_treshold"),
-    // new String[]{threshold + ""});
-    // f.println("<H3><A HREF=\"cluster" + threshold + ".html\">" + clustertitle + "</A></H3>");
-    // HTMLFile f2 = createHTMLFile(reportDir, "cluster" + threshold + ".html");
-    // writeHTMLHeader(f2, clustertitle);
-    // f2.println("<BODY>\n<H2>" + clustertitle + " (" + clustertype + ")</H2>");
-    // String text = program.clusters.printClusters(clustering, threshold, f2);
-    // f2.println("</BODY>\n</HTML>");
-    // f2.close();
-    // bytes += f2.bytesWritten();
-    // f.print(text);
-    // }
-    // } else {
-    // float increase = this.program.clusters.maxMergeValue / 10;
-    // if (increase < 5) {
-    // increase = 5;
-    // }
-    // for (float threshold = increase; threshold <= program.clusters.maxMergeValue;
-    // threshold += increase) {
-    // String clustertitle = TagParser
-    // .parse(msg.getString("Report.Clusters_for_Xpercent_treshold"),
-    // new String[]{threshold + ""});
-    // f.println(
-    // "<H3><A HREF=\"cluster" + (int) threshold + ".html\">" + clustertitle + "</A></H3>");
-    // HTMLFile f2 = createHTMLFile(reportDir, "cluster" + (int) threshold + ".html");
-    // writeHTMLHeader(f2, clustertitle);
-    // f2.println("<BODY>\n<H2>" + clustertitle + " (" + clustertype + ")</H2>");
-    // String text = program.clusters.printClusters(clustering, (int) threshold, f2);
-    // f2.println("</BODY>\n</HTML>");
-    // f2.close();
-    // bytes += f2.bytesWritten();
-    // f.print(text);
-    // }
-    // }
-    //
-    // f.println("</BODY>\n</HTML>");
-    // f.close();
-    //
-    // bytes += copySubmissions();
-    // return f.bytesWritten() + bytes;
-    // }
 
     // SUBMISSION - here it comes...
     private final String[] pics = {"forward.gif", "back.gif"};

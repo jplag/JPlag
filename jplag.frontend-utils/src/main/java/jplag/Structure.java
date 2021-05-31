@@ -10,7 +10,7 @@ import java.io.ObjectOutputStream;
 
 //import java.util.zip.*;
 
-/** The tokenlist */
+/** The tokenlist */ // TODO PB: The name 'Structure' is very generic and should be changed to something more descriptive.
 public class Structure implements TokenConstants {
 	public Token[] tokens = new Token[0];
 	Table table = null;

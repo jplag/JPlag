@@ -60,13 +60,6 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
 
-        // TODO TS: Cluster currently not supported
-        // Cluster cluster = null;
-        //
-        // if (options.getClusterType() != ClusterType.NONE) {
-        // cluster = this.clusters.calculateClustering(submissions);
-        // }
-
         return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
     }
 
