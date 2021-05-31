@@ -8,11 +8,15 @@ public class CPPToken extends jplag.Token implements CPPTokenConstants {
 		super(type,file,zeile);
 	}
 
-	public int getLine() { return line; }
-	public void setLine(int line) { this.line = line; }
+	@Override
+    public int getLine() { return line; }
+	@Override
+    public void setLine(int line) { this.line = line; }
 
-	public int getColumn() {return 0;}
-	public int getLength() {return 0;}
+	@Override
+    public int getColumn() {return 0;}
+	@Override
+    public int getLength() {return 0;}
 
 	public static String type2string(int type) {
 		switch (type) {

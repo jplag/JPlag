@@ -3,6 +3,7 @@ package jplag.chars;
 import java.io.File;
 
 import jplag.ProgramI;
+import jplag.Token;
 
 /*
  * read in text files as characters
@@ -17,7 +18,8 @@ public class Language implements jplag.Language {
 		this.parser.setProgram(this.program);
 	}
 
-	public String[] suffixes() {
+	@Override
+    public String[] suffixes() {
 		String[] res = { ".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex" };
 		return res;
 	}
@@ -27,47 +29,58 @@ public class Language implements jplag.Language {
 	 * 
 	 * @see jplag.Language#errorsCount()
 	 */
-	public int errorsCount() {
+	@Override
+    public int errorsCount() {
 		return this.parser.errorsCount();
 	}
 
-	public String name() {
+	@Override
+    public String name() {
 		return "Character Parser";
 	}
 
-	public String getShortName() {
+	@Override
+    public String getShortName() {
 		return "char";
 	}
 
-	public int min_token_match() {
+	@Override
+    public int min_token_match() {
 		return 10;
 	}
 
-	public jplag.Structure parse(File dir, String[] files) {
+	@Override
+    public jplag.Structure parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
-	public boolean errors() {
+	@Override
+    public boolean errors() {
 		return this.parser.getErrors();
 	}
 
-	public boolean supportsColumns() {
+	@Override
+    public boolean supportsColumns() {
 		return false;
 	}
 
-	public boolean isPreformatted() {
+	@Override
+    public boolean isPreformatted() {
 		return false;
 	}
 
-	public boolean usesIndex() {
+	@Override
+    public boolean usesIndex() {
 		return true;
 	}
 
-	public int noOfTokens() {
+	@Override
+    public int noOfTokens() {
 		return jplag.chars.CharToken.numberOfTokens();
 	}
 
-	public String type2string(int type) {
-		return jplag.chars.CharToken.type2string(type);
+	@Override
+    public String type2string(int type) {
+		return Token.type2string(type);
 	}
 }

@@ -17,52 +17,64 @@ public class LanguageWithDelimitedMethods implements jplag.Language {
 		this.parser.setProgram(program);
 	}
 
-	public int errorsCount() {
+	@Override
+    public int errorsCount() {
 		return this.parser.errorsCount();
 	}
 
-	public String[] suffixes() {
+	@Override
+    public String[] suffixes() {
 		String[] res = { ".java", ".jav", ".JAVA", ".JAV" };
 		return res;
 	}
 
-	public String name() {
+	@Override
+    public String name() {
 		return "Java1.5 Parser with delimited methods";
 	}
 
-	public String getShortName() {
+	@Override
+    public String getShortName() {
 		return "java15dm";
 	}
 
-	public int min_token_match() {
+	@Override
+    public int min_token_match() {
 		return 8;
 	}
 
-	public jplag.Structure parse(File dir, String[] files) {
+	@Override
+    public jplag.Structure parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
-	public boolean errors() {
+	@Override
+    public boolean errors() {
 		return this.parser.getErrors();
 	}
 
-	public boolean supportsColumns() {
+	@Override
+    public boolean supportsColumns() {
 		return true;
 	}
 
-	public boolean isPreformatted() {
+	@Override
+    public boolean isPreformatted() {
 		return true;
 	}
 
-	public boolean usesIndex() {
+	@Override
+    public boolean usesIndex() {
 		return false;
 	}
 
-	public int noOfTokens() {
+	@Override
+    public int noOfTokens() {
 		return jplag.java15.JavaToken.numberOfTokens();
 	}
 
-	public String type2string(int type) {
+	@Override
+    public String type2string(int type) {
 		return jplag.java15.JavaToken.type2string(type);
 	}
 }

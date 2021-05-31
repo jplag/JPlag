@@ -12,55 +12,67 @@ public class Language implements jplag.Language {
 
 	}
 
-	public int errorsCount() {
+	@Override
+    public int errorsCount() {
 		return this.parser.errorsCount();
 	}
 
 	private jplag.scheme.Parser parser;//noch nicht instanziert? siehe
 									   // Konstruktor
 
-	public String[] suffixes() {
+	@Override
+    public String[] suffixes() {
 		String[] res = { ".scm", ".SCM", ".ss", ".SS" };
 		return res;
 	}
 
-	public String name() {
+	@Override
+    public String name() {
 		return "SchemeR4RS Parser [basic markup]";
 	}
 
-	public String getShortName() {
+	@Override
+    public String getShortName() {
 		return "scheme";
 	}
 
-	public int min_token_match() {
+	@Override
+    public int min_token_match() {
 		return 13;
 	}
 
-	public boolean supportsColumns() {
+	@Override
+    public boolean supportsColumns() {
 		return false;
 	}
 
-	public boolean isPreformatted() {
+	@Override
+    public boolean isPreformatted() {
 		return true;
 	}
 
-	public boolean usesIndex() {
+	@Override
+    public boolean usesIndex() {
 		return false;
 	}
 
-	public jplag.Structure parse(File dir, String[] files) {
+	@Override
+    public jplag.Structure parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
-	public boolean errors() {
+	@Override
+    public boolean errors() {
 		return this.parser.getErrors();
 	}
 
-	public int noOfTokens() {
+	@Override
+    public int noOfTokens() {
 		return jplag.scheme.SchemeToken.numberOfTokens();
 	}
 
-	public String type2string(int type) {
+	@Override
+    public String type2string(int type) {
 		return jplag.scheme.SchemeToken.type2string(type);
 	}
 }

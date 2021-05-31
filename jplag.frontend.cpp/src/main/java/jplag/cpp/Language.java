@@ -16,53 +16,65 @@ public class Language implements jplag.Language {
 
 	}
 
-	public int errorsCount() {
+	@Override
+    public int errorsCount() {
 		return this.scanner.errorsCount();
 	}
 
-	public String[] suffixes() {
+	@Override
+    public String[] suffixes() {
 		String[] res = { ".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H",
 				".hpp", ".HPP", ".hh", ".HH" };
 		return res;
 	}
 
-	public String name() {
+	@Override
+    public String name() {
 		return "C/C++ Scanner [basic markup]";
 	}
 
-	public String getShortName() {
+	@Override
+    public String getShortName() {
 		return "cpp";
 	}
 
-	public int min_token_match() {
+	@Override
+    public int min_token_match() {
 		return 12;
 	}
 
-	public boolean supportsColumns() {
+	@Override
+    public boolean supportsColumns() {
 		return false;
 	}
 
-	public boolean isPreformatted() {
+	@Override
+    public boolean isPreformatted() {
 		return true;
 	}
 
-	public boolean usesIndex() {
+	@Override
+    public boolean usesIndex() {
 		return false;
 	}
 
-	public jplag.Structure parse(File dir, String[] files) {
+	@Override
+    public jplag.Structure parse(File dir, String[] files) {
 		return this.scanner.scan(dir, files);
 	}
 
-	public boolean errors() {
+	@Override
+    public boolean errors() {
 		return this.scanner.getErrors();
 	}
 
-	public int noOfTokens() {
+	@Override
+    public int noOfTokens() {
 		return jplag.cpp.CPPToken.numberOfTokens();
 	}
 
-	public String type2string(int type) {
+	@Override
+    public String type2string(int type) {
 		return jplag.cpp.CPPToken.type2string(type);
 	}
 }

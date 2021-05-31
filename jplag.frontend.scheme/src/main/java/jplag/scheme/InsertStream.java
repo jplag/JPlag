@@ -19,14 +19,16 @@ public class InsertStream extends FileInputStream {
 
   boolean end_of_file = false;
 
-  public int read() throws IOException {
+  @Override
+public int read() throws IOException {
     int result = super.read();
     if (result != -1 || end_of_file) return result;
     end_of_file = true;
     return Character.LINE_SEPARATOR;
   }
 
-  public int read(byte[] b) throws IOException {
+  @Override
+public int read(byte[] b) throws IOException {
     int result = super.read(b);
     if (result != -1 || end_of_file) return result;
     end_of_file = true;
@@ -37,7 +39,8 @@ public class InsertStream extends FileInputStream {
     return -1;
   }
 
-  public int read(byte[] b, int off, int len) throws IOException {
+  @Override
+public int read(byte[] b, int off, int len) throws IOException {
     int result = super.read(b,off,len);
     if (result != -1 || end_of_file) return result;
     end_of_file = true;

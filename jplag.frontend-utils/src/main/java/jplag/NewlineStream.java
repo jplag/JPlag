@@ -16,7 +16,8 @@ public class NewlineStream extends InputStream {
     this.stream = stream;
   }
 
-  public int read() throws IOException {
+  @Override
+public int read() throws IOException {
     int result;
     switch (endOfFile) {
     case 0:
