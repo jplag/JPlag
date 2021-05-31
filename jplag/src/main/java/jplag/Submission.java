@@ -38,8 +38,6 @@ public class Submission implements Comparable<Submission> {
 
     /**
      * List of tokens that have been parsed from the files this submission consists of.
-     * <p>
-     * TODO PB: The name 'Structure' is very generic and should be changed to something more descriptive.
      */
     public Structure tokenList;
 
