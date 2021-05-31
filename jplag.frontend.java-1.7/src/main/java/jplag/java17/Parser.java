@@ -7,15 +7,15 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
-import jplag.Structure;
-import jplag.java17.grammar.Java7Lexer;
-import jplag.java17.grammar.Java7Parser;
-import jplag.java17.grammar.Java7Parser.CompilationUnitContext;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
+import jplag.Structure;
+import jplag.java17.grammar.Java7Lexer;
+import jplag.java17.grammar.Java7Parser;
+import jplag.java17.grammar.Java7Parser.CompilationUnitContext;
 
 public class Parser extends jplag.Parser implements JavaTokenConstants {
 	private Structure struct = new Structure();

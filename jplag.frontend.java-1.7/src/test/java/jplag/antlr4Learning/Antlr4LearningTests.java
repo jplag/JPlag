@@ -5,10 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import jplag.java17.JplagJava7Listener;
-import jplag.java17.grammar.Java7Lexer;
-import jplag.java17.grammar.Java7Parser;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
@@ -16,6 +12,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import jplag.java17.JplagJava7Listener;
+import jplag.java17.grammar.Java7Lexer;
+import jplag.java17.grammar.Java7Parser;
 
 public class Antlr4LearningTests {
 	private static File srcTestResources;

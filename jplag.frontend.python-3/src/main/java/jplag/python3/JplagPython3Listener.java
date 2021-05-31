@@ -1,10 +1,12 @@
 package jplag.python3;
 
-import jplag.python3.grammar.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
+import jplag.python3.grammar.Python3Listener;
+import jplag.python3.grammar.Python3Parser;
 
 public class JplagPython3Listener implements Python3Listener, Python3TokenConstants {
 

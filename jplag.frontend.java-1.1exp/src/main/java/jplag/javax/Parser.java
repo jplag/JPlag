@@ -1,6 +1,6 @@
 package jplag.javax;
 
-import java.io.*;
+import java.io.File;
 
 public class Parser extends jplag.Parser implements JavaTokenConstants {
 	private String actFile;

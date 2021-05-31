@@ -1,6 +1,6 @@
 package jplag;
 
-import java.io.*;
+import java.io.File;
 
 /**
  * Common interface for all languages. Each language-front end must provide a concrete language implementation.
