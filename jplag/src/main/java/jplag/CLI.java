@@ -12,15 +12,46 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
+/**
+ * Command line interface class, allows using via command line.
+ * @see CLI#main(String[])
+ */
 public class CLI {
+    
+    private static final String DESCRIPTION = "JPlag - Detecting Software Plagiarism";
+    private static final String PROGRAM_NAME = "jplag";
+    private static final String[] verbosityOptions = {"parser", "quiet", "long", "details"};
+    private static final String[] languageOptions = new String[] {"java_1_1", "java_1_2", "java_1_5", "java_1_5_dm", "java_1_7", "java_1_9",
+            "python_3", "c_cpp", "c_sharp", "char", "text", "scheme"};
+    
+    private final ArgumentParser parser;
 
+    /**
+     * Main class for using JPlag via the CLI.
+     * @param args are the CLI arguments that will be passed to JPlag.
+     */
     public static void main(String[] args) {
-        ArgumentParser parser = ArgumentParsers.newFor("jplag").build().defaultHelp(true).description("JPlag - Detecting Software Plagiarism");
+        try {
+            CLI cli = new CLI();
+            Namespace arguments = cli.parseArguments(args);
+            JPlagOptions options = cli.buildOptionsFromArguments(arguments);
+            JPlag program = new JPlag(options);
+            System.out.println("JPlag initialized");
+            JPlagResult result = program.run();
+            File reportDir = new File(arguments.getString("r"));
+            Report report = new Report(reportDir);
+            report.writeResult(result);
+        } catch (ExitException exception) {
+            System.out.println("Error: " + exception.getReport());
+            System.exit(1);
+        }
+    }
 
-        String[] languageOptions = {"java_1_1", "java_1_2", "java_1_5", "java_1_5_dm", "java_1_7", "java_1_9", "python_3", "c_cpp", "c_sharp", "char",
-                "text", "scheme"};
-        String[] verbosityOptions = {"parser", "quiet", "long", "details"};
-
+    /**
+     * Creates the command line interface and initializes the argument parser.
+     */
+    public CLI() {
+        parser = ArgumentParsers.newFor(PROGRAM_NAME).build().defaultHelp(true).description(DESCRIPTION);
         parser.addArgument("rootDir").help("The root-directory that contains all submissions");
         parser.addArgument("-l").choices(languageOptions).setDefault("java_1_9").help("Select the language to parse the submissions");
         parser.addArgument("-bc").help("Name of the directory which contains the base code (common framework)");
@@ -32,57 +63,46 @@ public class CLI {
         parser.addArgument("-t").help("Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity");
         parser.addArgument("-s").help("Similarity Threshold: all matches above this threshold will be saved");
         parser.addArgument("-r").setDefault("result").help("Name of directory in which the web pages will be stored");
+    }
 
-        Namespace ns = null;
-
+    /**
+     * Parses an array of argument strings.
+     * @param args is the array to parse.
+     * @return the parsed arguments in a {@link Namespace} format.
+     */
+    public Namespace parseArguments(String[] args) {
         try {
-            ns = parser.parseArgs(args);
+            return parser.parseArgs(args);
         } catch (ArgumentParserException e) {
             parser.handleError(e);
             System.exit(1);
         }
+        return null;
+    }
 
-        String rootDir = ns.getString("rootDir");
-        String languageOption = ns.getString("l");
-        String verbosityOption = ns.getString("v");
-        String subDirName = ns.getString("S");
-        String fileSuffixString = ns.getString("p");
+    /**
+     * Builds a options instance from parsed arguments.
+     * @param namespace encapsulates the parsed arguments in a {@link Namespace} format.
+     * @return the newly built options.F
+     */
+    public JPlagOptions buildOptionsFromArguments(Namespace namespace) {
+        String fileSuffixString = namespace.getString("p");
         String[] fileSuffixes = new String[] {};
         if (fileSuffixString != null) {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
-        String exclusionFile = ns.getString("x");
-        String reportDirName = ns.getString("r");
-        float similarityThreshold = ns.getFloat("s");
-        int minTokenMatch = ns.getInt("t");
-        boolean useDebugParser = ns.getBoolean("d");
+        LanguageOption language = LanguageOption.fromOption(namespace.getString("l"));
+        Verbosity verbosity = Verbosity.fromOption(namespace.getString("v"));
 
-        LanguageOption language = LanguageOption.fromOption(languageOption);
-        Verbosity verbosity = Verbosity.fromOption(verbosityOption);
-
-        try {
-            JPlagOptions options = new JPlagOptions(rootDir, language);
-            options.setBaseCodeSubmissionName("base-code");
-            options.setVerbosity(verbosity);
-            options.setDebugParser(useDebugParser);
-            options.setSubdirectoryName(subDirName);
-            options.setFileSuffixes(fileSuffixes);
-            options.setExclusionFileName(exclusionFile);
-            options.setMinTokenMatch(minTokenMatch);
-            options.setSimilarityThreshold(similarityThreshold);
-
-            JPlag program = new JPlag(options);
-
-            System.out.println("JPlag initialized");
-            JPlagResult result = program.run();
-
-            File reportDir = new File(reportDirName);
-            Report report = new Report(reportDir);
-
-            report.writeResult(result);
-        } catch (ExitException ex) {
-            System.out.println("Error: " + ex.getReport());
-            System.exit(1);
-        }
+        JPlagOptions options = new JPlagOptions(namespace.getString("rootDir"), language);
+        options.setBaseCodeSubmissionName("base-code");
+        options.setVerbosity(verbosity);
+        options.setDebugParser(namespace.getBoolean("d"));
+        options.setSubdirectoryName(namespace.getString("S"));
+        options.setFileSuffixes(fileSuffixes);
+        options.setExclusionFileName(namespace.getString("x"));
+        options.setMinTokenMatch(namespace.getInt("t"));
+        options.setSimilarityThreshold(namespace.getFloat("s"));
+        return options;
     }
 }
