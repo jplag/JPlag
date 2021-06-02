@@ -29,61 +29,26 @@ import jplagUtils.PropertiesLoader;
  */
 public class JPlag implements ProgramI {
 
+    // CONSTANTS:
     private static final Properties versionProps = PropertiesLoader.loadProps("jplag/version.properties");
-
     public static final String name = "JPlag" + versionProps.getProperty("version", "devel");
-
     public static final String name_long = "JPlag (Version " + versionProps.getProperty("version", "devel") + ")";
 
-    /**
-     * This stores the name of the submission that is currently parsed.
-     * <p>
-     * TODO PB: This should be moved to parseSubmissions(...)
-     */
-    private String currentSubmissionName = "<Unknown submission>";
-
-    /**
-     * Vector of errors that occurred during the execution of the program.
-     */
-    private Vector<String> errorVector = new Vector<>();
-
-    private int errors = 0;
-
+    // INPUT:
+    private Submission baseCodeSubmission = null;
+    private HashSet<String> excludedFileNames = null; // Set of file names to be excluded in comparison.
     private Language language;
 
-    /**
-     * The base code directory is considered a separate submission.
-     */
-    private Submission baseCodeSubmission = null;
-
-    /**
-     * Comparison strategy to use.
-     */
+    // CORE COMPONENTS:
     private ComparisonStrategy comparisonStrategy;
-
-    /**
-     * Set of file names to be excluded in comparison.
-     */
-    private HashSet<String> excludedFileNames = null;
-
-    /**
-     * Contains the comparison logic.
-     */
-    private GreedyStringTiling gSTiling = new GreedyStringTiling(this);
-
-    /**
-     * JPlag configuration options.
-     */
+    private GreedyStringTiling gSTiling = new GreedyStringTiling(this); // Contains the comparison logic.
     private final JPlagOptions options;
-
-    /**
-     * File writer.
-     */
     private FileWriter writer = null;
 
-    public Language getLanguage() {
-        return language;
-    }
+    // ERROR REPORTING:
+    private String currentSubmissionName = "<Unknown submission>"; // TODO PB: This should be moved to parseSubmissions(...)
+    private int errors = 0;
+    private Vector<String> errorVector = new Vector<>(); // Vector of errors that occurred during the execution of the program.
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
@@ -92,47 +57,105 @@ public class JPlag implements ProgramI {
      */
     public JPlag(JPlagOptions options) throws ExitException {
         this.options = options;
-        this.initialize();
+        initializeLanguage();
+        initializeComparisonStrategy();
+        checkBaseCodeOption();
     }
 
-    public void initialize() throws ExitException {
-        this.initializeLanguage();
-        this.initializeComparisonStrategy();
-        this.checkBaseCodeOption();
+    /**
+     * Main procedure, executes the comparison of source code submissions.
+     * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
+     * @throws ExitException if the JPlag exits preemptively.
+     */
+    public JPlagResult run() throws ExitException {
+        // 1. Preparation:
+        File rootDir = new File(options.getRootDirName());
+        if (!rootDir.exists()) {
+            throw new ExitException("Root directory " + options.getRootDirName() + " does not exist!");
+        }
+        if (!rootDir.isDirectory()) {
+            throw new ExitException(options.getRootDirName() + " is not a directory!");
+        }
+        readExclusionFile(); // This file contains all files names which are excluded
+    
+        // 2. Parse and validate submissions:
+        Vector<Submission> submissions = findSubmissions(rootDir);
+        parseAllSubmissions(submissions, baseCodeSubmission);
+        submissions = filterValidSubmissions(submissions);
+        if (submissions.size() < 2) {
+            printErrors();
+            throw new ExitException("Not enough valid submissions! (found " + submissions.size() + " valid submissions)",
+                    ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
+        }
+    
+        // 3. Compare valid submissions:
+        errorVector = null; // errorVector is not needed anymore
+        System.gc();
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
+        closeWriter();
+        return result;
     }
 
-    private void initializeComparisonStrategy() throws ExitException {
-        ComparisonMode mode = options.getComparisonMode();
-        switch (mode) { // TODO TS: Currently only one comparison strategy supported
-        case NORMAL:
-            this.comparisonStrategy = new NormalComparisonStrategy(options, gSTiling);
+    /**
+     * Add an error to the errorVector.
+     */
+    @Override
+    public void addError(String errorMessage) {
+        errorVector.add("[" + currentSubmissionName + "]\n" + errorMessage);
+        print(errorMessage, null);
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public JPlagOptions getOptions() {
+        return this.options;
+    }
+
+    public boolean hasValidSuffix(File file) {
+        String[] validSuffixes = options.getFileSuffixes();
+        if (validSuffixes == null || validSuffixes.length == 0) {
+            return true; // TODO TS: Why does this return true if the valid suffixes are not set?
+        }
+        return Arrays.stream(validSuffixes).anyMatch(suffix -> file.getName().endsWith(suffix));
+    }
+
+    /**
+     * Check if a file is excluded or not.
+     */
+    public boolean isFileExcluded(File file) {
+        if (excludedFileNames == null) {
+            return false;
+        }
+        return excludedFileNames.stream().anyMatch(excludedName -> file.getName().endsWith(excludedName));
+    }
+
+    @Override
+    public void print(String message, String longMessage) {
+        if (options.getVerbosity() == PARSER) {
+            if (longMessage != null) {
+                myWrite(longMessage);
+            } else if (message != null) {
+                myWrite(message);
+            }
+        }
+        if (options.getVerbosity() == QUIET) {
             return;
-        default:
-            throw new ExitException("Illegal comparison mode: " + options.getComparisonMode());
         }
-    }
-
-    private void initializeLanguage() throws ExitException {
-        LanguageOption languageOption = this.options.getLanguageOption();
-
         try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ProgramI.class);
-            Object[] constructorParams = {this};
+            if (message != null) {
+                System.out.print(message);
+            }
 
-            Language language = (Language) constructor.newInstance(constructorParams);
-
-            this.language = language;
-            this.options.setLanguage(language);
-        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
-
-            throw new ExitException("Language instantiation failed", ExitException.BAD_LANGUAGE_ERROR);
+            if (longMessage != null) {
+                if (options.getVerbosity() == LONG) {
+                    System.out.print(longMessage);
+                }
+            }
+        } catch (Throwable e) {
+            System.out.println(e.getMessage());
         }
-
-        this.options.setLanguageDefaults(this.getLanguage());
-
-        System.out.println("Initialized language " + this.getLanguage().name());
     }
 
     /**
@@ -168,80 +191,19 @@ public class JPlag implements ProgramI {
         System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
     }
 
-    public JPlagOptions getOptions() {
-        return this.options;
-    }
-
-    /**
-     * Main procedure, executes the comparison of source code submissions.
-     * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
-     * @throws ExitException if the JPlag exits preemptively.
-     */
-    public JPlagResult run() throws ExitException {
-        File rootDir = new File(options.getRootDirName());
-
-        if (!rootDir.exists()) {
-            throw new ExitException("Root directory " + options.getRootDirName() + " does not exist!");
+    private void closeWriter() {
+        try {
+            if (writer != null) {
+                writer.close();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
-
-        if (!rootDir.isDirectory()) {
-            throw new ExitException(options.getRootDirName() + " is not a directory!");
-        }
-
-        // This file contains all files names which are excluded
-        readExclusionFile();
-
-        Vector<Submission> submissions = findSubmissions(rootDir);
-        parseAllSubmissions(submissions, baseCodeSubmission);
-        submissions = filterValidSubmissions(submissions);
-
-        if (submissions.size() < 2) {
-            printErrors();
-            throw new ExitException("Not enough valid submissions! (found " + submissions.size() + " valid submissions)",
-                    ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
-        }
-
-        // errorVector is not needed anymore
-        errorVector = null;
-
-        System.gc();
-
-        JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
-
-        closeWriter();
-
-        return result;
+        writer = null;
     }
 
     private Vector<Submission> filterValidSubmissions(Vector<Submission> submissions) {
         return submissions.stream().filter(submission -> !submission.hasErrors).collect(Collectors.toCollection(Vector::new));
-    }
-
-    /**
-     * TODO PB: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
-     */
-    private void parseAllSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) throws ExitException {
-        try {
-            parseSubmissions(submissions);
-            System.gc();
-            parseBaseCodeSubmission(baseCodeSubmission);
-        } catch (OutOfMemoryError e) {
-            System.gc();
-
-            throw new ExitException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
-        } catch (Throwable e) {
-            e.printStackTrace();
-
-            throw new ExitException("Unknown exception during parsing of " + "submission \"" + currentSubmissionName + "\"");
-        }
-    }
-
-    public boolean hasValidSuffix(File file) {
-        String[] validSuffixes = options.getFileSuffixes();
-        if (validSuffixes == null || validSuffixes.length == 0) {
-            return true; // TODO TS: Why does this return true if the valid suffixes are not set?
-        }
-        return Arrays.stream(validSuffixes).anyMatch(suffix -> file.getName().endsWith(suffix));
     }
 
     /**
@@ -268,6 +230,40 @@ public class JPlag implements ProgramI {
         Arrays.sort(fileNamesInRootDir);
 
         return fileNamesInRootDir;
+    }
+
+    private void initializeComparisonStrategy() throws ExitException {
+        ComparisonMode mode = options.getComparisonMode();
+        switch (mode) { // TODO TS: Currently only one comparison strategy supported
+        case NORMAL:
+            this.comparisonStrategy = new NormalComparisonStrategy(options, gSTiling);
+            return;
+        default:
+            throw new ExitException("Illegal comparison mode: " + options.getComparisonMode());
+        }
+    }
+
+    private void initializeLanguage() throws ExitException {
+        LanguageOption languageOption = this.options.getLanguageOption();
+
+        try {
+            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ProgramI.class);
+            Object[] constructorParams = {this};
+
+            Language language = (Language) constructor.newInstance(constructorParams);
+
+            this.language = language;
+            this.options.setLanguage(language);
+        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+
+            throw new ExitException("Language instantiation failed", ExitException.BAD_LANGUAGE_ERROR);
+        }
+
+        this.options.setLanguageDefaults(this.getLanguage());
+
+        System.out.println("Initialized language " + this.getLanguage().name());
     }
 
     private Vector<Submission> mapFileNamesInRootDirToSubmissions(String[] fileNames, File rootDir) throws ExitException {
@@ -312,14 +308,71 @@ public class JPlag implements ProgramI {
         return submissions;
     }
 
-    /**
-     * Check if a file is excluded or not.
-     */
-    public boolean isFileExcluded(File file) {
-        if (excludedFileNames == null) {
-            return false;
+    private void myWrite(String str) {
+        if (writer != null) {
+            try {
+                writer.write(str);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.print(str);
         }
-        return excludedFileNames.stream().anyMatch(excludedName -> file.getName().endsWith(excludedName));
+    }
+
+    /**
+     * TODO PB: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
+     */
+    private void parseAllSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) throws ExitException {
+        try {
+            parseSubmissions(submissions);
+            System.gc();
+            parseBaseCodeSubmission(baseCodeSubmission);
+        } catch (OutOfMemoryError e) {
+            System.gc();
+
+            throw new ExitException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
+        } catch (Throwable e) {
+            e.printStackTrace();
+
+            throw new ExitException("Unknown exception during parsing of " + "submission \"" + currentSubmissionName + "\"");
+        }
+    }
+
+    /**
+     * Parse the given base code submission.
+     */
+    private void parseBaseCodeSubmission(Submission subm) throws ExitException {
+        if (subm == null) {
+            // TODO:
+            // options.useBasecode = false;
+            return;
+        }
+
+        long msec = System.currentTimeMillis();
+        print("----- Parsing basecode submission: " + subm.name + "\n", null);
+
+        // lets go:
+
+        if (!subm.parse()) {
+            printErrors();
+            throw new ExitException("Bad basecode submission");
+        }
+
+        if (subm.tokenList != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
+            throw new ExitException("Basecode submission contains fewer tokens " + "than minimum match length allows!\n");
+        }
+
+        if (options.hasBaseCode()) {
+            gSTiling.createHashes(subm.tokenList, options.getMinTokenMatch(), true);
+        }
+
+        print("\nBasecode submission parsed!\n", null);
+
+        long time = System.currentTimeMillis() - msec;
+
+        print("\n", "\nTime for parsing Basecode: " + ((time / 3600000 > 0) ? (time / 3600000) + " h " : "")
+                + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60) + " sec\n");
     }
 
     /**
@@ -383,39 +436,17 @@ public class JPlag implements ProgramI {
     }
 
     /**
-     * Parse the given base code submission.
+     * Print all errors from the errorVector.
      */
-    private void parseBaseCodeSubmission(Submission subm) throws ExitException {
-        if (subm == null) {
-            // TODO:
-            // options.useBasecode = false;
-            return;
+    private void printErrors() {
+        StringBuilder errorStr = new StringBuilder();
+
+        for (String str : errorVector) {
+            errorStr.append(str);
+            errorStr.append('\n');
         }
 
-        long msec = System.currentTimeMillis();
-        print("----- Parsing basecode submission: " + subm.name + "\n", null);
-
-        // lets go:
-
-        if (!subm.parse()) {
-            printErrors();
-            throw new ExitException("Bad basecode submission");
-        }
-
-        if (subm.tokenList != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
-            throw new ExitException("Basecode submission contains fewer tokens " + "than minimum match length allows!\n");
-        }
-
-        if (options.hasBaseCode()) {
-            gSTiling.createHashes(subm.tokenList, options.getMinTokenMatch(), true);
-        }
-
-        print("\nBasecode submission parsed!\n", null);
-
-        long time = System.currentTimeMillis() - msec;
-
-        print("\n", "\nTime for parsing Basecode: " + ((time / 3600000 > 0) ? (time / 3600000) + " h " : "")
-                + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60) + " sec\n");
+        System.out.println(errorStr.toString());
     }
 
     /*
@@ -447,79 +478,6 @@ public class JPlag implements ProgramI {
             for (String excludedFileName : excludedFileNames) {
                 print(null, "  " + excludedFileName + "\n");
             }
-        }
-    }
-
-    private void myWrite(String str) {
-        if (writer != null) {
-            try {
-                writer.write(str);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.print(str);
-        }
-    }
-
-    private void closeWriter() {
-        try {
-            if (writer != null) {
-                writer.close();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        writer = null;
-    }
-
-    /**
-     * Add an error to the errorVector.
-     */
-    @Override
-    public void addError(String errorMessage) {
-        errorVector.add("[" + currentSubmissionName + "]\n" + errorMessage);
-        print(errorMessage, null);
-    }
-
-    /**
-     * Print all errors from the errorVector.
-     */
-    private void printErrors() {
-        StringBuilder errorStr = new StringBuilder();
-
-        for (String str : errorVector) {
-            errorStr.append(str);
-            errorStr.append('\n');
-        }
-
-        System.out.println(errorStr.toString());
-    }
-
-    @Override
-    public void print(String message, String longMessage) {
-        if (options.getVerbosity() == PARSER) {
-            if (longMessage != null) {
-                myWrite(longMessage);
-            } else if (message != null) {
-                myWrite(message);
-            }
-        }
-        if (options.getVerbosity() == QUIET) {
-            return;
-        }
-        try {
-            if (message != null) {
-                System.out.print(message);
-            }
-
-            if (longMessage != null) {
-                if (options.getVerbosity() == LONG) {
-                    System.out.print(longMessage);
-                }
-            }
-        } catch (Throwable e) {
-            System.out.println(e.getMessage());
         }
     }
 }
