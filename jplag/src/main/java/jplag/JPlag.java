@@ -40,17 +40,16 @@ public class JPlag implements ProgramI {
      * <p>
      * TODO PB: This should be moved to parseSubmissions(...)
      */
-    public String currentSubmissionName = "<Unknown submission>";
+    private String currentSubmissionName = "<Unknown submission>";
 
     /**
      * Vector of errors that occurred during the execution of the program.
      */
-    public Vector<String> errorVector = new Vector<>();
-
+    private Vector<String> errorVector = new Vector<>();
 
     private int errors = 0;
 
-    public Language language;
+    private Language language;
 
     /**
      * The base code directory is considered a separate submission.
@@ -60,7 +59,7 @@ public class JPlag implements ProgramI {
     /**
      * Comparison strategy to use.
      */
-    public ComparisonStrategy comparisonStrategy;
+    private ComparisonStrategy comparisonStrategy;
 
     /**
      * Set of file names to be excluded in comparison.
@@ -70,7 +69,7 @@ public class JPlag implements ProgramI {
     /**
      * Contains the comparison logic.
      */
-    protected GreedyStringTiling gSTiling = new GreedyStringTiling(this);
+    private GreedyStringTiling gSTiling = new GreedyStringTiling(this);
 
     /**
      * JPlag configuration options.
@@ -81,6 +80,10 @@ public class JPlag implements ProgramI {
      * File writer.
      */
     private FileWriter writer = null;
+
+    public Language getLanguage() {
+        return language;
+    }
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
@@ -98,7 +101,7 @@ public class JPlag implements ProgramI {
         this.checkBaseCodeOption();
     }
 
-    public void initializeComparisonStrategy() throws ExitException {
+    private void initializeComparisonStrategy() throws ExitException {
         ComparisonMode mode = options.getComparisonMode();
         switch (mode) { // TODO TS: Currently only one comparison strategy supported
         case NORMAL:
@@ -109,7 +112,7 @@ public class JPlag implements ProgramI {
         }
     }
 
-    public void initializeLanguage() throws ExitException {
+    private void initializeLanguage() throws ExitException {
         LanguageOption languageOption = this.options.getLanguageOption();
 
         try {
@@ -127,9 +130,9 @@ public class JPlag implements ProgramI {
             throw new ExitException("Language instantiation failed", ExitException.BAD_LANGUAGE_ERROR);
         }
 
-        this.options.setLanguageDefaults(this.language);
+        this.options.setLanguageDefaults(this.getLanguage());
 
-        System.out.println("Initialized language " + this.language.name());
+        System.out.println("Initialized language " + this.getLanguage().name());
     }
 
     /**
@@ -217,7 +220,7 @@ public class JPlag implements ProgramI {
     /**
      * TODO PB: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
      */
-    public void parseAllSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) throws ExitException {
+    private void parseAllSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) throws ExitException {
         try {
             parseSubmissions(submissions);
             System.gc();
@@ -235,22 +238,10 @@ public class JPlag implements ProgramI {
 
     public boolean hasValidSuffix(File file) {
         String[] validSuffixes = options.getFileSuffixes();
-
         if (validSuffixes == null || validSuffixes.length == 0) {
-            return true;
+            return true; // TODO TS: Why does this return true if the valid suffixes are not set?
         }
-
-        boolean hasValidSuffix = false;
-        String fileName = file.getName();
-
-        for (String validSuffix : validSuffixes) {
-            if (fileName.endsWith(validSuffix)) {
-                hasValidSuffix = true;
-                break;
-            }
-        }
-
-        return hasValidSuffix;
+        return Arrays.stream(validSuffixes).anyMatch(suffix -> file.getName().endsWith(suffix));
     }
 
     /**
@@ -324,20 +315,11 @@ public class JPlag implements ProgramI {
     /**
      * Check if a file is excluded or not.
      */
-    protected boolean isFileExcluded(File file) {
+    public boolean isFileExcluded(File file) {
         if (excludedFileNames == null) {
             return false;
         }
-
-        String fileName = file.getName();
-
-        for (String s : excludedFileNames) {
-            if (fileName.endsWith(s)) {
-                return true;
-            }
-        }
-
-        return false;
+        return excludedFileNames.stream().anyMatch(excludedName -> file.getName().endsWith(excludedName));
     }
 
     /**
@@ -480,7 +462,7 @@ public class JPlag implements ProgramI {
         }
     }
 
-    public void closeWriter() {
+    private void closeWriter() {
         try {
             if (writer != null) {
                 writer.close();
@@ -495,9 +477,9 @@ public class JPlag implements ProgramI {
      * Add an error to the errorVector.
      */
     @Override
-    public void addError(String errorMsg) {
-        errorVector.add("[" + currentSubmissionName + "]\n" + errorMsg);
-        print(errorMsg, null);
+    public void addError(String errorMessage) {
+        errorVector.add("[" + currentSubmissionName + "]\n" + errorMessage);
+        print(errorMessage, null);
     }
 
     /**
@@ -515,25 +497,25 @@ public class JPlag implements ProgramI {
     }
 
     @Override
-    public void print(String normal, String lng) {
+    public void print(String message, String longMessage) {
         if (options.getVerbosity() == PARSER) {
-            if (lng != null) {
-                myWrite(lng);
-            } else if (normal != null) {
-                myWrite(normal);
+            if (longMessage != null) {
+                myWrite(longMessage);
+            } else if (message != null) {
+                myWrite(message);
             }
         }
         if (options.getVerbosity() == QUIET) {
             return;
         }
         try {
-            if (normal != null) {
-                System.out.print(normal);
+            if (message != null) {
+                System.out.print(message);
             }
 
-            if (lng != null) {
+            if (longMessage != null) {
                 if (options.getVerbosity() == LONG) {
-                    System.out.print(lng);
+                    System.out.print(longMessage);
                 }
             }
         } catch (Throwable e) {
