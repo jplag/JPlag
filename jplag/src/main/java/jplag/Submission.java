@@ -132,8 +132,8 @@ public class Submission implements Comparable<Submission> {
 
         String[] relativeFilePaths = getRelativeFilePaths(submissionFile, files);
 
-        tokenList = this.program.language.parse(submissionFile, relativeFilePaths);
-        if (!program.language.errors()) {
+        tokenList = this.program.getLanguage().parse(submissionFile, relativeFilePaths);
+        if (!program.getLanguage().errors()) {
             if (tokenList.size() < 3) {
                 program.print("Submission \"" + name + "\" is too short!\n", null);
                 tokenList = null;
@@ -243,7 +243,7 @@ public class Submission implements Comparable<Submission> {
             return;
         }
 
-        errorDir = new File(errorDir, this.program.language.getShortName());
+        errorDir = new File(errorDir, this.program.getLanguage().getShortName());
 
         if (!errorDir.exists()) {
             errorDir.mkdir();
