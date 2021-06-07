@@ -3,13 +3,13 @@ package jplag;
 /**
  * Minimal data structure that stores "Match" objects.
  * <p>
- * Note: This class is only used by GSTiling as a data structure to store matches.
+ * Note: This class is only used by {@link GreedyStringTiling} as a data structure to store matches.
  */
 public class Matches {
 
     public Match[] matches;
 
-    private int anzahl;
+    private int numberOfMatches;
     private final int increment = 20;
 
     public Matches() {
@@ -17,11 +17,11 @@ public class Matches {
         for (int i = 0; i < 10; i++) {
             matches[i] = new Match();
         }
-        anzahl = 0;
+        numberOfMatches = 0;
     }
 
     public final int size() {
-        return anzahl;
+        return numberOfMatches;
     }
 
     private void ensureCapacity(int minCapacity) {
@@ -40,25 +40,21 @@ public class Matches {
         }
     }
 
-    /*
-     * public final void addMatch(Match match) { for (int i=0; i<anzahl; i++) if (match.overlap(matches[i])) return; // do
-     * not allow overlaps ensureCapacity(anzahl + 1); matches[anzahl++] = match; }
-     */
     public final void addMatch(int startA, int startB, int length) {
-        for (int i = anzahl - 1; i >= 0; i--) { // starting at the end is better(?)
+        for (int i = numberOfMatches - 1; i >= 0; i--) { // starting at the end is better(?)
             if (matches[i].overlap(startA, startB, length)) {
                 return;
             }
             // no overlaps!
         }
 
-        ensureCapacity(anzahl + 1);
+        ensureCapacity(numberOfMatches + 1);
 
-        matches[anzahl].set(startA, startB, length);
-        anzahl++;
+        matches[numberOfMatches].set(startA, startB, length);
+        numberOfMatches++;
     }
 
     public final void clear() {
-        anzahl = 0;
+        numberOfMatches = 0;
     }
 }

@@ -64,15 +64,15 @@ public class Report {
      * Two colors, represented by Rl,Gl,Bl and Rh,Gh,Bh respectively are mixed according to the percentage "percent"
      */
     private String color(float percent, int Rl, int Rh, int Gl, int Gh, int Bl, int Bh) {
-        int farbeR = (int) (Rl + (Rh - Rl) * percent / 100);
-        int farbeG = (int) (Gl + (Gh - Gl) * percent / 100);
-        int farbeB = (int) (Bl + (Bh - Bl) * percent / 100);
+        int redValue = (int) (Rl + (Rh - Rl) * percent / 100);
+        int greenValue = (int) (Gl + (Gh - Gl) * percent / 100);
+        int blueValue = (int) (Bl + (Bh - Bl) * percent / 100);
 
-        String helpR = (farbeR < 16 ? "0" : "") + Integer.toHexString(farbeR);
-        String helpG = (farbeG < 16 ? "0" : "") + Integer.toHexString(farbeG);
-        String helpB = (farbeB < 16 ? "0" : "") + Integer.toHexString(farbeB);
+        String red = (redValue < 16 ? "0" : "") + Integer.toHexString(redValue);
+        String green = (greenValue < 16 ? "0" : "") + Integer.toHexString(greenValue);
+        String blue = (blueValue < 16 ? "0" : "") + Integer.toHexString(blueValue);
 
-        return "#" + helpR + helpG + helpB;
+        return "#" + red + green + blue;
     }
 
     /*

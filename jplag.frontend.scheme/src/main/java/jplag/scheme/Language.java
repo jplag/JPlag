@@ -17,8 +17,7 @@ public class Language implements jplag.Language {
 		return this.parser.errorsCount();
 	}
 
-	private jplag.scheme.Parser parser;//noch nicht instanziert? siehe
-									   // Konstruktor
+	private jplag.scheme.Parser parser; // Not yet instantiated? See constructor!
 
 	@Override
     public String[] suffixes() {
