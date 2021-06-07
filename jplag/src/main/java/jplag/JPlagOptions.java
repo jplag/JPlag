@@ -10,11 +10,6 @@ import jplag.strategy.ComparisonMode;
 public class JPlagOptions {
 
     /**
-     * This is related to `storeMatches`.
-     */
-    public static final int MAX_RESULT_PAIRS = 1000;
-
-    /**
      * Language used to parse the submissions.
      */
     private Language language;
@@ -142,11 +137,11 @@ public class JPlagOptions {
         return this.baseCodeSubmissionName != null;
     }
 
-    public boolean hasFileSuffixes() {
+    private boolean hasFileSuffixes() {
         return this.fileSuffixes != null && this.fileSuffixes.length > 0;
     }
 
-    public boolean hasMinTokenMatch() {
+    private boolean hasMinTokenMatch() {
         return this.minTokenMatch != null;
     }
     

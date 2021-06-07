@@ -71,25 +71,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /*
-     * sort start indexes of subA
-     */
-    public final void sort() {   // bubblesort!!!
-        Match tmp;
-        int size = matches.size();
-        int i, j;
-
-        for (i = 1; i < size; i++) {
-            for (j = 0; j < (size - i); j++) {
-                if (matches.get(j).startA > matches.get(j + 1).startA) {
-                    tmp = matches.get(j);
-                    matches.set(j, matches.get(j + 1));
-                    matches.set(j + 1, tmp);
-                }
-            }
-        }
-    }
-
-    /*
      * A few methods to calculate some statistical data
      */
 
@@ -116,10 +97,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         }
 
         return erg;
-    }
-
-    public final boolean moreThan(float percent) {
-        return (percent() > percent);
     }
 
     public final float roundedPercent() {
@@ -159,11 +136,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
     }
 
-    public final float roundedPercentMaxAB() {
-        float percent = percentMaxAB();
-        return ((int) (percent * 10)) / (float) 10;
-    }
-
     public final float percentMaxAB() {
         float a = percentA();
         float b = percentB();
@@ -172,11 +144,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         } else {
             return b;
         }
-    }
-
-    public final float roundedPercentMinAB() {
-        float percent = percentMinAB();
-        return ((int) (percent * 10)) / (float) 10;
     }
 
     public final float percentMinAB() {
@@ -189,12 +156,12 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         }
     }
 
-    public final float percentBasecodeA() {
+    private final float percentBasecodeA() {
         float sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
         return bcMatchesA.getNumberOfMatchedTokens() * 100 / sa;
     }
 
-    public final float percentBasecodeB() {
+    private final float percentBasecodeB() {
         float sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
         return bcMatchesB.getNumberOfMatchedTokens() * 100 / sb;
     }
@@ -263,44 +230,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         return "#" + help + "0000";
     }
 
-    /*
-     * This method returns the name of all files that are represented by at least one token.
-     */
-    public final String[] allFiles(int sub) {
-        Structure struct = (sub == 0 ? firstSubmission : secondSubmission).tokenList;
-        int count = 1;
-        for (int i = 1; i < struct.size(); i++) {
-            if (!struct.tokens[i].file.equals(struct.tokens[i - 1].file)) {
-                count++;
-            }
-        }
-        String[] res = new String[count];
-        if (count > 0) {
-            res[0] = struct.tokens[0].file;
-        }
-        count = 1;
-        for (int i = 1; i < struct.size(); i++) {
-            if (!struct.tokens[i].file.equals(struct.tokens[i - 1].file)) {
-                res[count++] = struct.tokens[i].file;
-            }
-        }
-
-        /*
-         * bubblesort by file name. (so that equally named files are displayed approximately side by side.)
-         */
-        for (int a = 1; a < res.length; a++) {
-            for (int b = 1; b < (res.length - a); b++) {
-                if (res[b - 1].compareTo(res[b]) < 0) {
-                    String hilf = res[b - 1];
-                    res[b - 1] = res[b];
-                    res[b] = hilf;
-                }
-            }
-        }
-
-        return res;
-    }
-
     @Override
     public int compare(JPlagComparison o1, JPlagComparison o2) {
         float p1 = o1.percent();
@@ -326,39 +255,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     @Override
     public String toString() {
         return firstSubmission.name + " <-> " + secondSubmission.name;
-    }
-
-    public static class AvgComparator implements Comparator<JPlagComparison> {
-
-        @Override
-        public int compare(JPlagComparison o1, JPlagComparison o2) {
-            float p1 = o1.percent();
-            float p2 = o2.percent();
-            return Float.compare(p2, p1);
-        }
-
-    }
-
-    public static class AvgReversedComparator implements Comparator<JPlagComparison> {
-
-        @Override
-        public int compare(JPlagComparison o1, JPlagComparison o2) {
-            float p1 = o1.percent();
-            float p2 = o2.percent();
-            return Float.compare(p1, p2);
-        }
-
-    }
-
-    public static class MaxComparator implements Comparator<JPlagComparison> {
-
-        @Override
-        public int compare(JPlagComparison o1, JPlagComparison o2) {
-            float p1 = o1.percentMaxAB();
-            float p2 = o2.percentMaxAB();
-            return Float.compare(p2, p1);
-        }
-
     }
 
 }

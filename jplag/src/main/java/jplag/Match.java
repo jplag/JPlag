@@ -7,6 +7,7 @@ public class Match {
     public int length;
 
     public Match() {
+        // non-parameterized constructor for uninitialized matches 
     }
 
     public Match(int startA, int startB, int length) {
@@ -19,15 +20,6 @@ public class Match {
         this.startA = startA;
         this.startB = startB;
         this.length = length;
-    }
-
-    public final boolean contains(int index, int sub) {
-        int start = (sub == 0 ? startA : startB);
-        return (start <= index && index < (start + length));
-    }
-
-    public final boolean overlap(Match other) {
-        return overlap(other.startA, other.startB, other.length);
     }
 
     public final boolean overlap(int oStartA, int oStartB, int oLength) {

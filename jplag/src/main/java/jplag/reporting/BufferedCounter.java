@@ -16,10 +16,6 @@ public class BufferedCounter extends BufferedWriter {
         count = 0;
     }
 
-    public BufferedCounter(Writer out, int sz) {
-        super(out, sz);
-        count = 0;
-    }
 
     @Override
     public void write(int c) throws IOException {

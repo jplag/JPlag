@@ -26,9 +26,6 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
-        <includes>
-          <include>jplag/version.properties</include>
-        </includes>
       </resource>
 
       <resource>
