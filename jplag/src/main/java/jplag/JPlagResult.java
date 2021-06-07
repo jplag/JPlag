@@ -2,6 +2,8 @@ package jplag;
 
 import java.util.List;
 
+import jplag.options.JPlagOptions;
+
 /**
  * Encapsulates the results of a comparison of a set of source code submissions.
  */

@@ -6,8 +6,8 @@ import java.util.Vector;
 import jplag.GreedyStringTiling;
 import jplag.JPlagBaseCodeComparison;
 import jplag.JPlagComparison;
-import jplag.JPlagOptions;
 import jplag.Submission;
+import jplag.options.JPlagOptions;
 import jplag.options.SimilarityMetric;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
@@ -16,28 +16,28 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     // Hashtable that maps the name of a submissions to its matches with the provided base code.
     protected Hashtable<String, JPlagBaseCodeComparison> baseCodeMatches = new Hashtable<>(30);
 
-    protected GreedyStringTiling gSTiling;
+    protected GreedyStringTiling greedyStringTiling;
 
     protected JPlagOptions options;
 
-    public AbstractComparisonStrategy(JPlagOptions options, GreedyStringTiling gSTiling) {
-        this.gSTiling = gSTiling;
+    public AbstractComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
+        this.greedyStringTiling = greedyStringTiling;
         this.options = options;
     }
 
     protected void compareSubmissionsToBaseCode(Vector<Submission> submissions, Submission baseCodeSubmission) {
         int numberOfSubmissions = submissions.size();
 
-        JPlagBaseCodeComparison bcMatch;
+        JPlagBaseCodeComparison baseCodeMatch;
         Submission currentSubmission;
 
         for (int i = 0; i < (numberOfSubmissions); i++) {
             currentSubmission = submissions.elementAt(i);
 
-            bcMatch = this.gSTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
-            baseCodeMatches.put(currentSubmission.name, bcMatch);
+            baseCodeMatch = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
+            baseCodeMatches.put(currentSubmission.name, baseCodeMatch);
 
-            this.gSTiling.resetBaseSubmission(baseCodeSubmission);
+            greedyStringTiling.resetBaseSubmission(baseCodeSubmission);
         }
     }
 

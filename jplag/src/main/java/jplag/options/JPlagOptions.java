@@ -1,10 +1,8 @@
-package jplag;
+package jplag.options;
 
 import static jplag.strategy.ComparisonMode.NORMAL;
 
-import jplag.options.LanguageOption;
-import jplag.options.SimilarityMetric;
-import jplag.options.Verbosity;
+import jplag.Language;
 import jplag.strategy.ComparisonMode;
 
 public class JPlagOptions {
@@ -115,7 +113,7 @@ public class JPlagOptions {
      * not set by the user.
      * @param language - initialized language instance
      */
-    void setLanguageDefaults(Language language) {
+    public void setLanguageDefaults(Language language) {
         if (!this.hasMinTokenMatch()) {
             this.minTokenMatch = language.min_token_match();
         }
@@ -203,7 +201,7 @@ public class JPlagOptions {
         return similarityMetric;
     }
 
-    void setLanguage(Language language) {
+    public void setLanguage(Language language) {
         this.language = language;
     }
 
