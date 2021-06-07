@@ -33,8 +33,8 @@ public class Report {
     private final File reportDir;
     private final Messages msg;
 
-    int currentComparisonIndex = 0;
-    Map<JPlagComparison, Integer> comparisonToIndex = new HashMap<>();
+    private int currentComparisonIndex = 0;
+    private final Map<JPlagComparison, Integer> comparisonToIndex = new HashMap<>();
 
     public Report(File reportDir) throws ExitException {
         this.reportDir = reportDir;
@@ -405,7 +405,7 @@ public class Report {
             Token startB = tokensB[match.startB];
             Token endB = tokensB[match.startB + match.length - 1];
 
-            String col = Colors.getColor(i);
+            String col = Color.getHexadecimalValue(i);
 
             htmlFile.print("<TR><TD BGCOLOR=\"" + col + "\"><FONT COLOR=\"" + col + "\">-</FONT>");
             htmlFile.print("<TD><A HREF=\"javascript:ZweiFrames('match" + index + "-0.html#" + i + "',2,'match" + index + "-1.html#" + i
@@ -464,7 +464,7 @@ public class Report {
 
             for (int y = 0; y < files.length; y++) {
                 if (start.file.equals(files[y]) && text[y] != null) {
-                    hilf = "<FONT color=\"" + Colors.getColor(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
+                    hilf = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
                             + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
                             + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
                             + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";
@@ -593,7 +593,7 @@ public class Report {
                 // begin markup
                 if (start != null && start.getIndex() == charNr) {
                     f.print("<A NAME=\"" + perm[index - 1] + "\"></A>");
-                    f.print("<FONT color=\"" + Colors.getColor(perm[index - 1]) + "\"><B>");
+                    f.print("<FONT color=\"" + Color.getHexadecimalValue(perm[index - 1]) + "\"><B>");
                     // "<A HREF=\"javascript:ZweiFrames('match"+i+"-"+(1-j)+
                     // ".html#"+index+"',"+(3-j)+",'match"+i+"-top.html#"+index+
                     // "',1)\">"+"<IMG SRC=\""+pics[j]+
@@ -651,7 +651,7 @@ public class Report {
             Token end = tokens[((j == 0 ? onematch.startA : onematch.startB) + onematch.length - 1)];
             for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
                 if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
-                    String tmp = "<FONT color=\"" + Colors.getColor(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
+                    String tmp = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
                             + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
                             + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
                             + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";

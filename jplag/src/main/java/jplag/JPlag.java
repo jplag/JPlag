@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -22,17 +21,11 @@ import jplag.options.LanguageOption;
 import jplag.strategy.ComparisonMode;
 import jplag.strategy.ComparisonStrategy;
 import jplag.strategy.NormalComparisonStrategy;
-import jplagUtils.PropertiesLoader;
 
 /**
  * This class coordinates the whole program flow.
  */
 public class JPlag implements ProgramI {
-
-    // CONSTANTS:
-    private static final Properties versionProps = PropertiesLoader.loadProps("jplag/version.properties");
-    public static final String name = "JPlag" + versionProps.getProperty("version", "devel");
-    public static final String name_long = "JPlag (Version " + versionProps.getProperty("version", "devel") + ")";
 
     // INPUT:
     private Submission baseCodeSubmission = null;
@@ -77,7 +70,7 @@ public class JPlag implements ProgramI {
             throw new ExitException(options.getRootDirName() + " is not a directory!");
         }
         readExclusionFile(); // This file contains all files names which are excluded
-    
+
         // 2. Parse and validate submissions:
         Vector<Submission> submissions = findSubmissions(rootDir);
         parseAllSubmissions(submissions, baseCodeSubmission);
@@ -87,7 +80,7 @@ public class JPlag implements ProgramI {
             throw new ExitException("Not enough valid submissions! (found " + submissions.size() + " valid submissions)",
                     ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
         }
-    
+
         // 3. Compare valid submissions:
         errorVector = null; // errorVector is not needed anymore
         System.gc();
@@ -96,23 +89,31 @@ public class JPlag implements ProgramI {
         return result;
     }
 
-    /**
-     * Add an error to the errorVector.
-     */
     @Override
     public void addError(String errorMessage) {
         errorVector.add("[" + currentSubmissionName + "]\n" + errorMessage);
         print(errorMessage, null);
     }
 
+    /**
+     * @return the configured language in which the submissions are written.
+     */
     public Language getLanguage() {
         return language;
     }
 
-    public JPlagOptions getOptions() {
-        return this.options;
+    /**
+     * @return the program options which allow to configure JPlag.
+     */
+    protected JPlagOptions getOptions() {
+        return this.options; // TS: Should not be accessible, as options should be set before passing them to this class.
     }
 
+    /**
+     * Checks if a file has a valid suffix for the current language.
+     * @param file is the file to check.
+     * @return true if the file suffix matches the language.
+     */
     public boolean hasValidSuffix(File file) {
         String[] validSuffixes = options.getFileSuffixes();
         if (validSuffixes == null || validSuffixes.length == 0) {
@@ -122,7 +123,7 @@ public class JPlag implements ProgramI {
     }
 
     /**
-     * Check if a file is excluded or not.
+     * Checks if a file is excluded or not.
      */
     public boolean isFileExcluded(File file) {
         if (excludedFileNames == null) {

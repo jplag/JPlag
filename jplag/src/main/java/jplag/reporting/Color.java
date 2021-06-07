@@ -1,6 +1,6 @@
 package jplag.reporting;
 
-public enum Colors {
+public enum Color {
     BLUE("#0000ff"),
     BROWN("#f63526"),
     BROWN_2("#980517"),
@@ -62,7 +62,7 @@ public enum Colors {
 
     private final String hexadecimalValue;
 
-    private Colors(String hexadecimalValue) {
+    private Color(String hexadecimalValue) {
         this.hexadecimalValue = hexadecimalValue;
     }
 
@@ -70,7 +70,7 @@ public enum Colors {
         return hexadecimalValue;
     }
 
-    public static String getColor(int i) {
-        return values()[i % values().length].getHexadecimalValue();
+    public static String getHexadecimalValue(int index) {
+        return values()[index % values().length].getHexadecimalValue();
     }
 }

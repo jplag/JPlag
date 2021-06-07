@@ -29,7 +29,7 @@ public class Submission implements Comparable<Submission> {
      */
     public String name;
 
-    public File submissionFile;
+    private File submissionFile;
 
     /**
      * List of files this submission consists of.
@@ -115,7 +115,7 @@ public class Submission implements Comparable<Submission> {
      * @param files - List of files to map.
      * @return an array of file paths relative to the submission directory.
      */
-    public String[] getRelativeFilePaths(File baseFile, List<File> files) {
+    private String[] getRelativeFilePaths(File baseFile, List<File> files) {
         Path baseFilePath = baseFile.toPath();
 
         return files.stream().map(File::toPath).map(baseFilePath::relativize).map(Path::toString).toArray(String[]::new);
