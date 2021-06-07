@@ -4,8 +4,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-/*
- * This class counts the number of printed characters.
+/**
+ * A buffered writer that counts the number of printed characters.
  */
 public class BufferedCounter extends BufferedWriter {
 
@@ -15,7 +15,6 @@ public class BufferedCounter extends BufferedWriter {
         super(out);
         count = 0;
     }
-
 
     @Override
     public void write(int c) throws IOException {

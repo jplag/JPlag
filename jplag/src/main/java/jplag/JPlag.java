@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import jplag.options.JPlagOptions;
 import jplag.options.LanguageOption;
 import jplag.strategy.ComparisonMode;
 import jplag.strategy.ComparisonStrategy;

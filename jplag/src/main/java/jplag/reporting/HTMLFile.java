@@ -1,6 +1,5 @@
 package jplag.reporting;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,25 +9,22 @@ import java.nio.charset.StandardCharsets;
 
 public class HTMLFile extends PrintWriter {
 
-    private BufferedCounter bc;
+    private BufferedCounter counter;
 
     /**
      * Static factory method to instantiate an HTMLFile objects.
      */
     public static HTMLFile fromFile(File file) throws IOException {
-        BufferedCounter bc = new BufferedCounter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
-
-        HTMLFile htmlFile = new HTMLFile(bc);
-        htmlFile.bc = bc;
-
-        return htmlFile;
+        BufferedCounter counter = new BufferedCounter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+        return new HTMLFile(counter);
     }
 
-    private HTMLFile(BufferedWriter writer) {
-        super(writer);
+    private HTMLFile(BufferedCounter counter) {
+        super(counter);
+        this.counter = counter;
     }
 
     public int bytesWritten() {
-        return bc.bytesWritten();
+        return counter.bytesWritten();
     }
 }
