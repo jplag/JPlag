@@ -222,11 +222,11 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
-     * The bigger a match (length "anz") is relatively to the biggest match the redder is the color returned by this method.
+     * The bigger a match (length) is relatively to the biggest match the redder is the color returned by this method.
      */
-    public String color(int anz) {
-        int farbe = 255 * anz / biggestMatch();
-        String help = (farbe < 16 ? "0" : "") + Integer.toHexString(farbe);
+    public String color(int length) {
+        int color = 255 * length / biggestMatch();
+        String help = (color < 16 ? "0" : "") + Integer.toHexString(color);
         return "#" + help + "0000";
     }
 
