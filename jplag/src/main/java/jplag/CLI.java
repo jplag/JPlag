@@ -57,7 +57,10 @@ public class CLI {
         parser = ArgumentParsers.newFor(PROGRAM_NAME).build().defaultHelp(true).description(DESCRIPTION);
 
         parser.addArgument("rootDir").help("The root-directory that contains all submissions");
-        parser.addArgument("-l").choices(LanguageOption.getAllDisplayNames()).setDefault("java9").help("Select the language to parse the submissions");
+        parser.addArgument("-l")
+                .choices(LanguageOption.getAllDisplayNames())
+                .setDefault(LanguageOption.getDefault().getDisplayName())
+                .help("Select the language to parse the submissions");
         parser.addArgument("-bc").help("Name of the directory which contains the base code (common framework)");
         parser.addArgument("-v").choices(verbosityOptions).setDefault("quiet").help("Verbosity");
         parser.addArgument("-d").help("(Debug) parser. Non-parsable files will be stored").action(storeTrue());

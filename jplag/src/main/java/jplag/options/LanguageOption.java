@@ -33,16 +33,24 @@ public enum LanguageOption {
         return this.classPath;
     }
 
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
     public static LanguageOption fromDisplayName(String displayName) {
         return Arrays.stream(LanguageOption.values())
                 .filter(languageOption -> languageOption.displayName.equals(displayName))
                 .findFirst()
-                .orElse(LanguageOption.JAVA_1_9);
+                .orElse(getDefault());
     }
 
     public static String[] getAllDisplayNames() {
         return Arrays.stream(LanguageOption.values())
                 .map(languageOption -> languageOption.displayName)
                 .toArray(String[]::new);
+    }
+
+    public static LanguageOption getDefault() {
+        return LanguageOption.JAVA_1_9;
     }
 }
