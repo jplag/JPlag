@@ -117,8 +117,10 @@ public class JPlag implements ProgramI {
      */
     public boolean hasValidSuffix(File file) {
         String[] validSuffixes = options.getFileSuffixes();
+
+        // This is the case if either the language frontends or the CLI did not set the valid suffixes array in options
         if (validSuffixes == null || validSuffixes.length == 0) {
-            return true; // TODO TS: Why does this return true if the valid suffixes are not set?
+            return true;
         }
         return Arrays.stream(validSuffixes).anyMatch(suffix -> file.getName().endsWith(suffix));
     }
@@ -380,7 +382,7 @@ public class JPlag implements ProgramI {
     /**
      * Parse all given submissions.
      */
-    private void parseSubmissions(Vector<Submission> submissions) throws ExitException {
+    private void parseSubmissions(Vector<Submission> submissions) {
         if (submissions == null) {
             System.out.println("Nothing to parse!");
             return;
