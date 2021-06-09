@@ -56,6 +56,7 @@ public class CLI {
     public CLI() {
         parser = ArgumentParsers.newFor(PROGRAM_NAME).build().defaultHelp(true).description(DESCRIPTION);
 
+        // TODO SH: Fix code duplication of CLI arguments
         parser.addArgument("rootDir").help("The root-directory that contains all submissions");
         parser.addArgument("-l")
                 .choices(LanguageOption.getAllDisplayNames())
@@ -68,7 +69,7 @@ public class CLI {
         parser.addArgument("-p").help("comma-separated list of all filename suffixes that are included");
         parser.addArgument("-x").help("All files named in this file will be ignored in the comparison (line-separated list)");
         parser.addArgument("-t").help("Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity");
-        parser.addArgument("-s").setDefault(0f).help("Similarity Threshold [0-100]: all matches above this threshold will be saved");
+        parser.addArgument("-m").setDefault(0f).help("Match similarity Threshold [0-100]: all matches above this threshold will be saved");
         parser.addArgument("-r").setDefault("result").help("Name of directory in which the comparison results will be stored");
     }
 
@@ -120,7 +121,7 @@ public class CLI {
             }
         }
 
-        String similarityThreshold = namespace.getString("s");
+        String similarityThreshold = namespace.getString("m");
         if (similarityThreshold != null) {
             try {
                 options.setSimilarityThreshold(Float.parseFloat(similarityThreshold));
