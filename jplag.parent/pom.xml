@@ -10,12 +10,12 @@
   <url>http://jplag.ipd.kit.edu</url>
 
   <issueManagement>
-    <system>Github</system>
+    <system>GitHub</system>
     <url>https://github.com/jplag/jplag</url>
   </issueManagement>
   <ciManagement>
-    <system>Jenkins</system>
-    <url>http://bob.ipd.kit.edu/jenkins</url>
+    <system>GitHub Actions</system>
+    <url>https://github.com/jplag/jplag/actions</url>
   </ciManagement>
   <organization>
     <name>Karlsruhe Institute of Technology (KIT), Institute for Program Structures and Data
@@ -25,6 +25,24 @@
   </organization>
 
   <developers>
+    <developer>
+      <id>sebinside</id>
+      <name>Sebastian Hahner</name>
+      <email>hahner@kit.edu</email>
+      <url>https://sdq.ipd.kit.edu/people/sebastian-hahner/</url>
+      <organization>KASTEL</organization>
+      <organizationUrl>https://sdq.ipd.kit.edu/</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
+    <developer>
+      <id>tsaglam</id>
+      <name>Timur Sağlam</name>
+      <email>saglam@kit.edu</email>
+      <url>https://sdq.ipd.kit.edu/people/timur-saglam/</url>
+      <organization>KASTEL</organization>
+      <organizationUrl>https://sdq.ipd.kit.edu/</organizationUrl>
+      <timezone>GMT+1</timezone>
+    </developer>
     <developer>
       <id>sw</id>
       <name>Sebastian Weigelt</name>
@@ -38,17 +56,9 @@
       <id>lama</id>
       <name>Mathias Landhäußer</name>
       <email>mathias.landhaeusser@kit.edu</email>
-      <url>http://www.ipd.kit.edu/Tichy/people.php?id=82</url>
+      <url>https://ps.ipd.kit.edu/176_366.php</url>
       <organization>IPD Tichy</organization>
-      <organizationUrl>http://www.ipd.kit.edu/Tichy/</organizationUrl>
-      <timezone>GMT+1</timezone>
-    </developer>
-    <developer>
-      <id>anjela</id>
-      <name>Anjela Mayer</name>
-      <email>anjela.mayer@student.kit.edu</email>
-      <organization>IPD Tichy</organization>
-      <organizationUrl>http://www.ipd.kit.edu/Tichy/</organizationUrl>
+      <organizationUrl>https://ps.ipd.kit.edu/</organizationUrl>
       <timezone>GMT+1</timezone>
     </developer>
   </developers>
@@ -59,31 +69,6 @@
     <project.build.target>11</project.build.target>
     <project.build.optimize>true</project.build.optimize>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>ipdNexus</id>
-      <name>IPD-Nexus-Public</name>
-      <url>https://bob.ipd.kit.edu/nexus/repository/maven-public-all</url>
-    </repository>
-  </repositories>
-
-  <distributionManagement>
-    <!-- use the following if you're not using a snapshot version. -->
-    <repository>
-      <id>ipdNexus-jplag-releases</id>
-      <name>IPD-Tichy-Releases</name>
-      <url>https://bob.ipd.kit.edu/nexus/repository/maven-jplag-releases</url>
-      <layout>default</layout>
-    </repository>
-    <!-- use the following if you ARE using a snapshot version. -->
-    <snapshotRepository>
-      <id>ipdNexus-jplag-snapshots</id>
-      <name>IPD-Tichy-Snapshots</name>
-      <url>https://bob.ipd.kit.edu/nexus/repository/maven-jplag-snapshots</url>
-      <layout>default</layout>
-    </snapshotRepository>
-  </distributionManagement>
 
   <build>
     <plugins>
