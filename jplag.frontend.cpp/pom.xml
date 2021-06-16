@@ -4,14 +4,6 @@
 	<artifactId>cpp</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
 
-	<repositories>
-		<repository>
-			<id>ipdNexus</id>
-			<name>IPD-Nexus-Public</name>
-			<url>https://bob.ipd.kit.edu/nexus/repository/maven-public-all/</url>
-		</repository>
-	</repositories>
-
 	<build>
 		<plugins>
 			<plugin>

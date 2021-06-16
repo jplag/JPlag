@@ -3,15 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>python-3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
-	<repositories>
-		<repository>
-			<id>ipdNexus</id>
-			<name>IPD-Nexus-Public</name>
-			<url>https://bob.ipd.kit.edu/nexus/repository/maven-public-all/</url>
-		</repository>
-	</repositories>
-
+	
 	<build>
 		<plugins>
 			<plugin>

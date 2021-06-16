@@ -11,11 +11,4 @@
 		<relativePath>../jplag.parent/pom.xml</relativePath>
 	</parent>
 
-	<repositories>
-		<repository>
-			<id>ipdNexus</id>
-			<name>IPD-Nexus-Public</name>
-			<url>https://bob.ipd.kit.edu/nexus/repository/maven-public-all/</url>
-		</repository>
-	</repositories>
-</project>
+	</project>
