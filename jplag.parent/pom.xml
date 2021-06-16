@@ -294,7 +294,7 @@
 			<dependency>
 				<groupId>com.sun.xml.rpc</groupId>
 				<artifactId>jaxrpc-spi</artifactId>
-				<version>1.1.3_01</version>
+				<version>1.1.6</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.ant</groupId>
