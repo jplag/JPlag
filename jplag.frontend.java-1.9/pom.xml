@@ -4,14 +4,6 @@
 	<artifactId>java-1.9</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<repositories>
-		<repository>
-			<id>ipdNexus</id>
-			<name>IPD-Nexus-Public</name>
-			<url>http://bob.ipd.kit.edu/nexus/repository/maven-public-all/</url>
-		</repository>
-	</repositories>
-
 	<build>
 		<plugins>
 

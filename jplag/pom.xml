@@ -13,14 +13,6 @@
     <relativePath>../jplag.parent/pom.xml</relativePath>
   </parent>
 
-  <repositories>
-    <repository>
-      <id>ipdNexus</id>
-      <name>IPD-Nexus-Public</name>
-      <url>https://bob.ipd.kit.edu/nexus/repository/maven-public-all</url>
-    </repository>
-  </repositories>
-
   <build>
     <resources>
       <resource>
@@ -108,38 +100,6 @@
             </manifest>
           </archive>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>com.github.wvengen</groupId>
-        <artifactId>proguard-maven-plugin</artifactId>
-        <version>2.0.11</version>
-        <!-- executions>
-            <execution>
-                <phase>package</phase>
-                <goals>
-                    <goal>proguard</goal>
-                </goals>
-            </execution>
-        </executions-->
-        <configuration>
-          <proguardVersion>4.8</proguardVersion>
-          <options>
-            <option>-allowaccessmodification</option>
-            <option>-keep public class * extends java.applet.Applet { *; }</option>
-          </options>
-          <libs>
-            <lib>${java.home}/lib/rt.jar</lib>
-          </libs>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>net.sf.proguard</groupId>
-            <artifactId>proguard-base</artifactId>
-            <version>6.2.2</version>
-            <scope>runtime</scope>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
 
