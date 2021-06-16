@@ -39,6 +39,8 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
                     continue;
                 }
                 comparison = greedyStringTiling.compare(first, second);
+
+                // TODO SH: Why does this differ from the results shown in the result web page?
                 System.out.println("Comparing " + first.name + "-" + second.name + ": " + comparison.percent());
                 if (baseCodeSubmission != null) {
                     comparison.bcMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
