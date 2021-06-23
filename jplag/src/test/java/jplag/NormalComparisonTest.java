@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class NormalComparisonTests extends TestBase {
+public class NormalComparisonTest extends TestBase {
 
     @Test
     public void testSimpleDuplicate() throws ExitException {
