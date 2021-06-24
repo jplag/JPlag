@@ -7,7 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -82,11 +83,11 @@ public class Parser extends jplag.Parser implements Python3TokenConstants {
     public boolean parseFile(File dir, String file) {
         BufferedInputStream fis;
 
-        ANTLRInputStream input;
+        CharStream input;
         try {
             fis = new BufferedInputStream(new FileInputStream(new File(dir, file)));
             currentFile = file;
-            input = new ANTLRInputStream(fis);
+            input = CharStreams.fromStream(fis);
 
             // create a lexer that feeds off of input CharStream
             Python3Lexer lexer = new Python3Lexer(input);

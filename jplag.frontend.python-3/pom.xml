@@ -36,12 +36,6 @@
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>
 				<version>4.2</version>
-				<configuration>
-					<!-- Comma separated list of grammar files or pattern grammar files
-						By default, grammar file(s) is in ${basedir}/src/main/antlr -->
-					<!-- <grammars>*.g</grammars> -->
-					<grammars>Python3.g4</grammars>
-				</configuration>
 				<executions>
 					<execution>
 						<goals>
