@@ -1,7 +1,5 @@
 package jplag.options;
 
-import jplag.java19.Language;
-
 import java.util.Arrays;
 
 /**
