@@ -5,7 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -28,7 +29,7 @@ public class Antlr4LearningTests {
 	@Test
 	public void testVisitor() throws IOException {
 		BufferedInputStream fis = new BufferedInputStream(new FileInputStream(new File(srcTestResources, "ExceptionOne.java")));
-		ANTLRInputStream input = new ANTLRInputStream(fis);
+		CharStream input = CharStreams.fromStream(fis);
 
 		// create a lexer that feeds off of input CharStream
 		Java7Lexer lexer = new Java7Lexer(input);
@@ -46,7 +47,7 @@ public class Antlr4LearningTests {
 	public void howToUseAntlr4() throws IOException {
 		FileInputStream fis = new FileInputStream(new File(srcTestResources, "Java7FeatureTest.java"));
 		// create a CharStream that reads from file input stream
-		ANTLRInputStream input = new ANTLRInputStream(fis);
+		CharStream input = CharStreams.fromStream(fis);
 
 		// create a lexer that feeds off of input CharStream
 		Java7Lexer lexer = new Java7Lexer(input);
@@ -66,7 +67,7 @@ public class Antlr4LearningTests {
 	public void howToUseAntlr4Tokens() throws IOException {
 		FileInputStream fis = new FileInputStream(new File(srcTestResources, "Java7FeatureTest.java"));
 		// create a CharStream that reads from file input stream
-		ANTLRInputStream input = new ANTLRInputStream(fis);
+		CharStream input = CharStreams.fromStream(fis);
 
 		// create a lexer that feeds off of input CharStream
 		Java7Lexer lexer = new Java7Lexer(input);

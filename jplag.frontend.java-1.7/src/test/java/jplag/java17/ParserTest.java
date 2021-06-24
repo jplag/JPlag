@@ -7,7 +7,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -39,7 +40,7 @@ public class ParserTest {
 	public void testTheNewFancyJava7Features() throws IOException {
 		File file = new File(srcTestResources, "Java7FeatureTest.java");
 		FileInputStream fis = new FileInputStream(file);
-		ANTLRInputStream input = new ANTLRInputStream(fis);
+		CharStream input = CharStreams.fromStream(fis);
 		Java7Lexer lexer = new Java7Lexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		Java7Parser parser = new Java7Parser(tokens);
