@@ -85,8 +85,8 @@ public class GreedyStringTiling implements TokenConstants {
     public final JPlagComparison compare(Submission subA, Submission subB) {
         Submission A, B, tmp;
         if (subA.tokenList.size() > subB.tokenList.size()) {
-            A = subB;
-            B = subA;
+            A = subA;
+            B = subB;
         } else {
             A = subB;
             B = subA;
