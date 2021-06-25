@@ -3,6 +3,7 @@ package jplag.java19;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -25,7 +26,7 @@ public class JavacAdapter {
         final StandardJavaFileManager jfm = javac.getStandardFileManager(null, null, null);
         DiagnosticCollector<? super JavaFileObject> diagListen = new DiagnosticCollector<>();
         final JavaCompiler.CompilationTask task = javac.getTask(null, jfm, diagListen, null, null, jfm.getJavaFileObjects(pathedFiles));
-        Iterable<? extends CompilationUnitTree> asts = null;
+        Iterable<? extends CompilationUnitTree> asts = Collections.emptyList();
         try {
             asts = ((JavacTask) task).parse();
         } catch (IOException e) {
