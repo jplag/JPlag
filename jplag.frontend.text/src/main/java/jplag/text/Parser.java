@@ -34,8 +34,7 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 			String line;
 
 			while ((line = reader.readLine()) != null) {
-				line.trim();
-				filter.add(line.toLowerCase());
+				filter.add(line.trim().toLowerCase());
 			}
 
 			System.out.println("Filter: " + filter.size() + " words read.");
