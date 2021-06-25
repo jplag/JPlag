@@ -1,7 +1,7 @@
 package jplag;
 
 public interface ProgramI {
-    
+
     /**
      * Print and store an error.
      * @param errorMessage is the error message.

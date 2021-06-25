@@ -1,20 +1,21 @@
-/**
- Original pseudocode   : Thomas Weidenfeller
- Implementation tweaked: Aki Nieminen
-
- http://www.unicode.org/unicode/faq/utf_bom.html
- BOMs:
- 00 00 FE FF    = UTF-32, big-endian
- FF FE 00 00    = UTF-32, little-endian
- FE FF          = UTF-16, big-endian
- FF FE          = UTF-16, little-endian
- EF BB BF       = UTF-8
-
- Win2k Notepad:
- Unicode format = UTF-16LE
- ***/
+/*
+ * Original pseudocode   : Thomas Weidenfeller
+ * Implementation tweaked: Aki Nieminen
+ * 
+ * http://www.unicode.org/unicode/faq/utf_bom.html
+ * BOMs:
+ * 00 00 FE FF    = UTF-32, big-endian
+ * FF FE 00 00    = UTF-32, little-endian
+ * FE FF          = UTF-16, big-endian
+ * FF FE          = UTF-16, little-endian
+ * EF BB BF       = UTF-8
+ * 
+ * Win2k Notepad:
+ * Unicode format = UTF-16LE
+ */
 
 package jplag;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,14 +23,15 @@ import java.io.PushbackInputStream;
 import java.io.Reader;
 
 /**
- * Generic unicode text reader, which will use BOM mark to identify the encoding
- * to be used. If BOM is not found then use a given default encoding. System
- * default is used if: BOM mark is not found and defaultEnc is NULL.<br />
+ * Generic unicode text reader, which will use BOM mark to identify the encoding to be used. If BOM is not found then
+ * use a given default encoding. System default is used if: BOM mark is not found and defaultEnc is NULL.<br />
+ * Usage pattern:
  * 
- * Usage pattern:<pre>
+ * <pre>
  * String defaultEnc = "UTF-8"; // or NULL to use system default
  * FileInputStream fis = new FileInputStream(file);
- * Reader in = new UnicodeReader(fis, defaultEnc);</pre>
+ * Reader in = new UnicodeReader(fis, defaultEnc);
+ * </pre>
  */
 public class UnicodeReader extends Reader {
     PushbackInputStream internalIn;
@@ -56,8 +58,7 @@ public class UnicodeReader extends Reader {
     }
 
     /**
-     * Read-ahead four bytes and check for BOM marks. Extra bytes are
-     * unread back to the stream, only BOM bytes are skipped.
+     * Read-ahead four bytes and check for BOM marks. Extra bytes are unread back to the stream, only BOM bytes are skipped.
      */
     protected void init() throws IOException {
         if (internalIn2 != null)
@@ -68,8 +69,7 @@ public class UnicodeReader extends Reader {
         int n, unread;
         n = internalIn.read(bom, 0, bom.length);
 
-        if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB)
-                && (bom[2] == (byte) 0xBF)) {
+        if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
             encoding = "UTF-8";
             unread = n - 3;
         } else if ((bom[0] == (byte) 0xFE) && (bom[1] == (byte) 0xFF)) {
@@ -78,12 +78,10 @@ public class UnicodeReader extends Reader {
         } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)) {
             encoding = "UTF-16LE";
             unread = n - 2;
-        } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00)
-                && (bom[2] == (byte) 0xFE) && (bom[3] == (byte) 0xFF)) {
+        } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00) && (bom[2] == (byte) 0xFE) && (bom[3] == (byte) 0xFF)) {
             encoding = "UTF-32BE";
             unread = n - 4;
-        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)
-                && (bom[2] == (byte) 0x00) && (bom[3] == (byte) 0x00)) {
+        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00) && (bom[3] == (byte) 0x00)) {
             encoding = "UTF-32LE";
             unread = n - 4;
         } else {
@@ -91,7 +89,7 @@ public class UnicodeReader extends Reader {
             encoding = defaultEnc;
             unread = n;
         }
-        //      System.out.println("read=" + n + ", unread=" + unread);
+        // System.out.println("read=" + n + ", unread=" + unread);
 
         if (unread > 0)
             internalIn.unread(bom, (n - unread), unread);

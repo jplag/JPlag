@@ -1,23 +1,22 @@
 package jplag;
 
 /**
- * This is a stripped version of the JPlag main class Program to be used during
- * front end development only.
+ * This is a stripped version of the JPlag main class Program to be used during front end development only.
  */
 public class StrippedProgram implements ProgramI {
-	@Override
+    @Override
     public void addError(String errorMsg) {
-		System.err.println(errorMsg);
-	}
+        System.err.println(errorMsg);
+    }
 
-	@Override
+    @Override
     public void print(String normalMsg, String longMsg) {
-		if (longMsg != null) {
-			System.out.println(longMsg);
-		} else if (normalMsg != null) {
-			System.out.println(normalMsg);
-		} else {
-			System.out.println("Someboy messed up - no message given");
-		}
-	}
+        if (longMsg != null) {
+            System.out.println(longMsg);
+        } else if (normalMsg != null) {
+            System.out.println(normalMsg);
+        } else {
+            System.out.println("Someboy messed up - no message given");
+        }
+    }
 }
