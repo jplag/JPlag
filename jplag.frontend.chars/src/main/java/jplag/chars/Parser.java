@@ -28,7 +28,7 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 		return struct;
 	}
 
-	public boolean parseFile(File dir, String file) {
+	private boolean parseFile(File dir, String file) {
 		char[] buffer = new char[4096];
 		int type;
 		int length;

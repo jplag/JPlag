@@ -137,12 +137,4 @@ public class Table { // TODO TS: We need to deal with this abomination.
             System.arraycopy(oldData, 0, data[index], 0, oldData.length);
         }
     }
-
-    public final void count_dist(int[] dist) {
-        for (int i = 0; i < size; i++)
-            if (data[i] == null)
-                dist[0]++;
-            else
-                dist[(data[i][0] < dist.length ? data[i][0] : dist.length - 1)]++;
-    }
 }

@@ -34,11 +34,11 @@ import java.io.Reader;
  * </pre>
  */
 public class UnicodeReader extends Reader {
-    PushbackInputStream internalIn;
+    private PushbackInputStream internalIn;
 
-    InputStreamReader internalIn2 = null;
+    private InputStreamReader internalIn2 = null;
 
-    String defaultEnc;
+    private String defaultEnc;
 
     private static final int BOM_SIZE = 4;
 
@@ -60,7 +60,7 @@ public class UnicodeReader extends Reader {
     /**
      * Read-ahead four bytes and check for BOM marks. Extra bytes are unread back to the stream, only BOM bytes are skipped.
      */
-    protected void init() throws IOException {
+    private void init() throws IOException {
         if (internalIn2 != null)
             return;
 

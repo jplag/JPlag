@@ -28,9 +28,5 @@ public class CharToken extends jplag.Token {
 	@Override
     public int getIndex() { return index; }
 
-	public static String type2string(int type, Parser parser) {
-		return "" + parser.reverseMapping(type);
-	}
-
 	public static int numberOfTokens() { return 36;	}
 }
