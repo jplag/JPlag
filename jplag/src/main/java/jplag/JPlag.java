@@ -7,7 +7,6 @@ import static jplag.options.Verbosity.QUIET;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -37,7 +36,6 @@ public class JPlag implements ProgramI {
     private ComparisonStrategy comparisonStrategy;
     private GreedyStringTiling gSTiling = new GreedyStringTiling(this); // Contains the comparison logic.
     private final JPlagOptions options;
-    private FileWriter writer = null;
 
     // ERROR REPORTING:
     private String currentSubmissionName = "<Unknown submission>"; // TODO PB: This should be moved to parseSubmissions(...)
@@ -86,7 +84,6 @@ public class JPlag implements ProgramI {
         errorVector = null; // errorVector is not needed anymore
         System.gc();
         JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
-        closeWriter();
         return result;
     }
 
@@ -139,9 +136,9 @@ public class JPlag implements ProgramI {
     public void print(String message, String longMessage) {
         if (options.getVerbosity() == PARSER) {
             if (longMessage != null) {
-                myWrite(longMessage);
+                System.out.println(longMessage);
             } else if (message != null) {
-                myWrite(message);
+                System.out.println(message);
             }
         }
         if (options.getVerbosity() == QUIET) {
@@ -193,17 +190,6 @@ public class JPlag implements ProgramI {
         }
 
         System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
-    }
-
-    private void closeWriter() {
-        try {
-            if (writer != null) {
-                writer.close();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        writer = null;
     }
 
     private Vector<Submission> filterValidSubmissions(Vector<Submission> submissions) {
@@ -310,18 +296,6 @@ public class JPlag implements ProgramI {
         }
 
         return submissions;
-    }
-
-    private void myWrite(String str) {
-        if (writer != null) {
-            try {
-                writer.write(str);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.print(str);
-        }
     }
 
     /**
