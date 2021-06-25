@@ -6,10 +6,9 @@ import java.io.Reader;
 import antlr.InputBuffer;
 import antlr.LexerSharedInputState;
 
-/** This object contains the data associated with an
- *  input stream of characters.  Multiple lexers
- *  share a single LexerSharedInputState to lex
- *  the same input stream.
+/** 
+ * This object contains the data associated with an input stream of characters. 
+ * Multiple lexers share a single LexerSharedInputState to lex the same input stream.
  */
 public class InputState extends LexerSharedInputState {
   public int column = 0;

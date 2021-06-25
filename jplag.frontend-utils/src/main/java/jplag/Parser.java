@@ -1,13 +1,10 @@
 package jplag;
-/*
- * Created on 22.01.2005
- */
-
 
 /**
  * @author Emeric Kwemou
+ * @date 22.01.2005
  */
-public abstract class Parser {
+public abstract class Parser { // TODO TS: We should rename this class, as all concrete parsers shadow its name.
   protected ProgramI program;
   protected int errors    = 0;
   private   int errorsSum = 0;
