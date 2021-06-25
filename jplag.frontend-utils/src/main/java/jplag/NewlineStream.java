@@ -4,8 +4,8 @@ package jplag;
 import java.io.IOException;
 import java.io.InputStream;
 
-/* This stream adds a newline to the end of a file.
- * this is a proxy
+/**
+ * This stream adds a newline to the end of a file. This is a proxy.
  */
 public class NewlineStream extends InputStream {
   private int endOfFile = 0;
