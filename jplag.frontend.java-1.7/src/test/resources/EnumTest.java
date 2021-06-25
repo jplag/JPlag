@@ -1,27 +1,27 @@
 package de.jbb;
  
-public enum Land {
+public enum Country {
  
-  DEUTSCHLAND ("Berlin", 82169000, 357104.07),
-  RUSSLAND ("Moskau", 142400000, 17075400),
+  GERMANY ("Berlin", 82169000, 357104.07),
+  RUSSIA ("Moscow", 142400000, 17075400),
   USA ("Washington D. C.", 304482526, 9826630),
-  FRANKREICH ("Paris", 64473140, 672352);
+  FRANCE ("Paris", 64473140, 672352);
  
-  private int einwohner;
-  private final double flaeche;
-  private final String hauptstadt;
+  private int inhabitants;
+  private final double area;
+  private final String capitol;
  
-  private Land(String hauptstadt, int einwohner, double flaeche) {
-    this.hauptstadt = hauptstadt;
-    this.einwohner = einwohner;
-    this.flaeche = flaeche;
+  private Land(String capitol, int inhabitants, double area) {
+    this.capitol = capitol;
+    this.inhabitants = inhabitants;
+    this.area = area;
   }
  
-  public int getEinwohnerProQKM() {
-    return (int)(this.einwohner / this.flaeche);
+  public int getInhabitantsPerSquareKilometers() {
+    return (int)(this.inhabitants / this.area);
   }
  
-  public void setEinwohner(int einwohner) { this.einwohner = einwohner; }
+  public void setInhabitants(int inhabitants) { this.inhabitants = inhabitants; }
  
-  public String getHauptstadt() { return this.hauptstadt; }
+  public String getCapitol() { return this.capitol; }
 }

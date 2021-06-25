@@ -11,7 +11,7 @@ public class AnnotationText {
 	public int foo = 5;
 
 	@SuppressWarnings("unused")
-	public void bla() {
+	public void bar() {
 		@SuppressWarnings("unused")
 		int i = 9;
 	}

@@ -225,7 +225,7 @@ public class ParserTest {
 
 	@Test
 	public void assureBackwardsCompatibility4() throws IOException {
-		compareWithParser15(new File(srcTestResources, "Kalender.java"));
+		compareWithParser15(new File(srcTestResources, "Calendar.java"));
 	}
 
 	/**
