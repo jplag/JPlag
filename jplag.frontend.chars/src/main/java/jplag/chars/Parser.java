@@ -9,14 +9,6 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 
 	private Structure struct;
 
-	public static void main(String args[]) {
-		System.out.println("parsing: " + args[0]);
-		Parser parser = new Parser();
-		parser.struct = new Structure();
-		parser.parseFile(new File("."), args[0]);
-		System.out.println(parser.struct);
-	}
-
 	public jplag.Structure parse(File dir, String files[]) {
 		struct = new Structure();
 		errors = 0;
