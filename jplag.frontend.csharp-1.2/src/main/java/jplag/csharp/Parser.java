@@ -50,14 +50,12 @@ public class Parser extends jplag.Parser implements CSharpTokenConstants {
 		return true;
 	}
 
-	public void add(int type, antlr.Token tok) {
+	private void add(int type, antlr.Token tok) {
 		if (tok == null) {
 			System.out.println("tok == null  ERROR!");
 			return;
 		}
 		struct.addToken(new CSharpToken(type, currentFile, tok.getLine(), tok.getColumn(), tok.getText().length()));
-		//     System.out.println("type: " + CSharpToken.type2string(type) +
-		// 		       " text: '"+tok.getText()+"'");
 	}
 
 	public void add(int type, CSharpParser p) {

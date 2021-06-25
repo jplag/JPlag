@@ -36,7 +36,7 @@ public class Parser extends jplag.Parser implements Python3TokenConstants {
         return struct;
     }
 
-    public boolean parseFile(File dir, String file) {
+    private boolean parseFile(File dir, String file) {
         BufferedInputStream fis;
 
         CharStream input;

@@ -14,7 +14,6 @@ public class InputState extends LexerSharedInputState {
     public int column = 0;
     public int tokColumn = 0;
 
-    // public int guessing = 0;
     public InputState(InputBuffer inbuf) {
         super(inbuf);
         column = 1;

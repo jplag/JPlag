@@ -4,23 +4,23 @@ public class ParserToken extends antlr.Token {
     /**
      * This variable holds the line number of the current token.
      */
-    protected int _line = -1;
+    private int _line = -1;
 
     /**
      * This variable holds the column of the current token in its line.
      */
-    protected int _column = -1;
+    private int _column = -1;
 
     /**
      * This variable holds the label of the current token.
      */
-    protected String _text = null;
+    private String _text = null;
 
     /**
      * This variable holds the identifier of the current token.
      */
 
-    protected int _id = -1;
+    private int _id = -1;
 
     public ParserToken() {
         super();

@@ -27,7 +27,7 @@ public class Parser extends jplag.Parser implements JavaTokenConstants {
 		return struct;
 	}
 
-	public boolean parseFile(File dir, String file) {
+	private boolean parseFile(File dir, String file) {
 		InputState inputState = null;
 		try {
 			FileInputStream fis = new FileInputStream(new File(dir, file));
