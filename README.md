@@ -42,7 +42,7 @@ You'll find the generated JAR with all dependencies in  `jplag/target`.
 usage: jplag [-h]
              [-l {java_1_1,java_1_2,java_1_5,java_1_5_dm,java_1_7,java_1_9,python_3,c_cpp,c_sharp,char,text,scheme}]
              [-bc BC] [-v {parser,quiet,long,details}] [-d] [-S S] [-p P]
-             [-x X] [-t T] [-s S] [-r R] rootDir
+             [-x X] [-t T] [-m M] [-r R] rootDir
 
 JPlag - Detecting Software Plagiarism
 
@@ -67,8 +67,8 @@ named arguments:
   -x X                   All files named in <file> will be ignored
   -t T                   Tune the sensitivity of  the comparison. A smaller
                          <n> increases the sensitivity
-  -s S                   Similarity  Threshold:  all   matches  above  this
-                         threshold will be saved
+  -m M                   Match similarity  Threshold  [0-100]:  All matches
+                         above this threshold will be saved (Standard: 0.0)
   -r R                   Name of directory in which  the  web pages will be
                          stored (default: result)
 ```
