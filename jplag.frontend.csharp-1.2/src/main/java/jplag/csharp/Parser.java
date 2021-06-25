@@ -1,12 +1,8 @@
 package jplag.csharp;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 
-import jplag.StrippedProgram;
 import jplag.Structure;
 import jplag.UnicodeReader;
 import jplag.csharp.grammar.CSharpLexer;
@@ -15,44 +11,6 @@ import jplag.csharp.grammar.CSharpParser;
 public class Parser extends jplag.Parser implements CSharpTokenConstants {
 	private Structure struct;
 	private String currentFile;
-
-	public static void main(String args[]) {
-		if (args.length != 1) {
-			System.out.println("Only one parameter allowed.");
-			System.exit(-1);
-		}
-		Parser parser = new Parser();
-		parser.setProgram(new StrippedProgram());
-		jplag.Structure struct = parser.parse(new File(args[0]).getParentFile(), new String[] { new File(args[0]).getName() });
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(new File(args[0])));
-			int lineNr = 1;
-			int token = 0;
-			String line;
-			while ((line = reader.readLine()) != null) {
-				if (token < struct.size()) {
-					boolean first = true;
-					while (struct.tokens[token] != null && struct.tokens[token].getLine() == lineNr) {
-						if (!first)
-							System.out.println();
-						jplag.Token tok = struct.tokens[token];
-						System.out.print(CSharpToken.type2string(tok.type) + " (" + tok.getLine() + "," + tok.getColumn() + ","
-								+ tok.getLength() + ")\t");
-						first = false;
-						token++;
-					}
-					if (first)
-						System.out.print(" \t");
-				} else
-					System.out.print(" \t");
-				System.out.println(line);
-				lineNr++;
-			}
-			reader.close();
-		} catch (IOException e) {
-			System.out.println(e);
-		}
-	}
 
 	public jplag.Structure parse(File dir, String files[]) {
 		struct = new Structure();

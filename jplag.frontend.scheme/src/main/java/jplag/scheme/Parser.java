@@ -7,11 +7,6 @@ public class Parser extends jplag.Parser implements SchemeTokenConstants {
 
 	private jplag.Structure struct;
 
-	public static void main(String args[]) {
-		Parser p = new Parser();
-		System.out.println(p.parse(new File("."), args).toString());
-	}
-
 	public jplag.Structure parse(File dir, String files[]) {
 		struct = new jplag.Structure();
 		errors = 0;
