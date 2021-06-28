@@ -1,5 +1,7 @@
 package jplag;
 
+import java.util.List;
+
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
  * to the classes {@link Structure}, {@link Token}, as well as {@link Matches} and {@link Match}.
@@ -147,17 +149,16 @@ public class GreedyStringTiling implements TokenConstants {
         }
 
         int maxmatch;
-        int[] elemsB;
+        List<Integer> elementsB;
 
         do {
             maxmatch = mml;
             matches.clear();
             for (int x = 0; x <= lengthA - maxmatch; x++) {
-                if (A[x].marked || A[x].hash == -1 || (elemsB = structB.table.get(A[x].hash)) == null) {
+                if (A[x].marked || A[x].hash == -1 || (elementsB = structB.table.get(A[x].hash)) == null) {
                     continue;
                 }
-                inner: for (int i = 1; i <= elemsB[0]; i++) { // elemsB[0] contains the length of the Array // TODO TS: we should change this
-                    int y = elemsB[i];
+                inner: for (Integer y : elementsB) {
                     if (B[y].marked || maxmatch > lengthB - y) {
                         continue;
                     }
@@ -251,17 +252,16 @@ public class GreedyStringTiling implements TokenConstants {
         }
 
         int maxmatch;
-        int[] elemsB;
+        List<Integer> elementsB;
 
         do {
             maxmatch = mml;
             matches.clear();
             for (int x = 0; x <= lengthA - maxmatch; x++) {
-                if (A[x].marked || A[x].hash == -1 || (elemsB = structB.table.get(A[x].hash)) == null) {
+                if (A[x].marked || A[x].hash == -1 || (elementsB = structB.table.get(A[x].hash)) == null) {
                     continue;
                 }
-                inner: for (int i = 1; i <= elemsB[0]; i++) {// elemsB[0] contains the length of the Array
-                    int y = elemsB[i];
+                inner: for (Integer y : elementsB) {
                     if (B[y].marked || maxmatch > lengthB - y) {
                         continue;
                     }

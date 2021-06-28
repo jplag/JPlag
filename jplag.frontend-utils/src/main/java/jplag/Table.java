@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * A {@link HashMap} that maps Integer keys to multiple Integer values. Note that all keys with identical
@@ -29,16 +28,14 @@ public class Table {
      * Returns all stored numbers for a key. Note that all keys with identical <code>(key % prime)</code> are mapped to the
      * same values (see {@link Table}).
      * @param key is the specific key.
-     * @return the stored numbers or an empty array if it does not contain the modifiedKey.
+     * @return the stored numbers or null if nothing is stored.
      */
-    public final int[] get(int key) {
+    public final List<Integer> get(int key) {
         int actualKey = key % primeNumber;
-        if (!mappedEntries.containsKey(actualKey)) {
-            return null;
+        if (mappedEntries.containsKey(actualKey)) {
+            return new ArrayList<>(mappedEntries.get(actualKey));
         }
-        List<Integer> result = mappedEntries.get(actualKey);
-        Stream<Integer> stream = Stream.concat(Stream.of(result.size()), result.stream()); // Legacy format: First entry is the number of following entries.
-        return stream.mapToInt(Integer::intValue).toArray(); // TODO TS: Required, as the GST algorithm still relies on the array format.
+        return null;
     }
 
     /**
