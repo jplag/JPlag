@@ -69,7 +69,7 @@ public class CLI {
         parser.addArgument("-p").help("comma-separated list of all filename suffixes that are included");
         parser.addArgument("-x").help("All files named in this file will be ignored in the comparison (line-separated list)");
         parser.addArgument("-t").help("Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity");
-        parser.addArgument("-m").setDefault(0f).help("Match similarity Threshold [0-100]: all matches above this threshold will be saved");
+        parser.addArgument("-m").setDefault(0f).help("Match similarity Threshold [0-100]: All matches above this threshold will be saved");
         parser.addArgument("-r").setDefault("result").help("Name of directory in which the comparison results will be stored");
     }
 
