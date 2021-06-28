@@ -84,29 +84,31 @@ public class GreedyStringTiling implements TokenConstants {
         structure.hash_length = hashLength;
     }
 
-    public final JPlagComparison compare(Submission subA, Submission subB) {
-        Submission A, B, tmp;
-        if (subA.tokenList.size() > subB.tokenList.size()) {
-            A = subA;
-            B = subB;
+    public final JPlagComparison compare(Submission first, Submission second) {
+        Submission smallerSubmission, largerSubmission;
+        if (first.tokenList.size() > second.tokenList.size()) {
+            smallerSubmission = second;
+            largerSubmission = first;
         } else {
-            A = subB;
-            B = subA;
+            smallerSubmission = first;
+            largerSubmission = second;
         }
         // if hashtable exists in first but not in second structure: flip around!
-        if (B.tokenList.table == null && A.tokenList.table != null) {
-            tmp = A;
-            A = B;
-            B = tmp;
+        if (largerSubmission.tokenList.table == null && smallerSubmission.tokenList.table != null) {
+            Submission tmp = smallerSubmission;
+            smallerSubmission = largerSubmission;
+            largerSubmission = tmp;
         }
 
-        return compare(A, B, this.program.getOptions().getMinTokenMatch());
+        return compare(smallerSubmission, largerSubmission, this.program.getOptions().getMinTokenMatch());
     }
-
-    // first parameter should contain the smaller sequence!!!
-    private final JPlagComparison compare(Submission subA, Submission subB, int mml) {
-        Structure structA = subA.tokenList;
-        Structure structB = subB.tokenList;
+ 
+    /**
+     * first parameter should contain the smaller sequence!!!
+     */
+    private final JPlagComparison compare(Submission submissionA, Submission submissionB, int minimalTokenMatch) {
+        Structure structA = submissionA.tokenList;
+        Structure structB = submissionB.tokenList;
 
         // FILE_END used as pivot
 
@@ -115,9 +117,9 @@ public class GreedyStringTiling implements TokenConstants {
         Token[] B = structB.tokens;
         int lengthA = structA.size() - 1;  // minus pivots!
         int lengthB = structB.size() - 1;  // minus pivots!
-        JPlagComparison comparison = new JPlagComparison(subA, subB);
+        JPlagComparison comparison = new JPlagComparison(submissionA, submissionB);
 
-        if (lengthA < mml || lengthB < mml) {
+        if (lengthA < minimalTokenMatch || lengthB < minimalTokenMatch) {
             return comparison;
         }
 
@@ -141,18 +143,18 @@ public class GreedyStringTiling implements TokenConstants {
         }
 
         // start:
-        if (structA.hash_length != this.program.getOptions().getMinTokenMatch()) {
-            createHashes(structA, mml, false);
+        if (structA.hash_length != minimalTokenMatch) {
+            createHashes(structA, minimalTokenMatch, false);
         }
-        if (structB.hash_length != this.program.getOptions().getMinTokenMatch() || structB.table == null) {
-            createHashes(structB, mml, true);
+        if (structB.hash_length != minimalTokenMatch || structB.table == null) {
+            createHashes(structB, minimalTokenMatch, true);
         }
 
         int maxmatch;
         List<Integer> elementsB;
 
         do {
-            maxmatch = mml;
+            maxmatch = minimalTokenMatch;
             matches.clear();
             for (int x = 0; x <= lengthA - maxmatch; x++) {
                 if (A[x].marked || A[x].hash == -1 || (elementsB = structB.table.get(A[x].hash)) == null) {
@@ -193,31 +195,31 @@ public class GreedyStringTiling implements TokenConstants {
                 }
             }
 
-        } while (maxmatch != mml);
+        } while (maxmatch != minimalTokenMatch);
 
         return comparison;
     }
 
-    public final JPlagBaseCodeComparison compareWithBaseCode(Submission subA, Submission subB) {
-        Submission A, B, tmp;
-        if (subA.tokenList.size() > subB.tokenList.size()) {
-            A = subB;
-            B = subA;
+    public final JPlagBaseCodeComparison compareWithBaseCode(Submission first, Submission second) {
+        Submission smallerSubmission, largerSubmission;
+        if (first.tokenList.size() > second.tokenList.size()) {
+            smallerSubmission = second;
+            largerSubmission = first;
         } else {
-            A = subB;
-            B = subA;
+            smallerSubmission = second;
+            largerSubmission = first;
         }
         // if hashtable exists in first but not in second structure: flip around!
-        if (B.tokenList.table == null && A.tokenList.table != null) {
-            tmp = A;
-            A = B;
-            B = tmp;
+        if (largerSubmission.tokenList.table == null && smallerSubmission.tokenList.table != null) {
+            Submission tmp = smallerSubmission;
+            smallerSubmission = largerSubmission;
+            largerSubmission = tmp;
         }
 
-        return compareWithBaseCode(A, B, this.program.getOptions().getMinTokenMatch());
+        return compareWithBaseCode(smallerSubmission, largerSubmission, this.program.getOptions().getMinTokenMatch());
     }
 
-    private JPlagBaseCodeComparison compareWithBaseCode(Submission subA, Submission subB, int mml) {
+    private JPlagBaseCodeComparison compareWithBaseCode(Submission subA, Submission subB, int minimalTokenMatch) {
         Structure structA = subA.tokenList;
         Structure structB = subB.tokenList;
 
@@ -230,7 +232,7 @@ public class GreedyStringTiling implements TokenConstants {
         int lengthB = structB.size() - 1;  // minus pivots!
         JPlagBaseCodeComparison baseCodeComparison = new JPlagBaseCodeComparison(subA, subB);
 
-        if (lengthA < mml || lengthB < mml) {
+        if (lengthA < minimalTokenMatch || lengthB < minimalTokenMatch) {
             return baseCodeComparison;
         }
 
@@ -244,18 +246,18 @@ public class GreedyStringTiling implements TokenConstants {
         }
 
         // start:
-        if (structA.hash_length != this.program.getOptions().getMinTokenMatch()) {
-            createHashes(structA, mml, true);
+        if (structA.hash_length != minimalTokenMatch) {
+            createHashes(structA, minimalTokenMatch, true);
         }
-        if (structB.hash_length != this.program.getOptions().getMinTokenMatch() || structB.table == null) {
-            createHashes(structB, mml, true);
+        if (structB.hash_length != minimalTokenMatch || structB.table == null) {
+            createHashes(structB, minimalTokenMatch, true);
         }
 
         int maxmatch;
         List<Integer> elementsB;
 
         do {
-            maxmatch = mml;
+            maxmatch = minimalTokenMatch;
             matches.clear();
             for (int x = 0; x <= lengthA - maxmatch; x++) {
                 if (A[x].marked || A[x].hash == -1 || (elementsB = structB.table.get(A[x].hash)) == null) {
@@ -297,16 +299,15 @@ public class GreedyStringTiling implements TokenConstants {
                     y++;
                 }
             }
-        } while (maxmatch != mml);
+        } while (maxmatch != minimalTokenMatch);
 
         return baseCodeComparison;
     }
 
-    public void resetBaseSubmission(Submission sub) {
-        Structure tmpStruct = sub.tokenList;
-        Token[] tok = tmpStruct.tokens;
-        for (int z = 0; z < tmpStruct.size() - 1; z++) {
-            tok[z].basecode = false;
+    public void resetBaseSubmission(Submission submission) {
+        Token[] tokens = submission.tokenList.tokens;
+        for (int i = 0; i < submission.tokenList.size() - 1; i++) {
+            tokens[i].basecode = false;
         }
     }
 }

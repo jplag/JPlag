@@ -1,8 +1,8 @@
 package jplag;
 
 /** The tokenlist */ // TODO PB: The name 'Structure' is very generic and should be changed to something more descriptive.
-public class Structure implements TokenConstants {
-    public Token[] tokens = new Token[0];
+public class Structure implements TokenConstants { // TODO TS: How about TokenList?
+    public Token[] tokens = new Token[0]; // TODO TS: An array list would allow us to remove the code in ensureCapacity()
     Table table = null;
     int hash_length = -1;
 
