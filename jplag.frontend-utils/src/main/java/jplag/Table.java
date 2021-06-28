@@ -37,8 +37,8 @@ public class Table {
             return null;
         }
         List<Integer> result = mappedEntries.get(actualKey);
-        Stream<Integer> stream = Stream.concat(Stream.of(result.size()), result.stream()); // Legacy format: First entry is array length.
-        return stream.mapToInt(Integer::intValue).toArray(); // TODO TS: Requires as the GST algorithm still relies on the array format.
+        Stream<Integer> stream = Stream.concat(Stream.of(result.size()), result.stream()); // Legacy format: First entry is the number of following entries.
+        return stream.mapToInt(Integer::intValue).toArray(); // TODO TS: Required, as the GST algorithm still relies on the array format.
     }
 
     /**

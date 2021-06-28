@@ -156,7 +156,7 @@ public class GreedyStringTiling implements TokenConstants {
                 if (A[x].marked || A[x].hash == -1 || (elemsB = structB.table.get(A[x].hash)) == null) {
                     continue;
                 }
-                inner: for (int i = 1; i <= elemsB[0]; i++) { // elemsB[0] contains the length of the Array
+                inner: for (int i = 1; i <= elemsB[0]; i++) { // elemsB[0] contains the length of the Array // TODO TS: we should change this
                     int y = elemsB[i];
                     if (B[y].marked || maxmatch > lengthB - y) {
                         continue;
