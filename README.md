@@ -22,19 +22,20 @@ You'll find the generated JAR with all dependencies in  `jplag/target`.
 
 > Note: The following list is incomplete and gives a rough overview of the changes. In case you depend on missing features we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
 
-* Removed folders related to (deprecated) web services: `adminTool`, `atujplag`, `homepage`, `maven-libs`, `webService`, and `wsClient`
-* Deleted unnecessary resources from `jplag/src/main/resources`
-* All Cluster-related code fragments are commented and marked as `TODO`
-* The new `JPlagOptions` class replaces all previous Options-related classes and manages all available program options
-* Added the `argparse4j` package to properly parse CLI arguments
+* Java API to allow 3rd party integration (see Java API usage below).
+* Result clustering is currently not supported (but might be restored).
+* All comparisons are now sorted by average similarity. Maximum similarity is currently not supported (but might be restored).
+* The CLI interface is now properly defined based on `argparse4j`. The CLI interface was slightly changed, a detailed description of all available options of the new CLI can be found below.
+* The following comparison modes are no longer supported: **experimental**, **external**, **special** and **revision**.
 * Renamed the `Program` class to `JPlag`. It contains the main logic, the parsed submissions, and delegates the comparison of files to one of the new `ComparisonStrategy` implementing classes.
-* Deleted the **experimental** comparison mode. The **external** and **special** comparison strategies are commented out and marked as `TODO`. The **Normal** and **Revision** strategies should work as intended.
-* The new `JPlagResult` class is supposed to bundle all results of a plagiarism detection run. An instance of this class can optionally be passed to the new `Report` class to generate web pages of the results
-* While re-implementing the CLI, we renamed/removed some arguments to adapt the CLI to the new code structure. A detailed description of all available options of the new CLI can be found below.
+* The new `JPlagOptions` class replaces all previous Options-related classes and manages all available program options.
+* The new `JPlagResult` class bundles all results of a plagiarism detection run. An instance of this class can optionally be passed to the new `Report` class to generate web pages for the results
 * The new `JPlagComparison` class replaces the old `AllMatches` class.
-* We removed `AvgComparator`, `AvgReversedComparator`, `MaxComparator`, `MaxReversedComparator`, `MinComparator`, and `MinReversedComparator` from the `JPlagComparison` (previously `AllMatches`) class. All comparisons are now sorted by average similarity. The `JPlagResult` and `JPlagComparison` classes should make adding a custom sorting logic very straightforward if that's required.
+* We removed `AvgComparator`, `AvgReversedComparator`, `MaxComparator`, `MaxReversedComparator`, `MinComparator`, and `MinReversedComparator` from the `JPlagComparison` (previously `AllMatches`) class. The `JPlagResult` and `JPlagComparison` classes should make adding a custom sorting logic very straightforward if that's required.
+* Removed deprecated web service: `adminTool`, `atujplag`, `homepage`, `maven-libs`, `webService`, and `wsClient`
 
 ## Usage
+JPlag can either be used via the CLI or directly via its Java API.
 
 ### CLI
 
