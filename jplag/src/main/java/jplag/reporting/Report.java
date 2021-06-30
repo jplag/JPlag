@@ -389,8 +389,8 @@ public class Report {
      */
     private void reportComparison(HTMLFile htmlFile, JPlagComparison comparison, int index) {
         Match match;
-        Token[] tokensA = comparison.firstSubmission.tokenList.tokens;
-        Token[] tokensB = comparison.secondSubmission.tokenList.tokens;
+        Token[] tokensA = comparison.firstSubmission.tokenList.getTokenArray();
+        Token[] tokensB = comparison.secondSubmission.tokenList.getTokenArray();
         // sort();
 
         htmlFile.println("<TABLE BORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#d0d0d0\">");
@@ -452,7 +452,7 @@ public class Report {
 
         String[][] text = sub.readFiles(files);
 
-        Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.tokens;
+        Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.getTokenArray();
         Match currentMatch;
         String hilf;
         int h;
@@ -556,7 +556,7 @@ public class Report {
         Submission sub = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission);
         String[] files = comparison.files(j);
         char[][] text = sub.readFilesChar(files);
-        Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.tokens;
+        Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.getTokenArray();
 
         // get index array with matches sorted in ascending order.
         int[] perm = comparison.sort_permutation(j);
@@ -629,7 +629,7 @@ public class Report {
         Submission sub = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission);
         String[] files = comparison.files(j);
         String[][] text = sub.readFiles(files);
-        Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.tokens;
+        Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.getTokenArray();
 
         // Markup list:
         Comparator<MarkupText> comp = (mo1, mo2) -> {

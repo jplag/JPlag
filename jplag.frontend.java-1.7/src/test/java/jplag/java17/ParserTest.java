@@ -271,11 +271,11 @@ public class ParserTest {
 	private String buildTokenString(jplag.Structure oldStruct, boolean withDetails) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < oldStruct.size(); i++) {
-			sb.append(jplag.java17.JavaToken.type2string(oldStruct.tokens[i].type));
+			sb.append(jplag.java17.JavaToken.type2string(oldStruct.getToken(i).type));
 			if (withDetails) {
-				sb.append(" L:" + oldStruct.tokens[i].getLine()  
-				+ " C:" + oldStruct.tokens[i].getLine()
-				+ " l:" + oldStruct.tokens[i].getLine());
+				sb.append(" L:" + oldStruct.getToken(i).getLine()  
+				+ " C:" + oldStruct.getToken(i).getLine()
+				+ " l:" + oldStruct.getToken(i).getLine());
 			}
 			sb.append("\n");
 		}

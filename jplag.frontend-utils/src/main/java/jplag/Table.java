@@ -11,7 +11,7 @@ import java.util.Map;
  * <code>(key % prime)</code> are mapped to the same values. Specifically, <code>prime</code> is the next prime number
  * that is larger or equal to the specified size (see {@link Table#Table(int)}).
  */
-public class Table { // TODO TS: I think this might map token hashes to token indices for the token array in the structure class
+public class Table { // TODO TS: I think this might map token hashes to token indices for the token array in the structure class (rename?)
     private final Map<Integer, ArrayList<Integer>> mappedEntries;
     private final int primeNumber;
 

@@ -1,44 +1,48 @@
 package jplag;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** The tokenlist */ // TODO PB: The name 'Structure' is very generic and should be changed to something more descriptive.
-public class Structure implements TokenConstants { // TODO TS: How about TokenList?
-    public Token[] tokens = new Token[0]; // TODO TS: An array list would allow us to remove the code in ensureCapacity()
+public class Structure implements TokenConstants { // TODO TS: How about renaming it to TokenList?
+    private final List<Token> tokens;
     Table table = null;
     int hash_length = -1;
 
-    private int numberOfTokens;
-
     public Structure() {
-        tokens = new Token[400];
-        numberOfTokens = 0;
+        tokens = new ArrayList<>();
     }
 
     public final int size() {
-        return numberOfTokens;
-    }
-
-   private final void ensureCapacity(int minCapacity) {
-        int oldCapacity = tokens.length;
-        if (minCapacity > oldCapacity) {
-            Token[] oldTokens = tokens;
-            int newCapacity = (2 * oldCapacity);
-            if (newCapacity < minCapacity) {
-                newCapacity = minCapacity;
-            }
-            tokens = new Token[newCapacity];
-            System.arraycopy(oldTokens, 0, tokens, 0, numberOfTokens);
-        }
+        return tokens.size();
     }
 
     public final void addToken(Token token) {
-        ensureCapacity(numberOfTokens + 1);
-        if (numberOfTokens > 0 && tokens[numberOfTokens - 1].file.equals(token.file))
-            token.file = tokens[numberOfTokens - 1].file; // To save memory ...
-        if ((numberOfTokens > 0) && (token.getLine() < tokens[numberOfTokens - 1].getLine()) && (token.file.equals(tokens[numberOfTokens - 1].file)))
-            token.setLine(tokens[numberOfTokens - 1].getLine());
-        // just to make sure
+        if (tokens.size() > 0) {
+            Token lastToken = tokens.get(tokens.size() - 1);
+            if (lastToken.file.equals(token.file)) {
+                token.file = lastToken.file; // To save memory ...
+            }
+            if (token.getLine() < lastToken.getLine() && (token.file.equals(lastToken.file))) {
+                token.setLine(lastToken.getLine()); // just to make sure
+            }
+        }
+        tokens.add(token);
+    }
 
-        tokens[numberOfTokens++] = token;
+    public Iterable<Token> allTokens() {
+        return new ArrayList<>(tokens);
+    }
+
+    public Token getToken(int index) {
+        if (index < 0 || index >= tokens.size()) {
+            throw new IllegalArgumentException("Cannot access token with index " + index + ", there are only " + tokens.size() + " tokens!");
+        }
+        return tokens.get(index);
+    }
+
+    public Token[] getTokenArray() { // TODO TS: I added this to support the legacy code using arrays, however we should get rid of this.
+        return tokens.toArray(new Token[0]);
     }
 
     @Override
@@ -46,16 +50,16 @@ public class Structure implements TokenConstants { // TODO TS: How about TokenLi
         StringBuffer buffer = new StringBuffer();
 
         try {
-            for (int i = 0; i < numberOfTokens; i++) {
+            for (int i = 0; i < tokens.size(); i++) {
                 buffer.append(i);
                 buffer.append("\t");
-                buffer.append(tokens[i].toString());
-                if (i < numberOfTokens - 1) {
+                buffer.append(tokens.get(i).toString());
+                if (i < tokens.size() - 1) {
                     buffer.append("\n");
                 }
             }
         } catch (OutOfMemoryError e) {
-            return "Tokenlist to large for output: " + (numberOfTokens) + " Tokens";
+            return "Tokenlist to large for output: " + tokens.size() + " Tokens";
         }
         return buffer.toString();
     }
