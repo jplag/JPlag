@@ -41,7 +41,7 @@ public class GreedyStringTiling implements TokenConstants {
         int modulo = ((1 << 6) - 1);   // Modulo 64!
 
         int loops = tokenList.size() - hashLength;
-        tokenList.table = (makeTable ? new Table(3 * loops) : null);
+        tokenList.tokenHashes = (makeTable ? new TokenHashMap(3 * loops) : null);
         int hash = 0;
         int hashedLength = 0;
         for (int i = 0; i < hashLength; i++) {
@@ -57,7 +57,7 @@ public class GreedyStringTiling implements TokenConstants {
             for (int i = 0; i < loops; i++) {
                 if (hashedLength >= hashLength) {
                     tokenList.getToken(i).hash = hash;
-                    tokenList.table.add(hash, i);   // add into hashtable
+                    tokenList.tokenHashes.add(hash, i);   // add into hashtable
                 } else {
                     tokenList.getToken(i).hash = -1;
                 }
@@ -102,7 +102,7 @@ public class GreedyStringTiling implements TokenConstants {
             largerSubmission = secondSubmission;
         }
         // if hashtable exists in first but not in second structure: flip around!
-        if (largerSubmission.tokenList.table == null && smallerSubmission.tokenList.table != null) {
+        if (largerSubmission.tokenList.tokenHashes == null && smallerSubmission.tokenList.tokenHashes != null) {
             Submission swap = smallerSubmission;
             smallerSubmission = largerSubmission;
             largerSubmission = swap;
@@ -142,7 +142,7 @@ public class GreedyStringTiling implements TokenConstants {
         if (first.hash_length != minimalTokenMatch) {
             createHashes(first, minimalTokenMatch, withBaseCode); // don't make table if it is not a base code comparison
         }
-        if (second.hash_length != minimalTokenMatch || second.table == null) {
+        if (second.hash_length != minimalTokenMatch || second.tokenHashes == null) {
             createHashes(second, minimalTokenMatch, true);
         }
 
@@ -152,7 +152,7 @@ public class GreedyStringTiling implements TokenConstants {
             maxmatch = minimalTokenMatch;
             matches.clear();
             for (int x = 0; x < first.size() - maxmatch; x++) {
-                List<Integer> elementsOfSecond = second.table.get(first.getToken(x).hash);
+                List<Integer> elementsOfSecond = second.tokenHashes.get(first.getToken(x).hash);
                 if (first.getToken(x).marked || first.getToken(x).hash == -1 || elementsOfSecond == null) {
                     continue;
                 }

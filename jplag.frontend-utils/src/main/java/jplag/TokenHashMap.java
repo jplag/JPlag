@@ -9,24 +9,24 @@ import java.util.Map;
 /**
  * A {@link HashMap} that maps Integer keys to multiple Integer values. Note that all keys with identical
  * <code>(key % prime)</code> are mapped to the same values. Specifically, <code>prime</code> is the next prime number
- * that is larger or equal to the specified size (see {@link Table#Table(int)}).
+ * that is larger or equal to the specified size (see {@link TokenHashMap#Table(int)}).
  */
-public class Table { // TODO TS: I think this might map token hashes to token indices for the token array in the structure class (rename?)
+public class TokenHashMap {
     private final Map<Integer, ArrayList<Integer>> mappedEntries;
     private final int primeNumber;
 
     /**
      * Creates the {@link HashMap}.
-     * @param size specifies the initial size and the key mapping (see {@link Table}).
+     * @param size specifies the initial size and the key mapping (see {@link TokenHashMap}).
      */
-    public Table(int size) {
+    public TokenHashMap(int size) {
         mappedEntries = new HashMap<>(size);
         primeNumber = nextPrimeNumber(size);
     }
 
     /**
      * Returns all stored numbers for a key. Note that all keys with identical <code>(key % prime)</code> are mapped to the
-     * same values (see {@link Table}).
+     * same values (see {@link TokenHashMap}).
      * @param key is the specific key.
      * @return the stored numbers or null if nothing is stored.
      */
@@ -40,7 +40,7 @@ public class Table { // TODO TS: I think this might map token hashes to token in
 
     /**
      * Stores a number for a key, does not replace the previous stored numbers for that key. Note that all keys with
-     * identical <code>(key % prime)</code> are mapped to the same values (see {@link Table}).
+     * identical <code>(key % prime)</code> are mapped to the same values (see {@link TokenHashMap}).
      * @param key is the specific key.
      * @param value is the number to store.
      */
