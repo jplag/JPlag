@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
- * to the classes {@link Structure}, {@link Token}, as well as {@link Matches} and {@link Match}. While is class was
+ * to the classes {@link TokenList}, {@link Token}, as well as {@link Matches} and {@link Match}. While is class was
  * reworked, it still contains some quirks from the initial version.
  * @see <a href=
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
@@ -26,7 +26,7 @@ public class GreedyStringTiling implements TokenConstants {
      * @param hashLength is the hash length (condition: 1 < hashLength < 26)
      * @param makeTable determines if a simple hash table is created in the structure.
      */
-    public void createHashes(Structure tokenList, int hashLength, boolean makeTable) {
+    public void createHashes(TokenList tokenList, int hashLength, boolean makeTable) {
         // Here the upper boundary of the hash length is set.
         // It is determined by the number of bits of the 'int' data type and the number of tokens.
         if (hashLength < 1) {
@@ -122,8 +122,8 @@ public class GreedyStringTiling implements TokenConstants {
      */
     private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, int minimalTokenMatch, boolean withBaseCode) {
         // first and second refer to the list of tokens of the first and second submission:
-        Structure first = firstSubmission.tokenList;
-        Structure second = secondSubmission.tokenList;
+        TokenList first = firstSubmission.tokenList;
+        TokenList second = secondSubmission.tokenList;
 
         // FILE_END used as pivot
 
@@ -203,7 +203,7 @@ public class GreedyStringTiling implements TokenConstants {
         return comparison;
     }
 
-    private void markTokens(Structure tokenList, boolean withBaseCode) {
+    private void markTokens(TokenList tokenList, boolean withBaseCode) {
         for (Token token : tokenList.allTokens()) {
             if (withBaseCode) {
                 token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN;

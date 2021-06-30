@@ -184,7 +184,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
             return new String[] {};
         }
 
-        Structure tokenList = (j == 0 ? firstSubmission : secondSubmission).tokenList;
+        TokenList tokenList = (j == 0 ? firstSubmission : secondSubmission).tokenList;
         int i, h, starti, starth, count = 1;
 
         o1: for (i = 1; i < matches.size(); i++) {

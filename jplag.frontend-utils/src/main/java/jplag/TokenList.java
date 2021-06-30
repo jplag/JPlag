@@ -5,13 +5,13 @@ import java.util.List;
 
 /**
  * List of tokens. Allows random access to individual tokens.
- */ // TODO PB: The name 'Structure' is very generic and should be changed to something more descriptive.
-public class Structure implements TokenConstants { // TODO TS: How about renaming it to TokenList?
+ */
+public class TokenList implements TokenConstants {
     private final List<Token> tokens;
     Table table = null;
     int hash_length = -1;
 
-    public Structure() {
+    public TokenList() {
         tokens = new ArrayList<>();
     }
 

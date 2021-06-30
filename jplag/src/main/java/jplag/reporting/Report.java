@@ -20,7 +20,7 @@ import jplag.ExitException;
 import jplag.JPlagComparison;
 import jplag.JPlagResult;
 import jplag.Match;
-import jplag.Structure;
+import jplag.TokenList;
 import jplag.Submission;
 import jplag.Token;
 
@@ -389,8 +389,8 @@ public class Report {
      */
     private void reportComparison(HTMLFile htmlFile, JPlagComparison comparison, int index) {
         Match match;
-        Structure tokensA = comparison.firstSubmission.tokenList;
-        Structure tokensB = comparison.secondSubmission.tokenList;
+        TokenList tokensA = comparison.firstSubmission.tokenList;
+        TokenList tokensB = comparison.secondSubmission.tokenList;
         // sort();
 
         htmlFile.println("<TABLE BORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#d0d0d0\">");
@@ -452,7 +452,7 @@ public class Report {
 
         String[][] text = sub.readFiles(files);
 
-        Structure tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList;
+        TokenList tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList;
         Match currentMatch;
         String hilf;
         int h;
@@ -556,7 +556,7 @@ public class Report {
         Submission sub = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission);
         String[] files = comparison.files(j);
         char[][] text = sub.readFilesChar(files);
-        Structure tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList;
+        TokenList tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList;
 
         // get index array with matches sorted in ascending order.
         int[] perm = comparison.sort_permutation(j);
@@ -629,7 +629,7 @@ public class Report {
         Submission sub = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission);
         String[] files = comparison.files(j);
         String[][] text = sub.readFiles(files);
-        Structure tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList;
+        TokenList tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList;
 
         // Markup list:
         Comparator<MarkupText> comp = (mo1, mo2) -> {

@@ -9,14 +9,14 @@ public class Parser extends jplag.Parser implements JavaTokenConstants {
 	private String actFile;
 	private boolean useMethodSeparators;
 
-	private jplag.Structure struct;
+	private jplag.TokenList struct;
 
 	public Parser(boolean useMethodSeparators) {
 		this.useMethodSeparators = useMethodSeparators;
 	}
 
-	public jplag.Structure parse(File dir, String files[]) {
-		struct = new jplag.Structure();
+	public jplag.TokenList parse(File dir, String files[]) {
+		struct = new jplag.TokenList();
 		errors = 0;
 
 		JavaParser parser = null; // This will be (re)initialised in parseFile()

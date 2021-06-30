@@ -59,7 +59,7 @@ public class Language implements jplag.Language {
 	}
 
 	@Override
-    public jplag.Structure parse(File dir, String[] files) {
+    public jplag.TokenList parse(File dir, String[] files) {
 		return this.scanner.scan(dir, files);
 	}
 

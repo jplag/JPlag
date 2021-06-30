@@ -3,14 +3,14 @@ package jplag.chars;
 import java.io.File;
 import java.io.FileReader;
 
-import jplag.Structure;
+import jplag.TokenList;
 
 public class Parser extends jplag.Parser implements jplag.TokenConstants {
 
-	private Structure struct;
+	private TokenList struct;
 
-	public jplag.Structure parse(File dir, String files[]) {
-		struct = new Structure();
+	public jplag.TokenList parse(File dir, String files[]) {
+		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
 			getProgram().print(null, "Parsing file " + files[i] + "\n");

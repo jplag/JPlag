@@ -3,10 +3,10 @@ package jplag.java19;
 import java.io.File;
 
 public class Parser extends jplag.Parser {
-    private jplag.Structure struct;
+    private jplag.TokenList struct;
 
-    public jplag.Structure parse(File dir, String files[]) {
-        struct = new jplag.Structure();
+    public jplag.TokenList parse(File dir, String files[]) {
+        struct = new jplag.TokenList();
         errors = 0;
         File pathedFiles[] = new File[files.length];
         for (int i = 0; i < files.length; i++) {

@@ -3,17 +3,17 @@ package jplag.csharp;
 import java.io.File;
 import java.io.FileInputStream;
 
-import jplag.Structure;
+import jplag.TokenList;
 import jplag.UnicodeReader;
 import jplag.csharp.grammar.CSharpLexer;
 import jplag.csharp.grammar.CSharpParser;
 
 public class Parser extends jplag.Parser implements CSharpTokenConstants {
-	private Structure struct;
+	private TokenList struct;
 	private String currentFile;
 
-	public jplag.Structure parse(File dir, String files[]) {
-		struct = new Structure();
+	public jplag.TokenList parse(File dir, String files[]) {
+		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
 			//			getProgram().print(null, "Parsing file " + files[i] + "\n");
