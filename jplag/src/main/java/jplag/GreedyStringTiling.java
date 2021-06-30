@@ -85,6 +85,14 @@ public class GreedyStringTiling implements TokenConstants {
     }
 
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
+        return compare(firstSubmission, secondSubmission, false);
+    }
+
+    public final JPlagComparison compareWithBaseCode(Submission firstSubmission, Submission secondSubmission) {
+        return compare(firstSubmission, secondSubmission, true);
+    }
+
+    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
         Submission smallerSubmission, largerSubmission;
         if (firstSubmission.tokenList.size() > secondSubmission.tokenList.size()) {
             smallerSubmission = secondSubmission;
@@ -99,137 +107,39 @@ public class GreedyStringTiling implements TokenConstants {
             smallerSubmission = largerSubmission;
             largerSubmission = swap;
         }
+        int minTokenMatch = program.getOptions().getMinTokenMatch();
 
-        return compare(smallerSubmission, largerSubmission, this.program.getOptions().getMinTokenMatch());
+        return compare(smallerSubmission, largerSubmission, minTokenMatch, withBaseCode);
     }
 
     /**
-     * first parameter should contain the smaller sequence!!!
+     * Compares two submissions.
+     * @param firstSubmission is the submission with the smaller sequence.
+     * @param secondSubmission is the submission with the larger sequence.
+     * @param minimalTokenMatch is the minimal required token match.
+     * @param withBaseCode specifies whether one of the submissions is the base code.
+     * @return the comparison results.
      */
-    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, int minimalTokenMatch) {
+    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, int minimalTokenMatch, boolean withBaseCode) {
         Structure first = firstSubmission.tokenList;
         Structure second = secondSubmission.tokenList;
 
         // FILE_END used as pivot
 
         // Initialize:
-        JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
+        JPlagComparison comparison = withBaseCode ? new JPlagBaseCodeComparison(firstSubmission, secondSubmission)
+                : new JPlagComparison(firstSubmission, secondSubmission);
 
         if (first.size() <= minimalTokenMatch || second.size() <= minimalTokenMatch) { // <= because of pivots!
             return comparison;
         }
 
-        // Mark tokens:
-        for (Token token : first.allTokens()) {
-            token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && program.getOptions().hasBaseCode());
-        }
-        for (Token token : second.allTokens()) {
-            token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && program.getOptions().hasBaseCode());
-        }
+        markTokens(first, withBaseCode);
+        markTokens(second, withBaseCode);
 
         // create hashes:
         if (first.hash_length != minimalTokenMatch) {
-            createHashes(first, minimalTokenMatch, false);
-        }
-        if (second.hash_length != minimalTokenMatch || second.table == null) {
-            createHashes(second, minimalTokenMatch, true);
-        }
-
-        // start
-        int maxmatch;
-        do {
-            maxmatch = minimalTokenMatch;
-            matches.clear();
-            for (int x = 0; x < first.size() - maxmatch; x++) {
-                List<Integer> elementsOfSecond = second.table.get(first.getToken(x).hash);
-                if (first.getToken(x).marked || first.getToken(x).hash == -1 || elementsOfSecond == null) {
-                    continue;
-                }
-                inner: for (Integer y : elementsOfSecond) {
-                    if (second.getToken(y).marked || maxmatch >= second.size() - y) { // <= because of pivots!
-                        continue;
-                    }
-
-                    int j, hx, hy;
-                    for (j = maxmatch - 1; j >= 0; j--) { // begins comparison from behind
-                        if (first.getToken(hx = x + j).type != second.getToken(hy = y + j).type || first.getToken(hx).marked
-                                || second.getToken(hy).marked) {
-                            continue inner;
-                        }
-                    }
-
-                    // expand match
-                    j = maxmatch;
-                    while (first.getToken(hx = x + j).type == second.getToken(hy = y + j).type && !first.getToken(hx).marked
-                            && !second.getToken(hy).marked) {
-                        j++;
-                    }
-
-                    if (j > maxmatch) {  // new biggest match? -> delete current smaller
-                        matches.clear();
-                        maxmatch = j;
-                    }
-                    matches.addMatch(x, y, j);  // add match
-                }
-            }
-            for (int i = matches.size() - 1; i >= 0; i--) {
-                int x = matches.matches[i].startA;  // begining of sequence A
-                int y = matches.matches[i].startB;  // begining of sequence B
-                comparison.addMatch(x, y, matches.matches[i].length);
-                // in order that "Match" will be newly build (because reusing)
-                for (int j = matches.matches[i].length; j > 0; j--) {
-                    first.getToken(x++).marked = second.getToken(y++).marked = true; // mark all Token!
-                }
-            }
-
-        } while (maxmatch != minimalTokenMatch);
-
-        return comparison;
-    }
-
-    public final JPlagBaseCodeComparison compareWithBaseCode(Submission firstSubmission, Submission secondSubmission) {
-        Submission smallerSubmission, largerSubmission;
-        if (firstSubmission.tokenList.size() > secondSubmission.tokenList.size()) {
-            smallerSubmission = secondSubmission;
-            largerSubmission = firstSubmission;
-        } else {
-            smallerSubmission = firstSubmission;
-            largerSubmission = secondSubmission;
-        }
-        // if hashtable exists in first but not in second structure: flip around!
-        if (largerSubmission.tokenList.table == null && smallerSubmission.tokenList.table != null) {
-            Submission swap = smallerSubmission;
-            smallerSubmission = largerSubmission;
-            largerSubmission = swap;
-        }
-
-        return compareWithBaseCode(smallerSubmission, largerSubmission, this.program.getOptions().getMinTokenMatch());
-    }
-
-    private JPlagBaseCodeComparison compareWithBaseCode(Submission firstSubmission, Submission secondSubmission, int minimalTokenMatch) {
-        Structure first = firstSubmission.tokenList;
-        Structure second = secondSubmission.tokenList;
-
-        // FILE_END used as pivot
-
-        // Initialize:
-        JPlagBaseCodeComparison baseCodeComparison = new JPlagBaseCodeComparison(firstSubmission, secondSubmission);
-
-        if (first.size() - 1 < minimalTokenMatch || second.size() - 1 < minimalTokenMatch) { // -1 for pivot
-            return baseCodeComparison;
-        }
-
-        // Mark tokens:
-        for (Token token : first.allTokens()) {
-            token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN;
-        }
-        for (Token token : second.allTokens()) {
-            token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN;
-        }
-
-        // create hashes:
-        if (first.hash_length != minimalTokenMatch) {
-            createHashes(first, minimalTokenMatch, true);
+            createHashes(first, minimalTokenMatch, withBaseCode); // don't make table if it is not a base code comparison
         }
         if (second.hash_length != minimalTokenMatch || second.table == null) {
             createHashes(second, minimalTokenMatch, true);
@@ -240,13 +150,13 @@ public class GreedyStringTiling implements TokenConstants {
         do {
             maxmatch = minimalTokenMatch;
             matches.clear();
-            for (int x = 0; x < first.size() - maxmatch; x++) { // -1 for pivot
+            for (int x = 0; x < first.size() - maxmatch; x++) {
                 List<Integer> elementsOfSecond = second.table.get(first.getToken(x).hash);
                 if (first.getToken(x).marked || first.getToken(x).hash == -1 || elementsOfSecond == null) {
                     continue;
                 }
                 inner: for (Integer y : elementsOfSecond) {
-                    if (second.getToken(y).marked || maxmatch > second.size() - 1 - y) { // -1 for pivot
+                    if (second.getToken(y).marked || maxmatch >= second.size() - y) { // >= because of pivots!
                         continue;
                     }
 
@@ -257,6 +167,7 @@ public class GreedyStringTiling implements TokenConstants {
                             continue inner;
                         }
                     }
+
                     // expand match
                     j = maxmatch;
                     while (first.getToken(hx = x + j).type == second.getToken(hy = y + j).type && !first.getToken(hx).marked
@@ -264,7 +175,7 @@ public class GreedyStringTiling implements TokenConstants {
                         j++;
                     }
 
-                    if (j != maxmatch) {  // new biggest match? -> delete current smaller
+                    if (j > maxmatch && !withBaseCode || j != maxmatch && withBaseCode) {  // new biggest match? -> delete current smaller
                         matches.clear();
                         maxmatch = j;
                     }
@@ -272,20 +183,33 @@ public class GreedyStringTiling implements TokenConstants {
                 }
             }
             for (int i = matches.size() - 1; i >= 0; i--) {
-                int x = matches.matches[i].startA;  // beginning in sequence A
-                int y = matches.matches[i].startB;  // beginning in sequence B
-                baseCodeComparison.addMatch(x, y, matches.matches[i].length);
+                int x = matches.matches[i].startA;  // begining of/in sequence A
+                int y = matches.matches[i].startB;  // begining of/in sequence B
+                comparison.addMatch(x, y, matches.matches[i].length);
                 // in order that "Match" will be newly build (because reusing)
                 for (int j = matches.matches[i].length; j > 0; j--) {
                     first.getToken(x).marked = second.getToken(y).marked = true;   // mark all Token!
-                    first.getToken(x).basecode = second.getToken(y).basecode = true;
+                    if (withBaseCode) {
+                        first.getToken(x).basecode = second.getToken(y).basecode = true;
+                    }
                     x++;
                     y++;
                 }
             }
+
         } while (maxmatch != minimalTokenMatch);
 
-        return baseCodeComparison;
+        return comparison;
+    }
+
+    private void markTokens(Structure tokenList, boolean withBaseCode) {
+        for (Token token : tokenList.allTokens()) {
+            if (withBaseCode) {
+                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN;
+            } else {
+                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && program.getOptions().hasBaseCode());
+            }
+        }
     }
 
     public void resetBaseSubmission(Submission submission) {

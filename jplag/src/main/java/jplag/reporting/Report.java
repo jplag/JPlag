@@ -17,7 +17,6 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import jplag.ExitException;
-import jplag.JPlagBaseCodeComparison;
 import jplag.JPlagComparison;
 import jplag.JPlagResult;
 import jplag.Match;
@@ -488,8 +487,8 @@ public class Report {
             }
         }
 
-        if (result.getOptions().hasBaseCode() && comparison.bcMatchesA != null && comparison.bcMatchesB != null) {
-            JPlagBaseCodeComparison baseCodeComparison = (j == 0 ? comparison.bcMatchesA : comparison.bcMatchesB);
+        if (result.getOptions().hasBaseCode() && comparison.baseCodeMatchesA != null && comparison.baseCodeMatchesB != null) {
+            JPlagComparison baseCodeComparison = (j == 0 ? comparison.baseCodeMatchesA : comparison.baseCodeMatchesB);
 
             for (int x = 0; x < baseCodeComparison.matches.size(); x++) {
                 currentMatch = baseCodeComparison.matches.get(x);
@@ -667,8 +666,8 @@ public class Report {
             }
         }
 
-        if (result.getOptions().hasBaseCode() && comparison.bcMatchesA != null && comparison.bcMatchesB != null) {
-            JPlagBaseCodeComparison baseCodeComparison = (j == 0 ? comparison.bcMatchesA : comparison.bcMatchesB);
+        if (result.getOptions().hasBaseCode() && comparison.baseCodeMatchesA != null && comparison.baseCodeMatchesB != null) {
+            JPlagComparison baseCodeComparison = (j == 0 ? comparison.baseCodeMatchesA : comparison.baseCodeMatchesB);
 
             for (int x = 0; x < baseCodeComparison.matches.size(); x++) {
                 Match onematch = baseCodeComparison.matches.get(x);
