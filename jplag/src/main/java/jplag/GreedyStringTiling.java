@@ -57,7 +57,7 @@ public class GreedyStringTiling implements TokenConstants {
             for (int i = 0; i < loops; i++) {
                 if (hashedLength >= hashLength) {
                     tokenList.getToken(i).hash = hash;
-                    tokenList.tokenHashes.add(hash, i);   // add into hashtable
+                    tokenList.tokenHashes.put(hash, i);   // add into hashtable
                 } else {
                     tokenList.getToken(i).hash = -1;
                 }
@@ -152,11 +152,11 @@ public class GreedyStringTiling implements TokenConstants {
             maxmatch = minimalTokenMatch;
             matches.clear();
             for (int x = 0; x < first.size() - maxmatch; x++) {
-                List<Integer> elementsOfSecond = second.tokenHashes.get(first.getToken(x).hash);
-                if (first.getToken(x).marked || first.getToken(x).hash == -1 || elementsOfSecond == null) {
+                List<Integer> hashedTokens = second.tokenHashes.get(first.getToken(x).hash);
+                if (first.getToken(x).marked || first.getToken(x).hash == -1) {
                     continue;
                 }
-                inner: for (Integer y : elementsOfSecond) {
+                inner: for (Integer y : hashedTokens) {
                     if (second.getToken(y).marked || maxmatch >= second.size() - y) { // >= because of pivots!
                         continue;
                     }

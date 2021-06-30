@@ -2,6 +2,7 @@ package jplag;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +29,14 @@ public class TokenHashMap {
      * Returns all stored numbers for a key. Note that all keys with identical <code>(key % prime)</code> are mapped to the
      * same values (see {@link TokenHashMap}).
      * @param key is the specific key.
-     * @return the stored numbers or null if nothing is stored.
+     * @return the stored numbers or an empty list if nothing is stored.
      */
     public final List<Integer> get(int key) {
         int actualKey = key % primeNumber;
         if (mappedEntries.containsKey(actualKey)) {
             return new ArrayList<>(mappedEntries.get(actualKey));
         }
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -44,7 +45,7 @@ public class TokenHashMap {
      * @param key is the specific key.
      * @param value is the number to store.
      */
-    public final void add(int key, int value) { // TODO TS: Should be renamed to put
+    public final void put(int key, int value) {
         int actualKey = key % primeNumber;
         if (mappedEntries.containsKey(actualKey)) {
             mappedEntries.get(actualKey).add(value);
