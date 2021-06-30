@@ -3,7 +3,9 @@ package jplag;
 import java.util.ArrayList;
 import java.util.List;
 
-/** The tokenlist */ // TODO PB: The name 'Structure' is very generic and should be changed to something more descriptive.
+/**
+ * List of tokens. Allows random access to individual tokens.
+ */ // TODO PB: The name 'Structure' is very generic and should be changed to something more descriptive.
 public class Structure implements TokenConstants { // TODO TS: How about renaming it to TokenList?
     private final List<Token> tokens;
     Table table = null;
@@ -30,19 +32,25 @@ public class Structure implements TokenConstants { // TODO TS: How about renamin
         tokens.add(token);
     }
 
+    /**
+     * Returns a view on all tokens.
+     * @return all tokens.
+     */
     public Iterable<Token> allTokens() {
         return new ArrayList<>(tokens);
     }
 
+    /**
+     * Grants access to a specific token.
+     * @param index is the token index.
+     * @return the desired token.
+     * @throws IllegalArgumentException if the index is out of bounds.
+     */
     public Token getToken(int index) {
         if (index < 0 || index >= tokens.size()) {
             throw new IllegalArgumentException("Cannot access token with index " + index + ", there are only " + tokens.size() + " tokens!");
         }
         return tokens.get(index);
-    }
-
-    public Token[] getTokenArray() { // TODO TS: I added this to support the legacy code using arrays, however we should get rid of this.
-        return tokens.toArray(new Token[0]);
     }
 
     @Override

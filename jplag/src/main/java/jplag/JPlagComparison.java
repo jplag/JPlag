@@ -184,14 +184,14 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
             return new String[] {};
         }
 
-        Token[] tokens = (j == 0 ? firstSubmission : secondSubmission).tokenList.getTokenArray();
+        Structure tokenList = (j == 0 ? firstSubmission : secondSubmission).tokenList;
         int i, h, starti, starth, count = 1;
 
         o1: for (i = 1; i < matches.size(); i++) {
             starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
             for (h = 0; h < i; h++) {
                 starth = (j == 0 ? matches.get(h).startA : matches.get(h).startB);
-                if (tokens[starti].file.equals(tokens[starth].file)) {
+                if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o1;
                 }
             }
@@ -199,18 +199,18 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         }
 
         String[] res = new String[count];
-        res[0] = tokens[(j == 0 ? matches.get(0).startA : matches.get(0).startB)].file;
+        res[0] = tokenList.getToken((j == 0 ? matches.get(0).startA : matches.get(0).startB)).file;
         count = 1;
 
         o2: for (i = 1; i < matches.size(); i++) {
             starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
             for (h = 0; h < i; h++) {
                 starth = (j == 0 ? matches.get(h).startA : matches.get(h).startB);
-                if (tokens[starti].file.equals(tokens[starth].file)) {
+                if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o2;
                 }
             }
-            res[count++] = tokens[starti].file;
+            res[count++] = tokenList.getToken(starti).file;
         }
 
         /*

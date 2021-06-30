@@ -4,7 +4,8 @@ import java.util.List;
 
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
- * to the classes {@link Structure}, {@link Token}, as well as {@link Matches} and {@link Match}.
+ * to the classes {@link Structure}, {@link Token}, as well as {@link Matches} and {@link Match}. While is class was
+ * reworked, it still contains some quirks from the initial version.
  * @see <a href=
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
  * String Similarity via Greedy String Tiling and Running Karp−Rabin Matching </a>
@@ -42,9 +43,8 @@ public class GreedyStringTiling implements TokenConstants {
         int loops = tokenList.size() - hashLength;
         tokenList.table = (makeTable ? new Table(3 * loops) : null);
         int hash = 0;
-        int i;
         int hashedLength = 0;
-        for (i = 0; i < hashLength; i++) {
+        for (int i = 0; i < hashLength; i++) {
             hash = (2 * hash) + (tokenList.getToken(i).type & modulo);
             hashedLength++;
             if (tokenList.getToken(i).marked) {
@@ -54,7 +54,7 @@ public class GreedyStringTiling implements TokenConstants {
         int factor = (hashLength != 1 ? (2 << (hashLength - 2)) : 1);
 
         if (makeTable) {
-            for (i = 0; i < loops; i++) {
+            for (int i = 0; i < loops; i++) {
                 if (hashedLength >= hashLength) {
                     tokenList.getToken(i).hash = hash;
                     tokenList.table.add(hash, i);   // add into hashtable
@@ -70,7 +70,7 @@ public class GreedyStringTiling implements TokenConstants {
                 }
             }
         } else {
-            for (i = 0; i < loops; i++) {
+            for (int i = 0; i < loops; i++) {
                 tokenList.getToken(i).hash = (hashedLength >= hashLength) ? hash : -1;
                 hash -= factor * (tokenList.getToken(i).type & modulo);
                 hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
@@ -121,6 +121,7 @@ public class GreedyStringTiling implements TokenConstants {
      * @return the comparison results.
      */
     private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, int minimalTokenMatch, boolean withBaseCode) {
+        // first and second refer to the list of tokens of the first and second submission:
         Structure first = firstSubmission.tokenList;
         Structure second = secondSubmission.tokenList;
 
@@ -145,7 +146,7 @@ public class GreedyStringTiling implements TokenConstants {
             createHashes(second, minimalTokenMatch, true);
         }
 
-        // start:
+        // start the black magic:
         int maxmatch;
         do {
             maxmatch = minimalTokenMatch;
@@ -183,12 +184,12 @@ public class GreedyStringTiling implements TokenConstants {
                 }
             }
             for (int i = matches.size() - 1; i >= 0; i--) {
-                int x = matches.matches[i].startA;  // begining of/in sequence A
-                int y = matches.matches[i].startB;  // begining of/in sequence B
+                int x = matches.matches[i].startA;  // Beginning of/in sequence A
+                int y = matches.matches[i].startB;  // Beginning of/in sequence B
                 comparison.addMatch(x, y, matches.matches[i].length);
                 // in order that "Match" will be newly build (because reusing)
                 for (int j = matches.matches[i].length; j > 0; j--) {
-                    first.getToken(x).marked = second.getToken(y).marked = true;   // mark all Token!
+                    first.getToken(x).marked = second.getToken(y).marked = true; // mark all Tokens!
                     if (withBaseCode) {
                         first.getToken(x).basecode = second.getToken(y).basecode = true;
                     }
