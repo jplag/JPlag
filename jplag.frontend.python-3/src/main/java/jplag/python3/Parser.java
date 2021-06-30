@@ -75,6 +75,6 @@ public class Parser extends jplag.Parser implements Python3TokenConstants {
     }
 
     public void addEnd(int type, org.antlr.v4.runtime.Token tok) {
-        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), struct.tokens[struct.size()-1].getColumn() + 1,0));
+        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), struct.getToken(struct.size()-1).getColumn() + 1,0));
     }
 }
