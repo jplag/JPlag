@@ -65,8 +65,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.build.source>11</project.build.source>
-    <project.build.target>11</project.build.target>
+    <project.build.source>14</project.build.source>
+    <project.build.target>14</project.build.target>
     <project.build.optimize>true</project.build.optimize>
   </properties>
 
