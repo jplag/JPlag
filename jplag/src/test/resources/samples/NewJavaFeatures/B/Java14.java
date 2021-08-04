@@ -12,13 +12,6 @@ public enum Java14 {
         default -> false;
         };
         System.out.println(isWeekend);
-
-        // Text blocks (JEP 378): 
-        String query = """
-                SELECT "EMPLOYEE_ID", "NAME"
-                FROM "EMPLOYEE_TABLE";
-                """;
-        System.out.println(query);
     }
 
 }
