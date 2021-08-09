@@ -29,6 +29,7 @@ import jplag.Token;
  */
 public class Report {
 
+    private static final String CSV_FILE = "matches_avg.csv";
     private final Map<JPlagComparison, Integer> comparisonToIndex = new HashMap<>();
     private int currentComparisonIndex = 0;
     private final Messages msg;
@@ -401,11 +402,9 @@ public class Report {
         writeIndexBegin(htmlFile, msg.getString("Report.Search_Results"));
         writeDistribution(htmlFile);
 
-        String csvFile = "matches_avg.csv";
+        writeLinksToComparisons(htmlFile, "<H4>" + msg.getString("Report.MatchesAvg"), CSV_FILE);
 
-        writeLinksToComparisons(htmlFile, "<H4>" + msg.getString("Report.MatchesAvg"), csvFile);
-
-        writeMatchesCSV(csvFile);
+        writeMatchesCSV(CSV_FILE);
 
         writeIndexEnd(htmlFile);
 
@@ -542,7 +541,7 @@ public class Report {
     }
 
     private void writeLinksToComparisons(HTMLFile htmlFile, String headerStr, String csvFile) {
-        List<JPlagComparison> comparisons = result.getComparisons();
+        List<JPlagComparison> comparisons = result.getComparisons(); // should be already sorted!
 
         htmlFile.println(headerStr + " (<a href=\"help-sim-" + "en" // Country tag
                 + ".html\"><small><font color=\"#000088\">" + msg.getString("Report.WhatIsThis") + "</font></small></a>):</H4>");
