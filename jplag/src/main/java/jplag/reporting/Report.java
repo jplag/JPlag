@@ -30,15 +30,17 @@ import jplag.Token;
 public class Report {
 
     private static final String CSV_FILE = "matches_avg.csv";
-    private final Map<JPlagComparison, Integer> comparisonToIndex = new HashMap<>();
-    private int currentComparisonIndex = 0;
-    private final Messages msg;
+    private static final String[] PICS = {"forward.gif", "back.gif"};
 
-    // SUBMISSION - here it comes...
-    private final String[] pics = {"forward.gif", "back.gif"};
+    private final Map<JPlagComparison, Integer> comparisonToIndex = new HashMap<>();
+    private final Messages msg;
     private final File reportDir;
 
     private JPlagResult result;
+
+    private int currentComparisonIndex = 0;
+    private int matchWritingProgess = 0;
+    private int matchesWritten = 0;
 
     public Report(File reportDir) throws ExitException {
         this.reportDir = reportDir;
@@ -49,13 +51,11 @@ public class Report {
 
     public void writeResult(JPlagResult result) throws ExitException {
         this.result = result;
-        
-        System.out.print("Writing report...");
+        System.out.println("Writing report...");
         writeIndex();
-
         copyStaticFiles();
-
         writeMatches(result.getComparisons());
+        System.out.println("Report exported to " + reportDir.getAbsolutePath());
     }
 
     /*
@@ -65,11 +65,11 @@ public class Report {
         int redValue = (int) (Rl + (Rh - Rl) * percent / 100);
         int greenValue = (int) (Gl + (Gh - Gl) * percent / 100);
         int blueValue = (int) (Bl + (Bh - Bl) * percent / 100);
-    
+
         String red = (redValue < 16 ? "0" : "") + Integer.toHexString(redValue);
         String green = (greenValue < 16 ? "0" : "") + Integer.toHexString(greenValue);
         String blue = (blueValue < 16 ? "0" : "") + Integer.toHexString(blueValue);
-    
+
         return "#" + red + green + blue;
     }
 
@@ -78,15 +78,15 @@ public class Report {
      */
     private void copyStaticFiles() {
         final String[] fileList = {"back.gif", "forward.gif", "help-en.html", "help-sim-en.html", "logo.gif", "fields.js"};
-    
+
         for (int i = fileList.length - 1; i >= 0; i--) {
             try {
                 URL url = Report.class.getResource("data/" + fileList[i]);
                 DataInputStream dis = new DataInputStream(url.openStream());
-    
+
                 File dest = new File(reportDir, fileList[i]);
                 DataOutputStream dos = new DataOutputStream(new FileOutputStream(dest));
-    
+
                 byte[] buffer = new byte[1024];
                 int count;
                 do {
@@ -114,18 +114,6 @@ public class Report {
         } catch (IOException e) {
             throw new jplag.ExitException("Error opening file: " + file);
         }
-    }
-
-    private int getComparisonIndex(JPlagComparison comparison) {
-        Integer index = comparisonToIndex.get(comparison);
-    
-        if (index != null) {
-            return index;
-        }
-    
-        comparisonToIndex.put(comparison, currentComparisonIndex++);
-    
-        return currentComparisonIndex - 1;
     }
 
     /**
@@ -184,6 +172,15 @@ public class Report {
         htmlFile.println("</TABLE>");
     }
 
+    private synchronized void reportMatchWritingProgress(List<JPlagComparison> comparisons) {
+        matchesWritten++;
+        int currentProgress = 20 * matchesWritten / comparisons.size() * 5; // report every 5% step
+        if (currentProgress > matchWritingProgess) {
+            System.out.println("Writing matches: " + currentProgress + "%");
+            matchWritingProgess = currentProgress;
+        }
+    }
+
     /**
      * Make sure the report directory exists, is a directory and has write access.
      */
@@ -191,11 +188,11 @@ public class Report {
         if (!reportDir.exists() && !reportDir.mkdirs()) {
             throw new ExitException("Cannot create report directory!");
         }
-    
+
         if (!reportDir.isDirectory()) {
             throw new ExitException(reportDir + " is not a directory!");
         }
-    
+
         if (!reportDir.canWrite()) {
             throw new ExitException("Cannot write directory: " + reportDir);
         }
@@ -238,6 +235,18 @@ public class Report {
         htmlFile.println("</TABLE></CENTER>\n<P>\n<HR>");
     }
 
+    private int getComparisonIndex(JPlagComparison comparison) {
+        Integer index = comparisonToIndex.get(comparison);
+
+        if (index != null) {
+            return index;
+        }
+
+        comparisonToIndex.put(comparison, currentComparisonIndex++);
+
+        return currentComparisonIndex - 1;
+    }
+
     private void writeHTMLHeader(HTMLFile file, String title) {
         file.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
         file.println("<HTML><HEAD><TITLE>" + title + "</TITLE>");
@@ -277,7 +286,7 @@ public class Report {
                 if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
                     String tmp = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
                             + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
-                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
+                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + PICS[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
                             + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";
                     // position the icon and the beginning of the colorblock
                     markupList.put(new MarkupText(fileIndex, start.getLine() - 1, start.getColumn() - 1, tmp, true), null);
@@ -622,14 +631,14 @@ public class Report {
         htmlFile.close();
     }
 
-    private void writeMatches(List<JPlagComparison> comparisons) { // TODO TS: We should report the progress if there are many comparisons.
-        comparisons.forEach(comparison -> {
+    private void writeMatches(List<JPlagComparison> comparisons) {
+        comparisons.parallelStream().forEach(comparison -> {
             try {
-                int i = getComparisonIndex(comparison);
-                writeMatch(comparison, i);
-            } catch (ExitException e) {
-                e.printStackTrace();
+                writeMatch(comparison, getComparisonIndex(comparison));
+            } catch (ExitException exception) {
+                exception.printStackTrace();
             }
+            reportMatchWritingProgress(comparisons);
         });
     }
 
@@ -687,7 +696,7 @@ public class Report {
                 if (start.file.equals(files[y]) && text[y] != null) {
                     hilf = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
                             + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
-                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
+                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + PICS[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
                             + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";
                     // position the icon and the beginning of the colorblock
                     if (text[y][start.getLine() - 1].endsWith("</FONT>")) {
