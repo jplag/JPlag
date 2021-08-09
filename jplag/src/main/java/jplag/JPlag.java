@@ -82,7 +82,6 @@ public class JPlag implements ProgramI {
 
         // 3. Compare valid submissions:
         errorVector = null; // errorVector is not needed anymore
-        System.gc();
         JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
         return result;
     }
@@ -304,15 +303,11 @@ public class JPlag implements ProgramI {
     private void parseAllSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) throws ExitException {
         try {
             parseSubmissions(submissions);
-            System.gc();
             parseBaseCodeSubmission(baseCodeSubmission);
         } catch (OutOfMemoryError e) {
-            System.gc();
-
             throw new ExitException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
         } catch (Throwable e) {
             e.printStackTrace();
-
             throw new ExitException("Unknown exception during parsing of " + "submission \"" + currentSubmissionName + "\"");
         }
     }
