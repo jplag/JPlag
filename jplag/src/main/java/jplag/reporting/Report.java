@@ -29,7 +29,8 @@ import jplag.TokenList;
  */
 public class Report {
 
-    private final String[] pics = {"forward.gif", "back.gif"};
+    private static final String CSV_FILE = "matches_avg.csv";
+    private static final String[] PICS = {"forward.gif", "back.gif"};
 
     private final Map<JPlagComparison, Integer> comparisonToIndex = new HashMap<>();
     private final Messages msg;
@@ -38,6 +39,8 @@ public class Report {
     private JPlagResult result;
 
     private int currentComparisonIndex = 0;
+    private int matchWritingProgess = 0;
+    private int matchesWritten = 0;
 
     public Report(File reportDir) throws ExitException {
         this.reportDir = reportDir;
@@ -48,12 +51,11 @@ public class Report {
 
     public void writeResult(JPlagResult result) throws ExitException {
         this.result = result;
-
+        System.out.println("Writing report...");
         writeIndex();
-
         copyStaticFiles();
-
         writeMatches(result.getComparisons());
+        System.out.println("Report exported to " + reportDir.getAbsolutePath());
     }
 
     /*
@@ -182,6 +184,15 @@ public class Report {
         htmlFile.println("</TABLE>");
     }
 
+    private synchronized void reportMatchWritingProgress(List<JPlagComparison> comparisons) {
+        matchesWritten++;
+        int currentProgress = 20 * matchesWritten / comparisons.size() * 5; // report every 5% step
+        if (currentProgress > matchWritingProgess) {
+            System.out.println("Writing matches: " + currentProgress + "%");
+            matchWritingProgess = currentProgress;
+        }
+    }
+
     /**
      * Make sure the report directory exists, is a directory and has write access.
      */
@@ -275,7 +286,7 @@ public class Report {
                 if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
                     String tmp = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
                             + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
-                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
+                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + PICS[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
                             + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";
                     // position the icon and the beginning of the colorblock
                     markupList.put(new MarkupText(fileIndex, start.getLine() - 1, start.getColumn() - 1, tmp, true), null);
@@ -400,11 +411,9 @@ public class Report {
         writeIndexBegin(htmlFile, msg.getString("Report.Search_Results"));
         writeDistribution(htmlFile);
 
-        String csvFile = "matches_avg.csv";
+        writeLinksToComparisons(htmlFile, "<H4>" + msg.getString("Report.MatchesAvg"), CSV_FILE);
 
-        writeLinksToComparisons(htmlFile, "<H4>" + msg.getString("Report.MatchesAvg"), csvFile);
-
-        writeMatchesCSV(csvFile);
+        writeMatchesCSV(CSV_FILE);
 
         writeIndexEnd(htmlFile);
 
@@ -541,7 +550,7 @@ public class Report {
     }
 
     private void writeLinksToComparisons(HTMLFile htmlFile, String headerStr, String csvFile) {
-        List<JPlagComparison> comparisons = result.getComparisons();
+        List<JPlagComparison> comparisons = result.getComparisons(); // should be already sorted!
 
         htmlFile.println(headerStr + " (<a href=\"help-sim-" + "en" // Country tag
                 + ".html\"><small><font color=\"#000088\">" + msg.getString("Report.WhatIsThis") + "</font></small></a>):</H4>");
@@ -623,13 +632,13 @@ public class Report {
     }
 
     private void writeMatches(List<JPlagComparison> comparisons) {
-        comparisons.forEach(comparison -> {
+        comparisons.parallelStream().forEach(comparison -> {
             try {
-                int i = getComparisonIndex(comparison);
-                writeMatch(comparison, i);
-            } catch (ExitException e) {
-                e.printStackTrace();
+                writeMatch(comparison, getComparisonIndex(comparison));
+            } catch (ExitException exception) {
+                exception.printStackTrace();
             }
+            reportMatchWritingProgress(comparisons);
         });
     }
 
@@ -687,7 +696,7 @@ public class Report {
                 if (start.file.equals(files[y]) && text[y] != null) {
                     hilf = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
                             + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
-                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + pics[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
+                            + "-top.html#" + x + "',1)\"><IMG SRC=\"" + PICS[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
                             + (j == 0 ? "right" : "left") + "\"></A>" + (j == 1 ? "</div>" : "") + "<B>";
                     // position the icon and the beginning of the colorblock
                     if (text[y][start.getLine() - 1].endsWith("</FONT>")) {

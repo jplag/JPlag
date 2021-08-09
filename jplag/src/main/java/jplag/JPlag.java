@@ -82,7 +82,6 @@ public class JPlag implements ProgramI {
 
         // 3. Compare valid submissions:
         errorVector = null; // errorVector is not needed anymore
-        System.gc();
         JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
         return result;
     }
@@ -304,15 +303,11 @@ public class JPlag implements ProgramI {
     private void parseAllSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) throws ExitException {
         try {
             parseSubmissions(submissions);
-            System.gc();
             parseBaseCodeSubmission(baseCodeSubmission);
         } catch (OutOfMemoryError e) {
-            System.gc();
-
             throw new ExitException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
         } catch (Throwable e) {
             e.printStackTrace();
-
             throw new ExitException("Unknown exception during parsing of " + "submission \"" + currentSubmissionName + "\"");
         }
     }
@@ -438,16 +433,16 @@ public class JPlag implements ProgramI {
         excludedFileNames = new HashSet<>();
 
         try {
-            BufferedReader in = new BufferedReader(new FileReader(options.getExclusionFileName()));
+            BufferedReader reader = new BufferedReader(new FileReader(options.getExclusionFileName()));
             String line;
 
-            while ((line = in.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 excludedFileNames.add(line.trim());
             }
 
-            in.close();
-        } catch (IOException e) {
-            System.out.println("Could not read exclusion file: " + options.getExclusionFileName());
+            reader.close();
+        } catch (IOException exception) {
+            System.out.println("Could not read exclusion file: "+ exception.getMessage());
         }
 
         if (options.getVerbosity() == LONG) {

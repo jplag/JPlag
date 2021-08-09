@@ -52,8 +52,8 @@ public class JPlagResult {
         this.durationInMillis = durationInMillis;
         this.numberOfSubmissions = numberOfSubmissions;
         this.options = options;
-
-        this.similarityDistribution = calculateSimilarityDistribution(comparisons);
+        similarityDistribution = calculateSimilarityDistribution(comparisons);
+        comparisons.sort((first, second) -> Float.compare(second.percent(), first.percent())); // Sort by percentage (descending).
     }
 
     /**
@@ -68,6 +68,9 @@ public class JPlagResult {
         return similarityDistribution;
     }
 
+    /**
+     * @return a list of comparisons sorted by percentage (descending).
+     */
     public List<JPlagComparison> getComparisons() {
         return comparisons;
     }
