@@ -251,7 +251,7 @@ public class ParserTest {
 		// parse with old parser
 		jplag.java15.Parser oldParser = new jplag.java15.Parser(false);
 		oldParser.setProgram(new StrippedProgram());
-		jplag.Structure oldStruct = oldParser.parse(javaFile.getParentFile(), new String[] { javaFile.getName() });
+		jplag.TokenList oldStruct = oldParser.parse(javaFile.getParentFile(), new String[] { javaFile.getName() });
 
 		String oldTokens = buildTokenString(oldStruct, true);
 		return oldTokens;
@@ -268,14 +268,14 @@ public class ParserTest {
 	 * @param withDetails
 	 * @return
 	 */
-	private String buildTokenString(jplag.Structure oldStruct, boolean withDetails) {
+	private String buildTokenString(jplag.TokenList oldStruct, boolean withDetails) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < oldStruct.size(); i++) {
-			sb.append(jplag.java17.JavaToken.type2string(oldStruct.tokens[i].type));
+			sb.append(jplag.java17.JavaToken.type2string(oldStruct.getToken(i).type));
 			if (withDetails) {
-				sb.append(" L:" + oldStruct.tokens[i].getLine()  
-				+ " C:" + oldStruct.tokens[i].getLine()
-				+ " l:" + oldStruct.tokens[i].getLine());
+				sb.append(" L:" + oldStruct.getToken(i).getLine()  
+				+ " C:" + oldStruct.getToken(i).getLine()
+				+ " l:" + oldStruct.getToken(i).getLine());
 			}
 			sb.append("\n");
 		}
@@ -288,7 +288,7 @@ public class ParserTest {
 		// parse with new parser
 		jplag.java17.Parser newParser = new Parser();
 		newParser.setProgram(new StrippedProgram());
-		jplag.Structure newStruct = newParser.parse(javaFile.getParentFile(), new String[] { javaFile.getName() });
+		jplag.TokenList newStruct = newParser.parse(javaFile.getParentFile(), new String[] { javaFile.getName() });
 
 		String newTokens = buildTokenString(newStruct, withDetails);
 		return newTokens;

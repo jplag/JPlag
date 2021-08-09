@@ -11,18 +11,18 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import jplag.Structure;
+import jplag.TokenList;
 import jplag.python3.grammar.Python3Lexer;
 import jplag.python3.grammar.Python3Parser;
 import jplag.python3.grammar.Python3Parser.File_inputContext;
 
 public class Parser extends jplag.Parser implements Python3TokenConstants {
 
-    private Structure struct = new Structure();
+    private TokenList struct = new TokenList();
     private String currentFile;
 
-    public jplag.Structure parse(File dir, String files[]) {
-        struct = new Structure();
+    public jplag.TokenList parse(File dir, String files[]) {
+        struct = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {
             getProgram().print(null, "Parsing file " + files[i] + "\n");
@@ -75,6 +75,6 @@ public class Parser extends jplag.Parser implements Python3TokenConstants {
     }
 
     public void addEnd(int type, org.antlr.v4.runtime.Token tok) {
-        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), struct.tokens[struct.size()-1].getColumn() + 1,0));
+        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), struct.getToken(struct.size()-1).getColumn() + 1,0));
     }
 }

@@ -39,7 +39,7 @@ public class Submission implements Comparable<Submission> {
     /**
      * List of tokens that have been parsed from the files this submission consists of.
      */
-    public Structure tokenList;
+    public TokenList tokenList;
 
     /**
      * True, if at least one error occurred while parsing this submission; false otherwise.

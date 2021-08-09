@@ -30,7 +30,7 @@ public interface Language {
     /**
      * Parses a set files in a directory.
      */
-    public Structure parse(File dir, String[] files);
+    public TokenList parse(File dir, String[] files);
 
     /**
      * Whether errors were found during the last {@link #parse}.

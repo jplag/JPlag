@@ -5,10 +5,10 @@ import java.io.File;
 public class Parser extends jplag.Parser implements SchemeTokenConstants {
 	private String actFile;
 
-	private jplag.Structure struct;
+	private jplag.TokenList struct;
 
-	public jplag.Structure parse(File dir, String files[]) {
-		struct = new jplag.Structure();
+	public jplag.TokenList parse(File dir, String files[]) {
+		struct = new jplag.TokenList();
 		errors = 0;
 		SchemeParser parser = null;// no worry it will be reinitialized
 		// in method parseFile(...)

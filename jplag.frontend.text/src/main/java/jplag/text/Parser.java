@@ -9,7 +9,7 @@ import java.util.HashSet;
 
 import jplag.InputState;
 import jplag.ParserToken;
-import jplag.Structure;
+import jplag.TokenList;
 
 /**
  * @Changed by Emeric Kwemou 29.01.2005
@@ -19,7 +19,7 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 
 	protected TokenStructure tokenStructure = new TokenStructure();
 
-	private Structure struct;
+	private TokenList struct;
 
 	private String currentFile;
 
@@ -47,8 +47,8 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 		}
 	}
 
-	public jplag.Structure parse(File dir, String files[]) {
-		struct = new Structure();
+	public jplag.TokenList parse(File dir, String files[]) {
+		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
 			getProgram().print("", "Parsing file " + files[i] + "\n");
@@ -57,7 +57,7 @@ public class Parser extends jplag.Parser implements jplag.TokenConstants {
 			struct.addToken(new TextToken(FILE_END, files[i], this));
 		}
 
-		Structure tmp = struct;
+		TokenList tmp = struct;
 		struct = null;
 		this.parseEnd();
 		return tmp;

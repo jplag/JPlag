@@ -17,12 +17,12 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import jplag.ExitException;
-import jplag.JPlagBaseCodeComparison;
 import jplag.JPlagComparison;
 import jplag.JPlagResult;
 import jplag.Match;
 import jplag.Submission;
 import jplag.Token;
+import jplag.TokenList;
 
 /**
  * This class writes all the HTML pages
@@ -116,13 +116,25 @@ public class Report {
         }
     }
 
+    private int getComparisonIndex(JPlagComparison comparison) {
+        Integer index = comparisonToIndex.get(comparison);
+
+        if (index != null) {
+            return index;
+        }
+
+        comparisonToIndex.put(comparison, currentComparisonIndex++);
+
+        return currentComparisonIndex - 1;
+    }
+
     /**
      * This method generates an table entry in the list of all comparisons.
      */
     private void reportComparison(HTMLFile htmlFile, JPlagComparison comparison, int index) {
         Match match;
-        Token[] tokensA = comparison.firstSubmission.tokenList.tokens;
-        Token[] tokensB = comparison.secondSubmission.tokenList.tokens;
+        TokenList tokensA = comparison.firstSubmission.tokenList;
+        TokenList tokensB = comparison.secondSubmission.tokenList;
         // sort();
 
         htmlFile.println("<TABLE BORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#d0d0d0\">");
@@ -132,10 +144,10 @@ public class Report {
         for (int i = 0; i < comparison.matches.size(); i++) {
             match = comparison.matches.get(i);
 
-            Token startA = tokensA[match.startA];
-            Token endA = tokensA[match.startA + match.length - 1];
-            Token startB = tokensB[match.startB];
-            Token endB = tokensB[match.startB + match.length - 1];
+            Token startA = tokensA.getToken(match.startA);
+            Token endA = tokensA.getToken(match.startA + match.length - 1);
+            Token startB = tokensB.getToken(match.startB);
+            Token endB = tokensB.getToken(match.startB + match.length - 1);
 
             String col = Color.getHexadecimalValue(i);
 
@@ -235,18 +247,6 @@ public class Report {
         htmlFile.println("</TABLE></CENTER>\n<P>\n<HR>");
     }
 
-    private int getComparisonIndex(JPlagComparison comparison) {
-        Integer index = comparisonToIndex.get(comparison);
-
-        if (index != null) {
-            return index;
-        }
-
-        comparisonToIndex.put(comparison, currentComparisonIndex++);
-
-        return currentComparisonIndex - 1;
-    }
-
     private void writeHTMLHeader(HTMLFile file, String title) {
         file.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
         file.println("<HTML><HEAD><TITLE>" + title + "</TITLE>");
@@ -262,7 +262,7 @@ public class Report {
         Submission sub = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission);
         String[] files = comparison.files(j);
         String[][] text = sub.readFiles(files);
-        Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.tokens;
+        TokenList tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList;
 
         // Markup list:
         Comparator<MarkupText> comp = (mo1, mo2) -> {
@@ -280,8 +280,8 @@ public class Report {
         for (int x = 0; x < comparison.matches.size(); x++) {
             Match onematch = comparison.matches.get(x);
 
-            Token start = tokens[(j == 0 ? onematch.startA : onematch.startB)];
-            Token end = tokens[((j == 0 ? onematch.startA : onematch.startB) + onematch.length - 1)];
+            Token start = tokens.getToken(j == 0 ? onematch.startA : onematch.startB);
+            Token end = tokens.getToken((j == 0 ? onematch.startA : onematch.startB) + onematch.length - 1);
             for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
                 if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
                     String tmp = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
@@ -300,13 +300,13 @@ public class Report {
             }
         }
 
-        if (result.getOptions().hasBaseCode() && comparison.bcMatchesA != null && comparison.bcMatchesB != null) {
-            JPlagBaseCodeComparison baseCodeComparison = (j == 0 ? comparison.bcMatchesA : comparison.bcMatchesB);
+        if (result.getOptions().hasBaseCode() && comparison.baseCodeMatchesA != null && comparison.baseCodeMatchesB != null) {
+            JPlagComparison baseCodeComparison = (j == 0 ? comparison.baseCodeMatchesA : comparison.baseCodeMatchesB);
 
             for (int x = 0; x < baseCodeComparison.matches.size(); x++) {
                 Match onematch = baseCodeComparison.matches.get(x);
-                Token start = tokens[onematch.startA];
-                Token end = tokens[onematch.startA + onematch.length - 1];
+                Token start = tokens.getToken(onematch.startA);
+                Token end = tokens.getToken(onematch.startA + onematch.length - 1);
 
                 for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
                     if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
@@ -476,7 +476,7 @@ public class Report {
         Submission sub = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission);
         String[] files = comparison.files(j);
         char[][] text = sub.readFilesChar(files);
-        Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.tokens;
+        TokenList tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList;
 
         // get index array with matches sorted in ascending order.
         int[] perm = comparison.sort_permutation(j);
@@ -503,8 +503,8 @@ public class Report {
                 if (onematch == null) {
                     if (index < comparison.matches.size()) {
                         onematch = comparison.matches.get(perm[index]);
-                        start = tokens[(j == 0 ? onematch.startA : onematch.startB)];
-                        end = tokens[((j == 0 ? onematch.startA : onematch.startB) + onematch.length - 1)];
+                        start = tokens.getToken(j == 0 ? onematch.startA : onematch.startB);
+                        end = tokens.getToken((j == 0 ? onematch.startA : onematch.startB) + onematch.length - 1);
                         index++;
                     } else {
                         start = end = null;
@@ -682,15 +682,15 @@ public class Report {
 
         String[][] text = sub.readFiles(files);
 
-        Token[] tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList.tokens;
+        TokenList tokens = (j == 0 ? comparison.firstSubmission : comparison.secondSubmission).tokenList;
         Match currentMatch;
         String hilf;
         int h;
         for (int x = 0; x < comparison.matches.size(); x++) {
             currentMatch = comparison.matches.get(x);
 
-            Token start = tokens[(j == 0 ? currentMatch.startA : currentMatch.startB)];
-            Token ende = tokens[((j == 0 ? currentMatch.startA : currentMatch.startB) + currentMatch.length - 1)];
+            Token start = tokens.getToken(j == 0 ? currentMatch.startA : currentMatch.startB);
+            Token ende = tokens.getToken((j == 0 ? currentMatch.startA : currentMatch.startB) + currentMatch.length - 1);
 
             for (int y = 0; y < files.length; y++) {
                 if (start.file.equals(files[y]) && text[y] != null) {
@@ -718,13 +718,13 @@ public class Report {
             }
         }
 
-        if (result.getOptions().hasBaseCode() && comparison.bcMatchesA != null && comparison.bcMatchesB != null) {
-            JPlagBaseCodeComparison baseCodeComparison = (j == 0 ? comparison.bcMatchesA : comparison.bcMatchesB);
+        if (result.getOptions().hasBaseCode() && comparison.baseCodeMatchesA != null && comparison.baseCodeMatchesB != null) {
+            JPlagComparison baseCodeComparison = (j == 0 ? comparison.baseCodeMatchesA : comparison.baseCodeMatchesB);
 
             for (int x = 0; x < baseCodeComparison.matches.size(); x++) {
                 currentMatch = baseCodeComparison.matches.get(x);
-                Token start = tokens[currentMatch.startA];
-                Token ende = tokens[currentMatch.startA + currentMatch.length - 1];
+                Token start = tokens.getToken(currentMatch.startA);
+                Token ende = tokens.getToken(currentMatch.startA + currentMatch.length - 1);
 
                 for (int y = 0; y < files.length; y++) {
                     if (start.file.equals(files[y]) && text[y] != null) {

@@ -3,7 +3,7 @@ package jplag.java19;
 import java.io.File;
 
 import jplag.ProgramI;
-import jplag.Structure;
+import jplag.TokenList;
 
 /**
  * Language for Java 9 and newer.
@@ -63,7 +63,7 @@ public class Language implements jplag.Language {
     }
 
     @Override
-    public Structure parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
         return this.parser.parse(dir, files);
     }
 

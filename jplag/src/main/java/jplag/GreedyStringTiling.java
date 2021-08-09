@@ -1,8 +1,11 @@
 package jplag;
 
+import java.util.List;
+
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
- * to the classes {@link Structure}, {@link Token}, as well as {@link Matches} and {@link Match}.
+ * to the classes {@link TokenList}, {@link Token}, as well as {@link Matches} and {@link Match}. While is class was
+ * reworked, it still contains some quirks from the initial version.
  * @see <a href=
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
  * String Similarity via Greedy String Tiling and Running Karp−Rabin Matching </a>
@@ -19,11 +22,11 @@ public class GreedyStringTiling implements TokenConstants {
     /**
      * Creating hashes in linear time. The hash-code will be written in every Token for the next <hash_length> token
      * (includes the Token itself).
-     * @param structure contains the tokens.
+     * @param tokenList contains the tokens.
      * @param hashLength is the hash length (condition: 1 < hashLength < 26)
      * @param makeTable determines if a simple hash table is created in the structure.
      */
-    public void createHashes(Structure structure, int hashLength, boolean makeTable) {
+    public void createHashes(TokenList tokenList, int hashLength, boolean makeTable) {
         // Here the upper boundary of the hash length is set.
         // It is determined by the number of bits of the 'int' data type and the number of tokens.
         if (hashLength < 1) {
@@ -31,151 +34,149 @@ public class GreedyStringTiling implements TokenConstants {
         }
         hashLength = (hashLength < 26 ? hashLength : 25);
 
-        if (structure.size() < hashLength) {
+        if (tokenList.size() < hashLength) {
             return;
         }
 
         int modulo = ((1 << 6) - 1);   // Modulo 64!
 
-        int loops = structure.size() - hashLength;
-        structure.table = (makeTable ? new Table(3 * loops) : null);
+        int loops = tokenList.size() - hashLength;
+        tokenList.tokenHashes = (makeTable ? new TokenHashMap(3 * loops) : null);
         int hash = 0;
-        int i;
         int hashedLength = 0;
-        for (i = 0; i < hashLength; i++) {
-            hash = (2 * hash) + (structure.tokens[i].type & modulo);
+        for (int i = 0; i < hashLength; i++) {
+            hash = (2 * hash) + (tokenList.getToken(i).type & modulo);
             hashedLength++;
-            if (structure.tokens[i].marked) {
+            if (tokenList.getToken(i).marked) {
                 hashedLength = 0;
             }
         }
         int factor = (hashLength != 1 ? (2 << (hashLength - 2)) : 1);
 
         if (makeTable) {
-            for (i = 0; i < loops; i++) {
+            for (int i = 0; i < loops; i++) {
                 if (hashedLength >= hashLength) {
-                    structure.tokens[i].hash = hash;
-                    structure.table.add(hash, i);   // add into hashtable
+                    tokenList.getToken(i).hash = hash;
+                    tokenList.tokenHashes.put(hash, i);   // add into hashtable
                 } else {
-                    structure.tokens[i].hash = -1;
+                    tokenList.getToken(i).hash = -1;
                 }
-                hash -= factor * (structure.tokens[i].type & modulo);
-                hash = (2 * hash) + (structure.tokens[i + hashLength].type & modulo);
-                if (structure.tokens[i + hashLength].marked) {
+                hash -= factor * (tokenList.getToken(i).type & modulo);
+                hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
+                if (tokenList.getToken(i + hashLength).marked) {
                     hashedLength = 0;
                 } else {
                     hashedLength++;
                 }
             }
         } else {
-            for (i = 0; i < loops; i++) {
-                structure.tokens[i].hash = (hashedLength >= hashLength) ? hash : -1;
-                hash -= factor * (structure.tokens[i].type & modulo);
-                hash = (2 * hash) + (structure.tokens[i + hashLength].type & modulo);
-                if (structure.tokens[i + hashLength].marked) {
+            for (int i = 0; i < loops; i++) {
+                tokenList.getToken(i).hash = (hashedLength >= hashLength) ? hash : -1;
+                hash -= factor * (tokenList.getToken(i).type & modulo);
+                hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
+                if (tokenList.getToken(i + hashLength).marked) {
                     hashedLength = 0;
                 } else {
                     hashedLength++;
                 }
             }
         }
-        structure.hash_length = hashLength;
+        tokenList.hash_length = hashLength;
     }
 
-    public final JPlagComparison compare(Submission subA, Submission subB) {
-        Submission A, B, tmp;
-        if (subA.tokenList.size() > subB.tokenList.size()) {
-            A = subA;
-            B = subB;
+    public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
+        return compare(firstSubmission, secondSubmission, false);
+    }
+
+    public final JPlagComparison compareWithBaseCode(Submission firstSubmission, Submission secondSubmission) {
+        return compare(firstSubmission, secondSubmission, true);
+    }
+
+    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
+        Submission smallerSubmission, largerSubmission;
+        if (firstSubmission.tokenList.size() > secondSubmission.tokenList.size()) {
+            smallerSubmission = secondSubmission;
+            largerSubmission = firstSubmission;
         } else {
-            A = subB;
-            B = subA;
+            smallerSubmission = firstSubmission;
+            largerSubmission = secondSubmission;
         }
         // if hashtable exists in first but not in second structure: flip around!
-        if (B.tokenList.table == null && A.tokenList.table != null) {
-            tmp = A;
-            A = B;
-            B = tmp;
+        if (largerSubmission.tokenList.tokenHashes == null && smallerSubmission.tokenList.tokenHashes != null) {
+            Submission swap = smallerSubmission;
+            smallerSubmission = largerSubmission;
+            largerSubmission = swap;
         }
+        int minTokenMatch = program.getOptions().getMinTokenMatch();
 
-        return compare(A, B, this.program.getOptions().getMinTokenMatch());
+        return compare(smallerSubmission, largerSubmission, minTokenMatch, withBaseCode);
     }
 
-    // first parameter should contain the smaller sequence!!!
-    private final JPlagComparison compare(Submission subA, Submission subB, int mml) {
-        Structure structA = subA.tokenList;
-        Structure structB = subB.tokenList;
+    /**
+     * Compares two submissions.
+     * @param firstSubmission is the submission with the smaller sequence.
+     * @param secondSubmission is the submission with the larger sequence.
+     * @param minimalTokenMatch is the minimal required token match.
+     * @param withBaseCode specifies whether one of the submissions is the base code.
+     * @return the comparison results.
+     */
+    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, int minimalTokenMatch, boolean withBaseCode) {
+        // first and second refer to the list of tokens of the first and second submission:
+        TokenList first = firstSubmission.tokenList;
+        TokenList second = secondSubmission.tokenList;
 
         // FILE_END used as pivot
 
-        // init
-        Token[] A = structA.tokens;
-        Token[] B = structB.tokens;
-        int lengthA = structA.size() - 1;  // minus pivots!
-        int lengthB = structB.size() - 1;  // minus pivots!
-        JPlagComparison comparison = new JPlagComparison(subA, subB);
+        // Initialize:
+        JPlagComparison comparison = withBaseCode ? new JPlagBaseCodeComparison(firstSubmission, secondSubmission)
+                : new JPlagComparison(firstSubmission, secondSubmission);
 
-        if (lengthA < mml || lengthB < mml) {
+        if (first.size() <= minimalTokenMatch || second.size() <= minimalTokenMatch) { // <= because of pivots!
             return comparison;
         }
 
-        // Initialize
-        if (!program.getOptions().hasBaseCode()) {
-            for (int i = 0; i <= lengthA; i++) {
-                A[i].marked = A[i].type == FILE_END || A[i].type == SEPARATOR_TOKEN;
-            }
+        markTokens(first, withBaseCode);
+        markTokens(second, withBaseCode);
 
-            for (int i = 0; i <= lengthB; i++) {
-                B[i].marked = B[i].type == FILE_END || B[i].type == SEPARATOR_TOKEN;
-            }
-        } else {
-            for (int i = 0; i <= lengthA; i++) {
-                A[i].marked = A[i].type == FILE_END || A[i].type == SEPARATOR_TOKEN || A[i].basecode;
-            }
-
-            for (int i = 0; i <= lengthB; i++) {
-                B[i].marked = B[i].type == FILE_END || B[i].type == SEPARATOR_TOKEN || B[i].basecode;
-            }
+        // create hashes:
+        if (first.hash_length != minimalTokenMatch) {
+            createHashes(first, minimalTokenMatch, withBaseCode); // don't make table if it is not a base code comparison
+        }
+        if (second.hash_length != minimalTokenMatch || second.tokenHashes == null) {
+            createHashes(second, minimalTokenMatch, true);
         }
 
-        // start:
-        if (structA.hash_length != this.program.getOptions().getMinTokenMatch()) {
-            createHashes(structA, mml, false);
-        }
-        if (structB.hash_length != this.program.getOptions().getMinTokenMatch() || structB.table == null) {
-            createHashes(structB, mml, true);
-        }
-
+        // start the black magic:
         int maxmatch;
-        int[] elemsB;
-
         do {
-            maxmatch = mml;
+            maxmatch = minimalTokenMatch;
             matches.clear();
-            for (int x = 0; x <= lengthA - maxmatch; x++) {
-                if (A[x].marked || A[x].hash == -1 || (elemsB = structB.table.get(A[x].hash)) == null) {
+            for (int x = 0; x < first.size() - maxmatch; x++) {
+                List<Integer> hashedTokens = second.tokenHashes.get(first.getToken(x).hash);
+                if (first.getToken(x).marked || first.getToken(x).hash == -1) {
                     continue;
                 }
-                inner: for (int i = 1; i <= elemsB[0]; i++) { // elemsB[0] contains the length of the Array
-                    int y = elemsB[i];
-                    if (B[y].marked || maxmatch > lengthB - y) {
+                inner: for (Integer y : hashedTokens) {
+                    if (second.getToken(y).marked || maxmatch >= second.size() - y) { // >= because of pivots!
                         continue;
                     }
 
                     int j, hx, hy;
                     for (j = maxmatch - 1; j >= 0; j--) { // begins comparison from behind
-                        if (A[hx = x + j].type != B[hy = y + j].type || A[hx].marked || B[hy].marked) {
+                        if (first.getToken(hx = x + j).type != second.getToken(hy = y + j).type || first.getToken(hx).marked
+                                || second.getToken(hy).marked) {
                             continue inner;
                         }
                     }
 
                     // expand match
                     j = maxmatch;
-                    while (A[hx = x + j].type == B[hy = y + j].type && !A[hx].marked && !B[hy].marked) {
+                    while (first.getToken(hx = x + j).type == second.getToken(hy = y + j).type && !first.getToken(hx).marked
+                            && !second.getToken(hy).marked) {
                         j++;
                     }
 
-                    if (j > maxmatch) {  // new biggest match? -> delete current smaller
+                    if (j > maxmatch && !withBaseCode || j != maxmatch && withBaseCode) {  // new biggest match? -> delete current smaller
                         matches.clear();
                         maxmatch = j;
                     }
@@ -183,130 +184,38 @@ public class GreedyStringTiling implements TokenConstants {
                 }
             }
             for (int i = matches.size() - 1; i >= 0; i--) {
-                int x = matches.matches[i].startA;  // begining of sequence A
-                int y = matches.matches[i].startB;  // begining of sequence B
+                int x = matches.matches[i].startA;  // Beginning of/in sequence A
+                int y = matches.matches[i].startB;  // Beginning of/in sequence B
                 comparison.addMatch(x, y, matches.matches[i].length);
                 // in order that "Match" will be newly build (because reusing)
                 for (int j = matches.matches[i].length; j > 0; j--) {
-                    A[x++].marked = B[y++].marked = true;   // mark all Token!
-                }
-            }
-
-        } while (maxmatch != mml);
-
-        return comparison;
-    }
-
-    public final JPlagBaseCodeComparison compareWithBaseCode(Submission subA, Submission subB) {
-        Submission A, B, tmp;
-        if (subA.tokenList.size() > subB.tokenList.size()) {
-            A = subB;
-            B = subA;
-        } else {
-            A = subB;
-            B = subA;
-        }
-        // if hashtable exists in first but not in second structure: flip around!
-        if (B.tokenList.table == null && A.tokenList.table != null) {
-            tmp = A;
-            A = B;
-            B = tmp;
-        }
-
-        return compareWithBaseCode(A, B, this.program.getOptions().getMinTokenMatch());
-    }
-
-    private JPlagBaseCodeComparison compareWithBaseCode(Submission subA, Submission subB, int mml) {
-        Structure structA = subA.tokenList;
-        Structure structB = subB.tokenList;
-
-        // FILE_END used as pivot
-
-        // init
-        Token[] A = structA.tokens;
-        Token[] B = structB.tokens;
-        int lengthA = structA.size() - 1;  // minus pivots!
-        int lengthB = structB.size() - 1;  // minus pivots!
-        JPlagBaseCodeComparison baseCodeComparison = new JPlagBaseCodeComparison(subA, subB);
-
-        if (lengthA < mml || lengthB < mml) {
-            return baseCodeComparison;
-        }
-
-        // Initialize
-        for (int i = 0; i <= lengthA; i++) {
-            A[i].marked = A[i].type == FILE_END || A[i].type == SEPARATOR_TOKEN;
-        }
-
-        for (int i = 0; i <= lengthB; i++) {
-            B[i].marked = B[i].type == FILE_END || B[i].type == SEPARATOR_TOKEN;
-        }
-
-        // start:
-        if (structA.hash_length != this.program.getOptions().getMinTokenMatch()) {
-            createHashes(structA, mml, true);
-        }
-        if (structB.hash_length != this.program.getOptions().getMinTokenMatch() || structB.table == null) {
-            createHashes(structB, mml, true);
-        }
-
-        int maxmatch;
-        int[] elemsB;
-
-        do {
-            maxmatch = mml;
-            matches.clear();
-            for (int x = 0; x <= lengthA - maxmatch; x++) {
-                if (A[x].marked || A[x].hash == -1 || (elemsB = structB.table.get(A[x].hash)) == null) {
-                    continue;
-                }
-                inner: for (int i = 1; i <= elemsB[0]; i++) {// elemsB[0] contains the length of the Array
-                    int y = elemsB[i];
-                    if (B[y].marked || maxmatch > lengthB - y) {
-                        continue;
+                    first.getToken(x).marked = second.getToken(y).marked = true; // mark all Tokens!
+                    if (withBaseCode) {
+                        first.getToken(x).basecode = second.getToken(y).basecode = true;
                     }
-
-                    int j, hx, hy;
-                    for (j = maxmatch - 1; j >= 0; j--) { // begins comparison from behind
-                        if (A[hx = x + j].type != B[hy = y + j].type || A[hx].marked || B[hy].marked) {
-                            continue inner;
-                        }
-                    }
-                    // expand match
-                    j = maxmatch;
-                    while (A[hx = x + j].type == B[hy = y + j].type && !A[hx].marked && !B[hy].marked) {
-                        j++;
-                    }
-
-                    if (j != maxmatch) {  // new biggest match? -> delete current smaller
-                        matches.clear();
-                        maxmatch = j;
-                    }
-                    matches.addMatch(x, y, j);  // add match
-                }
-            }
-            for (int i = matches.size() - 1; i >= 0; i--) {
-                int x = matches.matches[i].startA;  // beginning in sequence A
-                int y = matches.matches[i].startB;  // beginning in sequence B
-                baseCodeComparison.addMatch(x, y, matches.matches[i].length);
-                // in order that "Match" will be newly build (because reusing)
-                for (int j = matches.matches[i].length; j > 0; j--) {
-                    A[x].marked = B[y].marked = true;   // mark all Token!
-                    A[x].basecode = B[y].basecode = true;
                     x++;
                     y++;
                 }
             }
-        } while (maxmatch != mml);
 
-        return baseCodeComparison;
+        } while (maxmatch != minimalTokenMatch);
+
+        return comparison;
     }
 
-    public void resetBaseSubmission(Submission sub) {
-        Structure tmpStruct = sub.tokenList;
-        Token[] tok = tmpStruct.tokens;
-        for (int z = 0; z < tmpStruct.size() - 1; z++) {
-            tok[z].basecode = false;
+    private void markTokens(TokenList tokenList, boolean withBaseCode) {
+        for (Token token : tokenList.allTokens()) {
+            if (withBaseCode) {
+                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN;
+            } else {
+                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && program.getOptions().hasBaseCode());
+            }
+        }
+    }
+
+    public void resetBaseSubmission(Submission submission) {
+        for (Token token : submission.tokenList.allTokens()) {
+            token.basecode = false;
         }
     }
 }

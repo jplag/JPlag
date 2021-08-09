@@ -7,10 +7,10 @@ import jplag.Parser;
 public class Scanner extends Parser implements CPPTokenConstants {
 	private String actFile;
 
-	private jplag.Structure struct;
+	private jplag.TokenList struct;
 
-	public jplag.Structure scan(File dir, String files[]) {
-		struct = new jplag.Structure();
+	public jplag.TokenList scan(File dir, String files[]) {
+		struct = new jplag.TokenList();
 		errors = 0;
 		CPPScanner scanner = null;// will be initialized in Method scanFile
 		for (int i = 0; i < files.length; i++) {

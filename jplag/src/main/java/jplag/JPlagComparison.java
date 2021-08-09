@@ -13,8 +13,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public Submission firstSubmission;
     public Submission secondSubmission;
 
-    public JPlagBaseCodeComparison bcMatchesA = null;
-    public JPlagBaseCodeComparison bcMatchesB = null;
+    public JPlagComparison baseCodeMatchesA = null;
+    public JPlagComparison baseCodeMatchesB = null;
 
     public List<Match> matches = new ArrayList<>();
 
@@ -106,9 +106,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
     public final float percent() {
         float sa, sb;
-        if (bcMatchesB != null && bcMatchesA != null) {
-            sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - bcMatchesA.getNumberOfMatchedTokens();
-            sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - bcMatchesB.getNumberOfMatchedTokens();
+        if (baseCodeMatchesB != null && baseCodeMatchesA != null) {
+            sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - baseCodeMatchesA.getNumberOfMatchedTokens();
+            sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - baseCodeMatchesB.getNumberOfMatchedTokens();
         } else {
             sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
             sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
@@ -118,8 +118,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
     public final float percentA() {
         int divisor;
-        if (bcMatchesA != null) {
-            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - bcMatchesA.getNumberOfMatchedTokens();
+        if (baseCodeMatchesA != null) {
+            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - baseCodeMatchesA.getNumberOfMatchedTokens();
         } else {
             divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
         }
@@ -128,8 +128,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
     public final float percentB() {
         int divisor;
-        if (bcMatchesB != null) {
-            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - bcMatchesB.getNumberOfMatchedTokens();
+        if (baseCodeMatchesB != null) {
+            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - baseCodeMatchesB.getNumberOfMatchedTokens();
         } else {
             divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
         }
@@ -158,12 +158,12 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
     private final float percentBasecodeA() {
         float sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
-        return bcMatchesA.getNumberOfMatchedTokens() * 100 / sa;
+        return baseCodeMatchesA.getNumberOfMatchedTokens() * 100 / sa;
     }
 
     private final float percentBasecodeB() {
         float sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
-        return bcMatchesB.getNumberOfMatchedTokens() * 100 / sb;
+        return baseCodeMatchesB.getNumberOfMatchedTokens() * 100 / sb;
     }
 
     public final float roundedPercentBasecodeA() {
@@ -184,14 +184,14 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
             return new String[] {};
         }
 
-        Token[] tokens = (j == 0 ? firstSubmission : secondSubmission).tokenList.tokens;
+        TokenList tokenList = (j == 0 ? firstSubmission : secondSubmission).tokenList;
         int i, h, starti, starth, count = 1;
 
         o1: for (i = 1; i < matches.size(); i++) {
             starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
             for (h = 0; h < i; h++) {
                 starth = (j == 0 ? matches.get(h).startA : matches.get(h).startB);
-                if (tokens[starti].file.equals(tokens[starth].file)) {
+                if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o1;
                 }
             }
@@ -199,18 +199,18 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         }
 
         String[] res = new String[count];
-        res[0] = tokens[(j == 0 ? matches.get(0).startA : matches.get(0).startB)].file;
+        res[0] = tokenList.getToken((j == 0 ? matches.get(0).startA : matches.get(0).startB)).file;
         count = 1;
 
         o2: for (i = 1; i < matches.size(); i++) {
             starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
             for (h = 0; h < i; h++) {
                 starth = (j == 0 ? matches.get(h).startA : matches.get(h).startB);
-                if (tokens[starti].file.equals(tokens[starth].file)) {
+                if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o2;
                 }
             }
-            res[count++] = tokens[starti].file;
+            res[count++] = tokenList.getToken(starti).file;
         }
 
         /*

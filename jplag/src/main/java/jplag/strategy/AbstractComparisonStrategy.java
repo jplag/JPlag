@@ -4,7 +4,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import jplag.GreedyStringTiling;
-import jplag.JPlagBaseCodeComparison;
 import jplag.JPlagComparison;
 import jplag.Submission;
 import jplag.options.JPlagOptions;
@@ -14,7 +13,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
     // TODO PB: I think it's better to make each submission store its own matches with the base code.
     // Hashtable that maps the name of a submissions to its matches with the provided base code.
-    protected Hashtable<String, JPlagBaseCodeComparison> baseCodeMatches = new Hashtable<>(30);
+    protected Hashtable<String, JPlagComparison> baseCodeMatches = new Hashtable<>(30);
 
     protected GreedyStringTiling greedyStringTiling;
 
@@ -28,7 +27,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     protected void compareSubmissionsToBaseCode(Vector<Submission> submissions, Submission baseCodeSubmission) {
         int numberOfSubmissions = submissions.size();
 
-        JPlagBaseCodeComparison baseCodeMatch;
+        JPlagComparison baseCodeMatch;
         Submission currentSubmission;
 
         for (int i = 0; i < (numberOfSubmissions); i++) {
