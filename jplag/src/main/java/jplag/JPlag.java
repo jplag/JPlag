@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 
 import jplag.options.JPlagOptions;
 import jplag.options.LanguageOption;
-import jplag.strategy.ComparisonMode;
 import jplag.strategy.ComparisonStrategy;
 import jplag.strategy.NormalComparisonStrategy;
+import jplag.strategy.ParallelComparisonStrategy;
 
 /**
  * This class coordinates the whole program flow.
@@ -222,11 +222,11 @@ public class JPlag implements ProgramI {
     }
 
     private void initializeComparisonStrategy() throws ExitException {
-        ComparisonMode mode = options.getComparisonMode();
-        switch (mode) { // TODO TS: Currently only one comparison strategy supported
+        switch (options.getComparisonMode()) {
         case NORMAL:
-            this.comparisonStrategy = new NormalComparisonStrategy(options, gSTiling);
-            return;
+            comparisonStrategy = new NormalComparisonStrategy(options, gSTiling); break;
+        case PARALLEL:
+            comparisonStrategy = new ParallelComparisonStrategy(options, gSTiling); break;
         default:
             throw new ExitException("Illegal comparison mode: " + options.getComparisonMode());
         }

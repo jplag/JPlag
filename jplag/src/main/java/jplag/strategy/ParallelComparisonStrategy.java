@@ -44,8 +44,8 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy  {
             JPlagComparison comparison = greedyStringTiling.compare(it.getLeft(), it.getRight());
             System.out.println("Comparing " + it.getLeft().name + "-" + it.getRight().name + ": " + comparison.percent());
             if (baseCodeSubmission != null) {
-                comparison.bcMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
-                comparison.bcMatchesB = baseCodeMatches.get(comparison.secondSubmission.name);
+                comparison.baseCodeMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
+                comparison.baseCodeMatchesB = baseCodeMatches.get(comparison.secondSubmission.name);
             }
             if (isAboveSimilarityThreshold(comparison)) {
                 synchronized (comparisons) {

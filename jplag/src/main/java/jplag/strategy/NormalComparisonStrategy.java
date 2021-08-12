@@ -43,8 +43,8 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
                 // TODO SH: Why does this differ from the results shown in the result web page?
                 System.out.println("Comparing " + first.name + "-" + second.name + ": " + comparison.percent());
                 if (baseCodeSubmission != null) {
-                    comparison.bcMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
-                    comparison.bcMatchesB = baseCodeMatches.get(comparison.secondSubmission.name);
+                    comparison.baseCodeMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
+                    comparison.baseCodeMatchesB = baseCodeMatches.get(comparison.secondSubmission.name);
                 }
                 if (isAboveSimilarityThreshold(comparison)) {
                     comparisons.add(comparison);
