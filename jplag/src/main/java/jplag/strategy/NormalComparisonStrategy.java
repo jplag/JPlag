@@ -18,6 +18,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     
     @Override
     public JPlagResult compareSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) {
+        long start = System.currentTimeMillis(); // TODO remove timing
         if (baseCodeSubmission != null) {
             compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
         }
@@ -51,6 +52,11 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
                 }
             }
         }
+        long end = System.currentTimeMillis(); // TODO remove timing
+        System.out.println("------------"); // TODO remove timing
+        System.out.println("Timed: " + (end - start)); // TODO remove timing
+        System.out.println("------------"); // TODO remove timing
+
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
         return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
     }

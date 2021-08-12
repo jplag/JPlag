@@ -39,6 +39,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy  {
             }
         }
 
+        // TODO TS: Copying the tokens has a high overhead. We should avoid that and instead make sure to not touch a submission by two threads concurrently
         List<JPlagComparison> comparisons = Collections.synchronizedList(new ArrayList<>());
         tuples.parallelStream().forEach(it -> {
             JPlagComparison comparison = greedyStringTiling.compare(it.getLeft(), it.getRight());
@@ -56,7 +57,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy  {
         
         long end = System.currentTimeMillis(); // TODO remove timing
         System.out.println("------------"); // TODO remove timing
-        System.out.println("Timed: " + (end - start)); // Seq: 113162 // TODO remove timing
+        System.out.println("Timed: " + (end - start)); // TODO remove timing
         System.out.println("------------"); // TODO remove timing
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;

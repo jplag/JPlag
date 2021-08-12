@@ -25,17 +25,9 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     }
 
     protected void compareSubmissionsToBaseCode(Vector<Submission> submissions, Submission baseCodeSubmission) {
-        int numberOfSubmissions = submissions.size();
-
-        JPlagComparison baseCodeMatch;
-        Submission currentSubmission;
-
-        for (int i = 0; i < (numberOfSubmissions); i++) {
-            currentSubmission = submissions.elementAt(i);
-
-            baseCodeMatch = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
+        for (Submission currentSubmission : submissions) {
+            JPlagComparison baseCodeMatch = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
             baseCodeMatches.put(currentSubmission.name, baseCodeMatch);
-
             baseCodeSubmission.resetBaseCode();
         }
     }
