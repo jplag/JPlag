@@ -85,14 +85,14 @@ public class GreedyStringTiling implements TokenConstants {
     }
 
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
-        return compare(firstSubmission, secondSubmission, false);
+        return swapAndCompare(firstSubmission, secondSubmission, false);
     }
 
     public final JPlagComparison compareWithBaseCode(Submission firstSubmission, Submission secondSubmission) {
-        return compare(firstSubmission, secondSubmission, true);
+        return swapAndCompare(firstSubmission, secondSubmission, true);
     }
 
-    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
+    private final JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
         Submission smallerSubmission, largerSubmission;
         if (firstSubmission.tokenList.size() > secondSubmission.tokenList.size()) {
             smallerSubmission = secondSubmission;
@@ -113,7 +113,7 @@ public class GreedyStringTiling implements TokenConstants {
     }
 
     /**
-     * Compares two submissions.
+     * Compares two submissions. FILE_END is used as pivot
      * @param firstSubmission is the submission with the smaller sequence.
      * @param secondSubmission is the submission with the larger sequence.
      * @param minimalTokenMatch is the minimal required token match.
@@ -124,8 +124,6 @@ public class GreedyStringTiling implements TokenConstants {
         // first and second refer to the list of tokens of the first and second submission:
         TokenList first = firstSubmission.tokenList;
         TokenList second = secondSubmission.tokenList;
-
-        // FILE_END used as pivot
 
         // Initialize:
         JPlagComparison comparison = withBaseCode ? new JPlagBaseCodeComparison(firstSubmission, secondSubmission)
@@ -145,7 +143,7 @@ public class GreedyStringTiling implements TokenConstants {
         if (second.hash_length != minimalTokenMatch || second.tokenHashes == null) {
             createHashes(second, minimalTokenMatch, true);
         }
-        
+
         List<Match> matches = new ArrayList<>();
 
         // start the black magic:
@@ -204,17 +202,16 @@ public class GreedyStringTiling implements TokenConstants {
 
         return comparison;
     }
-    
+
     private void addMatchIfNotOverlapping(List<Match> matches, int startA, int startB, int length) {
         for (int i = matches.size() - 1; i >= 0; i--) { // starting at the end is better(?)
             if (matches.get(i).overlap(startA, startB, length)) {
-                return; // no overlaps!
+                return; // no overlaps allowed!
             }
-
         }
         matches.add(new Match(startA, startB, length));
     }
-    
+
     private void markTokens(TokenList tokenList, boolean withBaseCode) {
         for (Token token : tokenList.allTokens()) {
             if (withBaseCode) {
