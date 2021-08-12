@@ -445,7 +445,8 @@ public class Report {
         if (result.getComparisons().size() > 0) {
             htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Matches_displayed") + ":</TD>" + "<TD>");
 
-            htmlFile.println(result.getComparisons().size() + " (" + msg.getString("Report.Treshold") + ": "
+            htmlFile.println(result.getComparisons().size() + " of " + result.getAllComparisons().size()
+                    + " (" + msg.getString("Report.Treshold") + ": "
                     + result.getOptions().getSimilarityThreshold() + "%)<br>");
 
             htmlFile.println("</TD></TR>");

@@ -70,6 +70,8 @@ named arguments:
                          <n> increases the sensitivity
   -m M                   Match similarity  Threshold  [0-100]:  All matches
                          above this threshold will be saved (Standard: 0.0)
+  -n N                   Maximum number of matches that will be saved. If 
+                         set to -1 all matches will be saved (Standard: 30)
   -r R                   Name of directory in which  the  web pages will be
                          stored (default: result)
 ```

@@ -69,7 +69,8 @@ public class CLI {
         parser.addArgument("-p").help("comma-separated list of all filename suffixes that are included");
         parser.addArgument("-x").help("All files named in this file will be ignored in the comparison (line-separated list)");
         parser.addArgument("-t").help("Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity");
-        parser.addArgument("-m").setDefault(0f).help("Match similarity Threshold [0-100]: All matches above this threshold will be saved");
+        parser.addArgument("-m").setDefault(0f).help("Match similarity threshold [0-100]: All matches above this threshold will be saved");
+        parser.addArgument("-n").setDefault(30).help("Maximum number of matches that will be saved. If set to -1 all matches will be saved");
         parser.addArgument("-r").setDefault("result").help("Name of directory in which the comparison results will be stored");
     }
 
@@ -127,7 +128,17 @@ public class CLI {
                 options.setSimilarityThreshold(Float.parseFloat(similarityThreshold));
             } catch (NumberFormatException e) {
                 System.out.println("Illegal similarity threshold. Taking 0 as default value.");
-                options.setSimilarityThreshold(0);
+                options.setSimilarityThreshold(0); // TODO SH: Remove code duplication
+            }
+        }
+
+        String maxNumberOfMatches = namespace.getString("n");
+        if(maxNumberOfMatches != null) {
+            try {
+                options.setMaxNumberOfMatches(Integer.parseInt(maxNumberOfMatches));
+            } catch (NumberFormatException e) {
+                System.out.println("Illegal maximum number of matches. Taking 30 as default value.");
+                options.setMaxNumberOfMatches(30); // TODO SH: Remove code duplication
             }
         }
 
