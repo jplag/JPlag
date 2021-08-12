@@ -1,19 +1,18 @@
-package jplag.volume;
+package jplag;
 
-import jplag.ExitException;
-import jplag.JPlagResult;
-import jplag.TestBase;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * These tests are not intended to be used automatically but rather manually prior to releases.
@@ -32,7 +31,8 @@ public class VolumeTest extends TestBase {
     }
 
     /**
-     * This test requires a folder "data" with submissions and a file named "matches_avg.csv" inside the volume folder
+     * This test requires a folder "data" with submissions and a file named "matches_avg.csv" inside the volume folder.
+     * Accepts a derivation of 0.1% in the matching percentage
      */
     @Test
     public void volumeComparisonTest() throws ExitException, IOException {
@@ -42,27 +42,37 @@ public class VolumeTest extends TestBase {
             return;
         }
 
-        JPlagResult result = runJPlagWithOptions("data",
+        var results = runJPlagWithOptions("data",
                 jPlagOptions -> jPlagOptions.setMaxNumberOfMatches(-1));
 
-        List<Result> csv = readCSVResults(String.format("%s/%s", this.getBasePath(), "matches_avg.csv"));
+        var csv = readCSVResults(String.format("%s/%s", this.getBasePath(), "matches_avg.csv"));
 
-        assertEquals(csv.size(), result.getAllComparisons().size());
+        assertEquals(csv.size(), results.getAllComparisons().size());
         System.out.println("Volume test size: " + csv.size());
-        // TODO SH: More individual tests
+
+        results.getAllComparisons().forEach(result -> {
+            var key = result.firstSubmission.name + result.secondSubmission.name;
+
+            assertTrue(csv.containsKey(key));
+            assertEquals(csv.getOrDefault(key, -1f), result.percent(), 0.1f);
+        });
+
     }
 
-    private List<Result> readCSVResults(String filePathAndName) throws IOException {
+    private Map<String, Float> readCSVResults(String filePathAndName) throws IOException {
         List<String> lines = Files.readAllLines(Path.of(filePathAndName));
+        var results = new HashMap<String, Float>();
 
-        return lines.stream().map(line -> {
+        lines.forEach(line -> {
             var entries = line.split(";");
 
             if(entries.length != 4) {
                 throw new IllegalArgumentException(String.format("Illegal line: '%s'", line));
             }
 
-            return new Result(Integer.parseInt(entries[0]), entries[1], entries[2], Float.parseFloat((entries[3])));
-        }).collect(Collectors.toList());
+            results.put(entries[1] + entries[2], Float.parseFloat((entries[3])));
+        });
+
+        return results;
     }
 }
