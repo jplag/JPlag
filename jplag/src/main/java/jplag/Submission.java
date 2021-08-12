@@ -227,6 +227,16 @@ public class Submission implements Comparable<Submission> {
 
         return result;
     }
+    
+    /**
+     * Resets the base code flag for all tokens of this submission.
+     */
+    public void resetBaseCode() {
+        for (Token token : tokenList.allTokens()) {
+            token.basecode = false;
+        }
+    }
+
 
     /*
      * This method is used to copy files that can not be parsed to a special folder: jplag/errors/java old_java scheme cpp
