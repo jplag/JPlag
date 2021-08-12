@@ -45,8 +45,8 @@ public class JPlagOptions {
     private float similarityThreshold = 0;
 
     /**
-     * The maximum number of matches that will be saved. This does the generated report as well as the internally saved
-     * comparisons.
+     * The maximum number of matches that will be saved. This does affect the generated report as well as the internally
+     * saved comparisons. If set to -1 all matches will be saved.
      */
     private int maxNumberOfMatches = 30;
 
@@ -245,7 +245,7 @@ public class JPlagOptions {
     }
 
     public void setMaxNumberOfMatches(int maxNumberOfMatches) {
-        if(maxNumberOfMatches < 0) {
+        if(maxNumberOfMatches < -1) {
             this.maxNumberOfMatches = 0;
         } else {
             this.maxNumberOfMatches = maxNumberOfMatches;

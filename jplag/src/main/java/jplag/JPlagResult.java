@@ -80,7 +80,11 @@ public class JPlagResult {
      * the maximum number of comparisons is limited by the settings set in JPlagOptions
      */
     public List<JPlagComparison> getComparisons() {
-        return this.getComparisons(this.options.getMaxNumberOfMatches());
+        if(this.options.getMaxNumberOfMatches() == -1) {
+            return this.getAllComparisons();
+        } else {
+            return this.getComparisons(this.options.getMaxNumberOfMatches());
+        }
     }
 
     /**
@@ -90,6 +94,16 @@ public class JPlagResult {
      */
     public List<JPlagComparison> getComparisons(int maxCount) {
         return comparisons.subList(0, Math.min(maxCount, comparisons.size()));
+    }
+
+    /**
+     * Drops elements from the comparison list to free memory. Note, that this affects the similarity distribution
+     * and is only meant to be used if you don't need the information about comparisons with lower match percentage
+     * anymore.
+     * @param limit the number of comparisons to keep in the list
+     */
+    public void dropComparisons(int limit) {
+        this.comparisons = this.getComparisons(limit);
     }
 
     public long getDuration() {
