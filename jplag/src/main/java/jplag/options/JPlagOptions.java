@@ -246,7 +246,7 @@ public class JPlagOptions {
 
     public void setMaxNumberOfMatches(int maxNumberOfMatches) {
         if(maxNumberOfMatches < -1) {
-            this.maxNumberOfMatches = 0;
+            this.maxNumberOfMatches = -1;
         } else {
             this.maxNumberOfMatches = maxNumberOfMatches;
         }
