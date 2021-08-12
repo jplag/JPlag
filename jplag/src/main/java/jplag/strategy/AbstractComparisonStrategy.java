@@ -36,7 +36,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
             baseCodeMatch = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
             baseCodeMatches.put(currentSubmission.name, baseCodeMatch);
 
-            greedyStringTiling.resetBaseSubmission(baseCodeSubmission);
+            baseCodeSubmission.resetBaseCode();
         }
     }
 
