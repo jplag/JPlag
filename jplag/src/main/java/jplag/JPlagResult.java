@@ -69,10 +69,27 @@ public class JPlagResult {
     }
 
     /**
+     * @return a list of all comparisons sorted by percentage (descending).
+     */
+    public List<JPlagComparison> getAllComparisons() {
+        return comparisons;
+    }
+
+    /**
      * @return a list of comparisons sorted by percentage (descending).
+     * the maximum number of comparisons is limited by the settings set in JPlagOptions
      */
     public List<JPlagComparison> getComparisons() {
-        return comparisons;
+        return this.getComparisons(this.options.getMaxNumberOfMatches());
+    }
+
+    /**
+     * Returns the first n comparisons (sorted by percentage, descending), limited by the specified parameter.
+     * @param maxCount the maximum number of yield comparisons
+     * @return a list of comparisons with a size of maxCount or less
+     */
+    public List<JPlagComparison> getComparisons(int maxCount) {
+        return comparisons.subList(0, Math.min(maxCount, comparisons.size()));
     }
 
     public long getDuration() {

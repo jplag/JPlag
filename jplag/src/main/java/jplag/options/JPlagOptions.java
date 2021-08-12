@@ -13,21 +13,6 @@ public class JPlagOptions {
     private Language language;
 
     /**
-     * Deprecated - use similarityThreshold instead! Maximum number of comparisons to store per run.
-     */
-    @Deprecated
-    private int storeMatches = 30;
-
-    /**
-     * Deprecated - use similarityThreshold instead!
-     * <p>
-     * True, if `storeMatches` should be interpreted as a percentage threshold for the similarity of a comparison; false
-     * otherwise;
-     */
-    @Deprecated
-    private boolean storePercent = false;
-
-    /**
      * TODO PB: Decide what to do with this.
      * <p>
      * Note: Previously, this option had two effects:
@@ -58,6 +43,12 @@ public class JPlagOptions {
      * default value of 0 allows all matches to be stored.
      */
     private float similarityThreshold = 0;
+
+    /**
+     * The maximum number of matches that will be saved. This does the generated report as well as the internally saved
+     * comparisons.
+     */
+    private int maxNumberOfMatches = 30;
 
     /**
      * TODO PB: Not happy with the name yet.
@@ -151,16 +142,6 @@ public class JPlagOptions {
         return fileSuffixes;
     }
 
-    @Deprecated
-    public int getStoreMatches() {
-        return storeMatches;
-    }
-
-    @Deprecated
-    public boolean isStorePercent() {
-        return storePercent;
-    }
-
     public Language getLanguage() {
         return language;
     }
@@ -197,6 +178,10 @@ public class JPlagOptions {
         return similarityThreshold;
     }
 
+    public int getMaxNumberOfMatches() {
+        return this.maxNumberOfMatches;
+    }
+
     public SimilarityMetric getSimilarityMetric() {
         return similarityMetric;
     }
@@ -219,16 +204,6 @@ public class JPlagOptions {
 
     public void setFileSuffixes(String[] fileSuffixes) {
         this.fileSuffixes = fileSuffixes;
-    }
-
-    @Deprecated
-    public void setStoreMatches(int storeMatches) {
-        this.storeMatches = storeMatches;
-    }
-
-    @Deprecated
-    public void setStorePercent(boolean storePercent) {
-        this.storePercent = storePercent;
     }
 
     public void setMinTokenMatch(Integer minTokenMatch) {
@@ -266,6 +241,14 @@ public class JPlagOptions {
             this.similarityThreshold = 0;
         } else {
             this.similarityThreshold = similarityThreshold;
+        }
+    }
+
+    public void setMaxNumberOfMatches(int maxNumberOfMatches) {
+        if(maxNumberOfMatches < 0) {
+            this.maxNumberOfMatches = 0;
+        } else {
+            this.maxNumberOfMatches = maxNumberOfMatches;
         }
     }
 
