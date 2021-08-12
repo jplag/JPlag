@@ -1,11 +1,13 @@
 package jplag.cpp;
 
+import jplag.Token;
+
 public class CPPToken extends jplag.Token implements CPPTokenConstants {
 	private static final long serialVersionUID = 1L;
 	private int line;
 
-	public CPPToken(int type, String file, int zeile) {
-		super(type,file,zeile);
+	public CPPToken(int type, String file, int line) {
+		super(type, file, line);
 	}
 
 	@Override
@@ -91,5 +93,10 @@ public class CPPToken extends jplag.Token implements CPPTokenConstants {
 
 	public static int numberOfTokens() { 
 		return NUM_DIFF_TOKENS;
-	} 
+	}
+	
+    @Override
+    public Token copy() {
+        return new CPPToken(type, file, line);
+    }
 }

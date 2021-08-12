@@ -1,5 +1,7 @@
 package jplag.chars;
 
+import jplag.Token;
+
 public class CharToken extends jplag.Token {
 	private static final long serialVersionUID = 1L;
 
@@ -29,4 +31,9 @@ public class CharToken extends jplag.Token {
     public int getIndex() { return index; }
 
 	public static int numberOfTokens() { return 36;	}
+
+    @Override
+    public Token copy() {
+        return new CharToken(type, file, index, null);
+    }
 }

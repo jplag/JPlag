@@ -1,5 +1,7 @@
 package jplag.python3;
 
+import jplag.Token;
+
 public class Python3Token extends jplag.Token implements Python3TokenConstants {
 
     private static final long serialVersionUID = 1485877548175917943L;
@@ -115,5 +117,10 @@ public class Python3Token extends jplag.Token implements Python3TokenConstants {
 
     public static int numberOfTokens() {
         return NUM_DIFF_TOKENS;
+    }
+
+    @Override
+    public Token copy() {
+        return new Python3Token(type, file, line, column, length);
     }
 }

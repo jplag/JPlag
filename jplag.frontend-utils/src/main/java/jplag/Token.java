@@ -56,4 +56,6 @@ abstract public class Token implements TokenConstants, Serializable {
     public static int numberOfTokens() {
         return 1;
     }
+    
+    public abstract Token copy();
 }
