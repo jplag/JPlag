@@ -6,10 +6,6 @@ public class Match {
     public int startB;
     public int length;
 
-    public Match() {
-        // non-parameterized constructor for uninitialized matches 
-    }
-
     public Match(int startA, int startB, int length) {
         this.startA = startA;
         this.startB = startB;
