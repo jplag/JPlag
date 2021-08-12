@@ -1,5 +1,6 @@
 package jplag;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,6 @@ import java.util.List;
  */
 public class GreedyStringTiling implements TokenConstants {
 
-    private Matches matches = new Matches();
     private JPlag program;
 
     public GreedyStringTiling(JPlag program) {
@@ -145,6 +145,8 @@ public class GreedyStringTiling implements TokenConstants {
         if (second.hash_length != minimalTokenMatch || second.tokenHashes == null) {
             createHashes(second, minimalTokenMatch, true);
         }
+        
+        List<Match> matches = new ArrayList<>();
 
         // start the black magic:
         int maxmatch;
@@ -180,15 +182,15 @@ public class GreedyStringTiling implements TokenConstants {
                         matches.clear();
                         maxmatch = j;
                     }
-                    matches.addMatch(x, y, j);  // add match
+                    addMatchIfNotOverlapping(matches, minimalTokenMatch, maxmatch, x);
                 }
             }
             for (int i = matches.size() - 1; i >= 0; i--) {
-                int x = matches.matches[i].startA;  // Beginning of/in sequence A
-                int y = matches.matches[i].startB;  // Beginning of/in sequence B
-                comparison.addMatch(x, y, matches.matches[i].length);
+                int x = matches.get(i).startA;  // Beginning of/in sequence A
+                int y = matches.get(i).startB;  // Beginning of/in sequence B
+                comparison.addMatch(x, y, matches.size());
                 // in order that "Match" will be newly build (because reusing)
-                for (int j = matches.matches[i].length; j > 0; j--) {
+                for (int j = matches.get(i).length; j > 0; j--) {
                     first.getToken(x).marked = second.getToken(y).marked = true; // mark all Tokens!
                     if (withBaseCode) {
                         first.getToken(x).basecode = second.getToken(y).basecode = true;
@@ -202,7 +204,17 @@ public class GreedyStringTiling implements TokenConstants {
 
         return comparison;
     }
+    
+    private void addMatchIfNotOverlapping(List<Match> matches, int startA, int startB, int length) {
+        for (int i = matches.size() - 1; i >= 0; i--) { // starting at the end is better(?)
+            if (matches.get(i).overlap(startA, startB, length)) {
+                return; // no overlaps!
+            }
 
+        }
+        matches.add(new Match(startA, startB, length));
+    }
+    
     private void markTokens(TokenList tokenList, boolean withBaseCode) {
         for (Token token : tokenList.allTokens()) {
             if (withBaseCode) {
@@ -210,12 +222,6 @@ public class GreedyStringTiling implements TokenConstants {
             } else {
                 token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && program.getOptions().hasBaseCode());
             }
-        }
-    }
-
-    public void resetBaseSubmission(Submission submission) {
-        for (Token token : submission.tokenList.allTokens()) {
-            token.basecode = false;
         }
     }
 }
