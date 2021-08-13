@@ -27,4 +27,9 @@ public class SubmissionTuple {
     public Submission getRight() {
         return right;
     }
+
+    @Override
+    public String toString() {
+        return "(" + left.toString() + " | " + right.toString() + ")";
+    }
 }

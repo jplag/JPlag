@@ -119,8 +119,8 @@ public class GreedyStringTiling implements TokenConstants {
      */
     private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
         // first and second refer to the list of tokens of the first and second submission:
-        TokenList first = firstSubmission.tokenList.copy();
-        TokenList second = secondSubmission.tokenList.copy(); 
+        TokenList first = firstSubmission.tokenList;
+        TokenList second = secondSubmission.tokenList; 
 
         // Initialize:
         JPlagComparison comparison = withBaseCode ? new JPlagBaseCodeComparison(firstSubmission, secondSubmission)
