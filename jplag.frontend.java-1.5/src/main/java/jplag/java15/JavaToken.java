@@ -95,10 +95,5 @@ public class JavaToken extends jplag.Token implements JavaTokenConstants {
   public static int numberOfTokens() { 
     return NUM_DIFF_TOKENS;
   }
-  
-  @Override
-  public Token copy() {
-      return new JavaToken(type, file, line, column, length);
-  }
 }
 

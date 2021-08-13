@@ -1,7 +1,5 @@
 package jplag.javax;
 
-import jplag.Token;
-
 public class JavaToken extends jplag.Token implements JavaTokenConstants {
 	private static final long serialVersionUID = 8090049637477580276L;
 	private int line;
@@ -131,9 +129,4 @@ public class JavaToken extends jplag.Token implements JavaTokenConstants {
 	public static int numberOfTokens() {
 		return NUM_DIFF_TOKENS;
 	}
-	
-    @Override
-    public Token copy() {
-        return new JavaToken(type, file, line);
-    }
 }

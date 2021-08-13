@@ -71,14 +71,4 @@ public class TokenList implements TokenConstants {
         }
         return buffer.toString();
     }
-    
-    /**
-     * Creates a deep copy of the token list. Thus all tokens are copied as well, and changing these token does not affecte the original ones.
-     * @return the deep copy of this token list.
-     */
-    public TokenList copy() {
-        TokenList copy = new TokenList();
-        tokens.forEach(it -> copy.tokens.add(it.copy()));
-        return copy;
-    }
 }

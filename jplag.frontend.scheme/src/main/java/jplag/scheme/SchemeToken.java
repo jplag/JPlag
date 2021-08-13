@@ -1,9 +1,5 @@
 package jplag.scheme;
 
-import jplag.Token;
-
-//import java.io.*;
-
 public class SchemeToken extends jplag.Token implements SchemeTokenConstants {
 	private static final long serialVersionUID = -143418583849687339L;
 	private int line;
@@ -74,10 +70,5 @@ public int getLength() {return 0;}
   
   public static int numberOfTokens() { 
     return NUM_DIFF_TOKENS;
-  }
-  
-  @Override
-  public Token copy() {
-    return new SchemeToken(type, file, line);
   }
 }

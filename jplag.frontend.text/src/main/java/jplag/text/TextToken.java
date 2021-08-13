@@ -1,7 +1,5 @@
 package jplag.text;
 
-import jplag.Token;
-
 public class TextToken extends jplag.Token {
 	private static final long serialVersionUID = 4301179216570538972L;
 
@@ -81,10 +79,5 @@ public class TextToken extends jplag.Token {
 
     public static int numberOfTokens(TokenStructure tokenStructure) {
         return tokenStructure.table.size();
-    }
-
-    @Override
-    public Token copy() {
-        return new TextToken(type, file, null);
     }
 }
