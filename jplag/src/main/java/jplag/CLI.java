@@ -3,6 +3,7 @@ package jplag;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
 import java.io.File;
+import java.util.Random;
 
 import jplag.options.JPlagOptions;
 import jplag.options.LanguageOption;
@@ -20,7 +21,21 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public class CLI {
 
-    private static final String DESCRIPTION = "JPlag - Detecting Software Plagiarism";
+    private static final String[] DESCRIPTIONS = {
+            "Detecting Software Plagiarism",
+            "Archaeological Playground",
+            "Since 1994",
+            "Scientifically Published",
+            "Supported by SDQ",
+            "RIP Structure and Table",
+            "What else?",
+            "You have been warned",
+            "Since Java 1.0",
+            "More Abstract than Tree",
+            "Students Nightmare",
+            "No, changing variable names does not work"
+    };
+
     private static final String PROGRAM_NAME = "jplag";
 
     // TODO SH: Replace verbosity when integrating a real logging library
@@ -54,7 +69,7 @@ public class CLI {
      * Creates the command line interface and initializes the argument parser.
      */
     public CLI() {
-        parser = ArgumentParsers.newFor(PROGRAM_NAME).build().defaultHelp(true).description(DESCRIPTION);
+        parser = ArgumentParsers.newFor(PROGRAM_NAME).build().defaultHelp(true).description(generateDescription());
 
         // TODO SH: Fix code duplication of CLI arguments
         parser.addArgument("rootDir").help("The root-directory that contains all submissions");
@@ -143,5 +158,10 @@ public class CLI {
         }
 
         return options;
+    }
+
+    private String generateDescription() {
+        var randomDescription = DESCRIPTIONS[new Random().nextInt(DESCRIPTIONS.length)];
+        return String.format("JPlag - %s", randomDescription);
     }
 }
