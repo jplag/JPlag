@@ -23,10 +23,10 @@ public class CLI {
 
     private static final String[] DESCRIPTIONS = {
             "Detecting Software Plagiarism",
-            "Archaeological Playground",
+            "Software-Archaeological Playground",
             "Since 1994",
             "Scientifically Published",
-            "Supported by SDQ",
+            "Maintained by SDQ",
             "RIP Structure and Table",
             "What else?",
             "You have been warned",
