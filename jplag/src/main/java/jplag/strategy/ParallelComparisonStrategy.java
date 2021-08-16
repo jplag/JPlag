@@ -3,7 +3,6 @@ package jplag.strategy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -53,7 +52,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         List<SubmissionTuple> tuples = buildComparisonTuples(submissions);
         Collections.shuffle(tuples); // Reduces how often submission pairs must be re-submitted
         for (SubmissionTuple tuple : tuples) {
-            threadPool.execute(compareTupleConcurrently(tuple, withBaseCode));
+            threadPool.execute(compareTuple(tuple, withBaseCode));
         }
 
         // Ensure termination:
@@ -82,7 +81,6 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
                 for (int j = (i + 1); j < submissions.size(); j++) {
                     Submission second = submissions.elementAt(j);
                     if (second.tokenList != null) {
-                        System.out.println(first + " " + second);
                         tuples.add(new SubmissionTuple(first, second));
                     }
                 }
@@ -92,28 +90,12 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     /**
-     * Compares a submission tuple and optionally returns the results if similarity is high enough.
-     */
-    private Optional<JPlagComparison> compareTuple(SubmissionTuple tuple, boolean withBaseCode) {
-        JPlagComparison comparison = greedyStringTiling.compare(tuple.getLeft(), tuple.getRight());
-        System.out.println("Comparing " + tuple.getLeft().name + "-" + tuple.getRight().name + ": " + comparison.percent());
-        if (withBaseCode) {
-            comparison.baseCodeMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
-            comparison.baseCodeMatchesB = baseCodeMatches.get(comparison.secondSubmission.name);
-        }
-        if (isAboveSimilarityThreshold(comparison)) {
-            return Optional.of(comparison);
-        }
-        return Optional.empty();
-    }
-
-    /**
      * Creates a runnable which compares a submission tuple. If the submissions are locked, the runnable is re-submitted.
      * @param tuple contains the submissions to compare.
      * @param withBaseCode specifies if base code is used.
      * @return the runnable for parallel use.
      */
-    private Runnable compareTupleConcurrently(SubmissionTuple tuple, boolean withBaseCode) {
+    private Runnable compareTuple(SubmissionTuple tuple, boolean withBaseCode) {
         return new Runnable() {
             @Override
             public void run() {
@@ -123,7 +105,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
                 boolean hasRight = hasLeft && rightLock.tryLock();
                 try {
                     if (hasLeft && hasRight) { // both locks acquired!
-                        compareTuple(tuple, withBaseCode).ifPresent(it -> comparisons.add(it));
+                        compareSubmissions(tuple.getLeft(), tuple.getRight(), withBaseCode).ifPresent(it -> comparisons.add(it));
                         synchronized (this) {
                             successfulComparisons++;
                         }

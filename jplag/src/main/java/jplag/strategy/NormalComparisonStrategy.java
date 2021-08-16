@@ -18,7 +18,8 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     
     @Override
     public JPlagResult compareSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) {
-        if (baseCodeSubmission != null) {
+        boolean withBaseCode = baseCodeSubmission != null;
+        if (withBaseCode) {
             compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
         }
         
@@ -26,7 +27,6 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         int i, j, numberOfSubmissions = submissions.size();
         Submission first, second;
         List<JPlagComparison> comparisons = new ArrayList<>();
-        JPlagComparison comparison;
         
         for (i = 0; i < (numberOfSubmissions - 1); i++) {
             first = submissions.elementAt(i);
@@ -38,17 +38,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
                 if (second.tokenList == null) {
                     continue;
                 }
-                comparison = greedyStringTiling.compare(first, second);
-
-                // TODO SH: Why does this differ from the results shown in the result web page?
-                System.out.println("Comparing " + first.name + "-" + second.name + ": " + comparison.percent());
-                if (baseCodeSubmission != null) {
-                    comparison.baseCodeMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
-                    comparison.baseCodeMatchesB = baseCodeMatches.get(comparison.secondSubmission.name);
-                }
-                if (isAboveSimilarityThreshold(comparison)) {
-                    comparisons.add(comparison);
-                }
+                compareSubmissions(first, second, withBaseCode).ifPresent(it -> comparisons.add(it));
             }
         }
 
