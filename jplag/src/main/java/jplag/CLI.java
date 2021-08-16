@@ -1,5 +1,6 @@
 package jplag;
 
+import static jplag.strategy.ComparisonMode.NORMAL;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import jplag.options.JPlagOptions;
 import jplag.options.LanguageOption;
 import jplag.options.Verbosity;
 import jplag.reporting.Report;
+import jplag.strategy.ComparisonMode;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
@@ -16,7 +18,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Command line interface class, allows using via command line.
- *
  * @see CLI#main(String[])
  */
 public class CLI {
@@ -45,7 +46,6 @@ public class CLI {
 
     /**
      * Main class for using JPlag via the CLI.
-     *
      * @param args are the CLI arguments that will be passed to JPlag.
      */
     public static void main(String[] args) {
@@ -73,11 +73,9 @@ public class CLI {
 
         // TODO SH: Fix code duplication of CLI arguments
         parser.addArgument("rootDir").help("The root-directory that contains all submissions");
-        parser.addArgument("-l")
-                .choices(LanguageOption.getAllDisplayNames())
-                .setDefault(LanguageOption.getDefault().getDisplayName())
+        parser.addArgument("-l").choices(LanguageOption.getAllDisplayNames()).setDefault(LanguageOption.getDefault().getDisplayName())
                 .help("Select the language to parse the submissions");
-        parser.addArgument("-bc").help("Name of the directory which contains the base code (common framework)");
+        parser.addArgument("-bc").help("Name of the directory which contains the base code (common framework used in all submissions)");
         parser.addArgument("-v").choices(verbosityOptions).setDefault("quiet").help("Verbosity");
         parser.addArgument("-d").help("(Debug) parser. Non-parsable files will be stored").action(storeTrue());
         parser.addArgument("-S").help("Look in directories <root-dir>/*/<dir> for programs");
@@ -87,11 +85,11 @@ public class CLI {
         parser.addArgument("-m").setDefault(0f).help("Match similarity threshold [0-100]: All matches above this threshold will be saved");
         parser.addArgument("-n").setDefault(30).help("Maximum number of matches that will be saved. If set to -1 all matches will be saved");
         parser.addArgument("-r").setDefault("result").help("Name of directory in which the comparison results will be stored");
+        parser.addArgument("-c").choices(ComparisonMode.allNames()).setDefault(NORMAL.getName()).help("Comparison mode used to compare the programs");
     }
 
     /**
      * Parses an array of argument strings.
-     *
      * @param args is the array to parse.
      * @return the parsed arguments in a {@link Namespace} format.
      */
@@ -107,13 +105,12 @@ public class CLI {
 
     /**
      * Builds a options instance from parsed arguments.
-     *
      * @param namespace encapsulates the parsed arguments in a {@link Namespace} format.
      * @return the newly built options.F
      */
     public JPlagOptions buildOptionsFromArguments(Namespace namespace) {
         String fileSuffixString = namespace.getString("p");
-        String[] fileSuffixes = new String[]{};
+        String[] fileSuffixes = new String[] {};
         if (fileSuffixString != null) {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
@@ -127,6 +124,8 @@ public class CLI {
         options.setSubdirectoryName(namespace.getString("S"));
         options.setFileSuffixes(fileSuffixes);
         options.setExclusionFileName(namespace.getString("x"));
+        ComparisonMode.fromName(namespace.getString("c")).ifPresentOrElse(it -> options.setComparisonMode(it),
+                () -> System.out.println("Unknown comparison mode, using default"));
 
         String minTokenMatch = namespace.getString("t");
         if (minTokenMatch != null) {

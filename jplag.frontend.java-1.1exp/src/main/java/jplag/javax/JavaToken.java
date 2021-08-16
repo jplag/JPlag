@@ -4,8 +4,8 @@ public class JavaToken extends jplag.Token implements JavaTokenConstants {
 	private static final long serialVersionUID = 8090049637477580276L;
 	private int line;
 
-	public JavaToken(int type, String file, int zeile) {
-		super(type, file, zeile);
+	public JavaToken(int type, String file, int line) {
+		super(type, file, line);
 	}
 
 	@Override

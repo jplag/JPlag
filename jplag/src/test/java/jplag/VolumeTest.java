@@ -1,6 +1,7 @@
 package jplag;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,10 +10,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 /**
  * These tests are not intended to be used automatically but rather manually prior to releases.
@@ -42,7 +41,7 @@ public class VolumeTest extends TestBase {
             return;
         }
 
-        var results = runJPlagWithOptions("data",
+        var results = runJPlag("data",
                 jPlagOptions -> jPlagOptions.setMaxNumberOfMatches(-1));
 
         var csv = readCSVResults(String.format("%s/%s", this.getBasePath(), "matches_avg.csv"));

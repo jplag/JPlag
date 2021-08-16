@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
- * to the classes {@link TokenList}, {@link Token}, as well as {@link Matches} and {@link Match}. While is class was
+ * to the classes {@link TokenList}, {@link Token}, and {@link Match}. While is class was
  * reworked, it still contains some quirks from the initial version.
  * @see <a href=
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
@@ -107,28 +107,26 @@ public class GreedyStringTiling implements TokenConstants {
             smallerSubmission = largerSubmission;
             largerSubmission = swap;
         }
-        int minTokenMatch = program.getOptions().getMinTokenMatch();
-
-        return compare(smallerSubmission, largerSubmission, minTokenMatch, withBaseCode);
+        return compare(smallerSubmission, largerSubmission, withBaseCode);
     }
 
     /**
      * Compares two submissions. FILE_END is used as pivot
      * @param firstSubmission is the submission with the smaller sequence.
      * @param secondSubmission is the submission with the larger sequence.
-     * @param minimalTokenMatch is the minimal required token match.
      * @param withBaseCode specifies whether one of the submissions is the base code.
      * @return the comparison results.
      */
-    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, int minimalTokenMatch, boolean withBaseCode) {
+    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
         // first and second refer to the list of tokens of the first and second submission:
         TokenList first = firstSubmission.tokenList;
-        TokenList second = secondSubmission.tokenList;
+        TokenList second = secondSubmission.tokenList; 
 
         // Initialize:
         JPlagComparison comparison = withBaseCode ? new JPlagBaseCodeComparison(firstSubmission, secondSubmission)
                 : new JPlagComparison(firstSubmission, secondSubmission);
-
+        int minimalTokenMatch = program.getOptions().getMinTokenMatch(); // minimal required token match
+        
         if (first.size() <= minimalTokenMatch || second.size() <= minimalTokenMatch) { // <= because of pivots!
             return comparison;
         }

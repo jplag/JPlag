@@ -1,6 +1,7 @@
 package jplag.strategy;
 
 import java.util.Hashtable;
+import java.util.Optional;
 import java.util.Vector;
 
 import jplag.GreedyStringTiling;
@@ -25,19 +26,27 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     }
 
     protected void compareSubmissionsToBaseCode(Vector<Submission> submissions, Submission baseCodeSubmission) {
-        int numberOfSubmissions = submissions.size();
-
-        JPlagComparison baseCodeMatch;
-        Submission currentSubmission;
-
-        for (int i = 0; i < (numberOfSubmissions); i++) {
-            currentSubmission = submissions.elementAt(i);
-
-            baseCodeMatch = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
+        for (Submission currentSubmission : submissions) {
+            JPlagComparison baseCodeMatch = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
             baseCodeMatches.put(currentSubmission.name, baseCodeMatch);
-
             baseCodeSubmission.resetBaseCode();
         }
+    }
+
+    /**
+     * Compares two submissions and optionally returns the results if similarity is high enough.
+     */
+    protected Optional<JPlagComparison> compareSubmissions(Submission first, Submission second, boolean withBaseCode) {
+        JPlagComparison comparison = greedyStringTiling.compare(first, second);
+        System.out.println("Comparing " + first.name + "-" + second.name + ": " + comparison.percent());
+        if (withBaseCode) {
+            comparison.baseCodeMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
+            comparison.baseCodeMatchesB = baseCodeMatches.get(comparison.secondSubmission.name);
+        }
+        if (isAboveSimilarityThreshold(comparison)) {
+            return Optional.of(comparison);
+        }
+        return Optional.empty();
     }
 
     protected boolean isAboveSimilarityThreshold(JPlagComparison comparison) {

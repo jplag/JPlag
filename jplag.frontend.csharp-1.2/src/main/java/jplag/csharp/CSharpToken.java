@@ -1,6 +1,5 @@
 package jplag.csharp;
 
-
 public class CSharpToken extends jplag.Token implements CSharpTokenConstants {
   private static final long serialVersionUID = 1L;
   private int line, column, length;
@@ -85,6 +84,6 @@ public void setLength(int length) { this.length = length; }
   
   public static int numberOfTokens() { 
     return NUM_DIFF_TOKENS;
-  } 
+  }
 }
 
