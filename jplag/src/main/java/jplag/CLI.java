@@ -4,6 +4,7 @@ import static jplag.strategy.ComparisonMode.NORMAL;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
 import java.io.File;
+import java.util.Random;
 
 import jplag.options.JPlagOptions;
 import jplag.options.LanguageOption;
@@ -21,7 +22,21 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public class CLI {
 
-    private static final String DESCRIPTION = "JPlag - Detecting Software Plagiarism";
+    private static final String[] DESCRIPTIONS = {
+            "Detecting Software Plagiarism",
+            "Software-Archaeological Playground",
+            "Since 1994",
+            "Scientifically Published",
+            "Maintained by SDQ",
+            "RIP Structure and Table",
+            "What else?",
+            "You have been warned",
+            "Since Java 1.0",
+            "More Abstract than Tree",
+            "Students Nightmare",
+            "No, changing variable names does not work"
+    };
+
     private static final String PROGRAM_NAME = "jplag";
 
     // TODO SH: Replace verbosity when integrating a real logging library
@@ -54,7 +69,7 @@ public class CLI {
      * Creates the command line interface and initializes the argument parser.
      */
     public CLI() {
-        parser = ArgumentParsers.newFor(PROGRAM_NAME).build().defaultHelp(true).description(DESCRIPTION);
+        parser = ArgumentParsers.newFor(PROGRAM_NAME).build().defaultHelp(true).description(generateDescription());
 
         // TODO SH: Fix code duplication of CLI arguments
         parser.addArgument("rootDir").help("The root-directory that contains all submissions");
@@ -67,7 +82,8 @@ public class CLI {
         parser.addArgument("-p").help("comma-separated list of all filename suffixes that are included");
         parser.addArgument("-x").help("All files named in this file will be ignored in the comparison (line-separated list)");
         parser.addArgument("-t").help("Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity");
-        parser.addArgument("-m").setDefault(0f).help("Match similarity Threshold [0-100]: All matches above this threshold will be saved");
+        parser.addArgument("-m").setDefault(0f).help("Match similarity threshold [0-100]: All matches above this threshold will be saved");
+        parser.addArgument("-n").setDefault(30).help("Maximum number of matches that will be saved. If set to -1 all matches will be saved");
         parser.addArgument("-r").setDefault("result").help("Name of directory in which the comparison results will be stored");
         parser.addArgument("-c").choices(ComparisonMode.allNames()).setDefault(NORMAL.getName()).help("Comparison mode used to compare the programs");
     }
@@ -126,10 +142,25 @@ public class CLI {
                 options.setSimilarityThreshold(Float.parseFloat(similarityThreshold));
             } catch (NumberFormatException e) {
                 System.out.println("Illegal similarity threshold. Taking 0 as default value.");
-                options.setSimilarityThreshold(0);
+                options.setSimilarityThreshold(0); // TODO SH: Remove code duplication
+            }
+        }
+
+        String maxNumberOfMatches = namespace.getString("n");
+        if(maxNumberOfMatches != null) {
+            try {
+                options.setMaxNumberOfMatches(Integer.parseInt(maxNumberOfMatches));
+            } catch (NumberFormatException e) {
+                System.out.println("Illegal maximum number of matches. Taking 30 as default value.");
+                options.setMaxNumberOfMatches(30); // TODO SH: Remove code duplication
             }
         }
 
         return options;
+    }
+
+    private String generateDescription() {
+        var randomDescription = DESCRIPTIONS[new Random().nextInt(DESCRIPTIONS.length)];
+        return String.format("JPlag - %s", randomDescription);
     }
 }

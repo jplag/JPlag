@@ -58,9 +58,9 @@ named arguments:
   -x X                   All files named in this file will be ignored in the comparison (line-separated list)
   -t T                   Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity
   -m M                   Match similarity Threshold [0-100]: All matches above this threshold will be saved (Standard: 0.0)
+  -n N                   Maximum number of matches that will be saved. If set to -1 all matches will be saved (Standard: 30)
   -r R                   Name of directory in which the comparison results will be stored (Standard: result)
   -c {normal,parallel}   Comparison mode used to compare the programs (Standard: normal)
-
 ```
 
 ### Java API

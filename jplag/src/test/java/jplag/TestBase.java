@@ -9,8 +9,12 @@ public abstract class TestBase {
 
     private static final String BASE_PATH = "src/test/resources/samples";
 
+    protected String getBasePath() {
+        return BASE_PATH;
+    }
+
     protected JPlagResult runJPlagWithExclusionFile(String testSampleName, String exclusionFileName) throws ExitException {
-        String blackList = String.format(BASE_PATH + "/%s/%s", testSampleName, exclusionFileName);
+        String blackList = String.format(getBasePath() + "/%s/%s", testSampleName, exclusionFileName);
         return runJPlagWithOptions(testSampleName, options -> options.setExclusionFileName(blackList));
     }
 
@@ -19,11 +23,10 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlagWithOptions(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(String.format(BASE_PATH + "/%s", testSampleName), LanguageOption.JAVA_1_9);
+        JPlagOptions options = new JPlagOptions(String.format(getBasePath() + "/%s", testSampleName), LanguageOption.JAVA_1_9);
         options.setDebugParser(true);
         customization.accept(options);
         JPlag jplag = new JPlag(options);
         return jplag.run();
     }
-
 }
