@@ -83,6 +83,7 @@ public class JPlag implements ProgramI {
         // 3. Compare valid submissions:
         errorVector = null; // errorVector is not needed anymore
         JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
+        printComparisonDuration(result.getDuration());
         return result;
     }
 
@@ -224,9 +225,11 @@ public class JPlag implements ProgramI {
     private void initializeComparisonStrategy() throws ExitException {
         switch (options.getComparisonMode()) {
         case NORMAL:
-            comparisonStrategy = new NormalComparisonStrategy(options, gSTiling); break;
+            comparisonStrategy = new NormalComparisonStrategy(options, gSTiling);
+            break;
         case PARALLEL:
-            comparisonStrategy = new ParallelComparisonStrategy(options, gSTiling); break;
+            comparisonStrategy = new ParallelComparisonStrategy(options, gSTiling);
+            break;
         default:
             throw new ExitException("Illegal comparison mode: " + options.getComparisonMode());
         }
@@ -408,6 +411,14 @@ public class JPlag implements ProgramI {
                         + "Time per parsed submission: " + (count > 0 ? (time / count) : "n/a") + " msec\n\n");
     }
 
+    private void printComparisonDuration(long durationInMiliseconds) {
+        int timeInSeconds = (int) (durationInMiliseconds / 1000);
+        String hours = (timeInSeconds / 3600 > 0) ? (timeInSeconds / 3600) + " h " : "";
+        String minutes = (timeInSeconds / 60 > 0) ? ((timeInSeconds / 60) % 60) + " min " : "";
+        String seconds = (timeInSeconds % 60) + " sec";
+        System.out.println("Total time for comparing submissions: " + hours + minutes + seconds);
+    }
+
     /**
      * Print all errors from the errorVector.
      */
@@ -442,7 +453,7 @@ public class JPlag implements ProgramI {
 
             reader.close();
         } catch (IOException exception) {
-            System.out.println("Could not read exclusion file: "+ exception.getMessage());
+            System.out.println("Could not read exclusion file: " + exception.getMessage());
         }
 
         if (options.getVerbosity() == LONG) {
