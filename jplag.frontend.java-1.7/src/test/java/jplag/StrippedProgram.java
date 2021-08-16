@@ -16,7 +16,7 @@ public class StrippedProgram implements ProgramI {
         } else if (normalMsg != null) {
             System.out.println(normalMsg);
         } else {
-            System.out.println("Someboy messed up - no message given");
+            System.out.println("Somebody messed up - no message given");
         }
     }
 }
