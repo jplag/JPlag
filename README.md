@@ -40,38 +40,27 @@ JPlag can either be used via the CLI or directly via its Java API.
 ### CLI
 
 ```
-usage: jplag [-h]
-             [-l {java_1_1,java_1_2,java_1_5,java_1_5_dm,java_1_7,java_1_9,python_3,c_cpp,c_sharp,char,text,scheme}]
-             [-bc BC] [-v {parser,quiet,long,details}] [-d] [-S S] [-p P]
-             [-x X] [-t T] [-m M] [-r R] rootDir
-
 JPlag - Detecting Software Plagiarism
 
-positional arguments:
-  rootDir                The root-directory that contains all submissions
+Usage: JPlag [ options ] [<root-dir>]
+ <root-dir>        The root-directory that contains all submissions
 
 named arguments:
   -h, --help             show this help message and exit
-  -l {java_1_1,java_1_2,java_1_5,java_1_5_dm,java_1_7,java_1_9,python_3,c_cpp,c_sharp,char,text,scheme}
-                         Select  the  language  to  parse  the  submissions
-                         (default: java_1_9)
-  -bc BC                 Name of  the  directory  which  contains  the base
-                         code (common framework)
+  -l {java1,java2,java5,java5dm,java7,java9,python3,cpp,csharp,char,text,scheme}
+                         Select the language to parse the submissions (Standard: java9)
+  -bc BC                 Name of the directory which contains the base code (common framework used in all submissions)
   -v {parser,quiet,long,details}
-                         Verbosity (default: quiet)
-  -d                     (Debug) parser. Non-parsable files  will be stored
-                         (default: false)
-  -S S                   Look   in   directories   <root-dir>/*/<dir>   for
-                         programs
-  -p P                   comma-separated  list  of  all  filename  suffixes
-                         that are included
-  -x X                   All files named in <file> will be ignored
-  -t T                   Tune the sensitivity of  the comparison. A smaller
-                         <n> increases the sensitivity
-  -m M                   Match similarity  Threshold  [0-100]:  All matches
-                         above this threshold will be saved (Standard: 0.0)
-  -r R                   Name of directory in which  the  web pages will be
-                         stored (default: result)
+                         Verbosity (Standard: quiet)
+  -d                     (Debug) parser. Non-parsable files will be stored (Standard: false)
+  -S S                   Look in directories <root-dir>/*/<dir> for programs
+  -p P                   comma-separated list of all filename suffixes that are included
+  -x X                   All files named in this file will be ignored in the comparison (line-separated list)
+  -t T                   Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity
+  -m M                   Match similarity Threshold [0-100]: All matches above this threshold will be saved (Standard: 0.0)
+  -r R                   Name of directory in which the comparison results will be stored (Standard: result)
+  -c {normal,parallel}   Comparison mode used to compare the programs (Standard: normal)
+
 ```
 
 ### Java API
