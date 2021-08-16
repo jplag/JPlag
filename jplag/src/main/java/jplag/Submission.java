@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import jplag.options.Verbosity;
-
 /**
  * Represents a single submission. A submission can contain multiple files.
  */
@@ -209,7 +207,7 @@ public class Submission implements Comparable<Submission> {
                 int size = (int) file.length();
                 char[] buffer = new char[size];
 
-                FileReader reader = new FileReader(file);
+                FileReader reader = new FileReader(file, StandardCharsets.UTF_8);
 
                 if (size != reader.read(buffer)) {
                     System.out.println("Not right size read from the file, " + "but I will still continue...");

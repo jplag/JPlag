@@ -19,7 +19,6 @@ public class Parser extends jplag.Parser implements JavaTokenConstants {
 				errors++;
 			struct.addToken(new JavaToken(FILE_END, actFile, 0));
 		}
-		// System.err.println(struct.toString());
 		if (errors == 0)
 			program.print(null, "OK\n");
 		else
@@ -30,10 +29,6 @@ public class Parser extends jplag.Parser implements JavaTokenConstants {
 
 	public void add(int type, Token token) {
 		struct.addToken(new JavaToken(type, actFile, token.beginLine));
-		/*
-		 * System.out.println(token.beginLine+"\t"+ (new
-		 * JavaToken(0,null,0)).type2string(type)+"\t"+ token.image);
-		 */
 	}
 
 }

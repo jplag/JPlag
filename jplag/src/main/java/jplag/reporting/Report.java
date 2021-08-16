@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -651,7 +652,7 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         try {
             csvFile.createNewFile();
-            writer = new FileWriter(csvFile);
+            writer = new FileWriter(csvFile, StandardCharsets.UTF_8);
 
             for (JPlagComparison comparison : comparisons) {
                 String submissionNameA = comparison.getFirstSubmission().name;

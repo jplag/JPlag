@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -444,7 +445,7 @@ public class JPlag implements ProgramI {
         excludedFileNames = new HashSet<>();
 
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(options.getExclusionFileName()));
+            BufferedReader reader = new BufferedReader(new FileReader(options.getExclusionFileName(), StandardCharsets.UTF_8));
             String line;
 
             while ((line = reader.readLine()) != null) {
