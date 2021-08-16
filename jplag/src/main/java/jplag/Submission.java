@@ -121,11 +121,9 @@ public class Submission implements Comparable<Submission> {
 
     /* parse all the files... */
     public boolean parse() {
-        if (program.getOptions().getVerbosity() != Verbosity.PARSER) {
-            if (files == null || files.size() == 0) {
-                program.print("ERROR: nothing to parse for submission \"" + name + "\"\n", null);
-                return false;
-            }
+        if (files == null || files.size() == 0) {
+            program.print("ERROR: nothing to parse for submission \"" + name + "\"\n", null);
+            return false;
         }
 
         String[] relativeFilePaths = getRelativeFilePaths(submissionFile, files);

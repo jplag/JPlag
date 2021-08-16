@@ -1,7 +1,6 @@
 package jplag;
 
 import static jplag.options.Verbosity.LONG;
-import static jplag.options.Verbosity.PARSER;
 import static jplag.options.Verbosity.QUIET;
 
 import java.io.BufferedReader;
@@ -19,6 +18,7 @@ import java.util.stream.Collectors;
 
 import jplag.options.JPlagOptions;
 import jplag.options.LanguageOption;
+import jplag.options.Verbosity;
 import jplag.strategy.ComparisonStrategy;
 import jplag.strategy.NormalComparisonStrategy;
 import jplag.strategy.ParallelComparisonStrategy;
@@ -135,28 +135,14 @@ public class JPlag implements ProgramI {
 
     @Override
     public void print(String message, String longMessage) {
-        if (options.getVerbosity() == PARSER) {
-            if (longMessage != null) {
-                System.out.println(longMessage);
-            } else if (message != null) {
-                System.out.println(message);
-            }
-        }
-        if (options.getVerbosity() == QUIET) {
-            return;
-        }
-        try {
+        Verbosity verbosity = options.getVerbosity();
+        if (verbosity != QUIET) {
             if (message != null) {
                 System.out.print(message);
             }
-
-            if (longMessage != null) {
-                if (options.getVerbosity() == LONG) {
-                    System.out.print(longMessage);
-                }
+            if (longMessage != null && verbosity == LONG) {
+                System.out.print(longMessage);
             }
-        } catch (Throwable e) {
-            System.out.println(e.getMessage());
         }
     }
 
