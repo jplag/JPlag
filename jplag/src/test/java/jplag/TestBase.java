@@ -15,14 +15,14 @@ public abstract class TestBase {
 
     protected JPlagResult runJPlagWithExclusionFile(String testSampleName, String exclusionFileName) throws ExitException {
         String blackList = String.format(getBasePath() + "/%s/%s", testSampleName, exclusionFileName);
-        return runJPlagWithOptions(testSampleName, options -> options.setExclusionFileName(blackList));
+        return runJPlag(testSampleName, options -> options.setExclusionFileName(blackList));
     }
 
     protected JPlagResult runJPlagWithDefaultOptions(String testSampleName) throws ExitException {
-        return runJPlagWithOptions(testSampleName, options -> {});
+        return runJPlag(testSampleName, options -> {});
     }
 
-    protected JPlagResult runJPlagWithOptions(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
+    protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
         JPlagOptions options = new JPlagOptions(String.format(getBasePath() + "/%s", testSampleName), LanguageOption.JAVA_1_9);
         options.setDebugParser(true);
         customization.accept(options);
