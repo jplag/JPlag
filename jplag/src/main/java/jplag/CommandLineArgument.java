@@ -69,8 +69,8 @@ public enum CommandLineArgument {
      */
     public void parseWith(ArgumentParser parser) {
         Argument argument = parser.addArgument(flag).help(helptext);
-        defaultValue.ifPresent(it -> argument.setDefault(defaultValue));
         choices.ifPresent(it -> argument.choices(it));
+        defaultValue.ifPresent(it -> argument.setDefault(it));
         action.ifPresent(it -> argument.action(it));
     }
 
