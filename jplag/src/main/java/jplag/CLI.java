@@ -34,8 +34,8 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class CLI {
 
     private static final String[] DESCRIPTIONS = {"Detecting Software Plagiarism", "Software-Archaeological Playground", "Since 1994",
-            "Scientifically Published", "Maintained by SDQ", "RIP Structure and Table", "What else?", "You have been warned", "Since Java 1.0",
-            "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work"};
+            "Scientifically Published", "Maintained by SDQ", "RIP Structure and Table", "What else?", "You have been warned!", "Since Java 1.0",
+            "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work", "The tech is out there!"};
 
     private static final String PROGRAM_NAME = "jplag";
 
