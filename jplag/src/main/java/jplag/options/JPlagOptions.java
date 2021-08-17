@@ -48,7 +48,7 @@ public class JPlagOptions {
      * The maximum number of matches that will be saved. This does affect the generated report as well as the internally
      * saved comparisons. If set to -1 all matches will be saved.
      */
-    private int maxNumberOfMatches = 30;
+    private int maxNumberOfMatches = 30; // TODO TS deduplicate default values
 
     /**
      * TODO PB: Not happy with the name yet.

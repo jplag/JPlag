@@ -1,7 +1,17 @@
 package jplag;
 
-import static jplag.strategy.ComparisonMode.NORMAL;
-import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
+import static jplag.CommandLineArgument.BASE_CODE;
+import static jplag.CommandLineArgument.COMPARISON_MODE;
+import static jplag.CommandLineArgument.DEBUG;
+import static jplag.CommandLineArgument.EXCLUDE_FILE;
+import static jplag.CommandLineArgument.LANGUAGE;
+import static jplag.CommandLineArgument.MIN_TOKEN_MATCH;
+import static jplag.CommandLineArgument.ROOT_DIRECTORY;
+import static jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
+import static jplag.CommandLineArgument.STORED_MATCHES;
+import static jplag.CommandLineArgument.SUBDIRECTORY;
+import static jplag.CommandLineArgument.SUFFIXES;
+import static jplag.CommandLineArgument.VERBOSITY;
 
 import java.io.File;
 import java.util.Random;
@@ -22,25 +32,11 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public class CLI {
 
-    private static final String[] DESCRIPTIONS = {
-            "Detecting Software Plagiarism",
-            "Software-Archaeological Playground",
-            "Since 1994",
-            "Scientifically Published",
-            "Maintained by SDQ",
-            "RIP Structure and Table",
-            "What else?",
-            "You have been warned",
-            "Since Java 1.0",
-            "More Abstract than Tree",
-            "Students Nightmare",
-            "No, changing variable names does not work"
-    };
+    private static final String[] DESCRIPTIONS = {"Detecting Software Plagiarism", "Software-Archaeological Playground", "Since 1994",
+            "Scientifically Published", "Maintained by SDQ", "RIP Structure and Table", "What else?", "You have been warned", "Since Java 1.0",
+            "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work"};
 
     private static final String PROGRAM_NAME = "jplag";
-
-    // TODO SH: Replace verbosity when integrating a real logging library
-    private static final String[] verbosityOptions = {"parser", "quiet", "long", "details"};
 
     private final ArgumentParser parser;
 
@@ -70,34 +66,21 @@ public class CLI {
      */
     public CLI() {
         parser = ArgumentParsers.newFor(PROGRAM_NAME).build().defaultHelp(true).description(generateDescription());
-
-        // TODO SH: Fix code duplication of CLI arguments
-        parser.addArgument("rootDir").help("The root-directory that contains all submissions");
-        parser.addArgument("-l").choices(LanguageOption.getAllDisplayNames()).setDefault(LanguageOption.getDefault().getDisplayName())
-                .help("Select the language to parse the submissions");
-        parser.addArgument("-bc").help("Name of the directory which contains the base code (common framework used in all submissions)");
-        parser.addArgument("-v").choices(verbosityOptions).setDefault("quiet").help("Verbosity");
-        parser.addArgument("-d").help("(Debug) parser. Non-parsable files will be stored").action(storeTrue());
-        parser.addArgument("-S").help("Look in directories <root-dir>/*/<dir> for programs");
-        parser.addArgument("-p").help("comma-separated list of all filename suffixes that are included");
-        parser.addArgument("-x").help("All files named in this file will be ignored in the comparison (line-separated list)");
-        parser.addArgument("-t").help("Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity");
-        parser.addArgument("-m").setDefault(0f).help("Match similarity threshold [0-100]: All matches above this threshold will be saved");
-        parser.addArgument("-n").setDefault(30).help("Maximum number of matches that will be saved. If set to -1 all matches will be saved");
-        parser.addArgument("-r").setDefault("result").help("Name of directory in which the comparison results will be stored");
-        parser.addArgument("-c").choices(ComparisonMode.allNames()).setDefault(NORMAL.getName()).help("Comparison mode used to compare the programs");
+        for (CommandLineArgument argument : CommandLineArgument.values()) {
+            argument.parseWith(parser);
+        }
     }
 
     /**
      * Parses an array of argument strings.
-     * @param args is the array to parse.
+     * @param arguments is the array to parse.
      * @return the parsed arguments in a {@link Namespace} format.
      */
-    public Namespace parseArguments(String[] args) {
+    public Namespace parseArguments(String[] arguments) {
         try {
-            return parser.parseArgs(args);
-        } catch (ArgumentParserException e) {
-            parser.handleError(e);
+            return parser.parseArgs(arguments);
+        } catch (ArgumentParserException exception) {
+            parser.handleError(exception);
             System.exit(1);
         }
         return null;
@@ -109,25 +92,23 @@ public class CLI {
      * @return the newly built options.F
      */
     public JPlagOptions buildOptionsFromArguments(Namespace namespace) {
-        String fileSuffixString = namespace.getString("p");
+        String fileSuffixString = namespace.getString(SUFFIXES.flag());
         String[] fileSuffixes = new String[] {};
         if (fileSuffixString != null) {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
-        LanguageOption language = LanguageOption.fromDisplayName(namespace.getString("l"));
-        Verbosity verbosity = Verbosity.fromOption(namespace.getString("v"));
-
-        JPlagOptions options = new JPlagOptions(namespace.getString("rootDir"), language);
-        options.setBaseCodeSubmissionName(namespace.getString("bc"));
-        options.setVerbosity(verbosity);
-        options.setDebugParser(namespace.getBoolean("d"));
-        options.setSubdirectoryName(namespace.getString("S"));
+        LanguageOption language = LanguageOption.fromDisplayName(namespace.getString(LANGUAGE.flag()));
+        JPlagOptions options = new JPlagOptions(namespace.getString(ROOT_DIRECTORY.flag()), language);
+        options.setBaseCodeSubmissionName(namespace.getString(BASE_CODE.flag()));
+        options.setVerbosity(Verbosity.fromOption(namespace.getString(VERBOSITY.flag())));
+        options.setDebugParser(namespace.getBoolean(DEBUG.flag()));
+        options.setSubdirectoryName(namespace.getString(SUBDIRECTORY.flag()));
         options.setFileSuffixes(fileSuffixes);
-        options.setExclusionFileName(namespace.getString("x"));
-        ComparisonMode.fromName(namespace.getString("c")).ifPresentOrElse(it -> options.setComparisonMode(it),
-                () -> System.out.println("Unknown comparison mode, using default"));
+        options.setExclusionFileName(namespace.getString(EXCLUDE_FILE.flag()));
+        ComparisonMode.fromName(namespace.getString(COMPARISON_MODE.flag())).ifPresentOrElse(it -> options.setComparisonMode(it),
+                () -> System.out.println("Unknown comparison mode, using default mode!"));
 
-        String minTokenMatch = namespace.getString("t");
+        String minTokenMatch = namespace.getString(MIN_TOKEN_MATCH.flag());
         if (minTokenMatch != null) {
             try {
                 options.setMinTokenMatch(Integer.parseInt(minTokenMatch));
@@ -136,7 +117,7 @@ public class CLI {
             }
         }
 
-        String similarityThreshold = namespace.getString("m");
+        String similarityThreshold = namespace.getString(SIMILARITY_THRESHOLD.flag());
         if (similarityThreshold != null) {
             try {
                 options.setSimilarityThreshold(Float.parseFloat(similarityThreshold));
@@ -146,8 +127,8 @@ public class CLI {
             }
         }
 
-        String maxNumberOfMatches = namespace.getString("n");
-        if(maxNumberOfMatches != null) {
+        String maxNumberOfMatches = namespace.getString(STORED_MATCHES.flag());
+        if (maxNumberOfMatches != null) {
             try {
                 options.setMaxNumberOfMatches(Integer.parseInt(maxNumberOfMatches));
             } catch (NumberFormatException e) {
