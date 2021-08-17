@@ -7,26 +7,19 @@ import jplag.strategy.ComparisonMode;
 
 public class JPlagOptions {
 
+    public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
+    public static final int DEFAULT_SIMILARITY_THRESHOLD = 0;
+    public static final int DEFAULT_STORED_MATCHES = 30;
+
     /**
      * Language used to parse the submissions.
      */
     private Language language;
 
     /**
-     * TODO PB: Decide what to do with this.
-     * <p>
-     * Note: Previously, this option had two effects:
-     * <ol>
-     * <li>If this option was > 0, it told JPlag to use the 'special' comparison strategy</li>
-     * <li>It specifies the number of submissions to compare each submission to during the 'special' comparison</li>
-     * </ol>
-     */
-    private int numberOfSubmissionsToCompareTo = 0; // 0 = deactivated
-
-    /**
      * Determines which strategy to use for the comparison of submissions.
      */
-    private ComparisonMode comparisonMode = NORMAL;
+    private ComparisonMode comparisonMode = DEFAULT_COMPARISON_MODE;
 
     /**
      * If true, submissions that cannot be parsed will be stored in a separate directory.
@@ -42,13 +35,13 @@ public class JPlagOptions {
      * Percentage value (must be between 0 and 100). Matches with a similarity below this threshold will be ignored. The
      * default value of 0 allows all matches to be stored.
      */
-    private float similarityThreshold = 0;
+    private float similarityThreshold = DEFAULT_SIMILARITY_THRESHOLD;
 
     /**
      * The maximum number of matches that will be saved. This does affect the generated report as well as the internally
      * saved comparisons. If set to -1 all matches will be saved.
      */
-    private int maxNumberOfMatches = 30; // TODO TS deduplicate default values
+    private int maxNumberOfMatches = DEFAULT_STORED_MATCHES;
 
     /**
      * TODO PB: Not happy with the name yet.
@@ -170,10 +163,6 @@ public class JPlagOptions {
         return debugParser;
     }
 
-    public int getNumberOfSubmissionsToCompareTo() {
-        return numberOfSubmissionsToCompareTo;
-    }
-
     public float getSimilarityThreshold() {
         return similarityThreshold;
     }
@@ -188,10 +177,6 @@ public class JPlagOptions {
 
     public void setLanguage(Language language) {
         this.language = language;
-    }
-
-    public void setNumberOfSubmissionsToCompareTo(int numberOfSubmissionsToCompareTo) {
-        this.numberOfSubmissionsToCompareTo = numberOfSubmissionsToCompareTo;
     }
 
     public void setComparisonMode(ComparisonMode comparisonMode) {
