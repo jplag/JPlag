@@ -12,6 +12,7 @@ import static jplag.CommandLineArgument.STORED_MATCHES;
 import static jplag.CommandLineArgument.SUBDIRECTORY;
 import static jplag.CommandLineArgument.SUFFIXES;
 import static jplag.CommandLineArgument.VERBOSITY;
+import static jplag.CommandLineArgument.RESULT_FOLDER;
 
 import java.io.File;
 import java.util.Random;
@@ -52,7 +53,7 @@ public class CLI {
             JPlag program = new JPlag(options);
             System.out.println("JPlag initialized");
             JPlagResult result = program.run();
-            File reportDir = new File(arguments.getString("r"));
+            File reportDir = new File(arguments.getString(RESULT_FOLDER.flag()));
             Report report = new Report(reportDir);
             report.writeResult(result);
         } catch (ExitException exception) {
@@ -92,51 +93,24 @@ public class CLI {
      * @return the newly built options.F
      */
     public JPlagOptions buildOptionsFromArguments(Namespace namespace) {
-        String fileSuffixString = namespace.getString(SUFFIXES.flag());
+        String fileSuffixString = SUFFIXES.getFrom(namespace);
         String[] fileSuffixes = new String[] {};
         if (fileSuffixString != null) {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
-        LanguageOption language = LanguageOption.fromDisplayName(namespace.getString(LANGUAGE.flag()));
-        JPlagOptions options = new JPlagOptions(namespace.getString(ROOT_DIRECTORY.flag()), language);
-        options.setBaseCodeSubmissionName(namespace.getString(BASE_CODE.flag()));
-        options.setVerbosity(Verbosity.fromOption(namespace.getString(VERBOSITY.flag())));
-        options.setDebugParser(namespace.getBoolean(DEBUG.flag()));
-        options.setSubdirectoryName(namespace.getString(SUBDIRECTORY.flag()));
+        LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
+        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getFrom(namespace), language);
+        options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
+        options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
+        options.setDebugParser(DEBUG.getFrom(namespace));
+        options.setSubdirectoryName(SUBDIRECTORY.getFrom(namespace));
         options.setFileSuffixes(fileSuffixes);
-        options.setExclusionFileName(namespace.getString(EXCLUDE_FILE.flag()));
-        ComparisonMode.fromName(namespace.getString(COMPARISON_MODE.flag())).ifPresentOrElse(it -> options.setComparisonMode(it),
+        options.setExclusionFileName(EXCLUDE_FILE.getFrom(namespace));
+        options.setMinTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace));
+        options.setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace));
+        options.setMaxNumberOfMatches(STORED_MATCHES.getFrom(namespace));
+        ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(it -> options.setComparisonMode(it),
                 () -> System.out.println("Unknown comparison mode, using default mode!"));
-
-        String minTokenMatch = namespace.getString(MIN_TOKEN_MATCH.flag());
-        if (minTokenMatch != null) {
-            try {
-                options.setMinTokenMatch(Integer.parseInt(minTokenMatch));
-            } catch (NumberFormatException e) {
-                System.out.println("Illegal comparison sensitivity. Ignoring input and taking language default value.");
-            }
-        }
-
-        String similarityThreshold = namespace.getString(SIMILARITY_THRESHOLD.flag());
-        if (similarityThreshold != null) {
-            try {
-                options.setSimilarityThreshold(Float.parseFloat(similarityThreshold));
-            } catch (NumberFormatException e) {
-                System.out.println("Illegal similarity threshold. Taking 0 as default value.");
-                options.setSimilarityThreshold(0); // TODO SH: Remove code duplication
-            }
-        }
-
-        String maxNumberOfMatches = namespace.getString(STORED_MATCHES.flag());
-        if (maxNumberOfMatches != null) {
-            try {
-                options.setMaxNumberOfMatches(Integer.parseInt(maxNumberOfMatches));
-            } catch (NumberFormatException e) {
-                System.out.println("Illegal maximum number of matches. Taking 30 as default value.");
-                options.setMaxNumberOfMatches(30); // TODO SH: Remove code duplication
-            }
-        }
-
         return options;
     }
 

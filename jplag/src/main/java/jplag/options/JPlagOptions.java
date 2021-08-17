@@ -236,8 +236,10 @@ public class JPlagOptions {
 
     public void setSimilarityThreshold(float similarityThreshold) {
         if (similarityThreshold > 100) {
+            System.out.println("Maximum threshold of 100 used instead of " + similarityThreshold);
             this.similarityThreshold = 100;
         } else if (similarityThreshold < 0) {
+            System.out.println("Minimum threshold of 0 used instead of " + similarityThreshold);
             this.similarityThreshold = 0;
         } else {
             this.similarityThreshold = similarityThreshold;
@@ -245,7 +247,7 @@ public class JPlagOptions {
     }
 
     public void setMaxNumberOfMatches(int maxNumberOfMatches) {
-        if(maxNumberOfMatches < -1) {
+        if (maxNumberOfMatches < -1) {
             this.maxNumberOfMatches = -1;
         } else {
             this.maxNumberOfMatches = maxNumberOfMatches;
