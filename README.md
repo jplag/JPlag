@@ -38,6 +38,7 @@ You'll find the generated JAR with all dependencies in  `jplag/target`.
 JPlag can either be used via the CLI or directly via its Java API.
 
 ### CLI
+*Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
 
 ```
 JPlag - Detecting Software Plagiarism
@@ -59,7 +60,7 @@ named arguments:
   -t T                   Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity
   -m M                   Match similarity Threshold [0-100]: All matches above this threshold will be saved (Standard: 0.0)
   -n N                   Maximum number of matches that will be saved. If set to -1 all matches will be saved (Standard: 30)
-  -r R                   Name of directory in which the comparison results will be stored (Standard: result)
+  -r R                   Name of the directory in which the comparison results will be stored (Standard: result)
   -c {normal,parallel}   Comparison mode used to compare the programs (Standard: normal)
 ```
 
@@ -128,7 +129,7 @@ JPlag will read submission directories recursively, so they can contain multiple
         └── Utils.java
 ```
 
-If you want JPlag to scan only one specific subdirectory of a submission for source code files (e.g. `src`), you can pass the `--subDir` option:
+If you want JPlag to scan only one specific subdirectory of a submission for source code files (e.g. `src`), you can pass the `-S` option:
 
 ```
 With option --subDir=src
