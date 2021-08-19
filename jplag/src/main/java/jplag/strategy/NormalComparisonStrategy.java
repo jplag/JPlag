@@ -15,19 +15,19 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     public NormalComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
         super(options, greedyStringTiling);
     }
-    
+
     @Override
     public JPlagResult compareSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) {
         boolean withBaseCode = baseCodeSubmission != null;
         if (withBaseCode) {
             compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
         }
-        
+
         long timeBeforeStartInMillis = System.currentTimeMillis();
         int i, j, numberOfSubmissions = submissions.size();
         Submission first, second;
         List<JPlagComparison> comparisons = new ArrayList<>();
-        
+
         for (i = 0; i < (numberOfSubmissions - 1); i++) {
             first = submissions.elementAt(i);
             if (first.tokenList == null) {

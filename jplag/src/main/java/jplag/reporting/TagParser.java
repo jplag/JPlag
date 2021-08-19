@@ -12,8 +12,7 @@ public class TagParser {
         String[] tokens = message.split("[{}]", -1);
         String result = tokens[0];
 
-        for (int i = 1; i < tokens.length; i += 2)    // Go to next tag position
-        {
+        for (int i = 1; i < tokens.length; i += 2) { // Go to next tag position
             try {
                 int ind = tokens[i].indexOf('_');
                 String num = (ind == -1) ? tokens[i] : tokens[i].substring(0, ind);

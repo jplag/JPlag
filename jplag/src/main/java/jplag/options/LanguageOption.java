@@ -39,16 +39,12 @@ public enum LanguageOption {
     }
 
     public static LanguageOption fromDisplayName(String displayName) {
-        return Arrays.stream(LanguageOption.values())
-                .filter(languageOption -> languageOption.displayName.equals(displayName))
-                .findFirst()
+        return Arrays.stream(LanguageOption.values()).filter(languageOption -> languageOption.displayName.equals(displayName)).findFirst()
                 .orElse(getDefault());
     }
 
     public static Collection<String> getAllDisplayNames() {
-        return Arrays.stream(LanguageOption.values())
-                .map(languageOption -> languageOption.displayName)
-                .collect(toList());
+        return Arrays.stream(LanguageOption.values()).map(languageOption -> languageOption.displayName).collect(toList());
     }
 
     public static LanguageOption getDefault() {

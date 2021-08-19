@@ -24,9 +24,9 @@ public class ParallelComparisonTest extends TestBase {
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getComparisons().size());
-        assertEquals(1, result.getComparisons().get(0).matches.size());
+        assertEquals(1, result.getComparisons().get(0).getMatches().size());
         assertEquals(1, result.getSimilarityDistribution()[6]);
-        assertEquals(62.07f, result.getComparisons().get(0).percent(), 0.1f);
+        assertEquals(62.07f, result.getComparisons().get(0).similarity(), 0.1f);
     }
 
     /**
@@ -40,7 +40,7 @@ public class ParallelComparisonTest extends TestBase {
         assertEquals(3, result.getComparisons().size());
 
         result.getAllComparisons().forEach(comparison -> {
-            assertEquals(0f, comparison.percent(), 0.1f);
+            assertEquals(0f, comparison.similarity(), 0.1f);
         });
     }
 
@@ -58,8 +58,8 @@ public class ParallelComparisonTest extends TestBase {
 
         // All comparisons with E shall have no matches
         result.getAllComparisons().stream()
-                .filter(comparison -> comparison.secondSubmission.name.equals("E") || comparison.firstSubmission.name.equals("E"))
-                .forEach(comparison -> assertEquals(0f, comparison.percent(), 0.1f));
+                .filter(comparison -> comparison.getSecondSubmission().name.equals("E") || comparison.getFirstSubmission().name.equals("E"))
+                .forEach(comparison -> assertEquals(0f, comparison.similarity(), 0.1f));
 
         // Hard coded assertions on selected comparisons
         assertEquals(24.6f, getSelectedPercent(result, "A", "B"), 0.1f);
@@ -71,21 +71,21 @@ public class ParallelComparisonTest extends TestBase {
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
-        assertEquals(96.4f, biggestMatch.get().percentMaxAB(), 0.1f);
-        assertEquals(65.3f, biggestMatch.get().percentMinAB(), 0.1f);
-        assertEquals(12, biggestMatch.get().matches.size());
+        assertEquals(96.4f, biggestMatch.get().maximalSimilarity(), 0.1f);
+        assertEquals(65.3f, biggestMatch.get().minimalSimilarity(), 0.1f);
+        assertEquals(12, biggestMatch.get().getMatches().size());
 
     }
 
     // TODO SH: Methods like this should be moved to the API and also should accept wildcards
     private float getSelectedPercent(JPlagResult result, String nameA, String nameB) {
-        return getSelectedComparison(result, nameA, nameB).map(JPlagComparison::percent).orElse(-1f);
+        return getSelectedComparison(result, nameA, nameB).map(JPlagComparison::similarity).orElse(-1f);
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
         return result.getAllComparisons().stream()
-                .filter(comparison -> comparison.firstSubmission.name.equals(nameA) && comparison.secondSubmission.name.equals(nameB)
-                        || comparison.firstSubmission.name.equals(nameB) && comparison.secondSubmission.name.equals(nameA))
+                .filter(comparison -> comparison.getFirstSubmission().name.equals(nameA) && comparison.getSecondSubmission().name.equals(nameB)
+                        || comparison.getFirstSubmission().name.equals(nameB) && comparison.getSecondSubmission().name.equals(nameA))
                 .findFirst();
     }
 }
