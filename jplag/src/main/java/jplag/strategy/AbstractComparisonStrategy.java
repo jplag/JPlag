@@ -14,9 +14,9 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
     // TODO PB: I think it's better to make each submission store its own matches with the base code.
     // Hashtable that maps the name of a submissions to its matches with the provided base code.
-    protected Hashtable<String, JPlagComparison> baseCodeMatches = new Hashtable<>(30);
+    private Hashtable<String, JPlagComparison> baseCodeMatches = new Hashtable<>(30);
 
-    protected GreedyStringTiling greedyStringTiling;
+    private GreedyStringTiling greedyStringTiling;
 
     protected JPlagOptions options;
 
@@ -49,7 +49,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
         return Optional.empty();
     }
 
-    protected boolean isAboveSimilarityThreshold(JPlagComparison comparison) {
+    private boolean isAboveSimilarityThreshold(JPlagComparison comparison) {
         float similarityThreshold = this.options.getSimilarityThreshold();
         SimilarityMetric similarityMetric = this.options.getSimilarityMetric();
 

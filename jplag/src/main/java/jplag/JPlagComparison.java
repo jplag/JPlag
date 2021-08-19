@@ -49,7 +49,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         if (s == 0) {     // submission A
             for (i = 1; i < size; i++) {
                 for (j = 0; j < (size - i); j++) {
-                    if (matches.get(perm[j]).startA > matches.get(perm[j + 1]).startA) {
+                    if (matches.get(perm[j]).getStartA() > matches.get(perm[j + 1]).getStartA()) {
                         tmp = perm[j];
                         perm[j] = perm[j + 1];
                         perm[j + 1] = tmp;
@@ -59,7 +59,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         } else {        // submission B
             for (i = 1; i < size; i++) {
                 for (j = 0; j < (size - i); j++) {
-                    if (matches.get(perm[j]).startB > matches.get(perm[j + 1]).startB) {
+                    if (matches.get(perm[j]).getStartB() > matches.get(perm[j + 1]).getStartB()) {
                         tmp = perm[j];
                         perm[j] = perm[j + 1];
                         perm[j + 1] = tmp;
@@ -81,22 +81,22 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         int numberOfMatchedTokens = 0;
 
         for (Match match : matches) {
-            numberOfMatchedTokens += match.length;
+            numberOfMatchedTokens += match.getLength();
         }
 
         return numberOfMatchedTokens;
     }
 
     private int biggestMatch() {
-        int erg = 0;
+        int maximalMatchLenght = 0;
 
         for (Match match : matches) {
-            if (match.length > erg) {
-                erg = match.length;
+            if (match.getLength() > maximalMatchLenght) {
+                maximalMatchLenght = match.getLength();
             }
         }
 
-        return erg;
+        return maximalMatchLenght;
     }
 
     public final float roundedPercent() {
@@ -188,9 +188,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         int i, h, starti, starth, count = 1;
 
         o1: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
+            starti = (j == 0 ? matches.get(i).getStartA() : matches.get(i).getStartB());
             for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).startA : matches.get(h).startB);
+                starth = (j == 0 ? matches.get(h).getStartA() : matches.get(h).getStartB());
                 if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o1;
                 }
@@ -199,13 +199,13 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         }
 
         String[] res = new String[count];
-        res[0] = tokenList.getToken((j == 0 ? matches.get(0).startA : matches.get(0).startB)).file;
+        res[0] = tokenList.getToken((j == 0 ? matches.get(0).getStartA() : matches.get(0).getStartB())).file;
         count = 1;
 
         o2: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).startA : matches.get(i).startB);
+            starti = (j == 0 ? matches.get(i).getStartA() : matches.get(i).getStartB());
             for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).startA : matches.get(h).startB);
+                starth = (j == 0 ? matches.get(h).getStartA() : matches.get(h).getStartB());
                 if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o2;
                 }
