@@ -57,15 +57,13 @@ public class JPlagResult {
     }
 
     /**
-     * Note: Before, comparisons with a similarity below the given threshold were also included in the similarity matrix.
+     * Drops elements from the comparison list to free memory. Note, that this affects the similarity distribution
+     * and is only meant to be used if you don't need the information about comparisons with lower match percentage
+     * anymore.
+     * @param limit the number of comparisons to keep in the list
      */
-    private int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
-        int[] similarityDistribution = new int[10];
-
-        comparisons.stream().map(JPlagComparison::percent).map(percent -> percent / 10).map(Float::intValue).map(index -> index == 10 ? 9 : index)
-                .forEach(index -> similarityDistribution[index]++);
-
-        return similarityDistribution;
+    public void dropComparisons(int limit) {
+        this.comparisons = this.getComparisons(limit);
     }
 
     /**
@@ -96,26 +94,16 @@ public class JPlagResult {
         return comparisons.subList(0, Math.min(maxCount, comparisons.size()));
     }
 
-    /**
-     * Drops elements from the comparison list to free memory. Note, that this affects the similarity distribution
-     * and is only meant to be used if you don't need the information about comparisons with lower match percentage
-     * anymore.
-     * @param limit the number of comparisons to keep in the list
-     */
-    public void dropComparisons(int limit) {
-        this.comparisons = this.getComparisons(limit);
-    }
-
     public long getDuration() {
         return durationInMillis;
     }
 
-    public JPlagOptions getOptions() {
-        return options;
-    }
-
     public int getNumberOfSubmissions() {
         return numberOfSubmissions;
+    }
+
+    public JPlagOptions getOptions() {
+        return options;
     }
 
     public int[] getSimilarityDistribution() {
@@ -126,5 +114,17 @@ public class JPlagResult {
     public String toString() {
         return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getComparisons().size(),
                 getDuration(), getOptions().getLanguageOption(), getNumberOfSubmissions());
+    }
+
+    /**
+     * Note: Before, comparisons with a similarity below the given threshold were also included in the similarity matrix.
+     */
+    private int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
+        int[] similarityDistribution = new int[10];
+
+        comparisons.stream().map(JPlagComparison::percent).map(percent -> percent / 10).map(Float::intValue).map(index -> index == 10 ? 9 : index)
+                .forEach(index -> similarityDistribution[index]++);
+
+        return similarityDistribution;
     }
 }

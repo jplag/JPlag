@@ -16,7 +16,7 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
- * Command line arguments for the JPlag CLI. Each argument is defined through an enuemral.
+ * Command line arguments for the JPlag CLI. Each argument is defined through an enumeral.
  * @author Timur Saglam
  */
 public enum CommandLineArgument {

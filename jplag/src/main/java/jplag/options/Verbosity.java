@@ -1,10 +1,9 @@
 package jplag.options;
 
-public enum Verbosity {
+public enum Verbosity { // TODO TS: These levels are not used consistently.
     PARSER,
     QUIET,
-    LONG,
-    DETAILS;
+    LONG;
 
     public static Verbosity fromOption(String optionName) {
         switch (optionName) {
@@ -14,8 +13,6 @@ public enum Verbosity {
             return QUIET;
         case "long":
             return LONG;
-        case "details":
-            return DETAILS;
         default:
             return QUIET;
         }

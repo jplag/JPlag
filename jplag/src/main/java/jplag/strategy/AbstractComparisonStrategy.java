@@ -8,7 +8,6 @@ import jplag.GreedyStringTiling;
 import jplag.JPlagComparison;
 import jplag.Submission;
 import jplag.options.JPlagOptions;
-import jplag.options.SimilarityMetric;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
@@ -43,26 +42,10 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
             comparison.baseCodeMatchesA = baseCodeMatches.get(comparison.firstSubmission.name);
             comparison.baseCodeMatchesB = baseCodeMatches.get(comparison.secondSubmission.name);
         }
-        if (isAboveSimilarityThreshold(comparison)) {
+        if (options.getSimilarityMetric().isAboveThreshold(comparison, options.getSimilarityThreshold())) {
             return Optional.of(comparison);
         }
         return Optional.empty();
-    }
-
-    private boolean isAboveSimilarityThreshold(JPlagComparison comparison) {
-        float similarityThreshold = this.options.getSimilarityThreshold();
-        SimilarityMetric similarityMetric = this.options.getSimilarityMetric();
-
-        switch (similarityMetric) {
-        case AVG:
-            return comparison.percent() >= similarityThreshold;
-        case MAX:
-            return comparison.percentMaxAB() >= similarityThreshold;
-        case MIN:
-            return comparison.percentMinAB() >= similarityThreshold;
-        default:
-            return true;
-        }
     }
 
 }
