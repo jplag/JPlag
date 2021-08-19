@@ -12,17 +12,18 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
     private static final int ROUNDING_FACTOR = 10;
     
-    private Submission firstSubmission;
-    private Submission secondSubmission;
+    private final Submission firstSubmission;
+    private final Submission secondSubmission;
 
     private JPlagComparison firstBaseCodeMatches = null;
     private JPlagComparison secondBaseCodeMatches = null;
 
-    private List<Match> matches = new ArrayList<>();
+    private final List<Match> matches;
 
     public JPlagComparison(Submission firstSubmission, Submission secondSubmission) {
         this.firstSubmission = firstSubmission;
         this.secondSubmission = secondSubmission;
+        matches = new ArrayList<>();
     }
 
     /**
@@ -157,19 +158,19 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     /**
      * @return Maximum similarity in percent of both submissions.
      */
-    public final float maximalPercent() {
+    public final float maximalSimilarity() {
         return Math.max(similarityOfFirst(), similarityOfSecond());
     }
 
     /**
      * @return Minimum similarity in percent of both submissions.
      */
-    public final float minimalPercent() {
+    public final float minimalSimilarity() {
         return Math.min(similarityOfFirst(), similarityOfSecond());
     }
 
     /**
-     * @return Similarity in percent.
+     * @return Similarity in percent (what percentage of tokens across both submissions are matched).
      */
     public final float similarity() {
         float sa, sb;
@@ -184,7 +185,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
-     * @return Similarity in percent for the first submission.
+     * @return Similarity in percent for the first submission (what percent of the first submission is similar to the second).
      */
     public final float similarityOfFirst() {
         int divisor;
@@ -197,7 +198,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
-     * @return Similarity in percent for the second submission.
+     * @return Similarity in percent for the second submission (what percent of the second submission is similar to the first).
      */
     public final float similarityOfSecond() {
         int divisor;

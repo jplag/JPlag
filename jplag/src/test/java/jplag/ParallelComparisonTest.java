@@ -71,8 +71,8 @@ public class ParallelComparisonTest extends TestBase {
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
-        assertEquals(96.4f, biggestMatch.get().maximalPercent(), 0.1f);
-        assertEquals(65.3f, biggestMatch.get().minimalPercent(), 0.1f);
+        assertEquals(96.4f, biggestMatch.get().maximalSimilarity(), 0.1f);
+        assertEquals(65.3f, biggestMatch.get().minimalSimilarity(), 0.1f);
         assertEquals(12, biggestMatch.get().getMatches().size());
 
     }

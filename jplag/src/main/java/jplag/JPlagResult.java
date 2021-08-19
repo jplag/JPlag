@@ -94,6 +94,9 @@ public class JPlagResult {
         return comparisons.subList(0, Math.min(maxCount, comparisons.size()));
     }
 
+    /**
+     * @return the duration of the comparison in milliseconds.
+     */
     public long getDuration() {
         return durationInMillis;
     }

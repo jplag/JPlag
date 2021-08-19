@@ -6,8 +6,8 @@ import jplag.JPlagComparison;
 
 public enum SimilarityMetric {
     AVG(it -> it.similarity()),
-    MIN(it -> it.minimalPercent()),
-    MAX(it -> it.maximalPercent());
+    MIN(it -> it.minimalSimilarity()),
+    MAX(it -> it.maximalSimilarity());
 
     private final Function<JPlagComparison, Float> similarityFunction;
 

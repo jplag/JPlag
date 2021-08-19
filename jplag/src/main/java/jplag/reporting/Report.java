@@ -25,9 +25,9 @@ import jplag.Token;
 import jplag.TokenList;
 
 /**
- * This class writes all the HTML pages
+ * This class writes all the HTML pages.
  */
-public class Report {
+public class Report { // Mostly legacy code with some minor improvements.
 
     private static final String CSV_FILE = "matches_avg.csv";
     private static final String[] PICS = {"forward.gif", "back.gif"};

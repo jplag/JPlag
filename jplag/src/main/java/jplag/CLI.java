@@ -6,13 +6,13 @@ import static jplag.CommandLineArgument.DEBUG;
 import static jplag.CommandLineArgument.EXCLUDE_FILE;
 import static jplag.CommandLineArgument.LANGUAGE;
 import static jplag.CommandLineArgument.MIN_TOKEN_MATCH;
+import static jplag.CommandLineArgument.RESULT_FOLDER;
 import static jplag.CommandLineArgument.ROOT_DIRECTORY;
 import static jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
 import static jplag.CommandLineArgument.STORED_MATCHES;
 import static jplag.CommandLineArgument.SUBDIRECTORY;
 import static jplag.CommandLineArgument.SUFFIXES;
 import static jplag.CommandLineArgument.VERBOSITY;
-import static jplag.CommandLineArgument.RESULT_FOLDER;
 
 import java.io.File;
 import java.util.Random;

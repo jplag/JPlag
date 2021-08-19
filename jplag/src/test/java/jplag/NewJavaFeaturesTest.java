@@ -1,8 +1,8 @@
 package jplag;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 public class NewJavaFeaturesTest extends TestBase {
     private static final String EXCLUSION_FILE_NAME = "blacklist.txt";
