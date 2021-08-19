@@ -17,7 +17,7 @@ public class NormalComparisonTest extends TestBase {
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getComparisons().size());
-        assertEquals(1, result.getComparisons().get(0).matches.size());
+        assertEquals(1, result.getComparisons().get(0).getMatches().size());
         assertEquals(1, result.getSimilarityDistribution()[6]);
         assertEquals(62.07f, result.getComparisons().get(0).percent(), 0.1f);
     }
@@ -56,8 +56,8 @@ public class NormalComparisonTest extends TestBase {
         result.getAllComparisons()
                 .stream()
                 .filter(comparison ->
-                        comparison.secondSubmission.name.equals("E") ||
-                                comparison.firstSubmission.name.equals("E"))
+                        comparison.getSecondSubmission().name.equals("E") ||
+                                comparison.getFirstSubmission().name.equals("E"))
                 .forEach(comparison ->
                         assertEquals(0f, comparison.percent(), 0.1f)
                 );
@@ -74,7 +74,7 @@ public class NormalComparisonTest extends TestBase {
         var biggestMatch = getSelectedComparison(result, "A", "D");
         assertEquals(96.4f, biggestMatch.get().percentMaxAB(), 0.1f);
         assertEquals(65.3f, biggestMatch.get().percentMinAB(), 0.1f);
-        assertEquals(12, biggestMatch.get().matches.size());
+        assertEquals(12, biggestMatch.get().getMatches().size());
 
     }
 
@@ -88,10 +88,10 @@ public class NormalComparisonTest extends TestBase {
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
         return result.getAllComparisons().stream()
                 .filter(comparison ->
-                        comparison.firstSubmission.name.equals(nameA) &&
-                                comparison.secondSubmission.name.equals(nameB) ||
-                                comparison.firstSubmission.name.equals(nameB) &&
-                                        comparison.secondSubmission.name.equals(nameA))
+                        comparison.getFirstSubmission().name.equals(nameA) &&
+                                comparison.getSecondSubmission().name.equals(nameB) ||
+                                comparison.getFirstSubmission().name.equals(nameB) &&
+                                        comparison.getSecondSubmission().name.equals(nameA))
                 .findFirst();
     }
 }

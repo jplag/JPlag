@@ -10,13 +10,13 @@ import java.util.List;
  */
 public class JPlagComparison implements Comparator<JPlagComparison> {
 
-    public Submission firstSubmission; // TODO TS: Make public fields private, use getters.
-    public Submission secondSubmission;
+    private Submission firstSubmission;
+    private Submission secondSubmission;
 
-    public JPlagComparison baseCodeMatchesA = null;
-    public JPlagComparison baseCodeMatchesB = null;
+    private JPlagComparison firstBaseCodeMatches = null;
+    private JPlagComparison secondBaseCodeMatches = null;
 
-    public List<Match> matches = new ArrayList<>();
+    private List<Match> matches = new ArrayList<>();
 
     public JPlagComparison(Submission firstSubmission, Submission secondSubmission) {
         this.firstSubmission = firstSubmission;
@@ -123,9 +123,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
      */
     public final float percent() {
         float sa, sb;
-        if (baseCodeMatchesB != null && baseCodeMatchesA != null) {
-            sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - baseCodeMatchesA.getNumberOfMatchedTokens();
-            sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - baseCodeMatchesB.getNumberOfMatchedTokens();
+        if (secondBaseCodeMatches != null && firstBaseCodeMatches != null) {
+            sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
+            sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
         } else {
             sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
             sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
@@ -138,8 +138,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
      */
     public final float percentA() {
         int divisor;
-        if (baseCodeMatchesA != null) {
-            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - baseCodeMatchesA.getNumberOfMatchedTokens();
+        if (firstBaseCodeMatches != null) {
+            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
         } else {
             divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
         }
@@ -151,8 +151,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
      */
     public final float percentB() {
         int divisor;
-        if (baseCodeMatchesB != null) {
-            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - baseCodeMatchesB.getNumberOfMatchedTokens();
+        if (secondBaseCodeMatches != null) {
+            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
         } else {
             divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
         }
@@ -235,12 +235,61 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
     private final float percentBasecodeA() {
         float sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
-        return baseCodeMatchesA.getNumberOfMatchedTokens() * 100 / sa;
+        return firstBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sa;
     }
 
     private final float percentBasecodeB() {
         float sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
-        return baseCodeMatchesB.getNumberOfMatchedTokens() * 100 / sb;
+        return secondBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sb;
+    }
+
+    /**
+     * @return the first of the two submissions.
+     */
+    public Submission getFirstSubmission() {
+        return firstSubmission;
+    }
+
+    /**
+     * @return the second of the two submissions.
+     */
+    public Submission getSecondSubmission() {
+        return secondSubmission;
+    }
+
+    /**
+     * @return the base code matches of the first submission.
+     */
+    public JPlagComparison getFirstBaseCodeMatches() {
+        return firstBaseCodeMatches;
+    }
+
+    /**
+     * @return the base code matches of the second submissions.
+     */
+    public JPlagComparison getSecondBaseCodeMatches() {
+        return secondBaseCodeMatches;
+    }
+
+    /**
+     * @return all matches between the two submissions.
+     */
+    public List<Match> getMatches() {
+        return matches;
+    }
+
+    /**
+     * Sets the base code matches of the second submissions.
+     */
+    public void setFirstBaseCodeMatches(JPlagComparison firstBaseCodeMatches) {
+        this.firstBaseCodeMatches = firstBaseCodeMatches;
+    }
+
+    /**
+     * Sets the base code matches of the second submissions.
+     */
+    public void setSecondBaseCodeMatches(JPlagComparison secondBaseCodeMatches) {
+        this.secondBaseCodeMatches = secondBaseCodeMatches;
     }
 
 }
