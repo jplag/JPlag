@@ -10,6 +10,8 @@ import java.util.List;
  */
 public class JPlagComparison implements Comparator<JPlagComparison> {
 
+    private static final int ROUNDING_FACTOR = 10;
+    
     private Submission firstSubmission;
     private Submission secondSubmission;
 
@@ -23,14 +25,17 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         this.secondSubmission = secondSubmission;
     }
 
-    public final void addMatch(int startA, int startB, int length) {
+    /**
+     * Add a match to the comparison (token indices and number of tokens), if it does not overlap with the existing matches.
+     * @see Match#Match(int, int, int)
+     */
+    public final void addMatch(int firstStart, int secondStart, int length) {
         for (Match match : matches) {
-            if (match.overlap(startA, startB, length)) {
+            if (match.overlap(firstStart, secondStart, length)) {
                 return;
             }
         }
-
-        matches.add(new Match(startA, startB, length));
+        matches.add(new Match(firstStart, secondStart, length));
     }
 
     /**
@@ -43,13 +48,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         return "#" + help + "0000";
     }
 
-    /*
-     * A few methods to calculate some statistical data
-     */
-
     @Override
     public int compare(JPlagComparison comparison1, JPlagComparison comparison2) {
-        return Float.compare(comparison2.percent(), comparison1.percent()); // comparison2 first!
+        return Float.compare(comparison2.similarity(), comparison1.similarity()); // comparison2 first!
     }
 
     @Override
@@ -61,7 +62,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
-     * This method returns all the files which contributed to a match. Parameter: j == 0 submission A, j != 0 submission B.
+     * This method returns all the files which contributed to a match. Parameter: j == 0 1st submission, j != 0 2nd submission.
      */
     public final String[] files(int j) {
         if (matches.size() == 0) {
@@ -106,6 +107,27 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
+     * @return the base code matches of the first submission.
+     */
+    public JPlagComparison getFirstBaseCodeMatches() {
+        return firstBaseCodeMatches;
+    }
+
+    /**
+     * @return the first of the two submissions.
+     */
+    public Submission getFirstSubmission() {
+        return firstSubmission;
+    }
+
+    /**
+     * @return all matches between the two submissions.
+     */
+    public List<Match> getMatches() {
+        return matches;
+    }
+
+    /**
      * Get the total number of matched tokens for this comparison.
      */
     public final int getNumberOfMatchedTokens() {
@@ -119,9 +141,37 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
+     * @return the base code matches of the second submissions.
+     */
+    public JPlagComparison getSecondBaseCodeMatches() {
+        return secondBaseCodeMatches;
+    }
+
+    /**
+     * @return the second of the two submissions.
+     */
+    public Submission getSecondSubmission() {
+        return secondSubmission;
+    }
+
+    /**
+     * @return Maximum similarity in percent of both submissions.
+     */
+    public final float maximalPercent() {
+        return Math.max(similarityOfFirst(), similarityOfSecond());
+    }
+
+    /**
+     * @return Minimum similarity in percent of both submissions.
+     */
+    public final float minimalPercent() {
+        return Math.min(similarityOfFirst(), similarityOfSecond());
+    }
+
+    /**
      * @return Similarity in percent.
      */
-    public final float percent() {
+    public final float similarity() {
         float sa, sb;
         if (secondBaseCodeMatches != null && firstBaseCodeMatches != null) {
             sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
@@ -136,7 +186,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     /**
      * @return Similarity in percent for the first submission.
      */
-    public final float percentA() {
+    public final float similarityOfFirst() {
         int divisor;
         if (firstBaseCodeMatches != null) {
             divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
@@ -149,7 +199,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     /**
      * @return Similarity in percent for the second submission.
      */
-    public final float percentB() {
+    public final float similarityOfSecond() {
         int divisor;
         if (secondBaseCodeMatches != null) {
             divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
@@ -160,39 +210,42 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
-     * @return Maximum similarity in percent of both submissions.
+     * @return Similarity in percent rounded down to the nearest tenth.
      */
-    public final float percentMaxAB() {
-        return Math.max(percentA(), percentB());
+    public final float roundedSimilarity() {
+        return ((int) (similarity() * ROUNDING_FACTOR)) / (float) ROUNDING_FACTOR;
     }
 
     /**
-     * @return Minimum similarity in percent of both submissions.
+     * @return Similarity of the first submission to the basecode in percent rounded down to the nearest tenth.
      */
-    public final float percentMinAB() {
-        return Math.min(percentA(), percentB());
+    public final float basecodeSimilarityOfFirst() {
+        return ((int) (firstBasecodeSimilarity() * ROUNDING_FACTOR)) / (float) ROUNDING_FACTOR;
+    }
+    
+    /**
+     * @return Similarity of the second submission to the basecode in percent rounded down to the nearest tenth.
+     */
+    public final float basecodeSimilarityOfSecond() {
+        return ((int) (secondBasecodeSimilarity() * ROUNDING_FACTOR)) / (float) ROUNDING_FACTOR;
     }
 
     /**
-     * @return Similarity in percent rounded to the nearest tenth.
+     * Sets the base code matches of the second submissions.
      */
-    public final float roundedPercent() {
-        float percent = percent();
-        return ((int) (percent * 10)) / (float) 10;
+    public void setFirstBaseCodeMatches(JPlagComparison firstBaseCodeMatches) {
+        this.firstBaseCodeMatches = firstBaseCodeMatches;
     }
 
-    public final float roundedPercentBasecodeA() {
-        float percent = percentBasecodeA();
-        return ((int) (percent * 10)) / (float) 10;
-    }
-
-    public final float roundedPercentBasecodeB() {
-        float percent = percentBasecodeB();
-        return ((int) (percent * 10)) / (float) 10;
+    /**
+     * Sets the base code matches of the second submissions.
+     */
+    public void setSecondBaseCodeMatches(JPlagComparison secondBaseCodeMatches) {
+        this.secondBaseCodeMatches = secondBaseCodeMatches;
     }
 
     /*
-     * s==0 uses the start indexes of subA as key for the sorting algorithm. Otherwise the start indexes of subB are used.
+     * s==0 uses the start indexes of 1st submission as key for the sorting algorithm. Otherwise the start indexes of 2nd submission are used.
      */
     public final int[] sort_permutation(int s) {   // bubblesort!!!
         int size = matches.size();
@@ -204,7 +257,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
             perm[i] = i;
         }
 
-        if (s == 0) {     // submission A
+        if (s == 0) {     // First Submission
             for (i = 1; i < size; i++) {
                 for (j = 0; j < (size - i); j++) {
                     if (matches.get(perm[j]).getStartA() > matches.get(perm[j + 1]).getStartA()) {
@@ -214,7 +267,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
                     }
                 }
             }
-        } else {        // submission B
+        } else {        // Second submission
             for (i = 1; i < size; i++) {
                 for (j = 0; j < (size - i); j++) {
                     if (matches.get(perm[j]).getStartB() > matches.get(perm[j + 1]).getStartB()) {
@@ -233,63 +286,14 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         return firstSubmission.name + " <-> " + secondSubmission.name;
     }
 
-    private final float percentBasecodeA() {
+    private final float firstBasecodeSimilarity() {
         float sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
         return firstBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sa;
     }
 
-    private final float percentBasecodeB() {
+    private final float secondBasecodeSimilarity() {
         float sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
         return secondBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sb;
-    }
-
-    /**
-     * @return the first of the two submissions.
-     */
-    public Submission getFirstSubmission() {
-        return firstSubmission;
-    }
-
-    /**
-     * @return the second of the two submissions.
-     */
-    public Submission getSecondSubmission() {
-        return secondSubmission;
-    }
-
-    /**
-     * @return the base code matches of the first submission.
-     */
-    public JPlagComparison getFirstBaseCodeMatches() {
-        return firstBaseCodeMatches;
-    }
-
-    /**
-     * @return the base code matches of the second submissions.
-     */
-    public JPlagComparison getSecondBaseCodeMatches() {
-        return secondBaseCodeMatches;
-    }
-
-    /**
-     * @return all matches between the two submissions.
-     */
-    public List<Match> getMatches() {
-        return matches;
-    }
-
-    /**
-     * Sets the base code matches of the second submissions.
-     */
-    public void setFirstBaseCodeMatches(JPlagComparison firstBaseCodeMatches) {
-        this.firstBaseCodeMatches = firstBaseCodeMatches;
-    }
-
-    /**
-     * Sets the base code matches of the second submissions.
-     */
-    public void setSecondBaseCodeMatches(JPlagComparison secondBaseCodeMatches) {
-        this.secondBaseCodeMatches = secondBaseCodeMatches;
     }
 
 }

@@ -5,9 +5,9 @@ import java.util.function.Function;
 import jplag.JPlagComparison;
 
 public enum SimilarityMetric {
-    AVG(it -> it.percent()),
-    MIN(it -> it.percentMinAB()),
-    MAX(it -> it.percentMaxAB());
+    AVG(it -> it.similarity()),
+    MIN(it -> it.minimalPercent()),
+    MAX(it -> it.maximalPercent());
 
     private final Function<JPlagComparison, Float> similarityFunction;
 

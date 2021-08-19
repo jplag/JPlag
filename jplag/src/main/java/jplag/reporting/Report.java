@@ -138,8 +138,8 @@ public class Report {
         // sort();
 
         htmlFile.println("<TABLE BORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#d0d0d0\">");
-        htmlFile.println("<TR><TH><TH>" + comparison.getFirstSubmission().name + " (" + comparison.percentA() + "%)<TH>" + comparison.getSecondSubmission().name
-                + " (" + comparison.percentB() + "%)<TH>" + msg.getString("AllMatches.Tokens"));
+        htmlFile.println("<TR><TH><TH>" + comparison.getFirstSubmission().name + " (" + comparison.similarityOfFirst() + "%)<TH>" + comparison.getSecondSubmission().name
+                + " (" + comparison.similarityOfSecond() + "%)<TH>" + msg.getString("AllMatches.Tokens"));
 
         for (int i = 0; i < comparison.getMatches().size(); i++) {
             match = comparison.getMatches().get(i);
@@ -177,8 +177,8 @@ public class Report {
 
         if (result.getOptions().hasBaseCode()) {
             htmlFile.print(
-                    "<TR><TD BGCOLOR=\"#C0C0C0\"><TD>" + msg.getString("AllMatches.Basecode") + " " + comparison.roundedPercentBasecodeA() + "%");
-            htmlFile.println("<TD>" + msg.getString("AllMatches.Basecode") + " " + comparison.roundedPercentBasecodeB() + "%<TD>&nbsp;");
+                    "<TR><TD BGCOLOR=\"#C0C0C0\"><TD>" + msg.getString("AllMatches.Basecode") + " " + comparison.basecodeSimilarityOfFirst() + "%");
+            htmlFile.println("<TD>" + msg.getString("AllMatches.Basecode") + " " + comparison.basecodeSimilarityOfSecond() + "%<TD>&nbsp;");
         }
 
         htmlFile.println("</TABLE>");
@@ -562,12 +562,12 @@ public class Report {
             String submissionNameA = comparison.getFirstSubmission().name;
             String submissionNameB = comparison.getSecondSubmission().name;
 
-            htmlFile.print("<TR><TD BGCOLOR=" + color(comparison.percentA(), 128, 192, 128, 192, 255, 255) + ">" + submissionNameA
+            htmlFile.print("<TR><TD BGCOLOR=" + color(comparison.similarityOfFirst(), 128, 192, 128, 192, 255, 255) + ">" + submissionNameA
                     + "</TD><TD><nobr>-&gt;</nobr>");
 
-            htmlFile.print("</TD><TD BGCOLOR=" + color(comparison.percentB(), 128, 192, 128, 192, 255, 255) + " ALIGN=center><A HREF=\"match"
+            htmlFile.print("</TD><TD BGCOLOR=" + color(comparison.similarityOfSecond(), 128, 192, 128, 192, 255, 255) + " ALIGN=center><A HREF=\"match"
                     + getComparisonIndex(comparison) + ".html\">" + submissionNameB + "</A><BR><FONT COLOR=\""
-                    + color(comparison.percent(), 0, 255, 0, 0, 0, 0) + "\">(" + (((int) (comparison.percent() * 10)) / (float) 10) + "%)</FONT>");
+                    + color(comparison.similarity(), 0, 255, 0, 0, 0, 0) + "\">(" + (((int) (comparison.similarity() * 10)) / (float) 10) + "%)</FONT>");
 
             htmlFile.println("</TD></TR>");
         }
@@ -591,7 +591,7 @@ public class Report {
                 new String[] {comparison.getFirstSubmission().name, comparison.getSecondSubmission().name}));
         htmlFile.println("      </h3>");
         htmlFile.println("      <h1 align=\"center\">");
-        htmlFile.println("        " + comparison.roundedPercent() + "%");
+        htmlFile.println("        " + comparison.roundedSimilarity() + "%");
         htmlFile.println("      </h1>");
         htmlFile.println("      <center>");
         htmlFile.println("        <a href=\"index.html\" target=\"_top\">");
@@ -659,7 +659,7 @@ public class Report {
                 writer.write(getComparisonIndex(comparison) + ";");
                 writer.write(submissionNameA + ";");
                 writer.write(submissionNameB + ";");
-                writer.write((((int) (comparison.percent() * 10)) / (float) 10) + ";");
+                writer.write((((int) (comparison.similarity() * 10)) / (float) 10) + ";");
                 writer.write("\n");
             }
 

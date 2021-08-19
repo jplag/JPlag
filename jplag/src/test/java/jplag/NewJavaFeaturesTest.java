@@ -16,7 +16,7 @@ public class NewJavaFeaturesTest extends TestBase {
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getComparisons().size());
         var comparison = result.getComparisons().get(0);
-        assertEquals(100, comparison.percent(), Double.MIN_NORMAL);
+        assertEquals(100, comparison.similarity(), Double.MIN_NORMAL);
         
         // Five matches that each start at the same position:
         assertEquals(4, comparison.getMatches().size());

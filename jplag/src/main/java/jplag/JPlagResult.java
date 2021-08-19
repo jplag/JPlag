@@ -53,7 +53,7 @@ public class JPlagResult {
         this.numberOfSubmissions = numberOfSubmissions;
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
-        comparisons.sort((first, second) -> Float.compare(second.percent(), first.percent())); // Sort by percentage (descending).
+        comparisons.sort((first, second) -> Float.compare(second.similarity(), first.similarity())); // Sort by percentage (descending).
     }
 
     /**
@@ -122,7 +122,7 @@ public class JPlagResult {
     private int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
         int[] similarityDistribution = new int[10];
 
-        comparisons.stream().map(JPlagComparison::percent).map(percent -> percent / 10).map(Float::intValue).map(index -> index == 10 ? 9 : index)
+        comparisons.stream().map(JPlagComparison::similarity).map(percent -> percent / 10).map(Float::intValue).map(index -> index == 10 ? 9 : index)
                 .forEach(index -> similarityDistribution[index]++);
 
         return similarityDistribution;

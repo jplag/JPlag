@@ -19,7 +19,7 @@ public class NormalComparisonTest extends TestBase {
         assertEquals(1, result.getComparisons().size());
         assertEquals(1, result.getComparisons().get(0).getMatches().size());
         assertEquals(1, result.getSimilarityDistribution()[6]);
-        assertEquals(62.07f, result.getComparisons().get(0).percent(), 0.1f);
+        assertEquals(62.07f, result.getComparisons().get(0).similarity(), 0.1f);
     }
 
     /**
@@ -33,7 +33,7 @@ public class NormalComparisonTest extends TestBase {
         assertEquals(3, result.getComparisons().size());
 
         result.getAllComparisons().forEach(comparison -> {
-            assertEquals(0f, comparison.percent(), 0.1f);
+            assertEquals(0f, comparison.similarity(), 0.1f);
         });
     }
 
@@ -59,7 +59,7 @@ public class NormalComparisonTest extends TestBase {
                         comparison.getSecondSubmission().name.equals("E") ||
                                 comparison.getFirstSubmission().name.equals("E"))
                 .forEach(comparison ->
-                        assertEquals(0f, comparison.percent(), 0.1f)
+                        assertEquals(0f, comparison.similarity(), 0.1f)
                 );
 
         // Hard coded assertions on selected comparisons
@@ -72,8 +72,8 @@ public class NormalComparisonTest extends TestBase {
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
-        assertEquals(96.4f, biggestMatch.get().percentMaxAB(), 0.1f);
-        assertEquals(65.3f, biggestMatch.get().percentMinAB(), 0.1f);
+        assertEquals(96.4f, biggestMatch.get().maximalPercent(), 0.1f);
+        assertEquals(65.3f, biggestMatch.get().minimalPercent(), 0.1f);
         assertEquals(12, biggestMatch.get().getMatches().size());
 
     }
@@ -81,7 +81,7 @@ public class NormalComparisonTest extends TestBase {
     // TODO SH: Methods like this should be moved to the API and also should accept wildcards
     private float getSelectedPercent(JPlagResult result, String nameA, String nameB) {
         return getSelectedComparison(result, nameA, nameB)
-                .map(JPlagComparison::percent)
+                .map(JPlagComparison::similarity)
                 .orElse(-1f);
     }
 

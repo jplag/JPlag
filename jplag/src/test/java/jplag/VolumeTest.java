@@ -53,7 +53,7 @@ public class VolumeTest extends TestBase {
             var key = result.getFirstSubmission().name + result.getSecondSubmission().name;
 
             assertTrue(csv.containsKey(key));
-            assertEquals(csv.getOrDefault(key, -1f), result.percent(), 0.1f);
+            assertEquals(csv.getOrDefault(key, -1f), result.similarity(), 0.1f);
         });
 
     }

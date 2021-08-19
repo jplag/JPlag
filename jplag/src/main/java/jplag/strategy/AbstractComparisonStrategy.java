@@ -37,7 +37,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
      */
     protected Optional<JPlagComparison> compareSubmissions(Submission first, Submission second, boolean withBaseCode) {
         JPlagComparison comparison = greedyStringTiling.compare(first, second);
-        System.out.println("Comparing " + first.name + "-" + second.name + ": " + comparison.percent());
+        System.out.println("Comparing " + first.name + "-" + second.name + ": " + comparison.similarity());
         if (withBaseCode) {
             comparison.setFirstBaseCodeMatches(baseCodeMatches.get(comparison.getFirstSubmission().name));
             comparison.setSecondBaseCodeMatches(baseCodeMatches.get(comparison.getSecondSubmission().name));
