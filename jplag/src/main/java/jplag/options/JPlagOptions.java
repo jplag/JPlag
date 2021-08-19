@@ -126,7 +126,7 @@ public class JPlagOptions {
     private boolean hasMinTokenMatch() {
         return this.minTokenMatch != null;
     }
-    
+
     public ComparisonMode getComparisonMode() {
         return comparisonMode;
     }

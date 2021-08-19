@@ -11,7 +11,7 @@ import java.util.List;
 public class JPlagComparison implements Comparator<JPlagComparison> {
 
     private static final int ROUNDING_FACTOR = 10;
-    
+
     private final Submission firstSubmission;
     private final Submission secondSubmission;
 
@@ -63,7 +63,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
-     * This method returns all the files which contributed to a match. Parameter: j == 0 1st submission, j != 0 2nd submission.
+     * This method returns all the files which contributed to a match. Parameter: j == 0 1st submission, j != 0 2nd
+     * submission.
      */
     public final String[] files(int j) {
         if (matches.size() == 0) {
@@ -185,7 +186,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
-     * @return Similarity in percent for the first submission (what percent of the first submission is similar to the second).
+     * @return Similarity in percent for the first submission (what percent of the first submission is similar to the
+     * second).
      */
     public final float similarityOfFirst() {
         int divisor;
@@ -198,7 +200,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /**
-     * @return Similarity in percent for the second submission (what percent of the second submission is similar to the first).
+     * @return Similarity in percent for the second submission (what percent of the second submission is similar to the
+     * first).
      */
     public final float similarityOfSecond() {
         int divisor;
@@ -223,7 +226,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public final float basecodeSimilarityOfFirst() {
         return ((int) (firstBasecodeSimilarity() * ROUNDING_FACTOR)) / (float) ROUNDING_FACTOR;
     }
-    
+
     /**
      * @return Similarity of the second submission to the basecode in percent rounded down to the nearest tenth.
      */
@@ -246,7 +249,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     }
 
     /*
-     * s==0 uses the start indexes of 1st submission as key for the sorting algorithm. Otherwise the start indexes of 2nd submission are used.
+     * s==0 uses the start indexes of 1st submission as key for the sorting algorithm. Otherwise the start indexes of 2nd
+     * submission are used.
      */
     public final int[] sort_permutation(int s) {   // bubblesort!!!
         int size = matches.size();

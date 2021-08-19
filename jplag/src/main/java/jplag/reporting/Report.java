@@ -138,8 +138,8 @@ public class Report { // Mostly legacy code with some minor improvements.
         // sort();
 
         htmlFile.println("<TABLE BORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#d0d0d0\">");
-        htmlFile.println("<TR><TH><TH>" + comparison.getFirstSubmission().name + " (" + comparison.similarityOfFirst() + "%)<TH>" + comparison.getSecondSubmission().name
-                + " (" + comparison.similarityOfSecond() + "%)<TH>" + msg.getString("AllMatches.Tokens"));
+        htmlFile.println("<TR><TH><TH>" + comparison.getFirstSubmission().name + " (" + comparison.similarityOfFirst() + "%)<TH>"
+                + comparison.getSecondSubmission().name + " (" + comparison.similarityOfSecond() + "%)<TH>" + msg.getString("AllMatches.Tokens"));
 
         for (int i = 0; i < comparison.getMatches().size(); i++) {
             match = comparison.getMatches().get(i);
@@ -172,7 +172,8 @@ public class Report { // Mostly legacy code with some minor improvements.
                 htmlFile.print("(" + startB.getLine() + "-" + endB.getLine());
             }
 
-            htmlFile.println(")</A><TD ALIGN=center>" + "<FONT COLOR=\"" + comparison.color(match.getLength()) + "\">" + match.getLength() + "</FONT>");
+            htmlFile.println(
+                    ")</A><TD ALIGN=center>" + "<FONT COLOR=\"" + comparison.color(match.getLength()) + "\">" + match.getLength() + "</FONT>");
         }
 
         if (result.getOptions().hasBaseCode()) {
@@ -445,9 +446,8 @@ public class Report { // Mostly legacy code with some minor improvements.
         if (result.getComparisons().size() > 0) {
             htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Matches_displayed") + ":</TD>" + "<TD>");
 
-            htmlFile.println(result.getComparisons().size() + " of " + result.getAllComparisons().size()
-                    + " (" + msg.getString("Report.Treshold") + ": "
-                    + result.getOptions().getSimilarityThreshold() + "%)<br>");
+            htmlFile.println(result.getComparisons().size() + " of " + result.getAllComparisons().size() + " (" + msg.getString("Report.Treshold")
+                    + ": " + result.getOptions().getSimilarityThreshold() + "%)<br>");
 
             htmlFile.println("</TD></TR>");
         }
@@ -565,9 +565,10 @@ public class Report { // Mostly legacy code with some minor improvements.
             htmlFile.print("<TR><TD BGCOLOR=" + color(comparison.similarityOfFirst(), 128, 192, 128, 192, 255, 255) + ">" + submissionNameA
                     + "</TD><TD><nobr>-&gt;</nobr>");
 
-            htmlFile.print("</TD><TD BGCOLOR=" + color(comparison.similarityOfSecond(), 128, 192, 128, 192, 255, 255) + " ALIGN=center><A HREF=\"match"
-                    + getComparisonIndex(comparison) + ".html\">" + submissionNameB + "</A><BR><FONT COLOR=\""
-                    + color(comparison.similarity(), 0, 255, 0, 0, 0, 0) + "\">(" + (((int) (comparison.similarity() * 10)) / (float) 10) + "%)</FONT>");
+            htmlFile.print("</TD><TD BGCOLOR=" + color(comparison.similarityOfSecond(), 128, 192, 128, 192, 255, 255)
+                    + " ALIGN=center><A HREF=\"match" + getComparisonIndex(comparison) + ".html\">" + submissionNameB + "</A><BR><FONT COLOR=\""
+                    + color(comparison.similarity(), 0, 255, 0, 0, 0, 0) + "\">(" + (((int) (comparison.similarity() * 10)) / (float) 10)
+                    + "%)</FONT>");
 
             htmlFile.println("</TD></TR>");
         }

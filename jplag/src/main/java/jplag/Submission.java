@@ -204,7 +204,7 @@ public class Submission implements Comparable<Submission> {
             if (!file.isAbsolute()) {
                 file = new File(submissionFile, files[i]);
             }
-            
+
             try {
                 int size = (int) file.length();
                 char[] buffer = new char[size];
@@ -227,7 +227,7 @@ public class Submission implements Comparable<Submission> {
 
         return result;
     }
-    
+
     /**
      * Resets the base code flag for all tokens of this submission.
      */
@@ -236,7 +236,6 @@ public class Submission implements Comparable<Submission> {
             token.basecode = false;
         }
     }
-
 
     /*
      * This method is used to copy files that can not be parsed to a special folder: jplag/errors/java old_java scheme cpp
