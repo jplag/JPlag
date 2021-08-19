@@ -21,7 +21,7 @@ public class NewJavaFeaturesTest extends TestBase {
         // Five matches that each start at the same position:
         assertEquals(4, comparison.getMatches().size());
         for (Match match : comparison.getMatches()) {
-            assertEquals(match.getStartA(), match.getStartB());
+            assertEquals(match.getStartOfFirst(), match.getStartOfSecond());
         }
     }
 

@@ -181,8 +181,8 @@ public class GreedyStringTiling implements TokenConstants {
                 }
             }
             for (int i = matches.size() - 1; i >= 0; i--) {
-                int x = matches.get(i).getStartA();  // Beginning of/in sequence A
-                int y = matches.get(i).getStartB();  // Beginning of/in sequence B
+                int x = matches.get(i).getStartOfFirst();  // Beginning of/in sequence A
+                int y = matches.get(i).getStartOfSecond();  // Beginning of/in sequence B
                 comparison.addMatch(x, y, matches.get(i).getLength());
                 // in order that "Match" will be newly build (because reusing)
                 for (int j = matches.get(i).getLength(); j > 0; j--) {

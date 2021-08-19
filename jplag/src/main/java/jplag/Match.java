@@ -1,42 +1,42 @@
 package jplag;
 
 /**
- * Represents two sections of two submissions A and B that are similar.
+ * Represents two sections of two submissions that are similar.
  */
 public class Match {
 
-    private final int startA;
-    private final int startB;
+    private final int startOfFirst;
+    private final int startOfSecond;
     private final int length;
 
     /**
      * Creates a match.
-     * @param startA is the starting index in the submission A.
-     * @param startB is the starting index in the submission B.
-     * @param length is the length of these similar sections.
+     * @param startOfSecond is the starting token index in the first submission.
+     * @param startOfSecond is the starting token index in the second submission.
+     * @param length is the length of these similar sections (number of tokens).
      */
-    public Match(int startA, int startB, int length) {
-        this.startA = startA;
-        this.startB = startB;
+    public Match(int startOfFirst, int startOfSecond, int length) {
+        this.startOfFirst = startOfFirst;
+        this.startOfSecond = startOfSecond;
         this.length = length;
     }
 
     /**
-     * @return the starting index in the submission A.
+     * @return the starting index in the first submission.
      */
-    public int getStartA() {
-        return startA;
+    public int getStartOfFirst() {
+        return startOfFirst;
     }
 
     /**
-     * @return the starting index in the submission B.
+     * @return the starting index in the second submission.
      */
-    public int getStartB() {
-        return startB;
+    public int getStartOfSecond() {
+        return startOfSecond;
     }
 
     /**
-     * @return the length of the similar sections.
+     * @return the length of the similar sections, meaning the number of tokens.
      */
     public int getLength() {
         return length;
@@ -46,21 +46,21 @@ public class Match {
      * Checks if two matches overlap.
      * @return true if they do.
      */
-    public final boolean overlap(int oStartA, int oStartB, int oLength) {
-        if (startA < oStartA) {
-            if ((oStartA - startA) < length) {
+    public final boolean overlap(int otherStartOfFirst, int otherStartOfSecond, int oLength) {
+        if (startOfFirst < otherStartOfFirst) {
+            if ((otherStartOfFirst - startOfFirst) < length) {
                 return true;
             }
         } else {
-            if ((startA - oStartA) < oLength) {
+            if ((startOfFirst - otherStartOfFirst) < oLength) {
                 return true;
             }
         }
 
-        if (startB < oStartB) {
-            return (oStartB - startB) < length;
+        if (startOfSecond < otherStartOfSecond) {
+            return (otherStartOfSecond - startOfSecond) < length;
         } else {
-            return (startB - oStartB) < oLength;
+            return (startOfSecond - otherStartOfSecond) < oLength;
         }
     }
 }

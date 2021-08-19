@@ -29,13 +29,13 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
      * Add a match to the comparison (token indices and number of tokens), if it does not overlap with the existing matches.
      * @see Match#Match(int, int, int)
      */
-    public final void addMatch(int firstStart, int secondStart, int length) {
+    public final void addMatch(int startOfFirst, int startOfSecond, int length) {
         for (Match match : matches) {
-            if (match.overlap(firstStart, secondStart, length)) {
+            if (match.overlap(startOfFirst, startOfSecond, length)) {
                 return;
             }
         }
-        matches.add(new Match(firstStart, secondStart, length));
+        matches.add(new Match(startOfFirst, startOfSecond, length));
     }
 
     /**
@@ -73,9 +73,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         int i, h, starti, starth, count = 1;
 
         o1: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).getStartA() : matches.get(i).getStartB());
+            starti = (j == 0 ? matches.get(i).getStartOfFirst() : matches.get(i).getStartOfSecond());
             for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).getStartA() : matches.get(h).getStartB());
+                starth = (j == 0 ? matches.get(h).getStartOfFirst() : matches.get(h).getStartOfSecond());
                 if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o1;
                 }
@@ -84,13 +84,13 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         }
 
         String[] res = new String[count];
-        res[0] = tokenList.getToken((j == 0 ? matches.get(0).getStartA() : matches.get(0).getStartB())).file;
+        res[0] = tokenList.getToken((j == 0 ? matches.get(0).getStartOfFirst() : matches.get(0).getStartOfSecond())).file;
         count = 1;
 
         o2: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).getStartA() : matches.get(i).getStartB());
+            starti = (j == 0 ? matches.get(i).getStartOfFirst() : matches.get(i).getStartOfSecond());
             for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).getStartA() : matches.get(h).getStartB());
+                starth = (j == 0 ? matches.get(h).getStartOfFirst() : matches.get(h).getStartOfSecond());
                 if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o2;
                 }
@@ -260,7 +260,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         if (s == 0) {     // First Submission
             for (i = 1; i < size; i++) {
                 for (j = 0; j < (size - i); j++) {
-                    if (matches.get(perm[j]).getStartA() > matches.get(perm[j + 1]).getStartA()) {
+                    if (matches.get(perm[j]).getStartOfFirst() > matches.get(perm[j + 1]).getStartOfFirst()) {
                         tmp = perm[j];
                         perm[j] = perm[j + 1];
                         perm[j + 1] = tmp;
@@ -270,7 +270,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         } else {        // Second submission
             for (i = 1; i < size; i++) {
                 for (j = 0; j < (size - i); j++) {
-                    if (matches.get(perm[j]).getStartB() > matches.get(perm[j + 1]).getStartB()) {
+                    if (matches.get(perm[j]).getStartOfSecond() > matches.get(perm[j + 1]).getStartOfSecond()) {
                         tmp = perm[j];
                         perm[j] = perm[j + 1];
                         perm[j + 1] = tmp;
