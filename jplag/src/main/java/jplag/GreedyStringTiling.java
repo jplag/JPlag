@@ -123,8 +123,7 @@ public class GreedyStringTiling implements TokenConstants {
         TokenList second = secondSubmission.tokenList; 
 
         // Initialize:
-        JPlagComparison comparison = withBaseCode ? new JPlagBaseCodeComparison(firstSubmission, secondSubmission)
-                : new JPlagComparison(firstSubmission, secondSubmission);
+        JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
         int minimalTokenMatch = program.getOptions().getMinTokenMatch(); // minimal required token match
         
         if (first.size() <= minimalTokenMatch || second.size() <= minimalTokenMatch) { // <= because of pivots!
