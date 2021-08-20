@@ -32,7 +32,7 @@ public enum CommandLineArgument {
     SIMILARITY_THRESHOLD("-m", Float.class, "Match similarity threshold [0-100]: All matches above this threshold will be saved", DEFAULT_SIMILARITY_THRESHOLD),
     STORED_MATCHES("-n", Integer.class, "Maximum number of matches that will be saved. If set to -1 all matches will be saved", DEFAULT_STORED_MATCHES),
     RESULT_FOLDER("-r", String.class, "Name of directory in which the comparison results will be stored", "result"),
-    COMPARISON_MODE("-c", String.class, "Comparison mode used to compare the programs", DEFAULT_COMPARISON_MODE, ComparisonMode.allNames());
+    COMPARISON_MODE("-c", String.class, "Comparison mode used to compare the programs", DEFAULT_COMPARISON_MODE.getName(), ComparisonMode.allNames());
 
     private final String flag;
     private final String helptext;
@@ -59,23 +59,30 @@ public enum CommandLineArgument {
         this.defaultValue = defaultValue;
         this.choices = choices;
     }
+    
+    /**
+     * @return the flag name of the command line argument.
+     */
+    public String flag() {
+        return flag;
+    }
 
     /**
      * @return the flag name of the command line argument without leading dashes.
      */
-    public String flag() {
+    public String flagWithoutDash() {
         return flag.replace("-", "");
     }
 
     /**
      * Returns the value of this argument. Convenience method for {@link Namespace#get(String)} and
-     * {@link CommandLineArgument#flag()}.
+     * {@link CommandLineArgument#flagWithoutDash()}.
      * @param <T> is the argument type.
      * @param namespace stores a value for the argument.
      * @return the argument value.
      */
     public <T> T getFrom(Namespace namespace) {
-        return namespace.get(flag());
+        return namespace.get(flagWithoutDash());
     }
 
     /**
