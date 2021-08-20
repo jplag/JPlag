@@ -8,7 +8,7 @@ import jplag.strategy.ComparisonMode;
 public class JPlagOptions {
 
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
-    public static final int DEFAULT_SIMILARITY_THRESHOLD = 0;
+    public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_STORED_MATCHES = 30;
 
     /**
