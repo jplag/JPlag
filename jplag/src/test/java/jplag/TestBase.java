@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import jplag.options.JPlagOptions;
 import jplag.options.LanguageOption;
+import jplag.options.Verbosity;
 
 public abstract class TestBase {
 
@@ -24,7 +25,7 @@ public abstract class TestBase {
 
     protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
         JPlagOptions options = new JPlagOptions(String.format(getBasePath() + "/%s", testSampleName), LanguageOption.JAVA_1_9);
-        options.setDebugParser(true);
+        options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);
         return jplag.run();
