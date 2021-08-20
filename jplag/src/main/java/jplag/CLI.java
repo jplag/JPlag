@@ -53,7 +53,7 @@ public class CLI {
             JPlag program = new JPlag(options);
             System.out.println("JPlag initialized");
             JPlagResult result = program.run();
-            File reportDir = new File(arguments.getString(RESULT_FOLDER.flag()));
+            File reportDir = new File(arguments.getString(RESULT_FOLDER.flagWithoutDash()));
             Report report = new Report(reportDir);
             report.writeResult(result);
         } catch (ExitException exception) {
