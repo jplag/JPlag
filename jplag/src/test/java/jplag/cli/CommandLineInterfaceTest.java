@@ -27,6 +27,37 @@ public class CommandLineInterfaceTest {
     protected JPlagOptions options;
 
     /**
+     * Creates a string for all arguments and their values that have been succesfully parsed.F
+     */
+    private String parsedKeys(String... arguments) {
+        var keys = namespace.getAttrs().keySet().stream()
+                .filter(key -> key.equals(ROOT_DIRECTORY.flag()) || Arrays.stream(arguments).anyMatch(arg -> arg.contains("-" + key)));
+        return keys.map(it -> it + "=" + namespace.get(it)).collect(toSet()).toString();
+    }
+
+    /**
+     * Builds a CLI string for a CLI argument and a value.
+     * @param argument is the CLI argument.
+     * @param value is the value for that argument.
+     * @return <code>"flag value"</code>
+     */
+    protected String buildArgument(CommandLineArgument argument, String value) {
+        return argument.flag() + "=" + value;
+    }
+
+    /**
+     * Builds {@link JPlagOptions} via the command line interface. Sets {@link CommandLineInterfaceTest#cli},
+     * {@link CommandLineInterfaceTest#namespace}, and {@link CommandLineInterfaceTest#options}.
+     * @param arguments are the command line interface arguments.
+     */
+    protected void buildOptionsFromCLI(String... arguments) {
+        cli = new CLI();
+        namespace = cli.parseArguments(arguments);
+        System.out.println("Parsed arguments: " + parsedKeys(arguments));
+        options = cli.buildOptionsFromArguments(namespace);
+    }
+
+    /**
      * Runs JPlag via the command line interface. Sets {@link CommandLineInterfaceTest#cli},
      * {@link CommandLineInterfaceTest#namespace}, and {@link CommandLineInterfaceTest#options}.
      * @param arguments arguments are the command line interface arguments.
@@ -43,37 +74,6 @@ public class CommandLineInterfaceTest {
             e.printStackTrace();
         }
         throw new IllegalStateException("Should never be reached!");
-    }
-
-    /**
-     * Builds {@link JPlagOptions} via the command line interface. Sets {@link CommandLineInterfaceTest#cli},
-     * {@link CommandLineInterfaceTest#namespace}, and {@link CommandLineInterfaceTest#options}.
-     * @param arguments are the command line interface arguments.
-     */
-    protected void buildOptionsFromCLI(String... arguments) {
-        cli = new CLI();
-        namespace = cli.parseArguments(arguments);
-        System.out.println("Parsed arguments: " + parsedKeys(arguments));
-        options = cli.buildOptionsFromArguments(namespace);
-    }
-
-    /**
-     * Builds a CLI string for a CLI argument and a value.
-     * @param argument is the CLI argument.
-     * @param value is the value for that argument.
-     * @return <code>"flag value"</code>
-     */
-    protected String buildArgument(CommandLineArgument argument, String value) {
-        return argument.flag() + " " + value;
-    }
-
-    /**
-     * Creates a string for all arguments and their values that have been succesfully parsed.F
-     */
-    private String parsedKeys(String... arguments) {
-        var keys = namespace.getAttrs().keySet().stream()
-                .filter(key -> key.equals(ROOT_DIRECTORY.flag()) || Arrays.stream(arguments).anyMatch(arg -> arg.contains(key)));
-        return keys.map(it -> it + "=" + namespace.get(it)).collect(toSet()).toString();
     }
 
 }
