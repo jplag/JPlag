@@ -98,12 +98,12 @@ public class JPlagOptions {
      * @param language - initialized language instance
      */
     public void setLanguageDefaults(Language language) {
-        if (!this.hasMinTokenMatch()) {
-            this.minTokenMatch = language.min_token_match();
+        if (!hasMinTokenMatch()) {
+            setMinTokenMatch(language.min_token_match());
         }
 
-        if (!this.hasFileSuffixes()) {
-            this.fileSuffixes = language.suffixes();
+        if (!hasFileSuffixes()) {
+            fileSuffixes = language.suffixes();
         }
     }
 
@@ -120,11 +120,11 @@ public class JPlagOptions {
     }
 
     private boolean hasFileSuffixes() {
-        return this.fileSuffixes != null && this.fileSuffixes.length > 0;
+        return fileSuffixes != null && fileSuffixes.length > 0;
     }
 
     private boolean hasMinTokenMatch() {
-        return this.minTokenMatch != null;
+        return minTokenMatch != null;
     }
 
     public ComparisonMode getComparisonMode() {
@@ -192,7 +192,11 @@ public class JPlagOptions {
     }
 
     public void setMinTokenMatch(Integer minTokenMatch) {
-        this.minTokenMatch = minTokenMatch;
+        if (minTokenMatch != null && minTokenMatch < 1) {
+            this.minTokenMatch = 1;
+        } else {
+            this.minTokenMatch = minTokenMatch;
+        }
     }
 
     public void setExclusionFileName(String exclusionFileName) {
