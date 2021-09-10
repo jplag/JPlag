@@ -30,12 +30,12 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 
         for (i = 0; i < (numberOfSubmissions - 1); i++) {
             first = submissions.elementAt(i);
-            if (first.tokenList == null) {
+            if (first.getTokenList() == null) {
                 continue;
             }
             for (j = (i + 1); j < numberOfSubmissions; j++) {
                 second = submissions.elementAt(j);
-                if (second.tokenList == null) {
+                if (second.getTokenList() == null) {
                     continue;
                 }
                 compareSubmissions(first, second, withBaseCode).ifPresent(it -> comparisons.add(it));

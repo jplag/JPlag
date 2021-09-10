@@ -58,7 +58,7 @@ public class ParallelComparisonTest extends TestBase {
 
         // All comparisons with E shall have no matches
         result.getAllComparisons().stream()
-                .filter(comparison -> comparison.getSecondSubmission().name.equals("E") || comparison.getFirstSubmission().name.equals("E"))
+                .filter(comparison -> comparison.getSecondSubmission().getName().equals("E") || comparison.getFirstSubmission().getName().equals("E"))
                 .forEach(comparison -> assertEquals(0f, comparison.similarity(), 0.1f));
 
         // Hard coded assertions on selected comparisons
@@ -84,8 +84,8 @@ public class ParallelComparisonTest extends TestBase {
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
         return result.getAllComparisons().stream()
-                .filter(comparison -> comparison.getFirstSubmission().name.equals(nameA) && comparison.getSecondSubmission().name.equals(nameB)
-                        || comparison.getFirstSubmission().name.equals(nameB) && comparison.getSecondSubmission().name.equals(nameA))
+                .filter(comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
+                        || comparison.getFirstSubmission().getName().equals(nameB) && comparison.getSecondSubmission().getName().equals(nameA))
                 .findFirst();
     }
 }

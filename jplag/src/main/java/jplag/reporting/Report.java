@@ -134,13 +134,13 @@ public class Report { // Mostly legacy code with some minor improvements.
      */
     private void reportComparison(HTMLFile htmlFile, JPlagComparison comparison, int index) {
         Match match;
-        TokenList tokensA = comparison.getFirstSubmission().tokenList;
-        TokenList tokensB = comparison.getSecondSubmission().tokenList;
+        TokenList tokensA = comparison.getFirstSubmission().getTokenList();
+        TokenList tokensB = comparison.getSecondSubmission().getTokenList();
         // sort();
 
         htmlFile.println("<TABLE BORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#d0d0d0\">");
-        htmlFile.println("<TR><TH><TH>" + comparison.getFirstSubmission().name + " (" + comparison.similarityOfFirst() + "%)<TH>"
-                + comparison.getSecondSubmission().name + " (" + comparison.similarityOfSecond() + "%)<TH>" + msg.getString("AllMatches.Tokens"));
+        htmlFile.println("<TR><TH><TH>" + comparison.getFirstSubmission().getName() + " (" + comparison.similarityOfFirst() + "%)<TH>"
+                + comparison.getSecondSubmission().getName() + " (" + comparison.similarityOfSecond() + "%)<TH>" + msg.getString("AllMatches.Tokens"));
 
         for (int i = 0; i < comparison.getMatches().size(); i++) {
             match = comparison.getMatches().get(i);
@@ -264,7 +264,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         Submission sub = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
         String[] files = comparison.files(j);
         String[][] text = sub.readFiles(files);
-        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).tokenList;
+        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
 
         // Markup list:
         Comparator<MarkupText> comp = (mo1, mo2) -> {
@@ -377,7 +377,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         for (int x = 0; x < text.length; x++) {
             f.println("<h3>");
             f.println("<center>");
-            f.println("<span>" + sub.name + "</span>");
+            f.println("<span>" + sub.getName() + "</span>");
             f.println("<span> - </span>");
             f.println("<span>" + files[x] + "</span>");
             f.println("</center>");
@@ -478,7 +478,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         Submission sub = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
         String[] files = comparison.files(j);
         char[][] text = sub.readFilesChar(files);
-        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).tokenList;
+        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
 
         // get index array with matches sorted in ascending order.
         int[] perm = comparison.sort_permutation(j);
@@ -493,7 +493,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
             f.println("<h3>");
             f.println("<center>");
-            f.println("<span>" + sub.name + "</span>");
+            f.println("<span>" + sub.getName() + "</span>");
             f.println("<span> - </span>");
             f.println("<span>" + files[fileIndex] + "</span>");
             f.println("</center>");
@@ -560,8 +560,8 @@ public class Report { // Mostly legacy code with some minor improvements.
         htmlFile.println("<TABLE CELLPADDING=3 CELLSPACING=2>");
 
         for (JPlagComparison comparison : comparisons) {
-            String submissionNameA = comparison.getFirstSubmission().name;
-            String submissionNameB = comparison.getSecondSubmission().name;
+            String submissionNameA = comparison.getFirstSubmission().getName();
+            String submissionNameB = comparison.getSecondSubmission().getName();
 
             htmlFile.print("<TR><TD BGCOLOR=" + color(comparison.similarityOfFirst(), 128, 192, 128, 192, 255, 255) + ">" + submissionNameA
                     + "</TD><TD><nobr>-&gt;</nobr>");
@@ -582,7 +582,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         HTMLFile htmlFile = createHTMLFile("match" + i + ".html");
 
         writeHTMLHeader(htmlFile, TagParser.parse(msg.getString("Report.Matches_for_X1_AND_X2"),
-                new String[] {comparison.getFirstSubmission().name, comparison.getSecondSubmission().name}));
+                new String[] {comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName()}));
 
         htmlFile.println("<body>");
         htmlFile.println("  <div style=\"align-items: center; display: flex; justify-content: space-around;\">");
@@ -590,7 +590,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         htmlFile.println("    <div>");
         htmlFile.println("      <h3 align=\"center\">");
         htmlFile.println(TagParser.parse(msg.getString("Report.Matches_for_X1_AND_X2"),
-                new String[] {comparison.getFirstSubmission().name, comparison.getSecondSubmission().name}));
+                new String[] {comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName()}));
         htmlFile.println("      </h3>");
         htmlFile.println("      <h1 align=\"center\">");
         htmlFile.println("        " + comparison.roundedSimilarity() + "%");
@@ -655,8 +655,8 @@ public class Report { // Mostly legacy code with some minor improvements.
             writer = new FileWriter(csvFile, StandardCharsets.UTF_8);
 
             for (JPlagComparison comparison : comparisons) {
-                String submissionNameA = comparison.getFirstSubmission().name;
-                String submissionNameB = comparison.getSecondSubmission().name;
+                String submissionNameA = comparison.getFirstSubmission().getName();
+                String submissionNameB = comparison.getSecondSubmission().getName();
 
                 writer.write(getComparisonIndex(comparison) + ";");
                 writer.write(submissionNameA + ";");
@@ -685,7 +685,7 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         String[][] text = sub.readFiles(files);
 
-        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).tokenList;
+        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
         Match currentMatch;
         String hilf;
         int h;
@@ -756,7 +756,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         for (int x = 0; x < text.length; x++) {
             f.println("<h3>");
             f.println("<center>");
-            f.println("<span>" + sub.name + "</span>");
+            f.println("<span>" + sub.getName() + "</span>");
             f.println("<span> - </span>");
             f.println("<span>" + files[x] + "</span>");
             f.println("</center>");

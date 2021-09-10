@@ -77,10 +77,10 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         List<SubmissionTuple> tuples = new ArrayList<>();
         for (int i = 0; i < (submissions.size() - 1); i++) {
             Submission first = submissions.elementAt(i);
-            if (first.tokenList != null) {
+            if (first.getTokenList() != null) {
                 for (int j = (i + 1); j < submissions.size(); j++) {
                     Submission second = submissions.elementAt(j);
-                    if (second.tokenList != null) {
+                    if (second.getTokenList() != null) {
                         tuples.add(new SubmissionTuple(first, second));
                     }
                 }
@@ -99,8 +99,8 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         return new Runnable() {
             @Override
             public void run() {
-                Lock leftLock = getOrCreateLock(tuple.getLeft().name);
-                Lock rightLock = getOrCreateLock(tuple.getRight().name);
+                Lock leftLock = getOrCreateLock(tuple.getLeft().getName());
+                Lock rightLock = getOrCreateLock(tuple.getRight().getName());
                 boolean hasLeft = leftLock.tryLock();
                 boolean hasRight = hasLeft && rightLock.tryLock();
                 try {

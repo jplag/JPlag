@@ -13,8 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -22,29 +22,19 @@ import java.util.Vector;
  */
 public class Submission implements Comparable<Submission> {
 
-    /**
-     * Name that uniquely identifies this submission. Will most commonly be the directory or file name.
-     */
-    public String name;
+    private static final String ERROR_FOLDER = "errors";
 
-    private File submissionFile;
+    private final String name; // uniquely identifies this submission (e.g. directory or file name)
 
-    /**
-     * List of files this submission consists of.
-     */
-    public List<File> files;
+    private final File submissionFile;
 
-    /**
-     * List of tokens that have been parsed from the files this submission consists of.
-     */
-    public TokenList tokenList;
-
-    /**
-     * True, if at least one error occurred while parsing this submission; false otherwise.
-     */
-    public boolean hasErrors = false;
+    private final Collection<File> files; // files of which the submission consists.
 
     private final JPlag program;
+
+    private boolean hasErrors; // indicates that at least one error occurred while parsing this submission
+
+    private TokenList tokenList; // parsed tokens from the files
 
     public Submission(String name, File submissionFile, JPlag program) {
         this.name = name;
@@ -54,34 +44,18 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Recursively scan the given directory for nested files. Excluded files and files with an invalid suffix are ignored.
-     * <p>
-     * If the given file is not a directory, the input will be returned as a singleton list.
-     * @param file - File to start the scan from.
-     * @return a list of nested files.
+     * @return a list of files this submission consists of.
      */
-    private List<File> parseFilesRecursively(File file) {
-        if (program.isFileExcluded(file)) {
-            return Collections.emptyList();
-        }
-
-        if (file.isFile() && program.hasValidSuffix(file)) {
-            return Collections.singletonList(file);
-        }
-
-        String[] nestedFileNames = file.list();
-
-        if (nestedFileNames == null) {
-            return Collections.emptyList();
-        }
-
-        List<File> files = new ArrayList<>();
-
-        for (String fileName : nestedFileNames) {
-            files.addAll(parseFilesRecursively(new File(file, fileName)));
-        }
-
+    public Collection<File> getFiles() {
         return files;
+    }
+
+    /**
+     * @return return the name that uniquely identifies this submission. Will most commonly be the directory or file
+     * name.return the name that uniquely identifies this submission. Will most commonly be the directory or file name.
+     */
+    public String getName() {
+        return name;
     }
 
     public int getNumberOfTokens() {
@@ -92,31 +66,18 @@ public class Submission implements Comparable<Submission> {
         return tokenList.size();
     }
 
-    @Override
-    public int compareTo(Submission other) {
-        return name.compareTo(other.name);
-    }
-
-    @Override
-    public String toString() {
-        return name;
+    /**
+     * @return list of tokens that have been parsed from the files this submission consists of.
+     */
+    public TokenList getTokenList() {
+        return tokenList;
     }
 
     /**
-     * Map all files of this submission to their path relative to the submission directory.
-     * <p>
-     * This method is required to stay compatible with `program.language.parse(...)` as it requires the given file paths to
-     * be relative to the submission directory.
-     * <p>
-     * In a future update, `program.language.parse(...)` should probably just take a list of files.
-     * @param baseFile - File to base all relative file paths on.
-     * @param files - List of files to map.
-     * @return an array of file paths relative to the submission directory.
+     * @return true if at least one error occurred while parsing this submission; false otherwise.
      */
-    private String[] getRelativeFilePaths(File baseFile, List<File> files) {
-        Path baseFilePath = baseFile.toPath();
-
-        return files.stream().map(File::toPath).map(baseFilePath::relativize).map(Path::toString).toArray(String[]::new);
+    public boolean hasErrors() {
+        return hasErrors;
     }
 
     /* parse all the files... */
@@ -159,7 +120,6 @@ public class Submission implements Comparable<Submission> {
             text.removeAllElements();
 
             try {
-                /* file encoding = "UTF-8" */
                 FileInputStream fileInputStream = new FileInputStream(new File(submissionFile, files[i]));
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
                 BufferedReader in = new BufferedReader(inputStreamReader);
@@ -233,6 +193,44 @@ public class Submission implements Comparable<Submission> {
         }
     }
 
+    /**
+     * Sets the tokens that have been parsed from the files this submission consists of.
+     * @param tokenList is the list of these tokens.
+     */
+    public void setTokenList(TokenList tokenList) {
+        this.tokenList = tokenList;
+    }
+
+    @Override
+    public int compareTo(Submission other) {
+        return name.compareTo(other.name);
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    /** Physical copy. :-) */
+    private void copyFile(File in, File out) {
+        byte[] buffer = new byte[10000];
+        try {
+            FileInputStream input = new FileInputStream(in);
+            FileOutputStream output = new FileOutputStream(out);
+            int count;
+            do {
+                count = input.read(buffer);
+                if (count != -1) {
+                    output.write(buffer, 0, count);
+                }
+            } while (count != -1);
+            input.close();
+            output.close();
+        } catch (IOException e) {
+            program.print("Error copying file: " + e.toString() + "\n", null);
+        }
+    }
+
     /*
      * This method is used to copy files that can not be parsed to a special folder: jplag/errors/java old_java scheme cpp
      * /001/(...files...) /002/(...files...)
@@ -242,7 +240,7 @@ public class Submission implements Comparable<Submission> {
         DecimalFormat format = new DecimalFormat("0000");
 
         try {
-            URL url = Submission.class.getResource("errors");
+            URL url = Submission.class.getResource(ERROR_FOLDER);
             errorDir = new File(url.getFile());
         } catch (NullPointerException e) {
             return;
@@ -263,28 +261,57 @@ public class Submission implements Comparable<Submission> {
 
         destDir.mkdir();
 
-        for (i = 0; i < files.size(); i++) {
-            copyFile(new File(files.get(i).getAbsolutePath()), new File(destDir, files.get(i).getName()));
+        for (File file : files) {
+            copyFile(new File(file.getAbsolutePath()), new File(destDir, file.getName()));
         }
     }
 
-    /* Physical copy. :-) */
-    private void copyFile(File in, File out) {
-        byte[] buffer = new byte[10000];
-        try {
-            FileInputStream dis = new FileInputStream(in);
-            FileOutputStream dos = new FileOutputStream(out);
-            int count;
-            do {
-                count = dis.read(buffer);
-                if (count != -1) {
-                    dos.write(buffer, 0, count);
-                }
-            } while (count != -1);
-            dis.close();
-            dos.close();
-        } catch (IOException e) {
-            program.print("Error copying file: " + e.toString() + "\n", null);
-        }
+    /**
+     * Map all files of this submission to their path relative to the submission directory.
+     * <p>
+     * This method is required to stay compatible with `program.language.parse(...)` as it requires the given file paths to
+     * be relative to the submission directory.
+     * <p>
+     * In a future update, `program.language.parse(...)` should probably just take a list of files.
+     * @param baseFile - File to base all relative file paths on.
+     * @param files - List of files to map.
+     * @return an array of file paths relative to the submission directory.
+     */
+    private String[] getRelativeFilePaths(File baseFile, Collection<File> files) {
+        Path baseFilePath = baseFile.toPath();
+
+        return files.stream().map(File::toPath).map(baseFilePath::relativize).map(Path::toString).toArray(String[]::new);
     }
+
+    /**
+     * Recursively scan the given directory for nested files. Excluded files and files with an invalid suffix are ignored.
+     * <p>
+     * If the given file is not a directory, the input will be returned as a singleton list.
+     * @param file - File to start the scan from.
+     * @return a list of nested files.
+     */
+    private Collection<File> parseFilesRecursively(File file) {
+        if (program.isFileExcluded(file)) {
+            return Collections.emptyList();
+        }
+
+        if (file.isFile() && program.hasValidSuffix(file)) {
+            return Collections.singletonList(file);
+        }
+
+        String[] nestedFileNames = file.list();
+
+        if (nestedFileNames == null) {
+            return Collections.emptyList();
+        }
+
+        Collection<File> files = new ArrayList<>();
+
+        for (String fileName : nestedFileNames) {
+            files.addAll(parseFilesRecursively(new File(file, fileName)));
+        }
+
+        return files;
+    }
+
 }

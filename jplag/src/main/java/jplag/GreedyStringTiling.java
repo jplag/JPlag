@@ -94,7 +94,7 @@ public class GreedyStringTiling implements TokenConstants {
 
     private final JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
         Submission smallerSubmission, largerSubmission;
-        if (firstSubmission.tokenList.size() > secondSubmission.tokenList.size()) {
+        if (firstSubmission.getTokenList().size() > secondSubmission.getTokenList().size()) {
             smallerSubmission = secondSubmission;
             largerSubmission = firstSubmission;
         } else {
@@ -102,7 +102,7 @@ public class GreedyStringTiling implements TokenConstants {
             largerSubmission = secondSubmission;
         }
         // if hashtable exists in first but not in second structure: flip around!
-        if (largerSubmission.tokenList.tokenHashes == null && smallerSubmission.tokenList.tokenHashes != null) {
+        if (largerSubmission.getTokenList().tokenHashes == null && smallerSubmission.getTokenList().tokenHashes != null) {
             Submission swap = smallerSubmission;
             smallerSubmission = largerSubmission;
             largerSubmission = swap;
@@ -119,8 +119,8 @@ public class GreedyStringTiling implements TokenConstants {
      */
     private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
         // first and second refer to the list of tokens of the first and second submission:
-        TokenList first = firstSubmission.tokenList;
-        TokenList second = secondSubmission.tokenList;
+        TokenList first = firstSubmission.getTokenList();
+        TokenList second = secondSubmission.getTokenList();
 
         // Initialize:
         JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);

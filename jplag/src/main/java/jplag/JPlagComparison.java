@@ -71,7 +71,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
             return new String[] {};
         }
 
-        TokenList tokenList = (j == 0 ? firstSubmission : secondSubmission).tokenList;
+        TokenList tokenList = (j == 0 ? firstSubmission : secondSubmission).getTokenList();
         int i, h, starti, starth, count = 1;
 
         o1: for (i = 1; i < matches.size(); i++) {
@@ -176,11 +176,11 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public final float similarity() {
         float sa, sb;
         if (secondBaseCodeMatches != null && firstBaseCodeMatches != null) {
-            sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
-            sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
+            sa = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
+            sb = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
         } else {
-            sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
-            sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
+            sa = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size();
+            sb = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size();
         }
         return (200 * getNumberOfMatchedTokens()) / (sa + sb);
     }
@@ -192,9 +192,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public final float similarityOfFirst() {
         int divisor;
         if (firstBaseCodeMatches != null) {
-            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
+            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
         } else {
-            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
+            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size();
         }
         return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
     }
@@ -206,9 +206,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
     public final float similarityOfSecond() {
         int divisor;
         if (secondBaseCodeMatches != null) {
-            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
+            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
         } else {
-            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
+            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size();
         }
         return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
     }
@@ -288,16 +288,16 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
 
     @Override
     public String toString() {
-        return firstSubmission.name + " <-> " + secondSubmission.name;
+        return firstSubmission.getName() + " <-> " + secondSubmission.getName();
     }
 
     private final float firstBasecodeSimilarity() {
-        float sa = firstSubmission.getNumberOfTokens() - firstSubmission.files.size();
+        float sa = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size();
         return firstBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sa;
     }
 
     private final float secondBasecodeSimilarity() {
-        float sb = secondSubmission.getNumberOfTokens() - secondSubmission.files.size();
+        float sb = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size();
         return secondBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sb;
     }
 
