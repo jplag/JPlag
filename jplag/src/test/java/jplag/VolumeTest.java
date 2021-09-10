@@ -51,7 +51,7 @@ public class VolumeTest extends TestBase {
         System.out.println("Volume test size: " + csv.size());
 
         results.getAllComparisons().forEach(result -> {
-            var key = result.getFirstSubmission().name + result.getSecondSubmission().name;
+            var key = result.getFirstSubmission().getName() + result.getSecondSubmission().getName();
 
             assertTrue(csv.containsKey(key));
             assertEquals(csv.getOrDefault(key, -1f), result.similarity(), 0.1f);

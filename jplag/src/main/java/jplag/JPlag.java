@@ -180,7 +180,7 @@ public class JPlag implements ProgramI {
     }
 
     private Vector<Submission> filterValidSubmissions(Vector<Submission> submissions) {
-        return submissions.stream().filter(submission -> !submission.hasErrors).collect(Collectors.toCollection(Vector::new));
+        return submissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(Vector::new));
     }
 
     /**
@@ -313,7 +313,7 @@ public class JPlag implements ProgramI {
         }
 
         long msec = System.currentTimeMillis();
-        print("----- Parsing basecode submission: " + subm.name + "\n", null);
+        print("----- Parsing basecode submission: " + subm.getName() + "\n", null);
 
         // lets go:
 
@@ -322,12 +322,12 @@ public class JPlag implements ProgramI {
             throw new ExitException("Bad basecode submission");
         }
 
-        if (subm.tokenList != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
+        if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
             throw new ExitException("Basecode submission contains fewer tokens " + "than minimum match length allows!\n");
         }
 
         if (options.hasBaseCode()) {
-            gSTiling.createHashes(subm.tokenList, options.getMinTokenMatch(), true);
+            gSTiling.createHashes(subm.getTokenList(), options.getMinTokenMatch(), true);
         }
 
         print("\nBasecode submission parsed!\n", null);
@@ -358,8 +358,8 @@ public class JPlag implements ProgramI {
             boolean removed = false;
             Submission subm = iter.next();
 
-            print(null, "------ Parsing submission: " + subm.name + "\n");
-            currentSubmissionName = subm.name;
+            print(null, "------ Parsing submission: " + subm.getName() + "\n");
+            currentSubmissionName = subm.getName();
 
             if (!(ok = subm.parse())) {
                 errors++;
@@ -367,9 +367,9 @@ public class JPlag implements ProgramI {
 
             count++;
 
-            if (subm.tokenList != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
+            if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
                 print(null, "Submission contains fewer tokens than minimum match " + "length allows!\n");
-                subm.tokenList = null;
+                subm.setTokenList(null);
                 invalid++;
                 removed = true;
             }
