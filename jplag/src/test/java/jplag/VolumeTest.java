@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -13,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+
+import jplag.options.JPlagOptions;
 
 /**
  * These tests are not intended to be used automatically but rather manually prior to releases.
@@ -60,7 +61,7 @@ public class VolumeTest extends TestBase {
     }
 
     private Map<String, Float> readCSVResults(String filePathAndName) throws IOException {
-        List<String> lines = Files.readAllLines(Path.of(filePathAndName), StandardCharsets.UTF_8);
+        List<String> lines = Files.readAllLines(Path.of(filePathAndName), JPlagOptions.CHARSET);
         var results = new HashMap<String, Float>();
 
         lines.forEach(line -> {

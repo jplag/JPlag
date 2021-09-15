@@ -9,13 +9,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Vector;
+
+import jplag.options.JPlagOptions;
 
 /**
  * Represents a single submission. A submission can contain multiple files.
@@ -121,7 +122,7 @@ public class Submission implements Comparable<Submission> {
 
             try {
                 FileInputStream fileInputStream = new FileInputStream(new File(submissionFile, files[i]));
-                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, JPlagOptions.CHARSET);
                 BufferedReader in = new BufferedReader(inputStreamReader);
 
                 while ((help = in.readLine()) != null) {
@@ -165,7 +166,7 @@ public class Submission implements Comparable<Submission> {
                 int size = (int) file.length();
                 char[] buffer = new char[size];
 
-                FileReader reader = new FileReader(file, StandardCharsets.UTF_8);
+                FileReader reader = new FileReader(file, JPlagOptions.CHARSET);
 
                 if (size != reader.read(buffer)) {
                     System.out.println("Not right size read from the file, " + "but I will still continue...");
