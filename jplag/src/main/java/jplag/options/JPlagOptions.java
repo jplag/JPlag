@@ -2,6 +2,9 @@ package jplag.options;
 
 import static jplag.strategy.ComparisonMode.NORMAL;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 import jplag.Language;
 import jplag.strategy.ComparisonMode;
 
@@ -10,6 +13,8 @@ public class JPlagOptions {
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_STORED_MATCHES = 30;
+    
+    public static final Charset CHARSET = StandardCharsets.UTF_8;
 
     /**
      * Language used to parse the submissions.

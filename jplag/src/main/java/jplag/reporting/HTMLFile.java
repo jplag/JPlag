@@ -5,7 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
+
+import jplag.options.JPlagOptions;
 
 public class HTMLFile extends PrintWriter {
 
@@ -15,7 +16,7 @@ public class HTMLFile extends PrintWriter {
      * Static factory method to instantiate an HTMLFile objects.
      */
     public static HTMLFile fromFile(File file) throws IOException {
-        BufferedCounter counter = new BufferedCounter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+        BufferedCounter counter = new BufferedCounter(new OutputStreamWriter(new FileOutputStream(file), JPlagOptions.CHARSET));
         return new HTMLFile(counter);
     }
 
