@@ -187,11 +187,6 @@ public class JPlag implements ProgramI {
      * Find all submissions in the given root directory.
      */
     private Vector<Submission> findSubmissions(File rootDir) throws ExitException {
-        String[] fileNamesInRootDir = getSortedFileNamesInRootDir(rootDir);
-        return mapFileNamesInRootDirToSubmissions(fileNamesInRootDir, rootDir);
-    }
-
-    private String[] getSortedFileNamesInRootDir(File rootDir) throws ExitException {
         String[] fileNamesInRootDir;
 
         try {
@@ -206,7 +201,7 @@ public class JPlag implements ProgramI {
 
         Arrays.sort(fileNamesInRootDir);
 
-        return fileNamesInRootDir;
+        return mapFileNamesInRootDirToSubmissions(fileNamesInRootDir, rootDir);
     }
 
     private void initializeComparisonStrategy() throws ExitException {

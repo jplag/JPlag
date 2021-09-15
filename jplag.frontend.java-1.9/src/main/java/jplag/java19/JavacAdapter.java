@@ -2,6 +2,7 @@ package jplag.java19;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Collections;
 
@@ -23,7 +24,7 @@ public class JavacAdapter {
     private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 
     public int parseFiles(File dir, File[] pathedFiles, final Parser parser) {
-        final StandardJavaFileManager jfm = javac.getStandardFileManager(null, null, null);
+        final StandardJavaFileManager jfm = javac.getStandardFileManager(null, null, StandardCharsets.UTF_8);
         DiagnosticCollector<? super JavaFileObject> diagListen = new DiagnosticCollector<>();
         final JavaCompiler.CompilationTask task = javac.getTask(null, jfm, diagListen, null, null, jfm.getJavaFileObjects(pathedFiles));
         Iterable<? extends CompilationUnitTree> asts = Collections.emptyList();
