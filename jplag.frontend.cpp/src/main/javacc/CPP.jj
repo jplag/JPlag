@@ -21,13 +21,12 @@ import jplag.*;
 public class CPPScanner implements CPPTokenConstants {
     private static Scanner scanner2;
     public static boolean scanFile(File dir, String fileName,
-        jplag.cpp.CPPScanner scanner, jplag.cpp.Scanner scannerX)
-    {
+        jplag.cpp.CPPScanner scanner, jplag.cpp.Scanner scannerX) {
         try {
             InputStream in = new NewlineStream(
                 new FileInputStream(new File(dir,fileName)));
               if (scanner==null) {
-                scanner = new CPPScanner(in);
+                scanner = new CPPScanner(in, "UTF-8");
               } else {
                 scanner.ReInit(in);
               }
