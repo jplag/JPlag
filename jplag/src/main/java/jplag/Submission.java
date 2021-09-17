@@ -17,8 +17,6 @@ import java.util.Collections;
 
 import jplag.options.JPlagOptions;
 
-import jplag.options.JPlagOptions;
-
 /**
  * Represents a single submission. A submission can contain multiple files.
  */
