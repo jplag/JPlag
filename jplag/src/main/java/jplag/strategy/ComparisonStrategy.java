@@ -1,6 +1,6 @@
 package jplag.strategy;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import jplag.JPlagResult;
 import jplag.Submission;
@@ -16,5 +16,5 @@ public interface ComparisonStrategy {
      * @param baseCodeSubmission is the base code on which each submission is based on.
      * @return the comparison results.
      */
-    JPlagResult compareSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission);
+    JPlagResult compareSubmissions(ArrayList<Submission> submissions, Submission baseCodeSubmission);
 }

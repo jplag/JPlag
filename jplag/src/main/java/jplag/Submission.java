@@ -14,7 +14,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Vector;
 
 import jplag.options.JPlagOptions;
 
@@ -115,10 +114,10 @@ public class Submission implements Comparable<Submission> {
     public String[][] readFiles(String[] files) throws jplag.ExitException {
         String[][] result = new String[files.length][];
         String help;
-        Vector<String> text = new Vector<>();
+        ArrayList<String> text = new ArrayList<>();
 
         for (int i = 0; i < files.length; i++) {
-            text.removeAllElements();
+            text.clear();
 
             try {
                 FileInputStream fileInputStream = new FileInputStream(new File(submissionFile, files[i]));
@@ -130,7 +129,7 @@ public class Submission implements Comparable<Submission> {
                     help = help.replaceAll("<", "&lt;");
                     help = help.replaceAll(">", "&gt;");
                     help = help.replaceAll("\"", "&quot;");
-                    text.addElement(help);
+                    text.add(help);
                 }
 
                 in.close();
@@ -143,7 +142,7 @@ public class Submission implements Comparable<Submission> {
             }
 
             result[i] = new String[text.size()];
-            text.copyInto(result[i]);
+            text.toArray(result[i]);
         }
 
         return result;

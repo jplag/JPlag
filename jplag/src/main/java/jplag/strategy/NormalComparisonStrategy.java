@@ -2,7 +2,6 @@ package jplag.strategy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import jplag.GreedyStringTiling;
 import jplag.JPlagComparison;
@@ -17,7 +16,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) {
+    public JPlagResult compareSubmissions(ArrayList<Submission> submissions, Submission baseCodeSubmission) {
         boolean withBaseCode = baseCodeSubmission != null;
         if (withBaseCode) {
             compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
@@ -29,12 +28,12 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         List<JPlagComparison> comparisons = new ArrayList<>();
 
         for (i = 0; i < (numberOfSubmissions - 1); i++) {
-            first = submissions.elementAt(i);
+            first = submissions.get(i);
             if (first.getTokenList() == null) {
                 continue;
             }
             for (j = (i + 1); j < numberOfSubmissions; j++) {
-                second = submissions.elementAt(j);
+                second = submissions.get(j);
                 if (second.getTokenList() == null) {
                     continue;
                 }

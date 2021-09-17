@@ -3,7 +3,6 @@ package jplag.strategy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -36,7 +35,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) {
+    public JPlagResult compareSubmissions(ArrayList<Submission> submissions, Submission baseCodeSubmission) {
         // Initialize:
         long timeBeforeStartInMillis = System.currentTimeMillis();
         boolean withBaseCode = baseCodeSubmission != null;
@@ -73,13 +72,13 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     /**
      * @return a list of all submission tuples to be processed.
      */
-    private List<SubmissionTuple> buildComparisonTuples(Vector<Submission> submissions) {
+    private List<SubmissionTuple> buildComparisonTuples(ArrayList<Submission> submissions) {
         List<SubmissionTuple> tuples = new ArrayList<>();
         for (int i = 0; i < (submissions.size() - 1); i++) {
-            Submission first = submissions.elementAt(i);
+            Submission first = submissions.get(i);
             if (first.getTokenList() != null) {
                 for (int j = (i + 1); j < submissions.size(); j++) {
-                    Submission second = submissions.elementAt(j);
+                    Submission second = submissions.get(j);
                     if (second.getTokenList() != null) {
                         tuples.add(new SubmissionTuple(first, second));
                     }
