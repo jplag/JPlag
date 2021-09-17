@@ -2,6 +2,7 @@ package jplag.csharp;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 
 import jplag.TokenList;
 import jplag.UnicodeReader;
@@ -30,7 +31,7 @@ public class Parser extends jplag.Parser implements CSharpTokenConstants {
 			FileInputStream fis = new FileInputStream(new File(dir, file));
 			currentFile = file;
 			// Create a scanner that reads from the input stream passed to us
-			CSharpLexer lexer = new CSharpLexer(new UnicodeReader(fis, "UTF-8"));
+			CSharpLexer lexer = new CSharpLexer(new UnicodeReader(fis, StandardCharsets.UTF_8));
 			lexer.setFilename(file);
 			lexer.setTabSize(1);
 

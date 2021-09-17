@@ -21,14 +21,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Generic unicode text reader, which will use BOM mark to identify the encoding to be used. If BOM is not found then
- * use a given default encoding. System default is used if: BOM mark is not found and defaultEnc is NULL.<br />
+ * use a given default encoding. UTF-8 is used if: BOM mark is not found and defaultEnc is NULL.<br />
  * Usage pattern:
  * 
  * <pre>
- * String defaultEnc = "UTF-8"; // or NULL to use system default
+ * String defaultEnc = "UTF-16BE"; // or NULL to use system default
  * FileInputStream fis = new FileInputStream(file);
  * Reader in = new UnicodeReader(fis, defaultEnc);
  * </pre>
@@ -38,16 +40,16 @@ public class UnicodeReader extends Reader {
 
     private InputStreamReader internalIn2 = null;
 
-    private String defaultEnc;
+    private Charset defaultEnc;
 
     private static final int BOM_SIZE = 4;
 
-    public UnicodeReader(InputStream in, String defaultEnc) {
+    public UnicodeReader(InputStream in, Charset defaultEnc) {
         internalIn = new PushbackInputStream(in, BOM_SIZE);
         this.defaultEnc = defaultEnc;
     }
 
-    public String getDefaultEncoding() {
+    public Charset getDefaultEncoding() {
         return defaultEnc;
     }
 
@@ -64,25 +66,25 @@ public class UnicodeReader extends Reader {
         if (internalIn2 != null)
             return;
 
-        String encoding;
+        Charset encoding;
         byte bom[] = new byte[BOM_SIZE];
         int n, unread;
         n = internalIn.read(bom, 0, bom.length);
 
         if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
-            encoding = "UTF-8";
+            encoding = StandardCharsets.UTF_8;
             unread = n - 3;
         } else if ((bom[0] == (byte) 0xFE) && (bom[1] == (byte) 0xFF)) {
-            encoding = "UTF-16BE";
+            encoding = StandardCharsets.UTF_16BE;
             unread = n - 2;
         } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)) {
-            encoding = "UTF-16LE";
+            encoding = StandardCharsets.UTF_16LE;
             unread = n - 2;
         } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00) && (bom[2] == (byte) 0xFE) && (bom[3] == (byte) 0xFF)) {
-            encoding = "UTF-32BE";
+            encoding = Charset.forName("UTF-32BE");
             unread = n - 4;
         } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00) && (bom[3] == (byte) 0x00)) {
-            encoding = "UTF-32LE";
+            encoding = Charset.forName("UTF-32LE");
             unread = n - 4;
         } else {
             // Unicode BOM mark not found, unread all bytes
@@ -95,7 +97,7 @@ public class UnicodeReader extends Reader {
 
         // Use given encoding
         if (encoding == null) {
-            internalIn2 = new InputStreamReader(internalIn);
+            internalIn2 = new InputStreamReader(internalIn, StandardCharsets.UTF_8);
         } else {
             internalIn2 = new InputStreamReader(internalIn, encoding);
         }
