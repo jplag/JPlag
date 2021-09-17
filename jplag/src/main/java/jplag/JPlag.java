@@ -9,10 +9,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 import jplag.options.JPlagOptions;
@@ -40,7 +41,7 @@ public class JPlag implements ProgramI {
     // ERROR REPORTING:
     private String currentSubmissionName = "<Unknown submission>"; // TODO PB: This should be moved to parseSubmissions(...)
     private int errors = 0;
-    private Vector<String> errorVector = new Vector<>(); // Vector of errors that occurred during the execution of the program.
+    private ArrayList<String> errorVector = new ArrayList<>(); // Vector of errors that occurred during the execution of the program.
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
@@ -71,7 +72,7 @@ public class JPlag implements ProgramI {
         readExclusionFile(); // This file contains all files names which are excluded
 
         // 2. Parse and validate submissions:
-        Vector<Submission> submissions = findSubmissions(rootDir);
+        ArrayList<Submission> submissions = findSubmissions(rootDir);
         parseAllSubmissions(submissions, baseCodeSubmission);
         submissions = filterValidSubmissions(submissions);
         if (submissions.size() < 2) {
@@ -178,14 +179,14 @@ public class JPlag implements ProgramI {
         System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
     }
 
-    private Vector<Submission> filterValidSubmissions(Vector<Submission> submissions) {
-        return submissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(Vector::new));
+    private ArrayList<Submission> filterValidSubmissions(ArrayList<Submission> submissions) {
+        return submissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
      * Find all submissions in the given root directory.
      */
-    private Vector<Submission> findSubmissions(File rootDir) throws ExitException {
+    private ArrayList<Submission> findSubmissions(File rootDir) throws ExitException {
         String[] fileNamesInRootDir;
 
         try {
@@ -239,8 +240,8 @@ public class JPlag implements ProgramI {
         System.out.println("Initialized language " + this.getLanguage().name());
     }
 
-    private Vector<Submission> mapFileNamesInRootDirToSubmissions(String[] fileNames, File rootDir) throws ExitException {
-        Vector<Submission> submissions = new Vector<>();
+    private ArrayList<Submission> mapFileNamesInRootDirToSubmissions(String[] fileNames, File rootDir) throws ExitException {
+        ArrayList<Submission> submissions = new ArrayList<>();
 
         for (String fileName : fileNames) {
             File submissionFile = new File(rootDir, fileName);
@@ -274,7 +275,7 @@ public class JPlag implements ProgramI {
             if (options.hasBaseCode() && options.getBaseCodeSubmissionName().equals(fileName)) {
                 baseCodeSubmission = submission;
             } else {
-                submissions.addElement(submission);
+                submissions.add(submission);
             }
         }
 
@@ -284,7 +285,7 @@ public class JPlag implements ProgramI {
     /**
      * TODO PB: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
      */
-    private void parseAllSubmissions(Vector<Submission> submissions, Submission baseCodeSubmission) throws ExitException {
+    private void parseAllSubmissions(ArrayList<Submission> submissions, Submission baseCodeSubmission) throws ExitException {
         try {
             parseSubmissions(submissions);
             parseBaseCodeSubmission(baseCodeSubmission);
@@ -335,7 +336,7 @@ public class JPlag implements ProgramI {
     /**
      * Parse all given submissions.
      */
-    private void parseSubmissions(Vector<Submission> submissions) {
+    private void parseSubmissions(ArrayList<Submission> submissions) {
         if (submissions == null) {
             System.out.println("Nothing to parse!");
             return;

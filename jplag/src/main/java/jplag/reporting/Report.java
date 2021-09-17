@@ -8,13 +8,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.Vector;
 
 import jplag.ExitException;
 import jplag.JPlagComparison;
@@ -329,41 +329,41 @@ public class Report { // Mostly legacy code with some minor improvements.
             String tmp = text[markup.fileIndex][markup.lineIndex];
             // is there any &quot;, &amp;, &gt; or &lt; in the String?
             if (tmp.indexOf('&') >= 0) {
-                Vector<String> tmpV = new Vector<>();
+                ArrayList<String> tmpV = new ArrayList<>();
                 // convert the string into a vector
                 int strLength = tmp.length();
                 for (int k = 0; k < strLength; k++) {
                     if (tmp.charAt(k) != '&') {
-                        tmpV.addElement(tmp.charAt(k) + "");
+                        tmpV.add(tmp.charAt(k) + "");
                     } else { // put &quot;, &amp;, &gt; and &lt; into one element
                         String tmpSub = tmp.substring(k);
                         if (tmpSub.startsWith("&quot;")) {
-                            tmpV.addElement("&quot;");
+                            tmpV.add("&quot;");
                             k = k + 5;
                         } else if (tmpSub.startsWith("&amp;")) {
-                            tmpV.addElement("&amp;");
+                            tmpV.add("&amp;");
                             k = k + 4;
                         } else if (tmpSub.startsWith("&lt;")) {
-                            tmpV.addElement("&lt;");
+                            tmpV.add("&lt;");
                             k = k + 3;
                         } else if (tmpSub.startsWith("&gt;")) {
-                            tmpV.addElement("&gt;");
+                            tmpV.add("&gt;");
                             k = k + 3;
                         } else {
-                            tmpV.addElement(tmp.charAt(k) + "");
+                            tmpV.add(tmp.charAt(k) + "");
                         }
                     }
                 }
                 if (markup.column <= tmpV.size()) {
-                    tmpV.insertElementAt(markup.text, markup.column);
+                    tmpV.add(markup.column, markup.text);
                 } else {
-                    tmpV.addElement(markup.text);
+                    tmpV.add(markup.text);
                 }
 
                 StringBuilder tmpVStr = new StringBuilder();
                 // reconvert the Vector into a String
                 for (int k = 0; k < tmpV.size(); k++) {
-                    tmpVStr.append(tmpV.elementAt(k));
+                    tmpVStr.append(tmpV.get(k));
                 }
                 text[markup.fileIndex][markup.lineIndex] = tmpVStr.toString();
             } else {
