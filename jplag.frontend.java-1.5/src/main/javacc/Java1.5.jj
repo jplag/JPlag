@@ -34,6 +34,7 @@ package jplag.java15.grammar;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.charset.StandardCharsets;
 
 import jplag.UnicodeReader;
 import jplag.java15.JavaTokenConstants;
@@ -137,11 +138,11 @@ public class JavaParser implements JavaTokenConstants
         try {
             FileInputStream in = new FileInputStream(new File(dir,fileName));
             if (parser == null) {
-                JavaTabModCharStream charStream = new JavaTabModCharStream(new UnicodeReader(in, "UTF-8"));
+                JavaTabModCharStream charStream = new JavaTabModCharStream(new UnicodeReader(in, StandardCharsets.UTF_8));
                 parser = new JavaParser(charStream);
                 parser.charStream = charStream;
             } else {
-                parser.charStream.ReInit(new UnicodeReader(in, "UTF-8"));
+                parser.charStream.ReInit(new UnicodeReader(in, StandardCharsets.UTF_8));
                 parser.ReInit(parser.charStream);
             }
             parser.parser2 = parserX;
