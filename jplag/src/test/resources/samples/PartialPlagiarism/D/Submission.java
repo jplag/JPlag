@@ -94,7 +94,7 @@ public class Submission implements Comparable<Submission> {
 
 	/*
 	 * This method is used to copy files that can not be parsed to a special
-	 * folder: jplag/errors/java old_java scheme cpp /001/(...files...)
+	 * folder: de/jplag/errors/java old_java scheme cpp /001/(...files...)
 	 * /002/(...files...)
 	 */
 	private void doSmth() {

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import jplag.CommandLineArgument;
+import de.jplag.CommandLineArgument;
 
 public class BaseCodeOptionTest extends CommandLineInterfaceTest {
 

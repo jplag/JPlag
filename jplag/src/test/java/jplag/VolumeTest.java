@@ -13,7 +13,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import jplag.options.JPlagOptions;
+import de.jplag.ExitException;
+import de.jplag.options.JPlagOptions;
 
 /**
  * These tests are not intended to be used automatically but rather manually prior to releases.

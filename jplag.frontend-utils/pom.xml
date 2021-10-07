@@ -3,7 +3,7 @@
   <artifactId>frontend-utils</artifactId>
   <version>0.0.3-SNAPSHOT</version>
   <parent>
-  	<groupId>edu.kit.ipd.jplag</groupId>
+  	<groupId>de.jplag</groupId>
   	<artifactId>parent</artifactId>
   	<version>0.3-SNAPSHOT</version>
   	<relativePath>../jplag.parent/pom.xml</relativePath>

@@ -1,10 +1,10 @@
 header {
-  package jplag.java.grammar;
+  package de.jplag.java.grammar;
   
   import java.io.IOException;
-  import jplag.java.*;
-  import jplag.InputState;
-  import jplag.ParserToken;
+  import de.jplag.java.*;
+  import de.jplag.InputState;
+  import de.jplag.ParserToken;
 }
 
 /** Java 1.2 Recognizer
@@ -101,9 +101,9 @@ tokens {
   FOR_ITERATOR; EMPTY_STAT; FINAL="final"; ABSTRACT="abstract";
 }
 	
-	// Emeric 13.01.05 feld jplag.java.Parser parser
+	// Emeric 13.01.05 feld de.jplag.java.Parser parser
 	
-	{public jplag.java.Parser parser ;}
+	{public de.jplag.java.Parser parser ;}
 	
 // Compilation Unit: In Java, this is a single file.  This is the start
 //   rule for this parser

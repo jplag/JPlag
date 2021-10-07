@@ -3,10 +3,10 @@
 header
 {
 
-package jplag.text;
+package de.jplag.text;
 
-import jplag.InputState;
-import jplag.ParserToken;
+import de.jplag.InputState;
+import de.jplag.ParserToken;
 
 //import java.io.InputStream;
 //import java.io.InputStreamReader;
@@ -40,7 +40,7 @@ options
 }
 
 {
-public jplag.text.Parser parser;
+public de.jplag.text.Parser parser;
   /**
    * The main routine is just for testing.
    */

@@ -14,14 +14,14 @@ options
 }
 
 PARSER_BEGIN(CPPScanner)
-package jplag.cpp;
+package de.jplag.cpp;
 import java.io.*;
-import jplag.*;
+import de.jplag.*;
 
 public class CPPScanner implements CPPTokenConstants {
     private static Scanner scanner2;
     public static boolean scanFile(File dir, String fileName,
-        jplag.cpp.CPPScanner scanner, jplag.cpp.Scanner scannerX) {
+        de.jplag.cpp.CPPScanner scanner, de.jplag.cpp.Scanner scannerX) {
         try {
             InputStream in = new NewlineStream(
                 new FileInputStream(new File(dir,fileName)));

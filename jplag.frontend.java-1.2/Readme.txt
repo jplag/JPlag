@@ -8,19 +8,19 @@ names, and comments are ignored, etc. Only some kind of program structure
 remains, which is then compared to other source files.
 
 This package contains a minimal set of files required to build our 
-Java 1.4 frontend (including ANTLR 2.7.7). The jplag.JPlag class has been
+Java 1.4 frontend (including ANTLR 2.7.7). The de.jplag.JPlag class has been
 reduced to only two functions.
 The grammar is specified with ANTLR 2.7.7 (src/main/antlr/java.g). In 
 some productions the parser adds tokens to the above mentioned token stream. 
 Search for "parser.add(" to find these locations. The token types are defined
-in "src/main/java/jplag/java/JavaToken.java" and "src/main/java/jplag/java/JavaTokenConstants.java".
+in "src/main/java/de/jplag/java/JavaToken.java" and "src/main/java/de/jplag/java/JavaTokenConstants.java".
 
 After building the source with a simple "mvn compile", you can test the parser by 
-invoking the main method of jplag.java.Parser with a Java file to parse as arguemtn:
+invoking the main method of de.jplag.java.Parser with a Java file to parse as arguemtn:
 
-java -cp "antlr.jar;build" jplag.java.Parser src/main/java/jplag/java/Parser.java
+java -cp "antlr.jar;build" de.jplag.java.Parser src/main/java/de/jplag/java/Parser.java
 
-This will show you the listing of src/main/java/jplag/java/Parser.java on the right side 
+This will show you the listing of src/main/java/de/jplag/java/Parser.java on the right side 
 of the screen with the generated tokens and their locations on the left side.
 
 To generate a new frontend you have to do the following things:

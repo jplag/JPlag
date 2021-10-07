@@ -2,7 +2,7 @@
 
 header 
 {
-package jplag.csharp.grammar;
+package de.jplag.csharp.grammar;
 
 }
 
@@ -20,7 +20,7 @@ options
 	defaultErrorHandler = false;		// don't generate parser error handlers
 	buildAST = false;   
  	exportVocab=CSharp;
-    classHeaderSuffix = "jplag.csharp.CSharpTokenConstants";
+    classHeaderSuffix = "de.jplag.csharp.CSharpTokenConstants";
 }
 
 
@@ -144,12 +144,12 @@ tokens
 	ModifierAttributes;
 	LinePragma;
 }
-	// Emeric 22.01.05 feld jplag.java.Parser parser
+	// Emeric 22.01.05 feld de.jplag.java.Parser parser
 	
 	
 // extended consume routine:
 {
-public jplag.csharp.Parser parser ;
+public de.jplag.csharp.Parser parser ;
     private Token lastConsumedToken = null;
     public void consume() {
         try {

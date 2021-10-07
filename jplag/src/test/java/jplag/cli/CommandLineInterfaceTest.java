@@ -1,17 +1,17 @@
 package jplag.cli;
 
+import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
 import static java.util.stream.Collectors.toSet;
-import static jplag.CommandLineArgument.ROOT_DIRECTORY;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
-import jplag.CLI;
-import jplag.CommandLineArgument;
-import jplag.ExitException;
-import jplag.JPlag;
-import jplag.JPlagResult;
-import jplag.options.JPlagOptions;
+import de.jplag.CLI;
+import de.jplag.CommandLineArgument;
+import de.jplag.ExitException;
+import de.jplag.JPlag;
+import de.jplag.JPlagResult;
+import de.jplag.options.JPlagOptions;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 /**

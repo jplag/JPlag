@@ -33,7 +33,7 @@
 					<grammarEncoding>${project.build.sourceEncoding}</grammarEncoding>
 					<debugparser>false</debugparser>
 					<isStatic>false</isStatic>
-					<outputDirectory>${project.basedir}/src/main/java/jplag/java15/grammar</outputDirectory>
+					<outputDirectory>${project.basedir}/src/main/java/de/jplag/java15/grammar</outputDirectory>
 				</configuration>
 				<executions>
 					<execution>
@@ -51,8 +51,8 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>jplag.java15.Parser</mainClass>
-							<packageName>jplag.java15</packageName>
+							<mainClass>de.jplag.java15.Parser</mainClass>
+							<packageName>de.jplag.java15</packageName>
 						</manifest>
 					</archive>
 				</configuration>
@@ -62,12 +62,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>edu.kit.ipd.jplag</groupId>
+			<groupId>de.jplag</groupId>
 			<artifactId>frontend-utils</artifactId>
 		</dependency>
 	</dependencies>
 	<parent>
-		<groupId>edu.kit.ipd.jplag</groupId>
+		<groupId>de.jplag</groupId>
 		<artifactId>parent</artifactId>
 		<version>0.3-SNAPSHOT</version>
 		<relativePath>../jplag.parent/pom.xml</relativePath>

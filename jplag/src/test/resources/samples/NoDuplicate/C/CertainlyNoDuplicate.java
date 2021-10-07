@@ -13,7 +13,7 @@ public class CertainlyNoDuplicate {
      * @param countryTag may be "de", "en", "fr", "es", "pt" or "ptbr"
      */
     public CertainlyNoDuplicate(String countryTag) {
-        String bundleName = "jplag.messages";
+        String bundleName = "de.jplag.messages";
         resourceBundle = ResourceBundle.getBundle(bundleName, new Locale(countryTag));
     }
 

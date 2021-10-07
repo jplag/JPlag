@@ -2,9 +2,12 @@ package jplag;
 
 import java.util.function.Consumer;
 
-import jplag.options.JPlagOptions;
-import jplag.options.LanguageOption;
-import jplag.options.Verbosity;
+import de.jplag.ExitException;
+import de.jplag.JPlag;
+import de.jplag.JPlagResult;
+import de.jplag.options.JPlagOptions;
+import de.jplag.options.LanguageOption;
+import de.jplag.options.Verbosity;
 
 public abstract class TestBase {
 
