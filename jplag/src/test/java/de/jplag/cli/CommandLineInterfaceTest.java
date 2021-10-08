@@ -1,4 +1,4 @@
-package jplag.cli;
+package de.jplag.cli;
 
 import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
 import static java.util.stream.Collectors.toSet;

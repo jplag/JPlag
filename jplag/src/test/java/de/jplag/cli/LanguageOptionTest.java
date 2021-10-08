@@ -1,4 +1,4 @@
-package jplag.cli;
+package de.jplag.cli;
 
 import static org.junit.Assert.assertEquals;
 
