@@ -11,7 +11,7 @@ import de.jplag.options.Verbosity;
 
 public abstract class TestBase {
 
-    private static final String BASE_PATH = "src/test/resources/samples";
+    private static final String BASE_PATH = "src/test/resources/de/jplag/samples";
 
     protected String getBasePath() {
         return BASE_PATH;
