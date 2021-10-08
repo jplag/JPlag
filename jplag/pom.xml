@@ -3,11 +3,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jplag</artifactId>
+  <artifactId>de.jplag</artifactId>
   <version>3.0.0-SNAPSHOT</version>
 
   <parent>
-    <groupId>edu.kit.ipd.jplag</groupId>
+    <groupId>de.jplag</groupId>
     <artifactId>parent</artifactId>
     <version>0.3-SNAPSHOT</version>
     <relativePath>../jplag.parent/pom.xml</relativePath>
@@ -24,7 +24,7 @@
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
         <excludes>
-          <exclude>jplag/version.properties</exclude>
+          <exclude>de/jplag/version.properties</exclude>
         </excludes>
       </resource>
     </resources>
@@ -61,7 +61,7 @@
           <debugParser>false</debugParser>
           <isStatic>false</isStatic>
           <!-- we need this since the old plugin does not read the package from
-              the grammar; as of 2.4 the plugin does that on its own <packageName>jplag.filter</packageName> -->
+              the grammar; as of 2.4 the plugin does that on its own <packageName>de.jplag.filter</packageName> -->
         </configuration>
         <executions>
           <execution>
@@ -78,8 +78,8 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>jplag.CLI</mainClass>
-              <packageName>jplag</packageName>
+              <mainClass>de.jplag.CLI</mainClass>
+              <packageName>de.jplag</packageName>
             </manifest>
           </archive>
         </configuration>
@@ -95,8 +95,8 @@
 
           <archive>
             <manifest>
-              <mainClass>jplag.CLI</mainClass>
-              <packageName>jplag</packageName>
+              <mainClass>de.jplag.CLI</mainClass>
+              <packageName>de.jplag</packageName>
             </manifest>
           </archive>
         </configuration>
@@ -149,62 +149,62 @@
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>frontend-utils</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>java-1.1exp</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>utils</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>text</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>java-1.5</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>java-1.7</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>java-1.9</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>python-3</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>csharp-1.2</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>cpp</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>scheme</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>edu.kit.ipd.jplag</groupId>
+      <groupId>de.jplag</groupId>
       <artifactId>chars</artifactId>
     </dependency>
     <dependency>

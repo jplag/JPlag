@@ -24,13 +24,13 @@ options {
 }
 
 PARSER_BEGIN(JavaParser)
-package jplag.javax;
+package de.jplag.javax;
 import java.io.*;
 
 public class JavaParser implements JavaTokenConstants {
   //static JavaParser parser = null;
- private   jplag.javax.Parser parser2 ;
-  public static boolean parseFile(File dir, String fileName,jplag.javax.JavaParser parser,jplag.javax.Parser parserX) {
+ private   de.jplag.javax.Parser parser2 ;
+  public static boolean parseFile(File dir, String fileName,de.jplag.javax.JavaParser parser,de.jplag.javax.Parser parserX) {
     File file=null;
     try {
       FileInputStream in = new FileInputStream(file=new File(dir,fileName));

@@ -6,8 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
-import jplag.CommandLineArgument;
-import jplag.options.JPlagOptions;
+import de.jplag.CommandLineArgument;
+import de.jplag.options.JPlagOptions;
 
 public class StoredMatchesTest extends CommandLineInterfaceTest {
 

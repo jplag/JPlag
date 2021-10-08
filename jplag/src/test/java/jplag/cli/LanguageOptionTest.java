@@ -6,8 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
-import jplag.CommandLineArgument;
-import jplag.options.LanguageOption;
+import de.jplag.CommandLineArgument;
+import de.jplag.options.LanguageOption;
 
 public class LanguageOptionTest extends CommandLineInterfaceTest {
 

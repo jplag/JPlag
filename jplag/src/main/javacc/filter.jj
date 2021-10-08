@@ -6,16 +6,16 @@ options {
 }
 
 PARSER_BEGIN(FilterParser)
-package jplag.filter;
+package de.jplag.filter;
 import java.io.*;
 import java.util.*;
 
 public class FilterParser {
-  private static jplag.Token javatoken;
+  private static de.jplag.Token javatoken;
   private static int[] table;
   private static boolean[] abgebildet;
  
-  public static int[] parse(String fileName, jplag.Token token,FilterParser parser) {
+  public static int[] parse(String fileName, de.jplag.Token token,FilterParser parser) {
     javatoken = token;
     table = new int[token.numberOfTokens()];
     abgebildet = new boolean[javatoken.numberOfTokens()];
@@ -68,7 +68,7 @@ public class FilterParser {
   /* // nur zum test
   public static void main(String[] args) {
   
-    parse(args[0], new jplag.javax.JavaToken(0,null,0),new FilterParser());
+    parse(args[0], new de.jplag.javax.JavaToken(0,null,0),new FilterParser());
   }
   
   */

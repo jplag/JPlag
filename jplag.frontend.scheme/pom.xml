@@ -60,8 +60,8 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>jplag.scheme.Parser</mainClass>
-							<packageName>jplag.scheme</packageName>
+							<mainClass>de.jplag.scheme.Parser</mainClass>
+							<packageName>de.jplag.scheme</packageName>
 						</manifest>
 					</archive>
 				</configuration>
@@ -107,12 +107,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>edu.kit.ipd.jplag</groupId>
+			<groupId>de.jplag</groupId>
 			<artifactId>frontend-utils</artifactId>
 		</dependency>
 	</dependencies>
 	<parent>
-		<groupId>edu.kit.ipd.jplag</groupId>
+		<groupId>de.jplag</groupId>
 		<artifactId>parent</artifactId>
 		<version>0.3-SNAPSHOT</version>
 		<relativePath>../jplag.parent/pom.xml</relativePath>

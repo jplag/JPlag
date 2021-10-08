@@ -9,9 +9,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
-import jplag.CommandLineArgument;
-import jplag.ExitException;
-import jplag.JPlag;
+import de.jplag.CommandLineArgument;
+import de.jplag.ExitException;
+import de.jplag.JPlag;
 
 public class MinTokenMatchTest extends CommandLineInterfaceTest {
 

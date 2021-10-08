@@ -30,14 +30,14 @@ options {
 }
 
 PARSER_BEGIN(JavaParser)
-package jplag.java15.grammar;
+package de.jplag.java15.grammar;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.StandardCharsets;
 
-import jplag.UnicodeReader;
-import jplag.java15.JavaTokenConstants;
+import de.jplag.UnicodeReader;
+import de.jplag.java15.JavaTokenConstants;
 
 /**
  * Grammar to parse Java version 1.5
@@ -49,7 +49,7 @@ public class JavaParser implements JavaTokenConstants
      * Class to hold modifiers.
      */
   
-    private jplag.java15.Parser parser2;
+    private de.jplag.java15.Parser parser2;
     static public final class ModifierSet
     {
         /* Definitions of the bits in the modifiers field.  */
@@ -133,7 +133,7 @@ public class JavaParser implements JavaTokenConstants
     //JavaParser parser = null;
     JavaTabModCharStream charStream = null;
 
-    public static boolean parseFile(File dir, String fileName, JavaParser parser, jplag.java15.Parser parserX)
+    public static boolean parseFile(File dir, String fileName, JavaParser parser, de.jplag.java15.Parser parserX)
     {
         try {
             FileInputStream in = new FileInputStream(new File(dir,fileName));

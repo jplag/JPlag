@@ -98,9 +98,9 @@ public class Structure implements TokenConstants {
 			for (int i = 0; i < anzahl; i++) {
 				tokens[i] = (Token) p.readObject();
 				// special case for text tokens:
-				// 	if (tokens[i] instanceof jplag.text.TextToken) {
-				// 	  jplag.text.TextToken token = (jplag.text.TextToken)tokens[i];
-				// 	  jplag.text.TextToken.put(token.getText(), token.type);
+				// 	if (tokens[i] instanceof de.jplag.text.TextToken) {
+				// 	  de.jplag.text.TextToken token = (de.jplag.text.TextToken)tokens[i];
+				// 	  de.jplag.text.TextToken.put(token.getText(), token.type);
 				// 	}
 			}
 			p.close();

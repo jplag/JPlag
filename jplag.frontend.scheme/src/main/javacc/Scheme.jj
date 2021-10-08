@@ -50,17 +50,17 @@ options
 
 
 PARSER_BEGIN(SchemeParser)
-package jplag.scheme;
+package de.jplag.scheme;
 import java.io.*;
 
 public class SchemeParser implements SchemeTokenConstants {
     /* used for context in the template production rule */
     private static int templateParam;
-    private jplag.scheme.Parser parser2 ;
+    private de.jplag.scheme.Parser parser2 ;
     //static SchemeParser parser = null;
 
     public static boolean parseFile(File dir, String fileName,
-        SchemeParser parser,jplag.scheme.Parser parserX)
+        SchemeParser parser, de.jplag.scheme.Parser parserX)
     {
         File file=null;
         try {

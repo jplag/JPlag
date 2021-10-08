@@ -1,13 +1,16 @@
 package jplag;
 
-import static jplag.strategy.ComparisonMode.PARALLEL;
+import static de.jplag.strategy.ComparisonMode.PARALLEL;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Optional;
 
 import org.junit.Test;
 
-import jplag.strategy.ParallelComparisonStrategy;
+import de.jplag.ExitException;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
  * Currently just a copy of {@link NormalComparisonTest} but for the {@link ParallelComparisonStrategy}.

@@ -4,6 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import de.jplag.ExitException;
+import de.jplag.JPlagResult;
+import de.jplag.Match;
+
 public class NewJavaFeaturesTest extends TestBase {
     private static final String EXCLUSION_FILE_NAME = "blacklist.txt";
     private static final String ROOT_DIRECTORY = "NewJavaFeatures";
