@@ -1,4 +1,4 @@
-package jplag;
+package de.jplag;
 
 import java.util.function.Consumer;
 

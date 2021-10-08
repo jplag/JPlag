@@ -1,14 +1,10 @@
-package jplag;
+package de.jplag;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.Optional;
 
 import org.junit.Test;
-
-import de.jplag.ExitException;
-import de.jplag.JPlagComparison;
-import de.jplag.JPlagResult;
 
 public class NormalComparisonTest extends TestBase {
 
