@@ -2,9 +2,6 @@ package de.jplag;
 
 import java.util.function.Consumer;
 
-import de.jplag.ExitException;
-import de.jplag.JPlag;
-import de.jplag.JPlagResult;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;
