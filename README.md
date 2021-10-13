@@ -1,3 +1,7 @@
+<p align="center"> 
+	<img alt="JPlag logo" src="jplag/src/main/resources/de/jplag/reporting/data/logo.png">
+</p>
+
 # JPlag - Detecting Software Plagiarism
 
 [![Maven Workflow](https://github.com/jplag/jplag/actions/workflows/maven.yml/badge.svg)](https://github.com/jplag/jplag/actions/workflows/maven.yml)
