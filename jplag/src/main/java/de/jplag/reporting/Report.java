@@ -78,7 +78,7 @@ public class Report { // Mostly legacy code with some minor improvements.
      * This procedure copies all the data from "data/" into the result-directory.
      */
     private void copyStaticFiles() {
-        final String[] fileList = {"back.gif", "forward.gif", "help-en.html", "help-sim-en.html", "logo.gif", "fields.js"};
+        final String[] fileList = {"back.gif", "forward.gif", "help-en.html", "help-sim-en.html", "logo.png", "fields.js"};
 
         for (int i = fileList.length - 1; i >= 0; i--) {
             try {
@@ -430,7 +430,7 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         htmlFile.println("<BODY BGCOLOR=#ffffff LINK=#000088 VLINK=#000000 TEXT=#000000>");
         htmlFile.println("<TABLE ALIGN=center CELLPADDING=2 CELLSPACING=1>");
-        htmlFile.println("<TR VALIGN=middle ALIGN=center BGCOLOR=#ffffff><TD>" + "<IMG SRC=\"logo.gif\" ALT=\"JPlag\" BORDER=0></TD>");
+        htmlFile.println("<TR VALIGN=middle ALIGN=center BGCOLOR=#ffffff><TD>" + "<IMG SRC=\"logo.png\" ALT=\"JPlag\" BORDER=0></TD>");
         htmlFile.println("<TD><H1><BIG>" + title + "</BIG></H1></TD></TR>");
 
         htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Language") + ":</TD><TD>"
