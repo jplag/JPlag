@@ -33,6 +33,8 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public class CLI {
 
+    private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. JPlag logo designed by Sandro Koch. Currently maintained by Sebastian Hahner and Timur Saglam.";
+
     private static final String[] DESCRIPTIONS = {"Detecting Software Plagiarism", "Software-Archaeological Playground", "Since 1996",
             "Scientifically Published", "Maintained by SDQ", "RIP Structure and Table", "What else?", "You have been warned!", "Since Java 1.0",
             "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work", "The tech is out there!"};
@@ -116,6 +118,6 @@ public class CLI {
 
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[new Random().nextInt(DESCRIPTIONS.length)];
-        return String.format("JPlag - %s", randomDescription);
+        return String.format("JPlag - %s" + System.lineSeparator() + CREDITS, randomDescription);
     }
 }
