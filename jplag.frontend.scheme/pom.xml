@@ -61,7 +61,7 @@
 					<archive>
 						<manifest>
 							<mainClass>de.jplag.scheme.Parser</mainClass>
-							<packageName>de.jplag.scheme</packageName>
+							<packageName>jplag.scheme</packageName>
 						</manifest>
 					</archive>
 				</configuration>

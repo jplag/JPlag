@@ -53,7 +53,7 @@
 					<archive>
 						<manifest>
 							<mainClass>de.jplag.java.Parser</mainClass>
-							<packageName>de.jplag.java</packageName>
+							<packageName>jplag.java</packageName>
 						</manifest>
 					</archive>
 				</configuration>

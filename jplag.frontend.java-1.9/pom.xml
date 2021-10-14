@@ -14,7 +14,7 @@
 					<archive>
 						<manifest>
 							<mainClass>de.jplag.java19.Parser</mainClass>
-							<packageName>de.jplag.java19</packageName>
+							<packageName>jplag.java19</packageName>
 						</manifest>
 					</archive>
 				</configuration>

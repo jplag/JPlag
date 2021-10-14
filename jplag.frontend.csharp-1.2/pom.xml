@@ -51,7 +51,7 @@
 					<archive>
 						<manifest>
 							<mainClass>de.jplag.csharp.Parser</mainClass>
-							<packageName>de.jplag.csharp</packageName>
+							<packageName>jplag.csharp</packageName>
 						</manifest>
 					</archive>
 				</configuration>

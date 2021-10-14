@@ -39,7 +39,7 @@ public class CLI {
             "Scientifically Published", "Maintained by SDQ", "RIP Structure and Table", "What else?", "You have been warned!", "Since Java 1.0",
             "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work", "The tech is out there!"};
 
-    private static final String PROGRAM_NAME = "de.jplag";
+    private static final String PROGRAM_NAME = "jplag";
 
     private final ArgumentParser parser;
 
