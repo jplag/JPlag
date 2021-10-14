@@ -50,7 +50,7 @@
 					<archive>
 						<manifest>
 							<mainClass>de.jplag.javax.Parser</mainClass>
-							<packageName>de.jplag.javax</packageName>
+							<packageName>jplag.javax</packageName>
 						</manifest>
 					</archive>
 				</configuration>
