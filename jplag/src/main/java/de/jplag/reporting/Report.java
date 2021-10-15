@@ -475,13 +475,14 @@ public class Report { // Mostly legacy code with some minor improvements.
      * getIndex() method of the token. It is meant to be used with the Character front end
      */
     private void writeIndexedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ExitException {
-        Submission sub = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
+        boolean useFirst = j == 0;
+        Submission sub = (useFirst ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
         String[] files = comparison.files(j);
         char[][] text = sub.readFilesChar(files);
-        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
+        TokenList tokens = (useFirst ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
 
         // get index array with matches sorted in ascending order.
-        int[] perm = comparison.sort_permutation(j);
+        List<Integer> perm = comparison.sort_permutation(useFirst);
 
         int index = 0; // match index
         Match onematch = null;
@@ -504,7 +505,7 @@ public class Report { // Mostly legacy code with some minor improvements.
             for (int charNr = 0; charNr < buffer.length; charNr++) {
                 if (onematch == null) {
                     if (index < comparison.getMatches().size()) {
-                        onematch = comparison.getMatches().get(perm[index]);
+                        onematch = comparison.getMatches().get(perm.get(index));
                         start = tokens.getToken(j == 0 ? onematch.getStartOfFirst() : onematch.getStartOfSecond());
                         end = tokens.getToken((j == 0 ? onematch.getStartOfFirst() : onematch.getStartOfSecond()) + onematch.getLength() - 1);
                         index++;
@@ -514,8 +515,8 @@ public class Report { // Mostly legacy code with some minor improvements.
                 }
                 // begin markup
                 if (start != null && start.getIndex() == charNr) {
-                    f.print("<A NAME=\"" + perm[index - 1] + "\"></A>");
-                    f.print("<FONT color=\"" + Color.getHexadecimalValue(perm[index - 1]) + "\"><B>");
+                    f.print("<A NAME=\"" + perm.get(index - 1) + "\"></A>");
+                    f.print("<FONT color=\"" + Color.getHexadecimalValue(perm.get(index - 1)) + "\"><B>");
                     // "<A HREF=\"javascript:ZweiFrames('match"+i+"-"+(1-j)+
                     // ".html#"+index+"',"+(3-j)+",'match"+i+"-top.html#"+index+
                     // "',1)\">"+"<IMG SRC=\""+pics[j]+

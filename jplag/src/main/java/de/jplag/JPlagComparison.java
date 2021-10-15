@@ -2,13 +2,15 @@ package de.jplag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * This method represents the whole result of a comparison between two submissions.
  */
-public class JPlagComparison implements Comparator<JPlagComparison> {
+public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME TS: contains a lot of code duplication
 
     private static final int ROUNDING_FACTOR = 10;
 
@@ -248,42 +250,24 @@ public class JPlagComparison implements Comparator<JPlagComparison> {
         this.secondBaseCodeMatches = secondBaseCodeMatches;
     }
 
-    /*
-     * s==0 uses the start indexes of 1st submission as key for the sorting algorithm. Otherwise the start indexes of 2nd
-     * submission are used.
+    /**
+     * Creates a permutation for the matches based on the indices of the matched token groups.
+     * @param useFirst determines whether the start of the first or second submission is compared.
+     * @return the permutation indices.
      */
-    public final int[] sort_permutation(int s) {   // bubblesort!!!
-        int size = matches.size();
-        int[] perm = new int[size];
-        int i, j, tmp;
+    public final List<Integer> sort_permutation(boolean useFirst) {
+        List<Integer> indices = new ArrayList<>(matches.size());
+        IntStream.range(0, matches.size()).forEach(index -> indices.add(index));
+        Comparator<Integer> comparator = (Integer i, Integer j) -> {
+            return Integer.compare(selectStartof(i, useFirst), selectStartof(j, useFirst));
+        };
+        Collections.sort(indices, comparator);
+        return indices;
+    }
 
-        // initialize permutation array
-        for (i = 0; i < size; i++) {
-            perm[i] = i;
-        }
-
-        if (s == 0) {     // First Submission
-            for (i = 1; i < size; i++) {
-                for (j = 0; j < (size - i); j++) {
-                    if (matches.get(perm[j]).getStartOfFirst() > matches.get(perm[j + 1]).getStartOfFirst()) {
-                        tmp = perm[j];
-                        perm[j] = perm[j + 1];
-                        perm[j + 1] = tmp;
-                    }
-                }
-            }
-        } else {        // Second submission
-            for (i = 1; i < size; i++) {
-                for (j = 0; j < (size - i); j++) {
-                    if (matches.get(perm[j]).getStartOfSecond() > matches.get(perm[j + 1]).getStartOfSecond()) {
-                        tmp = perm[j];
-                        perm[j] = perm[j + 1];
-                        perm[j + 1] = tmp;
-                    }
-                }
-            }
-        }
-        return perm;
+    private int selectStartof(Integer index, boolean useFirst) {
+        Match match = matches.get(index);
+        return useFirst ? match.getStartOfFirst() : match.getStartOfSecond();
     }
 
     @Override
