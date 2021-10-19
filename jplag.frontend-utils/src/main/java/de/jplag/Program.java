@@ -1,6 +1,6 @@
 package de.jplag;
 
-public interface ProgramI {
+public interface Program {
 
     /**
      * Print and store an error.

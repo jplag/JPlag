@@ -2,7 +2,7 @@ package de.jplag.cpp;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
 import de.jplag.TokenList;
 
 /*
@@ -11,14 +11,14 @@ import de.jplag.TokenList;
 public class Language implements de.jplag.Language {
 	private Scanner scanner;
 
-	public Language(ProgramI program) {
+	public Language(Program program) {
 		this.scanner = new Scanner();
 		this.scanner.setProgram(program);
 
 	}
 
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.scanner.errorsCount();
 	}
 
@@ -30,7 +30,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public String name() {
+    public String getName() {
 		return "C/C++ Scanner [basic markup]";
 	}
 
@@ -40,7 +40,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 12;
 	}
 
@@ -70,7 +70,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int noOfTokens() {
+    public int numberOfTokens() {
 		return CPPTokenConstants.NUM_DIFF_TOKENS;
 	}
 

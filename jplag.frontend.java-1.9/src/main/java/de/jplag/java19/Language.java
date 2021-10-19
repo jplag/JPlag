@@ -2,7 +2,7 @@ package de.jplag.java19;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
 import de.jplag.TokenList;
 
 /**
@@ -11,7 +11,7 @@ import de.jplag.TokenList;
 public class Language implements de.jplag.Language {
     private Parser parser;
 
-    public Language(ProgramI program) {
+    public Language(Program program) {
         this.parser = new Parser();
         this.parser.setProgram(program);
     }
@@ -23,7 +23,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String name() {
+    public String getName() {
         return "Javac 1.9+ based AST plugin";
     }
 
@@ -33,7 +33,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
         return 9;
     }
 
@@ -53,7 +53,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int noOfTokens() {
+    public int numberOfTokens() {
         return JavaTokenConstants.NUM_DIFF_TOKENS;
     }
 
@@ -73,7 +73,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int errorsCount() {
+    public int errorCount() {
         return this.parser.errorsCount();
     }
 
