@@ -3,14 +3,15 @@ package de.jplag.cpp;
 import java.io.File;
 
 import de.jplag.AbstractParser;
+import de.jplag.TokenList;
 
 public class Scanner extends AbstractParser implements CPPTokenConstants {
 	private String actFile;
 
-	private de.jplag.TokenList struct;
+	private TokenList struct;
 
-	public de.jplag.TokenList scan(File dir, String files[]) {
-		struct = new de.jplag.TokenList();
+	public TokenList scan(File dir, String files[]) {
+		struct = new TokenList();
 		errors = 0;
 		CPPScanner scanner = null;// will be initialized in Method scanFile
 		for (int i = 0; i < files.length; i++) {

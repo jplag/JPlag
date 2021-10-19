@@ -3,6 +3,7 @@ package de.jplag.cpp;
 import java.io.File;
 
 import de.jplag.ProgramI;
+import de.jplag.TokenList;
 
 /*
  * Leider werden C/C++ nicht geparst, sondern nur gescannt...
@@ -59,7 +60,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.scanner.scan(dir, files);
 	}
 
@@ -75,6 +76,6 @@ public class Language implements de.jplag.Language {
 
 	@Override
     public String type2string(int type) {
-		return de.jplag.cpp.CPPToken.type2string(type);
+		return CPPToken.type2string(type);
 	}
 }

@@ -10,9 +10,9 @@ import de.jplag.java17.grammar.Java7Parser.*;
 
 public class JplagJava7Listener implements Java7Listener, JavaTokenConstants {
 
-	private de.jplag.java17.Parser jplagParser;
+	private Parser jplagParser;
 
-	public JplagJava7Listener(de.jplag.java17.Parser jplag) {
+	public JplagJava7Listener(Parser jplag) {
 		jplagParser = jplag;
 	}
 

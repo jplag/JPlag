@@ -1,6 +1,8 @@
 package de.jplag.text;
 
-public class TextToken extends de.jplag.Token {
+import de.jplag.Token;
+
+public class TextToken extends Token {
 	private static final long serialVersionUID = 4301179216570538972L;
 
 	private static int getSerial(String text, Parser parser) {

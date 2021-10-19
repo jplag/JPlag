@@ -4,6 +4,7 @@ package de.jplag.text;
 import java.io.File;
 
 import de.jplag.ProgramI;
+import de.jplag.TokenList;
 
 /**
  * @Changed by Emeric Kwemou 29.01.2005
@@ -13,7 +14,7 @@ public class Language implements de.jplag.Language {
 
 	private ProgramI program;
 
-	private de.jplag.text.Parser parser = new de.jplag.text.Parser();
+	private Parser parser = new Parser();
 
 	public Language(ProgramI program) {
 		this.program = program;
@@ -47,7 +48,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 

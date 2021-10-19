@@ -4,16 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 
+import antlr.Token;
+import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 import de.jplag.UnicodeReader;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
-public class Parser extends de.jplag.AbstractParser implements CSharpTokenConstants {
+public class Parser extends AbstractParser implements CSharpTokenConstants {
 	private TokenList struct;
 	private String currentFile;
 
-	public de.jplag.TokenList parse(File dir, String files[]) {
+	public TokenList parse(File dir, String files[]) {
 		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
@@ -51,7 +53,7 @@ public class Parser extends de.jplag.AbstractParser implements CSharpTokenConsta
 		return true;
 	}
 
-	private void add(int type, antlr.Token tok) {
+	private void add(int type, Token tok) {
 		if (tok == null) {
 			System.out.println("tok == null  ERROR!");
 			return;

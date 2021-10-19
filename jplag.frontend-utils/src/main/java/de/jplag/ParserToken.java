@@ -1,6 +1,8 @@
 package de.jplag;
 
-public class ParserToken extends antlr.Token {
+import antlr.Token;
+
+public class ParserToken extends Token {
     /**
      * This variable holds the line number of the current token.
      */
