@@ -61,12 +61,12 @@ public class JPlag implements Program {
      */
     public JPlagResult run() throws ExitException {
         // 1. Preparation:
-        File rootDir = new File(options.getRootDirName());
+        File rootDir = new File(options.getRootDirectoryName());
         if (!rootDir.exists()) {
-            throw new ExitException("Root directory " + options.getRootDirName() + " does not exist!");
+            throw new ExitException("Root directory " + options.getRootDirectoryName() + " does not exist!");
         }
         if (!rootDir.isDirectory()) {
-            throw new ExitException(options.getRootDirName() + " is not a directory!");
+            throw new ExitException(options.getRootDirectoryName() + " is not a directory!");
         }
         readExclusionFile(); // This file contains all files names which are excluded
 
@@ -153,10 +153,10 @@ public class JPlag implements Program {
             return;
         }
 
-        String baseCodePath = this.options.getRootDirName() + File.separator + this.options.getBaseCodeSubmissionName();
+        String baseCodePath = this.options.getRootDirectoryName() + File.separator + this.options.getBaseCodeSubmissionName();
 
-        if (!(new File(this.options.getRootDirName())).exists()) {
-            throw new ExitException("Root directory \"" + this.options.getRootDirName() + "\" doesn't exist!", ExitException.BAD_PARAMETER);
+        if (!(new File(this.options.getRootDirectoryName())).exists()) {
+            throw new ExitException("Root directory \"" + this.options.getRootDirectoryName() + "\" doesn't exist!", ExitException.BAD_PARAMETER);
         }
 
         File f = new File(baseCodePath);
@@ -316,12 +316,12 @@ public class JPlag implements Program {
             throw new ExitException("Bad basecode submission");
         }
 
-        if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
+        if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
             throw new ExitException("Basecode submission contains fewer tokens " + "than minimum match length allows!\n");
         }
 
         if (options.hasBaseCode()) {
-            gSTiling.createHashes(subm.getTokenList(), options.getMinTokenMatch(), true);
+            gSTiling.createHashes(subm.getTokenList(), options.getMinimumTokenMatch(), true);
         }
 
         print("\nBasecode submission parsed!\n", null);
@@ -361,7 +361,7 @@ public class JPlag implements Program {
 
             count++;
 
-            if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
+            if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
                 print(null, "Submission contains fewer tokens than minimum match " + "length allows!\n");
                 subm.setTokenList(null);
                 invalid++;

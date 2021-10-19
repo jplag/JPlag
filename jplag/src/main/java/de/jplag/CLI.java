@@ -108,9 +108,9 @@ public class CLI {
         options.setSubdirectoryName(SUBDIRECTORY.getFrom(namespace));
         options.setFileSuffixes(fileSuffixes);
         options.setExclusionFileName(EXCLUDE_FILE.getFrom(namespace));
-        options.setMinTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace));
+        options.setMinimumTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace));
         options.setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace));
-        options.setMaxNumberOfMatches(STORED_MATCHES.getFrom(namespace));
+        options.setMaximumNumberOfMatches(STORED_MATCHES.getFrom(namespace));
         ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(it -> options.setComparisonMode(it),
                 () -> System.out.println("Unknown comparison mode, using default mode!"));
         return options;

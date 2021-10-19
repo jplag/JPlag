@@ -458,7 +458,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         htmlFile.println(
                 "<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Date") + ":</TD><TD>" + dateFormat.format(new Date()) + "</TD></TR>");
         htmlFile.println("<TR BGCOLOR=#aaaaff>" + "<TD><EM>" + msg.getString("Report.Minimum_Match_Length") + "</EM> ("
-                + msg.getString("Report.sensitivity") + "):</TD><TD>" + result.getOptions().getMinTokenMatch() + "</TD></TR>");
+                + msg.getString("Report.sensitivity") + "):</TD><TD>" + result.getOptions().getMinimumTokenMatch() + "</TD></TR>");
         htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Suffixes") + ":</TD><TD>");
 
         String[] fileSuffixes = result.getOptions().getFileSuffixes();

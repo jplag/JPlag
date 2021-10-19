@@ -17,7 +17,7 @@ public class StoredMatchesTest extends CommandLineInterfaceTest {
     @Test
     public void testDefault() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(JPlagOptions.DEFAULT_STORED_MATCHES, options.getMaxNumberOfMatches());
+        assertEquals(JPlagOptions.DEFAULT_STORED_MATCHES, options.getMaximumNumberOfMatches());
     }
 
     @Test
@@ -25,7 +25,7 @@ public class StoredMatchesTest extends CommandLineInterfaceTest {
         int expectedValue = 999;
         String argument = buildArgument(CommandLineArgument.STORED_MATCHES, Integer.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(expectedValue, options.getMaxNumberOfMatches());
+        assertEquals(expectedValue, options.getMaximumNumberOfMatches());
     }
 
     @Test
@@ -33,14 +33,14 @@ public class StoredMatchesTest extends CommandLineInterfaceTest {
         int expectedValue = -1;
         String argument = buildArgument(CommandLineArgument.STORED_MATCHES, Integer.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(expectedValue, options.getMaxNumberOfMatches());
+        assertEquals(expectedValue, options.getMaximumNumberOfMatches());
     }
 
     @Test
     public void testLowerBound() {
         String argument = buildArgument(CommandLineArgument.STORED_MATCHES, Integer.toString(-2));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(-1, options.getMaxNumberOfMatches());
+        assertEquals(-1, options.getMaximumNumberOfMatches());
     }
 
     @Test
