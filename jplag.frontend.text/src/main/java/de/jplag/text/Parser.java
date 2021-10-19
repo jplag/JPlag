@@ -7,15 +7,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashSet;
 
+import antlr.Token;
+import de.jplag.AbstractParser;
 import de.jplag.InputState;
 import de.jplag.ParserToken;
+import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
 /**
  * @Changed by Emeric Kwemou 29.01.2005
  *  
  */
-public class Parser extends de.jplag.AbstractParser implements de.jplag.TokenConstants {
+public class Parser extends AbstractParser implements TokenConstants {
 
 	protected TokenStructure tokenStructure = new TokenStructure();
 
@@ -47,7 +50,7 @@ public class Parser extends de.jplag.AbstractParser implements de.jplag.TokenCon
 		}
 	}
 
-	public de.jplag.TokenList parse(File dir, String files[]) {
+	public TokenList parse(File dir, String files[]) {
 		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
@@ -93,7 +96,7 @@ public class Parser extends de.jplag.AbstractParser implements de.jplag.TokenCon
 		return true;
 	}
 
-	public void add(antlr.Token tok) {
+	public void add(Token tok) {
 		ParserToken ptok = (ParserToken) tok;
 		if (filter != null && filter.contains(tok.getText().toLowerCase()))
 			return;

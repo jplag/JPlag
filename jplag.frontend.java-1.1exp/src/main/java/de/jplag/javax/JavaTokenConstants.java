@@ -1,8 +1,10 @@
 package de.jplag.javax;
 
+import de.jplag.TokenConstants;
+
 //import java.io.*;
 
-public interface JavaTokenConstants extends de.jplag.TokenConstants {
+public interface JavaTokenConstants extends TokenConstants {
   final static int FILE_END = 0;
 
   final static int J_PACKAGE =          1;  

@@ -3,12 +3,13 @@ package de.jplag.java17;
 import java.io.File;
 
 import de.jplag.ProgramI;
+import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
-	private de.jplag.java17.Parser parser;
+	private Parser parser;
 
 	public Language(ProgramI program) {
-		this.parser = new de.jplag.java17.Parser();
+		this.parser = new Parser();
 		this.parser.setProgram(program);
 	}
 
@@ -39,7 +40,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
@@ -70,6 +71,6 @@ public class Language implements de.jplag.Language {
 
 	@Override
     public String type2string(int type) {
-		return de.jplag.java17.JavaToken.type2string(type);
+		return JavaToken.type2string(type);
 	}
 }

@@ -1,6 +1,8 @@
 package de.jplag.java17;
 
-public class JavaToken extends de.jplag.Token implements JavaTokenConstants {
+import de.jplag.Token;
+
+public class JavaToken extends Token implements JavaTokenConstants {
 	private static final long serialVersionUID = -383581430479870696L;
 	private int line, column, length;
 

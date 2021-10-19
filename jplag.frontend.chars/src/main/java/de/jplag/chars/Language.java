@@ -4,6 +4,7 @@ import java.io.File;
 
 import de.jplag.ProgramI;
 import de.jplag.Token;
+import de.jplag.TokenList;
 
 /*
  * read in text files as characters
@@ -50,7 +51,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 

@@ -1,6 +1,8 @@
 package de.jplag.java17;
 
-public interface JavaTokenConstants extends de.jplag.TokenConstants {
+import de.jplag.TokenConstants;
+
+public interface JavaTokenConstants extends TokenConstants {
 	final static int FILE_END = 0;
 
 	// Used to optionally separate methods from each other

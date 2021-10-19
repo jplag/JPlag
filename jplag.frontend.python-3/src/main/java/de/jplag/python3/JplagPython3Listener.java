@@ -9,7 +9,7 @@ import de.jplag.python3.grammar.Python3Parser;
 
 public class JplagPython3Listener implements Python3Listener, Python3TokenConstants {
 
-    private de.jplag.python3.Parser jplagParser;
+    private Parser jplagParser;
 
     public JplagPython3Listener(de.jplag.python3.Parser jplag) {
         jplagParser = jplag;

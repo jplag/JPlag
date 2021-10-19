@@ -3,6 +3,7 @@ package de.jplag.scheme;
 import java.io.File;
 
 import de.jplag.ProgramI;
+import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
@@ -56,7 +57,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
@@ -72,6 +73,6 @@ public class Language implements de.jplag.Language {
 
 	@Override
     public String type2string(int type) {
-		return de.jplag.scheme.SchemeToken.type2string(type);
+		return SchemeToken.type2string(type);
 	}
 }

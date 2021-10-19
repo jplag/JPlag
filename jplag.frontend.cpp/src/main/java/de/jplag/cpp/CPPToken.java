@@ -1,6 +1,8 @@
 package de.jplag.cpp;
 
-public class CPPToken extends de.jplag.Token implements CPPTokenConstants {
+import de.jplag.Token;
+
+public class CPPToken extends Token implements CPPTokenConstants {
 	private static final long serialVersionUID = 1L;
 	private int line;
 

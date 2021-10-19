@@ -2,13 +2,16 @@ package de.jplag.scheme;
 
 import java.io.File;
 
-public class Parser extends de.jplag.AbstractParser implements SchemeTokenConstants {
+import de.jplag.AbstractParser;
+import de.jplag.TokenList;
+
+public class Parser extends AbstractParser implements SchemeTokenConstants {
 	private String actFile;
 
-	private de.jplag.TokenList struct;
+	private TokenList struct;
 
-	public de.jplag.TokenList parse(File dir, String files[]) {
-		struct = new de.jplag.TokenList();
+	public TokenList parse(File dir, String files[]) {
+		struct = new TokenList();
 		errors = 0;
 		SchemeParser parser = null;// no worry it will be reinitialized
 		// in method parseFile(...)

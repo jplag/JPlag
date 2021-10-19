@@ -3,17 +3,19 @@ package de.jplag.java;
 import java.io.File;
 import java.io.FileInputStream;
 
+import antlr.Token;
+import de.jplag.AbstractParser;
 import de.jplag.InputState;
 import de.jplag.ParserToken;
 import de.jplag.TokenList;
 import de.jplag.java.grammar.JLexer;
 import de.jplag.java.grammar.JRecognizer;
 
-public class Parser extends de.jplag.AbstractParser implements JavaTokenConstants {
+public class Parser extends AbstractParser implements JavaTokenConstants {
 	private TokenList struct;
 	private String currentFile;
 
-	public de.jplag.TokenList parse(File dir, String files[]) {
+	public TokenList parse(File dir, String files[]) {
 		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
@@ -59,7 +61,7 @@ public class Parser extends de.jplag.AbstractParser implements JavaTokenConstant
 		return true;
 	}
 
-	public void add(int type, antlr.Token tok) {
+	public void add(int type, Token tok) {
 		ParserToken ptok = (ParserToken) tok;
 		struct.addToken(new JavaToken(type, currentFile, ptok.getLine(), ptok.getColumn(), ptok.getLength()));
 	}
