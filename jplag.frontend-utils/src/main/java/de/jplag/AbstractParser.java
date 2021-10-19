@@ -9,7 +9,7 @@ public abstract class AbstractParser { // TODO TS: We should rename this class, 
     protected int errors = 0;
     private int errorsSum = 0;
 
-    public boolean getErrors() {
+    public boolean hasErrors() {
         return errors != 0;
     }
 

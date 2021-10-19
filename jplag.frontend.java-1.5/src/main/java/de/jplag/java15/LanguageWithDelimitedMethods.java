@@ -49,8 +49,8 @@ public class LanguageWithDelimitedMethods implements de.jplag.Language {
 	}
 
 	@Override
-    public boolean errors() {
-		return this.parser.getErrors();
+    public boolean hasErrors() {
+		return this.parser.hasErrors();
 	}
 
 	@Override
