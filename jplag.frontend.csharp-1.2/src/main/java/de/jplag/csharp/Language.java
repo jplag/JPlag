@@ -45,8 +45,8 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public boolean errors() {
-		return parser.getErrors();
+    public boolean hasErrors() {
+		return parser.hasErrors();
 	}
 
 	@Override

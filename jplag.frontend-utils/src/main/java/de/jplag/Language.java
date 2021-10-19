@@ -35,7 +35,7 @@ public interface Language {
     /**
      * Whether errors were found during the last {@link #parse}.
      */
-    public boolean errors();
+    public boolean hasErrors();
 
     /**
      * Number of errors found during the last {@link #parse}.

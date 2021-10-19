@@ -90,7 +90,7 @@ public class Submission implements Comparable<Submission> {
         String[] relativeFilePaths = getRelativeFilePaths(submissionFile, files);
 
         tokenList = this.program.getLanguage().parse(submissionFile, relativeFilePaths);
-        if (!program.getLanguage().errors()) {
+        if (!program.getLanguage().hasErrors()) {
             if (tokenList.size() < 3) {
                 program.print("Submission \"" + name + "\" is too short!\n", null);
                 tokenList = null;
