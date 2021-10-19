@@ -27,7 +27,7 @@ public class Language implements de.jplag.Language {
 
 	@Override
     public String name() {
-		return "SchemeR4RS Parser [basic markup]";
+		return "SchemeR4RS AbstractParser [basic markup]";
 	}
 
 	@Override

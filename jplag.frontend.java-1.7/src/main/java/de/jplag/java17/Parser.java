@@ -16,7 +16,7 @@ import de.jplag.java17.grammar.Java7Lexer;
 import de.jplag.java17.grammar.Java7Parser;
 import de.jplag.java17.grammar.Java7Parser.CompilationUnitContext;
 
-public class Parser extends de.jplag.Parser implements JavaTokenConstants {
+public class Parser extends de.jplag.AbstractParser implements JavaTokenConstants {
 	private TokenList struct = new TokenList();
 	private String currentFile;
 

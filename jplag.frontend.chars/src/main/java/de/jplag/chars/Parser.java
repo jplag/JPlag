@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 import de.jplag.TokenList;
 
-public class Parser extends de.jplag.Parser implements de.jplag.TokenConstants {
+public class Parser extends de.jplag.AbstractParser implements de.jplag.TokenConstants {
 
 	private TokenList struct;
 

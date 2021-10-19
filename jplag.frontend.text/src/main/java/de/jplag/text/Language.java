@@ -33,7 +33,7 @@ public class Language implements de.jplag.Language {
 
 	@Override
     public String name() {
-		return "Text Parser";
+		return "Text AbstractParser";
 	}
 
 	@Override

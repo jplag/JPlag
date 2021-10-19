@@ -2,7 +2,7 @@ package de.jplag.scheme;
 
 import java.io.File;
 
-public class Parser extends de.jplag.Parser implements SchemeTokenConstants {
+public class Parser extends de.jplag.AbstractParser implements SchemeTokenConstants {
 	private String actFile;
 
 	private de.jplag.TokenList struct;

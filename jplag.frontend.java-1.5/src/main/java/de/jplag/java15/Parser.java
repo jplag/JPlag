@@ -5,7 +5,7 @@ import java.io.File;
 import de.jplag.java15.grammar.JavaParser;
 import de.jplag.java15.grammar.Token;
 
-public class Parser extends de.jplag.Parser implements JavaTokenConstants {
+public class Parser extends de.jplag.AbstractParser implements JavaTokenConstants {
 	private String actFile;
 	private boolean useMethodSeparators;
 

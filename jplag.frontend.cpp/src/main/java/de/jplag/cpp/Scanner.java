@@ -2,9 +2,9 @@ package de.jplag.cpp;
 
 import java.io.File;
 
-import de.jplag.Parser;
+import de.jplag.AbstractParser;
 
-public class Scanner extends Parser implements CPPTokenConstants {
+public class Scanner extends AbstractParser implements CPPTokenConstants {
 	private String actFile;
 
 	private de.jplag.TokenList struct;

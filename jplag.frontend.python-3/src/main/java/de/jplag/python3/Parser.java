@@ -16,7 +16,7 @@ import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
 
-public class Parser extends de.jplag.Parser implements Python3TokenConstants {
+public class Parser extends de.jplag.AbstractParser implements Python3TokenConstants {
 
     private TokenList struct = new TokenList();
     private String currentFile;

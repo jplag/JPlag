@@ -26,7 +26,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String name() {
-        return "Python3 Parser";
+        return "Python3 AbstractParser";
     }
 
     @Override

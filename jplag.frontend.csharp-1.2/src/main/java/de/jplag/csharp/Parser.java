@@ -9,7 +9,7 @@ import de.jplag.UnicodeReader;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
-public class Parser extends de.jplag.Parser implements CSharpTokenConstants {
+public class Parser extends de.jplag.AbstractParser implements CSharpTokenConstants {
 	private TokenList struct;
 	private String currentFile;
 

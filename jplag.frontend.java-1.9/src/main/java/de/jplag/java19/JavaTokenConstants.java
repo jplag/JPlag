@@ -72,11 +72,11 @@ public interface JavaTokenConstants extends de.jplag.TokenConstants {
     final static int J_TRY_WITH_RESOURCE = 60; 	// check
 
     // new in 1.9
-    final static int J_REQUIRES = 61; 	       // check
-    final static int J_PROVIDES = 62; 	       // check
-    final static int J_EXPORTS = 63; 	       // check
-    final static int J_MODULE_BEGIN = 64;     // check
-    final static int J_MODULE_END = 65; 	       // check
+    final static int J_REQUIRES = 61; 	        // check
+    final static int J_PROVIDES = 62; 	        // check
+    final static int J_EXPORTS = 63; 	        // check
+    final static int J_MODULE_BEGIN = 64;       // check
+    final static int J_MODULE_END = 65; 	    // check
 
-    final static int NUM_DIFF_TOKENS = 66;		// @formatter:on
+    final static int NUM_DIFF_TOKENS = 66;	    // @formatter:on
 }

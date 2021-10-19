@@ -2,7 +2,7 @@ package de.jplag.java19;
 
 import java.io.File;
 
-public class Parser extends de.jplag.Parser {
+public class Parser extends de.jplag.AbstractParser {
     private de.jplag.TokenList tokenList;
 
     public de.jplag.TokenList parse(File dir, String files[]) {
