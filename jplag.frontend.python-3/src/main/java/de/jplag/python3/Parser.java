@@ -8,20 +8,22 @@ import java.io.IOException;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
 
-public class Parser extends de.jplag.Parser implements Python3TokenConstants {
+public class Parser extends AbstractParser implements Python3TokenConstants {
 
     private TokenList struct = new TokenList();
     private String currentFile;
 
-    public de.jplag.TokenList parse(File dir, String files[]) {
+    public TokenList parse(File dir, String files[]) {
         struct = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {
@@ -69,12 +71,12 @@ public class Parser extends de.jplag.Parser implements Python3TokenConstants {
         return true;
     }
 
-    public void add(int type, org.antlr.v4.runtime.Token tok) {
+    public void add(int type, Token tok) {
         struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), tok.getCharPositionInLine() + 1,
                 tok.getText().length()));
     }
 
-    public void addEnd(int type, org.antlr.v4.runtime.Token tok) {
+    public void addEnd(int type, Token tok) {
         struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), struct.getToken(struct.size()-1).getColumn() + 1,0));
     }
 }

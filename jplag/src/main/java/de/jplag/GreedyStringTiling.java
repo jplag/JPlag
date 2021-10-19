@@ -124,9 +124,9 @@ public class GreedyStringTiling implements TokenConstants {
 
         // Initialize:
         JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
-        int minimalTokenMatch = program.getOptions().getMinTokenMatch(); // minimal required token match
+        int minimumTokenMatch = program.getOptions().getMinimumTokenMatch(); // minimal required token match
 
-        if (first.size() <= minimalTokenMatch || second.size() <= minimalTokenMatch) { // <= because of pivots!
+        if (first.size() <= minimumTokenMatch || second.size() <= minimumTokenMatch) { // <= because of pivots!
             return comparison;
         }
 
@@ -134,32 +134,32 @@ public class GreedyStringTiling implements TokenConstants {
         markTokens(second, withBaseCode);
 
         // create hashes:
-        if (first.hash_length != minimalTokenMatch) {
-            createHashes(first, minimalTokenMatch, withBaseCode); // don't make table if it is not a base code comparison
+        if (first.hash_length != minimumTokenMatch) {
+            createHashes(first, minimumTokenMatch, withBaseCode); // don't make table if it is not a base code comparison
         }
-        if (second.hash_length != minimalTokenMatch || second.tokenHashes == null) {
-            createHashes(second, minimalTokenMatch, true);
+        if (second.hash_length != minimumTokenMatch || second.tokenHashes == null) {
+            createHashes(second, minimumTokenMatch, true);
         }
 
         List<Match> matches = new ArrayList<>();
 
         // start the black magic:
-        int maxmatch;
+        int maxMatch;
         do {
-            maxmatch = minimalTokenMatch;
+            maxMatch = minimumTokenMatch;
             matches.clear();
-            for (int x = 0; x < first.size() - maxmatch; x++) {
+            for (int x = 0; x < first.size() - maxMatch; x++) {
                 List<Integer> hashedTokens = second.tokenHashes.get(first.getToken(x).hash);
                 if (first.getToken(x).marked || first.getToken(x).hash == -1) {
                     continue;
                 }
                 inner: for (Integer y : hashedTokens) {
-                    if (second.getToken(y).marked || maxmatch >= second.size() - y) { // >= because of pivots!
+                    if (second.getToken(y).marked || maxMatch >= second.size() - y) { // >= because of pivots!
                         continue;
                     }
 
                     int j, hx, hy;
-                    for (j = maxmatch - 1; j >= 0; j--) { // begins comparison from behind
+                    for (j = maxMatch - 1; j >= 0; j--) { // begins comparison from behind
                         if (first.getToken(hx = x + j).type != second.getToken(hy = y + j).type || first.getToken(hx).marked
                                 || second.getToken(hy).marked) {
                             continue inner;
@@ -167,15 +167,15 @@ public class GreedyStringTiling implements TokenConstants {
                     }
 
                     // expand match
-                    j = maxmatch;
+                    j = maxMatch;
                     while (first.getToken(hx = x + j).type == second.getToken(hy = y + j).type && !first.getToken(hx).marked
                             && !second.getToken(hy).marked) {
                         j++;
                     }
 
-                    if (j > maxmatch && !withBaseCode || j != maxmatch && withBaseCode) {  // new biggest match? -> delete current smaller
+                    if (j > maxMatch && !withBaseCode || j != maxMatch && withBaseCode) {  // new biggest match? -> delete current smaller
                         matches.clear();
-                        maxmatch = j;
+                        maxMatch = j;
                     }
                     addMatchIfNotOverlapping(matches, x, y, j);
                 }
@@ -195,7 +195,7 @@ public class GreedyStringTiling implements TokenConstants {
                 }
             }
 
-        } while (maxmatch != minimalTokenMatch);
+        } while (maxMatch != minimumTokenMatch);
 
         return comparison;
     }

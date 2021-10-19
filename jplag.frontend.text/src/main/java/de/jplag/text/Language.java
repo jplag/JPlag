@@ -3,7 +3,8 @@ package de.jplag.text;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
+import de.jplag.TokenList;
 
 /**
  * @Changed by Emeric Kwemou 29.01.2005
@@ -11,17 +12,17 @@ import de.jplag.ProgramI;
  */
 public class Language implements de.jplag.Language {
 
-	private ProgramI program;
+	private Program program;
 
-	private de.jplag.text.Parser parser = new de.jplag.text.Parser();
+	private Parser parser = new Parser();
 
-	public Language(ProgramI program) {
+	public Language(Program program) {
 		this.program = program;
 		this.parser.setProgram(this.program);
 	}
 
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.parser.errorsCount();
 	}
 
@@ -32,8 +33,8 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public String name() {
-		return "Text Parser";
+    public String getName() {
+		return "Text AbstractParser";
 	}
 
 	@Override
@@ -42,18 +43,18 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 5;
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
 	@Override
-    public boolean errors() {
-		return this.parser.getErrors();
+    public boolean hasErrors() {
+		return this.parser.hasErrors();
 	}
 
 	@Override
@@ -72,7 +73,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int noOfTokens() {
+    public int numberOfTokens() {
         return parser.tokenStructure.serial;
 //		return de.jplag.text.TextToken.numberOfTokens();   // always returns 1 ....
 	}

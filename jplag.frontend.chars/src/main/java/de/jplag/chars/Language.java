@@ -2,18 +2,19 @@ package de.jplag.chars;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
 import de.jplag.Token;
+import de.jplag.TokenList;
 
 /*
  * read in text files as characters
  */
 public class Language implements de.jplag.Language {
-	private ProgramI program;
+	private Program program;
 
 	private de.jplag.chars.Parser parser = new Parser();
 
-	public Language(ProgramI program) {
+	public Language(Program program) {
 		this.program = program;
 		this.parser.setProgram(this.program);
 	}
@@ -30,13 +31,13 @@ public class Language implements de.jplag.Language {
 	 * @see de.jplag.Language#errorsCount()
 	 */
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.parser.errorsCount();
 	}
 
 	@Override
-    public String name() {
-		return "Character Parser";
+    public String getName() {
+		return "Character AbstractParser";
 	}
 
 	@Override
@@ -45,18 +46,18 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 10;
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
 	@Override
-    public boolean errors() {
-		return this.parser.getErrors();
+    public boolean hasErrors() {
+		return this.parser.hasErrors();
 	}
 
 	@Override
@@ -75,8 +76,8 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int noOfTokens() {
-		return de.jplag.chars.CharToken.numberOfTokens();
+    public int numberOfTokens() {
+		return 36;
 	}
 
 	@Override

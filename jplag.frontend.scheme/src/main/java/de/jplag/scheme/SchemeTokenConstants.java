@@ -1,6 +1,8 @@
 package de.jplag.scheme;
 
-public interface SchemeTokenConstants extends de.jplag.TokenConstants {
+import de.jplag.TokenConstants;
+
+public interface SchemeTokenConstants extends TokenConstants {
   final static int FILE_END = 0;
 
   // Used to optionally separate methods from each other

@@ -1,6 +1,8 @@
 package de.jplag.java15;
 
-public class JavaToken extends de.jplag.Token implements JavaTokenConstants {
+import de.jplag.Token;
+
+public class JavaToken extends Token implements JavaTokenConstants {
 	private static final long serialVersionUID = 3743208940428676175L;
 	private int line, column, length;
 
@@ -88,10 +90,6 @@ public class JavaToken extends de.jplag.Token implements JavaTokenConstants {
 
     default:                return "*UNKNOWN"; // @formatter:on
     }
-  }
-  
-  public static int numberOfTokens() { 
-    return NUM_DIFF_TOKENS;
   }
 }
 

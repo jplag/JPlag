@@ -1,6 +1,8 @@
 package de.jplag.cpp;
 
-public interface CPPTokenConstants extends de.jplag.TokenConstants {
+import de.jplag.TokenConstants;
+
+public interface CPPTokenConstants extends TokenConstants {
   final static int FILE_END = 0;
   // Used to optionally separate methods from each other
   // with an always marked token

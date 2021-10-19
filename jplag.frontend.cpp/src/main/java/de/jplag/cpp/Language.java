@@ -2,7 +2,8 @@ package de.jplag.cpp;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
+import de.jplag.TokenList;
 
 /*
  * Leider werden C/C++ nicht geparst, sondern nur gescannt...
@@ -10,14 +11,14 @@ import de.jplag.ProgramI;
 public class Language implements de.jplag.Language {
 	private Scanner scanner;
 
-	public Language(ProgramI program) {
+	public Language(Program program) {
 		this.scanner = new Scanner();
 		this.scanner.setProgram(program);
 
 	}
 
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.scanner.errorsCount();
 	}
 
@@ -29,7 +30,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public String name() {
+    public String getName() {
 		return "C/C++ Scanner [basic markup]";
 	}
 
@@ -39,7 +40,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 12;
 	}
 
@@ -59,22 +60,22 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.scanner.scan(dir, files);
 	}
 
 	@Override
-    public boolean errors() {
-		return this.scanner.getErrors();
+    public boolean hasErrors() {
+		return this.scanner.hasErrors();
 	}
 
 	@Override
-    public int noOfTokens() {
-		return de.jplag.cpp.CPPToken.numberOfTokens();
+    public int numberOfTokens() {
+		return CPPTokenConstants.NUM_DIFF_TOKENS;
 	}
 
 	@Override
     public String type2string(int type) {
-		return de.jplag.cpp.CPPToken.type2string(type);
+		return CPPToken.type2string(type);
 	}
 }

@@ -2,23 +2,25 @@ package de.jplag.java15;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Language;
+import de.jplag.Program;
+import de.jplag.TokenList;
 
 /**
  * Java 1.5 parser with method separators; if you know why these separators
  * exist, PLEASE tell us or document at
  * https://svn.ipd.kit.edu/trac/de/jplag/wiki/Server/Frontends/Java-1.5)
  */
-public class LanguageWithDelimitedMethods implements de.jplag.Language {
+public class LanguageWithDelimitedMethods implements Language {
 	private Parser parser;
 
-	public LanguageWithDelimitedMethods(ProgramI program) {
+	public LanguageWithDelimitedMethods(Program program) {
 		this.parser = new Parser(true);
 		this.parser.setProgram(program);
 	}
 
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.parser.errorsCount();
 	}
 
@@ -29,7 +31,7 @@ public class LanguageWithDelimitedMethods implements de.jplag.Language {
 	}
 
 	@Override
-    public String name() {
+    public String getName() {
 		return "Java1.5 Parser with delimited methods";
 	}
 
@@ -39,18 +41,18 @@ public class LanguageWithDelimitedMethods implements de.jplag.Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 8;
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
 	@Override
-    public boolean errors() {
-		return this.parser.getErrors();
+    public boolean hasErrors() {
+		return this.parser.hasErrors();
 	}
 
 	@Override
@@ -69,12 +71,12 @@ public class LanguageWithDelimitedMethods implements de.jplag.Language {
 	}
 
 	@Override
-    public int noOfTokens() {
-		return de.jplag.java15.JavaToken.numberOfTokens();
+    public int numberOfTokens() {
+		return JavaTokenConstants.NUM_DIFF_TOKENS;
 	}
 
 	@Override
     public String type2string(int type) {
-		return de.jplag.java15.JavaToken.type2string(type);
+		return JavaToken.type2string(type);
 	}
 }

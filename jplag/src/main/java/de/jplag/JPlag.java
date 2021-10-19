@@ -25,7 +25,7 @@ import de.jplag.strategy.ParallelComparisonStrategy;
 /**
  * This class coordinates the whole program flow.
  */
-public class JPlag implements ProgramI {
+public class JPlag implements Program {
 
     // INPUT:
     private Submission baseCodeSubmission = null;
@@ -61,12 +61,12 @@ public class JPlag implements ProgramI {
      */
     public JPlagResult run() throws ExitException {
         // 1. Preparation:
-        File rootDir = new File(options.getRootDirName());
+        File rootDir = new File(options.getRootDirectoryName());
         if (!rootDir.exists()) {
-            throw new ExitException("Root directory " + options.getRootDirName() + " does not exist!");
+            throw new ExitException("Root directory " + options.getRootDirectoryName() + " does not exist!");
         }
         if (!rootDir.isDirectory()) {
-            throw new ExitException(options.getRootDirName() + " is not a directory!");
+            throw new ExitException(options.getRootDirectoryName() + " is not a directory!");
         }
         readExclusionFile(); // This file contains all files names which are excluded
 
@@ -153,10 +153,10 @@ public class JPlag implements ProgramI {
             return;
         }
 
-        String baseCodePath = this.options.getRootDirName() + File.separator + this.options.getBaseCodeSubmissionName();
+        String baseCodePath = this.options.getRootDirectoryName() + File.separator + this.options.getBaseCodeSubmissionName();
 
-        if (!(new File(this.options.getRootDirName())).exists()) {
-            throw new ExitException("Root directory \"" + this.options.getRootDirName() + "\" doesn't exist!", ExitException.BAD_PARAMETER);
+        if (!(new File(this.options.getRootDirectoryName())).exists()) {
+            throw new ExitException("Root directory \"" + this.options.getRootDirectoryName() + "\" doesn't exist!", ExitException.BAD_PARAMETER);
         }
 
         File f = new File(baseCodePath);
@@ -220,7 +220,7 @@ public class JPlag implements ProgramI {
         LanguageOption languageOption = this.options.getLanguageOption();
 
         try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ProgramI.class);
+            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(Program.class);
             Object[] constructorParams = {this};
 
             Language language = (Language) constructor.newInstance(constructorParams);
@@ -236,7 +236,7 @@ public class JPlag implements ProgramI {
 
         this.options.setLanguageDefaults(this.getLanguage());
 
-        System.out.println("Initialized language " + this.getLanguage().name());
+        System.out.println("Initialized language " + this.getLanguage().getName());
     }
 
     private ArrayList<Submission> mapFileNamesInRootDirToSubmissions(String[] fileNames, File rootDir) throws ExitException {
@@ -316,12 +316,12 @@ public class JPlag implements ProgramI {
             throw new ExitException("Bad basecode submission");
         }
 
-        if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
+        if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
             throw new ExitException("Basecode submission contains fewer tokens " + "than minimum match length allows!\n");
         }
 
         if (options.hasBaseCode()) {
-            gSTiling.createHashes(subm.getTokenList(), options.getMinTokenMatch(), true);
+            gSTiling.createHashes(subm.getTokenList(), options.getMinimumTokenMatch(), true);
         }
 
         print("\nBasecode submission parsed!\n", null);
@@ -361,7 +361,7 @@ public class JPlag implements ProgramI {
 
             count++;
 
-            if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinTokenMatch()) {
+            if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
                 print(null, "Submission contains fewer tokens than minimum match " + "length allows!\n");
                 subm.setTokenList(null);
                 invalid++;

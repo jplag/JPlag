@@ -2,11 +2,14 @@ package de.jplag.java19;
 
 import java.io.File;
 
-public class Parser extends de.jplag.Parser {
-    private de.jplag.TokenList tokenList;
+import de.jplag.AbstractParser;
+import de.jplag.TokenList;
 
-    public de.jplag.TokenList parse(File dir, String files[]) {
-        tokenList = new de.jplag.TokenList();
+public class Parser extends AbstractParser {
+    private TokenList tokenList;
+
+    public TokenList parse(File dir, String files[]) {
+        tokenList = new TokenList();
         errors = 0;
         File pathedFiles[] = new File[files.length];
         for (int i = 0; i < files.length; i++) {

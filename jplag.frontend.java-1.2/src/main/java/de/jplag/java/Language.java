@@ -2,12 +2,13 @@ package de.jplag.java;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
+import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 	private Parser parser;
 
-	public Language(ProgramI program) {
+	public Language(Program program) {
 		this.parser = new Parser();
 		this.parser.setProgram(program);
 	}
@@ -19,13 +20,13 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.parser.errorsCount();
 	}
 
 	@Override
-    public String name() {
-		return "Java1.2 Parser";
+    public String getName() {
+		return "Java1.2 AbstractParser";
 	}
 
 	@Override
@@ -34,18 +35,18 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 9;
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
 	@Override
-    public boolean errors() {
-		return this.parser.getErrors();
+    public boolean hasErrors() {
+		return this.parser.hasErrors();
 	}
 
 	@Override
@@ -64,12 +65,12 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int noOfTokens() {
-		return de.jplag.java.JavaToken.numberOfTokens();
+    public int numberOfTokens() {
+		return JavaTokenConstants.NUM_DIFF_TOKENS;
 	}
 
 	@Override
     public String type2string(int type) {
-		return de.jplag.java.JavaToken.type2string(type);
+		return JavaToken.type2string(type);
 	}
 }

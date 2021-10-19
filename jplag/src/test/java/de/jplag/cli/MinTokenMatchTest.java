@@ -22,7 +22,7 @@ public class MinTokenMatchTest extends CommandLineInterfaceTest {
     public void testLanguageDefault() {
         // Language defaults not set yet:
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertNull(options.getMinTokenMatch());
+        assertNull(options.getMinimumTokenMatch());
         assertNull(options.getLanguage());
 
         // Init JPlag:
@@ -35,7 +35,7 @@ public class MinTokenMatchTest extends CommandLineInterfaceTest {
 
         // Now the language is set:
         assertNotNull(options.getLanguage());
-        assertEquals(options.getLanguage().min_token_match(), options.getMinTokenMatch().intValue());
+        assertEquals(options.getLanguage().minimumTokenMatch(), options.getMinimumTokenMatch().intValue());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class MinTokenMatchTest extends CommandLineInterfaceTest {
     public void testLowerBound() {
         String argument = buildArgument(CommandLineArgument.MIN_TOKEN_MATCH, Integer.toString(-1));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(1, options.getMinTokenMatch().intValue());
+        assertEquals(1, options.getMinimumTokenMatch().intValue());
     }
 
     @Test
@@ -64,6 +64,6 @@ public class MinTokenMatchTest extends CommandLineInterfaceTest {
         int expectedValue = 50;
         String argument = buildArgument(CommandLineArgument.MIN_TOKEN_MATCH, Integer.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(expectedValue, options.getMinTokenMatch().intValue());
+        assertEquals(expectedValue, options.getMinimumTokenMatch().intValue());
     }
 }

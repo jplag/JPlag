@@ -4,13 +4,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 
+import de.jplag.AbstractParser;
+import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
-public class Parser extends de.jplag.Parser implements de.jplag.TokenConstants {
+public class Parser extends AbstractParser implements TokenConstants {
 
 	private TokenList struct;
 
-	public de.jplag.TokenList parse(File dir, String files[]) {
+	public TokenList parse(File dir, String files[]) {
 		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
@@ -57,27 +59,6 @@ public class Parser extends de.jplag.Parser implements de.jplag.TokenConstants {
 			return false;
 		}
 		return true;
-	}
-
-	private char[] reversedMapping = null;
-
-	public char reverseMapping(int i) {
-		if (reversedMapping == null) {
-			int size = 0;
-			for (int j = 0; j < mapping.length; j++)
-				if (mapping[j] > size)
-					size = mapping[j];
-			reversedMapping = new char[size + 1];
-			for (int j = 0; j <= size; j++) {
-				reversedMapping[j] = 0;
-				for (int k = 0; k < mapping.length; k++)
-					if (mapping[k] == j) {
-						reversedMapping[j] = (char) k;
-						break;
-					}
-			}
-		}
-		return reversedMapping[i];
 	}
 
 	private int[] mapping = { -1, //   0 (nul)

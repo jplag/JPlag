@@ -1,6 +1,8 @@
 package de.jplag.python3;
 
-public class Python3Token extends de.jplag.Token implements Python3TokenConstants {
+import de.jplag.Token;
+
+public class Python3Token extends Token implements Python3TokenConstants {
 
     private static final long serialVersionUID = 1485877548175917943L;
     
@@ -111,9 +113,5 @@ public class Python3Token extends de.jplag.Token implements Python3TokenConstant
                 System.err.println("*UNKNOWN: " + type);
                 return "*UNKNOWN" + type;
         }
-    }
-
-    public static int numberOfTokens() {
-        return NUM_DIFF_TOKENS;
     }
 }

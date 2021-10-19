@@ -8,19 +8,21 @@ import java.io.IOException;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 import de.jplag.java17.grammar.Java7Lexer;
 import de.jplag.java17.grammar.Java7Parser;
 import de.jplag.java17.grammar.Java7Parser.CompilationUnitContext;
 
-public class Parser extends de.jplag.Parser implements JavaTokenConstants {
+public class Parser extends AbstractParser implements JavaTokenConstants {
 	private TokenList struct = new TokenList();
 	private String currentFile;
 
-	public de.jplag.TokenList parse(File dir, String files[]) {
+	public TokenList parse(File dir, String files[]) {
 		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
@@ -71,7 +73,7 @@ public class Parser extends de.jplag.Parser implements JavaTokenConstants {
 	//		struct.addToken(new JavaToken(type, (currentFile == null ? "null" : currentFile), line, start, text.length()));
 	//	}
 	
-	public void add(int type, org.antlr.v4.runtime.Token tok) {
+	public void add(int type, Token tok) {
 		struct.addToken(new JavaToken(type, (currentFile == null ? "null" : currentFile), tok.getLine(), tok.getCharPositionInLine() + 1, 
 				tok.getText().length()));
 	}

@@ -46,7 +46,7 @@ public class JPlagOptions {
      * The maximum number of matches that will be saved. This does affect the generated report as well as the internally
      * saved comparisons. If set to -1 all matches will be saved.
      */
-    private int maxNumberOfMatches = DEFAULT_STORED_MATCHES;
+    private int maximumNumberOfMatches = DEFAULT_STORED_MATCHES;
 
     /**
      * TODO PB: Not happy with the name yet.
@@ -56,7 +56,7 @@ public class JPlagOptions {
     /**
      * Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity
      */
-    private Integer minTokenMatch;
+    private Integer minimumTokenMatch;
 
     /**
      * Name of the file that contains the names of files to exclude from comparison.
@@ -66,7 +66,7 @@ public class JPlagOptions {
     /**
      * Directory that contains all submissions.
      */
-    private String rootDirName;
+    private String rootDirectoryName;
 
     /**
      * Name of the directory which contains the base code.
@@ -92,8 +92,8 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(String rootDirName, LanguageOption languageOption) {
-        this.rootDirName = rootDirName;
+    public JPlagOptions(String rootDirectoryName, LanguageOption languageOption) {
+        this.rootDirectoryName = rootDirectoryName;
         this.languageOption = languageOption;
     }
 
@@ -103,8 +103,8 @@ public class JPlagOptions {
      * @param language - initialized language instance
      */
     public void setLanguageDefaults(Language language) {
-        if (!hasMinTokenMatch()) {
-            setMinTokenMatch(language.min_token_match());
+        if (!hasMinimumTokenMatch()) {
+            setMinimumTokenMatch(language.minimumTokenMatch());
         }
 
         if (!hasFileSuffixes()) {
@@ -128,8 +128,8 @@ public class JPlagOptions {
         return fileSuffixes != null && fileSuffixes.length > 0;
     }
 
-    private boolean hasMinTokenMatch() {
-        return minTokenMatch != null;
+    private boolean hasMinimumTokenMatch() {
+        return minimumTokenMatch != null;
     }
 
     public ComparisonMode getComparisonMode() {
@@ -144,16 +144,16 @@ public class JPlagOptions {
         return language;
     }
 
-    public Integer getMinTokenMatch() {
-        return minTokenMatch;
+    public Integer getMinimumTokenMatch() {
+        return minimumTokenMatch;
     }
 
     public String getExclusionFileName() {
         return exclusionFileName;
     }
 
-    public String getRootDirName() {
-        return rootDirName;
+    public String getRootDirectoryName() {
+        return rootDirectoryName;
     }
 
     public String getBaseCodeSubmissionName() {
@@ -172,8 +172,8 @@ public class JPlagOptions {
         return similarityThreshold;
     }
 
-    public int getMaxNumberOfMatches() {
-        return this.maxNumberOfMatches;
+    public int getMaximumNumberOfMatches() {
+        return this.maximumNumberOfMatches;
     }
 
     public SimilarityMetric getSimilarityMetric() {
@@ -196,11 +196,11 @@ public class JPlagOptions {
         this.fileSuffixes = fileSuffixes;
     }
 
-    public void setMinTokenMatch(Integer minTokenMatch) {
-        if (minTokenMatch != null && minTokenMatch < 1) {
-            this.minTokenMatch = 1;
+    public void setMinimumTokenMatch(Integer minimumTokenMatch) {
+        if (minimumTokenMatch != null && minimumTokenMatch < 1) {
+            this.minimumTokenMatch = 1;
         } else {
-            this.minTokenMatch = minTokenMatch;
+            this.minimumTokenMatch = minimumTokenMatch;
         }
     }
 
@@ -208,8 +208,8 @@ public class JPlagOptions {
         this.exclusionFileName = exclusionFileName;
     }
 
-    public void setRootDirName(String rootDirName) {
-        this.rootDirName = rootDirName;
+    public void setRootDirectoryName(String rootDirectoryName) {
+        this.rootDirectoryName = rootDirectoryName;
     }
 
     public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
@@ -240,11 +240,11 @@ public class JPlagOptions {
         }
     }
 
-    public void setMaxNumberOfMatches(int maxNumberOfMatches) {
-        if (maxNumberOfMatches < -1) {
-            this.maxNumberOfMatches = -1;
+    public void setMaximumNumberOfMatches(int maximumNumberOfMatches) {
+        if (maximumNumberOfMatches < -1) {
+            this.maximumNumberOfMatches = -1;
         } else {
-            this.maxNumberOfMatches = maxNumberOfMatches;
+            this.maximumNumberOfMatches = maximumNumberOfMatches;
         }
     }
 

@@ -2,14 +2,15 @@ package de.jplag.python3;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
+import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
-    private de.jplag.python3.Parser parser;
+    private Parser parser;
 
-    public Language(ProgramI program) {
-        this.parser = new de.jplag.python3.Parser();
+    public Language(Program program) {
+        this.parser = new Parser();
         this.parser.setProgram(program);
     }
 
@@ -20,13 +21,13 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int errorsCount() {
+    public int errorCount() {
         return this.parser.errorsCount();
     }
 
     @Override
-    public String name() {
-        return "Python3 Parser";
+    public String getName() {
+        return "Python3 AbstractParser";
     }
 
     @Override
@@ -35,18 +36,18 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
         return 12;
     }
 
     @Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
         return this.parser.parse(dir, files);
     }
 
     @Override
-    public boolean errors() {
-        return this.parser.getErrors();
+    public boolean hasErrors() {
+        return this.parser.hasErrors();
     }
 
     @Override
@@ -65,12 +66,12 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int noOfTokens() {
-        return de.jplag.python3.Python3Token.numberOfTokens();
+    public int numberOfTokens() {
+        return Python3TokenConstants.NUM_DIFF_TOKENS;
     }
 
     @Override
     public String type2string(int type) {
-        return de.jplag.python3.Python3Token.type2string(type);
+        return Python3Token.type2string(type);
     }
 }

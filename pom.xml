@@ -22,7 +22,6 @@
     <module>jplag.frontend.python-3</module>
     <module>jplag.frontend.scheme</module>
     <module>jplag.frontend.text</module>
-    <module>jplag.utils</module>
     <module>jplag</module>
   </modules>
   <dependencyManagement>

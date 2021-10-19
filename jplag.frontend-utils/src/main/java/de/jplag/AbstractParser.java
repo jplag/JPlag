@@ -4,13 +4,13 @@ package de.jplag;
  * @author Emeric Kwemou
  * @date 22.01.2005
  */
-public abstract class Parser { // TODO TS: We should rename this class, as all concrete parsers shadow its name.
-    protected ProgramI program;
+public abstract class AbstractParser { // TODO TS: We should rename this class, as all concrete parsers shadow its name.
+    protected Program program;
     protected int errors = 0;
     private int errorsSum = 0;
 
-    public boolean getErrors() {
-        return (errors != 0);
+    public boolean hasErrors() {
+        return errors != 0;
     }
 
     public int errorsCount() {
@@ -21,11 +21,11 @@ public abstract class Parser { // TODO TS: We should rename this class, as all c
         errorsSum += errors;
     }
 
-    public ProgramI getProgram() {
+    public Program getProgram() {
         return program;
     }
 
-    public void setProgram(ProgramI prog) {
+    public void setProgram(Program prog) {
         this.program = prog;
     }
 }

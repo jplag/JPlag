@@ -2,21 +2,23 @@ package de.jplag.java15;
 
 import java.io.File;
 
+import de.jplag.AbstractParser;
+import de.jplag.TokenList;
 import de.jplag.java15.grammar.JavaParser;
 import de.jplag.java15.grammar.Token;
 
-public class Parser extends de.jplag.Parser implements JavaTokenConstants {
+public class Parser extends AbstractParser implements JavaTokenConstants {
 	private String actFile;
 	private boolean useMethodSeparators;
 
-	private de.jplag.TokenList struct;
+	private TokenList struct;
 
 	public Parser(boolean useMethodSeparators) {
 		this.useMethodSeparators = useMethodSeparators;
 	}
 
-	public de.jplag.TokenList parse(File dir, String files[]) {
-		struct = new de.jplag.TokenList();
+	public TokenList parse(File dir, String files[]) {
+		struct = new TokenList();
 		errors = 0;
 
 		JavaParser parser = null; // This will be (re)initialised in parseFile()

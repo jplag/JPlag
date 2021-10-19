@@ -1,6 +1,8 @@
 package de.jplag.python3;
 
-public interface Python3TokenConstants extends de.jplag.TokenConstants {
+import de.jplag.TokenConstants;
+
+public interface Python3TokenConstants extends TokenConstants {
 
     final static int FILE_END = 0;
     final static int SEPARATOR_TOKEN = 1;

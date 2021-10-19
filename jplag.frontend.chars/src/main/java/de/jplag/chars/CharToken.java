@@ -1,6 +1,8 @@
 package de.jplag.chars;
 
-public class CharToken extends de.jplag.Token {
+import de.jplag.Token;
+
+public class CharToken extends Token {
 	private static final long serialVersionUID = 1L;
 
 	private int index;
@@ -27,6 +29,4 @@ public class CharToken extends de.jplag.Token {
 
 	@Override
     public int getIndex() { return index; }
-
-	public static int numberOfTokens() { return 36;	}
 }

@@ -2,18 +2,19 @@ package de.jplag.scheme;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
+import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
-	public Language(ProgramI program) {
+	public Language(Program program) {
 		this.parser = new Parser();
 		this.parser.setProgram(program);
 
 	}
 
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.parser.errorsCount();
 	}
 
@@ -26,8 +27,8 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public String name() {
-		return "SchemeR4RS Parser [basic markup]";
+    public String getName() {
+		return "SchemeR4RS AbstractParser [basic markup]";
 	}
 
 	@Override
@@ -36,7 +37,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 13;
 	}
 
@@ -56,22 +57,22 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public de.jplag.TokenList parse(File dir, String[] files) {
+    public TokenList parse(File dir, String[] files) {
 		return this.parser.parse(dir, files);
 	}
 
 	@Override
-    public boolean errors() {
-		return this.parser.getErrors();
+    public boolean hasErrors() {
+		return this.parser.hasErrors();
 	}
 
 	@Override
-    public int noOfTokens() {
-		return de.jplag.scheme.SchemeToken.numberOfTokens();
+    public int numberOfTokens() {
+		return SchemeTokenConstants.NUM_DIFF_TOKENS;
 	}
 
 	@Override
     public String type2string(int type) {
-		return de.jplag.scheme.SchemeToken.type2string(type);
+		return SchemeToken.type2string(type);
 	}
 }

@@ -1,6 +1,8 @@
 package de.jplag.javax;
 
-public class JavaToken extends de.jplag.Token implements JavaTokenConstants {
+import de.jplag.Token;
+
+public class JavaToken extends Token implements JavaTokenConstants {
 	private static final long serialVersionUID = 8090049637477580276L;
 	private int line;
 
@@ -124,9 +126,5 @@ public class JavaToken extends de.jplag.Token implements JavaTokenConstants {
 	
 	    default:           return "<UNBEKANNT>";
 		}
-	}
-
-	public static int numberOfTokens() {
-		return NUM_DIFF_TOKENS;
 	}
 }
