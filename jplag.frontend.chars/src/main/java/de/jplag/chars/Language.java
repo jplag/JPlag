@@ -76,7 +76,7 @@ public class Language implements de.jplag.Language {
 
 	@Override
     public int noOfTokens() {
-		return de.jplag.chars.CharToken.numberOfTokens();
+		return 36;
 	}
 
 	@Override

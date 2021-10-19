@@ -52,8 +52,4 @@ abstract public class Token implements TokenConstants, Serializable {
     public String toString() {
         return type2string(type);
     }
-
-    public static int numberOfTokens() {
-        return 1;
-    }
 }

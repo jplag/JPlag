@@ -26,15 +26,6 @@ public class ParserToken extends antlr.Token {
         super();
     }
 
-    public ParserToken(int type) {
-        super(type);
-    }
-
-    public ParserToken(int type, String text) {
-        super(type, text);
-        setText(text);
-    }
-
     @Override
     public void setLine(int line) {
         _line = line;

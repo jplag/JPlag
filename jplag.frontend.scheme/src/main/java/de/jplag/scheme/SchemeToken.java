@@ -69,8 +69,4 @@ public int getLength() {return 0;}
     default:                 return "<?????> ";
     }
   }
-  
-  public static int numberOfTokens() { 
-    return NUM_DIFF_TOKENS;
-  }
 }

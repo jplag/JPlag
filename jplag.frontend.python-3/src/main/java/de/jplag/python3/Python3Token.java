@@ -112,8 +112,4 @@ public class Python3Token extends de.jplag.Token implements Python3TokenConstant
                 return "*UNKNOWN" + type;
         }
     }
-
-    public static int numberOfTokens() {
-        return NUM_DIFF_TOKENS;
-    }
 }

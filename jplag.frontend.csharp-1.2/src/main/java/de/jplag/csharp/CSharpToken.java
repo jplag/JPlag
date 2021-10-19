@@ -81,9 +81,5 @@ public void setLength(int length) { this.length = length; }
     default:                      return "<UNKNOWN> ";
     }
   }
-  
-  public static int numberOfTokens() { 
-    return NUM_DIFF_TOKENS;
-  }
 }
 

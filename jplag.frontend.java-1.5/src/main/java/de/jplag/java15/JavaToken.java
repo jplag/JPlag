@@ -89,9 +89,5 @@ public class JavaToken extends de.jplag.Token implements JavaTokenConstants {
     default:                return "*UNKNOWN"; // @formatter:on
     }
   }
-  
-  public static int numberOfTokens() { 
-    return NUM_DIFF_TOKENS;
-  }
 }
 

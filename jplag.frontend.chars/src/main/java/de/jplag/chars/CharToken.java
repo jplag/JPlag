@@ -27,6 +27,4 @@ public class CharToken extends de.jplag.Token {
 
 	@Override
     public int getIndex() { return index; }
-
-	public static int numberOfTokens() { return 36;	}
 }

@@ -88,8 +88,4 @@ public class CPPToken extends de.jplag.Token implements CPPTokenConstants {
 			default:                return "<UNBEKANNT>";
 		}
 	}
-
-	public static int numberOfTokens() { 
-		return NUM_DIFF_TOKENS;
-	}
 }

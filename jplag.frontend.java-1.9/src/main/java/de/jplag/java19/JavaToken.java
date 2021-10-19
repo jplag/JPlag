@@ -179,8 +179,4 @@ public class JavaToken extends de.jplag.Token implements JavaTokenConstants {
             return "*UNKNOWN" + type;
         }
     }
-
-    public static int numberOfTokens() {
-        return NUM_DIFF_TOKENS;
-    }
 }

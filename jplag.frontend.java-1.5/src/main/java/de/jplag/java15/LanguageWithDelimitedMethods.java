@@ -70,7 +70,7 @@ public class LanguageWithDelimitedMethods implements de.jplag.Language {
 
 	@Override
     public int noOfTokens() {
-		return de.jplag.java15.JavaToken.numberOfTokens();
+		return JavaTokenConstants.NUM_DIFF_TOKENS;
 	}
 
 	@Override

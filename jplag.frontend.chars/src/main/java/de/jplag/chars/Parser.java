@@ -59,27 +59,6 @@ public class Parser extends de.jplag.Parser implements de.jplag.TokenConstants {
 		return true;
 	}
 
-	private char[] reversedMapping = null;
-
-	public char reverseMapping(int i) {
-		if (reversedMapping == null) {
-			int size = 0;
-			for (int j = 0; j < mapping.length; j++)
-				if (mapping[j] > size)
-					size = mapping[j];
-			reversedMapping = new char[size + 1];
-			for (int j = 0; j <= size; j++) {
-				reversedMapping[j] = 0;
-				for (int k = 0; k < mapping.length; k++)
-					if (mapping[k] == j) {
-						reversedMapping[j] = (char) k;
-						break;
-					}
-			}
-		}
-		return reversedMapping[i];
-	}
-
 	private int[] mapping = { -1, //   0 (nul)
 			-1, //   1 (soh)
 			-1, //   2 (stx)

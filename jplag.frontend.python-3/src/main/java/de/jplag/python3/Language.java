@@ -66,7 +66,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public int noOfTokens() {
-        return de.jplag.python3.Python3Token.numberOfTokens();
+        return Python3TokenConstants.NUM_DIFF_TOKENS;
     }
 
     @Override

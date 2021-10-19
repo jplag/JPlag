@@ -3,7 +3,7 @@ package de.jplag.text;
 public class TextToken extends de.jplag.Token {
 	private static final long serialVersionUID = 4301179216570538972L;
 
-	public static int getSerial(String text, Parser parser) {
+	private static int getSerial(String text, Parser parser) {
         text = text.toLowerCase();
         Integer obj = parser.tokenStructure.table.get(text);
         if(obj == null) {
@@ -18,15 +18,7 @@ public class TextToken extends de.jplag.Token {
         }
         return obj.intValue();
     }
-
-    // throw away this method soon:
-
-    public static String type2string(int i, TokenStructure tokenStructure) {
-        if(tokenStructure.reverseMapping == null)
-            tokenStructure.createReverseMapping();
-        return tokenStructure.reverseMapping[i];
-    }
-
+	
     // ///////////////////// END OF STATIC MEMBERS
 
     private int line, column, length;
@@ -75,9 +67,5 @@ public class TextToken extends de.jplag.Token {
 
     public String getText() {
         return this.text;
-    }
-
-    public static int numberOfTokens(TokenStructure tokenStructure) {
-        return tokenStructure.table.size();
     }
 }
