@@ -15,7 +15,7 @@ public interface Language {
     /**
      * Descriptive name of the language.
      */
-    public String name();
+    public String getName();
 
     /**
      * Short name of the language used for CLI options.
@@ -25,7 +25,7 @@ public interface Language {
     /**
      * Minimum number of tokens required for a match.
      */
-    public int min_token_match();
+    public int minimumTokenMatch();
 
     /**
      * Parses a set files in a directory.
@@ -40,7 +40,7 @@ public interface Language {
     /**
      * Number of errors found during the last {@link #parse}.
      */
-    public int errorsCount();
+    public int errorCount();
 
     /**
      * Determines whether the parser provide column information.
@@ -60,7 +60,7 @@ public interface Language {
     /**
      * Number of defined tokens in the scanner of the language.
      */
-    public int noOfTokens();
+    public int numberOfTokens();
 
     /**
      * Convert a token type to a text representation.

@@ -3,7 +3,7 @@ package de.jplag.text;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
 import de.jplag.TokenList;
 
 /**
@@ -12,17 +12,17 @@ import de.jplag.TokenList;
  */
 public class Language implements de.jplag.Language {
 
-	private ProgramI program;
+	private Program program;
 
 	private Parser parser = new Parser();
 
-	public Language(ProgramI program) {
+	public Language(Program program) {
 		this.program = program;
 		this.parser.setProgram(this.program);
 	}
 
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.parser.errorsCount();
 	}
 
@@ -33,7 +33,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public String name() {
+    public String getName() {
 		return "Text AbstractParser";
 	}
 
@@ -43,7 +43,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 5;
 	}
 
@@ -73,7 +73,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int noOfTokens() {
+    public int numberOfTokens() {
         return parser.tokenStructure.serial;
 //		return de.jplag.text.TextToken.numberOfTokens();   // always returns 1 ....
 	}

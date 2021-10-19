@@ -25,7 +25,7 @@ import de.jplag.strategy.ParallelComparisonStrategy;
 /**
  * This class coordinates the whole program flow.
  */
-public class JPlag implements ProgramI {
+public class JPlag implements Program {
 
     // INPUT:
     private Submission baseCodeSubmission = null;
@@ -220,7 +220,7 @@ public class JPlag implements ProgramI {
         LanguageOption languageOption = this.options.getLanguageOption();
 
         try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ProgramI.class);
+            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(Program.class);
             Object[] constructorParams = {this};
 
             Language language = (Language) constructor.newInstance(constructorParams);
@@ -236,7 +236,7 @@ public class JPlag implements ProgramI {
 
         this.options.setLanguageDefaults(this.getLanguage());
 
-        System.out.println("Initialized language " + this.getLanguage().name());
+        System.out.println("Initialized language " + this.getLanguage().getName());
     }
 
     private ArrayList<Submission> mapFileNamesInRootDirToSubmissions(String[] fileNames, File rootDir) throws ExitException {

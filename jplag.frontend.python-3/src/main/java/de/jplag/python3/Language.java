@@ -2,14 +2,14 @@ package de.jplag.python3;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
     private Parser parser;
 
-    public Language(ProgramI program) {
+    public Language(Program program) {
         this.parser = new Parser();
         this.parser.setProgram(program);
     }
@@ -21,12 +21,12 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int errorsCount() {
+    public int errorCount() {
         return this.parser.errorsCount();
     }
 
     @Override
-    public String name() {
+    public String getName() {
         return "Python3 AbstractParser";
     }
 
@@ -36,7 +36,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
         return 12;
     }
 
@@ -66,7 +66,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int noOfTokens() {
+    public int numberOfTokens() {
         return Python3TokenConstants.NUM_DIFF_TOKENS;
     }
 

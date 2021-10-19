@@ -104,7 +104,7 @@ public class JPlagOptions {
      */
     public void setLanguageDefaults(Language language) {
         if (!hasMinTokenMatch()) {
-            setMinTokenMatch(language.min_token_match());
+            setMinTokenMatch(language.minimumTokenMatch());
         }
 
         if (!hasFileSuffixes()) {

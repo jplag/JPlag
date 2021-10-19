@@ -2,7 +2,7 @@ package de.jplag.chars;
 
 import java.io.File;
 
-import de.jplag.ProgramI;
+import de.jplag.Program;
 import de.jplag.Token;
 import de.jplag.TokenList;
 
@@ -10,11 +10,11 @@ import de.jplag.TokenList;
  * read in text files as characters
  */
 public class Language implements de.jplag.Language {
-	private ProgramI program;
+	private Program program;
 
 	private de.jplag.chars.Parser parser = new Parser();
 
-	public Language(ProgramI program) {
+	public Language(Program program) {
 		this.program = program;
 		this.parser.setProgram(this.program);
 	}
@@ -31,12 +31,12 @@ public class Language implements de.jplag.Language {
 	 * @see de.jplag.Language#errorsCount()
 	 */
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.parser.errorsCount();
 	}
 
 	@Override
-    public String name() {
+    public String getName() {
 		return "Character AbstractParser";
 	}
 
@@ -46,7 +46,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 10;
 	}
 
@@ -76,7 +76,7 @@ public class Language implements de.jplag.Language {
 	}
 
 	@Override
-    public int noOfTokens() {
+    public int numberOfTokens() {
 		return 36;
 	}
 

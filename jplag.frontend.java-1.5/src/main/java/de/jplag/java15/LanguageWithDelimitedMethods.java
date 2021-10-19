@@ -3,7 +3,7 @@ package de.jplag.java15;
 import java.io.File;
 
 import de.jplag.Language;
-import de.jplag.ProgramI;
+import de.jplag.Program;
 import de.jplag.TokenList;
 
 /**
@@ -14,13 +14,13 @@ import de.jplag.TokenList;
 public class LanguageWithDelimitedMethods implements Language {
 	private Parser parser;
 
-	public LanguageWithDelimitedMethods(ProgramI program) {
+	public LanguageWithDelimitedMethods(Program program) {
 		this.parser = new Parser(true);
 		this.parser.setProgram(program);
 	}
 
 	@Override
-    public int errorsCount() {
+    public int errorCount() {
 		return this.parser.errorsCount();
 	}
 
@@ -31,7 +31,7 @@ public class LanguageWithDelimitedMethods implements Language {
 	}
 
 	@Override
-    public String name() {
+    public String getName() {
 		return "Java1.5 Parser with delimited methods";
 	}
 
@@ -41,7 +41,7 @@ public class LanguageWithDelimitedMethods implements Language {
 	}
 
 	@Override
-    public int min_token_match() {
+    public int minimumTokenMatch() {
 		return 8;
 	}
 
@@ -71,7 +71,7 @@ public class LanguageWithDelimitedMethods implements Language {
 	}
 
 	@Override
-    public int noOfTokens() {
+    public int numberOfTokens() {
 		return JavaTokenConstants.NUM_DIFF_TOKENS;
 	}
 
