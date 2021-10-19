@@ -251,11 +251,6 @@
 			</dependency>
 			<dependency>
 				<groupId>de.jplag</groupId>
-				<artifactId>utils</artifactId>
-				<version>0.0.3-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.jplag</groupId>
 				<artifactId>frontend-utils</artifactId>
 				<version>0.0.3-SNAPSHOT</version>
 			</dependency>
