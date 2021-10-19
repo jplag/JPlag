@@ -26,7 +26,7 @@ public class Language implements de.jplag.Language {
 
 	@Override
     public String name() {
-		return "C# 1.2 Parser";
+		return "C# 1.2 AbstractParser";
 	}
 
 	@Override

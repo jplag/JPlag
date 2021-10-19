@@ -9,7 +9,7 @@ import de.jplag.TokenList;
 import de.jplag.java.grammar.JLexer;
 import de.jplag.java.grammar.JRecognizer;
 
-public class Parser extends de.jplag.Parser implements JavaTokenConstants {
+public class Parser extends de.jplag.AbstractParser implements JavaTokenConstants {
 	private TokenList struct;
 	private String currentFile;
 

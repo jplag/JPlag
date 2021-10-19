@@ -15,7 +15,7 @@ import de.jplag.TokenList;
  * @Changed by Emeric Kwemou 29.01.2005
  *  
  */
-public class Parser extends de.jplag.Parser implements de.jplag.TokenConstants {
+public class Parser extends de.jplag.AbstractParser implements de.jplag.TokenConstants {
 
 	protected TokenStructure tokenStructure = new TokenStructure();
 

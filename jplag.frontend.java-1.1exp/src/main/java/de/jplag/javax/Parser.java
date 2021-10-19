@@ -2,7 +2,7 @@ package de.jplag.javax;
 
 import java.io.File;
 
-public class Parser extends de.jplag.Parser implements JavaTokenConstants {
+public class Parser extends de.jplag.AbstractParser implements JavaTokenConstants {
 	private String actFile;
 
 	private de.jplag.TokenList struct;
