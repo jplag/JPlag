@@ -9,7 +9,8 @@ import de.jplag.options.Verbosity;
 public abstract class TestBase {
 
     private static final String BASE_PATH = "src/test/resources/de/jplag/samples";
-
+    protected static final float DELTA = 0.1f;
+    
     protected String getBasePath() {
         return BASE_PATH;
     }

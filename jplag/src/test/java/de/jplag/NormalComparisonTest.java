@@ -59,7 +59,7 @@ public class NormalComparisonTest extends TestBase {
                         comparison.getSecondSubmission().getName().equals("E") ||
                                 comparison.getFirstSubmission().getName().equals("E"))
                 .forEach(comparison ->
-                        assertEquals(0f, comparison.similarity(), 0.1f)
+                        assertEquals(0f, comparison.similarity(), DELTA)
                 );
 
         // Hard coded assertions on selected comparisons
