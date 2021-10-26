@@ -10,21 +10,20 @@ public class BaseCodeTest extends TestBase {
 
     @Test
     public void testBasecodeComparison() throws ExitException {
-        checkResult(runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base")));
+        JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base"));
+        verifyResults(result);
     }
-    
+
     @Test
-    public void testWeirdPath() throws ExitException {
-        String weirdPath = "." + File.separator + ".." + File.separator + "basecode" + File.separator + "base";
-        checkResult(runJPlag("basecode", it -> it.setBaseCodeSubmissionName(weirdPath)));
+    public void testAutoTrimFileSeparators() throws ExitException {
+        JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName(File.separator + "base" + File.separator));
+        verifyResults(result);
     }
 
-
-    private void checkResult(JPlagResult result) {
+    private void verifyResults(JPlagResult result) {
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getComparisons().size());
         assertEquals(1, result.getComparisons().get(0).getMatches().size());
-
         assertEquals(1, result.getSimilarityDistribution()[8]);
         assertEquals(85f, result.getComparisons().get(0).similarity(), DELTA);
     }
@@ -40,17 +39,7 @@ public class BaseCodeTest extends TestBase {
     }
 
     @Test(expected = ExitException.class)
-    public void testInvalidBasecode2() throws ExitException {
+    public void testBasecodeWithDots() throws ExitException {
         runJPlag("basecode", it -> it.setBaseCodeSubmissionName("." + File.separator + "base"));
-    }
-
-    @Test(expected = ExitException.class)
-    public void testInvalidBasecode3() throws ExitException {
-        runJPlag("basecode", it -> it.setBaseCodeSubmissionName(".." + File.separator + "base"));
-    }
-
-    @Test(expected = ExitException.class)
-    public void testInvalidBasecode4() throws ExitException {
-        runJPlag("basecode", it -> it.setBaseCodeSubmissionName(File.separator + "base" + File.separator));
     }
 }
