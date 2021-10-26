@@ -22,7 +22,7 @@
 You will find the generated JAR with all dependencies in  `jplag/target`.
 
 ## Usage
-JPlag can either be used via the CLI or directly via its Java API. For more information see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
 
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
@@ -75,7 +75,7 @@ Please consider our [guidelines for contributions](https://github.com/jplag/JPla
 
 ## Contact
 If you encounter bugs or other issues, please report them [here](https://github.com/jplag/jplag/issues).
-For other purposes you can contact us at jplag@ipd.kit.edu .
+For other purposes, you can contact us at jplag@ipd.kit.edu .
 If you are doing research related to JPlag, we would love to know what you are doing. Feel free to contact us!
 
 ### More information can be found in our [Wiki](https://github.com/jplag/JPlag/wiki)!
