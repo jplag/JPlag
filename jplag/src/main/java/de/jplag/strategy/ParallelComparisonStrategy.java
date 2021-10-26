@@ -42,7 +42,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         if (withBaseCode) {
             compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
         }
-        threadPool = Executors.newCachedThreadPool();
+        threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         comparisons.clear();
         submissionLocks.clear();
         successfulComparisons = 0;
