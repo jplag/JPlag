@@ -11,7 +11,7 @@
 ## Download and Installation
 
 ### Downloading a release
-* Download a [released version](https://github.com/jplag/jplag/releases), the most recent is [v3.0.0](https://github.com/jplag/jplag/releases/tag/v3.0.0-SNAPSHOT).
+* Download a [released version](https://github.com/jplag/jplag/releases).
 * In case you depend on the legacy version of JPlag we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
 
 ### Building from sources 
