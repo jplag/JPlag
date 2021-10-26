@@ -22,7 +22,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public enum CommandLineArgument {
     ROOT_DIRECTORY("rootDir", String.class, "The root-directory that contains all submissions"),
     LANGUAGE("-l", String.class, "Select the language to parse the submissions", LanguageOption.getDefault().getDisplayName(), LanguageOption.getAllDisplayNames()),
-    BASE_CODE("-bc", String.class, "Name of the directory which contains the base code (common framework used in all submissions)"),
+    BASE_CODE("-bc", String.class, "Name of the subdirectory of the root directory which contains the base code (common framework used in all submissions)"),
     VERBOSITY("-v", String.class, "Verbosity", "quiet", List.of("parser", "quiet", "long", "details")), // TODO SH: Replace verbosity when integrating a real logging library
     DEBUG("-d", Boolean.class, "(Debug) parser. Non-parsable files will be stored"),
     SUBDIRECTORY("-S", String.class, "Look in directories <root-dir>/*/<dir> for programs"),
