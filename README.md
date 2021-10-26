@@ -11,8 +11,8 @@
 ## Download and Installation
 
 ### Downloading a release
-Download a [released version](https://github.com/jplag/jplag/releases), the most recent is [v3.0.0](https://github.com/jplag/jplag/releases/tag/v3.0.0-SNAPSHOT).
-All releases are single-JAR releases.
+* Download a [released version](https://github.com/jplag/jplag/releases), the most recent is [v3.0.0](https://github.com/jplag/jplag/releases/tag/v3.0.0-SNAPSHOT).
+* In case you depend on the legacy version of JPlag we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
 
 ### Building from sources 
 1. Download or clone the code from this repository.
@@ -21,22 +21,8 @@ All releases are single-JAR releases.
 
 You will find the generated JAR with all dependencies in  `jplag/target`.
 
-## JPlag legacy version
-In case you depend on the legacy version of JPlag we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
-
-The following features are only available in version v3.0.0 and onwards:
-* a Java API for third-party integration
-* a simplified command-line interface
-* support for Java files containing new language features
-* improved colors for source codes matches in the report
-* a parallel comparison mode
-
-The following features are currently only supported in the legacy version:
-* result clustering
-* comparison based on maximum similarity
-
 ## Usage
-JPlag can either be used via the CLI or directly via its Java API.
+JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
 
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
@@ -65,9 +51,7 @@ named arguments:
 
 ### Java API
 
-The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects.
-
-#### Example 
+The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects:
 
 ```java
 JPlagOptions options = new JPlagOptions("/path/to/rootDir", LanguageOption.JAVA_1_9);
@@ -85,112 +69,13 @@ Report report = new Report(outputDir);
 report.writeResult(result);
 ```
 
-#### Class Diagram
-<p align="center">
-	<img alt="UMLClassDiagram.png" src="UMLClassDiagram.png?raw=true" width="800">
-</p>
-
-## Concepts
-
-This section explains some fundamental concepts about JPlag that make it easier to understand and use.
-
-### Root directory
-
-This is the directory in which JPlag will scan for submissions.
-
-### Submissions
-
-Submissions contain the source code that JPlag will parse and compare. They have to be direct children of the root directory and can either be single files or directories.
-
-#### Example: Single-file submissions
-
-```
-/path/to/root-directory
-├── Submission-1.java
-├── ...
-└── Submission-n.java
-```
-
-#### Example: Directory submissions
-
-JPlag will read submission directories recursively, so they can contain multiple (nested) source code files.
-
-```
-/path/to/root-directory
-├── Submission-1
-│   ├── Main.java
-│   └── util
-│       └── Utils.java
-├── ...
-└── Submission-n
-    ├── Main.java
-    └── util
-        └── Utils.java
-```
-
-If you want JPlag to scan only one specific subdirectory of a submission for source code files (e.g. `src`), you can pass the `-S` option:
-
-```
-With option --subDir=src
-
-/path/to/root-directory
-├── Submission-1
-│   ├── src                 
-│   │   ├── Main.java       # Included
-│   │   └── util            
-│   │       └── Utils.java  # Included
-│   ├── lib                 
-│   │   └── Library.java    # Ignored
-│   └── Other.java          # Ignored
-└── ...
-```
-
-### Base Code
-
-The base code is a special kind of submission. It is the template that all other submissions are based on. JPlag will ignore any match between two submissions that is also part of the base code.
-
-Like any other submission, the base code has to be a single file or directory in the root directory.
-
-```
-/path/to/root-directory
-├── BaseCode
-│   └── Solution.java
-├── Submission-1
-│   └── Solution.java
-├── ...
-└── Submission-n
-    └── Solution.java
-```
-
-#### Example
-
-In this example, students have to solve a given problem by implementing the `run` method in the template below. Because they are not supposed to modify the `main` function, it will be identical for each student. 
-
-```java
-// BaseCode/Solution.java
-public class Solution {
-
-    // DO NOT MODIFY
-    public static void main(String[] args) {
-        Solution solution = new Solution();  
-        solution.run();
-    }
-    
-    public void run() {
-        // TODO: Implement your solution here.
-    }
-}
-```
-
-To prevent JPlag from detecting similarities in the `main` function (and other parts of the template), we can instruct JPlag to ignore matches with the given base code by providing the `--baseCode=<base-code-name>` option. 
-
-The `<base-code-name>` in the example above is `BaseCode`.
-
 ## Contributing
 We're happy to incorporate all improvements to JPlag into this codebase. Feel free to fork the project and send pull requests.
+Please consider our [guidelines for contributions](https://github.com/jplag/JPlag/wiki/2.-Contributing-to-JPlag).
 
-### Adding new languages
-Adding a new language frontend is quite simple. Have a look at one of the `jplag.frontend` projects. All you need is a parser for the language (e.g., for ANTLR or for JavaCC) and a few lines of code that send the tokens (that are generated by the parser) to JPlag.
+## Contact
+If you encounter bugs or other issues, please report them [here](https://github.com/jplag/jplag/issues).
+For other purposes, you can contact us at jplag@ipd.kit.edu .
+If you are doing research related to JPlag, we would love to know what you are doing. Feel free to contact us!
 
-## Research
-If you are doing research related to JPlag, we would love to know what you are doing. Feel free to contact us at jplag@ipd.kit.edu or here on GitHub.
+### More information can be found in our [Wiki](https://github.com/jplag/JPlag/wiki)!
