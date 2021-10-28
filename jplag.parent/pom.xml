@@ -43,24 +43,6 @@
       <organizationUrl>https://sdq.ipd.kit.edu/</organizationUrl>
       <timezone>GMT+1</timezone>
     </developer>
-    <developer>
-      <id>sw</id>
-      <name>Sebastian Weigelt</name>
-      <email>weigelt@kit.edu</email>
-      <url>https://ps.ipd.kit.edu/176_347.php</url>
-      <organization>IPD Tichy</organization>
-      <organizationUrl>https://ps.ipd.kit.edu/</organizationUrl>
-      <timezone>GMT+1</timezone>
-    </developer>
-    <developer>
-      <id>lama</id>
-      <name>Mathias Landhäußer</name>
-      <email>mathias.landhaeusser@kit.edu</email>
-      <url>https://ps.ipd.kit.edu/176_366.php</url>
-      <organization>IPD Tichy</organization>
-      <organizationUrl>https://ps.ipd.kit.edu/</organizationUrl>
-      <timezone>GMT+1</timezone>
-    </developer>
   </developers>
 
   <properties>
@@ -116,7 +98,7 @@
     </plugins>
     <pluginManagement>
       <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings
+        <!--This plugin's configuration is used to store Eclipse m2e settings 
           only. It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
@@ -219,52 +201,52 @@
         <artifactId>chars</artifactId>
         <version>0.0.1-SNAPSHOT</version>
       </dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.13.2</version>
-			</dependency>
-			<dependency>
-				<groupId>antlr</groupId>
-				<artifactId>antlr</artifactId>
-				<version>2.7.7</version>
-			</dependency>
-			<dependency>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr4-runtime</artifactId>
-				<version>4.9.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr4</artifactId>
-				<version>4.9.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr3</artifactId>
-				<version>3.5</version>
-			</dependency>
-			<dependency>
-				<groupId>org.antlr</groupId>
-				<artifactId>antlr3-runtime</artifactId>
-				<version>3.5</version>
-			</dependency>
-			<dependency>
-				<groupId>de.jplag</groupId>
-				<artifactId>frontend-utils</artifactId>
-				<version>0.0.3-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.jplag</groupId>
-				<artifactId>jplag</artifactId>
-				<version>3.0.0-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>de.jplag</groupId>
-				<artifactId>java-1.5</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-	<name>JPlag Plagiarism Detector</name>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.2</version>
+      </dependency>
+      <dependency>
+        <groupId>antlr</groupId>
+        <artifactId>antlr</artifactId>
+        <version>2.7.7</version>
+      </dependency>
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+        <version>4.9.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4</artifactId>
+        <version>4.9.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr3</artifactId>
+        <version>3.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr3-runtime</artifactId>
+        <version>3.5</version>
+      </dependency>
+      <dependency>
+        <groupId>de.jplag</groupId>
+        <artifactId>frontend-utils</artifactId>
+        <version>0.0.3-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>de.jplag</groupId>
+        <artifactId>jplag</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>de.jplag</groupId>
+        <artifactId>java-1.5</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <name>JPlag Plagiarism Detector</name>
 </project>
