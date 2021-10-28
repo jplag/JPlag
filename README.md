@@ -17,7 +17,7 @@
 ### Building from sources 
 1. Download or clone the code from this repository.
 2. Run `mvn clean install` from the root of the repository to install all submodules. You will find the JARs in the respective `target` directories.
-3. Inside the `jplag` directory run `mvn clean generate-sources package assembly:single`. 
+3. Inside the `jplag` directory run `mvn clean generate-sources package`. 
 
 You will find the generated JAR with all dependencies in  `jplag/target`.
 
