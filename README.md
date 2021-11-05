@@ -1,5 +1,5 @@
 <p align="center"> 
-	<img alt="JPlag logo" src="jplag/src/main/resources/de/jplag/reporting/data/logo-dark.png">
+	<img alt="JPlag logo" src="jplag/src/main/resources/de/jplag/reporting/data/logo-dark.png" width="350">
 </p>
 
 # JPlag - Detecting Software Plagiarism
