@@ -37,19 +37,22 @@ public class JPlagOptions {
     private String[] fileSuffixes;
 
     /**
-     * Percentage value (must be between 0 and 100). Matches with a similarity below this threshold will be ignored. The
-     * default value of 0 allows all matches to be stored.
+     * Percentage value (must be between 0 and 100). Comparisons (of submissions pairs) with a similarity below this threshold will be ignored. The
+     * default value of 0 allows all matches to be stored. This affects which comparisons are stored and thus make it into the result object.
+     * @see JPlagOptions.similarityMetric
      */
     private float similarityThreshold = DEFAULT_SIMILARITY_THRESHOLD;
 
     /**
-     * The maximum number of matches that will be saved. This does affect the generated report as well as the internally
-     * saved comparisons. If set to -1 all matches will be saved.
+     * The maximum number of matches that will be saved. This does affect the generated report. If set to -1 all matches will be saved.
+     * TODO TS: First, this should be called maximumNumberOfComparisons, as matches are something else. Also, this should only affect the report.
      */
     private int maximumNumberOfMatches = DEFAULT_STORED_MATCHES;
 
     /**
-     * TODO PB: Not happy with the name yet.
+     * The similarity metric determines how the minimum similarity threshold required for a comparison (of two submissions) is calculated.
+     * This affects which comparisons are stored and thus make it into the result object.
+     * @see JPlagOptions.similarityThreshold
      */
     private SimilarityMetric similarityMetric = SimilarityMetric.AVG;
 
