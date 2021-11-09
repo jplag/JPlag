@@ -35,7 +35,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(ArrayList<Submission> submissions, Submission baseCodeSubmission) {
+    public JPlagResult compareSubmissions(List<Submission> submissions, Submission baseCodeSubmission) {
         // Initialize:
         long timeBeforeStartInMillis = System.currentTimeMillis();
         boolean withBaseCode = baseCodeSubmission != null;
@@ -72,7 +72,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     /**
      * @return a list of all submission tuples to be processed.
      */
-    private List<SubmissionTuple> buildComparisonTuples(ArrayList<Submission> submissions) {
+    private List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
         List<SubmissionTuple> tuples = new ArrayList<>();
         for (int i = 0; i < (submissions.size() - 1); i++) {
             Submission first = submissions.get(i);

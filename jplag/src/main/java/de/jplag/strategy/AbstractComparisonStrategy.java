@@ -1,7 +1,7 @@
 package de.jplag.strategy;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Optional;
 
 import de.jplag.GreedyStringTiling;
@@ -24,7 +24,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
         this.options = options;
     }
 
-    protected void compareSubmissionsToBaseCode(ArrayList<Submission> submissions, Submission baseCodeSubmission) {
+    protected void compareSubmissionsToBaseCode(List<Submission> submissions, Submission baseCodeSubmission) {
         for (Submission currentSubmission : submissions) {
             JPlagComparison baseCodeMatch = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
             baseCodeMatches.put(currentSubmission.getName(), baseCodeMatch);
