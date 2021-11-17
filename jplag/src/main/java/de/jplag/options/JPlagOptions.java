@@ -12,7 +12,7 @@ public class JPlagOptions {
 
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
-    public static final int DEFAULT_STORED_MATCHES = 30;
+    public static final int DEFAULT_SHOWN_COMPARISONS = 30;
     
     public static final Charset CHARSET = StandardCharsets.UTF_8;
 
@@ -44,10 +44,9 @@ public class JPlagOptions {
     private float similarityThreshold = DEFAULT_SIMILARITY_THRESHOLD;
 
     /**
-     * The maximum number of matches that will be saved. This does affect the generated report. If set to -1 all matches will be saved.
-     * TODO TS: First, this should be called maximumNumberOfComparisons, as matches are something else. Also, this should only affect the report.
+     * The maximum number of comparisons that will be shown in the generated report. If set to -1 all comparisons will be shown.
      */
-    private int maximumNumberOfMatches = DEFAULT_STORED_MATCHES;
+    private int maximumNumberOfComparisons = DEFAULT_SHOWN_COMPARISONS;
 
     /**
      * The similarity metric determines how the minimum similarity threshold required for a comparison (of two submissions) is calculated.
@@ -174,9 +173,9 @@ public class JPlagOptions {
     public float getSimilarityThreshold() {
         return similarityThreshold;
     }
-
-    public int getMaximumNumberOfMatches() {
-        return this.maximumNumberOfMatches;
+    
+    public int getMaximumNumberOfComparisons() {
+        return this.maximumNumberOfComparisons;
     }
 
     public SimilarityMetric getSimilarityMetric() {
@@ -243,11 +242,11 @@ public class JPlagOptions {
         }
     }
 
-    public void setMaximumNumberOfMatches(int maximumNumberOfMatches) {
-        if (maximumNumberOfMatches < -1) {
-            this.maximumNumberOfMatches = -1;
+    public void setMaximumNumberOfComparisons(int maximumNumberOfComparisons) {
+        if (maximumNumberOfComparisons < -1) {
+            this.maximumNumberOfComparisons = -1;
         } else {
-            this.maximumNumberOfMatches = maximumNumberOfMatches;
+            this.maximumNumberOfComparisons = maximumNumberOfComparisons;
         }
     }
 

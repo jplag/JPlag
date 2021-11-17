@@ -44,7 +44,7 @@ public class VolumeTest extends TestBase {
         }
 
         var results = runJPlag("data",
-                jPlagOptions -> jPlagOptions.setMaximumNumberOfMatches(-1));
+                jPlagOptions -> jPlagOptions.setMaximumNumberOfComparisons(-1));
 
         var csv = readCSVResults(String.format("%s/%s", this.getBasePath(), "matches_avg.csv"));
 

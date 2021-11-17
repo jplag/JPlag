@@ -2,7 +2,7 @@ package de.jplag;
 
 import static de.jplag.options.JPlagOptions.DEFAULT_COMPARISON_MODE;
 import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
-import static de.jplag.options.JPlagOptions.DEFAULT_STORED_MATCHES;
+import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
 import java.util.Collection;
@@ -30,7 +30,7 @@ public enum CommandLineArgument {
     EXCLUDE_FILE("-x", String.class, "All files named in this file will be ignored in the comparison (line-separated list)"),
     MIN_TOKEN_MATCH("-t", Integer.class, "Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity"),
     SIMILARITY_THRESHOLD("-m", Float.class, "Match similarity threshold [0-100]: All matches above this threshold will be saved", DEFAULT_SIMILARITY_THRESHOLD),
-    STORED_MATCHES("-n", Integer.class, "Maximum number of matches that will be saved. If set to -1 all matches will be saved", DEFAULT_STORED_MATCHES),
+    SHOWN_COMPARISONS("-n", Integer.class, "The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown", DEFAULT_SHOWN_COMPARISONS),
     RESULT_FOLDER("-r", String.class, "Name of directory in which the comparison results will be stored", "result"),
     COMPARISON_MODE("-c", String.class, "Comparison mode used to compare the programs", DEFAULT_COMPARISON_MODE.getName(), ComparisonMode.allNames());
 

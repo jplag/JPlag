@@ -9,7 +9,7 @@ import static de.jplag.CommandLineArgument.MIN_TOKEN_MATCH;
 import static de.jplag.CommandLineArgument.RESULT_FOLDER;
 import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
 import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
-import static de.jplag.CommandLineArgument.STORED_MATCHES;
+import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
 import static de.jplag.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.CommandLineArgument.SUFFIXES;
 import static de.jplag.CommandLineArgument.VERBOSITY;
@@ -110,7 +110,7 @@ public class CLI {
         options.setExclusionFileName(EXCLUDE_FILE.getFrom(namespace));
         options.setMinimumTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace));
         options.setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace));
-        options.setMaximumNumberOfMatches(STORED_MATCHES.getFrom(namespace));
+        options.setMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
         ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(it -> options.setComparisonMode(it),
                 () -> System.out.println("Unknown comparison mode, using default mode!"));
         return options;
