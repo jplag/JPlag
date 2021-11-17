@@ -32,7 +32,7 @@ public class NormalComparisonTest extends TestBase {
         assertEquals(3, result.getNumberOfSubmissions());
         assertEquals(3, result.getComparisons().size());
 
-        result.getAllComparisons().forEach(comparison -> {
+        result.getComparisons().forEach(comparison -> {
             assertEquals(0f, comparison.similarity(), 0.1f);
         });
     }
@@ -50,10 +50,10 @@ public class NormalComparisonTest extends TestBase {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
 
         assertEquals(5, result.getNumberOfSubmissions());
-        assertEquals(10, result.getAllComparisons().size());
+        assertEquals(10, result.getComparisons().size());
 
         // All comparisons with E shall have no matches
-        result.getAllComparisons()
+        result.getComparisons()
                 .stream()
                 .filter(comparison ->
                         comparison.getSecondSubmission().getName().equals("E") ||
@@ -86,7 +86,7 @@ public class NormalComparisonTest extends TestBase {
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
-        return result.getAllComparisons().stream()
+        return result.getComparisons().stream()
                 .filter(comparison ->
                         comparison.getFirstSubmission().getName().equals(nameA) &&
                                 comparison.getSecondSubmission().getName().equals(nameB) ||
