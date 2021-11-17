@@ -17,36 +17,36 @@ public class StoredMatchesTest extends CommandLineInterfaceTest {
     @Test
     public void testDefault() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(JPlagOptions.DEFAULT_STORED_MATCHES, options.getMaximumNumberOfMatches());
+        assertEquals(JPlagOptions.DEFAULT_SHOWN_COMPARISONS, options.getMaximumNumberOfComparisons());
     }
 
     @Test
     public void testValidThreshold() {
         int expectedValue = 999;
-        String argument = buildArgument(CommandLineArgument.STORED_MATCHES, Integer.toString(expectedValue));
+        String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, Integer.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(expectedValue, options.getMaximumNumberOfMatches());
+        assertEquals(expectedValue, options.getMaximumNumberOfComparisons());
     }
 
     @Test
     public void testAll() {
         int expectedValue = -1;
-        String argument = buildArgument(CommandLineArgument.STORED_MATCHES, Integer.toString(expectedValue));
+        String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, Integer.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(expectedValue, options.getMaximumNumberOfMatches());
+        assertEquals(expectedValue, options.getMaximumNumberOfComparisons());
     }
 
     @Test
     public void testLowerBound() {
-        String argument = buildArgument(CommandLineArgument.STORED_MATCHES, Integer.toString(-2));
+        String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, Integer.toString(-2));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(-1, options.getMaximumNumberOfMatches());
+        assertEquals(-1, options.getMaximumNumberOfComparisons());
     }
 
     @Test
     public void testInvalidThreshold() {
         exit.expectSystemExitWithStatus(1);
-        String argument = buildArgument(CommandLineArgument.STORED_MATCHES, "Not an integer...");
+        String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, "Not an integer...");
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
     }
 }

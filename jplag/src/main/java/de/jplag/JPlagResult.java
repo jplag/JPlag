@@ -77,10 +77,10 @@ public class JPlagResult {
      * settings set in JPlagOptions
      */
     public List<JPlagComparison> getComparisons() {
-        if (this.options.getMaximumNumberOfMatches() == -1) {
+        if (this.options.getMaximumNumberOfComparisons() == -1) {
             return this.getAllComparisons();
         } else {
-            return this.getComparisons(this.options.getMaximumNumberOfMatches());
+            return this.getComparisons(this.options.getMaximumNumberOfComparisons());
         }
     }
 
