@@ -36,6 +36,7 @@ public class Report { // Mostly legacy code with some minor improvements.
     private final Map<JPlagComparison, Integer> comparisonToIndex = new HashMap<>();
     private final Messages msg;
     private final File reportDir;
+    private final JPlagOptions options;
 
     private JPlagResult result;
 
@@ -43,9 +44,10 @@ public class Report { // Mostly legacy code with some minor improvements.
     private int matchWritingProgess = 0;
     private int matchesWritten = 0;
 
-    public Report(File reportDir) throws ExitException {
+    public Report(File reportDir, JPlagOptions options) throws ExitException {
         this.reportDir = reportDir;
-        this.msg = new Messages("en");
+        this.options = options;
+        msg = new Messages("en");
 
         validateReportDir();
     }
@@ -55,7 +57,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         System.out.println("Writing report...");
         writeIndex();
         copyStaticFiles();
-        writeMatches(result.getComparisons());
+        writeMatches(result.getComparisons(options.getMaximumNumberOfComparisons()));
         System.out.println("Report exported to " + reportDir.getAbsolutePath());
     }
 
@@ -140,7 +142,8 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         htmlFile.println("<TABLE BORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"#d0d0d0\">");
         htmlFile.println("<TR><TH><TH>" + comparison.getFirstSubmission().getName() + " (" + comparison.similarityOfFirst() + "%)<TH>"
-                + comparison.getSecondSubmission().getName() + " (" + comparison.similarityOfSecond() + "%)<TH>" + msg.getString("AllMatches.Tokens"));
+                + comparison.getSecondSubmission().getName() + " (" + comparison.similarityOfSecond() + "%)<TH>"
+                + msg.getString("AllMatches.Tokens"));
 
         for (int i = 0; i < comparison.getMatches().size(); i++) {
             match = comparison.getMatches().get(i);
@@ -444,11 +447,11 @@ public class Report { // Mostly legacy code with some minor improvements.
                     + result.getOptions().getBaseCodeSubmissionName() + "</TD></TR>");
         }
 
-        if (result.getComparisons().size() > 0) {
+        if (options.getMaximumNumberOfComparisons() > 0) {
             htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Matches_displayed") + ":</TD>" + "<TD>");
-
-            htmlFile.println(result.getComparisons().size() + " of " + result.getAllComparisons().size() + " (" + msg.getString("Report.Treshold")
-                    + ": " + result.getOptions().getSimilarityThreshold() + "%)<br>");
+            // TODO TS every instance of getComparisons must be replaced by get N in this class!
+            htmlFile.println(options.getMaximumNumberOfComparisons() + " of " + result.getComparisons().size() + " ("
+                    + msg.getString("Report.Treshold") + ": " + result.getOptions().getSimilarityThreshold() + "%)<br>");
 
             htmlFile.println("</TD></TR>");
         }
@@ -553,7 +556,7 @@ public class Report { // Mostly legacy code with some minor improvements.
     }
 
     private void writeLinksToComparisons(HTMLFile htmlFile, String headerStr, String csvFile) {
-        List<JPlagComparison> comparisons = result.getComparisons(); // should be already sorted!
+        List<JPlagComparison> comparisons = result.getComparisons(options.getMaximumNumberOfComparisons()); // should be already sorted!
 
         htmlFile.println(headerStr + " (<a href=\"help-sim-" + "en" // Country tag
                 + ".html\"><small><font color=\"#000088\">" + msg.getString("Report.WhatIsThis") + "</font></small></a>):</H4>");
@@ -649,7 +652,7 @@ public class Report { // Mostly legacy code with some minor improvements.
     private void writeMatchesCSV(String fileName) {
         FileWriter writer = null;
         File csvFile = new File(reportDir, fileName);
-        List<JPlagComparison> comparisons = result.getComparisons();
+        List<JPlagComparison> comparisons = result.getComparisons(options.getMaximumNumberOfComparisons());
 
         try {
             csvFile.createNewFile();
