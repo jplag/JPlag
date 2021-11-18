@@ -364,6 +364,7 @@ public class JPlag implements Program {
                 subm.setTokenList(null);
                 invalid++;
                 removed = true;
+                iter.remove();
             }
 
             if (ok && !removed) {
@@ -379,7 +380,7 @@ public class JPlag implements Program {
         if (invalid != 0) {
             print(null,
                     invalid + ((invalid == 1) ? " submission is not valid because it contains" : " submissions are not valid because they contain")
-                            + " fewer tokens\nthan minimum match length allows.\n");
+                            + " fewer tokens than minimum match length allows.\n");
         }
 
         long time = System.currentTimeMillis() - msec;
