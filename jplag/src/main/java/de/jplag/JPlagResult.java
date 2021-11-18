@@ -74,11 +74,14 @@ public class JPlagResult {
 
     /**
      * Returns the first n comparisons (sorted by percentage, descending), limited by the specified parameter.
-     * @param maxCount the maximum number of yield comparisons
-     * @return a list of comparisons with a size of maxCount or less
+     * @param numberOfComparisons specifies the number of requested comparisons. If set to -1, all comparisons will be returned.
+     * @return a list of comparisons sorted descending by percentage.
      */
-    public List<JPlagComparison> getComparisons(int maxCount) {
-        return comparisons.subList(0, Math.min(maxCount, comparisons.size()));
+    public List<JPlagComparison> getComparisons(int numberOfComparisons) {
+        if (numberOfComparisons == -1) {
+            return comparisons;
+        }
+        return comparisons.subList(0, Math.min(numberOfComparisons, comparisons.size()));
     }
 
     /**
