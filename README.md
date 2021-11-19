@@ -35,9 +35,9 @@ Usage: JPlag [ options ] [<root-dir>]
 
 named arguments:
   -h, --help             show this help message and exit
-  -l {java1,java2,java5,java5dm,java7,java9,python3,cpp,csharp,char,text,scheme} Select the language to parse the submissions (Standard: java9)
+  -l                     {java1,java2,java5,java5dm,java7,java9,python3,cpp,csharp,char,text,scheme} Select the language to parse the submissions (Standard: java9)
   -bc BC                 Name of the subdirectory of the root directory which contains the base code (common framework used in all submissions)
-  -v {parser,quiet,long,details} Verbosity of the logging (Standard: quiet)
+  -v                     {quiet,long} Verbosity of the logging (Standard: quiet)
   -d                     Debug parser. Non-parsable files will be stored (Standard: false)
   -S S                   Look in directories <root-dir>/*/<dir> for programs
   -p P                   comma-separated list of all filename suffixes that are included
@@ -46,7 +46,7 @@ named arguments:
   -m M                   Match similarity threshold [0-100]: All matches above this threshold will be saved (Standard: 0.0)
   -n N                   The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown (Standard: 30)
   -r R                   Name of the directory in which the comparison results will be stored (Standard: result)
-  -c {normal,parallel}   Comparison mode used to compare the programs (Standard: normal)
+  -c                     {normal,parallel} Comparison mode used to compare the programs (Standard: normal)
 ```
 
 ### Java API
