@@ -35,15 +35,15 @@ Usage: JPlag [ options ] [<root-dir>]
 
 named arguments:
   -h, --help             show this help message and exit
-  -l                     {java1,java2,java5,java5dm,java7,java9,python3,cpp,csharp,char,text,scheme} Select the language to parse the submissions (Standard: java9)
-  -bc BC                 Name of the directory which contains the base code (common framework used in all submissions)
-  -v                     {quiet,long} Verbosity of the logging (Standard: quiet)
-  -d                     (Debug) parser. Non-parsable files will be stored (Standard: false)
+  -l {java1,java2,java5,java5dm,java7,java9,python3,cpp,csharp,char,text,scheme} Select the language to parse the submissions (Standard: java9)
+  -bc BC                 Name of the subdirectory of the root directory which contains the base code (common framework used in all submissions)
+  -v {parser,quiet,long,details} Verbosity of the logging (Standard: quiet)
+  -d                     Debug parser. Non-parsable files will be stored (Standard: false)
   -S S                   Look in directories <root-dir>/*/<dir> for programs
   -p P                   comma-separated list of all filename suffixes that are included
   -x X                   All files named in this file will be ignored in the comparison (line-separated list)
-  -t T                   Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity
-  -m M                   Match similarity Threshold [0-100]: All matches above this threshold will be saved (Standard: 0.0)
+  -t T                   Tunes the comparison sensitivity by adjusting the minimum token required to be counted as a matching section. A smaller <n> increases the sensitivity but might lead to more false-positives
+  -m M                   Match similarity threshold [0-100]: All matches above this threshold will be saved (Standard: 0.0)
   -n N                   The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown (Standard: 30)
   -r R                   Name of the directory in which the comparison results will be stored (Standard: result)
   -c {normal,parallel}   Comparison mode used to compare the programs (Standard: normal)
