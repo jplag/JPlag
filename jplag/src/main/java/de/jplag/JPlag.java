@@ -105,7 +105,7 @@ public class JPlag implements Program {
      * @return the program options which allow to configure JPlag.
      */
     protected JPlagOptions getOptions() {
-        return this.options; // TS: Should not be accessible, as options should be set before passing them to this class.
+        return this.options; // TODO TS: Should not be accessible, as options should be set before passing them to this class.
     }
 
     /**

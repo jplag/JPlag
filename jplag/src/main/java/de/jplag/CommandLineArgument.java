@@ -28,7 +28,7 @@ public enum CommandLineArgument {
     SUBDIRECTORY("-S", String.class, "Look in directories <root-dir>/*/<dir> for programs"),
     SUFFIXES("-p", String.class, "comma-separated list of all filename suffixes that are included"),
     EXCLUDE_FILE("-x", String.class, "All files named in this file will be ignored in the comparison (line-separated list)"),
-    MIN_TOKEN_MATCH("-t", Integer.class, "Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity"),
+    MIN_TOKEN_MATCH("-t", Integer.class, "Tunes the comparison sensitivity by adjusting the minimum token required to be counted as matching section. A smaller <n> increases the sensitivity but might lead to more false-positves"),
     SIMILARITY_THRESHOLD("-m", Float.class, "Match similarity threshold [0-100]: All matches above this threshold will be saved", DEFAULT_SIMILARITY_THRESHOLD),
     SHOWN_COMPARISONS("-n", Integer.class, "The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown", DEFAULT_SHOWN_COMPARISONS),
     RESULT_FOLDER("-r", String.class, "Name of directory in which the comparison results will be stored", "result"),
