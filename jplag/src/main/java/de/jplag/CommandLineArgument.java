@@ -1,8 +1,8 @@
 package de.jplag;
 
 import static de.jplag.options.JPlagOptions.DEFAULT_COMPARISON_MODE;
-import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
 import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
+import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
 import java.util.Collection;
@@ -20,46 +20,46 @@ import net.sourceforge.argparse4j.inf.Namespace;
  * @author Timur Saglam
  */
 public enum CommandLineArgument {
-    ROOT_DIRECTORY("rootDir", String.class, "The root-directory that contains all submissions"),
-    LANGUAGE("-l", String.class, "Select the language to parse the submissions", LanguageOption.getDefault().getDisplayName(), LanguageOption.getAllDisplayNames()),
-    BASE_CODE("-bc", String.class, "Name of the subdirectory of the root directory which contains the base code (common framework used in all submissions)"),
-    VERBOSITY("-v", String.class, "Verbosity", "quiet", List.of("parser", "quiet", "long", "details")), // TODO SH: Replace verbosity when integrating a real logging library
-    DEBUG("-d", Boolean.class, "(Debug) parser. Non-parsable files will be stored"),
-    SUBDIRECTORY("-S", String.class, "Look in directories <root-dir>/*/<dir> for programs"),
-    SUFFIXES("-p", String.class, "comma-separated list of all filename suffixes that are included"),
-    EXCLUDE_FILE("-x", String.class, "All files named in this file will be ignored in the comparison (line-separated list)"),
-    MIN_TOKEN_MATCH("-t", Integer.class, "Tunes the comparison sensitivity by adjusting the minimum token required to be counted as matching section. A smaller <n> increases the sensitivity but might lead to more false-positves"),
-    SIMILARITY_THRESHOLD("-m", Float.class, "Match similarity threshold [0-100]: All matches above this threshold will be saved", DEFAULT_SIMILARITY_THRESHOLD),
-    SHOWN_COMPARISONS("-n", Integer.class, "The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown", DEFAULT_SHOWN_COMPARISONS),
-    RESULT_FOLDER("-r", String.class, "Name of directory in which the comparison results will be stored", "result"),
-    COMPARISON_MODE("-c", String.class, "Comparison mode used to compare the programs", DEFAULT_COMPARISON_MODE.getName(), ComparisonMode.allNames());
+    ROOT_DIRECTORY("rootDir", String.class),
+    LANGUAGE("-l", String.class, LanguageOption.getDefault().getDisplayName(), LanguageOption.getAllDisplayNames()),
+    BASE_CODE("-bc", String.class),
+    VERBOSITY("-v", String.class, "quiet", List.of("parser", "quiet", "long", "details")), // TODO SH: Replace verbosity when integrating a real logging library
+    DEBUG("-d", Boolean.class),
+    SUBDIRECTORY("-S", String.class),
+    SUFFIXES("-p", String.class),
+    EXCLUDE_FILE("-x", String.class),
+    MIN_TOKEN_MATCH("-t", Integer.class),
+    SIMILARITY_THRESHOLD("-m", Float.class, DEFAULT_SIMILARITY_THRESHOLD),
+    SHOWN_COMPARISONS("-n", Integer.class, DEFAULT_SHOWN_COMPARISONS),
+    RESULT_FOLDER("-r", String.class, "result"),
+    COMPARISON_MODE("-c", String.class, DEFAULT_COMPARISON_MODE.getName(), ComparisonMode.allNames());
 
     private final String flag;
-    private final String helptext;
+    private final String description;
     private final Optional<Object> defaultValue;
     private final Optional<Collection<String>> choices;
     private final Class<?> type;
 
-    private CommandLineArgument(String flag, Class<?> type, String helpText) {
-        this(flag, type, helpText, Optional.empty(), Optional.empty());
+    private CommandLineArgument(String flag, Class<?> type) {
+        this(flag, type, Optional.empty(), Optional.empty());
     }
 
-    private CommandLineArgument(String flag, Class<?> type, String helpText, Object defaultValue) {
-        this(flag, type, helpText, Optional.of(defaultValue), Optional.empty());
+    private CommandLineArgument(String flag, Class<?> type, Object defaultValue) {
+        this(flag, type, Optional.of(defaultValue), Optional.empty());
     }
 
-    private CommandLineArgument(String flag, Class<?> type, String helpText, Object defaultValue, Collection<String> choices) {
-        this(flag, type, helpText, Optional.of(defaultValue), Optional.of(choices));
+    private CommandLineArgument(String flag, Class<?> type, Object defaultValue, Collection<String> choices) {
+        this(flag, type, Optional.of(defaultValue), Optional.of(choices));
     }
 
-    private CommandLineArgument(String flag, Class<?> type, String helpText, Optional<Object> defaultValue, Optional<Collection<String>> choices) {
+    private CommandLineArgument(String flag, Class<?> type, Optional<Object> defaultValue, Optional<Collection<String>> choices) {
         this.flag = flag;
-        this.helptext = helpText;
         this.type = type;
         this.defaultValue = defaultValue;
         this.choices = choices;
+        this.description = retrieveDescriptionFromMessages();
     }
-    
+
     /**
      * @return the flag name of the command line argument.
      */
@@ -90,12 +90,25 @@ public enum CommandLineArgument {
      * @param parser is that parser.
      */
     public void parseWith(ArgumentParser parser) {
-        Argument argument = parser.addArgument(flag).help(helptext);
+        Argument argument = parser.addArgument(flag).help(description);
         choices.ifPresent(it -> argument.choices(it));
         defaultValue.ifPresent(it -> argument.setDefault(it));
         argument.type(type);
         if (type == Boolean.class) {
             argument.action(storeTrue());
         }
+    }
+
+    /**
+     * Dynamically loads the description from the message file. For an option named <code>NEW_OPTION</code> the messages key should
+     * be <code>CommandLineArgument.NewOption</code>.
+     */
+    private String retrieveDescriptionFromMessages() {
+        StringBuilder builder = new StringBuilder();
+        for (String substring : toString().toLowerCase().split("_")) {
+            builder.append(substring.substring(0, 1).toUpperCase());
+            builder.append(substring.substring(1));
+        }
+        return Messages.getString(getClass().getSimpleName() + "." + builder.toString());
     }
 }
