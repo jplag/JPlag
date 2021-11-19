@@ -13,7 +13,7 @@ public class JPlagOptions {
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 30;
-    
+
     public static final Charset CHARSET = StandardCharsets.UTF_8;
 
     /**
@@ -37,26 +37,29 @@ public class JPlagOptions {
     private String[] fileSuffixes;
 
     /**
-     * Percentage value (must be between 0 and 100). Comparisons (of submissions pairs) with a similarity below this threshold will be ignored. The
-     * default value of 0 allows all matches to be stored. This affects which comparisons are stored and thus make it into the result object.
+     * Percentage value (must be between 0 and 100). Comparisons (of submissions pairs) with a similarity below this
+     * threshold will be ignored. The default value of 0 allows all matches to be stored. This affects which comparisons are
+     * stored and thus make it into the result object.
      * @see JPlagOptions.similarityMetric
      */
     private float similarityThreshold = DEFAULT_SIMILARITY_THRESHOLD;
 
     /**
-     * The maximum number of comparisons that will be shown in the generated report. If set to -1 all comparisons will be shown.
+     * The maximum number of comparisons that will be shown in the generated report. If set to -1 all comparisons will be
+     * shown.
      */
     private int maximumNumberOfComparisons = DEFAULT_SHOWN_COMPARISONS;
 
     /**
-     * The similarity metric determines how the minimum similarity threshold required for a comparison (of two submissions) is calculated.
-     * This affects which comparisons are stored and thus make it into the result object.
+     * The similarity metric determines how the minimum similarity threshold required for a comparison (of two submissions)
+     * is calculated. This affects which comparisons are stored and thus make it into the result object.
      * @see JPlagOptions.similarityThreshold
      */
     private SimilarityMetric similarityMetric = SimilarityMetric.AVG;
 
     /**
-     * Tune the sensitivity of the comparison. A smaller <n> increases the sensitivity
+     * Tunes the comparison sensitivity by adjusting the minimum token required to be counted as matching section. A smaller
+     * <n> increases the sensitivity but might lead to more false-positves.
      */
     private Integer minimumTokenMatch;
 
@@ -173,7 +176,7 @@ public class JPlagOptions {
     public float getSimilarityThreshold() {
         return similarityThreshold;
     }
-    
+
     public int getMaximumNumberOfComparisons() {
         return this.maximumNumberOfComparisons;
     }
