@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import de.jplag.options.JPlagOptions;
@@ -40,7 +41,7 @@ public class JPlag implements Program {
     // ERROR REPORTING:
     private String currentSubmissionName = "<Unknown submission>"; // TODO PB: This should be moved to parseSubmissions(...)
     private int errors = 0;
-    private ArrayList<String> errorVector = new ArrayList<>(); // Vector of errors that occurred during the execution of the program.
+    private List<String> errorVector = new ArrayList<>(); // Vector of errors that occurred during the execution of the program.
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
@@ -104,7 +105,7 @@ public class JPlag implements Program {
      * @return the program options which allow to configure JPlag.
      */
     protected JPlagOptions getOptions() {
-        return this.options; // TS: Should not be accessible, as options should be set before passing them to this class.
+        return this.options; // TODO TS: Should not be accessible, as options should be set before passing them to this class.
     }
 
     /**
@@ -149,33 +150,30 @@ public class JPlag implements Program {
      * This method checks whether the base code directory value is valid.
      */
     private void checkBaseCodeOption() throws ExitException {
-        if (!this.options.hasBaseCode()) {
-            return;
-        }
-
-        String baseCodePath = this.options.getRootDirectoryName() + File.separator + this.options.getBaseCodeSubmissionName();
-
-        if (!(new File(this.options.getRootDirectoryName())).exists()) {
-            throw new ExitException("Root directory \"" + this.options.getRootDirectoryName() + "\" doesn't exist!", ExitException.BAD_PARAMETER);
-        }
-
-        File f = new File(baseCodePath);
-
-        if (!f.exists()) {
-            // Base code dir doesn't exist
-            throw new ExitException("Basecode directory \"" + baseCodePath + "\" doesn't exist!", ExitException.BAD_PARAMETER);
-        }
-
-        if (this.options.getSubdirectoryName() != null && this.options.getSubdirectoryName().length() != 0) {
-            f = new File(baseCodePath, this.options.getSubdirectoryName());
-
-            if (!f.exists()) {
-                throw new ExitException("Basecode directory doesn't contain" + " the subdirectory \"" + this.options.getSubdirectoryName() + "\"!",
-                        ExitException.BAD_PARAMETER);
+        if (options.hasBaseCode()) {
+            if (!new File(options.getRootDirectoryName()).exists()) {
+                throw new ExitException("Root directory \"" + options.getRootDirectoryName() + "\" doesn't exist!", ExitException.BAD_PARAMETER);
             }
-        }
 
-        System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
+            String baseCode = options.getBaseCodeSubmissionName().replace(File.separator, ""); // trim problematic file separators
+            if (baseCode.contains(".")) {
+                throw new ExitException("The basecode directory name \"" + baseCode + "\" cannot contain dots!", ExitException.BAD_PARAMETER);
+            }
+            String baseCodePath = options.getRootDirectoryName() + File.separator + baseCode;
+            if (!new File(baseCodePath).exists()) {
+                throw new ExitException("Basecode directory \"" + baseCodePath + "\" doesn't exist!", ExitException.BAD_PARAMETER);
+            }
+
+            String subdirectory = options.getSubdirectoryName();
+            if (subdirectory != null && subdirectory.length() != 0) {
+                if (!new File(baseCodePath, subdirectory).exists()) {
+                    throw new ExitException("Basecode directory doesn't contain" + " the subdirectory \"" + subdirectory + "\"!",
+                            ExitException.BAD_PARAMETER);
+                }
+            }
+            options.setBaseCodeSubmissionName(baseCode);
+            System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
+        }
     }
 
     private ArrayList<Submission> filterValidSubmissions(ArrayList<Submission> submissions) {
@@ -366,6 +364,7 @@ public class JPlag implements Program {
                 subm.setTokenList(null);
                 invalid++;
                 removed = true;
+                iter.remove();
             }
 
             if (ok && !removed) {
@@ -381,7 +380,7 @@ public class JPlag implements Program {
         if (invalid != 0) {
             print(null,
                     invalid + ((invalid == 1) ? " submission is not valid because it contains" : " submissions are not valid because they contain")
-                            + " fewer tokens\nthan minimum match length allows.\n");
+                            + " fewer tokens than minimum match length allows.\n");
         }
 
         long time = System.currentTimeMillis() - msec;

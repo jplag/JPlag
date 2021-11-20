@@ -16,7 +16,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(ArrayList<Submission> submissions, Submission baseCodeSubmission) {
+    public JPlagResult compareSubmissions(List<Submission> submissions, Submission baseCodeSubmission) {
         boolean withBaseCode = baseCodeSubmission != null;
         if (withBaseCode) {
             compareSubmissionsToBaseCode(submissions, baseCodeSubmission);

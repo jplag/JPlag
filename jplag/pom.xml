@@ -54,14 +54,14 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <!-- If you need javacc version 3.2 (as did the original jplag) use plugin
-            version 2.0; plugin version 2.6 uses javacc version 5.0 -->
+        <!-- If you need javacc version 3.2 (as did the original jplag) use 
+          plugin version 2.0; plugin version 2.6 uses javacc version 5.0 -->
         <version>2.6</version>
         <configuration>
           <debugParser>false</debugParser>
           <isStatic>false</isStatic>
-          <!-- we need this since the old plugin does not read the package from
-              the grammar; as of 2.4 the plugin does that on its own <packageName>jplag.filter</packageName> -->
+          <!-- we need this since the old plugin does not read the package 
+            from the grammar; as of 2.4 the plugin does that on its own <packageName>jplag.filter</packageName> -->
         </configuration>
         <executions>
           <execution>
@@ -100,13 +100,22 @@
             </manifest>
           </archive>
         </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 
     <pluginManagement>
       <plugins>
-        <!--This plugin's configuration is used to store Eclipse m2e settings
-            only. It has no influence on the Maven build itself. -->
+        <!--This plugin's configuration is used to store Eclipse m2e settings 
+          only. It has no influence on the Maven build itself. -->
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
@@ -130,7 +139,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -203,10 +212,10 @@
       <artifactId>chars</artifactId>
     </dependency>
     <dependency>
-    	<groupId>com.github.stefanbirkner</groupId>
-    	<artifactId>system-rules</artifactId>
-    	<scope>test</scope>
-    	<version>1.19.0</version>
+      <groupId>com.github.stefanbirkner</groupId>
+      <artifactId>system-rules</artifactId>
+      <scope>test</scope>
+      <version>1.19.0</version>
     </dependency>
   </dependencies>
 </project>
