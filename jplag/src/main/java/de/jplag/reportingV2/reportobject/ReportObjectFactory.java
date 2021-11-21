@@ -54,7 +54,8 @@ public class ReportObjectFactory {
 					c.similarity(),
 					getFilesForSubmission(c.getFirstSubmission()),
 					getFilesForSubmission(c.getSecondSubmission()),
-					c.getMatches().stream().map(m -> convertMatchToReportMatch(c, m)).collect(Collectors.toList())
+					c.getMatches().stream().map(m -> convertMatchToReportMatch(c, m,
+							result.getOptions().getLanguage().usesIndex())).collect(Collectors.toList())
 				)
 			);
 		});
@@ -130,19 +131,24 @@ public class ReportObjectFactory {
 		return submission.getFiles().stream().map( f -> new FilesOfSubmission(f.getName(), readFileLines(f))).collect(Collectors.toList());
 	}
 
-	private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
+	private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, Boolean usesIndex) {
 		TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
 		TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
-		Token startFirst = tokensFirst.getToken(match.getStartOfFirst());
-		Token endFirst = tokensFirst.getToken(match.getStartOfFirst() + match.getLength() - 1);
-		Token startSecond = tokensSecond.getToken(match.getStartOfSecond());
-		Token endSecond = tokensSecond.getToken(match.getStartOfSecond() + match.getLength() - 1);
+		Token startFirstToken = tokensFirst.getToken(match.getStartOfFirst());
+		Token endFirstToken = tokensFirst.getToken(match.getStartOfFirst() + match.getLength() - 1);
+		Token startSecondToken = tokensSecond.getToken(match.getStartOfSecond());
+		Token endSecondToken = tokensSecond.getToken(match.getStartOfSecond() + match.getLength() - 1);
 
-		return new Match(startFirst.file, startSecond.file,
-				startFirst.getIndex(),
-				endFirst.getIndex(),
-				startSecond.getIndex(),
-				endSecond.getIndex()
+		int startFirst = usesIndex ? startFirstToken.getIndex() : startFirstToken.getLine();
+		int endFirst = usesIndex ? endFirstToken.getIndex() : endFirstToken.getLine();
+		int startSecond = usesIndex ? startSecondToken.getIndex() : startSecondToken.getLine();
+		int endSecond = usesIndex ? endSecondToken.getIndex() : endSecondToken.getLine();
+
+		return new Match(startFirstToken.file, startSecondToken.file,
+				startFirst,
+				endFirst,
+				startSecond,
+				endSecond
 		);
 	}
 	private static List<String> readFileLines(File file) {
