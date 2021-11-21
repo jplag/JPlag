@@ -1,29 +1,31 @@
 package de.jplag.reportingV2.reportobject.model;
 
+import java.util.List;
+
 public class FilesOfSubmission {
 
 	private String file_name;
-	private String file_code;
+	private List<String> lines;
 
-	public FilesOfSubmission(String file_name, String file_code) {
+	public FilesOfSubmission(String file_name, List<String> file_code) {
 		this.file_name = file_name;
-		this.file_code = file_code;
+		this.lines = file_code;
 	}
 
 	public String getFile_name() {
 		return file_name;
 	}
 
-	public String getFile_code() {
-		return file_code;
+	public List<String> getLines() {
+		return lines;
 	}
 
 	public void setFile_name(String file_name) {
 		this.file_name = file_name;
 	}
 
-	public void setFile_code(String file_code) {
-		this.file_code = file_code;
+	public void setLines(List<String> lines) {
+		this.lines = lines;
 	}
 }
 
