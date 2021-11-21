@@ -18,7 +18,6 @@ public class ReportObjectFactory {
 	public static JPlagReport getReportObject(JPlagResult result) {
 		OverviewReport overviewReport = generateOverviewReport(result);
 		List<ComparisonReport> comparisons = generateComparisonReports(result);
-
 		return new JPlagReport(overviewReport, comparisons);
 	}
 
@@ -46,16 +45,17 @@ public class ReportObjectFactory {
 	}
 
 	private static List<ComparisonReport> generateComparisonReports(JPlagResult result) {
-		List<ComparisonReport> comparisons = List.of();
+		List<ComparisonReport> comparisons = new ArrayList<>();
 		result.getComparisons().forEach( c -> {
-
-			ComparisonReport comparisonReport = new ComparisonReport(
+			comparisons.add(
+				new ComparisonReport(
 					c.getFirstSubmission().getName(),
 					c.getSecondSubmission().getName(),
 					c.similarity(),
 					getFilesForSubmission(c.getFirstSubmission()),
 					getFilesForSubmission(c.getSecondSubmission()),
 					c.getMatches().stream().map(m -> convertMatchToReportMatch(c, m)).collect(Collectors.toList())
+				)
 			);
 		});
 		return comparisons;
