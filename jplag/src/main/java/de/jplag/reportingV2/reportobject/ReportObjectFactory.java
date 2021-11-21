@@ -2,10 +2,7 @@ package de.jplag.reportingV2.reportobject;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
-import de.jplag.reportingV2.reportobject.model.ComparisonReport;
-import de.jplag.reportingV2.reportobject.model.JPlagReport;
-import de.jplag.reportingV2.reportobject.model.OverviewReport;
-import de.jplag.reportingV2.reportobject.model.TopComparison;
+import de.jplag.reportingV2.reportobject.model.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -35,16 +32,11 @@ public class ReportObjectFactory {
 		overviewReport.setSubmission_ids(extractSubmissionNames(comparisons));
 		overviewReport.setFailed_submission_names(List.of());  //No number of failed submissions
 		overviewReport.setExcluded_files(List.of(result.getOptions().getExclusionFileName())); //Read exclusion file
-		overviewReport.setMax_similarity_threshold(result.getOptions().getSimilarityThreshold());
-		overviewReport.setAvg_similarity_threshold(0); //Also only one metric per JPLag result. Needs to be discussed.
 		overviewReport.setMatch_sensitivity(result.getOptions().getMinimumTokenMatch());
 		overviewReport.setDate_of_execution(getDate());
 		overviewReport.setExecution_time(result.getDuration());
-		overviewReport.setDistribution_max(intArrayToList(result.getSimilarityDistribution()));
-		overviewReport.setDistribution_avg(intArrayToList(new int[0])); //Missing second distribution
 		overviewReport.setComparison_names(getComparisonNames(comparisons));
-		overviewReport.setTop_max_comparisons(getTopComparisons(topComparisons));
-		overviewReport.setTop_avg_comparisons(getTopComparisons(List.of()));  //Missing avg comparisons
+		overviewReport.setMetrics(getMetrics(result));
 
 		return overviewReport;
 	}
@@ -72,6 +64,18 @@ public class ReportObjectFactory {
 				c -> names.add(String.join("-", c.getFirstSubmission().getName(), c.getSecondSubmission().getName()))
 		);
 		return names;
+	}
+
+	// Currently, only one metric can be obtained.
+	private static List<Metric> getMetrics(JPlagResult result) {
+		List<Metric> metrics = new ArrayList<>();
+		metrics.add(new Metric(
+				result.getOptions().getSimilarityMetric().name(),
+				result.getOptions().getSimilarityThreshold(),
+				intArrayToList(result.getSimilarityDistribution()),
+				getTopComparisons(result.getComparisons())
+		));
+		return metrics;
 	}
 
 	private static List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons) {
