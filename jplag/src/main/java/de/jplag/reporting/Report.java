@@ -264,10 +264,10 @@ public class Report { // Mostly legacy code with some minor improvements.
      * makes use of the column and length information!
      */
     private int writeImprovedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws de.jplag.ExitException {
-        Submission sub = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
+        Submission sub = comparison.getSubmission(j == 0);
         String[] files = comparison.files(j);
         String[][] text = sub.readFiles(files);
-        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
+        TokenList tokens = comparison.getSubmission(j == 0).getTokenList();
 
         // Markup list:
         Comparator<MarkupText> comp = (mo1, mo2) -> {
@@ -306,7 +306,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         }
 
         if (result.getOptions().hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
-            JPlagComparison baseCodeComparison = (j == 0 ? comparison.getFirstBaseCodeMatches() : comparison.getSecondBaseCodeMatches());
+            JPlagComparison baseCodeComparison = comparison.getBaseCodeMatches(j == 0);
 
             for (int x = 0; x < baseCodeComparison.getMatches().size(); x++) {
                 Match onematch = baseCodeComparison.getMatches().get(x);
@@ -479,10 +479,10 @@ public class Report { // Mostly legacy code with some minor improvements.
      */
     private void writeIndexedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ExitException {
         boolean useFirst = j == 0;
-        Submission sub = (useFirst ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
+        Submission sub = comparison.getSubmission(useFirst);
         String[] files = comparison.files(j);
         char[][] text = sub.readFilesChar(files);
-        TokenList tokens = (useFirst ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
+        TokenList tokens = comparison.getSubmission(useFirst).getTokenList();
 
         // get index array with matches sorted in ascending order.
         List<Integer> perm = comparison.sort_permutation(useFirst);
@@ -684,12 +684,12 @@ public class Report { // Mostly legacy code with some minor improvements.
      * i is the number of the match j == 0 if subA is considered, otherwise (j must then be 1) it is subB
      */
     private void writeNormalSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ExitException {
-        Submission sub = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
+        Submission sub = comparison.getSubmission(j == 0);
         String[] files = comparison.files(j);
 
         String[][] text = sub.readFiles(files);
 
-        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
+        TokenList tokens = comparison.getSubmission(j == 0).getTokenList();
         Match currentMatch;
         String hilf;
         int h;
@@ -726,7 +726,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         }
 
         if (result.getOptions().hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
-            JPlagComparison baseCodeComparison = (j == 0 ? comparison.getFirstBaseCodeMatches() : comparison.getSecondBaseCodeMatches());
+            JPlagComparison baseCodeComparison = comparison.getBaseCodeMatches(j == 0);
 
             for (int x = 0; x < baseCodeComparison.getMatches().size(); x++) {
                 currentMatch = baseCodeComparison.getMatches().get(x);

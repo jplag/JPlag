@@ -159,6 +159,24 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     }
 
     /**
+     * @param getFirst Whether to return the first submission,
+     *      else return the second submission.
+     * @return The requested submission.
+     */
+    public Submission getSubmission(boolean getFirst) {
+        return getFirst ? firstSubmission : secondSubmission;
+    }
+
+    /**
+     * @param getFirst Whether to return the first basecode matches,
+     *      else return the second basecode matches.
+     * @return The requested basecode matches.
+     */
+    public JPlagComparison getBaseCodeMatches(boolean getFirst) {
+        return getFirst ? firstBaseCodeMatches : secondBaseCodeMatches;
+    }
+
+    /**
      * @return Maximum similarity in percent of both submissions.
      */
     public final float maximalSimilarity() {
