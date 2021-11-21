@@ -84,7 +84,7 @@ public class JPlag implements Program {
         // 3. Compare valid submissions:
         errorVector = null; // errorVector is not needed anymore
         JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
-        printComparisonDuration(result.getDuration());
+        System.out.println("Total time for comparing submissions: " + formatComparisonDuration(result.getDuration()));
         return result;
     }
 
@@ -304,7 +304,7 @@ public class JPlag implements Program {
             return;
         }
 
-        long msec = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         print("----- Parsing basecode submission: " + subm.getName() + "\n", null);
 
         // lets go:
@@ -324,10 +324,8 @@ public class JPlag implements Program {
 
         print("\nBasecode submission parsed!\n", null);
 
-        long time = System.currentTimeMillis() - msec;
-
-        print("\n", "\nTime for parsing Basecode: " + ((time / 3600000 > 0) ? (time / 3600000) + " h " : "")
-                + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60) + " sec\n");
+        long duration = System.currentTimeMillis() - startTime;
+        print("\n", "\nTime for parsing Basecode: " + formatComparisonDuration(duration) + "\n");
     }
 
     /**
@@ -341,7 +339,7 @@ public class JPlag implements Program {
 
         int count = 0;
 
-        long msec = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         Iterator<Submission> iter = submissions.iterator();
 
         int invalid = 0;
@@ -383,20 +381,23 @@ public class JPlag implements Program {
                             + " fewer tokens than minimum match length allows.\n");
         }
 
-        long time = System.currentTimeMillis() - msec;
-
+        long duration = System.currentTimeMillis() - startTime;
         print("\n\n",
-                "\nTotal time for parsing: " + ((time / 3600000 > 0) ? (time / 3600000) + " h " : "")
-                        + ((time / 60000 > 0) ? ((time / 60000) % 60000) + " min " : "") + (time / 1000 % 60) + " sec\n"
-                        + "Time per parsed submission: " + (count > 0 ? (time / count) : "n/a") + " msec\n\n");
+                "\nTotal time for parsing: " + formatComparisonDuration(duration) + "\n"
+                        + "Time per parsed submission: " + (count > 0 ? (duration / count) : "n/a") + " msec\n\n");
     }
 
-    private void printComparisonDuration(long durationInMiliseconds) {
+    /**
+     * Convert a duration in milli-seconds to a human-readable representation.
+     * @param durationInMiliseconds Number of milli-seconds to convert.
+     * @return Readable representation of the time interval.
+     */
+    private String formatComparisonDuration(long durationInMiliseconds) {
         int timeInSeconds = (int) (durationInMiliseconds / 1000);
         String hours = (timeInSeconds / 3600 > 0) ? (timeInSeconds / 3600) + " h " : "";
         String minutes = (timeInSeconds / 60 > 0) ? ((timeInSeconds / 60) % 60) + " min " : "";
         String seconds = (timeInSeconds % 60) + " sec";
-        System.out.println("Total time for comparing submissions: " + hours + minutes + seconds);
+        return hours + minutes + seconds;
     }
 
     /**
