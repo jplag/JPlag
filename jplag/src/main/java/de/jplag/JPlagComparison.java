@@ -77,9 +77,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
         int i, h, starti, starth, count = 1;
 
         o1: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).getStartOfFirst() : matches.get(i).getStartOfSecond());
+            starti = matches.get(i).getStart(j == 0);
             for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).getStartOfFirst() : matches.get(h).getStartOfSecond());
+                starth = matches.get(h).getStart(j == 0);
                 if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o1;
                 }
@@ -88,13 +88,13 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
         }
 
         String[] res = new String[count];
-        res[0] = tokenList.getToken((j == 0 ? matches.get(0).getStartOfFirst() : matches.get(0).getStartOfSecond())).file;
+        res[0] = tokenList.getToken(matches.get(0).getStart(j == 0)).file;
         count = 1;
 
         o2: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).getStartOfFirst() : matches.get(i).getStartOfSecond());
+            starti = matches.get(i).getStart(j == 0);
             for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).getStartOfFirst() : matches.get(h).getStartOfSecond());
+                starth = matches.get(h).getStart(j == 0);
                 if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
                     continue o2;
                 }
@@ -267,7 +267,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
 
     private int selectStartof(Integer index, boolean useFirst) {
         Match match = matches.get(index);
-        return useFirst ? match.getStartOfFirst() : match.getStartOfSecond();
+        return match.getStart(useFirst);
     }
 
     @Override
