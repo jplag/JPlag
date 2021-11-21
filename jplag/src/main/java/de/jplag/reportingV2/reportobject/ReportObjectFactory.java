@@ -1,9 +1,15 @@
 package de.jplag.reportingV2.reportobject;
 
-import de.jplag.JPlagComparison;
-import de.jplag.JPlagResult;
+import de.jplag.*;
+import de.jplag.options.JPlagOptions;
 import de.jplag.reportingV2.reportobject.model.*;
+import de.jplag.reportingV2.reportobject.model.Match;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,7 +25,6 @@ public class ReportObjectFactory {
 
 	private static  OverviewReport generateOverviewReport(JPlagResult result) {
 		List<JPlagComparison> comparisons = result.getComparisons();
-		List<JPlagComparison> topComparisons = result.getComparisons(25);
 		OverviewReport overviewReport = new OverviewReport();
 
 		overviewReport.setSubmission_folder_path(result.getOptions().getRootDirectoryName());
@@ -31,7 +36,7 @@ public class ReportObjectFactory {
 		overviewReport.setFile_extensions(List.of(result.getOptions().getFileSuffixes()));
 		overviewReport.setSubmission_ids(extractSubmissionNames(comparisons));
 		overviewReport.setFailed_submission_names(List.of());  //No number of failed submissions
-		overviewReport.setExcluded_files(List.of(result.getOptions().getExclusionFileName())); //Read exclusion file
+		overviewReport.setExcluded_files(getExcludedFilesNames(result.getOptions())); //Read exclusion file
 		overviewReport.setMatch_sensitivity(result.getOptions().getMinimumTokenMatch());
 		overviewReport.setDate_of_execution(getDate());
 		overviewReport.setExecution_time(result.getDuration());
@@ -45,6 +50,14 @@ public class ReportObjectFactory {
 		List<ComparisonReport> comparisons = List.of();
 		result.getComparisons().forEach( c -> {
 
+			ComparisonReport comparisonReport = new ComparisonReport(
+					c.getFirstSubmission().getName(),
+					c.getSecondSubmission().getName(),
+					c.similarity(),
+					getFilesForSubmission(c.getFirstSubmission()),
+					getFilesForSubmission(c.getSecondSubmission()),
+					c.getMatches().stream().map(m -> convertMatchToReportMatch(c, m)).collect(Collectors.toList())
+			);
 		});
 		return comparisons;
 	}
@@ -89,6 +102,62 @@ public class ReportObjectFactory {
 				comparison.getFirstSubmission().getName(),
 				comparison.getSecondSubmission().getName()
 		);
+	}
+
+	private static List<String> getExcludedFilesNames(JPlagOptions options) {
+		if (options.getExclusionFileName() == null) {
+			return List.of();
+		}
+		HashSet<String> excludedFileNames = new HashSet<>();
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(options.getExclusionFileName(), JPlagOptions.CHARSET));
+			String line;
+
+			while ((line = reader.readLine()) != null) {
+				excludedFileNames.add(line.trim());
+			}
+
+			reader.close();
+		} catch (IOException exception) {
+			System.out.println("Could not read exclusion file: " + exception.getMessage());
+		}
+
+		return new ArrayList<>(excludedFileNames);
+	}
+
+
+	private static List<FilesOfSubmission> getFilesForSubmission(Submission submission) {
+		return submission.getFiles().stream().map( f -> new FilesOfSubmission(f.getName(), readFileLines(f))).collect(Collectors.toList());
+	}
+
+	private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
+		TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
+		TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
+		Token startFirst = tokensFirst.getToken(match.getStartOfFirst());
+		Token endFirst = tokensFirst.getToken(match.getStartOfFirst() + match.getLength() - 1);
+		Token startSecond = tokensSecond.getToken(match.getStartOfSecond());
+		Token endSecond = tokensSecond.getToken(match.getStartOfSecond() + match.getLength() - 1);
+
+		return new Match(startFirst.file, startSecond.file,
+				startFirst.getIndex(),
+				endFirst.getIndex(),
+				startSecond.getIndex(),
+				endSecond.getIndex()
+		);
+	}
+	private static List<String> readFileLines(File file) {
+		ArrayList<String> lines = new ArrayList<>();
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				lines.add(line);
+			}
+		} catch ( IOException exception) {
+			System.out.println("Could not read file: " + exception.getMessage());
+		}
+		return lines;
 	}
 
 	private static String getDate() {
