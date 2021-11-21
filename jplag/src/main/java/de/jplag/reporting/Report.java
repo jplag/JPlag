@@ -697,7 +697,7 @@ public class Report { // Mostly legacy code with some minor improvements.
             currentMatch = comparison.getMatches().get(x);
 
             Token start = tokens.getToken(currentMatch.getStart(j == 0));
-            Token ende = tokens.getToken((currentMatch.getStart(j == 0)) + currentMatch.getLength() - 1);
+            Token end = tokens.getToken((currentMatch.getStart(j == 0)) + currentMatch.getLength() - 1);
 
             for (int y = 0; y < files.length; y++) {
                 if (start.file.equals(files[y]) && text[y] != null) {
@@ -715,11 +715,11 @@ public class Report { // Mostly legacy code with some minor improvements.
                     h = (Math.max(start.getLine() - 4, 0));
                     text[y][h] = "<A NAME=\"" + x + "\"></A>" + text[y][h];
                     // mark the end
-                    if (start.getLine() != ende.getLine() && // if match is only one line
-                            text[y][ende.getLine() - 1].startsWith("<FONT ")) {
-                        text[y][ende.getLine() - 1] = "</B></FONT>" + text[y][ende.getLine() - 1];
+                    if (start.getLine() != end.getLine() && // if match is only one line
+                            text[y][end.getLine() - 1].startsWith("<FONT ")) {
+                        text[y][end.getLine() - 1] = "</B></FONT>" + text[y][end.getLine() - 1];
                     } else {
-                        text[y][ende.getLine() - 1] += "</B></FONT>";
+                        text[y][end.getLine() - 1] += "</B></FONT>";
                     }
                 }
             }
@@ -731,7 +731,7 @@ public class Report { // Mostly legacy code with some minor improvements.
             for (int x = 0; x < baseCodeComparison.getMatches().size(); x++) {
                 currentMatch = baseCodeComparison.getMatches().get(x);
                 Token start = tokens.getToken(currentMatch.getStartOfFirst());
-                Token ende = tokens.getToken(currentMatch.getStartOfFirst() + currentMatch.getLength() - 1);
+                Token end = tokens.getToken(currentMatch.getStartOfFirst() + currentMatch.getLength() - 1);
 
                 for (int y = 0; y < files.length; y++) {
                     if (start.file.equals(files[y]) && text[y] != null) {
@@ -744,11 +744,11 @@ public class Report { // Mostly legacy code with some minor improvements.
                         }
 
                         // mark the end
-                        if (start.getLine() != ende.getLine() && // match is only one line
-                                text[y][ende.getLine() - 1].startsWith("<font color=\"#C0C0C0\">")) {
-                            text[y][ende.getLine() - 1] = "</EM><font color=\"#000000\">" + text[y][ende.getLine() - 1];
+                        if (start.getLine() != end.getLine() && // match is only one line
+                                text[y][end.getLine() - 1].startsWith("<font color=\"#C0C0C0\">")) {
+                            text[y][end.getLine() - 1] = "</EM><font color=\"#000000\">" + text[y][end.getLine() - 1];
                         } else {
-                            text[y][ende.getLine() - 1] += "</EM><font color=\"#000000\">";
+                            text[y][end.getLine() - 1] += "</EM><font color=\"#000000\">";
                         }
                     }
                 }
