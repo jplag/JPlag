@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ public class ReportObjectFactory {
 
 	public static JPlagReport getReportObject(JPlagResult result) {
 		OverviewReport overviewReport = generateOverviewReport(result);
-		List<ComparisonReport> comparisons = List.of();
+		List<ComparisonReport> comparisons = generateComparisonReports(result);
 
 		return new JPlagReport(overviewReport, comparisons);
 	}
