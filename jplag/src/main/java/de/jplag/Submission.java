@@ -21,26 +21,51 @@ import de.jplag.options.JPlagOptions;
  * Represents a single submission. A submission can contain multiple files.
  */
 public class Submission implements Comparable<Submission> {
-
+    /**
+     * Directory name for storing submission files with parse errors if so requested.
+     */
     private static final String ERROR_FOLDER = "errors";
 
-    private final String name; // uniquely identifies this submission (e.g. directory or file name)
+    /**
+     * Identification of the submission (often a directory or file name).
+     */
+    private final String name;
 
-    private final File submissionFile;
+    /**
+     * Root of the submission (either a file or a directory).
+     */
+    private final File submissionRoot;
 
-    private final Collection<File> files; // files of which the submission consists.
+    /**
+     * Files of the submission.
+     */
+    private final Collection<File> files;
 
+    /**
+     * Back-link to the main application.
+     */
     private final JPlag program;
 
-    private boolean hasErrors; // indicates that at least one error occurred while parsing this submission
+    /**
+     * Whether an error occurred during parsing the submission files.
+     */
+    private boolean hasErrors;
 
-    private TokenList tokenList; // parsed tokens from the files
+    /**
+     * Parse result, tokens from all files.
+     */
+    private TokenList tokenList;
 
-    public Submission(String name, File submissionFile, JPlag program) {
+    /**
+     * @param name Identification of the submission (directory or filename).
+     * @param submissionRoot Root of the submission (either a file or a directory).
+     * @param program Back-link to the main application.
+     */
+    public Submission(String name, File submissionRoot, JPlag program) {
         this.name = name;
-        this.submissionFile = submissionFile;
+        this.submissionRoot = submissionRoot;
         this.program = program;
-        this.files = parseFilesRecursively(submissionFile);
+        this.files = parseFilesRecursively(submissionRoot);
     }
 
     /**
@@ -51,13 +76,15 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return return the name that uniquely identifies this submission. Will most commonly be the directory or file
-     * name.return the name that uniquely identifies this submission. Will most commonly be the directory or file name.
+     * @return Identification of the submission (often a directory or file name).
      */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return Number of tokens in the parse result.
+     */
     public int getNumberOfTokens() {
         if (tokenList == null) {
             return 0;
@@ -67,7 +94,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return list of tokens that have been parsed from the files this submission consists of.
+     * @return Parse result of the submission.
      */
     public TokenList getTokenList() {
         return tokenList;
@@ -80,16 +107,19 @@ public class Submission implements Comparable<Submission> {
         return hasErrors;
     }
 
-    /* parse all the files... */
+    /**
+     * Parse files of the submission.
+     * @return Whether parsing was successful.
+     */
     public boolean parse() {
         if (files == null || files.size() == 0) {
             program.print("ERROR: nothing to parse for submission \"" + name + "\"\n", null);
             return false;
         }
 
-        String[] relativeFilePaths = getRelativeFilePaths(submissionFile, files);
+        String[] relativeFilePaths = getRelativeFilePaths(submissionRoot, files);
 
-        tokenList = this.program.getLanguage().parse(submissionFile, relativeFilePaths);
+        tokenList = this.program.getLanguage().parse(submissionRoot, relativeFilePaths);
         if (!program.getLanguage().hasErrors()) {
             if (tokenList.size() < 3) {
                 program.print("Submission \"" + name + "\" is too short!\n", null);
@@ -120,7 +150,7 @@ public class Submission implements Comparable<Submission> {
             text.clear();
 
             try {
-                FileInputStream fileInputStream = new FileInputStream(new File(submissionFile, files[i]));
+                FileInputStream fileInputStream = new FileInputStream(new File(submissionRoot, files[i]));
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, JPlagOptions.CHARSET);
                 BufferedReader in = new BufferedReader(inputStreamReader);
 
@@ -136,7 +166,7 @@ public class Submission implements Comparable<Submission> {
                 inputStreamReader.close();
                 fileInputStream.close();
             } catch (FileNotFoundException e) {
-                System.out.println("File not found: " + ((new File(submissionFile, files[i])).toString()));
+                System.out.println("File not found: " + ((new File(submissionRoot, files[i])).toString()));
             } catch (IOException e) {
                 throw new de.jplag.ExitException("I/O exception!");
             }
@@ -158,7 +188,7 @@ public class Submission implements Comparable<Submission> {
             // If the token path is absolute, ignore the provided directory
             File file = new File(files[i]);
             if (!file.isAbsolute()) {
-                file = new File(submissionFile, files[i]);
+                file = new File(submissionRoot, files[i]);
             }
 
             try {
