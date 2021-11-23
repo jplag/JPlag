@@ -2,8 +2,10 @@ package de.jplag;
 
 import static java.util.Collections.emptyList;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Collection of submissions and their basecode if it exists.
@@ -24,7 +26,7 @@ public class SubmissionSet {
      * @param baseCodeSubmission Base code submission if it exists.
      */
     public SubmissionSet(List<Submission> submissions, Optional<Submission> baseCodeSubmission) {
-        setSubmissions(submissions);
+        this.submissions = submissions;
         this.baseCodeSubmission = baseCodeSubmission;
     }
 
@@ -64,14 +66,9 @@ public class SubmissionSet {
     }
 
     /**
-     * Give the submissions to the set.
-     * @param submissions New submissions to store.
+     * Remove invalid submissions from the set.
      */
-    public void setSubmissions(List<Submission> submissions) {
-        if (submissions == null) {
-            this.submissions = emptyList();
-        } else {
-            this.submissions = submissions;
-        }
+    public void filterValidSubmissions() {
+        submissions = submissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(ArrayList::new));
     }
 }

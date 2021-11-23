@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -74,7 +73,7 @@ public class JPlag implements Program {
         // 2. Parse and validate submissions:
         SubmissionSet submissionSet = findSubmissions(rootDir);
         parseAllSubmissions(submissionSet);
-        submissionSet.setSubmissions(filterValidSubmissions(submissionSet.getSubmissions()));
+        submissionSet.filterValidSubmissions();
 
         int submCount = submissionSet.numberOfSubmissions();
         if (submCount < 2) {
@@ -176,10 +175,6 @@ public class JPlag implements Program {
             options.setBaseCodeSubmissionName(baseCode);
             System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
         }
-    }
-
-    private List<Submission> filterValidSubmissions(List<Submission> submissions) {
-        return submissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
