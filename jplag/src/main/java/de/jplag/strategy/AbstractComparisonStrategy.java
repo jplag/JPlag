@@ -1,12 +1,12 @@
 package de.jplag.strategy;
 
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Optional;
 
 import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
+import de.jplag.SubmissionSet;
 import de.jplag.options.JPlagOptions;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
@@ -24,8 +24,14 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
         this.options = options;
     }
 
-    protected void compareSubmissionsToBaseCode(List<Submission> submissions, Submission baseCodeSubmission) {
-        for (Submission currentSubmission : submissions) {
+    /**
+     * Compare all submissions to the basecode.
+     * <p>Caller must ensure that the provided set does have a basecode submission before calling.</p>
+     * @param submissionSet Submissions and basecode to compare.
+     */
+    protected void compareSubmissionsToBaseCode(SubmissionSet submissionSet) {
+        Submission baseCodeSubmission = submissionSet.getBaseCode();
+        for (Submission currentSubmission : submissionSet.getSubmissions()) {
             JPlagComparison baseCodeMatch = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
             baseCodeMatches.put(currentSubmission.getName(), baseCodeMatch);
             baseCodeSubmission.resetBaseCode();

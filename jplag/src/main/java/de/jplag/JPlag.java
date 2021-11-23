@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.jplag.options.JPlagOptions;
@@ -29,7 +30,6 @@ import de.jplag.strategy.ParallelComparisonStrategy;
 public class JPlag implements Program {
 
     // INPUT:
-    private Submission baseCodeSubmission = null;
     private HashSet<String> excludedFileNames = null; // Set of file names to be excluded in comparison.
     private Language language;
 
@@ -72,18 +72,20 @@ public class JPlag implements Program {
         readExclusionFile(); // This file contains all files names which are excluded
 
         // 2. Parse and validate submissions:
-        ArrayList<Submission> submissions = findSubmissions(rootDir);
-        parseAllSubmissions(submissions, baseCodeSubmission);
-        submissions = filterValidSubmissions(submissions);
-        if (submissions.size() < 2) {
+        SubmissionSet submissionSet = findSubmissions(rootDir);
+        parseAllSubmissions(submissionSet);
+        submissionSet.setSubmissions(filterValidSubmissions(submissionSet.getSubmissions()));
+
+        int submCount = submissionSet.numberOfSubmissions();
+        if (submCount < 2) {
             printErrors();
-            throw new ExitException("Not enough valid submissions! (found " + submissions.size() + " valid submissions)",
+            throw new ExitException("Not enough valid submissions! (found " + submCount + " valid submissions)",
                     ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
         }
 
         // 3. Compare valid submissions:
         errorVector = null; // errorVector is not needed anymore
-        JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         System.out.println("Total time for comparing submissions: " + formatComparisonDuration(result.getDuration()));
         return result;
     }
@@ -176,14 +178,14 @@ public class JPlag implements Program {
         }
     }
 
-    private ArrayList<Submission> filterValidSubmissions(ArrayList<Submission> submissions) {
+    private List<Submission> filterValidSubmissions(List<Submission> submissions) {
         return submissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
      * Find all submissions in the given root directory.
      */
-    private ArrayList<Submission> findSubmissions(File rootDir) throws ExitException {
+    private SubmissionSet findSubmissions(File rootDir) throws ExitException {
         String[] fileNamesInRootDir;
 
         try {
@@ -237,8 +239,9 @@ public class JPlag implements Program {
         System.out.println("Initialized language " + this.getLanguage().getName());
     }
 
-    private ArrayList<Submission> mapFileNamesInRootDirToSubmissions(String[] fileNames, File rootDir) throws ExitException {
-        ArrayList<Submission> submissions = new ArrayList<>();
+    private SubmissionSet mapFileNamesInRootDirToSubmissions(String[] fileNames, File rootDir) throws ExitException {
+        List<Submission> submissions = new ArrayList<>();
+        Optional<Submission> baseCodeSubmission = Optional.empty();
 
         for (String fileName : fileNames) {
             File submissionFile = new File(rootDir, fileName);
@@ -270,22 +273,28 @@ public class JPlag implements Program {
             Submission submission = new Submission(fileName, submissionFile, this);
 
             if (options.hasBaseCode() && options.getBaseCodeSubmissionName().equals(fileName)) {
-                baseCodeSubmission = submission;
+                baseCodeSubmission = Optional.of(submission);
             } else {
                 submissions.add(submission);
             }
         }
 
-        return submissions;
+        return new SubmissionSet(submissions, baseCodeSubmission);
     }
 
     /**
      * TODO PB: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
      */
-    private void parseAllSubmissions(ArrayList<Submission> submissions, Submission baseCodeSubmission) throws ExitException {
+    private void parseAllSubmissions(SubmissionSet submissionSet) throws ExitException {
         try {
-            parseSubmissions(submissions);
-            parseBaseCodeSubmission(baseCodeSubmission);
+            parseSubmissions(submissionSet.getSubmissions());
+
+            if (submissionSet.hasBaseCode()) {
+                parseBaseCodeSubmission(submissionSet.getBaseCode());
+            } else {
+                // TODO:
+                // options.useBasecode = false;
+            }
         } catch (OutOfMemoryError e) {
             throw new ExitException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
         } catch (Throwable e) {
@@ -298,12 +307,6 @@ public class JPlag implements Program {
      * Parse the given base code submission.
      */
     private void parseBaseCodeSubmission(Submission subm) throws ExitException {
-        if (subm == null) {
-            // TODO:
-            // options.useBasecode = false;
-            return;
-        }
-
         long startTime = System.currentTimeMillis();
         print("----- Parsing basecode submission: " + subm.getName() + "\n", null);
 
@@ -315,7 +318,7 @@ public class JPlag implements Program {
         }
 
         if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-            throw new ExitException("Basecode submission contains fewer tokens " + "than minimum match length allows!\n");
+            throw new ExitException("Basecode submission contains fewer tokens than minimum match length allows!\n");
         }
 
         if (options.hasBaseCode()) {
@@ -331,9 +334,9 @@ public class JPlag implements Program {
     /**
      * Parse all given submissions.
      */
-    private void parseSubmissions(ArrayList<Submission> submissions) {
-        if (submissions == null) {
-            System.out.println("Nothing to parse!");
+    private void parseSubmissions(List<Submission> submissions) {
+        if (submissions.isEmpty()) {
+            System.out.println("No submissions to parse!");
             return;
         }
 
@@ -358,7 +361,7 @@ public class JPlag implements Program {
             count++;
 
             if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-                print(null, "Submission contains fewer tokens than minimum match " + "length allows!\n");
+                print(null, "Submission contains fewer tokens than minimum match length allows!\n");
                 subm.setTokenList(null);
                 invalid++;
                 removed = true;
