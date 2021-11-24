@@ -51,9 +51,9 @@ public class Submission implements Comparable<Submission> {
     private TokenList tokenList;
 
     /**
-     * baseCodeMatch
+     * Base code comparison
      */
-    private JPlagComparison baseCodeMatch;
+    private JPlagComparison baseCodeComparison;
 
     private final Language language;
     private final ErrorCollector errorCollector;
@@ -100,18 +100,18 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Sets the base code match
-     * @param baseCodeMatch is submissions matches with the base code
+     * Sets the base code comparison
+     * @param baseCodeComparison is submissions matches with the base code
      */
-    public void setBaseCodeMatch(JPlagComparison baseCodeMatch) {
-        this.baseCodeMatch = baseCodeMatch;
+    public void setBaseCodeComparison(JPlagComparison baseCodeComparison) {
+        this.baseCodeComparison = baseCodeComparison;
     }
 
     /**
-     * @return base code match
+     * @return base code comparison
      */
-    public JPlagComparison getBaseCodeMatch() {
-        return baseCodeMatch;
+    public JPlagComparison getBaseCodeComparison() {
+        return baseCodeComparison;
     }
 
 
