@@ -2,7 +2,7 @@ package de.jplag.cpp;
 
 import java.io.File;
 
-import de.jplag.Program;
+import de.jplag.ErrorReporting;
 import de.jplag.TokenList;
 
 /*
@@ -11,7 +11,7 @@ import de.jplag.TokenList;
 public class Language implements de.jplag.Language {
 	private Scanner scanner;
 
-	public Language(Program program) {
+	public Language(ErrorReporting program) {
 		this.scanner = new Scanner();
 		this.scanner.setProgram(program);
 

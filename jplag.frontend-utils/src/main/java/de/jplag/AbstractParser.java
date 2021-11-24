@@ -5,7 +5,7 @@ package de.jplag;
  * @date 22.01.2005
  */
 public abstract class AbstractParser { // TODO TS: We should rename this class, as all concrete parsers shadow its name.
-    protected Program program;
+    protected ErrorReporting program;
     protected int errors = 0;
     private int errorsSum = 0;
 
@@ -21,11 +21,11 @@ public abstract class AbstractParser { // TODO TS: We should rename this class, 
         errorsSum += errors;
     }
 
-    public Program getProgram() {
+    public ErrorReporting getProgram() {
         return program;
     }
 
-    public void setProgram(Program prog) {
+    public void setProgram(ErrorReporting prog) {
         this.program = prog;
     }
 }

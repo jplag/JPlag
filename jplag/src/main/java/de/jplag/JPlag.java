@@ -1,7 +1,6 @@
 package de.jplag;
 
 import static de.jplag.options.Verbosity.LONG;
-import static de.jplag.options.Verbosity.QUIET;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,13 +11,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
-import de.jplag.options.Verbosity;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.NormalComparisonStrategy;
 import de.jplag.strategy.ParallelComparisonStrategy;
@@ -26,7 +23,7 @@ import de.jplag.strategy.ParallelComparisonStrategy;
 /**
  * This class coordinates the whole program flow.
  */
-public class JPlag implements Program {
+public class JPlag {
 
     // INPUT:
     private HashSet<String> excludedFileNames = null; // Set of file names to be excluded in comparison.
@@ -36,11 +33,7 @@ public class JPlag implements Program {
     private ComparisonStrategy comparisonStrategy;
     private GreedyStringTiling gSTiling = new GreedyStringTiling(this); // Contains the comparison logic.
     private final JPlagOptions options;
-
-    // ERROR REPORTING:
-    private String currentSubmissionName = "<Unknown submission>"; // TODO PB: This should be moved to parseSubmissions(...)
-    private int errors = 0;
-    private List<String> errorVector = new ArrayList<>(); // Vector of errors that occurred during the execution of the program.
+    private final ErrorCollector errorCollector;
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
@@ -52,6 +45,7 @@ public class JPlag implements Program {
         initializeLanguage();
         initializeComparisonStrategy();
         checkBaseCodeOption();
+        errorCollector = new ErrorCollector(options);
     }
 
     /**
@@ -72,27 +66,22 @@ public class JPlag implements Program {
 
         // 2. Parse and validate submissions:
         SubmissionSet submissionSet = findSubmissions(rootDir);
-        parseAllSubmissions(submissionSet);
-        submissionSet.filterValidSubmissions();
+
+        if (submissionSet.hasBaseCode()) {
+            gSTiling.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
+        }
 
         int submCount = submissionSet.numberOfSubmissions();
         if (submCount < 2) {
-            printErrors();
+            errorCollector.printErrors();
             throw new ExitException("Not enough valid submissions! (found " + submCount + " valid submissions)",
                     ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
         }
 
         // 3. Compare valid submissions:
-        errorVector = null; // errorVector is not needed anymore
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
-        System.out.println("Total time for comparing submissions: " + formatComparisonDuration(result.getDuration()));
+        System.out.println("Total time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()));
         return result;
-    }
-
-    @Override
-    public void addError(String errorMessage) {
-        errorVector.add("[" + currentSubmissionName + "]\n" + errorMessage);
-        print(errorMessage, null);
     }
 
     /**
@@ -132,19 +121,6 @@ public class JPlag implements Program {
             return false;
         }
         return excludedFileNames.stream().anyMatch(excludedName -> file.getName().endsWith(excludedName));
-    }
-
-    @Override
-    public void print(String message, String longMessage) {
-        Verbosity verbosity = options.getVerbosity();
-        if (verbosity != QUIET) {
-            if (message != null) {
-                System.out.print(message);
-            }
-            if (longMessage != null && verbosity == LONG) {
-                System.out.print(longMessage);
-            }
-        }
     }
 
     /**
@@ -215,8 +191,8 @@ public class JPlag implements Program {
         LanguageOption languageOption = this.options.getLanguageOption();
 
         try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(Program.class);
-            Object[] constructorParams = {this};
+            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ErrorReporting.class);
+            Object[] constructorParams = {errorCollector};
 
             Language language = (Language) constructor.newInstance(constructorParams);
 
@@ -274,142 +250,11 @@ public class JPlag implements Program {
             }
         }
 
-        return new SubmissionSet(submissions, baseCodeSubmission);
+        return new SubmissionSet(submissions, baseCodeSubmission, errorCollector, options);
     }
 
-    /**
-     * TODO PB: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
-     */
-    private void parseAllSubmissions(SubmissionSet submissionSet) throws ExitException {
-        try {
-            parseSubmissions(submissionSet.getSubmissions());
-
-            if (submissionSet.hasBaseCode()) {
-                parseBaseCodeSubmission(submissionSet.getBaseCode());
-            } else {
-                // TODO:
-                // options.useBasecode = false;
-            }
-        } catch (OutOfMemoryError e) {
-            throw new ExitException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
-        } catch (Throwable e) {
-            e.printStackTrace();
-            throw new ExitException("Unknown exception during parsing of " + "submission \"" + currentSubmissionName + "\"");
-        }
-    }
-
-    /**
-     * Parse the given base code submission.
-     */
-    private void parseBaseCodeSubmission(Submission subm) throws ExitException {
-        long startTime = System.currentTimeMillis();
-        print("----- Parsing basecode submission: " + subm.getName() + "\n", null);
-
-        // lets go:
-
-        if (!subm.parse()) {
-            printErrors();
-            throw new ExitException("Bad basecode submission");
-        }
-
-        if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-            throw new ExitException("Basecode submission contains fewer tokens than minimum match length allows!\n");
-        }
-
-        if (options.hasBaseCode()) {
-            gSTiling.createHashes(subm.getTokenList(), options.getMinimumTokenMatch(), true);
-        }
-
-        print("\nBasecode submission parsed!\n", null);
-
-        long duration = System.currentTimeMillis() - startTime;
-        print("\n", "\nTime for parsing Basecode: " + formatComparisonDuration(duration) + "\n");
-    }
-
-    /**
-     * Parse all given submissions.
-     */
-    private void parseSubmissions(List<Submission> submissions) {
-        if (submissions.isEmpty()) {
-            System.out.println("No submissions to parse!");
-            return;
-        }
-
-        int count = 0;
-
-        long startTime = System.currentTimeMillis();
-        Iterator<Submission> iter = submissions.iterator();
-
-        int invalid = 0;
-        while (iter.hasNext()) {
-            boolean ok;
-            boolean removed = false;
-            Submission subm = iter.next();
-
-            print(null, "------ Parsing submission: " + subm.getName() + "\n");
-            currentSubmissionName = subm.getName();
-
-            if (!(ok = subm.parse())) {
-                errors++;
-            }
-
-            count++;
-
-            if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-                print(null, "Submission contains fewer tokens than minimum match length allows!\n");
-                subm.setTokenList(null);
-                invalid++;
-                removed = true;
-                iter.remove();
-            }
-
-            if (ok && !removed) {
-                print(null, "OK\n");
-            } else {
-                print(null, "ERROR -> Submission removed\n");
-            }
-        }
-
-        print("\n" + (count - errors - invalid) + " submissions parsed successfully!\n" + errors + " parser error" + (errors != 1 ? "s!\n" : "!\n"),
-                null);
-
-        if (invalid != 0) {
-            print(null,
-                    invalid + ((invalid == 1) ? " submission is not valid because it contains" : " submissions are not valid because they contain")
-                            + " fewer tokens than minimum match length allows.\n");
-        }
-
-        long duration = System.currentTimeMillis() - startTime;
-        print("\n\n",
-                "\nTotal time for parsing: " + formatComparisonDuration(duration) + "\n"
-                        + "Time per parsed submission: " + (count > 0 ? (duration / count) : "n/a") + " msec\n\n");
-    }
-
-    /**
-     * Convert a duration in milli-seconds to a human-readable representation.
-     * @param durationInMiliseconds Number of milli-seconds to convert.
-     * @return Readable representation of the time interval.
-     */
-    private String formatComparisonDuration(long durationInMiliseconds) {
-        int timeInSeconds = (int) (durationInMiliseconds / 1000);
-        String hours = (timeInSeconds / 3600 > 0) ? (timeInSeconds / 3600) + " h " : "";
-        String minutes = (timeInSeconds / 60 > 0) ? ((timeInSeconds / 60) % 60) + " min " : "";
-        String seconds = (timeInSeconds % 60) + " sec";
-        return hours + minutes + seconds;
-    }
-
-    /**
-     * Print all errors from the errorVector.
-     */
-    private void printErrors() {
-        StringBuilder errorStr = new StringBuilder();
-
-        for (String str : errorVector) {
-            errorStr.append(str);
-            errorStr.append('\n');
-        }
-
-        System.out.println(errorStr.toString());
+    public void print(String message, String longMessage) {
+        errorCollector.print(message, longMessage);
     }
 
     /*
@@ -436,10 +281,10 @@ public class JPlag implements Program {
         }
 
         if (options.getVerbosity() == LONG) {
-            print(null, "Excluded files:\n");
+            errorCollector.print(null, "Excluded files:\n");
 
             for (String excludedFileName : excludedFileNames) {
-                print(null, "  " + excludedFileName + "\n");
+                errorCollector.print(null, "  " + excludedFileName + "\n");
             }
         }
     }
