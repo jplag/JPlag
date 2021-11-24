@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import de.jplag.options.JPlagOptions;
 
@@ -42,11 +41,6 @@ public class Submission implements Comparable<Submission> {
     private final Collection<File> files;
 
     /**
-     * Back-link to the main application.
-     */
-    private final JPlag program;
-
-    /**
      * Whether an error occurred during parsing the submission files.
      */
     private boolean hasErrors;
@@ -56,21 +50,28 @@ public class Submission implements Comparable<Submission> {
      */
     private TokenList tokenList;
 
-     /**
-     * baseCodeMatche
+    /**
+     * baseCodeMatch
      */
     private JPlagComparison baseCodeMatch;
 
+    private final Language language;
+    private final ErrorCollector errorCollector;
+
     /**
+     * Creates a submission.
      * @param name Identification of the submission (directory or filename).
      * @param submissionRoot Root of the submission (either a file or a directory).
-     * @param program Back-link to the main application.
+     * @param files are the files of the submissions, if the root is a single file it should just contain one file.
+     * @param language is the language of the submission.
+     * @param errorCollector is the interface for error reporting.
      */
-    public Submission(String name, File submissionRoot, JPlag program) {
+    public Submission(String name, File submissionRoot, Collection<File> files, Language language, ErrorCollector errorCollector) {
         this.name = name;
         this.submissionRoot = submissionRoot;
-        this.program = program;
-        this.files = parseFilesRecursively(submissionRoot);
+        this.files = files;
+        this.language = language;
+        this.errorCollector = errorCollector;
     }
 
     /**
@@ -98,7 +99,7 @@ public class Submission implements Comparable<Submission> {
         return tokenList.size();
     }
 
-   /**
+    /**
      * Sets the base code match
      * @param baseCodeMatch is submissions matches with the base code
      */
@@ -107,11 +108,12 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return Number of tokens in the parse result.
+     * @return base code match
      */
     public JPlagComparison getBaseCodeMatch() {
         return baseCodeMatch;
     }
+
 
     /**
      * @return Parse result of the submission.
@@ -131,18 +133,18 @@ public class Submission implements Comparable<Submission> {
      * Parse files of the submission.
      * @return Whether parsing was successful.
      */
-    public boolean parse() {
+    public boolean parse(boolean debugParser) {
         if (files == null || files.size() == 0) {
-            program.print("ERROR: nothing to parse for submission \"" + name + "\"\n", null);
+            errorCollector.print("ERROR: nothing to parse for submission \"" + name + "\"\n", null);
             return false;
         }
 
         String[] relativeFilePaths = getRelativeFilePaths(submissionRoot, files);
 
-        tokenList = this.program.getLanguage().parse(submissionRoot, relativeFilePaths);
-        if (!program.getLanguage().hasErrors()) {
+        tokenList = language.parse(submissionRoot, relativeFilePaths);
+        if (!language.hasErrors()) {
             if (tokenList.size() < 3) {
-                program.print("Submission \"" + name + "\" is too short!\n", null);
+                errorCollector.print("Submission \"" + name + "\" is too short!\n", null);
                 tokenList = null;
                 hasErrors = true; // invalidate submission
                 return false;
@@ -152,7 +154,7 @@ public class Submission implements Comparable<Submission> {
 
         tokenList = null;
         hasErrors = true; // invalidate submission
-        if (program.getOptions().isDebugParser()) {
+        if (debugParser) {
             copySubmission();
         }
         return false;
@@ -218,7 +220,7 @@ public class Submission implements Comparable<Submission> {
                 FileReader reader = new FileReader(file, JPlagOptions.CHARSET);
 
                 if (size != reader.read(buffer)) {
-                    System.out.println("Not right size read from the file, " + "but I will still continue...");
+                    System.out.println("Not right size read from the file, but I will still continue...");
                 }
 
                 result[i] = buffer;
@@ -251,6 +253,10 @@ public class Submission implements Comparable<Submission> {
         this.tokenList = tokenList;
     }
 
+    public void markAsErroneous() {
+        hasErrors = true;
+    }
+
     @Override
     public int compareTo(Submission other) {
         return name.compareTo(other.name);
@@ -277,13 +283,13 @@ public class Submission implements Comparable<Submission> {
             input.close();
             output.close();
         } catch (IOException e) {
-            program.print("Error copying file: " + e.toString() + "\n", null);
+            errorCollector.print("Error copying file: " + e.toString() + "\n", null);
         }
     }
 
     /*
-     * This method is used to copy files that can not be parsed to a special folder: de/jplag/errors/java old_java scheme cpp
-     * /001/(...files...) /002/(...files...)
+     * This method is used to copy files that can not be parsed to a special folder: de/jplag/errors/java old_java scheme
+     * cpp /001/(...files...) /002/(...files...)
      */
     private void copySubmission() {
         File errorDir = null;
@@ -296,7 +302,7 @@ public class Submission implements Comparable<Submission> {
             return;
         }
 
-        errorDir = new File(errorDir, this.program.getLanguage().getShortName());
+        errorDir = new File(errorDir, language.getShortName());
 
         if (!errorDir.exists()) {
             errorDir.mkdir();
@@ -331,37 +337,6 @@ public class Submission implements Comparable<Submission> {
         Path baseFilePath = baseFile.toPath();
 
         return files.stream().map(File::toPath).map(baseFilePath::relativize).map(Path::toString).toArray(String[]::new);
-    }
-
-    /**
-     * Recursively scan the given directory for nested files. Excluded files and files with an invalid suffix are ignored.
-     * <p>
-     * If the given file is not a directory, the input will be returned as a singleton list.
-     * @param file - File to start the scan from.
-     * @return a list of nested files.
-     */
-    private Collection<File> parseFilesRecursively(File file) {
-        if (program.isFileExcluded(file)) {
-            return Collections.emptyList();
-        }
-
-        if (file.isFile() && program.hasValidSuffix(file)) {
-            return Collections.singletonList(file);
-        }
-
-        String[] nestedFileNames = file.list();
-
-        if (nestedFileNames == null) {
-            return Collections.emptyList();
-        }
-
-        Collection<File> files = new ArrayList<>();
-
-        for (String fileName : nestedFileNames) {
-            files.addAll(parseFilesRecursively(new File(file, fileName)));
-        }
-
-        return files;
     }
 
 }

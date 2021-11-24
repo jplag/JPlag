@@ -10,7 +10,7 @@ import org.junit.Test;
 import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
- * Currently just a copy of {@link NormalComparisonTest} but for the {@link ParallelComparisonStrategy}.
+ * Currently just a copy of {@link NormalComparisonTest} but for the {@link ParallelComparisonStrategy}. // TODO TS: de-duplicate this
  * @author Timur Saglam
  */
 public class ParallelComparisonTest extends TestBase {

@@ -3,7 +3,7 @@ package de.jplag.java15;
 import java.io.File;
 
 import de.jplag.Language;
-import de.jplag.Program;
+import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /**
@@ -14,7 +14,7 @@ import de.jplag.TokenList;
 public class LanguageWithDelimitedMethods implements Language {
 	private Parser parser;
 
-	public LanguageWithDelimitedMethods(Program program) {
+	public LanguageWithDelimitedMethods(ErrorConsumer program) {
 		this.parser = new Parser(true);
 		this.parser.setProgram(program);
 	}

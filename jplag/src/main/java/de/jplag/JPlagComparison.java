@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -74,37 +76,19 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
         }
 
         TokenList tokenList = (j == 0 ? firstSubmission : secondSubmission).getTokenList();
-        int i, h, starti, starth, count = 1;
 
-        o1: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).getStartOfFirst() : matches.get(i).getStartOfSecond());
-            for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).getStartOfFirst() : matches.get(h).getStartOfSecond());
-                if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
-                    continue o1;
-                }
-            }
-            count++;
-        }
-
-        String[] res = new String[count];
-        res[0] = tokenList.getToken((j == 0 ? matches.get(0).getStartOfFirst() : matches.get(0).getStartOfSecond())).file;
-        count = 1;
-
-        o2: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).getStartOfFirst() : matches.get(i).getStartOfSecond());
-            for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).getStartOfFirst() : matches.get(h).getStartOfSecond());
-                if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
-                    continue o2;
-                }
-            }
-            res[count++] = tokenList.getToken(starti).file;
+        /*
+         * Collect the file names of the first token of each match.
+         */
+        Set<String> collectedFiles = new LinkedHashSet<>();
+        for (Match match: matches) {
+            collectedFiles.add(tokenList.getToken(match.getStart(j == 0)).file);
         }
 
         /*
          * sort by file name. (so that equally named files are displayed approximately side by side.)
          */
+        String[] res = collectedFiles.toArray(new String[0]);
         Arrays.sort(res);
 
         return res;
@@ -156,6 +140,24 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      */
     public Submission getSecondSubmission() {
         return secondSubmission;
+    }
+
+    /**
+     * @param getFirst Whether to return the first submission,
+     *      else return the second submission.
+     * @return The requested submission.
+     */
+    public Submission getSubmission(boolean getFirst) {
+        return getFirst ? firstSubmission : secondSubmission;
+    }
+
+    /**
+     * @param getFirst Whether to return the first basecode matches,
+     *      else return the second basecode matches.
+     * @return The requested basecode matches.
+     */
+    public JPlagComparison getBaseCodeMatches(boolean getFirst) {
+        return getFirst ? firstBaseCodeMatches : secondBaseCodeMatches;
     }
 
     /**
@@ -267,7 +269,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
 
     private int selectStartof(Integer index, boolean useFirst) {
         Match match = matches.get(index);
-        return useFirst ? match.getStartOfFirst() : match.getStartOfSecond();
+        return match.getStart(useFirst);
     }
 
     @Override

@@ -264,10 +264,10 @@ public class Report { // Mostly legacy code with some minor improvements.
      * makes use of the column and length information!
      */
     private int writeImprovedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws de.jplag.ExitException {
-        Submission sub = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
+        Submission sub = comparison.getSubmission(j == 0);
         String[] files = comparison.files(j);
         String[][] text = sub.readFiles(files);
-        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
+        TokenList tokens = comparison.getSubmission(j == 0).getTokenList();
 
         // Markup list:
         Comparator<MarkupText> comp = (mo1, mo2) -> {
@@ -285,8 +285,8 @@ public class Report { // Mostly legacy code with some minor improvements.
         for (int x = 0; x < comparison.getMatches().size(); x++) {
             Match onematch = comparison.getMatches().get(x);
 
-            Token start = tokens.getToken(j == 0 ? onematch.getStartOfFirst() : onematch.getStartOfSecond());
-            Token end = tokens.getToken((j == 0 ? onematch.getStartOfFirst() : onematch.getStartOfSecond()) + onematch.getLength() - 1);
+            Token start = tokens.getToken(onematch.getStart(j == 0));
+            Token end = tokens.getToken((onematch.getStart(j == 0)) + onematch.getLength() - 1);
             for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
                 if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
                     String tmp = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
@@ -306,7 +306,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         }
 
         if (result.getOptions().hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
-            JPlagComparison baseCodeComparison = (j == 0 ? comparison.getFirstBaseCodeMatches() : comparison.getSecondBaseCodeMatches());
+            JPlagComparison baseCodeComparison = comparison.getBaseCodeMatches(j == 0);
 
             for (int x = 0; x < baseCodeComparison.getMatches().size(); x++) {
                 Match onematch = baseCodeComparison.getMatches().get(x);
@@ -449,7 +449,6 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         if (options.getMaximumNumberOfComparisons() > 0) {
             htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Matches_displayed") + ":</TD>" + "<TD>");
-            // TODO TS every instance of getComparisons must be replaced by get N in this class!
             htmlFile.println(options.getMaximumNumberOfComparisons() + " of " + result.getComparisons().size() + " ("
                     + msg.getString("Report.Treshold") + ": " + result.getOptions().getSimilarityThreshold() + "%)<br>");
 
@@ -479,10 +478,10 @@ public class Report { // Mostly legacy code with some minor improvements.
      */
     private void writeIndexedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ExitException {
         boolean useFirst = j == 0;
-        Submission sub = (useFirst ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
+        Submission sub = comparison.getSubmission(useFirst);
         String[] files = comparison.files(j);
         char[][] text = sub.readFilesChar(files);
-        TokenList tokens = (useFirst ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
+        TokenList tokens = comparison.getSubmission(useFirst).getTokenList();
 
         // get index array with matches sorted in ascending order.
         List<Integer> perm = comparison.sort_permutation(useFirst);
@@ -509,8 +508,8 @@ public class Report { // Mostly legacy code with some minor improvements.
                 if (onematch == null) {
                     if (index < comparison.getMatches().size()) {
                         onematch = comparison.getMatches().get(perm.get(index));
-                        start = tokens.getToken(j == 0 ? onematch.getStartOfFirst() : onematch.getStartOfSecond());
-                        end = tokens.getToken((j == 0 ? onematch.getStartOfFirst() : onematch.getStartOfSecond()) + onematch.getLength() - 1);
+                        start = tokens.getToken(onematch.getStart(j == 0));
+                        end = tokens.getToken((onematch.getStart(j == 0)) + onematch.getLength() - 1);
                         index++;
                     } else {
                         start = end = null;
@@ -684,20 +683,20 @@ public class Report { // Mostly legacy code with some minor improvements.
      * i is the number of the match j == 0 if subA is considered, otherwise (j must then be 1) it is subB
      */
     private void writeNormalSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ExitException {
-        Submission sub = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission());
+        Submission sub = comparison.getSubmission(j == 0);
         String[] files = comparison.files(j);
 
         String[][] text = sub.readFiles(files);
 
-        TokenList tokens = (j == 0 ? comparison.getFirstSubmission() : comparison.getSecondSubmission()).getTokenList();
+        TokenList tokens = comparison.getSubmission(j == 0).getTokenList();
         Match currentMatch;
         String hilf;
         int h;
         for (int x = 0; x < comparison.getMatches().size(); x++) {
             currentMatch = comparison.getMatches().get(x);
 
-            Token start = tokens.getToken(j == 0 ? currentMatch.getStartOfFirst() : currentMatch.getStartOfSecond());
-            Token ende = tokens.getToken((j == 0 ? currentMatch.getStartOfFirst() : currentMatch.getStartOfSecond()) + currentMatch.getLength() - 1);
+            Token start = tokens.getToken(currentMatch.getStart(j == 0));
+            Token end = tokens.getToken((currentMatch.getStart(j == 0)) + currentMatch.getLength() - 1);
 
             for (int y = 0; y < files.length; y++) {
                 if (start.file.equals(files[y]) && text[y] != null) {
@@ -715,23 +714,23 @@ public class Report { // Mostly legacy code with some minor improvements.
                     h = (Math.max(start.getLine() - 4, 0));
                     text[y][h] = "<A NAME=\"" + x + "\"></A>" + text[y][h];
                     // mark the end
-                    if (start.getLine() != ende.getLine() && // if match is only one line
-                            text[y][ende.getLine() - 1].startsWith("<FONT ")) {
-                        text[y][ende.getLine() - 1] = "</B></FONT>" + text[y][ende.getLine() - 1];
+                    if (start.getLine() != end.getLine() && // if match is only one line
+                            text[y][end.getLine() - 1].startsWith("<FONT ")) {
+                        text[y][end.getLine() - 1] = "</B></FONT>" + text[y][end.getLine() - 1];
                     } else {
-                        text[y][ende.getLine() - 1] += "</B></FONT>";
+                        text[y][end.getLine() - 1] += "</B></FONT>";
                     }
                 }
             }
         }
 
         if (result.getOptions().hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
-            JPlagComparison baseCodeComparison = (j == 0 ? comparison.getFirstBaseCodeMatches() : comparison.getSecondBaseCodeMatches());
+            JPlagComparison baseCodeComparison = comparison.getBaseCodeMatches(j == 0);
 
             for (int x = 0; x < baseCodeComparison.getMatches().size(); x++) {
                 currentMatch = baseCodeComparison.getMatches().get(x);
                 Token start = tokens.getToken(currentMatch.getStartOfFirst());
-                Token ende = tokens.getToken(currentMatch.getStartOfFirst() + currentMatch.getLength() - 1);
+                Token end = tokens.getToken(currentMatch.getStartOfFirst() + currentMatch.getLength() - 1);
 
                 for (int y = 0; y < files.length; y++) {
                     if (start.file.equals(files[y]) && text[y] != null) {
@@ -744,11 +743,11 @@ public class Report { // Mostly legacy code with some minor improvements.
                         }
 
                         // mark the end
-                        if (start.getLine() != ende.getLine() && // match is only one line
-                                text[y][ende.getLine() - 1].startsWith("<font color=\"#C0C0C0\">")) {
-                            text[y][ende.getLine() - 1] = "</EM><font color=\"#000000\">" + text[y][ende.getLine() - 1];
+                        if (start.getLine() != end.getLine() && // match is only one line
+                                text[y][end.getLine() - 1].startsWith("<font color=\"#C0C0C0\">")) {
+                            text[y][end.getLine() - 1] = "</EM><font color=\"#000000\">" + text[y][end.getLine() - 1];
                         } else {
-                            text[y][ende.getLine() - 1] += "</EM><font color=\"#000000\">";
+                            text[y][end.getLine() - 1] += "</EM><font color=\"#000000\">";
                         }
                     }
                 }

@@ -1,9 +1,9 @@
 package de.jplag;
 
 /**
- * This is a stripped version of the JPlag main class Program to be used during front end development only.
+ * This is a stripped version of the JPlag main class ErrorConsumer to be used during front end development only.
  */
-public class StrippedProgram implements Program {
+public class StrippedProgram implements ErrorConsumer {
     @Override
     public void addError(String errorMsg) {
         System.err.println(errorMsg);

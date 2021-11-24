@@ -2,7 +2,7 @@ package de.jplag.chars;
 
 import java.io.File;
 
-import de.jplag.Program;
+import de.jplag.ErrorConsumer;
 import de.jplag.Token;
 import de.jplag.TokenList;
 
@@ -10,11 +10,11 @@ import de.jplag.TokenList;
  * read in text files as characters
  */
 public class Language implements de.jplag.Language {
-	private Program program;
+	private ErrorConsumer program;
 
 	private de.jplag.chars.Parser parser = new Parser();
 
-	public Language(Program program) {
+	public Language(ErrorConsumer program) {
 		this.program = program;
 		this.parser.setProgram(this.program);
 	}

@@ -2,13 +2,13 @@ package de.jplag.java15;
 
 import java.io.File;
 
-import de.jplag.Program;
+import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 	private Parser parser;
 
-	public Language(Program program) {
+	public Language(ErrorConsumer program) {
 		this.parser = new Parser(false);
 		this.parser.setProgram(program);
 	}
