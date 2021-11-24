@@ -2,12 +2,12 @@ package de.jplag.scheme;
 
 import java.io.File;
 
-import de.jplag.Program;
+import de.jplag.ErrorReporting;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
-	public Language(Program program) {
+	public Language(ErrorReporting program) {
 		this.parser = new Parser();
 		this.parser.setProgram(program);
 

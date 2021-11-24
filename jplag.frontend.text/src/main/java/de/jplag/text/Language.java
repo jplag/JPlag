@@ -3,7 +3,7 @@ package de.jplag.text;
 
 import java.io.File;
 
-import de.jplag.Program;
+import de.jplag.ErrorReporting;
 import de.jplag.TokenList;
 
 /**
@@ -12,11 +12,11 @@ import de.jplag.TokenList;
  */
 public class Language implements de.jplag.Language {
 
-	private Program program;
+	private ErrorReporting program;
 
 	private Parser parser = new Parser();
 
-	public Language(Program program) {
+	public Language(ErrorReporting program) {
 		this.program = program;
 		this.parser.setProgram(this.program);
 	}
