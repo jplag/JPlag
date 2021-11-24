@@ -230,6 +230,10 @@ public class Submission implements Comparable<Submission> {
     public void setTokenList(TokenList tokenList) {
         this.tokenList = tokenList;
     }
+    
+    public void markAsErroneous() {
+        hasErrors = true;
+    }
 
     @Override
     public int compareTo(Submission other) {
