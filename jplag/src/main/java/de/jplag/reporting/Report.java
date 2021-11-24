@@ -449,7 +449,6 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         if (options.getMaximumNumberOfComparisons() > 0) {
             htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Matches_displayed") + ":</TD>" + "<TD>");
-            // TODO TS every instance of getComparisons must be replaced by get N in this class!
             htmlFile.println(options.getMaximumNumberOfComparisons() + " of " + result.getComparisons().size() + " ("
                     + msg.getString("Report.Treshold") + ": " + result.getOptions().getSimilarityThreshold() + "%)<br>");
 

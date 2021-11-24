@@ -4,7 +4,7 @@ package de.jplag;
  * @author Emeric Kwemou
  * @date 22.01.2005
  */
-public abstract class AbstractParser { // TODO TS: We should rename this class, as all concrete parsers shadow its name.
+public abstract class AbstractParser {
     protected ErrorConsumer program;
     protected int errors = 0;
     private int errorsSum = 0;

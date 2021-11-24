@@ -28,7 +28,6 @@ public class SubmissionSet {
 
     private final ErrorCollector errorCollector;
     private final JPlagOptions options;
-
     private int errors = 0;
     private String currentSubmissionName;
 
@@ -94,9 +93,6 @@ public class SubmissionSet {
         return allSubmissions.stream().filter(submission -> submission.hasErrors()).collect(toList());
     }
 
-    /**
-     * TODO PB: Find a better way to separate parseSubmissions(...) and parseBaseCodeSubmission(...)
-     */
     private void parseAllSubmissions() throws ExitException {
         try {
             parseSubmissions(allSubmissions);
@@ -115,21 +111,16 @@ public class SubmissionSet {
      * Parse the given base code submission.
      */
     private void parseBaseCodeSubmission(Submission baseCode) throws ExitException {
-
         long startTime = System.currentTimeMillis();
         errorCollector.print("----- Parsing basecode submission: " + baseCode.getName() + "\n", null);
-
-        if (!baseCode.parse()) {
+        if (!baseCode.parse(options.isDebugParser())) {
             errorCollector.printErrors();
             throw new ExitException("Bad basecode submission");
         }
-
         if (baseCode.getTokenList() != null && baseCode.getNumberOfTokens() < options.getMinimumTokenMatch()) {
             throw new ExitException("Basecode submission contains fewer tokens than minimum match length allows!\n");
         }
-
         errorCollector.print("\nBasecode submission parsed!\n", null);
-
         long duration = System.currentTimeMillis() - startTime;
         errorCollector.print("\n", "\nTime for parsing Basecode: " + TimeUtil.formatDuration(duration) + "\n");
 
@@ -159,7 +150,7 @@ public class SubmissionSet {
             currentSubmissionName = subm.getName();
             errorCollector.setCurrentSubmissionName(currentSubmissionName);
 
-            if (!(ok = subm.parse())) {
+            if (!(ok = subm.parse(options.isDebugParser()))) {
                 errors++;
             }
 
@@ -184,8 +175,8 @@ public class SubmissionSet {
                 + (errors != 1 ? "s!\n" : "!\n"), null);
 
         if (invalid != 0) {
-            errorCollector.print(null,
-                    invalid + ((invalid == 1) ? " submission is not valid because it contains" : " allSubmissions are not valid because they contain")
+            errorCollector.print(null, invalid + ((invalid == 1)
+                    ? " submission is not valid because it contains" : " allSubmissions are not valid because they contain")
                             + " fewer tokens than minimum match length allows.\n");
         }
 

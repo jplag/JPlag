@@ -3,6 +3,8 @@ package de.jplag;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.jplag.options.JPlagOptions;
+
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
  * to the classes {@link TokenList}, {@link Token}, and {@link Match}. While this class was reworked, it still contains
@@ -13,10 +15,10 @@ import java.util.List;
  */
 public class GreedyStringTiling implements TokenConstants {
 
-    private JPlag program;
+    private final JPlagOptions options;
 
-    public GreedyStringTiling(JPlag program) {
-        this.program = program;
+    public GreedyStringTiling(JPlagOptions options) {
+        this.options = options;
     }
 
     /**
@@ -124,7 +126,7 @@ public class GreedyStringTiling implements TokenConstants {
 
         // Initialize:
         JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
-        int minimumTokenMatch = program.getOptions().getMinimumTokenMatch(); // minimal required token match
+        int minimumTokenMatch = options.getMinimumTokenMatch(); // minimal required token match
 
         if (first.size() <= minimumTokenMatch || second.size() <= minimumTokenMatch) { // <= because of pivots!
             return comparison;
@@ -214,7 +216,7 @@ public class GreedyStringTiling implements TokenConstants {
             if (withBaseCode) {
                 token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN;
             } else {
-                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && program.getOptions().hasBaseCode());
+                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && options.hasBaseCode());
             }
         }
     }
