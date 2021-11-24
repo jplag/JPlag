@@ -9,7 +9,7 @@ import java.util.List;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.Verbosity;
 
-public class ErrorCollector implements ErrorReporting {
+public class ErrorCollector implements ErrorConsumer { // TODO TS should be eventually replaced with a true logger/logging manager
 
     private final List<String> errorVector; // List of errors that occurred during the execution of the program.
     private final JPlagOptions options;

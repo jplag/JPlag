@@ -1,6 +1,6 @@
 package de.jplag;
 
-public interface ErrorReporting {
+public interface ErrorConsumer {
 
     /**
      * Print and store an error.

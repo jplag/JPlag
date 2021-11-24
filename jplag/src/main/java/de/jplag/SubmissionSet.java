@@ -1,5 +1,7 @@
 package de.jplag;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -9,13 +11,15 @@ import java.util.stream.Collectors;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Collection of submissions and their basecode if it exists.
+ * Collection of all submissions and their basecode if it exists. Parses all allSubmissions upon creation.
  */
 public class SubmissionSet {
     /**
      * Submissions to check for plagiarism.
      */
-    private List<Submission> submissions;
+    private final List<Submission> allSubmissions;
+    private final List<Submission> invalidSubmissions;
+    private final List<Submission> submissions;
 
     /**
      * Base code submission if it exists.
@@ -29,17 +33,18 @@ public class SubmissionSet {
     private String currentSubmissionName;
 
     /**
-     * @param submissions Submissions to check for plagiarism.
+     * @param allSubmissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists.
      */
-    public SubmissionSet(List<Submission> submissions, Optional<Submission> baseCode, ErrorCollector errorCollector, JPlagOptions options)
+    public SubmissionSet(List<Submission> allSubmissions, Optional<Submission> baseCode, ErrorCollector errorCollector, JPlagOptions options)
             throws ExitException {
-        this.submissions = submissions;
+        this.allSubmissions = allSubmissions;
         this.baseCodeSubmission = baseCode;
         this.errorCollector = errorCollector;
         this.options = options;
         parseAllSubmissions();
-        filterValidSubmissions(); // TODO TS: Keep filtered Submissions
+        submissions = filterValidSubmissions();
+        invalidSubmissions = filterInvalidSubmissions();
     }
 
     /**
@@ -63,25 +68,30 @@ public class SubmissionSet {
     }
 
     /**
-     * @return The number of submissions.
+     * @return The number of allSubmissions.
      */
-    public int numberOfSubmissions() { // Ensure this is the right value (filtered vs. all)
-        return submissions.size();
+    public int numberOfSubmissions() { // TODO Ensure this is the right value (filtered vs. all)
+        return allSubmissions.size();
     }
 
     /**
-     * Obtain the submissions.
+     * Obtain the allSubmissions.
      * @note Changes in the list are reflected in this instance.
      */
-    public List<Submission> getSubmissions() { // TODO TS: Ensure this is the right value
+    public List<Submission> getSubmissions() {
         return submissions;
     }
 
-    /**
-     * Remove invalid submissions from the set.
-     */
-    private void filterValidSubmissions() {
-        submissions = submissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(ArrayList::new));
+    public List<Submission> getInvalidSubmissions() {
+        return invalidSubmissions;
+    }
+
+    private List<Submission> filterValidSubmissions() {
+        return allSubmissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private List<Submission> filterInvalidSubmissions() {
+        return allSubmissions.stream().filter(submission -> submission.hasErrors()).collect(toList());
     }
 
     /**
@@ -89,11 +99,10 @@ public class SubmissionSet {
      */
     private void parseAllSubmissions() throws ExitException {
         try {
-            parseSubmissions(submissions);
+            parseSubmissions(allSubmissions);
             if (baseCodeSubmission.isPresent()) {
                 parseBaseCodeSubmission(baseCodeSubmission.get()); // cannot use ifPresent because of throws declaration
             }
-
         } catch (OutOfMemoryError e) {
             throw new ExitException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
         } catch (Throwable e) {
@@ -127,11 +136,11 @@ public class SubmissionSet {
     }
 
     /**
-     * Parse all given submissions.
+     * Parse all given allSubmissions.
      */
     private void parseSubmissions(List<Submission> submissions) {
         if (submissions.isEmpty()) {
-            System.out.println("No submissions to parse!");
+            System.out.println("No allSubmissions to parse!");
             return;
         }
 
@@ -161,7 +170,7 @@ public class SubmissionSet {
                 subm.setTokenList(null);
                 invalid++;
                 removed = true;
-                iter.remove(); // TODO TS: Keep filtered Submissions
+                subm.markAsErroneous();
             }
 
             if (ok && !removed) {
@@ -171,13 +180,12 @@ public class SubmissionSet {
             }
         }
 
-        errorCollector.print(
-                "\n" + (count - errors - invalid) + " submissions parsed successfully!\n" + errors + " parser error" + (errors != 1 ? "s!\n" : "!\n"),
-                null);
+        errorCollector.print("\n" + (count - errors - invalid) + " allSubmissions parsed successfully!\n" + errors + " parser error"
+                + (errors != 1 ? "s!\n" : "!\n"), null);
 
         if (invalid != 0) {
             errorCollector.print(null,
-                    invalid + ((invalid == 1) ? " submission is not valid because it contains" : " submissions are not valid because they contain")
+                    invalid + ((invalid == 1) ? " submission is not valid because it contains" : " allSubmissions are not valid because they contain")
                             + " fewer tokens than minimum match length allows.\n");
         }
 

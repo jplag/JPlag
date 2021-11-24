@@ -191,7 +191,7 @@ public class JPlag {
         LanguageOption languageOption = this.options.getLanguageOption();
 
         try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ErrorReporting.class);
+            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ErrorConsumer.class);
             Object[] constructorParams = {errorCollector};
 
             Language language = (Language) constructor.newInstance(constructorParams);
