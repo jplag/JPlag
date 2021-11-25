@@ -246,13 +246,13 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     }
 
     private final float firstBasecodeSimilarity() {
-        float sa = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size();
+        float sa = firstSubmission.getSimilarityDivisor(false);
         JPlagComparison firstBaseCodeMatches = firstSubmission.getBaseCodeComparison();
         return firstBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sa;
     }
 
     private final float secondBasecodeSimilarity() {
-        float sb = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size();
+        float sb = secondSubmission.getSimilarityDivisor(false);
         JPlagComparison secondBaseCodeMatches = secondSubmission.getBaseCodeComparison();
         return secondBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sb;
     }
