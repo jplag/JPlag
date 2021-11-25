@@ -114,6 +114,24 @@ public class Submission implements Comparable<Submission> {
         return baseCodeComparison;
     }
 
+    /**
+     * @return Whether a comparison between the submission and the base code is available.
+     */
+    public boolean hasBaseCodeMatches() {
+        return baseCodeComparison != null;
+    }
+
+    /**
+     * @param subtractBaseCode If true subtract basecode matches if possible.
+     * @return Similarity divisor for the submission.
+     */
+    public int getSimilarityDivisor(boolean subtractBaseCode) {
+        int divisor = getNumberOfTokens() - getFiles().size();
+        if (subtractBaseCode && baseCodeComparison != null) {
+            divisor -= baseCodeComparison.getNumberOfMatchedTokens();
+        }
+        return divisor;
+    }
 
     /**
      * @return Parse result of the submission.
