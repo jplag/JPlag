@@ -1,6 +1,5 @@
 package de.jplag.strategy;
 
-import java.util.Hashtable;
 import java.util.Optional;
 
 import de.jplag.GreedyStringTiling;
@@ -10,10 +9,6 @@ import de.jplag.SubmissionSet;
 import de.jplag.options.JPlagOptions;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
-
-    // TODO PB: I think it's better to make each submission store its own matches with the base code.
-    // Hashtable that maps the name of a submissions to its matches with the provided base code.
-    private Hashtable<String, JPlagComparison> baseCodeMatches = new Hashtable<>(30);
 
     private GreedyStringTiling greedyStringTiling;
 
@@ -32,8 +27,8 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     protected void compareSubmissionsToBaseCode(SubmissionSet submissionSet) {
         Submission baseCodeSubmission = submissionSet.getBaseCode();
         for (Submission currentSubmission : submissionSet.getSubmissions()) {
-            JPlagComparison baseCodeMatch = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
-            baseCodeMatches.put(currentSubmission.getName(), baseCodeMatch);
+            JPlagComparison baseCodeComparison = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
+            currentSubmission.setBaseCodeComparison(baseCodeComparison);
             baseCodeSubmission.resetBaseCode();
         }
     }
@@ -45,8 +40,8 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
         JPlagComparison comparison = greedyStringTiling.compare(first, second);
         System.out.println("Comparing " + first.getName() + "-" + second.getName() + ": " + comparison.similarity());
         if (withBaseCode) {
-            comparison.setFirstBaseCodeMatches(baseCodeMatches.get(comparison.getFirstSubmission().getName()));
-            comparison.setSecondBaseCodeMatches(baseCodeMatches.get(comparison.getSecondSubmission().getName()));
+            comparison.setFirstBaseCodeMatches(comparison.getFirstSubmission().getBaseCodeComparison());
+            comparison.setSecondBaseCodeMatches(comparison.getSecondSubmission().getBaseCodeComparison());
         }
         if (options.getSimilarityMetric().isAboveThreshold(comparison, options.getSimilarityThreshold())) {
             return Optional.of(comparison);
