@@ -223,7 +223,7 @@ public class JPlagOptions {
     }
 
     public void setSubdirectoryName(String subdirectoryName) {
-        this.subdirectoryName = subdirectoryName;
+        this.subdirectoryName = subdirectoryName.replace(File.separator, ""); // Trim problematic file separators.
     }
 
     public void setLanguageOption(LanguageOption languageOption) {
