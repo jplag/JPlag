@@ -2,6 +2,7 @@ package de.jplag.options;
 
 import static de.jplag.strategy.ComparisonMode.NORMAL;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -218,7 +219,7 @@ public class JPlagOptions {
     }
 
     public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
-        this.baseCodeSubmissionName = baseCodeSubmissionName;
+        this.baseCodeSubmissionName = baseCodeSubmissionName.replace(File.separator, ""); // Trim problematic file separators.
     }
 
     public void setSubdirectoryName(String subdirectoryName) {

@@ -87,7 +87,6 @@ public class JPlag {
                             ExitException.BAD_PARAMETER);
                 }
             }
-            options.setBaseCodeSubmissionName(baseCode);
             System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
         }
     }
