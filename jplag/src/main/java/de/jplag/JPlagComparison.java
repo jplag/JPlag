@@ -19,9 +19,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     private final Submission firstSubmission;
     private final Submission secondSubmission;
 
-    private JPlagComparison firstBaseCodeMatches = null;
-    private JPlagComparison secondBaseCodeMatches = null;
-
     private final List<Match> matches;
 
     public JPlagComparison(Submission firstSubmission, Submission secondSubmission) {
@@ -98,7 +95,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * @return the base code matches of the first submission.
      */
     public JPlagComparison getFirstBaseCodeMatches() {
-        return firstBaseCodeMatches;
+        return firstSubmission.getBaseCodeComparison();
     }
 
     /**
@@ -132,7 +129,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * @return the base code matches of the second submissions.
      */
     public JPlagComparison getSecondBaseCodeMatches() {
-        return secondBaseCodeMatches;
+        return secondSubmission.getBaseCodeComparison();
     }
 
     /**
@@ -157,7 +154,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * @return The requested basecode matches.
      */
     public JPlagComparison getBaseCodeMatches(boolean getFirst) {
-        return getFirst ? firstBaseCodeMatches : secondBaseCodeMatches;
+        return getSubmission(getFirst).getBaseCodeComparison();
     }
 
     /**
@@ -179,6 +176,8 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      */
     public final float similarity() {
         float sa, sb;
+        JPlagComparison firstBaseCodeMatches = firstSubmission.getBaseCodeComparison();
+        JPlagComparison secondBaseCodeMatches = secondSubmission.getBaseCodeComparison();
         if (secondBaseCodeMatches != null && firstBaseCodeMatches != null) {
             sa = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
             sb = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
@@ -195,6 +194,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      */
     public final float similarityOfFirst() {
         int divisor;
+        JPlagComparison firstBaseCodeMatches = firstSubmission.getBaseCodeComparison();
         if (firstBaseCodeMatches != null) {
             divisor = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
         } else {
@@ -209,6 +209,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      */
     public final float similarityOfSecond() {
         int divisor;
+        JPlagComparison secondBaseCodeMatches = secondSubmission.getBaseCodeComparison();
         if (secondBaseCodeMatches != null) {
             divisor = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
         } else {
@@ -239,20 +240,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     }
 
     /**
-     * Sets the base code matches of the second submissions.
-     */
-    public void setFirstBaseCodeMatches(JPlagComparison firstBaseCodeMatches) {
-        this.firstBaseCodeMatches = firstBaseCodeMatches;
-    }
-
-    /**
-     * Sets the base code matches of the second submissions.
-     */
-    public void setSecondBaseCodeMatches(JPlagComparison secondBaseCodeMatches) {
-        this.secondBaseCodeMatches = secondBaseCodeMatches;
-    }
-
-    /**
      * Creates a permutation for the matches based on the indices of the matched token groups.
      * @param useFirst determines whether the start of the first or second submission is compared.
      * @return the permutation indices.
@@ -279,11 +266,13 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
 
     private final float firstBasecodeSimilarity() {
         float sa = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size();
+        JPlagComparison firstBaseCodeMatches = firstSubmission.getBaseCodeComparison();
         return firstBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sa;
     }
 
     private final float secondBasecodeSimilarity() {
         float sb = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size();
+        JPlagComparison secondBaseCodeMatches = secondSubmission.getBaseCodeComparison();
         return secondBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sb;
     }
 
