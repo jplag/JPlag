@@ -51,7 +51,7 @@ public class JPlag {
         if (!rootDir.isDirectory()) {
             throw new ExitException(options.getRootDirectoryName() + " is not a directory!");
         }
-        
+
         // 2. Parse and validate submissions:
         SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, errorCollector);
         SubmissionSet submissionSet = builder.buildSubmissionSet(rootDir);
@@ -72,14 +72,6 @@ public class JPlag {
         System.out.println("Total time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()));
         return result;
     }
-
-    /**
-     * @return the configured language in which the submissions are written.
-     */
-    public Language getLanguage() {
-        return language;
-    }
-
 
     /**
      * This method checks whether the base code directory value is valid.
@@ -142,8 +134,8 @@ public class JPlag {
             throw new ExitException("Language instantiation failed", ExitException.BAD_LANGUAGE_ERROR);
         }
 
-        this.options.setLanguageDefaults(this.getLanguage());
+        this.options.setLanguageDefaults(this.language);
 
-        System.out.println("Initialized language " + this.getLanguage().getName());
+        System.out.println("Initialized language " + this.language.getName());
     }
 }
