@@ -219,11 +219,13 @@ public class JPlagOptions {
     }
 
     public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
-        this.baseCodeSubmissionName = baseCodeSubmissionName.replace(File.separator, ""); // Trim problematic file separators.
+        // Trim problematic file separators.
+        this.baseCodeSubmissionName = (baseCodeSubmissionName == null) ? null : baseCodeSubmissionName.replace(File.separator, "");
     }
 
     public void setSubdirectoryName(String subdirectoryName) {
-        this.subdirectoryName = subdirectoryName.replace(File.separator, ""); // Trim problematic file separators.
+        // Trim problematic file separators.
+        this.subdirectoryName = (subdirectoryName == null) ? null : subdirectoryName.replace(File.separator, "");
     }
 
     public void setLanguageOption(LanguageOption languageOption) {
