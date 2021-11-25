@@ -338,5 +338,4 @@ public class Submission implements Comparable<Submission> {
 
         return files.stream().map(File::toPath).map(baseFilePath::relativize).map(Path::toString).toArray(String[]::new);
     }
-
 }
