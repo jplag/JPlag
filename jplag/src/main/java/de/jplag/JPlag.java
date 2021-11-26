@@ -71,7 +71,7 @@ public class JPlag {
         getRootDirectory(); // Performs checks on the root directory.
 
         if (options.hasBaseCode()) {
-            String baseCode = options.getBaseCodeSubmissionName().replace(File.separator, ""); // trim problematic file separators
+            String baseCode = options.getBaseCodeSubmissionName();
             if (baseCode.contains(".")) {
                 throw new ExitException("The basecode directory name \"" + baseCode + "\" cannot contain dots!", ExitException.BAD_PARAMETER);
             }
