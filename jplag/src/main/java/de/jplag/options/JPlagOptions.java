@@ -2,6 +2,7 @@ package de.jplag.options;
 
 import static de.jplag.strategy.ComparisonMode.NORMAL;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -218,11 +219,13 @@ public class JPlagOptions {
     }
 
     public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
-        this.baseCodeSubmissionName = baseCodeSubmissionName;
+        // Trim problematic file separators.
+        this.baseCodeSubmissionName = (baseCodeSubmissionName == null) ? null : baseCodeSubmissionName.replace(File.separator, "");
     }
 
     public void setSubdirectoryName(String subdirectoryName) {
-        this.subdirectoryName = subdirectoryName;
+        // Trim problematic file separators.
+        this.subdirectoryName = (subdirectoryName == null) ? null : subdirectoryName.replace(File.separator, "");
     }
 
     public void setLanguageOption(LanguageOption languageOption) {
