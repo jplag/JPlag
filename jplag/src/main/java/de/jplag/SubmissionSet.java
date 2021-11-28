@@ -67,14 +67,14 @@ public class SubmissionSet {
     }
 
     /**
-     * @return The number of allSubmissions.
+     * @return The number of valid submissions.
      */
-    public int numberOfSubmissions() { // TODO Ensure this is the right value (filtered vs. all)
-        return allSubmissions.size();
+    public int numberOfSubmissions() {
+        return submissions.size();
     }
 
     /**
-     * Obtain the allSubmissions.
+     * Obtain the submissions.
      * @note Changes in the list are reflected in this instance.
      */
     public List<Submission> getSubmissions() {
@@ -127,7 +127,7 @@ public class SubmissionSet {
     }
 
     /**
-     * Parse all given allSubmissions.
+     * Parse all given submissions.
      */
     private void parseSubmissions(List<Submission> submissions) {
         if (submissions.isEmpty()) {
@@ -157,7 +157,7 @@ public class SubmissionSet {
             count++;
 
             if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-                errorCollector.addError(null, "Submission " + currentSubmissionName + " contains fewer tokens than minimum match length allows!\n");
+                errorCollector.addError("Submission contains fewer tokens than minimum match length allows!\n");
                 subm.setTokenList(null);
                 invalid++;
                 removed = true;
