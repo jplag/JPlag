@@ -30,11 +30,11 @@ public class JPlag {
      */
     public JPlag(JPlagOptions options) throws ExitException {
         this.options = options;
+        errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
         initializeLanguage();
         initializeComparisonStrategy();
         checkBaseCodeOption();
-        errorCollector = new ErrorCollector(options);
     }
 
     /**
