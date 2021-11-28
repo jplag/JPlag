@@ -23,7 +23,7 @@ public enum CommandLineArgument {
     ROOT_DIRECTORY("rootDir", String.class),
     LANGUAGE("-l", String.class, LanguageOption.getDefault().getDisplayName(), LanguageOption.getAllDisplayNames()),
     BASE_CODE("-bc", String.class),
-    VERBOSITY("-v", String.class, "quiet", List.of("parser", "quiet", "long", "details")), // TODO SH: Replace verbosity when integrating a real logging library
+    VERBOSITY("-v", String.class, "quiet", List.of("quiet", "long")), // TODO SH: Replace verbosity when integrating a real logging library
     DEBUG("-d", Boolean.class),
     SUBDIRECTORY("-S", String.class),
     SUFFIXES("-p", String.class),
