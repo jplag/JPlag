@@ -131,7 +131,7 @@ public class SubmissionSet {
      */
     private void parseSubmissions(List<Submission> submissions) {
         if (submissions.isEmpty()) {
-            System.out.println("No allSubmissions to parse!");
+            errorCollector.print("No submissions to parse!", null);
             return;
         }
 
@@ -157,7 +157,7 @@ public class SubmissionSet {
             count++;
 
             if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-                errorCollector.print(null, "Submission contains fewer tokens than minimum match length allows!\n");
+                errorCollector.addError(null, "Submission " + currentSubmissionName + " contains fewer tokens than minimum match length allows!\n");
                 subm.setTokenList(null);
                 invalid++;
                 removed = true;
