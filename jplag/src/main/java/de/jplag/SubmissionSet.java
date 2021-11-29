@@ -3,7 +3,6 @@ package de.jplag;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -138,30 +137,26 @@ public class SubmissionSet {
         int count = 0;
 
         long startTime = System.currentTimeMillis();
-        Iterator<Submission> iter = submissions.iterator();
 
-        int invalid = 0;
-        while (iter.hasNext()) {
+        int tooSmallSubmissions = 0;
+        for (Submission submission : submissions) {
             boolean ok;
             boolean removed = false;
-            Submission subm = iter.next();
 
-            errorCollector.print(null, "------ Parsing submission: " + subm.getName() + "\n");
-            currentSubmissionName = subm.getName();
+            errorCollector.print(null, "------ Parsing submission: " + submission.getName() + "\n");
+            currentSubmissionName = submission.getName();
             errorCollector.setCurrentSubmissionName(currentSubmissionName);
 
-            if (!(ok = subm.parse(options.isDebugParser()))) {
+            if (!(ok = submission.parse(options.isDebugParser()))) {
                 errors++;
             }
 
-            count++;
-
-            if (subm.getTokenList() != null && subm.getNumberOfTokens() < options.getMinimumTokenMatch()) {
+            if (submission.getTokenList() != null && submission.getNumberOfTokens() < options.getMinimumTokenMatch()) {
                 errorCollector.addError("Submission contains fewer tokens than minimum match length allows!\n");
-                subm.setTokenList(null);
-                invalid++;
+                submission.setTokenList(null);
+                tooSmallSubmissions++;
                 removed = true;
-                subm.markAsErroneous();
+                submission.markAsErroneous();
             }
 
             if (ok && !removed) {
@@ -171,18 +166,19 @@ public class SubmissionSet {
             }
         }
 
-        errorCollector.print("\n" + (count - errors - invalid) + " allSubmissions parsed successfully!\n" + errors + " parser error"
-                + (errors != 1 ? "s!\n" : "!\n"), null);
+        int validSubmissions = submissions.size() - errors - tooSmallSubmissions;
+        errorCollector.print(validSubmissions + " allSubmissions parsed successfully!", null);
+        errorCollector.print(errors + " parser error" + (errors != 1 ? "s!\n" : "!\n"), null);
 
-        if (invalid != 0) {
-            errorCollector.print(null, invalid + ((invalid == 1)
-                    ? " submission is not valid because it contains" : " allSubmissions are not valid because they contain")
-                            + " fewer tokens than minimum match length allows.\n");
+        if (tooSmallSubmissions == 1) {
+            errorCollector.print(null, tooSmallSubmissions + " submission is not valid because it contains fewer tokens than minimum match length allows.\n");
+        } else if (tooSmallSubmissions > 1) {
+            errorCollector.print(null, tooSmallSubmissions + " submissions are not valid because they contain fewer tokens than minimum match length allows.\n");
         }
 
         long duration = System.currentTimeMillis() - startTime;
         errorCollector.print("\n\n", "\nTotal time for parsing: " + TimeUtil.formatDuration(duration) + "\n" + "Time per parsed submission: "
-                + (count > 0 ? (duration / count) : "n/a") + " msec\n\n");
+                + (count > 0 ? (duration / count) : "n/a") + " msec\n");
     }
 
 }
