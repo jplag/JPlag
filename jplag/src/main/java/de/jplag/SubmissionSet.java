@@ -55,7 +55,7 @@ public class SubmissionSet {
     /**
      * Retrieve the base code of this collection.
      * @return The base code submission.
-     * @note Asking for a non-existing basecode crashes the program.
+     * @note Asking for a non-existing basecode crashes the errorConsumer.
      * @see #hasBaseCode
      */
     public Submission getBaseCode() {

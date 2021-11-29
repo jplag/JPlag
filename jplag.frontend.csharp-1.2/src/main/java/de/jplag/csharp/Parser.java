@@ -46,7 +46,7 @@ public class Parser extends AbstractParser implements CSharpTokenConstants {
 			// close file
 			fis.close();
 		} catch (Exception e) {
-			getProgram().addError("  Parsing Error in '" + file + "':\n  " + e.toString());
+			getErrorConsumer().addError("  Parsing Error in '" + file + "':\n  " + e.toString());
 			return false;
 		}
 		return true;

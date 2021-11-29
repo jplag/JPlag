@@ -14,7 +14,7 @@ import de.jplag.options.Verbosity;
  */
 public class ErrorCollector implements ErrorConsumer { // TODO TS should be eventually replaced with a true logger/logging manager
 
-    private final List<String> collectedErrors; // List of errors that occurred during the execution of the program.
+    private final List<String> collectedErrors; // List of errors that occurred during the execution of the errorConsumer.
     private final JPlagOptions options;
     private String currentSubmissionName;
 

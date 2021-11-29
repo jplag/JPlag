@@ -17,15 +17,15 @@ public class Parser extends AbstractParser implements JavaTokenConstants {
 		// in method parseFile(...)
 		for (int i = 0; i < files.length; i++) {
 			actFile = files[i];
-			getProgram().print(null, "Parsing file " + files[i]);
+			getErrorConsumer().print(null, "Parsing file " + files[i]);
 			if (!JavaParser.parseFile(dir, files[i], parser, this))
 				errors++;
 			struct.addToken(new JavaToken(FILE_END, actFile, 0));
 		}
 		if (errors == 0)
-			program.print(null, "OK");
+			errorConsumer.print(null, "OK");
 		else
-			program.print(null, errors + " ERRORS");
+			errorConsumer.print(null, errors + " ERRORS");
 		this.parseEnd();
 		return struct;
 	}
