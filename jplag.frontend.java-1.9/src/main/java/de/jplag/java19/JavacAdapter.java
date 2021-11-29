@@ -49,7 +49,7 @@ public class JavacAdapter {
         int errors = 0;
         for (Diagnostic<?> diagItem : diagListen.getDiagnostics()) {
             if (diagItem.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
-                parser.getProgram().addError(diagItem.toString());
+                parser.getErrorConsumer().addError(diagItem.toString());
                 errors++;
             }
         }

@@ -11,7 +11,7 @@ import de.jplag.strategy.NormalComparisonStrategy;
 import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
- * This class coordinates the whole program flow.
+ * This class coordinates the whole errorConsumer flow.
  */
 public class JPlag {
     // INPUT:

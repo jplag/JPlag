@@ -54,7 +54,7 @@ public class Parser extends AbstractParser implements TokenConstants {
 		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
-			getProgram().print("", "Parsing file " + files[i]);
+			getErrorConsumer().print("", "Parsing file " + files[i]);
 			if (!parseFile(dir, files[i]))
 				errors++;
 			struct.addToken(new TextToken(FILE_END, files[i], this));
@@ -88,7 +88,7 @@ public class Parser extends AbstractParser implements TokenConstants {
 			// close file
 			fis.close();
 		} catch (Exception e) {
-			getProgram().addError("  Parsing Error in '" + file +
+			getErrorConsumer().addError("  Parsing Error in '" + file +
 					"' (line " + (inputState != null ? "" + inputState.getLine()
 					: "") + "):\n  " + e.getMessage());
 			return false;
@@ -111,7 +111,7 @@ public class Parser extends AbstractParser implements TokenConstants {
 			return;
 		runOut = true;
 		errors++;
-		program.print("ERROR: Out of serials!", null);
+		errorConsumer.print("ERROR: Out of serials!", null);
         System.out.println("de.jplag.text.Parser: ERROR: Out of serials!");
 	}
 }

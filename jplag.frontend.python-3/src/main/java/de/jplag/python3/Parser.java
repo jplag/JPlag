@@ -27,7 +27,7 @@ public class Parser extends AbstractParser implements Python3TokenConstants {
         struct = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {
-            getProgram().print(null, "Parsing file " + files[i]);
+            getErrorConsumer().print(null, "Parsing file " + files[i]);
             if (!parseFile(dir, files[i])) {
                 errors++;
             }
@@ -64,7 +64,7 @@ public class Parser extends AbstractParser implements Python3TokenConstants {
             }
 
         } catch (IOException e) {
-            getProgram().addError("Parsing Error in '" + file + "':\n" + e.getMessage());
+            getErrorConsumer().addError("Parsing Error in '" + file + "':\n" + e.getMessage());
             return false;
         }
 
