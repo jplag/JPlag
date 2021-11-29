@@ -27,7 +27,7 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(Path.of(BASE_PATH, testSampleName).toString(), LanguageOption.JAVA_1_9);
+        JPlagOptions options = new JPlagOptions(Path.of(BASE_PATH, testSampleName).toString(), LanguageOption.JAVA);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);

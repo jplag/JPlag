@@ -29,7 +29,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getShortName() {
-        return "java19";
+        return "java";
     }
 
     @Override

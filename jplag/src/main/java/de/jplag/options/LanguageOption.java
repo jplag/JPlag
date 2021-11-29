@@ -9,12 +9,7 @@ import java.util.Collection;
  * The available languages.
  */
 public enum LanguageOption {
-    JAVA_1_1("java1", "de.jplag.javax.Language"),
-    JAVA_1_2("java2", "de.jplag.java.Language"),
-    JAVA_1_5("java5", "de.jplag.java15.Language"),
-    JAVA_1_5_DM("java5dm", "de.jplag.java15.LanguageWithDelimitedMethods"),
-    JAVA_1_7("java7", "de.jplag.java17.Language"),
-    JAVA_1_9("java9", "de.jplag.java.Language"),
+    JAVA("java", "de.jplag.java.Language"),
     PYTHON_3("python3", "de.jplag.python3.Language"),
     C_CPP("cpp", "de.jplag.cpp.Language"),
     C_SHARP("csharp", "de.jplag.csharp.Language"),
@@ -48,6 +43,6 @@ public enum LanguageOption {
     }
 
     public static LanguageOption getDefault() {
-        return LanguageOption.JAVA_1_9;
+        return LanguageOption.JAVA;
     }
 }
