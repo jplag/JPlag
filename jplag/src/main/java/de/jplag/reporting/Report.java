@@ -54,7 +54,7 @@ public class Report { // Mostly legacy code with some minor improvements.
 
     public void writeResult(JPlagResult result) throws ExitException {
         this.result = result;
-        System.out.println("Writing report...");
+        System.out.println("\nWriting report...");
         writeIndex();
         copyStaticFiles();
         writeMatches(result.getComparisons(options.getMaximumNumberOfComparisons()));

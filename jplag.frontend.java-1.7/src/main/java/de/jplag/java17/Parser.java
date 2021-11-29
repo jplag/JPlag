@@ -26,7 +26,7 @@ public class Parser extends AbstractParser implements JavaTokenConstants {
 		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
-			getProgram().print(null, "Parsing file " + files[i] + "\n");
+			getProgram().print(null, "Parsing file " + files[i]);
 			if (!parseFile(dir, files[i]))
 				errors++;
 			System.gc();//Emeric
@@ -62,7 +62,7 @@ public class Parser extends AbstractParser implements JavaTokenConstants {
 			}
 
 		} catch (IOException e) {
-			getProgram().addError("Parsing Error in '" + file + "':\n" + e.getMessage() + "\n");
+			getProgram().addError("Parsing Error in '" + file + "':\n" + e.getMessage());
 			return false;
 		}
 

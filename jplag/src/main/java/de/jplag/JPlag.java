@@ -51,16 +51,15 @@ public class JPlag {
             coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
         }
 
-        int submCount = submissionSet.numberOfSubmissions();
-        if (submCount < 2) {
-            errorCollector.printErrors();
-            throw new ExitException("Not enough valid submissions! (found " + submCount + " valid submissions)",
+        int submissionCount = submissionSet.numberOfSubmissions();
+        if (submissionCount < 2) {
+            throw new ExitException("Not enough valid submissions! (found " + submissionCount + " valid submissions)",
                     ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
         }
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
-        System.out.println("Total time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()));
+        errorCollector.print("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()), null);
         return result;
     }
 

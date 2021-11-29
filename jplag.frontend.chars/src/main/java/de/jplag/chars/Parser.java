@@ -16,7 +16,7 @@ public class Parser extends AbstractParser implements TokenConstants {
 		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
-			getProgram().print(null, "Parsing file " + files[i] + "\n");
+			getProgram().print(null, "Parsing file " + files[i]);
 			if (!parseFile(dir, files[i]))
 				errors++;
 			struct.addToken(new CharToken(FILE_END, files[i], this));

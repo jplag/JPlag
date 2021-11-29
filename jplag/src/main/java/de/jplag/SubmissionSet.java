@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Collection of all submissions and their basecode if it exists. Parses all allSubmissions upon creation.
+ * Collection of all submissions and their basecode if it exists. Parses all submissions upon creation.
  */
 public class SubmissionSet {
     /**
@@ -31,17 +31,17 @@ public class SubmissionSet {
     private String currentSubmissionName;
 
     /**
-     * @param allSubmissions Submissions to check for plagiarism.
+     * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists.
      */
-    public SubmissionSet(List<Submission> allSubmissions, Optional<Submission> baseCode, ErrorCollector errorCollector, JPlagOptions options)
+    public SubmissionSet(List<Submission> submissions, Optional<Submission> baseCode, ErrorCollector errorCollector, JPlagOptions options)
             throws ExitException {
-        this.allSubmissions = allSubmissions;
+        this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.errorCollector = errorCollector;
         this.options = options;
         parseAllSubmissions();
-        submissions = filterValidSubmissions();
+        this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
     }
 
@@ -73,13 +73,17 @@ public class SubmissionSet {
     }
 
     /**
-     * Obtain the submissions.
+     * Obtain the valid submissions.
      * @note Changes in the list are reflected in this instance.
      */
     public List<Submission> getSubmissions() {
         return submissions;
     }
 
+    /**
+     * Obtain the invalid submissions.
+     * @note Changes in the list are reflected in this instance.
+     */
     public List<Submission> getInvalidSubmissions() {
         return invalidSubmissions;
     }
@@ -104,6 +108,9 @@ public class SubmissionSet {
             e.printStackTrace();
             throw new ExitException("Unknown exception during parsing of " + "submission \"" + currentSubmissionName + "\"");
         }
+        if (errorCollector.hasErrors()) {
+            errorCollector.printCollectedErrors();
+        }
     }
 
     /**
@@ -111,17 +118,17 @@ public class SubmissionSet {
      */
     private void parseBaseCodeSubmission(Submission baseCode) throws ExitException {
         long startTime = System.currentTimeMillis();
-        errorCollector.print("----- Parsing basecode submission: " + baseCode.getName() + "\n", null);
+        errorCollector.print("----- Parsing basecode submission: " + baseCode.getName(), null);
         if (!baseCode.parse(options.isDebugParser())) {
-            errorCollector.printErrors();
+            errorCollector.printCollectedErrors();
             throw new ExitException("Bad basecode submission");
         }
         if (baseCode.getTokenList() != null && baseCode.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-            throw new ExitException("Basecode submission contains fewer tokens than minimum match length allows!\n");
+            throw new ExitException("Basecode submission contains fewer tokens than minimum match length allows!");
         }
-        errorCollector.print("\nBasecode submission parsed!\n", null);
+        errorCollector.print("Basecode submission parsed!", null);
         long duration = System.currentTimeMillis() - startTime;
-        errorCollector.print("\n", "\nTime for parsing Basecode: " + TimeUtil.formatDuration(duration) + "\n");
+        errorCollector.print(null, "Time for parsing Basecode: " + TimeUtil.formatDuration(duration));
 
     }
 
@@ -134,16 +141,13 @@ public class SubmissionSet {
             return;
         }
 
-        int count = 0;
-
         long startTime = System.currentTimeMillis();
 
-        int tooSmallSubmissions = 0;
+        int tooShort = 0;
         for (Submission submission : submissions) {
             boolean ok;
-            boolean removed = false;
 
-            errorCollector.print(null, "------ Parsing submission: " + submission.getName() + "\n");
+            errorCollector.print(null, "------ Parsing submission: " + submission.getName());
             currentSubmissionName = submission.getName();
             errorCollector.setCurrentSubmissionName(currentSubmissionName);
 
@@ -152,33 +156,39 @@ public class SubmissionSet {
             }
 
             if (submission.getTokenList() != null && submission.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-                errorCollector.addError("Submission contains fewer tokens than minimum match length allows!\n");
+                errorCollector.addError("Submission contains fewer tokens than minimum match length allows!");
                 submission.setTokenList(null);
-                tooSmallSubmissions++;
-                removed = true;
+                tooShort++;
+                ok = false;
                 submission.markAsErroneous();
             }
 
-            if (ok && !removed) {
-                errorCollector.print(null, "OK\n");
+            if (ok) {
+                errorCollector.print(null, "OK");
             } else {
-                errorCollector.print(null, "ERROR -> Submission removed\n");
+                errorCollector.print(null, "ERROR -> Submission removed");
             }
         }
 
-        int validSubmissions = submissions.size() - errors - tooSmallSubmissions;
-        errorCollector.print(validSubmissions + " allSubmissions parsed successfully!", null);
-        errorCollector.print(errors + " parser error" + (errors != 1 ? "s!\n" : "!\n"), null);
+        int validSubmissions = submissions.size() - errors - tooShort;
+        errorCollector.print(validSubmissions + " submissions parsed successfully!", null);
+        errorCollector.print(errors + " parser error" + (errors != 1 ? "s!" : "!") + "", null);
+        errorCollector.print(tooShort + " too short submission" + (tooShort != 1 ? "s!" : "!") + "", null);
+        printDetails(submissions, startTime, tooShort);
+        errorCollector.print("", null); // new line
+    }
 
-        if (tooSmallSubmissions == 1) {
-            errorCollector.print(null, tooSmallSubmissions + " submission is not valid because it contains fewer tokens than minimum match length allows.\n");
-        } else if (tooSmallSubmissions > 1) {
-            errorCollector.print(null, tooSmallSubmissions + " submissions are not valid because they contain fewer tokens than minimum match length allows.\n");
+    private void printDetails(List<Submission> submissions, long startTime, int tooShort) {
+        if (tooShort == 1) {
+            errorCollector.print(null, tooShort + " submission is not valid because it contains fewer tokens than minimum match length allows.");
+        } else if (tooShort > 1) {
+            errorCollector.print(null, tooShort + " submissions are not valid because they contain fewer tokens than minimum match length allows.");
         }
 
         long duration = System.currentTimeMillis() - startTime;
-        errorCollector.print("\n\n", "\nTotal time for parsing: " + TimeUtil.formatDuration(duration) + "\n" + "Time per parsed submission: "
-                + (count > 0 ? (duration / count) : "n/a") + " msec\n");
+        String timePerSubmission = submissions.size() > 0 ? Long.toString(duration / submissions.size()) : "n/a";
+        errorCollector.print(null, "Total time for parsing: " + TimeUtil.formatDuration(duration));
+        errorCollector.print(null, "Time per parsed submission: " + timePerSubmission + " msec");
     }
 
 }
