@@ -244,8 +244,7 @@ public class Submission implements Comparable<Submission> {
                 result[i] = buffer;
                 reader.close();
             } catch (FileNotFoundException e) {
-                // TODO PB: Should an ExitException be thrown here?
-                System.out.println("File not found: " + file.getPath());
+                throw new de.jplag.ExitException("File not found: " + file.getPath(), e);
             } catch (IOException e) {
                 throw new de.jplag.ExitException("I/O exception reading file \"" + file.getPath() + "\"!", e);
             }
@@ -343,10 +342,10 @@ public class Submission implements Comparable<Submission> {
     /**
      * Map all files of this submission to their path relative to the submission directory.
      * <p>
-     * This method is required to stay compatible with `errorConsumer.language.parse(...)` as it requires the given file paths to
+     * This method is required to stay compatible with `language.parse(...)` as it requires the given file paths to
      * be relative to the submission directory.
      * <p>
-     * In a future update, `errorConsumer.language.parse(...)` should probably just take a list of files.
+     * In a future update, `language.parse(...)` should probably just take a list of files.
      * @param baseFile - File to base all relative file paths on.
      * @param files - List of files to map.
      * @return an array of file paths relative to the submission directory.
