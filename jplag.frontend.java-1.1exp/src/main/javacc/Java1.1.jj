@@ -49,11 +49,11 @@ public class JavaParser implements JavaTokenConstants {
       parser.CompilationUnit();
     } catch (ParseException e) {
       parserX.getProgram().addError("  Parsing Error in '" + fileName + "':\n  "
-                + e.getMessage() + "\n");
+                + e.getMessage());
       return false;
     } catch (TokenMgrError e) {
       parserX.getProgram().addError("  Scanning Error in '" + fileName
-      		+ "':\n  " + e.getMessage() + "\n");
+      		+ "':\n  " + e.getMessage());
       return true; //false;		// TODO: Why has this been manually set to true?
     }
     return true;

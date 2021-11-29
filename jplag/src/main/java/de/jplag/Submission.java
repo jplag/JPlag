@@ -153,7 +153,7 @@ public class Submission implements Comparable<Submission> {
      */
     public boolean parse(boolean debugParser) {
         if (files == null || files.size() == 0) {
-            errorCollector.print("ERROR: nothing to parse for submission \"" + name + "\"\n", null);
+            errorCollector.print("ERROR: nothing to parse for submission \"" + name, null);
             return false;
         }
 
@@ -162,7 +162,7 @@ public class Submission implements Comparable<Submission> {
         tokenList = language.parse(submissionRoot, relativeFilePaths);
         if (!language.hasErrors()) {
             if (tokenList.size() < 3) {
-                errorCollector.print("Submission \"" + name + "\" is too short!\n", null);
+                errorCollector.print("Submission \"" + name + "\" is too short!", null);
                 tokenList = null;
                 hasErrors = true; // invalidate submission
                 return false;

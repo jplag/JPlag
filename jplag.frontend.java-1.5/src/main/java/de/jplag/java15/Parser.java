@@ -25,7 +25,7 @@ public class Parser extends AbstractParser implements JavaTokenConstants {
 
 		for (int i = 0; i < files.length; i++) {
 			actFile = files[i];
-			getProgram().print(null, "Parsing file " + files[i] + "\n");
+			getProgram().print(null, "Parsing file " + files[i]);
 			if (!JavaParser.parseFile(dir, files[i], parser, this))
 				errors++;
 

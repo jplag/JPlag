@@ -178,10 +178,10 @@ public class SubmissionSetBuilder {
             }
 
             if (options.getVerbosity() == LONG) {
-                errorCollector.print(null, "Excluded files:\n");
+                errorCollector.print(null, "Excluded files:");
 
                 for (String excludedFileName : excludedFileNames) {
-                    errorCollector.print(null, "  " + excludedFileName + "\n");
+                    errorCollector.print(null, "  " + excludedFileName);
                 }
             }
         }

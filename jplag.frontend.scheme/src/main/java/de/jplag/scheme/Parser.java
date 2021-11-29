@@ -17,7 +17,7 @@ public class Parser extends AbstractParser implements SchemeTokenConstants {
 		// in method parseFile(...)
 		for (int i = 0; i < files.length; i++) {
 			actFile = files[i];
-		    getProgram().print(null, "Parsing file " + files[i] + "\n");
+		    getProgram().print(null, "Parsing file " + files[i]);
 			if (!SchemeParser.parseFile(dir, files[i], parser, this))
 				errors++;
 			struct.addToken(new SchemeToken(FILE_END, actFile, 1));
