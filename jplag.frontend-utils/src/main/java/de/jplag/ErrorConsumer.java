@@ -3,8 +3,9 @@ package de.jplag;
 public interface ErrorConsumer {
 
     /**
-     * Print and store an error.
+     * Adds an error to the error stack. The error is only printed directly when using the corresponding verbosity option.
      * @param errorMessage is the error message.
+     * @see JPlagOptions.getVerbosity()
      */
     public void addError(String errorMessage);
 
