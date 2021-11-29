@@ -35,7 +35,7 @@ Usage: JPlag [ options ] [<root-dir>]
 
 named arguments:
   -h, --help             show this help message and exit
-  -l                     {java1,java2,java5,java5dm,java7,java9,python3,cpp,csharp,char,text,scheme} Select the language to parse the submissions (Standard: java9)
+  -l                     {java,python3,cpp,csharp,char,text,scheme} Select the language to parse the submissions (Standard: java9)
   -bc BC                 Name of the subdirectory of the root directory which contains the base code (common framework used in all submissions)
   -v                     {quiet,long} Verbosity of the logging (Standard: quiet)
   -d                     Debug parser. Non-parsable files will be stored (Standard: false)
@@ -54,7 +54,7 @@ named arguments:
 The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects:
 
 ```java
-JPlagOptions options = new JPlagOptions("/path/to/rootDir", LanguageOption.JAVA_1_9);
+JPlagOptions options = new JPlagOptions("/path/to/rootDir", LanguageOption.JAVA);
 options.setBaseCodeSubmissionName("template");
 
 JPlag jplag = new JPlag(options);
