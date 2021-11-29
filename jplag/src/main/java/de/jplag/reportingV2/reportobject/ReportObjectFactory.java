@@ -93,15 +93,8 @@ public class ReportObjectFactory {
 
 	private static List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons) {
 		List<TopComparison> topComparisons = new ArrayList<>();
-		comparisons.forEach( c -> topComparisons.add(new TopComparison(constructComparisonName(c), c.similarity())));
+		comparisons.forEach( c -> topComparisons.add(new TopComparison(c.getFirstSubmission().getName(), c.getSecondSubmission().getName(), c.similarity())));
 		return topComparisons;
-	}
-
-	private static String constructComparisonName(JPlagComparison comparison) {
-		return String.join("-",
-				comparison.getFirstSubmission().getName(),
-				comparison.getSecondSubmission().getName()
-		);
 	}
 
 	private static List<String> getExcludedFilesNames(JPlagOptions options) {

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import {defineComponent, ref, reactive, watch, watchEffect} from "vue";
+import {defineComponent, ref, watch} from "vue";
 import { BarChart } from "vue-chart-3"
 import { Chart, registerables } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -22,8 +22,6 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const distributionRef = ref(props.distribution)
-
     let chartData = ref( {
         labels: ['0-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71-80%', '81-90%', '91-100%'],
         datasets: [{

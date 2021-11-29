@@ -28,7 +28,7 @@
       <div id="topComparisonsList" class="section">
         <p class="section-title">Top comparisons:</p>
         <p class="section-subtitle">(Top 25)</p>
-
+        <ComparisonsLists :comparisons="topComps[selectedMetricIndex]"/>
       </div>
     </div>
   </div>
@@ -43,7 +43,7 @@ import ComparisonsLists from "@/components/ComparisonsLists";
 
 export default defineComponent({
   name: "Overview",
-  components: { DistributionDiagram, MetricButton, TextInformation},
+  components: {ComparisonsLists, DistributionDiagram, MetricButton, TextInformation},
   props: {
     jsonString: {
       type: String,
@@ -54,6 +54,8 @@ export default defineComponent({
     const json = JSON.parse(props.jsonString)
     let selectedMetric = ref(json.metrics.map( () => false ))
     let distributions = ref(json.metrics.map( (m) =>  m.distribution ))
+    let topComps = ref(json.metrics.map((m) => m.topComparisons))
+    console.log(JSON.stringify(topComps.value))
     let selectedMetricIndex = ref(0)
     selectedMetric.value[0] = true;
 
@@ -65,10 +67,16 @@ export default defineComponent({
 
     watchEffect( () => {
       console.log("Overview - selected dist " + JSON.stringify(distributions.value[selectedMetricIndex.value]))
+      console.log("Overview - selected topComp " + JSON.stringify(topComps.value[selectedMetricIndex.value]))
     })
 
     return {
-      json, selectedMetric,selectedMetricIndex, distributions, selectMetric
+      json,
+      selectedMetric,
+      selectedMetricIndex,
+      distributions,
+      topComps,
+      selectMetric
     }
   }
 })

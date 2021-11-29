@@ -4,7 +4,7 @@
       <p class="submission-id">{{ submission1 }}</p>
       <img src="@/assets/double_arrow_black_18dp.svg" alt=">>"/>
       <p class="submission-id">{{ submission2 }}</p>
-    <p class="match-percentage">{{ matchPercentage }}%</p>
+    <p class="match-percentage">{{ formattedMatchPercentage }}%</p>
   </div>
 </template>
 
@@ -27,14 +27,14 @@ export default defineComponent({
       required: true
     },
     matchPercentage: {
-      type: String,
+      type: Number,
       required: true
     }
   },
-  setup() {
-
+  setup(props) {
+    let formattedMatchPercentage = props.matchPercentage.toFixed(2)
     return {
-
+      formattedMatchPercentage
     }
   }
 })
@@ -47,11 +47,9 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1%;
-  margin-bottom: 1%;
+  padding: 0 3%;
   box-shadow: #777777 0 3px 3px;
   border-radius: 40px;
-  width: 25%;
 }
 
 .wrapper-list-element > * {
