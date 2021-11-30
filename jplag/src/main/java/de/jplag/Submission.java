@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import de.jplag.options.JPlagOptions;
 
@@ -184,7 +185,7 @@ public class Submission implements Comparable<Submission> {
     public String[][] readFiles(String[] files) throws de.jplag.ExitException {
         String[][] result = new String[files.length][];
         String help;
-        ArrayList<String> text = new ArrayList<>();
+        List<String> text = new ArrayList<>();
 
         for (int i = 0; i < files.length; i++) {
             text.clear();

@@ -13,7 +13,7 @@ import java.util.Map;
  * that is larger or equal to the specified size (see {@link TokenHashMap#Table(int)}).
  */
 public class TokenHashMap {
-    private final Map<Integer, ArrayList<Integer>> mappedEntries;
+    private final Map<Integer, List<Integer>> mappedEntries;
     private final int primeNumber;
 
     /**
@@ -50,7 +50,7 @@ public class TokenHashMap {
         if (mappedEntries.containsKey(actualKey)) {
             mappedEntries.get(actualKey).add(value);
         } else {
-            ArrayList<Integer> entries = new ArrayList<>();
+            List<Integer> entries = new ArrayList<>();
             entries.add(value);
             mappedEntries.put(actualKey, entries);
         }
