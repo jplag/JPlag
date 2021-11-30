@@ -24,23 +24,13 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         }
 
         List<Submission> submissions = submissionSet.getSubmissions();
-        long timeBeforeStartInMillis = System.currentTimeMillis();
-        int i, j, numberOfSubmissions = submissions.size();
-        Submission first, second;
+        List<SubmissionTuple> tuples = TupleBuilder.buildComparisonTuples(submissions);
         List<JPlagComparison> comparisons = new ArrayList<>();
 
-        for (i = 0; i < (numberOfSubmissions - 1); i++) {
-            first = submissions.get(i);
-            if (first.getTokenList() == null) {
-                continue;
-            }
-            for (j = (i + 1); j < numberOfSubmissions; j++) {
-                second = submissions.get(j);
-                if (second.getTokenList() == null) {
-                    continue;
-                }
-                compareSubmissions(first, second).ifPresent(it -> comparisons.add(it));
-            }
+        long timeBeforeStartInMillis = System.currentTimeMillis();
+
+        for (SubmissionTuple tuple : tuples) {
+            compareSubmissions(tuple.getLeft(), tuple.getRight()).ifPresent(it -> comparisons.add(it));
         }
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;

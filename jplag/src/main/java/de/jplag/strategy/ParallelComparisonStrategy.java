@@ -50,7 +50,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
 
         // Parallel compare:
         List<Submission> submissions = submissionSet.getSubmissions();
-        List<SubmissionTuple> tuples = buildComparisonTuples(submissions);
+        List<SubmissionTuple> tuples = TupleBuilder.buildComparisonTuples(submissions);
         Collections.shuffle(tuples); // Reduces how often submission pairs must be re-submitted
         for (SubmissionTuple tuple : tuples) {
             threadPool.execute(compareTuple(tuple));
@@ -69,25 +69,6 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         shutdownThreadPool();
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
         return new JPlagResult(comparisons, durationInMillis, submissions.size(), options);
-    }
-
-    /**
-     * @return a list of all submission tuples to be processed.
-     */
-    private List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
-        List<SubmissionTuple> tuples = new ArrayList<>();
-        for (int i = 0; i < (submissions.size() - 1); i++) {
-            Submission first = submissions.get(i);
-            if (first.getTokenList() != null) {
-                for (int j = (i + 1); j < submissions.size(); j++) {
-                    Submission second = submissions.get(j);
-                    if (second.getTokenList() != null) {
-                        tuples.add(new SubmissionTuple(first, second));
-                    }
-                }
-            }
-        }
-        return tuples;
     }
 
     /**
