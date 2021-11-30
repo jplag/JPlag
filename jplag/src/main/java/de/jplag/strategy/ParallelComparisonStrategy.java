@@ -53,7 +53,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         List<SubmissionTuple> tuples = buildComparisonTuples(submissions);
         Collections.shuffle(tuples); // Reduces how often submission pairs must be re-submitted
         for (SubmissionTuple tuple : tuples) {
-            threadPool.execute(compareTuple(tuple, withBaseCode));
+            threadPool.execute(compareTuple(tuple));
         }
 
         // Ensure termination:
@@ -93,10 +93,9 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     /**
      * Creates a runnable which compares a submission tuple. If the submissions are locked, the runnable is re-submitted.
      * @param tuple contains the submissions to compare.
-     * @param withBaseCode specifies if base code is used.
      * @return the runnable for parallel use.
      */
-    private Runnable compareTuple(SubmissionTuple tuple, boolean withBaseCode) {
+    private Runnable compareTuple(SubmissionTuple tuple) {
         return new Runnable() {
             @Override
             public void run() {
@@ -106,7 +105,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
                 boolean hasRight = hasLeft && rightLock.tryLock();
                 try {
                     if (hasLeft && hasRight) { // both locks acquired!
-                        compareSubmissions(tuple.getLeft(), tuple.getRight(), withBaseCode).ifPresent(it -> comparisons.add(it));
+                        compareSubmissions(tuple.getLeft(), tuple.getRight()).ifPresent(it -> comparisons.add(it));
                         synchronized (this) {
                             successfulComparisons++;
                         }
