@@ -6,7 +6,6 @@ import java.util.List;
 import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
-import de.jplag.Submission;
 import de.jplag.SubmissionSet;
 import de.jplag.options.JPlagOptions;
 
@@ -17,14 +16,16 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(SubmissionSet submissionSet) {
-        boolean withBaseCode = submissionSet.hasBaseCode();
-        if (withBaseCode) {
-            compareSubmissionsToBaseCode(submissionSet);
+    public JPlagResult compareSubmissions(List<SubmissionSet> submissionSets) {
+        // Check submissions against their base code.
+        for (SubmissionSet submissionSet: submissionSets) {
+            if (submissionSet.hasBaseCode()) {
+                compareSubmissionsToBaseCode(submissionSet);
+            }
         }
 
-        List<Submission> submissions = submissionSet.getSubmissions();
-        List<SubmissionTuple> tuples = TupleBuilder.buildComparisonTuples(submissions);
+        // Compare the submissions.
+        List<SubmissionTuple> tuples = TupleBuilder.buildComparisonTuples(submissionSets);
         List<JPlagComparison> comparisons = new ArrayList<>();
 
         long timeBeforeStartInMillis = System.currentTimeMillis();
@@ -34,7 +35,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         }
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
+        return new JPlagResult(comparisons, durationInMillis, TupleBuilder.getNumberOfSubmissions(submissionSets), options);
     }
 
 }

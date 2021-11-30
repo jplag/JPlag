@@ -3,6 +3,8 @@ package de.jplag;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -43,58 +45,73 @@ public class JPlag {
      * @throws ExitException if the JPlag exits preemptively.
      */
     public JPlagResult run() throws ExitException {
-        // Parse and validate submissions.
+        List<String> rootDirectoryNames = options.getRootDirectoryNames();
+        List<SubmissionSet> submissionSets = new ArrayList<>(rootDirectoryNames.size());
         SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, errorCollector);
-        SubmissionSet submissionSet = builder.buildSubmissionSet(getRootDirectory());
 
-        if (submissionSet.hasBaseCode()) {
-            coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
+        // Parse and validate submissions of each root directory.
+        int totalSubmissions = 0;
+        for (String rootDirectoryName: rootDirectoryNames) {
+            SubmissionSet submissionSet = builder.buildSubmissionSet(getRootDirectory(rootDirectoryName));
+            if (submissionSet.hasBaseCode()) {
+                coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
+            }
+
+            int submissionCount = submissionSet.numberOfSubmissions();
+            if (submissionCount == 0) {
+                String msg = String.format("Not enough valid submissions! (found no valid submissions in \"%s\")", rootDirectoryName);
+                throw new ExitException(msg, ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
+            }
+
+            totalSubmissions += submissionCount;
+            submissionSets.add(submissionSet);
         }
 
-        int submissionCount = submissionSet.numberOfSubmissions();
-        if (submissionCount < 2) {
-            throw new ExitException("Not enough valid submissions! (found " + submissionCount + " valid submissions)",
-                    ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
+        if (totalSubmissions < 2) {
+            String msg = String.format("Not enough valid submissions! (found %d valid submissions)", totalSubmissions);
+            throw new ExitException(msg, ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
         }
 
         // Compare valid submissions.
-        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSets);
         errorCollector.print("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()), null);
         return result;
     }
 
     /**
-     * This method checks whether the base code directory value is valid.
+     * This method checks whether the base code directories are valid.
      */
     private void checkBaseCodeOption() throws ExitException {
-        getRootDirectory(); // Performs checks on the root directory.
+        for (String rootDirectoryName: options.getRootDirectoryNames()) {
+            getRootDirectory(rootDirectoryName); // Performs checks on the root directory.
 
-        if (options.hasBaseCode()) {
-            String baseCode = options.getBaseCodeSubmissionName();
-            if (baseCode.contains(".")) {
-                throw new ExitException("The basecode directory name \"" + baseCode + "\" cannot contain dots!", ExitException.BAD_PARAMETER);
-            }
-            String baseCodePath = options.getRootDirectoryName() + File.separator + baseCode;
-            if (!new File(baseCodePath).exists()) {
-                throw new ExitException("Basecode directory \"" + baseCodePath + "\" doesn't exist!", ExitException.BAD_PARAMETER);
-            }
-
-            String subdirectory = options.getSubdirectoryName();
-            if (subdirectory != null && subdirectory.length() != 0) {
-                if (!new File(baseCodePath, subdirectory).exists()) {
-                    throw new ExitException("Basecode directory doesn't contain" + " the subdirectory \"" + subdirectory + "\"!",
-                            ExitException.BAD_PARAMETER);
+            if (options.hasBaseCode()) {
+                String baseCode = options.getBaseCodeSubmissionName();
+                if (baseCode.contains(".")) {
+                    throw new ExitException("The basecode directory name \"" + baseCode + "\" cannot contain dots!", ExitException.BAD_PARAMETER);
                 }
+                String baseCodePath = rootDirectoryName + File.separator + baseCode;
+                if (!new File(baseCodePath).exists()) {
+                    throw new ExitException("Basecode directory \"" + baseCodePath + "\" doesn't exist!", ExitException.BAD_PARAMETER);
+                }
+
+                String subdirectory = options.getSubdirectoryName();
+                if (subdirectory != null && subdirectory.length() != 0) {
+                    if (!new File(baseCodePath, subdirectory).exists()) {
+                        throw new ExitException("Basecode directory doesn't contain the subdirectory \"" + subdirectory + "\"!",
+                                ExitException.BAD_PARAMETER);
+                    }
+                }
+                System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
             }
-            System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
         }
     }
 
     /**
      * Check sanity of the root directory name in the options, and construct file system access to it.
+     * @param rootDirectoryName Specified root directory name to check.
      */
-    private File getRootDirectory() throws ExitException {
-        String rootDirectoryName = options.getRootDirectoryName();
+    private File getRootDirectory(String rootDirectoryName) throws ExitException {
         File rootDir = new File(rootDirectoryName);
         if (!rootDir.exists()) {
             String msg = String.format("Root directory \"%s\" does not exist!", rootDirectoryName);

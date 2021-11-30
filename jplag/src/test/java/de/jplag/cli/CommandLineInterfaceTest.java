@@ -1,6 +1,6 @@
 package de.jplag.cli;
 
-import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
+import static de.jplag.CommandLineArgument.ROOT_DIRECTORIES;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Arrays;
@@ -25,11 +25,11 @@ public class CommandLineInterfaceTest {
     protected JPlagOptions options;
 
     /**
-     * Creates a string for all arguments and their values that have been succesfully parsed.F
+     * Creates a string for all arguments and their values that have been successfully parsed.
      */
     private String parsedKeys(String... arguments) {
         var keys = namespace.getAttrs().keySet().stream()
-                .filter(key -> key.equals(ROOT_DIRECTORY.flag()) || Arrays.stream(arguments).anyMatch(arg -> arg.contains("-" + key)));
+                .filter(key -> key.equals(ROOT_DIRECTORIES.flag()) || Arrays.stream(arguments).anyMatch(arg -> arg.contains("-" + key)));
         return keys.map(it -> it + "=" + namespace.get(it)).collect(toSet()).toString();
     }
 

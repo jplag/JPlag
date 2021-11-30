@@ -14,7 +14,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
-import de.jplag.Submission;
 import de.jplag.SubmissionSet;
 import de.jplag.options.JPlagOptions;
 
@@ -36,22 +35,24 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(SubmissionSet submissionSet) {
+    public JPlagResult compareSubmissions(List<SubmissionSet> submissionSets) {
         // Initialize:
-        long timeBeforeStartInMillis = System.currentTimeMillis();
-        boolean withBaseCode = submissionSet.hasBaseCode();
-        if (withBaseCode) {
-            compareSubmissionsToBaseCode(submissionSet);
+        for (SubmissionSet submissionSet: submissionSets) {
+            if (submissionSet.hasBaseCode()) {
+                compareSubmissionsToBaseCode(submissionSet);
+            }
         }
+
         threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         comparisons.clear();
         submissionLocks.clear();
         successfulComparisons = 0;
 
         // Parallel compare:
-        List<Submission> submissions = submissionSet.getSubmissions();
-        List<SubmissionTuple> tuples = TupleBuilder.buildComparisonTuples(submissions);
+        List<SubmissionTuple> tuples = TupleBuilder.buildComparisonTuples(submissionSets);
         Collections.shuffle(tuples); // Reduces how often submission pairs must be re-submitted
+
+        long timeBeforeStartInMillis = System.currentTimeMillis();
         for (SubmissionTuple tuple : tuples) {
             threadPool.execute(compareTuple(tuple));
         }
@@ -68,7 +69,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         // Clean up and return result:
         shutdownThreadPool();
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisons, durationInMillis, submissions.size(), options);
+        return new JPlagResult(comparisons, durationInMillis, TupleBuilder.getNumberOfSubmissions(submissionSets), options);
     }
 
     /**

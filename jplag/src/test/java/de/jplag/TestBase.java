@@ -1,5 +1,7 @@
 package de.jplag;
 
+import static java.util.Collections.singletonList;
+
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
@@ -27,7 +29,8 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(Path.of(BASE_PATH, testSampleName).toString(), LanguageOption.JAVA_1_9);
+        String rootDirectoryName = Path.of(BASE_PATH, testSampleName).toString();
+        JPlagOptions options = new JPlagOptions(singletonList(rootDirectoryName), LanguageOption.JAVA_1_9);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);

@@ -5,6 +5,7 @@ import static de.jplag.strategy.ComparisonMode.NORMAL;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import de.jplag.Language;
 import de.jplag.strategy.ComparisonMode;
@@ -70,9 +71,9 @@ public class JPlagOptions {
     private String exclusionFileName;
 
     /**
-     * Directory that contains all submissions.
+     * Directories that contains all submissions.
      */
-    private String rootDirectoryName;
+    private List<String> rootDirectoryNames;
 
     /**
      * Name of the directory which contains the base code.
@@ -98,8 +99,8 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(String rootDirectoryName, LanguageOption languageOption) {
-        this.rootDirectoryName = rootDirectoryName;
+    public JPlagOptions(List<String> rootDirectoryNames, LanguageOption languageOption) {
+        this.rootDirectoryNames = rootDirectoryNames;
         this.languageOption = languageOption;
     }
 
@@ -158,8 +159,8 @@ public class JPlagOptions {
         return exclusionFileName;
     }
 
-    public String getRootDirectoryName() {
-        return rootDirectoryName;
+    public List<String> getRootDirectoryNames() {
+        return rootDirectoryNames;
     }
 
     public String getBaseCodeSubmissionName() {
@@ -214,8 +215,8 @@ public class JPlagOptions {
         this.exclusionFileName = exclusionFileName;
     }
 
-    public void setRootDirectoryName(String rootDirectoryName) {
-        this.rootDirectoryName = rootDirectoryName;
+    public void setRootDirectoryName(List<String> rootDirectoryNames) {
+        this.rootDirectoryNames = rootDirectoryNames;
     }
 
     public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {

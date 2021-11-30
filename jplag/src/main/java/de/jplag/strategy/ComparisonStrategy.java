@@ -1,5 +1,7 @@
 package de.jplag.strategy;
 
+import java.util.List;
+
 import de.jplag.JPlagResult;
 import de.jplag.SubmissionSet;
 
@@ -13,5 +15,5 @@ public interface ComparisonStrategy {
      * @param submissionSet Collection of submissions with optional basecode to compare.
      * @return the comparison results.
      */
-    JPlagResult compareSubmissions(SubmissionSet submissionSet);
+    JPlagResult compareSubmissions(List<SubmissionSet> submissionSets);
 }

@@ -20,7 +20,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
  * @author Timur Saglam
  */
 public enum CommandLineArgument {
-    ROOT_DIRECTORY("rootDir", String.class),
+    ROOT_DIRECTORIES("rootDir", "+", String.class),
     LANGUAGE("-l", String.class, LanguageOption.getDefault().getDisplayName(), LanguageOption.getAllDisplayNames()),
     BASE_CODE("-bc", String.class),
     VERBOSITY("-v", String.class, "quiet", List.of("quiet", "long")), // TODO SH: Replace verbosity when integrating a real logging library
@@ -39,21 +39,27 @@ public enum CommandLineArgument {
     private final Optional<Object> defaultValue;
     private final Optional<Collection<String>> choices;
     private final Class<?> type;
+    private final Optional<String> nArgs;
 
     private CommandLineArgument(String flag, Class<?> type) {
-        this(flag, type, Optional.empty(), Optional.empty());
+        this(flag, Optional.empty(), type, Optional.empty(), Optional.empty());
+    }
+
+    private CommandLineArgument(String flag, String nArgs, Class<?> type) {
+        this(flag, Optional.of(nArgs), type, Optional.empty(), Optional.empty());
     }
 
     private CommandLineArgument(String flag, Class<?> type, Object defaultValue) {
-        this(flag, type, Optional.of(defaultValue), Optional.empty());
+        this(flag, Optional.empty(), type, Optional.of(defaultValue), Optional.empty());
     }
 
     private CommandLineArgument(String flag, Class<?> type, Object defaultValue, Collection<String> choices) {
-        this(flag, type, Optional.of(defaultValue), Optional.of(choices));
+        this(flag, Optional.empty(), type, Optional.of(defaultValue), Optional.of(choices));
     }
 
-    private CommandLineArgument(String flag, Class<?> type, Optional<Object> defaultValue, Optional<Collection<String>> choices) {
+    private CommandLineArgument(String flag, Optional<String> nArgs, Class<?> type, Optional<Object> defaultValue, Optional<Collection<String>> choices) {
         this.flag = flag;
+        this.nArgs = nArgs;
         this.type = type;
         this.defaultValue = defaultValue;
         this.choices = choices;
@@ -82,7 +88,23 @@ public enum CommandLineArgument {
      * @return the argument value.
      */
     public <T> T getFrom(Namespace namespace) {
+        if (!nArgs.isEmpty()) {
+            throw new AssertionError("Cannot retrieve a multi-value option with 'getFrom'.");
+        }
         return namespace.get(flagWithoutDash());
+    }
+
+    /**
+     * Returns the list value of the argument.
+     *
+     * @param namespace Stored value for the argument.
+     * @return The list value of the argument.
+     */
+    public List<String> getListFrom(Namespace namespace) {
+        if (nArgs.isEmpty()) {
+            throw new AssertionError("Cannot retrieve a single-value option with 'getListFrom'.");
+        }
+        return namespace.getList(flagWithoutDash());
     }
 
     /**
@@ -97,6 +119,7 @@ public enum CommandLineArgument {
         if (type == Boolean.class) {
             argument.action(storeTrue());
         }
+        nArgs.ifPresent(it -> argument.nargs(it));
     }
 
     /**
