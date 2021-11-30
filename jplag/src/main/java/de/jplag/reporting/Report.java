@@ -332,7 +332,7 @@ public class Report { // Mostly legacy code with some minor improvements.
             String tmp = text[markup.fileIndex][markup.lineIndex];
             // is there any &quot;, &amp;, &gt; or &lt; in the String?
             if (tmp.indexOf('&') >= 0) {
-                ArrayList<String> tmpV = new ArrayList<>();
+                List<String> tmpV = new ArrayList<>();
                 // convert the string into a vector
                 int strLength = tmp.length();
                 for (int k = 0; k < strLength; k++) {
