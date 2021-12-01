@@ -1,30 +1,14 @@
-/* Hey Emacs, this is -*- mode: java; page-delimiter: "^%%$"; -*- */
-
 header
 {
 
 package de.jplag.text;
 
-import de.jplag.InputState;
-import de.jplag.ParserToken;
-
-//import java.io.InputStream;
-//import java.io.InputStreamReader;
-//import java.io.FileInputStream;
-import java.io.IOException;
 }
 
 // tell ANTLR that we want to generate Java source code
 options
 {
   language="Java";
-}
-
-// Import the necessary classes
-{
-  //import antlr.CharBuffer;
-  //import antlr.collections.AST;
-  //import antlr.ParserException;
 }
 
 class TextParser extends Parser;
@@ -41,25 +25,6 @@ options
 
 {
 public de.jplag.text.Parser parser;
-  /**
-   * The main routine is just for testing.
-   */
-  /*public static void main(String[] args) throws Exception
-    {
-      try
-	{
-	  InputStream in = new FileInputStream(args[0]);
-	  WordParser parser = new WordParser(in);
-	  AST ast = parser.makeAST();
-	  ASTVisitor visitor = new ASTVisitor(System.out);
-	  visitor.visit(ast);
-	}
-      catch(Exception e)
-        {
-	  System.err.println("exception: " + e);
-	  throw e;   // so we can get stack trace
-        }      
-	}*/
 }
 
 file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
@@ -67,6 +32,11 @@ file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
 //----------------------------------------------------------------------------
 // The Text scanner
 //----------------------------------------------------------------------------
+
+{
+import de.jplag.InputState;
+import de.jplag.ParserToken;
+}
 
 class TextLexer extends Lexer;
 options
