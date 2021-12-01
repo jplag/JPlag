@@ -4,7 +4,13 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -49,10 +55,15 @@ public class JPlag {
         List<SubmissionSet> submissionSets = new ArrayList<>(rootDirectoryNames.size());
         SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, errorCollector);
 
+        List<String> setNames = rootDirectoryNames.size() < 2 ? null : makeSubmissionSetNames(rootDirectoryNames);
+
         // Parse and validate submissions of each root directory.
         int totalSubmissions = 0;
-        for (String rootDirectoryName: rootDirectoryNames) {
-            SubmissionSet submissionSet = builder.buildSubmissionSet(getRootDirectory(rootDirectoryName));
+        for (int rootNum = 0; rootNum < rootDirectoryNames.size(); rootNum++) {
+            String rootDirectoryName = rootDirectoryNames.get(rootNum);
+
+            String setName = (setNames == null) ? null : setNames.get(rootNum);
+            SubmissionSet submissionSet = builder.buildSubmissionSet(getRootDirectory(rootDirectoryName), setName);
             if (submissionSet.hasBaseCode()) {
                 coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
             }
@@ -103,6 +114,81 @@ public class JPlag {
                     }
                 }
                 System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
+            }
+        }
+    }
+
+    /**
+     * Construct names for the submission sets.
+     * @return Names for the sets, derived from their root directory.
+     */
+    private List<String> makeSubmissionSetNames(List<String> rootDirectories) {
+        // 1. Look for an identifying path component.
+
+        // Find unique path elements.
+        Set<String> discarded = new HashSet<>();
+        Map<String, Integer> uniques = new HashMap<>(); // Unique names to index in rootDirectories.
+        for (int index = 0; index < rootDirectories.size(); index++) {
+            String rootDir = rootDirectories.get(index);
+            for (String element: splitPathComponents(rootDir)) {
+                if (discarded.contains(element)) {
+                    continue;
+                }
+
+                if (uniques.containsKey(element)) { // Not unique any more.
+                    uniques.remove(element);
+                    discarded.add(element);
+                } else {
+                    uniques.put(element, index);
+                }
+            }
+        }
+
+        // Order them by index.
+        String[] names = new String[rootDirectories.size()];
+        for (Entry<String, Integer> entry: uniques.entrySet()) {
+            names[entry.getValue()] = entry.getKey();
+        }
+
+        // If they are complete, we're done.
+        boolean isComplete = true;
+        for (String name: names) {
+            if (name == null) {
+                isComplete = false;
+                break;
+            }
+        }
+        if (isComplete) {
+            return Arrays.asList(names);
+        }
+
+        // Fallback, invent unique names.
+        List<String> dirNames = new ArrayList<>(rootDirectories.size());
+        for (int i = 1; i <= rootDirectories.size(); i++) {
+            dirNames.add(String.format("rootdir-%d", i));
+        }
+        return dirNames;
+    }
+
+    /**
+     * Split a path in its components.
+     * @param pathName Path to split.
+     * @return The sequence of elements in the path.
+     */
+    private List<String> splitPathComponents(String pathName) {
+        pathName = pathName.replace('\\', '/');
+        List<String> components = new ArrayList<>();
+        int i = -1;
+        for(;;) {
+            int j = pathName.indexOf('/', i + 1);
+            if (j == i + 1) {
+                continue; // Empty path element, ignore.
+            }
+
+            if (j < 0) {
+                components.add(pathName.substring(i + 1));
+            } else {
+                components.add(pathName.substring(i + 1, j));
             }
         }
     }

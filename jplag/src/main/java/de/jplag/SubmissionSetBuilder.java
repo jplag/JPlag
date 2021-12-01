@@ -43,10 +43,11 @@ public class SubmissionSetBuilder {
     /**
      * Builds a submission set for all submissions of a specific directory.
      * @param rootDirectory is the specific directory.
+     * @param setName Name of the submission set.
      * @return the newly built submission set.
      * @throws ExitException if the directory cannot be read.
      */
-    public SubmissionSet buildSubmissionSet(File rootDirectory) throws ExitException {
+    public SubmissionSet buildSubmissionSet(File rootDirectory, String setName) throws ExitException {
         String[] fileNames;
 
         try {
@@ -61,7 +62,7 @@ public class SubmissionSetBuilder {
 
         Arrays.sort(fileNames);
 
-        return mapFileNamesToSubmissions(fileNames, rootDirectory);
+        return mapFileNamesToSubmissions(setName, fileNames, rootDirectory);
     }
 
     /**
@@ -86,7 +87,15 @@ public class SubmissionSetBuilder {
         return excludedFileNames.stream().anyMatch(excludedName -> file.getName().endsWith(excludedName));
     }
 
-    private SubmissionSet mapFileNamesToSubmissions(String[] fileNames, File rootDirectory) throws ExitException {
+    /**
+     * Construct a submission set from the file names.
+     * @param setName If not {@ocde null}, the name of the set.
+     * @param fileNames Submission roots relative to 'rootDirectory'.
+     * @param rootDirectory Root path of the submission set.
+     * @return The constructed submission set.
+     * @throws ExitException when an error was detected in the submissions.
+     */
+    private SubmissionSet mapFileNamesToSubmissions(String setName, String[] fileNames, File rootDirectory) throws ExitException {
         List<Submission> submissions = new ArrayList<>();
         Optional<Submission> baseCodeSubmission = Optional.empty();
 
@@ -117,7 +126,8 @@ public class SubmissionSetBuilder {
                 }
             }
 
-            Submission submission = new Submission(fileName, submissionFile, parseFilesRecursively(submissionFile), language, errorCollector);
+            String submissionName = (setName == null) ? fileName : setName + "::" + fileName;
+            Submission submission = new Submission(submissionName, submissionFile, parseFilesRecursively(submissionFile), language, errorCollector);
 
             if (options.hasBaseCode() && options.getBaseCodeSubmissionName().equals(fileName)) {
                 baseCodeSubmission = Optional.of(submission);
@@ -126,7 +136,7 @@ public class SubmissionSetBuilder {
             }
         }
 
-        return new SubmissionSet(submissions, baseCodeSubmission, errorCollector, options);
+        return new SubmissionSet(setName, submissions, baseCodeSubmission, errorCollector, options);
     }
 
     /**

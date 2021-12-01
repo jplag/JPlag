@@ -14,6 +14,11 @@ import de.jplag.options.JPlagOptions;
  */
 public class SubmissionSet {
     /**
+     * Unique name of the submission set, may be {@code null}.
+     */
+    private final String setName;
+
+    /**
      * Submissions to check for plagiarism.
      */
     private final List<Submission> allSubmissions;
@@ -31,11 +36,13 @@ public class SubmissionSet {
     private String currentSubmissionName;
 
     /**
+     * @param setName Name of the submission set, may be {@code null}.
      * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists.
      */
-    public SubmissionSet(List<Submission> submissions, Optional<Submission> baseCode, ErrorCollector errorCollector, JPlagOptions options)
+    public SubmissionSet(String setName, List<Submission> submissions, Optional<Submission> baseCode, ErrorCollector errorCollector, JPlagOptions options)
             throws ExitException {
+        this.setName = setName;
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.errorCollector = errorCollector;
@@ -43,6 +50,13 @@ public class SubmissionSet {
         parseAllSubmissions();
         this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
+    }
+
+    /**
+     * Get the name of the submission set, may be {@code null}.
+     */
+    public String getSetName() {
+        return setName;
     }
 
     /**
