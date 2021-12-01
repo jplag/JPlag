@@ -187,9 +187,11 @@ public class JPlag {
 
             if (j < 0) {
                 components.add(pathName.substring(i + 1));
+                return components;
             } else {
                 components.add(pathName.substring(i + 1, j));
             }
+            i = j;
         }
     }
 
