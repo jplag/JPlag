@@ -15,6 +15,12 @@ public class BaseCodeTest extends TestBase {
     }
 
     @Test
+    public void testEmptySubmission() throws ExitException {
+        JPlagResult result = runJPlag("emptysubmission", it -> it.setBaseCodeSubmissionName("base"));
+        verifyResults(result);
+    }
+
+    @Test
     public void testAutoTrimFileSeparators() throws ExitException {
         JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName(File.separator + "base" + File.separator));
         verifyResults(result);

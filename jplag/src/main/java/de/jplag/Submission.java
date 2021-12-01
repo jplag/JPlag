@@ -155,6 +155,8 @@ public class Submission implements Comparable<Submission> {
     public boolean parse(boolean debugParser) {
         if (files == null || files.size() == 0) {
             errorCollector.print("ERROR: nothing to parse for submission \"" + name, null);
+            tokenList = null;
+            hasErrors = true; // invalidate submission
             return false;
         }
 
