@@ -27,6 +27,13 @@ export default defineComponent({
       )
     }
 
+    const navigateToComparisonView = (file) => {
+      router.push({
+        name: "ComparisonView",
+        params: {str: file}
+      })
+    }
+
     const uploadFile = (e) => {
       let dropped = e.dataTransfer.files
       if (!dropped) return
@@ -34,7 +41,11 @@ export default defineComponent({
       if (files.length > 1 || files.length === 0) return
       let read = new FileReader()
       read.onload = (e) => {
-        navigateToOverview(e.target.result)
+        if(files[0].name.includes("comparison")) {
+          navigateToComparisonView(e.target.result)
+        } else {
+          navigateToOverview(e.target.result)
+        }
       }
       read.readAsText(files[0])
     }
