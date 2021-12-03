@@ -15,7 +15,7 @@
         <p>{{ submission2 }}</p>
         <p>{{ selectedSplit[1] }}</p>
       </th>
-      <th>Matched tokens</th>
+      <th>Tokens</th>
     </tr>
     <tr v-for="(match, index) in matches[selected]" :key="match.start_in_first + match.end_in_first"
         @click="this.$emit('matchSelected', $event, index)">
@@ -109,4 +109,5 @@ tr:hover {
   background: #FF5353;
   color: white;
 }
+
 </style>

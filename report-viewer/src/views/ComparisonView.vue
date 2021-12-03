@@ -12,26 +12,45 @@
                 @selection-changed="selectFiles"
                 @match-selected="selectMatch"/>
   </div>
-  <div id="rightPanel"></div>
+  <div id="rightPanel">
+    <CodePanel :lines="filesOfFirst[selectedFileOfFirst]" :not-blurred="[]"/>
+    <CodePanel :lines="filesOfSecond[selectedFileOfSecond]" :not-blurred="[]"/>
+  </div>
 </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import TextInformation from "@/components/TextInformation";
 import MatchList from "@/components/MatchList";
+import CodePanel from "@/components/CodePanel";
 
 export default defineComponent({
   name: "ComparisonView",
-  components: {MatchList, TextInformation},
+  components: {CodePanel, MatchList, TextInformation},
   props: {
     jsonString: {
       type: String
     }
   },
   setup(props) {
-    console.log(props.jsonString)
+    const selectedFileOfFirst = ref([])
+    const selectedFileOfSecond = ref([])
     const json = JSON.parse(props.jsonString)
+    const filesOfFirst = json.files_of_first_submission.reduce( (acc, val) => {
+      if(!acc[val.file_name]) {
+        acc[val.file_name] = []
+      }
+      acc[val.file_name] = val.lines
+      return acc
+    }, {})
+    const filesOfSecond = json.files_of_second_submission.reduce( (acc, val) => {
+      if(!acc[val.file_name]) {
+        acc[val.file_name] = []
+      }
+      acc[val.file_name] = val.lines
+      return acc
+    }, {})
 
     const groupedMatches = json.matches.reduce( (acc, val) => {
       let name = val.first_file_name + " - " + val.second_file_name
@@ -43,18 +62,19 @@ export default defineComponent({
     }, {})
 
 
-
-    console.log(JSON.stringify(groupedMatches))
-
     const selectFiles = (e , s) => {
-      console.log("Selected is " + s)
+      let split = s.split(" - ")
+      selectedFileOfFirst.value = split[0]
+      selectedFileOfSecond.value = split[1]
     }
 
     const selectMatch = (e, i) => {
-      console.log("Index of selected match is " + i)
+      console.log(e, i)
     }
     return {
-      json, groupedMatches, selectFiles, selectMatch,
+      json, groupedMatches, filesOfFirst, filesOfSecond, selectedFileOfFirst, selectedFileOfSecond,
+      selectFiles,
+      selectMatch,
     }
   }
 })
@@ -82,8 +102,8 @@ export default defineComponent({
   width: 80%;
   background: #ECECEC;
   display: flex;
-  flex-direction: column;
   flex-wrap: nowrap;
+  justify-content: stretch;
   padding: 1%;
 }
 
