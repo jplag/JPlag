@@ -1,11 +1,12 @@
 <template>
   <div class="code-container">
-    <LineOfCode v-for="(line, index) in lines" :key="line" :is-blurred="notBlurred.includes(index)" :line-number="index" :text="line"/>
+    <LineOfCode v-for="(line, index) in lines" :key="index" :is-blurred="isBlurred(index)" :line-number="index" :text="line"
+    :id="panelId.concat(index)"/>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import {computed, defineComponent} from "vue";
 import LineOfCode from "./LineOfCode";
 
 export default defineComponent({
@@ -19,10 +20,16 @@ export default defineComponent({
     notBlurred: {
       type: Array
     },
+    panelId: {
+      type: String
+    }
   },
   setup(props) {
+    const isBlurred = (index) => {
+      return !props.notBlurred.includes(index)
+    }
     return {
-
+      isBlurred
     }
   }
 })

@@ -22,7 +22,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-    console.log(props.lineNumber + " " + props.text)
     return {
 
     }
@@ -34,6 +33,7 @@ export default defineComponent({
 pre {
   margin: 0;
   padding: 0;
+  font-size: large;
 }
 .blurred {
   filter: blur(2px);
