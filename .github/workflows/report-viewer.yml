@@ -1,0 +1,30 @@
+name: Report Viewer Deployment Workflow
+
+on:
+ workflow_dispatch:
+ push:
+    branches:
+      - 192-webreport # you might change that to main/master later on
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.5
+      
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          
+      - name: Install and Build 🔧
+        working-directory: report-viewer
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.5
+        with:
+          branch: gh-pages
+          folder: report-viewer/dist
