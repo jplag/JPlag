@@ -1,7 +1,7 @@
 name: Report Viewer Deployment Workflow
 
 on:
- workflow_dispatch:
+ workflow_dispatch: # Use this to dispatch from the Actions Tab
  push:
     branches:
       - 192-webreport # you might change that to main/master later on
