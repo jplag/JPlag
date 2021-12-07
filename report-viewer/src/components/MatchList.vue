@@ -17,7 +17,7 @@
       </th>
       <th>Tokens</th>
     </tr>
-    <tr class="selectable-row" v-for="match in groupedMatches[selectedSplit[0]][selectedSplit[1]]" :key="match.start_in_first + match.end_in_first"
+    <tr class="selectable-row" v-for="match in matches[selectedSplit[0]][selectedSplit[1]]" :key="match.start_in_first + match.end_in_first"
         @click="this.$emit('matchSelected', $event, match.start_in_first, match.end_in_first, match.start_in_second, match.end_in_second)">
       <td>{{ match.start_in_first }} - {{ match.end_in_first }}</td>
       <td>{{ match.start_in_second }} - {{ match.end_in_second }}</td>
@@ -49,37 +49,15 @@ export default defineComponent({
   setup(props) {
     const SEPARATOR = " - "
 
-    const generateColour = () => {
-      let color = "#";
-      for (let i = 0; i < 3; i++)
-        color += ("0" + Math.floor(((1 + Math.random()) * Math.pow(16, 2)) / 2).toString(16)).slice(-2);
-      return color;
-    }
-
-    const groupedMatches = ref(props.matches.reduce( (acc, val) => {
-      let name = val.first_file_name
-      let subname = val.second_file_name
-      if(!acc[name]) {
-        acc[name] = {}
-      }
-      if(!acc[name][subname]) {
-        acc[name][subname] = []
-      }
-      let newVal = {...val, color: generateColour()}
-      acc[name][subname].push(newVal)
-      return acc;
-    }, {})
-    )
-
     const generatedSelectOptions = ref([])
-    Object.keys(groupedMatches.value).forEach( (key) => {
-      Object.keys(groupedMatches.value[key]).forEach( (subkey) => {
+    Object.keys(props.matches).forEach( (key) => {
+      Object.keys(props.matches[key]).forEach( (subkey) => {
         generatedSelectOptions.value.push(key + SEPARATOR + subkey)
       })
     })
 
     let selected = ref(generatedSelectOptions.value[0]);
-    let selectedSplit = selected.value.split(SEPARATOR)
+    let selectedSplit = ref(selected.value.split(SEPARATOR))
 
 
     watchEffect(() => {
@@ -90,8 +68,6 @@ export default defineComponent({
       selected,
       selectedSplit,
       generatedSelectOptions,
-      groupedMatches,
-
       SEPARATOR
     }
   }

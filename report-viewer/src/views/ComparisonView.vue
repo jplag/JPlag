@@ -11,14 +11,14 @@
     <TextInformation label="Match percentage:" value="75.34%" :has-additional-info="false"/>
     <MatchList :submission1="json.first_submission_id"
                :submission2="json.second_submission_id"
-               :matches="json.matches"
+               :matches="groupedMatches"
                 @selection-changed="selectFiles"
                 @match-selected="selectMatch"/>
   </div>
   <div id="rightPanel" v-bind:class="{extended : hideLeftPanel}">
     <button id="show-button" v-bind:class="{hidden : !hideLeftPanel}" @click="togglePanel"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
-    <CodePanel :lines="filesOfFirst[selectedFileOfFirst]" :not-blurred="notBlurredInFirst" panel-id="1"/>
-    <CodePanel :lines="filesOfSecond[selectedFileOfSecond]" :not-blurred="notBlurredInSecond" panel-id="2"/>
+    <CodePanel id="codePanel1" :lines="filesOfFirst[selectedFileOfFirst]" :coloring="coloringFirst" panel-id="1"/>
+    <CodePanel :lines="filesOfSecond[selectedFileOfSecond]"  :coloring="coloringSecond" panel-id="2"/>
   </div>
 </div>
 </template>
@@ -28,6 +28,7 @@ import { defineComponent, ref } from "vue";
 import TextInformation from "@/components/TextInformation";
 import MatchList from "@/components/MatchList";
 import CodePanel from "@/components/CodePanel";
+import {convertToFilesByName, generateColoringArray, generateColor} from "@/utils/Utils";
 
 export default defineComponent({
   name: "ComparisonView",
@@ -38,57 +39,52 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const selectedFileOfFirst = ref(0)
-    const selectedFileOfSecond = ref(0)
-    const hideLeftPanel = ref(false)
-    const notBlurredInFirst = ref([])
-    const notBlurredInSecond = ref([])
     const json = JSON.parse(props.jsonString)
 
-    const filesOfFirst = json.files_of_first_submission.reduce( (acc, val) => {
-      if(!acc[val.file_name]) {
-        acc[val.file_name] = []
-      }
-      acc[val.file_name] = val.lines
-      return acc
-    }, {})
-    const filesOfSecond = json.files_of_second_submission.reduce( (acc, val) => {
-      if(!acc[val.file_name]) {
-        acc[val.file_name] = []
-      }
-      acc[val.file_name] = val.lines
-      return acc
-    }, {})
+    const filesOfFirst = convertToFilesByName(json.files_of_first_submission)
+    const filesOfSecond = convertToFilesByName(json.files_of_second_submission)
+    const selectedFileOfFirst = ref(Object.keys(filesOfFirst)[0])
+    const selectedFileOfSecond = ref(Object.keys(filesOfSecond)[0])
+
+    const groupedMatches = ref(json.matches.reduce( (acc, val) => {
+          let name = val.first_file_name
+          let subname = val.second_file_name
+          if(!acc[name]) {
+            acc[name] = {}
+          }
+          if(!acc[name][subname]) {
+            acc[name][subname] = []
+          }
+          let newVal = {...val, color: generateColor()}
+          acc[name][subname].push(newVal)
+          return acc;
+        }, {})
+    )
+
+    let coloringFirst = ref(generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 1))
+    let coloringSecond = ref(generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 2))
 
     const selectFiles = (e , file1, file2) => {
-      console.log(file1, " ", file2)
       selectedFileOfFirst.value = file1
       selectedFileOfSecond.value = file2
+      coloringFirst.value = generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 1)
+      coloringSecond.value = generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 2)
     }
 
     const selectMatch = (e, s1, e1, s2, e2) => {
-      let notBlurred1 = []
-      let notBlurred2 = []
-      for (let i = s1; i <= e1; i++) {
-        notBlurred1.push(i)
-      }
-      notBlurredInFirst.value = notBlurred1
-      for (let i = s2; i <= e2; i++) {
-        notBlurred2.push(i)
-      }
-      notBlurredInSecond.value = notBlurred2
-      document.getElementById("1".concat(notBlurred1[0])).scrollIntoView()
-      document.getElementById("2".concat(notBlurred2[0])).scrollIntoView()
+      document.getElementById("1".concat(s1)).scrollIntoView()
+      document.getElementById("2".concat(s2)).scrollIntoView()
     }
 
+
+    const hideLeftPanel = ref(false)
     const togglePanel = () => {
-      console.log("hiding showing panel")
       hideLeftPanel.value = !hideLeftPanel.value
     }
 
     return {
       json, filesOfFirst, filesOfSecond, selectedFileOfFirst, selectedFileOfSecond, hideLeftPanel,
-      notBlurredInFirst, notBlurredInSecond,
+      coloringFirst, coloringSecond, groupedMatches,
       selectFiles,
       selectMatch,
       togglePanel
@@ -157,7 +153,7 @@ export default defineComponent({
   border: none;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
-  height: 5%;
+  height: 100%;
   width: 1%;
 }
 

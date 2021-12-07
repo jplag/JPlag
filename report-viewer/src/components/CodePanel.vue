@@ -1,12 +1,12 @@
 <template>
   <div class="code-container">
-    <LineOfCode v-for="(line, index) in lines" :key="index" :is-blurred="isBlurred(index)" :line-number="index" :text="line"
+    <LineOfCode v-for="(line, index) in lines" :key="index" :color="coloringArray[index]" :line-number="index" :text="line"
     :id="panelId.concat(index)"/>
   </div>
 </template>
 
 <script>
-import {computed, defineComponent} from "vue";
+import {ref, defineComponent, watchEffect} from "vue";
 import LineOfCode from "./LineOfCode";
 
 export default defineComponent({
@@ -17,7 +17,7 @@ export default defineComponent({
       type: Array,
       required: true
     },
-    notBlurred: {
+    coloring: {
       type: Array
     },
     panelId: {
@@ -25,11 +25,33 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const isBlurred = (index) => {
-      return !props.notBlurred.includes(index)
+    console.log(JSON.stringify(props.coloring))
+    const coloringArray = ref({})
+    props.coloring.forEach(m => {
+      for (let i = m.start; i <= m.end; i++) {
+        coloringArray.value[i] = m.color
+      }
+    })
+    for(let i = 0; i < props.lines.length; i++) {
+      if(!coloringArray.value[i]) {
+        coloringArray.value[i] = "#ECECEC"
+      }
     }
+    watchEffect(() => {
+      coloringArray.value = {}
+      props.coloring.forEach(m => {
+        for (let i = m.start; i <= m.end; i++) {
+          coloringArray.value[i] = m.color
+        }
+      })
+      for(let i = 0; i < props.lines.length; i++) {
+        if(!coloringArray.value[i]) {
+          coloringArray.value[i] = "#ECECEC"
+        }
+      }
+    })
     return {
-      isBlurred
+      coloringArray
     }
   }
 })

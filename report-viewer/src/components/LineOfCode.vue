@@ -1,9 +1,11 @@
 <template>
-<pre id="line" v-bind:class="{ blurred : isBlurred }">{{ lineNumber }} {{ text }}</pre>
+  <div class="line-wrap" :style="{background : color}">
+<pre :id="text" v-bind:class="{ blurred : isBlurred }" >{{ lineNumber }} {{ text }}</pre>
+  </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 
 export default defineComponent({
   name: "LineOfCode",
@@ -16,12 +18,16 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    isBlurred: {
-      type: Boolean,
-      required: true
+    color: {
+      type: String,
+      required:true
     },
+    startOfMatch: {
+      type: Number
+    }
   },
   setup(props) {
+    document.getEleme
     return {
 
     }
@@ -33,11 +39,16 @@ export default defineComponent({
 pre {
   margin: 0;
   padding: 0;
-  font-size: large;
+  float: left;
+
 }
 .blurred {
   filter: blur(2px);
   -webkit-filter: blur(2px);
 }
+.line-wrap {
+  width: 200%;
+}
+
 
 </style>
