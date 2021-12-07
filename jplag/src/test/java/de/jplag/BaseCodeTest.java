@@ -13,6 +13,11 @@ public class BaseCodeTest extends TestBase {
         JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base"));
         verifyResults(result);
     }
+    
+    @Test(expected = ExitException.class)
+    public void testTinyBasecode() throws ExitException {
+        runJPlag("TinyBasecode", it -> it.setBaseCodeSubmissionName("base"));
+    }
 
     @Test
     public void testEmptySubmission() throws ExitException {
