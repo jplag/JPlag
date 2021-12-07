@@ -102,11 +102,8 @@ public class SubmissionSet {
             if (baseCodeSubmission.isPresent()) {
                 parseBaseCodeSubmission(baseCodeSubmission.get()); // cannot use ifPresent because of throws declaration
             }
-        } catch (OutOfMemoryError e) {
+        } catch (OutOfMemoryError exception) {
             throw new ExitException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
-        } catch (Throwable e) {
-            e.printStackTrace();
-            throw new ExitException("Unknown exception during parsing of " + "submission \"" + currentSubmissionName + "\"");
         }
         if (errorCollector.hasErrors()) {
             errorCollector.printCollectedErrors();
@@ -122,8 +119,7 @@ public class SubmissionSet {
         if (!baseCode.parse(options.isDebugParser())) {
             errorCollector.printCollectedErrors();
             throw new ExitException("Bad basecode submission");
-        }
-        if (baseCode.getTokenList() != null && baseCode.getNumberOfTokens() < options.getMinimumTokenMatch()) {
+        } else if (baseCode.getNumberOfTokens() < options.getMinimumTokenMatch()) {
             throw new ExitException("Basecode submission contains fewer tokens than minimum match length allows!");
         }
         errorCollector.print("Basecode submission parsed!", null);
