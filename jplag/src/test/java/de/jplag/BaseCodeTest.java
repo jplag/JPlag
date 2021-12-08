@@ -6,7 +6,9 @@ import java.io.File;
 
 import org.junit.Test;
 
+import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.RootDirectoryException;
 
 public class BaseCodeTest extends TestBase {
 
@@ -16,7 +18,7 @@ public class BaseCodeTest extends TestBase {
         verifyResults(result);
     }
     
-    @Test(expected = ExitException.class)
+    @Test(expected = BasecodeException.class)
     public void testTinyBasecode() throws ExitException {
         runJPlag("TinyBasecode", it -> it.setBaseCodeSubmissionName("base"));
     }
@@ -41,17 +43,17 @@ public class BaseCodeTest extends TestBase {
         assertEquals(85f, result.getComparisons().get(0).similarity(), DELTA);
     }
 
-    @Test(expected = ExitException.class)
+    @Test(expected = RootDirectoryException.class)
     public void testInvalidRoot() throws ExitException {
         runJPlag("basecode", it -> it.setRootDirectoryName("WrongRoot"));
     }
 
-    @Test(expected = ExitException.class)
+    @Test(expected = BasecodeException.class)
     public void testInvalidBasecode() throws ExitException {
         runJPlag("basecode", it -> it.setBaseCodeSubmissionName("WrongBasecode"));
     }
 
-    @Test(expected = ExitException.class)
+    @Test(expected = BasecodeException.class)
     public void testBasecodeWithDots() throws ExitException {
         runJPlag("basecode", it -> it.setBaseCodeSubmissionName("." + File.separator + "base"));
     }
