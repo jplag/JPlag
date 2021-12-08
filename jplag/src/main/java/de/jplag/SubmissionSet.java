@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import de.jplag.exceptions.BasecodeException;
+import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -103,7 +106,7 @@ public class SubmissionSet {
                 parseBaseCodeSubmission(baseCodeSubmission.get()); // cannot use ifPresent because of throws declaration
             }
         } catch (OutOfMemoryError exception) {
-            throw new ExitException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
+            throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
         }
         if (errorCollector.hasErrors()) {
             errorCollector.printCollectedErrors();
@@ -113,14 +116,14 @@ public class SubmissionSet {
     /**
      * Parse the given base code submission.
      */
-    private void parseBaseCodeSubmission(Submission baseCode) throws ExitException {
+    private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException {
         long startTime = System.currentTimeMillis();
         errorCollector.print("----- Parsing basecode submission: " + baseCode.getName(), null);
         if (!baseCode.parse(options.isDebugParser())) {
             errorCollector.printCollectedErrors();
-            throw new ExitException("Bad basecode submission");
+            throw new BasecodeException("Could not successfully parse basecode submission!");
         } else if (baseCode.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-            throw new ExitException("Basecode submission contains fewer tokens than minimum match length allows!");
+            throw new BasecodeException("Basecode submission contains fewer tokens than minimum match length allows!");
         }
         errorCollector.print("Basecode submission parsed!", null);
         long duration = System.currentTimeMillis() - startTime;

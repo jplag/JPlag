@@ -3,6 +3,7 @@ package de.jplag;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
+import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;

@@ -14,6 +14,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.RootDirectoryException;
+import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -52,11 +55,12 @@ public class SubmissionSetBuilder {
         try {
             fileNames = rootDirectory.list();
         } catch (SecurityException exception) {
-            throw new ExitException("Cannot list files of the root directory! " + exception.getMessage());
+            throw new RootDirectoryException("Cannot list files of the root directory! " + exception.getMessage());
         }
 
         if (fileNames == null) {
-            throw new ExitException("Cannot list files of the root directory! " + "Make sure the specified root directory is in fact a directory.");
+            throw new RootDirectoryException(
+                    "Cannot list files of the root directory! Make sure the specified root directory is in fact a directory.");
         }
 
         Arrays.sort(fileNames);
@@ -108,12 +112,12 @@ public class SubmissionSetBuilder {
                 submissionFile = new File(submissionFile, options.getSubdirectoryName());
 
                 if (!submissionFile.exists()) {
-                    throw new ExitException(
+                    throw new SubmissionException(
                             String.format("Submission %s does not contain the given subdirectory '%s'", fileName, options.getSubdirectoryName()));
                 }
 
                 if (!submissionFile.isDirectory()) {
-                    throw new ExitException(String.format("The given subdirectory '%s' is not a directory!", options.getSubdirectoryName()));
+                    throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.getSubdirectoryName()));
                 }
             }
 

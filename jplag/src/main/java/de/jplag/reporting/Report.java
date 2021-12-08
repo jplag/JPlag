@@ -16,13 +16,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import de.jplag.ExitException;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
 import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.TokenList;
+import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.ReportGenerationException;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -44,7 +45,7 @@ public class Report { // Mostly legacy code with some minor improvements.
     private int matchWritingProgess = 0;
     private int matchesWritten = 0;
 
-    public Report(File reportDir, JPlagOptions options) throws ExitException {
+    public Report(File reportDir, JPlagOptions options) throws ReportGenerationException {
         this.reportDir = reportDir;
         this.options = options;
         msg = new Messages("en");
@@ -52,7 +53,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         validateReportDir();
     }
 
-    public void writeResult(JPlagResult result) throws ExitException {
+    public void writeResult(JPlagResult result) throws ReportGenerationException {
         this.result = result;
         System.out.println("\nWriting report...");
         writeIndex();
@@ -109,13 +110,13 @@ public class Report { // Mostly legacy code with some minor improvements.
     /**
      * Create a new HTML file.
      */
-    private HTMLFile createHTMLFile(String name) throws ExitException {
+    private HTMLFile createHTMLFile(String name) throws ReportGenerationException {
         File file = new File(reportDir, name);
 
         try {
             return HTMLFile.fromFile(file);
         } catch (IOException e) {
-            throw new de.jplag.ExitException("Error opening file: " + file);
+            throw new ReportGenerationException("Error opening file: " + file);
         }
     }
 
@@ -201,17 +202,17 @@ public class Report { // Mostly legacy code with some minor improvements.
     /**
      * Make sure the report directory exists, is a directory and has write access.
      */
-    private void validateReportDir() throws ExitException {
+    private void validateReportDir() throws ReportGenerationException {
         if (!reportDir.exists() && !reportDir.mkdirs()) {
-            throw new ExitException("Cannot create report directory!");
+            throw new ReportGenerationException("Cannot create report directory!");
         }
 
         if (!reportDir.isDirectory()) {
-            throw new ExitException(reportDir + " is not a directory!");
+            throw new ReportGenerationException(reportDir + " is not a directory!");
         }
 
         if (!reportDir.canWrite()) {
-            throw new ExitException("Cannot write directory: " + reportDir);
+            throw new ReportGenerationException("Cannot write directory: " + reportDir);
         }
     }
 
@@ -263,7 +264,7 @@ public class Report { // Mostly legacy code with some minor improvements.
      * i is the number of the match j == 0 if subA is considered, otherwise (j must then be 1) it is subB This procedure
      * makes use of the column and length information!
      */
-    private int writeImprovedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws de.jplag.ExitException {
+    private int writeImprovedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ReportGenerationException {
         Submission sub = comparison.getSubmission(j == 0);
         String[] files = comparison.files(j);
         String[][] text = sub.readFiles(files);
@@ -308,10 +309,9 @@ public class Report { // Mostly legacy code with some minor improvements.
         if (result.getOptions().hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
             JPlagComparison baseCodeComparison = comparison.getBaseCodeMatches(j == 0);
 
-            for (int x = 0; x < baseCodeComparison.getMatches().size(); x++) {
-                Match onematch = baseCodeComparison.getMatches().get(x);
-                Token start = tokens.getToken(onematch.getStartOfFirst());
-                Token end = tokens.getToken(onematch.getStartOfFirst() + onematch.getLength() - 1);
+            for (Match match : baseCodeComparison.getMatches()) {
+                Token start = tokens.getToken(match.getStartOfFirst());
+                Token end = tokens.getToken(match.getStartOfFirst() + match.getLength() - 1);
 
                 for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
                     if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
@@ -332,43 +332,43 @@ public class Report { // Mostly legacy code with some minor improvements.
             String tmp = text[markup.fileIndex][markup.lineIndex];
             // is there any &quot;, &amp;, &gt; or &lt; in the String?
             if (tmp.indexOf('&') >= 0) {
-                List<String> tmpV = new ArrayList<>();
+                List<String> list = new ArrayList<>();
                 // convert the string into a vector
                 int strLength = tmp.length();
                 for (int k = 0; k < strLength; k++) {
                     if (tmp.charAt(k) != '&') {
-                        tmpV.add(tmp.charAt(k) + "");
+                        list.add(tmp.charAt(k) + "");
                     } else { // put &quot;, &amp;, &gt; and &lt; into one element
                         String tmpSub = tmp.substring(k);
                         if (tmpSub.startsWith("&quot;")) {
-                            tmpV.add("&quot;");
+                            list.add("&quot;");
                             k = k + 5;
                         } else if (tmpSub.startsWith("&amp;")) {
-                            tmpV.add("&amp;");
+                            list.add("&amp;");
                             k = k + 4;
                         } else if (tmpSub.startsWith("&lt;")) {
-                            tmpV.add("&lt;");
+                            list.add("&lt;");
                             k = k + 3;
                         } else if (tmpSub.startsWith("&gt;")) {
-                            tmpV.add("&gt;");
+                            list.add("&gt;");
                             k = k + 3;
                         } else {
-                            tmpV.add(tmp.charAt(k) + "");
+                            list.add(tmp.charAt(k) + "");
                         }
                     }
                 }
-                if (markup.column <= tmpV.size()) {
-                    tmpV.add(markup.column, markup.text);
+                if (markup.column <= list.size()) {
+                    list.add(markup.column, markup.text);
                 } else {
-                    tmpV.add(markup.text);
+                    list.add(markup.text);
                 }
 
-                StringBuilder tmpVStr = new StringBuilder();
+                StringBuilder builder = new StringBuilder();
                 // reconvert the Vector into a String
-                for (int k = 0; k < tmpV.size(); k++) {
-                    tmpVStr.append(tmpV.get(k));
+                for (String element : list) {
+                    builder.append(element);
                 }
-                text[markup.fileIndex][markup.lineIndex] = tmpVStr.toString();
+                text[markup.fileIndex][markup.lineIndex] = builder.toString();
             } else {
                 text[markup.fileIndex][markup.lineIndex] = tmp.substring(0, (Math.min(tmp.length(), markup.column))) + markup.text
                         + tmp.substring((Math.min(tmp.length(), markup.column)));
@@ -410,7 +410,7 @@ public class Report { // Mostly legacy code with some minor improvements.
     /**
      * Write the index.html file.
      */
-    private void writeIndex() throws ExitException {
+    private void writeIndex() throws ReportGenerationException {
         HTMLFile htmlFile = createHTMLFile("index.html");
 
         writeIndexBegin(htmlFile, msg.getString("Report.Search_Results"));
@@ -476,7 +476,7 @@ public class Report { // Mostly legacy code with some minor improvements.
      * i is the number of the match j == 0 if subA is considered, otherwise it is subB This procedure uses only the
      * getIndex() method of the token. It is meant to be used with the Character front end
      */
-    private void writeIndexedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ExitException {
+    private void writeIndexedSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ReportGenerationException {
         boolean useFirst = j == 0;
         Submission sub = comparison.getSubmission(useFirst);
         String[] files = comparison.files(j);
@@ -581,7 +581,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         htmlFile.println("<!---->");
     }
 
-    private void writeMatch(JPlagComparison comparison, int i) throws ExitException {
+    private void writeMatch(JPlagComparison comparison, int i) throws ReportGenerationException {
         HTMLFile htmlFile = createHTMLFile("match" + i + ".html");
 
         writeHTMLHeader(htmlFile, TagParser.parse(msg.getString("Report.Matches_for_X1_AND_X2"),
@@ -682,18 +682,17 @@ public class Report { // Mostly legacy code with some minor improvements.
     /*
      * i is the number of the match j == 0 if subA is considered, otherwise (j must then be 1) it is subB
      */
-    private void writeNormalSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ExitException {
+    private void writeNormalSubmission(HTMLFile f, int i, JPlagComparison comparison, int j) throws ReportGenerationException {
         Submission sub = comparison.getSubmission(j == 0);
         String[] files = comparison.files(j);
 
         String[][] text = sub.readFiles(files);
 
         TokenList tokens = comparison.getSubmission(j == 0).getTokenList();
-        Match currentMatch;
         String hilf;
         int h;
         for (int x = 0; x < comparison.getMatches().size(); x++) {
-            currentMatch = comparison.getMatches().get(x);
+            Match currentMatch = comparison.getMatches().get(x);
 
             Token start = tokens.getToken(currentMatch.getStart(j == 0));
             Token end = tokens.getToken((currentMatch.getStart(j == 0)) + currentMatch.getLength() - 1);
@@ -727,8 +726,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         if (result.getOptions().hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
             JPlagComparison baseCodeComparison = comparison.getBaseCodeMatches(j == 0);
 
-            for (int x = 0; x < baseCodeComparison.getMatches().size(); x++) {
-                currentMatch = baseCodeComparison.getMatches().get(x);
+            for (Match currentMatch : baseCodeComparison.getMatches()) {
                 Token start = tokens.getToken(currentMatch.getStartOfFirst());
                 Token end = tokens.getToken(currentMatch.getStartOfFirst() + currentMatch.getLength() - 1);
 

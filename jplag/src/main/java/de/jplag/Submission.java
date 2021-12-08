@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.jplag.exceptions.ReportGenerationException;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -96,7 +97,6 @@ public class Submission implements Comparable<Submission> {
         if (tokenList == null) {
             return 0;
         }
-
         return tokenList.size();
     }
 
@@ -184,7 +184,7 @@ public class Submission implements Comparable<Submission> {
     /**
      * Used by the "Report" class. All source files are returned as an array of an array of strings.
      */
-    public String[][] readFiles(String[] files) throws de.jplag.ExitException {
+    public String[][] readFiles(String[] files) throws ReportGenerationException {
         String[][] result = new String[files.length][];
         String help;
         List<String> text = new ArrayList<>();
@@ -211,7 +211,7 @@ public class Submission implements Comparable<Submission> {
             } catch (FileNotFoundException e) {
                 System.out.println("File not found: " + ((new File(submissionRoot, files[i])).toString()));
             } catch (IOException e) {
-                throw new de.jplag.ExitException("I/O exception!");
+                throw new ReportGenerationException("I/O exception!", e);
             }
 
             result[i] = new String[text.size()];
@@ -224,7 +224,7 @@ public class Submission implements Comparable<Submission> {
     /**
      * Used by the "Report" class. All source files are returned as an array of an array of chars.
      */
-    public char[][] readFilesChar(String[] files) throws de.jplag.ExitException {
+    public char[][] readFilesChar(String[] files) throws ReportGenerationException {
         char[][] result = new char[files.length][];
 
         for (int i = 0; i < files.length; i++) {
@@ -247,9 +247,9 @@ public class Submission implements Comparable<Submission> {
                 result[i] = buffer;
                 reader.close();
             } catch (FileNotFoundException e) {
-                throw new de.jplag.ExitException("File not found: " + file.getPath(), e);
+                throw new ReportGenerationException("File not found: " + file.getPath(), e);
             } catch (IOException e) {
-                throw new de.jplag.ExitException("I/O exception reading file \"" + file.getPath() + "\"!", e);
+                throw new ReportGenerationException("I/O exception reading file \"" + file.getPath() + "\"!", e);
             }
         }
 
@@ -345,8 +345,8 @@ public class Submission implements Comparable<Submission> {
     /**
      * Map all files of this submission to their path relative to the submission directory.
      * <p>
-     * This method is required to stay compatible with `language.parse(...)` as it requires the given file paths to
-     * be relative to the submission directory.
+     * This method is required to stay compatible with `language.parse(...)` as it requires the given file paths to be
+     * relative to the submission directory.
      * <p>
      * In a future update, `language.parse(...)` should probably just take a list of files.
      * @param baseFile - File to base all relative file paths on.
