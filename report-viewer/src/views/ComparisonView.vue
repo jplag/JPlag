@@ -5,10 +5,10 @@
       <img id="logo" src="@/assets/logo.png" alt="JPlag">
       <button id="hide-button" @click="togglePanel"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
     </div>
-    <TextInformation :has-additional-info="false" value="Match Report" label=""/>
-    <TextInformation label="First Submission:" value="324567" :has-additional-info="false"/>
-    <TextInformation label="Second Submission:" value="789223" :has-additional-info="false"/>
-    <TextInformation label="Match percentage:" value="75.34%" :has-additional-info="false"/>
+    <TextInformation :has-additional-info="false" value="Matches Report" label=""/>
+    <TextInformation label="First Submission:" :value="json.first_submission_id" :has-additional-info="false"/>
+    <TextInformation label="Second Submission:" :value="json.second_submission_id" :has-additional-info="false"/>
+    <TextInformation label="Match percentage:" :value="json.match_percentage" :has-additional-info="false"/>
     <MatchList :submission1="json.first_submission_id"
                :submission2="json.second_submission_id"
                :matches="groupedMatches"
@@ -143,6 +143,11 @@ export default defineComponent({
   border: none;
   padding: 0;
   margin: 0;
+  transform: rotate(180deg);
+}
+
+#hide-button:hover {
+  cursor: pointer;
 }
 
 #show-button {
@@ -155,6 +160,10 @@ export default defineComponent({
   border-bottom-right-radius: 10px;
   height: 100%;
   width: 1%;
+}
+
+#show-button:hover {
+  cursor: pointer;
 }
 
 #show-button img {

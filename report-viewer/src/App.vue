@@ -4,6 +4,16 @@
 </template>
 
 <style>
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./fonts/jetbrains-mono/JetBrainsMono-Light.ttf");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./fonts/jetbrains-mono/JetBrainsMono-Bold.ttf");
+  font-weight: bold;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

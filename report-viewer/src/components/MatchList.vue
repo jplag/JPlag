@@ -17,8 +17,11 @@
       </th>
       <th>Tokens</th>
     </tr>
-    <tr class="selectable-row" v-for="match in matches[selectedSplit[0]][selectedSplit[1]]" :key="match.start_in_first + match.end_in_first"
-        @click="this.$emit('matchSelected', $event, match.start_in_first, match.end_in_first, match.start_in_second, match.end_in_second)">
+    <tr class="selectable-row" v-for="match in matches[selectedSplit[0]][selectedSplit[1]]"
+        :key="match.start_in_first + match.end_in_first"
+        @click="this.$emit('matchSelected', $event, match.start_in_first, match.end_in_first, match.start_in_second, match.end_in_second)"
+        :style="{background : match.color}"
+    >
       <td>{{ match.start_in_first }} - {{ match.end_in_first }}</td>
       <td>{{ match.start_in_second }} - {{ match.end_in_second }}</td>
       <td>TODO</td>
@@ -97,6 +100,10 @@ select {
   border-bottom: solid rgba(119, 119, 119, 0.20);
 }
 
+option {
+  text-align: center;
+}
+
 table {
   border-collapse: collapse;
 }
@@ -111,6 +118,7 @@ th > p {
 
 tr {
   border-bottom: solid rgba(119, 119, 119, 0.20);
+  border-radius: 10px;
 }
 
 td {
@@ -118,8 +126,8 @@ td {
 }
 
 .selectable-row:hover {
-  background: #FF5353;
   color: white;
+  cursor: pointer;
 }
 
 </style>
