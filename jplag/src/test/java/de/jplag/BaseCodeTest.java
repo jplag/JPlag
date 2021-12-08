@@ -6,6 +6,8 @@ import java.io.File;
 
 import org.junit.Test;
 
+import de.jplag.exceptions.ExitException;
+
 public class BaseCodeTest extends TestBase {
 
     @Test

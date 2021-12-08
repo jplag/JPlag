@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import de.jplag.exceptions.ExitException;
+
 public class NormalComparisonTest extends TestBase {
 
     /**

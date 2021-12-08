@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import de.jplag.exceptions.ExitException;
 import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**

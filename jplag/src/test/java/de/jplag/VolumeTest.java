@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
 /**

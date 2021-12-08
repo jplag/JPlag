@@ -4,6 +4,10 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import de.jplag.exceptions.BasecodeException;
+import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.RootDirectoryException;
+import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.strategy.ComparisonStrategy;
@@ -53,8 +57,7 @@ public class JPlag {
 
         int submissionCount = submissionSet.numberOfSubmissions();
         if (submissionCount < 2) {
-            throw new ExitException("Not enough valid submissions! (found " + submissionCount + " valid submissions)",
-                    ExitException.NOT_ENOUGH_SUBMISSIONS_ERROR);
+            throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
         }
 
         // Compare valid submissions.
@@ -72,18 +75,17 @@ public class JPlag {
         if (options.hasBaseCode()) {
             String baseCode = options.getBaseCodeSubmissionName();
             if (baseCode.contains(".")) {
-                throw new ExitException("The basecode directory name \"" + baseCode + "\" cannot contain dots!", ExitException.BAD_PARAMETER);
+                throw new BasecodeException("The basecode directory name \"" + baseCode + "\" cannot contain dots!");
             }
             String baseCodePath = options.getRootDirectoryName() + File.separator + baseCode;
             if (!new File(baseCodePath).exists()) {
-                throw new ExitException("Basecode directory \"" + baseCodePath + "\" doesn't exist!", ExitException.BAD_PARAMETER);
+                throw new BasecodeException("Basecode directory \"" + baseCodePath + "\" doesn't exist!");
             }
 
             String subdirectory = options.getSubdirectoryName();
             if (subdirectory != null && subdirectory.length() != 0) {
                 if (!new File(baseCodePath, subdirectory).exists()) {
-                    throw new ExitException("Basecode directory doesn't contain" + " the subdirectory \"" + subdirectory + "\"!",
-                            ExitException.BAD_PARAMETER);
+                    throw new BasecodeException("Basecode directory doesn't contain" + " the subdirectory \"" + subdirectory + "\"!");
                 }
             }
             System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
@@ -97,17 +99,15 @@ public class JPlag {
         String rootDirectoryName = options.getRootDirectoryName();
         File rootDir = new File(rootDirectoryName);
         if (!rootDir.exists()) {
-            String msg = String.format("Root directory \"%s\" does not exist!", rootDirectoryName);
-            throw new ExitException(msg, ExitException.BAD_PARAMETER);
+            throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectoryName));
         }
         if (!rootDir.isDirectory()) {
-            String msg = String.format("Root directory \"%s\" is not a directory!", rootDirectoryName);
-            throw new ExitException(msg, ExitException.BAD_PARAMETER);
+            throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectoryName));
         }
         return rootDir;
     }
 
-    private void initializeComparisonStrategy() throws ExitException {
+    private void initializeComparisonStrategy() {
         switch (options.getComparisonMode()) {
         case NORMAL:
             comparisonStrategy = new NormalComparisonStrategy(options, coreAlgorithm);
@@ -116,11 +116,11 @@ public class JPlag {
             comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
             break;
         default:
-            throw new ExitException("Illegal comparison mode: " + options.getComparisonMode());
+            throw new UnsupportedOperationException("Comparison mode not properly supported: " + options.getComparisonMode());
         }
     }
 
-    private void initializeLanguage() throws ExitException {
+    private void initializeLanguage() {
         LanguageOption languageOption = this.options.getLanguageOption();
 
         try {
@@ -134,8 +134,7 @@ public class JPlag {
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
-
-            throw new ExitException("Language instantiation failed", ExitException.BAD_LANGUAGE_ERROR);
+            throw new IllegalStateException("Language instantiation failed:" + e.getMessage());
         }
 
         this.options.setLanguageDefaults(this.language);

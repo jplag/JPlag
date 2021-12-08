@@ -17,6 +17,7 @@ import static de.jplag.CommandLineArgument.VERBOSITY;
 import java.io.File;
 import java.util.Random;
 
+import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;
@@ -59,7 +60,7 @@ public class CLI {
             Report report = new Report(reportDir, options);
             report.writeResult(result);
         } catch (ExitException exception) {
-            System.out.println("Error: " + exception.getReport());
+            System.out.println("Error: " + exception.getMessage());
             System.exit(1);
         }
     }
