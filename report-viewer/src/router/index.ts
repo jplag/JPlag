@@ -5,18 +5,18 @@ import ComparisonView from "@/views/ComparisonView.vue"
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
+    path: "/f",
     name: "FileUpload",
     component: FileUpload
   },
   {
-    path: "/overview",
+    path: "/",
     name: "Overview",
     component: Overview,
-    props: route => ({ jsonString : route.params.str })
+    //props: route => ({ jsonString : route.params.str })
   },
   {
-    path: "/c",
+    path: "/comparison",
     name: "ComparisonView",
     component: ComparisonView,
     props: route => ({ jsonString : route.params.str})

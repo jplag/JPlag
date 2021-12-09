@@ -21,7 +21,7 @@ export default defineComponent({
 
     const navigateToOverview = (file) => {
       router.push({
-          name: "Overview",
+          name: "OverviewV2",
           params: {str: file},
       }
       )

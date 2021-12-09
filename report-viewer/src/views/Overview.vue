@@ -11,53 +11,64 @@
       <TextInformation label="Duration (in ms): " :value="json.execution_time" :has-additional-info="false"/>
     </div>
     <div id="rightPanel">
-      <div id="metricsButtons" class="section">
-        <p class="section-title">Metrics: </p>
-        <ul class="metrics-list" v-for="(metric, i) in json.metrics" :key="metric.name">
-          <li><MetricButton :id="metric.name"
-                            :metric-threshold="metric.threshold"
-                            :metric-name="metric.name"
-                            :is-selected="selectedMetric[i]"
-                            @click="selectMetric(i)"/></li>
-        </ul>
+      <div class="right-panel-section">
+        <div id="metrics">
+          <p class="section-title">Select Metric:</p>
+          <div id="metrics-list">
+            <MetricButton v-for="(metric, i) in json.metrics" :key="metric.name"
+                          :id="metric.name"
+                          :metric-threshold="metric.threshold"
+                          :metric-name="metric.name"
+                          :is-selected="selectedMetric[i]"
+                          @click="selectMetric(i)"/>
+          </div>
+        </div>
+        <div id="diagram">
+          <p class="section-title">Distribution:</p>
+          <DistributionDiagram :distribution="distributions[selectedMetricIndex]"/>
+        </div>
       </div>
-      <div id="distribution" class="section">
-        <p class="section-title ">Distribution:</p>
-        <DistributionDiagram :distribution="distributions[selectedMetricIndex]"/>
-      </div>
-      <div id="topComparisonsList" class="section">
-        <p class="section-title">Top comparisons:</p>
-        <p class="section-subtitle">(Top 25)</p>
-        <ComparisonsLists :comparisons="topComps[selectedMetricIndex]"/>
+      <div id="topComparisons" class="right-panel-section">
+        <p class="section-title">Top Comparisons:</p>
+        <p class="section-subtitle">(Top n comparisons)</p>
+        <ComparisonListElement v-for="(comparison, index) in topComps[selectedMetricIndex]"
+                               :key = "comparison.first_submission
+                                        + comparison.second_submission
+                                        + comparison.match_percentage"
+                               :index="index + 1"
+                               :submission1="comparison.first_submission"
+                               :submission2="comparison.second_submission"
+                               :match-percentage="comparison.match_percentage"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {defineComponent, ref, watchEffect} from "vue";
-import TextInformation from "@/components/TextInformation";
-import MetricButton from "@/components/MetricButton";
+import {defineComponent, ref} from "vue";
+import TextInformation from "../components/TextInformation";
 import DistributionDiagram from "@/components/DistributionDiagram";
-import ComparisonsLists from "@/components/ComparisonsLists";
+import MetricButton from "@/components/MetricButton";
+import ComparisonListElement from "@/components/ComparisonListElement";
+import Overview from "../files/overview.json"
 
 export default defineComponent({
-  name: "Overview",
-  components: {ComparisonsLists, DistributionDiagram, MetricButton, TextInformation},
+  name: "OverviewV2",
+  components: {ComparisonListElement, DistributionDiagram, MetricButton, TextInformation },
   props: {
     jsonString: {
       type: String,
-
     }
   },
   setup(props) {
-    const json = JSON.parse(props.jsonString)
+    const json = Overview
+
+    //Metrics
     let selectedMetric = ref(json.metrics.map( () => false ))
-    let distributions = ref(json.metrics.map( (m) =>  m.distribution ))
-    let topComps = ref(json.metrics.map((m) => m.topComparisons))
-    console.log(JSON.stringify(topComps.value))
-    let selectedMetricIndex = ref(0)
     selectedMetric.value[0] = true;
+
+    let selectedMetricIndex = ref(0)
 
     const selectMetric = (metric) => {
       selectedMetric.value = selectedMetric.value.map( () => { return false })
@@ -65,17 +76,19 @@ export default defineComponent({
       selectedMetricIndex.value = metric
     }
 
-    watchEffect( () => {
-      console.log("Overview - selected dist " + JSON.stringify(distributions.value[selectedMetricIndex.value]))
-      console.log("Overview - selected topComp " + JSON.stringify(topComps.value[selectedMetricIndex.value]))
-    })
+    //Distribution
+    let distributions = ref(json.metrics.map( (m) =>  m.distribution ))
+
+    //Top Comparisons
+    let topComps = ref(json.metrics.map((m) => m.topComparisons))
 
     return {
       json,
-      selectedMetric,
       selectedMetricIndex,
+      selectedMetric,
       distributions,
       topComps,
+
       selectMetric
     }
   }
@@ -83,27 +96,31 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.section {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-}
-
 .container {
   display: flex;
   align-items: stretch;
   width: 100%;
   height: 100%;
   margin: 0;
+  overflow: auto;
+}
+
+.right-panel-section {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: 50%;
+  padding-left: 1%;
+  padding-top: 1%;
+  padding-bottom: 1%;
 }
 
 .section-title {
   font-size: x-large;
   font-weight: bold;
   text-align: start;
-  margin-top: 3%;
-  margin-bottom: 1%;
+  margin: 0;
+  padding: 0;
 }
 
 .section-subtitle {
@@ -134,39 +151,36 @@ export default defineComponent({
   width: 70%;
   background: #ECECEC;
   display: flex;
+  flex-wrap: nowrap;
+  padding: 0;
+}
+
+#metrics {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3%;
+}
+
+#metrics-list {
+  display: flex;
+}
+
+#diagram {
+  display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  padding: 1%;
+  height: 100%;
 }
 
-#metricsButtons {
-  flex-direction: row;
-  flex-shrink: 3;
-  align-items: flex-start;
+#topComparisons {
+  padding-right: 1%;
 }
-
-#metricsButtons > * {
-  margin-right: 1%;
-}
-
-#distribution {
-  flex-shrink: 2;
-  align-items: stretch;
-}
-
-#topComparisonsList {
-  min-height: 0;
-  align-items: stretch;
-}
-
 
 #logo {
   width: 40%;
   height: 20%;
   margin-bottom: 5%;
 }
-
-
 
 
 </style>

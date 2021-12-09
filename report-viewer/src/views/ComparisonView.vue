@@ -3,7 +3,7 @@
   <div id="leftPanel" v-bind:class="{hidden : hideLeftPanel}">
     <div class="logo-section">
       <img id="logo" src="@/assets/logo.png" alt="JPlag">
-      <button id="hide-button" @click="togglePanel"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
+      <button id="hide-button" @click="togglePanel" title="Hide sidebar"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
     </div>
     <TextInformation :has-additional-info="false" value="Matches Report" label=""/>
     <TextInformation label="First Submission:" :value="json.first_submission_id" :has-additional-info="false"/>
@@ -16,7 +16,7 @@
                 @match-selected="selectMatch"/>
   </div>
   <div id="rightPanel" v-bind:class="{extended : hideLeftPanel}">
-    <button id="show-button" v-bind:class="{hidden : !hideLeftPanel}" @click="togglePanel"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
+    <button id="show-button" v-bind:class="{hidden : !hideLeftPanel}" @click="togglePanel" title="Show sidebar"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
     <CodePanel id="codePanel1" :lines="filesOfFirst[selectedFileOfFirst]" :coloring="coloringFirst" panel-id="1"/>
     <CodePanel :lines="filesOfSecond[selectedFileOfSecond]"  :coloring="coloringSecond" panel-id="2"/>
   </div>
@@ -39,7 +39,10 @@ export default defineComponent({
     }
   },
   setup(props) {
+    console.log(props.jsonString)
     const json = JSON.parse(props.jsonString)
+    //const json = import(`../files/${props.jsonString}.json`)
+    console.log(json)
 
     const filesOfFirst = convertToFilesByName(json.files_of_first_submission)
     const filesOfSecond = convertToFilesByName(json.files_of_second_submission)

@@ -45,8 +45,8 @@ export default defineComponent({
   background: white;
   border-radius: 5px;
   box-shadow: #777777 2px 3px 3px;
-  padding: 5%;
-  width: 7vw;
+  padding: 1%;
+  margin-right: 1%;
 }
 
 
@@ -77,7 +77,7 @@ export default defineComponent({
 
 .selected {
   background: #FF5353;
-  box-shadow: #777777 0 0 0;
+  box-shadow: #777777 2px 3px 3px;
 }
 
 .selected p {
