@@ -161,7 +161,7 @@ public class Report { // Mostly legacy code with some minor improvements.
                     + "',3)\" NAME=\"" + i + "\">");
             htmlFile.print(new String(startA.file.getBytes()));
 
-            if (result.getOptions().getLanguage().usesIndex()) {
+            if (options.getLanguage().usesIndex()) {
                 htmlFile.print("(" + startA.getIndex() + "-" + endA.getIndex() + ")");
             } else {
                 htmlFile.print("(" + startA.getLine() + "-" + endA.getLine() + ")");
@@ -171,7 +171,7 @@ public class Report { // Mostly legacy code with some minor improvements.
                     + "',3)\" NAME=\"" + i + "\">");
             htmlFile.print(startB.file);
 
-            if (result.getOptions().getLanguage().usesIndex()) {
+            if (options.getLanguage().usesIndex()) {
                 htmlFile.print("(" + startB.getIndex() + "-" + endB.getIndex());
             } else {
                 htmlFile.print("(" + startB.getLine() + "-" + endB.getLine());
@@ -181,7 +181,7 @@ public class Report { // Mostly legacy code with some minor improvements.
                     ")</A><TD ALIGN=center>" + "<FONT COLOR=\"" + comparison.color(match.getLength()) + "\">" + match.getLength() + "</FONT>");
         }
 
-        if (result.getOptions().hasBaseCode()) {
+        if (options.hasBaseCode()) {
             htmlFile.print(
                     "<TR><TD BGCOLOR=\"#C0C0C0\"><TD>" + msg.getString("AllMatches.Basecode") + " " + comparison.basecodeSimilarityOfFirst() + "%");
             htmlFile.println("<TD>" + msg.getString("AllMatches.Basecode") + " " + comparison.basecodeSimilarityOfSecond() + "%<TD>&nbsp;");
@@ -306,7 +306,7 @@ public class Report { // Mostly legacy code with some minor improvements.
             }
         }
 
-        if (result.getOptions().hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
+        if (options.hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
             JPlagComparison baseCodeComparison = comparison.getBaseCodeMatches(j == 0);
 
             for (Match match : baseCodeComparison.getMatches()) {
@@ -386,18 +386,18 @@ public class Report { // Mostly legacy code with some minor improvements.
             f.println("</center>");
             f.println("</h3>");
             f.println("<HR>");
-            if (result.getOptions().getLanguage().isPreformatted()) {
+            if (options.getLanguage().isPreformatted()) {
                 f.println("<PRE>");
             }
             for (int y = 0; y < text[x].length; y++) {
                 f.print(text[x][y]);
-                if (!result.getOptions().getLanguage().isPreformatted()) {
+                if (!options.getLanguage().isPreformatted()) {
                     f.println("<BR>");
                 } else {
                     f.println();
                 }
             }
-            if (result.getOptions().getLanguage().isPreformatted()) {
+            if (options.getLanguage().isPreformatted()) {
                 f.println("</PRE>");
             }
         }
@@ -437,20 +437,20 @@ public class Report { // Mostly legacy code with some minor improvements.
         htmlFile.println("<TD><H1><BIG>" + title + "</BIG></H1></TD></TR>");
 
         htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Language") + ":</TD><TD>"
-                + result.getOptions().getLanguageOption().name() + "</TD></TR>");
+                + options.getLanguageOption().name() + "</TD></TR>");
         htmlFile.print("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Submissions") + ":</TD><TD>" + result.getNumberOfSubmissions());
 
         htmlFile.println("</TD></TR>");
 
-        if (result.getOptions().hasBaseCode()) {
+        if (options.hasBaseCode()) {
             htmlFile.print("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Basecode_submission") + ":</TD>" + "<TD>"
-                    + result.getOptions().getBaseCodeSubmissionName() + "</TD></TR>");
+                    + options.getBaseCodeSubmissionName() + "</TD></TR>");
         }
 
         if (options.getMaximumNumberOfComparisons() > 0) {
             htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Matches_displayed") + ":</TD>" + "<TD>");
             htmlFile.println(options.getMaximumNumberOfComparisons() + " of " + result.getComparisons().size() + " ("
-                    + msg.getString("Report.Treshold") + ": " + result.getOptions().getSimilarityThreshold() + "%)<br>");
+                    + msg.getString("Report.Treshold") + ": " + options.getSimilarityThreshold() + "%)<br>");
 
             htmlFile.println("</TD></TR>");
         }
@@ -460,10 +460,10 @@ public class Report { // Mostly legacy code with some minor improvements.
         htmlFile.println(
                 "<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Date") + ":</TD><TD>" + dateFormat.format(new Date()) + "</TD></TR>");
         htmlFile.println("<TR BGCOLOR=#aaaaff>" + "<TD><EM>" + msg.getString("Report.Minimum_Match_Length") + "</EM> ("
-                + msg.getString("Report.sensitivity") + "):</TD><TD>" + result.getOptions().getMinimumTokenMatch() + "</TD></TR>");
+                + msg.getString("Report.sensitivity") + "):</TD><TD>" + options.getMinimumTokenMatch() + "</TD></TR>");
         htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Suffixes") + ":</TD><TD>");
 
-        String[] fileSuffixes = result.getOptions().getFileSuffixes();
+        String[] fileSuffixes = options.getFileSuffixes();
 
         for (int i = 0; i < fileSuffixes.length; i++) {
             htmlFile.print(fileSuffixes[i] + (i < fileSuffixes.length - 1 ? ", " : "</TD></TR>\n"));
@@ -619,10 +619,10 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         htmlFile.println("  <div style=\"display: flex;\">");
 
-        if (result.getOptions().getLanguage().usesIndex()) {
+        if (options.getLanguage().usesIndex()) {
             writeIndexedSubmission(htmlFile, i, comparison, 0);
             writeIndexedSubmission(htmlFile, i, comparison, 1);
-        } else if (result.getOptions().getLanguage().supportsColumns()) {
+        } else if (options.getLanguage().supportsColumns()) {
             writeImprovedSubmission(htmlFile, i, comparison, 0);
             writeImprovedSubmission(htmlFile, i, comparison, 1);
         } else {
@@ -723,7 +723,7 @@ public class Report { // Mostly legacy code with some minor improvements.
             }
         }
 
-        if (result.getOptions().hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
+        if (options.hasBaseCode() && comparison.getFirstBaseCodeMatches() != null && comparison.getSecondBaseCodeMatches() != null) {
             JPlagComparison baseCodeComparison = comparison.getBaseCodeMatches(j == 0);
 
             for (Match currentMatch : baseCodeComparison.getMatches()) {
@@ -763,18 +763,18 @@ public class Report { // Mostly legacy code with some minor improvements.
             f.println("</center>");
             f.println("</h3>");
             f.println("<HR>");
-            if (result.getOptions().getLanguage().isPreformatted()) {
+            if (options.getLanguage().isPreformatted()) {
                 f.println("<PRE>");
             }
             for (int y = 0; y < text[x].length; y++) {
                 f.print(text[x][y]);
-                if (!result.getOptions().getLanguage().isPreformatted()) {
+                if (!options.getLanguage().isPreformatted()) {
                     f.println("<BR>");
                 } else {
                     f.println();
                 }
             }
-            if (result.getOptions().getLanguage().isPreformatted()) {
+            if (options.getLanguage().isPreformatted()) {
                 f.println("</PRE>");
             }
         }
