@@ -20,16 +20,12 @@ jobs:
       with:
         java-version: 14
         distribution: 'zulu'
-        
-    - name: Run Maven Install
-      run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-    
+            
     - name: Run Tests
       run: mvn test -B
       
     - name: Build Assembly
-      working-directory: jplag
-      run: mvn clean generate-sources package assembly:single
+      run: mvn clean package
       
     - name: Upload Assembly
       uses: actions/upload-artifact@v2
