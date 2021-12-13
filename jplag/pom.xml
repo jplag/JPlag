@@ -39,7 +39,6 @@
 					</archive>
 				</configuration>
 			</plugin>
-
 			<!-- <plugin> -->
 			<!-- <groupId>org.apache.maven.plugins</groupId> -->
 			<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
@@ -95,13 +94,11 @@
 		<dependency>
 			<groupId>net.sourceforge.argparse4j</groupId>
 			<artifactId>argparse4j</artifactId>
-			<version>0.9.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.stefanbirkner</groupId>
 			<artifactId>system-rules</artifactId>
 			<scope>test</scope>
-			<version>1.19.0</version>
 		</dependency>
 
 		<dependency>
