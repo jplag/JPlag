@@ -3,10 +3,10 @@
 </p>
 
 # JPlag - Detecting Software Plagiarism
-
-[![Maven Workflow](https://github.com/jplag/jplag/actions/workflows/maven.yml/badge.svg)](https://github.com/jplag/jplag/actions/workflows/maven.yml)
+[![CI Build](https://github.com/jplag/jplag/actions/workflows/maven.yml/badge.svg)](https://github.com/jplag/jplag/actions/workflows/maven.yml)
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
+[![Lines of code](https://img.shields.io/tokei/lines/github/jplag/jplag)](https://github.com/jplag/jplag/graphs/contributors)
 
 ## Download and Installation
 
