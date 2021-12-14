@@ -22,10 +22,10 @@ public class GreedyStringTiling implements TokenConstants {
     }
 
     /**
-     * Creating hashes in linear time. The hash-code will be written in every Token for the next <hash_length> token
+     * Creating hashes in linear time. The hash-code will be written in every Token for the next &lt;hash_length&gt; token
      * (includes the Token itself).
      * @param tokenList contains the tokens.
-     * @param hashLength is the hash length (condition: 1 < hashLength < 26)
+     * @param hashLength is the hash length (condition: 1 &lt; hashLength &lt; 26)
      * @param makeTable determines if a simple hash table is created in the structure.
      */
     public void createHashes(TokenList tokenList, int hashLength, boolean makeTable) {
