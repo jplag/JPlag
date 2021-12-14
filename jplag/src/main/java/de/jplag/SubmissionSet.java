@@ -56,9 +56,10 @@ public class SubmissionSet {
     }
 
     /**
-     * Retrieve the base code of this collection.
+     * Retrieve the base code of this collection.<br>
+     * <b>Asking for a non-existing basecode crashes the errorConsumer.</b>
+     * 
      * @return The base code submission.
-     * @note Asking for a non-existing basecode crashes the errorConsumer.
      * @see #hasBaseCode
      */
     public Submission getBaseCode() {
@@ -76,16 +77,16 @@ public class SubmissionSet {
     }
 
     /**
-     * Obtain the valid submissions.
-     * @note Changes in the list are reflected in this instance.
+     * Obtain the valid submissions.<br>
+     * <b>Changes in the list are reflected in this instance.</b>
      */
     public List<Submission> getSubmissions() {
         return submissions;
     }
 
     /**
-     * Obtain the invalid submissions.
-     * @note Changes in the list are reflected in this instance.
+     * Obtain the invalid submissions.<br>
+     * <b>Changes in the list are reflected in this instance.</b>
      */
     public List<Submission> getInvalidSubmissions() {
         return invalidSubmissions;
