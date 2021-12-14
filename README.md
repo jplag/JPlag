@@ -16,8 +16,9 @@
 
 ### Building from sources 
 1. Download or clone the code from this repository.
-2. Run `mvn clean package` from the root of the repository to compile & build all submodules. You will find the JARs in the respective `target` directories.
-3. You will find the generated JAR with all dependencies in `jplag/target`.
+2. Run `mvn clean package` from the root of the repository to compile and build all submodules.
+   Run `mvn clean package assembly:single` instead if you need the full jar which includes all dependencies.
+5. You will find the generated JARs in the subdirectory `jplag/target`.
 
 ## Usage
 JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
