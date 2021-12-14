@@ -19,5 +19,5 @@ jobs:
       - name: Publish package
         run: mvn --batch-mode deploy
         env:
-          MAVEN_USERNAME: ${{ jplag }}
+          MAVEN_USERNAME: jplag
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
