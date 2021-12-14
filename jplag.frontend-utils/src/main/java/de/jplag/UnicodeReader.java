@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Generic unicode text reader, which will use BOM mark to identify the encoding to be used. If BOM is not found then
- * use a given default encoding. UTF-8 is used if: BOM mark is not found and defaultEnc is NULL.<br />
+ * use a given default encoding. UTF-8 is used if: BOM mark is not found and defaultEnc is NULL.
  * Usage pattern:
  * 
  * <pre>

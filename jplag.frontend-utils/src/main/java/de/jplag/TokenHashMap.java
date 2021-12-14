@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * A {@link HashMap} that maps Integer keys to multiple Integer values. Note that all keys with identical
  * <code>(key % prime)</code> are mapped to the same values. Specifically, <code>prime</code> is the next prime number
- * that is larger or equal to the specified size (see {@link TokenHashMap#Table(int)}).
+ * that is larger or equal to the specified size (see {@link TokenHashMap#TokenHashMap(int)}).
  */
 public class TokenHashMap {
     private final Map<Integer, List<Integer>> mappedEntries;

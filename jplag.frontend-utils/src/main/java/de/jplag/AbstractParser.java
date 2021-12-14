@@ -2,7 +2,6 @@ package de.jplag;
 
 /**
  * @author Emeric Kwemou
- * @date 22.01.2005
  */
 public abstract class AbstractParser {
     protected ErrorConsumer errorConsumer;

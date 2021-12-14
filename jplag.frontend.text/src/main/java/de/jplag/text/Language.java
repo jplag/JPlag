@@ -7,9 +7,6 @@ import de.jplag.ErrorConsumer;
 import de.jplag.Token;
 import de.jplag.TokenList;
 
-/**
- * @Changed by Emeric Kwemou 29.01.2005
- */
 public class Language implements de.jplag.Language {
 
     private ErrorConsumer program;

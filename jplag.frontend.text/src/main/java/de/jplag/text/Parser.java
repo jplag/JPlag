@@ -11,9 +11,6 @@ import de.jplag.ParserToken;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
-/**
- * @Changed by Emeric Kwemou 29.01.2005
- */
 public class Parser extends AbstractParser implements TokenConstants {
 
     protected Hashtable<String, Integer> table = new Hashtable<>();
