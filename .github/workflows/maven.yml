@@ -32,14 +32,5 @@ jobs:
       with:
         name: "JPlag"
         path: "jplag/target/jplag-*-jar-with-dependencies.jar"
-        
-    - name: Publish Release
-      uses: marvinpinto/action-automatic-releases@latest
-      if: startsWith(github.ref, 'refs/tags/v')
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        draft: true
-        files: |
-          jplag/target/jplag-*-jar-with-dependencies.jar
       
 
