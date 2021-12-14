@@ -8,8 +8,19 @@
   <packaging>pom</packaging>
 
   <name>JPlag Plagiarism Detector</name>
-
+  <description>JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development.</description>
   <url>http://jplag.de</url>
+  <licenses>
+    <license>
+      <name>GNU General Public License v3.0</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git://github.com/jplag/JPlag.git</connection>
+    <developerConnection>scm:git:ssh://github.com:jplag/JPlag.git</developerConnection>
+    <url>http://github.com/jplag/JPlag/tree/master</url>
+  </scm>
 
   <issueManagement>
     <system>GitHub</system>
