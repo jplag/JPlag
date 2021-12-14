@@ -118,7 +118,7 @@
             </goals>
             <configuration>
               <keyname>0xC6E9DAC2</keyname>
-              <passphraseServerId>${gpg.passphrase}</passphraseServerId>
+              <passphrase>${env.GPG_PASSPHRASE}</passphrase>
             </configuration>
           </execution>
         </executions>
