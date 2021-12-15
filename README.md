@@ -5,6 +5,7 @@
 # JPlag - Detecting Software Plagiarism
 [![CI Build](https://github.com/jplag/jplag/actions/workflows/maven.yml/badge.svg)](https://github.com/jplag/jplag/actions/workflows/maven.yml)
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag)
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
 [![Lines of code](https://img.shields.io/tokei/lines/github/jplag/jplag)](https://github.com/jplag/jplag/graphs/contributors)
 
@@ -13,6 +14,15 @@
 ### Downloading a release
 * Download a [released version](https://github.com/jplag/jplag/releases).
 * In case you depend on the legacy version of JPlag we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
+
+### Via Maven
+JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag), it can be included as follows:
+```xml
+<dependency>
+  <groupId>de.jplag</groupId>
+  <artifactId>jplag</artifactId>
+</dependency>
+```
 
 ### Building from sources 
 1. Download or clone the code from this repository.
