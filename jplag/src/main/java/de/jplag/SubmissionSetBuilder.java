@@ -11,9 +11,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
@@ -45,11 +48,71 @@ public class SubmissionSetBuilder {
 
     /**
      * Builds a submission set for all submissions of a specific directory.
-     * @param rootDirectory is the specific directory.
      * @return the newly built submission set.
      * @throws ExitException if the directory cannot be read.
      */
-    public SubmissionSet buildSubmissionSet(File rootDirectory) throws ExitException {
+    public SubmissionSet buildSubmissionSet() throws ExitException {
+        // Read the root directory and collect valid looking submission entries from it.
+        File rootDirectory = new File(options.getRootDirectoryName());
+        verifyRootdirExistence(rootDirectory);
+        String[] fileNames = readSubmissionRootNames(rootDirectory);
+        Map<String, Submission> foundSubmissions = processRootDirEntries(rootDirectory, fileNames);
+
+        // Extract the basecode submission if necessary.
+        Optional<Submission> baseCodeSubmission = Optional.empty();
+        if (options.hasBaseCode()) {
+            verifyBaseCodeName();
+
+            String baseCodeName = options.getBaseCodeSubmissionName();
+            String baseCodePath = rootDirectory.toString() + File.separator + baseCodeName;
+
+            // Grab the basecode submission and erase it from the regular submissions.
+            Submission foundBaseCodeSubmission = foundSubmissions.get(baseCodeName);
+            if (foundBaseCodeSubmission == null) {
+                throw new BasecodeException("Basecode submission \"" + baseCodePath + "\" doesn't exist!");
+            }
+
+            foundSubmissions.remove(baseCodeName);
+            baseCodeSubmission = Optional.of(foundBaseCodeSubmission);
+            System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
+        }
+
+        // Merge everything in a submission set.
+        List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
+        return new SubmissionSet(submissions, baseCodeSubmission, errorCollector, options);
+    }
+
+    /**
+     * Verify that the given root directory exists.
+     */
+    private void verifyRootdirExistence(File rootDir) throws ExitException {
+        String rootDirectoryName = rootDir.getName();
+        if (!rootDir.exists()) {
+            throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectoryName));
+        }
+        if (!rootDir.isDirectory()) {
+            throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectoryName));
+        }
+    }
+
+    /**
+     * Verify the basecode name.
+     */
+    private void verifyBaseCodeName() throws ExitException {
+        String name = options.getBaseCodeSubmissionName();
+        if (name.contains(".")) {
+            throw new BasecodeException("The basecode directory name \"" + name + "\" cannot contain dots!");
+        }
+    }
+
+    /**
+     * Read entries in the given root directory.
+     */
+    private String[] readSubmissionRootNames(File rootDirectory) throws ExitException {
+        if (!rootDirectory.isDirectory()) {
+            throw new AssertionError("Given root is not a directory.");
+        }
+
         String[] fileNames;
 
         try {
@@ -59,40 +122,21 @@ public class SubmissionSetBuilder {
         }
 
         if (fileNames == null) {
-            throw new RootDirectoryException(
-                    "Cannot list files of the root directory! Make sure the specified root directory is in fact a directory.");
+            throw new RootDirectoryException("Cannot list files of the root directory!");
         }
 
         Arrays.sort(fileNames);
-
-        return mapFileNamesToSubmissions(fileNames, rootDirectory);
+        return fileNames;
     }
 
     /**
-     * Checks if a file has a valid suffix for the current language.
-     * @param file is the file to check.
-     * @return true if the file suffix matches the language.
+     * Process entries in the root directory to check whether they qualify as submissions.
+     * @param rootDirectory Root directory being examined.
+     * @param fileNames Entries found in the root directory.
+     * @return Candidate submissions ordered by their name.
      */
-    private boolean hasValidSuffix(File file) {
-        String[] validSuffixes = options.getFileSuffixes();
-
-        // This is the case if either the language frontends or the CLI did not set the valid suffixes array in options
-        if (validSuffixes == null || validSuffixes.length == 0) {
-            return true;
-        }
-        return Arrays.stream(validSuffixes).anyMatch(suffix -> file.getName().endsWith(suffix));
-    }
-
-    /**
-     * Checks if a file is excluded or not.
-     */
-    private boolean isFileExcluded(File file) {
-        return excludedFileNames.stream().anyMatch(excludedName -> file.getName().endsWith(excludedName));
-    }
-
-    private SubmissionSet mapFileNamesToSubmissions(String[] fileNames, File rootDirectory) throws ExitException {
-        List<Submission> submissions = new ArrayList<>();
-        Optional<Submission> baseCodeSubmission = Optional.empty();
+    private Map<String, Submission> processRootDirEntries(File rootDirectory, String[] fileNames) throws ExitException {
+        Map<String, Submission> foundSubmissions = new LinkedHashMap<>(fileNames.length); // Capacity is an over-estimate.
 
         for (String fileName : fileNames) {
             File submissionFile = new File(rootDirectory, fileName);
@@ -122,15 +166,31 @@ public class SubmissionSetBuilder {
             }
 
             Submission submission = new Submission(fileName, submissionFile, parseFilesRecursively(submissionFile), language, errorCollector);
-
-            if (options.hasBaseCode() && options.getBaseCodeSubmissionName().equals(fileName)) {
-                baseCodeSubmission = Optional.of(submission);
-            } else {
-                submissions.add(submission);
-            }
+            foundSubmissions.put(fileName, submission);
         }
+        return foundSubmissions;
+    }
 
-        return new SubmissionSet(submissions, baseCodeSubmission, errorCollector, options);
+    /**
+     * Checks if a file has a valid suffix for the current language.
+     * @param file is the file to check.
+     * @return true if the file suffix matches the language.
+     */
+    private boolean hasValidSuffix(File file) {
+        String[] validSuffixes = options.getFileSuffixes();
+
+        // This is the case if either the language frontends or the CLI did not set the valid suffixes array in options
+        if (validSuffixes == null || validSuffixes.length == 0) {
+            return true;
+        }
+        return Arrays.stream(validSuffixes).anyMatch(suffix -> file.getName().endsWith(suffix));
+    }
+
+    /**
+     * Checks if a file is excluded or not.
+     */
+    private boolean isFileExcluded(File file) {
+        return excludedFileNames.stream().anyMatch(excludedName -> file.getName().endsWith(excludedName));
     }
 
     /**

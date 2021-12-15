@@ -1,12 +1,9 @@
 package de.jplag;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
-import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -38,7 +35,6 @@ public class JPlag {
         coreAlgorithm = new GreedyStringTiling(options);
         initializeLanguage();
         initializeComparisonStrategy();
-        checkBaseCodeOption();
     }
 
     /**
@@ -49,7 +45,7 @@ public class JPlag {
     public JPlagResult run() throws ExitException {
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, errorCollector);
-        SubmissionSet submissionSet = builder.buildSubmissionSet(getRootDirectory());
+        SubmissionSet submissionSet = builder.buildSubmissionSet();
 
         if (submissionSet.hasBaseCode()) {
             coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
@@ -64,47 +60,6 @@ public class JPlag {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         errorCollector.print("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()), null);
         return result;
-    }
-
-    /**
-     * This method checks whether the base code directory value is valid.
-     */
-    private void checkBaseCodeOption() throws ExitException {
-        getRootDirectory(); // Performs checks on the root directory.
-
-        if (options.hasBaseCode()) {
-            String baseCode = options.getBaseCodeSubmissionName();
-            if (baseCode.contains(".")) {
-                throw new BasecodeException("The basecode directory name \"" + baseCode + "\" cannot contain dots!");
-            }
-            String baseCodePath = options.getRootDirectoryName() + File.separator + baseCode;
-            if (!new File(baseCodePath).exists()) {
-                throw new BasecodeException("Basecode directory \"" + baseCodePath + "\" doesn't exist!");
-            }
-
-            String subdirectory = options.getSubdirectoryName();
-            if (subdirectory != null && subdirectory.length() != 0) {
-                if (!new File(baseCodePath, subdirectory).exists()) {
-                    throw new BasecodeException("Basecode directory doesn't contain" + " the subdirectory \"" + subdirectory + "\"!");
-                }
-            }
-            System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
-        }
-    }
-
-    /**
-     * Check sanity of the root directory name in the options, and construct file system access to it.
-     */
-    private File getRootDirectory() throws ExitException {
-        String rootDirectoryName = options.getRootDirectoryName();
-        File rootDir = new File(rootDirectoryName);
-        if (!rootDir.exists()) {
-            throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectoryName));
-        }
-        if (!rootDir.isDirectory()) {
-            throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectoryName));
-        }
-        return rootDir;
     }
 
     private void initializeComparisonStrategy() {

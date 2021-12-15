@@ -31,7 +31,7 @@ public class Submission implements Comparable<Submission> {
     private final String name;
 
     /**
-     * Root of the submission (either a file or a directory).
+     * Root of the submission files (including the subdir if used).
      */
     private final File submissionRoot;
 
