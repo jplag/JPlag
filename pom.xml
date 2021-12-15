@@ -41,7 +41,7 @@
     </repository>
   </distributionManagement>
   <organization>
-    <name>Karlsruhe Institute of Technology (KIT), Institute for Program Structures and Data Organization</name>
+    <name>Karlsruhe Institute of Technology (KIT), KASTEL – Institute of Information Security and Dependability</name>
     <url>http://www.ipd.kit.edu</url>
   </organization>
 
@@ -52,7 +52,7 @@
       <email>hahner@kit.edu</email>
       <url>https://sdq.ipd.kit.edu/people/sebastian-hahner/</url>
       <organization>KASTEL</organization>
-      <organizationUrl>https://sdq.ipd.kit.edu/</organizationUrl>
+      <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
       <timezone>GMT+1</timezone>
     </developer>
     <developer>
@@ -61,7 +61,7 @@
       <email>saglam@kit.edu</email>
       <url>https://sdq.ipd.kit.edu/people/timur-saglam/</url>
       <organization>KASTEL</organization>
-      <organizationUrl>https://sdq.ipd.kit.edu/</organizationUrl>
+      <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
       <timezone>GMT+1</timezone>
     </developer>
   </developers>
