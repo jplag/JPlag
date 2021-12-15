@@ -1,4 +1,4 @@
-name: Maven Workflow
+name: CI Build
 
 on:
   push: 
