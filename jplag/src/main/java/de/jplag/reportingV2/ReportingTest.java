@@ -14,9 +14,9 @@ public class ReportingTest {
 		JPlagOptions options = new JPlagOptions("C:\\Uni\\PISE\\jplag-try-out\\src\\submission", LanguageOption.JAVA_1_9);
 		JPlag jPlag = new JPlag(options);
 		JPlagResult result = jPlag.run();
-		ReportStrategy reporting = new ReportImplementation();
-		List<String> jsonStrings = reporting.getJsonStrings(result);
-		System.out.println(jsonStrings.get(0));
-		System.out.println(jsonStrings.get(1));
+		Report reporting = new JsonReport();
+		if ( reporting.saveReport(result) ) {
+			System.out.println("Successfully saved report.");
+		}
 	}
 }
