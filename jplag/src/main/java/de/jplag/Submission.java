@@ -4,13 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -287,59 +285,31 @@ public class Submission implements Comparable<Submission> {
         return name;
     }
 
-    /** Physical copy. :-) */
-    private void copyFile(File in, File out) {
-        byte[] buffer = new byte[10000];
-        try {
-            FileInputStream input = new FileInputStream(in);
-            FileOutputStream output = new FileOutputStream(out);
-            int count;
-            do {
-                count = input.read(buffer);
-                if (count != -1) {
-                    output.write(buffer, 0, count);
-                }
-            } while (count != -1);
-            input.close();
-            output.close();
-        } catch (IOException e) {
-            errorCollector.print("Error copying file: " + e.toString() + "\n", null);
-        }
-    }
-
-    /*
-     * This method is used to copy files that can not be parsed to a special folder: de/jplag/errors/java old_java scheme
-     * cpp /001/(...files...) /002/(...files...)
+    /**
+     * This method is used to copy files that can not be parsed to a special folder.
      */
     private void copySubmission() {
-        File errorDir = null;
-        DecimalFormat format = new DecimalFormat("0000");
-
-        try {
-            URL url = Submission.class.getResource(ERROR_FOLDER);
-            errorDir = new File(url.getFile());
-        } catch (NullPointerException e) {
-            return;
-        }
-
-        errorDir = new File(errorDir, language.getShortName());
-
-        if (!errorDir.exists()) {
-            errorDir.mkdir();
-        }
-
-        int i = 0;
-        File destDir;
-
-        while ((destDir = new File(errorDir, format.format(i))).exists()) {
-            i++;
-        }
-
-        destDir.mkdir();
-
+        File rootDirectory = submissionRoot.getParentFile();
+        assert rootDirectory != null;
+        File submissionDirectory = createSubdirectory(rootDirectory, ERROR_FOLDER, language.getShortName(), name);
         for (File file : files) {
-            copyFile(new File(file.getAbsolutePath()), new File(destDir, file.getName()));
+            try {
+                Files.copy(file.toPath(), new File(submissionDirectory, file.getName()).toPath());
+            } catch (IOException exception) {
+                errorCollector.print("Error copying file: " + exception.toString() + "\n", null);
+            }
         }
+    }
+    
+    private File createSubdirectory(File parent, String... subdirectoryNames) {
+        File subdirectory = parent;
+        for (String name : subdirectoryNames) {
+            subdirectory = new File(subdirectory, name); 
+        }
+        if (!subdirectory.exists()) {
+            subdirectory.mkdirs();
+        }
+        return subdirectory;
     }
 
     /**
