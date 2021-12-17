@@ -28,9 +28,9 @@ export default defineComponent({
         datasets: [{
           label: 'Count',
           data: props.distribution,
-          backgroundColor: 'rgba(186,22,22,0.5)',
+          backgroundColor: 'rgba(149, 168, 241, 0.5)',
           borderWidth: 2,
-          borderColor: 'rgba(186,22,22,1)'
+          borderColor: 'rgba(149, 168, 241, 1)'
         }]
     })
 
@@ -65,9 +65,9 @@ export default defineComponent({
         datasets: [{
           label: 'Count',
           data: val,
-          backgroundColor: 'rgba(186,22,22,0.5)',
+          backgroundColor: 'rgba(149, 168, 241, 0.5)',
           borderWidth: 2,
-          borderColor: 'rgba(186,22,22,1)'
+          borderColor: 'rgba(149, 168, 241, 1)'
         }]
       }
 

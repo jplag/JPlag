@@ -1,19 +1,24 @@
 <template>
   <div class="container">
     <div id="leftPanel">
-      <img id="logo" src="@/assets/logo.png" alt="JPlag">
-      <TextInformation label="Directory path: " :value="json.submission_folder_path" :has-additional-info="false"/>
-      <TextInformation label="Base code path: " :value="json.base_code_folder_path" :has-additional-info="false"/>
-      <TextInformation label="Language: " :value="json.language" :has-additional-info="true" additional-info-label="see extensions"/>
-      <TextInformation label="Submissions: " :value="json.submission_ids.length" :has-additional-info="true" additional-info-label="see ids"/>
-      <TextInformation label="Failed to parse: " value="No info yet" :has-additional-info="true" additional-info-label="see ids"/>
-      <TextInformation label="Date of execution: " :value="json.date_of_execution" :has-additional-info="false"/>
-      <TextInformation label="Duration (in ms): " :value="json.execution_time" :has-additional-info="false"/>
+      <h1>JPlag Report</h1>
+      <p class="section-title">Main Info:</p>
+      <div id="basicInfo">
+      <TextInformation label="Directory path" :value="json.submission_folder_path" :has-additional-info="false"/>
+      <TextInformation label="Language" :value="json.language" :has-additional-info="true" :additional-info="json.file_extensions" additional-info-title="File extensions:"/>
+        <TextInformation :has-additional-info="false" :value="json.match_sensitivity" label="Match Sensitivity"/>
+      <TextInformation label="Submissions" :value="json.submission_ids.length" :has-additional-info="true" :additional-info="json.submission_ids" additional-info-title="Submission IDs:"/>
+      <TextInformation label="Date of execution" :value="json.date_of_execution" :has-additional-info="false"/>
+      <TextInformation label="Duration (in ms)" :value="json.execution_time" :has-additional-info="false"/>
+      </div>
+      <div id="logo-section">
+        <img id="logo" src="@/assets/logo-nobg.png" alt="JPlag">
+      </div>
     </div>
     <div id="rightPanel">
       <div class="right-panel-section">
         <div id="metrics">
-          <p class="section-title">Select Metric:</p>
+          <p class="section-title">Metric:</p>
           <div id="metrics-list">
             <MetricButton v-for="(metric, i) in json.metrics" :key="metric.name"
                           :id="metric.name"
@@ -96,6 +101,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+h1 {
+  text-align: left;
+  margin-top: 2%;
+}
 .container {
   display: flex;
   align-items: stretch;
@@ -140,11 +149,22 @@ export default defineComponent({
 
 #leftPanel {
   width: 30%;
-  background: #FF5353;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   padding: 1%;
+  background: var(--background-color);
+}
+
+#basicInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 3%;
+  margin-top: 1%;
+  background: var(--primary-color);
+  border-radius: 10px;
+  box-shadow: var(--shadow-color) 2px 3px 3px;
 }
 
 #rightPanel {
@@ -157,14 +177,14 @@ export default defineComponent({
 
 #metrics {
   display: flex;
-  flex-direction: column;
-  margin-bottom: 3%;
+  justify-content: start;
+  margin-bottom: 1%;
 }
 
 #metrics-list {
   display: flex;
+  margin-left: 2%;
 }
-
 #diagram {
   display: flex;
   flex-direction: column;
@@ -176,10 +196,19 @@ export default defineComponent({
   padding-right: 1%;
 }
 
+#title {
+  display: flex;
+  justify-content: start;
+
+}
+
+#logo-section {
+  justify-content: center;
+  padding: 5%;
+}
+
 #logo {
-  width: 40%;
-  height: 20%;
-  margin-bottom: 5%;
+  flex-shrink: 2;
 }
 
 

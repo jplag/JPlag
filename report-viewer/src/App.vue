@@ -14,6 +14,28 @@
   src: url("./fonts/jetbrains-mono/JetBrainsMono-Bold.ttf");
   font-weight: bold;
 }
+
+:root {
+  --primary-color: #f8534b;
+  --primary-color-light: #ff8777;
+  --primary-color-dark: #be1522;
+  --secondary-color: #ff9f8d;
+  --secondary-color-light: #ffd1bd;
+  --secondary-color-dark: #c96f60;
+  --tertiary-color: #95a8f1;
+  --tertiary-color-light: #c8d9ff;
+  --tertiary-color-dark: #6479be;
+  --quaternary-color: #f3eed9;
+  --quaternary-color-light: #ffffff;
+  --quaternary-color-dark: #c0bca8;
+  --background-color: #ECECEC;
+  --background-color-accent: #FFFFFF;
+  --on-primary-color: #303030;
+  --on-primary-color-accent: #FFFFFF;
+  --on-secondary-color: #000000;
+  --shadow-color: #777777;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

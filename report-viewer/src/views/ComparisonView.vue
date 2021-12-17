@@ -2,7 +2,7 @@
 <div class="container">
   <div id="leftPanel" v-bind:class="{hidden : hideLeftPanel}">
     <div class="logo-section">
-      <img id="logo" src="@/assets/logo.png" alt="JPlag">
+      <img id="logo" src="@/assets/logo-nobg.png" alt="JPlag">
       <button id="hide-button" @click="togglePanel" title="Hide sidebar"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
     </div>
     <TextInformation :has-additional-info="false" value="Matches Report" label=""/>
@@ -120,7 +120,7 @@ export default defineComponent({
 
 #leftPanel {
   width: 25%;
-  background: #FF5353;
+  background: var(--primary-color);
   display: flex;
   flex-direction: column;
   align-items: stretch;

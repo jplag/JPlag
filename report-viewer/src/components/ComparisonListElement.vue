@@ -63,6 +63,7 @@ export default defineComponent({
   align-items: center;
   justify-content: space-between;
   padding: 2% 3%;
+  margin-bottom: 2%;
   box-shadow: #777777 0 3px 3px;
   border-radius: 40px;
 }
