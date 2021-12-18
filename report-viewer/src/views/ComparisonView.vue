@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onBeforeMount } from "vue";
 import TextInformation from "@/components/TextInformation";
 import MatchList from "@/components/MatchList";
 import CodePanel from "@/components/CodePanel";
@@ -34,64 +34,67 @@ export default defineComponent({
   name: "ComparisonView",
   components: {CodePanel, MatchList, TextInformation},
   props: {
-    jsonString: {
+    id1: {
+      type: String
+    },
+    id2: {
       type: String
     }
   },
   setup(props) {
-    console.log(props.jsonString)
-    const json = JSON.parse(props.jsonString)
-    //const json = import(`../files/${props.jsonString}.json`)
-    console.log(json)
+    const fileName = props.id1.concat("-").concat(props.id2)
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const json = require(`../files/${fileName}.json`)
 
     const filesOfFirst = convertToFilesByName(json.files_of_first_submission)
     const filesOfSecond = convertToFilesByName(json.files_of_second_submission)
-    const selectedFileOfFirst = ref(Object.keys(filesOfFirst)[0])
-    const selectedFileOfSecond = ref(Object.keys(filesOfSecond)[0])
 
     const groupedMatches = ref(json.matches.reduce( (acc, val) => {
-          let name = val.first_file_name
-          let subname = val.second_file_name
-          if(!acc[name]) {
-            acc[name] = {}
-          }
-          if(!acc[name][subname]) {
-            acc[name][subname] = []
-          }
-          let newVal = {...val, color: generateColor()}
-          acc[name][subname].push(newVal)
-          return acc;
-        }, {})
-    )
+            let name = val.first_file_name
+            let subname = val.second_file_name
+            if(!acc[name]) {
+              acc[name] = {}
+            }
+            if(!acc[name][subname]) {
+              acc[name][subname] = []
+            }
+            let newVal = {...val, color: generateColor()}
+            acc[name][subname].push(newVal)
+            return acc;
+          }, {})
+      )
 
-    let coloringFirst = ref(generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 1))
-    let coloringSecond = ref(generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 2))
+    const selectedFileOfFirst = ref(Object.keys(groupedMatches.value)[0])
+    const selectedFileOfSecond = ref(Object.keys(groupedMatches.value[selectedFileOfFirst.value])[0])
 
-    const selectFiles = (e , file1, file2) => {
-      selectedFileOfFirst.value = file1
-      selectedFileOfSecond.value = file2
-      coloringFirst.value = generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 1)
-      coloringSecond.value = generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 2)
-    }
+      let coloringFirst = ref(generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 1))
+      let coloringSecond = ref(generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 2))
 
-    const selectMatch = (e, s1, e1, s2, e2) => {
-      document.getElementById("1".concat(s1)).scrollIntoView()
-      document.getElementById("2".concat(s2)).scrollIntoView()
-    }
+      const selectFiles = (e , file1, file2) => {
+        selectedFileOfFirst.value = file1
+        selectedFileOfSecond.value = file2
+        coloringFirst.value = generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 1)
+        coloringSecond.value = generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 2)
+      }
+
+      const selectMatch = (e, s1, e1, s2, e2) => {
+        document.getElementById("1".concat(s1)).scrollIntoView()
+        document.getElementById("2".concat(s2)).scrollIntoView()
+      }
 
 
-    const hideLeftPanel = ref(false)
-    const togglePanel = () => {
-      hideLeftPanel.value = !hideLeftPanel.value
-    }
+      const hideLeftPanel = ref(false)
+      const togglePanel = () => {
+        hideLeftPanel.value = !hideLeftPanel.value
+      }
 
-    return {
-      json, filesOfFirst, filesOfSecond, selectedFileOfFirst, selectedFileOfSecond, hideLeftPanel,
-      coloringFirst, coloringSecond, groupedMatches,
-      selectFiles,
-      selectMatch,
-      togglePanel
-    }
+      return {
+        json, filesOfFirst, filesOfSecond, selectedFileOfFirst, selectedFileOfSecond, hideLeftPanel,
+        coloringFirst, coloringSecond, groupedMatches,
+        selectFiles,
+        selectMatch,
+        togglePanel
+      }
   }
 })
 </script>

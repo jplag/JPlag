@@ -30,7 +30,8 @@ export default defineComponent({
           data: props.distribution,
           backgroundColor: 'rgba(149, 168, 241, 0.5)',
           borderWidth: 2,
-          borderColor: 'rgba(149, 168, 241, 1)'
+          borderColor: 'rgba(149, 168, 241, 1)',
+          tickColor: '#860000'
         }]
     })
 
@@ -40,12 +41,20 @@ export default defineComponent({
       indexAxis: 'y',
       scales: {
         x: {
-          suggestedMax: maxVal.value + 5
+          suggestedMax: maxVal.value + 5,
+          ticks: {
+            color: '#860000',
+          }
+        },
+        y: {
+          ticks: {
+            color: '#860000',
+          }
         }
       },
       plugins : {
         datalabels: {
-          color: '#000000',
+          color: '#860000',
           font: {
             weight: 'bold'
           },
@@ -67,7 +76,7 @@ export default defineComponent({
           data: val,
           backgroundColor: 'rgba(149, 168, 241, 0.5)',
           borderWidth: 2,
-          borderColor: 'rgba(149, 168, 241, 1)'
+          borderColor: 'rgba(149, 168, 241, 1)',
         }]
       }
 
@@ -78,12 +87,20 @@ export default defineComponent({
         indexAxis: 'y',
         scales: {
           x: {
-            suggestedMax: maxVal.value + 5
+            suggestedMax: maxVal.value + 5,
+            ticks: {
+              color: '#860000',
+            }
+          },
+          y: {
+            ticks: {
+              color: '#860000',
+            }
           }
         },
         plugins: {
           datalabels: {
-            color: '#000000',
+            color: '#be1523',
             font: {
               weight: 'bold'
             },
@@ -109,11 +126,12 @@ export default defineComponent({
 
 <style scoped>
 .wrapper {
-  background: white;
+  background: var(--background-color-accent);
   border-radius: 10px;
   box-shadow: #777777 2px 3px 3px;
   display: flex;
   height: 100%;
+
 }
 
 .chart {

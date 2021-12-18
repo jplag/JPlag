@@ -1,11 +1,11 @@
 <template>
-  <div class="line-wrap" :style="{background : color}" :class="{'first-line' : isFirst, 'last-line' : isLast}" @click="linkMatch">
-    <pre :id="text" v-bind:class="{ blurred : isBlurred, 'match-line' : color !== '#ECECEC' }">{{ lineNumber }} {{ text }}</pre>
+  <div class="line-wrap" :style="{background : color}" :class="{'first-line' : isFirst, 'last-line' : isLast}">
+    <pre :id="text" v-bind:class="{ 'match-line' : color !== '#ECECEC' }">{{ lineNumber }} {{ text }}</pre>
   </div>
 </template>
 
 <script>
-import { defineComponent, onMounted } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "LineOfCode",
@@ -25,6 +25,9 @@ export default defineComponent({
     startOfMatch: {
       type: Number
     },
+    fileIndex: {
+      type: Number,
+    },
     matchLink: {
       type: String
     },
@@ -35,14 +38,8 @@ export default defineComponent({
       type: Boolean,
     }
   },
-  setup(props) {
-    const linkMatch = () => {
-      if(props.matchLink !== "-1") {
-        document.getElementById(props.matchLink).scrollIntoView()
-      }
-    }
+  setup() {
     return {
-      linkMatch
     }
   }
 })
@@ -56,10 +53,7 @@ pre {
   font-family: "JetBrains Mono";
   font-size: x-small;
 }
-.blurred {
-  filter: blur(2px);
-  -webkit-filter: blur(2px);
-}
+
 .first-line {
   margin-top: 2%;
 }

@@ -45,7 +45,7 @@ export default defineComponent({
   background: white;
   border-radius: 5px;
   box-shadow: #777777 2px 3px 3px;
-  padding: 3%;
+  padding: 5%;
   margin-right: 5%;
 }
 
@@ -62,7 +62,7 @@ export default defineComponent({
 
 .wrapper:hover {
   background: var(--tertiary-color-dark);
-  color: var(--on-primary-color-accent);
+  color: white;
 }
 
 .metric {

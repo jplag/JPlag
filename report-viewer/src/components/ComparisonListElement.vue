@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper-list-element" @click="navigateToComparisonView(generateName(submission1, submission2))">
+  <div class="wrapper-list-element" @click="navigateToComparisonView()">
       <p class="index">{{ index }}.</p>
       <p class="submission-id">{{ submission1 }}</p>
       <img src="@/assets/double_arrow_black_18dp.svg" alt=">>"/>
@@ -35,21 +35,16 @@ export default defineComponent({
   setup(props) {
     let formattedMatchPercentage = props.matchPercentage.toFixed(2)
 
-    const navigateToComparisonView = (file) => {
-      import(`../files/${file}.json`).then( value => {
-        router.push({
-          name: "ComparisonView",
-          params: {str: JSON.stringify(value.default)}
-        })
+    const navigateToComparisonView = () => {
+      router.push({
+        name: "ComparisonView",
+        params: {id1 : props.submission1, id2 : props.submission2}
       })
     }
 
-    const generateName = (sub1, sub2) => { return sub1.concat("-").concat(sub2) }
-
     return {
       formattedMatchPercentage,
-      navigateToComparisonView,
-      generateName
+      navigateToComparisonView
     }
   }
 })
@@ -57,7 +52,7 @@ export default defineComponent({
 
 <style scoped>
 .wrapper-list-element {
-  background: white;
+  background: var(--quaternary-color);
   display: flex;
   flex-direction: row;
   align-items: center;

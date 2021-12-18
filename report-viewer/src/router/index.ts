@@ -1,7 +1,7 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import {createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw} from "vue-router";
 import Overview from "@/views/Overview.vue";
 import FileUpload from "@/views/FileUpload.vue"
-import ComparisonView from "@/views/ComparisonView.vue"
+import ComparisonView2 from "@/views/ComparisonView2.vue"
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,15 +16,15 @@ const routes: Array<RouteRecordRaw> = [
     //props: route => ({ jsonString : route.params.str })
   },
   {
-    path: "/comparison",
-    name: "ComparisonView",
-    component: ComparisonView,
-    props: route => ({ jsonString : route.params.str})
+    path: "/comparison/:id1/:id2",
+    name: "ComparisonView2",
+    component: ComparisonView2,
+    props: true
   },
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
 

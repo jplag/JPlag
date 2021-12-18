@@ -67,7 +67,7 @@ hr {
 
 .wrapper {
   display: flex;
-  background: var(--primary-color);
+  background: var(--primary-color-light);
   justify-content: space-between;
   border-radius: 10px;
 }
