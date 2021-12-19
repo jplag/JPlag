@@ -1,41 +1,46 @@
 <template>
   <div class="container">
-    <button id="show-button" v-bind:class="{hidden : !hideLeftPanel}" @click="togglePanel" title="Show sidebar">
+    <button id="show-button" :class="{hidden : !hideLeftPanel}" @click="togglePanel" title="Show sidebar">
       <img src="@/assets/double_arrow_white_24dp.svg" alt="show">
     </button>
     <div id="sidebar" :class="{ hidden : hideLeftPanel }">
-      <button id="hide-button" @click="togglePanel" title="Hide sidebar"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
+      <div class="title-section">
+        <h1>JPlag Comparison</h1>
+        <button id="hide-button" @click="togglePanel" title="Hide sidebar">
+          <img src="@/assets/keyboard_double_arrow_left_white_24dp.svg" alt="hide"></button>
+      </div>
       <TextInformation label="Submission 1" :value="id1" :has-additional-info="false"/>
       <TextInformation label="Submission 2" :value="id2" :has-additional-info="false"/>
       <TextInformation label="Match %" :value="json.match_percentage" :has-additional-info="false"/>
+      <MatchTable :matches="coloredMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
     </div>
     <div class="files-container" id="files1">
       <VueDraggableNext>
       <CodePanel v-for="(file, index) in Object.keys(filesOfFirst)"
-                 :lines="filesOfFirst[file]"
+                 :lines="filesOfFirst[file].lines"
                  :title="file"
                  :file-index="index"
                  :matches="!matchesInFirst[file] ? [] : matchesInFirst[file]"
                  :key="file.concat(index)"
-                 :collapse="filesOfFirstCollapsed[index]"
-                 @toggle-collapse="toggleCollapseFirst(index)"
+                 :collapse="filesOfFirst[file].collapsed"
+                 @toggle-collapse="toggleCollapseFirst(file)"
                  @line-selected="showMatchInSecond"
-                 panel-id="1"
+                 :panel-id="1"
       />
       </VueDraggableNext>
     </div>
     <div class="files-container" id="files2">
       <VueDraggableNext>
         <CodePanel v-for="(file, index) in Object.keys(filesOfSecond)"
-                   :lines="filesOfSecond[file]"
+                   :lines="filesOfSecond[file].lines"
                    :title="file"
                    :file-index="index"
                    :matches="!matchesInSecond[file] ? [] : matchesInSecond[file]"
                    :key="file.concat(index)"
-                   :collapse="filesOfSecondCollapsed[index]"
-                   @toggle-collapse="toggleCollapseSecond(index)"
+                   :collapse="filesOfSecond[file].collapsed"
+                   @toggle-collapse="toggleCollapseSecond(file)"
                    @line-selected="showMatchInFirst"
-                   panel-id="2"
+                   :panel-id="2"
                    />
       </VueDraggableNext>
     </div>
@@ -44,14 +49,15 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import {convertToFilesByName, generateColor, groupMatchesByFileName} from "@/utils/Utils";
+import {convertToFilesByName, generateColor, generateColorsForMatches,generateLineCodeLink, groupMatchesByFileName} from "@/utils/Utils";
 import { VueDraggableNext } from 'vue-draggable-next'
 import CodePanel from "@/components/CodePanel";
 import TextInformation from "@/components/TextInformation";
+import MatchTable from "@/components/MatchTable";
 
 export default defineComponent({
   name: "ComparisonView2",
-  components: {TextInformation, VueDraggableNext, CodePanel},
+  components: {MatchTable, TextInformation, VueDraggableNext, CodePanel},
   props: {
     id1: {
       type: String,
@@ -65,27 +71,34 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const json = require(`../files/${fileName}.json`)
 
-    const filesOfFirst = convertToFilesByName(json.files_of_first_submission)
-    const filesOfSecond = convertToFilesByName(json.files_of_second_submission)
-    const filesOfFirstCollapsed = ref(Object.keys(filesOfFirst).map( _ => false ))
-    const filesOfSecondCollapsed = ref(Object.keys(filesOfSecond).map( _ => false ))
-    const coloredMatches = json.matches.map( m => { return {...m, color : generateColor()} })
+    const filesOfFirst = ref(convertToFilesByName(json.files_of_first_submission))
+    const filesOfSecond = ref(convertToFilesByName(json.files_of_second_submission))
+    const filesOfFirstCollapsed = ref(Object.keys(filesOfFirst.value).map( _ => false ))
+    const filesOfSecondCollapsed = ref(Object.keys(filesOfSecond.value).map( _ => false ))
+    const colors = generateColorsForMatches(json.matches.length)
+    const coloredMatches = json.matches.map( (m, index) => { return {...m, color : colors[index]} })
 
     const matchesInFirst = groupMatchesByFileName(coloredMatches, 1)
     const matchesInSecond = groupMatchesByFileName(coloredMatches, 2)
 
-    const toggleCollapseFirst = (index) => { filesOfFirstCollapsed.value[index] = !filesOfFirstCollapsed.value[index] }
-    const toggleCollapseSecond = (index) => { filesOfSecondCollapsed.value[index] = !filesOfSecondCollapsed.value[index] }
+    const toggleCollapseFirst = (title) => { filesOfFirst.value[title].collapsed = !filesOfFirst.value[title].collapsed }
+    const toggleCollapseSecond = (title) => { filesOfSecond.value[title].collapsed = !filesOfSecond.value[title].collapsed }
 
-    const showMatchInFirst = ( e, fileIndex, matchLink ) => {
-      if( !filesOfFirstCollapsed.value[fileIndex] ) { toggleCollapseFirst(fileIndex) }
-      document.getElementById(matchLink).scrollIntoView()
+    const showMatchInFirst = ( e, panel, file, line ) => {
+      if( !filesOfFirst.value[file].collapsed ) { toggleCollapseFirst(file) }
+      document.getElementById(generateLineCodeLink(panel, file, line)).scrollIntoView()
     }
 
-    const showMatchInSecond = ( e, fileIndex, matchLink ) => {
-      if( !filesOfSecondCollapsed.value[fileIndex] ) { toggleCollapseSecond(fileIndex) }
-      document.getElementById(matchLink).scrollIntoView()
+    const showMatchInSecond = ( e, panel, file, line ) => {
+      if( !filesOfSecond.value[file].collapsed ) { toggleCollapseSecond(file) }
+      document.getElementById(generateLineCodeLink(panel, file, line)).scrollIntoView()
     }
+
+    const showMatch = ( e, match ) => {
+      showMatchInFirst(e, 1, match.first_file_name, match.start_in_first)
+      showMatchInSecond(e, 2, match.second_file_name, match.start_in_second)
+    }
+
 
     const hideLeftPanel = ref(true)
     const togglePanel = () => {
@@ -100,12 +113,14 @@ export default defineComponent({
       filesOfSecondCollapsed,
       matchesInFirst,
       matchesInSecond,
+      coloredMatches,
       hideLeftPanel,
 
       toggleCollapseFirst,
       toggleCollapseSecond,
       showMatchInFirst,
       showMatchInSecond,
+      showMatch,
       togglePanel
     }
   }
@@ -126,10 +141,18 @@ export default defineComponent({
   display: flex;
   flex-wrap: nowrap;
   flex-direction: column;
+  padding-top: 1%;
   width: 100%;
-  height: max-content;
-  padding: 1%;
   overflow: auto;
+}
+
+.title-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.title-section > h1 {
+  color: var(--on-primary-color);
 }
 
 .hidden {
@@ -139,14 +162,26 @@ export default defineComponent({
 #sidebar {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex-wrap: nowrap;
+  width: 60%;
   background: var(--primary-color-light);
   padding: 1%;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 #hide-button {
+  display: flex;
+  flex-direction: column;
   background: transparent;
+  border-radius: 10px;
+  height: max-content;
   border: none;
+}
+
+#hide-button:hover {
+  cursor: pointer;
+  background: var(--primary-color-dark);
 }
 
 #show-button {

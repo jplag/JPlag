@@ -13,11 +13,10 @@
                 :color="coloringArray[index]"
                 :line-number="index"
                 :text="line"
-                :id="panelId.concat(title).concat(index)"
-                :match-link="linksArray[index]"
+                :id="String(panelId).concat(title).concat(index)"
                 :is-last="isLast[index]"
                 :is-first="isFirst[index]"
-                  @click="$emit('lineSelected', $event, fileIndex, linksArray[index] )"/>
+                  @click="$emit('lineSelected', $event, linksArray[index].panel, linksArray[index].file, linksArray[index].line )"/>
     </div>
   </div>
 </template>
@@ -25,6 +24,7 @@
 <script>
 import {ref, defineComponent, watchEffect} from "vue";
 import LineOfCode from "./LineOfCode";
+import {generateLineCodeLink} from "@/utils/Utils";
 
 export default defineComponent({
   name: "CodePanel",
@@ -44,7 +44,7 @@ export default defineComponent({
       type: Array
     },
     panelId: {
-      type: String
+      type: Number
     },
     collapse: {
       type: Boolean
@@ -62,7 +62,7 @@ export default defineComponent({
     props.matches.forEach(m => {
       for (let i = m.start; i <= m.end; i++) {
         coloringArray.value[i] = m.color
-        linksArray.value[i] = m.link
+        linksArray.value[i] = { panel : m.linked_panel, file : m.linked_file, line : m.linked_line }
         if(i === m.start) {
           isFirst.value[i] = true
         }
@@ -96,6 +96,8 @@ export default defineComponent({
 .code-panel-container {
   display: flex;
   flex-direction: column;
+  margin-left: 1%;
+  margin-right: 1%;
   margin-bottom: 3%;
   border-radius: 10px;
   box-shadow: var(--shadow-color) 2px 3px 3px;
@@ -117,10 +119,9 @@ export default defineComponent({
   align-items: flex-start;
   margin: 1%;
   padding: 1%;
-  height: 100vw;
   background: var(--background-color-accent);
   box-shadow: inset var(--shadow-color) 0 0 3px 1px;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .collapse-button {

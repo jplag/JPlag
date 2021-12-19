@@ -94,7 +94,6 @@ export default defineComponent({
 
 <style scoped>
 h1 {
-  font-family: "League Spartan";
   text-align: left;
   margin-top: 2%;
   color: var(--on-background-color);

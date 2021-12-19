@@ -19,7 +19,6 @@ export default defineComponent({
       required: true
     },
     color: {
-      type: String,
       required:true
     },
     startOfMatch: {
@@ -28,9 +27,6 @@ export default defineComponent({
     fileIndex: {
       type: Number,
     },
-    matchLink: {
-      type: String
-    },
     isFirst: {
       type: Boolean,
     },
@@ -38,7 +34,8 @@ export default defineComponent({
       type: Boolean,
     }
   },
-  setup() {
+  setup(props) {
+    console.log(props.color)
     return {
     }
   }
