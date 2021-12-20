@@ -444,7 +444,7 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         if (options.hasBaseCode()) {
             htmlFile.print("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Basecode_submission") + ":</TD>" + "<TD>"
-                    + options.getBaseCodeSubmissionName() + "</TD></TR>");
+                    + options.getBaseCodeSubmissionName().get() + "</TD></TR>");
         }
 
         if (options.getMaximumNumberOfComparisons() > 0) {

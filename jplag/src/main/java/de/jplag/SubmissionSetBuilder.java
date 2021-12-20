@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
@@ -57,20 +59,35 @@ public class SubmissionSetBuilder {
         // Extract the basecode submission if necessary.
         Optional<Submission> baseCodeSubmission = Optional.empty();
         if (options.hasBaseCode()) {
-            verifyBaseCodeName();
+            Submission baseCode = tryLoadBaseCodeAsPath(rootDirectory);
+            if (baseCode == null) {
+                baseCode = tryLoadBaseCodeAsRootSubDirectory(foundSubmissions);
 
-            String baseCodeName = options.getBaseCodeSubmissionName();
-            String baseCodePath = rootDirectory.toString() + File.separator + baseCodeName;
-
-            // Grab the basecode submission and erase it from the regular submissions.
-            Submission foundBaseCodeSubmission = foundSubmissions.get(baseCodeName);
-            if (foundBaseCodeSubmission == null) {
-                throw new BasecodeException("Basecode submission \"" + baseCodePath + "\" doesn't exist!");
+                String baseCodeName = options.getBaseCodeSubmissionName().get();
+                if (baseCode == null) {
+                    // No base code found at all, report an error.
+                    throw new BasecodeException(
+                            String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
+                } else {
+                    // Found a base code as a submission, report about obsolete usage.
+                    System.out.printf("Deprecated use of the -bc option found, please specify the basecode as \"%s%c%s\" instead.",
+                            rootDirectory.toString(), File.separator, baseCodeName);
+                }
             }
+            baseCodeSubmission = Optional.of(baseCode);
+            System.out.println(String.format("Basecode directory \"%s\" will be used.", baseCode.getRoot().toString()));
 
-            foundSubmissions.remove(baseCodeName);
-            baseCodeSubmission = Optional.of(foundBaseCodeSubmission);
-            System.out.println("Basecode directory \"" + baseCodePath + "\" will be used");
+            // Basecode may also be registered as a user submission. If so, remove the latter.
+            File baseCodeRoot = baseCode.getCanonicalRoot(); // Use canonical form for a more sane equality notion.
+            Iterator<Entry<String, Submission>> submIter = foundSubmissions.entrySet().iterator();
+            while (submIter.hasNext()) {
+                Entry<String, Submission> entry = submIter.next();
+                if (baseCodeRoot.equals(entry.getValue().getCanonicalRoot())) {
+                    submIter.remove();
+                    System.out.println(String.format("Skipping \"%s\" as user submission.", entry.getValue().getRoot().toString()));
+                    break;
+                }
+            }
         }
 
         // Merge everything in a submission set.
@@ -92,13 +109,75 @@ public class SubmissionSetBuilder {
     }
 
     /**
-     * Verify the basecode name.
+     * Try to load the basecode under the assumption of being a path.
+     * @return Base code submission if the option value can be interpreted as global path, else {@code null}.
+     * @throws ExitException when the option value is a path with errors.
      */
-    private void verifyBaseCodeName() throws ExitException {
-        String name = options.getBaseCodeSubmissionName();
+    private Submission tryLoadBaseCodeAsPath(File rootDirectory) throws ExitException {
+        String baseCodeName = options.getBaseCodeSubmissionName().get();
+        File basecodeSubmission = new File(rootDirectory, baseCodeName);
+        if (!basecodeSubmission.exists()) {
+            return null;
+        }
+
+        String errorMessage = isExcludedEntry(basecodeSubmission);
+        if (errorMessage != null) {
+            throw new BasecodeException(errorMessage); // Stating an excluded path as basecode isn't very useful.
+        }
+
+        try {
+            return processDirEntry(basecodeSubmission);
+
+        } catch (SubmissionException ex) {
+            throw new BasecodeException(ex.getMessage()); // Change thrown exception to basecode exception.
+
+        } catch (ExitException ex) {
+            throw ex;
+        }
+    }
+
+    /**
+     * Try to load the basecode under the assumption of being a sub-directory in the user submissions directory.
+     * @return Base code submission if the option value can be interpreted as a sub-directory, else {@code null}.
+     * @throws ExitException when the option value is a sub-directory with errors.
+     */
+    private Submission tryLoadBaseCodeAsRootSubDirectory(Map<String, Submission> foundSubmissions) throws ExitException {
+        String baseCodeName = options.getBaseCodeSubmissionName().get();
+
+        // Is the option value a single name after trimming spurious separators?
+        String name = trimLeft(trimRight(baseCodeName, File.separatorChar), File.separatorChar);
+        if (name.contains(File.separator)) return null; // Not a single name, cannot be a sub-directory.
+
         if (name.contains(".")) {
             throw new BasecodeException("The basecode directory name \"" + name + "\" cannot contain dots!");
         }
+
+        // Grab the basecode submission from the regular submissions.
+        return foundSubmissions.get(baseCodeName);
+    }
+
+    /**
+     * Trim characters k from the left of the string.
+     */
+    private String trimLeft(String s, char k) {
+        int i = 0;
+        while (i < s.length() && s.charAt(i) == k) {
+            i++;
+        }
+        if (i == 0) return s;
+        return s.substring(i);
+    }
+
+    /**
+     * Trim characters k from the right of the string.
+     */
+    private String trimRight(String s, char k) {
+        int i = s.length() - 1;
+        while (i >= 0 && s.charAt(i) == k) {
+            i--;
+        }
+        if (i == s.length() - 1) return s;
+        return s.substring(0, i + 1);
     }
 
     /**
@@ -126,6 +205,51 @@ public class SubmissionSetBuilder {
     }
 
     /**
+     * Check that the given submission entry is not invalid due to exclusion names or bad suffix.
+     * @param submissionEntry Entry to check.
+     * @return Error message if the entry should be ignored.
+     */
+    private String isExcludedEntry(File submissionEntry) {
+        if (isFileExcluded(submissionEntry)) {
+            return "Exclude submission: " + submissionEntry.getName();
+        }
+
+        if (submissionEntry.isFile() && !hasValidSuffix(submissionEntry)) {
+            return "Ignore submission with invalid suffix: " + submissionEntry.getName();
+        }
+        return null;
+    }
+
+    /**
+     * Process the given directory entry as a submission root, the path MUST not be excluded.
+     * @param submissionEntry Entry to process.
+     * @return The entry converted to a submission.
+     * @throws ExitException when an error has been found with the entry.
+     */
+    private Submission processDirEntry(File submissionEntry) throws ExitException {
+        if (isExcludedEntry(submissionEntry) != null) {
+            throw new AssertionError("Pre-condition of non-exclusion is violated.");
+        }
+
+        String fileName = submissionEntry.getName();
+        if (submissionEntry.isDirectory() && options.getSubdirectoryName() != null) {
+            // Use subdirectory instead
+            submissionEntry = new File(submissionEntry, options.getSubdirectoryName());
+
+            if (!submissionEntry.exists()) {
+                throw new SubmissionException(
+                        String.format("Submission %s does not contain the given subdirectory '%s'", fileName, options.getSubdirectoryName()));
+            }
+
+            if (!submissionEntry.isDirectory()) {
+                throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.getSubdirectoryName()));
+            }
+        }
+
+        return new Submission(fileName, submissionEntry, parseFilesRecursively(submissionEntry), language, errorCollector);
+    }
+
+    /**
      * Process entries in the root directory to check whether they qualify as submissions.
      * @param rootDirectory Root directory being examined.
      * @param fileNames Entries found in the root directory.
@@ -137,33 +261,15 @@ public class SubmissionSetBuilder {
         for (String fileName : fileNames) {
             File submissionFile = new File(rootDirectory, fileName);
 
-            if (isFileExcluded(submissionFile)) {
-                System.out.println("Exclude submission: " + submissionFile.getName());
+            String errorMessage = isExcludedEntry(submissionFile);
+            if (errorMessage != null) {
+                System.out.println(errorMessage);
                 continue;
             }
 
-            if (submissionFile.isFile() && !hasValidSuffix(submissionFile)) {
-                System.out.println("Ignore submission with invalid suffix: " + submissionFile.getName());
-                continue;
-            }
-
-            if (submissionFile.isDirectory() && options.getSubdirectoryName() != null) {
-                // Use subdirectory instead
-                submissionFile = new File(submissionFile, options.getSubdirectoryName());
-
-                if (!submissionFile.exists()) {
-                    throw new SubmissionException(
-                            String.format("Submission %s does not contain the given subdirectory '%s'", fileName, options.getSubdirectoryName()));
-                }
-
-                if (!submissionFile.isDirectory()) {
-                    throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.getSubdirectoryName()));
-                }
-            }
-
-            Submission submission = new Submission(fileName, submissionFile, parseFilesRecursively(submissionFile), language, errorCollector);
-            foundSubmissions.put(fileName, submission);
+            foundSubmissions.put(fileName, processDirEntry(submissionFile));
         }
+
         return foundSubmissions;
     }
 
