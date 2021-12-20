@@ -45,7 +45,7 @@ public class BaseCodeTest extends TestBase {
 
     @Test
     public void testBasecodePathComparison() throws ExitException {
-        JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName(".." + File.separator + "basecode-base"));
+        JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName(getBasePath("basecode-base")));
         assertEquals(3, result.getNumberOfSubmissions()); // "basecode/base" is now a user submission.
     }
 
@@ -57,11 +57,6 @@ public class BaseCodeTest extends TestBase {
     @Test(expected = BasecodeException.class)
     public void testInvalidBasecode() throws ExitException {
         runJPlag("basecode", it -> it.setBaseCodeSubmissionName("WrongBasecode"));
-    }
-
-    @Test()
-    public void testBasecodePathWithDots() throws ExitException { // Dots are fine for paths.
-        runJPlag("basecode", it -> it.setBaseCodeSubmissionName("." + File.separator + "base"));
     }
 
     @Test(expected = BasecodeException.class)

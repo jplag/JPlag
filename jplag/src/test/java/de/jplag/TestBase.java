@@ -1,5 +1,6 @@
 package de.jplag;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 
@@ -15,6 +16,14 @@ public abstract class TestBase {
 
     protected String getBasePath() {
         return BASE_PATH;
+    }
+
+    protected String getBasePath(String... subs) {
+        String path = BASE_PATH;
+        for (String sub: subs) {
+            path += File.separator + sub;
+        }
+        return path;
     }
 
     protected JPlagResult runJPlagWithExclusionFile(String testSampleName, String exclusionFileName) throws ExitException {
