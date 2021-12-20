@@ -59,7 +59,7 @@ public class SubmissionSetBuilder {
         // Extract the basecode submission if necessary.
         Optional<Submission> baseCodeSubmission = Optional.empty();
         if (options.hasBaseCode()) {
-            Submission baseCode = tryLoadBaseCodeAsPath(rootDirectory);
+            Submission baseCode = tryLoadBaseCodeAsPath();
             if (baseCode == null) {
                 baseCode = tryLoadBaseCodeAsRootSubDirectory(foundSubmissions);
 
@@ -113,9 +113,9 @@ public class SubmissionSetBuilder {
      * @return Base code submission if the option value can be interpreted as global path, else {@code null}.
      * @throws ExitException when the option value is a path with errors.
      */
-    private Submission tryLoadBaseCodeAsPath(File rootDirectory) throws ExitException {
+    private Submission tryLoadBaseCodeAsPath() throws ExitException {
         String baseCodeName = options.getBaseCodeSubmissionName().get();
-        File basecodeSubmission = new File(rootDirectory, baseCodeName);
+        File basecodeSubmission = new File(baseCodeName);
         if (!basecodeSubmission.exists()) {
             return null;
         }
