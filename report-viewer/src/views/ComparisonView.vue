@@ -1,44 +1,71 @@
 <template>
-<div class="container">
-  <div id="leftPanel" v-bind:class="{hidden : hideLeftPanel}">
-    <div class="logo-section">
-      <img id="logo" src="@/assets/logo-nobg.png" alt="JPlag">
-      <button id="hide-button" @click="togglePanel" title="Hide sidebar"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
+  <div class="container">
+    <button id="show-button" :class="{hidden : !hideLeftPanel}" @click="togglePanel" title="Show sidebar">
+      <img src="@/assets/double_arrow_white_24dp.svg" alt="show">
+    </button>
+    <div id="sidebar" :class="{ hidden : hideLeftPanel }">
+      <div class="title-section">
+        <h1>JPlag Comparison</h1>
+        <button id="hide-button" @click="togglePanel" title="Hide sidebar">
+          <img src="@/assets/keyboard_double_arrow_left_white_24dp.svg" alt="hide"></button>
+      </div>
+      <TextInformation label="Submission 1" :value="id1" :has-additional-info="false"/>
+      <TextInformation label="Submission 2" :value="id2" :has-additional-info="false"/>
+      <TextInformation label="Match %" :value="json.match_percentage" :has-additional-info="false"/>
+      <MatchTable :matches="coloredMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
     </div>
-    <TextInformation :has-additional-info="false" value="Matches Report" label=""/>
-    <TextInformation label="First Submission:" :value="json.first_submission_id" :has-additional-info="false"/>
-    <TextInformation label="Second Submission:" :value="json.second_submission_id" :has-additional-info="false"/>
-    <TextInformation label="Match percentage:" :value="json.match_percentage" :has-additional-info="false"/>
-    <MatchList :submission1="json.first_submission_id"
-               :submission2="json.second_submission_id"
-               :matches="groupedMatches"
-                @selection-changed="selectFiles"
-                @match-selected="selectMatch"/>
+    <div class="files-container" id="files1">
+      <h1>Files of {{ id1 }}</h1>
+      <VueDraggableNext>
+      <CodePanel v-for="(file, index) in Object.keys(filesOfFirst)"
+                 :lines="filesOfFirst[file].lines"
+                 :title="file"
+                 :file-index="index"
+                 :matches="!matchesInFirst[file] ? [] : matchesInFirst[file]"
+                 :key="file.concat(index)"
+                 :collapse="filesOfFirst[file].collapsed"
+                 @toggle-collapse="toggleCollapseFirst(file)"
+                 @line-selected="showMatchInSecond"
+                 :panel-id="1"
+      />
+      </VueDraggableNext>
+    </div>
+    <div class="files-container" id="files2">
+      <h1>Files of {{ id2 }}</h1>
+      <VueDraggableNext>
+        <CodePanel v-for="(file, index) in Object.keys(filesOfSecond)"
+                   :lines="filesOfSecond[file].lines"
+                   :title="file"
+                   :file-index="index"
+                   :matches="!matchesInSecond[file] ? [] : matchesInSecond[file]"
+                   :key="file.concat(index)"
+                   :collapse="filesOfSecond[file].collapsed"
+                   @toggle-collapse="toggleCollapseSecond(file)"
+                   @line-selected="showMatchInFirst"
+                   :panel-id="2"
+                   />
+      </VueDraggableNext>
+    </div>
   </div>
-  <div id="rightPanel" v-bind:class="{extended : hideLeftPanel}">
-    <button id="show-button" v-bind:class="{hidden : !hideLeftPanel}" @click="togglePanel" title="Show sidebar"><img src="@/assets/double_arrow_white_24dp.svg" alt="hide"></button>
-    <CodePanel id="codePanel1" :lines="filesOfFirst[selectedFileOfFirst]" :coloring="coloringFirst" panel-id="1"/>
-    <CodePanel :lines="filesOfSecond[selectedFileOfSecond]"  :coloring="coloringSecond" panel-id="2"/>
-  </div>
-</div>
 </template>
 
 <script>
-import { defineComponent, ref, onBeforeMount } from "vue";
-import TextInformation from "@/components/TextInformation";
-import MatchList from "@/components/MatchList";
+import { defineComponent, ref } from "vue";
+import {convertToFilesByName, generateColorsForMatches,generateLineCodeLink, groupMatchesByFileName} from "@/utils/Utils";
+import { VueDraggableNext } from 'vue-draggable-next'
 import CodePanel from "@/components/CodePanel";
-import {convertToFilesByName, generateColoringArray, generateColor} from "@/utils/Utils";
+import TextInformation from "@/components/TextInformation";
+import MatchTable from "@/components/MatchTable";
 
 export default defineComponent({
   name: "ComparisonView",
-  components: {CodePanel, MatchList, TextInformation},
+  components: {MatchTable, TextInformation, VueDraggableNext, CodePanel},
   props: {
     id1: {
-      type: String
+      type: String,
     },
     id2: {
-      type: String
+      type: String,
     }
   },
   setup(props) {
@@ -46,121 +73,124 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const json = require(`../files/${fileName}.json`)
 
-    const filesOfFirst = convertToFilesByName(json.files_of_first_submission)
-    const filesOfSecond = convertToFilesByName(json.files_of_second_submission)
+    const filesOfFirst = ref(convertToFilesByName(json.files_of_first_submission))
+    const filesOfSecond = ref(convertToFilesByName(json.files_of_second_submission))
+    const colors = generateColorsForMatches(json.matches.length)
+    const coloredMatches = json.matches.map( (m, index) => { return {...m, color : colors[index]} })
 
-    const groupedMatches = ref(json.matches.reduce( (acc, val) => {
-            let name = val.first_file_name
-            let subname = val.second_file_name
-            if(!acc[name]) {
-              acc[name] = {}
-            }
-            if(!acc[name][subname]) {
-              acc[name][subname] = []
-            }
-            let newVal = {...val, color: generateColor()}
-            acc[name][subname].push(newVal)
-            return acc;
-          }, {})
-      )
+    const matchesInFirst = groupMatchesByFileName(coloredMatches, 1)
+    const matchesInSecond = groupMatchesByFileName(coloredMatches, 2)
 
-    const selectedFileOfFirst = ref(Object.keys(groupedMatches.value)[0])
-    const selectedFileOfSecond = ref(Object.keys(groupedMatches.value[selectedFileOfFirst.value])[0])
+    const toggleCollapseFirst = (title) => { filesOfFirst.value[title].collapsed = !filesOfFirst.value[title].collapsed }
+    const toggleCollapseSecond = (title) => { filesOfSecond.value[title].collapsed = !filesOfSecond.value[title].collapsed }
 
-      let coloringFirst = ref(generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 1))
-      let coloringSecond = ref(generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 2))
+    const showMatchInFirst = ( e, panel, file, line ) => {
+      if( !filesOfFirst.value[file].collapsed ) { toggleCollapseFirst(file) }
+      document.getElementById(generateLineCodeLink(panel, file, line)).scrollIntoView()
+    }
 
-      const selectFiles = (e , file1, file2) => {
-        selectedFileOfFirst.value = file1
-        selectedFileOfSecond.value = file2
-        coloringFirst.value = generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 1)
-        coloringSecond.value = generateColoringArray(groupedMatches.value[selectedFileOfFirst.value][selectedFileOfSecond.value], 2)
-      }
+    const showMatchInSecond = ( e, panel, file, line ) => {
+      if( !filesOfSecond.value[file].collapsed ) { toggleCollapseSecond(file) }
+      document.getElementById(generateLineCodeLink(panel, file, line)).scrollIntoView()
+    }
 
-      const selectMatch = (e, s1, e1, s2, e2) => {
-        document.getElementById("1".concat(s1)).scrollIntoView()
-        document.getElementById("2".concat(s2)).scrollIntoView()
-      }
+    const showMatch = ( e, match ) => {
+      showMatchInFirst(e, 1, match.first_file_name, match.start_in_first)
+      showMatchInSecond(e, 2, match.second_file_name, match.start_in_second)
+    }
 
 
-      const hideLeftPanel = ref(false)
-      const togglePanel = () => {
-        hideLeftPanel.value = !hideLeftPanel.value
-      }
+    const hideLeftPanel = ref(true)
+    const togglePanel = () => {
+      hideLeftPanel.value = !hideLeftPanel.value
+    }
 
-      return {
-        json, filesOfFirst, filesOfSecond, selectedFileOfFirst, selectedFileOfSecond, hideLeftPanel,
-        coloringFirst, coloringSecond, groupedMatches,
-        selectFiles,
-        selectMatch,
-        togglePanel
-      }
+    return {
+      json,
+      filesOfFirst,
+      filesOfSecond,
+      matchesInFirst,
+      matchesInSecond,
+      coloredMatches,
+      hideLeftPanel,
+
+      toggleCollapseFirst,
+      toggleCollapseSecond,
+      showMatchInFirst,
+      showMatchInSecond,
+      showMatch,
+      togglePanel
+    }
   }
 })
 </script>
 
 <style scoped>
+h1 {
+  color: var(--on-primary-color);
+  text-align: center;
+}
+
 .container {
   display: flex;
   align-items: stretch;
+  flex-wrap: nowrap;
   width: 100%;
   height: 100%;
-  margin: 0;
+  background: var(--background-color);
 }
 
-.logo-section {
+.files-container {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  padding-top: 1%;
+  width: 100%;
+  overflow: auto;
+}
+
+.title-section {
   display: flex;
   justify-content: space-between;
+}
+.title-section > h1 {
+  text-align: left !important;
 }
 
 .hidden {
   display: none !important;
 }
 
-.extended {
-  width: 100% !important;
-}
-
-#leftPanel {
-  width: 25%;
-  background: var(--primary-color);
+#sidebar {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  padding: 1%;
-}
-
-#rightPanel {
-  width: 75%;
-  background: #ECECEC;
-  display: flex;
   flex-wrap: nowrap;
-  justify-content: stretch;
+  width: 60%;
+  background: var(--primary-color-light);
   padding: 1%;
-}
-
-#logo {
-  margin-bottom: 5%;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 #hide-button {
-  height: 20%;
+  display: flex;
+  flex-direction: column;
   background: transparent;
+  border-radius: 10px;
+  height: max-content;
   border: none;
-  padding: 0;
-  margin: 0;
-  transform: rotate(180deg);
 }
 
 #hide-button:hover {
   cursor: pointer;
+  background: var(--primary-color-dark);
 }
 
 #show-button {
   position: absolute;
   z-index: 1000;
   left: 0;
-  background: #FF5353;
+  background: var(--secondary-color);
   border: none;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -168,15 +198,12 @@ export default defineComponent({
   width: 1%;
 }
 
-#show-button:hover {
-  cursor: pointer;
-}
-
 #show-button img {
   display: none;
 }
 
 #show-button:hover {
+  cursor: pointer;
   width: 3%;
 }
 

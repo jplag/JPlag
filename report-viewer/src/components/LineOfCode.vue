@@ -47,7 +47,7 @@ pre {
   margin: 0;
   padding: 0;
   float: left;
-  font-family: "JetBrains Mono";
+  font-family: "JetBrains Mono",serif;
   font-size: x-small;
 }
 

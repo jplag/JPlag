@@ -46,7 +46,6 @@ import {defineComponent, ref} from "vue";
 import TextInformation from "../components/TextInformation";
 import DistributionDiagram from "@/components/DistributionDiagram";
 import MetricButton from "@/components/MetricButton";
-import ComparisonListElement from "@/components/ComparisonListElement";
 import Overview from "../files/overview.json"
 import ComparisonsTable from "@/components/ComparisonsTable";
 
@@ -58,7 +57,7 @@ export default defineComponent({
       type: String,
     }
   },
-  setup(props) {
+  setup() {
     const json = Overview
 
     //Metrics

@@ -5,16 +5,6 @@
 
 <style>
 @font-face {
-  font-family: "Lobster";
-  src: url("./fonts/Lobster.ttf");
-}
-
-@font-face {
-  font-family: "League Spartan";
-  src: url("./fonts/LeagueSpartan.ttf");
-}
-
-@font-face {
   font-family: "JetBrains Mono";
   src: url("./fonts/jetbrains-mono/JetBrainsMono-Light.ttf");
 }

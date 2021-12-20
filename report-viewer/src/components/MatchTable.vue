@@ -47,11 +47,8 @@ export default defineComponent({
       type: String
     }
   },
-  setup(props) {
-
-    return {
-
-    }
+  setup() {
+    return {}
   }
 })
 </script>

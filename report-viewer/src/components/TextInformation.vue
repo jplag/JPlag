@@ -78,11 +78,6 @@ hr {
   overflow: hidden;
 }
 
-.label {
-  display: flex;
-  justify-content: space-between;
-}
-
 .label-text {
   color: var(--on-primary-color);
   text-align: left;
@@ -116,7 +111,7 @@ hr {
   margin: 3% 0;
   box-shadow: inset var(--shadow-color) 0 0 3px;
   border-radius: 10px;
-  font-family: "JetBrains Mono";
+  font-family: "JetBrains Mono",serif;
   font-size: smaller;
 }
 

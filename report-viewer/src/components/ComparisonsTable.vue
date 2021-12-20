@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { defineComponent, computed } from "vue";
+import { defineComponent } from "vue";
 import router from "@/router";
 
 export default defineComponent({
@@ -33,12 +33,12 @@ export default defineComponent({
       required: true
    }
   },
-  setup(props) {
+  setup() {
     let formattedMatchPercentage = ( number ) => number.toFixed(2)
 
     const navigateToComparisonView = (id1, id2) => {
       router.push({
-        name: "ComparisonView2",
+        name: "ComparisonView",
         params: { id1 : id1, id2 : id2 }
       })
     }
