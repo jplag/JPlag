@@ -70,7 +70,7 @@ public class SubmissionSetBuilder {
                             String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
                 } else {
                     // Found a base code as a submission, report about obsolete usage.
-                    System.out.printf("Deprecated use of the -bc option found, please specify the basecode as \"%s%c%s\" instead.",
+                    System.out.printf("Deprecated use of the -bc option found, please specify the basecode as \"%s%s%s\" instead.\n",
                             rootDirectory.toString(), File.separator, baseCodeName);
                 }
             }
@@ -153,7 +153,7 @@ public class SubmissionSetBuilder {
         }
 
         // Grab the basecode submission from the regular submissions.
-        return foundSubmissions.get(baseCodeName);
+        return foundSubmissions.get(name);
     }
 
     /**
