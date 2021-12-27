@@ -5,5 +5,6 @@ export type Match = {
     endInFirst: number,
     startInSecond: number,
     endInSecond: number,
+    tokens: number,
     color: string
 }

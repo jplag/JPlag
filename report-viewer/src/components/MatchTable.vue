@@ -25,7 +25,7 @@
           <p>({{ match.startInSecond }} - {{ match.endInSecond }})</p>
         </div>
       </td>
-      <td>TODO</td>
+      <td>{{ match.tokens }}</td>
     </tr>
   </table>
 </div>

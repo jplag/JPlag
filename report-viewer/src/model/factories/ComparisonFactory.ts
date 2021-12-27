@@ -98,6 +98,7 @@ export class ComparisonFactory {
             endInFirst: match.end_in_first as number,
             startInSecond: match.start_in_second as number,
             endInSecond: match.end_in_second as number,
+            tokens: match.tokens as number,
             color: color
         };
     }
