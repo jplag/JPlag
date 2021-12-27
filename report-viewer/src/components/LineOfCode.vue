@@ -34,10 +34,8 @@ export default defineComponent({
       type: Boolean,
     }
   },
-  setup(props) {
-    console.log(props.color)
-    return {
-    }
+  setup() {
+    return {}
   }
 })
 </script>

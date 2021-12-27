@@ -10,19 +10,19 @@
       <th>File 2</th>
       <th>Tokens</th>
     </tr>
-    <tr v-for="( match, index ) in matches" :key="String(index).concat(match.start_in_first).concat(match.start_in_second)"
+    <tr v-for="( match, index ) in matches" :key="String(index).concat(match.startInFirst).concat(match.startInSecond)"
         @click="$emit('matchSelected', $event, match)"
         :style="{ background : match.color }">
       <td>
         <div class="td-content">
-          <p>{{ match.first_file_name }}</p>
-          <p>({{ match.start_in_first }} - {{ match.end_in_first }})</p>
+          <p>{{ match.firstFile }}</p>
+          <p>({{ match.startInFirst }} - {{ match.endInFirst }})</p>
         </div>
       </td>
       <td>
         <div class="td-content">
-          <p>{{ match.second_file_name }}</p>
-          <p>({{ match.start_in_second }} - {{ match.start_in_second }})</p>
+          <p>{{ match.secondFile }}</p>
+          <p>({{ match.startInSecond }} - {{ match.endInSecond }})</p>
         </div>
       </td>
       <td>TODO</td>
@@ -47,7 +47,8 @@ export default defineComponent({
       type: String
     }
   },
-  setup() {
+  setup(props) {
+    console.log(props.matches)
     return {}
   }
 })

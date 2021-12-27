@@ -8,16 +8,16 @@
     <th>Match %</th>
   </tr>
   <tr v-for="(comparison, index) in topComparisons"
-      :key="comparison.first_submission
-            + comparison.second_submission
-            + comparison.match_percentage"
-      :class="{'even-row' : index % 2 === 0, 'odd-row' : index % 2 !== 0}"
-      @click="navigateToComparisonView(comparison.first_submission, comparison.second_submission)">
+      :key="comparison.firstSubmissionId
+            + comparison.secondSubmissionId
+            + comparison.matchPercentage"
+      :class="{ 'even-row' : index % 2 === 0, 'odd-row' : index % 2 !== 0 }"
+      @click="navigateToComparisonView(comparison.firstSubmissionId, comparison.secondSubmissionId)">
     <td>{{ index + 1 }}.</td>
-    <td>{{ comparison.first_submission }}</td>
+    <td>{{ comparison.firstSubmissionId }}</td>
     <td><img src="@/assets/double_arrow_black_18dp.svg" alt=">>"/></td>
-    <td>{{ comparison.second_submission }}</td>
-    <td>{{ formattedMatchPercentage(comparison.match_percentage) }}</td>
+    <td>{{ comparison.secondSubmissionId }}</td>
+    <td>{{ formattedMatchPercentage(comparison.matchPercentage) }}</td>
   </tr>
 </table>
 </template>
@@ -30,7 +30,8 @@ export default defineComponent({
   name: "ComparisonsTable",
   props: {
    topComparisons : {
-      required: true
+     type: Array,
+     required: true
    }
   },
   setup() {

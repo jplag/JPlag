@@ -22,9 +22,8 @@
 </template>
 
 <script>
-import {ref, defineComponent, watchEffect} from "vue";
+import {ref, defineComponent} from "vue";
 import LineOfCode from "./LineOfCode";
-import {generateLineCodeLink} from "@/utils/Utils";
 
 export default defineComponent({
   name: "CodePanel",

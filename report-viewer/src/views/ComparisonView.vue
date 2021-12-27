@@ -11,8 +11,8 @@
       </div>
       <TextInformation label="Submission 1" :value="id1" :has-additional-info="false"/>
       <TextInformation label="Submission 2" :value="id2" :has-additional-info="false"/>
-      <TextInformation label="Match %" :value="json.match_percentage" :has-additional-info="false"/>
-      <MatchTable :matches="coloredMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
+      <TextInformation label="Match %" :value="comparison.match_percentage" :has-additional-info="false"/>
+      <MatchTable :matches="comparison.allMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
     </div>
     <div class="files-container" id="files1">
       <h1>Files of {{ id1 }}</h1>
@@ -21,7 +21,7 @@
                  :lines="filesOfFirst[file].lines"
                  :title="file"
                  :file-index="index"
-                 :matches="!matchesInFirst[file] ? [] : matchesInFirst[file]"
+                 :matches="!comparison.matchesInFirstSubmission[file] ? [] : comparison.matchesInFirstSubmission[file]"
                  :key="file.concat(index)"
                  :collapse="filesOfFirst[file].collapsed"
                  @toggle-collapse="toggleCollapseFirst(file)"
@@ -37,7 +37,7 @@
                    :lines="filesOfSecond[file].lines"
                    :title="file"
                    :file-index="index"
-                   :matches="!matchesInSecond[file] ? [] : matchesInSecond[file]"
+                   :matches="!comparison.matchesInSecondSubmissions[file] ? [] : comparison.matchesInSecondSubmissions[file]"
                    :key="file.concat(index)"
                    :collapse="filesOfSecond[file].collapsed"
                    @toggle-collapse="toggleCollapseSecond(file)"
@@ -51,11 +51,12 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import {convertToFilesByName, generateColorsForMatches,generateLineCodeLink, groupMatchesByFileName} from "@/utils/Utils";
+import {generateLineCodeLink} from "@/utils/Utils";
 import { VueDraggableNext } from 'vue-draggable-next'
 import CodePanel from "@/components/CodePanel";
 import TextInformation from "@/components/TextInformation";
 import MatchTable from "@/components/MatchTable";
+import {ComparisonFactory} from "@/model/factories/ComparisonFactory";
 
 export default defineComponent({
   name: "ComparisonView",
@@ -72,14 +73,10 @@ export default defineComponent({
     const fileName = props.id1.concat("-").concat(props.id2)
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const json = require(`../files/${fileName}.json`)
+    const comparison = ComparisonFactory.getComparison(json)
 
-    const filesOfFirst = ref(convertToFilesByName(json.files_of_first_submission))
-    const filesOfSecond = ref(convertToFilesByName(json.files_of_second_submission))
-    const colors = generateColorsForMatches(json.matches.length)
-    const coloredMatches = json.matches.map( (m, index) => { return {...m, color : colors[index]} })
-
-    const matchesInFirst = groupMatchesByFileName(coloredMatches, 1)
-    const matchesInSecond = groupMatchesByFileName(coloredMatches, 2)
+    const filesOfFirst = ref(comparison.filesOfFirstSubmission)
+    const filesOfSecond = ref(comparison.filesOfSecondSubmission)
 
     const toggleCollapseFirst = (title) => { filesOfFirst.value[title].collapsed = !filesOfFirst.value[title].collapsed }
     const toggleCollapseSecond = (title) => { filesOfSecond.value[title].collapsed = !filesOfSecond.value[title].collapsed }
@@ -95,8 +92,8 @@ export default defineComponent({
     }
 
     const showMatch = ( e, match ) => {
-      showMatchInFirst(e, 1, match.first_file_name, match.start_in_first)
-      showMatchInSecond(e, 2, match.second_file_name, match.start_in_second)
+      showMatchInFirst(e, 1, match.firstFile, match.startInFirst)
+      showMatchInSecond(e, 2, match.secondFile, match.startInSecond)
     }
 
 
@@ -106,12 +103,9 @@ export default defineComponent({
     }
 
     return {
-      json,
+      comparison,
       filesOfFirst,
       filesOfSecond,
-      matchesInFirst,
-      matchesInSecond,
-      coloredMatches,
       hideLeftPanel,
 
       toggleCollapseFirst,
