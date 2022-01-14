@@ -15,41 +15,41 @@ options
 
 PARSER_BEGIN(CPPScanner)
 package de.jplag.cpp;
-import java.io.*;
-import de.jplag.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
+import de.jplag.NewlineStream;
 
 public class CPPScanner implements CPPTokenConstants {
     private static Scanner scanner2;
-    public static boolean scanFile(File dir, String fileName,
-        de.jplag.cpp.CPPScanner scanner, de.jplag.cpp.Scanner scannerX) {
+
+    public static boolean scanFile(File dir, String fileName, de.jplag.cpp.CPPScanner scanner, de.jplag.cpp.Scanner scannerX) {
         try {
-            InputStream in = new NewlineStream(
-                new FileInputStream(new File(dir,fileName)));
-              if (scanner==null) {
+            InputStream in = new NewlineStream(new FileInputStream(new File(dir, fileName)));
+            if (scanner == null) {
                 scanner = new CPPScanner(in, "UTF-8");
-              } else {
+            } else {
                 scanner.ReInit(in, "UTF-8");
-              }
-              scanner.scanner2=scannerX;
+            }
+            scanner.scanner2 = scannerX;
         } catch (FileNotFoundException e) {
-              System.out.println("C/C++ Scanner:  File " + fileName + " not found.");
-              return false;
+            System.out.println("C/C++ Scanner:  File " + fileName + " not found.");
+            return false;
         }
         try {
-              scanner.scan();
+            scanner.scan();
         } catch (ParseException e) {
-              scannerX.getErrorConsumer().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage());
-              return false;
+            scannerX.getErrorConsumer().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage());
+            return false;
         } catch (TokenMgrException e) {
-              scannerX.getErrorConsumer().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage());
-              return false;
+            scannerX.getErrorConsumer().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage());
+            return false;
         }
         return true;
     }
-
-/*    public static void main(String args[]) {
-        scanFile(new File("."),args[0]);
-    }*/
 }
 PARSER_END(CPPScanner)
 

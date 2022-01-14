@@ -49,26 +49,26 @@ options
 
 {
     public void newline() {
-	  super.newline();
-	  ((InputState)inputState).column = 1;
+        super.newline();
+        ((InputState) inputState).column = 1;
     }
 
     public void consume() throws antlr.CharStreamException {
-      if ( inputState.guessing == 0 ) {
-	    InputState state = (InputState)inputState;
-	    if (text.length()==0) {
-	      // remember token start column
-	      state.tokColumn = state.column;
-	    }
-	    state.column++;
-      }
-      super.consume();
+        if (inputState.guessing == 0) {
+            InputState state = (InputState) inputState;
+            if (text.length() == 0) {
+                // remember token start column
+                state.tokColumn = state.column;
+            }
+            state.column++;
+        }
+        super.consume();
     }
-    
+
     protected Token makeToken(int t) {
-      ParserToken tok = (ParserToken)super.makeToken(t);
-      tok.setColumn(((InputState)inputState).tokColumn);
-      return tok;
+        ParserToken token = (ParserToken) super.makeToken(t);
+        token.setColumn(((InputState) inputState).tokColumn);
+        return token;
     }
 }
 
