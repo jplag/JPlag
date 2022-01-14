@@ -66,9 +66,9 @@ public class SchemeParser implements SchemeTokenConstants {
         try {
             FileInputStream in = new FileInputStream(file=new File(dir,fileName));
             if (parser==null) {
-                parser = new SchemeParser(in);
+                parser = new SchemeParser(in, "UTF-8");
             } else {
-                parser.ReInit(in);
+                parser.ReInit(in, "UTF-8");
             }
             parser.parser2=parserX;
         } catch (FileNotFoundException e) {

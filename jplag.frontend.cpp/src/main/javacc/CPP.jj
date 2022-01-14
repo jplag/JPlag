@@ -28,7 +28,7 @@ public class CPPScanner implements CPPTokenConstants {
               if (scanner==null) {
                 scanner = new CPPScanner(in, "UTF-8");
               } else {
-                scanner.ReInit(in);
+                scanner.ReInit(in, "UTF-8");
               }
               scanner.scanner2=scannerX;
         } catch (FileNotFoundException e) {
