@@ -7,8 +7,6 @@ import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 public class Languages {
-    public static final String DEFAULT_LANGUAGE = "java";
-
     public static List<String> getAllDisplayNames() {
         return providers().stream()
                 .map(LanguageProvider::getDisplayName)
@@ -33,5 +31,9 @@ public class Languages {
     private static ProviderNotFoundException languageProviderNotfound(String languageName) {
         final var message = String.format("Language Provider for language %s not found", languageName);
         return new ProviderNotFoundException(message);
+    }
+
+    public static Language loadLanguage(final ErrorCollector errorCollector, final String classPath) {
+        return Languages.provider(classPath).create(errorCollector);
     }
 }

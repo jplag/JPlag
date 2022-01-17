@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import de.jplag.options.LanguageOption;
+import de.jplag.java.JavaLanguageProvider;
 import de.jplag.strategy.ComparisonMode;
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -21,7 +21,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public enum CommandLineArgument {
     ROOT_DIRECTORY("rootDir", String.class),
-    LANGUAGE("-l", String.class, LanguageOption.getDefault().getDisplayName(), LanguageOption.getAllDisplayNames()),
+    LANGUAGE("-l", String.class, JavaLanguageProvider.NAME, Languages.getAllDisplayNames()),
     BASE_CODE("-bc", String.class),
     VERBOSITY("-v", String.class, "quiet", List.of("quiet", "long")), // TODO SH: Replace verbosity when integrating a real logging library
     DEBUG("-d", Boolean.class),

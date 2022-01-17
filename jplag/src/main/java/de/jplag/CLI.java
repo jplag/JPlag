@@ -19,7 +19,6 @@ import java.util.Random;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;
 import de.jplag.reporting.Report;
 import de.jplag.strategy.ComparisonMode;
@@ -101,8 +100,7 @@ public class CLI {
         if (fileSuffixString != null) {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
-        LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getFrom(namespace), language);
+        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getFrom(namespace), LANGUAGE.getFrom(namespace));
         options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
         options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
         options.setDebugParser(DEBUG.getFrom(namespace));

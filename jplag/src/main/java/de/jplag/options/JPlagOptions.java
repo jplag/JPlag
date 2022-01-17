@@ -101,7 +101,7 @@ public class JPlagOptions {
     /**
      * Language to use when parsing the submissions.
      */
-    private LanguageOption languageOption;
+    private final String languageName;
 
     /**
      * Level of output verbosity.
@@ -111,9 +111,9 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(String rootDirectoryName, LanguageOption languageOption) {
+    public JPlagOptions(String rootDirectoryName, String languageName) {
         this.rootDirectoryName = rootDirectoryName;
-        this.languageOption = languageOption;
+        this.languageName = languageName;
     }
 
     public Optional<String> getBaseCodeSubmissionName() {
@@ -134,10 +134,6 @@ public class JPlagOptions {
 
     public String[] getFileSuffixes() {
         return fileSuffixes;
-    }
-
-    public LanguageOption getLanguageOption() {
-        return languageOption;
     }
 
     public int getMaximumNumberOfComparisons() {
@@ -219,10 +215,6 @@ public class JPlagOptions {
         }
     }
 
-    public void setLanguageOption(LanguageOption languageOption) {
-        this.languageOption = languageOption;
-    }
-
     public void setMaximumNumberOfComparisons(int maximumNumberOfComparisons) {
         if (maximumNumberOfComparisons < -1) {
             this.maximumNumberOfComparisons = -1;
@@ -274,5 +266,9 @@ public class JPlagOptions {
 
     private boolean hasMinimumTokenMatch() {
         return minimumTokenMatch != null;
+    }
+
+    public String getLanguageName() {
+        return languageName;
     }
 }

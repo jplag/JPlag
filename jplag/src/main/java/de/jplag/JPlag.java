@@ -5,8 +5,6 @@ import static de.jplag.options.Verbosity.LONG;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
@@ -15,7 +13,6 @@ import java.util.stream.Collectors;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 import de.jplag.strategy.ComparisonMode;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.NormalComparisonStrategy;
@@ -42,7 +39,7 @@ public class JPlag {
         this.options = options;
         errorCollector = new ErrorCollector(options);
 
-        language = loadLanguage(errorCollector, options.getLanguageOption().getClassPath());
+        language = Languages.loadLanguage(errorCollector, options.getLanguageName());
         this.options.setLanguageDefaults(language);
         System.out.println("Initialized language " + language.getName());
 
@@ -107,18 +104,5 @@ public class JPlag {
             case NORMAL -> new NormalComparisonStrategy(options, coreAlgorithm);
             case PARALLEL -> new ParallelComparisonStrategy(options, coreAlgorithm);
         };
-    }
-
-    private Language loadLanguage(final ErrorCollector errorCollector, final String classPath) {
-        try {
-            Constructor<?> constructor = Class.forName(classPath).getConstructor(ErrorConsumer.class);
-            Object[] constructorParams = {errorCollector};
-
-            return (Language) constructor.newInstance(constructorParams);
-        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("Language instantiation failed:" + e.getMessage(), e);
-        }
     }
 }
