@@ -9,6 +9,7 @@ import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
+    public static final String NAME = "text";
     private ErrorConsumer program;
 
     private Parser parser = new Parser();
@@ -36,7 +37,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getShortName() {
-        return "text";
+        return NAME;
     }
 
     @Override
