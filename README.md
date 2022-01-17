@@ -63,7 +63,7 @@ named arguments:
 The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects:
 
 ```java
-JPlagOptions options = new JPlagOptions("/path/to/rootDir", LanguageOption.JAVA);
+JPlagOptions options = new JPlagOptions("/path/to/rootDir", JavaLanguageProvider.NAME);
 options.setBaseCodeSubmissionName("template");
 
 JPlag jplag = new JPlag(options);
@@ -73,7 +73,7 @@ List<JPlagComparison> comparisons = result.getComparisons();
 
 // Optional
 File outputDir = new File("/path/to/output");
-Report report = new Report(outputDir);
+Report report = new Report(outputDir, jplag.getLanguage(), options);
 
 report.writeResult(result);
 ```
