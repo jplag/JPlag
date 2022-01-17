@@ -7,6 +7,7 @@ import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
+    public static final String NAME = "python3";
     private Parser parser;
 
     public Language(ErrorConsumer program) {
@@ -32,7 +33,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getShortName() {
-        return "python3";
+        return NAME;
     }
 
     @Override
