@@ -9,6 +9,7 @@ import de.jplag.TokenList;
  * Language for Java 9 and newer.
  */
 public class Language implements de.jplag.Language {
+    public static final String NAME = "java";
     private Parser parser;
 
     public Language(ErrorConsumer program) {
@@ -29,7 +30,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getShortName() {
-        return "java";
+        return NAME;
     }
 
     @Override
