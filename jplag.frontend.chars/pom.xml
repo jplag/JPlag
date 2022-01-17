@@ -7,6 +7,10 @@
 			<groupId>de.jplag</groupId>
 			<artifactId>frontend-utils</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.kohsuke.metainf-services</groupId>
+			<artifactId>metainf-services</artifactId>
+		</dependency>
 	</dependencies>
 	<parent>
 		<groupId>de.jplag</groupId>

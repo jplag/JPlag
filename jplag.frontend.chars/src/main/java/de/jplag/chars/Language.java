@@ -10,6 +10,7 @@ import de.jplag.TokenList;
  * read in text files as characters
  */
 public class Language implements de.jplag.Language {
+    public static final String NAME = "char";
     private ErrorConsumer program;
 
     private de.jplag.chars.Parser parser = new Parser();
@@ -37,7 +38,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getShortName() {
-        return "char";
+        return NAME;
     }
 
     @Override
