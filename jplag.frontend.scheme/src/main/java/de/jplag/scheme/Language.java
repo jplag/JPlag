@@ -7,6 +7,8 @@ import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
+	public static final String NAME = "scheme";
+
 	public Language(ErrorConsumer program) {
 		this.parser = new Parser();
 		this.parser.setProgram(program);
@@ -33,7 +35,7 @@ public class Language implements de.jplag.Language {
 
 	@Override
     public String getShortName() {
-		return "scheme";
+		return NAME;
 	}
 
 	@Override
