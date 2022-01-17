@@ -1,11 +1,6 @@
 package de.jplag;
 
-import static de.jplag.options.Verbosity.LONG;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
@@ -31,19 +27,22 @@ public class SubmissionSetBuilder {
     private final Language language;
     private final JPlagOptions options;
     private final ErrorCollector errorCollector;
-    private final HashSet<String> excludedFileNames; // Set of file names to be excluded in comparison.
+    private final Set<String> excludedFileNames; // Set of file names to be excluded in comparison.
 
     /**
      * Creates a builder for submission sets.
      * @param language is the language of the submissions.
      * @param options are the configured options.
      * @param errorCollector is the interface for error reporting.
+     * @param excludedFileNames
      */
-    public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector) {
+    public SubmissionSetBuilder(Language language,
+                                JPlagOptions options,
+                                ErrorCollector errorCollector, final Set<String> excludedFileNames) {
         this.language = language;
         this.options = options;
         this.errorCollector = errorCollector;
-        excludedFileNames = readExclusionFile();
+        this.excludedFileNames = excludedFileNames;
     }
 
     /**
@@ -224,31 +223,4 @@ public class SubmissionSetBuilder {
         return files;
     }
 
-    /**
-     * If an exclusion file is given, it is read in and all strings are saved in the set "excluded".
-     */
-    private HashSet<String> readExclusionFile() {
-        HashSet<String> excludedFileNames = new HashSet<>();
-        if (options.getExclusionFileName() != null) {
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(options.getExclusionFileName(), JPlagOptions.CHARSET));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    excludedFileNames.add(line.trim());
-                }
-                reader.close();
-            } catch (IOException exception) {
-                System.out.println("Could not read exclusion file: " + exception.getMessage());
-            }
-
-            if (options.getVerbosity() == LONG) {
-                errorCollector.print(null, "Excluded files:");
-
-                for (String excludedFileName : excludedFileNames) {
-                    errorCollector.print(null, "  " + excludedFileName);
-                }
-            }
-        }
-        return excludedFileNames;
-    }
 }
