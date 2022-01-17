@@ -23,19 +23,19 @@ public class MinTokenMatchTest extends CommandLineInterfaceTest {
         // Language defaults not set yet:
         buildOptionsFromCLI(CURRENT_DIRECTORY);
         assertNull(options.getMinimumTokenMatch());
-        assertNull(options.getLanguage());
 
+        JPlag jplag = null;
         // Init JPlag:
         try {
-            new JPlag(options);
+            jplag = new JPlag(options);
         } catch (ExitException e) {
             e.printStackTrace();
             fail("JPlag intialization failed!");
         }
 
         // Now the language is set:
-        assertNotNull(options.getLanguage());
-        assertEquals(options.getLanguage().minimumTokenMatch(), options.getMinimumTokenMatch().intValue());
+        assertNotNull(jplag.getLanguage());
+        assertEquals(jplag.getLanguage().minimumTokenMatch(), options.getMinimumTokenMatch().intValue());
     }
 
     @Test

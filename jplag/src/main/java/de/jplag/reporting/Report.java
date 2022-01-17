@@ -40,15 +40,17 @@ public class Report { // Mostly legacy code with some minor improvements.
     private final File reportDir;
     private final JPlagOptions options;
 
+    private final Language language;
     private JPlagResult result;
 
     private int currentComparisonIndex = 0;
     private int matchWritingProgess = 0;
     private int matchesWritten = 0;
 
-    public Report(File reportDir, JPlagOptions options) throws ReportGenerationException {
+    public Report(File reportDir, final Language language, JPlagOptions options) throws ReportGenerationException {
         this.reportDir = reportDir;
         this.options = options;
+        this.language = language;
         msg = new Messages("en");
 
         validateReportDir();
@@ -68,7 +70,7 @@ public class Report { // Mostly legacy code with some minor improvements.
     }
 
     private Language getLanguage() {
-        return options.getLanguage();
+        return language;
     }
 
     /*
