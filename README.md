@@ -27,7 +27,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 ### Building from sources 
 1. Download or clone the code from this repository.
 2. Run `mvn clean package` from the root of the repository to compile and build all submodules.
-   Run `mvn clean package assembly:single` instead if you need the full jar which includes all dependencies.
+   A jar which includes all dependencies, will also be created.
 5. You will find the generated JARs in the subdirectory `jplag/target`.
 
 ## Usage
