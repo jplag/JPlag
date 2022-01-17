@@ -9,6 +9,7 @@ import de.jplag.TokenList;
  * Leider werden C/C++ nicht geparst, sondern nur gescannt...
  */
 public class Language implements de.jplag.Language {
+	public static final String NAME = "cpp";
 	private Scanner scanner;
 
 	public Language(ErrorConsumer program) {
@@ -36,7 +37,7 @@ public class Language implements de.jplag.Language {
 
 	@Override
     public String getShortName() {
-		return "cpp";
+		return NAME;
 	}
 
 	@Override
