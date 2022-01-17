@@ -42,7 +42,7 @@ public class JPlag {
         this.options = options;
         errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
-        language = initializeLanguage();
+        initializeLanguage(this.options.getLanguageOption(), errorCollector);
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
         excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
         options.setExcludedFiles(excludedFileNames); // store for report
@@ -100,24 +100,24 @@ public class JPlag {
         };
     }
 
-    private Language initializeLanguage() {
-        LanguageOption languageOption = this.options.getLanguageOption();
+    private void initializeLanguage(final LanguageOption languageOption, final ErrorCollector errorCollector) {
+        language = loadLanguage(errorCollector, languageOption.getClassPath());
+        options.setLanguage(language);
+        options.setLanguageDefaults(language);
 
+        System.out.println("Initialized language " + language.getName());
+    }
+
+    private Language loadLanguage(final ErrorCollector errorCollector, final String classPath) {
         try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ErrorConsumer.class);
+            Constructor<?> constructor = Class.forName(classPath).getConstructor(ErrorConsumer.class);
             Object[] constructorParams = {errorCollector};
 
-            Language language = (Language) constructor.newInstance(constructorParams);
-
-            this.options.setLanguage(language);
-            this.options.setLanguageDefaults(language);
-            System.out.println("Initialized language " + language.getName());
-            return language;
+            return (Language) constructor.newInstance(constructorParams);
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
-            throw new IllegalStateException("Language instantiation failed:" + e.getMessage());
+            throw new IllegalStateException("Language instantiation failed:" + e.getMessage(), e);
         }
-
     }
 }
