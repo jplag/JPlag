@@ -18,6 +18,7 @@ import java.util.TreeMap;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
+import de.jplag.Language;
 import de.jplag.Match;
 import de.jplag.Submission;
 import de.jplag.Token;
@@ -39,15 +40,17 @@ public class Report { // Mostly legacy code with some minor improvements.
     private final File reportDir;
     private final JPlagOptions options;
 
+    private final Language language;
     private JPlagResult result;
 
     private int currentComparisonIndex = 0;
     private int matchWritingProgess = 0;
     private int matchesWritten = 0;
 
-    public Report(File reportDir, JPlagOptions options) throws ReportGenerationException {
+    public Report(File reportDir, final Language language, JPlagOptions options) throws ReportGenerationException {
         this.reportDir = reportDir;
         this.options = options;
+        this.language = language;
         msg = new Messages("en");
 
         validateReportDir();
@@ -161,7 +164,7 @@ public class Report { // Mostly legacy code with some minor improvements.
                     + "',3)\" NAME=\"" + i + "\">");
             htmlFile.print(new String(startA.file.getBytes()));
 
-            if (options.getLanguage().usesIndex()) {
+            if (language.usesIndex()) {
                 htmlFile.print("(" + startA.getIndex() + "-" + endA.getIndex() + ")");
             } else {
                 htmlFile.print("(" + startA.getLine() + "-" + endA.getLine() + ")");
@@ -171,7 +174,7 @@ public class Report { // Mostly legacy code with some minor improvements.
                     + "',3)\" NAME=\"" + i + "\">");
             htmlFile.print(startB.file);
 
-            if (options.getLanguage().usesIndex()) {
+            if (language.usesIndex()) {
                 htmlFile.print("(" + startB.getIndex() + "-" + endB.getIndex());
             } else {
                 htmlFile.print("(" + startB.getLine() + "-" + endB.getLine());
@@ -386,18 +389,18 @@ public class Report { // Mostly legacy code with some minor improvements.
             f.println("</center>");
             f.println("</h3>");
             f.println("<HR>");
-            if (options.getLanguage().isPreformatted()) {
+            if (language.isPreformatted()) {
                 f.println("<PRE>");
             }
             for (int y = 0; y < text[x].length; y++) {
                 f.print(text[x][y]);
-                if (!options.getLanguage().isPreformatted()) {
+                if (!language.isPreformatted()) {
                     f.println("<BR>");
                 } else {
                     f.println();
                 }
             }
-            if (options.getLanguage().isPreformatted()) {
+            if (language.isPreformatted()) {
                 f.println("</PRE>");
             }
         }
@@ -437,20 +440,20 @@ public class Report { // Mostly legacy code with some minor improvements.
         htmlFile.println("<TD><H1><BIG>" + title + "</BIG></H1></TD></TR>");
 
         htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Language") + ":</TD><TD>"
-                + options.getLanguageOption().name() + "</TD></TR>");
+                         + language.getName() + "</TD></TR>");
         htmlFile.print("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Submissions") + ":</TD><TD>" + result.getNumberOfSubmissions());
 
         htmlFile.println("</TD></TR>");
 
         if (options.hasBaseCode()) {
             htmlFile.print("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Basecode_submission") + ":</TD>" + "<TD>"
-                    + options.getBaseCodeSubmissionName().get() + "</TD></TR>");
+                           + options.getBaseCodeSubmissionName().get() + "</TD></TR>");
         }
 
         if (options.getMaximumNumberOfComparisons() > 0) {
             htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Matches_displayed") + ":</TD>" + "<TD>");
             htmlFile.println(options.getMaximumNumberOfComparisons() + " of " + result.getComparisons().size() + " ("
-                    + msg.getString("Report.Treshold") + ": " + options.getSimilarityThreshold() + "%)<br>");
+                             + msg.getString("Report.Treshold") + ": " + options.getSimilarityThreshold() + "%)<br>");
 
             htmlFile.println("</TD></TR>");
         }
@@ -460,7 +463,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         htmlFile.println(
                 "<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Date") + ":</TD><TD>" + dateFormat.format(new Date()) + "</TD></TR>");
         htmlFile.println("<TR BGCOLOR=#aaaaff>" + "<TD><EM>" + msg.getString("Report.Minimum_Match_Length") + "</EM> ("
-                + msg.getString("Report.sensitivity") + "):</TD><TD>" + options.getMinimumTokenMatch() + "</TD></TR>");
+                         + msg.getString("Report.sensitivity") + "):</TD><TD>" + options.getMinimumTokenMatch() + "</TD></TR>");
         htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Suffixes") + ":</TD><TD>");
 
         String[] fileSuffixes = options.getFileSuffixes();
@@ -619,10 +622,10 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         htmlFile.println("  <div style=\"display: flex;\">");
 
-        if (options.getLanguage().usesIndex()) {
+        if (language.usesIndex()) {
             writeIndexedSubmission(htmlFile, i, comparison, 0);
             writeIndexedSubmission(htmlFile, i, comparison, 1);
-        } else if (options.getLanguage().supportsColumns()) {
+        } else if (language.supportsColumns()) {
             writeImprovedSubmission(htmlFile, i, comparison, 0);
             writeImprovedSubmission(htmlFile, i, comparison, 1);
         } else {
@@ -763,18 +766,18 @@ public class Report { // Mostly legacy code with some minor improvements.
             f.println("</center>");
             f.println("</h3>");
             f.println("<HR>");
-            if (options.getLanguage().isPreformatted()) {
+            if (language.isPreformatted()) {
                 f.println("<PRE>");
             }
             for (int y = 0; y < text[x].length; y++) {
                 f.print(text[x][y]);
-                if (!options.getLanguage().isPreformatted()) {
+                if (!language.isPreformatted()) {
                     f.println("<BR>");
                 } else {
                     f.println();
                 }
             }
-            if (options.getLanguage().isPreformatted()) {
+            if (language.isPreformatted()) {
                 f.println("</PRE>");
             }
         }
