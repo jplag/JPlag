@@ -68,7 +68,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         // Clean up and return result:
         shutdownThreadPool();
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisons, durationInMillis, submissions.size(), options);
+        return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
     }
 
     /**

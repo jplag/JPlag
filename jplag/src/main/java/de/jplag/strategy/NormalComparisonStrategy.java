@@ -44,7 +44,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         }
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisons, durationInMillis, numberOfSubmissions, options);
+        return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
     }
 
 }
