@@ -9,36 +9,15 @@ import de.jplag.options.JPlagOptions;
  */
 public class JPlagResult {
 
-    /**
-     * List of detected comparisons whose similarity was about the specified threshold.
-     */
-    private List<JPlagComparison> comparisons;
+    private List<JPlagComparison> comparisons; // comparisons whose similarity was about the specified threshold
 
-    /**
-     * Duration of the JPlag run in milliseconds.
-     */
-    private long durationInMillis;
+    private SubmissionSet submissions;
 
-    /**
-     * Total number of submissions that have been compared.
-     */
-    private int numberOfSubmissions;
-
-    /**
-     * Options for the plagiarism detection run.
-     */
     private JPlagOptions options;
 
-    /**
-     * 10-element array representing the similarity distribution of the detected matches.
-     * <p>
-     * Each entry represents the absolute frequency of matches whose similarity lies within the respective interval.
-     * <p>
-     * Intervals:
-     * <p>
-     * 0: [0% - 10%), 1: [10% - 20%), 2: [20% - 30%), ..., 9: [90% - 100%]
-     */
-    private int[] similarityDistribution = null;
+    private long durationInMillis;
+
+    private int[] similarityDistribution = null; // 10-element array representing the similarity distribution of the detected matches.
 
     /**
      * Creates empty results.
@@ -47,10 +26,10 @@ public class JPlagResult {
         // No results available.
     }
 
-    public JPlagResult(List<JPlagComparison> comparisons, long durationInMillis, int numberOfSubmissions, JPlagOptions options) {
+    public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         this.comparisons = comparisons;
+        this.submissions = submissions;
         this.durationInMillis = durationInMillis;
-        this.numberOfSubmissions = numberOfSubmissions;
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
         comparisons.sort((first, second) -> Float.compare(second.similarity(), first.similarity())); // Sort by percentage (descending).
@@ -74,7 +53,8 @@ public class JPlagResult {
 
     /**
      * Returns the first n comparisons (sorted by percentage, descending), limited by the specified parameter.
-     * @param numberOfComparisons specifies the number of requested comparisons. If set to -1, all comparisons will be returned.
+     * @param numberOfComparisons specifies the number of requested comparisons. If set to -1, all comparisons will be
+     * returned.
      * @return a list of comparisons sorted descending by percentage.
      */
     public List<JPlagComparison> getComparisons(int numberOfComparisons) {
@@ -91,14 +71,33 @@ public class JPlagResult {
         return durationInMillis;
     }
 
-    public int getNumberOfSubmissions() {
-        return numberOfSubmissions;
+    /**
+     * @return the submission set that contains both the valid submissions and the invalid ones.
+     */
+    public SubmissionSet getSubmissions() {
+        return submissions;
     }
 
+    /**
+     * @return the total number of submissions that have been compared.
+     */
+    public int getNumberOfSubmissions() {
+        return submissions.numberOfSubmissions(); // Convenience method to preserve API
+    }
+
+    /**
+     * @return the JPlag options with which the JPlag run was configured.
+     */
     public JPlagOptions getOptions() {
         return options;
     }
 
+    /**
+     * Returns the similarity distribution of detected matches in a 10-element array. Each entry represents the absolute
+     * frequency of matches whose similarity lies within the respective interval. Intervals: 0: [0% - 10%), 1: [10% - 20%),
+     * 2: [20% - 30%), ..., 9: [90% - 100%]
+     * @return the similarity distribution array.
+     */
     public int[] getSimilarityDistribution() {
         return similarityDistribution;
     }
@@ -106,7 +105,7 @@ public class JPlagResult {
     @Override
     public String toString() {
         return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getComparisons().size(),
-                getDuration(), getOptions().getLanguageOption(), getNumberOfSubmissions());
+                getDuration(), getOptions().getLanguageOption(), submissions.numberOfSubmissions());
     }
 
     /**
