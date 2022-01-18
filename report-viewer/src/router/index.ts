@@ -1,30 +1,23 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import Overview from "@/views/Overview.vue";
-import FileUpload from "@/views/FileUpload.vue"
 import ComparisonView from "@/views/ComparisonView.vue"
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "FileUpload",
-    component: FileUpload
-  },
-  {
-    path: "/overview",
     name: "Overview",
     component: Overview,
-    props: route => ({ jsonString : route.params.str })
   },
   {
-    path: "/c",
+    path: "/comparison/:id1/:id2",
     name: "ComparisonView",
     component: ComparisonView,
-    props: route => ({ jsonString : route.params.str})
+    props: true
   },
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
 });
 

@@ -8,13 +8,15 @@ public class Match {
 	private int end_in_first;
 	private int start_in_second;
 	private int end_in_second;
+	private int tokens;
 
 	public Match(String first_file_name,
 				 String second_file_name,
 				 int start_in_first,
 				 int end_in_first,
 				 int start_in_second,
-				 int end_in_second) {
+				 int end_in_second,
+				 int tokens) {
 
 		this.first_file_name = first_file_name;
 		this.second_file_name = second_file_name;
@@ -22,6 +24,7 @@ public class Match {
 		this.end_in_first = end_in_first;
 		this.start_in_second = start_in_second;
 		this.end_in_second = end_in_second;
+		this.tokens = tokens;
 	}
 
 	public String getFirst_file_name() {
@@ -48,6 +51,8 @@ public class Match {
 		return end_in_second;
 	}
 
+	public int getTokens() { return tokens; }
+
 	public void setFirst_file_name(String first_file_name) {
 		this.first_file_name = first_file_name;
 	}
@@ -71,4 +76,6 @@ public class Match {
 	public void setEnd_in_second(int end_in_second) {
 		this.end_in_second = end_in_second;
 	}
+
+	public void setTokens(int tokens) { this.tokens = tokens; }
 }

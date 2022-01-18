@@ -1,15 +1,19 @@
 <template>
   <div class="wrapper">
-    <div class="label">
+      <div class="text-container">
       <p class="label-text">{{ label }}</p>
-      <div class="additional-info" v-if="hasAdditionalInfo">
-        <p class="additional-label">{{ additionalInfoLabel }}</p>
-        <img alt="icon" src="@/assets/double_arrow_white_18dp.svg">
+      <p class="value-text" :title="value">{{ value }}</p>
       </div>
-    </div>
-    <p class="value-text">{{ value }}</p>
-    <hr>
+      <button class="collapse-button" :class="{ hidden : !hasAdditionalInfo }" @click="toggleIsCollapsed">
+        <img v-if="isCollapsed" src="../assets/keyboard_double_arrow_up_white_18dp.svg" alt="hide info">
+        <img v-else src="../assets/keyboard_double_arrow_down_white_18dp.svg" alt="additional info">
+      </button>
   </div>
+  <div class="additional-info" :class="{ hidden : !isCollapsed }">
+    <p class="additional-info-title">{{ additionalInfoTitle }}</p>
+    <p v-for="info in additionalInfo" :key="info">{{ info }}</p>
+  </div>
+  <hr>
 </template>
 
 <script>
@@ -29,13 +33,17 @@ export default defineComponent({
       type: Boolean,
       required: true
     },
-    additionalInfoLabel : String,
+    additionalInfoTitle: String,
     additionalInfo : [String]
   },
   setup() {
+    const isCollapsed = ref(false)
+
+    const toggleIsCollapsed = () => isCollapsed.value = !isCollapsed.value
 
     return {
-
+      isCollapsed,
+      toggleIsCollapsed
     }
   }
 
@@ -59,38 +67,60 @@ hr {
 
 .wrapper {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  background: var(--primary-color-light);
+  justify-content: space-between;
+  border-radius: 10px;
 }
 
-.label {
+.text-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .label-text {
-  font-weight: lighter;
+  color: var(--on-primary-color);
   text-align: left;
-  color: #ECECEC;
 }
 
 .value-text {
   font-weight: bold;
   text-align: left;
-  color: white;
+  color: var(--on-primary-color-accent);
+}
+
+.collapse-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+}
+
+.collapse-button:hover {
+  background: var(--primary-color-dark);
+  border-radius: 10px;
 }
 
 .additional-info {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: start;
+  background: var(--quaternary-color);
+  padding: 2%;
+  margin: 3% 0;
+  box-shadow: inset var(--shadow-color) 0 0 3px;
+  border-radius: 10px;
+  font-family: "JetBrains Mono",serif;
+  font-size: smaller;
 }
 
-.additional-label {
-  font-weight: lighter;
-  font-size: smaller;
-  white-space: nowrap;
-  color: #ECECEC;
-  margin: 4% 0 0 0;
+.additional-info-title {
+  margin-bottom: 1%;
+}
+
+.hidden {
+  display: none !important;
 }
 
 </style>

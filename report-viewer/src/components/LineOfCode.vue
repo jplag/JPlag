@@ -1,5 +1,7 @@
 <template>
-<pre id="line" v-bind:class="{ blurred : isBlurred }">{{ lineNumber }} {{ text }}</pre>
+  <div class="line-wrap" :style="{background : color}" :class="{'first-line' : isFirst, 'last-line' : isLast}">
+    <pre :id="text" v-bind:class="{ 'match-line' : color !== '#ECECEC' }">{{ lineNumber }} {{ text }}</pre>
+  </div>
 </template>
 
 <script>
@@ -16,16 +18,24 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    isBlurred: {
-      type: Boolean,
-      required: true
+    color: {
+      required:true
     },
-  },
-  setup(props) {
-    console.log(props.lineNumber + " " + props.text)
-    return {
-
+    startOfMatch: {
+      type: Number
+    },
+    fileIndex: {
+      type: Number,
+    },
+    isFirst: {
+      type: Boolean,
+    },
+    isLast: {
+      type: Boolean,
     }
+  },
+  setup() {
+    return {}
   }
 })
 </script>
@@ -34,10 +44,22 @@ export default defineComponent({
 pre {
   margin: 0;
   padding: 0;
+  float: left;
+  font-family: "JetBrains Mono",serif;
+  font-size: x-small;
 }
-.blurred {
-  filter: blur(2px);
-  -webkit-filter: blur(2px);
+
+.first-line {
+  margin-top: 2%;
+}
+.last-line {
+  margin-bottom: 2%;
+  box-shadow: #777777 0 3px 3px;
+}
+.match-line {
+}
+.line-wrap {
+  width: 200%;
 }
 
 </style>

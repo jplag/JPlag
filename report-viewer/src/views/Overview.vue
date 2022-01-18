@@ -1,81 +1,86 @@
 <template>
   <div class="container">
-    <div id="leftPanel">
-      <img id="logo" src="@/assets/logo.png" alt="JPlag">
-      <TextInformation label="Directory path: " :value="json.submission_folder_path" :has-additional-info="false"/>
-      <TextInformation label="Base code path: " :value="json.base_code_folder_path" :has-additional-info="false"/>
-      <TextInformation label="Language: " :value="json.language" :has-additional-info="true" additional-info-label="see extensions"/>
-      <TextInformation label="Submissions: " :value="json.submission_ids.length" :has-additional-info="true" additional-info-label="see ids"/>
-      <TextInformation label="Failed to parse: " value="No info yet" :has-additional-info="true" additional-info-label="see ids"/>
-      <TextInformation label="Date of execution: " :value="json.date_of_execution" :has-additional-info="false"/>
-      <TextInformation label="Duration (in ms): " :value="json.execution_time" :has-additional-info="false"/>
+    <div class="column-container" style="width: 30%">
+      <h1>JPlag Report</h1>
+      <p class="section-title">Main Info:</p>
+      <div id="basicInfo">
+        <TextInformation label="Directory path" :value="overview.submissionFolderPath" :has-additional-info="false"/>
+        <TextInformation label="Language" :value="overview.language" :has-additional-info="true" :additional-info="overview.fileExtensions" additional-info-title="File extensions:"/>
+        <TextInformation :has-additional-info="false" :value="overview.matchSensitivity" label="Match Sensitivity"/>
+        <TextInformation label="Submissions" :value="overview.submissionIds.length" :has-additional-info="true" :additional-info="overview.submissionIds" additional-info-title="Submission IDs:"/>
+        <TextInformation label="Date of execution" :value="overview.dateOfExecution" :has-additional-info="false"/>
+        <TextInformation label="Duration (in ms)" :value="overview.durationOfExecution" :has-additional-info="false"/>
+      </div>
+      <div id="logo-section">
+        <img id="logo" src="@/assets/logo-nobg.png" alt="JPlag">
+      </div>
     </div>
-    <div id="rightPanel">
-      <div id="metricsButtons" class="section">
-        <p class="section-title">Metrics: </p>
-        <ul class="metrics-list" v-for="(metric, i) in json.metrics" :key="metric.name">
-          <li><MetricButton :id="metric.name"
-                            :metric-threshold="metric.threshold"
-                            :metric-name="metric.name"
-                            :is-selected="selectedMetric[i]"
-                            @click="selectMetric(i)"/></li>
-        </ul>
+
+      <div class="column-container" style="width: 35%">
+        <div id="metrics">
+          <p class="section-title">Metric:</p>
+          <div id="metrics-list">
+            <MetricButton v-for="(metric, i) in overview.metrics" :key="metric.metricName"
+                          :id="metric.metricName"
+                          :metric-threshold="metric.metricThreshold"
+                          :metric-name="metric.metricName"
+                          :is-selected="selectedMetric[i]"
+                          @click="selectMetric(i)"/>
+          </div>
+        </div>
+        <p class="section-title">Distribution:</p>
+        <DistributionDiagram class="full-width" :distribution="distributions[selectedMetricIndex]"/>
       </div>
-      <div id="distribution" class="section">
-        <p class="section-title ">Distribution:</p>
-        <DistributionDiagram :distribution="distributions[selectedMetricIndex]"/>
-      </div>
-      <div id="topComparisonsList" class="section">
-        <p class="section-title">Top comparisons:</p>
-        <p class="section-subtitle">(Top 25)</p>
-        <ComparisonsLists :comparisons="topComps[selectedMetricIndex]"/>
-      </div>
+    <div class="column-container" style="width: 35%">
+        <p class="section-title">Top Comparisons:</p>
+        <p class="section-subtitle">(Top n comparisons)</p>
+        <div id="comparisonsList">
+          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]"/>
+        </div>
     </div>
   </div>
 </template>
 
 <script>
-import {defineComponent, ref, watchEffect} from "vue";
-import TextInformation from "@/components/TextInformation";
-import MetricButton from "@/components/MetricButton";
+import {defineComponent, ref} from "vue";
+import TextInformation from "../components/TextInformation";
 import DistributionDiagram from "@/components/DistributionDiagram";
-import ComparisonsLists from "@/components/ComparisonsLists";
+import MetricButton from "@/components/MetricButton";
+import Overview from "../files/overview.json"
+import ComparisonsTable from "@/components/ComparisonsTable";
+import {OverviewFactory} from "@/model/factories/OverviewFactory";
 
 export default defineComponent({
   name: "Overview",
-  components: {ComparisonsLists, DistributionDiagram, MetricButton, TextInformation},
-  props: {
-    jsonString: {
-      type: String,
+  components: {ComparisonsTable, DistributionDiagram, MetricButton, TextInformation },
+  setup() {
+    const overview = OverviewFactory.getOverview(Overview)
 
-    }
-  },
-  setup(props) {
-    const json = JSON.parse(props.jsonString)
-    let selectedMetric = ref(json.metrics.map( () => false ))
-    let distributions = ref(json.metrics.map( (m) =>  m.distribution ))
-    let topComps = ref(json.metrics.map((m) => m.topComparisons))
-    console.log(JSON.stringify(topComps.value))
+    //Metrics
+    let selectedMetric = ref(overview.metrics.map( () => false ))
     let selectedMetricIndex = ref(0)
     selectedMetric.value[0] = true;
-
+    
     const selectMetric = (metric) => {
       selectedMetric.value = selectedMetric.value.map( () => { return false })
       selectedMetric.value[metric] = true
       selectedMetricIndex.value = metric
     }
 
-    watchEffect( () => {
-      console.log("Overview - selected dist " + JSON.stringify(distributions.value[selectedMetricIndex.value]))
-      console.log("Overview - selected topComp " + JSON.stringify(topComps.value[selectedMetricIndex.value]))
-    })
+    //Distribution
+    let distributions = ref(overview.metrics.map( (m) =>  m.distribution ))
+    console.log(overview.metrics[0])
+
+    //Top Comparisons
+    let topComps = ref(overview.metrics.map((m) => m.comparisons ))
 
     return {
-      json,
-      selectedMetric,
+      overview,
       selectedMetricIndex,
+      selectedMetric,
       distributions,
       topComps,
+
       selectMetric
     }
   }
@@ -83,11 +88,18 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.section {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
+h1 {
+  text-align: left;
+  margin-top: 2%;
+  color: var(--on-background-color);
+}
+
+hr {
+  border: 0;
+  height: 2px;
+  background: linear-gradient(to right, #ea4848, transparent, transparent);
+  width: 100%;
+  box-shadow: #ea4864 0 1px;
 }
 
 .container {
@@ -96,14 +108,27 @@ export default defineComponent({
   width: 100%;
   height: 100%;
   margin: 0;
+  overflow: auto;
+  background: var(--background-color);
+}
+
+.column-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1%;
+}
+
+.full-width {
+  width: 100%;
 }
 
 .section-title {
   font-size: x-large;
   font-weight: bold;
   text-align: start;
-  margin-top: 3%;
-  margin-bottom: 1%;
+  margin: 0;
+  padding: 0;
+  color: var(--on-background-color);
 }
 
 .section-subtitle {
@@ -113,60 +138,48 @@ export default defineComponent({
 }
 
 
-.metrics-list {
-  list-style: none;
-  display: flex;
-  padding: 0 1% 0 0;
-  margin-bottom: 0;
-
-}
-
-#leftPanel {
-  width: 30%;
-  background: #FF5353;
+#basicInfo {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  padding: 1%;
+  padding: 3%;
+  margin-top: 1%;
+  background: var(--primary-color-light);
+  border-radius: 10px;
+  box-shadow: var(--shadow-color) 2px 3px 3px;
 }
 
-#rightPanel {
-  width: 70%;
-  background: #ECECEC;
+#metrics {
+  display: flex;
+  justify-content: start;
+  margin-bottom: 1%;
+}
+
+#metrics-list {
+  display: flex;
+  margin-left: 2%;
+}
+
+#comparisonsList {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  padding: 1%;
+  padding: 2%;
+  background: var(--primary-color-light);
+  border-radius: 10px;
+  box-shadow: var(--shadow-color) 2px 3px 3px;
 }
 
-#metricsButtons {
-  flex-direction: row;
-  flex-shrink: 3;
-  align-items: flex-start;
+#logo-section {
+  justify-content: center;
+  align-items: center;
+  padding: 5%;
+  display: flex;
 }
-
-#metricsButtons > * {
-  margin-right: 1%;
-}
-
-#distribution {
-  flex-shrink: 2;
-  align-items: stretch;
-}
-
-#topComparisonsList {
-  min-height: 0;
-  align-items: stretch;
-}
-
 
 #logo {
-  width: 40%;
-  height: 20%;
-  margin-bottom: 5%;
+  flex-shrink: 2;
 }
-
-
 
 
 </style>

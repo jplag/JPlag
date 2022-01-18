@@ -136,12 +136,14 @@ public class ReportObjectFactory {
 		int endFirst = usesIndex ? endFirstToken.getIndex() : endFirstToken.getLine();
 		int startSecond = usesIndex ? startSecondToken.getIndex() : startSecondToken.getLine();
 		int endSecond = usesIndex ? endSecondToken.getIndex() : endSecondToken.getLine();
+		int tokens = match.getLength();
 
 		return new Match(startFirstToken.file, startSecondToken.file,
 				startFirst,
 				endFirst,
 				startSecond,
-				endSecond
+				endSecond,
+				tokens
 		);
 	}
 	private static List<String> readFileLines(File file) {

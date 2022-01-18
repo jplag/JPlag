@@ -31,9 +31,7 @@ export default defineComponent({
     },
   },
   setup() {
-
-    return {
-    }
+    return {}
   }
 })
 </script>
@@ -46,7 +44,7 @@ export default defineComponent({
   border-radius: 5px;
   box-shadow: #777777 2px 3px 3px;
   padding: 5%;
-  width: 7vw;
+  margin-right: 5%;
 }
 
 
@@ -58,6 +56,11 @@ export default defineComponent({
 .wrapper > div {
   display: flex;
   justify-content: space-between;
+}
+
+.wrapper:hover {
+  background: var(--tertiary-color-dark);
+  color: white;
 }
 
 .metric {
@@ -76,8 +79,8 @@ export default defineComponent({
 }
 
 .selected {
-  background: #FF5353;
-  box-shadow: #777777 0 0 0;
+  background: var(--tertiary-color);
+  box-shadow: var(--shadow-color) 2px 3px 3px;
 }
 
 .selected p {

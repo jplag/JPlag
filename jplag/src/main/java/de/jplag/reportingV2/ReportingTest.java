@@ -11,12 +11,12 @@ import java.util.List;
 public class ReportingTest {
 
 	public static void main(String[] args) throws ExitException {
-		JPlagOptions options = new JPlagOptions("C:\\Uni\\PISE\\jplag-try-out\\src\\submission", LanguageOption.JAVA_1_9);
+		JPlagOptions options = new JPlagOptions("C:\\Uni\\PISE\\JPlag\\jplag\\src\\test\\resources\\de\\jplag\\samples\\PartialPlagiarism", LanguageOption.JAVA_1_9);
 		JPlag jPlag = new JPlag(options);
 		JPlagResult result = jPlag.run();
-		ReportStrategy reporting = new ReportImplementation();
-		List<String> jsonStrings = reporting.getJsonStrings(result);
-		System.out.println(jsonStrings.get(0));
-		System.out.println(jsonStrings.get(1));
+		Report reporting = new JsonReport();
+		if ( reporting.saveReport(result) ) {
+			System.out.println("Successfully saved report.");
+		}
 	}
 }
