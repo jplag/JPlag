@@ -11,20 +11,13 @@ public class JPlagResult {
 
     private List<JPlagComparison> comparisons; // comparisons whose similarity was about the specified threshold
 
-    private SubmissionSet submissions;
+    private final SubmissionSet submissions;
 
-    private JPlagOptions options;
+    private final JPlagOptions options;
 
-    private long durationInMillis;
+    private final long durationInMillis;
 
-    private int[] similarityDistribution = null; // 10-element array representing the similarity distribution of the detected matches.
-
-    /**
-     * Creates empty results.
-     */
-    public JPlagResult() {
-        // No results available.
-    }
+    private final int[] similarityDistribution; // 10-element array representing the similarity distribution of the detected matches.
 
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         this.comparisons = comparisons;
