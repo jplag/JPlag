@@ -35,7 +35,7 @@ public class MinTokenMatchTest extends CommandLineInterfaceTest {
 
         // Now the language is set:
         assertNotNull(jplag.getLanguage());
-        assertEquals(jplag.getLanguage().minimumTokenMatch(), options.getMinimumTokenMatch().intValue());
+        assertEquals(jplag.getLanguage().minimumTokenMatch(), jplag.getConfigurationReport().getMinimumTokenMatch());
     }
 
     @Test

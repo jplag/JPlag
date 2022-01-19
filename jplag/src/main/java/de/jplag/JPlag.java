@@ -59,9 +59,6 @@ public class JPlag {
 
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode(), options.getSimilarityMetric(), options.getSimilarityThreshold());
         excludedFileNames = Optional.ofNullable(options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
-
-        options.setLanguageDefaults(language);
-        options.setExcludedFiles(excludedFileNames); // store for report
     }
 
     /**

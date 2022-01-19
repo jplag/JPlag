@@ -101,20 +101,24 @@ public class CLI {
         if (fileSuffixString != null) {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
-        LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getFrom(namespace), language);
-        options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
-        options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
-        options.setDebugParser(DEBUG.getFrom(namespace));
-        options.setSubdirectoryName(SUBDIRECTORY.getFrom(namespace));
-        options.setFileSuffixes(fileSuffixes);
-        options.setExclusionFileName(EXCLUDE_FILE.getFrom(namespace));
-        options.setMinimumTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace));
-        options.setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace));
-        options.setMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
-        ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(it -> options.setComparisonMode(it),
+
+        var builder = JPlagOptions.builder()
+                .setRootDirectoryName(ROOT_DIRECTORY.getFrom(namespace))
+                .setLanguageOption(LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace)))
+                .setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace))
+                .setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)))
+                .setDebugParser(DEBUG.getFrom(namespace))
+                .setSubdirectoryName(SUBDIRECTORY.getFrom(namespace))
+                .setFileSuffixes(fileSuffixes)
+                .setExclusionFileName(EXCLUDE_FILE.getFrom(namespace))
+                .setMinimumTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace))
+                .setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace))
+                .setMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
+
+        ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(builder::setComparisonMode,
                 () -> System.out.println("Unknown comparison mode, using default mode!"));
-        return options;
+
+        return builder.build();
     }
 
     private String generateDescription() {

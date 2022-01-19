@@ -27,11 +27,13 @@ public abstract class TestBase {
         });
     }
 
-    protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(Path.of(BASE_PATH, testSampleName).toString(), LanguageOption.JAVA);
-        options.setVerbosity(Verbosity.LONG);
-        customization.accept(options);
-        JPlag jplag = new JPlag(options);
+    protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions.JPlagOptionsBuilder> customization) throws ExitException {
+        var optionBuilder = JPlagOptions.builder()
+                .setRootDirectoryName(Path.of(BASE_PATH, testSampleName).toString())
+                .setLanguageOption(LanguageOption.JAVA)
+                .setVerbosity(Verbosity.LONG);
+        customization.accept(optionBuilder);
+        JPlag jplag = new JPlag(optionBuilder.build());
         return jplag.run();
     }
 }
