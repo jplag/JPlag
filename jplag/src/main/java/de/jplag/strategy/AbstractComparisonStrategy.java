@@ -6,17 +6,19 @@ import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
-import de.jplag.options.JPlagOptions;
+import de.jplag.options.SimilarityMetric;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
-    private GreedyStringTiling greedyStringTiling;
+    private final GreedyStringTiling greedyStringTiling;
 
-    protected JPlagOptions options;
+    private final SimilarityMetric similarityMetric;
+    private final float similarityThreshold;
 
-    public AbstractComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
+    public AbstractComparisonStrategy(GreedyStringTiling greedyStringTiling, SimilarityMetric similarityMetric, float similarityThreshold) {
         this.greedyStringTiling = greedyStringTiling;
-        this.options = options;
+        this.similarityMetric = similarityMetric;
+        this.similarityThreshold = similarityThreshold;
     }
 
     /**
@@ -40,7 +42,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
         JPlagComparison comparison = greedyStringTiling.compare(first, second);
         System.out.println("Comparing " + first.getName() + "-" + second.getName() + ": " + comparison.similarity());
 
-        if (options.getSimilarityMetric().isAboveThreshold(comparison, options.getSimilarityThreshold())) {
+        if (similarityMetric.isAboveThreshold(comparison, similarityThreshold)) {
             return Optional.of(comparison);
         }
         return Optional.empty();

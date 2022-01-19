@@ -16,9 +16,11 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling implements TokenConstants {
 
     private final JPlagOptions options;
+    private final int minimumTokenMatch;
 
-    public GreedyStringTiling(JPlagOptions options) {
+    public GreedyStringTiling(JPlagOptions options, int minimumTokenMatch) {
         this.options = options;
+        this.minimumTokenMatch = minimumTokenMatch;
     }
 
     /**
@@ -126,7 +128,6 @@ public class GreedyStringTiling implements TokenConstants {
 
         // Initialize:
         JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
-        int minimumTokenMatch = options.getMinimumTokenMatch(); // minimal required token match
 
         if (first.size() <= minimumTokenMatch || second.size() <= minimumTokenMatch) { // <= because of pivots!
             return comparison;

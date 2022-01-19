@@ -15,13 +15,13 @@ import de.jplag.options.Verbosity;
 public class ErrorCollector implements ErrorConsumer { // TODO TS should be eventually replaced with a true logger/logging manager
 
     private final List<String> collectedErrors; // List of errors that occurred during the execution of the errorConsumer.
-    private final JPlagOptions options;
+    private final Verbosity verbosity;
     private String currentSubmissionName;
 
-    public ErrorCollector(JPlagOptions options) {
-        this.options = options;
+    public ErrorCollector(Verbosity verbosity) {
         collectedErrors = new ArrayList<>();
         currentSubmissionName = "<Unknown submission>";
+        this.verbosity = verbosity;
     }
 
     @Override
@@ -35,7 +35,6 @@ public class ErrorCollector implements ErrorConsumer { // TODO TS should be even
         if (message == null && longMessage == null) {
             throw new IllegalArgumentException("At least one message parameter needs to be non-null!");
         }
-        Verbosity verbosity = options.getVerbosity();
         if (message != null) {
             System.out.println(message);
         }

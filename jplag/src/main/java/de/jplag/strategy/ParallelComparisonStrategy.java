@@ -16,7 +16,7 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
-import de.jplag.options.JPlagOptions;
+import de.jplag.options.SimilarityMetric;
 
 /**
  * Strategy for the parallel comparison of submissions. Uses all available cores and compares in a non-blocking manner.
@@ -29,8 +29,8 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     private final List<JPlagComparison> comparisons;
     private int successfulComparisons;
 
-    public ParallelComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
-        super(options, greedyStringTiling);
+    public ParallelComparisonStrategy(GreedyStringTiling greedyStringTiling, SimilarityMetric similarityMetric, float similarityThreshold) {
+        super(greedyStringTiling, similarityMetric, similarityThreshold);
         submissionLocks = new ConcurrentHashMap<>();
         comparisons = Collections.synchronizedList(new ArrayList<>());
     }
@@ -68,7 +68,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         // Clean up and return result:
         shutdownThreadPool();
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
+        return new JPlagResult(comparisons, submissionSet, durationInMillis);
     }
 
     /**
@@ -106,7 +106,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
                 boolean hasRight = hasLeft && rightLock.tryLock();
                 try {
                     if (hasLeft && hasRight) { // both locks acquired!
-                        compareSubmissions(tuple.getLeft(), tuple.getRight(), withBaseCode).ifPresent(it -> comparisons.add(it));
+                        compareSubmissions(tuple.getLeft(), tuple.getRight(), withBaseCode).ifPresent(comparisons::add);
                         synchronized (this) {
                             successfulComparisons++;
                         }

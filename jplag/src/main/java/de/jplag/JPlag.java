@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
+import de.jplag.options.SimilarityMetric;
 import de.jplag.strategy.ComparisonMode;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.NormalComparisonStrategy;
@@ -32,6 +32,8 @@ public class JPlag {
     private final GreedyStringTiling coreAlgorithm; // Contains the comparison logic.
     private final ErrorCollector errorCollector;
     private final Set<String> excludedFileNames;
+    private final int minimumTokenMatch;
+    private final String[] fileSuffixes;
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
@@ -40,16 +42,25 @@ public class JPlag {
      */
     public JPlag(JPlagOptions options) throws ExitException {
         this.options = options;
-        errorCollector = new ErrorCollector(options);
+        errorCollector = new ErrorCollector(options.getVerbosity());
 
         language = loadLanguage(errorCollector, options.getLanguageOption().getClassPath());
-        this.options.setLanguageDefaults(language);
+
+        minimumTokenMatch = Optional.ofNullable(options.getMinimumTokenMatch())
+                .map(v -> Math.max(1, v))
+                .orElse(language.minimumTokenMatch());
+
+        fileSuffixes = Optional.ofNullable(options.getFileSuffixes())
+                .orElse(language.suffixes());
+
         System.out.println("Initialized language " + language.getName());
 
-        coreAlgorithm = new GreedyStringTiling(options);
+        coreAlgorithm = new GreedyStringTiling(options, minimumTokenMatch);
 
-        comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
-        excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
+        comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode(), options.getSimilarityMetric(), options.getSimilarityThreshold());
+        excludedFileNames = Optional.ofNullable(options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
+
+        options.setLanguageDefaults(language);
         options.setExcludedFiles(excludedFileNames); // store for report
     }
 
@@ -84,11 +95,12 @@ public class JPlag {
      */
     public JPlagResult run() throws ExitException {
         // Parse and validate submissions.
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, errorCollector, excludedFileNames);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, errorCollector, excludedFileNames, minimumTokenMatch,
+                fileSuffixes);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
         if (submissionSet.hasBaseCode()) {
-            coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
+            coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), minimumTokenMatch, true);
         }
 
         int submissionCount = submissionSet.numberOfSubmissions();
@@ -102,10 +114,11 @@ public class JPlag {
         return result;
     }
 
-    private ComparisonStrategy initializeComparisonStrategy(final ComparisonMode comparisonMode) {
+    private ComparisonStrategy initializeComparisonStrategy(final ComparisonMode comparisonMode, SimilarityMetric similarityMetric,
+            float similarityThreshold) {
         return switch (comparisonMode) {
-            case NORMAL -> new NormalComparisonStrategy(options, coreAlgorithm);
-            case PARALLEL -> new ParallelComparisonStrategy(options, coreAlgorithm);
+            case NORMAL -> new NormalComparisonStrategy(coreAlgorithm, similarityMetric, similarityThreshold);
+            case PARALLEL -> new ParallelComparisonStrategy(coreAlgorithm, similarityMetric, similarityThreshold);
         };
     }
 

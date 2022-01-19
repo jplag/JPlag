@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
-import de.jplag.options.JPlagOptions;
 
 /**
  * Collection of all submissions and their basecode if it exists. Parses all submissions upon creation.
@@ -29,21 +28,25 @@ public class SubmissionSet {
     private final Optional<Submission> baseCodeSubmission;
 
     private final ErrorCollector errorCollector;
-    private final JPlagOptions options;
+    private final Integer minimumTokenMatch;
     private int errors = 0;
     private String currentSubmissionName;
 
     /**
+     * @param minimumTokenMatch
+     * @param debugParser
      * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists.
      */
-    public SubmissionSet(List<Submission> submissions, Optional<Submission> baseCode, ErrorCollector errorCollector, JPlagOptions options)
+    public SubmissionSet(List<Submission> submissions, Optional<Submission> baseCode, ErrorCollector errorCollector, Integer minimumTokenMatch,
+            boolean debugParser)
             throws ExitException {
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.errorCollector = errorCollector;
-        this.options = options;
-        parseAllSubmissions();
+        this.minimumTokenMatch = minimumTokenMatch;
+
+        parseAllSubmissions(debugParser);
         this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
     }
@@ -100,11 +103,11 @@ public class SubmissionSet {
         return allSubmissions.stream().filter(submission -> submission.hasErrors()).collect(toList());
     }
 
-    private void parseAllSubmissions() throws ExitException {
+    private void parseAllSubmissions(boolean isDebugParser) throws ExitException {
         try {
-            parseSubmissions(allSubmissions);
+            parseSubmissions(allSubmissions, isDebugParser);
             if (baseCodeSubmission.isPresent()) {
-                parseBaseCodeSubmission(baseCodeSubmission.get()); // cannot use ifPresent because of throws declaration
+                parseBaseCodeSubmission(baseCodeSubmission.get(), isDebugParser); // cannot use ifPresent because of throws declaration
             }
         } catch (OutOfMemoryError exception) {
             throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
@@ -117,13 +120,13 @@ public class SubmissionSet {
     /**
      * Parse the given base code submission.
      */
-    private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException {
+    private void parseBaseCodeSubmission(Submission baseCode, boolean isDebugParser) throws BasecodeException {
         long startTime = System.currentTimeMillis();
         errorCollector.print("----- Parsing basecode submission: " + baseCode.getName(), null);
-        if (!baseCode.parse(options.isDebugParser())) {
+        if (!baseCode.parse(isDebugParser)) {
             errorCollector.printCollectedErrors();
             throw new BasecodeException("Could not successfully parse basecode submission!");
-        } else if (baseCode.getNumberOfTokens() < options.getMinimumTokenMatch()) {
+        } else if (baseCode.getNumberOfTokens() < minimumTokenMatch) {
             throw new BasecodeException("Basecode submission contains fewer tokens than minimum match length allows!");
         }
         errorCollector.print("Basecode submission parsed!", null);
@@ -135,7 +138,7 @@ public class SubmissionSet {
     /**
      * Parse all given submissions.
      */
-    private void parseSubmissions(List<Submission> submissions) {
+    private void parseSubmissions(List<Submission> submissions, boolean isDebugParser) {
         if (submissions.isEmpty()) {
             errorCollector.print("No submissions to parse!", null);
             return;
@@ -151,11 +154,11 @@ public class SubmissionSet {
             currentSubmissionName = submission.getName();
             errorCollector.setCurrentSubmissionName(currentSubmissionName);
 
-            if (!(ok = submission.parse(options.isDebugParser()))) {
+            if (!(ok = submission.parse(isDebugParser))) {
                 errors++;
             }
 
-            if (submission.getTokenList() != null && submission.getNumberOfTokens() < options.getMinimumTokenMatch()) {
+            if (submission.getTokenList() != null && submission.getNumberOfTokens() < minimumTokenMatch) {
                 errorCollector.addError("Submission contains fewer tokens than minimum match length allows!");
                 submission.setTokenList(null);
                 tooShort++;

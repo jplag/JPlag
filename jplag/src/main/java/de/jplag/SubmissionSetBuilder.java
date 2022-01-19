@@ -27,6 +27,8 @@ public class SubmissionSetBuilder {
     private final JPlagOptions options;
     private final ErrorCollector errorCollector;
     private final Set<String> excludedFileNames; // Set of file names to be excluded in comparison.
+    private final int minimumTokenMatch;
+    private final String[] fileSuffixes;
 
     /**
      * Creates a builder for submission sets.
@@ -34,12 +36,17 @@ public class SubmissionSetBuilder {
      * @param options are the configured options.
      * @param errorCollector is the interface for error reporting.
      * @param excludedFileNames
+     * @param minimumTokenMatch
+     * @param fileSuffixes
      */
-    public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames) {
+    public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames,
+            Integer minimumTokenMatch, String[] fileSuffixes) {
         this.language = language;
         this.options = options;
         this.errorCollector = errorCollector;
         this.excludedFileNames = excludedFileNames;
+        this.minimumTokenMatch = minimumTokenMatch;
+        this.fileSuffixes = fileSuffixes;
     }
 
     /**
@@ -75,7 +82,7 @@ public class SubmissionSetBuilder {
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
-        return new SubmissionSet(submissions, baseCodeSubmission, errorCollector, options);
+        return new SubmissionSet(submissions, baseCodeSubmission, errorCollector, minimumTokenMatch, options.isDebugParser());
     }
 
     /**
@@ -173,13 +180,12 @@ public class SubmissionSetBuilder {
      * @return true if the file suffix matches the language.
      */
     private boolean hasValidSuffix(File file) {
-        String[] validSuffixes = options.getFileSuffixes();
 
         // This is the case if either the language frontends or the CLI did not set the valid suffixes array in options
-        if (validSuffixes == null || validSuffixes.length == 0) {
+        if (fileSuffixes == null || fileSuffixes.length == 0) {
             return true;
         }
-        return Arrays.stream(validSuffixes).anyMatch(suffix -> file.getName().endsWith(suffix));
+        return Arrays.stream(fileSuffixes).anyMatch(suffix -> file.getName().endsWith(suffix));
     }
 
     /**

@@ -8,12 +8,12 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
-import de.jplag.options.JPlagOptions;
+import de.jplag.options.SimilarityMetric;
 
 public class NormalComparisonStrategy extends AbstractComparisonStrategy {
 
-    public NormalComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
-        super(options, greedyStringTiling);
+    public NormalComparisonStrategy(GreedyStringTiling greedyStringTiling, SimilarityMetric similarityMetric, float similarityThreshold) {
+        super(greedyStringTiling, similarityMetric, similarityThreshold);
     }
 
     @Override
@@ -39,12 +39,12 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
                 if (second.getTokenList() == null) {
                     continue;
                 }
-                compareSubmissions(first, second, withBaseCode).ifPresent(it -> comparisons.add(it));
+                compareSubmissions(first, second, withBaseCode).ifPresent(comparisons::add);
             }
         }
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
+        return new JPlagResult(comparisons, submissionSet, durationInMillis);
     }
 
 }

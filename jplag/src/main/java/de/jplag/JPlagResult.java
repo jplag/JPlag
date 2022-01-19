@@ -13,17 +13,14 @@ public class JPlagResult {
 
     private final SubmissionSet submissions;
 
-    private final JPlagOptions options;
-
     private final long durationInMillis;
 
     private final int[] similarityDistribution; // 10-element array representing the similarity distribution of the detected matches.
 
-    public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
+    public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis) {
         this.comparisons = comparisons;
         this.submissions = submissions;
         this.durationInMillis = durationInMillis;
-        this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
         comparisons.sort((first, second) -> Float.compare(second.similarity(), first.similarity())); // Sort by percentage (descending).
     }
@@ -79,13 +76,6 @@ public class JPlagResult {
     }
 
     /**
-     * @return the JPlag options with which the JPlag run was configured.
-     */
-    public JPlagOptions getOptions() {
-        return options;
-    }
-
-    /**
      * Returns the similarity distribution of detected matches in a 10-element array. Each entry represents the absolute
      * frequency of matches whose similarity lies within the respective interval. Intervals: 0: [0% - 10%), 1: [10% - 20%),
      * 2: [20% - 30%), ..., 9: [90% - 100%]
@@ -97,8 +87,8 @@ public class JPlagResult {
 
     @Override
     public String toString() {
-        return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getComparisons().size(),
-                getDuration(), getOptions().getLanguageOption(), submissions.numberOfSubmissions());
+        return String.format("JPlagResult { comparisons: %d, duration: %d ms, submissions: %d }", getComparisons().size(),
+                getDuration(), submissions.numberOfSubmissions());
     }
 
     /**
