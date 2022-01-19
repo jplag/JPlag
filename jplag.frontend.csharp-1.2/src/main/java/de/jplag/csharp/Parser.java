@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import antlr.Token;
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
-import de.jplag.UnicodeReader;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 

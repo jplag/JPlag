@@ -34,8 +34,8 @@ file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
 //----------------------------------------------------------------------------
 
 {
-import de.jplag.InputState;
-import de.jplag.ParserToken;
+import de.jplag.text.InputState;
+import de.jplag.text.ParserToken;
 }
 
 class TextLexer extends Lexer;
@@ -72,7 +72,7 @@ options
     }
 }
 
-WORD 
+WORD
 options { paraphrase = "an identifier"; } :
   (( '0'..'9') | ('A'..'Z') | ('a'..'z') |
    ('\300' .. '\326') | ('\330' .. '\366') | ('\370' .. '\377'))+ ;
@@ -84,7 +84,7 @@ PUNCTUATION : (	'!' | '"' | '\'' | '(' | ')' | ',' | '-' | '.' |
 SPECIALS : ('#' | '$' | '%' | '&' | '+' | '<' | '=' | '*' |
 	    '/' | '>' | '@' | '\\' | '^' | '_' | '|' | '~' |
 	    ('\241' .. '\252') | ('\254' .. '\263') | ('\265' .. '\272') |
-	    ('\274' .. '\276') | '\327' | '\367' | ('\200' .. '\237') ) ; 
+	    ('\274' .. '\276') | '\327' | '\367' | ('\200' .. '\237') ) ;
 
 // Whitespace -- ignored
 SPACE : ( ' '

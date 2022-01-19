@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.text;
 
 import antlr.Token;
 
