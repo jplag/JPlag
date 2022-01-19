@@ -1,12 +1,6 @@
 package de.jplag;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -61,6 +55,11 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
             return false;
         }
         return (compare(this, (JPlagComparison) other) == 0);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstSubmission, secondSubmission, matches);
     }
 
     /**
