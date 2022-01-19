@@ -15,12 +15,12 @@ import de.jplag.options.JPlagOptions;
  */
 public class GreedyStringTiling implements TokenConstants {
 
-    private final JPlagOptions options;
     private final int minimumTokenMatch;
+    private final boolean hasBaseCode;
 
-    public GreedyStringTiling(JPlagOptions options, int minimumTokenMatch) {
-        this.options = options;
+    public GreedyStringTiling(int minimumTokenMatch, boolean hasBaseCode) {
         this.minimumTokenMatch = minimumTokenMatch;
+        this.hasBaseCode = hasBaseCode;
     }
 
     /**
@@ -222,7 +222,7 @@ public class GreedyStringTiling implements TokenConstants {
             if (isBaseCodeComparison) {
                 token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN;
             } else {
-                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && options.hasBaseCode());
+                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && hasBaseCode);
             }
         }
     }

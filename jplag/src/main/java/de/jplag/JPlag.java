@@ -55,7 +55,8 @@ public class JPlag {
 
         System.out.println("Initialized language " + language.getName());
 
-        coreAlgorithm = new GreedyStringTiling(options, minimumTokenMatch);
+        // TODO: remove option.hasBaseCode() usage in GreedyStringTiling
+        coreAlgorithm = new GreedyStringTiling(minimumTokenMatch, options.hasBaseCode());
 
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode(), options.getSimilarityMetric(), options.getSimilarityThreshold());
         excludedFileNames = Optional.ofNullable(options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
