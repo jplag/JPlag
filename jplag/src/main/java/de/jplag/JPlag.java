@@ -62,6 +62,13 @@ public class JPlag {
     }
 
     /**
+     * return a Summary of all the used configuration
+     */
+    public ConfigurationReport getConfigurationReport() {
+        return new ConfigurationReport(options, language, excludedFileNames, fileSuffixes, minimumTokenMatch);
+    }
+
+    /**
      * If an exclusion file is given, it is read in and all strings are saved in the set "excluded".
      * @param exclusionFileName
      */
