@@ -1,7 +1,7 @@
 /*
  * Original pseudocode   : Thomas Weidenfeller
  * Implementation tweaked: Aki Nieminen
- * 
+ *
  * http://www.unicode.org/unicode/faq/utf_bom.html
  * BOMs:
  * 00 00 FE FF    = UTF-32, big-endian
@@ -9,12 +9,12 @@
  * FE FF          = UTF-16, big-endian
  * FF FE          = UTF-16, little-endian
  * EF BB BF       = UTF-8
- * 
+ *
  * Win2k Notepad:
  * Unicode format = UTF-16LE
  */
 
-package de.jplag;
+package de.jplag.csharp;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
  * Generic unicode text reader, which will use BOM mark to identify the encoding to be used. If BOM is not found then
  * use a given default encoding. UTF-8 is used if: BOM mark is not found and defaultEnc is NULL.
  * Usage pattern:
- * 
+ *
  * <pre>
  * String defaultEnc = "UTF-16BE"; // or NULL to use system default
  * FileInputStream fis = new FileInputStream(file);

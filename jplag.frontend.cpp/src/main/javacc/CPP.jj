@@ -21,7 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import de.jplag.NewlineStream;
+import de.jplag.cpp.NewlineStream;
 
 public class CPPScanner implements CPPTokenConstants {
     private static Scanner scanner2;
@@ -317,15 +317,15 @@ void token(): {}
 | ">="
 | "<<"
 | ">>"
-| "+" 
-| "-" 
-| "*" 
-| "/" 
-| "%" 
+| "+"
+| "-"
+| "*"
+| "/"
+| "%"
 | "++"           { scanner2.add(C_ASSIGN,token); }
 | "--"           { scanner2.add(C_ASSIGN,token); }
-| "~" 
-| "!" 
+| "~"
+| "!"
 | "auto"         { scanner2.add(C_AUTO,token); }
 | "break"        { scanner2.add(C_BREAK,token); }
 | "case"         { scanner2.add(C_CASE,token); }
@@ -373,37 +373,37 @@ void token(): {}
 | "volatile"     { scanner2.add(C_VOLANTILE,token); }
 | "while"        { scanner2.add(C_WHILE,token); }
 | "operator"     { scanner2.add(C_OPERATOR,token); }
-| "true"         
-| "false"        
+| "true"
+| "false"
 | "throw"        { scanner2.add(C_THROW,token); }
 | "NULL"         { scanner2.add(C_NULL,token); }
 
-| <OCTALINT>                  
-| <OCTALLONG>                 
-| <UNSIGNED_OCTALINT>         
-| <UNSIGNED_OCTALLONG>        
-| <DECIMALINT>                
-| <DECIMALLONG>               
-| <UNSIGNED_DECIMALINT>       
-| <UNSIGNED_DECIMALLONG>      
+| <OCTALINT>
+| <OCTALLONG>
+| <UNSIGNED_OCTALINT>
+| <UNSIGNED_OCTALLONG>
+| <DECIMALINT>
+| <DECIMALLONG>
+| <UNSIGNED_DECIMALINT>
+| <UNSIGNED_DECIMALLONG>
 
-| <HEXADECIMALINT>            
-| <HEXADECIMALLONG>           
-| <UNSIGNED_HEXADECIMALINT>   
-| <UNSIGNED_HEXADECIMALLONG>  
+| <HEXADECIMALINT>
+| <HEXADECIMALLONG>
+| <UNSIGNED_HEXADECIMALINT>
+| <UNSIGNED_HEXADECIMALLONG>
 
-| <FLOATONE>                  
-| <FLOATTWO>                  
+| <FLOATONE>
+| <FLOATTWO>
 
-| <CHARACTER>                 
-| <STRING>                    
+| <CHARACTER>
+| <STRING>
 
 | <BACKSLASH>
 
        //| var() [LOOKAHEAD(2) "("        { scanner2.add(C_FUN,token); } ]
 | "."
-| "->" 
-| ".*" 
+| "->"
+| ".*"
 | "->*"
 | <ID>
 }
@@ -433,19 +433,19 @@ void var3(): {}
 void index(): {}
 {
   var()
-| <OCTALINT>                  
-| <OCTALLONG>                 
-| <UNSIGNED_OCTALINT>         
-| <UNSIGNED_OCTALLONG>        
-| <DECIMALINT>                
-| <DECIMALLONG>               
-| <UNSIGNED_DECIMALINT>       
-| <UNSIGNED_DECIMALLONG>      
+| <OCTALINT>
+| <OCTALLONG>
+| <UNSIGNED_OCTALINT>
+| <UNSIGNED_OCTALLONG>
+| <DECIMALINT>
+| <DECIMALLONG>
+| <UNSIGNED_DECIMALINT>
+| <UNSIGNED_DECIMALLONG>
 
-| <HEXADECIMALINT>            
-| <HEXADECIMALLONG>           
-| <UNSIGNED_HEXADECIMALINT>   
-| <UNSIGNED_HEXADECIMALLONG>  
+| <HEXADECIMALINT>
+| <HEXADECIMALLONG>
+| <UNSIGNED_HEXADECIMALINT>
+| <UNSIGNED_HEXADECIMALLONG>
 
 }
 

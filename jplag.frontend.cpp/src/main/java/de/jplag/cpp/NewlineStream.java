@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.cpp;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -6,8 +6,6 @@ import java.util.Hashtable;
 
 import antlr.Token;
 import de.jplag.AbstractParser;
-import de.jplag.InputState;
-import de.jplag.ParserToken;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
@@ -45,7 +43,7 @@ public class Parser extends AbstractParser implements TokenConstants {
             inputState = new InputState(inputStream);
             TextLexer lexer = new TextLexer(inputState);
             lexer.setFilename(file);
-            lexer.setTokenObjectClass("de.jplag.ParserToken");
+            lexer.setTokenObjectClass("de.jplag.text.ParserToken");
 
             // Create a parser that reads from the scanner
             TextParser parser = new TextParser(lexer);
