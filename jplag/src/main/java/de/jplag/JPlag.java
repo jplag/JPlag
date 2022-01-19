@@ -44,9 +44,8 @@ public class JPlag {
         coreAlgorithm = new GreedyStringTiling(options);
         language = initializeLanguage();
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
-		excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName())
-                .map(this::readExclusionFile)
-                .orElse(Collections.emptySet());
+        excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
+        options.setExcludedFiles(excludedFileNames); // store for report
     }
 
     /**
@@ -54,7 +53,6 @@ public class JPlag {
      * @param exclusionFileName
      */
     Set<String> readExclusionFile(final String exclusionFileName) {
-
         try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
             final var excludedFileNames = reader.lines().collect(Collectors.toSet());
             if (options.getVerbosity() == LONG) {
@@ -120,6 +118,6 @@ public class JPlag {
             e.printStackTrace();
             throw new IllegalStateException("Language instantiation failed:" + e.getMessage());
         }
-        
+
     }
 }

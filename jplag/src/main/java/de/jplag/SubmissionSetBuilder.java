@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +35,7 @@ public class SubmissionSetBuilder {
      * @param errorCollector is the interface for error reporting.
      * @param excludedFileNames
      */
-    public SubmissionSetBuilder(Language language,
-                                JPlagOptions options,
-                                ErrorCollector errorCollector, final Set<String> excludedFileNames) {
+    public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames) {
         this.language = language;
         this.options = options;
         this.errorCollector = errorCollector;

@@ -5,6 +5,8 @@ import static de.jplag.strategy.ComparisonMode.NORMAL;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Set;
 
 import de.jplag.Language;
 import de.jplag.strategy.ComparisonMode;
@@ -68,6 +70,11 @@ public class JPlagOptions {
      * Name of the file that contains the names of files to exclude from comparison.
      */
     private String exclusionFileName;
+    
+    /**
+     * Names of the excluded files.
+     */
+    private Set<String> excludedFiles = Collections.emptySet();
 
     /**
      * Directory that contains all submissions.
@@ -103,6 +110,99 @@ public class JPlagOptions {
         this.languageOption = languageOption;
     }
 
+    public String getBaseCodeSubmissionName() {
+        return baseCodeSubmissionName;
+    }
+
+    public ComparisonMode getComparisonMode() {
+        return comparisonMode;
+    }
+
+    public Set<String> getExcludedFiles() {
+        return excludedFiles;
+    }
+
+    public String getExclusionFileName() {
+        return exclusionFileName;
+    }
+
+    public String[] getFileSuffixes() {
+        return fileSuffixes;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public LanguageOption getLanguageOption() {
+        return languageOption;
+    }
+
+    public int getMaximumNumberOfComparisons() {
+        return this.maximumNumberOfComparisons;
+    }
+
+    public Integer getMinimumTokenMatch() {
+        return minimumTokenMatch;
+    }
+
+    public String getRootDirectoryName() {
+        return rootDirectoryName;
+    }
+
+    public SimilarityMetric getSimilarityMetric() {
+        return similarityMetric;
+    }
+
+    public float getSimilarityThreshold() {
+        return similarityThreshold;
+    }
+
+    public String getSubdirectoryName() {
+        return subdirectoryName;
+    }
+
+    public Verbosity getVerbosity() {
+        return verbosity;
+    }
+
+    public boolean hasBaseCode() {
+        return this.baseCodeSubmissionName != null;
+    }
+
+    public boolean isDebugParser() {
+        return debugParser;
+    }
+
+    public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
+        // Trim problematic file separators.
+        this.baseCodeSubmissionName = (baseCodeSubmissionName == null) ? null : baseCodeSubmissionName.replace(File.separator, "");
+    }
+
+    public void setComparisonMode(ComparisonMode comparisonMode) {
+        this.comparisonMode = comparisonMode;
+    }
+
+    public void setDebugParser(boolean debugParser) {
+        this.debugParser = debugParser;
+    }
+
+    public void setExcludedFiles(Set<String> excludedFiles) {
+        this.excludedFiles = excludedFiles;
+    }
+
+    public void setExclusionFileName(String exclusionFileName) {
+        this.exclusionFileName = exclusionFileName;
+    }
+
+    public void setFileSuffixes(String[] fileSuffixes) {
+        this.fileSuffixes = fileSuffixes;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
     /**
      * After the selected language has been initialized, this method is called by JPlag to set default values for options
      * not set by the user.
@@ -118,88 +218,16 @@ public class JPlagOptions {
         }
     }
 
-    public LanguageOption getLanguageOption() {
-        return languageOption;
+    public void setLanguageOption(LanguageOption languageOption) {
+        this.languageOption = languageOption;
     }
 
-    public Verbosity getVerbosity() {
-        return verbosity;
-    }
-
-    public boolean hasBaseCode() {
-        return this.baseCodeSubmissionName != null;
-    }
-
-    private boolean hasFileSuffixes() {
-        return fileSuffixes != null && fileSuffixes.length > 0;
-    }
-
-    private boolean hasMinimumTokenMatch() {
-        return minimumTokenMatch != null;
-    }
-
-    public ComparisonMode getComparisonMode() {
-        return comparisonMode;
-    }
-
-    public String[] getFileSuffixes() {
-        return fileSuffixes;
-    }
-
-    public Language getLanguage() {
-        return language;
-    }
-
-    public Integer getMinimumTokenMatch() {
-        return minimumTokenMatch;
-    }
-
-    public String getExclusionFileName() {
-        return exclusionFileName;
-    }
-
-    public String getRootDirectoryName() {
-        return rootDirectoryName;
-    }
-
-    public String getBaseCodeSubmissionName() {
-        return baseCodeSubmissionName;
-    }
-
-    public String getSubdirectoryName() {
-        return subdirectoryName;
-    }
-
-    public boolean isDebugParser() {
-        return debugParser;
-    }
-
-    public float getSimilarityThreshold() {
-        return similarityThreshold;
-    }
-
-    public int getMaximumNumberOfComparisons() {
-        return this.maximumNumberOfComparisons;
-    }
-
-    public SimilarityMetric getSimilarityMetric() {
-        return similarityMetric;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = language;
-    }
-
-    public void setComparisonMode(ComparisonMode comparisonMode) {
-        this.comparisonMode = comparisonMode;
-    }
-
-    public void setDebugParser(boolean debugParser) {
-        this.debugParser = debugParser;
-    }
-
-    public void setFileSuffixes(String[] fileSuffixes) {
-        this.fileSuffixes = fileSuffixes;
+    public void setMaximumNumberOfComparisons(int maximumNumberOfComparisons) {
+        if (maximumNumberOfComparisons < -1) {
+            this.maximumNumberOfComparisons = -1;
+        } else {
+            this.maximumNumberOfComparisons = maximumNumberOfComparisons;
+        }
     }
 
     public void setMinimumTokenMatch(Integer minimumTokenMatch) {
@@ -210,30 +238,12 @@ public class JPlagOptions {
         }
     }
 
-    public void setExclusionFileName(String exclusionFileName) {
-        this.exclusionFileName = exclusionFileName;
-    }
-
     public void setRootDirectoryName(String rootDirectoryName) {
         this.rootDirectoryName = rootDirectoryName;
     }
 
-    public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
-        // Trim problematic file separators.
-        this.baseCodeSubmissionName = (baseCodeSubmissionName == null) ? null : baseCodeSubmissionName.replace(File.separator, "");
-    }
-
-    public void setSubdirectoryName(String subdirectoryName) {
-        // Trim problematic file separators.
-        this.subdirectoryName = (subdirectoryName == null) ? null : subdirectoryName.replace(File.separator, "");
-    }
-
-    public void setLanguageOption(LanguageOption languageOption) {
-        this.languageOption = languageOption;
-    }
-
-    public void setVerbosity(Verbosity verbosity) {
-        this.verbosity = verbosity;
+    public void setSimilarityMetric(SimilarityMetric similarityMetric) {
+        this.similarityMetric = similarityMetric;
     }
 
     public void setSimilarityThreshold(float similarityThreshold) {
@@ -248,15 +258,20 @@ public class JPlagOptions {
         }
     }
 
-    public void setMaximumNumberOfComparisons(int maximumNumberOfComparisons) {
-        if (maximumNumberOfComparisons < -1) {
-            this.maximumNumberOfComparisons = -1;
-        } else {
-            this.maximumNumberOfComparisons = maximumNumberOfComparisons;
-        }
+    public void setSubdirectoryName(String subdirectoryName) {
+        // Trim problematic file separators.
+        this.subdirectoryName = (subdirectoryName == null) ? null : subdirectoryName.replace(File.separator, "");
     }
 
-    public void setSimilarityMetric(SimilarityMetric similarityMetric) {
-        this.similarityMetric = similarityMetric;
+    public void setVerbosity(Verbosity verbosity) {
+        this.verbosity = verbosity;
+    }
+
+    private boolean hasFileSuffixes() {
+        return fileSuffixes != null && fileSuffixes.length > 0;
+    }
+
+    private boolean hasMinimumTokenMatch() {
+        return minimumTokenMatch != null;
     }
 }
