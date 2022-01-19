@@ -41,8 +41,13 @@ public class JPlag {
     public JPlag(JPlagOptions options) throws ExitException {
         this.options = options;
         errorCollector = new ErrorCollector(options);
+
+        language = loadLanguage(errorCollector, options.getLanguageOption().getClassPath());
+        this.options.setLanguageDefaults(language);
+        System.out.println("Initialized language " + language.getName());
+
         coreAlgorithm = new GreedyStringTiling(options);
-        initializeLanguage(this.options.getLanguageOption(), errorCollector);
+
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
         excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
         options.setExcludedFiles(excludedFileNames); // store for report
@@ -102,14 +107,6 @@ public class JPlag {
             case NORMAL -> new NormalComparisonStrategy(options, coreAlgorithm);
             case PARALLEL -> new ParallelComparisonStrategy(options, coreAlgorithm);
         };
-    }
-
-    private void initializeLanguage(final LanguageOption languageOption, final ErrorCollector errorCollector) {
-        language = loadLanguage(errorCollector, languageOption.getClassPath());
-        options.setLanguage(language);
-        options.setLanguageDefaults(language);
-
-        System.out.println("Initialized language " + language.getName());
     }
 
     private Language loadLanguage(final ErrorCollector errorCollector, final String classPath) {

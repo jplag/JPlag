@@ -20,11 +20,6 @@ public class JPlagOptions {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
 
     /**
-     * Language used to parse the submissions.
-     */
-    private Language language;
-
-    /**
      * Determines which strategy to use for the comparison of submissions.
      */
     private ComparisonMode comparisonMode = DEFAULT_COMPARISON_MODE;
@@ -130,10 +125,6 @@ public class JPlagOptions {
         return fileSuffixes;
     }
 
-    public Language getLanguage() {
-        return language;
-    }
-
     public LanguageOption getLanguageOption() {
         return languageOption;
     }
@@ -197,10 +188,6 @@ public class JPlagOptions {
 
     public void setFileSuffixes(String[] fileSuffixes) {
         this.fileSuffixes = fileSuffixes;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = language;
     }
 
     /**
