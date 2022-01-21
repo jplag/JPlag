@@ -1,14 +1,16 @@
 <template>
   <div class="line-wrap" :style="{background : color}" :class="{'first-line' : isFirst, 'last-line' : isLast}">
-    <pre :id="text" v-bind:class="{ 'match-line' : color !== '#ECECEC' }">{{ lineNumber }} {{ text }}</pre>
+      <hljs class="hljs" v-bind:class="{ 'match-line' : color !== '#ECECEC' }" language="java" :code="lineNumber.toString().concat(' ').concat(text)"/>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import hljsVuePlugin from "@highlightjs/vue-plugin";
 
 export default defineComponent({
   name: "LineOfCode",
+  components: { hljs: hljsVuePlugin.component},
   props: {
     text: {
       type: String,
@@ -34,6 +36,7 @@ export default defineComponent({
       type: Boolean,
     }
   },
+
   setup() {
     return {}
   }
@@ -42,13 +45,12 @@ export default defineComponent({
 
 <style scoped>
 pre {
+  /* In hljs pre tag is used. We need this style to override attributes in the styles of higlightjs to show code more
+   compact */
   margin: 0;
   padding: 0;
   float: left;
-  font-family: "JetBrains Mono",serif;
-  font-size: x-small;
 }
-
 .first-line {
   margin-top: 2%;
 }

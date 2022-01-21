@@ -47,8 +47,7 @@ export default defineComponent({
       type: String
     }
   },
-  setup(props) {
-    console.log(props.matches)
+  setup() {
     return {}
   }
 })
@@ -59,7 +58,7 @@ export default defineComponent({
   width: 100%;
   margin-top: 2%;
   padding: 1%;
-  background: var(--quaternary-color);
+  background: var(--primary-color-dark);
   border-radius: 10px;
   overflow: auto;
 }
@@ -91,7 +90,6 @@ td {
   font-size: small;
   text-align: center;
   padding: 2%;
-  border-bottom: solid var(--quaternary-color);
-  border-top: solid var(--quaternary-color);
+
 }
 </style>

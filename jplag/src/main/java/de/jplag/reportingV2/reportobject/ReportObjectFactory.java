@@ -46,19 +46,17 @@ public class ReportObjectFactory {
 
 	private static List<ComparisonReport> generateComparisonReports(JPlagResult result) {
 		List<ComparisonReport> comparisons = new ArrayList<>();
-		result.getComparisons().forEach( c -> {
-			comparisons.add(
-				new ComparisonReport(
-					c.getFirstSubmission().getName(),
-					c.getSecondSubmission().getName(),
-					c.similarity(),
-					getFilesForSubmission(c.getFirstSubmission()),
-					getFilesForSubmission(c.getSecondSubmission()),
-					c.getMatches().stream().map(m -> convertMatchToReportMatch(c, m,
-							result.getOptions().getLanguage().usesIndex())).collect(Collectors.toList())
-				)
-			);
-		});
+		result.getComparisons().forEach( c -> comparisons.add(
+			new ComparisonReport(
+				c.getFirstSubmission().getName(),
+				c.getSecondSubmission().getName(),
+				c.similarity(),
+				getFilesForSubmission(c.getFirstSubmission()),
+				getFilesForSubmission(c.getSecondSubmission()),
+				c.getMatches().stream().map(m -> convertMatchToReportMatch(c, m,
+						result.getOptions().getLanguage().usesIndex())).collect(Collectors.toList())
+			)
+		));
 		return comparisons;
 	}
 

@@ -85,7 +85,7 @@ export class ComparisonFactory {
         for( let i = 0; i < num; i++ ) {
             const hue = i * hueDelta
 
-            colors.push(`hsla(${hue}, 80%, 50%, 0.5)`)
+            colors.push(`hsla(${hue}, 80%, 50%, 0.3)`)
         }
         return colors
     }

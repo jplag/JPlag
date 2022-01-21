@@ -31,7 +31,7 @@ export default defineComponent({
           backgroundColor: 'rgba(149, 168, 241, 0.5)',
           borderWidth: 2,
           borderColor: 'rgba(149, 168, 241, 1)',
-          tickColor: '#860000'
+          tickColor: '#000000'
         }]
     })
 
@@ -43,18 +43,18 @@ export default defineComponent({
         x: {
           suggestedMax: maxVal.value + 5,
           ticks: {
-            color: '#860000',
+            color: '#000000',
           }
         },
         y: {
           ticks: {
-            color: '#860000',
+            color: '#000000',
           }
         }
       },
       plugins : {
         datalabels: {
-          color: '#860000',
+          color: '#000000',
           font: {
             weight: 'bold'
           },
@@ -126,7 +126,7 @@ export default defineComponent({
 
 <style scoped>
 .wrapper {
-  background: var(--background-color-accent);
+  background: var(--background-color);
   border-radius: 10px;
   box-shadow: #777777 2px 3px 3px;
   display: flex;

@@ -9,9 +9,9 @@
         <button id="hide-button" @click="togglePanel" title="Hide sidebar">
           <img src="@/assets/keyboard_double_arrow_left_white_24dp.svg" alt="hide"></button>
       </div>
-      <TextInformation label="Submission 1" :value="id1" :has-additional-info="false"/>
-      <TextInformation label="Submission 2" :value="id2" :has-additional-info="false"/>
-      <TextInformation label="Match %" :value="comparison.match_percentage" :has-additional-info="false"/>
+      <TextInformation label="Submission 1" :value="id1"/>
+      <TextInformation label="Submission 2" :value="id2"/>
+      <TextInformation label="Match %" :value="comparison.match_percentage"/>
       <MatchTable :matches="comparison.allMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
     </div>
     <div class="files-container" id="files1">

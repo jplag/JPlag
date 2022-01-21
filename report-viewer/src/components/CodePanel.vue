@@ -108,7 +108,7 @@ export default defineComponent({
 
 .file-title > p {
   text-align: center;
-  color: var(--on-primary-color-accent);
+  color: var(--on-primary-color);
   font-weight: bold;
   font-size: large;
 }
@@ -118,7 +118,7 @@ export default defineComponent({
   align-items: flex-start;
   margin: 1%;
   padding: 1%;
-  background: var(--background-color-accent);
+  background: var(--background-color);
   box-shadow: inset var(--shadow-color) 0 0 3px 1px;
   overflow: auto;
 }

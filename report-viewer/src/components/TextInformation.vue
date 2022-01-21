@@ -5,8 +5,8 @@
       <p class="value-text" :title="value">{{ value }}</p>
       </div>
       <button class="collapse-button" :class="{ hidden : !hasAdditionalInfo }" @click="toggleIsCollapsed">
-        <img v-if="isCollapsed" src="../assets/keyboard_double_arrow_up_white_18dp.svg" alt="hide info">
-        <img v-else src="../assets/keyboard_double_arrow_down_white_18dp.svg" alt="additional info">
+        <img v-if="isCollapsed" src="../assets/keyboard_double_arrow_up_black_18dp.svg" alt="hide info">
+        <img v-else src="../assets/keyboard_double_arrow_down_black_18dp.svg" alt="additional info">
       </button>
   </div>
   <div class="additional-info" :class="{ hidden : !isCollapsed }">
@@ -31,10 +31,13 @@ export default defineComponent({
     },
     hasAdditionalInfo: {
       type: Boolean,
-      required: true
+      default: false
     },
-    additionalInfoTitle: String,
-    additionalInfo : [String]
+    additionalInfoTitle: {
+      type: String,
+      default: "",
+    },
+    additionalInfo : [Array, String, Number, Boolean]
   },
   setup() {
     const isCollapsed = ref(false)
@@ -60,9 +63,9 @@ p {
 hr {
   border: 0;
   height: 2px;
-  background: linear-gradient(to right, #ea4848, transparent, transparent);
+  background: linear-gradient(to right, #E2EAFC, transparent, transparent);
   width: 100%;
-  box-shadow: #ea4864 0 1px;
+  box-shadow: #D7E3FC 0 1px;
 }
 
 .wrapper {
@@ -86,7 +89,7 @@ hr {
 .value-text {
   font-weight: bold;
   text-align: left;
-  color: var(--on-primary-color-accent);
+  color: var(--on-primary-color);
 }
 
 .collapse-button {
@@ -106,7 +109,7 @@ hr {
   display: flex;
   flex-direction: column;
   align-items: start;
-  background: var(--quaternary-color);
+  background: var(--secondary-color);
   padding: 2%;
   margin: 3% 0;
   box-shadow: inset var(--shadow-color) 0 0 3px;

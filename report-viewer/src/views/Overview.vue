@@ -4,12 +4,12 @@
       <h1>JPlag Report</h1>
       <p class="section-title">Main Info:</p>
       <div id="basicInfo">
-        <TextInformation label="Directory path" :value="overview.submissionFolderPath" :has-additional-info="false"/>
+        <TextInformation label="Directory path" :value="overview.submissionFolderPath"/>
         <TextInformation label="Language" :value="overview.language" :has-additional-info="true" :additional-info="overview.fileExtensions" additional-info-title="File extensions:"/>
-        <TextInformation :has-additional-info="false" :value="overview.matchSensitivity" label="Match Sensitivity"/>
+        <TextInformation :value="overview.matchSensitivity" label="Match Sensitivity"/>
         <TextInformation label="Submissions" :value="overview.submissionIds.length" :has-additional-info="true" :additional-info="overview.submissionIds" additional-info-title="Submission IDs:"/>
-        <TextInformation label="Date of execution" :value="overview.dateOfExecution" :has-additional-info="false"/>
-        <TextInformation label="Duration (in ms)" :value="overview.durationOfExecution" :has-additional-info="false"/>
+        <TextInformation label="Date of execution" :value="overview.dateOfExecution"/>
+        <TextInformation label="Duration (in ms)" :value="overview.durationOfExecution"/>
       </div>
       <div id="logo-section">
         <img id="logo" src="@/assets/logo-nobg.png" alt="JPlag">
@@ -69,7 +69,6 @@ export default defineComponent({
 
     //Distribution
     let distributions = ref(overview.metrics.map( (m) =>  m.distribution ))
-    console.log(overview.metrics[0])
 
     //Top Comparisons
     let topComps = ref(overview.metrics.map((m) => m.comparisons ))
@@ -97,9 +96,9 @@ h1 {
 hr {
   border: 0;
   height: 2px;
-  background: linear-gradient(to right, #ea4848, transparent, transparent);
+  background: linear-gradient(to right, #EDF2FB, transparent, transparent);
   width: 100%;
-  box-shadow: #ea4864 0 1px;
+  box-shadow: #D7E3FC 0 1px;
 }
 
 .container {

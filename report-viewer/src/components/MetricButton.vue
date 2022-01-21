@@ -59,7 +59,7 @@ export default defineComponent({
 }
 
 .wrapper:hover {
-  background: var(--tertiary-color-dark);
+  background: var(--secondary-color-dark);
   color: white;
 }
 
@@ -79,7 +79,7 @@ export default defineComponent({
 }
 
 .selected {
-  background: var(--tertiary-color);
+  background: var(--secondary-color);
   box-shadow: var(--shadow-color) 2px 3px 3px;
 }
 
