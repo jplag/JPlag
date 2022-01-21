@@ -13,14 +13,27 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.
+ */
 public class ReportObjectFactory {
 
+	/**
+	 * Converts a JPlagResult to a JPlagReport.
+	 * @param result
+	 * @return JPlagReport for the given JPlagResult.
+	 */
 	public static JPlagReport getReportObject(JPlagResult result) {
 		OverviewReport overviewReport = generateOverviewReport(result);
 		List<ComparisonReport> comparisons = generateComparisonReports(result);
 		return new JPlagReport(overviewReport, comparisons);
 	}
 
+	/**
+	 * Generates an Overview DTO of a JPlagResult.
+	 * @param result
+	 * @return
+	 */
 	private static  OverviewReport generateOverviewReport(JPlagResult result) {
 		List<JPlagComparison> comparisons = result.getComparisons();
 		OverviewReport overviewReport = new OverviewReport();
@@ -44,6 +57,11 @@ public class ReportObjectFactory {
 		return overviewReport;
 	}
 
+	/**
+	 * Generates detailed ComparisonReport DTO for each comparison in a JPlagResult.
+	 * @param result
+	 * @return A list with ComparisonReport DTOs.
+	 */
 	private static List<ComparisonReport> generateComparisonReports(JPlagResult result) {
 		List<ComparisonReport> comparisons = new ArrayList<>();
 		result.getComparisons().forEach( c -> comparisons.add(
@@ -60,6 +78,11 @@ public class ReportObjectFactory {
 		return comparisons;
 	}
 
+	/**
+	 * Gets the names of all submissions.
+	 * @param comparisons
+	 * @return A list containing all submission names.
+	 */
 	private static List<String> extractSubmissionNames(List<JPlagComparison> comparisons) {
 		HashSet<String> names = new HashSet<>();
 		comparisons.forEach(c -> {
@@ -69,6 +92,11 @@ public class ReportObjectFactory {
 		return new ArrayList<>(names);
 	}
 
+	/**
+	 * Gets the names of all comparison.
+	 * @param comparisons
+	 * @return A list containing all comparisons.
+	 */
 	private static List<String> getComparisonNames(List<JPlagComparison> comparisons) {
 		List<String> names = new ArrayList<>();
 		comparisons.forEach(
@@ -78,6 +106,12 @@ public class ReportObjectFactory {
 	}
 
 	// Currently, only one metric can be obtained.
+
+	/**
+	 * Gets the used metric in a JPlag comparison.
+	 * @param result
+	 * @return A list contains Metric DTOs.
+	 */
 	private static List<Metric> getMetrics(JPlagResult result) {
 		List<Metric> metrics = new ArrayList<>();
 		metrics.add(new Metric(
@@ -89,12 +123,25 @@ public class ReportObjectFactory {
 		return metrics;
 	}
 
+
+	/**
+	 * Converts JPlagComparison to a DTO for displaying only comparisons. See {@link #generateComparisonReports(JPlagResult)}
+	 * for a more detailed representation of a comparison.
+	 * @param comparisons
+	 * @return List containing TopComparison DTOs.
+	 */
 	private static List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons) {
 		List<TopComparison> topComparisons = new ArrayList<>();
 		comparisons.forEach( c -> topComparisons.add(new TopComparison(c.getFirstSubmission().getName(), c.getSecondSubmission().getName(), c.similarity())));
 		return topComparisons;
 	}
 
+	/**
+	 * Gets the names of excluded files in a JPlag comparison.
+	 * To be changed in the future to direct access to the file names. No file reading.
+	 * @param options
+	 * @return List with the names of the files.
+	 */
 	private static List<String> getExcludedFilesNames(JPlagOptions options) {
 		if (options.getExclusionFileName() == null) {
 			return List.of();
@@ -117,11 +164,22 @@ public class ReportObjectFactory {
 		return new ArrayList<>(excludedFileNames);
 	}
 
-
+	/**
+	 * Converts files of a submission to FilesOFSubmission DTO.
+	 * @param submission
+	 * @return A list containing FilesOfSubmission DTOs.
+	 */
 	private static List<FilesOfSubmission> getFilesForSubmission(Submission submission) {
 		return submission.getFiles().stream().map( f -> new FilesOfSubmission(f.getName(), readFileLines(f))).collect(Collectors.toList());
 	}
 
+	/**
+	 * Converts a JPlag Match object to a Match DTO.
+	 * @param comparison The comparison from which the match originates.
+	 * @param match The match to be converted.
+	 * @param usesIndex Indicates whether the language uses indexes.
+	 * @return A Match DTO.
+	 */
 	private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, Boolean usesIndex) {
 		TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
 		TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
@@ -144,6 +202,7 @@ public class ReportObjectFactory {
 				tokens
 		);
 	}
+
 	private static List<String> readFileLines(File file) {
 		ArrayList<String> lines = new ArrayList<>();
 		try {

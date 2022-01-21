@@ -8,6 +8,10 @@ import de.jplag.reportingV2.reportobject.model.JPlagReport;
 import java.util.List;
 
 //ReportImplementation -> JsonReport
+
+/**
+ * A report generator which reports the JPlagResult in Json format.
+ */
 public class JsonReport implements Report {
 
 	@Override

@@ -11,8 +11,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Factory class, responsible for creating Json strings and writing them to files.
+ */
 public class JsonFactory {
 
+	/**
+	 * Uses Jackson to create Json Strings from JPlagReport object.
+	 * @param jPlagReport
+	 * @return A list, first element is Json String of Overview object. The rest elements are Json Strings of
+	 * Comparison objects.
+	 */
 	public static List<String> getJsonStrings(JPlagReport jPlagReport) {
 		List<String> jsonReports = new ArrayList<>();
 		try {
@@ -27,6 +36,12 @@ public class JsonFactory {
 		return jsonReports;
 	}
 
+	/**
+	 * Creates Json Files for the given JPlagReport and saves them in the given folder.
+	 * @param jPlagReport
+	 * @param folderPath
+	 * @return A boolean, representing whether the process was successful.
+	 */
 	public static boolean saveJsonFiles(JPlagReport jPlagReport, String folderPath ) {
 		String sanitizedFolderPath = folderPath;
 		if ( !folderPath.endsWith("/") ) { sanitizedFolderPath = folderPath.concat("/"); }
