@@ -1,15 +1,14 @@
 package de.jplag;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
@@ -54,7 +53,7 @@ public class SubmissionSetBuilder {
         File rootDirectory = new File(options.getRootDirectoryName());
         verifyRootdirExistence(rootDirectory);
         String[] fileNames = readSubmissionRootNames(rootDirectory);
-        Map<String, Submission> foundSubmissions = processRootDirEntries(rootDirectory, fileNames);
+        Map<File, Submission> foundSubmissions = processRootDirEntries(rootDirectory, fileNames);
 
         // Extract the basecode submission if necessary.
         Optional<Submission> baseCodeSubmission = Optional.empty();
@@ -78,15 +77,9 @@ public class SubmissionSetBuilder {
             System.out.println(String.format("Basecode directory \"%s\" will be used.", baseCode.getRoot().toString()));
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
-            File baseCodeRoot = baseCode.getCanonicalRoot(); // Use canonical form for a more sane equality notion.
-            Iterator<Entry<String, Submission>> submissionIterator = foundSubmissions.entrySet().iterator();
-            while (submissionIterator.hasNext()) {
-                Entry<String, Submission> entry = submissionIterator.next();
-                if (baseCodeRoot.equals(entry.getValue().getCanonicalRoot())) {
-                    submissionIterator.remove();
-                    System.out.println(String.format("Skipping \"%s\" as user submission.", entry.getValue().getRoot().toString()));
-                    break;
-                }
+            Submission removed = foundSubmissions.remove(baseCode.getCanonicalRoot());
+            if (removed != null) {
+                System.out.println(String.format("Skipping \"%s\" as user submission.", removed.getRoot().toString()));
             }
         }
 
@@ -141,7 +134,7 @@ public class SubmissionSetBuilder {
      * @return Base code submission if the option value can be interpreted as a sub-directory, else {@code null}.
      * @throws ExitException when the option value is a sub-directory with errors.
      */
-    private Submission tryLoadBaseCodeAsRootSubDirectory(Map<String, Submission> foundSubmissions) throws ExitException {
+    private Submission tryLoadBaseCodeAsRootSubDirectory(Map<File, Submission> foundSubmissions) throws ExitException {
         String baseCodeName = options.getBaseCodeSubmissionName().get();
 
         // Is the option value a single name after trimming spurious separators?
@@ -161,8 +154,15 @@ public class SubmissionSetBuilder {
             throw new BasecodeException("The basecode directory name \"" + name + "\" cannot contain dots!");
         }
 
+        File rootDirectory = new File(options.getRootDirectoryName());
+        File basecodePath = new File(rootDirectory, baseCodeName);
+        try {
+            basecodePath = basecodePath.getCanonicalFile();
+        } catch (IOException e) {
+            throw new BasecodeException(String.format("Cannot compute canonical file path of \"%s\".", basecodePath.toString()));
+        }
         // Grab the basecode submission from the regular submissions.
-        return foundSubmissions.get(name);
+        return foundSubmissions.get(basecodePath);
     }
 
     /**
@@ -240,8 +240,8 @@ public class SubmissionSetBuilder {
      * @param fileNames Entries found in the root directory.
      * @return Candidate submissions ordered by their name.
      */
-    private Map<String, Submission> processRootDirEntries(File rootDirectory, String[] fileNames) throws ExitException {
-        Map<String, Submission> foundSubmissions = new LinkedHashMap<>(fileNames.length); // Capacity is an over-estimate.
+    private Map<File, Submission> processRootDirEntries(File rootDirectory, String[] fileNames) throws ExitException {
+        Map<File, Submission> foundSubmissions = new LinkedHashMap<>(fileNames.length); // Capacity is an over-estimate.
 
         for (String fileName : fileNames) {
             File submissionFile = new File(rootDirectory, fileName);
@@ -252,7 +252,8 @@ public class SubmissionSetBuilder {
                 continue;
             }
 
-            foundSubmissions.put(fileName, processDirEntry(submissionFile));
+            Submission submission = processDirEntry(submissionFile);
+            foundSubmissions.put(submission.getCanonicalRoot(), submission);
         }
 
         return foundSubmissions;
