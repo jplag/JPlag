@@ -6,6 +6,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import de.jplag.Language;
@@ -70,7 +71,7 @@ public class JPlagOptions {
      * Name of the file that contains the names of files to exclude from comparison.
      */
     private String exclusionFileName;
-    
+
     /**
      * Names of the excluded files.
      */
@@ -82,9 +83,19 @@ public class JPlagOptions {
     private String rootDirectoryName;
 
     /**
-     * Name of the directory which contains the base code.
+     * Path name of the directory containing the base code.
+     * <p>
+     * For backwards compatibility it may also be a directory name inside the root directory.
+     * Condition for the latter is
+     * <ul><li>Specified path does not exist.</li>
+     *     <li>Name has not have a separator character after trimming them from both ends (leaving at least a one-character name).</li>
+     *     <li>A submission with the specified name exists in the root directory.</li>
+     * </ul>
+     * It's an error if a string has been provided but it is neither an existing path nor does it fulfill all the
+     * conditions of the compatibility fallback listed above.
+     * </p>
      */
-    private String baseCodeSubmissionName;
+    private Optional<String> baseCodeSubmissionName = Optional.empty();
 
     /**
      * Example: If the subdirectoryName is 'src', only the code inside submissionDir/src of each submission will be used for
@@ -110,7 +121,7 @@ public class JPlagOptions {
         this.languageOption = languageOption;
     }
 
-    public String getBaseCodeSubmissionName() {
+    public Optional<String> getBaseCodeSubmissionName() {
         return baseCodeSubmissionName;
     }
 
@@ -167,7 +178,7 @@ public class JPlagOptions {
     }
 
     public boolean hasBaseCode() {
-        return this.baseCodeSubmissionName != null;
+        return this.baseCodeSubmissionName.isPresent();
     }
 
     public boolean isDebugParser() {
@@ -175,8 +186,11 @@ public class JPlagOptions {
     }
 
     public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
-        // Trim problematic file separators.
-        this.baseCodeSubmissionName = (baseCodeSubmissionName == null) ? null : baseCodeSubmissionName.replace(File.separator, "");
+        if (baseCodeSubmissionName == null || baseCodeSubmissionName.isEmpty()) {
+            this.baseCodeSubmissionName = Optional.empty();
+        } else {
+            this.baseCodeSubmissionName = Optional.of(baseCodeSubmissionName);
+        }
     }
 
     public void setComparisonMode(ComparisonMode comparisonMode) {

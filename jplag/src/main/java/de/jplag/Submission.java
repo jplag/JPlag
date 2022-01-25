@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.ReportGenerationException;
+import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -86,6 +88,18 @@ public class Submission implements Comparable<Submission> {
      */
     public String getName() {
         return name;
+    }
+
+    public File getRoot() {
+        return submissionRoot;
+    }
+
+    public File getCanonicalRoot() throws ExitException {
+        try {
+            return submissionRoot.getCanonicalFile();
+        } catch (IOException e) {
+            throw new SubmissionException(String.format("Cannot compute canonical file path of \"%s\".", submissionRoot.toString()));
+        }
     }
 
     /**
@@ -300,11 +314,11 @@ public class Submission implements Comparable<Submission> {
             }
         }
     }
-    
+
     private File createSubdirectory(File parent, String... subdirectoryNames) {
         File subdirectory = parent;
         for (String name : subdirectoryNames) {
-            subdirectory = new File(subdirectory, name); 
+            subdirectory = new File(subdirectory, name);
         }
         if (!subdirectory.exists()) {
             subdirectory.mkdirs();

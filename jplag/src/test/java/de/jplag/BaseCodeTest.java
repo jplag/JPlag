@@ -13,11 +13,11 @@ import de.jplag.exceptions.RootDirectoryException;
 public class BaseCodeTest extends TestBase {
 
     @Test
-    public void testBasecodeComparison() throws ExitException {
+    public void testBasecodeUserSubmissionComparison() throws ExitException {
         JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base"));
         verifyResults(result);
     }
-    
+
     @Test(expected = BasecodeException.class)
     public void testTinyBasecode() throws ExitException {
         runJPlag("TinyBasecode", it -> it.setBaseCodeSubmissionName("base"));
@@ -43,6 +43,12 @@ public class BaseCodeTest extends TestBase {
         assertEquals(85f, result.getComparisons().get(0).similarity(), DELTA);
     }
 
+    @Test
+    public void testBasecodePathComparison() throws ExitException {
+        JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName(getBasePath("basecode-base")));
+        assertEquals(3, result.getNumberOfSubmissions()); // "basecode/base" is now a user submission.
+    }
+
     @Test(expected = RootDirectoryException.class)
     public void testInvalidRoot() throws ExitException {
         runJPlag("basecode", it -> it.setRootDirectoryName("WrongRoot"));
@@ -54,7 +60,7 @@ public class BaseCodeTest extends TestBase {
     }
 
     @Test(expected = BasecodeException.class)
-    public void testBasecodeWithDots() throws ExitException {
-        runJPlag("basecode", it -> it.setBaseCodeSubmissionName("." + File.separator + "base"));
+    public void testBasecodeUserSubmissionWithDots() throws ExitException {
+        runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base.ext"));
     }
 }
