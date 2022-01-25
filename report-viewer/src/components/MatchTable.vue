@@ -2,8 +2,8 @@
 <div class="match-table-container">
   <table>
     <tr>
-      <th>{{ id1 }}</th>
-      <th>{{ id2 }}</th>
+      <th>Submission 1</th>
+      <th>Submission 2</th>
     </tr>
     <tr>
       <th>File 1</th>

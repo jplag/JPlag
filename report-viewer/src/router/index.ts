@@ -7,6 +7,13 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "Overview",
     component: Overview,
+    props:true
+  },
+    {
+    path: "/:notBlurred",
+    name: "OverviewBlurred",
+    component: Overview,
+    props:true
   },
   {
     path: "/comparison/:id1/:id2",

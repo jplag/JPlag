@@ -35,7 +35,7 @@
         <p class="section-title">Top Comparisons:</p>
         <p class="section-subtitle">(Top n comparisons)</p>
         <div id="comparisonsList">
-          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]"/>
+          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]" :not-blurred="notBlurredArray"/>
         </div>
     </div>
   </div>
@@ -53,8 +53,18 @@ import {OverviewFactory} from "@/model/factories/OverviewFactory";
 export default defineComponent({
   name: "Overview",
   components: {ComparisonsTable, DistributionDiagram, MetricButton, TextInformation },
-  setup() {
+  props: {
+    notBlurred: {
+      type: String,
+      default: "all"
+    }
+  },
+  setup(props) {
     const overview = OverviewFactory.getOverview(Overview)
+    let notBlurredArray = props.notBlurred.split(",")
+    if(notBlurredArray[0].match("all")) {
+      notBlurredArray = overview.submissionIds
+    }
 
     //Metrics
     let selectedMetric = ref(overview.metrics.map( () => false ))
@@ -73,13 +83,14 @@ export default defineComponent({
     //Top Comparisons
     let topComps = ref(overview.metrics.map((m) => m.comparisons ))
 
+
     return {
       overview,
       selectedMetricIndex,
       selectedMetric,
       distributions,
       topComps,
-
+      notBlurredArray,
       selectMetric
     }
   }

@@ -15,11 +15,11 @@
       <MatchTable :matches="comparison.allMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
     </div>
     <FilesContainer :matches="comparison.matchesInFirstSubmission" :files="filesOfFirst" container-id="files1"
-                    :files-owner="id1"
+                    files-owner="Submission 1"
                     @toggle-collapse="toggleCollapseFirst"
                     @line-selected="showMatchInSecond"/>
     <FilesContainer :matches="comparison.matchesInSecondSubmissions" :files="filesOfSecond" container-id="files2"
-                    :files-owner="id2"
+                    files-owner="Submission 2"
                     @toggle-collapse="toggleCollapseSecond"
                     @line-selected="showMatchInFirst"/>
   </div>
@@ -44,6 +44,9 @@ export default defineComponent({
     },
     id2: {
       type: String,
+    },
+    notBlurred: {
+      type: Array
     }
   },
   setup(props) {

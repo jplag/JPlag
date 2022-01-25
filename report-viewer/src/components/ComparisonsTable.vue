@@ -12,11 +12,13 @@
             + comparison.secondSubmissionId
             + comparison.matchPercentage"
       :class="{ 'even-row' : index % 2 === 0, 'odd-row' : index % 2 !== 0 }"
-      @click="navigateToComparisonView(comparison.firstSubmissionId, comparison.secondSubmissionId)">
+      class="selectable"
+      @click="navigateToComparisonView(comparison.firstSubmissionId, comparison.secondSubmissionId)"
+      >
     <td>{{ index + 1 }}.</td>
-    <td>{{ comparison.firstSubmissionId }}</td>
+    <td :class="{ blur : !notBlurred.includes(comparison.firstSubmissionId) }">{{ comparison.firstSubmissionId }}</td>
     <td><img src="@/assets/double_arrow_black_18dp.svg" alt=">>"/></td>
-    <td>{{ comparison.secondSubmissionId }}</td>
+    <td :class="{ blur : !notBlurred.includes(comparison.secondSubmissionId) }">{{ comparison.secondSubmissionId }}</td>
     <td>{{ formattedMatchPercentage(comparison.matchPercentage) }}</td>
   </tr>
 </table>
@@ -32,7 +34,10 @@ export default defineComponent({
    topComparisons : {
      type: Array,
      required: true
-   }
+   },
+    notBlurred : {
+     type: Array
+    }
   },
   setup() {
     let formattedMatchPercentage = ( number ) => number.toFixed(2)
@@ -43,9 +48,11 @@ export default defineComponent({
         params: { id1 : id1, id2 : id2 }
       })
     }
+    const clickk = () => console.log('Clicked ')
     return {
       formattedMatchPercentage,
-      navigateToComparisonView
+      navigateToComparisonView,
+      clickk
     }
   }
 })
@@ -56,7 +63,6 @@ table {
   border-collapse: collapse;
   font-size: larger;
   text-align: center;
-  color: var(--on-primary-color-accent);
 }
 
 th {
@@ -71,6 +77,9 @@ td {
   padding-bottom: 3%;
 }
 
+.blur {
+  filter: blur(5px);
+}
 .head-row {
   background: var(--primary-color-light);
 }
@@ -79,16 +88,11 @@ td {
   background: var(--secondary-color);
 }
 
-.even-row:hover {
-  background: var(--primary-color-dark);
-  cursor: pointer;
-}
-
 .odd-row {
   background: var(--primary-color-light);
 }
 
-.odd-row:hover {
+.selectable:hover {
   background: var(--primary-color-dark);
   cursor: pointer;
 }
