@@ -7,9 +7,9 @@ import static de.jplag.CommandLineArgument.EXCLUDE_FILE;
 import static de.jplag.CommandLineArgument.LANGUAGE;
 import static de.jplag.CommandLineArgument.MIN_TOKEN_MATCH;
 import static de.jplag.CommandLineArgument.RESULT_FOLDER;
-import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
-import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
+import static de.jplag.CommandLineArgument.ROOT_DIRECTORIES;
 import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
+import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
 import static de.jplag.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.CommandLineArgument.SUFFIXES;
 import static de.jplag.CommandLineArgument.VERBOSITY;
@@ -103,7 +103,7 @@ public class CLI {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
         LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getFrom(namespace), language);
+        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORIES.getListFrom(namespace), language);
         options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
         options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
         options.setDebugParser(DEBUG.getFrom(namespace));
