@@ -2,10 +2,13 @@ package de.jplag;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Test;
 
+import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 
 public class NormalComparisonTest extends TestBase {
@@ -82,5 +85,44 @@ public class NormalComparisonTest extends TestBase {
                 comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
                         || comparison.getFirstSubmission().getName().equals(nameB) && comparison.getSecondSubmission().getName().equals(nameA))
                 .findFirst();
+    }
+
+    @Test
+    public void testMultiRootDirNoBasecode() throws ExitException {
+        List<String> paths = new ArrayList<>(2);
+        paths.add(getBasePath("basecode")); // 3 submissions.
+        paths.add(getBasePath("SimpleDuplicate")); // 2 submissions.
+        JPlagResult result = runJPlag(paths, options -> {});
+        assertEquals(5, result.getNumberOfSubmissions());
+    }
+
+    @Test
+    public void testMultiRootDirSeparateBasecode() throws ExitException {
+        List<String> paths = new ArrayList<>(2);
+        String basecodePath = getBasePath("basecode-base");
+        paths.add(getBasePath("basecode")); // 3 submissions.
+        paths.add(getBasePath("SimpleDuplicate")); // 2 submissions.
+        JPlagResult result = runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
+        assertEquals(5, result.getNumberOfSubmissions());
+    }
+
+    @Test
+    public void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
+        List<String> paths = new ArrayList<>(2);
+        String basecodePath = getBasePath("basecode", "base");
+        paths.add(getBasePath("basecode")); // 2 submissions, 1 basecode.
+        paths.add(getBasePath("SimpleDuplicate")); // 2 submissions.
+        JPlagResult result = runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
+        assertEquals(4, result.getNumberOfSubmissions());
+    }
+
+    @Test(expected = BasecodeException.class)
+    public void testMultiRootDirBasecodeName() throws ExitException {
+        List<String> paths = new ArrayList<>(2);
+        String basecodePath = "base"; // Should *not* find basecode/base
+        paths.add(getBasePath("basecode"));
+        paths.add(getBasePath("SimpleDuplicate"));
+        JPlagResult result = runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
+        assertEquals(4, result.getNumberOfSubmissions());
     }
 }

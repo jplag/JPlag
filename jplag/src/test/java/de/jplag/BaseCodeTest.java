@@ -3,6 +3,8 @@ package de.jplag;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -51,7 +53,9 @@ public class BaseCodeTest extends TestBase {
 
     @Test(expected = RootDirectoryException.class)
     public void testInvalidRoot() throws ExitException {
-        runJPlag("basecode", it -> it.setRootDirectoryName("WrongRoot"));
+        List<String> rootDirectories = new ArrayList<>(1);
+        rootDirectories.add("WrongRoot");
+        runJPlag("basecode", it -> it.setRootDirectoryNames(rootDirectories));
     }
 
     @Test(expected = BasecodeException.class)

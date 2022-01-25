@@ -1,7 +1,8 @@
 package de.jplag;
 
-import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import de.jplag.exceptions.ExitException;
@@ -35,9 +36,14 @@ public abstract class TestBase {
         return runJPlag(testSampleName, options -> {
         });
     }
-
     protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(Path.of(BASE_PATH, testSampleName).toString(), LanguageOption.JAVA);
+        List<String> testSampleNames = new ArrayList<>(1);
+        testSampleNames.add(Path.of(BASE_PATH, testSampleName).toString());
+        return runJPlag(testSampleNames, customization);
+    }
+
+    protected JPlagResult runJPlag(List<String> testPaths, Consumer<JPlagOptions> customization) throws ExitException {
+        JPlagOptions options = new JPlagOptions(testPaths, LanguageOption.JAVA);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);
