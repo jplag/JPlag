@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,17 +50,27 @@ public class SubmissionSetBuilder {
      * @throws ExitException if the directory cannot be read.
      */
     public SubmissionSet buildSubmissionSet() throws ExitException {
-        // Read the root directory and collect valid looking submission entries from it.
-        File rootDirectory = new File(options.getRootDirectoryName());
-        verifyRootdirExistence(rootDirectory);
-        String[] fileNames = readSubmissionRootNames(rootDirectory);
-        Map<File, Submission> foundSubmissions = processRootDirEntries(rootDirectory, fileNames);
+        verifyRootDirectories();
+
+        Map<File, Submission> foundSubmissions = new HashMap<>();
+
+        // Read the root directories and collect valid looking submission entries from it.
+        List<String> rootDirectoryNames = options.getRootDirectoryNames();
+        for (String rootDirectoryName: rootDirectoryNames) {
+            File rootDirectory = new File(rootDirectoryName);
+            processRootDirEntries(rootDirectory, foundSubmissions);
+        }
 
         // Extract the basecode submission if necessary.
         Optional<Submission> baseCodeSubmission = Optional.empty();
         if (options.hasBaseCode()) {
             Submission baseCode = tryLoadBaseCodeAsPath();
             if (baseCode == null) {
+                if (rootDirectoryNames.size() > 1) {
+                    throw new BasecodeException("Basecode name cannot be specified in a submission set with more than one root directory.");
+                }
+
+                // Single root-directory, try the deprecated basecode specification.
                 baseCode = tryLoadBaseCodeAsRootSubDirectory(foundSubmissions);
 
                 String baseCodeName = options.getBaseCodeSubmissionName().get();
@@ -70,7 +81,7 @@ public class SubmissionSetBuilder {
                 } else {
                     // Found a base code as a submission, report about obsolete usage.
                     System.out.printf("Deprecated use of the -bc option found, please specify the basecode as \"%s%s%s\" instead.\n",
-                            rootDirectory.toString(), File.separator, baseCodeName);
+                            rootDirectoryNames.get(0), File.separator, baseCodeName);
                 }
             }
             baseCodeSubmission = Optional.of(baseCode);
@@ -89,15 +100,30 @@ public class SubmissionSetBuilder {
     }
 
     /**
-     * Verify that the given root directory exists.
+     * Verify that the given root directories exist and have no duplicate entries.
      */
-    private void verifyRootdirExistence(File rootDir) throws ExitException {
-        String rootDirectoryName = rootDir.getName();
-        if (!rootDir.exists()) {
-            throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectoryName));
-        }
-        if (!rootDir.isDirectory()) {
-            throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectoryName));
+    private void verifyRootDirectories() throws ExitException {
+        List<String> rootDirectoryNames = options.getRootDirectoryNames();
+        Set<File> canonicalRootDirs = new HashSet<>(rootDirectoryNames.size());
+        for (String rootDirectoryName: rootDirectoryNames) {
+            File rootDir = new File(rootDirectoryName);
+
+            if (!rootDir.exists()) {
+                throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectoryName));
+            }
+            if (!rootDir.isDirectory()) {
+                throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectoryName));
+            }
+
+            boolean added;
+            try {
+                added = canonicalRootDirs.add(rootDir.getCanonicalFile());
+            } catch (IOException e) {
+                throw new RootDirectoryException(String.format("Cannot read root directory \"%s\".", rootDirectoryName));
+            }
+            if (!added) {
+                throw new RootDirectoryException(String.format("Root directory \"%s\" has already been added as submission root!", rootDirectoryName));
+            }
         }
     }
 
@@ -154,14 +180,14 @@ public class SubmissionSetBuilder {
             throw new BasecodeException("The basecode directory name \"" + name + "\" cannot contain dots!");
         }
 
-        File rootDirectory = new File(options.getRootDirectoryName());
+        // Grab the basecode submission from the regular submissions.
+        File rootDirectory = new File(options.getRootDirectoryNames().get(0));
         File basecodePath = new File(rootDirectory, baseCodeName);
         try {
             basecodePath = basecodePath.getCanonicalFile();
         } catch (IOException e) {
             throw new BasecodeException(String.format("Cannot compute canonical file path of \"%s\".", basecodePath.toString()));
         }
-        // Grab the basecode submission from the regular submissions.
         return foundSubmissions.get(basecodePath);
     }
 
@@ -237,12 +263,10 @@ public class SubmissionSetBuilder {
     /**
      * Process entries in the root directory to check whether they qualify as submissions.
      * @param rootDirectory Root directory being examined.
-     * @param fileNames Entries found in the root directory.
-     * @return Candidate submissions ordered by their name.
+     * @param submissions Submissions found so far, is updated in-place.
      */
-    private Map<File, Submission> processRootDirEntries(File rootDirectory, String[] fileNames) throws ExitException {
-        Map<File, Submission> foundSubmissions = new LinkedHashMap<>(fileNames.length); // Capacity is an over-estimate.
-
+    private void processRootDirEntries(File rootDirectory, Map<File, Submission> submissions) throws ExitException {
+        String[] fileNames = readSubmissionRootNames(rootDirectory);
         for (String fileName : fileNames) {
             File submissionFile = new File(rootDirectory, fileName);
 
@@ -253,10 +277,8 @@ public class SubmissionSetBuilder {
             }
 
             Submission submission = processDirEntry(submissionFile);
-            foundSubmissions.put(submission.getCanonicalRoot(), submission);
+            submissions.put(submission.getCanonicalRoot(), submission);
         }
-
-        return foundSubmissions;
     }
 
     /**
