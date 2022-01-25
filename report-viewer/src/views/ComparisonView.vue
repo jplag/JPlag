@@ -14,38 +14,14 @@
       <TextInformation label="Match %" :value="comparison.match_percentage"/>
       <MatchTable :matches="comparison.allMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
     </div>
-    <div class="files-container" id="files1">
-      <h1>Files of {{ id1 }}</h1>
-      <VueDraggableNext>
-      <CodePanel v-for="(file, index) in Object.keys(filesOfFirst)"
-                 :lines="filesOfFirst[file].lines"
-                 :title="file"
-                 :file-index="index"
-                 :matches="!comparison.matchesInFirstSubmission[file] ? [] : comparison.matchesInFirstSubmission[file]"
-                 :key="file.concat(index)"
-                 :collapse="filesOfFirst[file].collapsed"
-                 @toggle-collapse="toggleCollapseFirst(file)"
-                 @line-selected="showMatchInSecond"
-                 :panel-id="1"
-      />
-      </VueDraggableNext>
-    </div>
-    <div class="files-container" id="files2">
-      <h1>Files of {{ id2 }}</h1>
-      <VueDraggableNext>
-        <CodePanel v-for="(file, index) in Object.keys(filesOfSecond)"
-                   :lines="filesOfSecond[file].lines"
-                   :title="file"
-                   :file-index="index"
-                   :matches="!comparison.matchesInSecondSubmissions[file] ? [] : comparison.matchesInSecondSubmissions[file]"
-                   :key="file.concat(index)"
-                   :collapse="filesOfSecond[file].collapsed"
-                   @toggle-collapse="toggleCollapseSecond(file)"
-                   @line-selected="showMatchInFirst"
-                   :panel-id="2"
-                   />
-      </VueDraggableNext>
-    </div>
+    <FilesContainer :matches="comparison.matchesInFirstSubmission" :files="filesOfFirst" container-id="files1"
+                    :files-owner="id1"
+                    @toggle-collapse="toggleCollapseFirst"
+                    @line-selected="showMatchInSecond"/>
+    <FilesContainer :matches="comparison.matchesInSecondSubmissions" :files="filesOfSecond" container-id="files2"
+                    :files-owner="id2"
+                    @toggle-collapse="toggleCollapseSecond"
+                    @line-selected="showMatchInFirst"/>
   </div>
 </template>
 
@@ -57,10 +33,11 @@ import CodePanel from "@/components/CodePanel";
 import TextInformation from "@/components/TextInformation";
 import MatchTable from "@/components/MatchTable";
 import {ComparisonFactory} from "@/model/factories/ComparisonFactory";
+import FilesContainer from "@/components/FilesContainer";
 
 export default defineComponent({
   name: "ComparisonView",
-  components: {MatchTable, TextInformation, VueDraggableNext, CodePanel},
+  components: {FilesContainer, MatchTable, TextInformation },
   props: {
     id1: {
       type: String,
