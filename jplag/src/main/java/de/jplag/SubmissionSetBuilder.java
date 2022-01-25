@@ -79,11 +79,11 @@ public class SubmissionSetBuilder {
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
             File baseCodeRoot = baseCode.getCanonicalRoot(); // Use canonical form for a more sane equality notion.
-            Iterator<Entry<String, Submission>> submIter = foundSubmissions.entrySet().iterator();
-            while (submIter.hasNext()) {
-                Entry<String, Submission> entry = submIter.next();
+            Iterator<Entry<String, Submission>> submissionIterator = foundSubmissions.entrySet().iterator();
+            while (submissionIterator.hasNext()) {
+                Entry<String, Submission> entry = submissionIterator.next();
                 if (baseCodeRoot.equals(entry.getValue().getCanonicalRoot())) {
-                    submIter.remove();
+                    submissionIterator.remove();
                     System.out.println(String.format("Skipping \"%s\" as user submission.", entry.getValue().getRoot().toString()));
                     break;
                 }
@@ -145,8 +145,16 @@ public class SubmissionSetBuilder {
         String baseCodeName = options.getBaseCodeSubmissionName().get();
 
         // Is the option value a single name after trimming spurious separators?
-        String name = trimLeft(trimRight(baseCodeName, File.separatorChar), File.separatorChar);
-        if (name.contains(File.separator)) return null; // Not a single name, cannot be a sub-directory.
+        String name = baseCodeName;
+        while (name.startsWith(File.separator)) {
+            name = name.substring(1);
+        }
+        while (name.endsWith(File.separator)) {
+            name = name.substring(0, name.length() - 1);
+        }
+
+        // If it is not a name of a single sub-directory, bail out.
+        if (name.isEmpty() || name.contains(File.separator)) return null;
 
         if (name.contains(".")) {
             throw new BasecodeException("The basecode directory name \"" + name + "\" cannot contain dots!");
@@ -154,30 +162,6 @@ public class SubmissionSetBuilder {
 
         // Grab the basecode submission from the regular submissions.
         return foundSubmissions.get(name);
-    }
-
-    /**
-     * Trim characters k from the left of the string.
-     */
-    private String trimLeft(String s, char k) {
-        int i = 0;
-        while (i < s.length() && s.charAt(i) == k) {
-            i++;
-        }
-        if (i == 0) return s;
-        return s.substring(i);
-    }
-
-    /**
-     * Trim characters k from the right of the string.
-     */
-    private String trimRight(String s, char k) {
-        int i = s.length() - 1;
-        while (i >= 0 && s.charAt(i) == k) {
-            i--;
-        }
-        if (i == s.length() - 1) return s;
-        return s.substring(0, i + 1);
     }
 
     /**
