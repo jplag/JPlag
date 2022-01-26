@@ -89,8 +89,10 @@ public enum CommandLineArgument {
     }
 
     /**
-     * Returns the value of this argument. Convenience method for {@link Namespace#get(List<String>)} and
+     * Returns the value of this argument. Convenience method for {@link Namespace#getList(String)} and
      * {@link CommandLineArgument#flagWithoutDash()}.
+     * <p>Depending on the action of the option, result types may change.</p>
+     * @param <T> is the argument type.
      * @param namespace stores a value for the argument.
      * @return the argument value.
      */

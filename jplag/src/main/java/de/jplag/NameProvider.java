@@ -99,7 +99,7 @@ public class NameProvider<T> {
 
     /**
      * Elements that could be given a name.
-     * @note Field is initialized in {@link #collectElementNames}.
+     * <p>Field is initialized in {@link #collectElementNames}.</p>
      */
     private Map<T, List<String>> namedElements = null;
 
@@ -159,9 +159,9 @@ public class NameProvider<T> {
 
     /**
      * Traverse the stored name tails tree, and collect elements with their best name.
+     * <p>If all name sequences of the stored elements are unique, this will return all elements.
+     * Missing elements implies a name sequence collision between them.</p>
      * @return Found elements with their names.
-     * @note If all name sequences of the stored elements are unique, this will return all elements.
-     *      Missing elements implies a name sequence collision between them.
      * @see #collectUnnamedElements
      */
     public Map<T, List<String>> collectNamedElements() {
