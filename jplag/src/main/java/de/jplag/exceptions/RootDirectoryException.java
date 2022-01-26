@@ -11,4 +11,7 @@ public class RootDirectoryException extends ExitException {
         super(message);
     }
 
+    public RootDirectoryException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

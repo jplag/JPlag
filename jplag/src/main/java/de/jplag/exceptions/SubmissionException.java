@@ -11,4 +11,7 @@ public class SubmissionException extends ExitException {
         super(message);
     }
 
+    public SubmissionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

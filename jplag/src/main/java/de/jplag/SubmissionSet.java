@@ -58,7 +58,7 @@ public class SubmissionSet {
     /**
      * Retrieve the base code of this collection.<br>
      * <b>Asking for a non-existing basecode crashes the errorConsumer.</b>
-     * 
+     *
      * @return The base code submission.
      * @see #hasBaseCode
      */
@@ -107,7 +107,7 @@ public class SubmissionSet {
                 parseBaseCodeSubmission(baseCodeSubmission.get()); // cannot use ifPresent because of throws declaration
             }
         } catch (OutOfMemoryError exception) {
-            throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"");
+            throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"", exception);
         }
         if (errorCollector.hasErrors()) {
             errorCollector.printCollectedErrors();

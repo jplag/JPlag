@@ -128,8 +128,8 @@ public class SubmissionSetBuilder {
         try {
             return processDirEntry(basecodeSubmission);
 
-        } catch (SubmissionException ex) {
-            throw new BasecodeException(ex.getMessage()); // Change thrown exception to basecode exception.
+        } catch (SubmissionException exception) {
+            throw new BasecodeException(exception.getMessage(), exception); // Change thrown exception to basecode exception.
 
         } catch (ExitException ex) {
             throw ex;
@@ -177,7 +177,7 @@ public class SubmissionSetBuilder {
         try {
             fileNames = rootDirectory.list();
         } catch (SecurityException exception) {
-            throw new RootDirectoryException("Cannot list files of the root directory! " + exception.getMessage());
+            throw new RootDirectoryException("Cannot list files of the root directory! " + exception.getMessage(), exception);
         }
 
         if (fileNames == null) {

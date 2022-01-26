@@ -115,8 +115,8 @@ public class Report { // Mostly legacy code with some minor improvements.
 
         try {
             return HTMLFile.fromFile(file);
-        } catch (IOException e) {
-            throw new ReportGenerationException("Error opening file: " + file);
+        } catch (IOException exception) {
+            throw new ReportGenerationException("Error opening file: " + file, exception);
         }
     }
 

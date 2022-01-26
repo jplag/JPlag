@@ -97,8 +97,8 @@ public class Submission implements Comparable<Submission> {
     public File getCanonicalRoot() throws ExitException {
         try {
             return submissionRoot.getCanonicalFile();
-        } catch (IOException e) {
-            throw new SubmissionException(String.format("Cannot compute canonical file path of \"%s\".", submissionRoot.toString()));
+        } catch (IOException exception) {
+            throw new SubmissionException(String.format("Cannot compute canonical file path of \"%s\".", submissionRoot.toString()), exception);
         }
     }
 
