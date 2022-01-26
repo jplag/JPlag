@@ -10,4 +10,8 @@ public class BasecodeException extends ExitException {
     public BasecodeException(String message) {
         super(message);
     }
+
+    public BasecodeException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
