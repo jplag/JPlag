@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
@@ -52,13 +53,34 @@ public class SubmissionSetBuilder {
     public SubmissionSet buildSubmissionSet() throws ExitException {
         verifyRootDirectories();
 
-        Map<File, Submission> foundSubmissions = new HashMap<>();
-
-        // Read the root directories and collect valid looking submission entries from it.
         List<String> rootDirectoryNames = options.getRootDirectoryNames();
-        for (String rootDirectoryName: rootDirectoryNames) {
-            File rootDirectory = new File(rootDirectoryName);
-            processRootDirEntries(rootDirectory, foundSubmissions);
+
+        // Find unique short names in case of multiple root directories, since submission names
+        // may not be unique between different roots.
+        Map<File, List<String>> shortRootDirectoryNames;
+        if (rootDirectoryNames.size() == 1) {
+            // For backward compatibility, use an empty short name to skip prepending it to submission names.
+            File rootDirectory = new File(rootDirectoryNames.get(0));
+            shortRootDirectoryNames = Map.of(rootDirectory, List.of(""));
+        } else {
+            NameProvider<File> shortRootDirectoryNameProvider = new NameProvider<>();
+            for (String rootDirectoryName: rootDirectoryNames) {
+                File rootDirectory = new File(rootDirectoryName);
+                shortRootDirectoryNameProvider.storeElement(rootDirectory, rootDirectory.toString(), File.separator);
+            }
+            shortRootDirectoryNames = shortRootDirectoryNameProvider.collectNamedElements();
+        }
+        // Since verifyRootDirectories() checked uniqueness, we should have a short name for all roots.
+        if (shortRootDirectoryNames.size() != rootDirectoryNames.size()) {
+            throw new AssertionError("Failed to find unique names for all root directories.");
+        }
+
+        // Collect valid looking entries from the root directories.
+        Map<File, Submission> foundSubmissions = new HashMap<>();
+        for (Entry<File, List<String>> shortRootDirectoryNameEntry: shortRootDirectoryNames.entrySet()) {
+            File rootDirectory = shortRootDirectoryNameEntry.getKey();
+            String shortRootDirectoryName = join(shortRootDirectoryNameEntry.getValue());
+            processRootDirEntries(rootDirectory, shortRootDirectoryName, foundSubmissions);
         }
 
         // Extract the basecode submission if necessary.
@@ -145,7 +167,9 @@ public class SubmissionSetBuilder {
         }
 
         try {
-            return processDirEntry(basecodeSubmission);
+            // Use an unlikely short name for the base code. If all is well, this name should not appear
+            // in the output since basecode matches are removed from it.
+            return processDirEntry(basecodeSubmission, "**basecode**");
 
         } catch (SubmissionException exception) {
             throw new BasecodeException(exception.getMessage(), exception); // Change thrown exception to basecode exception.
@@ -234,10 +258,11 @@ public class SubmissionSetBuilder {
     /**
      * Process the given directory entry as a submission root, the path MUST not be excluded.
      * @param submissionEntry Entry to process.
+     * @param shortRootDirectoryName Short unique name of the directory containing the entry, may be empty.
      * @return The entry converted to a submission.
      * @throws ExitException when an error has been found with the entry.
      */
-    private Submission processDirEntry(File submissionEntry) throws ExitException {
+    private Submission processDirEntry(File submissionEntry, String shortRootDirectoryName) throws ExitException {
         if (isExcludedEntry(submissionEntry) != null) {
             throw new AssertionError("Pre-condition of non-exclusion is violated.");
         }
@@ -257,15 +282,17 @@ public class SubmissionSetBuilder {
             }
         }
 
-        return new Submission(fileName, submissionEntry, parseFilesRecursively(submissionEntry), language, errorCollector);
+        String submissionName = shortRootDirectoryName.isEmpty() ? fileName : (shortRootDirectoryName + "::" + fileName);
+        return new Submission(submissionName, submissionEntry, parseFilesRecursively(submissionEntry), language, errorCollector);
     }
 
     /**
      * Process entries in the root directory to check whether they qualify as submissions.
      * @param rootDirectory Root directory being examined.
+     * @param shortRootDirectoryName Short unique name of the root directory, may be empty.
      * @param submissions Submissions found so far, is updated in-place.
      */
-    private void processRootDirEntries(File rootDirectory, Map<File, Submission> submissions) throws ExitException {
+    private void processRootDirEntries(File rootDirectory, String shortRootDirectoryName, Map<File, Submission> submissions) throws ExitException {
         String[] fileNames = readSubmissionRootNames(rootDirectory);
         for (String fileName : fileNames) {
             File submissionFile = new File(rootDirectory, fileName);
@@ -276,7 +303,7 @@ public class SubmissionSetBuilder {
                 continue;
             }
 
-            Submission submission = processDirEntry(submissionFile);
+            Submission submission = processDirEntry(submissionFile, shortRootDirectoryName);
             submissions.put(submission.getCanonicalRoot(), submission);
         }
     }
@@ -334,4 +361,19 @@ public class SubmissionSetBuilder {
         return files;
     }
 
+    /**
+     * Construct a string by concatenating the parts separated by {@link File#separator}.
+     * @param nameParts Parts to join.
+     * @return The constructed string.
+     */
+    private static String join(List<String> nameParts) {
+        if (nameParts.size() == 1) return nameParts.get(0);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < nameParts.size(); i++) {
+            if (i > 0) stringBuilder.append(File.separator);
+            stringBuilder.append(nameParts.get(i));
+        }
+        return stringBuilder.toString();
+    }
 }
