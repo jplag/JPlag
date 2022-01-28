@@ -197,6 +197,7 @@ public class BFGS {
 
         double alam2 = 0.0, f2 = 0.0;
         double a, b, disc, rhs1, rhs2, tmpalam;
+        int runs = 50;
         while (true) {
             // Evaluate the function and gradient at stp
             // and compute the directional derivative.
@@ -212,6 +213,8 @@ public class BFGS {
                 return f;
             } else if (f <= fold + ftol * alam * slope) {
                 // Sufficient function decrease.
+                return f;
+            } else if (runs-- < 0) {
                 return f;
             } else {
                 // Backtrack
@@ -490,7 +493,7 @@ public class BFGS {
             if (t[index[i]] >= 0) break;
         }
 
-        double dt = t[i];
+        double dt = i < n ? t[i] : 0;
         for (; dt_min >= dt && i < n; i++) {
             int b = index[i];
             double tb = t[i];
