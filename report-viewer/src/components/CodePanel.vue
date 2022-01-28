@@ -1,5 +1,5 @@
 <template>
-  <div class="code-panel-container">
+  <div class="code-panel-container" :id="panelId.toString().concat(title).concat(fileIndex.toString())">
     <div class="file-title">
       <p style="width: 90%">{{ title }}</p>
       <button style="width: 10%" class="collapse-button" @click="$emit('toggleCollapse')">
@@ -9,6 +9,7 @@
     </div>
     <div class="code-container" :class="{ hidden : !collapse }">
       <LineOfCode v-for="(line, index) in lines"
+                  :visible="collapse"
                 :key="index"
                 :color="coloringArray[index]"
                 :line-number="index"
@@ -50,10 +51,6 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const isCollapsed = ref(false)
-    const toggleIsCollapsed = () => isCollapsed.value = !isCollapsed.value
-
-
     const coloringArray = ref({})
     const linksArray = ref({})
     const isLast = ref({})
@@ -80,12 +77,10 @@ export default defineComponent({
     }
 
     return {
-      isCollapsed,
       coloringArray,
       linksArray,
       isFirst,
       isLast,
-      toggleIsCollapsed
     }
   }
 })

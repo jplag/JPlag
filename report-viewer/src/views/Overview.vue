@@ -5,9 +5,13 @@
       <p class="section-title">Main Info:</p>
       <div id="basicInfo">
         <TextInformation label="Directory path" :value="overview.submissionFolderPath"/>
-        <TextInformation label="Language" :value="overview.language" :has-additional-info="true" :additional-info="overview.fileExtensions" additional-info-title="File extensions:"/>
+        <TextInformation label="Language" :value="overview.language" :has-additional-info="true" additional-info-title="File extensions:">
+          <p v-for="info in overview.fileExtensions" :key="info">{{ info }}</p>
+        </TextInformation>
         <TextInformation :value="overview.matchSensitivity" label="Match Sensitivity"/>
-        <TextInformation label="Submissions" :value="overview.submissionIds.length" :has-additional-info="true" :additional-info="overview.submissionIds" additional-info-title="Submission IDs:"/>
+        <TextInformation label="Submissions" :value="overview.submissionIds.length" :has-additional-info="true" additional-info-title="Submission IDs:">
+          <IDsList :ids="overview.submissionIds" @id-sent="handleId"/>
+        </TextInformation>
         <TextInformation label="Date of execution" :value="overview.dateOfExecution"/>
         <TextInformation label="Duration (in ms)" :value="overview.durationOfExecution"/>
       </div>
@@ -35,7 +39,7 @@
         <p class="section-title">Top Comparisons:</p>
         <p class="section-subtitle">(Top n comparisons)</p>
         <div id="comparisonsList">
-          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]" :not-blurred="notBlurredArray"/>
+          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]" :not-anonymized="notAnonymized"/>
         </div>
     </div>
   </div>
@@ -49,22 +53,36 @@ import MetricButton from "@/components/MetricButton";
 import Overview from "../files/overview.json"
 import ComparisonsTable from "@/components/ComparisonsTable";
 import {OverviewFactory} from "@/model/factories/OverviewFactory";
+import IDsList from "@/components/IDsList";
 
 export default defineComponent({
   name: "Overview",
-  components: {ComparisonsTable, DistributionDiagram, MetricButton, TextInformation },
+  components: {IDsList, ComparisonsTable, DistributionDiagram, MetricButton, TextInformation },
   props: {
-    notBlurred: {
-      type: String,
-      default: "all"
-    }
   },
-  setup(props) {
+  setup() {
     const overview = OverviewFactory.getOverview(Overview)
-    let notBlurredArray = props.notBlurred.split(",")
-    if(notBlurredArray[0].match("all")) {
-      notBlurredArray = overview.submissionIds
+    let notAnonymized = ref([...overview.submissionIds])
+
+    const handleId = (...id) => {
+      if( id.length === overview.submissionIds.length) {
+        if(notAnonymized.value.length > 0) {
+          notAnonymized.value = []
+        } else {
+          notAnonymized.value = [...overview.submissionIds]
+        }
+      } else {
+          if ( notAnonymized.value.length === overview.submissionIds.length) {
+            notAnonymized.value = []
+          }
+          if (notAnonymized.value.includes(id[0])) {
+            notAnonymized.value.splice(notAnonymized.value.indexOf(id[0]), 1)
+          } else {
+            notAnonymized.value.push(id[0])
+          }
+      }
     }
+
 
     //Metrics
     let selectedMetric = ref(overview.metrics.map( () => false ))
@@ -90,7 +108,8 @@ export default defineComponent({
       selectedMetric,
       distributions,
       topComps,
-      notBlurredArray,
+      notAnonymized,
+      handleId,
       selectMetric
     }
   }

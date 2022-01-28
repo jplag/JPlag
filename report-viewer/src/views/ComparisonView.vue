@@ -9,16 +9,16 @@
         <button id="hide-button" @click="togglePanel" title="Hide sidebar">
           <img src="@/assets/keyboard_double_arrow_left_white_24dp.svg" alt="hide"></button>
       </div>
-      <TextInformation label="Submission 1" :value="id1"/>
-      <TextInformation label="Submission 2" :value="id2"/>
+      <TextInformation label="Submission 1" :value="id1" :anonymous="!notAnonymized.includes(id1)"/>
+      <TextInformation label="Submission 2" :value="id2" :anonymous="!notAnonymized.includes(id2)"/>
       <TextInformation label="Match %" :value="comparison.match_percentage"/>
       <MatchTable :matches="comparison.allMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
     </div>
-    <FilesContainer :matches="comparison.matchesInFirstSubmission" :files="filesOfFirst" container-id="files1"
+    <FilesContainer :matches="comparison.matchesInFirstSubmission" :files="filesOfFirst" :container-id="1"
                     files-owner="Submission 1"
                     @toggle-collapse="toggleCollapseFirst"
                     @line-selected="showMatchInSecond"/>
-    <FilesContainer :matches="comparison.matchesInSecondSubmissions" :files="filesOfSecond" container-id="files2"
+    <FilesContainer :matches="comparison.matchesInSecondSubmissions" :files="filesOfSecond" :container-id="2"
                     files-owner="Submission 2"
                     @toggle-collapse="toggleCollapseSecond"
                     @line-selected="showMatchInFirst"/>
@@ -28,8 +28,6 @@
 <script>
 import { defineComponent, ref } from "vue";
 import {generateLineCodeLink} from "@/utils/Utils";
-import { VueDraggableNext } from 'vue-draggable-next'
-import CodePanel from "@/components/CodePanel";
 import TextInformation from "@/components/TextInformation";
 import MatchTable from "@/components/MatchTable";
 import {ComparisonFactory} from "@/model/factories/ComparisonFactory";
@@ -45,7 +43,7 @@ export default defineComponent({
     id2: {
       type: String,
     },
-    notBlurred: {
+    notAnonymized: {
       type: Array
     }
   },
@@ -112,15 +110,6 @@ h1 {
   width: 100%;
   height: 100%;
   background: var(--background-color);
-}
-
-.files-container {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: column;
-  padding-top: 1%;
-  width: 100%;
-  overflow: auto;
 }
 
 .title-section {

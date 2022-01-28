@@ -1,17 +1,20 @@
 <template>
-  <div class="line-wrap" :style="{background : color}" :class="{'first-line' : isFirst, 'last-line' : isLast}">
-      <hljs class="hljs" v-bind:class="{ 'match-line' : color !== '#ECECEC' }" language="java" :code="lineNumber.toString().concat(' ').concat(text)"/>
+  <div class="line-wrap" :style="{background : color}" :class="{'first-line' : isFirst, 'last-line' : isLast, 'visible' : visible}">
+    <pre ref="lineRef" :id="text" class="java" :class="{ 'match-line' : color !== '#ECECEC' }">{{ lineNumber }} {{ text }}</pre>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
-import hljsVuePlugin from "@highlightjs/vue-plugin";
+import {defineComponent, onUpdated, ref} from "vue";
+import hljs from 'highlight.js';
 
 export default defineComponent({
   name: "LineOfCode",
-  components: { hljs: hljsVuePlugin.component},
   props: {
+    visible: {
+      type: Boolean,
+      required: true
+    },
     text: {
       type: String,
       required: true
@@ -37,8 +40,18 @@ export default defineComponent({
     }
   },
 
-  setup() {
-    return {}
+  setup(props) {
+    let highlighted = false
+    let lineRef = ref(null)
+    onUpdated( () => {
+      if ( props.visible && !highlighted ) {
+          hljs.highlightElement(lineRef.value)
+          highlighted = true
+      }
+    })
+    return {
+      lineRef
+    }
   }
 })
 </script>
@@ -51,6 +64,8 @@ pre {
   padding: 0;
   float: left;
 }
+
+
 .first-line {
   margin-top: 2%;
 }

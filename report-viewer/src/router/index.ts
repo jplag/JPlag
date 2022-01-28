@@ -9,17 +9,11 @@ const routes: Array<RouteRecordRaw> = [
     component: Overview,
     props:true
   },
-    {
-    path: "/:notBlurred",
-    name: "OverviewBlurred",
-    component: Overview,
-    props:true
-  },
   {
-    path: "/comparison/:id1/:id2",
+    path: "/comparison",
     name: "ComparisonView",
     component: ComparisonView,
-    props: true
+    props: route => ({ notAnonymized : route.params.notAnonymized, id1: route.query.id1, id2: route.query.id2})
   },
 ];
 

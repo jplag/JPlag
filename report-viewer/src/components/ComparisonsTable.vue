@@ -16,9 +16,9 @@
       @click="navigateToComparisonView(comparison.firstSubmissionId, comparison.secondSubmissionId)"
       >
     <td>{{ index + 1 }}.</td>
-    <td :class="{ blur : !notBlurred.includes(comparison.firstSubmissionId) }">{{ comparison.firstSubmissionId }}</td>
+    <td :class="{ anonymous : !notAnonymized.includes(comparison.firstSubmissionId)}">{{ notAnonymized.includes(comparison.firstSubmissionId) ? comparison.firstSubmissionId : "Hidden" }}</td>
     <td><img src="@/assets/double_arrow_black_18dp.svg" alt=">>"/></td>
-    <td :class="{ blur : !notBlurred.includes(comparison.secondSubmissionId) }">{{ comparison.secondSubmissionId }}</td>
+    <td :class="{ anonymous : !notAnonymized.includes(comparison.secondSubmissionId)}">{{ notAnonymized.includes(comparison.secondSubmissionId) ? comparison.secondSubmissionId : "Hidden" }}</td>
     <td>{{ formattedMatchPercentage(comparison.matchPercentage) }}</td>
   </tr>
 </table>
@@ -35,24 +35,23 @@ export default defineComponent({
      type: Array,
      required: true
    },
-    notBlurred : {
+    notAnonymized : {
      type: Array
     }
   },
-  setup() {
+  setup(props) {
     let formattedMatchPercentage = ( number ) => number.toFixed(2)
 
     const navigateToComparisonView = (id1, id2) => {
       router.push({
         name: "ComparisonView",
-        params: { id1 : id1, id2 : id2 }
+        query: {id1: id1, id2: id2},
+        params: { notAnonymized: props.notAnonymized}
       })
     }
-    const clickk = () => console.log('Clicked ')
     return {
       formattedMatchPercentage,
       navigateToComparisonView,
-      clickk
     }
   }
 })
@@ -77,9 +76,11 @@ td {
   padding-bottom: 3%;
 }
 
-.blur {
-  filter: blur(5px);
+.anonymous {
+  color: #777777;
+  filter: blur(1px);
 }
+
 .head-row {
   background: var(--primary-color-light);
 }

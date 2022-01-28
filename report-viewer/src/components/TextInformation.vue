@@ -2,7 +2,7 @@
   <div class="wrapper">
       <div class="text-container">
       <p class="label-text">{{ label }}</p>
-      <p class="value-text" :title="value">{{ value }}</p>
+      <p :class="{ anonymous : anonymous }" class="value-text" :title="anonymous ? '' : value">{{ anonymous ? "Hidden" : value }}</p>
       </div>
       <button class="collapse-button" :class="{ hidden : !hasAdditionalInfo }" @click="toggleIsCollapsed">
         <img v-if="isCollapsed" src="../assets/keyboard_double_arrow_up_black_18dp.svg" alt="hide info">
@@ -11,7 +11,7 @@
   </div>
   <div class="additional-info" :class="{ hidden : !isCollapsed }">
     <p class="additional-info-title">{{ additionalInfoTitle }}</p>
-    <p v-for="info in additionalInfo" :key="info">{{ info }}</p>
+    <slot></slot>
   </div>
   <hr>
 </template>
@@ -37,7 +37,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
-    additionalInfo : [Array, String, Number, Boolean]
+    anonymous: {
+      type: Boolean,
+      default: false
+    }
   },
   setup() {
     const isCollapsed = ref(false)
@@ -66,6 +69,11 @@ hr {
   background: linear-gradient(to right, #E2EAFC, transparent, transparent);
   width: 100%;
   box-shadow: #D7E3FC 0 1px;
+}
+
+.anonymous {
+  filter: blur(1px);
+  color: #777777;
 }
 
 .wrapper {

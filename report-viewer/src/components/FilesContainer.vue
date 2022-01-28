@@ -1,5 +1,5 @@
 <template>
-  <div class="files-container" :id="containerId">
+  <div class="files-container">
     <h1>Files of {{ filesOwner }}</h1>
     <VueDraggableNext>
       <CodePanel v-for="(file, index) in Object.keys(files)"
@@ -11,7 +11,7 @@
                  :collapse="files[file].collapsed"
                  @toggle-collapse="$emit('toggle-collapse', file)"
                  @line-selected="lineSelected"
-                 :panel-id="1"
+                 :panel-id="containerId"
       />
     </VueDraggableNext>
   </div>
@@ -27,7 +27,7 @@ export default defineComponent({
   components: { CodePanel, VueDraggableNext},
   props: {
     containerId: {
-      type: String,
+      type: Number,
       required: true
     },
     filesOwner: {
