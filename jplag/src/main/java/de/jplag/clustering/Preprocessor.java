@@ -2,6 +2,7 @@ package de.jplag.clustering;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
@@ -29,6 +30,9 @@ public interface Preprocessor {
                 }
             }
             int[] preservedRows = rowList.stream().mapToInt(Integer::intValue).toArray();
+            if (preservedRows.length == 0) {
+                return new double[0][];
+            }
             similarity = similarity.getSubMatrix(preservedRows, preservedRows);
             return similarity.getData();
         }
@@ -51,8 +55,11 @@ public interface Preprocessor {
         @Override
         public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
             double[][] data = preprocessor.preprocessSimilarities(similarityMatrix.getData());
-            Collection<Collection<Integer>> prelimResult = base.cluster(new Array2DRowRealMatrix(data, false));
-            return preprocessor.postProcessResult(prelimResult);
+            if (data.length > 2) {
+                Collection<Collection<Integer>> prelimResult = base.cluster(new Array2DRowRealMatrix(data, false));
+                return preprocessor.postProcessResult(prelimResult);
+            }
+            return Collections.emptyList();
         }
 
     }
