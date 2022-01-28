@@ -3,8 +3,14 @@ import { createStore} from "vuex";
 const store = createStore({
     state () {
         return {
-            anonymous : new Set()
+            anonymous : new Set(),
+            files: Array
         }
+    },
+    getters: {
+      getFileByName: (state: any) => (name: string) => {
+          return state.files.find((file: any) => file.name.includes(name))
+      }
     },
     mutations: {
         addAnonymous (state: any, id) {
@@ -19,7 +25,11 @@ const store = createStore({
         },
         resetAnonymous (state) {
             state.anonymous = new Set()
+        },
+        saveFiles (state, files) {
+            state.files = files
         }
+
     }
 })
 

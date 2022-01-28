@@ -13,6 +13,7 @@
     "chartjs-plugin-datalabels": "^2.0.0",
     "core-js": "^3.6.5",
     "highlight.js": "^11.4.0",
+    "jszip": "^3.7.1",
     "vue": "^3.0.0",
     "vue-chart-3": "^3.0.3",
     "vue-draggable-next": "^2.1.1",
