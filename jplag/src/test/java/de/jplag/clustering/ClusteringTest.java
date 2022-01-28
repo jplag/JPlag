@@ -72,12 +72,17 @@ public class ClusteringTest {
         return 2 * a * b / (a + b);
     }
 
+    private URL loadFromClasspath(String file) throws FileNotFoundException {
+        URL url = getClass().getClassLoader().getResource(file);
+        if (url == null) {
+            throw new FileNotFoundException(file + " not found. Was the PseudonymizedReports submodule initialized?");
+        }
+        return url;
+    }
+
     @Test
     public void aClusteringOld() throws FileNotFoundException, URISyntaxException {
-        URL url = getClass().getClassLoader().getResource("de/jplag/PseudonymizedReports/alt/C_1000_matches_max.csv");
-        if (url == null) {
-            throw new FileNotFoundException();
-        }
+        URL url = loadFromClasspath("de/jplag/PseudonymizedReports/alt/C_1000_matches_max.csv");
         File file = new File(url.toURI());
         ReadResult r = readOldCsv(file);
         Preprocessor preprocessor = new CdfPreprocessor();
@@ -110,10 +115,7 @@ public class ClusteringTest {
 
     @Test
     public void aClusteringNew() throws FileNotFoundException, URISyntaxException {
-        URL url = getClass().getClassLoader().getResource("de/jplag/PseudonymizedReports/neu/B_matches_avg.csv");
-        if (url == null) {
-            throw new FileNotFoundException();
-        }
+        URL url = loadFromClasspath("de/jplag/PseudonymizedReports/neu/B_matches_avg.csv");
         File file = new File(url.toURI());
         ReadResult r = readNewCsv(file);
         RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(new CdfPreprocessor().preprocessSimilarities(r.similarity.getData()));
