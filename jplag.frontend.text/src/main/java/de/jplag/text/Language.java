@@ -3,83 +3,79 @@ package de.jplag.text;
 
 import java.io.File;
 
-import de.jplag.Program;
+import de.jplag.ErrorConsumer;
+import de.jplag.Token;
 import de.jplag.TokenList;
 
-/**
- * @Changed by Emeric Kwemou 29.01.2005
- *  
- */
 public class Language implements de.jplag.Language {
 
-	private Program program;
+    private ErrorConsumer program;
 
-	private Parser parser = new Parser();
+    private Parser parser = new Parser();
 
-	public Language(Program program) {
-		this.program = program;
-		this.parser.setProgram(this.program);
-	}
+    public Language(ErrorConsumer program) {
+        this.program = program;
+        this.parser.setProgram(this.program);
+    }
 
-	@Override
+    @Override
     public int errorCount() {
-		return this.parser.errorsCount();
-	}
+        return this.parser.errorsCount();
+    }
 
-	@Override
+    @Override
     public String[] suffixes() {
-		String[] res = { ".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex" };
-		return res;
-	}
+        String[] res = {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
+        return res;
+    }
 
-	@Override
+    @Override
     public String getName() {
-		return "Text AbstractParser";
-	}
+        return "Text AbstractParser";
+    }
 
-	@Override
+    @Override
     public String getShortName() {
-		return "text";
-	}
+        return "text";
+    }
 
-	@Override
+    @Override
     public int minimumTokenMatch() {
-		return 5;
-	}
+        return 5;
+    }
 
-	@Override
+    @Override
     public TokenList parse(File dir, String[] files) {
-		return this.parser.parse(dir, files);
-	}
+        return this.parser.parse(dir, files);
+    }
 
-	@Override
+    @Override
     public boolean hasErrors() {
-		return this.parser.hasErrors();
-	}
+        return this.parser.hasErrors();
+    }
 
-	@Override
+    @Override
     public boolean supportsColumns() {
-		return true;
-	}
+        return true;
+    }
 
-	@Override
+    @Override
     public boolean isPreformatted() {
-		return false;
-	}
+        return false;
+    }
 
-	@Override
+    @Override
     public boolean usesIndex() {
-		return false;
-	}
+        return false;
+    }
 
-	@Override
+    @Override
     public int numberOfTokens() {
-        return parser.tokenStructure.serial;
-//		return de.jplag.text.TextToken.numberOfTokens();   // always returns 1 ....
-	}
+        return parser.serial;
+    }
 
-	@Override
+    @Override
     public String type2string(int type) {
-		return TextToken.type2string(type);
-	}
+        return Token.type2string(type);
+    }
 }

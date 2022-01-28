@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
@@ -16,9 +18,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
 
     private final Submission firstSubmission;
     private final Submission secondSubmission;
-
-    private JPlagComparison firstBaseCodeMatches = null;
-    private JPlagComparison secondBaseCodeMatches = null;
 
     private final List<Match> matches;
 
@@ -74,37 +73,19 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
         }
 
         TokenList tokenList = (j == 0 ? firstSubmission : secondSubmission).getTokenList();
-        int i, h, starti, starth, count = 1;
 
-        o1: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).getStartOfFirst() : matches.get(i).getStartOfSecond());
-            for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).getStartOfFirst() : matches.get(h).getStartOfSecond());
-                if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
-                    continue o1;
-                }
-            }
-            count++;
-        }
-
-        String[] res = new String[count];
-        res[0] = tokenList.getToken((j == 0 ? matches.get(0).getStartOfFirst() : matches.get(0).getStartOfSecond())).file;
-        count = 1;
-
-        o2: for (i = 1; i < matches.size(); i++) {
-            starti = (j == 0 ? matches.get(i).getStartOfFirst() : matches.get(i).getStartOfSecond());
-            for (h = 0; h < i; h++) {
-                starth = (j == 0 ? matches.get(h).getStartOfFirst() : matches.get(h).getStartOfSecond());
-                if (tokenList.getToken(starti).file.equals(tokenList.getToken(starth).file)) {
-                    continue o2;
-                }
-            }
-            res[count++] = tokenList.getToken(starti).file;
+        /*
+         * Collect the file names of the first token of each match.
+         */
+        Set<String> collectedFiles = new LinkedHashSet<>();
+        for (Match match: matches) {
+            collectedFiles.add(tokenList.getToken(match.getStart(j == 0)).file);
         }
 
         /*
          * sort by file name. (so that equally named files are displayed approximately side by side.)
          */
+        String[] res = collectedFiles.toArray(new String[0]);
         Arrays.sort(res);
 
         return res;
@@ -114,7 +95,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * @return the base code matches of the first submission.
      */
     public JPlagComparison getFirstBaseCodeMatches() {
-        return firstBaseCodeMatches;
+        return firstSubmission.getBaseCodeComparison();
     }
 
     /**
@@ -148,7 +129,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * @return the base code matches of the second submissions.
      */
     public JPlagComparison getSecondBaseCodeMatches() {
-        return secondBaseCodeMatches;
+        return secondSubmission.getBaseCodeComparison();
     }
 
     /**
@@ -156,6 +137,24 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      */
     public Submission getSecondSubmission() {
         return secondSubmission;
+    }
+
+    /**
+     * @param getFirst Whether to return the first submission,
+     *      else return the second submission.
+     * @return The requested submission.
+     */
+    public Submission getSubmission(boolean getFirst) {
+        return getFirst ? firstSubmission : secondSubmission;
+    }
+
+    /**
+     * @param getFirst Whether to return the first basecode matches,
+     *      else return the second basecode matches.
+     * @return The requested basecode matches.
+     */
+    public JPlagComparison getBaseCodeMatches(boolean getFirst) {
+        return getSubmission(getFirst).getBaseCodeComparison();
     }
 
     /**
@@ -176,14 +175,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * @return Similarity in percent (what percentage of tokens across both submissions are matched).
      */
     public final float similarity() {
-        float sa, sb;
-        if (secondBaseCodeMatches != null && firstBaseCodeMatches != null) {
-            sa = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
-            sb = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
-        } else {
-            sa = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size();
-            sb = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size();
-        }
+        boolean subtractBaseCode = firstSubmission.hasBaseCodeMatches() && secondSubmission.hasBaseCodeMatches();
+        float sa = firstSubmission.getSimilarityDivisor(subtractBaseCode);
+        float sb = secondSubmission.getSimilarityDivisor(subtractBaseCode);
         return (200 * getNumberOfMatchedTokens()) / (sa + sb);
     }
 
@@ -192,12 +186,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * second).
      */
     public final float similarityOfFirst() {
-        int divisor;
-        if (firstBaseCodeMatches != null) {
-            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size() - firstBaseCodeMatches.getNumberOfMatchedTokens();
-        } else {
-            divisor = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size();
-        }
+        int divisor = firstSubmission.getSimilarityDivisor(true);
         return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
     }
 
@@ -206,12 +195,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * first).
      */
     public final float similarityOfSecond() {
-        int divisor;
-        if (secondBaseCodeMatches != null) {
-            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size() - secondBaseCodeMatches.getNumberOfMatchedTokens();
-        } else {
-            divisor = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size();
-        }
+        int divisor = secondSubmission.getSimilarityDivisor(true);
         return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
     }
 
@@ -252,20 +236,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     }
 
     /**
-     * Sets the base code matches of the second submissions.
-     */
-    public void setFirstBaseCodeMatches(JPlagComparison firstBaseCodeMatches) {
-        this.firstBaseCodeMatches = firstBaseCodeMatches;
-    }
-
-    /**
-     * Sets the base code matches of the second submissions.
-     */
-    public void setSecondBaseCodeMatches(JPlagComparison secondBaseCodeMatches) {
-        this.secondBaseCodeMatches = secondBaseCodeMatches;
-    }
-
-    /**
      * Creates a permutation for the matches based on the indices of the matched token groups.
      * @param useFirst determines whether the start of the first or second submission is compared.
      * @return the permutation indices.
@@ -282,7 +252,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
 
     private int selectStartof(Integer index, boolean useFirst) {
         Match match = matches.get(index);
-        return useFirst ? match.getStartOfFirst() : match.getStartOfSecond();
+        return match.getStart(useFirst);
     }
 
     @Override
@@ -291,13 +261,14 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     }
 
     private final float firstBasecodeSimilarity() {
-        float sa = firstSubmission.getNumberOfTokens() - firstSubmission.getFiles().size();
+        float sa = firstSubmission.getSimilarityDivisor(false);
+        JPlagComparison firstBaseCodeMatches = firstSubmission.getBaseCodeComparison();
         return firstBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sa;
     }
 
     private final float secondBasecodeSimilarity() {
-        float sb = secondSubmission.getNumberOfTokens() - secondSubmission.getFiles().size();
+        float sb = secondSubmission.getSimilarityDivisor(false);
+        JPlagComparison secondBaseCodeMatches = secondSubmission.getBaseCodeComparison();
         return secondBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sb;
     }
-
 }

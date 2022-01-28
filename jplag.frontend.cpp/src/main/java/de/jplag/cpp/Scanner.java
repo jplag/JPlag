@@ -16,7 +16,7 @@ public class Scanner extends AbstractParser implements CPPTokenConstants {
 		CPPScanner scanner = null;// will be initialized in Method scanFile
 		for (int i = 0; i < files.length; i++) {
 			actFile = files[i];
-		    getProgram().print(null, "Scanning file " + files[i] + "\n");
+		    getErrorConsumer().print(null, "Scanning file " + files[i]);
 			if (!CPPScanner.scanFile(dir, files[i], scanner, this))
 				errors++;
 			struct.addToken(new CPPToken(FILE_END, actFile, 1));

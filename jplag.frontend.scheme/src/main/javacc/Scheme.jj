@@ -51,50 +51,42 @@ options
 
 PARSER_BEGIN(SchemeParser)
 package de.jplag.scheme;
-import java.io.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 public class SchemeParser implements SchemeTokenConstants {
     /* used for context in the template production rule */
     private static int templateParam;
-    private de.jplag.scheme.Parser parser2 ;
-    //static SchemeParser parser = null;
+    private Parser parser2;
 
-    public static boolean parseFile(File dir, String fileName,
-        SchemeParser parser, de.jplag.scheme.Parser parserX)
-    {
-        File file=null;
+    public static boolean parseFile(File dir, String fileName, SchemeParser parser, Parser parserX) {
+        File file = null;
         try {
-            FileInputStream in = new FileInputStream(file=new File(dir,fileName));
-            if (parser==null) {
-                parser = new SchemeParser(in);
+            FileInputStream in = new FileInputStream(file = new File(dir, fileName));
+            if (parser == null) {
+                parser = new SchemeParser(in, "UTF-8");
             } else {
-                parser.ReInit(in);
+                parser.ReInit(in, "UTF-8");
             }
-            parser.parser2=parserX;
+            parser.parser2 = parserX;
         } catch (FileNotFoundException e) {
-            System.out.println("Scheme Parser R4RS:  File " + fileName +
-                " not found.");
+            System.out.println("Scheme Parser R4RS:  File " + fileName + " not found.");
             return false;
         }
         try {
             parser.Program();
         } catch (ParseException e) {
-            parserX.getProgram().addError("  Parsing Error in '" + fileName
-                + "':\n  " + e.getMessage() + "\n");
+            parserX.getErrorConsumer().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
             return false;
-        } catch (TokenMgrError e) {
-            parserX.getProgram().addError("  Scanning Error in '" + fileName
-                + "':\n  " + e.getMessage() + "\n");
+        } catch (TokenMgrException e) {
+            parserX.getErrorConsumer().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
             return false;
         }
         return true;
     }
-
-/*    public static void main(String args[]) {
-        parseFile(new File("."),args[0]);
-    }*/
 }
-
 PARSER_END(SchemeParser)
 
 

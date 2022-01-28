@@ -1,4 +1,4 @@
-name: Maven Workflow
+name: CI Build
 
 on:
   push: 
@@ -20,30 +20,17 @@ jobs:
       with:
         java-version: 14
         distribution: 'zulu'
-        
-    - name: Run Maven Install
-      run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
-    
+            
     - name: Run Tests
       run: mvn test -B
       
     - name: Build Assembly
-      working-directory: jplag
-      run: mvn clean generate-sources package assembly:single
+      run: mvn clean package assembly:single
       
     - name: Upload Assembly
       uses: actions/upload-artifact@v2
       with:
         name: "JPlag"
         path: "jplag/target/jplag-*-jar-with-dependencies.jar"
-        
-    - name: Publish Release
-      uses: marvinpinto/action-automatic-releases@latest
-      if: startsWith(github.ref, 'refs/tags/v')
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        draft: true
-        files: |
-          jplag/target/jplag-*-jar-with-dependencies.jar
       
 

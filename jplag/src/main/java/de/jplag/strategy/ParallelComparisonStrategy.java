@@ -15,6 +15,7 @@ import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
+import de.jplag.SubmissionSet;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -35,12 +36,12 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(List<Submission> submissions, Submission baseCodeSubmission) {
+    public JPlagResult compareSubmissions(SubmissionSet submissionSet) {
         // Initialize:
         long timeBeforeStartInMillis = System.currentTimeMillis();
-        boolean withBaseCode = baseCodeSubmission != null;
+        boolean withBaseCode = submissionSet.hasBaseCode();
         if (withBaseCode) {
-            compareSubmissionsToBaseCode(submissions, baseCodeSubmission);
+            compareSubmissionsToBaseCode(submissionSet);
         }
         threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         comparisons.clear();
@@ -48,6 +49,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         successfulComparisons = 0;
 
         // Parallel compare:
+        List<Submission> submissions = submissionSet.getSubmissions();
         List<SubmissionTuple> tuples = buildComparisonTuples(submissions);
         Collections.shuffle(tuples); // Reduces how often submission pairs must be re-submitted
         for (SubmissionTuple tuple : tuples) {
@@ -66,7 +68,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         // Clean up and return result:
         shutdownThreadPool();
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisons, durationInMillis, submissions.size(), options);
+        return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
     }
 
     /**

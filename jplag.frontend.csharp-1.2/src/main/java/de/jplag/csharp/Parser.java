@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import antlr.Token;
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
-import de.jplag.UnicodeReader;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
@@ -19,7 +18,6 @@ public class Parser extends AbstractParser implements CSharpTokenConstants {
 		struct = new TokenList();
 		errors = 0;
 		for (int i = 0; i < files.length; i++) {
-			//			getProgram().print(null, "Parsing file " + files[i] + "\n");
 			if (!parseFile(dir, files[i]))
 				errors++;
 			struct.addToken(new CSharpToken(FILE_END, files[i], -1, -1, -1));
@@ -47,7 +45,7 @@ public class Parser extends AbstractParser implements CSharpTokenConstants {
 			// close file
 			fis.close();
 		} catch (Exception e) {
-			getProgram().addError("  Parsing Error in '" + file + "':\n  " + e.toString() + "\n");
+			getErrorConsumer().addError("  Parsing Error in '" + file + "':\n  " + e.toString());
 			return false;
 		}
 		return true;

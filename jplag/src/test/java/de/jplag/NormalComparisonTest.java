@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import de.jplag.exceptions.ExitException;
+
 public class NormalComparisonTest extends TestBase {
 
     /**
@@ -43,7 +45,7 @@ public class NormalComparisonTest extends TestBase {
      * B is a partial copy of that code
      * C is a full copy of that code
      * D is dumb plagiarism, e.g., changed variable names, additional unneeded code, ...
-     * E is just a Hello World Java program
+     * E is just a Hello World Java errorConsumer
      */
     @Test
     public void testPartialPlagiarism() throws ExitException {

@@ -10,8 +10,8 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import de.jplag.CommandLineArgument;
-import de.jplag.ExitException;
 import de.jplag.JPlag;
+import de.jplag.exceptions.ExitException;
 
 public class MinTokenMatchTest extends CommandLineInterfaceTest {
 
