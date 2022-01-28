@@ -27,9 +27,7 @@ public interface ClusteringResult<T> {
      * </p>
      * 
      * It's called modularity in that paper.
-     * @param clustering
-     * @param similarity
-     * @return
+     * @return community strength
      */
     float getCommunityStrength();
 
