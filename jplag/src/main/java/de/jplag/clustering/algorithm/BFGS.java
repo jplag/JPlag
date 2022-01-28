@@ -89,7 +89,7 @@ import static java.lang.Math.sqrt;
  * @author Haifeng Li
  */
 public class BFGS {
-    private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BFGS.class);
+    //private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BFGS.class);
     /** A number close to zero, between machine epsilon and its square root. */
     private static final double EPSILON = Double.valueOf(System.getProperty("smile.bfgs.epsilon", "1E-10"));
     /** The convergence criterion on function value. */
@@ -345,7 +345,7 @@ public class BFGS {
 
             for (double xi : x) {
                 if (Double.isNaN(xi) || Double.isInfinite(xi)) {
-                    logger.warn("L-BFGS-B: bad x produced by line search, return previous good x");
+                    //logger.warn("L-BFGS-B: bad x produced by line search, return previous good x");
                     System.arraycopy(x_old, 0, x, 0, n);
                     return f_old;
                 }
@@ -354,18 +354,18 @@ public class BFGS {
             // STEP 5: compute gradient update current guess and function information
             f = func.g(x, g);
             if (Double.isNaN(f) || Double.isInfinite(f)) {
-                logger.warn("L-BFGS-B: bad f(x) produced by line search, return previous good x");
+                //logger.warn("L-BFGS-B: bad f(x) produced by line search, return previous good x");
                 System.arraycopy(x_old, 0, x, 0, n);
                 return f_old;
             }
 
             if (gnorm(x, g, l, u) < gtol) {
-                logger.info(String.format("L-BFGS-B converges on gradient after %d iterations: %.5f", iter, f));
+                //logger.info(String.format("L-BFGS-B converges on gradient after %d iterations: %.5f", iter, f));
                 return f;
             }
 
             if (iter % 100 == 0) {
-                logger.info(String.format("L-BFGS-B: the function value after %3d iterations: %.5f", iter, f));
+                //logger.info(String.format("L-BFGS-B: the function value after %3d iterations: %.5f", iter, f));
             }
 
             // prepare for next iteration
@@ -432,15 +432,15 @@ public class BFGS {
                 M = M.inverse();
             }
 
-            logger.debug("L-BFGS-B iteration {} moves from {} to {} where f(x) = {}", iter, Arrays.toString(x_old), Arrays.toString(x), f);
+            //logger.debug("L-BFGS-B iteration {} moves from {} to {} where f(x) = {}", iter, Arrays.toString(x_old), Arrays.toString(x), f);
 
             if (abs(f_old - f) < TOLF) {
-                logger.info(String.format("L-BFGS-B converges on f(x) after %d iterations: %.5f", iter, f));
+                //logger.info(String.format("L-BFGS-B converges on f(x) after %d iterations: %.5f", iter, f));
                 return f;
             }
         }
 
-        logger.warn(String.format("L-BFGS-B reaches maximum %d iterations: %.5f", maxIter, f));
+        //logger.warn(String.format("L-BFGS-B reaches maximum %d iterations: %.5f", maxIter, f));
         return f;
     }
 

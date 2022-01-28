@@ -317,6 +317,13 @@ public class JPlagOptions {
         this.languageOption = languageOption;
     }
 
+    public void setMaximumNumberOfComparisons(int maximumNumberOfComparisons) {
+        if (maximumNumberOfComparisons < -1) {
+            this.maximumNumberOfComparisons = -1;
+        } else {
+            this.maximumNumberOfComparisons = maximumNumberOfComparisons;
+        }
+    }
 
     public SimilarityMetric getClusteringSimilarityMetric() {
         return clusteringSimilarityMetric;
