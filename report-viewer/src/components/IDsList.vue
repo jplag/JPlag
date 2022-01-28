@@ -1,11 +1,11 @@
 <template>
 <div class="container">
   <div class="column-list">
-    <p v-for="(id, index) in ids" :key="index" @click="$emit('idSent', id)">
+    <p v-for="(id, index) in ids" :key="index" @click="$emit('idSent', [id])">
       {{ id }}
     </p>
   </div>
-  <button @click="$emit('idSent', ...ids)">Hide/Show all</button>
+  <button @click="$emit('idSent', ids)">Hide/Show all</button>
 </div>
 </template>
 

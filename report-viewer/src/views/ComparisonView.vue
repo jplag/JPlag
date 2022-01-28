@@ -9,8 +9,8 @@
         <button id="hide-button" @click="togglePanel" title="Hide sidebar">
           <img src="@/assets/keyboard_double_arrow_left_white_24dp.svg" alt="hide"></button>
       </div>
-      <TextInformation label="Submission 1" :value="id1" :anonymous="!notAnonymized.includes(id1)"/>
-      <TextInformation label="Submission 2" :value="id2" :anonymous="!notAnonymized.includes(id2)"/>
+      <TextInformation label="Submission 1" :value="id1" :anonymous="store.state.anonymous.has(id1)"/>
+      <TextInformation label="Submission 2" :value="id2" :anonymous="store.state.anonymous.has(id2)"/>
       <TextInformation label="Match %" :value="comparison.match_percentage"/>
       <MatchTable :matches="comparison.allMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
     </div>
@@ -28,6 +28,7 @@
 <script>
 import { defineComponent, ref } from "vue";
 import {generateLineCodeLink} from "@/utils/Utils";
+import store from "@/store/store";
 import TextInformation from "@/components/TextInformation";
 import MatchTable from "@/components/MatchTable";
 import {ComparisonFactory} from "@/model/factories/ComparisonFactory";
@@ -43,9 +44,6 @@ export default defineComponent({
     id2: {
       type: String,
     },
-    notAnonymized: {
-      type: Array
-    }
   },
   setup(props) {
     const fileName = props.id1.concat("-").concat(props.id2)
@@ -91,7 +89,9 @@ export default defineComponent({
       showMatchInFirst,
       showMatchInSecond,
       showMatch,
-      togglePanel
+      togglePanel,
+
+      store
     }
   }
 })

@@ -39,7 +39,7 @@
         <p class="section-title">Top Comparisons:</p>
         <p class="section-subtitle">(Top n comparisons)</p>
         <div id="comparisonsList">
-          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]" :not-anonymized="notAnonymized"/>
+          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]" :anonymous="store.state.anonymous"/>
         </div>
     </div>
   </div>
@@ -47,6 +47,7 @@
 
 <script>
 import {defineComponent, ref} from "vue";
+import store from "@/store/store";
 import TextInformation from "../components/TextInformation";
 import DistributionDiagram from "@/components/DistributionDiagram";
 import MetricButton from "@/components/MetricButton";
@@ -62,23 +63,23 @@ export default defineComponent({
   },
   setup() {
     const overview = OverviewFactory.getOverview(Overview)
-    let notAnonymized = ref([...overview.submissionIds])
 
-    const handleId = (...id) => {
+    const handleId = (id) => {
       if( id.length === overview.submissionIds.length) {
-        if(notAnonymized.value.length > 0) {
-          notAnonymized.value = []
+        if(store.state.anonymous.size > 0) {
+          store.commit("resetAnonymous")
         } else {
-          notAnonymized.value = [...overview.submissionIds]
+          store.commit("addAnonymous", id)
         }
       } else {
-          if ( notAnonymized.value.length === overview.submissionIds.length) {
-            notAnonymized.value = []
-          }
-          if (notAnonymized.value.includes(id[0])) {
-            notAnonymized.value.splice(notAnonymized.value.indexOf(id[0]), 1)
+          if (store.state.anonymous.has(id[0])) {
+            store.commit("removeAnonymous", id)
           } else {
-            notAnonymized.value.push(id[0])
+            if(store.state.anonymous.size === 0) {
+              store.commit("addAnonymous", overview.submissionIds.filter(s => s !== id[0]))
+            } else  {
+              store.commit("addAnonymous", id)
+            }
           }
       }
     }
@@ -108,9 +109,9 @@ export default defineComponent({
       selectedMetric,
       distributions,
       topComps,
-      notAnonymized,
       handleId,
-      selectMetric
+      selectMetric,
+      store
     }
   }
 })

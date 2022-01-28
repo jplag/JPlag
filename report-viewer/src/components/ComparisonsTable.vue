@@ -16,9 +16,13 @@
       @click="navigateToComparisonView(comparison.firstSubmissionId, comparison.secondSubmissionId)"
       >
     <td>{{ index + 1 }}.</td>
-    <td :class="{ anonymous : !notAnonymized.includes(comparison.firstSubmissionId)}">{{ notAnonymized.includes(comparison.firstSubmissionId) ? comparison.firstSubmissionId : "Hidden" }}</td>
+    <td :class="{ 'anonymous-style' : anonymous.has(comparison.firstSubmissionId)}">
+      {{ anonymous.has(comparison.firstSubmissionId) ? "Hidden" : comparison.firstSubmissionId  }}
+    </td>
     <td><img src="@/assets/double_arrow_black_18dp.svg" alt=">>"/></td>
-    <td :class="{ anonymous : !notAnonymized.includes(comparison.secondSubmissionId)}">{{ notAnonymized.includes(comparison.secondSubmissionId) ? comparison.secondSubmissionId : "Hidden" }}</td>
+    <td :class="{ 'anonymous-style' : anonymous.has(comparison.secondSubmissionId)}">
+      {{ anonymous.has(comparison.secondSubmissionId) ? "Hidden" : comparison.secondSubmissionId }}
+    </td>
     <td>{{ formattedMatchPercentage(comparison.matchPercentage) }}</td>
   </tr>
 </table>
@@ -35,8 +39,8 @@ export default defineComponent({
      type: Array,
      required: true
    },
-    notAnonymized : {
-     type: Array
+    anonymous : {
+     type: Set
     }
   },
   setup(props) {
@@ -46,7 +50,6 @@ export default defineComponent({
       router.push({
         name: "ComparisonView",
         query: {id1: id1, id2: id2},
-        params: { notAnonymized: props.notAnonymized}
       })
     }
     return {
@@ -76,7 +79,7 @@ td {
   padding-bottom: 3%;
 }
 
-.anonymous {
+.anonymous-style {
   color: #777777;
   filter: blur(1px);
 }
