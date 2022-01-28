@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -703,7 +704,7 @@ public class BFGS {
         List<Pair<Integer, Double>> sortedPairs = IntStream.range(0, array.length)
             .mapToObj(idx -> Pair.create(idx, array[idx]))
             .sorted(Comparator.comparingDouble(Pair::getValue))
-            .toList();
+            .collect(Collectors.toList());
         double[] sortedDoubles = sortedPairs.stream().mapToDouble(Pair::getValue).toArray();
         int[] sortedIndices = sortedPairs.stream().mapToInt(Pair::getKey).toArray();
         System.arraycopy(sortedDoubles, 0, array, 0, array.length);
