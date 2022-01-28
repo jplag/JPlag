@@ -1,7 +1,9 @@
 package de.jplag;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import de.jplag.clustering.ClusteringResult;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -40,6 +42,8 @@ public class JPlagResult {
      */
     private int[] similarityDistribution = null;
 
+    private List<ClusteringResult<Submission>> clusteringResult = new ArrayList<>(0);
+
     /**
      * Creates empty results.
      */
@@ -63,6 +67,10 @@ public class JPlagResult {
      */
     public void dropComparisons(int limit) {
         this.comparisons = this.getComparisons(limit);
+    }
+
+    public void setClusteringResult(List<ClusteringResult<Submission>> clustering) {
+        this.clusteringResult = clustering;
     }
 
     /**
@@ -101,6 +109,10 @@ public class JPlagResult {
 
     public int[] getSimilarityDistribution() {
         return similarityDistribution;
+    }
+
+    public List<ClusteringResult<Submission>> getClusteringResult() {
+        return this.clusteringResult;
     }
 
     @Override

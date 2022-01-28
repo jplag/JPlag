@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.jplag.clustering.ClusteringFactory;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;
@@ -85,6 +86,10 @@ public class JPlag implements Program {
         errorVector = null; // errorVector is not needed anymore
         JPlagResult result = comparisonStrategy.compareSubmissions(submissions, baseCodeSubmission);
         printComparisonDuration(result.getDuration());
+
+        // 4. Do clustering
+        result.setClusteringResult(ClusteringFactory.getClusterings(result.getComparisons(), options));
+        
         return result;
     }
 

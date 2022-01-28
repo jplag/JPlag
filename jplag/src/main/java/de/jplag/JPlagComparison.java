@@ -223,6 +223,21 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     }
 
     /**
+     * @param submission Either the first of second submission of this comparison.
+     * 
+     * @return Number of non EOF tokens int the submission, excluding base code matches.
+     */
+    public final int getNumberOfCountingTokens(Submission submission) {
+        int numberOfTokens = submission.getNumberOfTokens() - submission.getFiles().size();
+        if (submission == firstSubmission && firstBaseCodeMatches != null) {
+            numberOfTokens -= firstBaseCodeMatches.getNumberOfMatchedTokens();
+        } else if (submission == secondSubmission && secondBaseCodeMatches != null) {
+            numberOfTokens -= secondBaseCodeMatches.getNumberOfMatchedTokens();
+        }
+        return numberOfTokens;
+    }
+
+    /**
      * @return Similarity of the first submission to the basecode in percent rounded down to the nearest tenth.
      */
     public final float basecodeSimilarityOfFirst() {

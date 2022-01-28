@@ -1,0 +1,3 @@
+[submodule "jplag/src/test/resources/de/jplag/PseudonymizedReports"]
+	path = jplag/src/test/resources/de/jplag/PseudonymizedReports
+	url = https://github.com/jplag/PseudonymizedReports

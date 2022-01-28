@@ -217,5 +217,34 @@
       <scope>test</scope>
       <version>1.19.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-math3</artifactId>
+      <version>3.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.haifengl</groupId>
+      <artifactId>smile-core</artifactId>
+      <version>2.6.0</version>
+    </dependency>
+    <dependency>
+    <groupId>org.bytedeco</groupId>
+    <artifactId>arpack-ng</artifactId>
+    <version>3.7.0-1.5.3</version>
+</dependency>
+    <dependency>
+      <!-- This needed by smile -->
+      <groupId>org.bytedeco</groupId>
+      <artifactId>openblas</artifactId>
+      <version>0.3.9-1.5.3</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>4.0.0</version>
+      <scope>test</scope>
+  </dependency>
   </dependencies>
 </project>
