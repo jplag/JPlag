@@ -70,6 +70,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>14</maven.compiler.source>
     <maven.compiler.target>14</maven.compiler.target>
+    <spotless.version>2.20.0</spotless.version>
   </properties>
 
   <build>
@@ -145,6 +146,31 @@
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
       </plugin>
+      <plugin>
+          <groupId>com.diffplug.spotless</groupId>
+          <artifactId>spotless-maven-plugin</artifactId>
+          <version>${spotless.version}</version>
+          <configuration>
+            <java>
+              <eclipse>
+                <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
+              </eclipse>
+
+              <importOrder>
+                <file>spotless.importorder</file>
+              </importOrder>
+              <removeUnusedImports></removeUnusedImports>
+            </java>
+            <pom>
+              <sortPom>
+                <encoding>UTF-8</encoding>
+                <keepBlankLines>true</keepBlankLines>
+                <indentBlankLines>false</indentBlankLines>
+                <nrOfIndentSpace>2</nrOfIndentSpace>
+              </sortPom>
+            </pom>
+          </configuration>
+        </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
