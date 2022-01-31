@@ -11,7 +11,8 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
- * Currently just a copy of {@link NormalComparisonTest} but for the {@link ParallelComparisonStrategy}. // TODO TS: de-duplicate this
+ * Currently just a copy of {@link NormalComparisonTest} but for the {@link ParallelComparisonStrategy}. // TODO TS:
+ * de-duplicate this
  * @author Timur Saglam
  */
 public class ParallelComparisonTest extends TestBase {
@@ -84,8 +85,8 @@ public class ParallelComparisonTest extends TestBase {
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
-        return result.getComparisons().stream()
-                .filter(comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
+        return result.getComparisons().stream().filter(
+                comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
                         || comparison.getFirstSubmission().getName().equals(nameB) && comparison.getSecondSubmission().getName().equals(nameA))
                 .findFirst();
     }

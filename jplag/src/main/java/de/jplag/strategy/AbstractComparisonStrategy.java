@@ -21,7 +21,9 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
     /**
      * Compare all submissions to the basecode.
-     * <p>Caller must ensure that the provided set does have a basecode submission before calling.</p>
+     * <p>
+     * Caller must ensure that the provided set does have a basecode submission before calling.
+     * </p>
      * @param submissionSet Submissions and basecode to compare.
      */
     protected void compareSubmissionsToBaseCode(SubmissionSet submissionSet) {

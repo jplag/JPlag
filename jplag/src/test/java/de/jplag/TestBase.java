@@ -20,7 +20,7 @@ public abstract class TestBase {
 
     protected String getBasePath(String... subs) {
         String path = BASE_PATH;
-        for (String sub: subs) {
+        for (String sub : subs) {
             path += File.separator + sub;
         }
         return path;

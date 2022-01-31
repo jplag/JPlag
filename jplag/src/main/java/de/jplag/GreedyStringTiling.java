@@ -175,7 +175,8 @@ public class GreedyStringTiling implements TokenConstants {
                         j++;
                     }
 
-                    if (j > maxMatch && !isBaseCodeComparison || j != maxMatch && isBaseCodeComparison) {  // new biggest match? -> delete current smaller
+                    if (j > maxMatch && !isBaseCodeComparison || j != maxMatch && isBaseCodeComparison) {  // new biggest match? -> delete current
+                                                                                                           // smaller
                         matches.clear();
                         maxMatch = j;
                     }

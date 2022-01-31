@@ -85,14 +85,15 @@ public class JPlagOptions {
     /**
      * Path name of the directory containing the base code.
      * <p>
-     * For backwards compatibility it may also be a directory name inside the root directory.
-     * Condition for the latter is
-     * <ul><li>Specified path does not exist.</li>
-     *     <li>Name has not have a separator character after trimming them from both ends (leaving at least a one-character name).</li>
-     *     <li>A submission with the specified name exists in the root directory.</li>
+     * For backwards compatibility it may also be a directory name inside the root directory. Condition for the latter is
+     * <ul>
+     * <li>Specified path does not exist.</li>
+     * <li>Name has not have a separator character after trimming them from both ends (leaving at least a one-character
+     * name).</li>
+     * <li>A submission with the specified name exists in the root directory.</li>
      * </ul>
-     * It's an error if a string has been provided but it is neither an existing path nor does it fulfill all the
-     * conditions of the compatibility fallback listed above.
+     * It's an error if a string has been provided but it is neither an existing path nor does it fulfill all the conditions
+     * of the compatibility fallback listed above.
      * </p>
      */
     private Optional<String> baseCodeSubmissionName = Optional.empty();

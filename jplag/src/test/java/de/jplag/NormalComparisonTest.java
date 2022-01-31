@@ -40,12 +40,9 @@ public class NormalComparisonTest extends TestBase {
     }
 
     /**
-     * This case is more complex and consists out of 5 submissions with different plagiarism.
-     * A is the original code (coming from an older JPlag version)
-     * B is a partial copy of that code
-     * C is a full copy of that code
-     * D is dumb plagiarism, e.g., changed variable names, additional unneeded code, ...
-     * E is just a Hello World Java errorConsumer
+     * This case is more complex and consists out of 5 submissions with different plagiarism. A is the original code (coming
+     * from an older JPlag version) B is a partial copy of that code C is a full copy of that code D is dumb plagiarism,
+     * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java errorConsumer
      */
     @Test
     public void testPartialPlagiarism() throws ExitException {
@@ -55,14 +52,9 @@ public class NormalComparisonTest extends TestBase {
         assertEquals(10, result.getComparisons().size());
 
         // All comparisons with E shall have no matches
-        result.getComparisons()
-                .stream()
-                .filter(comparison ->
-                        comparison.getSecondSubmission().getName().equals("E") ||
-                                comparison.getFirstSubmission().getName().equals("E"))
-                .forEach(comparison ->
-                        assertEquals(0f, comparison.similarity(), DELTA)
-                );
+        result.getComparisons().stream()
+                .filter(comparison -> comparison.getSecondSubmission().getName().equals("E") || comparison.getFirstSubmission().getName().equals("E"))
+                .forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
         assertEquals(24.6f, getSelectedPercent(result, "A", "B"), 0.1f);
@@ -82,18 +74,13 @@ public class NormalComparisonTest extends TestBase {
 
     // TODO SH: Methods like this should be moved to the API and also should accept wildcards
     private float getSelectedPercent(JPlagResult result, String nameA, String nameB) {
-        return getSelectedComparison(result, nameA, nameB)
-                .map(JPlagComparison::similarity)
-                .orElse(-1f);
+        return getSelectedComparison(result, nameA, nameB).map(JPlagComparison::similarity).orElse(-1f);
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
-        return result.getComparisons().stream()
-                .filter(comparison ->
-                        comparison.getFirstSubmission().getName().equals(nameA) &&
-                                comparison.getSecondSubmission().getName().equals(nameB) ||
-                                comparison.getFirstSubmission().getName().equals(nameB) &&
-                                        comparison.getSecondSubmission().getName().equals(nameA))
+        return result.getComparisons().stream().filter(
+                comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
+                        || comparison.getFirstSubmission().getName().equals(nameB) && comparison.getSecondSubmission().getName().equals(nameA))
                 .findFirst();
     }
 }

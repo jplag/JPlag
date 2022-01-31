@@ -154,7 +154,8 @@ public class SubmissionSetBuilder {
         }
 
         // If it is not a name of a single sub-directory, bail out.
-        if (name.isEmpty() || name.contains(File.separator)) return null;
+        if (name.isEmpty() || name.contains(File.separator))
+            return null;
 
         if (name.contains(".")) {
             throw new BasecodeException("The basecode directory name \"" + name + "\" cannot contain dots!");

@@ -19,20 +19,20 @@ public class NewlineStream extends InputStream {
     public int read() throws IOException {
         int result;
         switch (endOfFile) {
-        case 0:
-            result = stream.read();
-            if (result == -1) {
-                result = 13;
-                endOfFile = 1;
-            }
-            break;
-        case 1:
-            result = 10;
-            endOfFile = 2;
-            break;
-        default:
-            result = -1;
-            break;
+            case 0:
+                result = stream.read();
+                if (result == -1) {
+                    result = 13;
+                    endOfFile = 1;
+                }
+                break;
+            case 1:
+                result = 10;
+                endOfFile = 2;
+                break;
+            default:
+                result = -1;
+                break;
         }
         return result;
     }
