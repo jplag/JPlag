@@ -2,14 +2,14 @@ package de.jplag.scheme;
 
 import java.io.File;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 
 public class Parser extends AbstractParser implements SchemeTokenConstants {
-    static final Logger logger = LogManager.getLogger(Parser.class);
+    static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
     private String actFile;
 

@@ -13,8 +13,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
@@ -27,7 +27,7 @@ import de.jplag.options.JPlagOptions;
  * @author Timur Saglam
  */
 public class SubmissionSetBuilder {
-    private static final Logger logger = LogManager.getLogger(JPlag.class);
+    private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
     private final Language language;
     private final JPlagOptions options;

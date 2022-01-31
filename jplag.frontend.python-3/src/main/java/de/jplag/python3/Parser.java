@@ -11,8 +11,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
@@ -21,7 +21,7 @@ import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
 
 public class Parser extends AbstractParser implements Python3TokenConstants {
-    private static final Logger logger = LogManager.getLogger(Parser.class);
+    private static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
     private TokenList struct = new TokenList();
     private String currentFile;

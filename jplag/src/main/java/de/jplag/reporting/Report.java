@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
@@ -33,7 +33,7 @@ import de.jplag.options.JPlagOptions;
  * This class writes all the HTML pages.
  */
 public class Report { // Mostly legacy code with some minor improvements.
-    private static final Logger logger = LogManager.getLogger(Report.class);
+    private static final Logger logger = LoggerFactory.getLogger(Report.class);
 
     private static final String CSV_FILE = "matches_avg.csv";
     private static final String[] PICS = {"forward.gif", "back.gif"};

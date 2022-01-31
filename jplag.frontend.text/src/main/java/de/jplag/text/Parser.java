@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Hashtable;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import antlr.Token;
 
@@ -14,7 +14,7 @@ import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
 public class Parser extends AbstractParser implements TokenConstants {
-    private static final Logger logger = LogManager.getLogger(Parser.class);
+    private static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
     protected Hashtable<String, Integer> table = new Hashtable<>();
     protected int serial = 1; // 0 is FILE_END token

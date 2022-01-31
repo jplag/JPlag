@@ -9,15 +9,15 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.strategy.ComparisonMode;
 
 public class JPlagOptions {
-    private static final Logger logger = LogManager.getLogger(JPlag.class);
+    private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;

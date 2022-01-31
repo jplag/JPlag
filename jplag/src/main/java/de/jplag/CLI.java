@@ -22,8 +22,8 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -38,7 +38,7 @@ import de.jplag.strategy.ComparisonMode;
  */
 public class CLI {
 
-    private static final Logger logger = LogManager.getLogger(JPlag.class);
+    private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
     private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. JPlag logo designed by Sandro Koch. Currently maintained by Sebastian Hahner and Timur Saglam.";
 

@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import antlr.Token;
 
@@ -15,7 +15,7 @@ import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
 public class Parser extends AbstractParser implements CSharpTokenConstants {
-    private static final Logger logger = LogManager.getLogger(Parser.class);
+    private static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
     private TokenList struct;
     private String currentFile;

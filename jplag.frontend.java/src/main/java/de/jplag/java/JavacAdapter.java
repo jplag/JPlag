@@ -13,8 +13,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
@@ -24,7 +24,7 @@ import com.sun.source.util.Trees;
 
 public class JavacAdapter {
 
-    private static final Logger logger = LogManager.getLogger(JavacAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JavacAdapter.class);
 
     private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 

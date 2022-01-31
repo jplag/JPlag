@@ -12,8 +12,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
@@ -28,7 +28,7 @@ import de.jplag.strategy.ParallelComparisonStrategy;
  * This class coordinates the whole errorConsumer flow.
  */
 public class JPlag {
-    private static final Logger logger = LogManager.getLogger(JPlag.class);
+    private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
     private final JPlagOptions options;
 

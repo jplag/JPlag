@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.ReportGenerationException;
@@ -25,7 +25,7 @@ import de.jplag.options.JPlagOptions;
  * Represents a single submission. A submission can contain multiple files.
  */
 public class Submission implements Comparable<Submission> {
-    private static final Logger logger = LogManager.getLogger(JPlag.class);
+    private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
     /**
      * Directory name for storing submission files with parse errors if so requested.
