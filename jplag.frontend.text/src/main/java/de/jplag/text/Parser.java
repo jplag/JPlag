@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.Hashtable;
 
 import antlr.Token;
+
 import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;

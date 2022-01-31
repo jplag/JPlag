@@ -36,8 +36,8 @@ public class Match {
     }
 
     /**
-     * @param getFirst Whether to return the starting token index of the first submission,
-     *      else the starting token index of the second submission is returned.
+     * @param getFirst Whether to return the starting token index of the first submission, else the starting token index of
+     * the second submission is returned.
      * @return Start index of the requested submission.
      */
     public int getStart(boolean getFirst) {

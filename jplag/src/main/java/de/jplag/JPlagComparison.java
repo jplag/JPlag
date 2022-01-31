@@ -78,7 +78,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
          * Collect the file names of the first token of each match.
          */
         Set<String> collectedFiles = new LinkedHashSet<>();
-        for (Match match: matches) {
+        for (Match match : matches) {
             collectedFiles.add(tokenList.getToken(match.getStart(j == 0)).file);
         }
 
@@ -140,8 +140,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     }
 
     /**
-     * @param getFirst Whether to return the first submission,
-     *      else return the second submission.
+     * @param getFirst Whether to return the first submission, else return the second submission.
      * @return The requested submission.
      */
     public Submission getSubmission(boolean getFirst) {
@@ -149,8 +148,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     }
 
     /**
-     * @param getFirst Whether to return the first basecode matches,
-     *      else return the second basecode matches.
+     * @param getFirst Whether to return the first basecode matches, else return the second basecode matches.
      * @return The requested basecode matches.
      */
     public JPlagComparison getBaseCodeMatches(boolean getFirst) {

@@ -9,11 +9,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import de.jplag.options.LanguageOption;
-import de.jplag.strategy.ComparisonMode;
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.Namespace;
+
+import de.jplag.options.LanguageOption;
+import de.jplag.strategy.ComparisonMode;
 
 /**
  * Command line arguments for the JPlag CLI. Each argument is defined through an enumeral.
@@ -100,8 +101,8 @@ public enum CommandLineArgument {
     }
 
     /**
-     * Dynamically loads the description from the message file. For an option named <code>NEW_OPTION</code> the messages key should
-     * be <code>CommandLineArgument.NewOption</code>.
+     * Dynamically loads the description from the message file. For an option named <code>NEW_OPTION</code> the messages key
+     * should be <code>CommandLineArgument.NewOption</code>.
      */
     private String retrieveDescriptionFromMessages() {
         StringBuilder builder = new StringBuilder();
