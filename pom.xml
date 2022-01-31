@@ -342,7 +342,6 @@
                 <version>${spotless.version}</version>
                 <configuration>
                     <java>
-                        <toggleOffOn></toggleOffOn>
                         <eclipse>
                             <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
                         </eclipse>
