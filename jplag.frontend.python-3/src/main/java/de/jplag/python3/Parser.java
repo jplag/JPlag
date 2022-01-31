@@ -11,6 +11,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
@@ -19,6 +21,7 @@ import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
 
 public class Parser extends AbstractParser implements Python3TokenConstants {
+    private static final Logger logger = LogManager.getLogger(Parser.class);
 
     private TokenList struct = new TokenList();
     private String currentFile;
@@ -27,7 +30,7 @@ public class Parser extends AbstractParser implements Python3TokenConstants {
         struct = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {
-            getErrorConsumer().print(null, "Parsing file " + files[i]);
+            logger.info("Parsing file " + files[i]);
             if (!parseFile(dir, files[i])) {
                 errors++;
             }
@@ -64,7 +67,7 @@ public class Parser extends AbstractParser implements Python3TokenConstants {
             }
 
         } catch (IOException e) {
-            getErrorConsumer().addError("Parsing Error in '" + file + "':\n" + e.getMessage());
+            logger.error("Parsing Error in '" + file + "':\n" + e.getMessage(), e);
             return false;
         }
 

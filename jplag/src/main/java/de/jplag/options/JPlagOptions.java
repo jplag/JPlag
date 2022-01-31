@@ -9,10 +9,15 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.strategy.ComparisonMode;
 
 public class JPlagOptions {
+    private static final Logger logger = LogManager.getLogger(JPlag.class);
 
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
@@ -263,10 +268,10 @@ public class JPlagOptions {
 
     public void setSimilarityThreshold(float similarityThreshold) {
         if (similarityThreshold > 100) {
-            System.out.println("Maximum threshold of 100 used instead of " + similarityThreshold);
+            logger.warn("Maximum threshold of 100 used instead of " + similarityThreshold);
             this.similarityThreshold = 100;
         } else if (similarityThreshold < 0) {
-            System.out.println("Minimum threshold of 0 used instead of " + similarityThreshold);
+            logger.warn("Minimum threshold of 0 used instead of " + similarityThreshold);
             this.similarityThreshold = 0;
         } else {
             this.similarityThreshold = similarityThreshold;

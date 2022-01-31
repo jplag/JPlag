@@ -78,10 +78,10 @@ public class SchemeParser implements SchemeTokenConstants {
         try {
             parser.Program();
         } catch (ParseException e) {
-            parserX.getErrorConsumer().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
+            parserX.logger.error("  Parsing Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
             return false;
         } catch (TokenMgrException e) {
-            parserX.getErrorConsumer().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
+            parserX.logger.error("  Scanning Error in '" + fileName + "':\n  " + e.getMessage() + "\n");
             return false;
         }
         return true;

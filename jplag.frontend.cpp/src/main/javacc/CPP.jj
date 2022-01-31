@@ -36,16 +36,16 @@ public class CPPScanner implements CPPTokenConstants {
             }
             scanner.scanner2 = scannerX;
         } catch (FileNotFoundException e) {
-            System.out.println("C/C++ Scanner:  File " + fileName + " not found.");
+            scannerX.logger.error("C/C++ Scanner:  File " + fileName + " not found.");
             return false;
         }
         try {
             scanner.scan();
         } catch (ParseException e) {
-            scannerX.getErrorConsumer().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage());
+            scannerX.logger.error("  Parsing Error in '" + fileName + "':\n  " + e.getMessage());
             return false;
         } catch (TokenMgrException e) {
-            scannerX.getErrorConsumer().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage());
+            scannerX.logger.error("  Scanning Error in '" + fileName + "':\n  " + e.getMessage());
             return false;
         }
         return true;

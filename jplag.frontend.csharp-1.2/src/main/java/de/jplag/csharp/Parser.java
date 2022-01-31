@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import antlr.Token;
 
 import de.jplag.AbstractParser;
@@ -12,6 +15,8 @@ import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
 public class Parser extends AbstractParser implements CSharpTokenConstants {
+    private static final Logger logger = LogManager.getLogger(Parser.class);
+
     private TokenList struct;
     private String currentFile;
 
@@ -46,7 +51,7 @@ public class Parser extends AbstractParser implements CSharpTokenConstants {
             // close file
             fis.close();
         } catch (Exception e) {
-            getErrorConsumer().addError("  Parsing Error in '" + file + "':\n  " + e.toString());
+            logger.error("  Parsing Error in '" + file + "':\n  " + e);
             return false;
         }
         return true;
@@ -54,7 +59,7 @@ public class Parser extends AbstractParser implements CSharpTokenConstants {
 
     private void add(int type, Token tok) {
         if (tok == null) {
-            System.out.println("tok == null  ERROR!");
+            logger.error("tok == null  ERROR!");
             return;
         }
         struct.addToken(new CSharpToken(type, currentFile, tok.getLine(), tok.getColumn(), tok.getText().length()));

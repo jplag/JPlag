@@ -22,6 +22,9 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -34,6 +37,8 @@ import de.jplag.strategy.ComparisonMode;
  * @see CLI#main(String[])
  */
 public class CLI {
+
+    private static final Logger logger = LogManager.getLogger(JPlag.class);
 
     private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. JPlag logo designed by Sandro Koch. Currently maintained by Sebastian Hahner and Timur Saglam.";
 
@@ -55,13 +60,13 @@ public class CLI {
             Namespace arguments = cli.parseArguments(args);
             JPlagOptions options = cli.buildOptionsFromArguments(arguments);
             JPlag program = new JPlag(options);
-            System.out.println("JPlag initialized");
+            logger.debug("JPlag initialized");
             JPlagResult result = program.run();
             File reportDir = new File(arguments.getString(RESULT_FOLDER.flagWithoutDash()));
             Report report = new Report(reportDir, options);
             report.writeResult(result);
         } catch (ExitException exception) {
-            System.out.println("Error: " + exception.getMessage());
+            logger.error("Error: " + exception.getMessage(), exception);
             System.exit(1);
         }
     }
@@ -114,7 +119,7 @@ public class CLI {
         options.setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace));
         options.setMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
         ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(it -> options.setComparisonMode(it),
-                () -> System.out.println("Unknown comparison mode, using default mode!"));
+                () -> logger.warn("Unknown comparison mode, using default mode!"));
         return options;
     }
 

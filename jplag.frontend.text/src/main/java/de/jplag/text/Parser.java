@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Hashtable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import antlr.Token;
 
 import de.jplag.AbstractParser;
@@ -11,6 +14,7 @@ import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
 public class Parser extends AbstractParser implements TokenConstants {
+    private static final Logger logger = LogManager.getLogger(Parser.class);
 
     protected Hashtable<String, Integer> table = new Hashtable<>();
     protected int serial = 1; // 0 is FILE_END token
@@ -23,7 +27,7 @@ public class Parser extends AbstractParser implements TokenConstants {
         struct = new TokenList();
         errors = 0;
         for (String file : files) {
-            getErrorConsumer().print("", "Parsing file " + file);
+            logger.info("Parsing file " + file);
             if (!parseFile(dir, file))
                 errors++;
             struct.addToken(new TextToken(FILE_END, file, this));
@@ -57,8 +61,9 @@ public class Parser extends AbstractParser implements TokenConstants {
             // close file
             inputStream.close();
         } catch (Exception e) {
-            getErrorConsumer().addError(
-                    "  Parsing Error in '" + file + "' (line " + (inputState != null ? "" + inputState.getLine() : "") + "):\n  " + e.getMessage());
+            logger.error(
+                    "  Parsing Error in '" + file + "' (line " + (inputState != null ? "" + inputState.getLine() : "") + "):\n  " + e.getMessage(),
+                    e);
             return false;
         }
         return true;
@@ -76,7 +81,6 @@ public class Parser extends AbstractParser implements TokenConstants {
             return;
         runOut = true;
         errors++;
-        errorConsumer.print("ERROR: Out of serials!", null);
-        System.out.println("de.jplag.text.Parser: ERROR: Out of serials!");
+        logger.error("Out of serials!");
     }
 }

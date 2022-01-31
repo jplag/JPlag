@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
@@ -30,6 +33,7 @@ import de.jplag.options.JPlagOptions;
  * This class writes all the HTML pages.
  */
 public class Report { // Mostly legacy code with some minor improvements.
+    private static final Logger logger = LogManager.getLogger(Report.class);
 
     private static final String CSV_FILE = "matches_avg.csv";
     private static final String[] PICS = {"forward.gif", "back.gif"};
@@ -55,11 +59,11 @@ public class Report { // Mostly legacy code with some minor improvements.
 
     public void writeResult(JPlagResult result) throws ReportGenerationException {
         this.result = result;
-        System.out.println("\nWriting report...");
+        logger.info("Writing report...");
         writeIndex();
         copyStaticFiles();
         writeMatches(result.getComparisons(options.getMaximumNumberOfComparisons()));
-        System.out.println("Report exported to " + reportDir.getAbsolutePath());
+        logger.info("Report exported to " + reportDir.getAbsolutePath());
     }
 
     /*
@@ -194,7 +198,7 @@ public class Report { // Mostly legacy code with some minor improvements.
         matchesWritten++;
         int currentProgress = 20 * matchesWritten / comparisons.size() * 5; // report every 5% step
         if (currentProgress > matchWritingProgess) {
-            System.out.println("Writing matches: " + currentProgress + "%");
+            logger.info("Writing matches: " + currentProgress + "%");
             matchWritingProgess = currentProgress;
         }
     }

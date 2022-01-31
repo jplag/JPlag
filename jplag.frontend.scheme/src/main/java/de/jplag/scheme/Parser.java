@@ -2,10 +2,15 @@ package de.jplag.scheme;
 
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 
 public class Parser extends AbstractParser implements SchemeTokenConstants {
+    static final Logger logger = LogManager.getLogger(Parser.class);
+
     private String actFile;
 
     private TokenList struct;
@@ -17,7 +22,7 @@ public class Parser extends AbstractParser implements SchemeTokenConstants {
         // in method parseFile(...)
         for (int i = 0; i < files.length; i++) {
             actFile = files[i];
-            getErrorConsumer().print(null, "Parsing file " + files[i]);
+            logger.info("Parsing file " + files[i]);
             if (!SchemeParser.parseFile(dir, files[i], parser, this))
                 errors++;
             struct.addToken(new SchemeToken(FILE_END, actFile, 1));

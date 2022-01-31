@@ -2,13 +2,19 @@ package de.jplag.strategy;
 
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.jplag.GreedyStringTiling;
+import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
 import de.jplag.options.JPlagOptions;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
+
+    private static final Logger logger = LogManager.getLogger(JPlag.class);
 
     private GreedyStringTiling greedyStringTiling;
 
@@ -40,7 +46,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
      */
     protected Optional<JPlagComparison> compareSubmissions(Submission first, Submission second, boolean withBaseCode) {
         JPlagComparison comparison = greedyStringTiling.compare(first, second);
-        System.out.println("Comparing " + first.getName() + "-" + second.getName() + ": " + comparison.similarity());
+        logger.info("Comparing " + first.getName() + "-" + second.getName() + ": " + comparison.similarity());
 
         if (options.getSimilarityMetric().isAboveThreshold(comparison, options.getSimilarityThreshold())) {
             return Optional.of(comparison);

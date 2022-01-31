@@ -2,7 +2,6 @@ package de.jplag.cpp;
 
 import java.io.File;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /*
@@ -11,10 +10,8 @@ import de.jplag.TokenList;
 public class Language implements de.jplag.Language {
     private Scanner scanner;
 
-    public Language(ErrorConsumer program) {
+    public Language() {
         this.scanner = new Scanner();
-        this.scanner.setProgram(program);
-
     }
 
     @Override

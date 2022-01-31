@@ -4,7 +4,6 @@ package de.jplag;
  * @author Emeric Kwemou
  */
 public abstract class AbstractParser {
-    protected ErrorConsumer errorConsumer;
     protected int errors = 0;
     private int errorsSum = 0;
 
@@ -20,11 +19,4 @@ public abstract class AbstractParser {
         errorsSum += errors;
     }
 
-    public ErrorConsumer getErrorConsumer() {
-        return errorConsumer;
-    }
-
-    public void setProgram(ErrorConsumer errorConsumer) {
-        this.errorConsumer = errorConsumer;
-    }
 }

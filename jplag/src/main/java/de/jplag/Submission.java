@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.ReportGenerationException;
 import de.jplag.exceptions.SubmissionException;
@@ -22,6 +25,8 @@ import de.jplag.options.JPlagOptions;
  * Represents a single submission. A submission can contain multiple files.
  */
 public class Submission implements Comparable<Submission> {
+    private static final Logger logger = LogManager.getLogger(JPlag.class);
+
     /**
      * Directory name for storing submission files with parse errors if so requested.
      */
@@ -58,7 +63,6 @@ public class Submission implements Comparable<Submission> {
     private JPlagComparison baseCodeComparison;
 
     private final Language language;
-    private final ErrorCollector errorCollector;
 
     /**
      * Creates a submission.
@@ -66,14 +70,12 @@ public class Submission implements Comparable<Submission> {
      * @param submissionRoot Root of the submission (either a file or a directory).
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
      * @param language is the language of the submission.
-     * @param errorCollector is the interface for error reporting.
      */
-    public Submission(String name, File submissionRoot, Collection<File> files, Language language, ErrorCollector errorCollector) {
+    public Submission(String name, File submissionRoot, Collection<File> files, Language language) {
         this.name = name;
         this.submissionRoot = submissionRoot;
         this.files = files;
         this.language = language;
-        this.errorCollector = errorCollector;
     }
 
     /**
@@ -166,7 +168,7 @@ public class Submission implements Comparable<Submission> {
      */
     public boolean parse(boolean debugParser) {
         if (files == null || files.size() == 0) {
-            errorCollector.print("ERROR: nothing to parse for submission \"" + name, null);
+            logger.error("nothing to parse for submission \"" + name + "\"");
             tokenList = null;
             hasErrors = true; // invalidate submission
             return false;
@@ -177,7 +179,7 @@ public class Submission implements Comparable<Submission> {
         tokenList = language.parse(submissionRoot, relativeFilePaths);
         if (!language.hasErrors()) {
             if (tokenList.size() < 3) {
-                errorCollector.print("Submission \"" + name + "\" is too short!", null);
+                logger.error("Submission \"" + name + "\" is too short!");
                 tokenList = null;
                 hasErrors = true; // invalidate submission
                 return false;
@@ -221,7 +223,7 @@ public class Submission implements Comparable<Submission> {
                 inputStreamReader.close();
                 fileInputStream.close();
             } catch (FileNotFoundException e) {
-                System.out.println("File not found: " + ((new File(submissionRoot, files[i])).toString()));
+                logger.error("File not found: " + ((new File(submissionRoot, files[i])).toString()), e);
             } catch (IOException e) {
                 throw new ReportGenerationException("I/O exception!", e);
             }
@@ -253,7 +255,7 @@ public class Submission implements Comparable<Submission> {
                 FileReader reader = new FileReader(file, JPlagOptions.CHARSET);
 
                 if (size != reader.read(buffer)) {
-                    System.out.println("Not right size read from the file, but I will still continue...");
+                    logger.warn("Not right size read from the file, but I will still continue...");
                 }
 
                 result[i] = buffer;
@@ -310,7 +312,7 @@ public class Submission implements Comparable<Submission> {
             try {
                 Files.copy(file.toPath(), new File(submissionDirectory, file.getName()).toPath());
             } catch (IOException exception) {
-                errorCollector.print("Error copying file: " + exception.toString() + "\n", null);
+                logger.error("Error copying file: " + exception.toString() + "\n", exception);
             }
         }
     }

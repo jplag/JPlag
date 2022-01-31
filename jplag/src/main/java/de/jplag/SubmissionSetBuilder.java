@@ -13,6 +13,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
@@ -24,23 +27,21 @@ import de.jplag.options.JPlagOptions;
  * @author Timur Saglam
  */
 public class SubmissionSetBuilder {
+    private static final Logger logger = LogManager.getLogger(JPlag.class);
 
     private final Language language;
     private final JPlagOptions options;
-    private final ErrorCollector errorCollector;
     private final Set<String> excludedFileNames; // Set of file names to be excluded in comparison.
 
     /**
      * Creates a builder for submission sets.
      * @param language is the language of the submissions.
      * @param options are the configured options.
-     * @param errorCollector is the interface for error reporting.
      * @param excludedFileNames
      */
-    public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames) {
+    public SubmissionSetBuilder(Language language, JPlagOptions options, Set<String> excludedFileNames) {
         this.language = language;
         this.options = options;
-        this.errorCollector = errorCollector;
         this.excludedFileNames = excludedFileNames;
     }
 
@@ -70,12 +71,12 @@ public class SubmissionSetBuilder {
                             String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
                 } else {
                     // Found a base code as a submission, report about obsolete usage.
-                    System.out.printf("Deprecated use of the -bc option found, please specify the basecode as \"%s%s%s\" instead.\n",
+                    logger.warn("Deprecated use of the -bc option found, please specify the basecode as \"%s%s%s\" instead.\n",
                             rootDirectory.toString(), File.separator, baseCodeName);
                 }
             }
             baseCodeSubmission = Optional.of(baseCode);
-            System.out.println(String.format("Basecode directory \"%s\" will be used.", baseCode.getRoot().toString()));
+            logger.info(String.format("Basecode directory \"%s\" will be used.", baseCode.getRoot().toString()));
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
             File baseCodeRoot = baseCode.getCanonicalRoot(); // Use canonical form for a more sane equality notion.
@@ -84,7 +85,7 @@ public class SubmissionSetBuilder {
                 Entry<String, Submission> entry = submissionIterator.next();
                 if (baseCodeRoot.equals(entry.getValue().getCanonicalRoot())) {
                     submissionIterator.remove();
-                    System.out.println(String.format("Skipping \"%s\" as user submission.", entry.getValue().getRoot().toString()));
+                    logger.info(String.format("Skipping \"%s\" as user submission.", entry.getValue().getRoot().toString()));
                     break;
                 }
             }
@@ -92,7 +93,7 @@ public class SubmissionSetBuilder {
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
-        return new SubmissionSet(submissions, baseCodeSubmission, errorCollector, options);
+        return new SubmissionSet(submissions, baseCodeSubmission, options);
     }
 
     /**
@@ -231,7 +232,7 @@ public class SubmissionSetBuilder {
             }
         }
 
-        return new Submission(fileName, submissionEntry, parseFilesRecursively(submissionEntry), language, errorCollector);
+        return new Submission(fileName, submissionEntry, parseFilesRecursively(submissionEntry), language);
     }
 
     /**
@@ -248,7 +249,7 @@ public class SubmissionSetBuilder {
 
             String errorMessage = isExcludedEntry(submissionFile);
             if (errorMessage != null) {
-                System.out.println(errorMessage);
+                logger.error(errorMessage);
                 continue;
             }
 

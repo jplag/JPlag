@@ -4,11 +4,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
 public class Parser extends AbstractParser implements TokenConstants {
+    private static final Logger logger = LogManager.getLogger(Parser.class);
 
     private TokenList struct;
 
@@ -16,15 +20,15 @@ public class Parser extends AbstractParser implements TokenConstants {
         struct = new TokenList();
         errors = 0;
         for (String file : files) {
-            getErrorConsumer().print(null, "Parsing file " + file);
+            logger.info("Parsing file " + file);
             if (!parseFile(dir, file))
                 errors++;
             struct.addToken(new CharToken(FILE_END, file, this));
         }
         if (errors == 0)
-            errorConsumer.print(null, "OK");
+            logger.info("OK");
         else
-            errorConsumer.print(null, errors + " ERROR" + (errors > 1 ? "S" : ""));
+            logger.error(errors + " ERROR" + (errors > 1 ? "S" : ""));
 
         this.parseEnd();
         return struct;

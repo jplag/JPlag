@@ -13,6 +13,9 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.util.JavacTask;
@@ -20,6 +23,8 @@ import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
 public class JavacAdapter {
+
+    private static final Logger logger = LogManager.getLogger(JavacAdapter.class);
 
     private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 
@@ -49,7 +54,7 @@ public class JavacAdapter {
         int errors = 0;
         for (Diagnostic<?> diagItem : diagListen.getDiagnostics()) {
             if (diagItem.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
-                parser.getErrorConsumer().addError(diagItem.toString());
+                logger.error(diagItem.toString());
                 errors++;
             }
         }
