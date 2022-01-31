@@ -152,6 +152,7 @@
           <version>${spotless.version}</version>
           <configuration>
             <java>
+              <toggleOffOn />
               <eclipse>
                 <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
               </eclipse>
@@ -166,7 +167,7 @@
                 <encoding>UTF-8</encoding>
                 <keepBlankLines>true</keepBlankLines>
                 <indentBlankLines>false</indentBlankLines>
-                <nrOfIndentSpace>2</nrOfIndentSpace>
+                <nrOfIndentSpace>4</nrOfIndentSpace>
               </sortPom>
             </pom>
           </configuration>
