@@ -1,21 +1,3 @@
-/*
- * spotless:off
- * Original pseudocode   : Thomas Weidenfeller
- * Implementation tweaked: Aki Nieminen
- *
- * http://www.unicode.org/unicode/faq/utf_bom.html
- * BOMs:
- * 00 00 FE FF    = UTF-32, big-endian
- * FF FE 00 00    = UTF-32, little-endian
- * FE FF          = UTF-16, big-endian
- * FF FE          = UTF-16, little-endian
- * EF BB BF       = UTF-8
- *
- * Win2k Notepad:
- * Unicode format = UTF-16LE
- * spotless:on
- */
-
 package de.jplag.csharp;
 
 import java.io.IOException;
@@ -34,6 +16,20 @@ import java.nio.charset.StandardCharsets;
  * String defaultEnc = "UTF-16BE"; // or NULL to use system default
  * FileInputStream fis = new FileInputStream(file);
  * Reader in = new UnicodeReader(fis, defaultEnc);
+ * 
+ * Original pseudocode   : Thomas Weidenfeller
+ * Implementation tweaked: Aki Nieminen
+ *
+ * http://www.unicode.org/unicode/faq/utf_bom.html
+ * BOMs:
+ * 00 00 FE FF    = UTF-32, big-endian
+ * FF FE 00 00    = UTF-32, little-endian
+ * FE FF          = UTF-16, big-endian
+ * FF FE          = UTF-16, little-endian
+ * EF BB BF       = UTF-8
+ *
+ * Win2k Notepad:
+ * Unicode format = UTF-16LE
  * </pre>
  */
 public class UnicodeReader extends Reader {
