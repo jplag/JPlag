@@ -50,6 +50,7 @@
         <module>jplag.frontend.python-3</module>
         <module>jplag.frontend.scheme</module>
         <module>jplag.frontend.text</module>
+        <module>jplag.cli</module>
         <module>jplag</module>
     </modules>
     <scm>
@@ -173,6 +174,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>cli</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>jplag</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -182,6 +188,11 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-rules</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
