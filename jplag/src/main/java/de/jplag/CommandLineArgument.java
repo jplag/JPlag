@@ -54,7 +54,8 @@ public enum CommandLineArgument {
         this(flag, Optional.empty(), type, Optional.of(defaultValue), Optional.of(choices));
     }
 
-    private CommandLineArgument(String flag, Optional<String> nArgs, Class<?> type, Optional<Object> defaultValue, Optional<Collection<String>> choices) {
+    private CommandLineArgument(String flag, Optional<String> nArgs, Class<?> type, Optional<Object> defaultValue,
+            Optional<Collection<String>> choices) {
         this.flag = flag;
         this.nArgs = nArgs;
         this.type = type;
@@ -91,13 +92,15 @@ public enum CommandLineArgument {
     /**
      * Returns the value of this argument. Convenience method for {@link Namespace#getList(String)} and
      * {@link CommandLineArgument#flagWithoutDash()}.
-     * <p>Depending on the action of the option, result types may change.</p>
+     * <p>
+     * Depending on the action of the option, result types may change.
+     * </p>
      * @param <T> is the argument type.
      * @param namespace stores a value for the argument.
      * @return the argument value.
      */
     public <T> List<T> getListFrom(Namespace namespace) {
-         return namespace.getList(flagWithoutDash());
+        return namespace.getList(flagWithoutDash());
     }
 
     /**

@@ -8,7 +8,9 @@ import java.util.Map.Entry;
 
 /**
  * Class constructing unique short names for provided named elements.
- * <p>It builds a suffix tree of each name and finds entries used by one element in it.</p>
+ * <p>
+ * It builds a suffix tree of each name and finds entries used by one element in it.
+ * </p>
  * @param <T> Type of the elements to give a name.
  */
 public class NameProvider<T> {
@@ -79,7 +81,7 @@ public class NameProvider<T> {
             // Explore sub-trees.
             int freeIndex = pathName.size();
             pathName.add(null);
-            for (Entry<String, NameNode<E>> entry: childNodes.entrySet()) {
+            for (Entry<String, NameNode<E>> entry : childNodes.entrySet()) {
                 pathName.set(freeIndex, entry.getKey());
                 entry.getValue().collectElements(pathName, foundElements);
             }
@@ -99,7 +101,9 @@ public class NameProvider<T> {
 
     /**
      * Elements that could be given a name.
-     * <p>Field is initialized in {@link #collectElementNames}.</p>
+     * <p>
+     * Field is initialized in {@link #collectElementNames}.
+     * </p>
      */
     private Map<T, List<String>> namedElements = null;
 
@@ -122,7 +126,7 @@ public class NameProvider<T> {
 
         namedElements = null; // Anything in the namedElements is now invalid.
         List<NameNode<T>> openNodes = new ArrayList<>(parts.size());
-        for (String part: parts) {
+        for (String part : parts) {
             openNodes.add(rootNode);
             for (int idx = 0; idx < openNodes.size(); idx++) {
                 NameNode<T> node = openNodes.get(idx);
@@ -130,7 +134,6 @@ public class NameProvider<T> {
             }
         }
     }
-
 
     /**
      * Convenience method to store an element by giving its name as a single string.
@@ -159,8 +162,10 @@ public class NameProvider<T> {
 
     /**
      * Traverse the stored name tails tree, and collect elements with their best name.
-     * <p>If all name sequences of the stored elements are unique, this will return all elements.
-     * Missing elements implies a name sequence collision between them.</p>
+     * <p>
+     * If all name sequences of the stored elements are unique, this will return all elements. Missing elements implies a
+     * name sequence collision between them.
+     * </p>
      * @return Found elements with their names.
      * @see #collectUnnamedElements
      */
@@ -185,7 +190,7 @@ public class NameProvider<T> {
             return unnamedElements;
         }
 
-        for (T element: elements) {
+        for (T element : elements) {
             if (!namedElements.containsKey(element)) {
                 unnamedElements.add(element);
             }

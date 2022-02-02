@@ -92,7 +92,8 @@ public class NormalComparisonTest extends TestBase {
         List<String> paths = new ArrayList<>(2);
         paths.add(getBasePath("basecode")); // 3 submissions.
         paths.add(getBasePath("SimpleDuplicate")); // 2 submissions.
-        JPlagResult result = runJPlag(paths, options -> {});
+        JPlagResult result = runJPlag(paths, options -> {
+        });
         assertEquals(5, result.getNumberOfSubmissions());
     }
 

@@ -64,7 +64,7 @@ public class SubmissionSetBuilder {
             shortRootDirectoryNames = Map.of(rootDirectory, List.of(""));
         } else {
             NameProvider<File> shortRootDirectoryNameProvider = new NameProvider<>();
-            for (String rootDirectoryName: rootDirectoryNames) {
+            for (String rootDirectoryName : rootDirectoryNames) {
                 File rootDirectory = new File(rootDirectoryName);
                 shortRootDirectoryNameProvider.storeElement(rootDirectory, rootDirectory.toString(), File.separator);
             }
@@ -77,7 +77,7 @@ public class SubmissionSetBuilder {
 
         // Collect valid looking entries from the root directories.
         Map<File, Submission> foundSubmissions = new HashMap<>();
-        for (Entry<File, List<String>> shortRootDirectoryNameEntry: shortRootDirectoryNames.entrySet()) {
+        for (Entry<File, List<String>> shortRootDirectoryNameEntry : shortRootDirectoryNames.entrySet()) {
             File rootDirectory = shortRootDirectoryNameEntry.getKey();
             String shortRootDirectoryName = join(shortRootDirectoryNameEntry.getValue());
             processRootDirEntries(rootDirectory, shortRootDirectoryName, foundSubmissions);
@@ -127,7 +127,7 @@ public class SubmissionSetBuilder {
     private void verifyRootDirectories() throws ExitException {
         List<String> rootDirectoryNames = options.getRootDirectoryNames();
         Set<File> canonicalRootDirs = new HashSet<>(rootDirectoryNames.size());
-        for (String rootDirectoryName: rootDirectoryNames) {
+        for (String rootDirectoryName : rootDirectoryNames) {
             File rootDir = new File(rootDirectoryName);
 
             if (!rootDir.exists()) {
@@ -144,7 +144,8 @@ public class SubmissionSetBuilder {
                 throw new RootDirectoryException(String.format("Cannot read root directory \"%s\".", rootDirectoryName));
             }
             if (!added) {
-                throw new RootDirectoryException(String.format("Root directory \"%s\" has already been added as submission root!", rootDirectoryName));
+                throw new RootDirectoryException(
+                        String.format("Root directory \"%s\" has already been added as submission root!", rootDirectoryName));
             }
         }
     }
@@ -367,11 +368,15 @@ public class SubmissionSetBuilder {
      * @return The constructed string.
      */
     private static String join(List<String> nameParts) {
-        if (nameParts.size() == 1) return nameParts.get(0);
+        if (nameParts.size() == 1) {
+            return nameParts.get(0);
+        }
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < nameParts.size(); i++) {
-            if (i > 0) stringBuilder.append(File.separator);
+            if (i > 0) {
+                stringBuilder.append(File.separator);
+            }
             stringBuilder.append(nameParts.get(i));
         }
         return stringBuilder.toString();

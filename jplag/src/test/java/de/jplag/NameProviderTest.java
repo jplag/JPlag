@@ -108,7 +108,7 @@ public class NameProviderTest {
         assertEquals(1, namedElements.size());
         assertTrue(namedElements.containsKey(zeroElement));
 
-        List<Integer> unnamedElements= nameProvider.collectUnnamedElements();
+        List<Integer> unnamedElements = nameProvider.collectUnnamedElements();
         assertEquals(2, unnamedElements.size());
     }
 
