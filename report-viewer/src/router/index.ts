@@ -13,13 +13,15 @@ const routes: Array<RouteRecordRaw> = [
     path: "/overview",
     name: "Overview",
     component: Overview,
-    props:true
   },
   {
     path: "/comparison",
     name: "ComparisonView",
     component: ComparisonView,
-    props: route => ({ notAnonymized : route.params.notAnonymized, id1: route.query.id1, id2: route.query.id2})
+    props: route => ({
+      id1: route.query.id1,
+      id2: route.query.id2
+    })
   },
 ];
 

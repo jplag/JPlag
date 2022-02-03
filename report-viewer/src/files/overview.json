@@ -1,0 +1,103 @@
+{
+  "submission_folder_path": "C:\\Uni\\PISE\\JPlag\\jplag\\src\\test\\resources\\de\\jplag\\samples\\PartialPlagiarism",
+  "base_code_folder_path": "",
+  "language": "Javac 1.9+ based AST plugin",
+  "file_extensions": [
+    ".java",
+    ".JAVA"
+  ],
+  "submission_ids": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+  ],
+  "failed_submission_names": [],
+  "excluded_files": [],
+  "match_sensitivity": 9,
+  "date_of_execution": "27/12/21",
+  "execution_time": 94,
+  "comparison_names": [
+    "C-A",
+    "D-A",
+    "D-C",
+    "B-D",
+    "B-A",
+    "B-C",
+    "E-A",
+    "E-B",
+    "E-C",
+    "E-D"
+  ],
+  "metrics": [
+    {
+      "name": "AVG",
+      "threshold": 0.0,
+      "distribution": [
+        4,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        1
+      ],
+      "topComparisons": [
+        {
+          "first_submission": "C",
+          "second_submission": "A",
+          "match_percentage": 99.6633
+        },
+        {
+          "first_submission": "D",
+          "second_submission": "A",
+          "match_percentage": 77.87255
+        },
+        {
+          "first_submission": "D",
+          "second_submission": "C",
+          "match_percentage": 77.87255
+        },
+        {
+          "first_submission": "B",
+          "second_submission": "D",
+          "match_percentage": 28.278688
+        },
+        {
+          "first_submission": "B",
+          "second_submission": "A",
+          "match_percentage": 24.576895
+        },
+        {
+          "first_submission": "B",
+          "second_submission": "C",
+          "match_percentage": 24.576895
+        },
+        {
+          "first_submission": "E",
+          "second_submission": "A",
+          "match_percentage": 0.0
+        },
+        {
+          "first_submission": "E",
+          "second_submission": "B",
+          "match_percentage": 0.0
+        },
+        {
+          "first_submission": "E",
+          "second_submission": "C",
+          "match_percentage": 0.0
+        },
+        {
+          "first_submission": "E",
+          "second_submission": "D",
+          "match_percentage": 0.0
+        }
+      ]
+    }
+  ]
+}

@@ -4,7 +4,11 @@ const store = createStore({
     state () {
         return {
             anonymous : new Set(),
-            files: Array
+            files : Object,
+            local: Boolean,
+            zip: Boolean,
+            single: Boolean,
+            fileString: String
         }
     },
     getters: {
@@ -26,8 +30,14 @@ const store = createStore({
         resetAnonymous (state) {
             state.anonymous = new Set()
         },
-        saveFiles (state, files) {
-            state.files = files
+        saveFile (state, file: Record<string, any>) {
+            state.files[file.fileName] = file.data
+        },
+        setLoadingType (state, payload: Record<string, any>) {
+            state.local = payload.local
+            state.zip = payload.zip
+            state.single = payload.single
+            state.fileString = payload.fileString
         }
 
     }

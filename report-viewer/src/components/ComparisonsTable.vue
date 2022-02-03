@@ -31,6 +31,7 @@
 <script>
 import { defineComponent } from "vue";
 import router from "@/router";
+import store from "@/store/store";
 
 export default defineComponent({
   name: "ComparisonsTable",
@@ -43,14 +44,16 @@ export default defineComponent({
      type: Set
     }
   },
-  setup(props) {
+  setup() {
     let formattedMatchPercentage = ( number ) => number.toFixed(2)
 
     const navigateToComparisonView = (id1, id2) => {
-      router.push({
-        name: "ComparisonView",
-        query: {id1: id1, id2: id2},
-      })
+      if(!store.state.single) {
+        router.push({
+          name: "ComparisonView",
+          query: {id1: id1, id2: id2},
+        })
+      }
     }
     return {
       formattedMatchPercentage,

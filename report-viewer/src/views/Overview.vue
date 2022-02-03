@@ -37,7 +37,6 @@
       </div>
     <div class="column-container" style="width: 35%">
         <p class="section-title">Top Comparisons:</p>
-        <p class="section-subtitle">(Top n comparisons)</p>
         <div id="comparisonsList">
           <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]" :anonymous="store.state.anonymous"/>
         </div>
@@ -48,10 +47,10 @@
 <script>
 import {defineComponent, ref} from "vue";
 import store from "@/store/store";
+import router from "@/router";
 import TextInformation from "../components/TextInformation";
 import DistributionDiagram from "@/components/DistributionDiagram";
 import MetricButton from "@/components/MetricButton";
-import Overview from "../files/overview.json"
 import ComparisonsTable from "@/components/ComparisonsTable";
 import {OverviewFactory} from "@/model/factories/OverviewFactory";
 import IDsList from "@/components/IDsList";
@@ -59,48 +58,63 @@ import IDsList from "@/components/IDsList";
 export default defineComponent({
   name: "Overview",
   components: {IDsList, ComparisonsTable, DistributionDiagram, MetricButton, TextInformation },
-  props: {
-  },
   setup() {
-    const overview = OverviewFactory.getOverview(Overview)
+    let overview;
+    if (store.state.local) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        overview = OverviewFactory.getOverview(require("../files/overview.json"))
+      } catch (e) {
+        console.log(e)
+        router.back()
+      }
+    } else if (store.state.zip) {
+      console.log(store.state.files["overview.json"])
+      overview = OverviewFactory.getOverview(JSON.parse(store.state.files["overview.json"]))
+    } else if (store.state.single) {
+      overview = OverviewFactory.getOverview(JSON.parse(store.state.fileString))
+    }
+
 
     const handleId = (id) => {
-      if( id.length === overview.submissionIds.length) {
-        if(store.state.anonymous.size > 0) {
+      if (id.length === overview.submissionIds.length) {
+        if (store.state.anonymous.size > 0) {
           store.commit("resetAnonymous")
         } else {
           store.commit("addAnonymous", id)
         }
       } else {
-          if (store.state.anonymous.has(id[0])) {
-            store.commit("removeAnonymous", id)
+        if (store.state.anonymous.has(id[0])) {
+          store.commit("removeAnonymous", id)
+        } else {
+          if (store.state.anonymous.size === 0) {
+            store.commit("addAnonymous", overview.submissionIds.filter(s => s !== id[0]))
           } else {
-            if(store.state.anonymous.size === 0) {
-              store.commit("addAnonymous", overview.submissionIds.filter(s => s !== id[0]))
-            } else  {
-              store.commit("addAnonymous", id)
-            }
+            store.commit("addAnonymous", id)
           }
+        }
       }
     }
 
 
     //Metrics
-    let selectedMetric = ref(overview.metrics.map( () => false ))
+    let selectedMetric = ref(overview.metrics.map(() => false))
     let selectedMetricIndex = ref(0)
     selectedMetric.value[0] = true;
-    
+
     const selectMetric = (metric) => {
-      selectedMetric.value = selectedMetric.value.map( () => { return false })
+      selectedMetric.value = selectedMetric.value.map(() => {
+        return false
+      })
       selectedMetric.value[metric] = true
       selectedMetricIndex.value = metric
     }
 
     //Distribution
-    let distributions = ref(overview.metrics.map( (m) =>  m.distribution ))
+    let distributions = ref(overview.metrics.map((m) => m.distribution))
 
     //Top Comparisons
-    let topComps = ref(overview.metrics.map((m) => m.comparisons ))
+    let topComps = ref(overview.metrics.map((m) => m.comparisons))
 
 
     return {
@@ -160,13 +174,6 @@ hr {
   padding: 0;
   color: var(--on-background-color);
 }
-
-.section-subtitle {
-  font-size: small;
-  text-align: start;
-  margin-top: 0;
-}
-
 
 #basicInfo {
   display: flex;

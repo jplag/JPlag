@@ -17,3 +17,14 @@ export function generateColoringArray(array: Array<Record<string, unknown>>, fil
             return []
     }
 }
+
+export function isTrue(str: string): boolean {
+    return str === "true";
+}
+
+export function getFileExtension(file: File): string {
+    if(file.name.includes(".")) {
+        return file.name.split(".")[1]
+    }
+    return "";
+}

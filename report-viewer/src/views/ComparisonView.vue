@@ -47,9 +47,15 @@ export default defineComponent({
   },
   setup(props) {
     const fileName = props.id1.concat("-").concat(props.id2)
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const json = require(`../files/${fileName}.json`)
-    const comparison = ComparisonFactory.getComparison(json)
+    let comparison;
+    if(store.state.local) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      comparison = ComparisonFactory.getComparison(require(`../files/${fileName}.json`))
+    } else if(store.state.zip) {
+      comparison = ComparisonFactory.getComparison(JSON.parse(store.state.files[fileName.concat(".json")]))
+    } else if(store.state.single) {
+      comparison = ComparisonFactory.getComparison(JSON.parse(store.state.fileString))
+    }
 
     const filesOfFirst = ref(comparison.filesOfFirstSubmission)
     const filesOfSecond = ref(comparison.filesOfSecondSubmission)

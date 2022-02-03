@@ -2,39 +2,75 @@
   <div class="container" @dragover.prevent @drop.prevent>
     <img src="@/assets/logo-nobg.png" alt="JPlag"/>
     <h1>JPlag Report Viewer</h1>
-    <h2>Select an overview or comparison file to display.</h2>
+    <h2>Select an overview or comparison file or a zip to display.</h2>
     <div class="drop-container" @drop="uploadFile">
-      <p> Drop a .json file here</p>
+      <p> Drop a .json or .zip file here</p>
     </div>
-    <label for="browse">Or browse for a .json file</label>
-    <input type="file" id="browse" name="browse">
+    <div v-if="hasLocalFile" class="local-files-container">
+      <p class="local-files-text">Detected local files!</p>
+      <button class="local-files-button" @click="continueWithLocal">Continue with local files</button>
+    </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import { fs } from "fs";
-import { jszip } from "jszip"
+import jszip from "jszip"
 import router from "@/router";
 import store from "@/store/store";
+import { getFileExtension } from "@/utils/Utils";
 
 export default defineComponent({
   name: "FileUpload",
   setup() {
-
-    const navigateToOverview = (file) => {
+    let hasLocalFile;
+    try {
+      require("../files/overview.json")
+      hasLocalFile = true
+    } catch(e) {
+      console.log(e)
+      hasLocalFile = false
+    }
+    const navigateToOverview = () => {
       router.push({
-            name: "OverviewV2",
-            params: {str: file},
+            name: "Overview",
           }
       )
     }
 
-    const navigateToComparisonView = (file) => {
+    const navigateToComparisonView = (id1, id2) => {
       router.push({
         name: "ComparisonView",
-        params: {str: file}
+        query: {
+          id1: id1,
+          id2: id2
+        }
       })
+    }
+
+    const handleZipFile = (file) => {
+      jszip.loadAsync(file).then( async (zip) => {
+        for (const fileName of Object.keys(zip.files)) {
+          console.log(fileName)
+          await zip.files[fileName].async("string").then(data => {
+                store.commit("saveFile", {fileName: fileName, data: data})
+              }
+          )
+        }
+        store.commit("setLoadingType", {local: false, zip: true, single: false, fileString: ""})
+        navigateToOverview()
+      })
+    }
+
+    const handleJsonFile = (str) => {
+      let json = JSON.parse(str)
+      if(json["submission_folder_path"]) {
+        store.commit("setLoadingType", {local: false, zip: false, single: true, fileString: str})
+        navigateToOverview()
+      } else if(json["first_submission_id"] && json["second_submission_id"]) {
+        store.commit("setLoadingType", {local: false, zip: false, single: true, fileString: str})
+        navigateToComparisonView(json["first_submission_id"], json["second_submission_id"] )
+      }
     }
 
     const uploadFile = (e) => {
@@ -44,20 +80,24 @@ export default defineComponent({
       if (files.length > 1 || files.length === 0) return
       let read = new FileReader()
       read.onload = (e) => {
-        store.commit("saveFiles", files)
-        fs.readFile(files[0], (err, data) => {
-          console.log(data.name)
-        })
-        /*if(files[0].name.includes("comparison")) {
-          navigateToComparisonView(e.target.result)
-        } else {
-          navigateToOverview(e.target.result)
-        }*/
+        let extension = getFileExtension(files[0])
+        if(extension === "zip") {
+          handleZipFile(files[0])
+        } else if (extension === "json") {
+          handleJsonFile(e.target.result)
+        }
       }
       read.readAsText(files[0])
     }
+
+    const continueWithLocal = () => {
+      store.commit("setLoadingType", {local: true, zip: false, single: false, fileString: ""})
+      navigateToOverview()
+    }
     return {
-      uploadFile
+      continueWithLocal,
+      uploadFile,
+      hasLocalFile
     }
   }
 })
@@ -71,7 +111,7 @@ export default defineComponent({
   justify-content: center;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to right, #FF5353,#ECECEC, #ECECEC);
+  background: var(--primary-color-light);
 }
 
 .drop-container {
@@ -86,6 +126,33 @@ export default defineComponent({
 .drop-container > p {
   color: dodgerblue;
   text-align: center;
+}
+
+.local-files-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.local-files-text {
+  font-weight: bold;
+  color: var(--on-background-color);
+}
+
+.local-files-button {
+  font-size: large;
+  background: var(--primary-color);
+  color: var(--on-primary-color);
+  font-weight: bold;
+  padding: 5%;
+  border: none;
+  border-radius: 10px;
+  box-shadow: var(--shadow-color) 2px 3px 3px;
+}
+
+.local-files-button:hover {
+  cursor: pointer;
+  background: var(--primary-color-dark);
 }
 
 input {

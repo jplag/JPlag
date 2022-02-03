@@ -32,9 +32,8 @@ export default defineComponent({
 
 <style scoped>
 button {
-  height: 25%;
   background: inherit;
-  font-family: "JetBrains Mono", serif;
+  font-weight: bold;
   border: none;
   border-radius: 10px;
 }
@@ -47,12 +46,21 @@ button:hover {
 .container {
   display: flex;
   justify-content: space-between;
+  background: inherit !important;
 }
 
 .column-list {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.column-list > p {
+  width: 100%;
+  font-weight: bold;
+  margin: 0;
 }
 
 .column-list > p:hover {
