@@ -2,6 +2,9 @@ import {Match} from "./Match";
 import {SubmissionFile} from "./SubmissionFile"
 import {MatchInSingleFile} from "./MatchInSingleFile";
 
+/**
+ * Comparison model used by the ComparisonView
+ */
 export class Comparison {
     private readonly _firstSubmissionId: string
     private readonly _secondSubmissionId: string

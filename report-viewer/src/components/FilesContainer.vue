@@ -26,18 +26,32 @@ export default defineComponent({
   name: "FilesContainer",
   components: { CodePanel, VueDraggableNext},
   props: {
+    /**
+     * Id of the files container. We have only two so it is either 1 or 2.
+     */
     containerId: {
       type: Number,
       required: true
     },
+    /**
+     * Id of the submission to thich the files belong.
+     */
     filesOwner: {
       type: String,
       required: true
     },
+    /**
+     * Files of the submission.
+     * type: Array<SubmissionFile>
+     */
     files: {
       required: true,
 
     },
+    /**
+     * Matche of submission.
+     * type: Array<MatchInSingleFile>
+     */
     matches: {
       required: true
     }
@@ -45,6 +59,13 @@ export default defineComponent({
 
   setup(props, { emit }) {
 
+    /**
+     * Passes lineSelected event, emitted from LineOfCode, to parent.
+     * @param e
+     * @param index
+     * @param file
+     * @param line
+     */
     const lineSelected = (e, index, file, line) => {
       emit('lineSelected', e, index, file, line)
     }

@@ -3,8 +3,8 @@
     <div class="file-title">
       <p style="width: 90%">{{ title }}</p>
       <button style="width: 10%" class="collapse-button" @click="$emit('toggleCollapse')">
-        <img v-if="collapse" src="../assets/keyboard_double_arrow_up_white_18dp.svg" alt="hide info">
-        <img v-else src="../assets/keyboard_double_arrow_down_white_18dp.svg" alt="additional info">
+        <img v-if="collapse" src="../assets/keyboard_double_arrow_up_black_18dp.svg" alt="hide info">
+        <img v-else src="../assets/keyboard_double_arrow_down_black_18dp.svg" alt="additional info">
       </button>
     </div>
     <div class="code-container" :class="{ hidden : !collapse }">

@@ -37,6 +37,9 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    /**
+     * Indicates whether the value should be hidden.
+     */
     anonymous: {
       type: Boolean,
       default: false

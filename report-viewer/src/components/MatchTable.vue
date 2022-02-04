@@ -37,12 +37,22 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "MatchTable",
   props: {
+    /**
+     * Matches of the comparison.
+     * type: Array<Match>
+     */
     matches : {
       type: Array
     },
+    /**
+     * ID of first submission
+     */
     id1: {
       type: String
     },
+    /**
+     * ID of second submission
+     */
     id2: {
       type: String
     }

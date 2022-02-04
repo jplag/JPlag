@@ -60,6 +60,7 @@ export default defineComponent({
   components: {IDsList, ComparisonsTable, DistributionDiagram, MetricButton, TextInformation },
   setup() {
     let overview;
+    //Gets the overview file based on the used mode (zip, local, single).
     if (store.state.local) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -73,6 +74,12 @@ export default defineComponent({
       overview = OverviewFactory.getOverview(JSON.parse(store.state.fileString))
     }
 
+    /**
+     * Handles the selection of an Id to anonymize.
+     * If all submission ids are provided as parameter it hides or displays them based on their previous state.
+     * If a single id is provided it hides all of the other ids except for the chosen one.
+     * @param id
+     */
     const handleId = (id) => {
       if (id.length === overview.submissionIds.length) {
         if (store.state.anonymous.size > 0) {
@@ -95,7 +102,16 @@ export default defineComponent({
 
 
     //Metrics
+    /**
+     * Current metric to display distribution and comparisons for.
+     * @type {Ref<UnwrapRef<boolean[]>>}
+     */
     let selectedMetric = ref(overview.metrics.map(() => false))
+    /**
+     * Index of current selected metric. Used to obtain information for the metric from the distribution and top
+     * comparisons array.
+     * @type {Ref<UnwrapRef<number>>}
+     */
     let selectedMetricIndex = ref(0)
     selectedMetric.value[0] = true;
 

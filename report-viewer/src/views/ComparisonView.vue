@@ -1,13 +1,13 @@
 <template>
   <div class="container">
     <button id="show-button" :class="{hidden : !hideLeftPanel}" @click="togglePanel" title="Show sidebar">
-      <img src="@/assets/double_arrow_white_24dp.svg" alt="show">
+      <img src="@/assets/double_arrow_black_24dp.svg" alt="show">
     </button>
     <div id="sidebar" :class="{ hidden : hideLeftPanel }">
       <div class="title-section">
         <h1>JPlag Comparison</h1>
         <button id="hide-button" @click="togglePanel" title="Hide sidebar">
-          <img src="@/assets/keyboard_double_arrow_left_white_24dp.svg" alt="hide"></button>
+          <img src="@/assets/keyboard_double_arrow_left_black_24dp.svg" alt="hide"></button>
       </div>
       <TextInformation label="Submission 1" :value="id1" :anonymous="store.state.anonymous.has(id1)"/>
       <TextInformation label="Submission 2" :value="id2" :anonymous="store.state.anonymous.has(id2)"/>
@@ -46,8 +46,14 @@ export default defineComponent({
     },
   },
   setup(props) {
+    /**
+     * Name of the comparison file. Comparison files should be named {ID1}-{ID2}
+     * @type {string}
+     */
     const fileName = props.id1.concat("-").concat(props.id2)
+
     let comparison;
+    //getting the comparison file based on the used mode (zip, local, single)
     if(store.state.local) {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       comparison = ComparisonFactory.getComparison(require(`../files/${fileName}.json`))
@@ -60,14 +66,34 @@ export default defineComponent({
     const filesOfFirst = ref(comparison.filesOfFirstSubmission)
     const filesOfSecond = ref(comparison.filesOfSecondSubmission)
 
+    /**
+     * Collapses a file in the first files container.
+     * @param title
+     */
     const toggleCollapseFirst = (title) => { filesOfFirst.value[title].collapsed = !filesOfFirst.value[title].collapsed }
+    /**
+     * Collapses a file in the second files container.
+     * @param title
+     */
     const toggleCollapseSecond = (title) => { filesOfSecond.value[title].collapsed = !filesOfSecond.value[title].collapsed }
-
+    /**
+     * Shows a match in the first files container
+     * @param e
+     * @param panel
+     * @param file
+     * @param line
+     */
     const showMatchInFirst = ( e, panel, file, line ) => {
       if( !filesOfFirst.value[file].collapsed ) { toggleCollapseFirst(file) }
       document.getElementById(generateLineCodeLink(panel, file, line)).scrollIntoView()
     }
-
+    /**
+     * Shows a match in the second files container.
+     * @param e
+     * @param panel
+     * @param file
+     * @param line
+     */
     const showMatchInSecond = ( e, panel, file, line ) => {
       if( !filesOfSecond.value[file].collapsed ) { toggleCollapseSecond(file) }
       document.getElementById(generateLineCodeLink(panel, file, line)).scrollIntoView()
@@ -79,6 +105,7 @@ export default defineComponent({
     }
 
 
+    //Left panel
     const hideLeftPanel = ref(true)
     const togglePanel = () => {
       hideLeftPanel.value = !hideLeftPanel.value

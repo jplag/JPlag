@@ -1,20 +1,36 @@
 import { createStore} from "vuex";
 
+/**
+ * Local store. Stores the state of the application.
+ */
 const store = createStore({
     state () {
         return {
+            /**
+             * The set of ids to be hidden.
+             */
             anonymous : new Set(),
+            /**
+             * Stored files if zip mode is used. Stores the files as key - file name, value - file string
+             */
             files : Object,
+            /**
+             * Indicates whether local mode is used.
+             */
             local: Boolean,
+            /**
+             * Indicates whether zip mode is used.
+             */
             zip: Boolean,
+            /**
+             * Indicates whether single file mode is used.
+             */
             single: Boolean,
+            /**
+             * Files string if single mode is used.
+             */
             fileString: String
         }
-    },
-    getters: {
-      getFileByName: (state: any) => (name: string) => {
-          return state.files.find((file: any) => file.name.includes(name))
-      }
     },
     mutations: {
         addAnonymous (state: any, id) {

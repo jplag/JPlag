@@ -24,6 +24,7 @@ export default defineComponent({
   name: "FileUpload",
   setup() {
     let hasLocalFile;
+    //Tries to detect local file. If no files detected, hides local mode from screen.
     try {
       require("../files/overview.json")
       hasLocalFile = true
@@ -31,6 +32,8 @@ export default defineComponent({
       console.log(e)
       hasLocalFile = false
     }
+
+
     const navigateToOverview = () => {
       router.push({
             name: "Overview",
@@ -47,7 +50,10 @@ export default defineComponent({
         }
       })
     }
-
+    /**
+     * Handles zip file on drop. It extracts the zip and saves each file in the store.
+     * @param file
+     */
     const handleZipFile = (file) => {
       jszip.loadAsync(file).then( async (zip) => {
         for (const fileName of Object.keys(zip.files)) {
@@ -61,7 +67,10 @@ export default defineComponent({
         navigateToOverview()
       })
     }
-
+    /**
+     * Handles a json file on drop. It read the file and passes the file string to next window.
+     * @param str
+     */
     const handleJsonFile = (str) => {
       let json = JSON.parse(str)
       if(json["submission_folder_path"]) {
@@ -72,7 +81,10 @@ export default defineComponent({
         navigateToComparisonView(json["first_submission_id"], json["second_submission_id"] )
       }
     }
-
+    /**
+     * Handles file drop.
+     * @param e
+     */
     const uploadFile = (e) => {
       let dropped = e.dataTransfer.files
       if (!dropped) return
@@ -89,7 +101,9 @@ export default defineComponent({
       }
       read.readAsText(files[0])
     }
-
+    /**
+     * Handles click on Continue with local files.
+     */
     const continueWithLocal = () => {
       store.commit("setLoadingType", {local: true, zip: false, single: false, fileString: ""})
       navigateToOverview()
