@@ -12,6 +12,7 @@
     "chart.js": "^3.6.0",
     "chartjs-plugin-datalabels": "^2.0.0",
     "core-js": "^3.6.5",
+    "gitart-vue-dialog": "^1.2.3",
     "highlight.js": "^11.4.0",
     "jszip": "^3.7.1",
     "vue": "^3.0.0",

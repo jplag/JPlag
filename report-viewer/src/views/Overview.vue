@@ -38,7 +38,7 @@
     <div class="column-container" style="width: 35%">
         <p class="section-title">Top Comparisons:</p>
         <div id="comparisonsList">
-          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]" :anonymous="store.state.anonymous"/>
+          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]" :clusters="overview.clusters"/>
         </div>
     </div>
   </div>
@@ -65,16 +65,13 @@ export default defineComponent({
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         overview = OverviewFactory.getOverview(require("../files/overview.json"))
       } catch (e) {
-        console.log(e)
         router.back()
       }
     } else if (store.state.zip) {
-      console.log(store.state.files["overview.json"])
       overview = OverviewFactory.getOverview(JSON.parse(store.state.files["overview.json"]))
     } else if (store.state.single) {
       overview = OverviewFactory.getOverview(JSON.parse(store.state.fileString))
     }
-
 
     const handleId = (id) => {
       if (id.length === overview.submissionIds.length) {

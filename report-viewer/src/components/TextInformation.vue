@@ -2,7 +2,7 @@
   <div class="wrapper">
       <div class="text-container">
       <p class="label-text">{{ label }}</p>
-      <p :class="{ anonymous : anonymous }" class="value-text" :title="anonymous ? '' : value">{{ anonymous ? "Hidden" : value }}</p>
+      <p :class="{ 'anonymous' : anonymous }" class="value-text" :title="anonymous ? '' : value">{{ anonymous ? "Hidden" : value }}</p>
       </div>
       <button class="collapse-button" :class="{ hidden : !hasAdditionalInfo }" @click="toggleIsCollapsed">
         <img v-if="isCollapsed" src="../assets/keyboard_double_arrow_up_black_18dp.svg" alt="hide info">

@@ -1,4 +1,5 @@
 import {Metric} from "./Metric";
+import {Cluster} from "@/model/Cluster";
 
 export class Overview {
     private readonly _submissionFolderPath: string
@@ -10,9 +11,10 @@ export class Overview {
     private readonly _dateOfExecution: string
     private readonly _durationOfExecution: number
     private readonly _metrics: Array<Metric>
+    private readonly _clusters: Array<Cluster>
 
 
-    constructor(submissionFolderPath: string, baseCodeFolderPath: string, language: string, fileExtensions: Array<string>,matchSensitivity: number, submissionIds: Array<string>, dateOfExecution: string, durationOfExecution: number, metrics: Array<Metric>) {
+    constructor(submissionFolderPath: string, baseCodeFolderPath: string, language: string, fileExtensions: Array<string>,matchSensitivity: number, submissionIds: Array<string>, dateOfExecution: string, durationOfExecution: number, metrics: Array<Metric>, clusters: Array<Cluster>) {
         this._submissionFolderPath = submissionFolderPath;
         this._baseCodeFolderPath = baseCodeFolderPath;
         this._language = language;
@@ -22,6 +24,7 @@ export class Overview {
         this._dateOfExecution = dateOfExecution;
         this._durationOfExecution = durationOfExecution;
         this._metrics = metrics;
+        this._clusters = clusters
     }
 
 
@@ -59,5 +62,9 @@ export class Overview {
 
     get metrics(): Array<Metric> {
         return this._metrics;
+    }
+
+    get clusters(): Array<Cluster> {
+        return this._clusters
     }
 }

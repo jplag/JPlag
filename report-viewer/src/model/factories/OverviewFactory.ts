@@ -1,6 +1,7 @@
 import {Overview} from "../Overview";
 import {Metric} from "../Metric";
 import {ComparisonListElement} from "../ComparisonListElement";
+import {Cluster} from "@/model/Cluster";
 
 export class OverviewFactory {
 
@@ -14,6 +15,7 @@ export class OverviewFactory {
         const dateOfExecution = json.date_of_execution as string
         const duration = json.execution_time as number as number
         const metrics = [] as Array<Metric>
+        const clusters = [] as Array<Cluster>
         (json.metrics as Array<unknown>).forEach( (m) => {
             const metric = m as Record<string, unknown>
             const comparisons = [] as Array<ComparisonListElement>
@@ -34,7 +36,17 @@ export class OverviewFactory {
                 comparisons : comparisons
             }
             metrics.push(newMetric)
+        });
+
+        (json.clusters as Array<unknown>).forEach( c => {
+            const cluster = c as Record<string, unknown>
+            const newCluster : Cluster = {
+                avgSim: cluster.avgSim as number,
+                members: cluster.members as Array<string>
+            }
+            clusters.push(newCluster)
         })
+
 
         return new Overview(
             submissionFolder,
@@ -45,7 +57,8 @@ export class OverviewFactory {
             submissions,
             dateOfExecution,
             duration,
-            metrics
+            metrics,
+            clusters
         )
     }
 }

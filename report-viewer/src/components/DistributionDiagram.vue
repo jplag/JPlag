@@ -22,7 +22,10 @@ export default defineComponent({
     }
   },
   setup(props) {
+    //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
+    //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
     let maxVal = ref(Math.max(...props.distribution));
+
     let chartData = ref( {
         labels: ['0-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71-80%', '81-90%', '91-100%'],
         datasets: [{
@@ -68,6 +71,8 @@ export default defineComponent({
       }
     })
 
+    //We watch the given distributions parameter. When the distribution of another metric is passed, the diagram is
+    //updated with the new data.
     watch( () => props.distribution, (val) => {
       chartData.value = {
         labels: ['0-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71-80%', '81-90%', '91-100%'],
@@ -89,18 +94,18 @@ export default defineComponent({
           x: {
             suggestedMax: maxVal.value + 5,
             ticks: {
-              color: '#860000',
+              color: '#000000',
             }
           },
           y: {
             ticks: {
-              color: '#860000',
+              color: '#000000',
             }
           }
         },
         plugins: {
           datalabels: {
-            color: '#be1523',
+            color: '#000000',
             font: {
               weight: 'bold'
             },

@@ -11,6 +11,9 @@ import hljs from 'highlight.js';
 export default defineComponent({
   name: "LineOfCode",
   props: {
+    /**
+     * Indicates whether the line is shown on screen. Used for highlighting on demand.
+     */
     visible: {
       type: Boolean,
       required: true
@@ -26,9 +29,6 @@ export default defineComponent({
     color: {
       required:true
     },
-    startOfMatch: {
-      type: Number
-    },
     fileIndex: {
       type: Number,
     },
@@ -43,6 +43,7 @@ export default defineComponent({
   setup(props) {
     let highlighted = false
     let lineRef = ref(null)
+    //Trigger highlighting when code panel is collapsed.
     onUpdated( () => {
       if ( props.visible && !highlighted ) {
           hljs.highlightElement(lineRef.value)

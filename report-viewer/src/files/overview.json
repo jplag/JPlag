@@ -99,5 +99,15 @@
         }
       ]
     }
+  ],
+  "clusters": [
+    {
+      "avgSim": 30,
+      "members": ["A", "B", "C"]
+    },
+    {
+      "avgSim": 80,
+      "members": ["A", "B", "D", "E"]
+    }
   ]
 }
