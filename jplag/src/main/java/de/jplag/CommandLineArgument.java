@@ -21,43 +21,43 @@ import de.jplag.strategy.ComparisonMode;
  * @author Timur Saglam
  */
 public enum CommandLineArgument {
-    ROOT_DIRECTORIES("rootDir", Optional.of("+"), String.class),
+    ROOT_DIRECTORY("rootDir", NumberOfValues.ONE_OR_MORE_VALUES, String.class),
     LANGUAGE("-l", String.class, LanguageOption.getDefault().getDisplayName(), LanguageOption.getAllDisplayNames()),
-    BASE_CODE("-bc", Optional.empty(), String.class),
+    BASE_CODE("-bc", NumberOfValues.SINGLE_VALUE, String.class),
     VERBOSITY("-v", String.class, "quiet", List.of("quiet", "long")), // TODO SH: Replace verbosity when integrating a real logging library
-    DEBUG("-d", Optional.empty(), Boolean.class),
-    SUBDIRECTORY("-S", Optional.empty(), String.class),
-    SUFFIXES("-p", Optional.empty(), String.class),
-    EXCLUDE_FILE("-x", Optional.empty(), String.class),
-    MIN_TOKEN_MATCH("-t", Optional.empty(), Integer.class),
+    DEBUG("-d", NumberOfValues.SINGLE_VALUE, Boolean.class),
+    SUBDIRECTORY("-S", NumberOfValues.SINGLE_VALUE, String.class),
+    SUFFIXES("-p", NumberOfValues.SINGLE_VALUE, String.class),
+    EXCLUDE_FILE("-x", NumberOfValues.SINGLE_VALUE, String.class),
+    MIN_TOKEN_MATCH("-t", NumberOfValues.SINGLE_VALUE, Integer.class),
     SIMILARITY_THRESHOLD("-m", Float.class, DEFAULT_SIMILARITY_THRESHOLD),
     SHOWN_COMPARISONS("-n", Integer.class, DEFAULT_SHOWN_COMPARISONS),
     RESULT_FOLDER("-r", String.class, "result"),
     COMPARISON_MODE("-c", String.class, DEFAULT_COMPARISON_MODE.getName(), ComparisonMode.allNames());
 
     private final String flag;
-    private final Optional<String> nArgs;
+    private final NumberOfValues numberOfValues;
     private final String description;
     private final Optional<Object> defaultValue;
     private final Optional<Collection<String>> choices;
     private final Class<?> type;
 
-    private CommandLineArgument(String flag, Optional<String> nArgs, Class<?> type) {
-        this(flag, nArgs, type, Optional.empty(), Optional.empty());
+    private CommandLineArgument(String flag, NumberOfValues valueMultiplicity, Class<?> type) {
+        this(flag, valueMultiplicity, type, Optional.empty(), Optional.empty());
     }
 
     private CommandLineArgument(String flag, Class<?> type, Object defaultValue) {
-        this(flag, Optional.empty(), type, Optional.of(defaultValue), Optional.empty());
+        this(flag, NumberOfValues.SINGLE_VALUE, type, Optional.of(defaultValue), Optional.empty());
     }
 
     private CommandLineArgument(String flag, Class<?> type, Object defaultValue, Collection<String> choices) {
-        this(flag, Optional.empty(), type, Optional.of(defaultValue), Optional.of(choices));
+        this(flag, NumberOfValues.SINGLE_VALUE, type, Optional.of(defaultValue), Optional.of(choices));
     }
 
-    private CommandLineArgument(String flag, Optional<String> nArgs, Class<?> type, Optional<Object> defaultValue,
+    private CommandLineArgument(String flag, NumberOfValues numberOfValues, Class<?> type, Optional<Object> defaultValue,
             Optional<Collection<String>> choices) {
         this.flag = flag;
-        this.nArgs = nArgs;
+        this.numberOfValues = numberOfValues;
         this.type = type;
         this.defaultValue = defaultValue;
         this.choices = choices;
@@ -79,8 +79,8 @@ public enum CommandLineArgument {
     }
 
     /**
-     * Returns the value of this argument. Convenience method for {@link Namespace#get(String)} and
-     * {@link CommandLineArgument#flagWithoutDash()}.
+     * Returns the value of this argument for arguments with a single value. Convenience method for
+     * {@link Namespace#get(String)} and {@link CommandLineArgument#flagWithoutDash()}.
      * @param <T> is the argument type.
      * @param namespace stores a value for the argument.
      * @return the argument value.
@@ -90,8 +90,8 @@ public enum CommandLineArgument {
     }
 
     /**
-     * Returns the value of this argument. Convenience method for {@link Namespace#getList(String)} and
-     * {@link CommandLineArgument#flagWithoutDash()}.
+     * Returns the value of this argument for arguments that allow more than a single value. Convenience method for
+     * {@link Namespace#getList(String)} and {@link CommandLineArgument#flagWithoutDash()}.
      * <p>
      * Depending on the action of the option, result types may change.
      * </p>
@@ -115,7 +115,9 @@ public enum CommandLineArgument {
         if (type == Boolean.class) {
             argument.action(storeTrue());
         }
-        nArgs.ifPresent(it -> argument.nargs(it));
+        if (numberOfValues == NumberOfValues.ONE_OR_MORE_VALUES) {
+            argument.nargs("+");
+        }
     }
 
     /**
@@ -129,5 +131,11 @@ public enum CommandLineArgument {
             builder.append(substring.substring(1));
         }
         return Messages.getString(getClass().getSimpleName() + "." + builder.toString());
+    }
+
+    /** Allowed number of values of an argument. */
+    public static enum NumberOfValues {
+        SINGLE_VALUE,
+        ONE_OR_MORE_VALUES,
     }
 }

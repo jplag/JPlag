@@ -2,7 +2,6 @@ package de.jplag;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -39,9 +38,7 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
-        List<String> testSampleNames = new ArrayList<>(1);
-        testSampleNames.add(Path.of(BASE_PATH, testSampleName).toString());
-        return runJPlag(testSampleNames, customization);
+        return runJPlag(List.of(getBasePath(testSampleName)), customization);
     }
 
     protected JPlagResult runJPlag(List<String> testPaths, Consumer<JPlagOptions> customization) throws ExitException {
