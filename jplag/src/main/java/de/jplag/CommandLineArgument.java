@@ -120,7 +120,7 @@ public enum CommandLineArgument {
             argument.action(storeTrue());
         }
         if (numberOfValues == NumberOfArgumentValues.ONE_OR_MORE_VALUES) {
-            argument.nargs("+");
+            argument.nargs(numberOfValues.toString());
         }
     }
 
