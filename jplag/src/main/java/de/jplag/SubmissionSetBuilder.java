@@ -279,7 +279,7 @@ public class SubmissionSetBuilder {
 
             String errorMessage = isExcludedEntry(submissionFile);
             if (errorMessage == null) {
-                String rootDirectoryPrefix = multipleRoots ? (rootDirectory.getName() + "::") : "";
+                String rootDirectoryPrefix = multipleRoots ? (rootDirectory.getName() + File.separator) : "";
                 String submissionName = rootDirectoryPrefix + fileName;
                 Submission submission = processSubmission(submissionName, submissionFile);
                 foundSubmissions.put(submission.getRoot(), submission);
