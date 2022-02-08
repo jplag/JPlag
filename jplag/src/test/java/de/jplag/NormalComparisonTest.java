@@ -115,7 +115,7 @@ public class NormalComparisonTest extends TestBase {
     public void testMultiRootDirBasecodeName() throws ExitException {
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate"));
         String basecodePath = "base"; // Should *not* find basecode/base
-        JPlagResult result = runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
+        runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
         fail("No basecode exception was thrown!");
     }
 }
