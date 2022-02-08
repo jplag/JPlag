@@ -106,19 +106,20 @@ public class SubmissionSetBuilder {
             Submission baseCode = loadBaseCodeAsPath(baseCodeName);
             if (baseCode == null) {
                 if (rootDirectories.size() > 1) {
-                    throw new BasecodeException("The base code submissiom needs to be specified by path instead of by name!");
+                    throw new BasecodeException("The base code submission needs to be specified by path instead of by name!");
                 }
                 File rootDirectory = rootDirectories.iterator().next();
                 // Single root-directory, try the legacy way of specifying basecode.
-                baseCode = loadBaseCodeAsRootSubDirectory(baseCodeName, rootDirectory, foundSubmissions);
+                baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
             }
             baseCodeSubmission = Optional.of(baseCode);
-            System.out.println(String.format("Basecode directory \"%s\" will be used.", baseCode.getRoot().toString()));
+            System.out.println(String.format("Basecode directory \"%s\" will be used.", baseCode.getName()));
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
             Submission removed = foundSubmissions.remove(baseCode.getRoot());
             if (removed != null) {
-                System.out.println(String.format("Skipping \"%s\" as user submission.", removed.getRoot().toString()));
+                System.out.println(
+                        String.format("Submission \"%s\" is the specified basecode, it will be skipped during comparison.", removed.getName()));
             }
         }
         return baseCodeSubmission;
@@ -143,7 +144,7 @@ public class SubmissionSetBuilder {
         try {
             // Use an unlikely short name for the base code. If all is well, this name should not appear
             // in the output since basecode matches are removed from it
-            return processSubmission(baseCodeName, basecodeSubmission);
+            return processSubmission(basecodeSubmission.getName(), basecodeSubmission);
         } catch (SubmissionException exception) {
             throw new BasecodeException(exception.getMessage(), exception); // Change thrown exception to basecode exception.
 
@@ -157,8 +158,7 @@ public class SubmissionSetBuilder {
      * @return the base code submission if a fitting subdirectory was found, else {@code null}.
      * @throws ExitException when the option value is a sub-directory with errors.
      */
-    private Submission loadBaseCodeAsRootSubDirectory(String baseCodeName, File rootDirectory, Map<File, Submission> foundSubmissions)
-            throws ExitException {
+    private Submission loadBaseCodeViaName(String baseCodeName, File rootDirectory, Map<File, Submission> foundSubmissions) throws ExitException {
         // Is the option value a single name after trimming spurious separators?
         String name = baseCodeName;
         while (name.startsWith(File.separator)) {
@@ -188,8 +188,7 @@ public class SubmissionSetBuilder {
                         String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
             } else {
                 // Found a base code as a submission, report about obsolete usage.
-                System.out.printf("Deprecated use of the -bc option found, please specify the basecode as \"%s%s%s\" instead.\n", rootDirectory,
-                        File.separator, baseCodeName);
+                System.out.println("Legacy use of the -bc option found, please specify the basecode by path instead of by name!");
             }
             return baseCode;
         } catch (IOException exception) {
