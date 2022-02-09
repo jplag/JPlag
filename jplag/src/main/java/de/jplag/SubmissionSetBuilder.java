@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
@@ -84,13 +85,8 @@ public class SubmissionSetBuilder {
                 throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectoryName));
             }
 
-            boolean added;
-            try {
-                added = canonicalRootDirectories.add(rootDir.getCanonicalFile());
-            } catch (IOException exception) {
-                throw new RootDirectoryException(String.format("Cannot read root directory \"%s\".", rootDirectoryName), exception);
-            }
-            if (!added) {
+            rootDir = makeCanonical(rootDir, it -> new RootDirectoryException("Cannot read root directory: " + rootDirectoryName, it));
+            if (!canonicalRootDirectories.add(rootDir)) {
                 // Root directory was already added, report a warning.
                 System.out.printf("Warning: Root directory \"%s\" was specified more than once, duplicates will be ignored.", rootDirectoryName);
             }
@@ -180,20 +176,16 @@ public class SubmissionSetBuilder {
         // Grab the basecode submission from the regular submissions.
         File basecodePath = new File(rootDirectory, baseCodeName);
 
-        try {
-            Submission baseCode = foundSubmissions.get(basecodePath.getCanonicalFile());
-            if (baseCode == null) {
-                // No base code found at all, report an error.
-                throw new BasecodeException(
-                        String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
-            } else {
-                // Found a base code as a submission, report about obsolete usage.
-                System.out.println("Legacy use of the -bc option found, please specify the basecode by path instead of by name!");
-            }
-            return baseCode;
-        } catch (IOException exception) {
-            throw new BasecodeException(String.format("Cannot compute canonical file path of \"%s\".", basecodePath.toString()), exception);
+        Submission baseCode = foundSubmissions
+                .get(makeCanonical(basecodePath, it -> new BasecodeException("Cannot compute canonical file path: " + basecodePath, it)));
+        if (baseCode == null) {
+            // No base code found at all, report an error.
+            throw new BasecodeException(String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
+        } else {
+            // Found a base code as a submission, report about legacy usage.
+            System.out.println("Legacy use of the -bc option found, please specify the basecode by path instead of by name!");
         }
+        return baseCode;
     }
 
     /**
@@ -258,11 +250,8 @@ public class SubmissionSetBuilder {
                 throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.getSubdirectoryName()));
             }
         }
-        try {
-            submissionFile = submissionFile.getCanonicalFile();
-        } catch (IOException exception) {
-            throw new SubmissionException("Cannot create submission " + submissionName, exception);
-        }
+
+        submissionFile = makeCanonical(submissionFile, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
         return new Submission(submissionName, submissionFile, parseFilesRecursively(submissionFile), language, errorCollector);
     }
 
@@ -339,5 +328,16 @@ public class SubmissionSetBuilder {
         }
 
         return files;
+    }
+
+    /**
+     * Computes the canonical file of a file, if an exception is thrown it is wrapped accordingly and re-thrown.
+     */
+    private File makeCanonical(File file, Function<Exception, ExitException> exceptionWrapper) throws ExitException {
+        try {
+            return file.getCanonicalFile();
+        } catch (IOException exception) {
+            throw exceptionWrapper.apply(exception);
+        }
     }
 }
