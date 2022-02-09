@@ -76,17 +76,17 @@ public class SubmissionSetBuilder {
     private Set<File> verifyRootDirectories(List<String> rootDirectoryNames) throws ExitException {
         Set<File> canonicalRootDirectories = new HashSet<>(rootDirectoryNames.size());
         for (String rootDirectoryName : rootDirectoryNames) {
-            File rootDir = new File(rootDirectoryName);
+            File rootDirectory = new File(rootDirectoryName);
 
-            if (!rootDir.exists()) {
+            if (!rootDirectory.exists()) {
                 throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectoryName));
             }
-            if (!rootDir.isDirectory()) {
+            if (!rootDirectory.isDirectory()) {
                 throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectoryName));
             }
 
-            rootDir = makeCanonical(rootDir, it -> new RootDirectoryException("Cannot read root directory: " + rootDirectoryName, it));
-            if (!canonicalRootDirectories.add(rootDir)) {
+            rootDirectory = makeCanonical(rootDirectory, it -> new RootDirectoryException("Cannot read root directory: " + rootDirectoryName, it));
+            if (!canonicalRootDirectories.add(rootDirectory)) {
                 // Root directory was already added, report a warning.
                 System.out.printf("Warning: Root directory \"%s\" was specified more than once, duplicates will be ignored.", rootDirectoryName);
             }
