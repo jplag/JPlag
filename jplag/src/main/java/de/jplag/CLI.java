@@ -15,6 +15,7 @@ import static de.jplag.CommandLineArgument.SUFFIXES;
 import static de.jplag.CommandLineArgument.VERBOSITY;
 
 import java.io.File;
+import java.util.List;
 import java.util.Random;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -102,8 +103,12 @@ public class CLI {
         if (fileSuffixString != null) {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
+
+        List<String> plagiarismCheckRootDirectoryNames = ROOT_DIRECTORY.getListFrom(namespace);
+        List<String> priorSubmissionsRootDirectoryNames = List.of();
+
         LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getListFrom(namespace), language);
+        JPlagOptions options = new JPlagOptions(plagiarismCheckRootDirectoryNames, priorSubmissionsRootDirectoryNames, language);
         options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
         options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
         options.setDebugParser(DEBUG.getFrom(namespace));
