@@ -68,9 +68,8 @@ public class ClusteringFactory {
         ClusteringResult<Submission> result = adapter.doClustering(ca);
 
         // remove bad clusters
-        if (options.isClusteringPruneBadClusters()) {
-            result = removeBadClusters(result);
-        }
+        result = removeBadClusters(result);
+        
         return List.of(result);
     }
 

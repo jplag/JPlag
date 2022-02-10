@@ -153,11 +153,6 @@ public class JPlagOptions {
     private int clusteringSpectralMaxKMeansIterationPerRun = 200;
 
     /**
-     * Remove clusters that are evaluated as especially bad from the final set of clusters.
-     */
-    private boolean clusteringPruneBadClusters = true;
-
-    /**
      * Preprocessing for the similarity values before clustering.
      * This is mandatory for spectral clustering and optional for agglomerative clustering.
      */
@@ -349,10 +344,6 @@ public class JPlagOptions {
         return clusteringSpectralMaxKMeansIterationPerRun;
     }
 
-    public boolean isClusteringPruneBadClusters() {
-        return clusteringPruneBadClusters;
-    }
-
     public float getClusteringAgglomerativeThreshold() {
         return clusteringAgglomerativeThreshold;
     }
@@ -448,10 +439,6 @@ public class JPlagOptions {
 
     public void setClusteringSpectralMaxKMeansIterationPerRun(int clusteringSpectralMaxKMeansIterationPerRun) {
         this.clusteringSpectralMaxKMeansIterationPerRun = clusteringSpectralMaxKMeansIterationPerRun;
-    }
-
-    public void setClusteringPruneBadClusters(boolean clusteringPruneBadClusters) {
-        this.clusteringPruneBadClusters = clusteringPruneBadClusters;
     }
 
     public void setClusteringPreprocessor(Preprocessors clusteringPreprocessor) {
