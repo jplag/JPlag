@@ -5,6 +5,7 @@ import static de.jplag.CLI.CLUSTERING_PREPROCESSING_GROUP_NAME;
 import static de.jplag.options.JPlagOptions.DEFAULT_COMPARISON_MODE;
 import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
+import static net.sourceforge.argparse4j.impl.Arguments.append;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
 import java.util.Collection;
@@ -30,8 +31,9 @@ import de.jplag.strategy.ComparisonMode;
  * @author Timur Saglam
  */
 public enum CommandLineArgument {
-
-    ROOT_DIRECTORY(new Builder("rootDir", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
+    ROOT_DIRECTORY(new Builder("rootDir", String.class).nargs(NumberOfArgumentValues.ZERO_OR_MORE_VALUES)),
+    PLAGIARISM_DIRECTORY(new Builder("-new", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
+    PRIOR_DIRECTORY(new Builder("-old", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     LANGUAGE(new Builder("-l", String.class).defaultsTo(LanguageOption.getDefault().getDisplayName()).choices(LanguageOption.getAllDisplayNames())),
     BASE_CODE("-bc", String.class),
     VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices(List.of("quiet", "long"))), // TODO SH: Replace verbosity when integrating a
@@ -167,8 +169,12 @@ public enum CommandLineArgument {
         if (type == Boolean.class) {
             argument.action(storeTrue());
         }
-        if (numberOfValues == NumberOfArgumentValues.ONE_OR_MORE_VALUES) {
+        if (!numberOfValues.toString().isEmpty()) {
+            // For multi-value arguments keep all invocations.
+            // This causes the argument value to change its type to 'List<List<String>>'.
+            // Also, when the retrieved value after parsing the CLI is 'null', the argument is not used.
             argument.nargs(numberOfValues.toString());
+            argument.action(append());
         }
     }
 

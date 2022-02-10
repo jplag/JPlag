@@ -2,6 +2,7 @@ package de.jplag;
 
 import static de.jplag.CommandLineArgument.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -100,8 +101,12 @@ public class CLI {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
 
-        List<String> plagiarismCheckRootDirectoryNames = ROOT_DIRECTORY.getListFrom(namespace);
-        List<String> priorSubmissionsRootDirectoryNames = List.of();
+        // Collect the root directories.
+        List<String> plagiarismCheckRootDirectoryNames = new ArrayList<>();
+        List<String> priorSubmissionsRootDirectoryNames = new ArrayList<>();
+        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), plagiarismCheckRootDirectoryNames);
+        addAllMultiValueArgument(PLAGIARISM_DIRECTORY.getListFrom(namespace), plagiarismCheckRootDirectoryNames);
+        addAllMultiValueArgument(PRIOR_DIRECTORY.getListFrom(namespace), priorSubmissionsRootDirectoryNames);
 
         LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
         JPlagOptions options = new JPlagOptions(plagiarismCheckRootDirectoryNames, priorSubmissionsRootDirectoryNames, language);
@@ -156,5 +161,13 @@ public class CLI {
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[new Random().nextInt(DESCRIPTIONS.length)];
         return String.format("JPlag - %s" + System.lineSeparator() + CREDITS, randomDescription);
+    }
+
+    private void addAllMultiValueArgument(List<List<String>> argumentValues, List<String> destinationRootDirectoryNames) {
+        if (argumentValues == null) {
+            return;
+        }
+
+        argumentValues.stream().forEach(value -> destinationRootDirectoryNames.addAll(value));
     }
 }
