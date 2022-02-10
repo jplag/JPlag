@@ -118,4 +118,34 @@ public class NormalComparisonTest extends TestBase {
         runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
         fail("No basecode exception was thrown!");
     }
+
+    @Test
+    public void testCheckAndPriorRootDirectories() throws ExitException {
+        List<String> checkRootDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
+        List<String> priorRootDirectories = List.of(getBasePath("basecode")); // 3 submissions
+        JPlagResult result = runJPlag(checkRootDirectories, priorRootDirectories, it -> {
+        });
+        int numberOfExpectedComparison = 1 + 3 * 2;
+        assertEquals(numberOfExpectedComparison, result.getComparisons().size());
+    }
+
+    @Test
+    public void testCheckAndPriorRootDirectoriesOverlap() throws ExitException {
+        List<String> checkRootDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
+        List<String> priorRootDirectories = List.of(getBasePath("SimpleDuplicate"));
+        JPlagResult result = runJPlag(checkRootDirectories, priorRootDirectories, it -> {
+        });
+        int numberOfExpectedComparison = 1;
+        assertEquals(numberOfExpectedComparison, result.getComparisons().size());
+    }
+
+    @Test
+    public void testBasecodeInPriorRootDirectory() throws ExitException {
+        String basecodePath = getBasePath("basecode", "base");
+        List<String> checkRootDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
+        List<String> priorRootDirectories = List.of(getBasePath("basecode")); // 3 - 1 submissions
+        JPlagResult result = runJPlag(checkRootDirectories, priorRootDirectories, it -> it.setBaseCodeSubmissionName(basecodePath));
+        int numberOfExpectedComparison = 1 + 2 * 2;
+        assertEquals(numberOfExpectedComparison, result.getComparisons().size());
+    }
 }
