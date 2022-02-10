@@ -80,9 +80,14 @@ public class JPlagOptions {
     private Set<String> excludedFiles = Collections.emptySet();
 
     /**
-     * Directory that contains all submissions.
+     * Directories that contain all submissions that need to be checked for plagiarism.
      */
-    private List<String> rootDirectoryNames;
+    private List<String> plagiarismCheckRootDirectoryNames;
+
+    /**
+     * Directories that contain all submissions with prior art to check against.
+     */
+    private List<String> priorSubmissionsRootDirectoryNames;
 
     /**
      * Path name of the directory containing the base code.
@@ -124,8 +129,10 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(List<String> rootDirectoryNames, LanguageOption languageOption) {
-        this.rootDirectoryNames = rootDirectoryNames;
+    public JPlagOptions(List<String> plagiarismCheckRootDirectoryNames, List<String> priorSubmissionsRootDirectoryNames,
+            LanguageOption languageOption) {
+        this.plagiarismCheckRootDirectoryNames = plagiarismCheckRootDirectoryNames;
+        this.priorSubmissionsRootDirectoryNames = priorSubmissionsRootDirectoryNames;
         this.languageOption = languageOption;
     }
 
@@ -165,8 +172,12 @@ public class JPlagOptions {
         return minimumTokenMatch;
     }
 
-    public List<String> getRootDirectoryNames() {
-        return rootDirectoryNames;
+    public List<String> getPlagiarismCheckRootDirectoryNames() {
+        return plagiarismCheckRootDirectoryNames;
+    }
+
+    public List<String> getPriorSubmissionsDirectoryNames() {
+        return priorSubmissionsRootDirectoryNames;
     }
 
     public SimilarityMetric getSimilarityMetric() {
@@ -264,8 +275,12 @@ public class JPlagOptions {
         }
     }
 
-    public void setRootDirectoryNames(List<String> rootDirectoryNames) {
-        this.rootDirectoryNames = rootDirectoryNames;
+    public void setPlagismCheckRootDirectoryNames(List<String> plagiarismCheckRootDirectoryNames) {
+        this.plagiarismCheckRootDirectoryNames = plagiarismCheckRootDirectoryNames;
+    }
+
+    public void setPriorSubmissionsRootDirectoryNames(List<String> priorSubmissionsRootDirectoryNames) {
+        this.priorSubmissionsRootDirectoryNames = priorSubmissionsRootDirectoryNames;
     }
 
     public void setSimilarityMetric(SimilarityMetric similarityMetric) {
