@@ -38,14 +38,16 @@ export class OverviewFactory {
             metrics.push(newMetric)
         });
 
-        (json.clusters as Array<unknown>).forEach( c => {
-            const cluster = c as Record<string, unknown>
-            const newCluster : Cluster = {
-                avgSim: cluster.avgSim as number,
-                members: cluster.members as Array<string>
-            }
-            clusters.push(newCluster)
-        })
+        if(json.clusters) {
+            (json.clusters as Array<unknown>).forEach(c => {
+                const cluster = c as Record<string, unknown>
+                const newCluster: Cluster = {
+                    avgSim: cluster.avgSim as number,
+                    members: cluster.members as Array<string>
+                }
+                clusters.push(newCluster)
+            })
+        }
 
 
         return new Overview(
