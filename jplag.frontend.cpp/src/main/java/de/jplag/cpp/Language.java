@@ -72,9 +72,4 @@ public class Language implements de.jplag.Language {
     public int numberOfTokens() {
         return CPPTokenConstants.NUM_DIFF_TOKENS;
     }
-
-    @Override
-    public String type2string(int type) {
-        return CPPToken.type2string(type);
-    }
 }

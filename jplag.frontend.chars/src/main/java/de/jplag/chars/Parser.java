@@ -44,7 +44,7 @@ public class Parser extends AbstractParser implements TokenConstants {
 
                 for (int i = 0; i < length; i++) {
                     if (buffer[i] <= 127 && (type = mapping[buffer[i]]) > 1) {
-                        struct.addToken(new CharToken(type, file, offset + i, this));
+                        struct.addToken(new CharToken(type, file, offset + i, buffer[i], this));
                     }
                 }
                 offset += length;

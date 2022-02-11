@@ -3,21 +3,9 @@ package de.jplag.cpp;
 import de.jplag.Token;
 
 public class CPPToken extends Token implements CPPTokenConstants {
-    private static final long serialVersionUID = 1L;
-    private int line;
 
     public CPPToken(int type, String file, int line) {
         super(type, file, line);
-    }
-
-    @Override
-    public int getLine() {
-        return line;
-    }
-
-    @Override
-    public void setLine(int line) {
-        this.line = line;
     }
 
     @Override
@@ -30,7 +18,17 @@ public class CPPToken extends Token implements CPPTokenConstants {
         return 0;
     }
 
-    public static String type2string(int type) {
+    @Override
+    public void setColumn(int column) {
+        // Do nothing!
+    }
+
+    @Override
+    public void setLength(int length) {
+        // Do nothing!
+    }
+
+    protected String type2string() {
         switch (type) {
             case CPPTokenConstants.FILE_END:
                 return "********";

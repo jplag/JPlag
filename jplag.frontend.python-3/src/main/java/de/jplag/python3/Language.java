@@ -69,9 +69,4 @@ public class Language implements de.jplag.Language {
     public int numberOfTokens() {
         return Python3TokenConstants.NUM_DIFF_TOKENS;
     }
-
-    @Override
-    public String type2string(int type) {
-        return Python3Token.type2string(type);
-    }
 }

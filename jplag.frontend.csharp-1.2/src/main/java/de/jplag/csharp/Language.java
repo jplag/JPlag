@@ -69,9 +69,4 @@ public class Language implements de.jplag.Language {
     public int numberOfTokens() {
         return CSharpTokenConstants.NUM_DIFF_TOKENS;
     }
-
-    @Override
-    public String type2string(int type) {
-        return CSharpToken.type2string(type);
-    }
 }
