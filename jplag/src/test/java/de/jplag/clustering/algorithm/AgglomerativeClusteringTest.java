@@ -1,7 +1,5 @@
 package de.jplag.clustering.algorithm;
 
-import de.jplag.clustering.algorithm.AgglomerativeClustering.ClusteringOptions;
-
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -11,6 +9,8 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.Before;
 import org.junit.Test;
+
+import de.jplag.clustering.algorithm.AgglomerativeClustering.ClusteringOptions;
 
 public class AgglomerativeClusteringTest {
     AgglomerativeClustering clustering;
@@ -47,7 +47,7 @@ public class AgglomerativeClusteringTest {
             return combined;
         }).size() == 4);
         assertTrue("Should be clustered as {0,1}, {2,3}", result.stream().allMatch(cluster -> {
-            return cluster.size() == 2 && cluster.stream().reduce((a, b) -> Math.abs(a - b)).orElse(0) == 1; 
+            return cluster.size() == 2 && cluster.stream().reduce((a, b) -> Math.abs(a - b)).orElse(0) == 1;
         }) && result.stream().map(Collection::size).reduce((a, b) -> a + b).orElse(0) == 4);
 
     }

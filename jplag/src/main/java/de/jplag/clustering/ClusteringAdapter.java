@@ -14,15 +14,15 @@ import de.jplag.clustering.algorithm.ClusteringAlgorithm;
 /**
  * This class acts as an adapter between
  * <ul>
- *  <li>the clustering algorithms (that operate on collections of integers)</li>
- *  <li>and the rest of the code base (that operates on {@link ClusteringResult}s of {@link Submission}s)</li>
+ * <li>the clustering algorithms (that operate on collections of integers)</li>
+ * <li>and the rest of the code base (that operates on {@link ClusteringResult}s of {@link Submission}s)</li>
  * </ul>
  */
 public class ClusteringAdapter {
 
     private RealMatrix similarityMatrix;
     private IntegerMapping<Submission> mapping;
-    
+
     public ClusteringAdapter(Collection<JPlagComparison> comparisons, Function<JPlagComparison, Float> metric) {
         mapping = new IntegerMapping<>(comparisons.size());
         for (JPlagComparison comparison : comparisons) {
@@ -56,7 +56,8 @@ public class ClusteringAdapter {
         public MappedClusteringResult(ClusteringResult<M> unmapped, Function<M, T> mapping) {
             communityStrength = unmapped.getCommunityStrength();
             clusters = unmapped.getClusters().stream().map(unmappedCluster -> {
-                return new ClusteringResult.DefaultCluster<T>(unmappedCluster.getMembers().stream().map(mapping).collect(Collectors.toList()), unmappedCluster.getCommunityStrength(), this);
+                return new ClusteringResult.DefaultCluster<T>(unmappedCluster.getMembers().stream().map(mapping).collect(Collectors.toList()),
+                        unmappedCluster.getCommunityStrength(), this);
             }).collect(Collectors.toList());
             size = unmapped.size();
         }
@@ -76,6 +77,5 @@ public class ClusteringAdapter {
             return size;
         }
 
-    } 
+    }
 }
- 

@@ -12,7 +12,7 @@ public class IntegerMapping<T> {
     private HashMap<T, Integer> mapping = new HashMap<>();
     private List<T> backMapping = new ArrayList<>();
     private int size = 0;
-    
+
     public IntegerMapping(int initialCapacity) {
         mapping = new HashMap<>(initialCapacity);
         backMapping = new ArrayList<>(initialCapacity);

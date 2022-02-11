@@ -1,5 +1,8 @@
 package de.jplag.clustering;
 
 public enum Preprocessors {
-    NONE, CDF, THRESHOLD, PERCENTILE
+    NONE,
+    CDF,
+    THRESHOLD,
+    PERCENTILE
 }

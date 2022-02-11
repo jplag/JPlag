@@ -11,22 +11,11 @@ public interface ClusteringResult<T> {
     Collection<Cluster<T>> getClusters();
 
     /**
-     * Community strength of the clustering.
-     * 
-     * The expectation of community strength in a random graph is zero and it can not exceed one.
-     * It's the sum of it's clusters {@link Cluster#getCommunityStrength}.  
-     * 
-     * If the underlying network is not changed, a higher community strength denotes a better clustering.
-     * 
-     * <p>
-     * See:
-     * Finding and evaluating community structure in networks,
-     * M. E. J. Newman and M. Girvan,
-     * Phys. Rev. E 69, 026113 – Published 26 February 2004,
-     * Doi: 10.1103/PhysRevE.69.026113
-     * </p>
-     * 
-     * It's called modularity in that paper.
+     * Community strength of the clustering. The expectation of community strength in a random graph is zero and it can not
+     * exceed one. It's the sum of it's clusters {@link Cluster#getCommunityStrength}. If the underlying network is not
+     * changed, a higher community strength denotes a better clustering. See: Finding and evaluating community structure in
+     * networks, M. E. J. Newman and M. Girvan, Phys. Rev. E 69, 026113 – Published 26 February 2004, Doi:
+     * 10.1103/PhysRevE.69.026113 It's called modularity in that paper.
      * @return community strength
      */
     float getCommunityStrength();
@@ -34,13 +23,10 @@ public interface ClusteringResult<T> {
     int size();
 
     default float getWorth(BiFunction<T, T, Float> similarity) {
-        return (float) getClusters().stream()
-            .mapToDouble(c -> c.getWorth(similarity))
-            .map(worth -> Double.isFinite(worth) ? worth : 0)
-            .average()
-            .getAsDouble();
+        return (float) getClusters().stream().mapToDouble(c -> c.getWorth(similarity)).map(worth -> Double.isFinite(worth) ? worth : 0).average()
+                .getAsDouble();
     }
-    
+
     public interface Cluster<T> {
         Collection<T> getMembers();
 
@@ -53,28 +39,29 @@ public interface ClusteringResult<T> {
         ClusteringResult<T> getClusteringResult();
 
         /**
-         * @return How much each member of this cluster contributes to the {@link ClusteringResult#getCommunityStrength} 
+         * @return How much each member of this cluster contributes to the {@link ClusteringResult#getCommunityStrength}
          */
         default float getCommunityStrengthPerConnection() {
             int size = getMembers().size();
-            if (size < 2) return 0;
+            if (size < 2)
+                return 0;
             return getCommunityStrength() / connections();
         }
 
         /**
-         * Computes a normalized community strength per connection.
-         * Can be used as measure for strength of evidence in comparison to other clusters in the same clustering.
-         * Guaranteed to be smaller than 1.
-         * Negative values indicate non-clusters.
-         * 
+         * Computes a normalized community strength per connection. Can be used as measure for strength of evidence in
+         * comparison to other clusters in the same clustering. Guaranteed to be smaller than 1. Negative values indicate
+         * non-clusters.
          * @return normalized community strength per connection
          */
         default float getNormalizedCommunityStrengthPerConnection() {
-            List<Cluster<T>> goodClusters = getClusteringResult().getClusters().stream().filter(cluster -> cluster.getCommunityStrength() > 0).collect(Collectors.toList());
+            List<Cluster<T>> goodClusters = getClusteringResult().getClusters().stream().filter(cluster -> cluster.getCommunityStrength() > 0)
+                    .collect(Collectors.toList());
             float posCommunityStrengthSum = (float) goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
 
             int size = getClusteringResult().size();
-            if (size < 2) return getCommunityStrengthPerConnection();
+            if (size < 2)
+                return getCommunityStrengthPerConnection();
             return getCommunityStrengthPerConnection() / posCommunityStrengthSum;
         }
 
@@ -92,7 +79,6 @@ public interface ClusteringResult<T> {
 
         /**
          * Computes the average similarity inside the cluster.
-         * 
          * @param similarity function that supplies the similarity of two cluster members.
          * @return average similarity
          */
@@ -119,7 +105,6 @@ public interface ClusteringResult<T> {
             return getMembers().size() < 2 || getCommunityStrength() < 0;
         }
     }
-
 
     public static class DefaultCluster<T> implements Cluster<T> {
 
@@ -148,9 +133,5 @@ public interface ClusteringResult<T> {
             return clusteringResult;
         }
 
-
-
-    } 
+    }
 }
-
-

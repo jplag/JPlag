@@ -82,7 +82,7 @@ public class JPlag {
         if (submissionSet.hasBaseCode()) {
             coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
         }
-        
+
         int submissionCount = submissionSet.numberOfSubmissions();
         if (submissionCount < 2) {
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");

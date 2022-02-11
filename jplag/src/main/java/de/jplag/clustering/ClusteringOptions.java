@@ -157,8 +157,7 @@ public class ClusteringOptions {
             return Builder.this;
         }
 
-        public Builder agglomerativeInterClusterSimilarity(
-                AgglomerativeClustering.InterClusterSimilarity agglomerativeInterClusterSimilarity) {
+        public Builder agglomerativeInterClusterSimilarity(AgglomerativeClustering.InterClusterSimilarity agglomerativeInterClusterSimilarity) {
             this.agglomerativeInterClusterSimilarity = agglomerativeInterClusterSimilarity;
             return Builder.this;
         }

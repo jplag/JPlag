@@ -36,10 +36,12 @@ public class IntegerClusteringResult implements ClusteringResult<Integer> {
             RealMatrix E = new Array2DRowRealMatrix(clusters.size(), clusters.size());
             E = E.scalarMultiply(0);
             for (int i = 0; i < N; i++) {
-                if (!submissionIdx2ClusterIdx.containsKey(i)) continue;
+                if (!submissionIdx2ClusterIdx.containsKey(i))
+                    continue;
                 int clusterA = submissionIdx2ClusterIdx.get(i);
                 for (int j = i + 1; j < N; j++) {
-                    if (!submissionIdx2ClusterIdx.containsKey(j)) continue;
+                    if (!submissionIdx2ClusterIdx.containsKey(j))
+                        continue;
                     int clusterB = submissionIdx2ClusterIdx.get(j);
                     E.addToEntry(clusterA, clusterB, similarity.getEntry(i, j));
                     E.addToEntry(clusterB, clusterA, similarity.getEntry(i, j));
@@ -52,7 +54,7 @@ public class IntegerClusteringResult implements ClusteringResult<Integer> {
                 this.clusters.add(new DefaultCluster<Integer>(clusters.get(i), (float) clusterCommunityStrength, this));
                 communityStrength += clusterCommunityStrength;
             }
-        }   
+        }
         size = this.clusters.stream().mapToInt(x -> x.getMembers().size()).sum();
     }
 
@@ -70,5 +72,5 @@ public class IntegerClusteringResult implements ClusteringResult<Integer> {
     public int size() {
         return size;
     }
-    
+
 }

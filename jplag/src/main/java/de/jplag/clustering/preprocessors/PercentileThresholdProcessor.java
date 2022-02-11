@@ -11,7 +11,7 @@ import de.jplag.clustering.Preprocessor;
 
 public class PercentileThresholdProcessor implements Preprocessor {
 
-    private float percentile; 
+    private float percentile;
     private ThresholdPreprocessor tp;
 
     public PercentileThresholdProcessor(float percentile) {
@@ -20,7 +20,7 @@ public class PercentileThresholdProcessor implements Preprocessor {
 
     @Override
     public double[][] preprocessSimilarities(double[][] similarityMatrix) {
-        Array2DRowRealMatrix similarity = new Array2DRowRealMatrix(similarityMatrix, false); 
+        Array2DRowRealMatrix similarity = new Array2DRowRealMatrix(similarityMatrix, false);
         Percentile p = new Percentile().withEstimationType(EstimationType.R_2);
         int connections = (similarity.getColumnDimension() * (similarity.getColumnDimension() - 1)) / 2;
         double[] allWeights = new double[connections];
@@ -46,5 +46,5 @@ public class PercentileThresholdProcessor implements Preprocessor {
     public Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result) {
         return tp.postProcessResult(result);
     }
-    
+
 }

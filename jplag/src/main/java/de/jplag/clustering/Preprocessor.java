@@ -14,6 +14,7 @@ import de.jplag.clustering.algorithm.ClusteringAlgorithm;
 
 public interface Preprocessor {
     double[][] preprocessSimilarities(double[][] similarityMatrix);
+
     Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result);
 
     public static class PreprocessorHelper {

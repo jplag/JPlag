@@ -8,7 +8,7 @@ import de.jplag.CommandLineArgument;
 import de.jplag.clustering.Preprocessors;
 
 public class ClusteringTest extends CommandLineInterfaceTest {
-    
+
     @Test
     public void parsePercentilePreProcessor() {
         String argument = CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE.flag() + "=" + Float.toString(0.5f);

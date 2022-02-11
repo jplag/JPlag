@@ -43,7 +43,8 @@ public class AgglomerativeClustering implements ClusteringAlgorithm {
                 Cluster leftCluster = initialClusters.get(leftIndex);
                 for (int rightIndex = leftIndex + 1; rightIndex < initialClusters.size(); rightIndex++) {
                     Cluster rightCluster = initialClusters.get(rightIndex);
-                    initialSimilarities.add(new ClusterConnection(leftCluster, rightCluster, (float) similarityMatrix.getEntry(leftIndex, rightIndex)));
+                    initialSimilarities
+                            .add(new ClusterConnection(leftCluster, rightCluster, (float) similarityMatrix.getEntry(leftIndex, rightIndex)));
                 }
             }
 
@@ -75,14 +76,14 @@ public class AgglomerativeClustering implements ClusteringAlgorithm {
         float similarity = 0;
         switch (options.similarity) {
             case MIN:
-            similarity = Float.MAX_VALUE;
-            break;
+                similarity = Float.MAX_VALUE;
+                break;
             case MAX:
-            similarity = -Float.MAX_VALUE;
-            break;
+                similarity = -Float.MAX_VALUE;
+                break;
             case AVERAGE:
-            similarity = 0;
-            break;
+                similarity = 0;
+                break;
         }
 
         for (int leftIndex = 0; leftIndex < leftCluster.size(); leftIndex++) {
@@ -91,18 +92,17 @@ public class AgglomerativeClustering implements ClusteringAlgorithm {
                 float submissionSimilarity = (float) similarityMatrix.getEntry(leftSubmission, rightCluster.get(rightIndex));
                 switch (options.similarity) {
                     case MIN:
-                    similarity = Math.min(similarity, submissionSimilarity);
-                    break;
+                        similarity = Math.min(similarity, submissionSimilarity);
+                        break;
                     case MAX:
-                    similarity = Math.max(similarity, submissionSimilarity);
-                    break;
+                        similarity = Math.max(similarity, submissionSimilarity);
+                        break;
                     case AVERAGE:
-                    similarity += submissionSimilarity;
+                        similarity += submissionSimilarity;
                 }
             }
         }
-    
-        
+
         if (options.similarity == InterClusterSimilarity.AVERAGE) {
             similarity /= leftCluster.size() * rightCluster.size();
         }
@@ -111,7 +111,7 @@ public class AgglomerativeClustering implements ClusteringAlgorithm {
 
     public static class ClusteringOptions {
         public float minimalSimilarity = 0.1f;
-        public InterClusterSimilarity similarity = InterClusterSimilarity.AVERAGE; 
+        public InterClusterSimilarity similarity = InterClusterSimilarity.AVERAGE;
     }
 
     public static enum InterClusterSimilarity {
@@ -140,7 +140,7 @@ public class AgglomerativeClustering implements ClusteringAlgorithm {
         public int compareTo(ClusterConnection other) {
             return (int) Math.signum(other.similarity - similarity);
         }
-        
+
     }
 
     private class Cluster {
@@ -153,7 +153,7 @@ public class AgglomerativeClustering implements ClusteringAlgorithm {
         public List<Integer> getSubmissions() {
             return submissions;
         }
-        
+
     }
 
     private class MergedList extends AbstractList<Integer> {
@@ -180,7 +180,7 @@ public class AgglomerativeClustering implements ClusteringAlgorithm {
         public int size() {
             return size;
         }
-        
+
     }
-    
+
 }

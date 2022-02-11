@@ -255,7 +255,7 @@ public class JPlagOptions {
             this.maximumNumberOfComparisons = maximumNumberOfComparisons;
         }
     }
-    
+
     public void setMinimumTokenMatch(Integer minimumTokenMatch) {
         if (minimumTokenMatch != null && minimumTokenMatch < 1) {
             this.minimumTokenMatch = 1;

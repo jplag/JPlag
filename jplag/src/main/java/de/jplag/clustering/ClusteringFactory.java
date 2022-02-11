@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
+import de.jplag.clustering.algorithm.AgglomerativeClustering;
 import de.jplag.clustering.algorithm.ClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
-import de.jplag.clustering.algorithm.AgglomerativeClustering;
 import de.jplag.clustering.preprocessors.CdfPreprocessor;
 import de.jplag.clustering.preprocessors.PercentileThresholdProcessor;
 import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
@@ -19,7 +19,8 @@ import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
  */
 public class ClusteringFactory {
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
-        if (!options.isEnabled()) return Collections.emptyList();
+        if (!options.isEnabled())
+            return Collections.emptyList();
 
         // init algorithm
         ClusteringAlgorithm ca = null;
@@ -68,7 +69,7 @@ public class ClusteringFactory {
 
         // remove bad clusters
         result = removeBadClusters(result);
-        
+
         return List.of(result);
     }
 
@@ -77,9 +78,7 @@ public class ClusteringFactory {
 
             @Override
             public Collection<Cluster<Submission>> getClusters() {
-                return clustering.getClusters().stream()
-                    .filter(cluster -> !cluster.isBadCluster())
-                    .collect(Collectors.toList());
+                return clustering.getClusters().stream().filter(cluster -> !cluster.isBadCluster()).collect(Collectors.toList());
             }
 
             @Override

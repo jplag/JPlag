@@ -121,9 +121,11 @@ public class CLI {
         Optional.ofNullable((Float) CLUSTER_SPECTRAL_NOISE.getFrom(namespace)).ifPresent(clusteringBuilder::spectralGPVariance);
         Optional.ofNullable((Integer) CLUSTER_SPECTRAL_MIN_RUNS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMinRuns);
         Optional.ofNullable((Integer) CLUSTER_SPECTRAL_MAX_RUNS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMaxRuns);
-        Optional.ofNullable((Integer) CLUSTER_SPECTRAL_KMEANS_ITERATIONS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMaxKMeansIterationPerRun);
+        Optional.ofNullable((Integer) CLUSTER_SPECTRAL_KMEANS_ITERATIONS.getFrom(namespace))
+                .ifPresent(clusteringBuilder::spectralMaxKMeansIterationPerRun);
         Optional.ofNullable((Float) CLUSTER_AGGLOMERATIVE_THRESHOLD.getFrom(namespace)).ifPresent(clusteringBuilder::agglomerativeThreshold);
-        Optional.ofNullable((AgglomerativeClustering.InterClusterSimilarity) CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace)).ifPresent(clusteringBuilder::agglomerativeInterClusterSimilarity);
+        Optional.ofNullable((AgglomerativeClustering.InterClusterSimilarity) CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace))
+                .ifPresent(clusteringBuilder::agglomerativeInterClusterSimilarity);
         Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_NONE.getFrom(namespace)).ifPresent(none -> {
             if (none) {
                 clusteringBuilder.preprocessor(Preprocessors.NONE);

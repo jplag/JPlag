@@ -11,17 +11,16 @@ import org.apache.commons.math3.random.EmpiricalDistribution;
 import de.jplag.clustering.Preprocessor;
 
 /**
- * Multiplies entries of the similarity matrix by their cumulative probability.
- *  - Weights that are very low will be (close to) zero
- *  - Weights that are very high will be (close to) unchanged
+ * Multiplies entries of the similarity matrix by their cumulative probability. - Weights that are very low will be
+ * (close to) zero - Weights that are very high will be (close to) unchanged
  */
-public class CdfPreprocessor implements Preprocessor{
+public class CdfPreprocessor implements Preprocessor {
 
     private PreprocessorHelper helper = new PreprocessorHelper();
 
     @Override
     public double[][] preprocessSimilarities(double[][] similarityMatrix) {
-        RealMatrix similarity = new Array2DRowRealMatrix(similarityMatrix, true); 
+        RealMatrix similarity = new Array2DRowRealMatrix(similarityMatrix, true);
         int connections = (similarity.getColumnDimension() * (similarity.getColumnDimension() - 1)) / 2;
         EmpiricalDistribution dist = new EmpiricalDistribution(Math.max(100, connections / 100));
         double[] allWeights = new double[connections];
@@ -51,5 +50,5 @@ public class CdfPreprocessor implements Preprocessor{
     public Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result) {
         return helper.postProcessResult(result);
     }
-    
+
 }

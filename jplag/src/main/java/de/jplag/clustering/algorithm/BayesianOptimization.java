@@ -28,9 +28,8 @@ public class BayesianOptimization {
     private double noise;
     private RealVector lengthScale;
     public boolean debug = false;
-    
+
     /**
-     * 
      * @param minima of the explored parameters
      * @param maxima of the explored parameters
      * @param initPoints points that are initially sampled for exploration
@@ -56,10 +55,7 @@ public class BayesianOptimization {
     private Stream<RealVector> sampleSolutionSpace() {
         RandomVectorGenerator g = new HaltonSequenceGenerator(minima.getDimension());
         RealVector size = maxima.subtract(minima);
-        return Stream.generate(g::nextVector)
-            .map(x -> new ArrayRealVector(x))
-            .map(x -> x.ebeMultiply(size))
-            .map(x -> x.add(minima));
+        return Stream.generate(g::nextVector).map(x -> new ArrayRealVector(x)).map(x -> x.ebeMultiply(size)).map(x -> x.add(minima));
 
     }
 
@@ -96,19 +92,20 @@ public class BayesianOptimization {
         double[] bestSolution = getNext(samples).orElseThrow().toArray();
         double[] min = minima.toArray();
         double[] max = maxima.toArray();
-        
+
         int nonZeroAcquisitions = 0;
         for (int i = 0; i < MAXIMUM_ACQ_FN_EVALS_PER_ITERATION && nonZeroAcquisitions < MAX_NON_ZERO_ACQ_FN_EVALS_PER_ITERATION; i++) {
             double[] r = getNext(samples).orElseThrow().toArray();
-            if (acquisitionFunction(gpr, r, yMax) == 0) continue;
+            if (acquisitionFunction(gpr, r, yMax) == 0)
+                continue;
             nonZeroAcquisitions++;
             double poi = -BFGS.minimize(x -> -acquisitionFunction(gpr, x, yMax), 5, r, min, max, 0.00001, 1000);
             // Sometimes result is out of bounds (might be due to numerical errors?)
-            for (int j = 0; j< r.length; j++) {
+            for (int j = 0; j < r.length; j++) {
                 r[j] = Math.min(max[j], r[j]);
                 r[j] = Math.max(min[j], r[j]);
-            } 
-            if(poi > bestScore) {
+            }
+            if (poi > bestScore) {
                 bestSolution = r;
                 bestScore = poi;
             }
@@ -127,9 +124,7 @@ public class BayesianOptimization {
         OptimizationResult<T> best = null;
 
         // the first couple of executions are reserved for exploration
-        sampleSolutionSpace()
-            .limit(initialPoints)
-            .forEach(X::add);
+        sampleSolutionSpace().limit(initialPoints).forEach(X::add);
 
         Spliterator<RealVector> poiSampler = sampleSolutionSpace().spliterator();
         double[] zeroAcquisitionsCounter = new double[1];
@@ -184,5 +179,5 @@ public class BayesianOptimization {
         public RealVector getParams() {
             return params;
         }
-    } 
+    }
 }

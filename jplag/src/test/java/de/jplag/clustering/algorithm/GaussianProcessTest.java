@@ -10,7 +10,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.junit.Test;
 
 public class GaussianProcessTest {
-    
+
     @Test
     public void noisyLinearFunction() {
         List<RealVector> X = new ArrayList<>();

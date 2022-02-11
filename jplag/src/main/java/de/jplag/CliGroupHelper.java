@@ -3,10 +3,10 @@ package de.jplag;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.ArgumentContainer;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 
 public class CliGroupHelper {
 
@@ -25,6 +25,5 @@ public class CliGroupHelper {
     public ArgumentContainer getArgumentGroup(String name) {
         return argumentGroups.computeIfAbsent(name, parser::addArgumentGroup);
     }
-
 
 }

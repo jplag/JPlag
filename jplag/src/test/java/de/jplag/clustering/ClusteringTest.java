@@ -34,7 +34,7 @@ import de.jplag.clustering.algorithm.SpectralClustering;
 import de.jplag.clustering.preprocessors.CdfPreprocessor;
 
 public class ClusteringTest {
-    
+
     @Test
     public void testClustering() {
         List<Submission> submissions = IntStream.range(0, 4).mapToObj(x -> mock(Submission.class)).collect(Collectors.toList());
@@ -90,25 +90,26 @@ public class ClusteringTest {
         RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(preprocessor.preprocessSimilarities(r.similarity.getData()));
 
         /*
-        AgglomerativeClustering.ClusteringOptions options = new AgglomerativeClustering.ClusteringOptions();
-        options.minimalSimilarity = 0.15f;
-        options.similarity = AgglomerativeClustering.InterClusterSimilarity.AVERAGE;
-        ClusteringAlgorithm clusteringAlg = new AgglomerativeClustering(options);
-        */
-        
+         * AgglomerativeClustering.ClusteringOptions options = new AgglomerativeClustering.ClusteringOptions();
+         * options.minimalSimilarity = 0.15f; options.similarity = AgglomerativeClustering.InterClusterSimilarity.AVERAGE;
+         * ClusteringAlgorithm clusteringAlg = new AgglomerativeClustering(options);
+         */
+
         SpectralClustering clusteringAlg = new SpectralClustering(new SpectralClustering.ClusteringOptions());
         Collection<Collection<Integer>> clustering = clusteringAlg.cluster(clusteringSimilarity);
         clustering = preprocessor.postProcessResult(clustering);
         ClusteringResult<Integer> mRes = new IntegerClusteringResult(clustering, r.similarity);
         List<Cluster<Integer>> clusters = new ArrayList<>(mRes.getClusters());
-        clusters.sort(Comparator.comparingDouble(c -> -harmonicMean(c.getCommunityStrengthPerConnection(), avgSimilarity(new ArrayList<>(c.getMembers()), r.similarity))));
+        clusters.sort(Comparator.comparingDouble(
+                c -> -harmonicMean(c.getCommunityStrengthPerConnection(), avgSimilarity(new ArrayList<>(c.getMembers()), r.similarity))));
 
         System.out.println("cs\tncsm\tavgSim\tcombined\tmembers");
         for (Cluster<Integer> c : clusters) {
             float ncsm = c.getCommunityStrengthPerConnection();
             float avgSim = c.avgSimilarity((a, b) -> (float) r.similarity.getEntry(a, b));
             float combined = harmonicMean(ncsm, avgSim);
-            System.out.println(str(c.getCommunityStrength()) + "\t" + str(ncsm) + "\t" + str(avgSim) + "\t" + str(combined) + "\t" + c.getMembers().stream().map(r.mapping::unmap).collect(Collectors.toList()));
+            System.out.println(str(c.getCommunityStrength()) + "\t" + str(ncsm) + "\t" + str(avgSim) + "\t" + str(combined) + "\t"
+                    + c.getMembers().stream().map(r.mapping::unmap).collect(Collectors.toList()));
         }
         System.out.println("Community Strength: " + mRes.getCommunityStrength());
         System.out.println("Clusters: " + clusters.size());
@@ -123,26 +124,28 @@ public class ClusteringTest {
         RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(new CdfPreprocessor().preprocessSimilarities(r.similarity.getData()));
 
         /*
-        AgglomerativeClustering.ClusteringOptions options = new AgglomerativeClustering.ClusteringOptions();
-        options.minimalSimilarity = 0.3f;
-        options.similarity = AgglomerativeClustering.InterClusterSimilarity.AVERAGE;
-        ClusteringAlgorithm clusteringAlg = new AgglomerativeClustering(options);
-        */
-        
+         * AgglomerativeClustering.ClusteringOptions options = new AgglomerativeClustering.ClusteringOptions();
+         * options.minimalSimilarity = 0.3f; options.similarity = AgglomerativeClustering.InterClusterSimilarity.AVERAGE;
+         * ClusteringAlgorithm clusteringAlg = new AgglomerativeClustering(options);
+         */
+
         SpectralClustering clusteringAlg = new SpectralClustering(new SpectralClustering.ClusteringOptions());
-        
+
         Collection<Collection<Integer>> clustering = clusteringAlg.cluster(clusteringSimilarity);
         ClusteringResult<Integer> mRes = new IntegerClusteringResult(clustering, r.similarity);
         List<Cluster<Integer>> clusters = new ArrayList<>(mRes.getClusters());
-        clusters.sort(Comparator.comparingDouble(c -> -harmonicMean(c.getNormalizedCommunityStrengthPerConnection(), avgSimilarity(new ArrayList<>(c.getMembers()), r.similarity))));
+        clusters.sort(Comparator.comparingDouble(
+                c -> -harmonicMean(c.getNormalizedCommunityStrengthPerConnection(), avgSimilarity(new ArrayList<>(c.getMembers()), r.similarity))));
 
         System.out.println("cs\tncsm\tavgSim\tcombined\tmembers");
         for (Cluster<Integer> c : clusters) {
-            if (c.isBadCluster()) continue;
+            if (c.isBadCluster())
+                continue;
             float ncsm = c.getNormalizedCommunityStrengthPerConnection();
             float avgSim = c.avgSimilarity((a, b) -> (float) r.similarity.getEntry(a, b));
             float combined = harmonicMean(ncsm, avgSim);
-            System.out.println(str(c.getCommunityStrength()) + "\t" + str(ncsm) + "\t" + str(avgSim) + "\t" + str(combined) + "\t" + c.getMembers().stream().map(r.mapping::unmap).collect(Collectors.toList()));
+            System.out.println(str(c.getCommunityStrength()) + "\t" + str(ncsm) + "\t" + str(avgSim) + "\t" + str(combined) + "\t"
+                    + c.getMembers().stream().map(r.mapping::unmap).collect(Collectors.toList()));
         }
         System.out.println("Community Strength: " + mRes.getCommunityStrength());
         System.out.println("Clusters: " + clusters.size());
@@ -179,7 +182,8 @@ public class ClusteringTest {
         try (CSVReader reader = new CSVReader(fileName, ";")) {
             while (reader.hasNext()) {
                 List<String> records = reader.next();
-                if (records.isEmpty()) continue;
+                if (records.isEmpty())
+                    continue;
                 String leftStudent = records.get(1);
                 String rightStudent = records.get(2);
                 String similarity = records.get(3);
@@ -207,7 +211,8 @@ public class ClusteringTest {
         try (CSVReader reader = new CSVReader(fileName, ";")) {
             while (reader.hasNext()) {
                 List<String> records = reader.next();
-                if (records.isEmpty()) continue;
+                if (records.isEmpty())
+                    continue;
                 Deque<String> stuff = new ArrayDeque<>(records);
                 String leftStudent = stuff.removeFirst();
                 int leftID = mapping.map(leftStudent);
@@ -237,6 +242,7 @@ public class ClusteringTest {
     private static class CSVReader implements AutoCloseable {
         private String delimiter;
         private Scanner scanner;
+
         private CSVReader(File fileName, String delimiter) throws FileNotFoundException {
             this.delimiter = delimiter;
             scanner = new Scanner(fileName);

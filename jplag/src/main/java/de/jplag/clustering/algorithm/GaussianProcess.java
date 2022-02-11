@@ -24,7 +24,8 @@ public class GaussianProcess {
     private CholeskyDecomposition cholesky;
     private RealVector lengthScale;
 
-    private GaussianProcess(List<RealVector> X, RealVector weight, double mean, double standardDeviation, CholeskyDecomposition cholesky, RealVector lengthScale) {
+    private GaussianProcess(List<RealVector> X, RealVector weight, double mean, double standardDeviation, CholeskyDecomposition cholesky,
+            RealVector lengthScale) {
         this.X = X;
         this.weight = weight;
         this.mean = mean;
@@ -33,7 +34,7 @@ public class GaussianProcess {
         this.lengthScale = lengthScale;
     }
 
-     /**
+    /**
      * @param x position to predict at
      * @return mean prediction at x
      */
@@ -70,9 +71,9 @@ public class GaussianProcess {
     private static final double SQRT_5 = Math.sqrt(5);
 
     /**
-     * Identical to {@link GaussianProcess#fit(List, double[], double, boolean, double[])} but using a one vector as length scale.
-     * 
-     * @param X 
+     * Identical to {@link GaussianProcess#fit(List, double[], double, boolean, double[])} but using a one vector as length
+     * scale.
+     * @param X
      * @param Y expected to have zero mean, unit variance if normalize is false
      * @param noise variance of noise in Y
      * @param normalize for Y
@@ -80,29 +81,31 @@ public class GaussianProcess {
     public static GaussianProcess fit(List<RealVector> X, double[] Y, double noise, boolean normalize) {
         return fit(X, Y, noise, normalize, new ArrayRealVector(X.get(0).getDimension(), 1).toArray());
     }
-    
+
     /**
      * Fit Gaussian Process using a matern kernel.
-     * 
-     * @param X  
+     * @param X
      * @param Y expected to have zero mean, unit variance if normalize is false
      * @param noise variance of noise in Y
      * @param normalize if Y should be normalized
-     * @param lengthScale X values are divided by these values before calculating their euclidean distance. If all entries are equal the kernel is isometric.
+     * @param lengthScale X values are divided by these values before calculating their euclidean distance. If all entries
+     * are equal the kernel is isometric.
      */
     public static GaussianProcess fit(List<RealVector> X, double[] Y, double noise, boolean normalize, double[] lengthScale) {
         if (X.size() != Y.length) {
             throw new IllegalArgumentException(MessageFormat.format("X and Y are of different dimensions {0} and {1}", X.size(), Y.length));
         }
-        OptionalInt brokenXIndex = IntStream.range(1, X.size()).filter(i -> X.get(i).getDimension() != X.get(i-1).getDimension()).findFirst();
+        OptionalInt brokenXIndex = IntStream.range(1, X.size()).filter(i -> X.get(i).getDimension() != X.get(i - 1).getDimension()).findFirst();
         brokenXIndex.ifPresent(brokenIndex -> {
-            throw new IllegalArgumentException(MessageFormat.format("X has different dimensions at index {0} ({2}) and index {1} ({3})", brokenIndex - 1, brokenXIndex, X.get(brokenIndex - 1).getDimension(), X.get(brokenIndex).getDimension()));
+            throw new IllegalArgumentException(MessageFormat.format("X has different dimensions at index {0} ({2}) and index {1} ({3})",
+                    brokenIndex - 1, brokenXIndex, X.get(brokenIndex - 1).getDimension(), X.get(brokenIndex).getDimension()));
         });
         if (noise <= 0) {
             throw new IllegalArgumentException(MessageFormat.format("noise must be strictly positive, got {0}", noise));
         }
         if (lengthScale.length != X.get(0).getDimension()) {
-            throw new IllegalArgumentException(MessageFormat.format("lengthScale is of different dimension {0} than X values {1}", lengthScale.length, X.get(0).getDimension()));
+            throw new IllegalArgumentException(
+                    MessageFormat.format("lengthScale is of different dimension {0} than X values {1}", lengthScale.length, X.get(0).getDimension()));
         }
         double mean = 0;
         double standardDeviation = 1;
@@ -121,12 +124,12 @@ public class GaussianProcess {
 
         CholeskyDecomposition choDec = new CholeskyDecomposition(k);
         RealVector w = choDec.getSolver().solve(yVector);
-    
+
         return new GaussianProcess(X, w, mean, standardDeviation, choDec, scaleV);
     }
 
     /**
-     * Matern kernel for nu=2.5 (we get a twice differentiable gp) 
+     * Matern kernel for nu=2.5 (we get a twice differentiable gp)
      */
     private static RealMatrix maternKernel(List<RealVector> X, RealVector lengthScale) {
         RealMatrix k = new Array2DRowRealMatrix(X.size(), X.size());
@@ -186,9 +189,12 @@ public class GaussianProcess {
         int[] mindCharPos = DoubleStream.of(mean).mapToInt(toCharPos).toArray();
 
         for (int x = 0; x < width; x++) {
-            if (upperCharPos[x] > 0 && upperCharPos[x] < height) out[upperCharPos[x]][x] = '-';
-            if (lowerCharPos[x] > 0 && lowerCharPos[x] < height) out[lowerCharPos[x]][x] = '-';
-            if (mindCharPos[x] > 0 && mindCharPos[x] < height) out[mindCharPos[x]][x] = '+';
+            if (upperCharPos[x] > 0 && upperCharPos[x] < height)
+                out[upperCharPos[x]][x] = '-';
+            if (lowerCharPos[x] > 0 && lowerCharPos[x] < height)
+                out[lowerCharPos[x]][x] = '-';
+            if (mindCharPos[x] > 0 && mindCharPos[x] < height)
+                out[mindCharPos[x]][x] = '+';
         }
 
         StringBuilder sb = new StringBuilder();
@@ -196,7 +202,7 @@ public class GaussianProcess {
             sb.append(out[i]);
             if (i < 98) {
                 sb.append('\n');
-            } 
+            }
         }
         return sb.toString();
     }

@@ -1,15 +1,22 @@
 package de.jplag;
 
+import static de.jplag.CLI.CLUSTERING_GROUP_NAME;
+import static de.jplag.CLI.CLUSTERING_PREPROCESSING_GROUP_NAME;
 import static de.jplag.options.JPlagOptions.DEFAULT_COMPARISON_MODE;
 import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
-import static de.jplag.CLI.CLUSTERING_GROUP_NAME;
-import static de.jplag.CLI.CLUSTERING_PREPROCESSING_GROUP_NAME;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.Argument;
+import net.sourceforge.argparse4j.inf.ArgumentAction;
+import net.sourceforge.argparse4j.inf.ArgumentContainer;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.Namespace;
 
 import de.jplag.clustering.Algorithms;
 import de.jplag.clustering.ClusteringOptions;
@@ -17,12 +24,6 @@ import de.jplag.clustering.algorithm.AgglomerativeClustering;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.strategy.ComparisonMode;
-import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.Argument;
-import net.sourceforge.argparse4j.inf.ArgumentAction;
-import net.sourceforge.argparse4j.inf.ArgumentContainer;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Command line arguments for the JPlag CLI. Each argument is defined through an enumeral.
@@ -33,7 +34,8 @@ public enum CommandLineArgument {
     ROOT_DIRECTORY(new Builder("rootDir", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     LANGUAGE(new Builder("-l", String.class).defaultsTo(LanguageOption.getDefault().getDisplayName()).choices(LanguageOption.getAllDisplayNames())),
     BASE_CODE("-bc", String.class),
-    VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices(List.of("quiet", "long"))), // TODO SH: Replace verbosity when integrating a real logging library
+    VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices(List.of("quiet", "long"))), // TODO SH: Replace verbosity when integrating a
+                                                                                                      // real logging library
     DEBUG("-d", Boolean.class),
     SUBDIRECTORY("-S", String.class),
     SUFFIXES("-p", String.class),
@@ -44,21 +46,42 @@ public enum CommandLineArgument {
     RESULT_FOLDER(new Builder("-r", String.class).defaultsTo("result")),
     COMPARISON_MODE(new Builder("-c", String.class).defaultsTo(DEFAULT_COMPARISON_MODE.getName()).choices(ComparisonMode.allNames())),
     CLUSTER_ENABLE(new Builder("--cluster-skip", Boolean.class).argumentGroup(CLUSTERING_GROUP_NAME).action(Arguments.storeTrue())),
-    CLUSTER_ALGORITHM(new Builder("--cluster-alg", Algorithms.class).argumentGroup(CLUSTERING_GROUP_NAME).defaultsTo(ClusteringOptions.DEFAULTS.getAlgorithm())),
-    CLUSTER_METRIC(new Builder("--cluster-metric", SimilarityMetric.class).argumentGroup(CLUSTERING_GROUP_NAME).defaultsTo(ClusteringOptions.DEFAULTS.getSimilarityMetric())),
-    CLUSTER_SPECTRAL_BANDWIDTH(new Builder("--cluster-spectral-bandwidth", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("bandwidth").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralKernelBandwidth())),
-    CLUSTER_SPECTRAL_NOISE(new Builder("--cluster-spectral-noise", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("noise").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralGPVariance())),
-    CLUSTER_SPECTRAL_MIN_RUNS(new Builder("--cluster-spectral-min-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("min").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMinRuns())),
-    CLUSTER_SPECTRAL_MAX_RUNS(new Builder("--cluster-spectral-max-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("max").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxRuns())),
-    CLUSTER_SPECTRAL_KMEANS_ITERATIONS(new Builder("--cluster-spectral-kmeans-interations", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("iterations").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxKMeansIterationPerRun())),
-    CLUSTER_AGGLOMERATIVE_THRESHOLD(new Builder("--cluster-agglomerative-threshold", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("threshold").defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold())),
-    CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY(new Builder("--cluster-agglomerative-inter-cluster-similarity", AgglomerativeClustering.InterClusterSimilarity.class).argumentGroup(CLUSTERING_GROUP_NAME).defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity())),
-    CLUSTER_PREPROCESSING_NONE(new Builder("--cluster-pp-none", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).action(Arguments.storeTrue())),
-    CLUSTER_PREPROCESSING_CDF(new Builder("--cluster-pp-cdf", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).action(Arguments.storeTrue())),
-    CLUSTER_PREPROCESSING_PERCENTILE(new Builder("--cluster-pp-percentile", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("percentile")),
-    CLUSTER_PREPROCESSING_THRESHOLD(new Builder("--cluster-pp-threshold", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("threshold"));
-
-
+    CLUSTER_ALGORITHM(
+            new Builder("--cluster-alg", Algorithms.class).argumentGroup(CLUSTERING_GROUP_NAME)
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getAlgorithm())),
+    CLUSTER_METRIC(
+            new Builder("--cluster-metric", SimilarityMetric.class).argumentGroup(CLUSTERING_GROUP_NAME)
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSimilarityMetric())),
+    CLUSTER_SPECTRAL_BANDWIDTH(
+            new Builder("--cluster-spectral-bandwidth", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("bandwidth")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralKernelBandwidth())),
+    CLUSTER_SPECTRAL_NOISE(
+            new Builder("--cluster-spectral-noise", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("noise")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralGPVariance())),
+    CLUSTER_SPECTRAL_MIN_RUNS(
+            new Builder("--cluster-spectral-min-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("min")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMinRuns())),
+    CLUSTER_SPECTRAL_MAX_RUNS(
+            new Builder("--cluster-spectral-max-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("max")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxRuns())),
+    CLUSTER_SPECTRAL_KMEANS_ITERATIONS(
+            new Builder("--cluster-spectral-kmeans-interations", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("iterations")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxKMeansIterationPerRun())),
+    CLUSTER_AGGLOMERATIVE_THRESHOLD(
+            new Builder("--cluster-agglomerative-threshold", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("threshold")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold())),
+    CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY(
+            new Builder("--cluster-agglomerative-inter-cluster-similarity", AgglomerativeClustering.InterClusterSimilarity.class)
+                    .argumentGroup(CLUSTERING_GROUP_NAME).defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity())),
+    CLUSTER_PREPROCESSING_NONE(
+            new Builder("--cluster-pp-none", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME)
+                    .action(Arguments.storeTrue())),
+    CLUSTER_PREPROCESSING_CDF(
+            new Builder("--cluster-pp-cdf", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).action(Arguments.storeTrue())),
+    CLUSTER_PREPROCESSING_PERCENTILE(
+            new Builder("--cluster-pp-percentile", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("percentile")),
+    CLUSTER_PREPROCESSING_THRESHOLD(
+            new Builder("--cluster-pp-threshold", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("threshold"));
 
     private final String flag;
     private final NumberOfArgumentValues numberOfValues;
@@ -132,10 +155,8 @@ public enum CommandLineArgument {
      * @param parser is that parser.
      */
     public void parseWith(ArgumentParser parser, CliGroupHelper groupHelper) {
-        ArgumentContainer argContainer = mutuallyExclusiveGroup
-            .map(groupHelper::getMutuallyExclusiveGroup)
-            .or(() -> argumentGroup.map(groupHelper::getArgumentGroup))
-            .orElse(parser);
+        ArgumentContainer argContainer = mutuallyExclusiveGroup.map(groupHelper::getMutuallyExclusiveGroup)
+                .or(() -> argumentGroup.map(groupHelper::getArgumentGroup)).orElse(parser);
 
         Argument argument = argContainer.addArgument(flag).help(description);
         choices.ifPresent(it -> argument.choices(it));

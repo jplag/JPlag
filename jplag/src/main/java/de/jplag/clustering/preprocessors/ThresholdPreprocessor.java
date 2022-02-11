@@ -33,6 +33,5 @@ public class ThresholdPreprocessor implements Preprocessor {
     public Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result) {
         return helper.postProcessResult(result);
     }
-    
-    
+
 }
