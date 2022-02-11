@@ -33,6 +33,11 @@ public class IntegerMapping<T> {
         return result;
     }
 
+    /**
+     * Maps the integer back to the original set.
+     * @param index the integer
+     * @return the original value
+     */
     public T unmap(int index) {
         return backMapping.get(index);
     }

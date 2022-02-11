@@ -8,6 +8,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 import de.jplag.clustering.Preprocessor;
 
+/**
+ * Suppresses all similarities below a given threshold.
+ */
 public class ThresholdPreprocessor implements Preprocessor {
 
     private double threshold;

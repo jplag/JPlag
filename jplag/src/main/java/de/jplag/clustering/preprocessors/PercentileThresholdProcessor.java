@@ -9,6 +9,9 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile.EstimationType;
 
 import de.jplag.clustering.Preprocessor;
 
+/**
+ * Suppresses all similarities below a given percentile.
+ */
 public class PercentileThresholdProcessor implements Preprocessor {
 
     private float percentile;

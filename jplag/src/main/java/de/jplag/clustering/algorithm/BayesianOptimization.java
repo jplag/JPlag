@@ -118,6 +118,13 @@ public class BayesianOptimization {
         return new ArrayRealVector(bestSolution);
     }
 
+    /**
+     * Optimizes a real-valued function and returns a result associated with the optimal value.
+     * 
+     * @param <T> type of the result
+     * @param f function to optimize
+     * @return result
+     */
     public <T> OptimizationResult<T> maximize(Function<RealVector, OptimizationResult<T>> f) {
         List<Double> Y = new ArrayList<>(maxEvaluations);
         List<RealVector> X = new ArrayList<>(maxEvaluations);

@@ -15,7 +15,7 @@ import de.jplag.clustering.preprocessors.PercentileThresholdProcessor;
 import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
 
 /**
- * Produces the clustering according to the options.
+ * Runs the clustering according to an options object.
  */
 public class ClusteringFactory {
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
