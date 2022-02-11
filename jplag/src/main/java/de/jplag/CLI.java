@@ -13,13 +13,20 @@ import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
 import static de.jplag.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.CommandLineArgument.SUFFIXES;
 import static de.jplag.CommandLineArgument.VERBOSITY;
+import static de.jplag.CommandLineArgument.*;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.Random;
 
+import de.jplag.clustering.Algorithms;
+import de.jplag.clustering.ClusteringOptions;
+import de.jplag.clustering.Preprocessors;
+import de.jplag.clustering.algorithm.TopDownHierarchicalClustering;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
+import de.jplag.options.SimilarityMetric;
 import de.jplag.options.Verbosity;
 import de.jplag.reporting.Report;
 import de.jplag.strategy.ComparisonMode;
@@ -41,6 +48,8 @@ public class CLI {
             "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work", "The tech is out there!"};
 
     private static final String PROGRAM_NAME = "jplag";
+    static final String CLUSTERING_GROUP_NAME = "Clustering";
+    static final String CLUSTERING_PREPROCESSING_GROUP_NAME = "Clustering - Preprocessing";
 
     private final ArgumentParser parser;
 
@@ -70,8 +79,9 @@ public class CLI {
      */
     public CLI() {
         parser = ArgumentParsers.newFor(PROGRAM_NAME).build().defaultHelp(true).description(generateDescription());
+        CliGroupHelper groupHelper = new CliGroupHelper(parser);
         for (CommandLineArgument argument : CommandLineArgument.values()) {
-            argument.parseWith(parser);
+            argument.parseWith(parser, groupHelper);
         }
     }
 
@@ -114,6 +124,38 @@ public class CLI {
         options.setMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
         ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(it -> options.setComparisonMode(it),
                 () -> System.out.println("Unknown comparison mode, using default mode!"));
+
+        ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
+        Optional.ofNullable((Boolean) CLUSTER_ENABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);
+        Optional.ofNullable((Algorithms) CLUSTER_ALGORITHM.getFrom(namespace)).ifPresent(clusteringBuilder::algorithm);
+        Optional.ofNullable((SimilarityMetric) CLUSTER_METRIC.getFrom(namespace)).ifPresent(clusteringBuilder::similarityMetric);
+        Optional.ofNullable((Float) CLUSTER_SPECTRAL_BANDWIDTH.getFrom(namespace)).ifPresent(clusteringBuilder::spectralKernelBandwidth);
+        Optional.ofNullable((Float) CLUSTER_SPECTRAL_NOISE.getFrom(namespace)).ifPresent(clusteringBuilder::spectralGPVariance);
+        Optional.ofNullable((Integer) CLUSTER_SPECTRAL_MIN_RUNS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMinRuns);
+        Optional.ofNullable((Integer) CLUSTER_SPECTRAL_MAX_RUNS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMaxRuns);
+        Optional.ofNullable((Integer) CLUSTER_SPECTRAL_KMEANS_ITERATIONS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMaxKMeansIterationPerRun);
+        Optional.ofNullable((Float) CLUSTER_AGGLOMERATIVE_THRESHOLD.getFrom(namespace)).ifPresent(clusteringBuilder::agglomerativeThreshold);
+        Optional.ofNullable((TopDownHierarchicalClustering.InterClusterSimilarity) CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace)).ifPresent(clusteringBuilder::agglomerativeInterClusterSimilarity);
+        Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_NONE.getFrom(namespace)).ifPresent(none -> {
+            if (none) {
+                clusteringBuilder.preprocessor(Preprocessors.NONE);
+            }
+        });
+        Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_CDF.getFrom(namespace)).ifPresent(cdf -> {
+            if (cdf) {
+                clusteringBuilder.preprocessor(Preprocessors.CDF);
+            }
+        });
+        Optional.ofNullable((Float) CLUSTER_PREPROCESSING_PERCENTILE.getFrom(namespace)).ifPresent(percentile -> {
+            clusteringBuilder.preprocessor(Preprocessors.PERCENTILE);
+            clusteringBuilder.preprocessorPercentile(percentile);
+        });
+        Optional.ofNullable((Float) CLUSTER_PREPROCESSING_THRESHOLD.getFrom(namespace)).ifPresent(threshold -> {
+            clusteringBuilder.preprocessor(Preprocessors.THRESHOLD);
+            clusteringBuilder.preprocessorPercentile(threshold);
+        });
+        options.setClusteringOptions(clusteringBuilder.build());
+
         return options;
     }
 
