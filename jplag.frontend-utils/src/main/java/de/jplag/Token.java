@@ -1,14 +1,15 @@
 package de.jplag;
 
-abstract public class Token {
-    public int type;
-    public String file;
+public abstract class Token {
+    private boolean basecode = false;
+    private String file;
+    private int hash = -1;// hash-value. set and used by main algorithm (GSTiling)
+    private boolean marked;
 
-    protected int line, column, length;
-
-    protected boolean marked; // TODO TS: Why protected/no accessors?
-    protected boolean basecode = false;
-    protected int hash = -1;// hash-value. set and used by main algorithm (GSTiling)
+    protected int column;
+    protected int length;
+    protected int line;
+    protected int type;
 
     public Token(int type, String file, int line) {
         this(type, file, line, -1, -1);
@@ -22,20 +23,37 @@ abstract public class Token {
         setLength(length);
     }
 
-    public int getLine() {
-        return line;
-    }
-
     public int getColumn() {
         return column;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public int getHash() {
+        return hash;
+    }
+
+    // this is made to distinguish the character front end. Maybe other front ends can use it too?
+    public int getIndex() {
+        return -1;
     }
 
     public int getLength() {
         return length;
     }
 
-    public void setLine(int line) {
-        this.line = line;
+    public int getLine() {
+        return line;
+    }
+
+    public boolean isBasecode() {
+        return basecode;
+    }
+
+    public boolean isMarked() {
+        return marked;
     }
 
     public void setColumn(int column) {
@@ -46,15 +64,32 @@ abstract public class Token {
         this.length = length;
     }
 
-    // this is made to distinguish the character front end. Maybe other front ends can use it too?
-    public int getIndex() {
-        return -1;
+    public void setLine(int line) {
+        this.line = line;
     }
-
-    protected abstract String type2string();
 
     @Override
     public String toString() {
         return type2string();
+    }
+
+    protected abstract String type2string();
+
+    /* Package Private */ boolean setBasecode(boolean basecode) {
+        this.basecode = basecode;
+        return basecode;
+    }
+
+    /* Package Private */ void setFile(String file) {
+        this.file = file;
+    }
+
+    /* Package Private */ void setHash(int hash) {
+        this.hash = hash;
+    }
+
+    /* Package Private */ boolean setMarked(boolean marked) {
+        this.marked = marked;
+        return marked;
     }
 }
