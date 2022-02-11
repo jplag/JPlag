@@ -120,7 +120,6 @@ public class BayesianOptimization {
 
     /**
      * Optimizes a real-valued function and returns a result associated with the optimal value.
-     * 
      * @param <T> type of the result
      * @param f function to optimize
      * @return result

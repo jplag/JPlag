@@ -23,10 +23,9 @@ import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 import de.jplag.clustering.IntegerClusteringResult;
 
 /**
- * Spectral clustering is a clustering algorithm for graph data.
- * Each node is represented as k-dimensional vector, afterwards k-Means is used to generate a clustering with k on that representation.
- * 
- * This implementation uses Bayesian Optimization to find an appropriate number for k.
+ * Spectral clustering is a clustering algorithm for graph data. Each node is represented as k-dimensional vector,
+ * afterwards k-Means is used to generate a clustering with k on that representation. This implementation uses Bayesian
+ * Optimization to find an appropriate number for k.
  */
 public class SpectralClustering implements ClusteringAlgorithm {
 

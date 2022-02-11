@@ -13,9 +13,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 import de.jplag.clustering.algorithm.ClusteringAlgorithm;
 
 /**
- * Interface for classes that process similarity matrices before any clustering.
- * Classes implementing this interface must ensure that they do not produce zero rows/columns inside the similarity matrix.
- * They must also be able to calculate the original indices of rows/columns after use through their {@link Preprocessor#postProcessResult} method.
+ * Interface for classes that process similarity matrices before any clustering. Classes implementing this interface
+ * must ensure that they do not produce zero rows/columns inside the similarity matrix. They must also be able to
+ * calculate the original indices of rows/columns after use through their {@link Preprocessor#postProcessResult} method.
  */
 public interface Preprocessor {
     double[][] preprocessSimilarities(double[][] similarityMatrix);
