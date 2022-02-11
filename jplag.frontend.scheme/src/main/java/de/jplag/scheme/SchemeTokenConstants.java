@@ -3,11 +3,6 @@ package de.jplag.scheme;
 import de.jplag.TokenConstants;
 
 public interface SchemeTokenConstants extends TokenConstants {
-    final static int FILE_END = 0;
-
-    // Used to optionally separate methods from each other
-    // with an always marked token
-    final static int SEPARATOR_TOKEN = 1;
 
     final static int S_BOOL = 2;
     final static int S_NUMBER = 3;
