@@ -53,7 +53,7 @@ public interface ClusteringResult<T> {
         ClusteringResult<T> getClusteringResult();
 
         /**
-         * @return How much each member o f this cluster contributes to the {@link ClusteringResult#getCommunityStrength} 
+         * @return How much each member of this cluster contributes to the {@link ClusteringResult#getCommunityStrength} 
          */
         default float getCommunityStrengthPerConnection() {
             int size = getMembers().size();

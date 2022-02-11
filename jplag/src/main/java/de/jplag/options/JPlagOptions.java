@@ -10,9 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import de.jplag.Language;
-import de.jplag.clustering.Algorithms;
-import de.jplag.clustering.Preprocessors;
-import de.jplag.clustering.algorithm.TopDownHierarchicalClustering;
+import de.jplag.clustering.ClusteringOptions;
 import de.jplag.strategy.ComparisonMode;
 
 public class JPlagOptions {
@@ -66,7 +64,7 @@ public class JPlagOptions {
 
     /**
      * Tunes the comparison sensitivity by adjusting the minimum token required to be counted as matching section. A smaller
-     * <n> increases the sensitivity but might lead to more false-positves.
+     * <n> increases the sensitivity but might lead to more false-positives.
      */
     private Integer minimumTokenMatch;
 
@@ -117,77 +115,9 @@ public class JPlagOptions {
     private Verbosity verbosity;
 
     /**
-     * This similarity metric is used for clustering.
+     * Clustering options
      */
-    private SimilarityMetric clusteringSimilarityMetric = SimilarityMetric.MAX;
-
-    /**
-     * The kernel bandwidth for the matern kernel used in the gaussian process for the automatic search for the number of clusters in spectral clustering.
-     * Affects the runtime and results of the spectral clustering.
-     */
-    private float clusteringSpectralKernelBandwidth = 20.f;
-
-    /**
-     * This is the assumed level of noise in the evaluation results of a spectral clustering.
-     * Acts as normalization parameter for the gaussian process.
-     * The default setting works well with similarity scores in the range between zero and one.
-     * Affects the runtime and results of the spectral clustering.
-     */
-    private float clusteringSpectralGPVariance = 0.05f * 0.05f;
-
-    /**
-     * The minimal number of runs of the spectral clustering algorithm.
-     * These runs will use predefined numbers of clusters and will not use the bayesian optimization to determine the number of clusters. 
-     */
-    private int clusteringSpectralMinRuns = 5;
-
-    /**
-     * Maximal number of runs of the spectral clustering algorithm.
-     * The bayesian optimization may be stopped before, when no more maxima of the acquisition-function are found.
-     */
-    private int clusteringSpectralMaxRuns = 50;
-
-    /**
-     * Maximum number of iterations of the kMeans clustering per run of the spectral clustering algorithm.
-     */
-    private int clusteringSpectralMaxKMeansIterationPerRun = 200;
-
-    /**
-     * Preprocessing for the similarity values before clustering.
-     * This is mandatory for spectral clustering and optional for agglomerative clustering.
-     */
-    private Preprocessors clusteringPreprocessor = Preprocessors.CDF;
-
-    /**
-     * Sets up to which similarity the threshold preprocessor zeroes out the similarities.
-     */
-    private float clusteringPreprocessorThreshold = 0.2f;
-
-    /**
-     * Sets up to which percentile of the percentile preprocessor zeroes out the similarities.
-     */
-    private float clusteringPreprocessorPercentile = 0.5f;
-
-    /**
-     * Agglomerative clustering will merge clusters that have a similarity higher than this threshold.
-     */
-    private float clusteringAgglomerativeThreshold = 0.2f;
-
-    /**
-     * Similarity measure between clusters in agglomerative clustering. 
-     */
-    private TopDownHierarchicalClustering.InterClusterSimilarity clusteringAgglomerativeInterClusterSimilarity = TopDownHierarchicalClustering.InterClusterSimilarity.AVERAGE;
-
-    /**
-     * The clustering algorithm to use.
-     */
-    private Algorithms clusteringAlgorithm = Algorithms.SPECTRAL;
-
-    /**
-     * If clustering should be performed.
-     */
-    private boolean clusteringDoClustering = true;
-
+    private ClusteringOptions clusteringOptions = new ClusteringOptions.Builder().build();
 
     /**
      * Constructor with required attributes.
@@ -261,6 +191,10 @@ public class JPlagOptions {
         return debugParser;
     }
 
+    public ClusteringOptions getClusteringOptions() {
+        return this.clusteringOptions;
+    }
+
     public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
         if (baseCodeSubmissionName == null || baseCodeSubmissionName.isEmpty()) {
             this.baseCodeSubmissionName = Optional.empty();
@@ -319,58 +253,6 @@ public class JPlagOptions {
             this.maximumNumberOfComparisons = maximumNumberOfComparisons;
         }
     }
-
-    public SimilarityMetric getClusteringSimilarityMetric() {
-        return clusteringSimilarityMetric;
-    }
-
-    public float getClusteringSpectralKernelBandwidth() {
-        return clusteringSpectralKernelBandwidth;
-    }
-
-    public float getClusteringSpectralGPVariance() {
-        return clusteringSpectralGPVariance;
-    }
-
-    public int getClusteringSpectralMinRuns() {
-        return clusteringSpectralMinRuns;
-    }
-
-    public int getClusteringSpectralMaxRuns() {
-        return clusteringSpectralMaxRuns;
-    }
-
-    public int getClusteringSpectralMaxKMeansIterationPerRun() {
-        return clusteringSpectralMaxKMeansIterationPerRun;
-    }
-
-    public float getClusteringAgglomerativeThreshold() {
-        return clusteringAgglomerativeThreshold;
-    }
-
-    public Preprocessors getClusteringPreprocessor() {
-        return clusteringPreprocessor;
-    }
-
-    public boolean isClustering() {
-        return clusteringDoClustering;
-    }
-
-    public Algorithms getClusteringAlgorithm() {
-        return clusteringAlgorithm;
-    }
-
-    public TopDownHierarchicalClustering.InterClusterSimilarity getClusteringAgglomerativeInterClusterSimilarity() {
-        return clusteringAgglomerativeInterClusterSimilarity;
-    }
-
-    public float getClusteringPreprocessorThreshold() {
-        return clusteringPreprocessorThreshold;
-    }
-
-    public float getClusteringPreprocessorPercentile() {
-        return clusteringPreprocessorPercentile;
-    }
     
     public void setMinimumTokenMatch(Integer minimumTokenMatch) {
         if (minimumTokenMatch != null && minimumTokenMatch < 1) {
@@ -409,6 +291,10 @@ public class JPlagOptions {
         this.verbosity = verbosity;
     }
 
+    public void setClusteringOptions(ClusteringOptions clusteringOptions) {
+        this.clusteringOptions = clusteringOptions;
+    }
+
     private boolean hasFileSuffixes() {
         return fileSuffixes != null && fileSuffixes.length > 0;
     }
@@ -417,56 +303,4 @@ public class JPlagOptions {
         return minimumTokenMatch != null;
     }
 
-    public void setClusteringSimilarityMetric(SimilarityMetric clusteringSimilarityMetric) {
-        this.clusteringSimilarityMetric = clusteringSimilarityMetric;
-    }
-
-    public void setClusteringSpectralKernelBandwidth(float clusteringSpectralKernelBandwidth) {
-        this.clusteringSpectralKernelBandwidth = clusteringSpectralKernelBandwidth;
-    }
-
-    public void setClusteringSpectralGPVariance(float clusteringSpectralGPVariance) {
-        this.clusteringSpectralGPVariance = clusteringSpectralGPVariance;
-    }
-
-    public void setClusteringSpectralMinRuns(int clusteringSpectralMinRuns) {
-        this.clusteringSpectralMinRuns = clusteringSpectralMinRuns;
-    }
-
-    public void setClusteringSpectralMaxRuns(int clusteringSpectralMaxRuns) {
-        this.clusteringSpectralMaxRuns = clusteringSpectralMaxRuns;
-    }
-
-    public void setClusteringSpectralMaxKMeansIterationPerRun(int clusteringSpectralMaxKMeansIterationPerRun) {
-        this.clusteringSpectralMaxKMeansIterationPerRun = clusteringSpectralMaxKMeansIterationPerRun;
-    }
-
-    public void setClusteringPreprocessor(Preprocessors clusteringPreprocessor) {
-        this.clusteringPreprocessor = clusteringPreprocessor;
-    }
-
-    public void setClusteringAgglomerativeThreshold(float clusteringAgglomerativeThreshold) {
-        this.clusteringAgglomerativeThreshold = clusteringAgglomerativeThreshold;
-    }
-
-    public void setClusteringAgglomerativeInterClusterSimilarity(
-            TopDownHierarchicalClustering.InterClusterSimilarity clusteringAgglomerativeInterClusterSimilarity) {
-        this.clusteringAgglomerativeInterClusterSimilarity = clusteringAgglomerativeInterClusterSimilarity;
-    }
-
-    public void setClusteringAlgorithm(Algorithms clusteringAlgorithm) {
-        this.clusteringAlgorithm = clusteringAlgorithm;
-    }
-
-    public void setClustering(boolean clustering) {
-        this.clusteringDoClustering = clustering;
-    }
-
-    public void setClusteringPreprocessorThreshold(float clusteringPreprocessorThreshold) {
-        this.clusteringPreprocessorThreshold = clusteringPreprocessorThreshold;
-    }
-
-    public void setClusteringPreprocessorPercentile(float clusteringPreprocessorPercentile) {
-        this.clusteringPreprocessorPercentile = clusteringPreprocessorPercentile;
-    }
 }

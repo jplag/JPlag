@@ -13,43 +13,42 @@ import de.jplag.clustering.algorithm.TopDownHierarchicalClustering;
 import de.jplag.clustering.preprocessors.CdfPreprocessor;
 import de.jplag.clustering.preprocessors.PercentileThresholdProcessor;
 import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
-import de.jplag.options.JPlagOptions;
 
 /**
  * Produces the clustering according to the options.
  */
 public class ClusteringFactory {
-    public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, JPlagOptions options) {
-        if (!options.isClustering()) return Collections.emptyList();
+    public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
+        if (!options.isEnabled()) return Collections.emptyList();
 
         // init algorithm
         ClusteringAlgorithm ca = null;
-        if (options.getClusteringAlgorithm() == Algorithms.AGGLOMERATIVE) {
+        if (options.getAlgorithm() == Algorithms.AGGLOMERATIVE) {
             TopDownHierarchicalClustering.ClusteringOptions clusteringOptions = new TopDownHierarchicalClustering.ClusteringOptions();
-            clusteringOptions.minimalSimilarity = options.getClusteringAgglomerativeThreshold();
-            clusteringOptions.similarity = options.getClusteringAgglomerativeInterClusterSimilarity();
+            clusteringOptions.minimalSimilarity = options.getAgglomerativeThreshold();
+            clusteringOptions.similarity = options.getAgglomerativeInterClusterSimilarity();
             ca = new TopDownHierarchicalClustering(clusteringOptions);
-        } else if (options.getClusteringAlgorithm() == Algorithms.SPECTRAL) {
+        } else if (options.getAlgorithm() == Algorithms.SPECTRAL) {
             SpectralClustering.ClusteringOptions clusteringOptions = new SpectralClustering.ClusteringOptions();
-            clusteringOptions.GPVariance = options.getClusteringSpectralGPVariance();
-            clusteringOptions.kernelBandwidth = options.getClusteringSpectralKernelBandwidth();
-            clusteringOptions.maxKMeansIterations = options.getClusteringSpectralMaxKMeansIterationPerRun();
-            clusteringOptions.maxRuns = options.getClusteringSpectralMaxRuns();
-            clusteringOptions.minRuns = options.getClusteringSpectralMinRuns();
+            clusteringOptions.GPVariance = options.getSpectralGPVariance();
+            clusteringOptions.kernelBandwidth = options.getSpectralKernelBandwidth();
+            clusteringOptions.maxKMeansIterations = options.getSpectralMaxKMeansIterationPerRun();
+            clusteringOptions.maxRuns = options.getSpectralMaxRuns();
+            clusteringOptions.minRuns = options.getSpectralMinRuns();
             ca = new SpectralClustering(clusteringOptions);
         }
 
         // init preprocessor
         Preprocessor preprocessor;
-        switch (options.getClusteringPreprocessor()) {
+        switch (options.getPreprocessor()) {
             case CDF:
                 preprocessor = new CdfPreprocessor();
                 break;
             case THRESHOLD:
-                preprocessor = new ThresholdPreprocessor(options.getClusteringPreprocessorThreshold());
+                preprocessor = new ThresholdPreprocessor(options.getPreprocessorThreshold());
                 break;
             case PERCENTILE:
-                preprocessor = new PercentileThresholdProcessor(options.getClusteringPreprocessorPercentile());
+                preprocessor = new PercentileThresholdProcessor(options.getPreprocessorPercentile());
                 break;
             case NONE:
             default:
@@ -62,7 +61,7 @@ public class ClusteringFactory {
         }
 
         // init adapter
-        ClusteringAdapter adapter = new ClusteringAdapter(comparisons, options.getClusteringSimilarityMetric());
+        ClusteringAdapter adapter = new ClusteringAdapter(comparisons, options.getSimilarityMetric());
 
         // run clustering
         ClusteringResult<Submission> result = adapter.doClustering(ca);
