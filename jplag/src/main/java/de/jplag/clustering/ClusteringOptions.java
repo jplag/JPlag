@@ -6,21 +6,21 @@ import de.jplag.options.SimilarityMetric;
 
 public class ClusteringOptions {
 
-    public static ClusteringOptions DEFAULTS = new Builder().build();
+    public static final ClusteringOptions DEFAULTS = new Builder().build();
 
-    private SimilarityMetric similarityMetric;
-    private float spectralKernelBandwidth;
-    private float spectralGPVariance;
-    private int spectralMinRuns;
-    private int spectralMaxRuns;
-    private int spectralMaxKMeansIterationPerRun;
-    private float agglomerativeThreshold;
-    private Preprocessors preprocessor;
-    private boolean enabled;
-    private Algorithms algorithm;
-    private AgglomerativeClustering.InterClusterSimilarity agglomerativeInterClusterSimilarity;
-    private float preprocessorThreshold;
-    private float preprocessorPercentile;
+    private final SimilarityMetric similarityMetric;
+    private final float spectralKernelBandwidth;
+    private final float spectralGPVariance;
+    private final int spectralMinRuns;
+    private final int spectralMaxRuns;
+    private final int spectralMaxKMeansIterationPerRun;
+    private final float agglomerativeThreshold;
+    private final Preprocessors preprocessor;
+    private final boolean enabled;
+    private final Algorithms algorithm;
+    private final AgglomerativeClustering.InterClusterSimilarity agglomerativeInterClusterSimilarity;
+    private final float preprocessorThreshold;
+    private final float preprocessorPercentile;
 
     public SimilarityMetric getSimilarityMetric() {
         return similarityMetric;
