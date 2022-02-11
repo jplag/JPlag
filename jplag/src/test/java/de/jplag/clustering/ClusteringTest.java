@@ -22,6 +22,7 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 
@@ -30,7 +31,6 @@ import de.jplag.Submission;
 import de.jplag.clustering.ClusteringResult.Cluster;
 import de.jplag.clustering.algorithm.ClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
-import de.jplag.clustering.algorithm.TopDownHierarchicalClustering;
 import de.jplag.clustering.preprocessors.CdfPreprocessor;
 
 public class ClusteringTest {
@@ -81,6 +81,7 @@ public class ClusteringTest {
     }
 
     @Test
+    @Ignore
     public void aClusteringOld() throws FileNotFoundException, URISyntaxException {
         URL url = loadFromClasspath("de/jplag/PseudonymizedReports/alt/C_1000_matches_max.csv");
         File file = new File(url.toURI());
@@ -114,6 +115,7 @@ public class ClusteringTest {
     }
 
     @Test
+    @Ignore
     public void aClusteringNew() throws FileNotFoundException, URISyntaxException {
         URL url = loadFromClasspath("de/jplag/PseudonymizedReports/neu/B_matches_avg.csv");
         File file = new File(url.toURI());
