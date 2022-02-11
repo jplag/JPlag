@@ -194,7 +194,4 @@ public class ClusteringOptions {
         this.preprocessorPercentile = builder.preprocessorPercentile;
     }
 
-    public void doSomething() {
-        // do something
-    }
 }
