@@ -9,73 +9,72 @@ import de.jplag.TokenList;
  * Leider werden C/C++ nicht geparst, sondern nur gescannt...
  */
 public class Language implements de.jplag.Language {
-	private Scanner scanner;
+    private Scanner scanner;
 
-	public Language(ErrorConsumer program) {
-		this.scanner = new Scanner();
-		this.scanner.setProgram(program);
+    public Language(ErrorConsumer program) {
+        this.scanner = new Scanner();
+        this.scanner.setProgram(program);
 
-	}
+    }
 
-	@Override
+    @Override
     public int errorCount() {
-		return this.scanner.errorsCount();
-	}
+        return this.scanner.errorsCount();
+    }
 
-	@Override
+    @Override
     public String[] suffixes() {
-		String[] res = { ".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H",
-				".hpp", ".HPP", ".hh", ".HH" };
-		return res;
-	}
+        String[] res = {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH"};
+        return res;
+    }
 
-	@Override
+    @Override
     public String getName() {
-		return "C/C++ Scanner [basic markup]";
-	}
+        return "C/C++ Scanner [basic markup]";
+    }
 
-	@Override
+    @Override
     public String getShortName() {
-		return "cpp";
-	}
+        return "cpp";
+    }
 
-	@Override
+    @Override
     public int minimumTokenMatch() {
-		return 12;
-	}
+        return 12;
+    }
 
-	@Override
+    @Override
     public boolean supportsColumns() {
-		return false;
-	}
+        return false;
+    }
 
-	@Override
+    @Override
     public boolean isPreformatted() {
-		return true;
-	}
+        return true;
+    }
 
-	@Override
+    @Override
     public boolean usesIndex() {
-		return false;
-	}
+        return false;
+    }
 
-	@Override
+    @Override
     public TokenList parse(File dir, String[] files) {
-		return this.scanner.scan(dir, files);
-	}
+        return this.scanner.scan(dir, files);
+    }
 
-	@Override
+    @Override
     public boolean hasErrors() {
-		return this.scanner.hasErrors();
-	}
+        return this.scanner.hasErrors();
+    }
 
-	@Override
+    @Override
     public int numberOfTokens() {
-		return CPPTokenConstants.NUM_DIFF_TOKENS;
-	}
+        return CPPTokenConstants.NUM_DIFF_TOKENS;
+    }
 
-	@Override
+    @Override
     public String type2string(int type) {
-		return CPPToken.type2string(type);
-	}
+        return CPPToken.type2string(type);
+    }
 }

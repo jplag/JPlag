@@ -436,8 +436,8 @@ public class Report { // Mostly legacy code with some minor improvements.
         htmlFile.println("<TR VALIGN=middle ALIGN=center BGCOLOR=#ffffff><TD>" + "<IMG SRC=\"logo.png\" ALT=\"JPlag\" BORDER=0></TD>");
         htmlFile.println("<TD><H1><BIG>" + title + "</BIG></H1></TD></TR>");
 
-        htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Language") + ":</TD><TD>"
-                + options.getLanguageOption().name() + "</TD></TR>");
+        htmlFile.println("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Language") + ":</TD><TD>" + options.getLanguageOption().name()
+                + "</TD></TR>");
         htmlFile.print("<TR BGCOLOR=#aaaaff VALIGN=top><TD>" + msg.getString("Report.Submissions") + ":</TD><TD>" + result.getNumberOfSubmissions());
 
         htmlFile.println("</TD></TR>");

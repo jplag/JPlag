@@ -5,10 +5,11 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.Arrays;
 
+import net.sourceforge.argparse4j.inf.Namespace;
+
 import de.jplag.CLI;
 import de.jplag.CommandLineArgument;
 import de.jplag.options.JPlagOptions;
-import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Test base for tests regarding the {@link CLI} and any {@link CommandLineArgument}. Solely tests if the arguments set
@@ -30,7 +31,7 @@ public class CommandLineInterfaceTest {
     private String parsedKeys(String... arguments) {
         var keys = namespace.getAttrs().keySet().stream()
                 .filter(key -> key.equals(ROOT_DIRECTORY.flag()) || Arrays.stream(arguments).anyMatch(arg -> arg.contains("-" + key)));
-        return keys.map(it -> it + "=" + namespace.get(it)).collect(toSet()).toString();
+        return keys.map(it -> it.toString() + "=" + namespace.get(it)).collect(toSet()).toString();
     }
 
     /**

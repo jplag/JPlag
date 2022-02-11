@@ -1,4 +1,22 @@
-/*
+package de.jplag.csharp;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
+/**
+ * Generic unicode text reader, which will use BOM mark to identify the encoding to be used. If BOM is not found then
+ * use a given default encoding. UTF-8 is used if: BOM mark is not found and defaultEnc is NULL. Usage pattern:
+ *
+ * <pre>
+ * String defaultEnc = "UTF-16BE"; // or NULL to use system default
+ * FileInputStream fis = new FileInputStream(file);
+ * Reader in = new UnicodeReader(fis, defaultEnc);
+ * 
  * Original pseudocode   : Thomas Weidenfeller
  * Implementation tweaked: Aki Nieminen
  *
@@ -12,27 +30,6 @@
  *
  * Win2k Notepad:
  * Unicode format = UTF-16LE
- */
-
-package de.jplag.csharp;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PushbackInputStream;
-import java.io.Reader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-/**
- * Generic unicode text reader, which will use BOM mark to identify the encoding to be used. If BOM is not found then
- * use a given default encoding. UTF-8 is used if: BOM mark is not found and defaultEnc is NULL.
- * Usage pattern:
- *
- * <pre>
- * String defaultEnc = "UTF-16BE"; // or NULL to use system default
- * FileInputStream fis = new FileInputStream(file);
- * Reader in = new UnicodeReader(fis, defaultEnc);
  * </pre>
  */
 public class UnicodeReader extends Reader {

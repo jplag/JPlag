@@ -6,6 +6,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -81,19 +82,20 @@ public class JPlagOptions {
     /**
      * Directory that contains all submissions.
      */
-    private String rootDirectoryName;
+    private List<String> rootDirectoryNames;
 
     /**
      * Path name of the directory containing the base code.
      * <p>
-     * For backwards compatibility it may also be a directory name inside the root directory.
-     * Condition for the latter is
-     * <ul><li>Specified path does not exist.</li>
-     *     <li>Name has not have a separator character after trimming them from both ends (leaving at least a one-character name).</li>
-     *     <li>A submission with the specified name exists in the root directory.</li>
+     * For backwards compatibility it may also be a directory name inside the root directory. Condition for the latter is
+     * <ul>
+     * <li>Specified path does not exist.</li>
+     * <li>Name has not have a separator character after trimming them from both ends (leaving at least a one-character
+     * name).</li>
+     * <li>A submission with the specified name exists in the root directory.</li>
      * </ul>
-     * It's an error if a string has been provided but it is neither an existing path nor does it fulfill all the
-     * conditions of the compatibility fallback listed above.
+     * It's an error if a string has been provided but it is neither an existing path nor does it fulfill all the conditions
+     * of the compatibility fallback listed above.
      * </p>
      */
     private Optional<String> baseCodeSubmissionName = Optional.empty();
@@ -122,8 +124,8 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(String rootDirectoryName, LanguageOption languageOption) {
-        this.rootDirectoryName = rootDirectoryName;
+    public JPlagOptions(List<String> rootDirectoryNames, LanguageOption languageOption) {
+        this.rootDirectoryNames = rootDirectoryNames;
         this.languageOption = languageOption;
     }
 
@@ -163,8 +165,8 @@ public class JPlagOptions {
         return minimumTokenMatch;
     }
 
-    public String getRootDirectoryName() {
-        return rootDirectoryName;
+    public List<String> getRootDirectoryNames() {
+        return rootDirectoryNames;
     }
 
     public SimilarityMetric getSimilarityMetric() {
@@ -262,8 +264,8 @@ public class JPlagOptions {
         }
     }
 
-    public void setRootDirectoryName(String rootDirectoryName) {
-        this.rootDirectoryName = rootDirectoryName;
+    public void setRootDirectoryNames(List<String> rootDirectoryNames) {
+        this.rootDirectoryNames = rootDirectoryNames;
     }
 
     public void setSimilarityMetric(SimilarityMetric similarityMetric) {

@@ -11,7 +11,8 @@ import de.jplag.exceptions.ExitException;
 
 public class JPlagComparisonTest extends TestBase {
 
-    private static final String[] FILES = {"GSTiling.java", "Match.java", "Matches.java", "Structure.java", "Submission.java", "Table.java", "Token.java"};
+    private static final String[] FILES = {"GSTiling.java", "Match.java", "Matches.java", "Structure.java", "Submission.java", "Table.java",
+            "Token.java"};
     private static final String[] FILES_2 = {"Match.java", "Matches.java", "Structure.java", "Submission.java", "Table.java", "Token.java"};
     private static final String[] FILES_3 = {"Table.java", "Token.java"};
 

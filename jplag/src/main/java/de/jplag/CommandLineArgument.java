@@ -30,7 +30,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public enum CommandLineArgument {
 
-    ROOT_DIRECTORY("rootDir", String.class),
+    ROOT_DIRECTORY(new Builder("rootDir", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     LANGUAGE(new Builder("-l", String.class).defaultsTo(LanguageOption.getDefault().getDisplayName()).choices(LanguageOption.getAllDisplayNames())),
     BASE_CODE("-bc", String.class),
     VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices(List.of("quiet", "long"))), // TODO SH: Replace verbosity when integrating a real logging library
@@ -61,6 +61,7 @@ public enum CommandLineArgument {
 
 
     private final String flag;
+    private final NumberOfArgumentValues numberOfValues;
     private final String description;
     private final Optional<Object> defaultValue;
     private final Optional<Collection<String>> choices;
@@ -83,6 +84,7 @@ public enum CommandLineArgument {
         this.mutuallyExclusiveGroup = builder.mutuallyExclusiveGroup;
         this.action = builder.action;
         this.metaVar = builder.metaVar;
+        this.numberOfValues = builder.nargs.orElse(NumberOfArgumentValues.SINGLE_VALUE);
         this.description = retrieveDescriptionFromMessages();
     }
 
@@ -101,14 +103,28 @@ public enum CommandLineArgument {
     }
 
     /**
-     * Returns the value of this argument. Convenience method for {@link Namespace#get(String)} and
-     * {@link CommandLineArgument#flagWithoutDash()}.
+     * Returns the value of this argument for arguments with a single value. Convenience method for
+     * {@link Namespace#get(String)} and {@link CommandLineArgument#flagWithoutDash()}.
      * @param <T> is the argument type.
      * @param namespace stores a value for the argument.
      * @return the argument value.
      */
     public <T> T getFrom(Namespace namespace) {
         return namespace.get(flagWithoutDash());
+    }
+
+    /**
+     * Returns the value of this argument for arguments that allow more than a single value. Convenience method for
+     * {@link Namespace#getList(String)} and {@link CommandLineArgument#flagWithoutDash()}.
+     * <p>
+     * Depending on the action of the option, result types may change.
+     * </p>
+     * @param <T> is the argument type.
+     * @param namespace stores a value for the argument.
+     * @return the argument value.
+     */
+    public <T> List<T> getListFrom(Namespace namespace) {
+        return namespace.getList(flagWithoutDash());
     }
 
     /**
@@ -130,11 +146,14 @@ public enum CommandLineArgument {
         if (type == Boolean.class) {
             argument.action(storeTrue());
         }
+        if (numberOfValues == NumberOfArgumentValues.ONE_OR_MORE_VALUES) {
+            argument.nargs(numberOfValues.toString());
+        }
     }
 
     /**
-     * Dynamically loads the description from the message file. For an option named <code>NEW_OPTION</code> the messages key should
-     * be <code>CommandLineArgument.NewOption</code>.
+     * Dynamically loads the description from the message file. For an option named <code>NEW_OPTION</code> the messages key
+     * should be <code>CommandLineArgument.NewOption</code>.
      */
     private String retrieveDescriptionFromMessages() {
         StringBuilder builder = new StringBuilder();
@@ -154,6 +173,7 @@ public enum CommandLineArgument {
         private Optional<String> mutuallyExclusiveGroup = Optional.empty();
         private Optional<ArgumentAction> action = Optional.empty();
         private Optional<String> metaVar = Optional.empty();
+        private Optional<NumberOfArgumentValues> nargs = Optional.empty();
 
         public Builder(String flag, Class<?> type) {
             this.flag = flag;
@@ -187,6 +207,11 @@ public enum CommandLineArgument {
 
         public Builder metaVar(String metaVar) {
             this.metaVar = Optional.of(metaVar);
+            return this;
+        }
+
+        public Builder nargs(NumberOfArgumentValues nargs) {
+            this.nargs = Optional.of(nargs);
             return this;
         }
     }

@@ -2,6 +2,7 @@ package de.jplag;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.Consumer;
 
 import de.jplag.exceptions.ExitException;
@@ -20,7 +21,7 @@ public abstract class TestBase {
 
     protected String getBasePath(String... subs) {
         String path = BASE_PATH;
-        for (String sub: subs) {
+        for (String sub : subs) {
             path += File.separator + sub;
         }
         return path;
@@ -37,7 +38,11 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(Path.of(BASE_PATH, testSampleName).toString(), LanguageOption.JAVA);
+        return runJPlag(List.of(getBasePath(testSampleName)), customization);
+    }
+
+    protected JPlagResult runJPlag(List<String> testPaths, Consumer<JPlagOptions> customization) throws ExitException {
+        JPlagOptions options = new JPlagOptions(testPaths, LanguageOption.JAVA);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);

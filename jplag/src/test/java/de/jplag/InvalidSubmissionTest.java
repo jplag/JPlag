@@ -25,7 +25,7 @@ public class InvalidSubmissionTest extends TestBase {
     public void testInvalidSubmissionsWithDebug() throws ExitException {
         try {
             runJPlag(SAMPLE_NAME, it -> it.setDebugParser(true));
-            fail();
+            fail("No submission exception was thrown!");
         } catch (SubmissionException e) {
             System.out.println(e.getMessage());
         } finally {
