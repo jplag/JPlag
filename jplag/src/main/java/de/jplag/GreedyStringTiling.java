@@ -49,7 +49,7 @@ public class GreedyStringTiling implements TokenConstants {
         for (int i = 0; i < hashLength; i++) {
             hash = (2 * hash) + (tokenList.getToken(i).type & modulo);
             hashedLength++;
-            if (tokenList.getToken(i).marked) {
+            if (tokenList.getToken(i).isMarked()) {
                 hashedLength = 0;
             }
         }
@@ -58,14 +58,14 @@ public class GreedyStringTiling implements TokenConstants {
         if (makeTable) {
             for (int i = 0; i < loops; i++) {
                 if (hashedLength >= hashLength) {
-                    tokenList.getToken(i).hash = hash;
+                    tokenList.getToken(i).setHash(hash);
                     tokenList.tokenHashes.put(hash, i);   // add into hashtable
                 } else {
-                    tokenList.getToken(i).hash = -1;
+                    tokenList.getToken(i).setHash(-1);
                 }
                 hash -= factor * (tokenList.getToken(i).type & modulo);
                 hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
-                if (tokenList.getToken(i + hashLength).marked) {
+                if (tokenList.getToken(i + hashLength).isMarked()) {
                     hashedLength = 0;
                 } else {
                     hashedLength++;
@@ -73,10 +73,10 @@ public class GreedyStringTiling implements TokenConstants {
             }
         } else {
             for (int i = 0; i < loops; i++) {
-                tokenList.getToken(i).hash = (hashedLength >= hashLength) ? hash : -1;
+                tokenList.getToken(i).setHash((hashedLength >= hashLength) ? hash : -1);
                 hash -= factor * (tokenList.getToken(i).type & modulo);
                 hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
-                if (tokenList.getToken(i + hashLength).marked) {
+                if (tokenList.getToken(i + hashLength).isMarked()) {
                     hashedLength = 0;
                 } else {
                     hashedLength++;
@@ -151,27 +151,27 @@ public class GreedyStringTiling implements TokenConstants {
             maxMatch = minimumTokenMatch;
             matches.clear();
             for (int x = 0; x < first.size() - maxMatch; x++) {
-                List<Integer> hashedTokens = second.tokenHashes.get(first.getToken(x).hash);
-                if (first.getToken(x).marked || first.getToken(x).hash == -1) {
+                List<Integer> hashedTokens = second.tokenHashes.get(first.getToken(x).getHash());
+                if (first.getToken(x).isMarked() || first.getToken(x).getHash() == -1) {
                     continue;
                 }
                 inner: for (Integer y : hashedTokens) {
-                    if (second.getToken(y).marked || maxMatch >= second.size() - y) { // >= because of pivots!
+                    if (second.getToken(y).isMarked() || maxMatch >= second.size() - y) { // >= because of pivots!
                         continue;
                     }
 
                     int j, hx, hy;
                     for (j = maxMatch - 1; j >= 0; j--) { // begins comparison from behind
-                        if (first.getToken(hx = x + j).type != second.getToken(hy = y + j).type || first.getToken(hx).marked
-                                || second.getToken(hy).marked) {
+                        if (first.getToken(hx = x + j).type != second.getToken(hy = y + j).type || first.getToken(hx).isMarked()
+                                || second.getToken(hy).isMarked()) {
                             continue inner;
                         }
                     }
 
                     // expand match
                     j = maxMatch;
-                    while (first.getToken(hx = x + j).type == second.getToken(hy = y + j).type && !first.getToken(hx).marked
-                            && !second.getToken(hy).marked) {
+                    while (first.getToken(hx = x + j).type == second.getToken(hy = y + j).type && !first.getToken(hx).isMarked()
+                            && !second.getToken(hy).isMarked()) {
                         j++;
                     }
 
@@ -189,9 +189,11 @@ public class GreedyStringTiling implements TokenConstants {
                 comparison.addMatch(x, y, matches.get(i).getLength());
                 // in order that "Match" will be newly build (because reusing)
                 for (int j = matches.get(i).getLength(); j > 0; j--) {
-                    first.getToken(x).marked = second.getToken(y).marked = true; // mark all Tokens!
+                    first.getToken(x).setMarked(true); // mark all Tokens!
+                    second.getToken(y).setMarked(true);
                     if (isBaseCodeComparison) {
-                        first.getToken(x).basecode = second.getToken(y).basecode = true;
+                        first.getToken(x).setBasecode(true);
+                        second.getToken(y).setBasecode(true);
                     }
                     x++;
                     y++;
@@ -220,9 +222,9 @@ public class GreedyStringTiling implements TokenConstants {
     private void markTokens(TokenList tokenList, boolean isBaseCodeComparison) {
         for (Token token : tokenList.allTokens()) {
             if (isBaseCodeComparison) {
-                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN;
+                token.setMarked(token.type == FILE_END || token.type == SEPARATOR_TOKEN);
             } else {
-                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && options.hasBaseCode());
+                token.setMarked(token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.isBasecode() && options.hasBaseCode()));
             }
         }
     }

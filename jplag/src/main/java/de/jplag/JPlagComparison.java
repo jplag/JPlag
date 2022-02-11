@@ -79,7 +79,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
          */
         Set<String> collectedFiles = new LinkedHashSet<>();
         for (Match match : matches) {
-            collectedFiles.add(tokenList.getToken(match.getStart(j == 0)).file);
+            collectedFiles.add(tokenList.getToken(match.getStart(j == 0)).getFile());
         }
 
         /*
