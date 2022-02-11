@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import de.jplag.clustering.Algorithms;
 import de.jplag.clustering.ClusteringOptions;
-import de.jplag.clustering.algorithm.TopDownHierarchicalClustering;
+import de.jplag.clustering.algorithm.AgglomerativeClustering;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.strategy.ComparisonMode;
@@ -52,7 +52,7 @@ public enum CommandLineArgument {
     CLUSTER_SPECTRAL_MAX_RUNS(new Builder("--cluster-spectral-max-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("max").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxRuns())),
     CLUSTER_SPECTRAL_KMEANS_ITERATIONS(new Builder("--cluster-spectral-kmeans-interations", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("iterations").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxKMeansIterationPerRun())),
     CLUSTER_AGGLOMERATIVE_THRESHOLD(new Builder("--cluster-agglomerative-threshold", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("threshold").defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold())),
-    CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY(new Builder("--cluster-agglomerative-inter-cluster-similarity", TopDownHierarchicalClustering.InterClusterSimilarity.class).argumentGroup(CLUSTERING_GROUP_NAME).defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity())),
+    CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY(new Builder("--cluster-agglomerative-inter-cluster-similarity", AgglomerativeClustering.InterClusterSimilarity.class).argumentGroup(CLUSTERING_GROUP_NAME).defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity())),
     CLUSTER_PREPROCESSING_NONE(new Builder("--cluster-pp-none", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).action(Arguments.storeTrue())),
     CLUSTER_PREPROCESSING_CDF(new Builder("--cluster-pp-cdf", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).action(Arguments.storeTrue())),
     CLUSTER_PREPROCESSING_PERCENTILE(new Builder("--cluster-pp-percentile", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("percentile")),

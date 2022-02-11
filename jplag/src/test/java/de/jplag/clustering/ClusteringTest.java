@@ -90,10 +90,10 @@ public class ClusteringTest {
         RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(preprocessor.preprocessSimilarities(r.similarity.getData()));
 
         /*
-        TopDownHierachicalClustering.ClusteringOptions options = new TopDownHierachicalClustering.ClusteringOptions();
+        AgglomerativeClustering.ClusteringOptions options = new AgglomerativeClustering.ClusteringOptions();
         options.minimalSimilarity = 0.15f;
-        options.similarity = TopDownHierachicalClustering.InterClusterSimilarity.AVERAGE;
-        ClusteringAlgorithm clusteringAlg = new TopDownHierachicalClustering(options);
+        options.similarity = AgglomerativeClustering.InterClusterSimilarity.AVERAGE;
+        ClusteringAlgorithm clusteringAlg = new AgglomerativeClustering(options);
         */
         
         SpectralClustering clusteringAlg = new SpectralClustering(new SpectralClustering.ClusteringOptions());
@@ -123,10 +123,10 @@ public class ClusteringTest {
         RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(new CdfPreprocessor().preprocessSimilarities(r.similarity.getData()));
 
         /*
-        TopDownHierarchicalClustering.ClusteringOptions options = new TopDownHierarchicalClustering.ClusteringOptions();
+        AgglomerativeClustering.ClusteringOptions options = new AgglomerativeClustering.ClusteringOptions();
         options.minimalSimilarity = 0.3f;
-        options.similarity = TopDownHierarchicalClustering.InterClusterSimilarity.AVERAGE;
-        ClusteringAlgorithm clusteringAlg = new TopDownHierarchicalClustering(options);
+        options.similarity = AgglomerativeClustering.InterClusterSimilarity.AVERAGE;
+        ClusteringAlgorithm clusteringAlg = new AgglomerativeClustering(options);
         */
         
         SpectralClustering clusteringAlg = new SpectralClustering(new SpectralClustering.ClusteringOptions());

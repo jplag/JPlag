@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
-public class TopDownHierarchicalClustering implements ClusteringAlgorithm {
+public class AgglomerativeClustering implements ClusteringAlgorithm {
 
     private ClusteringOptions options;
 
-    public TopDownHierarchicalClustering(ClusteringOptions options) {
+    public AgglomerativeClustering(ClusteringOptions options) {
         this.options = options;
     }
 

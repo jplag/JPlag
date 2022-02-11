@@ -1,6 +1,6 @@
 package de.jplag.clustering.algorithm;
 
-import de.jplag.clustering.algorithm.TopDownHierarchicalClustering.ClusteringOptions;
+import de.jplag.clustering.algorithm.AgglomerativeClustering.ClusteringOptions;
 
 import static org.junit.Assert.assertTrue;
 
@@ -12,14 +12,14 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TopDownHierarchicalClusteringTest {
-    TopDownHierarchicalClustering clustering;
+public class AgglomerativeClusteringTest {
+    AgglomerativeClustering clustering;
 
     @Before
     public void init() {
         ClusteringOptions options = new ClusteringOptions();
         options.minimalSimilarity = 0.4f;
-        clustering = new TopDownHierarchicalClustering(options);
+        clustering = new AgglomerativeClustering(options);
     }
 
     @Test

@@ -9,7 +9,7 @@ import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.clustering.algorithm.ClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
-import de.jplag.clustering.algorithm.TopDownHierarchicalClustering;
+import de.jplag.clustering.algorithm.AgglomerativeClustering;
 import de.jplag.clustering.preprocessors.CdfPreprocessor;
 import de.jplag.clustering.preprocessors.PercentileThresholdProcessor;
 import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
@@ -24,10 +24,10 @@ public class ClusteringFactory {
         // init algorithm
         ClusteringAlgorithm ca = null;
         if (options.getAlgorithm() == Algorithms.AGGLOMERATIVE) {
-            TopDownHierarchicalClustering.ClusteringOptions clusteringOptions = new TopDownHierarchicalClustering.ClusteringOptions();
+            AgglomerativeClustering.ClusteringOptions clusteringOptions = new AgglomerativeClustering.ClusteringOptions();
             clusteringOptions.minimalSimilarity = options.getAgglomerativeThreshold();
             clusteringOptions.similarity = options.getAgglomerativeInterClusterSimilarity();
-            ca = new TopDownHierarchicalClustering(clusteringOptions);
+            ca = new AgglomerativeClustering(clusteringOptions);
         } else if (options.getAlgorithm() == Algorithms.SPECTRAL) {
             SpectralClustering.ClusteringOptions clusteringOptions = new SpectralClustering.ClusteringOptions();
             clusteringOptions.GPVariance = options.getSpectralGPVariance();
