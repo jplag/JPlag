@@ -35,8 +35,8 @@ public class ReportObjectFactory {
         List<JPlagComparison> comparisons = result.getComparisons();
         OverviewReport overviewReport = new OverviewReport();
 
-        //New update in JPlagOption. Not a single root dir but a list. Needs re-thinking and
-        //implementation also in report model.
+        // New update in JPlagOption. Not a single root dir but a list. Needs re-thinking and
+        // implementation also in report model.
         overviewReport.setSubmission_folder_path(result.getOptions().getRootDirectoryNames().get(0));
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().getBaseCodeSubmissionName().orElse("") : "";
