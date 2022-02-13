@@ -1,10 +1,15 @@
 package de.jplag;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Test;
+
+import de.jplag.exceptions.BasecodeException;
+import de.jplag.exceptions.ExitException;
 
 public class NormalComparisonTest extends TestBase {
 
@@ -38,12 +43,9 @@ public class NormalComparisonTest extends TestBase {
     }
 
     /**
-     * This case is more complex and consists out of 5 submissions with different plagiarism.
-     * A is the original code (coming from an older JPlag version)
-     * B is a partial copy of that code
-     * C is a full copy of that code
-     * D is dumb plagiarism, e.g., changed variable names, additional unneeded code, ...
-     * E is just a Hello World Java program
+     * This case is more complex and consists out of 5 submissions with different plagiarism. A is the original code (coming
+     * from an older JPlag version) B is a partial copy of that code C is a full copy of that code D is dumb plagiarism,
+     * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java errorConsumer
      */
     @Test
     public void testPartialPlagiarism() throws ExitException {
@@ -53,14 +55,9 @@ public class NormalComparisonTest extends TestBase {
         assertEquals(10, result.getComparisons().size());
 
         // All comparisons with E shall have no matches
-        result.getComparisons()
-                .stream()
-                .filter(comparison ->
-                        comparison.getSecondSubmission().getName().equals("E") ||
-                                comparison.getFirstSubmission().getName().equals("E"))
-                .forEach(comparison ->
-                        assertEquals(0f, comparison.similarity(), DELTA)
-                );
+        result.getComparisons().stream()
+                .filter(comparison -> comparison.getSecondSubmission().getName().equals("E") || comparison.getFirstSubmission().getName().equals("E"))
+                .forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
         assertEquals(24.6f, getSelectedPercent(result, "A", "B"), 0.1f);
@@ -80,18 +77,45 @@ public class NormalComparisonTest extends TestBase {
 
     // TODO SH: Methods like this should be moved to the API and also should accept wildcards
     private float getSelectedPercent(JPlagResult result, String nameA, String nameB) {
-        return getSelectedComparison(result, nameA, nameB)
-                .map(JPlagComparison::similarity)
-                .orElse(-1f);
+        return getSelectedComparison(result, nameA, nameB).map(JPlagComparison::similarity).orElse(-1f);
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
-        return result.getComparisons().stream()
-                .filter(comparison ->
-                        comparison.getFirstSubmission().getName().equals(nameA) &&
-                                comparison.getSecondSubmission().getName().equals(nameB) ||
-                                comparison.getFirstSubmission().getName().equals(nameB) &&
-                                        comparison.getSecondSubmission().getName().equals(nameA))
+        return result.getComparisons().stream().filter(
+                comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
+                        || comparison.getFirstSubmission().getName().equals(nameB) && comparison.getSecondSubmission().getName().equals(nameA))
                 .findFirst();
+    }
+
+    @Test
+    public void testMultiRootDirNoBasecode() throws ExitException {
+        List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 3 + 2 submissions.
+        JPlagResult result = runJPlag(paths, options -> {
+        });
+        assertEquals(5, result.getNumberOfSubmissions());
+    }
+
+    @Test
+    public void testMultiRootDirSeparateBasecode() throws ExitException {
+        String basecodePath = getBasePath("basecode-base");
+        List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 3 + 2 submissions.
+        JPlagResult result = runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
+        assertEquals(5, result.getNumberOfSubmissions());
+    }
+
+    @Test
+    public void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
+        String basecodePath = getBasePath("basecode", "base");
+        List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 2 + 2 submissions.
+        JPlagResult result = runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
+        assertEquals(4, result.getNumberOfSubmissions());
+    }
+
+    @Test(expected = BasecodeException.class)
+    public void testMultiRootDirBasecodeName() throws ExitException {
+        List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate"));
+        String basecodePath = "base"; // Should *not* find basecode/base
+        runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
+        fail("No basecode exception was thrown!");
     }
 }

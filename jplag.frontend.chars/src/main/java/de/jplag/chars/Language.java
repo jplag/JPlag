@@ -2,7 +2,7 @@ package de.jplag.chars;
 
 import java.io.File;
 
-import de.jplag.Program;
+import de.jplag.ErrorConsumer;
 import de.jplag.Token;
 import de.jplag.TokenList;
 
@@ -10,78 +10,73 @@ import de.jplag.TokenList;
  * read in text files as characters
  */
 public class Language implements de.jplag.Language {
-	private Program program;
+    private ErrorConsumer program;
 
-	private de.jplag.chars.Parser parser = new Parser();
+    private de.jplag.chars.Parser parser = new Parser();
 
-	public Language(Program program) {
-		this.program = program;
-		this.parser.setProgram(this.program);
-	}
+    public Language(ErrorConsumer program) {
+        this.program = program;
+        this.parser.setProgram(this.program);
+    }
 
-	@Override
+    @Override
     public String[] suffixes() {
-		String[] res = { ".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex" };
-		return res;
-	}
+        String[] res = {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
+        return res;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see de.jplag.Language#errorsCount()
-	 */
-	@Override
+    @Override
     public int errorCount() {
-		return this.parser.errorsCount();
-	}
+        return this.parser.errorsCount();
+    }
 
-	@Override
+    @Override
     public String getName() {
-		return "Character AbstractParser";
-	}
+        return "Character AbstractParser";
+    }
 
-	@Override
+    @Override
     public String getShortName() {
-		return "char";
-	}
+        return "char";
+    }
 
-	@Override
+    @Override
     public int minimumTokenMatch() {
-		return 10;
-	}
+        return 10;
+    }
 
-	@Override
+    @Override
     public TokenList parse(File dir, String[] files) {
-		return this.parser.parse(dir, files);
-	}
+        return this.parser.parse(dir, files);
+    }
 
-	@Override
+    @Override
     public boolean hasErrors() {
-		return this.parser.hasErrors();
-	}
+        return this.parser.hasErrors();
+    }
 
-	@Override
+    @Override
     public boolean supportsColumns() {
-		return false;
-	}
+        return false;
+    }
 
-	@Override
+    @Override
     public boolean isPreformatted() {
-		return false;
-	}
+        return false;
+    }
 
-	@Override
+    @Override
     public boolean usesIndex() {
-		return true;
-	}
+        return true;
+    }
 
-	@Override
+    @Override
     public int numberOfTokens() {
-		return 36;
-	}
+        return 36;
+    }
 
-	@Override
+    @Override
     public String type2string(int type) {
-		return Token.type2string(type);
-	}
+        return Token.type2string(type);
+    }
 }

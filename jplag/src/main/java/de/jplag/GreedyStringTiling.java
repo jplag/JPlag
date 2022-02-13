@@ -3,9 +3,11 @@ package de.jplag;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.jplag.options.JPlagOptions;
+
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
- * to the classes {@link TokenList}, {@link Token}, and {@link Match}. While is class was reworked, it still contains
+ * to the classes {@link TokenList}, {@link Token}, and {@link Match}. While this class was reworked, it still contains
  * some quirks from the initial version.
  * @see <a href=
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
@@ -13,17 +15,17 @@ import java.util.List;
  */
 public class GreedyStringTiling implements TokenConstants {
 
-    private JPlag program;
+    private final JPlagOptions options;
 
-    public GreedyStringTiling(JPlag program) {
-        this.program = program;
+    public GreedyStringTiling(JPlagOptions options) {
+        this.options = options;
     }
 
     /**
-     * Creating hashes in linear time. The hash-code will be written in every Token for the next <hash_length> token
+     * Creating hashes in linear time. The hash-code will be written in every Token for the next &lt;hash_length&gt; token
      * (includes the Token itself).
      * @param tokenList contains the tokens.
-     * @param hashLength is the hash length (condition: 1 < hashLength < 26)
+     * @param hashLength is the hash length (condition: 1 &lt; hashLength &lt; 26)
      * @param makeTable determines if a simple hash table is created in the structure.
      */
     public void createHashes(TokenList tokenList, int hashLength, boolean makeTable) {
@@ -92,7 +94,7 @@ public class GreedyStringTiling implements TokenConstants {
         return swapAndCompare(firstSubmission, secondSubmission, true);
     }
 
-    private final JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
+    private final JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
         Submission smallerSubmission, largerSubmission;
         if (firstSubmission.getTokenList().size() > secondSubmission.getTokenList().size()) {
             smallerSubmission = secondSubmission;
@@ -107,35 +109,35 @@ public class GreedyStringTiling implements TokenConstants {
             smallerSubmission = largerSubmission;
             largerSubmission = swap;
         }
-        return compare(smallerSubmission, largerSubmission, withBaseCode);
+        return compare(smallerSubmission, largerSubmission, isBaseCodeComparison);
     }
 
     /**
      * Compares two submissions. FILE_END is used as pivot
      * @param firstSubmission is the submission with the smaller sequence.
      * @param secondSubmission is the submission with the larger sequence.
-     * @param withBaseCode specifies whether one of the submissions is the base code.
+     * @param isBaseCodeComparison specifies whether one of the submissions is the base code.
      * @return the comparison results.
      */
-    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean withBaseCode) {
+    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
         // first and second refer to the list of tokens of the first and second submission:
         TokenList first = firstSubmission.getTokenList();
         TokenList second = secondSubmission.getTokenList();
 
         // Initialize:
         JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
-        int minimumTokenMatch = program.getOptions().getMinimumTokenMatch(); // minimal required token match
+        int minimumTokenMatch = options.getMinimumTokenMatch(); // minimal required token match
 
         if (first.size() <= minimumTokenMatch || second.size() <= minimumTokenMatch) { // <= because of pivots!
             return comparison;
         }
 
-        markTokens(first, withBaseCode);
-        markTokens(second, withBaseCode);
+        markTokens(first, isBaseCodeComparison);
+        markTokens(second, isBaseCodeComparison);
 
         // create hashes:
         if (first.hash_length != minimumTokenMatch) {
-            createHashes(first, minimumTokenMatch, withBaseCode); // don't make table if it is not a base code comparison
+            createHashes(first, minimumTokenMatch, isBaseCodeComparison); // don't make table if it is not a base code comparison
         }
         if (second.hash_length != minimumTokenMatch || second.tokenHashes == null) {
             createHashes(second, minimumTokenMatch, true);
@@ -173,7 +175,8 @@ public class GreedyStringTiling implements TokenConstants {
                         j++;
                     }
 
-                    if (j > maxMatch && !withBaseCode || j != maxMatch && withBaseCode) {  // new biggest match? -> delete current smaller
+                    if (j > maxMatch && !isBaseCodeComparison || j != maxMatch && isBaseCodeComparison) {  // new biggest match? -> delete current
+                                                                                                           // smaller
                         matches.clear();
                         maxMatch = j;
                     }
@@ -187,7 +190,7 @@ public class GreedyStringTiling implements TokenConstants {
                 // in order that "Match" will be newly build (because reusing)
                 for (int j = matches.get(i).getLength(); j > 0; j--) {
                     first.getToken(x).marked = second.getToken(y).marked = true; // mark all Tokens!
-                    if (withBaseCode) {
+                    if (isBaseCodeComparison) {
                         first.getToken(x).basecode = second.getToken(y).basecode = true;
                     }
                     x++;
@@ -209,12 +212,17 @@ public class GreedyStringTiling implements TokenConstants {
         matches.add(new Match(startA, startB, length));
     }
 
-    private void markTokens(TokenList tokenList, boolean withBaseCode) {
+    /**
+     * Disable finding a match at separator tokens and basecode matches for non-basecode comparisons.
+     * @param tokenList Tokens to mark.
+     * @param isBaseCodeComparison Whether the {@link Token#basecode} matches should be enabled for matching.
+     */
+    private void markTokens(TokenList tokenList, boolean isBaseCodeComparison) {
         for (Token token : tokenList.allTokens()) {
-            if (withBaseCode) {
+            if (isBaseCodeComparison) {
                 token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN;
             } else {
-                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && program.getOptions().hasBaseCode());
+                token.marked = token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.basecode && options.hasBaseCode());
             }
         }
     }

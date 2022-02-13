@@ -20,4 +20,7 @@ updates:
     commit-message:
       prefix: "Dependency"
       include: "scope"
+    labels:
+      - "dependencies"
+      - "minor"
 

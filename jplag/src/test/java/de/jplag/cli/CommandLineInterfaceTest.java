@@ -2,20 +2,19 @@ package de.jplag.cli;
 
 import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
 import static java.util.stream.Collectors.toSet;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
-import de.jplag.CLI;
-import de.jplag.CommandLineArgument;
-import de.jplag.ExitException;
-import de.jplag.JPlag;
-import de.jplag.JPlagResult;
-import de.jplag.options.JPlagOptions;
 import net.sourceforge.argparse4j.inf.Namespace;
 
+import de.jplag.CLI;
+import de.jplag.CommandLineArgument;
+import de.jplag.options.JPlagOptions;
+
 /**
- * Test base for tests regarding the {@link CLI} and any {@link CommandLineArgument}.
+ * Test base for tests regarding the {@link CLI} and any {@link CommandLineArgument}. Solely tests if the arguments set
+ * via the command line interface are propagated correctly into options. JPlag is not executed for the different command
+ * line arguments, thus these tests do not test the functionality of the options during the comparison.
  * @author Timur Saglam
  */
 public class CommandLineInterfaceTest {
@@ -32,7 +31,7 @@ public class CommandLineInterfaceTest {
     private String parsedKeys(String... arguments) {
         var keys = namespace.getAttrs().keySet().stream()
                 .filter(key -> key.equals(ROOT_DIRECTORY.flag()) || Arrays.stream(arguments).anyMatch(arg -> arg.contains("-" + key)));
-        return keys.map(it -> it + "=" + namespace.get(it)).collect(toSet()).toString();
+        return keys.map(it -> it.toString() + "=" + namespace.get(it)).collect(toSet()).toString();
     }
 
     /**
@@ -55,25 +54,6 @@ public class CommandLineInterfaceTest {
         namespace = cli.parseArguments(arguments);
         System.out.println("Parsed arguments: " + parsedKeys(arguments));
         options = cli.buildOptionsFromArguments(namespace);
-    }
-
-    /**
-     * Runs JPlag via the command line interface. Sets {@link CommandLineInterfaceTest#cli},
-     * {@link CommandLineInterfaceTest#namespace}, and {@link CommandLineInterfaceTest#options}.
-     * @param arguments arguments are the command line interface arguments.
-     * @return the result of the JPlag run.
-     */
-    protected JPlagResult runViaCLI(String... arguments) {
-        buildOptionsFromCLI(arguments);
-        try {
-            JPlag program = new JPlag(options);
-            return program.run();
-        } catch (ExitException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-            e.printStackTrace();
-        }
-        throw new IllegalStateException("Should never be reached!");
     }
 
 }

@@ -7,10 +7,12 @@ import java.util.Optional;
 
 import org.junit.Test;
 
+import de.jplag.exceptions.ExitException;
 import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
- * Currently just a copy of {@link NormalComparisonTest} but for the {@link ParallelComparisonStrategy}.
+ * Currently just a copy of {@link NormalComparisonTest} but for the {@link ParallelComparisonStrategy}. // TODO TS:
+ * de-duplicate this
  * @author Timur Saglam
  */
 public class ParallelComparisonTest extends TestBase {
@@ -47,7 +49,7 @@ public class ParallelComparisonTest extends TestBase {
     /**
      * This case is more complex and consists out of 5 submissions with different plagiarism. A is the original code (coming
      * from an older JPlag version) B is a partial copy of that code C is a full copy of that code D is dumb plagiarism,
-     * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java program
+     * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java errorConsumer
      */
     @Test
     public void testPartialPlagiarism() throws ExitException {
@@ -83,8 +85,8 @@ public class ParallelComparisonTest extends TestBase {
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
-        return result.getComparisons().stream()
-                .filter(comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
+        return result.getComparisons().stream().filter(
+                comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
                         || comparison.getFirstSubmission().getName().equals(nameB) && comparison.getSecondSubmission().getName().equals(nameA))
                 .findFirst();
     }

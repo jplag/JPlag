@@ -11,7 +11,7 @@ public class Match {
 
     /**
      * Creates a match.
-     * @param startOfSecond is the starting token index in the first submission.
+     * @param startOfFirst is the starting token index in the first submission.
      * @param startOfSecond is the starting token index in the second submission.
      * @param length is the length of these similar sections (number of tokens).
      */
@@ -33,6 +33,15 @@ public class Match {
      */
     public int getStartOfSecond() {
         return startOfSecond;
+    }
+
+    /**
+     * @param getFirst Whether to return the starting token index of the first submission, else the starting token index of
+     * the second submission is returned.
+     * @return Start index of the requested submission.
+     */
+    public int getStart(boolean getFirst) {
+        return getFirst ? startOfFirst : startOfSecond;
     }
 
     /**

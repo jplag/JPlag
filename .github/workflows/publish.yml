@@ -1,0 +1,28 @@
+name: Deploy to Maven Central
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Maven Central Repository
+        uses: actions/setup-java@v2
+        with:
+          java-version: '14'
+          distribution: 'zulu'
+      - name: Set maven settings.xml
+        uses: whelk-io/maven-settings-xml-action@v20
+        with:
+          servers: '[{ "id": "ossrh", "username": "jplag", "password": "${{ secrets.OSSRH_TOKEN }}" }]'
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v4
+        with:
+          gpg_private_key: ${{ secrets.PGP_SECRET }}
+          passphrase: ${{ secrets.PGP_PW }}
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          GPG_PASSPHRASE: ${{ secrets.PGP_PW }}

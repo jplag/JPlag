@@ -1,7 +1,8 @@
 package de.jplag.cli;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+
+import java.util.Optional;
 
 import org.junit.Test;
 
@@ -14,13 +15,13 @@ public class BaseCodeOptionTest extends CommandLineInterfaceTest {
     @Test
     public void testDefaultValue() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertNull(options.getBaseCodeSubmissionName());
+        assertEquals(Optional.empty(), options.getBaseCodeSubmissionName());
     }
 
     @Test
     public void testCustomName() {
         String argument = buildArgument(CommandLineArgument.BASE_CODE, NAME);
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(NAME, options.getBaseCodeSubmissionName());
+        assertEquals(NAME, options.getBaseCodeSubmissionName().get());
     }
 }

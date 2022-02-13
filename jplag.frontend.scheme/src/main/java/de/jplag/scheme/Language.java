@@ -2,77 +2,77 @@ package de.jplag.scheme;
 
 import java.io.File;
 
-import de.jplag.Program;
+import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
-	public Language(Program program) {
-		this.parser = new Parser();
-		this.parser.setProgram(program);
+    public Language(ErrorConsumer program) {
+        this.parser = new Parser();
+        this.parser.setProgram(program);
 
-	}
+    }
 
-	@Override
+    @Override
     public int errorCount() {
-		return this.parser.errorsCount();
-	}
+        return this.parser.errorsCount();
+    }
 
-	private de.jplag.scheme.Parser parser; // Not yet instantiated? See constructor!
+    private de.jplag.scheme.Parser parser; // Not yet instantiated? See constructor!
 
-	@Override
+    @Override
     public String[] suffixes() {
-		String[] res = { ".scm", ".SCM", ".ss", ".SS" };
-		return res;
-	}
+        String[] res = {".scm", ".SCM", ".ss", ".SS"};
+        return res;
+    }
 
-	@Override
+    @Override
     public String getName() {
-		return "SchemeR4RS AbstractParser [basic markup]";
-	}
+        return "SchemeR4RS AbstractParser [basic markup]";
+    }
 
-	@Override
+    @Override
     public String getShortName() {
-		return "scheme";
-	}
+        return "scheme";
+    }
 
-	@Override
+    @Override
     public int minimumTokenMatch() {
-		return 13;
-	}
+        return 13;
+    }
 
-	@Override
+    @Override
     public boolean supportsColumns() {
-		return false;
-	}
+        return false;
+    }
 
-	@Override
+    @Override
     public boolean isPreformatted() {
-		return true;
-	}
+        return true;
+    }
 
-	@Override
+    @Override
     public boolean usesIndex() {
-		return false;
-	}
+        return false;
+    }
 
-	@Override
+    @Override
     public TokenList parse(File dir, String[] files) {
-		return this.parser.parse(dir, files);
-	}
+        return this.parser.parse(dir, files);
+    }
 
-	@Override
+    @Override
     public boolean hasErrors() {
-		return this.parser.hasErrors();
-	}
+        return this.parser.hasErrors();
+    }
 
-	@Override
+    @Override
     public int numberOfTokens() {
-		return SchemeTokenConstants.NUM_DIFF_TOKENS;
-	}
+        return SchemeTokenConstants.NUM_DIFF_TOKENS;
+    }
 
-	@Override
+    @Override
     public String type2string(int type) {
-		return SchemeToken.type2string(type);
-	}
+        return SchemeToken.type2string(type);
+    }
 }

@@ -13,11 +13,12 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
 /**
- * These tests are not intended to be used automatically but rather manually prior to releases.
- * These tests shall be used with large data sets (e.g., 100+ submissions) in order to validate the core functionality.
+ * These tests are not intended to be used automatically but rather manually prior to releases. These tests shall be
+ * used with large data sets (e.g., 100+ submissions) in order to validate the core functionality.
  */
 public class VolumeTest extends TestBase {
 
@@ -39,12 +40,11 @@ public class VolumeTest extends TestBase {
     public void volumeComparisonTest() throws ExitException, IOException {
 
         // Always succeed if not executed in an appropriate environment
-        if(!new File(this.getBasePath()).exists()) {
+        if (!new File(this.getBasePath()).exists()) {
             return;
         }
 
-        var results = runJPlag("data",
-                jPlagOptions -> jPlagOptions.setMaximumNumberOfComparisons(-1));
+        var results = runJPlag("data", jPlagOptions -> jPlagOptions.setMaximumNumberOfComparisons(-1));
 
         var csv = readCSVResults(String.format("%s/%s", this.getBasePath(), "matches_avg.csv"));
 
@@ -67,7 +67,7 @@ public class VolumeTest extends TestBase {
         lines.forEach(line -> {
             var entries = line.split(";");
 
-            if(entries.length != 4) {
+            if (entries.length != 4) {
                 throw new IllegalArgumentException(String.format("Illegal line: '%s'", line));
             }
 

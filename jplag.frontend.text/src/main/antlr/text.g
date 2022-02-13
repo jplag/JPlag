@@ -1,30 +1,14 @@
-/* Hey Emacs, this is -*- mode: java; page-delimiter: "^%%$"; -*- */
-
 header
 {
 
 package de.jplag.text;
 
-import de.jplag.InputState;
-import de.jplag.ParserToken;
-
-//import java.io.InputStream;
-//import java.io.InputStreamReader;
-//import java.io.FileInputStream;
-import java.io.IOException;
 }
 
 // tell ANTLR that we want to generate Java source code
 options
 {
   language="Java";
-}
-
-// Import the necessary classes
-{
-  //import antlr.CharBuffer;
-  //import antlr.collections.AST;
-  //import antlr.ParserException;
 }
 
 class TextParser extends Parser;
@@ -41,25 +25,6 @@ options
 
 {
 public de.jplag.text.Parser parser;
-  /**
-   * The main routine is just for testing.
-   */
-  /*public static void main(String[] args) throws Exception
-    {
-      try
-	{
-	  InputStream in = new FileInputStream(args[0]);
-	  WordParser parser = new WordParser(in);
-	  AST ast = parser.makeAST();
-	  ASTVisitor visitor = new ASTVisitor(System.out);
-	  visitor.visit(ast);
-	}
-      catch(Exception e)
-        {
-	  System.err.println("exception: " + e);
-	  throw e;   // so we can get stack trace
-        }      
-	}*/
 }
 
 file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
@@ -67,6 +32,11 @@ file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
 //----------------------------------------------------------------------------
 // The Text scanner
 //----------------------------------------------------------------------------
+
+{
+import de.jplag.text.InputState;
+import de.jplag.text.ParserToken;
+}
 
 class TextLexer extends Lexer;
 options
@@ -79,30 +49,30 @@ options
 
 {
     public void newline() {
-	  super.newline();
-	  ((InputState)inputState).column = 1;
+        super.newline();
+        ((InputState) inputState).column = 1;
     }
 
     public void consume() throws antlr.CharStreamException {
-      if ( inputState.guessing == 0 ) {
-	    InputState state = (InputState)inputState;
-	    if (text.length()==0) {
-	      // remember token start column
-	      state.tokColumn = state.column;
-	    }
-	    state.column++;
-      }
-      super.consume();
+        if (inputState.guessing == 0) {
+            InputState state = (InputState) inputState;
+            if (text.length() == 0) {
+                // remember token start column
+                state.tokColumn = state.column;
+            }
+            state.column++;
+        }
+        super.consume();
     }
-    
+
     protected Token makeToken(int t) {
-      ParserToken tok = (ParserToken)super.makeToken(t);
-      tok.setColumn(((InputState)inputState).tokColumn);
-      return tok;
+        ParserToken token = (ParserToken) super.makeToken(t);
+        token.setColumn(((InputState) inputState).tokColumn);
+        return token;
     }
 }
 
-WORD 
+WORD
 options { paraphrase = "an identifier"; } :
   (( '0'..'9') | ('A'..'Z') | ('a'..'z') |
    ('\300' .. '\326') | ('\330' .. '\366') | ('\370' .. '\377'))+ ;
@@ -114,7 +84,7 @@ PUNCTUATION : (	'!' | '"' | '\'' | '(' | ')' | ',' | '-' | '.' |
 SPECIALS : ('#' | '$' | '%' | '&' | '+' | '<' | '=' | '*' |
 	    '/' | '>' | '@' | '\\' | '^' | '_' | '|' | '~' |
 	    ('\241' .. '\252') | ('\254' .. '\263') | ('\265' .. '\272') |
-	    ('\274' .. '\276') | '\327' | '\367' | ('\200' .. '\237') ) ; 
+	    ('\274' .. '\276') | '\327' | '\367' | ('\200' .. '\237') ) ;
 
 // Whitespace -- ignored
 SPACE : ( ' '

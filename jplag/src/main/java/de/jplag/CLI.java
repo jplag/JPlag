@@ -8,8 +8,8 @@ import static de.jplag.CommandLineArgument.LANGUAGE;
 import static de.jplag.CommandLineArgument.MIN_TOKEN_MATCH;
 import static de.jplag.CommandLineArgument.RESULT_FOLDER;
 import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
-import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
 import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
+import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
 import static de.jplag.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.CommandLineArgument.SUFFIXES;
 import static de.jplag.CommandLineArgument.VERBOSITY;
@@ -17,15 +17,17 @@ import static de.jplag.CommandLineArgument.VERBOSITY;
 import java.io.File;
 import java.util.Random;
 
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
+
+import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;
 import de.jplag.reporting.Report;
 import de.jplag.strategy.ComparisonMode;
-import net.sourceforge.argparse4j.ArgumentParsers;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Command line interface class, allows using via command line.
@@ -59,7 +61,7 @@ public class CLI {
             Report report = new Report(reportDir, options);
             report.writeResult(result);
         } catch (ExitException exception) {
-            System.out.println("Error: " + exception.getReport());
+            System.out.println("Error: " + exception.getMessage());
             System.exit(1);
         }
     }
@@ -101,7 +103,7 @@ public class CLI {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
         LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getFrom(namespace), language);
+        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getListFrom(namespace), language);
         options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
         options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
         options.setDebugParser(DEBUG.getFrom(namespace));

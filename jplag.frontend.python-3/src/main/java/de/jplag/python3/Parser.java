@@ -27,11 +27,11 @@ public class Parser extends AbstractParser implements Python3TokenConstants {
         struct = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {
-            getProgram().print(null, "Parsing file " + files[i] + "\n");
+            getErrorConsumer().print(null, "Parsing file " + files[i]);
             if (!parseFile(dir, files[i])) {
                 errors++;
             }
-            System.gc();//Emeric
+            System.gc();// Emeric
             struct.addToken(new Python3Token(FILE_END, files[i], -1, -1, -1));
         }
         this.parseEnd();
@@ -64,7 +64,7 @@ public class Parser extends AbstractParser implements Python3TokenConstants {
             }
 
         } catch (IOException e) {
-            getProgram().addError("Parsing Error in '" + file + "':\n" + e.getMessage() + "\n");
+            getErrorConsumer().addError("Parsing Error in '" + file + "':\n" + e.getMessage());
             return false;
         }
 
@@ -77,6 +77,7 @@ public class Parser extends AbstractParser implements Python3TokenConstants {
     }
 
     public void addEnd(int type, Token tok) {
-        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), struct.getToken(struct.size()-1).getColumn() + 1,0));
+        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(),
+                struct.getToken(struct.size() - 1).getColumn() + 1, 0));
     }
 }

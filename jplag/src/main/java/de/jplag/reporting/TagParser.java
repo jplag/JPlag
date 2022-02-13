@@ -3,7 +3,7 @@ package de.jplag.reporting;
 public class TagParser {
 
     /**
-     * Replaces all "{<index>_description}" tags inside the message string with params[<index>-1].
+     * Replaces all "{&lt;index&gt;_description}" tags inside the message string with params[&lt;index&gt;-1].
      * <p>
      * Example: parse("blb {1_n/a} d {3_desc} sf {2_bla} d", new String[] {"#", blabla(), null}); returns "blb # d null sf
      * blab d", if blabla() returns "blab"
