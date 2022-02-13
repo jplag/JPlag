@@ -1,4 +1,5 @@
 export type Cluster = {
-    avgSim: number,
+    averageSimilarity: number,
+    strength: number,
     members: Array<string>
 }

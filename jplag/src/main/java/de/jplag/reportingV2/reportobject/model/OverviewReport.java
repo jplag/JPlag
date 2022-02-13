@@ -16,6 +16,7 @@ public class OverviewReport {
     private long execution_time;
     private List<String> comparison_names;
     private List<Metric> metrics;
+    private List<Cluster> clusters;
 
     public OverviewReport() {
         submission_folder_path = "";
@@ -28,6 +29,7 @@ public class OverviewReport {
         match_sensitivity = 0;
         date_of_execution = "";
         execution_time = 0;
+        clusters = List.of();
     }
 
     /*******************************
@@ -82,6 +84,10 @@ public class OverviewReport {
         return metrics;
     }
 
+    public List<Cluster> getClusters() {
+        return clusters;
+    }
+
     /*******************************
      * SETTERS
      *******************************/
@@ -132,5 +138,9 @@ public class OverviewReport {
 
     public void setMetrics(List<Metric> metrics) {
         this.metrics = metrics;
+    }
+
+    public void setClusters(List<Cluster> clusters) {
+        this.clusters = clusters;
     }
 }

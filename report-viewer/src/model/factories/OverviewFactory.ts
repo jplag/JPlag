@@ -42,7 +42,8 @@ export class OverviewFactory {
             (json.clusters as Array<unknown>).forEach(c => {
                 const cluster = c as Record<string, unknown>
                 const newCluster: Cluster = {
-                    avgSim: cluster.avgSim as number,
+                    averageSimilarity: cluster.average_similarity as number,
+                    strength: cluster.strength as number,
                     members: cluster.members as Array<string>
                 }
                 clusters.push(newCluster)

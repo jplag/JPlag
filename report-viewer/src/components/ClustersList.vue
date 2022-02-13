@@ -2,7 +2,7 @@
   <div class="wrapper">
   <h1>Clusters for comparison {{ comparison.firstSubmissionId }} > {{ comparison.secondSubmissionId}}</h1>
   <p v-for="( cluster, index ) in clusters" :key="index" @click="toggleDialog">
-    {{index}} - {{cluster.avgSim}}
+    {{index}} - {{cluster.average_similarity}}
     <GDialog v-model="dialog" fullscreen>
       <button @click="toggleDialog">Close</button>
       <ClusterRadarChart :cluster="cluster"></ClusterRadarChart>

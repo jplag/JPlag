@@ -52,6 +52,7 @@ public class ReportObjectFactory {
         overviewReport.setExecution_time(result.getDuration());
         overviewReport.setComparison_names(getComparisonNames(comparisons));
         overviewReport.setMetrics(getMetrics(result));
+        overviewReport.setClusters(getClusters(result));
 
         return overviewReport;
     }
@@ -173,6 +174,13 @@ public class ReportObjectFactory {
         int tokens = match.getLength();
 
         return new Match(startFirstToken.file, startSecondToken.file, startFirst, endFirst, startSecond, endSecond, tokens);
+    }
+
+    // TODO implement after PR Readd clustering #281
+    private static List<Cluster> getClusters(JPlagResult result) {
+        // List<ClusteringResult<Submission>> clusters = result.getClusteringResult();
+        // return clusters.map( c -> new Cluster(getAvgSimilarity, getStrength, c.getMembers().map(Submission::getName)))
+        return List.of();
     }
 
     private static List<String> readFileLines(File file) {
