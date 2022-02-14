@@ -1,8 +1,8 @@
 package de.jplag.java;
 
-import de.jplag.TypographicToken;
+import de.jplag.Token;
 
-public class JavaToken extends TypographicToken implements JavaTokenConstants {
+public class JavaToken extends Token implements JavaTokenConstants {
 
     public JavaToken(int type, String file, int line, int col, int length) {
         super(type, file, line, col, length);
@@ -16,134 +16,134 @@ public class JavaToken extends TypographicToken implements JavaTokenConstants {
             case JavaTokenConstants.SEPARATOR_TOKEN:
                 return "METHOD_SEPARATOR";
             case J_PACKAGE:
-                return "PACKAGE ";
+                return "PACKAGE";
             case J_IMPORT:
-                return "IMPORT  ";
+                return "IMPORT";
             case J_CLASS_BEGIN:
-                return "CLASS{  ";
+                return "CLASS{";
             case J_CLASS_END:
-                return "}CLASS  ";
+                return "}CLASS";
             case J_METHOD_BEGIN:
-                return "METHOD{ ";
+                return "METHOD{";
             case J_METHOD_END:
-                return "}METHOD ";
+                return "}METHOD";
             case J_VARDEF:
-                return "VARDEF  ";
+                return "VARDEF";
             case J_SYNC_BEGIN:
-                return "SYNC{   ";
+                return "SYNC{";
             case J_SYNC_END:
-                return "}SYNC   ";
+                return "}SYNC";
             case J_DO_BEGIN:
-                return "DO{     ";
+                return "DO{";
             case J_DO_END:
-                return "}DO     ";
+                return "}DO";
             case J_WHILE_BEGIN:
-                return "WHILE{  ";
+                return "WHILE{";
             case J_WHILE_END:
-                return "}WHILE  ";
+                return "}WHILE";
             case J_FOR_BEGIN:
-                return "FOR{    ";
+                return "FOR{";
             case J_FOR_END:
-                return "}FOR    ";
+                return "}FOR";
             case J_SWITCH_BEGIN:
-                return "SWITCH{ ";
+                return "SWITCH{";
             case J_SWITCH_END:
-                return "}SWITCH ";
+                return "}SWITCH";
             case J_CASE:
-                return "CASE    ";
+                return "CASE";
             case J_TRY_BEGIN:
-                return "TRY{    ";
+                return "TRY{";
             case J_CATCH_BEGIN:
-                return "CATCH{  ";
+                return "CATCH{";
             case J_CATCH_END:
-                return "}CATCH  ";
+                return "}CATCH";
             case J_FINALLY:
-                return "FINALLY ";
+                return "FINALLY";
             case J_IF_BEGIN:
-                return "IF{     ";
+                return "IF{";
             case J_ELSE:
-                return "ELSE    ";
+                return "ELSE";
             case J_IF_END:
-                return "}IF     ";
+                return "}IF";
             case J_COND:
-                return "COND    ";
+                return "COND";
             case J_BREAK:
-                return "BREAK   ";
+                return "BREAK";
             case J_CONTINUE:
                 return "CONTINUE";
             case J_RETURN:
-                return "RETURN  ";
+                return "RETURN";
             case J_THROW:
-                return "THROW   ";
+                return "THROW";
             case J_IN_CLASS_BEGIN:
                 return "INCLASS{";
             case J_IN_CLASS_END:
                 return "}INCLASS";
             case J_APPLY:
-                return "APPLY   ";
+                return "APPLY";
             case J_NEWCLASS:
                 return "NEWCLASS";
             case J_NEWARRAY:
                 return "NEWARRAY";
             case J_ASSIGN:
-                return "ASSIGN  ";
+                return "ASSIGN";
             case J_INTERFACE_BEGIN:
-                return "INTERF{ ";
+                return "INTERF{";
             case J_INTERFACE_END:
-                return "}INTERF ";
+                return "}INTERF";
             case J_CONSTR_BEGIN:
-                return "CONSTR{ ";
+                return "CONSTR{";
             case J_CONSTR_END:
-                return "}CONSTR ";
+                return "}CONSTR";
             case J_INIT_BEGIN:
-                return "INIT{   ";
+                return "INIT{";
             case J_INIT_END:
-                return "}INIT   ";
+                return "}INIT";
             case J_VOID:
-                return "VOID    ";
+                return "VOID";
             case J_ARRAY_INIT_BEGIN:
                 return "ARRINIT{";
             case J_ARRAY_INIT_END:
                 return "ARRINIT}";
             case J_ENUM_BEGIN:
-                return "ENUM{   ";
+                return "ENUM{";
             case J_ENUM_CLASS_BEGIN:
                 return "ENUM_CLA";
             case J_ENUM_END:
-                return "}ENUM   ";
+                return "}ENUM";
             case J_GENERIC:
-                return "GENERIC ";
+                return "GENERIC";
             case J_ASSERT:
-                return "ASSERT  ";
+                return "ASSERT";
             case J_ANNO:
-                return "ANNO    ";
+                return "ANNO";
             case J_ANNO_MARKER:
                 return "ANNOMARK";
             case J_ANNO_M_BEGIN:
-                return "ANNO_M{ ";
+                return "ANNO_M{";
             case J_ANNO_M_END:
-                return "}ANNO_M ";
+                return "}ANNO_M";
             case J_ANNO_T_BEGIN:
-                return "ANNO_T{ ";
+                return "ANNO_T{";
             case J_ANNO_T_END:
-                return "}ANNO_T ";
+                return "}ANNO_T";
             case J_ANNO_C_BEGIN:
-                return "ANNO_C{ ";
+                return "ANNO_C{";
             case J_ANNO_C_END:
-                return "}ANNO_C ";
+                return "}ANNO_C";
             case J_MODULE_BEGIN:
-                return "MODULE{ ";
+                return "MODULE{";
             case J_MODULE_END:
-                return "}MODULE ";
+                return "}MODULE";
             case J_EXPORTS:
-                return "EXPORTS ";
+                return "EXPORTS";
             case J_PROVIDES:
                 return "PROVIDES";
             case J_REQUIRES:
                 return "REQUIRES";
 
             case J_TRY_WITH_RESOURCE:
-                return "TRY_RES ";
+                return "TRY_RES";
 
             default:
                 System.err.println("*UNKNOWN: " + type);
