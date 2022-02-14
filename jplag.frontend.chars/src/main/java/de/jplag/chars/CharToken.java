@@ -23,32 +23,12 @@ public class CharToken extends Token {
     }
 
     @Override
-    public int getColumn() {
-        return 0;
-    }
-
-    @Override
-    public int getLength() {
-        return 0;
-    }
-
-    @Override
     public int getIndex() {
         return index;
     }
 
     @Override
     public void setLine(int line) {
-        // Do nothing!
-    }
-
-    @Override
-    public void setColumn(int column) {
-        // Do nothing!
-    }
-
-    @Override
-    public void setLength(int length) {
         // Do nothing!
     }
 

@@ -8,26 +8,6 @@ public class CPPToken extends Token implements CPPTokenConstants {
         super(type, file, line);
     }
 
-    @Override
-    public int getColumn() {
-        return 0;
-    }
-
-    @Override
-    public int getLength() {
-        return 0;
-    }
-
-    @Override
-    public void setColumn(int column) {
-        // Do nothing!
-    }
-
-    @Override
-    public void setLength(int length) {
-        // Do nothing!
-    }
-
     protected String type2string() {
         switch (type) {
             case CPPTokenConstants.FILE_END:

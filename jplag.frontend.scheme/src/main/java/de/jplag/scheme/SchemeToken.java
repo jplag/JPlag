@@ -8,26 +8,6 @@ public class SchemeToken extends Token implements SchemeTokenConstants {
         super(type, file, line);
     }
 
-    @Override
-    public int getColumn() {
-        return 0;
-    }
-
-    @Override
-    public int getLength() {
-        return 0;
-    }
-
-    @Override
-    public void setColumn(int line) {
-        // Do nothing!
-    }
-
-    @Override
-    public void setLength(int line) {
-        // Do nothing!
-    }
-
     protected String type2string() {
         switch (type) {
             case SchemeTokenConstants.FILE_END:
