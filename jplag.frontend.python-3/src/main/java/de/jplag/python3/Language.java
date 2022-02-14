@@ -16,8 +16,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        String[] res = {".py"};
-        return res;
+        return new String[] {".py"};
     }
 
     @Override
@@ -27,7 +26,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Python3 AbstractParser";
+        return "Python3 Parser";
     }
 
     @Override

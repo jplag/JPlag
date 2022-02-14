@@ -18,8 +18,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        String[] res = {".java", ".JAVA"};
-        return res;
+        return new String[] {".java", ".JAVA"};
     }
 
     @Override

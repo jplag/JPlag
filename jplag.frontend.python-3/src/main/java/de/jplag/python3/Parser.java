@@ -20,32 +20,32 @@ import de.jplag.python3.grammar.Python3Parser.File_inputContext;
 
 public class Parser extends AbstractParser implements Python3TokenConstants {
 
-    private TokenList struct = new TokenList();
+    private TokenList tokens = new TokenList();
     private String currentFile;
 
-    public TokenList parse(File dir, String files[]) {
-        struct = new TokenList();
+    public TokenList parse(File directory, String files[]) {
+        tokens = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {
             getErrorConsumer().print(null, "Parsing file " + files[i]);
-            if (!parseFile(dir, files[i])) {
+            if (!parseFile(directory, files[i])) {
                 errors++;
             }
             System.gc();// Emeric
-            struct.addToken(new Python3Token(FILE_END, files[i], -1, -1, -1));
+            tokens.addToken(new Python3Token(FILE_END, files[i], -1, -1, -1));
         }
         this.parseEnd();
-        return struct;
+        return tokens;
     }
 
-    private boolean parseFile(File dir, String file) {
-        BufferedInputStream fis;
+    private boolean parseFile(File directory, String file) {
+        BufferedInputStream inputStream;
 
         CharStream input;
         try {
-            fis = new BufferedInputStream(new FileInputStream(new File(dir, file)));
+            inputStream = new BufferedInputStream(new FileInputStream(new File(directory, file)));
             currentFile = file;
-            input = CharStreams.fromStream(fis);
+            input = CharStreams.fromStream(inputStream);
 
             // create a lexer that feeds off of input CharStream
             Python3Lexer lexer = new Python3Lexer(input);
@@ -71,13 +71,13 @@ public class Parser extends AbstractParser implements Python3TokenConstants {
         return true;
     }
 
-    public void add(int type, Token tok) {
-        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(), tok.getCharPositionInLine() + 1,
-                tok.getText().length()));
+    public void add(int type, Token token) {
+        tokens.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), token.getLine(), token.getCharPositionInLine() + 1,
+                token.getText().length()));
     }
 
-    public void addEnd(int type, Token tok) {
-        struct.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), tok.getLine(),
-                struct.getToken(struct.size() - 1).getColumn() + 1, 0));
+    public void addEnd(int type, Token token) {
+        tokens.addToken(new Python3Token(type, (currentFile == null ? "null" : currentFile), token.getLine(),
+                tokens.getToken(tokens.size() - 1).getColumn() + 1, 0));
     }
 }

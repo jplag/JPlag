@@ -12,22 +12,22 @@ import antlr.LexerSharedInputState;
  */
 public class InputState extends LexerSharedInputState {
     public int column = 0;
-    public int tokColumn = 0;
+    public int tokenColumn = 0;
 
-    public InputState(InputBuffer inbuf) {
-        super(inbuf);
+    public InputState(InputBuffer inputBuffer) {
+        super(inputBuffer);
         column = 1;
         line = 1;
     }
 
-    public InputState(InputStream in) {
-        super(in);
+    public InputState(InputStream inputStream) {
+        super(inputStream);
         column = 1;
         line = 1;
     }
 
-    public InputState(Reader in) {
-        super(in);
+    public InputState(Reader inputReader) {
+        super(inputReader);
         column = 1;
         line = 1;
     }
