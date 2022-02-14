@@ -5,16 +5,12 @@ import java.io.File;
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
-/*
- * Leider werden C/C++ nicht geparst, sondern nur gescannt...
- */
 public class Language implements de.jplag.Language {
-    private Scanner scanner;
+    private Scanner scanner; // cpp code is scanned not parsed
 
     public Language(ErrorConsumer program) {
         this.scanner = new Scanner();
         this.scanner.setProgram(program);
-
     }
 
     @Override

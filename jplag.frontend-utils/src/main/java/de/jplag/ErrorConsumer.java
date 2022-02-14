@@ -1,5 +1,8 @@
 package de.jplag;
 
+/**
+ * Consumes errors from a language parser.
+ */
 public interface ErrorConsumer {
 
     /**
