@@ -115,8 +115,7 @@ public class SubmissionSetBuilder {
             // Basecode may also be registered as a user submission. If so, remove the latter.
             Submission removed = foundSubmissions.remove(baseCode.getRoot());
             if (removed != null) {
-                logger.info(
-                        String.format("Submission \"%s\" is the specified basecode, it will be skipped during comparison.", removed.getName()));
+                logger.info(String.format("Submission \"%s\" is the specified basecode, it will be skipped during comparison.", removed.getName()));
             }
         }
         return baseCodeSubmission;
