@@ -94,10 +94,14 @@ public class JPlag {
     }
 
     private ComparisonStrategy initializeComparisonStrategy(final ComparisonMode comparisonMode) {
-        return switch (comparisonMode) {
-            case NORMAL -> new NormalComparisonStrategy(options, coreAlgorithm);
-            case PARALLEL -> new ParallelComparisonStrategy(options, coreAlgorithm);
-        };
+        switch (comparisonMode) {
+            case NORMAL:
+                return new NormalComparisonStrategy(options, coreAlgorithm);
+            case PARALLEL:
+                return new ParallelComparisonStrategy(options, coreAlgorithm);
+            default:
+                throw new AssertionError("Unknown comparison strategy found.");
+        }
     }
 
     private Language initializeLanguage() {

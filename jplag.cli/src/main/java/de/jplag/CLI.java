@@ -103,7 +103,7 @@ public class CLI {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
         LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getFrom(namespace), language);
+        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getListFrom(namespace), language);
         options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
         options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
         options.setDebugParser(DEBUG.getFrom(namespace));
