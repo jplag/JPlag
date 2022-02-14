@@ -1,8 +1,8 @@
 package de.jplag.python3;
 
-import de.jplag.Token;
+import de.jplag.TypographicToken;
 
-public class Python3Token extends Token implements Python3TokenConstants {
+public class Python3Token extends TypographicToken implements Python3TokenConstants {
 
     public Python3Token(int type, String file, int line, int column, int length) {
         super(type, file, line, column, length);

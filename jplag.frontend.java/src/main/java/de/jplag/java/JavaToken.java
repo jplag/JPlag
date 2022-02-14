@@ -1,8 +1,8 @@
 package de.jplag.java;
 
-import de.jplag.Token;
+import de.jplag.TypographicToken;
 
-public class JavaToken extends Token implements JavaTokenConstants {
+public class JavaToken extends TypographicToken implements JavaTokenConstants {
 
     public JavaToken(int type, String file, int line, int col, int length) {
         super(type, file, line, col, length);

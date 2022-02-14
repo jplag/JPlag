@@ -1,8 +1,8 @@
 package de.jplag.csharp;
 
-import de.jplag.Token;
+import de.jplag.TypographicToken;
 
-public class CSharpToken extends Token implements CSharpTokenConstants {
+public class CSharpToken extends TypographicToken implements CSharpTokenConstants {
 
     public CSharpToken(int type, String file, int line, int column, int length) {
         super(type, file, line, column, length);
