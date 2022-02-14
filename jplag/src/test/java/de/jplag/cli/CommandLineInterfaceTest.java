@@ -31,7 +31,7 @@ public class CommandLineInterfaceTest {
     private String parsedKeys(String... arguments) {
         var keys = namespace.getAttrs().keySet().stream()
                 .filter(key -> key.equals(ROOT_DIRECTORY.flag()) || Arrays.stream(arguments).anyMatch(arg -> arg.contains("-" + key)));
-        return keys.map(it -> it + "=" + namespace.get(it)).collect(toSet()).toString();
+        return keys.map(it -> it.toString() + "=" + namespace.get(it)).collect(toSet()).toString();
     }
 
     /**

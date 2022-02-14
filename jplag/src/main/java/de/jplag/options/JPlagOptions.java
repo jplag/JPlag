@@ -6,6 +6,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -85,7 +86,7 @@ public class JPlagOptions {
     /**
      * Directory that contains all submissions.
      */
-    private String rootDirectoryName;
+    private List<String> rootDirectoryNames;
 
     /**
      * Path name of the directory containing the base code.
@@ -122,8 +123,8 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(String rootDirectoryName, LanguageOption languageOption) {
-        this.rootDirectoryName = rootDirectoryName;
+    public JPlagOptions(List<String> rootDirectoryNames, LanguageOption languageOption) {
+        this.rootDirectoryNames = rootDirectoryNames;
         this.languageOption = languageOption;
     }
 
@@ -163,8 +164,8 @@ public class JPlagOptions {
         return minimumTokenMatch;
     }
 
-    public String getRootDirectoryName() {
-        return rootDirectoryName;
+    public List<String> getRootDirectoryNames() {
+        return rootDirectoryNames;
     }
 
     public SimilarityMetric getSimilarityMetric() {
@@ -258,8 +259,8 @@ public class JPlagOptions {
         }
     }
 
-    public void setRootDirectoryName(String rootDirectoryName) {
-        this.rootDirectoryName = rootDirectoryName;
+    public void setRootDirectoryNames(List<String> rootDirectoryNames) {
+        this.rootDirectoryNames = rootDirectoryNames;
     }
 
     public void setSimilarityMetric(SimilarityMetric similarityMetric) {

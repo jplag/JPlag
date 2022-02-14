@@ -82,7 +82,7 @@
         <maven.compiler.source>14</maven.compiler.source>
         <maven.compiler.target>14</maven.compiler.target>
         <slf4j.version>1.7.35</slf4j.version>
-        <spotless.version>2.20.1</spotless.version>
+        <spotless.version>2.20.2</spotless.version>
     </properties>
     <dependencyManagement>
         <dependencies>
