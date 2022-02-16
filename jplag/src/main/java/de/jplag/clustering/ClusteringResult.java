@@ -62,7 +62,7 @@ public class ClusteringResult<T> {
      * it's clusters.
      */
     public static ClusteringResult<Integer> fromIntegerCollections(List<Collection<Integer>> clustering, RealMatrix similarity) {
-        int N = similarity.getRowDimension();
+        int numberOfSubmissions = similarity.getRowDimension();
         Map<Integer, Integer> submissionIdx2ClusterIdx = new HashMap<>();
         int clusterIdx = 0;
         for (Collection<Integer> cluster : clustering) {
@@ -76,11 +76,11 @@ public class ClusteringResult<T> {
         if (clustering.size() > 0) {
             RealMatrix E = new Array2DRowRealMatrix(clustering.size(), clustering.size());
             E = E.scalarMultiply(0);
-            for (int i = 0; i < N; i++) {
+            for (int i = 0; i < numberOfSubmissions; i++) {
                 if (!submissionIdx2ClusterIdx.containsKey(i))
                     continue;
                 int clusterA = submissionIdx2ClusterIdx.get(i);
-                for (int j = i + 1; j < N; j++) {
+                for (int j = i + 1; j < numberOfSubmissions; j++) {
                     if (!submissionIdx2ClusterIdx.containsKey(j))
                         continue;
                     int clusterB = submissionIdx2ClusterIdx.get(j);
