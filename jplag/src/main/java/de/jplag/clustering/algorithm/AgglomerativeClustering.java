@@ -1,6 +1,5 @@
 package de.jplag.clustering.algorithm;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,7 +64,8 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
             }
             clusters.remove(nearest.left);
             clusters.remove(nearest.right);
-            Cluster combined = new Cluster(new MergedList(nearest.left.getSubmissions(), nearest.right.getSubmissions()));
+            nearest.left.getSubmissions().addAll(nearest.right.getSubmissions());
+            Cluster combined = new Cluster(nearest.left.getSubmissions());
             for (Cluster otherCluster : clusters) {
                 similarities.add(new ClusterConnection(combined, otherCluster, similarityMatrix));
             }
@@ -146,6 +146,10 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
 
     }
 
+    /**
+     * Encapsulate a list in a class because we do not want hashing based on the members but on identity only.
+     * Also a cluster need a different identity than the list because the lists are reused.
+     */
     private class Cluster {
         private List<Integer> submissions;
 
@@ -156,34 +160,6 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
         public List<Integer> getSubmissions() {
             return submissions;
         }
-
-    }
-
-    private class MergedList extends AbstractList<Integer> {
-
-        private List<Integer> left, right;
-        private int size;
-
-        public MergedList(List<Integer> left, List<Integer> right) {
-            this.left = left;
-            this.right = right;
-            size = left.size() + right.size();
-        }
-
-        @Override
-        public Integer get(int index) {
-            if (index < left.size()) {
-                return left.get(index);
-            } else {
-                return right.get(index - left.size());
-            }
-        }
-
-        @Override
-        public int size() {
-            return size;
-        }
-
     }
 
 }
