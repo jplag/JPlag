@@ -27,21 +27,38 @@ public interface ClusteringResult<T> {
                 .getAsDouble();
     }
 
-    public interface Cluster<T> {
-        Collection<T> getMembers();
+    public static class Cluster<T> {
+
+        private float communityStrength;
+        private Collection<T> members;
+        private ClusteringResult<T> clusteringResult;
+
+        public Cluster(Collection<T> members, float communityStrength, ClusteringResult<T> clustering) {
+            this.members = new ArrayList<>(members);
+            this.communityStrength = communityStrength;
+            this.clusteringResult = clustering;
+        }
+
+        public Collection<T> getMembers() {
+            return members;
+        }
 
         /**
          * See {@link ClusteringResult#getCommunityStrength}
          * @return community strength of the cluster
          */
-        float getCommunityStrength();
+        public float getCommunityStrength() {
+            return communityStrength;
+        }
 
-        ClusteringResult<T> getClusteringResult();
+        public ClusteringResult<T> getClusteringResult() {
+            return clusteringResult;
+        }
 
         /**
          * @return How much each member of this cluster contributes to the {@link ClusteringResult#getCommunityStrength}
          */
-        default float getCommunityStrengthPerConnection() {
+        public float getCommunityStrengthPerConnection() {
             int size = getMembers().size();
             if (size < 2)
                 return 0;
@@ -54,7 +71,7 @@ public interface ClusteringResult<T> {
          * non-clusters.
          * @return normalized community strength per connection
          */
-        default float getNormalizedCommunityStrengthPerConnection() {
+        public float getNormalizedCommunityStrengthPerConnection() {
             List<Cluster<T>> goodClusters = getClusteringResult().getClusters().stream().filter(cluster -> cluster.getCommunityStrength() > 0)
                     .collect(Collectors.toList());
             float posCommunityStrengthSum = (float) goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
@@ -68,7 +85,7 @@ public interface ClusteringResult<T> {
         /**
          * How much this cluster is worth during optimization.
          */
-        default double getWorth(BiFunction<T, T, Float> similarity) {
+        public double getWorth(BiFunction<T, T, Float> similarity) {
             double ncs = getCommunityStrength();
             if (getMembers().size() > 1) {
                 ncs /= connections();
@@ -82,7 +99,7 @@ public interface ClusteringResult<T> {
          * @param similarity function that supplies the similarity of two cluster members.
          * @return average similarity
          */
-        default float avgSimilarity(BiFunction<T, T, Float> similarity) {
+        public float avgSimilarity(BiFunction<T, T, Float> similarity) {
             List<T> members = new ArrayList<>(getMembers());
             if (members.size() < 2) {
                 return 1;
@@ -96,42 +113,14 @@ public interface ClusteringResult<T> {
             return similaritySum / connections();
         }
 
-        default int connections() {
+        public int connections() {
             int size = getMembers().size();
             return ((size - 1) * size) / 2;
         }
 
-        default boolean isBadCluster() {
+        public boolean isBadCluster() {
             return getMembers().size() < 2 || getCommunityStrength() < 0;
         }
     }
 
-    public static class DefaultCluster<T> implements Cluster<T> {
-
-        private float communityStrength;
-        private Collection<T> members;
-        private ClusteringResult<T> clusteringResult;
-
-        public DefaultCluster(Collection<T> members, float communityStrength, ClusteringResult<T> clustering) {
-            this.members = new ArrayList<>(members);
-            this.communityStrength = communityStrength;
-            this.clusteringResult = clustering;
-        }
-
-        @Override
-        public Collection<T> getMembers() {
-            return members;
-        }
-
-        @Override
-        public float getCommunityStrength() {
-            return communityStrength;
-        }
-
-        @Override
-        public ClusteringResult<T> getClusteringResult() {
-            return clusteringResult;
-        }
-
-    }
 }

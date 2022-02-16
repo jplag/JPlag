@@ -51,7 +51,7 @@ public class IntegerClusteringResult implements ClusteringResult<Integer> {
             for (int i = 0; i < clusters.size(); i++) {
                 double outWeightSum = E.getRowVector(i).getL1Norm();
                 double clusterCommunityStrength = E.getEntry(i, i) - outWeightSum * outWeightSum;
-                this.clusters.add(new DefaultCluster<Integer>(clusters.get(i), (float) clusterCommunityStrength, this));
+                this.clusters.add(new Cluster<Integer>(clusters.get(i), (float) clusterCommunityStrength, this));
                 communityStrength += clusterCommunityStrength;
             }
         }

@@ -68,7 +68,7 @@ public class ClusteringAdapter {
         public MappedClusteringResult(ClusteringResult<M> unmapped, Function<M, T> mapping) {
             communityStrength = unmapped.getCommunityStrength();
             clusters = unmapped.getClusters().stream().map(unmappedCluster -> {
-                return new ClusteringResult.DefaultCluster<T>(unmappedCluster.getMembers().stream().map(mapping).collect(Collectors.toList()),
+                return new ClusteringResult.Cluster<T>(unmappedCluster.getMembers().stream().map(mapping).collect(Collectors.toList()),
                         unmappedCluster.getCommunityStrength(), this);
             }).collect(Collectors.toList());
             size = unmapped.size();
