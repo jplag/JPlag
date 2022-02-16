@@ -94,7 +94,7 @@ public class ClusteringTest {
          * ClusteringAlgorithm clusteringAlg = new AgglomerativeClustering(options);
          */
 
-        SpectralClustering clusteringAlg = new SpectralClustering(new SpectralClustering.ClusteringOptions());
+        SpectralClustering clusteringAlg = new SpectralClustering(ClusteringOptions.DEFAULTS);
         Collection<Collection<Integer>> clustering = clusteringAlg.cluster(clusteringSimilarity);
         clustering = preprocessor.postProcessResult(clustering);
         ClusteringResult<Integer> mRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), r.similarity);
@@ -128,7 +128,7 @@ public class ClusteringTest {
          * ClusteringAlgorithm clusteringAlg = new AgglomerativeClustering(options);
          */
 
-        SpectralClustering clusteringAlg = new SpectralClustering(new SpectralClustering.ClusteringOptions());
+        SpectralClustering clusteringAlg = new SpectralClustering(ClusteringOptions.DEFAULTS);
 
         Collection<Collection<Integer>> clustering = clusteringAlg.cluster(clusteringSimilarity);
         ClusteringResult<Integer> mRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), r.similarity);

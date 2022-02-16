@@ -36,7 +36,9 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
 
             ArrayList<Cluster> initialClusters = new ArrayList<>(N);
             for (int i = 0; i < N; i++) {
-                Cluster cluster = new Cluster(Collections.singletonList(i));
+                List<Integer> members = new ArrayList<>();
+                members.add(i);
+                Cluster cluster = new Cluster(members);
                 initialClusters.add(cluster);
                 clusters.add(cluster);
             }
