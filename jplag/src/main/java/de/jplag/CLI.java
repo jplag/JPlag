@@ -14,7 +14,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessors;
-import de.jplag.clustering.algorithm.AgglomerativeClustering;
+import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -124,7 +124,7 @@ public class CLI {
         Optional.ofNullable((Integer) CLUSTER_SPECTRAL_KMEANS_ITERATIONS.getFrom(namespace))
                 .ifPresent(clusteringBuilder::spectralMaxKMeansIterationPerRun);
         Optional.ofNullable((Float) CLUSTER_AGGLOMERATIVE_THRESHOLD.getFrom(namespace)).ifPresent(clusteringBuilder::agglomerativeThreshold);
-        Optional.ofNullable((AgglomerativeClustering.InterClusterSimilarity) CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace))
+        Optional.ofNullable((InterClusterSimilarity) CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace))
                 .ifPresent(clusteringBuilder::agglomerativeInterClusterSimilarity);
         Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_NONE.getFrom(namespace)).ifPresent(none -> {
             if (none) {

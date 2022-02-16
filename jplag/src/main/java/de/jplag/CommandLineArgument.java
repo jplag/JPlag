@@ -20,7 +20,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
-import de.jplag.clustering.algorithm.AgglomerativeClustering;
+import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.strategy.ComparisonMode;
@@ -71,7 +71,7 @@ public enum CommandLineArgument {
             new Builder("--cluster-agglomerative-threshold", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("threshold")
                     .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold())),
     CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY(
-            new Builder("--cluster-agglomerative-inter-cluster-similarity", AgglomerativeClustering.InterClusterSimilarity.class)
+            new Builder("--cluster-agglomerative-inter-cluster-similarity", InterClusterSimilarity.class)
                     .argumentGroup(CLUSTERING_GROUP_NAME).defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity())),
     CLUSTER_PREPROCESSING_NONE(
             new Builder("--cluster-pp-none", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME)

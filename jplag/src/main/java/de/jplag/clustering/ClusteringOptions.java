@@ -1,7 +1,7 @@
 
 package de.jplag.clustering;
 
-import de.jplag.clustering.algorithm.AgglomerativeClustering;
+import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.options.SimilarityMetric;
 
 /**
@@ -21,7 +21,7 @@ public class ClusteringOptions {
     private final Preprocessors preprocessor;
     private final boolean enabled;
     private final ClusteringAlgorithm algorithm;
-    private final AgglomerativeClustering.InterClusterSimilarity agglomerativeInterClusterSimilarity;
+    private final InterClusterSimilarity agglomerativeInterClusterSimilarity;
     private final float preprocessorThreshold;
     private final float preprocessorPercentile;
 
@@ -121,7 +121,7 @@ public class ClusteringOptions {
      * 
      * @return similarity measure
      */
-    public AgglomerativeClustering.InterClusterSimilarity getAgglomerativeInterClusterSimilarity() {
+    public InterClusterSimilarity getAgglomerativeInterClusterSimilarity() {
         return agglomerativeInterClusterSimilarity;
     }
 
@@ -151,7 +151,7 @@ public class ClusteringOptions {
         private Preprocessors preprocessor;
         private boolean enabled;
         private ClusteringAlgorithm algorithm;
-        private AgglomerativeClustering.InterClusterSimilarity agglomerativeInterClusterSimilarity;
+        private InterClusterSimilarity agglomerativeInterClusterSimilarity;
         private float preprocessorThreshold;
         private float preprocessorPercentile;
 
@@ -167,7 +167,7 @@ public class ClusteringOptions {
             preprocessor(Preprocessors.CDF);
             enabled(true);
             algorithm(ClusteringAlgorithm.SPECTRAL);
-            agglomerativeInterClusterSimilarity(AgglomerativeClustering.InterClusterSimilarity.AVERAGE);
+            agglomerativeInterClusterSimilarity(InterClusterSimilarity.AVERAGE);
             preprocessorThreshold(0.2f);
             preprocessorPercentile(0.5f);
         }
@@ -222,7 +222,7 @@ public class ClusteringOptions {
             return Builder.this;
         }
 
-        public Builder agglomerativeInterClusterSimilarity(AgglomerativeClustering.InterClusterSimilarity agglomerativeInterClusterSimilarity) {
+        public Builder agglomerativeInterClusterSimilarity(InterClusterSimilarity agglomerativeInterClusterSimilarity) {
             this.agglomerativeInterClusterSimilarity = agglomerativeInterClusterSimilarity;
             return Builder.this;
         }

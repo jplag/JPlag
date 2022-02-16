@@ -25,10 +25,7 @@ public class ClusteringFactory {
         // init algorithm
         GenericClusteringAlgorithm clusteringAlgorithm = null;
         if (options.getAlgorithm() == ClusteringAlgorithm.AGGLOMERATIVE) {
-            AgglomerativeClustering.ClusteringOptions clusteringOptions = new AgglomerativeClustering.ClusteringOptions();
-            clusteringOptions.minimalSimilarity = options.getAgglomerativeThreshold();
-            clusteringOptions.similarity = options.getAgglomerativeInterClusterSimilarity();
-            clusteringAlgorithm = new AgglomerativeClustering(clusteringOptions);
+            clusteringAlgorithm = new AgglomerativeClustering(options);
         } else if (options.getAlgorithm() == ClusteringAlgorithm.SPECTRAL) {
             SpectralClustering.ClusteringOptions clusteringOptions = new SpectralClustering.ClusteringOptions();
             clusteringOptions.GPVariance = options.getSpectralGaussianProcessVariance();

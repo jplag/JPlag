@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
+import de.jplag.clustering.ClusteringOptions;
+
 /**
  * Begin by assigning a cluster to each entity and then successively merge similar clusters.
  */
@@ -59,7 +61,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
                 // One cluster already part of another cluster
                 continue;
             }
-            if (nearest.similarity < options.minimalSimilarity) {
+            if (nearest.similarity < options.getAgglomerativeThreshold()) {
                 break;
             }
             clusters.remove(nearest.left);
@@ -77,7 +79,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
 
     private float clusterSimilarity(List<Integer> leftCluster, List<Integer> rightCluster, RealMatrix similarityMatrix) {
         float similarity = 0;
-        switch (options.similarity) {
+        switch (options.getAgglomerativeInterClusterSimilarity()) {
             case MIN:
                 similarity = Float.MAX_VALUE;
                 break;
@@ -93,7 +95,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
             int leftSubmission = leftCluster.get(leftIndex);
             for (int rightIndex = 0; rightIndex < rightCluster.size(); rightIndex++) {
                 float submissionSimilarity = (float) similarityMatrix.getEntry(leftSubmission, rightCluster.get(rightIndex));
-                switch (options.similarity) {
+                switch (options.getAgglomerativeInterClusterSimilarity()) {
                     case MIN:
                         similarity = Math.min(similarity, submissionSimilarity);
                         break;
@@ -106,21 +108,10 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
             }
         }
 
-        if (options.similarity == InterClusterSimilarity.AVERAGE) {
+        if (options.getAgglomerativeInterClusterSimilarity() == InterClusterSimilarity.AVERAGE) {
             similarity /= leftCluster.size() * rightCluster.size();
         }
         return similarity;
-    }
-
-    public static class ClusteringOptions {
-        public float minimalSimilarity = 0.1f;
-        public InterClusterSimilarity similarity = InterClusterSimilarity.AVERAGE;
-    }
-
-    public static enum InterClusterSimilarity {
-        MIN,
-        MAX,
-        AVERAGE;
     }
 
     private class ClusterConnection implements Comparable<ClusterConnection> {

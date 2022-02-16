@@ -10,14 +10,12 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.jplag.clustering.algorithm.AgglomerativeClustering.ClusteringOptions;
-
 public class AgglomerativeClusteringTest {
     AgglomerativeClustering clustering;
 
     @Before
     public void init() {
-        ClusteringOptions options = new ClusteringOptions();
+        AgglomerativeClusteringOptions options = new AgglomerativeClusteringOptions();
         options.minimalSimilarity = 0.4f;
         clustering = new AgglomerativeClustering(options);
     }
