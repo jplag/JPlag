@@ -15,6 +15,9 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.random.HaltonSequenceGenerator;
 import org.apache.commons.math3.random.RandomVectorGenerator;
 
+/**
+ * Maximizes a function using bayesian optimization.
+ */
 public class BayesianOptimization {
 
     private static final int STOP_AFTER_CONSECUTIVE_RANDOM_PICKS = 3;
@@ -53,9 +56,9 @@ public class BayesianOptimization {
     }
 
     private Stream<RealVector> sampleSolutionSpace() {
-        RandomVectorGenerator g = new HaltonSequenceGenerator(minima.getDimension());
+        RandomVectorGenerator generator = new HaltonSequenceGenerator(minima.getDimension());
         RealVector size = maxima.subtract(minima);
-        return Stream.generate(g::nextVector).map(x -> new ArrayRealVector(x)).map(x -> x.ebeMultiply(size)).map(x -> x.add(minima));
+        return Stream.generate(generator::nextVector).map(x -> new ArrayRealVector(x)).map(x -> x.ebeMultiply(size)).map(x -> x.add(minima));
 
     }
 
@@ -65,13 +68,13 @@ public class BayesianOptimization {
 
     private double acquisitionFunction(GaussianProcess gpr, double[] r, double yMax) {
         // expected improvement
-        double[] meanStd = gpr.predictWidthStd(new ArrayRealVector(r));
-        double mean = meanStd[0];
-        double std = meanStd[1];
+        double[] meanAndStandardDeviation = gpr.predictWidthStd(new ArrayRealVector(r));
+        double mean = meanAndStandardDeviation[0];
+        double standardDeviation = meanAndStandardDeviation[1];
         double a = mean - yMax;
-        double z = a / std;
-        NormalDistribution norm = new NormalDistribution(null, 0, 1);
-        return a * norm.cumulativeProbability(z) + std * norm.density(z);
+        double z = a / standardDeviation;
+        NormalDistribution normalDistribution = new NormalDistribution(null, 0, 1);
+        return a * normalDistribution.cumulativeProbability(z) + standardDeviation * normalDistribution.density(z);
     }
 
     private static <T> Optional<T> getNext(Spliterator<T> spliterator) {
@@ -95,19 +98,19 @@ public class BayesianOptimization {
 
         int nonZeroAcquisitions = 0;
         for (int i = 0; i < MAXIMUM_ACQ_FN_EVALS_PER_ITERATION && nonZeroAcquisitions < MAX_NON_ZERO_ACQ_FN_EVALS_PER_ITERATION; i++) {
-            double[] r = getNext(samples).orElseThrow().toArray();
-            if (acquisitionFunction(gpr, r, yMax) == 0)
+            double[] location = getNext(samples).orElseThrow().toArray();
+            if (acquisitionFunction(gpr, location, yMax) == 0)
                 continue;
             nonZeroAcquisitions++;
-            double poi = -BFGS.minimize(x -> -acquisitionFunction(gpr, x, yMax), 5, r, min, max, 0.00001, 1000);
+            double acquisition = -BFGS.minimize(x -> -acquisitionFunction(gpr, x, yMax), 5, location, min, max, 0.00001, 1000);
             // Sometimes result is out of bounds (might be due to numerical errors?)
-            for (int j = 0; j < r.length; j++) {
-                r[j] = Math.min(max[j], r[j]);
-                r[j] = Math.max(min[j], r[j]);
+            for (int j = 0; j < location.length; j++) {
+                location[j] = Math.min(max[j], location[j]);
+                location[j] = Math.max(min[j], location[j]);
             }
-            if (poi > bestScore) {
-                bestSolution = r;
-                bestScore = poi;
+            if (acquisition > bestScore) {
+                bestSolution = location;
+                bestScore = acquisition;
             }
         }
         if (nonZeroAcquisitions == 0) {
