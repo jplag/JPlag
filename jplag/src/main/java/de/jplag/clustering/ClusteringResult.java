@@ -15,7 +15,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 /**
  * Set of clusters dividing a set of entities.
- * @param T type of the clustered entities (e.g. Submission)
+ * @param <T> type of the clustered entities (e.g. Submission)
  */
 public class ClusteringResult<T> {
 
