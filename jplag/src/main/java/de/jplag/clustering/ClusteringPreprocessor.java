@@ -1,7 +1,5 @@
 package de.jplag.clustering;
 
-import java.util.Collection;
-
 /**
  * Interface for classes that process similarity matrices before any clustering. Classes implementing this interface
  * must ensure that they do not produce zero rows/columns inside the similarity matrix. They must also be able to
@@ -17,9 +15,9 @@ public interface ClusteringPreprocessor {
     double[][] preprocessSimilarities(double[][] similarityMatrix);
 
     /**
-     * Change the indices contained in the clustering result to the indices used before preprocessing.
-     * @param result from clustering with preprocessed similarities
-     * @return the same result but with the indices from the original similarity matrix
+     * Maps the indices of the preprocessed similarity matrix back to indices in the original matrix.
+     * @param index after preprocessing
+     * @return corresponding index before preprocessing
      */
-    Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result);
+    int originalIndexOf(int index);
 }

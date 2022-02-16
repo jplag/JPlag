@@ -1,7 +1,5 @@
 package de.jplag.clustering.preprocessors;
 
-import java.util.Collection;
-
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.DefaultRealMatrixChangingVisitor;
 import org.apache.commons.math3.linear.DefaultRealMatrixPreservingVisitor;
@@ -48,7 +46,7 @@ public class CumulativeDistributionFunctionPreprocessor implements ClusteringPre
     }
 
     @Override
-    public Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result) {
+    public int originalIndexOf(int result) {
         return helper.postProcessResult(result);
     }
 

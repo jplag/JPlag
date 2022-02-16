@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.RealMatrix;
@@ -24,17 +25,17 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
 
     @Override
     public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
-        int N = similarityMatrix.getRowDimension();
+        int size = similarityMatrix.getRowDimension();
         // all clusters that do not have a parent yet
-        HashSet<Cluster> clusters = new HashSet<>(N);
+        Set<Cluster> clusters = new HashSet<>(size);
         // calculated similarities. Might contain connections to already visited clusters, those need to be ignored.
         PriorityQueue<ClusterConnection> similarities;
 
         {
             // initialization
 
-            ArrayList<Cluster> initialClusters = new ArrayList<>(N);
-            for (int i = 0; i < N; i++) {
+            List<Cluster> initialClusters = new ArrayList<>(size);
+            for (int i = 0; i < size; i++) {
                 List<Integer> members = new ArrayList<>();
                 members.add(i);
                 Cluster cluster = new Cluster(members);
@@ -42,7 +43,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
                 clusters.add(cluster);
             }
 
-            ArrayList<ClusterConnection> initialSimilarities = new ArrayList<>(N * (N - 1) / 2);
+            List<ClusterConnection> initialSimilarities = new ArrayList<>(size * (size - 1) / 2);
 
             for (int leftIndex = 0; leftIndex < initialClusters.size(); leftIndex++) {
                 Cluster leftCluster = initialClusters.get(leftIndex);

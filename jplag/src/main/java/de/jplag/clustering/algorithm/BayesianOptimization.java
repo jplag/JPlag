@@ -30,7 +30,7 @@ public class BayesianOptimization {
     private int initialPoints;
     private double noise;
     private RealVector lengthScale;
-    public boolean debug = false;
+    private boolean debug = false;
 
     /**
      * @param minima of the explored parameters
@@ -53,6 +53,10 @@ public class BayesianOptimization {
         this.maxEvaluations = maxEvaluations;
         this.noise = noise;
         this.lengthScale = lengthScale;
+    }
+
+    public void setDebugLogging(boolean debug) {
+        this.debug = debug;
     }
 
     private Stream<RealVector> sampleSolutionSpace() {

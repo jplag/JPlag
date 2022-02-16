@@ -92,6 +92,8 @@ public class GaussianProcess {
      * are equal the kernel is isometric.
      */
     public static GaussianProcess fit(List<RealVector> X, double[] Y, double noise, boolean normalize, double[] lengthScale) {
+        if (X.size() < 1)
+            throw new IllegalArgumentException("X is empty");
         if (X.size() != Y.length) {
             throw new IllegalArgumentException(MessageFormat.format("X and Y are of different dimensions {0} and {1}", X.size(), Y.length));
         }

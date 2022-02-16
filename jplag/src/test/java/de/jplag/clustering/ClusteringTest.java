@@ -85,8 +85,7 @@ public class ClusteringTest {
         URL url = loadFromClasspath("de/jplag/PseudonymizedReports/alt/C_1000_matches_max.csv");
         File file = new File(url.toURI());
         ReadResult r = readOldCsv(file);
-        ClusteringPreprocessor preprocessor = new CumulativeDistributionFunctionPreprocessor();
-        RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(preprocessor.preprocessSimilarities(r.similarity.getData()));
+        RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(r.similarity.getData());
 
         /*
          * AgglomerativeClustering.ClusteringOptions options = new AgglomerativeClustering.ClusteringOptions();
@@ -95,8 +94,9 @@ public class ClusteringTest {
          */
 
         SpectralClustering clusteringAlg = new SpectralClustering(ClusteringOptions.DEFAULTS);
-        Collection<Collection<Integer>> clustering = clusteringAlg.cluster(clusteringSimilarity);
-        clustering = preprocessor.postProcessResult(clustering);
+        ClusteringPreprocessor preprocessor = new CumulativeDistributionFunctionPreprocessor();
+        GenericClusteringAlgorithm preprocessedClusteringAlg = new PreprocessedClusteringAlgorithm(clusteringAlg, preprocessor);
+        Collection<Collection<Integer>> clustering = preprocessedClusteringAlg.cluster(clusteringSimilarity);
         ClusteringResult<Integer> mRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), r.similarity);
         List<Cluster<Integer>> clusters = new ArrayList<>(mRes.getClusters());
         clusters.sort(Comparator.comparingDouble(

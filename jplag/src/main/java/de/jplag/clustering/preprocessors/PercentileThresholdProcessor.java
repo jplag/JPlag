@@ -1,7 +1,5 @@
 package de.jplag.clustering.preprocessors;
 
-import java.util.Collection;
-
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.DefaultRealMatrixPreservingVisitor;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
@@ -46,8 +44,8 @@ public class PercentileThresholdProcessor implements ClusteringPreprocessor {
     }
 
     @Override
-    public Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result) {
-        return thresholdPreprocessor.postProcessResult(result);
+    public int originalIndexOf(int result) {
+        return thresholdPreprocessor.originalIndexOf(result);
     }
 
 }

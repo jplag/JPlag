@@ -3,7 +3,6 @@ package de.jplag.clustering;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -40,11 +39,11 @@ public class PreprocessorHelper {
     }
 
     /**
-     * Implements the logic for {@link ClusteringPreprocessor#postProcessResult(Collection)}
-     * @param result clustering result gained from preprocessed similarities
-     * @return post processed clustering result
+     * Implements the logic for {@link ClusteringPreprocessor#originalIndexOf(Collection)}
+     * @param index after preprocessing
+     * @return corresponding index before preprocessing
      */
-    public Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result) {
-        return result.stream().map(cluster -> cluster.stream().map(mapping::unmap).collect(Collectors.toList())).collect(Collectors.toList());
+    public int postProcessResult(int result) {
+        return mapping.unmap(result);
     }
 }

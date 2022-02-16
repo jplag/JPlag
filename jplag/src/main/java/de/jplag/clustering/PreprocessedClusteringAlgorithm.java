@@ -2,6 +2,7 @@ package de.jplag.clustering;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -26,7 +27,8 @@ public class PreprocessedClusteringAlgorithm implements GenericClusteringAlgorit
         double[][] data = preprocessor.preprocessSimilarities(similarityMatrix.getData());
         if (data.length > 2) {
             Collection<Collection<Integer>> preliminaryResult = base.cluster(new Array2DRowRealMatrix(data, false));
-            return preprocessor.postProcessResult(preliminaryResult);
+            return preliminaryResult.stream().map(cluster -> cluster.stream().map(preprocessor::originalIndexOf).collect(Collectors.toList()))
+                    .collect(Collectors.toList());
         }
         return Collections.emptyList();
     }
