@@ -23,6 +23,12 @@ public class ClusteringAdapter {
     private RealMatrix similarityMatrix;
     private IntegerMapping<Submission> mapping;
 
+    /**
+     * Creates the clustering adapter. Only submissions that appear in those similarities might also appear in {@link ClusteringResult}s obtained from this adapter.
+     *  
+     * @param comparisons that should be included in the process of clustering
+     * @param metric function that assigns a similarity to each comparison
+     */
     public ClusteringAdapter(Collection<JPlagComparison> comparisons, Function<JPlagComparison, Float> metric) {
         mapping = new IntegerMapping<>(comparisons.size());
         for (JPlagComparison comparison : comparisons) {
@@ -41,6 +47,12 @@ public class ClusteringAdapter {
         }
     }
 
+    /**
+     * Use a generic clustering algorithm to cluster the submissions, that were included in this {@link ClusteringAdapter}'s comparison.
+     * 
+     * @param algorithm that is used for clustering
+     * @return the clustered submissions
+     */
     public ClusteringResult<Submission> doClustering(GenericClusteringAlgorithm algorithm) {
         Collection<Collection<Integer>> intResult = algorithm.cluster(similarityMatrix);
         ClusteringResult<Integer> modularityClusterResult = new IntegerClusteringResult(intResult, similarityMatrix);
