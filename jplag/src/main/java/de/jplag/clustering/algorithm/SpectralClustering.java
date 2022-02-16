@@ -20,6 +20,7 @@ import org.apache.commons.math3.ml.clustering.Clusterable;
 import org.apache.commons.math3.ml.clustering.Clusterer;
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 
+import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.ClusteringResult;
 
 /**
@@ -84,9 +85,9 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         int maxK = (int) Math.ceil(N / 2.0);
 
         // Find number of clusters using bayesian optimization
-        RealVector lengthScale = new ArrayRealVector(1, options.kernelBandwidth);
-        BayesianOptimization bo = new BayesianOptimization(new ArrayRealVector(1, minK), new ArrayRealVector(1, maxK), options.minRuns,
-                options.maxRuns, options.GPVariance, lengthScale);
+        RealVector lengthScale = new ArrayRealVector(1, options.getSpectralKernelBandwidth());
+        BayesianOptimization bo = new BayesianOptimization(new ArrayRealVector(1, minK), new ArrayRealVector(1, maxK), options.getSpectralMinRuns(),
+                options.getSpectralMaxRuns(), options.getSpectralGaussianProcessVariance(), lengthScale);
         // bo.debug = true;
         BayesianOptimization.OptimizationResult<Collection<Collection<Integer>>> boResult = bo.maximize(r -> {
             int k = (int) Math.round(r.getEntry(0));
@@ -114,7 +115,7 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         List<ClusterableEigenVector> normRows = IntStream.range(0, n).filter(i -> Q.getRowVector(i).getNorm() > 0)
                 .mapToObj(row -> new ClusterableEigenVector(row, Q.getRowVector(row).unitVector())).collect(Collectors.toList());
 
-        Clusterer<ClusterableEigenVector> clusterer = new KMeansPlusPlusClusterer<>(k, options.maxKMeansIterations);
+        Clusterer<ClusterableEigenVector> clusterer = new KMeansPlusPlusClusterer<>(k, options.getSpectralMaxKMeansIterationPerRun());
         List<? extends Cluster<ClusterableEigenVector>> clusters = clusterer.cluster(normRows);
         return clusters.stream().map(cluster -> {
             return cluster.getPoints().stream().map(x -> x.id).collect(Collectors.toList());
@@ -134,39 +135,6 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         public double[] getPoint() {
             return eigenVector;
         }
-    }
-
-    public static class ClusteringOptions {
-        /**
-         * The kernel bandwidth for the matern kernel used in the gaussian process for the automatic search for the number of
-         * clusters in spectral clustering. Affects the runtime and results of the spectral clustering.
-         */
-        public float kernelBandwidth = 20.f;
-
-        /**
-         * This is the assumed level of noise in the evaluation results of a spectral clustering. Acts as normalization
-         * parameter for the gaussian process. The default setting works well with similarity scores in the range between zero
-         * and one. Affects the runtime and results of the spectral clustering.
-         */
-        public float GPVariance = 0.05f * 0.05f;
-
-        /**
-         * The minimal number of runs of the spectral clustering algorithm. These runs will use predefined numbers of clusters
-         * and will not use the bayesian optimization to determine the number of clusters.
-         */
-        public int minRuns = 5;
-
-        /**
-         * Maximal number of runs of the spectral clustering algorithm. The bayesian optimization may be stopped before, when no
-         * more maxima of the acquisition-function are found.
-         */
-        public int maxRuns = 50;
-
-        /**
-         * Maximum number of iterations of the kMeans clustering per run of the spectral clustering algorithm.
-         */
-        public int maxKMeansIterations = 200;
-
     }
 
 }

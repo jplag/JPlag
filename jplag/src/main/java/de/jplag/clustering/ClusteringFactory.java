@@ -27,13 +27,7 @@ public class ClusteringFactory {
         if (options.getAlgorithm() == ClusteringAlgorithm.AGGLOMERATIVE) {
             clusteringAlgorithm = new AgglomerativeClustering(options);
         } else if (options.getAlgorithm() == ClusteringAlgorithm.SPECTRAL) {
-            SpectralClustering.ClusteringOptions clusteringOptions = new SpectralClustering.ClusteringOptions();
-            clusteringOptions.GPVariance = options.getSpectralGaussianProcessVariance();
-            clusteringOptions.kernelBandwidth = options.getSpectralKernelBandwidth();
-            clusteringOptions.maxKMeansIterations = options.getSpectralMaxKMeansIterationPerRun();
-            clusteringOptions.maxRuns = options.getSpectralMaxRuns();
-            clusteringOptions.minRuns = options.getSpectralMinRuns();
-            clusteringAlgorithm = new SpectralClustering(clusteringOptions);
+            clusteringAlgorithm = new SpectralClustering(options);
         }
 
         // init preprocessor
