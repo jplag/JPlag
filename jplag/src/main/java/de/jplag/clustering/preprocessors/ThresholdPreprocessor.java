@@ -7,6 +7,7 @@ import org.apache.commons.math3.linear.DefaultRealMatrixChangingVisitor;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.jplag.clustering.ClusteringPreprocessor;
+import de.jplag.clustering.PreprocessorHelper;
 
 /**
  * Suppresses all similarities below a given threshold.

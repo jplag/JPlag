@@ -9,6 +9,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.random.EmpiricalDistribution;
 
 import de.jplag.clustering.ClusteringPreprocessor;
+import de.jplag.clustering.PreprocessorHelper;
 
 /**
  * Multiplies entries of the similarity matrix by their cumulative probability. - Weights that are very low will be
