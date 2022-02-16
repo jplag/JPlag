@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+/**
+ * Cluster part of a {@link ClusteringResult}.
+ * @param <T> type of the clusters members
+ */
 public class Cluster<T> {
 
     private float communityStrength;
@@ -96,11 +100,15 @@ public class Cluster<T> {
         return similaritySum / connections();
     }
 
-    public int connections() {
+    private int connections() {
         int size = getMembers().size();
         return ((size - 1) * size) / 2;
     }
 
+    /**
+     * Whether this cluster is very uninformative or wrong and should be pruned as last step of the clustering process.
+     * @return is bad
+     */
     public boolean isBadCluster() {
         return getMembers().size() < 2 || getCommunityStrength() < 0;
     }
