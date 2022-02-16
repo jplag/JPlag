@@ -69,12 +69,12 @@ public class Cluster<T> {
      * How much this cluster is worth during optimization.
      */
     public double getWorth(BiFunction<T, T, Float> similarity) {
-        double ncs = getCommunityStrength();
+        double communityStrength = getCommunityStrength();
         if (getMembers().size() > 1) {
-            ncs /= connections();
+            communityStrength /= connections();
         }
-        double avgSim = averageSimilarity(similarity);
-        return ncs * avgSim;
+        double averageSimilarity = averageSimilarity(similarity);
+        return communityStrength * averageSimilarity;
     }
 
     /**
