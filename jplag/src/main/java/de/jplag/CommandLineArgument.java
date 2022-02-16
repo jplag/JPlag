@@ -57,7 +57,7 @@ public enum CommandLineArgument {
                     .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralKernelBandwidth())),
     CLUSTER_SPECTRAL_NOISE(
             new Builder("--cluster-spectral-noise", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("noise")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralGPVariance())),
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralGaussianProcessVariance())),
     CLUSTER_SPECTRAL_MIN_RUNS(
             new Builder("--cluster-spectral-min-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("min")
                     .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMinRuns())),

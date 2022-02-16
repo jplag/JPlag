@@ -10,7 +10,7 @@ public class ClusteringOptions {
 
     private final SimilarityMetric similarityMetric;
     private final float spectralKernelBandwidth;
-    private final float spectralGPVariance;
+    private final float spectralGaussianProcessVariance;
     private final int spectralMinRuns;
     private final int spectralMaxRuns;
     private final int spectralMaxKMeansIterationPerRun;
@@ -30,8 +30,8 @@ public class ClusteringOptions {
         return spectralKernelBandwidth;
     }
 
-    public float getSpectralGPVariance() {
-        return spectralGPVariance;
+    public float getSpectralGaussianProcessVariance() {
+        return spectralGaussianProcessVariance;
     }
 
     public int getSpectralMinRuns() {
@@ -78,7 +78,7 @@ public class ClusteringOptions {
 
         private SimilarityMetric similarityMetric;
         private float spectralKernelBandwidth;
-        private float spectralGPVariance;
+        private float spectralGaussianProcessVariance;
         private int spectralMinRuns;
         private int spectralMaxRuns;
         private int spectralMaxKMeansIterationPerRun;
@@ -94,7 +94,7 @@ public class ClusteringOptions {
             // Setting the defaults here
             similarityMetric(SimilarityMetric.MAX);
             spectralKernelBandwidth(20.f);
-            spectralGPVariance(0.05f * 0.05f);
+            spectralGaussianProcessVariance(0.05f * 0.05f);
             spectralMinRuns(5);
             spectralMaxRuns(50);
             spectralMaxKMeansIterationPerRun(200);
@@ -117,8 +117,8 @@ public class ClusteringOptions {
             return Builder.this;
         }
 
-        public Builder spectralGPVariance(float spectralGPVariance) {
-            this.spectralGPVariance = spectralGPVariance;
+        public Builder spectralGaussianProcessVariance(float spectralGPVariance) {
+            this.spectralGaussianProcessVariance = spectralGPVariance;
             return Builder.this;
         }
 
@@ -181,7 +181,7 @@ public class ClusteringOptions {
     private ClusteringOptions(Builder builder) {
         this.similarityMetric = builder.similarityMetric;
         this.spectralKernelBandwidth = builder.spectralKernelBandwidth;
-        this.spectralGPVariance = builder.spectralGPVariance;
+        this.spectralGaussianProcessVariance = builder.spectralGaussianProcessVariance;
         this.spectralMinRuns = builder.spectralMinRuns;
         this.spectralMaxRuns = builder.spectralMaxRuns;
         this.spectralMaxKMeansIterationPerRun = builder.spectralMaxKMeansIterationPerRun;

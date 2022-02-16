@@ -118,7 +118,7 @@ public class CLI {
         Optional.ofNullable((ClusteringAlgorithm) CLUSTER_ALGORITHM.getFrom(namespace)).ifPresent(clusteringBuilder::algorithm);
         Optional.ofNullable((SimilarityMetric) CLUSTER_METRIC.getFrom(namespace)).ifPresent(clusteringBuilder::similarityMetric);
         Optional.ofNullable((Float) CLUSTER_SPECTRAL_BANDWIDTH.getFrom(namespace)).ifPresent(clusteringBuilder::spectralKernelBandwidth);
-        Optional.ofNullable((Float) CLUSTER_SPECTRAL_NOISE.getFrom(namespace)).ifPresent(clusteringBuilder::spectralGPVariance);
+        Optional.ofNullable((Float) CLUSTER_SPECTRAL_NOISE.getFrom(namespace)).ifPresent(clusteringBuilder::spectralGaussianProcessVariance);
         Optional.ofNullable((Integer) CLUSTER_SPECTRAL_MIN_RUNS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMinRuns);
         Optional.ofNullable((Integer) CLUSTER_SPECTRAL_MAX_RUNS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMaxRuns);
         Optional.ofNullable((Integer) CLUSTER_SPECTRAL_KMEANS_ITERATIONS.getFrom(namespace))

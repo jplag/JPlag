@@ -31,7 +31,7 @@ public class ClusteringFactory {
             ca = new AgglomerativeClustering(clusteringOptions);
         } else if (options.getAlgorithm() == ClusteringAlgorithm.SPECTRAL) {
             SpectralClustering.ClusteringOptions clusteringOptions = new SpectralClustering.ClusteringOptions();
-            clusteringOptions.GPVariance = options.getSpectralGPVariance();
+            clusteringOptions.GPVariance = options.getSpectralGaussianProcessVariance();
             clusteringOptions.kernelBandwidth = options.getSpectralKernelBandwidth();
             clusteringOptions.maxKMeansIterations = options.getSpectralMaxKMeansIterationPerRun();
             clusteringOptions.maxRuns = options.getSpectralMaxRuns();
