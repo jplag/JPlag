@@ -68,8 +68,8 @@ public interface ClusteringPreprocessor {
         public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
             double[][] data = preprocessor.preprocessSimilarities(similarityMatrix.getData());
             if (data.length > 2) {
-                Collection<Collection<Integer>> prelimResult = base.cluster(new Array2DRowRealMatrix(data, false));
-                return preprocessor.postProcessResult(prelimResult);
+                Collection<Collection<Integer>> preliminaryResult = base.cluster(new Array2DRowRealMatrix(data, false));
+                return preprocessor.postProcessResult(preliminaryResult);
             }
             return Collections.emptyList();
         }
