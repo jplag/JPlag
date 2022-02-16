@@ -14,7 +14,7 @@ import de.jplag.clustering.ClusteringPreprocessor;
  * Multiplies entries of the similarity matrix by their cumulative probability. - Weights that are very low will be
  * (close to) zero - Weights that are very high will be (close to) unchanged
  */
-public class CdfPreprocessor implements ClusteringPreprocessor {
+public class CumulativeDistributionFunctionPreprocessor implements ClusteringPreprocessor {
 
     private PreprocessorHelper helper = new PreprocessorHelper();
 

@@ -10,7 +10,7 @@ import de.jplag.Submission;
 import de.jplag.clustering.algorithm.AgglomerativeClustering;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
-import de.jplag.clustering.preprocessors.CdfPreprocessor;
+import de.jplag.clustering.preprocessors.CumulativeDistributionFunctionPreprocessor;
 import de.jplag.clustering.preprocessors.PercentileThresholdProcessor;
 import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
 
@@ -34,7 +34,7 @@ public class ClusteringFactory {
         ClusteringPreprocessor preprocessor;
         switch (options.getPreprocessor()) {
             case CDF:
-                preprocessor = new CdfPreprocessor();
+                preprocessor = new CumulativeDistributionFunctionPreprocessor();
                 break;
             case THRESHOLD:
                 preprocessor = new ThresholdPreprocessor(options.getPreprocessorThreshold());

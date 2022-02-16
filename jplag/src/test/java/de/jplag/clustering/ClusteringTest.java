@@ -30,7 +30,7 @@ import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
-import de.jplag.clustering.preprocessors.CdfPreprocessor;
+import de.jplag.clustering.preprocessors.CumulativeDistributionFunctionPreprocessor;
 
 public class ClusteringTest {
 
@@ -85,7 +85,7 @@ public class ClusteringTest {
         URL url = loadFromClasspath("de/jplag/PseudonymizedReports/alt/C_1000_matches_max.csv");
         File file = new File(url.toURI());
         ReadResult r = readOldCsv(file);
-        ClusteringPreprocessor preprocessor = new CdfPreprocessor();
+        ClusteringPreprocessor preprocessor = new CumulativeDistributionFunctionPreprocessor();
         RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(preprocessor.preprocessSimilarities(r.similarity.getData()));
 
         /*
@@ -120,7 +120,8 @@ public class ClusteringTest {
         URL url = loadFromClasspath("de/jplag/PseudonymizedReports/neu/B_matches_avg.csv");
         File file = new File(url.toURI());
         ReadResult r = readNewCsv(file);
-        RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(new CdfPreprocessor().preprocessSimilarities(r.similarity.getData()));
+        RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(
+                new CumulativeDistributionFunctionPreprocessor().preprocessSimilarities(r.similarity.getData()));
 
         /*
          * AgglomerativeClustering.ClusteringOptions options = new AgglomerativeClustering.ClusteringOptions();
