@@ -3,8 +3,8 @@ package de.jplag.clustering;
 /**
  * Interface for classes that process similarity matrices before any clustering. Classes implementing this interface
  * must ensure that they do not produce zero rows/columns inside the similarity matrix. They must also be able to
- * calculate the original indices of rows/columns after use through their
- * {@link ClusteringPreprocessor#originalIndexOf} method.
+ * calculate the original indices of rows/columns after use through their {@link ClusteringPreprocessor#originalIndexOf}
+ * method.
  */
 public interface ClusteringPreprocessor {
     /**
