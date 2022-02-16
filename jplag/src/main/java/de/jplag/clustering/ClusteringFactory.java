@@ -49,7 +49,7 @@ public class ClusteringFactory {
         }
         if (preprocessor != null) {
             // Package preprocessor into a clustering algorithm
-            clusteringAlgorithm = new ClusteringPreprocessor.PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor);
+            clusteringAlgorithm = new PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor);
         }
 
         // init adapter

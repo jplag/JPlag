@@ -1,12 +1,6 @@
 package de.jplag.clustering;
 
 import java.util.Collection;
-import java.util.Collections;
-
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
-
-import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 
 /**
  * Interface for classes that process similarity matrices before any clustering. Classes implementing this interface
@@ -15,32 +9,17 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
  * {@link ClusteringPreprocessor#postProcessResult} method.
  */
 public interface ClusteringPreprocessor {
+    /**
+     * Applies some preprocessing defined by the implementing class.
+     * @param similarityMatrix original similarities
+     * @return preprocessed similarities
+     */
     double[][] preprocessSimilarities(double[][] similarityMatrix);
 
-    Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result);
-
     /**
-     * Adapter class to put a preprocessor before any clustering algorithm.
+     * Change the indices contained in the clustering result to the indices used before preprocessing.
+     * @param result from clustering with preprocessed similarities
+     * @return the same result but with the indices from the original similarity matrix
      */
-    public static class PreprocessedClusteringAlgorithm implements GenericClusteringAlgorithm {
-
-        private final GenericClusteringAlgorithm base;
-        private final ClusteringPreprocessor preprocessor;
-
-        public PreprocessedClusteringAlgorithm(GenericClusteringAlgorithm base, ClusteringPreprocessor preprocessor) {
-            this.base = base;
-            this.preprocessor = preprocessor;
-        }
-
-        @Override
-        public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
-            double[][] data = preprocessor.preprocessSimilarities(similarityMatrix.getData());
-            if (data.length > 2) {
-                Collection<Collection<Integer>> preliminaryResult = base.cluster(new Array2DRowRealMatrix(data, false));
-                return preprocessor.postProcessResult(preliminaryResult);
-            }
-            return Collections.emptyList();
-        }
-
-    }
+    Collection<Collection<Integer>> postProcessResult(Collection<Collection<Integer>> result);
 }

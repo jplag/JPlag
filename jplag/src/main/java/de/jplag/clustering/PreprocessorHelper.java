@@ -40,7 +40,7 @@ public class PreprocessorHelper {
     }
 
     /**
-     * Implements the logic for {@link ClusteringPreprocessor#postProcessResult(Collection)} 
+     * Implements the logic for {@link ClusteringPreprocessor#postProcessResult(Collection)}
      * @param result clustering result gained from preprocessed similarities
      * @return post processed clustering result
      */
