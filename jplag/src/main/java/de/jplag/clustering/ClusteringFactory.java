@@ -23,12 +23,12 @@ public class ClusteringFactory {
             return Collections.emptyList();
 
         // init algorithm
-        GenericClusteringAlgorithm ca = null;
+        GenericClusteringAlgorithm clusteringAlgorithm = null;
         if (options.getAlgorithm() == ClusteringAlgorithm.AGGLOMERATIVE) {
             AgglomerativeClustering.ClusteringOptions clusteringOptions = new AgglomerativeClustering.ClusteringOptions();
             clusteringOptions.minimalSimilarity = options.getAgglomerativeThreshold();
             clusteringOptions.similarity = options.getAgglomerativeInterClusterSimilarity();
-            ca = new AgglomerativeClustering(clusteringOptions);
+            clusteringAlgorithm = new AgglomerativeClustering(clusteringOptions);
         } else if (options.getAlgorithm() == ClusteringAlgorithm.SPECTRAL) {
             SpectralClustering.ClusteringOptions clusteringOptions = new SpectralClustering.ClusteringOptions();
             clusteringOptions.GPVariance = options.getSpectralGaussianProcessVariance();
@@ -36,7 +36,7 @@ public class ClusteringFactory {
             clusteringOptions.maxKMeansIterations = options.getSpectralMaxKMeansIterationPerRun();
             clusteringOptions.maxRuns = options.getSpectralMaxRuns();
             clusteringOptions.minRuns = options.getSpectralMinRuns();
-            ca = new SpectralClustering(clusteringOptions);
+            clusteringAlgorithm = new SpectralClustering(clusteringOptions);
         }
 
         // init preprocessor
@@ -58,14 +58,14 @@ public class ClusteringFactory {
         }
         if (preprocessor != null) {
             // Package preprocessor into a clustering algorithm
-            ca = new Preprocessor.PreprocessedClusteringAlgorithm(ca, preprocessor);
+            clusteringAlgorithm = new Preprocessor.PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor);
         }
 
         // init adapter
         ClusteringAdapter adapter = new ClusteringAdapter(comparisons, options.getSimilarityMetric());
 
         // run clustering
-        ClusteringResult<Submission> result = adapter.doClustering(ca);
+        ClusteringResult<Submission> result = adapter.doClustering(clusteringAlgorithm);
 
         // remove bad clusters
         result = removeBadClusters(result);
