@@ -1,7 +1,6 @@
 package de.jplag.clustering;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
@@ -39,11 +38,11 @@ public class PreprocessorHelper {
     }
 
     /**
-     * Implements the logic for {@link ClusteringPreprocessor#originalIndexOf(Collection)}
+     * Implements the logic for {@link ClusteringPreprocessor#originalIndexOf}
      * @param index after preprocessing
      * @return corresponding index before preprocessing
      */
-    public int postProcessResult(int result) {
-        return mapping.unmap(result);
+    public int postProcessResult(int index) {
+        return mapping.unmap(index);
     }
 }
