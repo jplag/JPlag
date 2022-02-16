@@ -24,8 +24,8 @@ public class ClusteringAdapter {
     private IntegerMapping<Submission> mapping;
 
     /**
-     * Creates the clustering adapter. Only submissions that appear in those similarities might also appear in {@link ClusteringResult}s obtained from this adapter.
-     *  
+     * Creates the clustering adapter. Only submissions that appear in those similarities might also appear in
+     * {@link ClusteringResult}s obtained from this adapter.
      * @param comparisons that should be included in the process of clustering
      * @param metric function that assigns a similarity to each comparison
      */
@@ -48,8 +48,8 @@ public class ClusteringAdapter {
     }
 
     /**
-     * Use a generic clustering algorithm to cluster the submissions, that were included in this {@link ClusteringAdapter}'s comparison.
-     * 
+     * Use a generic clustering algorithm to cluster the submissions, that were included in this {@link ClusteringAdapter}'s
+     * comparison.
      * @param algorithm that is used for clustering
      * @return the clustered submissions
      */
@@ -68,7 +68,7 @@ public class ClusteringAdapter {
         public MappedClusteringResult(ClusteringResult<M> unmapped, Function<M, T> mapping) {
             communityStrength = unmapped.getCommunityStrength();
             clusters = unmapped.getClusters().stream().map(unmappedCluster -> {
-                return new ClusteringResult.Cluster<T>(unmappedCluster.getMembers().stream().map(mapping).collect(Collectors.toList()),
+                return new Cluster<T>(unmappedCluster.getMembers().stream().map(mapping).collect(Collectors.toList()),
                         unmappedCluster.getCommunityStrength(), this);
             }).collect(Collectors.toList());
             size = unmapped.size();

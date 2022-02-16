@@ -28,7 +28,6 @@ import org.mockito.invocation.InvocationOnMock;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
-import de.jplag.clustering.ClusteringResult.Cluster;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
 import de.jplag.clustering.preprocessors.CdfPreprocessor;
