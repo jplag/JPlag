@@ -97,7 +97,7 @@ public class ClusteringTest {
         SpectralClustering clusteringAlg = new SpectralClustering(new SpectralClustering.ClusteringOptions());
         Collection<Collection<Integer>> clustering = clusteringAlg.cluster(clusteringSimilarity);
         clustering = preprocessor.postProcessResult(clustering);
-        ClusteringResult<Integer> mRes = new IntegerClusteringResult(clustering, r.similarity);
+        ClusteringResult<Integer> mRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), r.similarity);
         List<Cluster<Integer>> clusters = new ArrayList<>(mRes.getClusters());
         clusters.sort(Comparator.comparingDouble(
                 c -> -harmonicMean(c.getCommunityStrengthPerConnection(), avgSimilarity(new ArrayList<>(c.getMembers()), r.similarity))));
@@ -131,7 +131,7 @@ public class ClusteringTest {
         SpectralClustering clusteringAlg = new SpectralClustering(new SpectralClustering.ClusteringOptions());
 
         Collection<Collection<Integer>> clustering = clusteringAlg.cluster(clusteringSimilarity);
-        ClusteringResult<Integer> mRes = new IntegerClusteringResult(clustering, r.similarity);
+        ClusteringResult<Integer> mRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), r.similarity);
         List<Cluster<Integer>> clusters = new ArrayList<>(mRes.getClusters());
         clusters.sort(Comparator.comparingDouble(
                 c -> -harmonicMean(c.getNormalizedCommunityStrengthPerConnection(), avgSimilarity(new ArrayList<>(c.getMembers()), r.similarity))));

@@ -20,7 +20,7 @@ import org.apache.commons.math3.ml.clustering.Clusterable;
 import org.apache.commons.math3.ml.clustering.Clusterer;
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer;
 
-import de.jplag.clustering.IntegerClusteringResult;
+import de.jplag.clustering.ClusteringResult;
 
 /**
  * Spectral clustering is a clustering algorithm for graph data. Each node is represented as k-dimensional vector,
@@ -93,7 +93,7 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
             k = Math.max(minK, k);
             k = Math.min(maxK, k);
             Collection<Collection<Integer>> clustering = cluster(k, N, eigenValueIds, ed);
-            IntegerClusteringResult modularityRes = new IntegerClusteringResult(clustering, similarityMatrix);
+            ClusteringResult<Integer> modularityRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), similarityMatrix);
             return new BayesianOptimization.OptimizationResult<>(modularityRes.getWorth((a, b) -> (float) similarityMatrix.getEntry(a, b)),
                     clustering);
         });

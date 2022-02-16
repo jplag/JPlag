@@ -1,6 +1,8 @@
 package de.jplag.clustering;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,39 +57,12 @@ public class ClusteringAdapter {
      */
     public ClusteringResult<Submission> doClustering(GenericClusteringAlgorithm algorithm) {
         Collection<Collection<Integer>> intResult = algorithm.cluster(similarityMatrix);
-        ClusteringResult<Integer> modularityClusterResult = new IntegerClusteringResult(intResult, similarityMatrix);
-        return new MappedClusteringResult<>(modularityClusterResult, mapping::unmap);
+        ClusteringResult<Integer> modularityClusterResult = ClusteringResult.fromIntegerCollections(new ArrayList<>(intResult), similarityMatrix);
+        List<Cluster<Submission>> mappedClusters = modularityClusterResult.getClusters().stream().map(unmappedCluster -> {
+            return new Cluster<Submission>(unmappedCluster.getMembers().stream().map(mapping::unmap).collect(Collectors.toList()),
+                    unmappedCluster.getCommunityStrength());
+        }).collect(Collectors.toList());
+        return new ClusteringResult<>(mappedClusters, modularityClusterResult.getCommunityStrength());
     }
 
-    private static class MappedClusteringResult<M, T> implements ClusteringResult<T> {
-
-        private Collection<Cluster<T>> clusters;
-        private float communityStrength;
-        private int size;
-
-        public MappedClusteringResult(ClusteringResult<M> unmapped, Function<M, T> mapping) {
-            communityStrength = unmapped.getCommunityStrength();
-            clusters = unmapped.getClusters().stream().map(unmappedCluster -> {
-                return new Cluster<T>(unmappedCluster.getMembers().stream().map(mapping).collect(Collectors.toList()),
-                        unmappedCluster.getCommunityStrength(), this);
-            }).collect(Collectors.toList());
-            size = unmapped.size();
-        }
-
-        @Override
-        public Collection<Cluster<T>> getClusters() {
-            return clusters;
-        }
-
-        @Override
-        public float getCommunityStrength() {
-            return communityStrength;
-        }
-
-        @Override
-        public int size() {
-            return size;
-        }
-
-    }
 }

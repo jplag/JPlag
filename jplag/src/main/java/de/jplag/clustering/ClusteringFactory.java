@@ -74,23 +74,8 @@ public class ClusteringFactory {
     }
 
     private static ClusteringResult<Submission> removeBadClusters(final ClusteringResult<Submission> clustering) {
-        return new ClusteringResult<>() {
-
-            @Override
-            public Collection<Cluster<Submission>> getClusters() {
-                return clustering.getClusters().stream().filter(cluster -> !cluster.isBadCluster()).collect(Collectors.toList());
-            }
-
-            @Override
-            public float getCommunityStrength() {
-                // Do not lie by letting the clustering improve by wiping away the bad part...
-                return clustering.getCommunityStrength();
-            }
-
-            @Override
-            public int size() {
-                return getClusters().size();
-            }
-        };
+        List<Cluster<Submission>> filtered = clustering.getClusters().stream().filter(cluster -> !cluster.isBadCluster())
+                .collect(Collectors.toList());
+        return new ClusteringResult<>(filtered, clustering.getCommunityStrength());
     }
 }

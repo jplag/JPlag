@@ -1,11 +1,34 @@
 package de.jplag.clustering;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.DoubleStream;
 
-public interface ClusteringResult<T> {
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 
-    Collection<Cluster<T>> getClusters();
+public class ClusteringResult<T> {
+
+    private final List<Cluster<T>> clusters;
+    private float communityStrength = 0;
+
+    public ClusteringResult(Collection<Cluster<T>> clusters, float communityStrength) {
+        this.clusters = Collections.unmodifiableList(new ArrayList<>(clusters));
+        this.communityStrength = communityStrength;
+        for (Cluster<T> cluster : clusters) {
+            cluster.setClusteringResult(this);
+        }
+    }
+
+    public Collection<Cluster<T>> getClusters() {
+        return Collections.unmodifiableList(clusters);
+    }
 
     /**
      * Community strength of the clustering. The expectation of community strength in a random graph is zero and it can not
@@ -15,13 +38,60 @@ public interface ClusteringResult<T> {
      * 10.1103/PhysRevE.69.026113 It's called modularity in that paper.
      * @return community strength
      */
-    float getCommunityStrength();
+    public float getCommunityStrength() {
+        return communityStrength;
+    }
 
-    int size();
-
-    default float getWorth(BiFunction<T, T, Float> similarity) {
+    /**
+     * How much this clustering result is worth during optimization.
+     * @param similarity
+     * @return worth
+     */
+    public float getWorth(BiFunction<T, T, Float> similarity) {
         return (float) getClusters().stream().mapToDouble(c -> c.getWorth(similarity)).map(worth -> Double.isFinite(worth) ? worth : 0).average()
                 .getAsDouble();
+    }
+
+    /**
+     * Responsible for calculating the {@link ClusteringResult#getCommunityStrength} of a new clustering on integers and
+     * it's clusters.
+     */
+    public static ClusteringResult<Integer> fromIntegerCollections(List<Collection<Integer>> clustering, RealMatrix similarity) {
+        int N = similarity.getRowDimension();
+        Map<Integer, Integer> submissionIdx2ClusterIdx = new HashMap<>();
+        int clusterIdx = 0;
+        for (Collection<Integer> cluster : clustering) {
+            for (Integer submissionIdx : cluster) {
+                submissionIdx2ClusterIdx.put(submissionIdx, clusterIdx);
+            }
+            clusterIdx++;
+        }
+        List<Cluster<Integer>> clusters = new ArrayList<>(clustering.size());
+        float communityStrength = 0;
+        if (clustering.size() > 0) {
+            RealMatrix E = new Array2DRowRealMatrix(clustering.size(), clustering.size());
+            E = E.scalarMultiply(0);
+            for (int i = 0; i < N; i++) {
+                if (!submissionIdx2ClusterIdx.containsKey(i))
+                    continue;
+                int clusterA = submissionIdx2ClusterIdx.get(i);
+                for (int j = i + 1; j < N; j++) {
+                    if (!submissionIdx2ClusterIdx.containsKey(j))
+                        continue;
+                    int clusterB = submissionIdx2ClusterIdx.get(j);
+                    E.addToEntry(clusterA, clusterB, similarity.getEntry(i, j));
+                    E.addToEntry(clusterB, clusterA, similarity.getEntry(i, j));
+                }
+            }
+            E = E.scalarMultiply(1 / Arrays.stream(similarity.getData()).flatMapToDouble(DoubleStream::of).sum());
+            for (int i = 0; i < clustering.size(); i++) {
+                double outWeightSum = E.getRowVector(i).getL1Norm();
+                double clusterCommunityStrength = E.getEntry(i, i) - outWeightSum * outWeightSum;
+                clusters.add(new Cluster<Integer>(clustering.get(i), (float) clusterCommunityStrength));
+                communityStrength += clusterCommunityStrength;
+            }
+        }
+        return new ClusteringResult<>(clusters, communityStrength);
     }
 
 }
