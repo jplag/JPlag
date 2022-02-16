@@ -73,7 +73,7 @@ public class Cluster<T> {
         if (getMembers().size() > 1) {
             ncs /= connections();
         }
-        double avgSim = avgSimilarity(similarity);
+        double avgSim = averageSimilarity(similarity);
         return ncs * avgSim;
     }
 
@@ -82,7 +82,7 @@ public class Cluster<T> {
      * @param similarity function that supplies the similarity of two cluster members.
      * @return average similarity
      */
-    public float avgSimilarity(BiFunction<T, T, Float> similarity) {
+    public float averageSimilarity(BiFunction<T, T, Float> similarity) {
         List<T> members = new ArrayList<>(getMembers());
         if (members.size() < 2) {
             return 1;

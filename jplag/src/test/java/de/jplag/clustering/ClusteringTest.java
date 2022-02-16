@@ -105,7 +105,7 @@ public class ClusteringTest {
         System.out.println("cs\tncsm\tavgSim\tcombined\tmembers");
         for (Cluster<Integer> c : clusters) {
             float ncsm = c.getCommunityStrengthPerConnection();
-            float avgSim = c.avgSimilarity((a, b) -> (float) r.similarity.getEntry(a, b));
+            float avgSim = c.averageSimilarity((a, b) -> (float) r.similarity.getEntry(a, b));
             float combined = harmonicMean(ncsm, avgSim);
             System.out.println(str(c.getCommunityStrength()) + "\t" + str(ncsm) + "\t" + str(avgSim) + "\t" + str(combined) + "\t"
                     + c.getMembers().stream().map(r.mapping::unmap).collect(Collectors.toList()));
@@ -141,7 +141,7 @@ public class ClusteringTest {
             if (c.isBadCluster())
                 continue;
             float ncsm = c.getNormalizedCommunityStrengthPerConnection();
-            float avgSim = c.avgSimilarity((a, b) -> (float) r.similarity.getEntry(a, b));
+            float avgSim = c.averageSimilarity((a, b) -> (float) r.similarity.getEntry(a, b));
             float combined = harmonicMean(ncsm, avgSim);
             System.out.println(str(c.getCommunityStrength()) + "\t" + str(ncsm) + "\t" + str(avgSim) + "\t" + str(combined) + "\t"
                     + c.getMembers().stream().map(r.mapping::unmap).collect(Collectors.toList()));
