@@ -6,12 +6,12 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.DefaultRealMatrixChangingVisitor;
 import org.apache.commons.math3.linear.RealMatrix;
 
-import de.jplag.clustering.Preprocessor;
+import de.jplag.clustering.ClusteringPreprocessor;
 
 /**
  * Suppresses all similarities below a given threshold.
  */
-public class ThresholdPreprocessor implements Preprocessor {
+public class ThresholdPreprocessor implements ClusteringPreprocessor {
 
     private double threshold;
     private PreprocessorHelper helper = new PreprocessorHelper();

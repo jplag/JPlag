@@ -85,7 +85,7 @@ public class ClusteringTest {
         URL url = loadFromClasspath("de/jplag/PseudonymizedReports/alt/C_1000_matches_max.csv");
         File file = new File(url.toURI());
         ReadResult r = readOldCsv(file);
-        Preprocessor preprocessor = new CdfPreprocessor();
+        ClusteringPreprocessor preprocessor = new CdfPreprocessor();
         RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(preprocessor.preprocessSimilarities(r.similarity.getData()));
 
         /*

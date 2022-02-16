@@ -7,12 +7,12 @@ import org.apache.commons.math3.linear.DefaultRealMatrixPreservingVisitor;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile.EstimationType;
 
-import de.jplag.clustering.Preprocessor;
+import de.jplag.clustering.ClusteringPreprocessor;
 
 /**
  * Suppresses all similarities below a given percentile.
  */
-public class PercentileThresholdProcessor implements Preprocessor {
+public class PercentileThresholdProcessor implements ClusteringPreprocessor {
 
     private float percentile;
     private ThresholdPreprocessor tp;

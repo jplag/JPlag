@@ -40,7 +40,7 @@ public class ClusteringFactory {
         }
 
         // init preprocessor
-        Preprocessor preprocessor;
+        ClusteringPreprocessor preprocessor;
         switch (options.getPreprocessor()) {
             case CDF:
                 preprocessor = new CdfPreprocessor();
@@ -58,7 +58,7 @@ public class ClusteringFactory {
         }
         if (preprocessor != null) {
             // Package preprocessor into a clustering algorithm
-            clusteringAlgorithm = new Preprocessor.PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor);
+            clusteringAlgorithm = new ClusteringPreprocessor.PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor);
         }
 
         // init adapter
