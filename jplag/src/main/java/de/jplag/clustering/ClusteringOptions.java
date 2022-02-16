@@ -33,9 +33,8 @@ public class ClusteringOptions {
     }
 
     /**
-     * The kernel bandwidth for the matern kernel used in the gaussian process for the automatic search for the number of clusters in spectral clustering.
-     * Affects the runtime and results of the spectral clustering.
-     * 
+     * The kernel bandwidth for the matern kernel used in the gaussian process for the automatic search for the number of
+     * clusters in spectral clustering. Affects the runtime and results of the spectral clustering.
      * @return kernel bandwidth for spectral clustering
      */
     public float getSpectralKernelBandwidth() {
@@ -43,11 +42,9 @@ public class ClusteringOptions {
     }
 
     /**
-     * This is the assumed level of noise in the evaluation results of a spectral clustering.
-     * Acts as normalization parameter for the Gaussian Process.
-     * The default setting works well with similarity scores in the range between zero and one.
-     * Affects the results of the spectral clustering.
-     * 
+     * This is the assumed level of noise in the evaluation results of a spectral clustering. Acts as normalization
+     * parameter for the Gaussian Process. The default setting works well with similarity scores in the range between zero
+     * and one. Affects the results of the spectral clustering.
      * @return assumed variance of noise in Gaussian Process during spectral clustering.
      */
     public float getSpectralGaussianProcessVariance() {
@@ -55,8 +52,8 @@ public class ClusteringOptions {
     }
 
     /**
-     * The minimal number of times the kMeans algorithm is run for the spectral clustering.
-     * These runs will use predefined numbers of clusters and will not use the bayesian optimization to determine the number of clusters.
+     * The minimal number of times the kMeans algorithm is run for the spectral clustering. These runs will use predefined
+     * numbers of clusters and will not use the bayesian optimization to determine the number of clusters.
      * @return minimal kMeans runs during spectral clustering
      */
     public int getSpectralMinRuns() {
@@ -64,9 +61,8 @@ public class ClusteringOptions {
     }
 
     /**
-     * The maximal number of times the kMeans algorithm is run during the bayesian optimization for spectral clustering.
-     * The bayesian optimization may be stopped before, when no more maxima of the acquisition-function are found.
-     * 
+     * The maximal number of times the kMeans algorithm is run during the bayesian optimization for spectral clustering. The
+     * bayesian optimization may be stopped before, when no more maxima of the acquisition-function are found.
      * @return maximal kMeans runs during spectral clustering
      */
     public int getSpectralMaxRuns() {
@@ -75,7 +71,6 @@ public class ClusteringOptions {
 
     /**
      * Maximum number of iterations of the kMeans clustering per run during spectral clustering.
-     * 
      * @return maximal kMeans iterations
      */
     public int getSpectralMaxKMeansIterationPerRun() {
@@ -84,7 +79,6 @@ public class ClusteringOptions {
 
     /**
      * Agglomerative clustering will merge clusters that have a similarity higher than this threshold.
-     * 
      * @return merging threshold for agglomerative clustering
      */
     public float getAgglomerativeThreshold() {
@@ -92,10 +86,8 @@ public class ClusteringOptions {
     }
 
     /**
-     * 
-     * Preprocessing for the similarity values before clustering.
-     * Preprocessing is mandatory for spectral clustering and optional for agglomerative clustering.
-     * 
+     * Preprocessing for the similarity values before clustering. Preprocessing is mandatory for spectral clustering and
+     * optional for agglomerative clustering.
      * @return preprocessor
      */
     public Preprocessors getPreprocessor() {
@@ -117,8 +109,7 @@ public class ClusteringOptions {
     }
 
     /**
-     * Similarity measure between clusters in agglomerative clustering. 
-     * 
+     * Similarity measure between clusters in agglomerative clustering.
      * @return similarity measure
      */
     public InterClusterSimilarity getAgglomerativeInterClusterSimilarity() {

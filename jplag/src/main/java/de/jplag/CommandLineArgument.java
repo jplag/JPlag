@@ -71,8 +71,8 @@ public enum CommandLineArgument {
             new Builder("--cluster-agglomerative-threshold", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("threshold")
                     .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold())),
     CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY(
-            new Builder("--cluster-agglomerative-inter-cluster-similarity", InterClusterSimilarity.class)
-                    .argumentGroup(CLUSTERING_GROUP_NAME).defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity())),
+            new Builder("--cluster-agglomerative-inter-cluster-similarity", InterClusterSimilarity.class).argumentGroup(CLUSTERING_GROUP_NAME)
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity())),
     CLUSTER_PREPROCESSING_NONE(
             new Builder("--cluster-pp-none", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME)
                     .action(Arguments.storeTrue())),
