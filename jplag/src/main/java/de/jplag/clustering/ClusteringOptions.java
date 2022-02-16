@@ -17,7 +17,7 @@ public class ClusteringOptions {
     private final float agglomerativeThreshold;
     private final Preprocessors preprocessor;
     private final boolean enabled;
-    private final Algorithms algorithm;
+    private final ClusteringAlgorithm algorithm;
     private final AgglomerativeClustering.InterClusterSimilarity agglomerativeInterClusterSimilarity;
     private final float preprocessorThreshold;
     private final float preprocessorPercentile;
@@ -58,7 +58,7 @@ public class ClusteringOptions {
         return enabled;
     }
 
-    public Algorithms getAlgorithm() {
+    public ClusteringAlgorithm getAlgorithm() {
         return algorithm;
     }
 
@@ -85,7 +85,7 @@ public class ClusteringOptions {
         private float agglomerativeThreshold;
         private Preprocessors preprocessor;
         private boolean enabled;
-        private Algorithms algorithm;
+        private ClusteringAlgorithm algorithm;
         private AgglomerativeClustering.InterClusterSimilarity agglomerativeInterClusterSimilarity;
         private float preprocessorThreshold;
         private float preprocessorPercentile;
@@ -101,7 +101,7 @@ public class ClusteringOptions {
             agglomerativeThreshold(0.2f);
             preprocessor(Preprocessors.CDF);
             enabled(true);
-            algorithm(Algorithms.SPECTRAL);
+            algorithm(ClusteringAlgorithm.SPECTRAL);
             agglomerativeInterClusterSimilarity(AgglomerativeClustering.InterClusterSimilarity.AVERAGE);
             preprocessorThreshold(0.2f);
             preprocessorPercentile(0.5f);
@@ -152,7 +152,7 @@ public class ClusteringOptions {
             return Builder.this;
         }
 
-        public Builder algorithm(Algorithms algorithm) {
+        public Builder algorithm(ClusteringAlgorithm algorithm) {
             this.algorithm = algorithm;
             return Builder.this;
         }

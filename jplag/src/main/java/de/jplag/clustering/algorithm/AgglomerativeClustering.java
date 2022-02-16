@@ -14,7 +14,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 /**
  * Begin by assigning a cluster to each entity and then successively merge similar clusters.
  */
-public class AgglomerativeClustering implements ClusteringAlgorithm {
+public class AgglomerativeClustering implements GenericClusteringAlgorithm {
 
     private ClusteringOptions options;
 

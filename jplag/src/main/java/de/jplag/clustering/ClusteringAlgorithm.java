@@ -6,7 +6,7 @@ import de.jplag.clustering.algorithm.SpectralClustering;
 /**
  * Choosable clustering algorithms
  */
-public enum Algorithms {
+public enum ClusteringAlgorithm {
     /** {@link AgglomerativeClustering} */
     AGGLOMERATIVE,
     /** {@link SpectralClustering} */

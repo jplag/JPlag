@@ -9,7 +9,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
-import de.jplag.clustering.algorithm.ClusteringAlgorithm;
+import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 
 /**
  * This class acts as an adapter between
@@ -41,7 +41,7 @@ public class ClusteringAdapter {
         }
     }
 
-    public ClusteringResult<Submission> doClustering(ClusteringAlgorithm algorithm) {
+    public ClusteringResult<Submission> doClustering(GenericClusteringAlgorithm algorithm) {
         Collection<Collection<Integer>> intResult = algorithm.cluster(similarityMatrix);
         ClusteringResult<Integer> modularityClusterResult = new IntegerClusteringResult(intResult, similarityMatrix);
         return new MappedClusteringResult<>(modularityClusterResult, mapping::unmap);

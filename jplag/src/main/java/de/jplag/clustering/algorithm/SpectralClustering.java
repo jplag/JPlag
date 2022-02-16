@@ -27,7 +27,7 @@ import de.jplag.clustering.IntegerClusteringResult;
  * afterwards k-Means is used to generate a clustering with k on that representation. This implementation uses Bayesian
  * Optimization to find an appropriate number for k.
  */
-public class SpectralClustering implements ClusteringAlgorithm {
+public class SpectralClustering implements GenericClusteringAlgorithm {
 
     private final ClusteringOptions options;
 

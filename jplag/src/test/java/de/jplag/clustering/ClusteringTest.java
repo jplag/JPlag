@@ -29,7 +29,7 @@ import org.mockito.invocation.InvocationOnMock;
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.clustering.ClusteringResult.Cluster;
-import de.jplag.clustering.algorithm.ClusteringAlgorithm;
+import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
 import de.jplag.clustering.preprocessors.CdfPreprocessor;
 
@@ -49,7 +49,7 @@ public class ClusteringTest {
         }
 
         // Mock algorithm that returns everything in a single cluster
-        ClusteringAlgorithm algorithm = mock(ClusteringAlgorithm.class);
+        GenericClusteringAlgorithm algorithm = mock(GenericClusteringAlgorithm.class);
         when(algorithm.cluster(any(RealMatrix.class))).then((InvocationOnMock invocation) -> {
             RealMatrix arg = invocation.getArgument(0);
             Collection<Collection<Integer>> result = List.of(IntStream.range(0, arg.getRowDimension()).boxed().collect(Collectors.toList()));

@@ -10,7 +10,7 @@ import java.util.stream.DoubleStream;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
-import de.jplag.clustering.algorithm.ClusteringAlgorithm;
+import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 
 /**
  * Interface for classes that process similarity matrices before any clustering. Classes implementing this interface
@@ -54,12 +54,12 @@ public interface Preprocessor {
     /**
      * Adapter class to put a preprocessor before any clustering algorithm.
      */
-    public static class PreprocessedClusteringAlgorithm implements ClusteringAlgorithm {
+    public static class PreprocessedClusteringAlgorithm implements GenericClusteringAlgorithm {
 
-        private final ClusteringAlgorithm base;
+        private final GenericClusteringAlgorithm base;
         private final Preprocessor preprocessor;
 
-        public PreprocessedClusteringAlgorithm(ClusteringAlgorithm base, Preprocessor preprocessor) {
+        public PreprocessedClusteringAlgorithm(GenericClusteringAlgorithm base, Preprocessor preprocessor) {
             this.base = base;
             this.preprocessor = preprocessor;
         }

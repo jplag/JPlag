@@ -18,7 +18,7 @@ import net.sourceforge.argparse4j.inf.ArgumentContainer;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.Namespace;
 
-import de.jplag.clustering.Algorithms;
+import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.AgglomerativeClustering;
 import de.jplag.options.LanguageOption;
@@ -47,7 +47,7 @@ public enum CommandLineArgument {
     COMPARISON_MODE(new Builder("-c", String.class).defaultsTo(DEFAULT_COMPARISON_MODE.getName()).choices(ComparisonMode.allNames())),
     CLUSTER_ENABLE(new Builder("--cluster-skip", Boolean.class).argumentGroup(CLUSTERING_GROUP_NAME).action(Arguments.storeTrue())),
     CLUSTER_ALGORITHM(
-            new Builder("--cluster-alg", Algorithms.class).argumentGroup(CLUSTERING_GROUP_NAME)
+            new Builder("--cluster-alg", ClusteringAlgorithm.class).argumentGroup(CLUSTERING_GROUP_NAME)
                     .defaultsTo(ClusteringOptions.DEFAULTS.getAlgorithm())),
     CLUSTER_METRIC(
             new Builder("--cluster-metric", SimilarityMetric.class).argumentGroup(CLUSTERING_GROUP_NAME)

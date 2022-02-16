@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.clustering.algorithm.AgglomerativeClustering;
-import de.jplag.clustering.algorithm.ClusteringAlgorithm;
+import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
 import de.jplag.clustering.preprocessors.CdfPreprocessor;
 import de.jplag.clustering.preprocessors.PercentileThresholdProcessor;
@@ -23,13 +23,13 @@ public class ClusteringFactory {
             return Collections.emptyList();
 
         // init algorithm
-        ClusteringAlgorithm ca = null;
-        if (options.getAlgorithm() == Algorithms.AGGLOMERATIVE) {
+        GenericClusteringAlgorithm ca = null;
+        if (options.getAlgorithm() == ClusteringAlgorithm.AGGLOMERATIVE) {
             AgglomerativeClustering.ClusteringOptions clusteringOptions = new AgglomerativeClustering.ClusteringOptions();
             clusteringOptions.minimalSimilarity = options.getAgglomerativeThreshold();
             clusteringOptions.similarity = options.getAgglomerativeInterClusterSimilarity();
             ca = new AgglomerativeClustering(clusteringOptions);
-        } else if (options.getAlgorithm() == Algorithms.SPECTRAL) {
+        } else if (options.getAlgorithm() == ClusteringAlgorithm.SPECTRAL) {
             SpectralClustering.ClusteringOptions clusteringOptions = new SpectralClustering.ClusteringOptions();
             clusteringOptions.GPVariance = options.getSpectralGPVariance();
             clusteringOptions.kernelBandwidth = options.getSpectralKernelBandwidth();
