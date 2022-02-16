@@ -63,11 +63,11 @@ public class ClusteringResult<T> {
      */
     public static ClusteringResult<Integer> fromIntegerCollections(List<Collection<Integer>> clustering, RealMatrix similarity) {
         int numberOfSubmissions = similarity.getRowDimension();
-        Map<Integer, Integer> submissionIdx2ClusterIdx = new HashMap<>();
+        Map<Integer, Integer> clusterIndicesOfSubmissionIndices = new HashMap<>();
         int clusterIdx = 0;
         for (Collection<Integer> cluster : clustering) {
             for (Integer submissionIdx : cluster) {
-                submissionIdx2ClusterIdx.put(submissionIdx, clusterIdx);
+                clusterIndicesOfSubmissionIndices.put(submissionIdx, clusterIdx);
             }
             clusterIdx++;
         }
@@ -77,13 +77,13 @@ public class ClusteringResult<T> {
             RealMatrix E = new Array2DRowRealMatrix(clustering.size(), clustering.size());
             E = E.scalarMultiply(0);
             for (int i = 0; i < numberOfSubmissions; i++) {
-                if (!submissionIdx2ClusterIdx.containsKey(i))
+                if (!clusterIndicesOfSubmissionIndices.containsKey(i))
                     continue;
-                int clusterA = submissionIdx2ClusterIdx.get(i);
+                int clusterA = clusterIndicesOfSubmissionIndices.get(i);
                 for (int j = i + 1; j < numberOfSubmissions; j++) {
-                    if (!submissionIdx2ClusterIdx.containsKey(j))
+                    if (!clusterIndicesOfSubmissionIndices.containsKey(j))
                         continue;
-                    int clusterB = submissionIdx2ClusterIdx.get(j);
+                    int clusterB = clusterIndicesOfSubmissionIndices.get(j);
                     E.addToEntry(clusterA, clusterB, similarity.getEntry(i, j));
                     E.addToEntry(clusterB, clusterA, similarity.getEntry(i, j));
                 }
