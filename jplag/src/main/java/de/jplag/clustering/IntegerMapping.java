@@ -25,10 +25,10 @@ public class IntegerMapping<T> {
     public int map(T value) {
         Integer result = mapping.get(value);
         if (result == null) {
-            int newIdx = size++;
-            mapping.put(value, newIdx);
+            int newIndex = size++;
+            mapping.put(value, newIndex);
             backMapping.add(value);
-            return newIdx;
+            return newIndex;
         }
         return result;
     }
