@@ -30,6 +30,7 @@ import de.jplag.clustering.ClusteringResult;
  */
 public class SpectralClustering implements GenericClusteringAlgorithm {
 
+    private static final double MULTIPLICITY_EPSILON = 0.05;
     private final ClusteringOptions options;
 
     public SpectralClustering(ClusteringOptions options) {
@@ -40,11 +41,11 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
     public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
         // Calculate points to cluster according to "On spectral clustering: analysis and an algorithm" by Ng, Jordan & Weiss
         // 2001
-        int N = similarityMatrix.getRowDimension();
+        int dimension = similarityMatrix.getRowDimension();
 
         // We don't use the similarity function, we already have some kind of similarity
-        RealMatrix W = similarityMatrix.copy();
-        W.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
+        RealMatrix weights = similarityMatrix.copy();
+        weights.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
             @Override
             public double visit(int row, int column, double value) {
                 if (row == column)
@@ -53,58 +54,57 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
             }
         });
 
-        DiagonalMatrix D_pow_minus_1_over_2 = new DiagonalMatrix(N);
-        D_pow_minus_1_over_2.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
+        DiagonalMatrix diagonalPowMinus1Over2 = new DiagonalMatrix(dimension);
+        diagonalPowMinus1Over2.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
             @Override
             public double visit(int row, int column, double value) {
                 if (row != column)
                     return 0;
-                return 1 / Math.sqrt(W.getRowVector(row).getL1Norm());
+                return 1 / Math.sqrt(weights.getRowVector(row).getL1Norm());
             }
         });
 
-        RealMatrix I = new Array2DRowRealMatrix(N, N);
-        I.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
+        RealMatrix identity = new Array2DRowRealMatrix(dimension, dimension);
+        identity.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
             @Override
             public double visit(int row, int column, double value) {
                 return row == column ? 1 : 0;
             }
         });
-        RealMatrix L = I.subtract(D_pow_minus_1_over_2.multiply(W).multiply(D_pow_minus_1_over_2));
-        EigenDecomposition ed = new EigenDecomposition(L);
+        RealMatrix laplacian = identity.subtract(diagonalPowMinus1Over2.multiply(weights).multiply(diagonalPowMinus1Over2));
+        EigenDecomposition eigenDecomposition = new EigenDecomposition(laplacian);
 
-        List<Integer> eigenValueIds = new ArrayList<>(N);
-        for (int i = 0; i < N; i++) {
+        List<Integer> eigenValueIds = new ArrayList<>(dimension);
+        for (int i = 0; i < dimension; i++) {
             eigenValueIds.add(i);
         }
-        eigenValueIds.sort(Comparator.comparingDouble(ed::getRealEigenvalue));
+        eigenValueIds.sort(Comparator.comparingDouble(eigenDecomposition::getRealEigenvalue));
 
         // find number of clusters as the multiplicity of eigenvalue 0
-        double eps = 0.05;
-        int minK = Math.max(2, (int) DoubleStream.of(ed.getRealEigenvalues()).filter(x -> x < eps).count());
-        int maxK = (int) Math.ceil(N / 2.0);
+        int minClusters = Math.max(2, (int) DoubleStream.of(eigenDecomposition.getRealEigenvalues()).filter(x -> x < MULTIPLICITY_EPSILON).count());
+        int maxClusters = (int) Math.ceil(dimension / 2.0);
 
         // Find number of clusters using bayesian optimization
         RealVector lengthScale = new ArrayRealVector(1, options.getSpectralKernelBandwidth());
-        BayesianOptimization bo = new BayesianOptimization(new ArrayRealVector(1, minK), new ArrayRealVector(1, maxK), options.getSpectralMinRuns(),
-                options.getSpectralMaxRuns(), options.getSpectralGaussianProcessVariance(), lengthScale);
+        BayesianOptimization bo = new BayesianOptimization(new ArrayRealVector(1, minClusters), new ArrayRealVector(1, maxClusters),
+                options.getSpectralMinRuns(), options.getSpectralMaxRuns(), options.getSpectralGaussianProcessVariance(), lengthScale);
         // bo.debug = true;
-        BayesianOptimization.OptimizationResult<Collection<Collection<Integer>>> boResult = bo.maximize(r -> {
-            int k = (int) Math.round(r.getEntry(0));
-            k = Math.max(minK, k);
-            k = Math.min(maxK, k);
-            Collection<Collection<Integer>> clustering = cluster(k, N, eigenValueIds, ed);
+        BayesianOptimization.OptimizationResult<Collection<Collection<Integer>>> bayesianOptimizationResult = bo.maximize(r -> {
+            int clusters = (int) Math.round(r.getEntry(0));
+            clusters = Math.max(minClusters, clusters);
+            clusters = Math.min(maxClusters, clusters);
+            Collection<Collection<Integer>> clustering = cluster(clusters, dimension, eigenValueIds, eigenDecomposition);
             ClusteringResult<Integer> modularityRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), similarityMatrix);
             return new BayesianOptimization.OptimizationResult<>(modularityRes.getWorth((a, b) -> (float) similarityMatrix.getEntry(a, b)),
                     clustering);
         });
 
-        return boResult.getValue();
+        return bayesianOptimizationResult.getValue();
     }
 
-    private Collection<Collection<Integer>> cluster(int k, int n, List<Integer> eigenValueIds, EigenDecomposition ed) {
-        RealMatrix Q = new Array2DRowRealMatrix(n, k);
-        Q.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
+    private Collection<Collection<Integer>> cluster(int numberOfClusters, int dimension, List<Integer> eigenValueIds, EigenDecomposition ed) {
+        RealMatrix concatenatedEigenVectors = new Array2DRowRealMatrix(dimension, numberOfClusters);
+        concatenatedEigenVectors.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
             public double visit(int row, int column, double value) {
                 int eigenVectorId = eigenValueIds.get(column);
                 RealVector eigenVector = ed.getEigenvector(eigenVectorId);
@@ -112,13 +112,14 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
             };
         });
 
-        List<ClusterableEigenVector> normRows = IntStream.range(0, n).filter(i -> Q.getRowVector(i).getNorm() > 0)
-                .mapToObj(row -> new ClusterableEigenVector(row, Q.getRowVector(row).unitVector())).collect(Collectors.toList());
+        List<ClusterableEigenVector> normRows = IntStream.range(0, dimension).filter(i -> concatenatedEigenVectors.getRowVector(i).getNorm() > 0)
+                .mapToObj(row -> new ClusterableEigenVector(row, concatenatedEigenVectors.getRowVector(row).unitVector()))
+                .collect(Collectors.toList());
 
-        Clusterer<ClusterableEigenVector> clusterer = new KMeansPlusPlusClusterer<>(k, options.getSpectralMaxKMeansIterationPerRun());
+        Clusterer<ClusterableEigenVector> clusterer = new KMeansPlusPlusClusterer<>(numberOfClusters, options.getSpectralMaxKMeansIterationPerRun());
         List<? extends Cluster<ClusterableEigenVector>> clusters = clusterer.cluster(normRows);
         return clusters.stream().map(cluster -> {
-            return cluster.getPoints().stream().map(x -> x.id).collect(Collectors.toList());
+            return cluster.getPoints().stream().map(eigenVector -> eigenVector.id).collect(Collectors.toList());
         }).collect(Collectors.toList());
     }
 
