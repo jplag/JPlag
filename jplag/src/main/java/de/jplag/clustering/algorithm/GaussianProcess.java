@@ -15,6 +15,10 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.stat.StatUtils;
 
+/**
+ * Implementation of a gaussian process with a matern kernel. This class can be used to fit any real-valued function
+ * with noisy evaluations. Predictions come in the form of expectations and standard deviations.
+ */
 public class GaussianProcess {
 
     private List<RealVector> X;
@@ -39,11 +43,11 @@ public class GaussianProcess {
      * @return mean prediction at x
      */
     public double predict(RealVector x) {
-        RealVector k = maternKernel(X, x, lengthScale);
+        RealVector kernelizedX = maternKernel(X, x, lengthScale);
 
-        double mu = weight.dotProduct(k);
+        double predictedMean = weight.dotProduct(kernelizedX);
 
-        return mu * this.standardDeviation + this.mean;
+        return predictedMean * this.standardDeviation + this.mean;
     }
 
     /**
@@ -51,15 +55,15 @@ public class GaussianProcess {
      * @return array containing the predicted [mean, std] at x.
      */
     public double[] predictWidthStd(RealVector x) {
-        RealVector k = maternKernel(X, x, lengthScale);
-        RealVector Kx = cholesky.getSolver().solve(k);
+        RealVector kernelizedX = maternKernel(X, x, lengthScale);
+        RealVector kernelMatrixTimesX = cholesky.getSolver().solve(kernelizedX);
 
-        double mu = weight.dotProduct(k);
-        double sd = Math.sqrt(maternKernel(x, x, lengthScale) - Kx.dotProduct(k));
+        double predictedMean = weight.dotProduct(kernelizedX);
+        double predictedStandardDeviation = Math.sqrt(maternKernel(x, x, lengthScale) - kernelMatrixTimesX.dotProduct(kernelizedX));
 
         double[] out = new double[2];
-        out[0] = mu * this.standardDeviation + this.mean;
-        out[1] = sd * this.standardDeviation;
+        out[0] = predictedMean * this.standardDeviation + this.mean;
+        out[1] = predictedStandardDeviation * this.standardDeviation;
 
         if (Double.isNaN(out[1])) {
             out[1] = 0;
