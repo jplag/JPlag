@@ -33,7 +33,7 @@ public class ClusteringFactory {
         // init preprocessor
         ClusteringPreprocessor preprocessor;
         switch (options.getPreprocessor()) {
-            case CDF:
+            case CUMULATIVE_DISTRIBUTION_FUNCTION:
                 preprocessor = new CumulativeDistributionFunctionPreprocessor();
                 break;
             case THRESHOLD:

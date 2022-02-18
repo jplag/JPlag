@@ -13,7 +13,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
-import de.jplag.clustering.Preprocessors;
+import de.jplag.clustering.Preprocessing;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -128,20 +128,20 @@ public class CLI {
                 .ifPresent(clusteringBuilder::agglomerativeInterClusterSimilarity);
         Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_NONE.getFrom(namespace)).ifPresent(none -> {
             if (none) {
-                clusteringBuilder.preprocessor(Preprocessors.NONE);
+                clusteringBuilder.preprocessor(Preprocessing.NONE);
             }
         });
         Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_CDF.getFrom(namespace)).ifPresent(cdf -> {
             if (cdf) {
-                clusteringBuilder.preprocessor(Preprocessors.CDF);
+                clusteringBuilder.preprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
             }
         });
         Optional.ofNullable((Float) CLUSTER_PREPROCESSING_PERCENTILE.getFrom(namespace)).ifPresent(percentile -> {
-            clusteringBuilder.preprocessor(Preprocessors.PERCENTILE);
+            clusteringBuilder.preprocessor(Preprocessing.PERCENTILE);
             clusteringBuilder.preprocessorPercentile(percentile);
         });
         Optional.ofNullable((Float) CLUSTER_PREPROCESSING_THRESHOLD.getFrom(namespace)).ifPresent(threshold -> {
-            clusteringBuilder.preprocessor(Preprocessors.THRESHOLD);
+            clusteringBuilder.preprocessor(Preprocessing.THRESHOLD);
             clusteringBuilder.preprocessorPercentile(threshold);
         });
         options.setClusteringOptions(clusteringBuilder.build());

@@ -9,10 +9,10 @@ import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
 /**
  * List of all usable {@link Preprocessor}s.
  */
-public enum Preprocessors {
+public enum Preprocessing {
     NONE,
     /** {@link CumulativeDistributionFunctionPreprocessor} */
-    CDF,
+    CUMULATIVE_DISTRIBUTION_FUNCTION,
     /** {@link ThresholdPreprocessor} */
     THRESHOLD,
     /** {@link PercentileThresholdProcessor} */

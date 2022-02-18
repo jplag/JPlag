@@ -18,7 +18,7 @@ public class ClusteringOptions {
     private final int spectralMaxRuns;
     private final int spectralMaxKMeansIterationPerRun;
     private final float agglomerativeThreshold;
-    private final Preprocessors preprocessor;
+    private final Preprocessing preprocessor;
     private final boolean enabled;
     private final ClusteringAlgorithm algorithm;
     private final InterClusterSimilarity agglomerativeInterClusterSimilarity;
@@ -90,7 +90,7 @@ public class ClusteringOptions {
      * optional for agglomerative clustering.
      * @return preprocessor
      */
-    public Preprocessors getPreprocessor() {
+    public Preprocessing getPreprocessor() {
         return preprocessor;
     }
 
@@ -139,7 +139,7 @@ public class ClusteringOptions {
         private int spectralMaxRuns;
         private int spectralMaxKMeansIterationPerRun;
         private float agglomerativeThreshold;
-        private Preprocessors preprocessor;
+        private Preprocessing preprocessor;
         private boolean enabled;
         private ClusteringAlgorithm algorithm;
         private InterClusterSimilarity agglomerativeInterClusterSimilarity;
@@ -155,7 +155,7 @@ public class ClusteringOptions {
             spectralMaxRuns(50);
             spectralMaxKMeansIterationPerRun(200);
             agglomerativeThreshold(0.2f);
-            preprocessor(Preprocessors.CDF);
+            preprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
             enabled(true);
             algorithm(ClusteringAlgorithm.SPECTRAL);
             agglomerativeInterClusterSimilarity(InterClusterSimilarity.AVERAGE);
@@ -198,7 +198,7 @@ public class ClusteringOptions {
             return Builder.this;
         }
 
-        public Builder preprocessor(Preprocessors preprocessor) {
+        public Builder preprocessor(Preprocessing preprocessor) {
             this.preprocessor = preprocessor;
             return Builder.this;
         }
