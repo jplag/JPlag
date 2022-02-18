@@ -73,8 +73,8 @@ public class ClusteringResult<T> {
         List<Cluster<Integer>> clusters = new ArrayList<>(clustering.size());
         float communityStrength = 0;
         if (clustering.size() > 0) {
-            RealMatrix E = new Array2DRowRealMatrix(clustering.size(), clustering.size());
-            E = E.scalarMultiply(0);
+            RealMatrix percentagesOfSimilaritySums = new Array2DRowRealMatrix(clustering.size(), clustering.size());
+            percentagesOfSimilaritySums = percentagesOfSimilaritySums.scalarMultiply(0);
             for (int i = 0; i < numberOfSubmissions; i++) {
                 if (!clusterIndicesOfSubmissionIndices.containsKey(i))
                     continue;
@@ -83,14 +83,15 @@ public class ClusteringResult<T> {
                     if (!clusterIndicesOfSubmissionIndices.containsKey(j))
                         continue;
                     int clusterB = clusterIndicesOfSubmissionIndices.get(j);
-                    E.addToEntry(clusterA, clusterB, similarity.getEntry(i, j));
-                    E.addToEntry(clusterB, clusterA, similarity.getEntry(i, j));
+                    percentagesOfSimilaritySums.addToEntry(clusterA, clusterB, similarity.getEntry(i, j));
+                    percentagesOfSimilaritySums.addToEntry(clusterB, clusterA, similarity.getEntry(i, j));
                 }
             }
-            E = E.scalarMultiply(1 / Arrays.stream(similarity.getData()).flatMapToDouble(DoubleStream::of).sum());
+            percentagesOfSimilaritySums = percentagesOfSimilaritySums
+                    .scalarMultiply(1 / Arrays.stream(similarity.getData()).flatMapToDouble(DoubleStream::of).sum());
             for (int i = 0; i < clustering.size(); i++) {
-                double outWeightSum = E.getRowVector(i).getL1Norm();
-                double clusterCommunityStrength = E.getEntry(i, i) - outWeightSum * outWeightSum;
+                double outWeightSum = percentagesOfSimilaritySums.getRowVector(i).getL1Norm();
+                double clusterCommunityStrength = percentagesOfSimilaritySums.getEntry(i, i) - outWeightSum * outWeightSum;
                 clusters.add(new Cluster<Integer>(clustering.get(i), (float) clusterCommunityStrength));
                 communityStrength += clusterCommunityStrength;
             }
