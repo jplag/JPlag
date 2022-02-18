@@ -72,7 +72,7 @@ public class BayesianOptimization {
 
     private double acquisitionFunction(GaussianProcess gpr, double[] r, double yMax) {
         // expected improvement
-        double[] meanAndStandardDeviation = gpr.predictWidthStd(new ArrayRealVector(r));
+        double[] meanAndStandardDeviation = gpr.predict(new ArrayRealVector(r));
         double mean = meanAndStandardDeviation[0];
         double standardDeviation = meanAndStandardDeviation[1];
         double a = mean - yMax;

@@ -24,12 +24,12 @@ public class GaussianProcessTest {
             Y[idx++] = i + Math.random() - 0.5;
             Y[idx++] = i + Math.random() - 0.5;
         }
-        GaussianProcess gp = GaussianProcess.fit(X, Y, 1 / 12.0, true);
+        GaussianProcess gp = GaussianProcess.fit(X, Y, 1 / 12.0, true, new double[] {1});
         for (int i = 0; i < 19; i++) {
             RealVector vx = new ArrayRealVector(1);
             double x = i / 2.0;
             vx.setEntry(0, x);
-            double[] prediction = gp.predictWidthStd(vx);
+            double[] prediction = gp.predict(vx);
             assertTrue("The prediction error can't very high", Math.abs(prediction[0] - x) < 1);
             assertTrue("The standard deviation must be greater than 0", prediction[1] > 0);
         }

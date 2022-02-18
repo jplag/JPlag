@@ -39,22 +39,10 @@ public class GaussianProcess {
     }
 
     /**
-     * @param x position to predict at
-     * @return mean prediction at x
+     * @param x coordinate to predict at
+     * @return array containing the predicted [mean, standard deviation] at x.
      */
-    public double predict(RealVector x) {
-        RealVector kernelizedX = maternKernel(X, x, lengthScale);
-
-        double predictedMean = weight.dotProduct(kernelizedX);
-
-        return predictedMean * this.standardDeviation + this.mean;
-    }
-
-    /**
-     * @param x position to predict at
-     * @return array containing the predicted [mean, std] at x.
-     */
-    public double[] predictWidthStd(RealVector x) {
+    public double[] predict(RealVector x) {
         RealVector kernelizedX = maternKernel(X, x, lengthScale);
         RealVector kernelMatrixTimesX = cholesky.getSolver().solve(kernelizedX);
 
@@ -73,18 +61,6 @@ public class GaussianProcess {
     }
 
     private static final double SQRT_5 = Math.sqrt(5);
-
-    /**
-     * Identical to {@link GaussianProcess#fit(List, double[], double, boolean, double[])} but using a one vector as length
-     * scale.
-     * @param X
-     * @param Y expected to have zero mean, unit variance if normalize is false
-     * @param noise variance of noise in Y
-     * @param normalize for Y
-     */
-    public static GaussianProcess fit(List<RealVector> X, double[] Y, double noise, boolean normalize) {
-        return fit(X, Y, noise, normalize, new ArrayRealVector(X.get(0).getDimension(), 1).toArray());
-    }
 
     /**
      * Fit Gaussian Process using a matern kernel.
@@ -180,7 +156,7 @@ public class GaussianProcess {
         for (int i = 0; i < width; i++) {
             double t = (i + 0.5) / width;
             RealVector x = min.add(max.subtract(min).mapMultiplyToSelf(t));
-            double[] meanStd = predictWidthStd(x);
+            double[] meanStd = predict(x);
             mean[i] = meanStd[0];
             std[i] = meanStd[1];
         }
