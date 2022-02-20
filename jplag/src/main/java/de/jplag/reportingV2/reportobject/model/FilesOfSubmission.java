@@ -1,19 +1,24 @@
 package de.jplag.reportingV2.reportobject.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class FilesOfSubmission {
 
-    private final String file_name;
+    @JsonProperty("file_name")
+    private final String fileName;
+
+    @JsonProperty("lines")
     private final List<String> lines;
 
-    public FilesOfSubmission(String file_name, List<String> file_code) {
-        this.file_name = file_name;
+    public FilesOfSubmission(String fileName, List<String> file_code) {
+        this.fileName = fileName;
         this.lines = List.copyOf(file_code);
     }
 
-    public String getFile_name() {
-        return file_name;
+    public String getFileName() {
+        return fileName;
     }
 
     public List<String> getLines() {

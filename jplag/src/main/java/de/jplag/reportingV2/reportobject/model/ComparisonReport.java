@@ -1,45 +1,58 @@
 package de.jplag.reportingV2.reportobject.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class ComparisonReport {
 
-    private final String first_submission_id;
-    private final String second_submission_id;
-    private final float match_percentage;
-    private final List<FilesOfSubmission> files_of_first_submission;
-    private final List<FilesOfSubmission> files_of_second_submission;
+    @JsonProperty("first_submission_id")
+    private final String firstSubmissionId;
+
+    @JsonProperty("second_submission_id")
+    private final String secondSubmissionId;
+
+    @JsonProperty("match_percentage")
+    private final float matchPercentage;
+
+    @JsonProperty("files_of_first_submission")
+    private final List<FilesOfSubmission> filesOfFirstSubmission;
+
+    @JsonProperty("files_of_second_submission")
+    private final List<FilesOfSubmission> filesOfSecondSubmission;
+
+    @JsonProperty("matches")
     private final List<Match> matches;
 
-    public ComparisonReport(String first_submission_id, String second_submission_id, float match_percentage,
-            List<FilesOfSubmission> files_of_first_submission, List<FilesOfSubmission> files_of_second_submission, List<Match> matches) {
+    public ComparisonReport(String firstSubmissionId, String secondSubmissionId, float matchPercentage,
+                            List<FilesOfSubmission> filesOfFirstSubmission, List<FilesOfSubmission> filesOfSecondSubmission, List<Match> matches) {
 
-        this.first_submission_id = first_submission_id;
-        this.second_submission_id = second_submission_id;
-        this.match_percentage = match_percentage;
-        this.files_of_first_submission = List.copyOf(files_of_first_submission);
-        this.files_of_second_submission = List.copyOf(files_of_second_submission);
+        this.firstSubmissionId = firstSubmissionId;
+        this.secondSubmissionId = secondSubmissionId;
+        this.matchPercentage = matchPercentage;
+        this.filesOfFirstSubmission = List.copyOf(filesOfFirstSubmission);
+        this.filesOfSecondSubmission = List.copyOf(filesOfSecondSubmission);
         this.matches = matches;
     }
 
-    public String getFirst_submission_id() {
-        return first_submission_id;
+    public String getFirstSubmissionId() {
+        return firstSubmissionId;
     }
 
-    public String getSecond_submission_id() {
-        return second_submission_id;
+    public String getSecondSubmissionId() {
+        return secondSubmissionId;
     }
 
-    public float getMatch_percentage() {
-        return match_percentage;
+    public float getMatchPercentage() {
+        return matchPercentage;
     }
 
-    public List<FilesOfSubmission> getFiles_of_first_submission() {
-        return files_of_first_submission;
+    public List<FilesOfSubmission> getFilesOfFirstSubmission() {
+        return filesOfFirstSubmission;
     }
 
-    public List<FilesOfSubmission> getFiles_of_second_submission() {
-        return files_of_second_submission;
+    public List<FilesOfSubmission> getFilesOfSecondSubmission() {
+        return filesOfSecondSubmission;
     }
 
     public List<Match> getMatches() {

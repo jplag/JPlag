@@ -1,48 +1,63 @@
 package de.jplag.reportingV2.reportobject.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Match {
 
-    private final String first_file_name;
-    private final String second_file_name;
-    private final int start_in_first;
-    private final int end_in_first;
-    private final int start_in_second;
-    private final int end_in_second;
+    @JsonProperty("first_file_name")
+    private final String firstFileName;
+
+    @JsonProperty("second_file_name")
+    private final String secondFileName;
+
+    @JsonProperty("start_in_first")
+    private final int startInFirst;
+
+    @JsonProperty("end_in_first")
+    private final int endInFirst;
+
+    @JsonProperty("start_in_second")
+    private final int startInSecond;
+
+    @JsonProperty("end_in_second")
+    private final int endInSecond;
+
+    @JsonProperty("tokens")
     private final int tokens;
 
-    public Match(String first_file_name, String second_file_name, int start_in_first, int end_in_first, int start_in_second, int end_in_second,
-            int tokens) {
-        this.first_file_name = first_file_name;
-        this.second_file_name = second_file_name;
-        this.start_in_first = start_in_first;
-        this.end_in_first = end_in_first;
-        this.start_in_second = start_in_second;
-        this.end_in_second = end_in_second;
+    public Match(String firstFileName, String secondFileName, int startInFirst, int endInFirst, int startInSecond, int endInSecond,
+                 int tokens) {
+        this.firstFileName = firstFileName;
+        this.secondFileName = secondFileName;
+        this.startInFirst = startInFirst;
+        this.endInFirst = endInFirst;
+        this.startInSecond = startInSecond;
+        this.endInSecond = endInSecond;
         this.tokens = tokens;
     }
 
-    public String getFirst_file_name() {
-        return first_file_name;
+    public String getFirstFileName() {
+        return firstFileName;
     }
 
-    public String getSecond_file_name() {
-        return second_file_name;
+    public String getSecondFileName() {
+        return secondFileName;
     }
 
-    public int getStart_in_first() {
-        return start_in_first;
+    public int getStartInFirst() {
+        return startInFirst;
     }
 
-    public int getEnd_in_first() {
-        return end_in_first;
+    public int getEndInFirst() {
+        return endInFirst;
     }
 
-    public int getStart_in_second() {
-        return start_in_second;
+    public int getStartInSecond() {
+        return startInSecond;
     }
 
-    public int getEnd_in_second() {
-        return end_in_second;
+    public int getEndInSecond() {
+        return endInSecond;
     }
 
     public int getTokens() {

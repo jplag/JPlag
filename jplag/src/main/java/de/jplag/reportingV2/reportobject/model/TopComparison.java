@@ -1,27 +1,34 @@
 package de.jplag.reportingV2.reportobject.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class TopComparison {
 
-    private final String first_submission;
-    private final String second_submission;
-    private final float match_percentage;
+    @JsonProperty("first_submission")
+    private final String firstSubmission;
 
-    public TopComparison(String first_submission, String second_submission, float match_percentage) {
-        this.first_submission = first_submission;
-        this.second_submission = second_submission;
-        this.match_percentage = match_percentage;
+    @JsonProperty("second_submission")
+    private final String secondSubmission;
+
+    @JsonProperty("match_percentage")
+    private final float matchPercentage;
+
+    public TopComparison(String firstSubmission, String secondSubmission, float matchPercentage) {
+        this.firstSubmission = firstSubmission;
+        this.secondSubmission = secondSubmission;
+        this.matchPercentage = matchPercentage;
     }
 
-    public String getFirst_submission() {
-        return first_submission;
+    public String getFirstSubmission() {
+        return firstSubmission;
     }
 
-    public String getSecond_submission() {
-        return second_submission;
+    public String getSecondSubmission() {
+        return secondSubmission;
     }
 
-    public float getMatch_percentage() {
-        return match_percentage;
+    public float getMatchPercentage() {
+        return matchPercentage;
     }
 
 }

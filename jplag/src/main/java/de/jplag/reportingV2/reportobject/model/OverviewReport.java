@@ -1,35 +1,62 @@
 package de.jplag.reportingV2.reportobject.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.Set;
 
 public class OverviewReport {
 
-    private String submission_folder_path;
-    private String base_code_folder_path;
+    @JsonProperty("submission_folder_path")
+    private String submissionFolderPath;
+
+    @JsonProperty("base_code_folder_path")
+    private String baseCodeFolderPath;
+
+    @JsonProperty("language")
     private String language;
-    private List<String> file_extensions;
-    private List<String> submission_ids;
-    private List<String> failed_submission_names;
-    private Set<String> excluded_files;
-    private int match_sensitivity;
-    private String date_of_execution;
-    private long execution_time;
-    private List<String> comparison_names;
+
+    @JsonProperty("file_extensions")
+    private List<String> fileExtensions;
+
+    @JsonProperty("submission_ids")
+    private List<String> submissionIds;
+
+    @JsonProperty("failed_submission_names")
+    private List<String> failedSubmissionNames;
+
+    @JsonProperty("excluded_files")
+    private Set<String> excludedFiles;
+
+    @JsonProperty("match_sensitivity")
+    private int matchSensitivity;
+
+    @JsonProperty("date_of_execution")
+    private String dateOfExecution;
+
+    @JsonProperty("execution_time")
+    private long executionTime;
+
+    @JsonProperty("comparison_names")
+    private List<String> comparisonNames;
+
+    @JsonProperty("metrics")
     private List<Metric> metrics;
+
+    @JsonProperty("clusters")
     private List<Cluster> clusters;
 
     public OverviewReport() {
-        submission_folder_path = "";
-        base_code_folder_path = "";
+        submissionFolderPath = "";
+        baseCodeFolderPath = "";
         language = "";
-        file_extensions = List.of();
-        submission_ids = List.of();
-        failed_submission_names = List.of();
-        excluded_files = Set.of();
-        match_sensitivity = 0;
-        date_of_execution = "";
-        execution_time = 0;
+        fileExtensions = List.of();
+        submissionIds = List.of();
+        failedSubmissionNames = List.of();
+        excludedFiles = Set.of();
+        matchSensitivity = 0;
+        dateOfExecution = "";
+        executionTime = 0;
         clusters = List.of();
     }
 
@@ -37,48 +64,48 @@ public class OverviewReport {
      * GETTERS
      *******************************/
 
-    public String getSubmission_folder_path() {
-        return submission_folder_path;
+    public String getSubmissionFolderPath() {
+        return submissionFolderPath;
     }
 
-    public String getBase_code_folder_path() {
-        return base_code_folder_path;
+    public String getBaseCodeFolderPath() {
+        return baseCodeFolderPath;
     }
 
     public String getLanguage() {
         return language;
     }
 
-    public List<String> getFile_extensions() {
-        return file_extensions;
+    public List<String> getFileExtensions() {
+        return fileExtensions;
     }
 
-    public List<String> getSubmission_ids() {
-        return submission_ids;
+    public List<String> getSubmissionIds() {
+        return submissionIds;
     }
 
-    public List<String> getFailed_submission_names() {
-        return failed_submission_names;
+    public List<String> getFailedSubmissionNames() {
+        return failedSubmissionNames;
     }
 
-    public Set<String> getExcluded_files() {
-        return excluded_files;
+    public Set<String> getExcludedFiles() {
+        return excludedFiles;
     }
 
-    public int getMatch_sensitivity() {
-        return match_sensitivity;
+    public int getMatchSensitivity() {
+        return matchSensitivity;
     }
 
-    public String getDate_of_execution() {
-        return date_of_execution;
+    public String getDateOfExecution() {
+        return dateOfExecution;
     }
 
-    public long getExecution_time() {
-        return execution_time;
+    public long getExecutionTime() {
+        return executionTime;
     }
 
-    public List<String> getComparison_names() {
-        return comparison_names;
+    public List<String> getComparisonNames() {
+        return comparisonNames;
     }
 
     public List<Metric> getMetrics() {
@@ -93,48 +120,48 @@ public class OverviewReport {
      * SETTERS
      *******************************/
 
-    public void setSubmission_folder_path(String submission_folder_path) {
-        this.submission_folder_path = submission_folder_path;
+    public void setSubmissionFolderPath(String submissionFolderPath) {
+        this.submissionFolderPath = submissionFolderPath;
     }
 
-    public void setBase_code_folder_path(String base_code_folder_path) {
-        this.base_code_folder_path = base_code_folder_path;
+    public void setBaseCodeFolderPath(String baseCodeFolderPath) {
+        this.baseCodeFolderPath = baseCodeFolderPath;
     }
 
     public void setLanguage(String language) {
         this.language = language;
     }
 
-    public void setFile_extensions(List<String> file_extensions) {
-        this.file_extensions = List.copyOf(file_extensions);
+    public void setFileExtensions(List<String> fileExtensions) {
+        this.fileExtensions = List.copyOf(fileExtensions);
     }
 
-    public void setSubmission_ids(List<String> submission_ids) {
-        this.submission_ids = List.copyOf(submission_ids);
+    public void setSubmissionIds(List<String> submissionIds) {
+        this.submissionIds = List.copyOf(submissionIds);
     }
 
-    public void setFailed_submission_names(List<String> failed_submission_names) {
-        this.failed_submission_names = List.copyOf(failed_submission_names);
+    public void setFailedSubmissionNames(List<String> failedSubmissionNames) {
+        this.failedSubmissionNames = List.copyOf(failedSubmissionNames);
     }
 
-    public void setExcluded_files(Set<String> excluded_files) {
-        this.excluded_files = Set.copyOf(excluded_files);
+    public void setExcludedFiles(Set<String> excludedFiles) {
+        this.excludedFiles = Set.copyOf(excludedFiles);
     }
 
-    public void setMatch_sensitivity(int match_sensitivity) {
-        this.match_sensitivity = match_sensitivity;
+    public void setMatchSensitivity(int matchSensitivity) {
+        this.matchSensitivity = matchSensitivity;
     }
 
-    public void setDate_of_execution(String date_of_execution) {
-        this.date_of_execution = date_of_execution;
+    public void setDateOfExecution(String dateOfExecution) {
+        this.dateOfExecution = dateOfExecution;
     }
 
-    public void setExecution_time(long execution_time) {
-        this.execution_time = execution_time;
+    public void setExecutionTime(long executionTime) {
+        this.executionTime = executionTime;
     }
 
-    public void setComparison_names(List<String> comparison_names) {
-        this.comparison_names = List.copyOf(comparison_names);
+    public void setComparisonNames(List<String> comparisonNames) {
+        this.comparisonNames = List.copyOf(comparisonNames);
     }
 
     public void setMetrics(List<Metric> metrics) {

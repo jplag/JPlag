@@ -37,20 +37,20 @@ public class ReportObjectFactory {
 
         // New update in JPlagOption. Not a single root dir but a list. Needs re-thinking and
         // implementation also in report model.
-        overviewReport.setSubmission_folder_path(result.getOptions().getRootDirectoryNames().get(0));
+        overviewReport.setSubmissionFolderPath(result.getOptions().getRootDirectoryNames().get(0));
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().getBaseCodeSubmissionName().orElse("") : "";
-        overviewReport.setBase_code_folder_path(baseCodePath);
+        overviewReport.setBaseCodeFolderPath(baseCodePath);
 
         overviewReport.setLanguage(result.getOptions().getLanguage().getName());
-        overviewReport.setFile_extensions(List.of(result.getOptions().getFileSuffixes()));
-        overviewReport.setSubmission_ids(extractSubmissionNames(comparisons));
-        overviewReport.setFailed_submission_names(List.of());  // No number of failed submissions
-        overviewReport.setExcluded_files(result.getOptions().getExcludedFiles());
-        overviewReport.setMatch_sensitivity(result.getOptions().getMinimumTokenMatch());
-        overviewReport.setDate_of_execution(getDate());
-        overviewReport.setExecution_time(result.getDuration());
-        overviewReport.setComparison_names(getComparisonNames(comparisons));
+        overviewReport.setFileExtensions(List.of(result.getOptions().getFileSuffixes()));
+        overviewReport.setSubmissionIds(extractSubmissionNames(comparisons));
+        overviewReport.setFailedSubmissionNames(List.of());  // No number of failed submissions
+        overviewReport.setExcludedFiles(result.getOptions().getExcludedFiles());
+        overviewReport.setMatchSensitivity(result.getOptions().getMinimumTokenMatch());
+        overviewReport.setDateOfExecution(getDate());
+        overviewReport.setExecutionTime(result.getDuration());
+        overviewReport.setComparisonNames(getComparisonNames(comparisons));
         overviewReport.setMetrics(getMetrics(result));
         overviewReport.setClusters(getClusters(result));
 

@@ -1,20 +1,28 @@
 package de.jplag.reportingV2.reportobject.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class Cluster {
-    private final float average_similarity;
+
+    @JsonProperty("average_similarity")
+    private final float averageSimilarity;
+
+    @JsonProperty("strength")
     private final float strength;
+
+    @JsonProperty("members")
     private final List<String> members;
 
-    public Cluster(float average_similarity, float strength, List<String> members) {
-        this.average_similarity = average_similarity;
+    public Cluster(float averageSimilarity, float strength, List<String> members) {
+        this.averageSimilarity = averageSimilarity;
         this.strength = strength;
         this.members = List.copyOf(members);
     }
 
-    public float getAverage_similarity() {
-        return average_similarity;
+    public float getAverageSimilarity() {
+        return averageSimilarity;
     }
 
     public float getStrength() {

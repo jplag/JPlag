@@ -1,11 +1,21 @@
 package de.jplag.reportingV2.reportobject.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class Metric {
+
+    @JsonProperty("name")
     private final String name;
+
+    @JsonProperty("threshold")
     private final float threshold;
+
+    @JsonProperty("distribution")
     private final List<Integer> distribution;
+
+    @JsonProperty("topComparisons")
     private final List<TopComparison> topComparisons;
 
     public Metric(String name, float threshold, List<Integer> distribution, List<TopComparison> topComparisons) {

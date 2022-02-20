@@ -45,7 +45,7 @@ public class JsonFactory {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(Path.of(folderPath, "overview.json").toFile(), jPlagReport.getOverviewReport());
             for (ComparisonReport r : jPlagReport.getComparisons()) {
-                String name = r.getFirst_submission_id().concat("-").concat(r.getSecond_submission_id()).concat(".json");
+                String name = r.getFirstSubmissionId().concat("-").concat(r.getSecondSubmissionId()).concat(".json");
                 mapper.writeValue(Path.of(folderPath, name).toFile(), r);
             }
         } catch (IOException e) {
