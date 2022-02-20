@@ -6,7 +6,7 @@ public enum Verbosity {
 
     public static Verbosity fromOption(String optionValue) {
         for (Verbosity verbosity : Verbosity.values())
-            if (verbosity.name().equals(optionValue))
+            if (verbosity.name().equalsIgnoreCase(optionValue))
                 return verbosity;
         return QUIET;
     }
