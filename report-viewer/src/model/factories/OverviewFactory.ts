@@ -6,7 +6,7 @@ import {Cluster} from "@/model/Cluster";
 export class OverviewFactory {
 
     static getOverview(json: Record<string, unknown>): Overview {
-        const submissionFolder = json.submission_folder_path as string
+        const submissionFolder = json.submission_folder_path as Array<string>
         const baseCodeFolder = ""
         const language = json.language as string
         const fileExtensions = json.file_extensions as Array<string>

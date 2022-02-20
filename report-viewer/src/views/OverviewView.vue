@@ -4,7 +4,9 @@
       <h1>JPlag Report</h1>
       <p class="section-title">Main Info:</p>
       <div id="basicInfo">
-        <TextInformation label="Directory path" :value="overview.submissionFolderPath"/>
+        <TextInformation label="Directory path" :value="submissionPathValue" :has-additional-info="hasMoreSubmissionPaths" additional-info-title="">
+          <p v-for="path in overview.submissionFolderPath" :key="path" :title="path">{{ path }}</p>
+        </TextInformation>
         <TextInformation label="Language" :value="overview.language" :has-additional-info="true" additional-info-title="File extensions:">
           <p v-for="info in overview.fileExtensions" :key="info">{{ info }}</p>
         </TextInformation>
@@ -129,6 +131,9 @@ export default defineComponent({
     //Top Comparisons
     let topComps = ref(overview.metrics.map((m) => m.comparisons))
 
+    const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1;
+    const submissionPathValue = hasMoreSubmissionPaths ? "Click arrow to see all paths"
+        : overview.submissionFolderPath[0]
 
     return {
       overview,
@@ -136,6 +141,8 @@ export default defineComponent({
       selectedMetric,
       distributions,
       topComps,
+      hasMoreSubmissionPaths,
+      submissionPathValue,
       handleId,
       selectMetric,
       store

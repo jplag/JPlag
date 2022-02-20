@@ -2,7 +2,7 @@ import {Metric} from "./Metric";
 import {Cluster} from "@/model/Cluster";
 
 export class Overview {
-    private readonly _submissionFolderPath: string
+    private readonly _submissionFolderPath: Array<string>
     private readonly _baseCodeFolderPath: string
     private readonly _language: string
     private readonly _fileExtensions: Array<string>
@@ -14,7 +14,7 @@ export class Overview {
     private readonly _clusters: Array<Cluster>
 
 
-    constructor(submissionFolderPath: string, baseCodeFolderPath: string, language: string, fileExtensions: Array<string>,matchSensitivity: number, submissionIds: Array<string>, dateOfExecution: string, durationOfExecution: number, metrics: Array<Metric>, clusters: Array<Cluster>) {
+    constructor(submissionFolderPath: Array<string>, baseCodeFolderPath: string, language: string, fileExtensions: Array<string>,matchSensitivity: number, submissionIds: Array<string>, dateOfExecution: string, durationOfExecution: number, metrics: Array<Metric>, clusters: Array<Cluster>) {
         this._submissionFolderPath = submissionFolderPath;
         this._baseCodeFolderPath = baseCodeFolderPath;
         this._language = language;
@@ -28,7 +28,7 @@ export class Overview {
     }
 
 
-    get submissionFolderPath(): string {
+    get submissionFolderPath(): Array<string> {
         return this._submissionFolderPath;
     }
 

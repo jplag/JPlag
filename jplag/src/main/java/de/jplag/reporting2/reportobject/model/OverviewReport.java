@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class OverviewReport {
 
     @JsonProperty("submission_folder_path")
-    private String submissionFolderPath;
+    private List<String> submissionFolderPath;
 
     @JsonProperty("base_code_folder_path")
     private String baseCodeFolderPath;
@@ -47,7 +47,7 @@ public class OverviewReport {
     private List<Cluster> clusters;
 
     public OverviewReport() {
-        submissionFolderPath = "";
+        submissionFolderPath = List.of();
         baseCodeFolderPath = "";
         language = "";
         fileExtensions = List.of();
@@ -64,7 +64,7 @@ public class OverviewReport {
      * GETTERS
      *******************************/
 
-    public String getSubmissionFolderPath() {
+    public List<String> getSubmissionFolderPath() {
         return submissionFolderPath;
     }
 
@@ -120,7 +120,7 @@ public class OverviewReport {
      * SETTERS
      *******************************/
 
-    public void setSubmissionFolderPath(String submissionFolderPath) {
+    public void setSubmissionFolderPath(List<String> submissionFolderPath) {
         this.submissionFolderPath = submissionFolderPath;
     }
 
