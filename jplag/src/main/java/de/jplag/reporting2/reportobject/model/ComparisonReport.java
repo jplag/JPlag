@@ -1,8 +1,8 @@
-package de.jplag.reportingV2.reportobject.model;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package de.jplag.reporting2.reportobject.model;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ComparisonReport {
 
@@ -25,7 +25,7 @@ public class ComparisonReport {
     private final List<Match> matches;
 
     public ComparisonReport(String firstSubmissionId, String secondSubmissionId, float matchPercentage,
-                            List<FilesOfSubmission> filesOfFirstSubmission, List<FilesOfSubmission> filesOfSecondSubmission, List<Match> matches) {
+            List<FilesOfSubmission> filesOfFirstSubmission, List<FilesOfSubmission> filesOfSecondSubmission, List<Match> matches) {
 
         this.firstSubmissionId = firstSubmissionId;
         this.secondSubmissionId = secondSubmissionId;

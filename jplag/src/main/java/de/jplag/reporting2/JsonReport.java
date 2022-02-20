@@ -1,12 +1,12 @@
-package de.jplag.reportingV2;
+package de.jplag.reporting2;
 
 import java.io.File;
 import java.util.List;
 
 import de.jplag.JPlagResult;
-import de.jplag.reportingV2.jsonfactory.JsonFactory;
-import de.jplag.reportingV2.reportobject.ReportObjectFactory;
-import de.jplag.reportingV2.reportobject.model.JPlagReport;
+import de.jplag.reporting2.jsonfactory.JsonFactory;
+import de.jplag.reporting2.reportobject.ReportObjectFactory;
+import de.jplag.reporting2.reportobject.model.JPlagReport;
 
 // ReportImplementation -> JsonReport
 

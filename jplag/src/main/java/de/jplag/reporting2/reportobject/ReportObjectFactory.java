@@ -1,4 +1,4 @@
-package de.jplag.reportingV2.reportobject;
+package de.jplag.reporting2.reportobject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 import de.jplag.*;
 import de.jplag.options.JPlagOptions;
-import de.jplag.reportingV2.reportobject.model.*;
-import de.jplag.reportingV2.reportobject.model.Match;
+import de.jplag.reporting2.reportobject.model.*;
+import de.jplag.reporting2.reportobject.model.Match;
 
 /**
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.

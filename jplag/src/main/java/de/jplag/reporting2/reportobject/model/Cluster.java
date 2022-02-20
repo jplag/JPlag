@@ -1,8 +1,8 @@
-package de.jplag.reportingV2.reportobject.model;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package de.jplag.reporting2.reportobject.model;
 
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Cluster {
 

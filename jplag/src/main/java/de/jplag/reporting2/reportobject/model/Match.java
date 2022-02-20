@@ -1,4 +1,4 @@
-package de.jplag.reportingV2.reportobject.model;
+package de.jplag.reporting2.reportobject.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,8 +25,7 @@ public class Match {
     @JsonProperty("tokens")
     private final int tokens;
 
-    public Match(String firstFileName, String secondFileName, int startInFirst, int endInFirst, int startInSecond, int endInSecond,
-                 int tokens) {
+    public Match(String firstFileName, String secondFileName, int startInFirst, int endInFirst, int startInSecond, int endInSecond, int tokens) {
         this.firstFileName = firstFileName;
         this.secondFileName = secondFileName;
         this.startInFirst = startInFirst;

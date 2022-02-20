@@ -1,4 +1,4 @@
-package de.jplag.reportingV2.jsonfactory;
+package de.jplag.reporting2.jsonfactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -8,8 +8,8 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.jplag.reportingV2.reportobject.model.ComparisonReport;
-import de.jplag.reportingV2.reportobject.model.JPlagReport;
+import de.jplag.reporting2.reportobject.model.ComparisonReport;
+import de.jplag.reporting2.reportobject.model.JPlagReport;
 
 /**
  * Factory class, responsible for creating Json strings and writing them to files.
