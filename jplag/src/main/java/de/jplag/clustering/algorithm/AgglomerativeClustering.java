@@ -28,7 +28,8 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
         int size = similarityMatrix.getRowDimension();
         // all clusters that do not have a parent yet
         Set<Cluster> clusters = new HashSet<>(size);
-        // calculated similarities. Might contain connections to already visited clusters, those need to be ignored.
+        // calculated similarities. Might contain connections to already visited
+        // clusters, those need to be ignored.
         PriorityQueue<ClusterConnection> similarities;
 
         {
@@ -71,7 +72,9 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
             nearest.left.getSubmissions().addAll(nearest.right.getSubmissions());
             Cluster combined = new Cluster(nearest.left.getSubmissions());
             for (Cluster otherCluster : clusters) {
-                similarities.add(new ClusterConnection(combined, otherCluster, similarityMatrix));
+                float similarity = options.getAgglomerativeInterClusterSimilarity().clusterSimilarity(combined.submissions, otherCluster.submissions,
+                        similarityMatrix);
+                similarities.add(new ClusterConnection(combined, otherCluster, similarity));
             }
             clusters.add(combined);
         }
@@ -79,52 +82,11 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
         return clusters.stream().map(Cluster::getSubmissions).collect(Collectors.toList());
     }
 
-    private float clusterSimilarity(List<Integer> leftCluster, List<Integer> rightCluster, RealMatrix similarityMatrix) {
-        float similarity = 0;
-        switch (options.getAgglomerativeInterClusterSimilarity()) {
-            case MIN:
-                similarity = Float.MAX_VALUE;
-                break;
-            case MAX:
-                similarity = -Float.MAX_VALUE;
-                break;
-            case AVERAGE:
-                similarity = 0;
-                break;
-        }
-
-        for (int leftIndex = 0; leftIndex < leftCluster.size(); leftIndex++) {
-            int leftSubmission = leftCluster.get(leftIndex);
-            for (int rightIndex = 0; rightIndex < rightCluster.size(); rightIndex++) {
-                float submissionSimilarity = (float) similarityMatrix.getEntry(leftSubmission, rightCluster.get(rightIndex));
-                switch (options.getAgglomerativeInterClusterSimilarity()) {
-                    case MIN:
-                        similarity = Math.min(similarity, submissionSimilarity);
-                        break;
-                    case MAX:
-                        similarity = Math.max(similarity, submissionSimilarity);
-                        break;
-                    case AVERAGE:
-                        similarity += submissionSimilarity;
-                }
-            }
-        }
-
-        if (options.getAgglomerativeInterClusterSimilarity() == InterClusterSimilarity.AVERAGE) {
-            similarity /= leftCluster.size() * rightCluster.size();
-        }
-        return similarity;
-    }
-
     private class ClusterConnection implements Comparable<ClusterConnection> {
 
         private Cluster left;
         private Cluster right;
         private float similarity;
-
-        public ClusterConnection(Cluster left, Cluster right, RealMatrix similarity) {
-            this(left, right, clusterSimilarity(left.submissions, right.submissions, similarity));
-        }
 
         public ClusterConnection(Cluster left, Cluster right, float similarity) {
             this.left = left;
