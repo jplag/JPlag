@@ -3,6 +3,7 @@ package de.jplag.clustering;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
@@ -10,9 +11,6 @@ import de.jplag.Submission;
 import de.jplag.clustering.algorithm.AgglomerativeClustering;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
-import de.jplag.clustering.preprocessors.CumulativeDistributionFunctionPreprocessor;
-import de.jplag.clustering.preprocessors.PercentileThresholdProcessor;
-import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
 
 /**
  * Runs the clustering according to an options object.
@@ -31,25 +29,11 @@ public class ClusteringFactory {
         }
 
         // init preprocessor
-        ClusteringPreprocessor preprocessor;
-        switch (options.getPreprocessor()) {
-            case CUMULATIVE_DISTRIBUTION_FUNCTION:
-                preprocessor = new CumulativeDistributionFunctionPreprocessor();
-                break;
-            case THRESHOLD:
-                preprocessor = new ThresholdPreprocessor(options.getPreprocessorThreshold());
-                break;
-            case PERCENTILE:
-                preprocessor = new PercentileThresholdProcessor(options.getPreprocessorPercentile());
-                break;
-            case NONE:
-            default:
-                preprocessor = null;
-                break;
-        }
-        if (preprocessor != null) {
+        Optional<ClusteringPreprocessor> preprocessor = options.getPreprocessor().constructPreprocessor(options);
+
+        if (preprocessor.isPresent()) {
             // Package preprocessor into a clustering algorithm
-            clusteringAlgorithm = new PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor);
+            clusteringAlgorithm = new PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor.orElseThrow());
         }
 
         // init adapter
