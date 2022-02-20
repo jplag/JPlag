@@ -1,5 +1,6 @@
 package de.jplag.reportingV2;
 
+import java.io.File;
 import java.util.List;
 
 import de.jplag.JPlagResult;
@@ -21,9 +22,15 @@ public class JsonReport implements Report {
     }
 
     @Override
-    public boolean saveReport(JPlagResult result) {
+    public boolean saveReport(JPlagResult result, String path) {
         JPlagReport report = ReportObjectFactory.getReportObject(result);
-        return JsonFactory.saveJsonFiles(report, "./report-viewer/src/files/");
+        File dir = new File(path);
+        if(!dir.exists()) {
+            if(!dir.mkdir()) {
+                System.out.println("Failed to create dir.");
+            }
+        }
+        return JsonFactory.saveJsonFiles(report, path);
     }
 
 }

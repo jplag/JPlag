@@ -2,6 +2,7 @@ package de.jplag.reportingV2.jsonfactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,8 @@ import de.jplag.reportingV2.reportobject.model.JPlagReport;
  */
 public class JsonFactory {
 
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     /**
      * Uses Jackson to create Json Strings from JPlagReport object.
      * @return A list, first element is Json String of Overview object. The rest elements are Json Strings of Comparison
@@ -24,7 +27,6 @@ public class JsonFactory {
     public static List<String> getJsonStrings(JPlagReport jPlagReport) {
         List<String> jsonReports = new ArrayList<>();
         try {
-            ObjectMapper mapper = new ObjectMapper();
             jsonReports.add(mapper.writeValueAsString(jPlagReport.getOverviewReport()));
             for (ComparisonReport comparisonReport : jPlagReport.getComparisons()) {
                 jsonReports.add(mapper.writeValueAsString(comparisonReport));
@@ -40,16 +42,12 @@ public class JsonFactory {
      * @return A boolean, representing whether the process was successful.
      */
     public static boolean saveJsonFiles(JPlagReport jPlagReport, String folderPath) {
-        String sanitizedFolderPath = folderPath;
-        if (!folderPath.endsWith("/")) {
-            sanitizedFolderPath = folderPath.concat("/");
-        }
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(new File(sanitizedFolderPath.concat("overview.json")), jPlagReport.getOverviewReport());
+            mapper.writeValue(Path.of(folderPath, "overview.json").toFile(), jPlagReport.getOverviewReport());
             for (ComparisonReport r : jPlagReport.getComparisons()) {
                 String name = r.getFirst_submission_id().concat("-").concat(r.getSecond_submission_id()).concat(".json");
-                mapper.writeValue(new File(folderPath + name), r);
+                mapper.writeValue(Path.of(folderPath, name).toFile(), r);
             }
         } catch (IOException e) {
             System.out.println("Failed to save json files: " + e.getMessage());

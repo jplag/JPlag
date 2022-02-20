@@ -22,7 +22,8 @@ public interface Report {
     /**
      * Creates and saves JPlag report files to the disk.
      * @param result The result of a JPlag comparison.
+     * @param path Path to the directory where the report should be saved.
      * @return True if the process is successful, otherwise false.
      */
-    boolean saveReport(JPlagResult result);
+    boolean saveReport(JPlagResult result, String path);
 }
