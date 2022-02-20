@@ -36,7 +36,7 @@ export default defineComponent({
 
     const navigateToOverview = () => {
       router.push({
-            name: "Overview",
+            name: "OverviewView",
           }
       )
     }

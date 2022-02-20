@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
-import Overview from "@/views/Overview.vue";
+import Overview from "@/views/OverviewView.vue";
 import ComparisonView from "@/views/ComparisonView.vue"
 import FileUpload from "@/views/FileUpload.vue"
 
@@ -11,7 +11,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/overview",
-    name: "Overview",
+    name: "OverviewView",
     component: Overview,
   },
   {

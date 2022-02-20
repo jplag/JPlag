@@ -56,7 +56,7 @@ import {OverviewFactory} from "@/model/factories/OverviewFactory";
 import IDsList from "@/components/IDsList";
 
 export default defineComponent({
-  name: "Overview",
+  name: "OverviewView",
   components: {IDsList, ComparisonsTable, DistributionDiagram, MetricButton, TextInformation },
   setup() {
     let overview;
