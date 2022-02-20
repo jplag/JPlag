@@ -11,8 +11,8 @@ public class Metric {
     public Metric(String name, float threshold, List<Integer> distribution, List<TopComparison> topComparisons) {
         this.name = name;
         this.threshold = threshold;
-        this.distribution = distribution;
-        this.topComparisons = topComparisons;
+        this.distribution = List.copyOf(distribution);
+        this.topComparisons = List.copyOf(topComparisons);
     }
 
     public String getName() {

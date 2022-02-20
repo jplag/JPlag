@@ -4,12 +4,12 @@ import java.util.List;
 
 public class ComparisonReport {
 
-    private String first_submission_id;
-    private String second_submission_id;
-    private float match_percentage;
-    private List<FilesOfSubmission> files_of_first_submission;
-    private List<FilesOfSubmission> files_of_second_submission;
-    private List<Match> matches;
+    private final String first_submission_id;
+    private final String second_submission_id;
+    private final float match_percentage;
+    private final List<FilesOfSubmission> files_of_first_submission;
+    private final List<FilesOfSubmission> files_of_second_submission;
+    private final List<Match> matches;
 
     public ComparisonReport(String first_submission_id, String second_submission_id, float match_percentage,
             List<FilesOfSubmission> files_of_first_submission, List<FilesOfSubmission> files_of_second_submission, List<Match> matches) {
@@ -17,8 +17,8 @@ public class ComparisonReport {
         this.first_submission_id = first_submission_id;
         this.second_submission_id = second_submission_id;
         this.match_percentage = match_percentage;
-        this.files_of_first_submission = files_of_first_submission;
-        this.files_of_second_submission = files_of_second_submission;
+        this.files_of_first_submission = List.copyOf(files_of_first_submission);
+        this.files_of_second_submission = List.copyOf(files_of_second_submission);
         this.matches = matches;
     }
 
@@ -44,29 +44,5 @@ public class ComparisonReport {
 
     public List<Match> getMatches() {
         return matches;
-    }
-
-    public void setFirst_submission_id(String first_submission_id) {
-        this.first_submission_id = first_submission_id;
-    }
-
-    public void setSecond_submission_id(String second_submission_id) {
-        this.second_submission_id = second_submission_id;
-    }
-
-    public void setMatch_percentage(float match_percentage) {
-        this.match_percentage = match_percentage;
-    }
-
-    public void setFiles_of_first_submission(List<FilesOfSubmission> files_of_first_submission) {
-        this.files_of_first_submission = files_of_first_submission;
-    }
-
-    public void setFiles_of_second_submission(List<FilesOfSubmission> files_of_second_submission) {
-        this.files_of_second_submission = files_of_second_submission;
-    }
-
-    public void setMatches(List<Match> matches) {
-        this.matches = matches;
     }
 }

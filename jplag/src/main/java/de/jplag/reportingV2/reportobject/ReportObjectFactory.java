@@ -63,10 +63,20 @@ public class ReportObjectFactory {
      */
     private static List<ComparisonReport> generateComparisonReports(JPlagResult result) {
         List<ComparisonReport> comparisons = new ArrayList<>();
-        result.getComparisons().forEach(c -> comparisons.add(new ComparisonReport(c.getFirstSubmission().getName(), c.getSecondSubmission().getName(),
-                c.similarity(), getFilesForSubmission(c.getFirstSubmission()), getFilesForSubmission(c.getSecondSubmission()), c.getMatches().stream()
-                        .map(m -> convertMatchToReportMatch(c, m, result.getOptions().getLanguage().usesIndex())).collect(Collectors.toList()))));
+        result.getComparisons().forEach(comparison -> comparisons.add( //
+                new ComparisonReport(comparison.getFirstSubmission().getName(), //
+                        comparison.getSecondSubmission().getName(), //
+                        comparison.similarity(), //
+                        getFilesForSubmission(comparison.getFirstSubmission()), //
+                        getFilesForSubmission(comparison.getSecondSubmission()), //
+                        convertMatchesToReportMatches(result, comparison, comparison.getMatches()) //
+                )));
         return comparisons;
+    }
+
+    private static List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison, List<de.jplag.Match> matches) {
+        return matches.stream().map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().usesIndex()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -162,18 +172,18 @@ public class ReportObjectFactory {
     private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, Boolean usesIndex) {
         TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
         TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
-        Token startFirstToken = tokensFirst.getToken(match.getStartOfFirst());
-        Token endFirstToken = tokensFirst.getToken(match.getStartOfFirst() + match.getLength() - 1);
-        Token startSecondToken = tokensSecond.getToken(match.getStartOfSecond());
-        Token endSecondToken = tokensSecond.getToken(match.getStartOfSecond() + match.getLength() - 1);
+        Token startTokenFirst = tokensFirst.getToken(match.getStartOfFirst());
+        Token endTokenFirst = tokensFirst.getToken(match.getStartOfFirst() + match.getLength() - 1);
+        Token startTokenSecond = tokensSecond.getToken(match.getStartOfSecond());
+        Token endTokenSecond = tokensSecond.getToken(match.getStartOfSecond() + match.getLength() - 1);
 
-        int startFirst = usesIndex ? startFirstToken.getIndex() : startFirstToken.getLine();
-        int endFirst = usesIndex ? endFirstToken.getIndex() : endFirstToken.getLine();
-        int startSecond = usesIndex ? startSecondToken.getIndex() : startSecondToken.getLine();
-        int endSecond = usesIndex ? endSecondToken.getIndex() : endSecondToken.getLine();
+        int startFirst = usesIndex ? startTokenFirst.getIndex() : startTokenFirst.getLine();
+        int endFirst = usesIndex ? endTokenFirst.getIndex() : endTokenFirst.getLine();
+        int startSecond = usesIndex ? startTokenSecond.getIndex() : startTokenSecond.getLine();
+        int endSecond = usesIndex ? endTokenSecond.getIndex() : endTokenSecond.getLine();
         int tokens = match.getLength();
 
-        return new Match(startFirstToken.file, startSecondToken.file, startFirst, endFirst, startSecond, endSecond, tokens);
+        return new Match(startTokenFirst.file, startTokenSecond.file, startFirst, endFirst, startSecond, endSecond, tokens);
     }
 
     // TODO implement after PR Readd clustering #281

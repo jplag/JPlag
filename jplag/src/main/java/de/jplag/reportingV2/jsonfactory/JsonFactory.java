@@ -1,6 +1,5 @@
 package de.jplag.reportingV2.jsonfactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;

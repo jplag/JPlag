@@ -10,7 +10,7 @@ public class Cluster {
     public Cluster(float average_similarity, float strength, List<String> members) {
         this.average_similarity = average_similarity;
         this.strength = strength;
-        this.members = members;
+        this.members = List.copyOf(members);
     }
 
     public float getAverage_similarity() {

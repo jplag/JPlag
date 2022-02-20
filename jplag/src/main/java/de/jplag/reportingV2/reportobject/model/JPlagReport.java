@@ -8,7 +8,7 @@ public class JPlagReport {
 
     public JPlagReport(OverviewReport overviewReport, List<ComparisonReport> comparisons) {
         this.overviewReport = overviewReport;
-        this.comparisons = comparisons;
+        this.comparisons = List.copyOf(comparisons);
     }
 
     public OverviewReport getOverviewReport() {

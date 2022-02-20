@@ -2,9 +2,9 @@ package de.jplag.reportingV2.reportobject.model;
 
 public class TopComparison {
 
-    private String first_submission;
-    private String second_submission;
-    private float match_percentage;
+    private final String first_submission;
+    private final String second_submission;
+    private final float match_percentage;
 
     public TopComparison(String first_submission, String second_submission, float match_percentage) {
         this.first_submission = first_submission;
@@ -24,15 +24,4 @@ public class TopComparison {
         return match_percentage;
     }
 
-    public void setFirst_submission(String first_submission) {
-        this.first_submission = first_submission;
-    }
-
-    public void setSecond_submission(String second_submission) {
-        this.second_submission = second_submission;
-    }
-
-    public void setMatch_percentage(float match_percentage) {
-        this.match_percentage = match_percentage;
-    }
 }

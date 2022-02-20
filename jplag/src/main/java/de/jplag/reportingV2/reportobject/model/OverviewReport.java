@@ -105,19 +105,19 @@ public class OverviewReport {
     }
 
     public void setFile_extensions(List<String> file_extensions) {
-        this.file_extensions = file_extensions;
+        this.file_extensions = List.copyOf(file_extensions);
     }
 
     public void setSubmission_ids(List<String> submission_ids) {
-        this.submission_ids = submission_ids;
+        this.submission_ids = List.copyOf(submission_ids);
     }
 
     public void setFailed_submission_names(List<String> failed_submission_names) {
-        this.failed_submission_names = failed_submission_names;
+        this.failed_submission_names = List.copyOf(failed_submission_names);
     }
 
     public void setExcluded_files(List<String> excluded_files) {
-        this.excluded_files = excluded_files;
+        this.excluded_files = List.copyOf(excluded_files);
     }
 
     public void setMatch_sensitivity(int match_sensitivity) {
@@ -133,14 +133,14 @@ public class OverviewReport {
     }
 
     public void setComparison_names(List<String> comparison_names) {
-        this.comparison_names = comparison_names;
+        this.comparison_names = List.copyOf(comparison_names);
     }
 
     public void setMetrics(List<Metric> metrics) {
-        this.metrics = metrics;
+        this.metrics = List.copyOf(metrics);
     }
 
     public void setClusters(List<Cluster> clusters) {
-        this.clusters = clusters;
+        this.clusters = List.copyOf(clusters);
     }
 }
