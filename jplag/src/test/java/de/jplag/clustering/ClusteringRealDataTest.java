@@ -29,11 +29,9 @@ import de.jplag.clustering.algorithm.SpectralClustering;
 import de.jplag.clustering.preprocessors.CumulativeDistributionFunctionPreprocessor;
 
 /**
- * These test are not meant to be run during normal unit testing.
- * They can be used to test the clustering algorithms against data from
- * the private pseudomized reports repository.
- * 
- * These tests test PROBABILISTIC behavior, so use with caution!
+ * These test are not meant to be run during normal unit testing. They can be used to test the clustering algorithms
+ * against data from the private pseudomized reports repository. These tests test PROBABILISTIC behavior, so use with
+ * caution!
  */
 public class ClusteringRealDataTest {
 
@@ -48,21 +46,16 @@ public class ClusteringRealDataTest {
         }
     }
 
-    private static List<String> B_POSITIVE = Arrays.asList(new String[] { "Student (31)", "Student (223)" });
-    private static List<String> C_POSITIVE = Arrays
-            .asList(new String[] { "Student (166)", "Student (212)", "Student (236)", "Student (229)" });
+    private static List<String> B_POSITIVE = Arrays.asList(new String[] {"Student (31)", "Student (223)"});
+    private static List<String> C_POSITIVE = Arrays.asList(new String[] {"Student (166)", "Student (212)", "Student (236)", "Student (229)"});
 
-    private static final TestFile[] OLD_CLUSTERING_DATA = {
-            new TestFile("de/jplag/PseudonymizedReports/alt/A_1000_matches_max.csv", Optional.empty()),
+    private static final TestFile[] OLD_CLUSTERING_DATA = {new TestFile("de/jplag/PseudonymizedReports/alt/A_1000_matches_max.csv", Optional.empty()),
             new TestFile("de/jplag/PseudonymizedReports/alt/B_1000_matches_max.csv", Optional.of(B_POSITIVE)),
-            new TestFile("de/jplag/PseudonymizedReports/alt/C_1000_matches_max.csv", Optional.of(C_POSITIVE)),
-    };
+            new TestFile("de/jplag/PseudonymizedReports/alt/C_1000_matches_max.csv", Optional.of(C_POSITIVE)),};
 
-    private static final TestFile[] NEW_CLUSTERING_DATA = {
-            new TestFile("de/jplag/PseudonymizedReports/neu/A_matches_avg.csv", Optional.empty()),
+    private static final TestFile[] NEW_CLUSTERING_DATA = {new TestFile("de/jplag/PseudonymizedReports/neu/A_matches_avg.csv", Optional.empty()),
             new TestFile("de/jplag/PseudonymizedReports/neu/B_matches_avg.csv", Optional.of(B_POSITIVE)),
-            new TestFile("de/jplag/PseudonymizedReports/neu/C_matches_avg.csv", Optional.of(C_POSITIVE)),
-    };
+            new TestFile("de/jplag/PseudonymizedReports/neu/C_matches_avg.csv", Optional.of(C_POSITIVE)),};
 
     private String str(float f) {
         return String.format("%.4f", f);
@@ -71,9 +64,7 @@ public class ClusteringRealDataTest {
     private URL loadFromClasspath(String file) throws FileNotFoundException {
         URL url = getClass().getClassLoader().getResource(file);
         if (url == null) {
-            assumeTrue(file
-                    + " not found. 'de/jpag/PseudonymizedReports' must contain the data from the PseudonymizedReports repository.",
-                    false);
+            assumeTrue(file + " not found. 'de/jpag/PseudonymizedReports' must contain the data from the PseudonymizedReports repository.", false);
         }
         return url;
     }
@@ -82,20 +73,16 @@ public class ClusteringRealDataTest {
         RealMatrix clusteringSimilarity = new Array2DRowRealMatrix(readResult.similarity.getData());
 
         /*
-         * AgglomerativeClustering.ClusteringOptions options = new
-         * AgglomerativeClustering.ClusteringOptions();
-         * options.minimalSimilarity = 0.15f; options.similarity =
-         * AgglomerativeClustering.InterClusterSimilarity.AVERAGE;
+         * AgglomerativeClustering.ClusteringOptions options = new AgglomerativeClustering.ClusteringOptions();
+         * options.minimalSimilarity = 0.15f; options.similarity = AgglomerativeClustering.InterClusterSimilarity.AVERAGE;
          * ClusteringAlgorithm clusteringAlg = new AgglomerativeClustering(options);
          */
 
         SpectralClustering clusteringAlg = new SpectralClustering(ClusteringOptions.DEFAULTS);
         ClusteringPreprocessor preprocessor = new CumulativeDistributionFunctionPreprocessor();
-        GenericClusteringAlgorithm preprocessedClusteringAlg = new PreprocessedClusteringAlgorithm(clusteringAlg,
-                preprocessor);
+        GenericClusteringAlgorithm preprocessedClusteringAlg = new PreprocessedClusteringAlgorithm(clusteringAlg, preprocessor);
         Collection<Collection<Integer>> clustering = preprocessedClusteringAlg.cluster(clusteringSimilarity);
-        ClusteringResult<Integer> mRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering),
-                readResult.similarity);
+        ClusteringResult<Integer> mRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), readResult.similarity);
         List<Cluster<Integer>> clusters = new ArrayList<>(mRes.getClusters());
         clusters.sort(Comparator.comparingDouble(c -> -c.getNormalizedCommunityStrengthPerConnection()));
 
@@ -103,17 +90,15 @@ public class ClusteringRealDataTest {
         for (Cluster<Integer> c : clusters) {
             float ncsm = c.getCommunityStrengthPerConnection();
             float avgSim = c.averageSimilarity((a, b) -> (float) readResult.similarity.getEntry(a, b));
-            System.out.println(
-                    str(c.getCommunityStrength()) + "\t" + str(ncsm) + "\t" + str(avgSim) + "\t"
-                            + c.getMembers().stream().map(readResult.mapping::unmap).collect(Collectors.toList()));
+            System.out.println(str(c.getCommunityStrength()) + "\t" + str(ncsm) + "\t" + str(avgSim) + "\t"
+                    + c.getMembers().stream().map(readResult.mapping::unmap).collect(Collectors.toList()));
         }
         System.out.println("Community Strength: " + mRes.getCommunityStrength());
         System.out.println("Clusters: " + clusters.size());
 
         expected.ifPresent(expectedIdentifiers -> {
             Set<String> expectedIdentifiersSet = new HashSet<>(expectedIdentifiers);
-            Set<String> bestClusters = clusters.get(0).getMembers().stream().map(readResult.mapping::unmap)
-                    .collect(Collectors.toSet());
+            Set<String> bestClusters = clusters.get(0).getMembers().stream().map(readResult.mapping::unmap).collect(Collectors.toSet());
             assertEquals(expectedIdentifiersSet, bestClusters);
             System.out.println("hey");
         });
