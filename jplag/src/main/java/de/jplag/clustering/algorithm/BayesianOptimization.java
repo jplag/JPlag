@@ -62,12 +62,13 @@ public class BayesianOptimization {
     private Stream<RealVector> sampleSolutionSpace() {
         RandomVectorGenerator generator = new HaltonSequenceGenerator(minima.getDimension());
         RealVector size = maxima.subtract(minima);
-        return Stream.generate(generator::nextVector).map(x -> new ArrayRealVector(x)).map(x -> x.ebeMultiply(size)).map(x -> x.add(minima));
+        return Stream.generate(generator::nextVector).map(haltonPoint -> new ArrayRealVector(haltonPoint).ebeMultiply(size).add(minima));
 
     }
 
-    private GaussianProcess fit(List<RealVector> X, List<Double> Y) {
-        return GaussianProcess.fit(X, Y.stream().mapToDouble(Double::doubleValue).toArray(), noise, true, lengthScale.toArray());
+    private GaussianProcess fit(List<RealVector> listOfCoordinates, List<Double> observations) {
+        return GaussianProcess.fit(listOfCoordinates, observations.stream().mapToDouble(Double::doubleValue).toArray(), noise, true,
+                lengthScale.toArray());
     }
 
     private double acquisitionFunction(GaussianProcess gpr, double[] r, double yMax) {
@@ -75,10 +76,11 @@ public class BayesianOptimization {
         double[] meanAndStandardDeviation = gpr.predict(new ArrayRealVector(r));
         double mean = meanAndStandardDeviation[0];
         double standardDeviation = meanAndStandardDeviation[1];
-        double a = mean - yMax;
-        double z = a / standardDeviation;
+        double neededImprovement = mean - yMax;
+        double normalizedNeededImprovement = neededImprovement / standardDeviation;
         NormalDistribution normalDistribution = new NormalDistribution(null, 0, 1);
-        return a * normalDistribution.cumulativeProbability(z) + standardDeviation * normalDistribution.density(z);
+        return neededImprovement * normalDistribution.cumulativeProbability(normalizedNeededImprovement)
+                + standardDeviation * normalDistribution.density(normalizedNeededImprovement);
     }
 
     private static <T> Optional<T> getNext(Spliterator<T> spliterator) {
@@ -94,7 +96,7 @@ public class BayesianOptimization {
     /**
      * Numerically optimize acquisition function
      */
-    private RealVector maxAcq(GaussianProcess gpr, double yMax, Spliterator<RealVector> samples, double[] randomPicks) {
+    private RealVector maxAcq(GaussianProcess gaussianProcess, double yMax, Spliterator<RealVector> samples, double[] randomPicks) {
         double bestScore = Double.NEGATIVE_INFINITY;
         double[] bestSolution = getNext(samples).orElseThrow().toArray();
         double[] min = minima.toArray();
@@ -103,10 +105,11 @@ public class BayesianOptimization {
         int nonZeroAcquisitions = 0;
         for (int i = 0; i < MAXIMUM_ACQ_FN_EVALS_PER_ITERATION && nonZeroAcquisitions < MAX_NON_ZERO_ACQ_FN_EVALS_PER_ITERATION; i++) {
             double[] location = getNext(samples).orElseThrow().toArray();
-            if (acquisitionFunction(gpr, location, yMax) == 0)
+            if (acquisitionFunction(gaussianProcess, location, yMax) == 0)
                 continue;
             nonZeroAcquisitions++;
-            double acquisition = -BFGS.minimize(x -> -acquisitionFunction(gpr, x, yMax), 5, location, min, max, 0.00001, 1000);
+            double acquisition = -BFGS.minimize(coordinates -> -acquisitionFunction(gaussianProcess, coordinates, yMax), 5, location, min, max,
+                    0.00001, 1000);
             // Sometimes result is out of bounds (might be due to numerical errors?)
             for (int j = 0; j < location.length; j++) {
                 location[j] = Math.min(max[j], location[j]);
@@ -128,38 +131,38 @@ public class BayesianOptimization {
     /**
      * Optimizes a real-valued function and returns a result associated with the optimal value.
      * @param <T> type of the result
-     * @param f function to optimize
+     * @param objectiveFunction function to optimize
      * @return result
      */
-    public <T> OptimizationResult<T> maximize(Function<RealVector, OptimizationResult<T>> f) {
-        List<Double> Y = new ArrayList<>(maxEvaluations);
-        List<RealVector> X = new ArrayList<>(maxEvaluations);
+    public <T> OptimizationResult<T> maximize(Function<RealVector, OptimizationResult<T>> objectiveFunction) {
+        List<Double> observations = new ArrayList<>(maxEvaluations);
+        List<RealVector> testedCoordinates = new ArrayList<>(maxEvaluations);
         OptimizationResult<T> best = null;
 
         // the first couple of executions are reserved for exploration
-        sampleSolutionSpace().limit(initialPoints).forEach(X::add);
+        sampleSolutionSpace().limit(initialPoints).forEach(testedCoordinates::add);
 
         Spliterator<RealVector> poiSampler = sampleSolutionSpace().spliterator();
         double[] zeroAcquisitionsCounter = new double[1];
 
-        while (Y.size() < maxEvaluations && zeroAcquisitionsCounter[0] < STOP_AFTER_CONSECUTIVE_RANDOM_PICKS) {
-            int idx = Y.size();
-            RealVector x;
-            if (idx < X.size()) {
+        while (observations.size() < maxEvaluations && zeroAcquisitionsCounter[0] < STOP_AFTER_CONSECUTIVE_RANDOM_PICKS) {
+            int idx = observations.size();
+            RealVector coordinates;
+            if (idx < testedCoordinates.size()) {
                 // hard coded exploration
-                x = X.get(idx);
+                coordinates = testedCoordinates.get(idx);
             } else {
                 // GPR
-                GaussianProcess gpr = fit(X, Y);
+                GaussianProcess gpr = fit(testedCoordinates, observations);
                 if (debug) {
                     System.out.println(gpr.toString(minima, maxima, 100, 25, 0));
                 }
-                x = maxAcq(gpr, best.score, poiSampler, zeroAcquisitionsCounter);
-                X.add(x);
+                coordinates = maxAcq(gpr, best.score, poiSampler, zeroAcquisitionsCounter);
+                testedCoordinates.add(coordinates);
             }
-            OptimizationResult<T> result = f.apply(x);
-            result.params = x;
-            Y.add(result.getScore());
+            OptimizationResult<T> result = objectiveFunction.apply(coordinates);
+            result.params = coordinates;
+            observations.add(result.getScore());
             if (best == null) {
                 best = result;
             } else if (result.score > best.score) {
