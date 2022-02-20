@@ -36,9 +36,8 @@ public class JPlag {
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
      * @param options determines the parameterization.
-     * @throws ExitException if the initialization fails.
      */
-    public JPlag(JPlagOptions options) throws ExitException {
+    public JPlag(JPlagOptions options) {
         this.options = options;
         errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
