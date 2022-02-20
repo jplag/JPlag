@@ -29,6 +29,7 @@
 import { defineComponent, ref } from "vue";
 import {generateLineCodeLink} from "@/utils/Utils";
 import store from "@/store/store";
+import router from "@/router";
 import TextInformation from "@/components/TextInformation";
 import MatchTable from "@/components/MatchTable";
 import {ComparisonFactory} from "@/model/factories/ComparisonFactory";
@@ -55,8 +56,12 @@ export default defineComponent({
     let comparison;
     //getting the comparison file based on the used mode (zip, local, single)
     if(store.state.local) {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      comparison = ComparisonFactory.getComparison(require(`../files/${fileName}.json`))
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        comparison = ComparisonFactory.getComparison(require(`../files/${fileName}.json`))
+      } catch (exception) {
+        router.back()
+      }
     } else if(store.state.zip) {
       comparison = ComparisonFactory.getComparison(JSON.parse(store.state.files[fileName.concat(".json")]))
     } else if(store.state.single) {
