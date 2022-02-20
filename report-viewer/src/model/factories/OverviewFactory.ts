@@ -16,15 +16,15 @@ export class OverviewFactory {
         const duration = json.execution_time as number as number
         const metrics = [] as Array<Metric>
         const clusters = [] as Array<Cluster>
-        (json.metrics as Array<unknown>).forEach( (m) => {
-            const metric = m as Record<string, unknown>
+        (json.metrics as Array<unknown>).forEach( (jsonMetric) => {
+            const metric = jsonMetric as Record<string, unknown>
             const comparisons = [] as Array<ComparisonListElement>
 
-            (metric.topComparisons as Array<Record<string, unknown>>).forEach( c => {
+            (metric.topComparisons as Array<Record<string, unknown>>).forEach( jsonComparison => {
                 const comparison: ComparisonListElement = {
-                    firstSubmissionId : c.first_submission as string,
-                    secondSubmissionId : c.second_submission as string,
-                    matchPercentage : c.match_percentage as number
+                    firstSubmissionId : jsonComparison.first_submission as string,
+                    secondSubmissionId : jsonComparison.second_submission as string,
+                    matchPercentage : jsonComparison.match_percentage as number
                 }
                 comparisons.push(comparison)
             })
@@ -39,8 +39,8 @@ export class OverviewFactory {
         });
 
         if(json.clusters) {
-            (json.clusters as Array<unknown>).forEach(c => {
-                const cluster = c as Record<string, unknown>
+            (json.clusters as Array<unknown>).forEach(jsonCluster => {
+                const cluster = jsonCluster as Record<string, unknown>
                 const newCluster: Cluster = {
                     averageSimilarity: cluster.average_similarity as number,
                     strength: cluster.strength as number,

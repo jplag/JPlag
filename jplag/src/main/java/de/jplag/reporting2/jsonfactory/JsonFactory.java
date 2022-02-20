@@ -44,9 +44,9 @@ public class JsonFactory {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(Path.of(folderPath, "overview.json").toFile(), jPlagReport.getOverviewReport());
-            for (ComparisonReport r : jPlagReport.getComparisons()) {
-                String name = r.getFirstSubmissionId().concat("-").concat(r.getSecondSubmissionId()).concat(".json");
-                mapper.writeValue(Path.of(folderPath, name).toFile(), r);
+            for (ComparisonReport report : jPlagReport.getComparisons()) {
+                String name = report.getFirstSubmissionId().concat("-").concat(report.getSecondSubmissionId()).concat(".json");
+                mapper.writeValue(Path.of(folderPath, name).toFile(), report);
             }
         } catch (IOException e) {
             System.out.println("Failed to save json files: " + e.getMessage());

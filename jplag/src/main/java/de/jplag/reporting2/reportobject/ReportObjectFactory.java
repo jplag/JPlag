@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import de.jplag.*;
-import de.jplag.options.JPlagOptions;
 import de.jplag.reporting2.reportobject.model.*;
 import de.jplag.reporting2.reportobject.model.Match;
 
@@ -85,9 +84,9 @@ public class ReportObjectFactory {
      */
     private static List<String> extractSubmissionNames(List<JPlagComparison> comparisons) {
         HashSet<String> names = new HashSet<>();
-        comparisons.forEach(c -> {
-            names.add(c.getFirstSubmission().getName());
-            names.add(c.getSecondSubmission().getName());
+        comparisons.forEach(comparison -> {
+            names.add(comparison.getFirstSubmission().getName());
+            names.add(comparison.getSecondSubmission().getName());
         });
         return new ArrayList<>(names);
     }
@@ -98,7 +97,8 @@ public class ReportObjectFactory {
      */
     private static List<String> getComparisonNames(List<JPlagComparison> comparisons) {
         List<String> names = new ArrayList<>();
-        comparisons.forEach(c -> names.add(String.join("-", c.getFirstSubmission().getName(), c.getSecondSubmission().getName())));
+        comparisons.forEach(
+                comparison -> names.add(String.join("-", comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName())));
         return names;
     }
 
@@ -122,36 +122,9 @@ public class ReportObjectFactory {
      */
     private static List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons) {
         List<TopComparison> topComparisons = new ArrayList<>();
-        comparisons.forEach(
-                c -> topComparisons.add(new TopComparison(c.getFirstSubmission().getName(), c.getSecondSubmission().getName(), c.similarity())));
+        comparisons.forEach(comparison -> topComparisons.add(
+                new TopComparison(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(), comparison.similarity())));
         return topComparisons;
-    }
-
-    /**
-     * Gets the names of excluded files in a JPlag comparison. To be changed in the future to direct access to the file
-     * names. No file reading.
-     * @return List with the names of the files.
-     */
-    private static List<String> getExcludedFilesNames(JPlagOptions options) {
-        if (options.getExclusionFileName() == null) {
-            return List.of();
-        }
-        HashSet<String> excludedFileNames = new HashSet<>();
-
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(options.getExclusionFileName(), JPlagOptions.CHARSET));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                excludedFileNames.add(line.trim());
-            }
-
-            reader.close();
-        } catch (IOException exception) {
-            System.out.println("Could not read exclusion file: " + exception.getMessage());
-        }
-
-        return new ArrayList<>(excludedFileNames);
     }
 
     /**
@@ -159,7 +132,7 @@ public class ReportObjectFactory {
      * @return A list containing FilesOfSubmission DTOs.
      */
     private static List<FilesOfSubmission> getFilesForSubmission(Submission submission) {
-        return submission.getFiles().stream().map(f -> new FilesOfSubmission(f.getName(), readFileLines(f))).collect(Collectors.toList());
+        return submission.getFiles().stream().map(file -> new FilesOfSubmission(file.getName(), readFileLines(file))).collect(Collectors.toList());
     }
 
     /**
