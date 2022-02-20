@@ -51,19 +51,30 @@ export default defineComponent({
      * Name of the comparison file. Comparison files should be named {ID1}-{ID2}
      * @type {string}
      */
-    const fileName = props.id1.concat("-").concat(props.id2)
+    const fileName1 = props.id1.concat("-").concat(props.id2)
+    const fileName2 = props.id2.concat("-").concat(props.id1)
 
     let comparison;
     //getting the comparison file based on the used mode (zip, local, single)
     if(store.state.local) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        comparison = ComparisonFactory.getComparison(require(`../files/${fileName}.json`))
+        comparison = ComparisonFactory.getComparison(require(`../files/${fileName1}.json`))
       } catch (exception) {
-        router.back()
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          comparison = ComparisonFactory.getComparison(require(`../files/${fileName2}.json`))
+        } catch (exception) {
+          router.back()
+        }
       }
     } else if(store.state.zip) {
-      comparison = ComparisonFactory.getComparison(JSON.parse(store.state.files[fileName.concat(".json")]))
+      if(store.state.files[fileName1.concat(".json")]) {
+        comparison = ComparisonFactory.getComparison(JSON.parse(store.state.files[fileName1.concat(".json")]))
+      } else {
+        comparison = ComparisonFactory.getComparison(JSON.parse(store.state.files[fileName2.concat(".json")]))
+      }
+
     } else if(store.state.single) {
       comparison = ComparisonFactory.getComparison(JSON.parse(store.state.fileString))
     }
