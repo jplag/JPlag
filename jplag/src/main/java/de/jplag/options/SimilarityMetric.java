@@ -5,13 +5,13 @@ import java.util.function.Function;
 import de.jplag.JPlagComparison;
 
 public enum SimilarityMetric {
-    AVG(it -> it.similarity()),
-    MIN(it -> it.minimalSimilarity()),
-    MAX(it -> it.maximalSimilarity());
+    AVG(JPlagComparison::similarity),
+    MIN(JPlagComparison::minimalSimilarity),
+    MAX(JPlagComparison::maximalSimilarity);
 
     private final Function<JPlagComparison, Float> similarityFunction;
 
-    private SimilarityMetric(Function<JPlagComparison, Float> determinePercentage) {
+    SimilarityMetric(Function<JPlagComparison, Float> determinePercentage) {
         this.similarityFunction = determinePercentage;
     }
 

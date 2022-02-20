@@ -1,9 +1,12 @@
 package de.jplag.csharp;
 
+import java.io.Serial;
+
 import de.jplag.Token;
 
 public class CSharpToken extends Token implements CSharpTokenConstants {
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = -169669119665425164L;
     private int line, column, length;
 
     public CSharpToken(int type, String file, int line, int column, int length) {

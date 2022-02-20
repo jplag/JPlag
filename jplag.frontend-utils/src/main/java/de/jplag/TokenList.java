@@ -55,8 +55,7 @@ public class TokenList implements TokenConstants {
 
     @Override
     public final String toString() {
-        StringBuffer buffer = new StringBuffer();
-
+        StringBuilder buffer = new StringBuilder();
         try {
             for (int i = 0; i < tokens.size(); i++) {
                 buffer.append(i);

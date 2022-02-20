@@ -33,11 +33,11 @@ import java.nio.charset.StandardCharsets;
  * </pre>
  */
 public class UnicodeReader extends Reader {
-    private PushbackInputStream internalIn;
+    private final PushbackInputStream internalIn;
 
     private InputStreamReader internalIn2 = null;
 
-    private Charset defaultEnc;
+    private final Charset defaultEnc;
 
     private static final int BOM_SIZE = 4;
 
@@ -64,7 +64,7 @@ public class UnicodeReader extends Reader {
             return;
 
         Charset encoding;
-        byte bom[] = new byte[BOM_SIZE];
+        byte[] bom = new byte[BOM_SIZE];
         int n, unread;
         n = internalIn.read(bom, 0, bom.length);
 
@@ -80,7 +80,9 @@ public class UnicodeReader extends Reader {
         } else if ((bom[0] == (byte) 0x00) && (bom[1] == (byte) 0x00) && (bom[2] == (byte) 0xFE) && (bom[3] == (byte) 0xFF)) {
             encoding = Charset.forName("UTF-32BE");
             unread = n - 4;
-        } else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00) && (bom[3] == (byte) 0x00)) {
+        }
+        // WARNING: This line will evaluate always to false. Maybe that's an issue
+        else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00) && (bom[3] == (byte) 0x00)) {
             encoding = Charset.forName("UTF-32LE");
             unread = n - 4;
         } else {

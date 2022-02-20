@@ -23,7 +23,7 @@ public class Parser extends AbstractParser implements Python3TokenConstants {
     private TokenList struct = new TokenList();
     private String currentFile;
 
-    public TokenList parse(File dir, String files[]) {
+    public TokenList parse(File dir, String[] files) {
         struct = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {

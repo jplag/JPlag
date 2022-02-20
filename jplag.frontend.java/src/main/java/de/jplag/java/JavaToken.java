@@ -1,8 +1,11 @@
 package de.jplag.java;
 
+import java.io.Serial;
+
 import de.jplag.Token;
 
 public class JavaToken extends Token implements JavaTokenConstants {
+    @Serial
     private static final long serialVersionUID = -383581430479870696L;
     private int line, column, length;
 

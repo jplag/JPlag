@@ -30,6 +30,6 @@ public class SubmissionTuple {
 
     @Override
     public String toString() {
-        return "(" + left.toString() + " | " + right.toString() + ")";
+        return "(" + left + " | " + right + ")";
     }
 }

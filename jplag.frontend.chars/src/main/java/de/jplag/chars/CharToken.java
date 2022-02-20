@@ -1,11 +1,14 @@
 package de.jplag.chars;
 
+import java.io.Serial;
+
 import de.jplag.Token;
 
 public class CharToken extends Token {
-    private static final long serialVersionUID = 1L;
 
-    private int index;
+    @Serial
+    private static final long serialVersionUID = -754166753275082477L;
+    private final int index;
 
     public CharToken(int type, String file, int index, Parser parser) {
         super(type, file, -1);

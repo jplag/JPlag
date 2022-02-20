@@ -8,7 +8,7 @@ import java.io.InputStream;
  */
 public class NewlineStream extends InputStream {
     private int endOfFile = 0;
-    private InputStream stream;
+    private final InputStream stream;
 
     public NewlineStream(InputStream stream) {
         super();

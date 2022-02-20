@@ -9,7 +9,7 @@ import de.jplag.TokenList;
  * Leider werden C/C++ nicht geparst, sondern nur gescannt...
  */
 public class Language implements de.jplag.Language {
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public Language(ErrorConsumer program) {
         this.scanner = new Scanner();
@@ -24,8 +24,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        String[] res = {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH"};
-        return res;
+        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH"};
     }
 
     @Override

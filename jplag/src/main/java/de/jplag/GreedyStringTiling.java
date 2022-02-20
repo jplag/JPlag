@@ -94,7 +94,7 @@ public class GreedyStringTiling implements TokenConstants {
         return swapAndCompare(firstSubmission, secondSubmission, true);
     }
 
-    private final JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
+    private JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
         Submission smallerSubmission, largerSubmission;
         if (firstSubmission.getTokenList().size() > secondSubmission.getTokenList().size()) {
             smallerSubmission = secondSubmission;
@@ -119,7 +119,7 @@ public class GreedyStringTiling implements TokenConstants {
      * @param isBaseCodeComparison specifies whether one of the submissions is the base code.
      * @return the comparison results.
      */
-    private final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
+    private JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
         // first and second refer to the list of tokens of the first and second submission:
         TokenList first = firstSubmission.getTokenList();
         TokenList second = secondSubmission.getTokenList();

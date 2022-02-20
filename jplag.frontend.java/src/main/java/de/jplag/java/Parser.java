@@ -8,10 +8,10 @@ import de.jplag.TokenList;
 public class Parser extends AbstractParser {
     private TokenList tokenList;
 
-    public TokenList parse(File dir, String files[]) {
+    public TokenList parse(File dir, String[] files) {
         tokenList = new TokenList();
         errors = 0;
-        File pathedFiles[] = new File[files.length];
+        File[] pathedFiles = new File[files.length];
         for (int i = 0; i < files.length; i++) {
             pathedFiles[i] = new File(dir, files[i]);
         }

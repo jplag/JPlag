@@ -44,7 +44,7 @@ public class JPlagOptions {
      * Percentage value (must be between 0 and 100). Comparisons (of submissions pairs) with a similarity below this
      * threshold will be ignored. The default value of 0 allows all matches to be stored. This affects which comparisons are
      * stored and thus make it into the result object.
-     * @see JPlagOptions.similarityMetric
+     * @see JPlagOptions#similarityMetric
      */
     private float similarityThreshold = DEFAULT_SIMILARITY_THRESHOLD;
 
@@ -57,7 +57,7 @@ public class JPlagOptions {
     /**
      * The similarity metric determines how the minimum similarity threshold required for a comparison (of two submissions)
      * is calculated. This affects which comparisons are stored and thus make it into the result object.
-     * @see JPlagOptions.similarityThreshold
+     * @see JPlagOptions#similarityThreshold
      */
     private SimilarityMetric similarityMetric = SimilarityMetric.AVG;
 
@@ -96,7 +96,7 @@ public class JPlagOptions {
      * of the compatibility fallback listed above.
      * </p>
      */
-    private Optional<String> baseCodeSubmissionName = Optional.empty();
+    private String baseCodeSubmissionName = null;
 
     /**
      * Example: If the subdirectoryName is 'src', only the code inside submissionDir/src of each submission will be used for
@@ -123,7 +123,7 @@ public class JPlagOptions {
     }
 
     public Optional<String> getBaseCodeSubmissionName() {
-        return baseCodeSubmissionName;
+        return Optional.ofNullable(baseCodeSubmissionName);
     }
 
     public ComparisonMode getComparisonMode() {
@@ -179,7 +179,7 @@ public class JPlagOptions {
     }
 
     public boolean hasBaseCode() {
-        return this.baseCodeSubmissionName.isPresent();
+        return this.baseCodeSubmissionName != null;
     }
 
     public boolean isDebugParser() {
@@ -188,9 +188,9 @@ public class JPlagOptions {
 
     public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
         if (baseCodeSubmissionName == null || baseCodeSubmissionName.isEmpty()) {
-            this.baseCodeSubmissionName = Optional.empty();
+            this.baseCodeSubmissionName = null;
         } else {
-            this.baseCodeSubmissionName = Optional.of(baseCodeSubmissionName);
+            this.baseCodeSubmissionName = baseCodeSubmissionName;
         }
     }
 
@@ -238,11 +238,7 @@ public class JPlagOptions {
     }
 
     public void setMaximumNumberOfComparisons(int maximumNumberOfComparisons) {
-        if (maximumNumberOfComparisons < -1) {
-            this.maximumNumberOfComparisons = -1;
-        } else {
-            this.maximumNumberOfComparisons = maximumNumberOfComparisons;
-        }
+        this.maximumNumberOfComparisons = Math.max(maximumNumberOfComparisons, -1);
     }
 
     public void setMinimumTokenMatch(Integer minimumTokenMatch) {

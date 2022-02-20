@@ -6,7 +6,7 @@ import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
-    private Parser parser;
+    private final Parser parser;
 
     public Language(ErrorConsumer program) {
         this.parser = new Parser();
@@ -16,8 +16,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        String[] res = {".cs", ".CS"};
-        return res;
+        return new String[] {".cs", ".CS"};
     }
 
     @Override

@@ -19,7 +19,7 @@ public class Parser extends AbstractParser implements TokenConstants {
 
     private String currentFile;
 
-    public TokenList parse(File dir, String files[]) {
+    public TokenList parse(File dir, String[] files) {
         struct = new TokenList();
         errors = 0;
         for (String file : files) {

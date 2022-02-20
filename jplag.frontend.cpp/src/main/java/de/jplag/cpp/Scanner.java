@@ -10,7 +10,7 @@ public class Scanner extends AbstractParser implements CPPTokenConstants {
 
     private TokenList struct;
 
-    public TokenList scan(File dir, String files[]) {
+    public TokenList scan(File dir, String[] files) {
         struct = new TokenList();
         errors = 0;
         CPPScanner scanner = null;// will be initialized in Method scanFile

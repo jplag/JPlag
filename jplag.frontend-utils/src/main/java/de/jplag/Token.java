@@ -1,8 +1,10 @@
 package de.jplag;
 
+import java.io.Serial;
 import java.io.Serializable;
 
-abstract public class Token implements TokenConstants, Serializable {
+public abstract class Token implements TokenConstants, Serializable {
+    @Serial
     private static final long serialVersionUID = 862935679966383302L;
     public int type;
     public String file;
@@ -24,11 +26,11 @@ abstract public class Token implements TokenConstants, Serializable {
     }
 
     // abstract members
-    abstract public int getLine();
+    public abstract int getLine();
 
-    abstract public int getColumn();
+    public abstract int getColumn();
 
-    abstract public int getLength();
+    public abstract int getLength();
 
     protected void setLine(int line) {
     }

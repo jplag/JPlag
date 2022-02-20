@@ -18,12 +18,11 @@ public class Language implements de.jplag.Language {
         return this.parser.errorsCount();
     }
 
-    private de.jplag.scheme.Parser parser; // Not yet instantiated? See constructor!
+    private final de.jplag.scheme.Parser parser; // Not yet instantiated? See constructor!
 
     @Override
     public String[] suffixes() {
-        String[] res = {".scm", ".SCM", ".ss", ".SS"};
-        return res;
+        return new String[] {".scm", ".SCM", ".ss", ".SS"};
     }
 
     @Override

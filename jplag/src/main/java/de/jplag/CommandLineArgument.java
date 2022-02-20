@@ -41,19 +41,19 @@ public enum CommandLineArgument {
     private final Optional<Collection<String>> choices;
     private final Class<?> type;
 
-    private CommandLineArgument(String flag, Class<?> type) {
+    CommandLineArgument(String flag, Class<?> type) {
         this(flag, type, Optional.empty(), Optional.empty());
     }
 
-    private CommandLineArgument(String flag, Class<?> type, Object defaultValue) {
+    CommandLineArgument(String flag, Class<?> type, Object defaultValue) {
         this(flag, type, Optional.of(defaultValue), Optional.empty());
     }
 
-    private CommandLineArgument(String flag, Class<?> type, Object defaultValue, Collection<String> choices) {
+    CommandLineArgument(String flag, Class<?> type, Object defaultValue, Collection<String> choices) {
         this(flag, type, Optional.of(defaultValue), Optional.of(choices));
     }
 
-    private CommandLineArgument(String flag, Class<?> type, Optional<Object> defaultValue, Optional<Collection<String>> choices) {
+    CommandLineArgument(String flag, Class<?> type, Optional<Object> defaultValue, Optional<Collection<String>> choices) {
         this.flag = flag;
         this.type = type;
         this.defaultValue = defaultValue;
@@ -92,8 +92,8 @@ public enum CommandLineArgument {
      */
     public void parseWith(ArgumentParser parser) {
         Argument argument = parser.addArgument(flag).help(description);
-        choices.ifPresent(it -> argument.choices(it));
-        defaultValue.ifPresent(it -> argument.setDefault(it));
+        choices.ifPresent(argument::choices);
+        defaultValue.ifPresent(argument::setDefault);
         argument.type(type);
         if (type == Boolean.class) {
             argument.action(storeTrue());

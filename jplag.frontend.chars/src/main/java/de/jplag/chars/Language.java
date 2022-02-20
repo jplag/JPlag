@@ -10,19 +10,16 @@ import de.jplag.TokenList;
  * read in text files as characters
  */
 public class Language implements de.jplag.Language {
-    private ErrorConsumer program;
 
-    private de.jplag.chars.Parser parser = new Parser();
+    private final de.jplag.chars.Parser parser = new Parser();
 
     public Language(ErrorConsumer program) {
-        this.program = program;
-        this.parser.setProgram(this.program);
+        this.parser.setProgram(program);
     }
 
     @Override
     public String[] suffixes() {
-        String[] res = {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
-        return res;
+        return new String[] {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
     }
 
     @Override

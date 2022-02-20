@@ -1,8 +1,11 @@
 package de.jplag.scheme;
 
+import java.io.Serial;
+
 import de.jplag.Token;
 
 public class SchemeToken extends Token implements SchemeTokenConstants {
+    @Serial
     private static final long serialVersionUID = -143418583849687339L;
     private int line;
 

@@ -12,7 +12,7 @@ public class Parser extends AbstractParser implements TokenConstants {
 
     private TokenList struct;
 
-    public TokenList parse(File dir, String files[]) {
+    public TokenList parse(File dir, String[] files) {
         struct = new TokenList();
         errors = 0;
         for (String file : files) {
@@ -59,7 +59,7 @@ public class Parser extends AbstractParser implements TokenConstants {
         return true;
     }
 
-    private int[] mapping = {-1, // 0 (nul)
+    private final int[] mapping = {-1, // 0 (nul)
             -1, // 1 (soh)
             -1, // 2 (stx)
             -1, // 3 (etx)

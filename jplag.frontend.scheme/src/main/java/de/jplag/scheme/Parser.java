@@ -10,7 +10,7 @@ public class Parser extends AbstractParser implements SchemeTokenConstants {
 
     private TokenList struct;
 
-    public TokenList parse(File dir, String files[]) {
+    public TokenList parse(File dir, String[] files) {
         struct = new TokenList();
         errors = 0;
         SchemeParser parser = null;// no worry it will be reinitialized

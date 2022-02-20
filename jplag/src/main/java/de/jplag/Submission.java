@@ -98,7 +98,7 @@ public class Submission implements Comparable<Submission> {
         try {
             return submissionRoot.getCanonicalFile();
         } catch (IOException exception) {
-            throw new SubmissionException(String.format("Cannot compute canonical file path of \"%s\".", submissionRoot.toString()), exception);
+            throw new SubmissionException(String.format("Cannot compute canonical file path of \"%s\".", submissionRoot), exception);
         }
     }
 
@@ -310,7 +310,7 @@ public class Submission implements Comparable<Submission> {
             try {
                 Files.copy(file.toPath(), new File(submissionDirectory, file.getName()).toPath());
             } catch (IOException exception) {
-                errorCollector.print("Error copying file: " + exception.toString() + "\n", null);
+                errorCollector.print("Error copying file: " + exception + "\n", null);
             }
         }
     }

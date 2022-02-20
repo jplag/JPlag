@@ -35,7 +35,7 @@ public class SubmissionSetBuilder {
      * @param language is the language of the submissions.
      * @param options are the configured options.
      * @param errorCollector is the interface for error reporting.
-     * @param excludedFileNames
+     * @param excludedFileNames a list of filenames or paths to be excluded
      */
     public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames) {
         this.language = language;
@@ -75,7 +75,7 @@ public class SubmissionSetBuilder {
                 }
             }
             baseCodeSubmission = Optional.of(baseCode);
-            System.out.println(String.format("Basecode directory \"%s\" will be used.", baseCode.getRoot().toString()));
+            System.out.printf("Basecode directory \"%s\" will be used.%n", baseCode.getRoot().toString());
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
             File baseCodeRoot = baseCode.getCanonicalRoot(); // Use canonical form for a more sane equality notion.
@@ -84,7 +84,7 @@ public class SubmissionSetBuilder {
                 Entry<String, Submission> entry = submissionIterator.next();
                 if (baseCodeRoot.equals(entry.getValue().getCanonicalRoot())) {
                     submissionIterator.remove();
-                    System.out.println(String.format("Skipping \"%s\" as user submission.", entry.getValue().getRoot().toString()));
+                    System.out.printf("Skipping \"%s\" as user submission.%n", entry.getValue().getRoot().toString());
                     break;
                 }
             }
@@ -131,8 +131,6 @@ public class SubmissionSetBuilder {
         } catch (SubmissionException exception) {
             throw new BasecodeException(exception.getMessage(), exception); // Change thrown exception to basecode exception.
 
-        } catch (ExitException ex) {
-            throw ex;
         }
     }
 
@@ -142,10 +140,8 @@ public class SubmissionSetBuilder {
      * @throws ExitException when the option value is a sub-directory with errors.
      */
     private Submission tryLoadBaseCodeAsRootSubDirectory(Map<String, Submission> foundSubmissions) throws ExitException {
-        String baseCodeName = options.getBaseCodeSubmissionName().get();
-
         // Is the option value a single name after trimming spurious separators?
-        String name = baseCodeName;
+        String name = options.getBaseCodeSubmissionName().get();
         while (name.startsWith(File.separator)) {
             name = name.substring(1);
         }

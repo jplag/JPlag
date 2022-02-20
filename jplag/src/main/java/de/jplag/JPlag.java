@@ -50,7 +50,7 @@ public class JPlag {
 
     /**
      * If an exclusion file is given, it is read in and all strings are saved in the set "excluded".
-     * @param exclusionFileName
+     * @param exclusionFileName the file name or path
      */
     Set<String> readExclusionFile(final String exclusionFileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {

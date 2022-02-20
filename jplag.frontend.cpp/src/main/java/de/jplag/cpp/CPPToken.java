@@ -1,9 +1,12 @@
 package de.jplag.cpp;
 
+import java.io.Serial;
+
 import de.jplag.Token;
 
 public class CPPToken extends Token implements CPPTokenConstants {
-    private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = -8962159131223617619L;
     private int line;
 
     public CPPToken(int type, String file, int line) {
