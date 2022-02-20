@@ -22,7 +22,7 @@ public class PercentileThresholdProcessor implements ClusteringPreprocessor {
     @Override
     public double[][] preprocessSimilarities(double[][] similarityMatrix) {
         Array2DRowRealMatrix similarity = new Array2DRowRealMatrix(similarityMatrix, false);
-        Percentile p = new Percentile().withEstimationType(EstimationType.R_2);
+        Percentile percentileEstimator = new Percentile().withEstimationType(EstimationType.R_2);
         int connections = (similarity.getColumnDimension() * (similarity.getColumnDimension() - 1)) / 2;
         double[] allWeights = new double[connections];
         similarity.walkInOptimizedOrder(new DefaultRealMatrixPreservingVisitor() {
@@ -37,7 +37,7 @@ public class PercentileThresholdProcessor implements ClusteringPreprocessor {
                 }
             }
         });
-        double threshold = p.evaluate(allWeights, percentile);
+        double threshold = percentileEstimator.evaluate(allWeights, percentile);
         thresholdPreprocessor = new ThresholdPreprocessor(threshold);
 
         return thresholdPreprocessor.preprocessSimilarities(similarityMatrix);
