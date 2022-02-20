@@ -46,7 +46,7 @@ public class ReportObjectFactory {
         overviewReport.setFile_extensions(List.of(result.getOptions().getFileSuffixes()));
         overviewReport.setSubmission_ids(extractSubmissionNames(comparisons));
         overviewReport.setFailed_submission_names(List.of());  // No number of failed submissions
-        overviewReport.setExcluded_files(getExcludedFilesNames(result.getOptions())); // Read exclusion file
+        overviewReport.setExcluded_files(result.getOptions().getExcludedFiles());
         overviewReport.setMatch_sensitivity(result.getOptions().getMinimumTokenMatch());
         overviewReport.setDate_of_execution(getDate());
         overviewReport.setExecution_time(result.getDuration());
@@ -186,7 +186,7 @@ public class ReportObjectFactory {
         return new Match(startTokenFirst.file, startTokenSecond.file, startFirst, endFirst, startSecond, endSecond, tokens);
     }
 
-    // TODO implement after PR Readd clustering #281
+    // TODO implement after PR Read clustering #281
     private static List<Cluster> getClusters(JPlagResult result) {
         // List<ClusteringResult<Submission>> clusters = result.getClusteringResult();
         // return clusters.map( c -> new Cluster(getAvgSimilarity, getStrength, c.getMembers().map(Submission::getName)))
@@ -194,7 +194,7 @@ public class ReportObjectFactory {
     }
 
     private static List<String> readFileLines(File file) {
-        ArrayList<String> lines = new ArrayList<>();
+        List<String> lines = new ArrayList<>();
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String line;

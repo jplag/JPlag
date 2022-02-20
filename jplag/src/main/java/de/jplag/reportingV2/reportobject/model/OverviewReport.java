@@ -1,6 +1,7 @@
 package de.jplag.reportingV2.reportobject.model;
 
 import java.util.List;
+import java.util.Set;
 
 public class OverviewReport {
 
@@ -10,7 +11,7 @@ public class OverviewReport {
     private List<String> file_extensions;
     private List<String> submission_ids;
     private List<String> failed_submission_names;
-    private List<String> excluded_files;
+    private Set<String> excluded_files;
     private int match_sensitivity;
     private String date_of_execution;
     private long execution_time;
@@ -25,7 +26,7 @@ public class OverviewReport {
         file_extensions = List.of();
         submission_ids = List.of();
         failed_submission_names = List.of();
-        excluded_files = List.of();
+        excluded_files = Set.of();
         match_sensitivity = 0;
         date_of_execution = "";
         execution_time = 0;
@@ -60,7 +61,7 @@ public class OverviewReport {
         return failed_submission_names;
     }
 
-    public List<String> getExcluded_files() {
+    public Set<String> getExcluded_files() {
         return excluded_files;
     }
 
@@ -116,8 +117,8 @@ public class OverviewReport {
         this.failed_submission_names = List.copyOf(failed_submission_names);
     }
 
-    public void setExcluded_files(List<String> excluded_files) {
-        this.excluded_files = List.copyOf(excluded_files);
+    public void setExcluded_files(Set<String> excluded_files) {
+        this.excluded_files = Set.copyOf(excluded_files);
     }
 
     public void setMatch_sensitivity(int match_sensitivity) {
