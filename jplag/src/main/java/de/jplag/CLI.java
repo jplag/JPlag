@@ -14,7 +14,6 @@ import static de.jplag.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.CommandLineArgument.SUFFIXES;
 import static de.jplag.CommandLineArgument.VERBOSITY;
 
-import java.io.File;
 import java.util.Random;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -26,7 +25,8 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;
-import de.jplag.reporting.Report;
+import de.jplag.reporting2.JsonReport;
+import de.jplag.reporting2.Report;
 import de.jplag.strategy.ComparisonMode;
 
 /**
@@ -57,9 +57,8 @@ public class CLI {
             JPlag program = new JPlag(options);
             System.out.println("JPlag initialized");
             JPlagResult result = program.run();
-            File reportDir = new File(arguments.getString(RESULT_FOLDER.flagWithoutDash()));
-            Report report = new Report(reportDir, options);
-            report.writeResult(result);
+            Report report = new JsonReport();
+            report.saveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
         } catch (ExitException exception) {
             System.out.println("Error: " + exception.getMessage());
             System.exit(1);
