@@ -36,4 +36,8 @@ public class ThresholdPreprocessor implements ClusteringPreprocessor {
         return helper.postProcessResult(result);
     }
 
+    public double getThreshold() {
+        return threshold;
+    }
+
 }
