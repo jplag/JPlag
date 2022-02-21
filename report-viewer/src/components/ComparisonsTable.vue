@@ -141,12 +141,12 @@ table {
   text-align: center;
 }
 
-table:nth-child(odd) {
-  background: var(--secondary-color);
+tr:nth-child(odd) {
+  background: var(--primary-color-light);
 }
 
-table:nth-child(even) {
-  background: var(--primary-color-light);
+tr:nth-child(even) {
+  background: var(--secondary-color);
 }
 
 th {
