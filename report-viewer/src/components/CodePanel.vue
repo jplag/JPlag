@@ -1,30 +1,31 @@
 <template>
-  <div class="code-panel-container" :id="panelId.toString().concat(title).concat(fileIndex.toString())">
+  <div :id="panelId.toString().concat(title).concat(fileIndex.toString())" class="code-panel-container">
     <div class="file-title">
       <p style="width: 90%">{{ title }}</p>
-      <button style="width: 10%" class="collapse-button" @click="$emit('toggleCollapse')">
-        <img v-if="collapse" src="../assets/keyboard_double_arrow_up_black_18dp.svg" alt="hide info">
-        <img v-else src="../assets/keyboard_double_arrow_down_black_18dp.svg" alt="additional info">
+      <button class="collapse-button" style="width: 10%" @click="$emit('toggleCollapse')">
+        <img v-if="collapse" alt="hide info" src="../assets/keyboard_double_arrow_up_black_18dp.svg">
+        <img v-else alt="additional info" src="../assets/keyboard_double_arrow_down_black_18dp.svg">
       </button>
     </div>
-    <div class="code-container" :class="{ hidden : !collapse }">
+    <div :class="{ hidden : !collapse }" class="code-container">
       <LineOfCode v-for="(line, index) in lines"
+                  :id="String(panelId).concat(title).concat(index)"
+                  :key="index"
+                  :color="coloringArray[index]"
+                  :is-first="isFirst[index]"
+                  :is-last="isLast[index]"
+                  :line-number="index"
+                  :text="line"
                   :visible="collapse"
-                :key="index"
-                :color="coloringArray[index]"
-                :line-number="index"
-                :text="line"
-                :id="String(panelId).concat(title).concat(index)"
-                :is-last="isLast[index]"
-                :is-first="isFirst[index]"
                   @click="$emit('lineSelected', $event, linksArray[index].panel, linksArray[index].file, linksArray[index].line )"/>
     </div>
   </div>
 </template>
 
 <script>
-import {ref, defineComponent} from "vue";
+import {defineComponent, ref} from "vue";
 import LineOfCode from "./LineOfCode";
+
 export default defineComponent({
   name: "CodePanel",
   components: {LineOfCode},
@@ -117,20 +118,20 @@ export default defineComponent({
         //assign match color to line
         coloringArray.value[i] = m.color
         //assign link object to line.
-        linksArray.value[i] = { panel : m.linked_panel, file : m.linked_file, line : m.linked_line }
+        linksArray.value[i] = {panel: m.linked_panel, file: m.linked_file, line: m.linked_line}
         //check whether line is start of match and assign true if yes
-        if(i === m.start) {
+        if (i === m.start) {
           isFirst.value[i] = true
         }
         //check whether line is end of match and assign true if yes
-        if(i === m.end) {
+        if (i === m.end) {
           isLast.value[i] = true
         }
       }
     })
     //assign default values for all line which are not contained in matches
-    for(let i = 0; i < props.lines.length; i++) {
-      if(!coloringArray.value[i]) {
+    for (let i = 0; i < props.lines.length; i++) {
+      if (!coloringArray.value[i]) {
         coloringArray.value[i] = "#FFFFFF"
         linksArray.value[i] = "-1"
         isFirst.value[i] = false
@@ -159,6 +160,7 @@ export default defineComponent({
   box-shadow: var(--shadow-color) 2px 3px 3px;
   background: var(--primary-color-light);
 }
+
 .file-title {
   display: flex;
 }
@@ -169,6 +171,7 @@ export default defineComponent({
   font-weight: bold;
   font-size: large;
 }
+
 .code-container {
   display: flex;
   flex-direction: column;

@@ -1,38 +1,39 @@
 <template>
-<div class="match-table-container">
-  <table>
-    <tr>
-      <th>Submission 1</th>
-      <th>Submission 2</th>
-    </tr>
-    <tr>
-      <th>File 1</th>
-      <th>File 2</th>
-      <th>Tokens</th>
-    </tr>
-    <tr v-for="( match, index ) in matches" :key="String(index).concat(match.startInFirst).concat(match.startInSecond)"
-        @click="$emit('matchSelected', $event, match)"
-        :style="{ background : match.color }">
-      <td>
-        <div class="td-content">
-          <p>{{ match.firstFile }}</p>
-          <p>({{ match.startInFirst }} - {{ match.endInFirst }})</p>
-        </div>
-      </td>
-      <td>
-        <div class="td-content">
-          <p>{{ match.secondFile }}</p>
-          <p>({{ match.startInSecond }} - {{ match.endInSecond }})</p>
-        </div>
-      </td>
-      <td>{{ match.tokens }}</td>
-    </tr>
-  </table>
-</div>
+  <div class="match-table-container">
+    <table>
+      <tr>
+        <th>Submission 1</th>
+        <th>Submission 2</th>
+      </tr>
+      <tr>
+        <th>File 1</th>
+        <th>File 2</th>
+        <th>Tokens</th>
+      </tr>
+      <tr v-for="( match, index ) in matches"
+          :key="String(index).concat(match.startInFirst).concat(match.startInSecond)"
+          :style="{ background : match.color }"
+          @click="$emit('matchSelected', $event, match)">
+        <td>
+          <div class="td-content">
+            <p>{{ match.firstFile }}</p>
+            <p>({{ match.startInFirst }} - {{ match.endInFirst }})</p>
+          </div>
+        </td>
+        <td>
+          <div class="td-content">
+            <p>{{ match.secondFile }}</p>
+            <p>({{ match.startInSecond }} - {{ match.endInSecond }})</p>
+          </div>
+        </td>
+        <td>{{ match.tokens }}</td>
+      </tr>
+    </table>
+  </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 export default defineComponent({
   name: "MatchTable",
@@ -41,7 +42,7 @@ export default defineComponent({
      * Matches of the comparison.
      * type: Array<Match>
      */
-    matches : {
+    matches: {
       type: Array
     },
     /**

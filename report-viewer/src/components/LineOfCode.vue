@@ -1,6 +1,9 @@
 <template>
-  <div class="line-wrap" :style="{background : color}" :class="{'first-line' : isFirst, 'last-line' : isLast, 'visible' : visible}">
-    <pre ref="lineRef" :id="text" class="java" :class="{ 'match-line' : color !== '#ECECEC' }">{{ lineNumber }} {{ text }}</pre>
+  <div :class="{'first-line' : isFirst, 'last-line' : isLast, 'visible' : visible}" :style="{background : color}"
+       class="line-wrap">
+    <pre :id="text" ref="lineRef" :class="{ 'match-line' : color !== '#ECECEC' }" class="java">{{ lineNumber }} {{
+        text
+      }}</pre>
   </div>
 </template>
 
@@ -27,7 +30,7 @@ export default defineComponent({
       required: true
     },
     color: {
-      required:true
+      required: true
     },
     fileIndex: {
       type: Number,
@@ -44,10 +47,10 @@ export default defineComponent({
     let highlighted = false
     let lineRef = ref(null)
     //Trigger highlighting when code panel is collapsed.
-    onUpdated( () => {
-      if ( props.visible && !highlighted ) {
-          hljs.highlightElement(lineRef.value)
-          highlighted = true
+    onUpdated(() => {
+      if (props.visible && !highlighted) {
+        hljs.highlightElement(lineRef.value)
+        highlighted = true
       }
     })
     return {
@@ -70,12 +73,15 @@ pre {
 .first-line {
   margin-top: 2%;
 }
+
 .last-line {
   margin-bottom: 2%;
   box-shadow: #777777 0 3px 3px;
 }
+
 .match-line {
 }
+
 .line-wrap {
   width: 200%;
 }

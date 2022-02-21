@@ -11,7 +11,7 @@ export class ComparisonFactory {
 
         const matches = json.matches as Array<Record<string, unknown>>
         const colors = this.generateColorsForMatches(matches.length)
-        const coloredMatches = matches.map( (match, index) => this.mapMatch(match, colors[index]) )
+        const coloredMatches = matches.map((match, index) => this.mapMatch(match, colors[index]))
 
         const matchesInFirst = this.groupMatchesByFileName(coloredMatches, 1)
         const matchesInSecond = this.groupMatchesByFileName(coloredMatches, 2)
@@ -32,10 +32,10 @@ export class ComparisonFactory {
     }
 
     private static convertToFilesByName(files: Array<Record<string, unknown>>): Record<string, SubmissionFile> {
-        return files.reduce( (acc: Record<string, SubmissionFile>, val: Record<string, unknown>) => {
-            if(!acc[val.file_name as string]) {
+        return files.reduce((acc: Record<string, SubmissionFile>, val: Record<string, unknown>) => {
+            if (!acc[val.file_name as string]) {
                 acc[val.file_name as string] = {
-                    lines : [],
+                    lines: [],
                     collapsed: false
                 }
             }
@@ -48,14 +48,14 @@ export class ComparisonFactory {
     }
 
     private static groupMatchesByFileName(matches: Array<Match>, index: number): Record<string, Array<MatchInSingleFile>> {
-        return matches.reduce( (acc: Record<string, Array<MatchInSingleFile>>, val: Match ) => {
+        return matches.reduce((acc: Record<string, Array<MatchInSingleFile>>, val: Match) => {
             const name = index === 1 ? val.firstFile as string : val.secondFile as string
-            if(!acc[name]) {
+            if (!acc[name]) {
                 acc[name] = []
             }
-            if( index === 1 ) {
+            if (index === 1) {
                 const newVal: MatchInSingleFile = {
-                    start : val.startInFirst as number,
+                    start: val.startInFirst as number,
                     end: val.endInFirst as number,
                     linked_panel: 2,
                     linked_file: val.secondFile as string,
@@ -65,7 +65,7 @@ export class ComparisonFactory {
                 acc[name].push(newVal)
             } else {
                 const newVal: MatchInSingleFile = {
-                    start : val.startInSecond as number,
+                    start: val.startInSecond as number,
                     end: val.endInSecond as number,
                     linked_panel: 1,
                     linked_file: val.firstFile as string,
@@ -78,11 +78,11 @@ export class ComparisonFactory {
         }, {})
     }
 
-    private static generateColorsForMatches( num : number ): Array<string> {
+    private static generateColorsForMatches(num: number): Array<string> {
         const colors = []
-        const hueDelta = Math.trunc(360 / (num) )
+        const hueDelta = Math.trunc(360 / (num))
 
-        for( let i = 0; i < num; i++ ) {
+        for (let i = 0; i < num; i++) {
             const hue = i * hueDelta
 
             colors.push(`hsla(${hue}, 80%, 50%, 0.3)`)

@@ -4,44 +4,48 @@
       <h1>JPlag Report</h1>
       <p class="section-title">Main Info:</p>
       <div id="basicInfo">
-        <TextInformation label="Directory path" :value="submissionPathValue" :has-additional-info="hasMoreSubmissionPaths" additional-info-title="">
+        <TextInformation :has-additional-info="hasMoreSubmissionPaths" :value="submissionPathValue"
+                         additional-info-title="" label="Directory path">
           <p v-for="path in overview.submissionFolderPath" :key="path" :title="path">{{ path }}</p>
         </TextInformation>
-        <TextInformation label="Language" :value="overview.language" :has-additional-info="true" additional-info-title="File extensions:">
+        <TextInformation :has-additional-info="true" :value="overview.language" additional-info-title="File extensions:"
+                         label="Language">
           <p v-for="info in overview.fileExtensions" :key="info">{{ info }}</p>
         </TextInformation>
         <TextInformation :value="overview.matchSensitivity" label="Match Sensitivity"/>
-        <TextInformation label="Submissions" :value="overview.submissionIds.length" :has-additional-info="true" additional-info-title="Submission IDs:">
+        <TextInformation :has-additional-info="true" :value="overview.submissionIds.length"
+                         additional-info-title="Submission IDs:"
+                         label="Submissions">
           <IDsList :ids="overview.submissionIds" @id-sent="handleId"/>
         </TextInformation>
-        <TextInformation label="Date of execution" :value="overview.dateOfExecution"/>
-        <TextInformation label="Duration (in ms)" :value="overview.durationOfExecution"/>
+        <TextInformation :value="overview.dateOfExecution" label="Date of execution"/>
+        <TextInformation :value="overview.durationOfExecution" label="Duration (in ms)"/>
       </div>
       <div id="logo-section">
-        <img id="logo" src="@/assets/logo-nobg.png" alt="JPlag">
+        <img id="logo" alt="JPlag" src="@/assets/logo-nobg.png">
       </div>
     </div>
 
-      <div class="column-container" style="width: 35%">
-        <div id="metrics">
-          <p class="section-title">Metric:</p>
-          <div id="metrics-list">
-            <MetricButton v-for="(metric, i) in overview.metrics" :key="metric.metricName"
-                          :id="metric.metricName"
-                          :metric-threshold="metric.metricThreshold"
-                          :metric-name="metric.metricName"
-                          :is-selected="selectedMetric[i]"
-                          @click="selectMetric(i)"/>
-          </div>
-        </div>
-        <p class="section-title">Distribution:</p>
-        <DistributionDiagram class="full-width" :distribution="distributions[selectedMetricIndex]"/>
-      </div>
     <div class="column-container" style="width: 35%">
-        <p class="section-title">Top Comparisons:</p>
-        <div id="comparisonsList">
-          <ComparisonsTable :top-comparisons="topComps[selectedMetricIndex]" :clusters="overview.clusters"/>
+      <div id="metrics">
+        <p class="section-title">Metric:</p>
+        <div id="metrics-list">
+          <MetricButton v-for="(metric, i) in overview.metrics" :id="metric.metricName"
+                        :key="metric.metricName"
+                        :is-selected="selectedMetric[i]"
+                        :metric-name="metric.metricName"
+                        :metric-threshold="metric.metricThreshold"
+                        @click="selectMetric(i)"/>
         </div>
+      </div>
+      <p class="section-title">Distribution:</p>
+      <DistributionDiagram :distribution="distributions[selectedMetricIndex]" class="full-width"/>
+    </div>
+    <div class="column-container" style="width: 35%">
+      <p class="section-title">Top Comparisons:</p>
+      <div id="comparisonsList">
+        <ComparisonsTable :clusters="overview.clusters" :top-comparisons="topComps[selectedMetricIndex]"/>
+      </div>
     </div>
   </div>
 </template>
@@ -59,7 +63,7 @@ import IDsList from "@/components/IDsList";
 
 export default defineComponent({
   name: "OverviewView",
-  components: {IDsList, ComparisonsTable, DistributionDiagram, MetricButton, TextInformation },
+  components: {IDsList, ComparisonsTable, DistributionDiagram, MetricButton, TextInformation},
   setup() {
     let overview;
     //Gets the overview file based on the used mode (zip, local, single).

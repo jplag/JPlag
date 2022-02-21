@@ -16,29 +16,29 @@ export class OverviewFactory {
         const duration = json.execution_time as number as number
         const metrics = [] as Array<Metric>
         const clusters = [] as Array<Cluster>
-        (json.metrics as Array<unknown>).forEach( (jsonMetric) => {
+        (json.metrics as Array<unknown>).forEach((jsonMetric) => {
             const metric = jsonMetric as Record<string, unknown>
             const comparisons = [] as Array<ComparisonListElement>
 
-            (metric.topComparisons as Array<Record<string, unknown>>).forEach( jsonComparison => {
+            (metric.topComparisons as Array<Record<string, unknown>>).forEach(jsonComparison => {
                 const comparison: ComparisonListElement = {
-                    firstSubmissionId : jsonComparison.first_submission as string,
-                    secondSubmissionId : jsonComparison.second_submission as string,
-                    matchPercentage : jsonComparison.match_percentage as number
+                    firstSubmissionId: jsonComparison.first_submission as string,
+                    secondSubmissionId: jsonComparison.second_submission as string,
+                    matchPercentage: jsonComparison.match_percentage as number
                 }
                 comparisons.push(comparison)
             })
 
-            const newMetric : Metric = {
-                metricName : metric.name as string,
-                metricThreshold : metric.threshold as number,
-                distribution : metric.distribution as Array<number>,
-                comparisons : comparisons
+            const newMetric: Metric = {
+                metricName: metric.name as string,
+                metricThreshold: metric.threshold as number,
+                distribution: metric.distribution as Array<number>,
+                comparisons: comparisons
             }
             metrics.push(newMetric)
         });
 
-        if(json.clusters) {
+        if (json.clusters) {
             (json.clusters as Array<unknown>).forEach(jsonCluster => {
                 const cluster = jsonCluster as Record<string, unknown>
                 const newCluster: Cluster = {

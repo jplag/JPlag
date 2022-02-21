@@ -1,20 +1,21 @@
 <template>
   <div class="wrapper">
-    <BarChart class="chart" :chartData="chartData" :options="options"/>
+    <BarChart :chartData="chartData" :options="options" class="chart"/>
   </div>
 </template>
 
 <script>
 import {defineComponent, ref, watch} from "vue";
-import { BarChart } from "vue-chart-3"
-import { Chart, registerables } from 'chart.js';
+import {BarChart} from "vue-chart-3"
+import {Chart, registerables} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+
 Chart.register(...registerables);
 Chart.register(ChartDataLabels);
 
 export default defineComponent({
   name: "DistributionDiagram",
-  components: { BarChart },
+  components: {BarChart},
   props: {
     distribution: {
       type: Array,
@@ -26,16 +27,16 @@ export default defineComponent({
     //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
     let maxVal = ref(Math.max(...props.distribution));
 
-    let chartData = ref( {
-        labels: ['0-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71-80%', '81-90%', '91-100%'],
-        datasets: [{
-          label: 'Count',
-          data: props.distribution,
-          backgroundColor: 'rgba(149, 168, 241, 0.5)',
-          borderWidth: 2,
-          borderColor: 'rgba(149, 168, 241, 1)',
-          tickColor: '#000000'
-        }]
+    let chartData = ref({
+      labels: ['0-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71-80%', '81-90%', '91-100%'],
+      datasets: [{
+        label: 'Count',
+        data: props.distribution,
+        backgroundColor: 'rgba(149, 168, 241, 0.5)',
+        borderWidth: 2,
+        borderColor: 'rgba(149, 168, 241, 1)',
+        tickColor: '#000000'
+      }]
     })
 
     const options = ref({
@@ -55,7 +56,7 @@ export default defineComponent({
           }
         }
       },
-      plugins : {
+      plugins: {
         datalabels: {
           color: '#000000',
           font: {
@@ -73,7 +74,7 @@ export default defineComponent({
 
     //We watch the given distributions parameter. When the distribution of another metric is passed, the diagram is
     //updated with the new data.
-    watch( () => props.distribution, (val) => {
+    watch(() => props.distribution, (val) => {
       chartData.value = {
         labels: ['0-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71-80%', '81-90%', '91-100%'],
         datasets: [{

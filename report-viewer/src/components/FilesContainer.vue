@@ -3,28 +3,28 @@
     <h1>Files of {{ filesOwner }}</h1>
     <VueDraggableNext>
       <CodePanel v-for="(file, index) in Object.keys(files)"
-                 :lines="files[file].lines"
-                 :title="file"
-                 :file-index="index"
-                 :matches="!matches[file] ? [] : matches[file]"
                  :key="file.concat(index)"
                  :collapse="files[file].collapsed"
+                 :file-index="index"
+                 :lines="files[file].lines"
+                 :matches="!matches[file] ? [] : matches[file]"
+                 :panel-id="containerId"
+                 :title="file"
                  @toggle-collapse="$emit('toggle-collapse', file)"
                  @line-selected="lineSelected"
-                 :panel-id="containerId"
       />
     </VueDraggableNext>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import CodePanel from "@/components/CodePanel";
-import { VueDraggableNext } from "vue-draggable-next"
+import {VueDraggableNext} from "vue-draggable-next"
 
 export default defineComponent({
   name: "FilesContainer",
-  components: { CodePanel, VueDraggableNext},
+  components: {CodePanel, VueDraggableNext},
   props: {
     /**
      * Id of the files container. We have only two so it is either 1 or 2.
@@ -57,7 +57,7 @@ export default defineComponent({
     }
   },
 
-  setup(props, { emit }) {
+  setup(props, {emit}) {
 
     /**
      * Passes lineSelected event, emitted from LineOfCode, to parent.
@@ -80,6 +80,7 @@ export default defineComponent({
 h1 {
   text-align: center;
 }
+
 .files-container {
   display: flex;
   flex-wrap: nowrap;

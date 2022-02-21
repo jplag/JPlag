@@ -1,24 +1,24 @@
 <template>
   <div class="container">
-    <button id="show-button" :class="{hidden : !hideLeftPanel}" @click="togglePanel" title="Show sidebar">
-      <img src="@/assets/double_arrow_black_24dp.svg" alt="show">
+    <button id="show-button" :class="{hidden : !hideLeftPanel}" title="Show sidebar" @click="togglePanel">
+      <img alt="show" src="@/assets/double_arrow_black_24dp.svg">
     </button>
     <div id="sidebar" :class="{ hidden : hideLeftPanel }">
       <div class="title-section">
         <h1>JPlag Comparison</h1>
-        <button id="hide-button" @click="togglePanel" title="Hide sidebar">
-          <img src="@/assets/keyboard_double_arrow_left_black_24dp.svg" alt="hide"></button>
+        <button id="hide-button" title="Hide sidebar" @click="togglePanel">
+          <img alt="hide" src="@/assets/keyboard_double_arrow_left_black_24dp.svg"></button>
       </div>
-      <TextInformation label="Submission 1" :value="id1" :anonymous="store.state.anonymous.has(id1)"/>
-      <TextInformation label="Submission 2" :value="id2" :anonymous="store.state.anonymous.has(id2)"/>
-      <TextInformation label="Match %" :value="comparison.match_percentage"/>
-      <MatchTable :matches="comparison.allMatches" :id1="id1" :id2="id2" @match-selected="showMatch" />
+      <TextInformation :anonymous="store.state.anonymous.has(id1)" :value="id1" label="Submission 1"/>
+      <TextInformation :anonymous="store.state.anonymous.has(id2)" :value="id2" label="Submission 2"/>
+      <TextInformation :value="comparison.match_percentage" label="Match %"/>
+      <MatchTable :id1="id1" :id2="id2" :matches="comparison.allMatches" @match-selected="showMatch"/>
     </div>
-    <FilesContainer :matches="comparison.matchesInFirstSubmission" :files="filesOfFirst" :container-id="1"
+    <FilesContainer :container-id="1" :files="filesOfFirst" :matches="comparison.matchesInFirstSubmission"
                     files-owner="Submission 1"
                     @toggle-collapse="toggleCollapseFirst"
                     @line-selected="showMatchInSecond"/>
-    <FilesContainer :matches="comparison.matchesInSecondSubmissions" :files="filesOfSecond" :container-id="2"
+    <FilesContainer :container-id="2" :files="filesOfSecond" :matches="comparison.matchesInSecondSubmissions"
                     files-owner="Submission 2"
                     @toggle-collapse="toggleCollapseSecond"
                     @line-selected="showMatchInFirst"/>
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import {defineComponent, ref} from "vue";
 import {generateLineCodeLink} from "@/utils/Utils";
 import store from "@/store/store";
 import router from "@/router";
@@ -37,7 +37,7 @@ import FilesContainer from "@/components/FilesContainer";
 
 export default defineComponent({
   name: "ComparisonView",
-  components: {FilesContainer, MatchTable, TextInformation },
+  components: {FilesContainer, MatchTable, TextInformation},
   props: {
     firstId: {
       type: String,
@@ -56,7 +56,7 @@ export default defineComponent({
 
     let comparison;
     //getting the comparison file based on the used mode (zip, local, single)
-    if(store.state.local) {
+    if (store.state.local) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         comparison = ComparisonFactory.getComparison(require(`../files/${fileName1}.json`))
@@ -68,14 +68,14 @@ export default defineComponent({
           router.back()
         }
       }
-    } else if(store.state.zip) {
-      if(store.state.files[fileName1.concat(".json")]) {
+    } else if (store.state.zip) {
+      if (store.state.files[fileName1.concat(".json")]) {
         comparison = ComparisonFactory.getComparison(JSON.parse(store.state.files[fileName1.concat(".json")]))
       } else {
         comparison = ComparisonFactory.getComparison(JSON.parse(store.state.files[fileName2.concat(".json")]))
       }
 
-    } else if(store.state.single) {
+    } else if (store.state.single) {
       comparison = ComparisonFactory.getComparison(JSON.parse(store.state.fileString))
     }
 
@@ -86,12 +86,16 @@ export default defineComponent({
      * Collapses a file in the first files container.
      * @param title
      */
-    const toggleCollapseFirst = (title) => { filesOfFirst.value[title].collapsed = !filesOfFirst.value[title].collapsed }
+    const toggleCollapseFirst = (title) => {
+      filesOfFirst.value[title].collapsed = !filesOfFirst.value[title].collapsed
+    }
     /**
      * Collapses a file in the second files container.
      * @param title
      */
-    const toggleCollapseSecond = (title) => { filesOfSecond.value[title].collapsed = !filesOfSecond.value[title].collapsed }
+    const toggleCollapseSecond = (title) => {
+      filesOfSecond.value[title].collapsed = !filesOfSecond.value[title].collapsed
+    }
     /**
      * Shows a match in the first files container
      * @param e
@@ -99,8 +103,10 @@ export default defineComponent({
      * @param file
      * @param line
      */
-    const showMatchInFirst = ( e, panel, file, line ) => {
-      if( !filesOfFirst.value[file].collapsed ) { toggleCollapseFirst(file) }
+    const showMatchInFirst = (e, panel, file, line) => {
+      if (!filesOfFirst.value[file].collapsed) {
+        toggleCollapseFirst(file)
+      }
       document.getElementById(generateLineCodeLink(panel, file, line)).scrollIntoView()
     }
     /**
@@ -110,12 +116,14 @@ export default defineComponent({
      * @param file
      * @param line
      */
-    const showMatchInSecond = ( e, panel, file, line ) => {
-      if( !filesOfSecond.value[file].collapsed ) { toggleCollapseSecond(file) }
+    const showMatchInSecond = (e, panel, file, line) => {
+      if (!filesOfSecond.value[file].collapsed) {
+        toggleCollapseSecond(file)
+      }
       document.getElementById(generateLineCodeLink(panel, file, line)).scrollIntoView()
     }
 
-    const showMatch = ( e, match ) => {
+    const showMatch = (e, match) => {
       showMatchInFirst(e, 1, match.firstFile, match.startInFirst)
       showMatchInSecond(e, 2, match.secondFile, match.startInSecond)
     }
@@ -165,6 +173,7 @@ h1 {
   display: flex;
   justify-content: space-between;
 }
+
 .title-section > h1 {
   text-align: left !important;
 }

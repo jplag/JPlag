@@ -1,23 +1,24 @@
 <template>
-<div class="wrapper">
-  <select v-model="selectedMember">
-    <option v-for="(member, index) in Object.keys(cluster.members)" :key="index">{{ member }}</option>
-  </select>
-  <RadarChart class="chart" :chartData="chartData" :options="options"></RadarChart>
-</div>
+  <div class="wrapper">
+    <select v-model="selectedMember">
+      <option v-for="(member, index) in Object.keys(cluster.members)" :key="index">{{ member }}</option>
+    </select>
+    <RadarChart :chartData="chartData" :options="options" class="chart"></RadarChart>
+  </div>
 </template>
 
 <script>
-import { defineComponent, ref, watch } from "vue";
-import { RadarChart } from "vue-chart-3"
-import { Chart, registerables } from 'chart.js';
+import {defineComponent, ref, watch} from "vue";
+import {RadarChart} from "vue-chart-3"
+import {Chart, registerables} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+
 Chart.register(...registerables);
 Chart.register(ChartDataLabels);
 
 export default defineComponent({
   name: "ClusterRadarChart",
-  components: { RadarChart },
+  components: {RadarChart},
   props: {
     cluster: {}
   },
@@ -27,12 +28,12 @@ export default defineComponent({
 
     const createLabelsFor = (member) => {
       let matchedWith = []
-      props.cluster.members[member].forEach( m => matchedWith.push(m.matchedWith))
+      props.cluster.members[member].forEach(m => matchedWith.push(m.matchedWith))
       return matchedWith
     }
     const createDataSetFor = (member) => {
       let data = []
-      props.cluster.members[member].forEach( m => data.push(m.percentage))
+      props.cluster.members[member].forEach(m => data.push(m.percentage))
       return data
     }
 
@@ -52,14 +53,15 @@ export default defineComponent({
     })
 
     const options = ref({
-      scales: { r: {
+      scales: {
+        r: {
           suggestedMin: 50,
           suggestedMax: 100
         }
       }
     })
 
-    watch( () => selectedMember.value, (val) => {
+    watch(() => selectedMember.value, (val) => {
       chartData.value = {
         labels: createLabelsFor(val),
         datasets: [{

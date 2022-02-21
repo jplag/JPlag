@@ -1,5 +1,5 @@
 <template>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <router-view/>
 </template>
 

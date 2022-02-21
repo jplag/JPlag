@@ -1,6 +1,6 @@
 <template>
   <div class="container" @dragover.prevent @drop.prevent>
-    <img src="@/assets/logo-nobg.png" alt="JPlag"/>
+    <img alt="JPlag" src="@/assets/logo-nobg.png"/>
     <h1>JPlag Report Viewer</h1>
     <h2>Select an overview or comparison file or a zip to display.</h2>
     <div class="drop-container" @drop="uploadFile">
@@ -14,11 +14,11 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import jszip from "jszip"
 import router from "@/router";
 import store from "@/store/store";
-import { getFileExtension } from "@/utils/Utils";
+import {getFileExtension} from "@/utils/Utils";
 
 export default defineComponent({
   name: "FileUploadView",
@@ -28,7 +28,7 @@ export default defineComponent({
     try {
       require("../files/overview.json")
       hasLocalFile = true
-    } catch(e) {
+    } catch (e) {
       console.log(e)
       hasLocalFile = false
     }
@@ -55,7 +55,7 @@ export default defineComponent({
      * @param file
      */
     const handleZipFile = (file) => {
-      jszip.loadAsync(file).then( async (zip) => {
+      jszip.loadAsync(file).then(async (zip) => {
         for (const fileName of Object.keys(zip.files)) {
           console.log(fileName)
           await zip.files[fileName].async("string").then(data => {
@@ -73,12 +73,12 @@ export default defineComponent({
      */
     const handleJsonFile = (str) => {
       let json = JSON.parse(str)
-      if(json["submission_folder_path"]) {
+      if (json["submission_folder_path"]) {
         store.commit("setLoadingType", {local: false, zip: false, single: true, fileString: str})
         navigateToOverview()
-      } else if(json["first_submission_id"] && json["second_submission_id"]) {
+      } else if (json["first_submission_id"] && json["second_submission_id"]) {
         store.commit("setLoadingType", {local: false, zip: false, single: true, fileString: str})
-        navigateToComparisonView(json["first_submission_id"], json["second_submission_id"] )
+        navigateToComparisonView(json["first_submission_id"], json["second_submission_id"])
       }
     }
     /**
@@ -93,7 +93,7 @@ export default defineComponent({
       let read = new FileReader()
       read.onload = (e) => {
         let extension = getFileExtension(files[0])
-        if(extension === "zip") {
+        if (extension === "zip") {
           handleZipFile(files[0])
         } else if (extension === "json") {
           handleJsonFile(e.target.result)

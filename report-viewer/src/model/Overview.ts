@@ -14,7 +14,7 @@ export class Overview {
     private readonly _clusters: Array<Cluster>
 
 
-    constructor(submissionFolderPath: Array<string>, baseCodeFolderPath: string, language: string, fileExtensions: Array<string>,matchSensitivity: number, submissionIds: Array<string>, dateOfExecution: string, durationOfExecution: number, metrics: Array<Metric>, clusters: Array<Cluster>) {
+    constructor(submissionFolderPath: Array<string>, baseCodeFolderPath: string, language: string, fileExtensions: Array<string>, matchSensitivity: number, submissionIds: Array<string>, dateOfExecution: string, durationOfExecution: number, metrics: Array<Metric>, clusters: Array<Cluster>) {
         this._submissionFolderPath = submissionFolderPath;
         this._baseCodeFolderPath = baseCodeFolderPath;
         this._language = language;

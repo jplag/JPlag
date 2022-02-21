@@ -1,15 +1,16 @@
 <template>
   <div class="wrapper">
-      <div class="text-container">
+    <div class="text-container">
       <p class="label-text">{{ label }}</p>
-      <p :class="{ 'anonymous' : anonymous }" class="value-text" :title="anonymous ? '' : value">{{ anonymous ? "Hidden" : value }}</p>
-      </div>
-      <button class="collapse-button" :class="{ hidden : !hasAdditionalInfo }" @click="toggleIsCollapsed">
-        <img v-if="isCollapsed" src="../assets/keyboard_double_arrow_up_black_18dp.svg" alt="hide info">
-        <img v-else src="../assets/keyboard_double_arrow_down_black_18dp.svg" alt="additional info">
-      </button>
+      <p :class="{ 'anonymous' : anonymous }" :title="anonymous ? '' : value" class="value-text">
+        {{ anonymous ? "Hidden" : value }}</p>
+    </div>
+    <button :class="{ hidden : !hasAdditionalInfo }" class="collapse-button" @click="toggleIsCollapsed">
+      <img v-if="isCollapsed" alt="hide info" src="../assets/keyboard_double_arrow_up_black_18dp.svg">
+      <img v-else alt="additional info" src="../assets/keyboard_double_arrow_down_black_18dp.svg">
+    </button>
   </div>
-  <div class="additional-info" :class="{ hidden : !isCollapsed }">
+  <div :class="{ hidden : !isCollapsed }" class="additional-info">
     <p class="additional-info-title">{{ additionalInfoTitle }}</p>
     <slot></slot>
   </div>
@@ -125,7 +126,7 @@ hr {
   margin: 3% 0;
   box-shadow: inset var(--shadow-color) 0 0 3px;
   border-radius: 10px;
-  font-family: "JetBrains Mono",serif;
+  font-family: "JetBrains Mono", serif;
   font-size: smaller;
 }
 

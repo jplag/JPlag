@@ -1,14 +1,14 @@
 <template>
-<div class="wrapper" v-bind:class="{ selected : isSelected }">
-  <div class="metric">
-    <p class="metric-name">{{ metricName }}</p>
-    <img src="@/assets/help_outline_black_18dp.svg" alt="?"/>
+  <div class="wrapper" v-bind:class="{ selected : isSelected }">
+    <div class="metric">
+      <p class="metric-name">{{ metricName }}</p>
+      <img alt="?" src="@/assets/help_outline_black_18dp.svg"/>
+    </div>
+    <div class="threshold">
+      <p>Threshold: </p>
+      <p>{{ metricThreshold }}%</p>
+    </div>
   </div>
-  <div class="threshold">
-    <p>Threshold: </p>
-    <p>{{ metricThreshold }}%</p>
-  </div>
-</div>
 </template>
 
 <script>
@@ -25,7 +25,7 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    isSelected : {
+    isSelected: {
       type: Boolean,
       default: false
     },

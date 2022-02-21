@@ -1,24 +1,24 @@
 <template>
   <div class="wrapper">
-  <h1>Clusters for comparison {{ comparison.firstSubmissionId }} > {{ comparison.secondSubmissionId}}</h1>
-  <p v-for="( cluster, index ) in clusters" :key="index" @click="toggleDialog">
-    {{index}} - {{cluster.average_similarity}}
-    <GDialog v-model="dialog" fullscreen>
-      <button @click="toggleDialog">Close</button>
-      <ClusterRadarChart :cluster="cluster"></ClusterRadarChart>
-    </GDialog>
-  </p>
+    <h1>Clusters for comparison {{ comparison.firstSubmissionId }} > {{ comparison.secondSubmissionId }}</h1>
+    <p v-for="( cluster, index ) in clusters" :key="index" @click="toggleDialog">
+      {{ index }} - {{ cluster.average_similarity }}
+      <GDialog v-model="dialog" fullscreen>
+        <button @click="toggleDialog">Close</button>
+        <ClusterRadarChart :cluster="cluster"></ClusterRadarChart>
+      </GDialog>
+    </p>
   </div>
 </template>
 
 <script>
-import  { defineComponent, ref } from "vue";
-import { GDialog } from "gitart-vue-dialog";
+import {defineComponent, ref} from "vue";
+import {GDialog} from "gitart-vue-dialog";
 import ClusterRadarChart from "@/components/ClusterRadarChart";
 
 export default defineComponent({
   name: "ClustersList",
-  components: {ClusterRadarChart, GDialog },
+  components: {ClusterRadarChart, GDialog},
   props: {
     comparison: {},
     clusters: Array
