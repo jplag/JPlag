@@ -11,7 +11,6 @@
       :key="comparison.firstSubmissionId
             + comparison.secondSubmissionId
             + comparison.matchPercentage"
-      :class="{ 'even-row' : index % 2 === 0, 'odd-row' : index % 2 !== 0 }"
       class="selectable"
       >
 
@@ -142,6 +141,14 @@ table {
   text-align: center;
 }
 
+table:nth-child(odd) {
+  background: var(--secondary-color);
+}
+
+table:nth-child(even) {
+  background: var(--primary-color-light);
+}
+
 th {
   margin: 0;
   padding-top: 2%;
@@ -160,14 +167,6 @@ td {
 }
 
 .head-row {
-  background: var(--primary-color-light);
-}
-
-.even-row {
-  background: var(--secondary-color);
-}
-
-.odd-row {
   background: var(--primary-color-light);
 }
 
