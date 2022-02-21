@@ -29,7 +29,10 @@ const store = createStore({
             /**
              * Files string if single mode is used.
              */
-            fileString: String
+            fileString: {
+                type: String,
+                required: false
+            }
         }
     },
     mutations: {
