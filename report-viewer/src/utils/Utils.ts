@@ -4,7 +4,7 @@ export function generateLineCodeLink(index: number, fileName: string, line: numb
 
 export function getFileExtension(file: File): string {
     if(file.name.includes(".")) {
-        let split = file.name.split(".")
+        const split = file.name.split(".")
         return split[split.length - 1]
     }
     return "";
