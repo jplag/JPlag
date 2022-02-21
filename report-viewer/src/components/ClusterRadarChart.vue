@@ -60,8 +60,6 @@ export default defineComponent({
     })
 
     watch( () => selectedMember.value, (val) => {
-      console.log("Selected member is " + val)
-      console.log(JSON.stringify(createLabelsFor(val)))
       chartData.value = {
         labels: createLabelsFor(val),
         datasets: [{

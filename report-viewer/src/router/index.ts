@@ -1,13 +1,13 @@
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import Overview from "@/views/OverviewView.vue";
 import ComparisonView from "@/views/ComparisonView.vue"
-import FileUpload from "@/views/FileUpload.vue"
+import FileUploadView from "@/views/FileUploadView.vue"
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "FileUpload",
-    component: FileUpload
+    name: "FileUploadView",
+    component: FileUploadView
   },
   {
     path: "/overview",
@@ -19,8 +19,8 @@ const routes: Array<RouteRecordRaw> = [
     name: "ComparisonView",
     component: ComparisonView,
     props: route => ({
-      id1: route.query.id1,
-      id2: route.query.id2
+      id1: route.query.firstId,
+      id2: route.query.secondId
     })
   },
 ];

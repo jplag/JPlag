@@ -39,10 +39,10 @@ export default defineComponent({
   name: "ComparisonView",
   components: {FilesContainer, MatchTable, TextInformation },
   props: {
-    id1: {
+    firstId: {
       type: String,
     },
-    id2: {
+    secondId: {
       type: String,
     },
   },
@@ -51,8 +51,8 @@ export default defineComponent({
      * Name of the comparison file. Comparison files should be named {ID1}-{ID2}
      * @type {string}
      */
-    const fileName1 = props.id1.concat("-").concat(props.id2)
-    const fileName2 = props.id2.concat("-").concat(props.id1)
+    const fileName1 = props.firstId.concat("-").concat(props.secondId)
+    const fileName2 = props.firstId.concat("-").concat(props.secondId)
 
     let comparison;
     //getting the comparison file based on the used mode (zip, local, single)

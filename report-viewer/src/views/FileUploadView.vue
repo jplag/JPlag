@@ -21,7 +21,7 @@ import store from "@/store/store";
 import { getFileExtension } from "@/utils/Utils";
 
 export default defineComponent({
-  name: "FileUpload",
+  name: "FileUploadView",
   setup() {
     let hasLocalFile;
     //Tries to detect local file. If no files detected, hides local mode from screen.

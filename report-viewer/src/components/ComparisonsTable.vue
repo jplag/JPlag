@@ -69,11 +69,11 @@ export default defineComponent({
       dialog.value = true
     }
 
-    const navigateToComparisonView = (id1, id2) => {
+    const navigateToComparisonView = (firstId, secondId) => {
       if(!store.state.single) {
         router.push({
           name: "ComparisonView",
-          query: {id1: id1, id2: id2},
+          query: {firstId: firstId, secondId: secondId},
         })
       }
     }
@@ -91,10 +91,8 @@ export default defineComponent({
       let matches = []
       props.topComparisons.forEach( comparison => {
         if(comparison.firstSubmissionId.includes(id)  && others.includes(comparison.secondSubmissionId)) {
-          console.log("Pushing")
           matches.push({ matchedWith: comparison.secondSubmissionId, percentage: comparison.matchPercentage})
         } else if ( comparison.secondSubmissionId.includes(id) && others.includes(comparison.firstSubmissionId)) {
-          console.log("Pushing")
           matches.push({ matchedWith: comparison.firstSubmissionId, percentage: comparison.matchPercentage})
         }
       })
