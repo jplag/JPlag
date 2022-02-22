@@ -7,9 +7,9 @@ public class Java10 {
     List<Optional<String>> test;
     
     public Java10() {
-        // Var type for local variables (JEP 286):
+        // Typed variables as usual:
         test = new ArrayList<>();
-        var variable = test;
+        List<Optional<String>> variable = test;
         int length = variable.toString().length();
         test = variable;
         test.add(Optional.of(variable.toString()));
