@@ -5,7 +5,7 @@ import java.io.File;
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 
-public class Parser extends AbstractParser{
+public class Parser extends AbstractParser {
     private String currentFile;
 
     private TokenList tokens;

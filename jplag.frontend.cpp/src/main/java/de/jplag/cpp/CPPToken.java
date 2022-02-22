@@ -15,7 +15,7 @@ public class CPPToken extends Token implements CPPTokenConstants {
     protected String type2string() {
         switch (type) {
             case CPPTokenConstants.FILE_END:
-                return "********";
+                return "EOF";
 
             case C_BLOCK_BEGIN:
                 return "BLOCK{";
@@ -141,7 +141,7 @@ public class CPPToken extends Token implements CPPTokenConstants {
                 return "NULL";
 
             default:
-                return "<UNKNOWN>";
+                return "<UNKNOWN" + type + ">";
         }
     }
 }
