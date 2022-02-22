@@ -24,7 +24,6 @@ export default defineComponent({
   },
   setup(props) {
     const selectedMember = ref("")
-    const labels = ref([])
 
     const createLabelsFor = (member) => {
       let matchedWith = []
@@ -37,18 +36,22 @@ export default defineComponent({
       return data
     }
 
+    const chartStyle = {
+      fill: true,
+      backgroundColor: 'rgba(149, 168, 241, 0.5)',
+      borderColor: 'rgba(149, 168, 241, 1)',
+      pointBackgroundColor: 'rgba(149, 168, 241, 1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgb(255, 99, 132)'
+    }
+
     const chartData = ref({
       labels: createLabelsFor(Object.keys(props.cluster.members)[0]),
       datasets: [{
+        ...chartStyle,
         label: Object.keys(props.cluster.members)[0],
-        data: createDataSetFor(Object.keys(props.cluster.members)[0]),
-        fill: true,
-        backgroundColor: 'rgba(149, 168, 241, 0.5)',
-        borderColor: 'rgba(149, 168, 241, 1)',
-        pointBackgroundColor: 'rgba(149, 168, 241, 1)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgb(255, 99, 132)'
+        data: createDataSetFor(Object.keys(props.cluster.members)[0])
       }]
     })
 
@@ -65,15 +68,9 @@ export default defineComponent({
       chartData.value = {
         labels: createLabelsFor(val),
         datasets: [{
+          ...chartStyle,
           label: val,
           data: createDataSetFor(val),
-          fill: true,
-          backgroundColor: 'rgba(149, 168, 241, 0.5)',
-          borderColor: 'rgba(149, 168, 241, 1)',
-          pointBackgroundColor: 'rgba(149, 168, 241, 1)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgb(255, 99, 132)'
         }]
       }
     })

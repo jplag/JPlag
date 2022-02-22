@@ -26,16 +26,20 @@ export default defineComponent({
     //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
     //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
     let maxVal = ref(Math.max(...props.distribution));
-
+    const labels = ['0-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71-80%', '81-90%', '91-100%']
+    const dataSetStyle = {
+      label: 'Count',
+      backgroundColor: 'rgba(149, 168, 241, 0.5)',
+      borderWidth: 2,
+      borderColor: 'rgba(149, 168, 241, 1)',
+      tickColor: '#000000'
+    }
+    
     let chartData = ref({
-      labels: ['0-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71-80%', '81-90%', '91-100%'],
+      labels: labels,
       datasets: [{
-        label: 'Count',
+        ...dataSetStyle,
         data: props.distribution,
-        backgroundColor: 'rgba(149, 168, 241, 0.5)',
-        borderWidth: 2,
-        borderColor: 'rgba(149, 168, 241, 1)',
-        tickColor: '#000000'
       }]
     })
 
@@ -75,51 +79,18 @@ export default defineComponent({
     //We watch the given distributions parameter. When the distribution of another metric is passed, the diagram is
     //updated with the new data.
     watch(() => props.distribution, (val) => {
-      chartData.value = {
-        labels: ['0-10%', '11-20%', '21-30%', '31-40%', '41-50%', '51-60%', '61-70%', '71-80%', '81-90%', '91-100%'],
-        datasets: [{
-          label: 'Count',
-          data: val,
-          backgroundColor: 'rgba(149, 168, 241, 0.5)',
-          borderWidth: 2,
-          borderColor: 'rgba(149, 168, 241, 1)',
-        }]
-      }
+          chartData.value = {
+            labels: labels,
+            datasets: [{
+              ...dataSetStyle,
+              data: val,
+            }]
+          }
 
-      maxVal.value = Math.max(...val)
-      options.value = {
-        responsive: true,
-        maintainAspectRatio: false,
-        indexAxis: 'y',
-        scales: {
-          x: {
-            suggestedMax: maxVal.value + 5,
-            ticks: {
-              color: '#000000',
-            }
-          },
-          y: {
-            ticks: {
-              color: '#000000',
-            }
-          }
-        },
-        plugins: {
-          datalabels: {
-            color: '#000000',
-            font: {
-              weight: 'bold'
-            },
-            anchor: 'end',
-            align: 'end',
-            clamp: true
-          },
-          legend: {
-            display: false,
-          }
+          maxVal.value = Math.max(...val)
+          options.value.scales.x.suggestedMax = maxVal.value + 5
         }
-      }
-    })
+    )
 
     return {
       chartData,

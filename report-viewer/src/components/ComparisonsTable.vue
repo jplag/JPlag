@@ -13,7 +13,6 @@
             + comparison.matchPercentage"
         class="selectable"
     >
-
       <td @click="navigateToComparisonView(comparison.firstSubmissionId, comparison.secondSubmissionId)">{{
           index + 1
         }}.
@@ -35,10 +34,10 @@
         <img v-if="isInCluster(comparison.firstSubmissionId, comparison.secondSubmissionId)"
              alt=">>"
              src="@/assets/keyboard_double_arrow_down_black_18dp.svg"
-             @click="toggleDialog"
+             @click="toggleDialog(index)"
         />
       </td>
-      <GDialog v-model="dialog">
+      <GDialog v-model="dialog[index]">
         <ClustersList :clusters="getClustersFor(comparison.firstSubmissionId, comparison.secondSubmissionId)"
                       :comparison="comparison"/>
       </GDialog>
@@ -67,10 +66,11 @@ export default defineComponent({
   },
   setup(props) {
     let formattedMatchPercentage = (number) => number.toFixed(2)
-    const dialog = ref(false)
+    const dialog = ref([])
+    props.topComparisons.forEach(() => dialog.value.push(false))
 
-    const toggleDialog = () => {
-      dialog.value = true
+    const toggleDialog = (index) => {
+      dialog.value[index] = true
     }
 
     const navigateToComparisonView = (firstId, secondId) => {
@@ -111,7 +111,8 @@ export default defineComponent({
       })
 
       return {
-        avgSim: cluster.avgSim,
+        averageSimilarity: cluster.averageSimilarity,
+        strength: cluster.strength,
         members: membersArray
       }
     })
