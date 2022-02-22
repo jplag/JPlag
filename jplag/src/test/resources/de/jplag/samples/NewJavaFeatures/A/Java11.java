@@ -13,23 +13,6 @@ public class Java11 {
         Cal cal = (var a, var b) -> a + b;
         int result = cal.sum(10, 20);
         System.out.println(result);
-        
-        // New HTTP Client API:
-        HttpClient client = HttpClient.newBuilder()
-                .version(Version.HTTP_1_1)
-                .followRedirects(Redirect.NORMAL)
-                .connectTimeout(Duration.ofSeconds(20))
-                .proxy(ProxySelector.of(new InetSocketAddress("proxy.example.com", 80)))
-                .authenticator(Authenticator.getDefault())
-                .build();
-        System.out.println(client);
-        
-        // New string methods:
-        String text = "ABCD";
-        text.repeat(2);
-        text.isBlank();
-        text.strip();
-        text.lines();
     }
     
     interface Cal {
