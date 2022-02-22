@@ -28,6 +28,7 @@ import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.ProvidesTree;
 import com.sun.source.tree.RequiresTree;
 import com.sun.source.tree.ReturnTree;
+import com.sun.source.tree.SwitchExpressionTree;
 import com.sun.source.tree.SwitchTree;
 import com.sun.source.tree.SynchronizedTree;
 import com.sun.source.tree.ThrowTree;
@@ -180,6 +181,16 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         Object ret = super.visitSwitch(node, p);
         parser.add(JavaTokenConstants.J_SWITCH_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
         return ret;
+    }
+
+    @Override
+    public Object visitSwitchExpression(SwitchExpressionTree node, Object parameterValue) {
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node);
+        parser.add(JavaTokenConstants.J_SWITCH_BEGIN, filename, map.getLineNumber(start), map.getColumnNumber(start), 6);
+        Object result = super.visitSwitchExpression(node, parameterValue);
+        parser.add(JavaTokenConstants.J_SWITCH_END, filename, map.getLineNumber(end - 1), map.getColumnNumber(end - 1), 1);
+        return result;
     }
 
     @Override
