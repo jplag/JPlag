@@ -4,7 +4,9 @@
 <template>
   <div class="container">
     <div class="column-list">
-      <p v-for="(id, index) in ids" :key="index" @click="$emit('idSent', [id])">
+      <p v-for="(id, index) in ids" :key="index"
+         :class="{'selected' : !store.state.anonymous.has(id) && store.state.anonymous.size !== 0 }"
+         @click="$emit('idSent', [id])">
         {{ id }}
       </p>
     </div>
@@ -14,6 +16,7 @@
 
 <script>
 import {defineComponent} from "vue";
+import store from "@/store/store.ts"
 
 export default defineComponent({
   name: "IDsList",
@@ -27,7 +30,8 @@ export default defineComponent({
     // eslint-disable-next-line vue/no-setup-props-destructure
     const savedIds = props.ids
     return {
-      savedIds
+      savedIds,
+      store
     }
   }
 })
@@ -64,10 +68,15 @@ button:hover {
   width: 100%;
   font-weight: bold;
   margin: 0;
+  border-radius: 10px;
 }
 
 .column-list > p:hover {
   background: var(--primary-color-dark);
   cursor: pointer;
+}
+
+.selected {
+  background: var(--primary-color-dark);
 }
 </style>
