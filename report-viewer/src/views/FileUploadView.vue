@@ -1,3 +1,6 @@
+<!--
+  Starting view of the application. Presents the options for loading a JPlag report.
+-->
 <template>
   <div class="container" @dragover.prevent @drop.prevent>
     <img alt="JPlag" src="@/assets/logo-nobg.png"/>

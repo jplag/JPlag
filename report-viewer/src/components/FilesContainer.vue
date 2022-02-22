@@ -1,3 +1,6 @@
+<!--
+  Container containing CodePanels for all of the files in a submission.
+-->
 <template>
   <div class="files-container">
     <h1>Files of {{ filesOwner }}</h1>

@@ -1,3 +1,6 @@
+<!--
+  List containing all the clusters in which both comparison submissions participate.
+-->
 <template>
   <div class="wrapper">
     <h1>Clusters for comparison {{ comparison.firstSubmissionId }} > {{ comparison.secondSubmissionId }}</h1>

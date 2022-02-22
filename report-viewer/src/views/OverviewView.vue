@@ -1,3 +1,6 @@
+<!--
+  A view displaying the overview file of a JPlag report.
+-->
 <template>
   <div class="container">
     <div class="column-container" style="width: 30%">

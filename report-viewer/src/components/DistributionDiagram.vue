@@ -1,3 +1,6 @@
+<!--
+  Bar diagram, displaying the distribution for the selected metric.
+-->
 <template>
   <div class="wrapper">
     <BarChart :chartData="chartData" :options="options" class="chart"/>
@@ -34,7 +37,7 @@ export default defineComponent({
       borderColor: 'rgba(149, 168, 241, 1)',
       tickColor: '#000000'
     }
-    
+
     let chartData = ref({
       labels: labels,
       datasets: [{

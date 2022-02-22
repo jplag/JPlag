@@ -1,3 +1,6 @@
+<!--
+  Table which contains all of the matches for a comparison with navigation links.
+-->
 <template>
   <div class="match-table-container">
     <table>

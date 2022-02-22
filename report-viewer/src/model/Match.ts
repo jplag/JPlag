@@ -1,3 +1,6 @@
+/**
+ * Match between two files of two submissions.
+ */
 export type Match = {
     firstFile: string,
     secondFile: string,

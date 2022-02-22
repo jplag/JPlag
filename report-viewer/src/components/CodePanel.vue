@@ -1,3 +1,6 @@
+<!--
+  Panel which displays a submission files with its line of code.
+-->
 <template>
   <div :id="panelId.toString().concat(title).concat(fileIndex.toString())" class="code-panel-container">
     <div class="file-title">

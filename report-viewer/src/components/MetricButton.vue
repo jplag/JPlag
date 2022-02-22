@@ -1,3 +1,7 @@
+<!--
+  Button which displays the information for a used metric and is used to select for which
+  metric the distribution and comparisons are displayed.
+-->
 <template>
   <div class="wrapper" v-bind:class="{ selected : isSelected }">
     <div class="metric">

@@ -1,3 +1,6 @@
+<!--
+  List containing the ids of all submissions.
+-->
 <template>
   <div class="container">
     <div class="column-list">

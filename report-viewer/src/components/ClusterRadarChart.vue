@@ -1,3 +1,7 @@
+<!--
+  Radar chart which displays a cluster member with their similarity to other
+  participants in the cluster.
+-->
 <template>
   <div class="wrapper">
     <select v-model="selectedMember">

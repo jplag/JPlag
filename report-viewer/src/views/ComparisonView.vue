@@ -1,3 +1,6 @@
+<!--
+  A view displaying the .json file of a comparison from a JPlag report.
+-->
 <template>
   <div class="container">
     <button id="show-button" :class="{hidden : !hideLeftPanel}" title="Show sidebar" @click="togglePanel">

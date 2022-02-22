@@ -3,6 +3,9 @@ import OverviewView from "@/views/OverviewView.vue"
 import ComparisonView from "@/views/ComparisonView.vue"
 import FileUploadView from "@/views/FileUploadView.vue"
 
+/**
+ * Router containing the navigation destinations.
+ */
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/",

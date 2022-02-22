@@ -1,3 +1,6 @@
+<!--
+  Container which display a single line of code of a file.
+-->
 <template>
   <div :class="{'first-line' : isFirst, 'last-line' : isLast, 'visible' : visible}" :style="{background : color}"
        class="line-wrap">
