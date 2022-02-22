@@ -11,7 +11,7 @@ import de.jplag.TokenList;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
-public class Parser extends AbstractParser implements CSharpTokenConstants {
+public class Parser extends AbstractParser {
     private TokenList tokens;
     private String currentFile;
 
@@ -21,7 +21,7 @@ public class Parser extends AbstractParser implements CSharpTokenConstants {
         for (int i = 0; i < files.length; i++) {
             if (!parseFile(directory, files[i]))
                 errors++;
-            tokens.addToken(new CSharpToken(FILE_END, files[i], -1, -1, -1));
+            tokens.addToken(new CSharpToken(CSharpTokenConstants.FILE_END, files[i], -1, -1, -1));
         }
         this.parseEnd();
         return tokens;

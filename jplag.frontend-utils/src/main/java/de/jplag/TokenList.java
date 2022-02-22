@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * List of tokens. Allows random access to individual tokens. Contains a hash map for token hashes.
  */
-public class TokenList implements TokenConstants {
+public class TokenList {
     private final List<Token> tokens;
     TokenHashMap tokenHashes = null;
     int hash_length = -1;
