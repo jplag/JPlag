@@ -8,7 +8,7 @@ import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
-public class Parser extends AbstractParser implements TokenConstants {
+public class Parser extends AbstractParser {
 
     private TokenList tokens;
 
@@ -19,7 +19,7 @@ public class Parser extends AbstractParser implements TokenConstants {
             getErrorConsumer().print(null, "Parsing file " + file);
             if (!parseFile(directory, file))
                 errors++;
-            tokens.addToken(new CharToken(FILE_END, file, this));
+            tokens.addToken(new CharToken(TokenConstants.FILE_END, file, this));
         }
         if (errors == 0)
             errorConsumer.print(null, "OK");

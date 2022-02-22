@@ -5,7 +5,7 @@ import java.io.File;
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 
-public class Parser extends AbstractParser implements SchemeTokenConstants {
+public class Parser extends AbstractParser{
     private String currentFile;
 
     private TokenList tokens;
@@ -18,7 +18,7 @@ public class Parser extends AbstractParser implements SchemeTokenConstants {
             getErrorConsumer().print(null, "Parsing file " + files[i]);
             if (!SchemeParser.parseFile(directory, files[i], null, this))
                 errors++;
-            tokens.addToken(new SchemeToken(FILE_END, currentFile));
+            tokens.addToken(new SchemeToken(SchemeTokenConstants.FILE_END, currentFile));
         }
         this.parseEnd();
         return tokens;
