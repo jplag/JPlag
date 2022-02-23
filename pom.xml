@@ -81,7 +81,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>14</maven.compiler.source>
         <maven.compiler.target>14</maven.compiler.target>
-        <spotless.version>2.20.2</spotless.version>
+        <spotless.version>2.21.0</spotless.version>
     </properties>
     <dependencyManagement>
         <dependencies>
