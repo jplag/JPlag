@@ -77,7 +77,7 @@ public final class TokenPrinter {
             if (token.getLine() > lineIndex) {
                 lineIndex = token.getLine();
                 columnIndex = 1;
-                
+
                 String fileName = token.getFile().isEmpty() ? root.getName() : token.getFile();
                 String currentLine = filesToLines.get(fileName).get(lineIndex - 1);
                 if (REPLACE_TABS) {
