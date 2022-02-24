@@ -34,7 +34,7 @@ public final class TokenPrinter {
      * @return the string representation.
      */
     public static String printTokens(Submission submission) {
-        return printTokens(submission.getTokenList(), submission.getFiles());
+        return printTokens(submission.getTokenList(), submission.getFiles(), submission.getRoot());
     }
 
     /**
@@ -46,7 +46,7 @@ public final class TokenPrinter {
      */
     public static String printTokens(TokenList tokens, File directory, Collection<String> fileNames) {
         Collection<File> files = fileNames.stream().map(name -> new File(directory, name)).collect(toList());
-        return printTokens(tokens, files);
+        return printTokens(tokens, files, directory);
     }
 
     /**
@@ -55,7 +55,7 @@ public final class TokenPrinter {
      * @param files are the parsed files.
      * @return the string representation.
      */
-    public static String printTokens(TokenList tokens, Collection<File> files) {
+    public static String printTokens(TokenList tokens, Collection<File> files, File root) {
         Map<String, List<String>> filesToLines = readFiles(files);
         StringBuilder builder = new StringBuilder();
         int lineIndex = 0;
@@ -77,7 +77,9 @@ public final class TokenPrinter {
             if (token.getLine() > lineIndex) {
                 lineIndex = token.getLine();
                 columnIndex = 1;
-                String currentLine = filesToLines.get(token.getFile()).get(lineIndex - 1);
+                
+                String fileName = token.getFile().isEmpty() ? root.getName() : token.getFile();
+                String currentLine = filesToLines.get(fileName).get(lineIndex - 1);
                 if (REPLACE_TABS) {
                     currentLine = currentLine.replace(TAB, TAB_REPLACEMENT);
                 }
