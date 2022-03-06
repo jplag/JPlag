@@ -2,7 +2,6 @@ package de.jplag;
 
 import static de.jplag.CommandLineArgument.*;
 
-import java.io.File;
 import java.util.Optional;
 import java.util.Random;
 
