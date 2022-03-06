@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import de.jplag.Language;
+import de.jplag.clustering.ClusteringOptions;
 import de.jplag.strategy.ComparisonMode;
 
 public class JPlagOptions {
@@ -64,7 +65,7 @@ public class JPlagOptions {
 
     /**
      * Tunes the comparison sensitivity by adjusting the minimum token required to be counted as matching section. A smaller
-     * <n> increases the sensitivity but might lead to more false-positves.
+     * <n> increases the sensitivity but might lead to more false-positives.
      */
     private Integer minimumTokenMatch;
 
@@ -114,6 +115,11 @@ public class JPlagOptions {
      * Level of output verbosity.
      */
     private Verbosity verbosity;
+
+    /**
+     * Clustering options
+     */
+    private ClusteringOptions clusteringOptions = new ClusteringOptions.Builder().build();
 
     /**
      * Constructor with required attributes.
@@ -185,6 +191,10 @@ public class JPlagOptions {
 
     public boolean isDebugParser() {
         return debugParser;
+    }
+
+    public ClusteringOptions getClusteringOptions() {
+        return this.clusteringOptions;
     }
 
     public void setBaseCodeSubmissionName(String baseCodeSubmissionName) {
@@ -283,6 +293,10 @@ public class JPlagOptions {
         this.verbosity = verbosity;
     }
 
+    public void setClusteringOptions(ClusteringOptions clusteringOptions) {
+        this.clusteringOptions = clusteringOptions;
+    }
+
     private boolean hasFileSuffixes() {
         return fileSuffixes != null && fileSuffixes.length > 0;
     }
@@ -290,4 +304,5 @@ public class JPlagOptions {
     private boolean hasMinimumTokenMatch() {
         return minimumTokenMatch != null;
     }
+
 }
