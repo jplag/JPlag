@@ -36,6 +36,8 @@ public class CLI {
             "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work", "The tech is out there!"};
 
     private static final String PROGRAM_NAME = "jplag";
+    static final String CLUSTERING_GROUP_NAME = "Clustering";
+    static final String CLUSTERING_PREPROCESSING_GROUP_NAME = "Clustering - Preprocessing";
 
     private final ArgumentParser parser;
 
