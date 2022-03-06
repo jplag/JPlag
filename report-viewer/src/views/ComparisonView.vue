@@ -12,10 +12,10 @@
         <button id="hide-button" title="Hide sidebar" @click="togglePanel">
           <img alt="hide" src="@/assets/keyboard_double_arrow_left_black_24dp.svg"></button>
       </div>
-      <TextInformation :anonymous="store.state.anonymous.has(id1)" :value="id1" label="Submission 1"/>
-      <TextInformation :anonymous="store.state.anonymous.has(id2)" :value="id2" label="Submission 2"/>
+      <TextInformation :anonymous="store.state.anonymous.has(firstId)" :value="firstId" label="Submission 1"/>
+      <TextInformation :anonymous="store.state.anonymous.has(secondId)" :value="secondId" label="Submission 2"/>
       <TextInformation :value="comparison.match_percentage" label="Match %"/>
-      <MatchTable :id1="id1" :id2="id2" :matches="comparison.allMatches" @match-selected="showMatch"/>
+      <MatchTable :id1="firstId" :id2="secondId" :matches="comparison.allMatches" @match-selected="showMatch"/>
     </div>
     <FilesContainer :container-id="1" :files="filesOfFirst" :matches="comparison.matchesInFirstSubmission"
                     files-owner="Submission 1"

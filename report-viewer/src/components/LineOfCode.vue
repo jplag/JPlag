@@ -72,6 +72,20 @@ pre {
   float: left;
 }
 
+pre code.hljs {
+  padding: 0 !important;
+}
+
+code.hljs {
+  padding: 0 !important;
+}
+
+.hljs {
+  background: transparent !important;
+  font-family: "JetBrains Mono", serif !important;
+  font-weight: bold;    font-size: x-small !important;
+}
+
 
 .first-line {
   margin-top: 2%;
