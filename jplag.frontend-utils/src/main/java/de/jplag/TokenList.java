@@ -22,10 +22,10 @@ public class TokenList implements TokenConstants {
     public final void addToken(Token token) {
         if (tokens.size() > 0) {
             Token lastToken = tokens.get(tokens.size() - 1);
-            if (lastToken.getFile().equals(token.getFile())) {
-                token.setFile(lastToken.getFile()); // To save memory ...
+            if (lastToken.file.equals(token.file)) {
+                token.file = lastToken.file; // To save memory ...
             }
-            if (token.getLine() < lastToken.getLine() && (token.getFile().equals(lastToken.getFile()))) {
+            if (token.getLine() < lastToken.getLine() && (token.file.equals(lastToken.file))) {
                 token.setLine(lastToken.getLine()); // just to make sure
             }
         }
