@@ -7,13 +7,11 @@ package de.jplag;
  */
 public abstract class Token {
     private boolean basecode = false;
-    private int column;
     private String file;
     private int hash = -1;// hash-value. set and used by main algorithm (GSTiling)
-
-    private int length;
-    private int line;
     private boolean marked;
+
+    private int line;
     protected int type;
 
     /**
@@ -26,20 +24,6 @@ public abstract class Token {
         this.type = type;
         this.file = file;
         setLine(line > 0 ? line : 1);
-    }
-
-    /**
-     * Creates a token with column and length information.
-     * @param type is the token type.
-     * @param file is the name of the source code file.
-     * @param line is the line in the source code where the token resides.
-     * @param column is the line index in the line, meaning where the token starts
-     * @param length is the length of the token in the line.
-     */
-    public Token(int type, String file, int line, int column, int length) {
-        this(type, file, line);
-        this.column = column;
-        this.length = length;
     }
 
     public String getFile() {
@@ -60,11 +44,11 @@ public abstract class Token {
     }
 
     public int getColumn() {
-        return column;
+        return 0; // no column
     }
 
     public int getLength() {
-        return length;
+        return 0; // no length
     }
 
     public boolean isBasecode() {
@@ -77,14 +61,6 @@ public abstract class Token {
 
     public void setLine(int line) {
         this.line = line;
-    }
-
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
     }
 
     @Override

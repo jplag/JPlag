@@ -43,7 +43,8 @@ public interface Language {
     public int errorCount();
 
     /**
-     * Determines whether the parser provide column information.
+     * Determines whether the parser provide column information. If this returns true, all generated tokens are a
+     * {@link TypographicToken}.
      */
     public boolean supportsColumns();
 

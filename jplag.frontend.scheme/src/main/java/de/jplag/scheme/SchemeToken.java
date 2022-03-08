@@ -4,12 +4,8 @@ import de.jplag.Token;
 
 public class SchemeToken extends Token implements SchemeTokenConstants {
 
-    public SchemeToken(int type, String file, int line, int column, int length) {
-        super(type, file, line, column, length);
-    }
-
-    public SchemeToken(int type, String file) {
-        super(type, file, 1, 0, 0);
+    public SchemeToken(int type, String file, int line) {
+        super(type, file, line);
     }
 
     protected String type2string() {

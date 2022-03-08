@@ -4,12 +4,8 @@ import de.jplag.Token;
 
 public class CPPToken extends Token implements CPPTokenConstants {
 
-    public CPPToken(int type, String file, int line, int column, int length) {
-        super(type, file, line, column, length);
-    }
-
-    public CPPToken(int type, String file) {
-        super(type, file, 1, 0, 0);
+    public CPPToken(int type, String file, int line) {
+        super(type, file, line);
     }
 
     protected String type2string() {
@@ -141,7 +137,7 @@ public class CPPToken extends Token implements CPPTokenConstants {
                 return "NULL";
 
             default:
-                return "<UNKNOWN>";
+                return "<UNBEKANNT>";
         }
     }
 }
