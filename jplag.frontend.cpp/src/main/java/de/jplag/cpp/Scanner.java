@@ -5,7 +5,7 @@ import java.io.File;
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 
-public class Scanner extends AbstractParser {
+public class Scanner extends AbstractParser implements CPPTokenConstants {
     private String currentFile;
 
     private TokenList tokens;
@@ -20,7 +20,7 @@ public class Scanner extends AbstractParser {
             if (!CPPScanner.scanFile(directory, files[i], scanner, this)) {
                 errors++;
             }
-            tokens.addToken(new CPPToken(CPPTokenConstants.FILE_END, currentFile));
+            tokens.addToken(new CPPToken(FILE_END, currentFile));
         }
         this.parseEnd();
         return tokens;

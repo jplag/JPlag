@@ -18,7 +18,7 @@ import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
 
-public class Parser extends AbstractParser {
+public class Parser extends AbstractParser implements Python3TokenConstants {
 
     private TokenList tokens = new TokenList();
     private String currentFile;
@@ -32,7 +32,7 @@ public class Parser extends AbstractParser {
                 errors++;
             }
             System.gc();// Emeric
-            tokens.addToken(new Python3Token(Python3TokenConstants.FILE_END, files[i], -1, -1, -1));
+            tokens.addToken(new Python3Token(FILE_END, files[i], -1, -1, -1));
         }
         this.parseEnd();
         return tokens;

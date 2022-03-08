@@ -1,8 +1,5 @@
 package de.jplag;
 
-import static de.jplag.TokenConstants.FILE_END;
-import static de.jplag.TokenConstants.SEPARATOR_TOKEN;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +13,7 @@ import de.jplag.options.JPlagOptions;
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
  * String Similarity via Greedy String Tiling and Running Karp−Rabin Matching </a>
  */
-public class GreedyStringTiling {
+public class GreedyStringTiling implements TokenConstants {
 
     private final JPlagOptions options;
 
