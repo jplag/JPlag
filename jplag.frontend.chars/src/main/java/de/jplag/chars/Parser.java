@@ -10,16 +10,16 @@ import de.jplag.TokenList;
 
 public class Parser extends AbstractParser implements TokenConstants {
 
-    private TokenList tokens;
+    private TokenList struct;
 
-    public TokenList parse(File directory, String files[]) {
-        tokens = new TokenList();
+    public TokenList parse(File dir, String files[]) {
+        struct = new TokenList();
         errors = 0;
         for (String file : files) {
             getErrorConsumer().print(null, "Parsing file " + file);
-            if (!parseFile(directory, file))
+            if (!parseFile(dir, file))
                 errors++;
-            tokens.addToken(new CharToken(FILE_END, file, this));
+            struct.addToken(new CharToken(FILE_END, file, this));
         }
         if (errors == 0)
             errorConsumer.print(null, "OK");
@@ -27,7 +27,7 @@ public class Parser extends AbstractParser implements TokenConstants {
             errorConsumer.print(null, errors + " ERROR" + (errors > 1 ? "S" : ""));
 
         this.parseEnd();
-        return tokens;
+        return struct;
     }
 
     private boolean parseFile(File dir, String file) {
@@ -44,7 +44,7 @@ public class Parser extends AbstractParser implements TokenConstants {
 
                 for (int i = 0; i < length; i++) {
                     if (buffer[i] <= 127 && (type = mapping[buffer[i]]) > 1) {
-                        tokens.addToken(new CharToken(type, file, offset + i, buffer[i], this));
+                        struct.addToken(new CharToken(type, file, offset + i, buffer[i], this));
                     }
                 }
                 offset += length;

@@ -24,12 +24,13 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
+        String[] res = {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
+        return res;
     }
 
     @Override
     public String getName() {
-        return "Text Parser";
+        return "Text AbstractParser";
     }
 
     @Override

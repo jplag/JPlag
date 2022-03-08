@@ -6,22 +6,23 @@ public class ParserToken extends Token {
     /**
      * This variable holds the line number of the current token.
      */
-    private int line = -1;
+    private int _line = -1;
 
     /**
      * This variable holds the column of the current token in its line.
      */
-    private int column = -1;
+    private int _column = -1;
 
     /**
      * This variable holds the label of the current token.
      */
-    private String text = null;
+    private String _text = null;
 
     /**
      * This variable holds the identifier of the current token.
      */
-    private int id = -1;
+
+    private int _id = -1;
 
     public ParserToken() {
         super();
@@ -29,44 +30,44 @@ public class ParserToken extends Token {
 
     @Override
     public void setLine(int line) {
-        this.line = line;
+        _line = line;
     }
 
     @Override
     public void setColumn(int column) {
-        this.column = column;
+        _column = column;
     }
 
     public void setID(int id) {
-        this.id = id;
+        _id = id;
     }
 
     @Override
     public void setText(String text) {
-        this.text = (text != null ? text.intern() : null);
+        _text = (text != null ? text.intern() : null);
     }
 
     @Override
     public int getColumn() {
-        return column;
+        return _column;
     }
 
     @Override
     public int getLine() {
-        return line;
+        return _line;
     }
 
     @Override
     public String getText() {
-        return text;
+        return _text;
     }
 
     public int getID() {
-        return id;
+        return _id;
     }
 
     public int getLength() {
-        return text.length();
+        return _text.length();
     }
 
     @Override

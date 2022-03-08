@@ -15,46 +15,30 @@ public class Parser extends AbstractParser implements TokenConstants {
     protected Hashtable<String, Integer> table = new Hashtable<>();
     protected int serial = 1; // 0 is FILE_END token
 
-    private TokenList tokens;
+    private TokenList struct;
 
     private String currentFile;
 
-    private boolean runOut = false;
-
-    public TokenList parse(File directory, String files[]) {
-        tokens = new TokenList();
+    public TokenList parse(File dir, String files[]) {
+        struct = new TokenList();
         errors = 0;
         for (String file : files) {
             getErrorConsumer().print("", "Parsing file " + file);
-            if (!parseFile(directory, file))
+            if (!parseFile(dir, file))
                 errors++;
-            tokens.addToken(new TextToken(FILE_END, file, this));
+            struct.addToken(new TextToken(FILE_END, file, this));
         }
 
-        TokenList tmp = tokens;
-        tokens = null;
+        TokenList tmp = struct;
+        struct = null;
         this.parseEnd();
         return tmp;
     }
 
-    public void add(Token token) {
-        ParserToken parserToken = (ParserToken) token;
-        tokens.addToken(new TextToken(token.getText(), currentFile, parserToken.getLine(), parserToken.getColumn(), parserToken.getLength(), this));
-    }
-
-    public void outOfSerials() {
-        if (runOut)
-            return;
-        runOut = true;
-        errors++;
-        errorConsumer.print("ERROR: Out of serials!", null);
-        System.out.println("de.jplag.text.Parser: ERROR: Out of serials!");
-    }
-
-    private boolean parseFile(File directory, String file) {
+    private boolean parseFile(File dir, String file) {
         InputState inputState = null;
         try {
-            FileInputStream inputStream = new FileInputStream(new File(directory, file));
+            FileInputStream inputStream = new FileInputStream(new File(dir, file));
             currentFile = file;
             // Create a scanner that reads from the input stream passed to us
             inputState = new InputState(inputStream);
@@ -78,5 +62,21 @@ public class Parser extends AbstractParser implements TokenConstants {
             return false;
         }
         return true;
+    }
+
+    public void add(Token tok) {
+        ParserToken ptok = (ParserToken) tok;
+        struct.addToken(new TextToken(tok.getText(), currentFile, ptok.getLine(), ptok.getColumn(), ptok.getLength(), this));
+    }
+
+    private boolean runOut = false;
+
+    public void outOfSerials() {
+        if (runOut)
+            return;
+        runOut = true;
+        errors++;
+        errorConsumer.print("ERROR: Out of serials!", null);
+        System.out.println("de.jplag.text.Parser: ERROR: Out of serials!");
     }
 }

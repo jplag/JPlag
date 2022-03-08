@@ -4,8 +4,8 @@ import de.jplag.Token;
 
 public class JavaToken extends Token implements JavaTokenConstants {
 
-    public JavaToken(int type, String file, int line, int column, int length) {
-        super(type, file, line, column, length);
+    public JavaToken(int type, String file, int line, int col, int length) {
+        super(type, file, line, col, length);
     }
 
     @Override

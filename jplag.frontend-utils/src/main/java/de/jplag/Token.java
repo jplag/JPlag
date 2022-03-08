@@ -6,22 +6,21 @@ package de.jplag;
  * The language parsers decide what is a token and what is not.
  */
 public abstract class Token {
-    private int line;
-    private int column;
-    private int length;
-    private String file;
-
-    private boolean marked;
     private boolean basecode = false;
+    private int column;
+    private String file;
     private int hash = -1;// hash-value. set and used by main algorithm (GSTiling)
 
+    private int length;
+    private int line;
+    private boolean marked;
     protected int type;
 
     /**
      * Creates a token without information about the column or the length of the token in the line.
      * @param type is the token type.
      * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
+     * @param line is the line in the source code where the token resides. Cannot be smaller than 1.
      */
     public Token(int type, String file, int line) {
         this.type = type;
@@ -33,9 +32,9 @@ public abstract class Token {
      * Creates a token with column and length information.
      * @param type is the token type.
      * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
-     * @param column is the column index, meaning where the token starts in the line.
-     * @param length is the length of the token in the source code.
+     * @param line is the line in the source code where the token resides.
+     * @param column is the line index in the line, meaning where the token starts
+     * @param length is the length of the token in the line.
      */
     public Token(int type, String file, int line, int column, int length) {
         this(type, file, line);

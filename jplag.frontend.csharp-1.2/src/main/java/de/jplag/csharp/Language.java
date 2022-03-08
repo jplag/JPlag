@@ -16,7 +16,8 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".cs", ".CS"};
+        String[] res = {".cs", ".CS"};
+        return res;
     }
 
     @Override
@@ -26,7 +27,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "C# 1.2 Parser";
+        return "C# 1.2 AbstractParser";
     }
 
     @Override

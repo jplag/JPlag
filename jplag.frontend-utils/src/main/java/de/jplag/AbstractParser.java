@@ -6,18 +6,18 @@ package de.jplag;
 public abstract class AbstractParser {
     protected ErrorConsumer errorConsumer;
     protected int errors = 0;
-    private int numberOfErrors = 0;
+    private int errorsSum = 0;
 
     public boolean hasErrors() {
         return errors != 0;
     }
 
     public int errorsCount() {
-        return numberOfErrors;
+        return errorsSum;
     }
 
     protected void parseEnd() {
-        numberOfErrors += errors;
+        errorsSum += errors;
     }
 
     public ErrorConsumer getErrorConsumer() {

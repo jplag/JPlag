@@ -22,12 +22,13 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".scm", ".SCM", ".ss", ".SS"};
+        String[] res = {".scm", ".SCM", ".ss", ".SS"};
+        return res;
     }
 
     @Override
     public String getName() {
-        return "SchemeR4RS Parser [basic markup]";
+        return "SchemeR4RS AbstractParser [basic markup]";
     }
 
     @Override
