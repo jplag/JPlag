@@ -4,7 +4,7 @@ on:
  workflow_dispatch: # Use this to dispatch from the Actions Tab
  push:
     branches:
-      - 192-webreport # you might change that to main/master later on
+      - master
       
 jobs:
   build-and-deploy:
