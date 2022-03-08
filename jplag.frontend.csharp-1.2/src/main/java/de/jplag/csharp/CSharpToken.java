@@ -11,7 +11,7 @@ public class CSharpToken extends Token implements CSharpTokenConstants {
     protected String type2string() {
         switch (type) {
             case CSharpTokenConstants.FILE_END:
-                return "EOF";
+                return "**********";
             case _INVOCATION:
                 return "INVOCATION";
             case _OBJECT_CREATION:

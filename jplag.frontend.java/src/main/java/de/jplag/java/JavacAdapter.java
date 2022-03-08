@@ -23,11 +23,10 @@ public class JavacAdapter {
 
     private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 
-    public int parseFiles(File directory, File[] pathedFiles, final Parser parser) {
-        final StandardJavaFileManager fileManager = javac.getStandardFileManager(null, null, StandardCharsets.UTF_8);
+    public int parseFiles(File dir, File[] pathedFiles, final Parser parser) {
+        final StandardJavaFileManager jfm = javac.getStandardFileManager(null, null, StandardCharsets.UTF_8);
         DiagnosticCollector<? super JavaFileObject> diagListen = new DiagnosticCollector<>();
-        final JavaCompiler.CompilationTask task = javac.getTask(null, fileManager, diagListen, null, null,
-                fileManager.getJavaFileObjects(pathedFiles));
+        final JavaCompiler.CompilationTask task = javac.getTask(null, jfm, diagListen, null, null, jfm.getJavaFileObjects(pathedFiles));
         Iterable<? extends CompilationUnitTree> asts = Collections.emptyList();
         try {
             asts = ((JavacTask) task).parse();
@@ -38,10 +37,10 @@ public class JavacAdapter {
         final SourcePositions positions = trees.getSourcePositions();
         for (final CompilationUnitTree ast : asts) {
             final String filename;
-            if (directory == null)
+            if (dir == null)
                 filename = ast.getSourceFile().getName();
             else {
-                filename = Paths.get(directory.toURI()).relativize(Paths.get(ast.getSourceFile().toUri())).toString();
+                filename = Paths.get(dir.toURI()).relativize(Paths.get(ast.getSourceFile().toUri())).toString();
             }
             final LineMap map = ast.getLineMap();
             ast.accept(new TokenGeneratingTreeScanner(filename, parser, map, positions, ast), null);

@@ -15,7 +15,7 @@ public class SchemeToken extends Token implements SchemeTokenConstants {
     protected String type2string() {
         switch (type) {
             case SchemeTokenConstants.FILE_END:
-                return "EOF";
+                return "********";
             case S_BOOL:
                 return "BOOL    ";
             case S_NUMBER:

@@ -26,7 +26,7 @@ import de.jplag.cpp.NewlineStream;
 public class CPPScanner implements CPPTokenConstants {
     private static Scanner scanner2;
 
-    public static boolean scanFile(File dir, String fileName, CPPScanner scanner, Scanner scannerX) {
+    public static boolean scanFile(File dir, String fileName, de.jplag.cpp.CPPScanner scanner, de.jplag.cpp.Scanner scannerX) {
         try {
             InputStream in = new NewlineStream(new FileInputStream(new File(dir, fileName)));
             if (scanner == null) {
