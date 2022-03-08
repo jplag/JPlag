@@ -4,6 +4,7 @@ package de.jplag.text;
 import java.io.File;
 
 import de.jplag.ErrorConsumer;
+import de.jplag.Token;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
@@ -71,5 +72,10 @@ public class Language implements de.jplag.Language {
     @Override
     public int numberOfTokens() {
         return parser.serial;
+    }
+
+    @Override
+    public String type2string(int type) {
+        return Token.type2string(type);
     }
 }

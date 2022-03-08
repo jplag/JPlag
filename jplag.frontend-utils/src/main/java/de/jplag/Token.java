@@ -1,12 +1,13 @@
 package de.jplag;
 
-abstract public class Token {
+import java.io.Serializable;
+
+abstract public class Token implements TokenConstants, Serializable {
+    private static final long serialVersionUID = 862935679966383302L;
     public int type;
     public String file;
 
-    protected int line, column, length;
-
-    protected boolean marked; // TODO TS: Why protected/no accessors?
+    protected boolean marked;
     protected boolean basecode = false;
     protected int hash = -1;// hash-value. set and used by main algorithm (GSTiling)
 
@@ -22,28 +23,20 @@ abstract public class Token {
         setLength(length);
     }
 
-    public int getLine() {
-        return line;
+    // abstract members
+    abstract public int getLine();
+
+    abstract public int getColumn();
+
+    abstract public int getLength();
+
+    protected void setLine(int line) {
     }
 
-    public int getColumn() {
-        return column;
+    protected void setColumn(int line) {
     }
 
-    public int getLength() {
-        return length;
-    }
-
-    public void setLine(int line) {
-        this.line = line;
-    }
-
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
+    protected void setLength(int line) {
     }
 
     // this is made to distinguish the character front end. Maybe other front ends can use it too?
@@ -51,10 +44,12 @@ abstract public class Token {
         return -1;
     }
 
-    protected abstract String type2string();
+    public static String type2string(int type) {
+        return "<abstract>";
+    }
 
     @Override
     public String toString() {
-        return type2string();
+        return type2string(type);
     }
 }

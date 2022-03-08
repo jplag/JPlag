@@ -19,6 +19,9 @@ public class TextToken extends Token {
         return serial.intValue();
     }
 
+    // ///////////////////// END OF STATIC MEMBERS
+
+    private int line, column, length;
     private String text;
 
     public TextToken(int type, String file, Parser parser) {
@@ -31,12 +34,37 @@ public class TextToken extends Token {
         this.text = text.toLowerCase();
     }
 
-    public String getText() {
-        return this.text;
+    @Override
+    public int getLine() {
+        return line;
     }
 
     @Override
-    protected String type2string() {
-        return getText();
+    public int getColumn() {
+        return column;
+    }
+
+    @Override
+    public int getLength() {
+        return length;
+    }
+
+    @Override
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    @Override
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
+    @Override
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public String getText() {
+        return this.text;
     }
 }

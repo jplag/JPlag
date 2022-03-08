@@ -70,4 +70,9 @@ public class Language implements de.jplag.Language {
     public int numberOfTokens() {
         return SchemeTokenConstants.NUM_DIFF_TOKENS;
     }
+
+    @Override
+    public String type2string(int type) {
+        return SchemeToken.type2string(type);
+    }
 }

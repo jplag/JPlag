@@ -3,6 +3,7 @@ package de.jplag.chars;
 import java.io.File;
 
 import de.jplag.ErrorConsumer;
+import de.jplag.Token;
 import de.jplag.TokenList;
 
 /*
@@ -72,5 +73,10 @@ public class Language implements de.jplag.Language {
     @Override
     public int numberOfTokens() {
         return 36;
+    }
+
+    @Override
+    public String type2string(int type) {
+        return Token.type2string(type);
     }
 }
