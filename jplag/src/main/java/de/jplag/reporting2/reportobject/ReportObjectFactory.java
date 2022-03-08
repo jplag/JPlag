@@ -154,7 +154,7 @@ public class ReportObjectFactory {
         int endSecond = usesIndex ? endTokenSecond.getIndex() : endTokenSecond.getLine();
         int tokens = match.getLength();
 
-        return new Match(startTokenFirst.file, startTokenSecond.file, startFirst, endFirst, startSecond, endSecond, tokens);
+        return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
     }
 
     // TODO implement after PR Read clustering #281
@@ -166,8 +166,7 @@ public class ReportObjectFactory {
 
     private static List<String> readFileLines(File file) {
         List<String> lines = new ArrayList<>();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 lines.add(line);
