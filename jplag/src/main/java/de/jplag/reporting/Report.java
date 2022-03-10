@@ -159,7 +159,7 @@ public class Report { // Mostly legacy code with some minor improvements.
             htmlFile.print("<TR><TD BGCOLOR=\"" + col + "\"><FONT COLOR=\"" + col + "\">-</FONT>");
             htmlFile.print("<TD><A HREF=\"javascript:ZweiFrames('match" + index + "-0.html#" + i + "',2,'match" + index + "-1.html#" + i
                     + "',3)\" NAME=\"" + i + "\">");
-            htmlFile.print(new String(startA.file.getBytes()));
+            htmlFile.print(new String(startA.getFile().getBytes()));
 
             if (options.getLanguage().usesIndex()) {
                 htmlFile.print("(" + startA.getIndex() + "-" + endA.getIndex() + ")");
@@ -169,7 +169,7 @@ public class Report { // Mostly legacy code with some minor improvements.
 
             htmlFile.print("<TD><A HREF=\"javascript:ZweiFrames('match" + index + "-0.html#" + i + "',2,'match" + index + "-1.html#" + i
                     + "',3)\" NAME=\"" + i + "\">");
-            htmlFile.print(startB.file);
+            htmlFile.print(startB.getFile());
 
             if (options.getLanguage().usesIndex()) {
                 htmlFile.print("(" + startB.getIndex() + "-" + endB.getIndex());
@@ -289,7 +289,7 @@ public class Report { // Mostly legacy code with some minor improvements.
             Token start = tokens.getToken(onematch.getStart(j == 0));
             Token end = tokens.getToken((onematch.getStart(j == 0)) + onematch.getLength() - 1);
             for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
-                if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
+                if (start.getFile().equals(files[fileIndex]) && text[fileIndex] != null) {
                     String tmp = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
                             + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
                             + "-top.html#" + x + "',1)\"><IMG SRC=\"" + PICS[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
@@ -314,7 +314,7 @@ public class Report { // Mostly legacy code with some minor improvements.
                 Token end = tokens.getToken(match.getStartOfFirst() + match.getLength() - 1);
 
                 for (int fileIndex = 0; fileIndex < files.length; fileIndex++) {
-                    if (start.file.equals(files[fileIndex]) && text[fileIndex] != null) {
+                    if (start.getFile().equals(files[fileIndex]) && text[fileIndex] != null) {
                         String tmp = "<font color=\"#C0C0C0\"><EM>";
                         // beginning of the colorblock
                         markupList.put(new MarkupText(fileIndex, start.getLine() - 1, start.getColumn() - 1, tmp, false), null);
@@ -698,7 +698,7 @@ public class Report { // Mostly legacy code with some minor improvements.
             Token end = tokens.getToken((currentMatch.getStart(j == 0)) + currentMatch.getLength() - 1);
 
             for (int y = 0; y < files.length; y++) {
-                if (start.file.equals(files[y]) && text[y] != null) {
+                if (start.getFile().equals(files[y]) && text[y] != null) {
                     hilf = "<FONT color=\"" + Color.getHexadecimalValue(x) + "\">" + (j == 1 ? "<div style=\"position:absolute;left:0\">" : "")
                             + "<A HREF=\"javascript:ZweiFrames('match" + i + "-" + (1 - j) + ".html#" + x + "'," + (3 - j) + ",'match" + i
                             + "-top.html#" + x + "',1)\"><IMG SRC=\"" + PICS[j] + "\" ALT=\"other\" " + "BORDER=\"0\" ALIGN=\""
@@ -731,7 +731,7 @@ public class Report { // Mostly legacy code with some minor improvements.
                 Token end = tokens.getToken(currentMatch.getStartOfFirst() + currentMatch.getLength() - 1);
 
                 for (int y = 0; y < files.length; y++) {
-                    if (start.file.equals(files[y]) && text[y] != null) {
+                    if (start.getFile().equals(files[y]) && text[y] != null) {
                         hilf = ("<font color=\"#C0C0C0\"><EM>");
                         // position the icon and the beginning of the colorblock
                         if (text[y][start.getLine() - 1].endsWith("<font color=\"#000000\">")) {

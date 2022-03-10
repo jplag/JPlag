@@ -10,60 +10,55 @@ public interface Language {
     /**
      * Suffixes for the files containing code of the language.
      */
-    String[] suffixes();
+    public String[] suffixes();
 
     /**
      * Descriptive name of the language.
      */
-    String getName();
+    public String getName();
 
     /**
      * Short name of the language used for CLI options.
      */
-    String getShortName();
+    public String getShortName();
 
     /**
      * Minimum number of tokens required for a match.
      */
-    int minimumTokenMatch();
+    public int minimumTokenMatch();
 
     /**
      * Parses a set files in a directory.
      */
-    TokenList parse(File dir, String[] files);
+    public TokenList parse(File dir, String[] files);
 
     /**
      * Whether errors were found during the last {@link #parse}.
      */
-    boolean hasErrors();
+    public boolean hasErrors();
 
     /**
      * Number of errors found during the last {@link #parse}.
      */
-    int errorCount();
+    public int errorCount();
 
     /**
      * Determines whether the parser provide column information.
      */
-    boolean supportsColumns();
+    public boolean supportsColumns();
 
     /**
      * Determines whether JPlag should use a fixed-width font in its reports.
      */
-    boolean isPreformatted();
+    public boolean isPreformatted();
 
     /**
      * Determines whether tokens from the scanner are indexed.
      */
-    boolean usesIndex();
+    public boolean usesIndex();
 
     /**
      * Number of defined tokens in the scanner of the language.
      */
-    int numberOfTokens();
-
-    /**
-     * Convert a token type to a text representation.
-     */
-    String type2string(int type);
+    public int numberOfTokens();
 }

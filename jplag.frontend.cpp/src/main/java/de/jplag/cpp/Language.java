@@ -5,16 +5,12 @@ import java.io.File;
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
-/*
- * Leider werden C/C++ nicht geparst, sondern nur gescannt...
- */
 public class Language implements de.jplag.Language {
-    private final Scanner scanner;
+    private Scanner scanner; // cpp code is scanned not parsed
 
     public Language(ErrorConsumer program) {
         this.scanner = new Scanner();
         this.scanner.setProgram(program);
-
     }
 
     @Override
@@ -70,10 +66,5 @@ public class Language implements de.jplag.Language {
     @Override
     public int numberOfTokens() {
         return CPPTokenConstants.NUM_DIFF_TOKENS;
-    }
-
-    @Override
-    public String type2string(int type) {
-        return CPPToken.type2string(type);
     }
 }

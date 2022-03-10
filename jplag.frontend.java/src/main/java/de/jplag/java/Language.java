@@ -57,11 +57,6 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String type2string(int type) {
-        return JavaToken.type2string(type);
-    }
-
-    @Override
     public TokenList parse(File dir, String[] files) {
         return this.parser.parse(dir, files);
     }

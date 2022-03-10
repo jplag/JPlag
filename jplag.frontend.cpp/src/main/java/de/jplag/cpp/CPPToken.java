@@ -1,42 +1,21 @@
 package de.jplag.cpp;
 
-import java.io.Serial;
-
 import de.jplag.Token;
 
 public class CPPToken extends Token implements CPPTokenConstants {
-    @Serial
-    private static final long serialVersionUID = -8962159131223617619L;
-    private int line;
 
-    public CPPToken(int type, String file, int line) {
-        super(type, file, line);
+    public CPPToken(int type, String file, int line, int column, int length) {
+        super(type, file, line, column, length);
     }
 
-    @Override
-    public int getLine() {
-        return line;
+    public CPPToken(int type, String file) {
+        super(type, file, 1, 0, 0);
     }
 
-    @Override
-    public void setLine(int line) {
-        this.line = line;
-    }
-
-    @Override
-    public int getColumn() {
-        return 0;
-    }
-
-    @Override
-    public int getLength() {
-        return 0;
-    }
-
-    public static String type2string(int type) {
+    protected String type2string() {
         switch (type) {
             case CPPTokenConstants.FILE_END:
-                return "********";
+                return "EOF";
 
             case C_BLOCK_BEGIN:
                 return "BLOCK{";
@@ -162,7 +141,7 @@ public class CPPToken extends Token implements CPPTokenConstants {
                 return "NULL";
 
             default:
-                return "<UNBEKANNT>";
+                return "<UNKNOWN" + type + ">";
         }
     }
 }

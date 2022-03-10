@@ -1,54 +1,17 @@
 package de.jplag.python3;
 
-import java.io.Serial;
-
 import de.jplag.Token;
 
 public class Python3Token extends Token implements Python3TokenConstants {
-
-    @Serial
-    private static final long serialVersionUID = 1485877548175917943L;
-
-    private int line, column, length;
 
     public Python3Token(int type, String file, int line, int column, int length) {
         super(type, file, line, column, length);
     }
 
-    @Override
-    public int getLine() {
-        return line;
-    }
-
-    @Override
-    public int getColumn() {
-        return column;
-    }
-
-    @Override
-    public int getLength() {
-        return length;
-    }
-
-    @Override
-    public void setLine(int line) {
-        this.line = line;
-    }
-
-    @Override
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
-    @Override
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-    public static String type2string(int type) {
+    protected String type2string() {
         switch (type) {
             case Python3TokenConstants.FILE_END:
-                return "********";
+                return "EOF";
             case Python3TokenConstants.SEPARATOR_TOKEN:
                 return "METHOD_SEPARATOR";
 

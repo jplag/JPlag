@@ -11,28 +11,28 @@ import de.jplag.TokenList;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
-public class Parser extends AbstractParser implements CSharpTokenConstants {
-    private TokenList struct;
+public class Parser extends AbstractParser {
+    private TokenList tokens;
     private String currentFile;
 
-    public TokenList parse(File dir, String[] files) {
-        struct = new TokenList();
+    public TokenList parse(File directory, String files[]) {
+        tokens = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {
-            if (!parseFile(dir, files[i]))
+            if (!parseFile(directory, files[i]))
                 errors++;
-            struct.addToken(new CSharpToken(FILE_END, files[i], -1, -1, -1));
+            tokens.addToken(new CSharpToken(CSharpTokenConstants.FILE_END, files[i], -1, -1, -1));
         }
         this.parseEnd();
-        return struct;
+        return tokens;
     }
 
     private boolean parseFile(File dir, String file) {
         try {
-            FileInputStream fis = new FileInputStream(new File(dir, file));
+            FileInputStream input = new FileInputStream(new File(dir, file));
             currentFile = file;
             // Create a scanner that reads from the input stream passed to us
-            CSharpLexer lexer = new CSharpLexer(new UnicodeReader(fis, StandardCharsets.UTF_8));
+            CSharpLexer lexer = new CSharpLexer(new UnicodeReader(input, StandardCharsets.UTF_8));
             lexer.setFilename(file);
             lexer.setTabSize(1);
 
@@ -44,7 +44,7 @@ public class Parser extends AbstractParser implements CSharpTokenConstants {
             parser.compilation_unit();
 
             // close file
-            fis.close();
+            input.close();
         } catch (Exception e) {
             getErrorConsumer().addError("  Parsing Error in '" + file + "':\n  " + e.toString());
             return false;
@@ -52,15 +52,15 @@ public class Parser extends AbstractParser implements CSharpTokenConstants {
         return true;
     }
 
-    private void add(int type, Token tok) {
-        if (tok == null) {
+    private void add(int type, Token token) {
+        if (token == null) {
             System.out.println("tok == null  ERROR!");
             return;
         }
-        struct.addToken(new CSharpToken(type, currentFile, tok.getLine(), tok.getColumn(), tok.getText().length()));
+        tokens.addToken(new CSharpToken(type, currentFile, token.getLine(), token.getColumn(), token.getText().length()));
     }
 
-    public void add(int type, CSharpParser p) {
-        add(type, p.getLastConsumedToken());
+    public void add(int type, CSharpParser parser) {
+        add(type, parser.getLastConsumedToken());
     }
 }

@@ -8,18 +8,18 @@ import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
-public class Parser extends AbstractParser implements TokenConstants {
+public class Parser extends AbstractParser {
 
-    private TokenList struct;
+    private TokenList tokens;
 
-    public TokenList parse(File dir, String[] files) {
-        struct = new TokenList();
+    public TokenList parse(File directory, String files[]) {
+        tokens = new TokenList();
         errors = 0;
         for (String file : files) {
             getErrorConsumer().print(null, "Parsing file " + file);
-            if (!parseFile(dir, file))
+            if (!parseFile(directory, file))
                 errors++;
-            struct.addToken(new CharToken(FILE_END, file, this));
+            tokens.addToken(new CharToken(TokenConstants.FILE_END, file, this));
         }
         if (errors == 0)
             errorConsumer.print(null, "OK");
@@ -27,7 +27,7 @@ public class Parser extends AbstractParser implements TokenConstants {
             errorConsumer.print(null, errors + " ERROR" + (errors > 1 ? "S" : ""));
 
         this.parseEnd();
-        return struct;
+        return tokens;
     }
 
     private boolean parseFile(File dir, String file) {
@@ -44,7 +44,7 @@ public class Parser extends AbstractParser implements TokenConstants {
 
                 for (int i = 0; i < length; i++) {
                     if (buffer[i] <= 127 && (type = mapping[buffer[i]]) > 1) {
-                        struct.addToken(new CharToken(type, file, offset + i, this));
+                        tokens.addToken(new CharToken(type, file, offset + i, buffer[i], this));
                     }
                 }
                 offset += length;
@@ -59,7 +59,7 @@ public class Parser extends AbstractParser implements TokenConstants {
         return true;
     }
 
-    private final int[] mapping = {-1, // 0 (nul)
+    private int[] mapping = {-1, // 0 (nul)
             -1, // 1 (soh)
             -1, // 2 (stx)
             -1, // 3 (etx)
