@@ -4,8 +4,8 @@ import de.jplag.Token;
 
 public class CharToken extends Token {
 
-    private int index;
-    private Character character;
+    private final int index;
+    private final Character character;
 
     public CharToken(int type, String file, int index, Character character, Parser parser) {
         super(type, file, -1);

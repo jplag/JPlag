@@ -23,7 +23,7 @@ public enum Preprocessing {
 
     private final Function<ClusteringOptions, ClusteringPreprocessor> constructor;
 
-    private Preprocessing(Function<ClusteringOptions, ClusteringPreprocessor> constructor) {
+    Preprocessing(Function<ClusteringOptions, ClusteringPreprocessor> constructor) {
         this.constructor = constructor;
     }
 

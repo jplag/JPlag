@@ -23,7 +23,7 @@ public class Parser extends AbstractParser {
     private TokenList tokens = new TokenList();
     private String currentFile;
 
-    public TokenList parse(File directory, String files[]) {
+    public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {

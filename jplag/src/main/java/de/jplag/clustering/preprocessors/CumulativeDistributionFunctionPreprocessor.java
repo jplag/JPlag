@@ -15,7 +15,7 @@ import de.jplag.clustering.PreprocessorHelper;
  */
 public class CumulativeDistributionFunctionPreprocessor implements ClusteringPreprocessor {
 
-    private PreprocessorHelper helper = new PreprocessorHelper();
+    private final PreprocessorHelper helper = new PreprocessorHelper();
 
     @Override
     public double[][] preprocessSimilarities(double[][] similarityMatrix) {

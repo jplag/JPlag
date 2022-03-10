@@ -13,135 +13,70 @@ public class CPPToken extends Token implements CPPTokenConstants {
     }
 
     protected String type2string() {
-        switch (type) {
-            case CPPTokenConstants.FILE_END:
-                return "EOF";
-
-            case C_BLOCK_BEGIN:
-                return "BLOCK{";
-            case C_BLOCK_END:
-                return "}BLOCK";
-            case C_SCOPE:
-                return "SCOPE";
-            case C_QUESTIONMARK:
-                return "COND";
-            case C_ELLIPSIS:
-                return "...";
-            case C_ASSIGN:
-                return "ASSIGN";
-            case C_DOT:
-                return "DOT";
-            case C_ARROW:
-                return "ARROW";
-            case C_DOTSTAR:
-                return "DOTSTAR";
-            case C_ARROWSTAR:
-                return "ARROWSTAR";
-            case C_AUTO:
-                return "AUTO";
-            case C_BREAK:
-                return "BREAK";
-            case C_CASE:
-                return "CASE";
-            case C_CATCH:
-                return "CATCH";
-            case C_CHAR:
-                return "CHAR";
-            case C_CONST:
-                return "CONST";
-            case C_CONTINUE:
-                return "CONTINUE";
-            case C_DEFAULT:
-                return "DEFAULT";
-            case C_DELETE:
-                return "DELETE";
-            case C_DO:
-                return "DO";
-            case C_DOUBLE:
-                return "DOUBLE";
-            case C_ELSE:
-                return "ELSE";
-            case C_ENUM:
-                return "ENUM";
-            case C_EXTERN:
-                return "EXTERN";
-            case C_FLOAT:
-                return "FLOAT";
-            case C_FOR:
-                return "FOR";
-            case C_FRIEND:
-                return "FRIEND";
-            case C_GOTO:
-                return "GOTO";
-            case C_IF:
-                return "IF";
-            case C_INLINE:
-                return "INLINE";
-            case C_INT:
-                return "INT";
-            case C_LONG:
-                return "LONG";
-            case C_NEW:
-                return "NEW";
-            case C_PRIVATE:
-                return "PRIVATE";
-            case C_PROTECTED:
-                return "PROTECTED";
-            case C_PUBLIC:
-                return "PUBLIC";
-            case C_REDECLARED:
-                return "REDECLARED";
-            case C_REGISTER:
-                return "REGISTER";
-            case C_RETURN:
-                return "RETURN";
-            case C_SHORT:
-                return "SHORT";
-            case C_SIGNED:
-                return "SIGNED";
-            case C_SIZEOF:
-                return "SIZEOF";
-            case C_STATIC:
-                return "STATIC";
-            case C_STRUCT:
-                return "STRUCT";
-            case C_CLASS:
-                return "CLASS";
-            case C_SWITCH:
-                return "SWITCH";
-            case C_TEMPLATE:
-                return "TEMPLATE";
-            case C_THIS:
-                return "THIS";
-            case C_TRY:
-                return "TRY";
-            case C_TYPEDEF:
-                return "TYPEDEF";
-            case C_UNION:
-                return "UNION";
-            case C_UNSIGNED:
-                return "UNSIGNED";
-            case C_VIRTUAL:
-                return "VIRTUAL";
-            case C_VOID:
-                return "VOID";
-            case C_VOLANTILE:
-                return "VOLANTILE";
-            case C_WHILE:
-                return "WHILE";
-            case C_OPERATOR:
-                return "OPERATOR";
-            case C_THROW:
-                return "THROW";
-            case C_ID:
-                return "ID";
-            case C_FUN:
-                return "FUN";
-            case C_NULL:
-                return "NULL";
-
-            default:
-                return "<UNKNOWN" + type + ">";
-        }
+        return switch (type) {
+            case CPPTokenConstants.FILE_END -> "EOF";
+            case C_BLOCK_BEGIN -> "BLOCK{";
+            case C_BLOCK_END -> "}BLOCK";
+            case C_SCOPE -> "SCOPE";
+            case C_QUESTIONMARK -> "COND";
+            case C_ELLIPSIS -> "...";
+            case C_ASSIGN -> "ASSIGN";
+            case C_DOT -> "DOT";
+            case C_ARROW -> "ARROW";
+            case C_DOTSTAR -> "DOTSTAR";
+            case C_ARROWSTAR -> "ARROWSTAR";
+            case C_AUTO -> "AUTO";
+            case C_BREAK -> "BREAK";
+            case C_CASE -> "CASE";
+            case C_CATCH -> "CATCH";
+            case C_CHAR -> "CHAR";
+            case C_CONST -> "CONST";
+            case C_CONTINUE -> "CONTINUE";
+            case C_DEFAULT -> "DEFAULT";
+            case C_DELETE -> "DELETE";
+            case C_DO -> "DO";
+            case C_DOUBLE -> "DOUBLE";
+            case C_ELSE -> "ELSE";
+            case C_ENUM -> "ENUM";
+            case C_EXTERN -> "EXTERN";
+            case C_FLOAT -> "FLOAT";
+            case C_FOR -> "FOR";
+            case C_FRIEND -> "FRIEND";
+            case C_GOTO -> "GOTO";
+            case C_IF -> "IF";
+            case C_INLINE -> "INLINE";
+            case C_INT -> "INT";
+            case C_LONG -> "LONG";
+            case C_NEW -> "NEW";
+            case C_PRIVATE -> "PRIVATE";
+            case C_PROTECTED -> "PROTECTED";
+            case C_PUBLIC -> "PUBLIC";
+            case C_REDECLARED -> "REDECLARED";
+            case C_REGISTER -> "REGISTER";
+            case C_RETURN -> "RETURN";
+            case C_SHORT -> "SHORT";
+            case C_SIGNED -> "SIGNED";
+            case C_SIZEOF -> "SIZEOF";
+            case C_STATIC -> "STATIC";
+            case C_STRUCT -> "STRUCT";
+            case C_CLASS -> "CLASS";
+            case C_SWITCH -> "SWITCH";
+            case C_TEMPLATE -> "TEMPLATE";
+            case C_THIS -> "THIS";
+            case C_TRY -> "TRY";
+            case C_TYPEDEF -> "TYPEDEF";
+            case C_UNION -> "UNION";
+            case C_UNSIGNED -> "UNSIGNED";
+            case C_VIRTUAL -> "VIRTUAL";
+            case C_VOID -> "VOID";
+            case C_VOLANTILE -> "VOLANTILE";
+            case C_WHILE -> "WHILE";
+            case C_OPERATOR -> "OPERATOR";
+            case C_THROW -> "THROW";
+            case C_ID -> "ID";
+            case C_FUN -> "FUN";
+            case C_NULL -> "NULL";
+            default -> "<UNKNOWN" + type + ">";
+        };
     }
 }

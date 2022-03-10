@@ -7,6 +7,7 @@ import java.io.PushbackInputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * Generic unicode text reader, which will use BOM mark to identify the encoding to be used. If BOM is not found then
@@ -81,7 +82,7 @@ public class UnicodeReader extends Reader {
             encoding = Charset.forName("UTF-32BE");
             unread = n - 4;
         }
-        // WARNING: This line will evaluate always to false. Maybe that's an issue
+        // TODO WARNING: This line will evaluate always to false. Maybe that's an issue
         else if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE) && (bom[2] == (byte) 0x00) && (bom[3] == (byte) 0x00)) {
             encoding = Charset.forName("UTF-32LE");
             unread = n - 4;
@@ -95,11 +96,7 @@ public class UnicodeReader extends Reader {
             internalIn.unread(bom, (n - unread), unread);
 
         // Use given encoding
-        if (encoding == null) {
-            internalIn2 = new InputStreamReader(internalIn, StandardCharsets.UTF_8);
-        } else {
-            internalIn2 = new InputStreamReader(internalIn, encoding);
-        }
+        internalIn2 = new InputStreamReader(internalIn, Objects.requireNonNullElse(encoding, StandardCharsets.UTF_8));
     }
 
     @Override
