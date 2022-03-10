@@ -8,29 +8,31 @@ import org.slf4j.LoggerFactory;
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 
-public class Scanner extends AbstractParser implements CPPTokenConstants {
+public class Scanner extends AbstractParser  {
     static final Logger logger = LoggerFactory.getLogger(Scanner.class);
+    private String currentFile;
 
-    private String actFile;
+    private TokenList tokens;
 
-    private TokenList struct;
-
-    public TokenList scan(File dir, String files[]) {
-        struct = new TokenList();
+    public TokenList scan(File directory, String files[]) {
+        tokens = new TokenList();
         errors = 0;
         CPPScanner scanner = null;// will be initialized in Method scanFile
         for (int i = 0; i < files.length; i++) {
-            actFile = files[i];
+
+            currentFile = files[i];
             logger.info("Scanning file " + files[i]);
-            if (!CPPScanner.scanFile(dir, files[i], scanner, this))
+            if (!CPPScanner.scanFile(directory, files[i], scanner, this)) {
                 errors++;
-            struct.addToken(new CPPToken(FILE_END, actFile, 1));
+            }
+            tokens.addToken(new CPPToken(CPPTokenConstants.FILE_END, currentFile));
         }
         this.parseEnd();
-        return struct;
+        return tokens;
     }
 
     public void add(int type, Token token) {
-        struct.addToken(new CPPToken(type, actFile, token.beginLine));
+        int length = token.endColumn - token.beginColumn + 1;
+        tokens.addToken(new CPPToken(type, currentFile, token.beginLine, token.beginColumn, length));
     }
 }

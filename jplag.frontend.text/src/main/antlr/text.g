@@ -58,7 +58,7 @@ options
             InputState state = (InputState) inputState;
             if (text.length() == 0) {
                 // remember token start column
-                state.tokColumn = state.column;
+                state.tokenColumn = state.column;
             }
             state.column++;
         }
@@ -67,7 +67,7 @@ options
 
     protected Token makeToken(int t) {
         ParserToken token = (ParserToken) super.makeToken(t);
-        token.setColumn(((InputState) inputState).tokColumn);
+        token.setColumn(((InputState) inputState).tokenColumn);
         return token;
     }
 }

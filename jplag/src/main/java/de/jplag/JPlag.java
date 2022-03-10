@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+import de.jplag.clustering.ClusteringFactory;
+
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
@@ -92,7 +95,9 @@ public class JPlag {
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
-        logger.info("Total time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()));
+
+        logger.info("Total time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()));;
+        result.setClusteringResult(ClusteringFactory.getClusterings(result.getComparisons(), options.getClusteringOptions()));
         return result;
     }
 

@@ -269,7 +269,7 @@ public class Submission implements Comparable<Submission> {
      */
     public void resetBaseCode() {
         for (Token token : tokenList.allTokens()) {
-            token.basecode = false;
+            token.setBasecode(false);
         }
     }
 

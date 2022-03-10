@@ -61,9 +61,4 @@ public interface Language {
      * Number of defined tokens in the scanner of the language.
      */
     public int numberOfTokens();
-
-    /**
-     * Convert a token type to a text representation.
-     */
-    public String type2string(int type);
 }

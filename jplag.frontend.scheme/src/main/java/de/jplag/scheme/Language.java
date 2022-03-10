@@ -19,13 +19,12 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        String[] res = {".scm", ".SCM", ".ss", ".SS"};
-        return res;
+        return new String[] {".scm", ".SCM", ".ss", ".SS"};
     }
 
     @Override
     public String getName() {
-        return "SchemeR4RS AbstractParser [basic markup]";
+        return "SchemeR4RS Parser [basic markup]";
     }
 
     @Override
@@ -66,10 +65,5 @@ public class Language implements de.jplag.Language {
     @Override
     public int numberOfTokens() {
         return SchemeTokenConstants.NUM_DIFF_TOKENS;
-    }
-
-    @Override
-    public String type2string(int type) {
-        return SchemeToken.type2string(type);
     }
 }

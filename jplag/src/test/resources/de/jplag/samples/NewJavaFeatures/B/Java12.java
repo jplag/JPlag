@@ -1,7 +1,7 @@
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class Java12 {
+public class Java12 { // Java 12 has no new relevant structural features
     public static void main(String[] args) {
         // New String methods:
         String text = "ABCD";

@@ -6,11 +6,13 @@ public enum Java14 {
     SUNDAY;
 
     public static void main(String[] args) {
-        // Advanced switch expressions (JEP 361):
-        boolean isWeekend = switch (MONDAY) {
-        case FRIDAY, SATURDAY, SUNDAY -> true;
-        default -> false;
-        };
+        // Old switch expressions:
+        boolean isWeekend;
+        switch (MONDAY) {
+            case SATURDAY:
+            case SUNDAY: isWeekend = true; break;
+            default: isWeekend = false;
+        }
         System.out.println(isWeekend);
     }
 

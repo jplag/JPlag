@@ -3,37 +3,19 @@ package de.jplag.scheme;
 import de.jplag.Token;
 
 public class SchemeToken extends Token implements SchemeTokenConstants {
-    private static final long serialVersionUID = -143418583849687339L;
-    private int line;
 
-    public SchemeToken(int type, String file, int line) {
-        super(type, file, line);
+    public SchemeToken(int type, String file, int line, int column, int length) {
+        super(type, file, line, column, length);
     }
 
-    @Override
-    public int getLine() {
-        return line;
+    public SchemeToken(int type, String file) {
+        super(type, file, 1, 0, 0);
     }
 
-    @Override
-    public void setLine(int line) {
-        this.line = line;
-    }
-
-    @Override
-    public int getColumn() {
-        return 0;
-    }
-
-    @Override
-    public int getLength() {
-        return 0;
-    }
-
-    public static String type2string(int type) {
+    protected String type2string() {
         switch (type) {
             case SchemeTokenConstants.FILE_END:
-                return "********";
+                return "EOF";
             case S_BOOL:
                 return "BOOL    ";
             case S_NUMBER:

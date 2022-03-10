@@ -13,8 +13,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        String[] res = {".cs", ".CS"};
-        return res;
+        return new String[] {".cs", ".CS"};
     }
 
     @Override
@@ -24,7 +23,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "C# 1.2 AbstractParser";
+        return "C# 1.2 Parser";
     }
 
     @Override
@@ -65,10 +64,5 @@ public class Language implements de.jplag.Language {
     @Override
     public int numberOfTokens() {
         return CSharpTokenConstants.NUM_DIFF_TOKENS;
-    }
-
-    @Override
-    public String type2string(int type) {
-        return CSharpToken.type2string(type);
     }
 }

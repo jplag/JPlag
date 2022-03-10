@@ -3,47 +3,15 @@ package de.jplag.csharp;
 import de.jplag.Token;
 
 public class CSharpToken extends Token implements CSharpTokenConstants {
-    private static final long serialVersionUID = 1L;
-    private int line, column, length;
 
     public CSharpToken(int type, String file, int line, int column, int length) {
         super(type, file, line, column, length);
     }
 
-    @Override
-    public int getLine() {
-        return line;
-    }
-
-    @Override
-    public int getColumn() {
-        return column;
-    }
-
-    @Override
-    public int getLength() {
-        return length;
-    }
-
-    @Override
-    public void setLine(int line) {
-        this.line = line;
-    }
-
-    @Override
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
-    @Override
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-    public static String type2string(int type) {
+    protected String type2string() {
         switch (type) {
             case CSharpTokenConstants.FILE_END:
-                return "**********";
+                return "EOF";
             case _INVOCATION:
                 return "INVOCATION";
             case _OBJECT_CREATION:

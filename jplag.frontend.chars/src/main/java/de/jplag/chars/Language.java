@@ -18,8 +18,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        String[] res = {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
-        return res;
+        return new String[] {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
     }
 
     @Override
@@ -29,7 +28,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Character AbstractParser";
+        return "Character Parser";
     }
 
     @Override
@@ -70,10 +69,5 @@ public class Language implements de.jplag.Language {
     @Override
     public int numberOfTokens() {
         return 36;
-    }
-
-    @Override
-    public String type2string(int type) {
-        return Token.type2string(type);
     }
 }

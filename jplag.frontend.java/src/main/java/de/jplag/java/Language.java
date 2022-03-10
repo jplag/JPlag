@@ -16,8 +16,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        String[] res = {".java", ".JAVA"};
-        return res;
+        return new String[] {".java", ".JAVA"};
     }
 
     @Override
@@ -53,11 +52,6 @@ public class Language implements de.jplag.Language {
     @Override
     public int numberOfTokens() {
         return JavaTokenConstants.NUM_DIFF_TOKENS;
-    }
-
-    @Override
-    public String type2string(int type) {
-        return JavaToken.type2string(type);
     }
 
     @Override

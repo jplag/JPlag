@@ -4,11 +4,8 @@ import java.io.File;
 
 import de.jplag.TokenList;
 
-/*
- * Leider werden C/C++ nicht geparst, sondern nur gescannt...
- */
 public class Language implements de.jplag.Language {
-    private Scanner scanner;
+    private Scanner scanner; // cpp code is scanned not parsed
 
     public Language() {
         this.scanner = new Scanner();
@@ -21,8 +18,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        String[] res = {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH"};
-        return res;
+        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH"};
     }
 
     @Override
@@ -68,10 +64,5 @@ public class Language implements de.jplag.Language {
     @Override
     public int numberOfTokens() {
         return CPPTokenConstants.NUM_DIFF_TOKENS;
-    }
-
-    @Override
-    public String type2string(int type) {
-        return CPPToken.type2string(type);
     }
 }
