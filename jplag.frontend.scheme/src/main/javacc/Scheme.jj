@@ -72,7 +72,7 @@ public class SchemeParser implements SchemeTokenConstants {
             }
             parser.parser2 = parserX;
         } catch (FileNotFoundException e) {
-            System.out.println("Scheme Parser R4RS:  File " + fileName + " not found.");
+            parserX.logger.error("Scheme Parser R4RS:  File " + fileName + " not found.");
             return false;
         }
         try {

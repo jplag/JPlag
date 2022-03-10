@@ -20,7 +20,7 @@ import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
 
-public class Parser extends AbstractParser  {
+public class Parser extends AbstractParser {
     private static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
     private TokenList tokens = new TokenList();

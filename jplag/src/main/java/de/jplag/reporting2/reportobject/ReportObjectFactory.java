@@ -8,6 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.*;
 import de.jplag.reporting2.reportobject.model.*;
 import de.jplag.reporting2.reportobject.model.Match;
@@ -16,6 +19,7 @@ import de.jplag.reporting2.reportobject.model.Match;
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.
  */
 public class ReportObjectFactory {
+    private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
 
     /**
      * Converts a JPlagResult to a JPlagReport.
@@ -172,7 +176,7 @@ public class ReportObjectFactory {
                 lines.add(line);
             }
         } catch (IOException exception) {
-            System.out.println("Could not read file: " + exception.getMessage());
+            logger.error("Could not read file: " + exception.getMessage(), exception);
         }
         return lines;
     }

@@ -2,7 +2,6 @@ package de.jplag.chars;
 
 import java.io.File;
 
-import de.jplag.Token;
 import de.jplag.TokenList;
 
 /*

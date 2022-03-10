@@ -89,7 +89,7 @@ public class SubmissionSetBuilder {
             rootDirectory = makeCanonical(rootDirectory, it -> new RootDirectoryException("Cannot read root directory: " + rootDirectoryName, it));
             if (!canonicalRootDirectories.add(rootDirectory)) {
                 // Root directory was already added, report a warning.
-                logger.info("Warning: Root directory \"%s\" was specified more than once, duplicates will be ignored.", rootDirectoryName);
+                logger.info("Warning: Root directory \"{}\" was specified more than once, duplicates will be ignored.", rootDirectoryName);
             }
         }
         return canonicalRootDirectories;
@@ -110,7 +110,7 @@ public class SubmissionSetBuilder {
                 baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
             }
             baseCodeSubmission = Optional.of(baseCode);
-            System.out.println(String.format("Basecode directory \"%s\" will be used.", baseCode.getName()));
+            logger.info(String.format("Basecode directory \"%s\" will be used.", baseCode.getName()));
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
             Submission removed = foundSubmissions.remove(baseCode.getRoot());
@@ -183,7 +183,7 @@ public class SubmissionSetBuilder {
             throw new BasecodeException(String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
         } else {
             // Found a base code as a submission, report about legacy usage.
-            System.out.println("Legacy use of the -bc option found, please specify the basecode by path instead of by name!");
+            logger.warn("Legacy use of the -bc option found, please specify the basecode by path instead of by name!");
         }
         return baseCode;
     }

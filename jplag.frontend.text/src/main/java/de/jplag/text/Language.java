@@ -3,8 +3,6 @@ package de.jplag.text;
 
 import java.io.File;
 
-import de.jplag.Token;
-
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {

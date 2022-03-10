@@ -1,8 +1,12 @@
 package de.jplag.java;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.Token;
 
 public class JavaToken extends Token implements JavaTokenConstants {
+    private static final Logger logger = LoggerFactory.getLogger(JavaToken.class);
 
     public JavaToken(int type, String file, int line, int column, int length) {
         super(type, file, line, column, length);
@@ -146,7 +150,7 @@ public class JavaToken extends Token implements JavaTokenConstants {
                 return "TRY_RES";
 
             default:
-                System.err.println("UNKNOWN: " + type);
+                logger.error("UNKNOWN: " + type);
                 return "<UNKNOWN" + type + ">";
         }
     }

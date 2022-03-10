@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 
-
 public class Parser extends AbstractParser {
     static final Logger logger = LoggerFactory.getLogger(Parser.class);
     private String currentFile;

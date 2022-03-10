@@ -11,7 +11,6 @@ import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
-
 public class Parser extends AbstractParser {
     private static final Logger logger = LoggerFactory.getLogger(Parser.class);
 

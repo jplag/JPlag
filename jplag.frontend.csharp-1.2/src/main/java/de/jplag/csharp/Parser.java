@@ -14,7 +14,6 @@ import de.jplag.TokenList;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
-
 public class Parser extends AbstractParser {
     private static final Logger logger = LoggerFactory.getLogger(Parser.class);
     private TokenList tokens;
