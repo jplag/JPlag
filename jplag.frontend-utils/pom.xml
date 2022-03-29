@@ -5,7 +5,7 @@
     <parent>
         <groupId>de.jplag</groupId>
         <artifactId>aggregator</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>frontend-utils</artifactId>
 
