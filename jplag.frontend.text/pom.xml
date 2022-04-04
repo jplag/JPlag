@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.jplag</groupId>
         <artifactId>aggregator</artifactId>
-        <version>${revision}</version>
+        <version>${jplag-revision}</version>
     </parent>
     <artifactId>text</artifactId>
 
