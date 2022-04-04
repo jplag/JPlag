@@ -215,7 +215,7 @@ public class Submission implements Comparable<Submission> {
                 inputStreamReader.close();
                 fileInputStream.close();
             } catch (FileNotFoundException e) {
-                System.out.println("File not found: " + ((new File(submissionRootFile, files[i]))));
+                System.out.println("File not found: " + new File(submissionRootFile, files[i]));
             } catch (IOException e) {
                 throw new ReportGenerationException("I/O exception!", e);
             }
