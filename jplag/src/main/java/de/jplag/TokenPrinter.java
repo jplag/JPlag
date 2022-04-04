@@ -12,7 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Utility class for printing JPlag tokens from a submission.
+ * Utility class for printing JPlag tokens from a submission. Each line of code is printed starting with the line
+ * number. Under these lines the tokens are annotated in the format <code>|TOKEN|</code>. The first vertical line marks
+ * the token start, while the last vertical line marks the token end. Tokens that are shorter than the name do not end
+ * with a vertical line, e.g. <code>|TOKEN</code>. Tokens with length 1 or 0 are printed in lower case, e.g.
+ * <code>|token</code>.
  * @see Submission
  * @author Timur Saglam
  */
@@ -25,7 +29,7 @@ public final class TokenPrinter {
     private static final String TAB_REPLACEMENT = "        "; // might depend on files
 
     // Configuration:
-    private static final boolean INDICATE_TINY_TOKEN = true; // print token with length <= 0 in lowercase
+    private static final boolean INDICATE_TINY_TOKEN = true; // print token with length <= 1 in lowercase
     private static final boolean REPLACE_TABS = false;
 
     /**
@@ -116,7 +120,6 @@ public final class TokenPrinter {
             }
         }
         return builder.toString();
-
     }
 
     private static StringBuilder appendCodeLinePrefix(StringBuilder builder, int index) {
