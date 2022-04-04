@@ -48,7 +48,7 @@ public class ClusteringResult<T> {
 
     /**
      * How much this clustering result is worth during optimization.
-     * @param similarity TODO JAVADOC
+     * @param similarity TODO DF: JAVADOC
      * @return worth
      */
     public float getWorth(BiFunction<T, T, Float> similarity) {
