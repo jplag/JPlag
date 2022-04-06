@@ -119,7 +119,7 @@ public class CLI {
         options.setMinimumTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace));
         options.setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace));
         options.setMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
-        ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(it -> options.setComparisonMode(it),
+        ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(options::setComparisonMode,
                 () -> System.out.println("Unknown comparison mode, using default mode!"));
 
         ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();

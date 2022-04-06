@@ -12,7 +12,7 @@ import de.jplag.options.JPlagOptions;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
-    private GreedyStringTiling greedyStringTiling;
+    private final GreedyStringTiling greedyStringTiling;
 
     protected JPlagOptions options;
 

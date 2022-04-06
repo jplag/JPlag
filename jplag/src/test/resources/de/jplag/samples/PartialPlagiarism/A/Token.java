@@ -1,6 +1,6 @@
 import java.io.Serializable;
 
-abstract public class Token implements TokenConstants, Serializable {
+public abstract class Token implements TokenConstants, Serializable {
 	private static final long serialVersionUID = 862935679966383302L;
 	public int type;
 	public String file;
@@ -22,9 +22,9 @@ abstract public class Token implements TokenConstants, Serializable {
 	}
 	
 	// abstract members
-	abstract public int getLine();
-	abstract public int getColumn();
-	abstract public int getLength();
+	public abstract int getLine();
+	public abstract int getColumn();
+	public abstract int getLength();
 	protected void setLine(int line) {}
 	protected void setColumn(int line) {}
 	protected void setLength(int line) {}

@@ -10,7 +10,7 @@ public class Scanner extends AbstractParser {
 
     private TokenList tokens;
 
-    public TokenList scan(File directory, String files[]) {
+    public TokenList scan(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         CPPScanner scanner = null;// will be initialized in Method scanFile

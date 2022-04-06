@@ -87,7 +87,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
                 boolean hasRight = hasLeft && rightLock.tryLock();
                 try {
                     if (hasLeft && hasRight) { // both locks acquired!
-                        compareSubmissions(tuple.getLeft(), tuple.getRight(), withBaseCode).ifPresent(it -> comparisons.add(it));
+                        compareSubmissions(tuple.getLeft(), tuple.getRight(), withBaseCode).ifPresent(comparisons::add);
                         synchronized (this) {
                             successfulComparisons++;
                         }

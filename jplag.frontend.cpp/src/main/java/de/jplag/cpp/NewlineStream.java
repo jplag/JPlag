@@ -8,7 +8,7 @@ import java.io.InputStream;
  */
 public class NewlineStream extends InputStream {
     private int endOfFile = 0;
-    private InputStream stream;
+    private final InputStream stream;
 
     public NewlineStream(InputStream stream) {
         super();
@@ -19,20 +19,18 @@ public class NewlineStream extends InputStream {
     public int read() throws IOException {
         int result;
         switch (endOfFile) {
-            case 0:
+            case 0 -> {
                 result = stream.read();
                 if (result == -1) {
                     result = 13;
                     endOfFile = 1;
                 }
-                break;
-            case 1:
+            }
+            case 1 -> {
                 result = 10;
                 endOfFile = 2;
-                break;
-            default:
-                result = -1;
-                break;
+            }
+            default -> result = -1;
         }
         return result;
     }

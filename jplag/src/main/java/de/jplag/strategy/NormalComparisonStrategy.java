@@ -28,7 +28,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
         List<JPlagComparison> comparisons = new ArrayList<>();
 
         for (SubmissionTuple tuple : buildComparisonTuples(submissions)) {
-            compareSubmissions(tuple.getLeft(), tuple.getRight(), withBaseCode).ifPresent(it -> comparisons.add(it));
+            compareSubmissions(tuple.getLeft(), tuple.getRight(), withBaseCode).ifPresent(comparisons::add);
         }
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;

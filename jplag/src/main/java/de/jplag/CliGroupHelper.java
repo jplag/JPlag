@@ -15,8 +15,8 @@ import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 public class CliGroupHelper {
 
     private final ArgumentParser parser;
-    private Map<String, MutuallyExclusiveGroup> mutuallyExclusiveGroups = new HashMap<>();
-    private Map<String, ArgumentGroup> argumentGroups = new HashMap<>();
+    private final Map<String, MutuallyExclusiveGroup> mutuallyExclusiveGroups = new HashMap<>();
+    private final Map<String, ArgumentGroup> argumentGroups = new HashMap<>();
 
     public CliGroupHelper(ArgumentParser parser) {
         this.parser = parser;

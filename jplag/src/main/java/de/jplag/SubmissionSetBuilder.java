@@ -36,7 +36,7 @@ public class SubmissionSetBuilder {
      * @param language is the language of the submissions.
      * @param options are the configured options.
      * @param errorCollector is the interface for error reporting.
-     * @param excludedFileNames
+     * @param excludedFileNames a list of file names to be excluded
      */
     public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames) {
         this.language = language;
@@ -146,14 +146,14 @@ public class SubmissionSetBuilder {
                 // Single root-directory, try the legacy way of specifying basecode.
                 baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
             }
+            // TODO Optional.of() will cause a NPTR-Exception of baseCode is null. Is this a bug?
             baseCodeSubmission = Optional.of(baseCode);
-            System.out.println(String.format("Basecode directory \"%s\" will be used.", baseCode.getName()));
+            System.out.printf("Basecode directory \"%s\" will be used.%n", baseCode.getName());
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
             Submission removed = foundSubmissions.remove(baseCode.getRoot());
             if (removed != null) {
-                System.out.println(
-                        String.format("Submission \"%s\" is the specified basecode, it will be skipped during comparison.", removed.getName()));
+                System.out.printf("Submission \"%s\" is the specified basecode, it will be skipped during comparison.%n", removed.getName());
             }
         }
         return baseCodeSubmission;
@@ -181,9 +181,6 @@ public class SubmissionSetBuilder {
             return processSubmission(basecodeSubmission.getName(), basecodeSubmission, false);
         } catch (SubmissionException exception) {
             throw new BasecodeException(exception.getMessage(), exception); // Change thrown exception to basecode exception.
-
-        } catch (ExitException exception) {
-            throw exception;
         }
     }
 
@@ -297,7 +294,6 @@ public class SubmissionSetBuilder {
     /**
      * Process entries in the root directory to check whether they qualify as submissions.
      * @param rootDirectory is the root directory being examined.
-     * @param addRootDirectoryPrefix specifies whether multiple root directories are in use.
      * @param foundSubmissions Submissions found so far, is updated in-place.
      * @param submissionsNeedChecking states whether submissions found in the root directory must be checked for plagiarism.
      */

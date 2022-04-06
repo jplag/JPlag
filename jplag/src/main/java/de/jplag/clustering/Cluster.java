@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
  */
 public class Cluster<T> {
 
-    private float communityStrength;
-    private Collection<T> members;
+    private final float communityStrength;
+    private final Collection<T> members;
     private ClusteringResult<T> clusteringResult = null;
 
     public Cluster(Collection<T> members, float communityStrength) {
@@ -22,6 +22,7 @@ public class Cluster<T> {
     }
 
     public Collection<T> getMembers() {
+        // TODO Check why access to local attribute.
         return members;
     }
 

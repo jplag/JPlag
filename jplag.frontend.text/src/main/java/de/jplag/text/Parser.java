@@ -21,7 +21,7 @@ public class Parser extends AbstractParser {
 
     private boolean runOut = false;
 
-    public TokenList parse(File directory, String files[]) {
+    public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         for (String file : files) {

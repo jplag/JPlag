@@ -293,9 +293,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         if (node.getInitializers() != null && !node.getInitializers().isEmpty()) {
             n = positions.getStartPosition(ast, node.getInitializers().get(0));
             parser.add(JavaTokenConstants.J_ARRAY_INIT_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 1);
-            ;
             parser.add(JavaTokenConstants.J_ARRAY_INIT_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-            ;
         }
         return super.visitNewArray(node, arg1);
     }

@@ -1,22 +1,25 @@
 package de.jplag.text;
 
+import java.io.Serial;
+
 import de.jplag.Token;
 
 public class TextToken extends Token {
+    @Serial
     private static final long serialVersionUID = 4301179216570538972L;
 
     private static int getSerial(String text, Parser parser) {
         text = text.toLowerCase();
         Integer serial = parser.table.get(text);
         if (serial == null) {
-            serial = Integer.valueOf(parser.serial);
+            serial = parser.serial;
             if (parser.serial == Integer.MAX_VALUE)
                 parser.outOfSerials();
             else
                 parser.serial++;
             parser.table.put(text, serial);
         }
-        return serial.intValue();
+        return serial;
     }
 
     private String text;

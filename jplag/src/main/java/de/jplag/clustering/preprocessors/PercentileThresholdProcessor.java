@@ -12,7 +12,7 @@ import de.jplag.clustering.ClusteringPreprocessor;
  */
 public class PercentileThresholdProcessor implements ClusteringPreprocessor {
 
-    private float percentile;
+    private final float percentile;
     private ThresholdPreprocessor thresholdPreprocessor;
 
     public PercentileThresholdProcessor(float percentile) {
