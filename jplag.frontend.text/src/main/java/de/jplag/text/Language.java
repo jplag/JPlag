@@ -8,13 +8,10 @@ import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
-    private ErrorConsumer program;
-
-    private Parser parser = new Parser();
+    private final Parser parser = new Parser();
 
     public Language(ErrorConsumer program) {
-        this.program = program;
-        this.parser.setProgram(this.program);
+        this.parser.setProgram(program);
     }
 
     @Override

@@ -109,7 +109,7 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
                 int eigenVectorId = eigenValueIds.get(column);
                 RealVector eigenVector = ed.getEigenvector(eigenVectorId);
                 return eigenVector.getEntry(row);
-            };
+            }
         });
 
         List<ClusterableEigenVector> normRows = IntStream.range(0, dimension).filter(i -> concatenatedEigenVectors.getRowVector(i).getNorm() > 0)
@@ -118,14 +118,13 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
 
         Clusterer<ClusterableEigenVector> clusterer = new KMeansPlusPlusClusterer<>(numberOfClusters, options.getSpectralMaxKMeansIterationPerRun());
         List<? extends Cluster<ClusterableEigenVector>> clusters = clusterer.cluster(normRows);
-        return clusters.stream().map(cluster -> {
-            return cluster.getPoints().stream().map(eigenVector -> eigenVector.id).collect(Collectors.toList());
-        }).collect(Collectors.toList());
+        return clusters.stream().map(cluster -> cluster.getPoints().stream().map(eigenVector -> eigenVector.id).collect(Collectors.toList()))
+                .collect(Collectors.toList());
     }
 
     private static class ClusterableEigenVector implements Clusterable {
-        private int id;
-        private double[] eigenVector;
+        private final int id;
+        private final double[] eigenVector;
 
         public ClusterableEigenVector(int id, RealVector eigenVector) {
             this.id = id;

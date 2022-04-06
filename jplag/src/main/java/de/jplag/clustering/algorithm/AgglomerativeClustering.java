@@ -17,7 +17,7 @@ import de.jplag.clustering.ClusteringOptions;
  */
 public class AgglomerativeClustering implements GenericClusteringAlgorithm {
 
-    private ClusteringOptions options;
+    private final ClusteringOptions options;
 
     public AgglomerativeClustering(ClusteringOptions options) {
         this.options = options;
@@ -60,6 +60,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
 
         while (clusters.size() > 1) {
             ClusterConnection nearest = similarities.poll();
+            // TODO Check that nearest is never null
             if (!(clusters.contains(nearest.left) && clusters.contains(nearest.right))) {
                 // One cluster already part of another cluster
                 continue;
@@ -82,11 +83,11 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
         return clusters.stream().map(Cluster::getSubmissions).collect(Collectors.toList());
     }
 
-    private class ClusterConnection implements Comparable<ClusterConnection> {
+    private static class ClusterConnection implements Comparable<ClusterConnection> {
 
-        private Cluster left;
-        private Cluster right;
-        private float similarity;
+        private final Cluster left;
+        private final Cluster right;
+        private final float similarity;
 
         public ClusterConnection(Cluster left, Cluster right, float similarity) {
             this.left = left;
@@ -105,8 +106,8 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
      * Encapsulate a list in a class because we do not want hashing based on the members but on identity only. Also a
      * cluster need a different identity than the list because the lists are reused.
      */
-    private class Cluster {
-        private List<Integer> submissions;
+    private static class Cluster {
+        private final List<Integer> submissions;
 
         public Cluster(List<Integer> submissions) {
             this.submissions = submissions;

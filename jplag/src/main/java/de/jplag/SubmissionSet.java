@@ -52,7 +52,7 @@ public class SubmissionSet {
      * @return Whether a basecode is available for this collection.
      */
     public boolean hasBaseCode() {
-        return !baseCodeSubmission.isEmpty();
+        return baseCodeSubmission.isPresent();
     }
 
     /**
@@ -96,7 +96,7 @@ public class SubmissionSet {
     }
 
     private List<Submission> filterInvalidSubmissions() {
-        return allSubmissions.stream().filter(submission -> submission.hasErrors()).collect(toList());
+        return allSubmissions.stream().filter(Submission::hasErrors).collect(toList());
     }
 
     private void parseAllSubmissions() throws ExitException {
