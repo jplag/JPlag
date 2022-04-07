@@ -11,11 +11,13 @@ import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ContinueTree;
+import com.sun.source.tree.DefaultCaseLabelTree;
 import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.ErroneousTree;
 import com.sun.source.tree.ExportsTree;
 import com.sun.source.tree.ForLoopTree;
+import com.sun.source.tree.GuardedPatternTree;
 import com.sun.source.tree.IfTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.LineMap;
@@ -25,6 +27,7 @@ import com.sun.source.tree.ModuleTree;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.PackageTree;
+import com.sun.source.tree.ParenthesizedPatternTree;
 import com.sun.source.tree.ProvidesTree;
 import com.sun.source.tree.RequiresTree;
 import com.sun.source.tree.ReturnTree;
@@ -378,5 +381,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     public Object visitErroneous(ErroneousTree node, Object p) {
         parser.errorsInc();
         return super.visitErroneous(node, p);
+    }
+
+    @Override
+    public Object visitDefaultCaseLabel(DefaultCaseLabelTree node, Object p) {
+        // TODO TS: Decide if we need to add tokens here
+        return super.visitDefaultCaseLabel(node, p);
+    }
+
+    @Override
+    public Object visitParenthesizedPattern(ParenthesizedPatternTree node, Object p) {
+        // TODO TS: Decide if we need to add tokens here
+        return super.visitParenthesizedPattern(node, p);
+    }
+
+    @Override
+    public Object visitGuardedPattern(GuardedPatternTree node, Object p) {
+        // TODO TS: Decide if we need to add tokens here
+        return super.visitGuardedPattern(node, p);
     }
 }
