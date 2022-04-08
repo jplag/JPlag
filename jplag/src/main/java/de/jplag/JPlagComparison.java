@@ -39,16 +39,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
         matches.add(new Match(startOfFirst, startOfSecond, length));
     }
 
-    /**
-     * The bigger a match (length) is relatively to the biggest match the redder is the color returned by this method.
-     */
-    public String color(int length) {
-        int longestMatch = matches.stream().mapToInt(Match::getLength).max().orElse(0);
-        int color = 255 * length / longestMatch;
-        String help = (color < 16 ? "0" : "") + Integer.toHexString(color);
-        return "#" + help + "0000";
-    }
-
     @Override
     public int compare(JPlagComparison comparison1, JPlagComparison comparison2) {
         return Float.compare(comparison2.similarity(), comparison1.similarity()); // comparison2 first!
