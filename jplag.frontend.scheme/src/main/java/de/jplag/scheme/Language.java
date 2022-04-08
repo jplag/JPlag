@@ -42,7 +42,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public boolean supportsColumns() {
-        return false;
+        return true;
     }
 
     @Override
