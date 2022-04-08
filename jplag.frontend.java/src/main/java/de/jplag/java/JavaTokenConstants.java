@@ -77,5 +77,12 @@ public interface JavaTokenConstants extends TokenConstants {
     final static int J_MODULE_BEGIN = 64;       // check
     final static int J_MODULE_END = 65; 	    // check
 
-    final static int NUM_DIFF_TOKENS = 66;	    // @formatter:on
+    // new in 13
+    final static int J_YIELD = 66;
+
+    // new in 17
+    final static int J_DEFAULT = 67;
+    final static int J_RECORD_BEGIN = 68;
+    final static int J_RECORD_END = 69;
+    final static int NUM_DIFF_TOKENS = 70;	    // @formatter:on
 }
