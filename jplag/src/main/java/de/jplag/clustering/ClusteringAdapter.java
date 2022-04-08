@@ -22,8 +22,8 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
  */
 public class ClusteringAdapter {
 
-    private RealMatrix similarityMatrix;
-    private IntegerMapping<Submission> mapping;
+    private final RealMatrix similarityMatrix;
+    private final IntegerMapping<Submission> mapping;
 
     /**
      * Creates the clustering adapter. Only submissions that appear in those similarities might also appear in
@@ -58,10 +58,10 @@ public class ClusteringAdapter {
     public ClusteringResult<Submission> doClustering(GenericClusteringAlgorithm algorithm) {
         Collection<Collection<Integer>> intResult = algorithm.cluster(similarityMatrix);
         ClusteringResult<Integer> modularityClusterResult = ClusteringResult.fromIntegerCollections(new ArrayList<>(intResult), similarityMatrix);
-        List<Cluster<Submission>> mappedClusters = modularityClusterResult.getClusters().stream().map(unmappedCluster -> {
-            return new Cluster<Submission>(unmappedCluster.getMembers().stream().map(mapping::unmap).collect(Collectors.toList()),
-                    unmappedCluster.getCommunityStrength());
-        }).collect(Collectors.toList());
+        List<Cluster<Submission>> mappedClusters = modularityClusterResult.getClusters().stream()
+                .map(unmappedCluster -> new Cluster<>(unmappedCluster.getMembers().stream().map(mapping::unmap).collect(Collectors.toList()),
+                        unmappedCluster.getCommunityStrength()))
+                .collect(Collectors.toList());
         return new ClusteringResult<>(mappedClusters, modularityClusterResult.getCommunityStrength());
     }
 

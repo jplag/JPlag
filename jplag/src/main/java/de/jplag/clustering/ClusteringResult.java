@@ -23,7 +23,7 @@ public class ClusteringResult<T> {
     private float communityStrength = 0;
 
     public ClusteringResult(Collection<Cluster<T>> clusters, float communityStrength) {
-        this.clusters = Collections.unmodifiableList(new ArrayList<>(clusters));
+        this.clusters = List.copyOf(clusters);
         this.communityStrength = communityStrength;
         for (Cluster<T> cluster : clusters) {
             cluster.setClusteringResult(this);
@@ -48,7 +48,7 @@ public class ClusteringResult<T> {
 
     /**
      * How much this clustering result is worth during optimization.
-     * @param similarity
+     * @param similarity TODO DF: JAVADOC
      * @return worth
      */
     public float getWorth(BiFunction<T, T, Float> similarity) {
@@ -92,7 +92,7 @@ public class ClusteringResult<T> {
             for (int i = 0; i < clustering.size(); i++) {
                 double outWeightSum = percentagesOfSimilaritySums.getRowVector(i).getL1Norm();
                 double clusterCommunityStrength = percentagesOfSimilaritySums.getEntry(i, i) - outWeightSum * outWeightSum;
-                clusters.add(new Cluster<Integer>(clustering.get(i), (float) clusterCommunityStrength));
+                clusters.add(new Cluster<>(clustering.get(i), (float) clusterCommunityStrength));
                 communityStrength += clusterCommunityStrength;
             }
         }

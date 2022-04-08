@@ -9,7 +9,7 @@ public enum NumberOfArgumentValues {
 
     private final String representation;
 
-    private NumberOfArgumentValues(String representation) {
+    NumberOfArgumentValues(String representation) {
         this.representation = representation;
     }
 

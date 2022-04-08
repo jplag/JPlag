@@ -2,7 +2,6 @@ package de.jplag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -44,7 +43,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * The bigger a match (length) is relatively to the biggest match the redder is the color returned by this method.
      */
     public String color(int length) {
-        int longestMatch = matches.stream().mapToInt(it -> it.getLength()).max().orElse(0);
+        int longestMatch = matches.stream().mapToInt(Match::getLength).max().orElse(0);
         int color = 255 * length / longestMatch;
         String help = (color < 16 ? "0" : "") + Integer.toHexString(color);
         return "#" + help + "0000";
@@ -225,11 +224,9 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      */
     public final List<Integer> sort_permutation(boolean useFirst) {
         List<Integer> indices = new ArrayList<>(matches.size());
-        IntStream.range(0, matches.size()).forEach(index -> indices.add(index));
-        Comparator<Integer> comparator = (Integer i, Integer j) -> {
-            return Integer.compare(selectStartof(i, useFirst), selectStartof(j, useFirst));
-        };
-        Collections.sort(indices, comparator);
+        IntStream.range(0, matches.size()).forEach(indices::add);
+        Comparator<Integer> comparator = Comparator.comparingInt((Integer i) -> selectStartof(i, useFirst));
+        indices.sort(comparator);
         return indices;
     }
 
@@ -243,13 +240,13 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
         return firstSubmission.getName() + " <-> " + secondSubmission.getName();
     }
 
-    private final float firstBasecodeSimilarity() {
+    private float firstBasecodeSimilarity() {
         float sa = firstSubmission.getSimilarityDivisor(false);
         JPlagComparison firstBaseCodeMatches = firstSubmission.getBaseCodeComparison();
         return firstBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sa;
     }
 
-    private final float secondBasecodeSimilarity() {
+    private float secondBasecodeSimilarity() {
         float sb = secondSubmission.getSimilarityDivisor(false);
         JPlagComparison secondBaseCodeMatches = secondSubmission.getBaseCodeComparison();
         return secondBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sb;

@@ -9,7 +9,7 @@ import de.jplag.TokenList;
  * Language for Java 9 and newer.
  */
 public class Language implements de.jplag.Language {
-    private Parser parser;
+    private final Parser parser;
 
     public Language(ErrorConsumer program) {
         this.parser = new Parser();

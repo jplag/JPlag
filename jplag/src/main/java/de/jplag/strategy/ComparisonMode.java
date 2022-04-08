@@ -30,7 +30,7 @@ public enum ComparisonMode {
 
     /**
      * The textual description of the comparison mode.
-     * @return
+     * @return a description of the comparison mode
      */
     public String getDescription() {
         return description;
@@ -40,7 +40,7 @@ public enum ComparisonMode {
      * @return a collections of all mode names.
      */
     public static Collection<String> allNames() {
-        return Arrays.stream(values()).map(it -> it.getName()).collect(toList());
+        return Arrays.stream(values()).map(ComparisonMode::getName).collect(toList());
     }
 
     /**

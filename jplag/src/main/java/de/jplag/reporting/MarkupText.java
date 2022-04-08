@@ -7,7 +7,7 @@ package de.jplag.reporting;
 public class MarkupText {
     public int fileIndex, lineIndex, column;
     public String text;
-    public boolean frontMarkup = false;
+    public boolean frontMarkup;
 
     public MarkupText(int fileIndex, int lineIndex, int column, String text, boolean frontMarkup) {
         this.fileIndex = fileIndex;

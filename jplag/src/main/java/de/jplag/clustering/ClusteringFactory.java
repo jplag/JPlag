@@ -8,9 +8,7 @@ import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
-import de.jplag.clustering.algorithm.AgglomerativeClustering;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
-import de.jplag.clustering.algorithm.SpectralClustering;
 
 /**
  * Runs the clustering according to an options object.
@@ -21,12 +19,7 @@ public class ClusteringFactory {
             return Collections.emptyList();
 
         // init algorithm
-        GenericClusteringAlgorithm clusteringAlgorithm = null;
-        if (options.getAlgorithm() == ClusteringAlgorithm.AGGLOMERATIVE) {
-            clusteringAlgorithm = new AgglomerativeClustering(options);
-        } else if (options.getAlgorithm() == ClusteringAlgorithm.SPECTRAL) {
-            clusteringAlgorithm = new SpectralClustering(options);
-        }
+        GenericClusteringAlgorithm clusteringAlgorithm = options.getAlgorithm().create(options);
 
         // init preprocessor
         Optional<ClusteringPreprocessor> preprocessor = options.getPreprocessor().constructPreprocessor(options);

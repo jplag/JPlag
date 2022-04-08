@@ -12,8 +12,8 @@ import de.jplag.clustering.PreprocessorHelper;
  */
 public class ThresholdPreprocessor implements ClusteringPreprocessor {
 
-    private double threshold;
-    private PreprocessorHelper helper = new PreprocessorHelper();
+    private final double threshold;
+    private final PreprocessorHelper helper = new PreprocessorHelper();
 
     public ThresholdPreprocessor(double threshold) {
         this.threshold = threshold;

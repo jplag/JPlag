@@ -3,14 +3,12 @@ package de.jplag.clustering;
 import java.util.Optional;
 import java.util.function.Function;
 
-import antlr.preprocessor.Preprocessor;
-
 import de.jplag.clustering.preprocessors.CumulativeDistributionFunctionPreprocessor;
 import de.jplag.clustering.preprocessors.PercentileThresholdProcessor;
 import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
 
 /**
- * List of all usable {@link Preprocessor}s.
+ * List of all usable {@link ClusteringPreprocessor}s.
  */
 public enum Preprocessing {
     NONE(options -> null),
@@ -23,7 +21,7 @@ public enum Preprocessing {
 
     private final Function<ClusteringOptions, ClusteringPreprocessor> constructor;
 
-    private Preprocessing(Function<ClusteringOptions, ClusteringPreprocessor> constructor) {
+    Preprocessing(Function<ClusteringOptions, ClusteringPreprocessor> constructor) {
         this.constructor = constructor;
     }
 

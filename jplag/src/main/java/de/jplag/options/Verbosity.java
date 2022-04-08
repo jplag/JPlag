@@ -5,13 +5,9 @@ public enum Verbosity {
     LONG;
 
     public static Verbosity fromOption(String optionValue) {
-        switch (optionValue) {
-            case "quiet":
-                return QUIET;
-            case "long":
-                return LONG;
-            default:
-                return QUIET;
-        }
+        for (Verbosity verbosity : Verbosity.values())
+            if (verbosity.name().equalsIgnoreCase(optionValue))
+                return verbosity;
+        return QUIET;
     }
 }
