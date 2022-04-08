@@ -19,8 +19,8 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.options.Verbosity;
-import de.jplag.reporting2.JsonReport;
-import de.jplag.reporting2.Report;
+import de.jplag.reporting.JsonReport;
+import de.jplag.reporting.Report;
 import de.jplag.strategy.ComparisonMode;
 
 /**

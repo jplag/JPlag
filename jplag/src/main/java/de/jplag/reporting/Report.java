@@ -1,4 +1,4 @@
-package de.jplag.reporting2;
+package de.jplag.reporting;
 
 import java.util.List;
 
