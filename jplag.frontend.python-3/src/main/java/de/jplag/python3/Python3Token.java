@@ -11,7 +11,7 @@ public class Python3Token extends Token implements Python3TokenConstants {
     protected String type2string() {
         switch (type) {
             case Python3TokenConstants.FILE_END:
-                return "********";
+                return "EOF";
             case Python3TokenConstants.SEPARATOR_TOKEN:
                 return "METHOD_SEPARATOR";
 

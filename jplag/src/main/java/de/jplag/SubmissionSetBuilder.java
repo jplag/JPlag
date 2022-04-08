@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
@@ -35,7 +36,7 @@ public class SubmissionSetBuilder {
      * @param language is the language of the submissions.
      * @param options are the configured options.
      * @param errorCollector is the interface for error reporting.
-     * @param excludedFileNames
+     * @param excludedFileNames a list of file names to be excluded
      */
     public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames) {
         this.language = language;
@@ -50,52 +51,19 @@ public class SubmissionSetBuilder {
      * @throws ExitException if the directory cannot be read.
      */
     public SubmissionSet buildSubmissionSet() throws ExitException {
-        verifyRootDirectories();
-
-        List<String> rootDirectoryNames = options.getRootDirectoryNames();
+        Set<File> rootDirectoryNames = verifyRootDirectories(options.getRootDirectoryNames());
 
         // For backward compatibility, don't prefix submission names with their root directory
         // if there is only one root directory.
-        boolean addRootDirectoryPrefix = (rootDirectoryNames.size() > 1);
+        boolean multipleRoots = (rootDirectoryNames.size() > 1);
 
         // Collect valid looking entries from the root directories.
         Map<File, Submission> foundSubmissions = new HashMap<>();
-        for (String rootDirectoryName : rootDirectoryNames) {
-            processRootDirectoryEntries(rootDirectoryName, addRootDirectoryPrefix, foundSubmissions);
+        for (File rootDirectory : rootDirectoryNames) {
+            processRootDirectoryEntries(rootDirectory, multipleRoots, foundSubmissions);
         }
 
-        // Extract the basecode submission if necessary.
-        Optional<Submission> baseCodeSubmission = Optional.empty();
-        if (options.hasBaseCode()) {
-            Submission baseCode = tryLoadBaseCodeAsPath();
-            if (baseCode == null) {
-                if (rootDirectoryNames.size() > 1) {
-                    throw new BasecodeException("Basecode name cannot be specified in a submission set with more than one root directory.");
-                }
-
-                // Single root-directory, try the deprecated basecode specification.
-                baseCode = tryLoadBaseCodeAsRootSubDirectory(foundSubmissions);
-
-                String baseCodeName = options.getBaseCodeSubmissionName().get();
-                if (baseCode == null) {
-                    // No base code found at all, report an error.
-                    throw new BasecodeException(
-                            String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
-                } else {
-                    // Found a base code as a submission, report about obsolete usage.
-                    System.out.printf("Deprecated use of the -bc option found, please specify the basecode as \"%s%s%s\" instead.\n",
-                            rootDirectoryNames.get(0), File.separator, baseCodeName);
-                }
-            }
-            baseCodeSubmission = Optional.of(baseCode);
-            System.out.println(String.format("Basecode directory \"%s\" will be used.", baseCode.getRoot().toString()));
-
-            // Basecode may also be registered as a user submission. If so, remove the latter.
-            Submission removed = foundSubmissions.remove(baseCode.getCanonicalRoot());
-            if (removed != null) {
-                System.out.println(String.format("Skipping \"%s\" as user submission.", removed.getRoot().toString()));
-            }
-        }
+        Optional<Submission> baseCodeSubmission = loadBaseCode(rootDirectoryNames, foundSubmissions);
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
@@ -105,31 +73,52 @@ public class SubmissionSetBuilder {
     /**
      * Verify that the given root directories exist and have no duplicate entries.
      */
-    private void verifyRootDirectories() throws ExitException {
-        List<String> rootDirectoryNames = options.getRootDirectoryNames();
-        Set<File> canonicalRootDirs = new HashSet<>(rootDirectoryNames.size());
+    private Set<File> verifyRootDirectories(List<String> rootDirectoryNames) throws ExitException {
+        Set<File> canonicalRootDirectories = new HashSet<>(rootDirectoryNames.size());
         for (String rootDirectoryName : rootDirectoryNames) {
-            File rootDir = new File(rootDirectoryName);
+            File rootDirectory = new File(rootDirectoryName);
 
-            if (!rootDir.exists()) {
+            if (!rootDirectory.exists()) {
                 throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectoryName));
             }
-            if (!rootDir.isDirectory()) {
+            if (!rootDirectory.isDirectory()) {
                 throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectoryName));
             }
 
-            boolean added;
-            try {
-                added = canonicalRootDirs.add(rootDir.getCanonicalFile());
-            } catch (IOException exception) {
-                throw new RootDirectoryException(String.format("Cannot read root directory \"%s\".", rootDirectoryName), exception);
-            }
-            if (!added) {
+            rootDirectory = makeCanonical(rootDirectory, it -> new RootDirectoryException("Cannot read root directory: " + rootDirectoryName, it));
+            if (!canonicalRootDirectories.add(rootDirectory)) {
                 // Root directory was already added, report a warning.
-                System.out.printf("Warning: Root directory \"%s\" was already added as submission root, avoiding to process it a second time.",
-                        rootDirectoryName);
+                System.out.printf("Warning: Root directory \"%s\" was specified more than once, duplicates will be ignored.", rootDirectoryName);
             }
         }
+        return canonicalRootDirectories;
+    }
+
+    private Optional<Submission> loadBaseCode(Set<File> rootDirectories, Map<File, Submission> foundSubmissions) throws ExitException {
+        // Extract the basecode submission if necessary.
+        Optional<Submission> baseCodeSubmission = Optional.empty();
+        if (options.hasBaseCode()) {
+            String baseCodeName = options.getBaseCodeSubmissionName().get();
+            Submission baseCode = loadBaseCodeAsPath(baseCodeName);
+            if (baseCode == null) {
+                if (rootDirectories.size() > 1) {
+                    throw new BasecodeException("The base code submission needs to be specified by path instead of by name!");
+                }
+                File rootDirectory = rootDirectories.iterator().next();
+                // Single root-directory, try the legacy way of specifying basecode.
+                baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
+            }
+            // TODO Optional.of() will cause a NPTR-Exception of baseCode is null. Is this a bug?
+            baseCodeSubmission = Optional.of(baseCode);
+            System.out.printf("Basecode directory \"%s\" will be used.%n", baseCode.getName());
+
+            // Basecode may also be registered as a user submission. If so, remove the latter.
+            Submission removed = foundSubmissions.remove(baseCode.getRoot());
+            if (removed != null) {
+                System.out.printf("Submission \"%s\" is the specified basecode, it will be skipped during comparison.%n", removed.getName());
+            }
+        }
+        return baseCodeSubmission;
     }
 
     /**
@@ -137,8 +126,7 @@ public class SubmissionSetBuilder {
      * @return Base code submission if the option value can be interpreted as global path, else {@code null}.
      * @throws ExitException when the option value is a path with errors.
      */
-    private Submission tryLoadBaseCodeAsPath() throws ExitException {
-        String baseCodeName = options.getBaseCodeSubmissionName().get();
+    private Submission loadBaseCodeAsPath(String baseCodeName) throws ExitException {
         File basecodeSubmission = new File(baseCodeName);
         if (!basecodeSubmission.exists()) {
             return null;
@@ -151,25 +139,19 @@ public class SubmissionSetBuilder {
 
         try {
             // Use an unlikely short name for the base code. If all is well, this name should not appear
-            // in the output since basecode matches are removed from it.
-            return processDirectoryEntry(basecodeSubmission, "**basecode**");
-
+            // in the output since basecode matches are removed from it
+            return processSubmission(basecodeSubmission.getName(), basecodeSubmission);
         } catch (SubmissionException exception) {
             throw new BasecodeException(exception.getMessage(), exception); // Change thrown exception to basecode exception.
-
-        } catch (ExitException exception) {
-            throw exception;
         }
     }
 
     /**
-     * Try to load the basecode under the assumption of being a sub-directory in the user submissions directory.
-     * @return Base code submission if the option value can be interpreted as a sub-directory, else {@code null}.
+     * Try to load the basecode by looking up the basecode name in the root directory.
+     * @return the base code submission if a fitting subdirectory was found, else {@code null}.
      * @throws ExitException when the option value is a sub-directory with errors.
      */
-    private Submission tryLoadBaseCodeAsRootSubDirectory(Map<File, Submission> foundSubmissions) throws ExitException {
-        String baseCodeName = options.getBaseCodeSubmissionName().get();
-
+    private Submission loadBaseCodeViaName(String baseCodeName, File rootDirectory, Map<File, Submission> foundSubmissions) throws ExitException {
         // Is the option value a single name after trimming spurious separators?
         String name = baseCodeName;
         while (name.startsWith(File.separator)) {
@@ -180,28 +162,33 @@ public class SubmissionSetBuilder {
         }
 
         // If it is not a name of a single sub-directory, bail out.
-        if (name.isEmpty() || name.contains(File.separator))
+        if (name.isEmpty() || name.contains(File.separator)) {
             return null;
+        }
 
         if (name.contains(".")) {
             throw new BasecodeException("The basecode directory name \"" + name + "\" cannot contain dots!");
         }
 
         // Grab the basecode submission from the regular submissions.
-        File rootDirectory = new File(options.getRootDirectoryNames().get(0));
         File basecodePath = new File(rootDirectory, baseCodeName);
-        try {
-            basecodePath = basecodePath.getCanonicalFile();
-        } catch (IOException exception) {
-            throw new BasecodeException(String.format("Cannot compute canonical file path of \"%s\".", basecodePath.toString()), exception);
+
+        Submission baseCode = foundSubmissions
+                .get(makeCanonical(basecodePath, it -> new BasecodeException("Cannot compute canonical file path: " + basecodePath, it)));
+        if (baseCode == null) {
+            // No base code found at all, report an error.
+            throw new BasecodeException(String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
+        } else {
+            // Found a base code as a submission, report about legacy usage.
+            System.out.println("Legacy use of the -bc option found, please specify the basecode by path instead of by name!");
         }
-        return foundSubmissions.get(basecodePath);
+        return baseCode;
     }
 
     /**
      * Read entries in the given root directory.
      */
-    private String[] readSubmissionRootNames(File rootDirectory) throws ExitException {
+    private String[] listSubmissionFiles(File rootDirectory) throws ExitException {
         if (!rootDirectory.isDirectory()) {
             throw new AssertionError("Given root is not a directory.");
         }
@@ -239,58 +226,49 @@ public class SubmissionSetBuilder {
     }
 
     /**
-     * Process the given directory entry as a submission root, the path MUST not be excluded.
-     * @param submissionEntry Entry to process.
-     * @param rootDirectoryPrefix Prefix for connecting submissions to the root directory, may be empty.
+     * Process the given directory entry as a submission, the path MUST not be excluded.
+     * @param submissionFile the file for the submission.
      * @return The entry converted to a submission.
      * @throws ExitException when an error has been found with the entry.
      */
-    private Submission processDirectoryEntry(File submissionEntry, String rootDirectoryPrefix) throws ExitException {
-        if (isExcludedEntry(submissionEntry) != null) {
-            throw new AssertionError("Pre-condition of non-exclusion is violated.");
-        }
+    private Submission processSubmission(String submissionName, File submissionFile) throws ExitException {
 
-        String fileName = submissionEntry.getName();
-        if (submissionEntry.isDirectory() && options.getSubdirectoryName() != null) {
+        if (submissionFile.isDirectory() && options.getSubdirectoryName() != null) {
             // Use subdirectory instead
-            submissionEntry = new File(submissionEntry, options.getSubdirectoryName());
+            submissionFile = new File(submissionFile, options.getSubdirectoryName());
 
-            if (!submissionEntry.exists()) {
+            if (!submissionFile.exists()) {
                 throw new SubmissionException(
-                        String.format("Submission %s does not contain the given subdirectory '%s'", fileName, options.getSubdirectoryName()));
+                        String.format("Submission %s does not contain the given subdirectory '%s'", submissionName, options.getSubdirectoryName()));
             }
 
-            if (!submissionEntry.isDirectory()) {
+            if (!submissionFile.isDirectory()) {
                 throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.getSubdirectoryName()));
             }
         }
 
-        String submissionName = rootDirectoryPrefix + fileName;
-        return new Submission(submissionName, submissionEntry, parseFilesRecursively(submissionEntry), language, errorCollector);
+        submissionFile = makeCanonical(submissionFile, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
+        return new Submission(submissionName, submissionFile, parseFilesRecursively(submissionFile), language, errorCollector);
     }
 
     /**
      * Process entries in the root directory to check whether they qualify as submissions.
-     * @param rootDirectoryName Root directory being examined.
-     * @param addRootDirectoryPrefix Whether to prefix the submission name with its root directory.
+     * @param rootDirectory is the root directory being examined.
      * @param foundSubmissions Submissions found so far, is updated in-place.
      */
-    private void processRootDirectoryEntries(String rootDirectoryName, boolean addRootDirectoryPrefix, Map<File, Submission> foundSubmissions)
-            throws ExitException {
-        File rootDirectory = new File(rootDirectoryName);
-        String[] fileNames = readSubmissionRootNames(rootDirectory);
-        for (String fileName : fileNames) {
+    private void processRootDirectoryEntries(File rootDirectory, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {
+        for (String fileName : listSubmissionFiles(rootDirectory)) {
             File submissionFile = new File(rootDirectory, fileName);
 
             String errorMessage = isExcludedEntry(submissionFile);
-            if (errorMessage != null) {
+            if (errorMessage == null) {
+                String rootDirectoryPrefix = multipleRoots ? (rootDirectory.getName() + File.separator) : "";
+                String submissionName = rootDirectoryPrefix + fileName;
+                Submission submission = processSubmission(submissionName, submissionFile);
+                foundSubmissions.put(submission.getRoot(), submission);
+            } else {
                 System.out.println(errorMessage);
-                continue;
             }
-
-            String rootDirectoryPrefix = addRootDirectoryPrefix ? (rootDirectoryName + "::") : "";
-            Submission submission = processDirectoryEntry(submissionFile, rootDirectoryPrefix);
-            foundSubmissions.put(submission.getCanonicalRoot(), submission);
         }
     }
 
@@ -345,5 +323,16 @@ public class SubmissionSetBuilder {
         }
 
         return files;
+    }
+
+    /**
+     * Computes the canonical file of a file, if an exception is thrown it is wrapped accordingly and re-thrown.
+     */
+    private File makeCanonical(File file, Function<Exception, ExitException> exceptionWrapper) throws ExitException {
+        try {
+            return file.getCanonicalFile();
+        } catch (IOException exception) {
+            throw exceptionWrapper.apply(exception);
+        }
     }
 }

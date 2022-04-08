@@ -8,18 +8,18 @@ import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
-public class Parser extends AbstractParser implements TokenConstants {
+public class Parser extends AbstractParser {
 
     private TokenList tokens;
 
-    public TokenList parse(File directory, String files[]) {
+    public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         for (String file : files) {
             getErrorConsumer().print(null, "Parsing file " + file);
             if (!parseFile(directory, file))
                 errors++;
-            tokens.addToken(new CharToken(FILE_END, file, this));
+            tokens.addToken(new CharToken(TokenConstants.FILE_END, file, this));
         }
         if (errors == 0)
             errorConsumer.print(null, "OK");
@@ -59,7 +59,7 @@ public class Parser extends AbstractParser implements TokenConstants {
         return true;
     }
 
-    private int[] mapping = {-1, // 0 (nul)
+    private final int[] mapping = {-1, // 0 (nul)
             -1, // 1 (soh)
             -1, // 2 (stx)
             -1, // 3 (etx)

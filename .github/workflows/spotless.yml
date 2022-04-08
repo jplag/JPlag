@@ -13,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3
 
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: 14
-        distribution: 'zulu'
+        java-version: 17
+        distribution: 'temurin'
       
     - name: Check with Spotless
       run: mvn clean spotless:check

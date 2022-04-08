@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * List of tokens. Allows random access to individual tokens. Contains a hash map for token hashes.
  */
-public class TokenList implements TokenConstants {
+public class TokenList {
     private final List<Token> tokens;
     TokenHashMap tokenHashes = null;
     int hash_length = -1;
@@ -55,8 +55,7 @@ public class TokenList implements TokenConstants {
 
     @Override
     public final String toString() {
-        StringBuffer buffer = new StringBuffer();
-
+        StringBuilder buffer = new StringBuilder();
         try {
             for (int i = 0; i < tokens.size(); i++) {
                 buffer.append(i);

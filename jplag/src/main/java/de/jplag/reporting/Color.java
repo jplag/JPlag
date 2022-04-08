@@ -61,7 +61,7 @@ public enum Color {
 
     private final String hexadecimalValue;
 
-    private Color(String hexadecimalValue) {
+    Color(String hexadecimalValue) {
         this.hexadecimalValue = hexadecimalValue;
     }
 

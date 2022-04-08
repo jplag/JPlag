@@ -10,7 +10,7 @@ import de.jplag.options.JPlagOptions;
 
 public class HTMLFile extends PrintWriter {
 
-    private BufferedCounter counter;
+    private final BufferedCounter counter;
 
     /**
      * Static factory method to instantiate an HTMLFile objects.

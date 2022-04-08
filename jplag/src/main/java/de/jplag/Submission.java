@@ -13,9 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.ReportGenerationException;
-import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -35,7 +33,7 @@ public class Submission implements Comparable<Submission> {
     /**
      * Root of the submission files (including the subdir if used).
      */
-    private final File submissionRoot;
+    private final File submissionRootFile;
 
     /**
      * Files of the submission.
@@ -63,14 +61,14 @@ public class Submission implements Comparable<Submission> {
     /**
      * Creates a submission.
      * @param name Identification of the submission (directory or filename).
-     * @param submissionRoot Root of the submission (either a file or a directory).
+     * @param submissionRootFile is the submission file, or the root of the submission itself.
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
      * @param language is the language of the submission.
      * @param errorCollector is the interface for error reporting.
      */
-    public Submission(String name, File submissionRoot, Collection<File> files, Language language, ErrorCollector errorCollector) {
+    public Submission(String name, File submissionRootFile, Collection<File> files, Language language, ErrorCollector errorCollector) {
         this.name = name;
-        this.submissionRoot = submissionRoot;
+        this.submissionRootFile = submissionRootFile;
         this.files = files;
         this.language = language;
         this.errorCollector = errorCollector;
@@ -84,22 +82,18 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return Identification of the submission (often a directory or file name).
+     * @return name of the submission (directory or file name).
      */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return the unique file of the submission, which is either in a root folder or a subfolder of root folder when the
+     * subdirectory option is used.
+     */
     public File getRoot() {
-        return submissionRoot;
-    }
-
-    public File getCanonicalRoot() throws ExitException {
-        try {
-            return submissionRoot.getCanonicalFile();
-        } catch (IOException exception) {
-            throw new SubmissionException(String.format("Cannot compute canonical file path of \"%s\".", submissionRoot.toString()), exception);
-        }
+        return submissionRootFile;
     }
 
     /**
@@ -172,9 +166,9 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
-        String[] relativeFilePaths = getRelativeFilePaths(submissionRoot, files);
+        String[] relativeFilePaths = getRelativeFilePaths(submissionRootFile, files);
 
-        tokenList = language.parse(submissionRoot, relativeFilePaths);
+        tokenList = language.parse(submissionRootFile, relativeFilePaths);
         if (!language.hasErrors()) {
             if (tokenList.size() < 3) {
                 errorCollector.print("Submission \"" + name + "\" is too short!", null);
@@ -205,7 +199,7 @@ public class Submission implements Comparable<Submission> {
             text.clear();
 
             try {
-                FileInputStream fileInputStream = new FileInputStream(new File(submissionRoot, files[i]));
+                FileInputStream fileInputStream = new FileInputStream(new File(submissionRootFile, files[i]));
                 InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, JPlagOptions.CHARSET);
                 BufferedReader in = new BufferedReader(inputStreamReader);
 
@@ -221,7 +215,7 @@ public class Submission implements Comparable<Submission> {
                 inputStreamReader.close();
                 fileInputStream.close();
             } catch (FileNotFoundException e) {
-                System.out.println("File not found: " + ((new File(submissionRoot, files[i])).toString()));
+                System.out.println("File not found: " + new File(submissionRootFile, files[i]));
             } catch (IOException e) {
                 throw new ReportGenerationException("I/O exception!", e);
             }
@@ -243,7 +237,7 @@ public class Submission implements Comparable<Submission> {
             // If the token path is absolute, ignore the provided directory
             File file = new File(files[i]);
             if (!file.isAbsolute()) {
-                file = new File(submissionRoot, files[i]);
+                file = new File(submissionRootFile, files[i]);
             }
 
             try {
@@ -303,14 +297,14 @@ public class Submission implements Comparable<Submission> {
      * This method is used to copy files that can not be parsed to a special folder.
      */
     private void copySubmission() {
-        File rootDirectory = submissionRoot.getParentFile();
+        File rootDirectory = submissionRootFile.getParentFile();
         assert rootDirectory != null;
         File submissionDirectory = createSubdirectory(rootDirectory, ERROR_FOLDER, language.getShortName(), name);
         for (File file : files) {
             try {
                 Files.copy(file.toPath(), new File(submissionDirectory, file.getName()).toPath());
             } catch (IOException exception) {
-                errorCollector.print("Error copying file: " + exception.toString() + "\n", null);
+                errorCollector.print("Error copying file: " + exception + "\n", null);
             }
         }
     }

@@ -5,12 +5,12 @@ import java.io.File;
 import de.jplag.AbstractParser;
 import de.jplag.TokenList;
 
-public class Scanner extends AbstractParser implements CPPTokenConstants {
+public class Scanner extends AbstractParser {
     private String currentFile;
 
     private TokenList tokens;
 
-    public TokenList scan(File directory, String files[]) {
+    public TokenList scan(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         CPPScanner scanner = null;// will be initialized in Method scanFile
@@ -20,7 +20,7 @@ public class Scanner extends AbstractParser implements CPPTokenConstants {
             if (!CPPScanner.scanFile(directory, files[i], scanner, this)) {
                 errors++;
             }
-            tokens.addToken(new CPPToken(FILE_END, currentFile));
+            tokens.addToken(new CPPToken(CPPTokenConstants.FILE_END, currentFile));
         }
         this.parseEnd();
         return tokens;

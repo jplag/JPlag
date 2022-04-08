@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
@@ -36,9 +37,8 @@ public class JPlag {
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
      * @param options determines the parameterization.
-     * @throws ExitException if the initialization fails.
      */
-    public JPlag(JPlagOptions options) throws ExitException {
+    public JPlag(JPlagOptions options) {
         this.options = options;
         errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
@@ -50,7 +50,7 @@ public class JPlag {
 
     /**
      * If an exclusion file is given, it is read in and all strings are saved in the set "excluded".
-     * @param exclusionFileName
+     * @param exclusionFileName the file name or path
      */
     Set<String> readExclusionFile(final String exclusionFileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
@@ -90,18 +90,17 @@ public class JPlag {
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         errorCollector.print("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()), null);
+
+        result.setClusteringResult(ClusteringFactory.getClusterings(result.getComparisons(), options.getClusteringOptions()));
+
         return result;
     }
 
     private ComparisonStrategy initializeComparisonStrategy(final ComparisonMode comparisonMode) {
-        switch (comparisonMode) {
-            case NORMAL:
-                return new NormalComparisonStrategy(options, coreAlgorithm);
-            case PARALLEL:
-                return new ParallelComparisonStrategy(options, coreAlgorithm);
-            default:
-                throw new AssertionError("Unknown comparison strategy found.");
-        }
+        return switch (comparisonMode) {
+            case NORMAL -> new NormalComparisonStrategy(options, coreAlgorithm);
+            case PARALLEL -> new ParallelComparisonStrategy(options, coreAlgorithm);
+        };
     }
 
     private Language initializeLanguage() {

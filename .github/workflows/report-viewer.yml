@@ -1,0 +1,30 @@
+name: Report Viewer Deployment Workflow
+
+on:
+ workflow_dispatch: # Use this to dispatch from the Actions Tab
+ push:
+    branches:
+      - master
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+          
+      - name: Install and Build 🔧
+        working-directory: report-viewer
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.2.5
+        with:
+          branch: gh-pages
+          folder: report-viewer/dist

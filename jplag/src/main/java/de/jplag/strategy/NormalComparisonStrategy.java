@@ -39,7 +39,7 @@ public class NormalComparisonStrategy extends AbstractComparisonStrategy {
                 if (second.getTokenList() == null) {
                     continue;
                 }
-                compareSubmissions(first, second, withBaseCode).ifPresent(it -> comparisons.add(it));
+                compareSubmissions(first, second, withBaseCode).ifPresent(comparisons::add);
             }
         }
 

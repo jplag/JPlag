@@ -10,7 +10,7 @@ import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
-public class Parser extends AbstractParser implements TokenConstants {
+public class Parser extends AbstractParser {
 
     protected Hashtable<String, Integer> table = new Hashtable<>();
     protected int serial = 1; // 0 is FILE_END token
@@ -21,14 +21,14 @@ public class Parser extends AbstractParser implements TokenConstants {
 
     private boolean runOut = false;
 
-    public TokenList parse(File directory, String files[]) {
+    public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         for (String file : files) {
             getErrorConsumer().print("", "Parsing file " + file);
             if (!parseFile(directory, file))
                 errors++;
-            tokens.addToken(new TextToken(FILE_END, file, this));
+            tokens.addToken(new TextToken(TokenConstants.FILE_END, file, this));
         }
 
         TokenList tmp = tokens;

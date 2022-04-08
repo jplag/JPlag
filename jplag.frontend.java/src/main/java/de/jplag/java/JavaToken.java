@@ -12,7 +12,7 @@ public class JavaToken extends Token implements JavaTokenConstants {
     protected String type2string() {
         switch (type) {
             case JavaTokenConstants.FILE_END:
-                return "********";
+                return "EOF";
             case JavaTokenConstants.SEPARATOR_TOKEN:
                 return "METHOD_SEPARATOR";
             case J_PACKAGE:
@@ -141,13 +141,20 @@ public class JavaToken extends Token implements JavaTokenConstants {
                 return "PROVIDES";
             case J_REQUIRES:
                 return "REQUIRES";
-
             case J_TRY_WITH_RESOURCE:
                 return "TRY_RES";
+            case J_YIELD:
+                return "YIELD";
+            case J_DEFAULT:
+                return "DEFAULT";
+            case J_RECORD_BEGIN:
+                return "RECORD{";
+            case J_RECORD_END:
+                return "}RECORD";
 
             default:
-                System.err.println("*UNKNOWN: " + type);
-                return "*UNKNOWN" + type;
+                System.err.println("UNKNOWN: " + type);
+                return "<UNKNOWN" + type + ">";
         }
     }
 }
