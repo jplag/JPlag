@@ -51,25 +51,25 @@ public class SubmissionSetBuilder {
      * @throws ExitException if the directory cannot be read.
      */
     public SubmissionSet buildSubmissionSet() throws ExitException {
-        Set<File> plagiarismCheckRootDirectoryNames = verifyRootDirectories(options.getPlagiarismCheckRootDirectoryNames(), true);
-        Set<File> priorSubmissionrootDirectoryNames = verifyRootDirectories(options.getPriorSubmissionsDirectoryNames(), false);
-        checkForNonOverlappingRootDirectories(plagiarismCheckRootDirectoryNames, priorSubmissionrootDirectoryNames);
+        Set<File> submissionDirectories = verifyRootDirectories(options.getSubmissionDirectories(), true);
+        Set<File> oldSubmissionDirectories = verifyRootDirectories(options.getOldSubmissionDirectories(), false);
+        checkForNonOverlappingRootDirectories(submissionDirectories, oldSubmissionDirectories);
 
         // For backward compatibility, don't prefix submission names with their root directory
         // if there is only one root directory.
-        int numberOfRootDirectories = plagiarismCheckRootDirectoryNames.size() + priorSubmissionrootDirectoryNames.size();
+        int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
         boolean multipleRoots = (numberOfRootDirectories > 1);
 
         // Collect valid looking entries from the root directories.
         Map<File, Submission> foundSubmissions = new HashMap<>();
-        for (File rootDirectory : plagiarismCheckRootDirectoryNames) {
-            processRootDirectoryEntries(rootDirectory, multipleRoots, foundSubmissions, true);
+        for (File directory : submissionDirectories) {
+            processRootDirectoryEntries(directory, multipleRoots, foundSubmissions, true);
         }
-        for (File rootDirectory : priorSubmissionrootDirectoryNames) {
-            processRootDirectoryEntries(rootDirectory, multipleRoots, foundSubmissions, false);
+        for (File oldDirectory : oldSubmissionDirectories) {
+            processRootDirectoryEntries(oldDirectory, multipleRoots, foundSubmissions, false);
         }
 
-        Optional<Submission> baseCodeSubmission = loadBaseCode(plagiarismCheckRootDirectoryNames, priorSubmissionrootDirectoryNames,
+        Optional<Submission> baseCodeSubmission = loadBaseCode(submissionDirectories, oldSubmissionDirectories,
                 foundSubmissions);
 
         // Merge everything in a submission set.
@@ -80,8 +80,8 @@ public class SubmissionSetBuilder {
     /**
      * Verify that the given root directories exist and have no duplicate entries.
      */
-    private Set<File> verifyRootDirectories(List<String> rootDirectoryNames, boolean isCheckingPlagiarismDirectories) throws ExitException {
-        if (isCheckingPlagiarismDirectories && rootDirectoryNames.isEmpty()) {
+    private Set<File> verifyRootDirectories(List<String> rootDirectoryNames, boolean areNewDirectories) throws ExitException {
+        if (areNewDirectories && rootDirectoryNames.isEmpty()) {
             throw new RootDirectoryException("No root directories specified with submissions to check for plagiarism!");
         }
 
@@ -106,27 +106,26 @@ public class SubmissionSetBuilder {
     }
 
     /**
-     * Verify that the plagiarism and prior root directory sets are disjunct and modify the prior submissions set if
-     * necessary.
+     * Verify that the new and old directory sets are disjunct and modify the old submissions set if necessary.
      */
-    private void checkForNonOverlappingRootDirectories(Set<File> plagiarismCheckRootDirectoryNames, Set<File> priorSubmissionrootDirectoryNames) {
+    private void checkForNonOverlappingRootDirectories(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
 
-        Set<File> commonRootdirectories = new HashSet<>(plagiarismCheckRootDirectoryNames);
-        commonRootdirectories.retainAll(priorSubmissionrootDirectoryNames);
+        Set<File> commonRootdirectories = new HashSet<>(submissionDirectories);
+        commonRootdirectories.retainAll(oldSubmissionDirectories);
         if (commonRootdirectories.isEmpty()) {
             return;
         }
 
-        // As usage of prior submission submissions is a subset of usage of plagiarism check submissions, the
+        // As old submission directories are only read while new submission directories are both read and checked, the
         // former use can be removed without affecting the result of the checks.
-        priorSubmissionrootDirectoryNames.removeAll(commonRootdirectories);
+        oldSubmissionDirectories.removeAll(commonRootdirectories);
         for (File rootDirectory : commonRootdirectories) {
             System.out.println("Warning: Root directory \"" + rootDirectory.toString()
                     + "\" is specified both for plagiarism checking and for prior submissions, will perform plagiarism checking only.");
         }
     }
 
-    private Optional<Submission> loadBaseCode(Set<File> plagiarismCheckRootDirectoryNames, Set<File> priorSubmissionrootDirectoryNames,
+    private Optional<Submission> loadBaseCode(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             Map<File, Submission> foundSubmissions) throws ExitException {
         // Extract the basecode submission if necessary.
         Optional<Submission> baseCodeSubmission = Optional.empty();
@@ -134,14 +133,14 @@ public class SubmissionSetBuilder {
             String baseCodeName = options.getBaseCodeSubmissionName().get();
             Submission baseCode = loadBaseCodeAsPath(baseCodeName);
             if (baseCode == null) {
-                int numberOfRootDirectories = plagiarismCheckRootDirectoryNames.size() + priorSubmissionrootDirectoryNames.size();
+                int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
                 if (numberOfRootDirectories > 1) {
                     throw new BasecodeException("The base code submission needs to be specified by path instead of by name!");
                 }
 
-                // There is one root directory, and the plagiarismCheckRootDirectoryNames have been checked to be non-empty.
+                // There is one root directory, and the submissionDirectories variable has been checked to be non-empty.
                 // That set thus contains the the one and only root directory.
-                File rootDirectory = plagiarismCheckRootDirectoryNames.iterator().next();
+                File rootDirectory = submissionDirectories.iterator().next();
 
                 // Single root-directory, try the legacy way of specifying basecode.
                 baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
@@ -266,11 +265,11 @@ public class SubmissionSetBuilder {
     /**
      * Process the given directory entry as a submission, the path MUST not be excluded.
      * @param submissionFile the file for the submission.
-     * @param submissionsNeedChecking states whether submissions found in the root directory must be checked for plagiarism.
+     * @param isNew states whether submissions found in the root directory must be checked for plagiarism.
      * @return The entry converted to a submission.
      * @throws ExitException when an error has been found with the entry.
      */
-    private Submission processSubmission(String submissionName, File submissionFile, boolean submissionsNeedChecking) throws ExitException {
+    private Submission processSubmission(String submissionName, File submissionFile, boolean isNew) throws ExitException {
 
         if (submissionFile.isDirectory() && options.getSubdirectoryName() != null) {
             // Use subdirectory instead
@@ -287,7 +286,7 @@ public class SubmissionSetBuilder {
         }
 
         submissionFile = makeCanonical(submissionFile, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, submissionFile, submissionsNeedChecking, parseFilesRecursively(submissionFile), language,
+        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language,
                 errorCollector);
     }
 
@@ -295,10 +294,10 @@ public class SubmissionSetBuilder {
      * Process entries in the root directory to check whether they qualify as submissions.
      * @param rootDirectory is the root directory being examined.
      * @param foundSubmissions Submissions found so far, is updated in-place.
-     * @param submissionsNeedChecking states whether submissions found in the root directory must be checked for plagiarism.
+     * @param isNew states whether submissions found in the root directory must be checked for plagiarism.
      */
     private void processRootDirectoryEntries(File rootDirectory, boolean multipleRoots, Map<File, Submission> foundSubmissions,
-            boolean submissionsNeedChecking) throws ExitException {
+            boolean isNew) throws ExitException {
         for (String fileName : listSubmissionFiles(rootDirectory)) {
             File submissionFile = new File(rootDirectory, fileName);
 
@@ -306,7 +305,7 @@ public class SubmissionSetBuilder {
             if (errorMessage == null) {
                 String rootDirectoryPrefix = multipleRoots ? (rootDirectory.getName() + File.separator) : "";
                 String submissionName = rootDirectoryPrefix + fileName;
-                Submission submission = processSubmission(submissionName, submissionFile, submissionsNeedChecking);
+                Submission submission = processSubmission(submissionName, submissionFile, isNew);
                 foundSubmissions.put(submission.getRoot(), submission);
             } else {
                 System.out.println(errorMessage);

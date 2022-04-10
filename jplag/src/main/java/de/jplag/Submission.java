@@ -36,9 +36,9 @@ public class Submission implements Comparable<Submission> {
     private final File submissionRootFile;
 
     /**
-     * Whether the submission must be checked for plagiarism.
+     * Whether the submission is new. That is, must be checked for plagiarism.
      */
-    private final boolean mustBeCheckedForPlagiarism;
+    private final boolean isNew;
 
     /**
      * Files of the submission.
@@ -67,16 +67,16 @@ public class Submission implements Comparable<Submission> {
      * Creates a submission.
      * @param name Identification of the submission (directory or filename).
      * @param submissionRootFile is the submission file, or the root of the submission itself.
-     * @param mustBeCheckedForPlagiarism states whether the submission must be checked for plagiarism.
+     * @param isNew states whether the submission must be checked for plagiarism.
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
      * @param language is the language of the submission.
      * @param errorCollector is the interface for error reporting.
      */
-    public Submission(String name, File submissionRootFile, boolean mustBeCheckedForPlagiarism, Collection<File> files, Language language,
+    public Submission(String name, File submissionRootFile, boolean isNew, Collection<File> files, Language language,
             ErrorCollector errorCollector) {
         this.name = name;
         this.submissionRootFile = submissionRootFile;
-        this.mustBeCheckedForPlagiarism = mustBeCheckedForPlagiarism;
+        this.isNew = isNew;
         this.files = files;
         this.language = language;
         this.errorCollector = errorCollector;
@@ -105,10 +105,10 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return whether the submission must be checked for plagiarism.
+     * @return whether the submission is new, That is, must be checked for plagiarism.
      */
-    public boolean mustBeCheckedForPlagiarism() {
-        return mustBeCheckedForPlagiarism;
+    public boolean isNew() {
+        return isNew;
     }
 
     /**

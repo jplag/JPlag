@@ -68,7 +68,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
                     continue;
                 }
 
-                if (first.mustBeCheckedForPlagiarism() || second.mustBeCheckedForPlagiarism()) {
+                if (first.isNew() || second.isNew()) {
                     tuples.add(new SubmissionTuple(first, second));
                 }
             }

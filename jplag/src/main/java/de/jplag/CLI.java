@@ -102,14 +102,14 @@ public class CLI {
         }
 
         // Collect the root directories.
-        List<String> plagiarismCheckRootDirectoryNames = new ArrayList<>();
-        List<String> priorSubmissionsRootDirectoryNames = new ArrayList<>();
-        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), plagiarismCheckRootDirectoryNames);
-        addAllMultiValueArgument(PLAGIARISM_DIRECTORY.getListFrom(namespace), plagiarismCheckRootDirectoryNames);
-        addAllMultiValueArgument(PRIOR_DIRECTORY.getListFrom(namespace), priorSubmissionsRootDirectoryNames);
+        List<String> submissionDirectories = new ArrayList<>();
+        List<String> oldSubmissionDirectories = new ArrayList<>();
+        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), submissionDirectories);
+        addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectories);
+        addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
 
         LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(plagiarismCheckRootDirectoryNames, priorSubmissionsRootDirectoryNames, language);
+        JPlagOptions options = new JPlagOptions(submissionDirectories, oldSubmissionDirectories, language);
         options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
         options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
         options.setDebugParser(DEBUG.getFrom(namespace));
@@ -163,11 +163,11 @@ public class CLI {
         return String.format("JPlag - %s" + System.lineSeparator() + CREDITS, randomDescription);
     }
 
-    private void addAllMultiValueArgument(List<List<String>> argumentValues, List<String> destinationRootDirectoryNames) {
+    private void addAllMultiValueArgument(List<List<String>> argumentValues, List<String> destinationRootDirectories) {
         if (argumentValues == null) {
             return;
         }
 
-        argumentValues.stream().forEach(value -> destinationRootDirectoryNames.addAll(value));
+        argumentValues.stream().forEach(value -> destinationRootDirectories.addAll(value));
     }
 }

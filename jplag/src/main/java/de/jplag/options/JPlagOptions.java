@@ -80,14 +80,14 @@ public class JPlagOptions {
     private Set<String> excludedFiles = Collections.emptySet();
 
     /**
-     * Directories that contain all submissions that need to be checked for plagiarism.
+     * Directories with new submissions. These must be checked for plagiarism.
      */
-    private List<String> plagiarismCheckRootDirectoryNames;
+    private List<String> submissionDirectories;
 
     /**
-     * Directories that contain all submissions with prior art to check against.
+     * Directories with old submissions to check against.
      */
-    private List<String> priorSubmissionsRootDirectoryNames;
+    private List<String> oldSubmissionDirectories;
 
     /**
      * Path name of the directory containing the base code.
@@ -129,10 +129,10 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(List<String> plagiarismCheckRootDirectoryNames, List<String> priorSubmissionsRootDirectoryNames,
+    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories,
             LanguageOption languageOption) {
-        this.plagiarismCheckRootDirectoryNames = plagiarismCheckRootDirectoryNames;
-        this.priorSubmissionsRootDirectoryNames = priorSubmissionsRootDirectoryNames;
+        this.submissionDirectories = submissionDirectories;
+        this.oldSubmissionDirectories = oldSubmissionDirectories;
         this.languageOption = languageOption;
     }
 
@@ -172,12 +172,12 @@ public class JPlagOptions {
         return minimumTokenMatch;
     }
 
-    public List<String> getPlagiarismCheckRootDirectoryNames() {
-        return plagiarismCheckRootDirectoryNames;
+    public List<String> getSubmissionDirectories() {
+        return submissionDirectories;
     }
 
-    public List<String> getPriorSubmissionsDirectoryNames() {
-        return priorSubmissionsRootDirectoryNames;
+    public List<String> getOldSubmissionDirectories() {
+        return oldSubmissionDirectories;
     }
 
     public SimilarityMetric getSimilarityMetric() {
@@ -271,12 +271,12 @@ public class JPlagOptions {
         }
     }
 
-    public void setPlagismCheckRootDirectoryNames(List<String> plagiarismCheckRootDirectoryNames) {
-        this.plagiarismCheckRootDirectoryNames = plagiarismCheckRootDirectoryNames;
+    public void setSubmissionDirectories(List<String> submissionDirectories) {
+        this.submissionDirectories = submissionDirectories;
     }
 
-    public void setPriorSubmissionsRootDirectoryNames(List<String> priorSubmissionsRootDirectoryNames) {
-        this.priorSubmissionsRootDirectoryNames = priorSubmissionsRootDirectoryNames;
+    public void setOldSubmissionDirectories(List<String> oldSubmissionDirectories) {
+        this.oldSubmissionDirectories = oldSubmissionDirectories;
     }
 
     public void setSimilarityMetric(SimilarityMetric similarityMetric) {

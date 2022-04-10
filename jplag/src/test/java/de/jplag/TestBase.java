@@ -41,12 +41,12 @@ public abstract class TestBase {
         return runJPlag(List.of(getBasePath(testSampleName)), List.of(), customization);
     }
 
-    protected JPlagResult runJPlag(List<String> checkPaths, Consumer<JPlagOptions> customization) throws ExitException {
-        return runJPlag(checkPaths, List.of(), customization);
+    protected JPlagResult runJPlag(List<String> newPaths, Consumer<JPlagOptions> customization) throws ExitException {
+        return runJPlag(newPaths, List.of(), customization);
     }
 
-    protected JPlagResult runJPlag(List<String> checkPaths, List<String> priorPaths, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(checkPaths, priorPaths, LanguageOption.JAVA);
+    protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Consumer<JPlagOptions> customization) throws ExitException {
+        JPlagOptions options = new JPlagOptions(newPaths, oldPaths, LanguageOption.JAVA);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);
