@@ -69,8 +69,7 @@ public class SubmissionSetBuilder {
             processRootDirectoryEntries(oldDirectory, multipleRoots, foundSubmissions, false);
         }
 
-        Optional<Submission> baseCodeSubmission = loadBaseCode(submissionDirectories, oldSubmissionDirectories,
-                foundSubmissions);
+        Optional<Submission> baseCodeSubmission = loadBaseCode(submissionDirectories, oldSubmissionDirectories, foundSubmissions);
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
@@ -286,8 +285,7 @@ public class SubmissionSetBuilder {
         }
 
         submissionFile = makeCanonical(submissionFile, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language,
-                errorCollector);
+        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language, errorCollector);
     }
 
     /**
@@ -296,8 +294,8 @@ public class SubmissionSetBuilder {
      * @param foundSubmissions Submissions found so far, is updated in-place.
      * @param isNew states whether submissions found in the root directory must be checked for plagiarism.
      */
-    private void processRootDirectoryEntries(File rootDirectory, boolean multipleRoots, Map<File, Submission> foundSubmissions,
-            boolean isNew) throws ExitException {
+    private void processRootDirectoryEntries(File rootDirectory, boolean multipleRoots, Map<File, Submission> foundSubmissions, boolean isNew)
+            throws ExitException {
         for (String fileName : listSubmissionFiles(rootDirectory)) {
             File submissionFile = new File(rootDirectory, fileName);
 

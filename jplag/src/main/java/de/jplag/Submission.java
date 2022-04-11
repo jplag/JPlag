@@ -72,8 +72,7 @@ public class Submission implements Comparable<Submission> {
      * @param language is the language of the submission.
      * @param errorCollector is the interface for error reporting.
      */
-    public Submission(String name, File submissionRootFile, boolean isNew, Collection<File> files, Language language,
-            ErrorCollector errorCollector) {
+    public Submission(String name, File submissionRootFile, boolean isNew, Collection<File> files, Language language, ErrorCollector errorCollector) {
         this.name = name;
         this.submissionRootFile = submissionRootFile;
         this.isNew = isNew;

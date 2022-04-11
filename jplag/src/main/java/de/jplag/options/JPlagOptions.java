@@ -129,8 +129,7 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories,
-            LanguageOption languageOption) {
+    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, LanguageOption languageOption) {
         this.submissionDirectories = submissionDirectories;
         this.oldSubmissionDirectories = oldSubmissionDirectories;
         this.languageOption = languageOption;
