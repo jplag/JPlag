@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.jplag</groupId>
         <artifactId>aggregator</artifactId>
-        <version>${jplag-revision}</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>python-3</artifactId>
 
