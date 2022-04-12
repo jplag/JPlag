@@ -1,7 +1,5 @@
-/* Hey Emacs, this is -*- mode: java; page-delimiter: "^%%$"; -*- */
-
-/* Ein C/C++ Scanner.
- * ...weil Parsen zu schwierig ist.
+/*
+ * A C/C++ scanner.
  */
 
 options
@@ -24,28 +22,25 @@ import java.io.InputStream;
 import de.jplag.cpp.NewlineStream;
 
 public class CPPScanner implements CPPTokenConstants {
-    private static Scanner scanner2;
+    private static Scanner delegatingScanner;
 
-    public static boolean scanFile(File dir, String fileName, CPPScanner scanner, Scanner scannerX) {
+    public static boolean scanFile(File dir, String fileName, Scanner delegatingScanner) {
+        CPPScanner scanner;
         try {
-            InputStream in = new NewlineStream(new FileInputStream(new File(dir, fileName)));
-            if (scanner == null) {
-                scanner = new CPPScanner(in, "UTF-8");
-            } else {
-                scanner.ReInit(in, "UTF-8");
-            }
-            scanner.scanner2 = scannerX;
+            InputStream input = new NewlineStream(new FileInputStream(new File(dir, fileName)));
+            scanner = new CPPScanner(input, "UTF-8");
+            scanner.delegatingScanner = delegatingScanner;
         } catch (FileNotFoundException e) {
-            System.out.println("C/C++ Scanner:  File " + fileName + " not found.");
+            System.out.println("C/C++ Scanner: File " + fileName + " not found.");
             return false;
         }
         try {
             scanner.scan();
         } catch (ParseException e) {
-            scannerX.getErrorConsumer().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage());
+            delegatingScanner.getErrorConsumer().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage());
             return false;
         } catch (TokenMgrException e) {
-            scannerX.getErrorConsumer().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage());
+            delegatingScanner.getErrorConsumer().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage());
             return false;
         }
         return true;
@@ -281,29 +276,29 @@ void scan(): {}
 
 void token(): {}
 {
-  "{"            { scanner2.add(C_BLOCK_BEGIN,token); }
-| "}"            { scanner2.add(C_BLOCK_END,token); }
+  "{"            { delegatingScanner.add(C_BLOCK_BEGIN,token); }
+| "}"            { delegatingScanner.add(C_BLOCK_END,token); }
 | "["
 | "]"
 | "("
 | ")"
-| "::"           { scanner2.add(C_SCOPE,token); }
+| "::"           { delegatingScanner.add(C_SCOPE,token); }
 | ":"
 | ";"
 | ","
-| "?"            { scanner2.add(C_QUESTIONMARK,token); }
-| "..."          { scanner2.add(C_ELLIPSIS,token); }
-| "="            { scanner2.add(C_ASSIGN,token); }
-| "*="           { scanner2.add(C_ASSIGN,token); }
-| "/="           { scanner2.add(C_ASSIGN,token); }
-| "%="           { scanner2.add(C_ASSIGN,token); }
-| "+="           { scanner2.add(C_ASSIGN,token); }
-| "-="           { scanner2.add(C_ASSIGN,token); }
-| "<<="          { scanner2.add(C_ASSIGN,token); }
-| ">>="          { scanner2.add(C_ASSIGN,token); }
-| "&="           { scanner2.add(C_ASSIGN,token); }
-| "^="           { scanner2.add(C_ASSIGN,token); }
-| "|="           { scanner2.add(C_ASSIGN,token); }
+| "?"            { delegatingScanner.add(C_QUESTIONMARK,token); }
+| "..."          { delegatingScanner.add(C_ELLIPSIS,token); }
+| "="            { delegatingScanner.add(C_ASSIGN,token); }
+| "*="           { delegatingScanner.add(C_ASSIGN,token); }
+| "/="           { delegatingScanner.add(C_ASSIGN,token); }
+| "%="           { delegatingScanner.add(C_ASSIGN,token); }
+| "+="           { delegatingScanner.add(C_ASSIGN,token); }
+| "-="           { delegatingScanner.add(C_ASSIGN,token); }
+| "<<="          { delegatingScanner.add(C_ASSIGN,token); }
+| ">>="          { delegatingScanner.add(C_ASSIGN,token); }
+| "&="           { delegatingScanner.add(C_ASSIGN,token); }
+| "^="           { delegatingScanner.add(C_ASSIGN,token); }
+| "|="           { delegatingScanner.add(C_ASSIGN,token); }
 | "||"
 | "&&"
 | "|"
@@ -322,61 +317,61 @@ void token(): {}
 | "*"
 | "/"
 | "%"
-| "++"           { scanner2.add(C_ASSIGN,token); }
-| "--"           { scanner2.add(C_ASSIGN,token); }
+| "++"           { delegatingScanner.add(C_ASSIGN,token); }
+| "--"           { delegatingScanner.add(C_ASSIGN,token); }
 | "~"
 | "!"
-| "auto"         { scanner2.add(C_AUTO,token); }
-| "break"        { scanner2.add(C_BREAK,token); }
-| "case"         { scanner2.add(C_CASE,token); }
-| "catch"        { scanner2.add(C_CATCH,token); }
-| "char"         { scanner2.add(C_CHAR,token); }
-| "const"        { scanner2.add(C_CONST,token); }
-| "continue"     { scanner2.add(C_CONTINUE,token); }
-| "default"      { scanner2.add(C_DEFAULT,token); }
-| "delete"       { scanner2.add(C_DELETE,token); }
-| "do"           { scanner2.add(C_DO,token); }
-| "double"       { scanner2.add(C_DOUBLE,token); }
-| "else"         { scanner2.add(C_ELSE,token); }
-| "enum"         { scanner2.add(C_ENUM,token); }
-| "extern"       { scanner2.add(C_EXTERN,token); }
-| "float"        { scanner2.add(C_FLOAT,token); }
-| "for"          { scanner2.add(C_FOR,token); }
-| "friend"       { scanner2.add(C_FRIEND,token); }
-| "goto"         { scanner2.add(C_GOTO,token); }
-| "if"           { scanner2.add(C_IF,token); }
-| "inline"       { scanner2.add(C_INLINE,token); }
-| "int"          { scanner2.add(C_INT,token); }
-| "long"         { scanner2.add(C_LONG,token); }
-| "new"          { scanner2.add(C_NEW,token); }
-| "private"      { scanner2.add(C_PRIVATE,token); }
-| "protected"    { scanner2.add(C_PROTECTED,token); }
-| "public"       { scanner2.add(C_PUBLIC,token); }
-| "redeclared"   { scanner2.add(C_REDECLARED,token); }
-| "register"     { scanner2.add(C_REGISTER,token); }
-| "return"       { scanner2.add(C_RETURN,token); }
-| "short"        { scanner2.add(C_SHORT,token); }
-| "signed"       { scanner2.add(C_SIGNED,token); }
-| "sizeof"       { scanner2.add(C_SIZEOF,token); }
-| "static"       { scanner2.add(C_STATIC,token); }
-| "struct"       { scanner2.add(C_STRUCT,token); }
-| "class"        { scanner2.add(C_CLASS,token); }
-| "switch"       { scanner2.add(C_SWITCH,token); }
-| "template"     { scanner2.add(C_TEMPLATE,token); }
-| "this"         { scanner2.add(C_THIS,token); }
-| "try"          { scanner2.add(C_TRY,token); }
-| "typedef"      { scanner2.add(C_TYPEDEF,token); }
-| "union"        { scanner2.add(C_UNION,token); }
-| "unsigned"     { scanner2.add(C_UNSIGNED,token); }
-| "virtual"      { scanner2.add(C_VIRTUAL,token); }
-| "void"         { scanner2.add(C_VOID,token); }
-| "volatile"     { scanner2.add(C_VOLANTILE,token); }
-| "while"        { scanner2.add(C_WHILE,token); }
-| "operator"     { scanner2.add(C_OPERATOR,token); }
+| "auto"         { delegatingScanner.add(C_AUTO,token); }
+| "break"        { delegatingScanner.add(C_BREAK,token); }
+| "case"         { delegatingScanner.add(C_CASE,token); }
+| "catch"        { delegatingScanner.add(C_CATCH,token); }
+| "char"         { delegatingScanner.add(C_CHAR,token); }
+| "const"        { delegatingScanner.add(C_CONST,token); }
+| "continue"     { delegatingScanner.add(C_CONTINUE,token); }
+| "default"      { delegatingScanner.add(C_DEFAULT,token); }
+| "delete"       { delegatingScanner.add(C_DELETE,token); }
+| "do"           { delegatingScanner.add(C_DO,token); }
+| "double"       { delegatingScanner.add(C_DOUBLE,token); }
+| "else"         { delegatingScanner.add(C_ELSE,token); }
+| "enum"         { delegatingScanner.add(C_ENUM,token); }
+| "extern"       { delegatingScanner.add(C_EXTERN,token); }
+| "float"        { delegatingScanner.add(C_FLOAT,token); }
+| "for"          { delegatingScanner.add(C_FOR,token); }
+| "friend"       { delegatingScanner.add(C_FRIEND,token); }
+| "goto"         { delegatingScanner.add(C_GOTO,token); }
+| "if"           { delegatingScanner.add(C_IF,token); }
+| "inline"       { delegatingScanner.add(C_INLINE,token); }
+| "int"          { delegatingScanner.add(C_INT,token); }
+| "long"         { delegatingScanner.add(C_LONG,token); }
+| "new"          { delegatingScanner.add(C_NEW,token); }
+| "private"      { delegatingScanner.add(C_PRIVATE,token); }
+| "protected"    { delegatingScanner.add(C_PROTECTED,token); }
+| "public"       { delegatingScanner.add(C_PUBLIC,token); }
+| "redeclared"   { delegatingScanner.add(C_REDECLARED,token); }
+| "register"     { delegatingScanner.add(C_REGISTER,token); }
+| "return"       { delegatingScanner.add(C_RETURN,token); }
+| "short"        { delegatingScanner.add(C_SHORT,token); }
+| "signed"       { delegatingScanner.add(C_SIGNED,token); }
+| "sizeof"       { delegatingScanner.add(C_SIZEOF,token); }
+| "static"       { delegatingScanner.add(C_STATIC,token); }
+| "struct"       { delegatingScanner.add(C_STRUCT,token); }
+| "class"        { delegatingScanner.add(C_CLASS,token); }
+| "switch"       { delegatingScanner.add(C_SWITCH,token); }
+| "template"     { delegatingScanner.add(C_TEMPLATE,token); }
+| "this"         { delegatingScanner.add(C_THIS,token); }
+| "try"          { delegatingScanner.add(C_TRY,token); }
+| "typedef"      { delegatingScanner.add(C_TYPEDEF,token); }
+| "union"        { delegatingScanner.add(C_UNION,token); }
+| "unsigned"     { delegatingScanner.add(C_UNSIGNED,token); }
+| "virtual"      { delegatingScanner.add(C_VIRTUAL,token); }
+| "void"         { delegatingScanner.add(C_VOID,token); }
+| "volatile"     { delegatingScanner.add(C_VOLANTILE,token); }
+| "while"        { delegatingScanner.add(C_WHILE,token); }
+| "operator"     { delegatingScanner.add(C_OPERATOR,token); }
 | "true"
 | "false"
-| "throw"        { scanner2.add(C_THROW,token); }
-| "NULL"         { scanner2.add(C_NULL,token); }
+| "throw"        { delegatingScanner.add(C_THROW,token); }
+| "NULL"         { delegatingScanner.add(C_NULL,token); }
 
 | <OCTALINT>
 | <OCTALLONG>
@@ -400,7 +395,7 @@ void token(): {}
 
 | <BACKSLASH>
 
-       //| var() [LOOKAHEAD(2) "("        { scanner2.add(C_FUN,token); } ]
+       //| var() [LOOKAHEAD(2) "("        { delegatingScanner.add(C_FUN,token); } ]
 | "."
 | "->"
 | ".*"
