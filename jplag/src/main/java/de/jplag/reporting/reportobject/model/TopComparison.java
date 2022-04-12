@@ -1,4 +1,4 @@
-package de.jplag.reporting2.reportobject.model;
+package de.jplag.reporting.reportobject.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

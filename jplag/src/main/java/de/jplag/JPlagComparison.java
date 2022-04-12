@@ -1,12 +1,8 @@
 package de.jplag;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.IntStream;
 
 /**
  * This method represents the whole result of a comparison between two submissions.
@@ -30,23 +26,13 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      * Add a match to the comparison (token indices and number of tokens), if it does not overlap with the existing matches.
      * @see Match#Match(int, int, int)
      */
-    public final void addMatch(int startOfFirst, int startOfSecond, int length) {
+    /* package-private */ final void addMatch(int startOfFirst, int startOfSecond, int length) {
         for (Match match : matches) {
             if (match.overlap(startOfFirst, startOfSecond, length)) {
                 return;
             }
         }
         matches.add(new Match(startOfFirst, startOfSecond, length));
-    }
-
-    /**
-     * The bigger a match (length) is relatively to the biggest match the redder is the color returned by this method.
-     */
-    public String color(int length) {
-        int longestMatch = matches.stream().mapToInt(Match::getLength).max().orElse(0);
-        int color = 255 * length / longestMatch;
-        String help = (color < 16 ? "0" : "") + Integer.toHexString(color);
-        return "#" + help + "0000";
     }
 
     @Override
@@ -60,34 +46,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
             return false;
         }
         return (compare(this, (JPlagComparison) other) == 0);
-    }
-
-    /**
-     * This method returns all the files which contributed to a match. Parameter: j == 0 1st submission, j != 0 2nd
-     * submission.
-     */
-    public final String[] files(int j) {
-        if (matches.size() == 0) {
-            return new String[] {};
-        }
-
-        TokenList tokenList = (j == 0 ? firstSubmission : secondSubmission).getTokenList();
-
-        /*
-         * Collect the file names of the first token of each match.
-         */
-        Set<String> collectedFiles = new LinkedHashSet<>();
-        for (Match match : matches) {
-            collectedFiles.add(tokenList.getToken(match.getStart(j == 0)).getFile());
-        }
-
-        /*
-         * sort by file name. (so that equally named files are displayed approximately side by side.)
-         */
-        String[] res = collectedFiles.toArray(new String[0]);
-        Arrays.sort(res);
-
-        return res;
     }
 
     /**
@@ -136,22 +94,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      */
     public Submission getSecondSubmission() {
         return secondSubmission;
-    }
-
-    /**
-     * @param getFirst Whether to return the first submission, else return the second submission.
-     * @return The requested submission.
-     */
-    public Submission getSubmission(boolean getFirst) {
-        return getFirst ? firstSubmission : secondSubmission;
-    }
-
-    /**
-     * @param getFirst Whether to return the first basecode matches, else return the second basecode matches.
-     * @return The requested basecode matches.
-     */
-    public JPlagComparison getBaseCodeMatches(boolean getFirst) {
-        return getSubmission(getFirst).getBaseCodeComparison();
     }
 
     /**
@@ -215,24 +157,6 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
      */
     public final float basecodeSimilarityOfSecond() {
         return ((int) (secondBasecodeSimilarity() * ROUNDING_FACTOR)) / (float) ROUNDING_FACTOR;
-    }
-
-    /**
-     * Creates a permutation for the matches based on the indices of the matched token groups.
-     * @param useFirst determines whether the start of the first or second submission is compared.
-     * @return the permutation indices.
-     */
-    public final List<Integer> sort_permutation(boolean useFirst) {
-        List<Integer> indices = new ArrayList<>(matches.size());
-        IntStream.range(0, matches.size()).forEach(indices::add);
-        Comparator<Integer> comparator = Comparator.comparingInt((Integer i) -> selectStartof(i, useFirst));
-        indices.sort(comparator);
-        return indices;
-    }
-
-    private int selectStartof(Integer index, boolean useFirst) {
-        Match match = matches.get(index);
-        return match.getStart(useFirst);
     }
 
     @Override
