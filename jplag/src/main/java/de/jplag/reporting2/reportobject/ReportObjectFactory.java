@@ -34,7 +34,11 @@ public class ReportObjectFactory {
         List<JPlagComparison> comparisons = result.getComparisons();
         OverviewReport overviewReport = new OverviewReport();
 
-        overviewReport.setSubmissionFolderPath(result.getOptions().getRootDirectoryNames());
+        // TODO: Consider to treat entries that were checked differently from old entries with prior work.
+        List<String> folders = new ArrayList<>();
+        folders.addAll(result.getOptions().getSubmissionDirectories());
+        folders.addAll(result.getOptions().getOldSubmissionDirectories());
+        overviewReport.setSubmissionFolderPath(folders);
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().getBaseCodeSubmissionName().orElse("") : "";
         overviewReport.setBaseCodeFolderPath(baseCodePath);
