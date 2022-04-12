@@ -31,7 +31,6 @@ public class Parser extends AbstractParser {
             if (!parseFile(directory, files[i])) {
                 errors++;
             }
-            System.gc();// Emeric
             tokens.addToken(new Python3Token(Python3TokenConstants.FILE_END, files[i], -1, -1, -1));
         }
         this.parseEnd();
