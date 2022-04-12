@@ -1,20 +1,10 @@
 package de.jplag;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
-import de.jplag.exceptions.ReportGenerationException;
-import de.jplag.options.JPlagOptions;
 
 /**
  * Represents a single submission. A submission can contain multiple files.
@@ -81,6 +71,18 @@ public class Submission implements Comparable<Submission> {
         this.errorCollector = errorCollector;
     }
 
+    @Override
+    public int compareTo(Submission other) {
+        return name.compareTo(other.name);
+    }
+
+    /**
+     * @return base code comparison
+     */
+    public JPlagComparison getBaseCodeComparison() {
+        return baseCodeComparison;
+    }
+
     /**
      * @return a list of files this submission consists of.
      */
@@ -96,21 +98,6 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return the unique file of the submission, which is either in a root folder or a subfolder of root folder when the
-     * subdirectory option is used.
-     */
-    public File getRoot() {
-        return submissionRootFile;
-    }
-
-    /**
-     * @return whether the submission is new, That is, must be checked for plagiarism.
-     */
-    public boolean isNew() {
-        return isNew;
-    }
-
-    /**
      * @return Number of tokens in the parse result.
      */
     public int getNumberOfTokens() {
@@ -121,25 +108,11 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Sets the base code comparison
-     * @param baseCodeComparison is submissions matches with the base code
+     * @return the unique file of the submission, which is either in a root folder or a subfolder of root folder when the
+     * subdirectory option is used.
      */
-    public void setBaseCodeComparison(JPlagComparison baseCodeComparison) {
-        this.baseCodeComparison = baseCodeComparison;
-    }
-
-    /**
-     * @return base code comparison
-     */
-    public JPlagComparison getBaseCodeComparison() {
-        return baseCodeComparison;
-    }
-
-    /**
-     * @return Whether a comparison between the submission and the base code is available.
-     */
-    public boolean hasBaseCodeMatches() {
-        return baseCodeComparison != null;
+    public File getRoot() {
+        return submissionRootFile;
     }
 
     /**
@@ -162,6 +135,13 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
+     * @return Whether a comparison between the submission and the base code is available.
+     */
+    public boolean hasBaseCodeMatches() {
+        return baseCodeComparison != null;
+    }
+
+    /**
      * @return true if at least one error occurred while parsing this submission; false otherwise.
      */
     public boolean hasErrors() {
@@ -169,111 +149,10 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Parse files of the submission.
-     * @return Whether parsing was successful.
+     * @return whether the submission is new, That is, must be checked for plagiarism.
      */
-    public boolean parse(boolean debugParser) {
-        if (files == null || files.size() == 0) {
-            errorCollector.print("ERROR: nothing to parse for submission \"" + name + "\"", null);
-            tokenList = null;
-            hasErrors = true; // invalidate submission
-            return false;
-        }
-
-        String[] relativeFilePaths = getRelativeFilePaths(submissionRootFile, files);
-
-        tokenList = language.parse(submissionRootFile, relativeFilePaths);
-        if (!language.hasErrors()) {
-            if (tokenList.size() < 3) {
-                errorCollector.print("Submission \"" + name + "\" is too short!", null);
-                tokenList = null;
-                hasErrors = true; // invalidate submission
-                return false;
-            }
-            return true;
-        }
-
-        tokenList = null;
-        hasErrors = true; // invalidate submission
-        if (debugParser) {
-            copySubmission();
-        }
-        return false;
-    }
-
-    /**
-     * Used by the "Report" class. All source files are returned as an array of an array of strings.
-     */
-    public String[][] readFiles(String[] files) throws ReportGenerationException {
-        String[][] result = new String[files.length][];
-        String help;
-        List<String> text = new ArrayList<>();
-
-        for (int i = 0; i < files.length; i++) {
-            text.clear();
-
-            try {
-                FileInputStream fileInputStream = new FileInputStream(new File(submissionRootFile, files[i]));
-                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, JPlagOptions.CHARSET);
-                BufferedReader in = new BufferedReader(inputStreamReader);
-
-                while ((help = in.readLine()) != null) {
-                    help = help.replaceAll("&", "&amp;");
-                    help = help.replaceAll("<", "&lt;");
-                    help = help.replaceAll(">", "&gt;");
-                    help = help.replaceAll("\"", "&quot;");
-                    text.add(help);
-                }
-
-                in.close();
-                inputStreamReader.close();
-                fileInputStream.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("File not found: " + new File(submissionRootFile, files[i]));
-            } catch (IOException e) {
-                throw new ReportGenerationException("I/O exception!", e);
-            }
-
-            result[i] = new String[text.size()];
-            text.toArray(result[i]);
-        }
-
-        return result;
-    }
-
-    /**
-     * Used by the "Report" class. All source files are returned as an array of an array of chars.
-     */
-    public char[][] readFilesChar(String[] files) throws ReportGenerationException {
-        char[][] result = new char[files.length][];
-
-        for (int i = 0; i < files.length; i++) {
-            // If the token path is absolute, ignore the provided directory
-            File file = new File(files[i]);
-            if (!file.isAbsolute()) {
-                file = new File(submissionRootFile, files[i]);
-            }
-
-            try {
-                int size = (int) file.length();
-                char[] buffer = new char[size];
-
-                FileReader reader = new FileReader(file, JPlagOptions.CHARSET);
-
-                if (size != reader.read(buffer)) {
-                    System.out.println("Not right size read from the file, but I will still continue...");
-                }
-
-                result[i] = buffer;
-                reader.close();
-            } catch (FileNotFoundException e) {
-                throw new ReportGenerationException("File not found: " + file.getPath(), e);
-            } catch (IOException e) {
-                throw new ReportGenerationException("I/O exception reading file \"" + file.getPath() + "\"!", e);
-            }
-        }
-
-        return result;
+    public boolean isNew() {
+        return isNew;
     }
 
     /**
@@ -286,20 +165,19 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
+     * Sets the base code comparison
+     * @param baseCodeComparison is submissions matches with the base code
+     */
+    public void setBaseCodeComparison(JPlagComparison baseCodeComparison) {
+        this.baseCodeComparison = baseCodeComparison;
+    }
+
+    /**
      * Sets the tokens that have been parsed from the files this submission consists of.
      * @param tokenList is the list of these tokens.
      */
     public void setTokenList(TokenList tokenList) {
         this.tokenList = tokenList;
-    }
-
-    public void markAsErroneous() {
-        hasErrors = true;
-    }
-
-    @Override
-    public int compareTo(Submission other) {
-        return name.compareTo(other.name);
     }
 
     @Override
@@ -349,5 +227,42 @@ public class Submission implements Comparable<Submission> {
         Path baseFilePath = baseFile.toPath();
 
         return files.stream().map(File::toPath).map(baseFilePath::relativize).map(Path::toString).toArray(String[]::new);
+    }
+
+    /* package-private */ void markAsErroneous() {
+        hasErrors = true;
+    }
+
+    /**
+     * Parse files of the submission.
+     * @return Whether parsing was successful.
+     */
+    /* package-private */ boolean parse(boolean debugParser) {
+        if (files == null || files.size() == 0) {
+            errorCollector.print("ERROR: nothing to parse for submission \"" + name + "\"", null);
+            tokenList = null;
+            hasErrors = true; // invalidate submission
+            return false;
+        }
+
+        String[] relativeFilePaths = getRelativeFilePaths(submissionRootFile, files);
+
+        tokenList = language.parse(submissionRootFile, relativeFilePaths);
+        if (!language.hasErrors()) {
+            if (tokenList.size() < 3) {
+                errorCollector.print("Submission \"" + name + "\" is too short!", null);
+                tokenList = null;
+                hasErrors = true; // invalidate submission
+                return false;
+            }
+            return true;
+        }
+
+        tokenList = null;
+        hasErrors = true; // invalidate submission
+        if (debugParser) {
+            copySubmission();
+        }
+        return false;
     }
 }
