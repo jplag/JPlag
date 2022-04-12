@@ -1,6 +1,34 @@
 package de.jplag;
 
-import static de.jplag.CommandLineArgument.*;
+import static de.jplag.CommandLineArgument.BASE_CODE;
+import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY;
+import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_THRESHOLD;
+import static de.jplag.CommandLineArgument.CLUSTER_ALGORITHM;
+import static de.jplag.CommandLineArgument.CLUSTER_ENABLE;
+import static de.jplag.CommandLineArgument.CLUSTER_METRIC;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_CDF;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_NONE;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_THRESHOLD;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_BANDWIDTH;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_KMEANS_ITERATIONS;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MAX_RUNS;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MIN_RUNS;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_NOISE;
+import static de.jplag.CommandLineArgument.COMPARISON_MODE;
+import static de.jplag.CommandLineArgument.DEBUG;
+import static de.jplag.CommandLineArgument.EXCLUDE_FILE;
+import static de.jplag.CommandLineArgument.LANGUAGE;
+import static de.jplag.CommandLineArgument.MIN_TOKEN_MATCH;
+import static de.jplag.CommandLineArgument.NEW_DIRECTORY;
+import static de.jplag.CommandLineArgument.OLD_DIRECTORY;
+import static de.jplag.CommandLineArgument.RESULT_FOLDER;
+import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
+import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
+import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
+import static de.jplag.CommandLineArgument.SUBDIRECTORY;
+import static de.jplag.CommandLineArgument.SUFFIXES;
+import static de.jplag.CommandLineArgument.VERBOSITY;
 
 import java.util.ArrayList;
 import java.util.List;

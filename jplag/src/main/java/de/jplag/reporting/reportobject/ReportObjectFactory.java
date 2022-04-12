@@ -5,11 +5,26 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import de.jplag.*;
-import de.jplag.reporting.reportobject.model.*;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+import de.jplag.Submission;
+import de.jplag.Token;
+import de.jplag.TokenList;
+import de.jplag.reporting.reportobject.model.Cluster;
+import de.jplag.reporting.reportobject.model.ComparisonReport;
+import de.jplag.reporting.reportobject.model.FilesOfSubmission;
+import de.jplag.reporting.reportobject.model.JPlagReport;
+import de.jplag.reporting.reportobject.model.Match;
+import de.jplag.reporting.reportobject.model.Metric;
+import de.jplag.reporting.reportobject.model.OverviewReport;
+import de.jplag.reporting.reportobject.model.TopComparison;
 
 /**
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.
