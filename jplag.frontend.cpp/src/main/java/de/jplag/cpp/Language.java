@@ -10,7 +10,7 @@ public class Language implements de.jplag.Language {
 
     public Language(ErrorConsumer program) {
         this.scanner = new Scanner();
-        this.scanner.setProgram(program);
+        this.scanner.setErrorConsumer(program);
     }
 
     @Override

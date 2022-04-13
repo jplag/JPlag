@@ -391,7 +391,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
 
     @Override
     public Object visitErroneous(ErroneousTree node, Object p) {
-        parser.errorsInc();
+        parser.increaseErrors();
         return super.visitErroneous(node, p);
     }
 
