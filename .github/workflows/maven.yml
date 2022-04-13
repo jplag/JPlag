@@ -18,8 +18,8 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v2
       with:
-        java-version: 14
-        distribution: 'zulu'
+        java-version: 17
+        distribution: 'temurin'
             
     - name: Run Tests
       run: mvn test -B

@@ -11,6 +11,7 @@ import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ContinueTree;
+import com.sun.source.tree.DefaultCaseLabelTree;
 import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.ErroneousTree;
@@ -37,6 +38,7 @@ import com.sun.source.tree.TryTree;
 import com.sun.source.tree.TypeParameterTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.WhileLoopTree;
+import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
@@ -67,35 +69,32 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
 
     @Override
     public Object visitClass(ClassTree node, Object p) {
-        boolean isEnum = false;
-        boolean isInterface = false;
-        boolean isAnnotation = false;
         long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
+        long m = positions.getEndPosition(ast, node) - 1;
 
-        if (node.getKind() == Tree.Kind.ENUM)
-            isEnum = true;
-        if (node.getKind() == Tree.Kind.INTERFACE)
-            isInterface = true;
-        if (node.getKind() == Tree.Kind.ANNOTATION_TYPE)
-            isAnnotation = true;
-        if (isEnum)
+        if (node.getKind() == Tree.Kind.ENUM) {
             parser.add(JavaTokenConstants.J_ENUM_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 4);
-        if (isInterface)
+        } else if (node.getKind() == Tree.Kind.INTERFACE) {
             parser.add(JavaTokenConstants.J_INTERFACE_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 9);
-        if (isAnnotation)
+        } else if (node.getKind() == Tree.Kind.RECORD) {
+            parser.add(JavaTokenConstants.J_RECORD_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 1);
+        } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
             parser.add(JavaTokenConstants.J_ANNO_T_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 10);
-        if (!isEnum && !isInterface && !isAnnotation)
+        } else if (node.getKind() == Tree.Kind.CLASS) {
             parser.add(JavaTokenConstants.J_CLASS_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 5);
+        }
         Object result = super.visitClass(node, p);
-        if (!isEnum && !isInterface && !isAnnotation)
-            parser.add(JavaTokenConstants.J_CLASS_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        if (isAnnotation)
-            parser.add(JavaTokenConstants.J_ANNO_T_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        if (isEnum)
-            parser.add(JavaTokenConstants.J_ENUM_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        if (isInterface)
-            parser.add(JavaTokenConstants.J_INTERFACE_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
+        if (node.getKind() == Tree.Kind.ENUM) {
+            parser.add(JavaTokenConstants.J_ENUM_END, filename, map.getLineNumber(m), map.getColumnNumber(m), 1);
+        } else if (node.getKind() == Tree.Kind.INTERFACE) {
+            parser.add(JavaTokenConstants.J_INTERFACE_END, filename, map.getLineNumber(m), map.getColumnNumber(m), 1);
+        } else if (node.getKind() == Tree.Kind.RECORD) {
+            parser.add(JavaTokenConstants.J_RECORD_END, filename, map.getLineNumber(m), map.getColumnNumber(m), 1);
+        } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
+            parser.add(JavaTokenConstants.J_ANNO_T_END, filename, map.getLineNumber(m), map.getColumnNumber(m), 1);
+        } else if (node.getKind() == Tree.Kind.CLASS) {
+            parser.add(JavaTokenConstants.J_CLASS_END, filename, map.getLineNumber(m), map.getColumnNumber(m), 1);
+        }
         return result;
     }
 
@@ -376,5 +375,21 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     public Object visitErroneous(ErroneousTree node, Object p) {
         parser.errorsInc();
         return super.visitErroneous(node, p);
+    }
+
+    @Override
+    public Object visitYield(YieldTree node, Object p) {
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node);
+        parser.add(JavaTokenConstants.J_YIELD, filename, map.getLineNumber(start), map.getColumnNumber(start), (end - start));
+        return super.visitYield(node, p);
+    }
+
+    @Override
+    public Object visitDefaultCaseLabel(DefaultCaseLabelTree node, Object p) {
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node);
+        parser.add(JavaTokenConstants.J_DEFAULT, filename, map.getLineNumber(start), map.getColumnNumber(start), (end - start));
+        return super.visitDefaultCaseLabel(node, p);
     }
 }
