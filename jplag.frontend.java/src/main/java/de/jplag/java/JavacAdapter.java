@@ -9,7 +9,7 @@ import java.util.Collections;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
+import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
@@ -19,38 +19,52 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
+import de.jplag.ErrorConsumer;
+import de.jplag.TokenConstants;
+
 public class JavacAdapter {
 
     private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 
-    public int parseFiles(File directory, File[] pathedFiles, final Parser parser) {
+    public int parseFiles(File directory, Iterable<File> pathedFiles, final Parser parser) {
         final StandardJavaFileManager fileManager = javac.getStandardFileManager(null, null, StandardCharsets.UTF_8);
-        DiagnosticCollector<? super JavaFileObject> diagListen = new DiagnosticCollector<>();
-        final JavaCompiler.CompilationTask task = javac.getTask(null, fileManager, diagListen, null, null,
-                fileManager.getJavaFileObjects(pathedFiles));
-        Iterable<? extends CompilationUnitTree> asts = Collections.emptyList();
-        try {
-            asts = ((JavacTask) task).parse();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        var listener = new DiagnosticCollector<>();
+        var javaFiles = fileManager.getJavaFileObjectsFromFiles(pathedFiles);
+        final CompilationTask task = javac.getTask(null, fileManager, listener, null, null, javaFiles);
         final Trees trees = Trees.instance(task);
         final SourcePositions positions = trees.getSourcePositions();
-        for (final CompilationUnitTree ast : asts) {
-            final String filename;
-            if (directory == null)
-                filename = ast.getSourceFile().getName();
-            else {
-                filename = Paths.get(directory.toURI()).relativize(Paths.get(ast.getSourceFile().toUri())).toString();
-            }
+        for (final CompilationUnitTree ast : executeCompilationTask(task)) {
+            final String filename = fileNameOf(directory, ast);
             final LineMap map = ast.getLineMap();
             ast.accept(new TokenGeneratingTreeScanner(filename, parser, map, positions, ast), null);
-            parser.add(JavaTokenConstants.FILE_END, filename, 1, -1, -1);
+            parser.add(TokenConstants.FILE_END, filename, 1, -1, -1);
         }
+        return processErrors(parser.getErrorConsumer(), listener);
+    }
+
+    private Iterable<? extends CompilationUnitTree> executeCompilationTask(final CompilationTask task) {
+        Iterable<? extends CompilationUnitTree> abstractSyntaxTrees = Collections.emptyList();
+        try {
+            abstractSyntaxTrees = ((JavacTask) task).parse();
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+        return abstractSyntaxTrees;
+    }
+
+    private String fileNameOf(File directory, final CompilationUnitTree ast) {
+        if (directory == null)
+            return ast.getSourceFile().getName();
+        else {
+            return Paths.get(directory.toURI()).relativize(Paths.get(ast.getSourceFile().toUri())).toString();
+        }
+    }
+
+    private int processErrors(final ErrorConsumer consumer, DiagnosticCollector<Object> listener) {
         int errors = 0;
-        for (Diagnostic<?> diagItem : diagListen.getDiagnostics()) {
-            if (diagItem.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
-                parser.getErrorConsumer().addError(diagItem.toString());
+        for (Diagnostic<?> diagnosticItem : listener.getDiagnostics()) {
+            if (diagnosticItem.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
+                consumer.addError(diagnosticItem.toString());
                 errors++;
             }
         }

@@ -9,7 +9,7 @@ public class Language implements de.jplag.Language {
 
     public Language(ErrorConsumer program) {
         this.parser = new Parser();
-        this.parser.setProgram(program);
+        this.parser.setErrorConsumer(program);
 
     }
 

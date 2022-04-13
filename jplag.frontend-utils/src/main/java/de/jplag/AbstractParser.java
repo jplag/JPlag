@@ -24,7 +24,7 @@ public abstract class AbstractParser {
         return errorConsumer;
     }
 
-    public void setProgram(ErrorConsumer errorConsumer) {
+    public void setErrorConsumer(ErrorConsumer errorConsumer) {
         this.errorConsumer = errorConsumer;
     }
 }

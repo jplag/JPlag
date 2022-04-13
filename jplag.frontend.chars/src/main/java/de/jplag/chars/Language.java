@@ -13,7 +13,7 @@ public class Language implements de.jplag.Language {
     private final de.jplag.chars.Parser parser = new Parser();
 
     public Language(ErrorConsumer program) {
-        this.parser.setProgram(program);
+        this.parser.setErrorConsumer(program);
     }
 
     @Override
