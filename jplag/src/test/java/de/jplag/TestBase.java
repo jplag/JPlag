@@ -38,11 +38,15 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlag(String testSampleName, Consumer<JPlagOptions> customization) throws ExitException {
-        return runJPlag(List.of(getBasePath(testSampleName)), customization);
+        return runJPlag(List.of(getBasePath(testSampleName)), List.of(), customization);
     }
 
-    protected JPlagResult runJPlag(List<String> testPaths, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(testPaths, LanguageOption.JAVA);
+    protected JPlagResult runJPlag(List<String> newPaths, Consumer<JPlagOptions> customization) throws ExitException {
+        return runJPlag(newPaths, List.of(), customization);
+    }
+
+    protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Consumer<JPlagOptions> customization) throws ExitException {
+        JPlagOptions options = new JPlagOptions(newPaths, oldPaths, LanguageOption.JAVA);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);

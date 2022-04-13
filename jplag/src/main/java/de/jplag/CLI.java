@@ -1,7 +1,37 @@
 package de.jplag;
 
-import static de.jplag.CommandLineArgument.*;
+import static de.jplag.CommandLineArgument.BASE_CODE;
+import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY;
+import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_THRESHOLD;
+import static de.jplag.CommandLineArgument.CLUSTER_ALGORITHM;
+import static de.jplag.CommandLineArgument.CLUSTER_ENABLE;
+import static de.jplag.CommandLineArgument.CLUSTER_METRIC;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_CDF;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_NONE;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_THRESHOLD;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_BANDWIDTH;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_KMEANS_ITERATIONS;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MAX_RUNS;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MIN_RUNS;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_NOISE;
+import static de.jplag.CommandLineArgument.COMPARISON_MODE;
+import static de.jplag.CommandLineArgument.DEBUG;
+import static de.jplag.CommandLineArgument.EXCLUDE_FILE;
+import static de.jplag.CommandLineArgument.LANGUAGE;
+import static de.jplag.CommandLineArgument.MIN_TOKEN_MATCH;
+import static de.jplag.CommandLineArgument.NEW_DIRECTORY;
+import static de.jplag.CommandLineArgument.OLD_DIRECTORY;
+import static de.jplag.CommandLineArgument.RESULT_FOLDER;
+import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
+import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
+import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
+import static de.jplag.CommandLineArgument.SUBDIRECTORY;
+import static de.jplag.CommandLineArgument.SUFFIXES;
+import static de.jplag.CommandLineArgument.VERBOSITY;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -19,8 +49,8 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.options.Verbosity;
-import de.jplag.reporting2.JsonReport;
-import de.jplag.reporting2.Report;
+import de.jplag.reporting.JsonReport;
+import de.jplag.reporting.Report;
 import de.jplag.strategy.ComparisonMode;
 
 /**
@@ -98,8 +128,16 @@ public class CLI {
         if (fileSuffixString != null) {
             fileSuffixes = fileSuffixString.replaceAll("\\s+", "").split(",");
         }
+
+        // Collect the root directories.
+        List<String> submissionDirectories = new ArrayList<>();
+        List<String> oldSubmissionDirectories = new ArrayList<>();
+        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), submissionDirectories);
+        addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectories);
+        addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
+
         LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(ROOT_DIRECTORY.getListFrom(namespace), language);
+        JPlagOptions options = new JPlagOptions(submissionDirectories, oldSubmissionDirectories, language);
         options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
         options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
         options.setDebugParser(DEBUG.getFrom(namespace));
@@ -151,5 +189,13 @@ public class CLI {
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[new Random().nextInt(DESCRIPTIONS.length)];
         return String.format("JPlag - %s" + System.lineSeparator() + CREDITS, randomDescription);
+    }
+
+    private void addAllMultiValueArgument(List<List<String>> argumentValues, List<String> destinationRootDirectories) {
+        if (argumentValues == null) {
+            return;
+        }
+
+        argumentValues.stream().forEach(value -> destinationRootDirectories.addAll(value));
     }
 }
