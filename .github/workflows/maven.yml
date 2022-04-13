@@ -28,7 +28,7 @@ jobs:
       run: mvn clean package assembly:single
       
     - name: Upload Assembly
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: "JPlag"
         path: "jplag/target/jplag-*-jar-with-dependencies.jar"
