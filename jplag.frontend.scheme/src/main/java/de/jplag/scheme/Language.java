@@ -9,7 +9,7 @@ public class Language implements de.jplag.Language {
 
     public Language(ErrorConsumer program) {
         this.parser = new Parser();
-        this.parser.setProgram(program);
+        this.parser.setErrorConsumer(program);
 
     }
 
@@ -18,7 +18,7 @@ public class Language implements de.jplag.Language {
         return this.parser.errorsCount();
     }
 
-    private de.jplag.scheme.Parser parser; // Not yet instantiated? See constructor!
+    private final de.jplag.scheme.Parser parser; // Not yet instantiated? See constructor!
 
     @Override
     public String[] suffixes() {
@@ -42,7 +42,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public boolean supportsColumns() {
-        return false;
+        return true;
     }
 
     @Override

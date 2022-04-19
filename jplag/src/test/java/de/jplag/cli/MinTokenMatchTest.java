@@ -3,7 +3,6 @@ package de.jplag.cli;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,7 +10,6 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import de.jplag.CommandLineArgument;
 import de.jplag.JPlag;
-import de.jplag.exceptions.ExitException;
 
 public class MinTokenMatchTest extends CommandLineInterfaceTest {
 
@@ -26,12 +24,7 @@ public class MinTokenMatchTest extends CommandLineInterfaceTest {
         assertNull(options.getLanguage());
 
         // Init JPlag:
-        try {
-            new JPlag(options);
-        } catch (ExitException e) {
-            e.printStackTrace();
-            fail("JPlag intialization failed!");
-        }
+        new JPlag(options);
 
         // Now the language is set:
         assertNotNull(options.getLanguage());

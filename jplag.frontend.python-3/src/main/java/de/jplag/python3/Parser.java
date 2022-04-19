@@ -23,7 +23,7 @@ public class Parser extends AbstractParser {
     private TokenList tokens = new TokenList();
     private String currentFile;
 
-    public TokenList parse(File directory, String files[]) {
+    public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         for (int i = 0; i < files.length; i++) {
@@ -31,7 +31,6 @@ public class Parser extends AbstractParser {
             if (!parseFile(directory, files[i])) {
                 errors++;
             }
-            System.gc();// Emeric
             tokens.addToken(new Python3Token(Python3TokenConstants.FILE_END, files[i], -1, -1, -1));
         }
         this.parseEnd();

@@ -55,7 +55,7 @@ public class ErrorCollector implements ErrorConsumer { // TODO TS should be even
             errorReport.append('\n');
         }
 
-        System.out.println(errorReport.toString());
+        System.out.println(errorReport);
     }
 
     /**

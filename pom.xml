@@ -79,10 +79,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
-        <spotless.version>2.21.0</spotless.version>
-
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <spotless.version>2.22.1</spotless.version>
+        <!-- The Revision of JPlag -->
         <revision>4.0.0-SNAPSHOT</revision>
     </properties>
     <dependencyManagement>
@@ -96,12 +96,12 @@
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-runtime</artifactId>
-                <version>4.9.3</version>
+                <version>4.10</version>
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4</artifactId>
-                <version>4.9.3</version>
+                <version>4.10</version>
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
@@ -236,7 +236,7 @@
                 <plugin>
                     <groupId>org.antlr</groupId>
                     <artifactId>antlr4-maven-plugin</artifactId>
-                    <version>4.9.3</version>
+                    <version>4.10</version>
                 </plugin>
 
                 <plugin>

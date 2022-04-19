@@ -9,8 +9,8 @@ import java.util.List;
  */
 public class IntegerMapping<T> {
 
-    private HashMap<T, Integer> mapping = new HashMap<>();
-    private List<T> backMapping = new ArrayList<>();
+    private HashMap<T, Integer> mapping;
+    private List<T> backMapping;
     private int size = 0;
 
     public IntegerMapping(int initialCapacity) {

@@ -12,7 +12,7 @@ public class Parser extends AbstractParser {
 
     private TokenList tokens;
 
-    public TokenList parse(File directory, String files[]) {
+    public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         for (String file : files) {
@@ -59,7 +59,7 @@ public class Parser extends AbstractParser {
         return true;
     }
 
-    private int[] mapping = {-1, // 0 (nul)
+    private final int[] mapping = {-1, // 0 (nul)
             -1, // 1 (soh)
             -1, // 2 (stx)
             -1, // 3 (etx)

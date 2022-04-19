@@ -6,11 +6,11 @@ import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
-    private Scanner scanner; // cpp code is scanned not parsed
+    private final Scanner scanner; // cpp code is scanned not parsed
 
     public Language(ErrorConsumer program) {
         this.scanner = new Scanner();
-        this.scanner.setProgram(program);
+        this.scanner.setErrorConsumer(program);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public boolean supportsColumns() {
-        return false;
+        return true;
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ContinueTree;
+import com.sun.source.tree.DefaultCaseLabelTree;
 import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.ErroneousTree;
@@ -37,6 +38,7 @@ import com.sun.source.tree.TryTree;
 import com.sun.source.tree.TypeParameterTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.WhileLoopTree;
+import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
@@ -55,328 +57,357 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         this.ast = ast;
     }
 
+    /**
+     * Convenience method that adds a specific token.
+     * @param tokenType is the type from {@link JavaTokenConstants}.
+     * @param position is the start position of the token.
+     * @param length is the length of the token.
+     */
+    private void addToken(int tokenType, long position, int length) {
+        parser.add(tokenType, filename, map.getLineNumber(position), map.getColumnNumber(position), length);
+    }
+
+    /**
+     * Convenience method that adds a specific token.
+     * @param tokenType is the type from {@link JavaTokenConstants}.
+     * @param start is the start position of the token.
+     * @param end is the end position of the token for the calculation of the length.
+     */
+    private void addToken(int tokenType, long start, long end) {
+        parser.add(tokenType, filename, map.getLineNumber(start), map.getColumnNumber(start), (end - start));
+    }
+
     @Override
     public Object visitBlock(BlockTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_INIT_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 1);
-        Object ret = super.visitBlock(node, p);
-        parser.add(JavaTokenConstants.J_INIT_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_INIT_BEGIN, start, 1);
+        Object result = super.visitBlock(node, p);
+        addToken(JavaTokenConstants.J_INIT_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitClass(ClassTree node, Object p) {
-        boolean isEnum = false;
-        boolean isInterface = false;
-        boolean isAnnotation = false;
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
 
-        if (node.getKind() == Tree.Kind.ENUM)
-            isEnum = true;
-        if (node.getKind() == Tree.Kind.INTERFACE)
-            isInterface = true;
-        if (node.getKind() == Tree.Kind.ANNOTATION_TYPE)
-            isAnnotation = true;
-        if (isEnum)
-            parser.add(JavaTokenConstants.J_ENUM_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 4);
-        if (isInterface)
-            parser.add(JavaTokenConstants.J_INTERFACE_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 9);
-        if (isAnnotation)
-            parser.add(JavaTokenConstants.J_ANNO_T_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 10);
-        if (!isEnum && !isInterface && !isAnnotation)
-            parser.add(JavaTokenConstants.J_CLASS_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 5);
+        if (node.getKind() == Tree.Kind.ENUM) {
+            addToken(JavaTokenConstants.J_ENUM_BEGIN, start, 4);
+        } else if (node.getKind() == Tree.Kind.INTERFACE) {
+            addToken(JavaTokenConstants.J_INTERFACE_BEGIN, start, 9);
+        } else if (node.getKind() == Tree.Kind.RECORD) {
+            addToken(JavaTokenConstants.J_RECORD_BEGIN, start, 1);
+        } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
+            addToken(JavaTokenConstants.J_ANNO_T_BEGIN, start, 10);
+        } else if (node.getKind() == Tree.Kind.CLASS) {
+            addToken(JavaTokenConstants.J_CLASS_BEGIN, start, 5);
+        }
         Object result = super.visitClass(node, p);
-        if (!isEnum && !isInterface && !isAnnotation)
-            parser.add(JavaTokenConstants.J_CLASS_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        if (isAnnotation)
-            parser.add(JavaTokenConstants.J_ANNO_T_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        if (isEnum)
-            parser.add(JavaTokenConstants.J_ENUM_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        if (isInterface)
-            parser.add(JavaTokenConstants.J_INTERFACE_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
+        if (node.getKind() == Tree.Kind.ENUM) {
+            addToken(JavaTokenConstants.J_ENUM_END, end, 1);
+        } else if (node.getKind() == Tree.Kind.INTERFACE) {
+            addToken(JavaTokenConstants.J_INTERFACE_END, end, 1);
+        } else if (node.getKind() == Tree.Kind.RECORD) {
+            addToken(JavaTokenConstants.J_RECORD_END, end, 1);
+        } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
+            addToken(JavaTokenConstants.J_ANNO_T_END, end, 1);
+        } else if (node.getKind() == Tree.Kind.CLASS) {
+            addToken(JavaTokenConstants.J_CLASS_END, end, 1);
+        }
         return result;
     }
 
     @Override
     public Object visitImport(ImportTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_IMPORT, filename, map.getLineNumber(n), map.getColumnNumber(n), 6);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_IMPORT, start, 6);
         return super.visitImport(node, p);
     }
 
     @Override
     public Object visitPackage(PackageTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_PACKAGE, filename, map.getLineNumber(n), map.getColumnNumber(n), 7);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_PACKAGE, start, 7);
         return super.visitPackage(node, p);
     }
 
     @Override
     public Object visitMethod(MethodTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_METHOD_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), node.getName().length());
-        Object ret = super.visitMethod(node, p);
-        parser.add(JavaTokenConstants.J_METHOD_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_METHOD_BEGIN, start, node.getName().length());
+        Object result = super.visitMethod(node, p);
+        addToken(JavaTokenConstants.J_METHOD_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitSynchronized(SynchronizedTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_SYNC_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 12);
-        Object ret = super.visitSynchronized(node, p);
-        parser.add(JavaTokenConstants.J_SYNC_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_SYNC_BEGIN, start, 12);
+        Object result = super.visitSynchronized(node, p);
+        addToken(JavaTokenConstants.J_SYNC_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitDoWhileLoop(DoWhileLoopTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_DO_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 2);
-        Object ret = super.visitDoWhileLoop(node, p);
-        parser.add(JavaTokenConstants.J_DO_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_DO_BEGIN, start, 2);
+        Object result = super.visitDoWhileLoop(node, p);
+        addToken(JavaTokenConstants.J_DO_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitWhileLoop(WhileLoopTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_WHILE_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 5);
-        Object ret = super.visitWhileLoop(node, p);
-        parser.add(JavaTokenConstants.J_WHILE_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_WHILE_BEGIN, start, 5);
+        Object result = super.visitWhileLoop(node, p);
+        addToken(JavaTokenConstants.J_WHILE_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitForLoop(ForLoopTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_FOR_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 3);
-        Object ret = super.visitForLoop(node, p);
-        parser.add(JavaTokenConstants.J_FOR_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_FOR_BEGIN, start, 3);
+        Object result = super.visitForLoop(node, p);
+        addToken(JavaTokenConstants.J_FOR_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitEnhancedForLoop(EnhancedForLoopTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_FOR_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 3);
-        Object ret = super.visitEnhancedForLoop(node, p);
-        parser.add(JavaTokenConstants.J_FOR_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_FOR_BEGIN, start, 3);
+        Object result = super.visitEnhancedForLoop(node, p);
+        addToken(JavaTokenConstants.J_FOR_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitSwitch(SwitchTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_SWITCH_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 6);
-        Object ret = super.visitSwitch(node, p);
-        parser.add(JavaTokenConstants.J_SWITCH_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_SWITCH_BEGIN, start, 6);
+        Object result = super.visitSwitch(node, p);
+        addToken(JavaTokenConstants.J_SWITCH_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitSwitchExpression(SwitchExpressionTree node, Object parameterValue) {
         long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_SWITCH_BEGIN, filename, map.getLineNumber(start), map.getColumnNumber(start), 6);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_SWITCH_BEGIN, start, 6);
         Object result = super.visitSwitchExpression(node, parameterValue);
-        parser.add(JavaTokenConstants.J_SWITCH_END, filename, map.getLineNumber(end - 1), map.getColumnNumber(end - 1), 1);
+        addToken(JavaTokenConstants.J_SWITCH_END, end, 1);
         return result;
     }
 
     @Override
     public Object visitCase(CaseTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_CASE, filename, map.getLineNumber(n), map.getColumnNumber(n), 4);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_CASE, start, 4);
         return super.visitCase(node, p);
     }
 
     @Override
     public Object visitTry(TryTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
+        long start = positions.getStartPosition(ast, node);
         if (node.getResources().isEmpty())
-            parser.add(JavaTokenConstants.J_TRY_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 3);
+            addToken(JavaTokenConstants.J_TRY_BEGIN, start, 3);
         else
-            parser.add(JavaTokenConstants.J_TRY_WITH_RESOURCE, filename, map.getLineNumber(n), map.getColumnNumber(n), 3);
+            addToken(JavaTokenConstants.J_TRY_WITH_RESOURCE, start, 3);
         if (node.getFinallyBlock() != null)
-            parser.add(JavaTokenConstants.J_FINALLY, filename, map.getLineNumber(n), map.getColumnNumber(n), 3);
+            addToken(JavaTokenConstants.J_FINALLY, start, 3);
         return super.visitTry(node, p);
     }
 
     @Override
     public Object visitCatch(CatchTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_CATCH_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 5);
-        Object ret = super.visitCatch(node, p);
-        parser.add(JavaTokenConstants.J_CATCH_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_CATCH_BEGIN, start, 5);
+        Object result = super.visitCatch(node, p);
+        addToken(JavaTokenConstants.J_CATCH_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitIf(IfTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_IF_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 2);
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_IF_BEGIN, start, 2);
         node.getCondition().accept(this, p);
         node.getThenStatement().accept(this, p);
         if (node.getElseStatement() != null) {
-            n = positions.getStartPosition(ast, node.getElseStatement());
-            parser.add(JavaTokenConstants.J_ELSE, filename, map.getLineNumber(n), map.getColumnNumber(n), 4);
+            start = positions.getStartPosition(ast, node.getElseStatement());
+            addToken(JavaTokenConstants.J_ELSE, start, 4);
             node.getElseStatement().accept(this, p);
         }
-        parser.add(JavaTokenConstants.J_IF_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
+        addToken(JavaTokenConstants.J_IF_END, end, 1);
         return null;
     }
 
     @Override
     public Object visitBreak(BreakTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_BREAK, filename, map.getLineNumber(n), map.getColumnNumber(n), 5);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_BREAK, start, 5);
         return super.visitBreak(node, p);
     }
 
     @Override
     public Object visitContinue(ContinueTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_CONTINUE, filename, map.getLineNumber(n), map.getColumnNumber(n), 8);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_CONTINUE, start, 8);
         return super.visitContinue(node, p);
     }
 
     @Override
     public Object visitReturn(ReturnTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_RETURN, filename, map.getLineNumber(n), map.getColumnNumber(n), 6);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_RETURN, start, 6);
         return super.visitReturn(node, p);
     }
 
     @Override
     public Object visitThrow(ThrowTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_THROW, filename, map.getLineNumber(n), map.getColumnNumber(n), 5);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_THROW, start, 5);
         return super.visitThrow(node, p);
     }
 
     @Override
     public Object visitNewClass(NewClassTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
+        long start = positions.getStartPosition(ast, node);
         if (node.getTypeArguments().size() > 0) {
-            parser.add(JavaTokenConstants.J_GENERIC, filename, map.getLineNumber(n), map.getColumnNumber(n),
-                    3 + node.getIdentifier().toString().length());
+            addToken(JavaTokenConstants.J_GENERIC, start, 3 + node.getIdentifier().toString().length());
         }
-        parser.add(JavaTokenConstants.J_NEWCLASS, filename, map.getLineNumber(n), map.getColumnNumber(n), 3);
+        addToken(JavaTokenConstants.J_NEWCLASS, start, 3);
         return super.visitNewClass(node, p);
     }
 
     @Override
     public Object visitTypeParameter(TypeParameterTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
+        long start = positions.getStartPosition(ast, node);
         // This is odd, but also done like this in Java17
-        parser.add(JavaTokenConstants.J_GENERIC, filename, map.getLineNumber(n), map.getColumnNumber(n), 1);
+        addToken(JavaTokenConstants.J_GENERIC, start, 1);
         return super.visitTypeParameter(node, p);
     }
 
     @Override
     public Object visitNewArray(NewArrayTree node, Object arg1) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_NEWARRAY, filename, map.getLineNumber(n), map.getColumnNumber(n), 3);
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_NEWARRAY, start, 3);
         if (node.getInitializers() != null && !node.getInitializers().isEmpty()) {
-            n = positions.getStartPosition(ast, node.getInitializers().get(0));
-            parser.add(JavaTokenConstants.J_ARRAY_INIT_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 1);
-            ;
-            parser.add(JavaTokenConstants.J_ARRAY_INIT_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-            ;
+            start = positions.getStartPosition(ast, node.getInitializers().get(0));
+            addToken(JavaTokenConstants.J_ARRAY_INIT_BEGIN, start, 1);
+            addToken(JavaTokenConstants.J_ARRAY_INIT_END, end, 1);
         }
         return super.visitNewArray(node, arg1);
     }
 
     @Override
     public Object visitAssignment(AssignmentTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_ASSIGN, filename, map.getLineNumber(n), map.getColumnNumber(n), 1);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_ASSIGN, start, 1);
         return super.visitAssignment(node, p);
     }
 
     @Override
     public Object visitAssert(AssertTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_ASSERT, filename, map.getLineNumber(n), map.getColumnNumber(n), 6);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_ASSERT, start, 6);
         return super.visitAssert(node, p);
     }
 
     @Override
     public Object visitVariable(VariableTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_VARDEF, filename, map.getLineNumber(n), map.getColumnNumber(n), node.toString().length());
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_VARDEF, start, node.toString().length());
         return super.visitVariable(node, p);
     }
 
     @Override
     public Object visitConditionalExpression(ConditionalExpressionTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_COND, filename, map.getLineNumber(n), map.getColumnNumber(n), 1);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_COND, start, 1);
         return super.visitConditionalExpression(node, p);
     }
 
     @Override
     public Object visitMethodInvocation(MethodInvocationTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_APPLY, filename, map.getLineNumber(n), map.getColumnNumber(n),
-                positions.getEndPosition(ast, node.getMethodSelect()) - n);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start);
         return super.visitMethodInvocation(node, p);
     }
 
     @Override
     public Object visitAnnotation(AnnotationTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_ANNO, filename, map.getLineNumber(n), map.getColumnNumber(n), 1);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_ANNO, start, 1);
         return super.visitAnnotation(node, p);
     }
 
     @Override
     public Object visitModule(ModuleTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        long m = positions.getEndPosition(ast, node);
-        parser.add(JavaTokenConstants.J_MODULE_BEGIN, filename, map.getLineNumber(n), map.getColumnNumber(n), 6);
-        Object ret = super.visitModule(node, p);
-        parser.add(JavaTokenConstants.J_MODULE_END, filename, map.getLineNumber(m - 1), map.getColumnNumber(m - 1), 1);
-        return ret;
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenConstants.J_MODULE_BEGIN, start, 6);
+        Object result = super.visitModule(node, p);
+        addToken(JavaTokenConstants.J_MODULE_END, end, 1);
+        return result;
     }
 
     @Override
     public Object visitRequires(RequiresTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_REQUIRES, filename, map.getLineNumber(n), map.getColumnNumber(n), 8);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_REQUIRES, start, 8);
         return super.visitRequires(node, p);
     }
 
     @Override
     public Object visitProvides(ProvidesTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_PROVIDES, filename, map.getLineNumber(n), map.getColumnNumber(n), 8);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_PROVIDES, start, 8);
         return super.visitProvides(node, p);
     }
 
     @Override
     public Object visitExports(ExportsTree node, Object p) {
-        long n = positions.getStartPosition(ast, node);
-        parser.add(JavaTokenConstants.J_EXPORTS, filename, map.getLineNumber(n), map.getColumnNumber(n), 7);
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenConstants.J_EXPORTS, start, 7);
         return super.visitExports(node, p);
     }
 
     @Override
     public Object visitErroneous(ErroneousTree node, Object p) {
-        parser.errorsInc();
+        parser.increaseErrors();
         return super.visitErroneous(node, p);
+    }
+
+    @Override
+    public Object visitYield(YieldTree node, Object p) {
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node);
+        addToken(JavaTokenConstants.J_YIELD, start, end);
+        return super.visitYield(node, p);
+    }
+
+    @Override
+    public Object visitDefaultCaseLabel(DefaultCaseLabelTree node, Object p) {
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node);
+        addToken(JavaTokenConstants.J_DEFAULT, start, end);
+        return super.visitDefaultCaseLabel(node, p);
     }
 }

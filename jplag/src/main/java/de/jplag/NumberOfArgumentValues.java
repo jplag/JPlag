@@ -5,11 +5,12 @@ package de.jplag;
  */
 public enum NumberOfArgumentValues {
     SINGLE_VALUE(""),
-    ONE_OR_MORE_VALUES("+"),;
+    ONE_OR_MORE_VALUES("+"),
+    ZERO_OR_MORE_VALUES("*");
 
     private final String representation;
 
-    private NumberOfArgumentValues(String representation) {
+    NumberOfArgumentValues(String representation) {
         this.representation = representation;
     }
 

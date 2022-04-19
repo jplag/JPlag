@@ -70,7 +70,7 @@ import org.apache.commons.math3.util.Pair;
 public class BFGS {
     // private static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(BFGS.class);
     /** A number close to zero, between machine epsilon and its square root. */
-    private static final double EPSILON = Double.valueOf(System.getProperty("smile.bfgs.epsilon", "1E-10"));
+    private static final double EPSILON = Double.parseDouble(System.getProperty("smile.bfgs.epsilon", "1E-10"));
     /** The convergence criterion on function value. */
     private static final double TOLF = 4 * EPSILON;
     /** The scaled maximum step length allowed in line searches. */
@@ -670,14 +670,13 @@ public class BFGS {
      */
     private static class Matrix {
 
-        private RealMatrix d;
-        private int m;
-        private int n;
+        private final RealMatrix d;
+        private final int m;
+        private final int n;
 
         /**
-         * Constructor of zero matrix.
-         * @param m the number of rows.
-         * @param n the number of columns.
+         * Constructor of real matrix.
+         * @param delegate the matrix that shall be wrapped.
          */
         public Matrix(RealMatrix delegate) {
             d = delegate;
@@ -724,10 +723,10 @@ public class BFGS {
          * @return {@code A' * A}.
          */
         public Matrix ata() {
-            Matrix C = new Matrix(d.transpose().multiply(d));
-            // C.mm(TRANSPOSE, 1this, NO_TRANSPOSE, this);
-            // C.uplo(LOWER);
-            return C;
+            Matrix c = new Matrix(d.transpose().multiply(d));
+            // c.mm(TRANSPOSE, 1this, NO_TRANSPOSE, this);
+            // c.uplo(LOWER);
+            return c;
         }
 
         /**

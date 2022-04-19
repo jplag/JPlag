@@ -21,12 +21,12 @@ import org.apache.commons.math3.stat.StatUtils;
  */
 public class GaussianProcess {
 
-    private List<RealVector> listOfCoordinates;
-    private RealVector weight;
-    private double mean;
-    private double standardDeviation;
-    private CholeskyDecomposition cholesky;
-    private RealVector lengthScale;
+    private final List<RealVector> listOfCoordinates;
+    private final RealVector weight;
+    private final double mean;
+    private final double standardDeviation;
+    private final CholeskyDecomposition cholesky;
+    private final RealVector lengthScale;
 
     private GaussianProcess(List<RealVector> listOfCoordinates, RealVector weight, double mean, double standardDeviation,
             CholeskyDecomposition cholesky, RealVector lengthScale) {
@@ -65,7 +65,7 @@ public class GaussianProcess {
 
     /**
      * Fit Gaussian Process using a matern kernel.
-     * @param observedCoordinates
+     * @param observedCoordinates TODO DOCUMENTATION MISSING
      * @param observations expected to have zero mean, unit variance if normalize is false
      * @param noise variance of noise in Y
      * @param normalize if Y should be normalized
