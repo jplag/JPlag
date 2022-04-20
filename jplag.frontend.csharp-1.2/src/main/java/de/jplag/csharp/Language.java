@@ -9,19 +9,12 @@ public class Language implements de.jplag.Language {
     private final Parser parser;
 
     public Language(ErrorConsumer program) {
-        this.parser = new Parser();
-        this.parser.setErrorConsumer(program);
-
+        parser = new Parser(program);
     }
 
     @Override
     public String[] suffixes() {
         return new String[] {".cs", ".CS"};
-    }
-
-    @Override
-    public int errorCount() {
-        return this.parser.errorCount();
     }
 
     @Override

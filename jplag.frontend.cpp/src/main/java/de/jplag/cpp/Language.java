@@ -8,14 +8,8 @@ import de.jplag.TokenList;
 public class Language implements de.jplag.Language {
     private final Scanner scanner; // cpp code is scanned not parsed
 
-    public Language(ErrorConsumer program) {
-        this.scanner = new Scanner();
-        this.scanner.setErrorConsumer(program);
-    }
-
-    @Override
-    public int errorCount() {
-        return this.scanner.errorCount();
+    public Language(ErrorConsumer errorConsumer) {
+        scanner = new Scanner(errorConsumer);
     }
 
     @Override

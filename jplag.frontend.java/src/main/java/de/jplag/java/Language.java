@@ -12,8 +12,7 @@ public class Language implements de.jplag.Language {
     private final Parser parser;
 
     public Language(ErrorConsumer errorConsumer) {
-        this.parser = new Parser();
-        this.parser.setErrorConsumer(errorConsumer);
+        parser = new Parser(errorConsumer);
     }
 
     @Override
@@ -64,11 +63,6 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return this.parser.hasErrors();
-    }
-
-    @Override
-    public int errorCount() {
-        return this.parser.errorCount();
     }
 
 }

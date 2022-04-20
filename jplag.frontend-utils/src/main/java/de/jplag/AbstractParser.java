@@ -8,18 +8,15 @@ public abstract class AbstractParser {
     protected ErrorConsumer errorConsumer;
     protected int errors = 0;
 
-    /**
-     * @return true if there currently are some errors.
-     */
-    public boolean hasErrors() {
-        return errors != 0;
+    public AbstractParser(ErrorConsumer errorConsumer) {
+        this.errorConsumer = errorConsumer;
     }
 
     /**
-     * @return number of total errors.
+     * @return true if the last parse call (which could be still ongoing) lead to one or more errors.
      */
-    public int errorCount() {
-        return errors;
+    public boolean hasErrors() {
+        return errors != 0;
     }
 
     /**
@@ -33,7 +30,5 @@ public abstract class AbstractParser {
      * Setter for the error consumer that collects and prints errors.
      * @param errorConsumer is the consumer to set.
      */
-    public void setErrorConsumer(ErrorConsumer errorConsumer) {
-        this.errorConsumer = errorConsumer;
-    }
+
 }

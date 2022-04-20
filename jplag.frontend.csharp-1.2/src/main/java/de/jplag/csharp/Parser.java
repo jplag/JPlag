@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import antlr.Token;
 
 import de.jplag.AbstractParser;
+import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
@@ -14,6 +15,14 @@ import de.jplag.csharp.grammar.CSharpParser;
 public class Parser extends AbstractParser {
     private TokenList tokens;
     private String currentFile;
+
+    /**
+     * Creates the parser.
+     * @param errorConsumer is the consumer for any occurring errors.
+     */
+    public Parser(ErrorConsumer errorConsumer) {
+        super(errorConsumer);
+    }
 
     public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();

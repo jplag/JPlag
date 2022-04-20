@@ -10,20 +10,15 @@ import de.jplag.TokenList;
  */
 public class Language implements de.jplag.Language {
 
-    private final de.jplag.chars.Parser parser = new Parser();
+    private final Parser parser;
 
     public Language(ErrorConsumer program) {
-        this.parser.setErrorConsumer(program);
+        parser = new Parser(program);
     }
 
     @Override
     public String[] suffixes() {
         return new String[] {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
-    }
-
-    @Override
-    public int errorCount() {
-        return this.parser.errorCount();
     }
 
     @Override

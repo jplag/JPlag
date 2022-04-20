@@ -41,11 +41,6 @@ public interface Language {
     boolean hasErrors();
 
     /**
-     * Number of errors found during the last {@link #parse}.
-     */
-    int errorCount();
-
-    /**
      * Determines whether the parser provide column information.
      */
     boolean supportsColumns();
