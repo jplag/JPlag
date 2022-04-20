@@ -1,5 +1,7 @@
 package de.jplag;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +13,16 @@ public class TokenList {
     TokenHashMap tokenHashes = null;
     int hashLength = -1;
 
+    /**
+     * Creates an empty token list.
+     */
     public TokenList() {
         tokens = new ArrayList<>();
     }
 
+    /**
+     * @return the number of tokens in the list.
+     */
     public final int size() {
         return tokens.size();
     }
@@ -59,19 +67,11 @@ public class TokenList {
 
     @Override
     public final String toString() {
-        StringBuilder buffer = new StringBuilder();
         try {
-            for (int i = 0; i < tokens.size(); i++) {
-                buffer.append(i);
-                buffer.append("\t");
-                buffer.append(tokens.get(i).toString());
-                if (i < tokens.size() - 1) {
-                    buffer.append("\n");
-                }
-            }
-        } catch (OutOfMemoryError e) {
-            return "Tokenlist to large for output: " + tokens.size() + " Tokens";
+            List<String> tokenStrings = tokens.stream().map(Token::toString).collect(toList());
+            return String.join(System.lineSeparator(), tokenStrings);
+        } catch (OutOfMemoryError exception) {
+            return "Token list to large for output: " + tokens.size() + " Tokens";
         }
-        return buffer.toString();
     }
 }
