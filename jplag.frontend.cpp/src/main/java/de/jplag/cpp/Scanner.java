@@ -3,12 +3,21 @@ package de.jplag.cpp;
 import java.io.File;
 
 import de.jplag.AbstractParser;
+import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Scanner extends AbstractParser {
     private String currentFile;
 
     private TokenList tokens;
+
+    /**
+     * Creates the parser.
+     * @param errorConsumer is the consumer for any occurring errors.
+     */
+    public Scanner(ErrorConsumer errorConsumer) {
+        super(errorConsumer);
+    }
 
     public TokenList scan(File directory, String[] files) {
         tokens = new TokenList();
@@ -21,7 +30,6 @@ public class Scanner extends AbstractParser {
             }
             tokens.addToken(new CPPToken(CPPTokenConstants.FILE_END, currentFile));
         }
-        this.parseEnd();
         return tokens;
     }
 

@@ -5,12 +5,21 @@ import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 
 import de.jplag.AbstractParser;
+import de.jplag.ErrorConsumer;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
 public class Parser extends AbstractParser {
 
     private TokenList tokens;
+
+    /**
+     * Creates the parser.
+     * @param errorConsumer is the consumer for any occurring errors.
+     */
+    public Parser(ErrorConsumer errorConsumer) {
+        super(errorConsumer);
+    }
 
     public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
@@ -26,7 +35,6 @@ public class Parser extends AbstractParser {
         else
             errorConsumer.print(null, errors + " ERROR" + (errors > 1 ? "S" : ""));
 
-        this.parseEnd();
         return tokens;
     }
 

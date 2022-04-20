@@ -6,19 +6,11 @@ import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
+    private final de.jplag.scheme.Parser parser;
 
     public Language(ErrorConsumer program) {
-        this.parser = new Parser();
-        this.parser.setErrorConsumer(program);
-
+        parser = new Parser(program);
     }
-
-    @Override
-    public int errorCount() {
-        return this.parser.errorsCount();
-    }
-
-    private final de.jplag.scheme.Parser parser; // Not yet instantiated? See constructor!
 
     @Override
     public String[] suffixes() {

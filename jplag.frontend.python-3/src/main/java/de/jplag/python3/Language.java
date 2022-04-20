@@ -9,19 +9,13 @@ public class Language implements de.jplag.Language {
 
     private final Parser parser;
 
-    public Language(ErrorConsumer program) {
-        this.parser = new Parser();
-        this.parser.setErrorConsumer(program);
+    public Language(ErrorConsumer errorConsumer) {
+        parser = new Parser(errorConsumer);
     }
 
     @Override
     public String[] suffixes() {
         return new String[] {".py"};
-    }
-
-    @Override
-    public int errorCount() {
-        return this.parser.errorsCount();
     }
 
     @Override

@@ -13,7 +13,7 @@ public abstract class Token {
 
     private boolean marked;
     private boolean basecode = false;
-    private int hash = -1;// hash-value. set and used by main algorithm (GSTiling)
+    private int hash = -1; // hash-value. set and used by main algorithm (GSTiling)
 
     protected int type;
 
@@ -43,12 +43,19 @@ public abstract class Token {
         this.length = length;
     }
 
-    public String getFile() {
-        return file;
+    /**
+     * Returns the character index which denotes where the code sections represented by this token starts in the line.
+     * @return the character index in the line.
+     */
+    public int getColumn() {
+        return column;
     }
 
-    public int getHash() {
-        return hash;
+    /**
+     * @return the name of the file where the source code that the token represents is located in.
+     */
+    public String getFile() {
+        return file;
     }
 
     // this is made to distinguish the character front end. Maybe other front ends can use it too?
@@ -56,36 +63,44 @@ public abstract class Token {
         return -1;
     }
 
-    public int getLine() {
-        return line;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
+    /**
+     * Gives the length if the code sections represented by this token.
+     * @return the length in characters.
+     */
     public int getLength() {
         return length;
     }
 
-    public boolean isBasecode() {
-        return basecode;
+    /**
+     * Gives the line index denoting in which line the code sections represented by this token starts.
+     * @return the line index.
+     */
+    public int getLine() {
+        return line;
     }
 
-    public boolean isMarked() {
-        return marked;
-    }
-
-    public void setLine(int line) {
-        this.line = line;
-    }
-
+    /**
+     * Sets the character index which denotes where the code sections represented by this token starts in the line.
+     * @param column is the index in characters to set.
+     */
     public void setColumn(int column) {
         this.column = column;
     }
 
+    /**
+     * Sets the length if the code sections represented by this token.
+     * @param length is the length in characters to set.
+     */
     public void setLength(int length) {
         this.length = length;
+    }
+
+    /**
+     * Sets the line index denoting in which line the code sections represented by this token starts.
+     * @param line is the line index to set.
+     */
+    public void setLine(int line) {
+        this.line = line;
     }
 
     @Override
@@ -93,22 +108,43 @@ public abstract class Token {
         return type2string();
     }
 
+    /**
+     * @return a string representation depending on the type of the token.
+     */
     protected abstract String type2string();
 
-    /* Package Private */ boolean setBasecode(boolean basecode) {
+    /* package-private */ int getHash() {
+        return hash;
+    }
+
+    /**
+     * @return whether this token is part of a basecode.
+     */
+    /* package-private */ boolean isBasecode() {
+        return basecode;
+    }
+
+    /**
+     * @return whether this token is marked by the comparison algorithm.
+     */
+    /* package-private */ boolean isMarked() {
+        return marked;
+    }
+
+    /* package-private */ boolean setBasecode(boolean basecode) {
         this.basecode = basecode;
         return basecode;
     }
 
-    /* Package Private */ void setFile(String file) {
+    /* package-private */ void setFile(String file) {
         this.file = file;
     }
 
-    /* Package Private */ void setHash(int hash) {
+    /* package-private */ void setHash(int hash) {
         this.hash = hash;
     }
 
-    /* Package Private */ boolean setMarked(boolean marked) {
+    /* package-private */ boolean setMarked(boolean marked) {
         this.marked = marked;
         return marked;
     }
