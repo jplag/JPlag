@@ -21,7 +21,6 @@ public class Scanner extends AbstractParser {
             }
             tokens.addToken(new CPPToken(CPPTokenConstants.FILE_END, currentFile));
         }
-        this.parseEnd();
         return tokens;
     }
 

@@ -15,7 +15,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public int errorCount() {
-        return this.scanner.errorsCount();
+        return this.scanner.errorCount();
     }
 
     @Override

@@ -33,7 +33,6 @@ public class Parser extends AbstractParser {
 
         TokenList tmp = tokens;
         tokens = null;
-        this.parseEnd();
         return tmp;
     }
 

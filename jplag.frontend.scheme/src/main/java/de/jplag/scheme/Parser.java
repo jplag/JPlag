@@ -20,7 +20,6 @@ public class Parser extends AbstractParser {
                 errors++;
             tokens.addToken(new SchemeToken(SchemeTokenConstants.FILE_END, currentFile));
         }
-        this.parseEnd();
         return tokens;
     }
 

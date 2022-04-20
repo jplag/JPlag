@@ -26,7 +26,6 @@ public class Parser extends AbstractParser {
         else
             errorConsumer.print(null, errors + " ERROR" + (errors > 1 ? "S" : ""));
 
-        this.parseEnd();
         return tokens;
     }
 

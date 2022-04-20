@@ -16,7 +16,6 @@ public class Parser extends AbstractParser {
         errors = 0;
         var pathedFiles = Arrays.stream(files).map(it -> new File(directory, it)).collect(toList());
         errors += new JavacAdapter().parseFiles(directory, pathedFiles, this);
-        this.parseEnd();
         return tokens;
     }
 

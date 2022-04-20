@@ -15,7 +15,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public int errorCount() {
-        return this.parser.errorsCount();
+        return this.parser.errorCount();
     }
 
     private final de.jplag.scheme.Parser parser; // Not yet instantiated? See constructor!

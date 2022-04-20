@@ -25,7 +25,7 @@ public class GreedyStringTiling {
     }
 
     /**
-     * Creating hashes in linear time. The hash-code will be written in every Token for the next &lt;hash_length&gt; token
+     * Creating hashes in linear time. The hash-code will be written in every Token for the next &lt;hashLength&gt; token
      * (includes the Token itself).
      * @param tokenList contains the tokens.
      * @param hashLength is the hash length (condition: 1 &lt; hashLength &lt; 26)
@@ -86,7 +86,7 @@ public class GreedyStringTiling {
                 }
             }
         }
-        tokenList.hash_length = hashLength;
+        tokenList.hashLength = hashLength;
     }
 
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
@@ -139,10 +139,10 @@ public class GreedyStringTiling {
         markTokens(second, isBaseCodeComparison);
 
         // create hashes:
-        if (first.hash_length != minimumTokenMatch) {
+        if (first.hashLength != minimumTokenMatch) {
             createHashes(first, minimumTokenMatch, isBaseCodeComparison); // don't make table if it is not a base code comparison
         }
-        if (second.hash_length != minimumTokenMatch || second.tokenHashes == null) {
+        if (second.hashLength != minimumTokenMatch || second.tokenHashes == null) {
             createHashes(second, minimumTokenMatch, true);
         }
 

@@ -9,7 +9,7 @@ import java.util.List;
 public class TokenList {
     private final List<Token> tokens;
     TokenHashMap tokenHashes = null;
-    int hash_length = -1;
+    int hashLength = -1;
 
     public TokenList() {
         tokens = new ArrayList<>();
@@ -19,6 +19,10 @@ public class TokenList {
         return tokens.size();
     }
 
+    /**
+     * Adds an token to the list.
+     * @param token is the token to add.
+     */
     public final void addToken(Token token) {
         if (tokens.size() > 0) {
             Token lastToken = tokens.get(tokens.size() - 1);

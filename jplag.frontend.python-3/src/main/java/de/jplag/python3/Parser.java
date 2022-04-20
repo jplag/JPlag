@@ -33,7 +33,6 @@ public class Parser extends AbstractParser {
             }
             tokens.addToken(new Python3Token(Python3TokenConstants.FILE_END, files[i], -1, -1, -1));
         }
-        this.parseEnd();
         return tokens;
     }
 

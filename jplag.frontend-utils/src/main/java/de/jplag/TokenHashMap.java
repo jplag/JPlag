@@ -13,6 +13,7 @@ import java.util.Map;
  * that is larger or equal to the specified size (see {@link TokenHashMap#TokenHashMap(int)}).
  */
 public class TokenHashMap {
+    private static final int CERTAINTY = 100;
     private final Map<Integer, List<Integer>> mappedEntries;
     private final int primeNumber;
 
@@ -67,7 +68,7 @@ public class TokenHashMap {
         }
         for (int possiblePrime = number; possiblePrime < 2 * number; possiblePrime++) { // Bertrand's postulate
             BigInteger bigInt = BigInteger.valueOf(possiblePrime);
-            if (bigInt.isProbablePrime(100)) {
+            if (bigInt.isProbablePrime(CERTAINTY)) {
                 return possiblePrime;
             }
         }

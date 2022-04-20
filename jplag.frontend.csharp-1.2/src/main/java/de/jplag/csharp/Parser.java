@@ -23,7 +23,6 @@ public class Parser extends AbstractParser {
                 errors++;
             tokens.addToken(new CSharpToken(CSharpTokenConstants.FILE_END, files[i], -1, -1, -1));
         }
-        this.parseEnd();
         return tokens;
     }
 
