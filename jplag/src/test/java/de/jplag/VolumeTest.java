@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.jplag.exceptions.ExitException;
@@ -37,6 +38,7 @@ public class VolumeTest extends TestBase {
      * Accepts a derivation of 0.1% in the matching percentage
      */
     @Test
+    @Ignore
     public void volumeComparisonTest() throws ExitException, IOException {
 
         // Always succeed if not executed in an appropriate environment
