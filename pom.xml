@@ -22,19 +22,19 @@
 
     <developers>
         <developer>
-            <id>sebinside</id>
-            <name>Sebastian Hahner</name>
-            <email>hahner@kit.edu</email>
-            <url>https://sdq.ipd.kit.edu/people/sebastian-hahner/</url>
+            <id>tsaglam</id>
+            <name>Timur Sağlam</name>
+            <email>saglam@kit.edu</email>
+            <url>https://sdq.ipd.kit.edu/people/timur-saglam/</url>
             <organization>KASTEL</organization>
             <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
         </developer>
         <developer>
-            <id>tsaglam</id>
-            <name>Timur Sağlam</name>
-            <email>saglam@kit.edu</email>
-            <url>https://sdq.ipd.kit.edu/people/timur-saglam/</url>
+            <id>sebinside</id>
+            <name>Sebastian Hahner</name>
+            <email>hahner@kit.edu</email>
+            <url>https://sdq.ipd.kit.edu/people/sebastian-hahner/</url>
             <organization>KASTEL</organization>
             <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
@@ -46,6 +46,7 @@
         <module>jplag.frontend.chars</module>
         <module>jplag.frontend.cpp</module>
         <module>jplag.frontend.csharp-1.2</module>
+        <module>jplag.frontend.csharp-6</module>
         <module>jplag.frontend.java</module>
         <module>jplag.frontend.python-3</module>
         <module>jplag.frontend.scheme</module>
@@ -151,6 +152,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>csharp-1.2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>csharp-6</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
