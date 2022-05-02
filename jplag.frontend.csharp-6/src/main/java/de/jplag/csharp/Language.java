@@ -11,6 +11,11 @@ import de.jplag.TokenList;
  * @author Timur Saglam
  */
 public class Language implements de.jplag.Language {
+    private static final String NAME = "C# 6 Parser";
+    private static final String SHORT_NAME = "C# 6";
+    private static final String[] FILE_ENDINGS = new String[] {".cs", ".CS"};
+    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
+
     private final CSharpParserAdapter parser;
 
     public Language(ErrorConsumer program) {
@@ -19,27 +24,27 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".cs", ".CS"};
+        return FILE_ENDINGS;
     }
 
     @Override
     public String getName() {
-        return "C# 6 Parser";
+        return NAME;
     }
 
     @Override
     public String getShortName() {
-        return "C# 6";
+        return SHORT_NAME;
     }
 
     @Override
     public int minimumTokenMatch() {
-        return 8;
+        return DEFAULT_MIN_TOKEN_MATCH;
     }
 
     @Override
     public TokenList parse(File dir, String[] files) {
-        return this.parser.parse(dir, Arrays.asList(files));
+        return parser.parse(dir, Arrays.asList(files));
     }
 
     @Override
@@ -54,7 +59,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public boolean isPreformatted() {
-        return false;
+        return true;
     }
 
     @Override

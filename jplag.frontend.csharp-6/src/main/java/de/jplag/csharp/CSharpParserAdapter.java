@@ -62,13 +62,13 @@ public class CSharpParserAdapter extends AbstractParser {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             CSharpParser parser = new CSharpParser(tokens);
 
-            // Create a tree walker and rule context
-            ParserRuleContext ruleContext = parser.getRuleContext();
+            // Create a tree walker and the entry context defined by the parser grammar
+            ParserRuleContext entryContext = parser.compilation_unit();
             ParseTreeWalker treeWalker = new ParseTreeWalker();
 
             // Walk over the parse tree:
-            for (int i = 0; i < ruleContext.getChildCount(); i++) {
-                ParseTree parseTree = ruleContext.getChild(i);
+            for (int i = 0; i < entryContext.getChildCount(); i++) {
+                ParseTree parseTree = entryContext.getChild(i);
                 treeWalker.walk(new CSharpListener(this), parseTree);
             }
         } catch (IOException exception) {

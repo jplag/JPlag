@@ -42,7 +42,7 @@ import de.jplag.csharp.grammar.CSharpParser.ReturnStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.Struct_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Struct_definitionContext;
 import de.jplag.csharp.grammar.CSharpParser.SwitchStatementContext;
-import de.jplag.csharp.grammar.CSharpParser.Switch_expressionContext;
+import de.jplag.csharp.grammar.CSharpParser.Switch_sectionContext;
 import de.jplag.csharp.grammar.CSharpParser.ThrowStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.TryStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.UncheckedExpressionContext;
@@ -133,15 +133,15 @@ public class CSharpListener extends CSharpParserBaseListener implements CSharpTo
     }
 
     @Override
-    public void enterSwitch_expression(Switch_expressionContext context) {
+    public void enterSwitch_section(Switch_sectionContext context) {
         transformToken(SWITCH_BEGIN, context.getStart());
-        super.enterSwitch_expression(context);
+        super.enterSwitch_section(context);
     }
 
     @Override
-    public void exitSwitch_expression(Switch_expressionContext context) {
+    public void exitSwitch_section(Switch_sectionContext context) {
         transformToken(SWITCH_END, context.getStop());
-        super.exitSwitch_expression(context);
+        super.exitSwitch_section(context);
     }
 
     @Override
