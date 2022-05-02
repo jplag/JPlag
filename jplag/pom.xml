@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>csharp-1.2</artifactId>
+            <artifactId>csharp-6</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
