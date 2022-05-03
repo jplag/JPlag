@@ -17,7 +17,6 @@ import java.util.Map;
  * the token start, while the last vertical line marks the token end. Tokens that are shorter than the name do not end
  * with a vertical line, e.g. <code>|TOKEN</code>. Tokens with length 1 or 0 are printed in lower case, e.g.
  * <code>|token</code>.
- * @see Submission
  * @author Timur Saglam
  */
 public final class TokenPrinter {
@@ -34,15 +33,6 @@ public final class TokenPrinter {
 
     private TokenPrinter() {
         // Utility class, no public constructor.
-    }
-
-    /**
-     * Creates a string representation of a submission line by line and adds the tokens under the lines.
-     * @param submission is the submission to print.
-     * @return the string representation.
-     */
-    public static String printTokens(Submission submission) {
-        return printTokens(submission.getTokenList(), submission.getFiles(), submission.getRoot());
     }
 
     /**

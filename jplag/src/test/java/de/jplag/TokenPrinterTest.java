@@ -43,17 +43,21 @@ public class TokenPrinterTest extends TestBase {
         try {
             JPlagResult result = runJPlag(PRINTER_FOLDER, optionsCustomization);
             for (Submission submission : result.getSubmissions().getSubmissions()) {
-                System.out.println();
-                System.out.println(LINE);
-                System.out.println(LARGE_SPACE + submission.getName());
-                System.out.println(LINE);
-                System.out.println(TokenPrinter.printTokens(submission));
+                printSubmission(submission);
             }
             System.out.println("JPlag printed " + result.getSubmissions().numberOfSubmissions() + " valid submissions!");
         } catch (ExitException exception) {
             System.err.println("JPlag threw Error: " + exception.getMessage());
             fail();
         }
+    }
+
+    private void printSubmission(Submission submission) {
+        System.out.println();
+        System.out.println(LINE);
+        System.out.println(LARGE_SPACE + submission.getName());
+        System.out.println(LINE);
+        System.out.println(TokenPrinter.printTokens(submission.getTokenList(), submission.getFiles(), submission.getRoot()));
     }
 
 }
