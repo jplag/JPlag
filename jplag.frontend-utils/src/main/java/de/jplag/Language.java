@@ -29,18 +29,16 @@ public interface Language {
 
     /**
      * Parses a set files in a directory.
+     * @param directory is the directory where the files are located.
+     * @param files are the names of the files to parse.
+     * @return the list of parsed JPlag tokens.
      */
-    TokenList parse(File dir, String[] files);
+    TokenList parse(File directory, String[] files);
 
     /**
      * Whether errors were found during the last {@link #parse}.
      */
     boolean hasErrors();
-
-    /**
-     * Number of errors found during the last {@link #parse}.
-     */
-    int errorCount();
 
     /**
      * Determines whether the parser provide column information.

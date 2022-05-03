@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.jplag</groupId>
         <artifactId>aggregator</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>jplag</artifactId>
 
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.2.1</version>
+            <version>2.13.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>4.4.0</version>
+            <version>4.5.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>csharp-1.2</artifactId>
+            <artifactId>csharp-6</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>

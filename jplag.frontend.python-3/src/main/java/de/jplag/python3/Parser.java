@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
@@ -23,6 +24,14 @@ public class Parser extends AbstractParser {
     private TokenList tokens = new TokenList();
     private String currentFile;
 
+    /**
+     * Creates the parser.
+     * @param errorConsumer is the consumer for any occurring errors.
+     */
+    public Parser(ErrorConsumer errorConsumer) {
+        super(errorConsumer);
+    }
+
     public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
@@ -31,10 +40,8 @@ public class Parser extends AbstractParser {
             if (!parseFile(directory, files[i])) {
                 errors++;
             }
-            System.gc();// Emeric
             tokens.addToken(new Python3Token(Python3TokenConstants.FILE_END, files[i], -1, -1, -1));
         }
-        this.parseEnd();
         return tokens;
     }
 

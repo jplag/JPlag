@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.jplag</groupId>
         <artifactId>aggregator</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>cpp</artifactId>
 
@@ -28,7 +28,7 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <jdkVersion>1.5</jdkVersion>
+                            <jdkVersion>17</jdkVersion>
                             <javadocFriendlyComments>true</javadocFriendlyComments>
                             <packageName>de.jplag.cpp</packageName>
                             <sourceDirectory>src/main/javacc</sourceDirectory>

@@ -11,9 +11,8 @@ import de.jplag.TokenList;
 public class Language implements de.jplag.Language {
     private final Parser parser;
 
-    public Language(ErrorConsumer program) {
-        this.parser = new Parser();
-        this.parser.setProgram(program);
+    public Language(ErrorConsumer errorConsumer) {
+        parser = new Parser(errorConsumer);
     }
 
     @Override
@@ -23,7 +22,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Javac 1.9+ based AST plugin";
+        return "Javac based AST plugin";
     }
 
     @Override
@@ -57,18 +56,13 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public TokenList parse(File dir, String[] files) {
-        return this.parser.parse(dir, files);
+    public TokenList parse(File directory, String[] files) {
+        return this.parser.parse(directory, files);
     }
 
     @Override
     public boolean hasErrors() {
         return this.parser.hasErrors();
-    }
-
-    @Override
-    public int errorCount() {
-        return this.parser.errorsCount();
     }
 
 }

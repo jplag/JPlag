@@ -80,9 +80,14 @@ public class JPlagOptions {
     private Set<String> excludedFiles = Collections.emptySet();
 
     /**
-     * Directory that contains all submissions.
+     * Directories with new submissions. These must be checked for plagiarism.
      */
-    private List<String> rootDirectoryNames;
+    private List<String> submissionDirectories;
+
+    /**
+     * Directories with old submissions to check against.
+     */
+    private List<String> oldSubmissionDirectories;
 
     /**
      * Path name of the directory containing the base code.
@@ -124,8 +129,9 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(List<String> rootDirectoryNames, LanguageOption languageOption) {
-        this.rootDirectoryNames = rootDirectoryNames;
+    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, LanguageOption languageOption) {
+        this.submissionDirectories = submissionDirectories;
+        this.oldSubmissionDirectories = oldSubmissionDirectories;
         this.languageOption = languageOption;
     }
 
@@ -165,8 +171,12 @@ public class JPlagOptions {
         return minimumTokenMatch;
     }
 
-    public List<String> getRootDirectoryNames() {
-        return rootDirectoryNames;
+    public List<String> getSubmissionDirectories() {
+        return submissionDirectories;
+    }
+
+    public List<String> getOldSubmissionDirectories() {
+        return oldSubmissionDirectories;
     }
 
     public SimilarityMetric getSimilarityMetric() {
@@ -260,8 +270,12 @@ public class JPlagOptions {
         }
     }
 
-    public void setRootDirectoryNames(List<String> rootDirectoryNames) {
-        this.rootDirectoryNames = rootDirectoryNames;
+    public void setSubmissionDirectories(List<String> submissionDirectories) {
+        this.submissionDirectories = submissionDirectories;
+    }
+
+    public void setOldSubmissionDirectories(List<String> oldSubmissionDirectories) {
+        this.oldSubmissionDirectories = oldSubmissionDirectories;
     }
 
     public void setSimilarityMetric(SimilarityMetric similarityMetric) {

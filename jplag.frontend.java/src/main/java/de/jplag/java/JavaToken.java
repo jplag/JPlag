@@ -1,6 +1,7 @@
 package de.jplag.java;
 
 import de.jplag.Token;
+import de.jplag.TokenConstants;
 
 public class JavaToken extends Token implements JavaTokenConstants {
 
@@ -11,9 +12,9 @@ public class JavaToken extends Token implements JavaTokenConstants {
     @Override
     protected String type2string() {
         switch (type) {
-            case JavaTokenConstants.FILE_END:
+            case TokenConstants.FILE_END:
                 return "EOF";
-            case JavaTokenConstants.SEPARATOR_TOKEN:
+            case TokenConstants.SEPARATOR_TOKEN:
                 return "METHOD_SEPARATOR";
             case J_PACKAGE:
                 return "PACKAGE";

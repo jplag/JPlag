@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.jplag</groupId>
     <artifactId>aggregator</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>JPlag Plagiarism Detector</name>
@@ -22,19 +22,19 @@
 
     <developers>
         <developer>
-            <id>sebinside</id>
-            <name>Sebastian Hahner</name>
-            <email>hahner@kit.edu</email>
-            <url>https://sdq.ipd.kit.edu/people/sebastian-hahner/</url>
+            <id>tsaglam</id>
+            <name>Timur Sağlam</name>
+            <email>saglam@kit.edu</email>
+            <url>https://sdq.ipd.kit.edu/people/timur-saglam/</url>
             <organization>KASTEL</organization>
             <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
         </developer>
         <developer>
-            <id>tsaglam</id>
-            <name>Timur Sağlam</name>
-            <email>saglam@kit.edu</email>
-            <url>https://sdq.ipd.kit.edu/people/timur-saglam/</url>
+            <id>sebinside</id>
+            <name>Sebastian Hahner</name>
+            <email>hahner@kit.edu</email>
+            <url>https://sdq.ipd.kit.edu/people/sebastian-hahner/</url>
             <organization>KASTEL</organization>
             <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
@@ -45,7 +45,7 @@
         <module>jplag.frontend-utils</module>
         <module>jplag.frontend.chars</module>
         <module>jplag.frontend.cpp</module>
-        <module>jplag.frontend.csharp-1.2</module>
+        <module>jplag.frontend.csharp-6</module>
         <module>jplag.frontend.java</module>
         <module>jplag.frontend.python-3</module>
         <module>jplag.frontend.scheme</module>
@@ -81,7 +81,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.21.0</spotless.version>
+        <spotless.version>2.22.2</spotless.version>
+        <!-- The Revision of JPlag -->
+        <revision>4.0.0-SNAPSHOT</revision>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -94,12 +96,12 @@
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-runtime</artifactId>
-                <version>4.9.3</version>
+                <version>4.10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4</artifactId>
-                <version>4.9.3</version>
+                <version>4.10.1</version>
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
@@ -148,7 +150,7 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>csharp-1.2</artifactId>
+                <artifactId>csharp-6</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -190,6 +192,32 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.2.7</version>
+                    <configuration>
+                        <updatePomFile>true</updatePomFile>
+                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>flatten</id>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                            <phase>process-resources</phase>
+                        </execution>
+                        <execution>
+                            <id>flatten.clean</id>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                            <phase>clean</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
                     <groupId>com.helger.maven</groupId>
                     <artifactId>ph-javacc-maven-plugin</artifactId>
                     <version>4.1.5</version>
@@ -208,7 +236,7 @@
                 <plugin>
                     <groupId>org.antlr</groupId>
                     <artifactId>antlr4-maven-plugin</artifactId>
-                    <version>4.9.3</version>
+                    <version>4.10.1</version>
                 </plugin>
 
                 <plugin>
@@ -222,6 +250,13 @@
                             </manifest>
                         </archive>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>test-jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
@@ -265,6 +300,10 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -328,7 +367,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.12</version>
+                <version>1.6.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
