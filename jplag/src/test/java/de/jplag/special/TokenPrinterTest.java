@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.special;
 
 import static org.junit.Assert.fail;
 
@@ -7,6 +7,10 @@ import java.util.function.Consumer;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import de.jplag.JPlagResult;
+import de.jplag.Submission;
+import de.jplag.TestBase;
+import de.jplag.TokenPrinter;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
