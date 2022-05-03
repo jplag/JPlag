@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.util.function.Consumer;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.jplag.exceptions.ExitException;
@@ -11,25 +12,30 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 
 /**
- * Temporary test case the does not really test anything but prints the tokens and the corresponding line of code.
- * Should not be merged into master as this is only for explorative testing.
+ * Special test case the does not really test anything but prints the tokens and the corresponding line of code.
  * @author Timur Saglam
  */
 public class TokenPrinterTest extends TestBase {
+    private static final String LARGE_SPACE = "   ";
+    private static final String LINE = "------------------";
+
+    private static final int MIN_TOKEN_MATCH = 5;
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
 
+    @Ignore
     @Test
     public void printCPPFiles() {
         printSubmissions(options -> {
             options.setLanguageOption(LanguageOption.C_CPP);
-            options.setMinimumTokenMatch(5); // for printing also allow small files
+            options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }
 
+    @Ignore
     @Test
     public void printJavaFiles() {
         printSubmissions(options -> {
-            options.setMinimumTokenMatch(5); // for printing also allow small files
+            options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }
 
@@ -38,14 +44,14 @@ public class TokenPrinterTest extends TestBase {
             JPlagResult result = runJPlag(PRINTER_FOLDER, optionsCustomization);
             for (Submission submission : result.getSubmissions().getSubmissions()) {
                 System.out.println();
-                System.out.println("------------------");
-                System.out.println("   " + submission.getName());
-                System.out.println("------------------");
-                TokenPrinter.printTokens(submission);
+                System.out.println(LINE);
+                System.out.println(LARGE_SPACE + submission.getName());
+                System.out.println(LINE);
+                System.out.println(TokenPrinter.printTokens(submission));
             }
-            System.out.println("JPlag printed " + result.getSubmissions() + " valid submissions!");
-        } catch (ExitException e) {
-            System.err.println("JPlag threw Error: " + e.getMessage());
+            System.out.println("JPlag printed " + result.getSubmissions().numberOfSubmissions() + " valid submissions!");
+        } catch (ExitException exception) {
+            System.err.println("JPlag threw Error: " + exception.getMessage());
             fail();
         }
     }

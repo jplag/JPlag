@@ -32,6 +32,10 @@ public final class TokenPrinter {
     private static final boolean INDICATE_TINY_TOKEN = true; // print token with length <= 1 in lowercase
     private static final boolean REPLACE_TABS = false;
 
+    private TokenPrinter() {
+        // Utility class, no public constructor.
+    }
+
     /**
      * Creates a string representation of a submission line by line and adds the tokens under the lines.
      * @param submission is the submission to print.
