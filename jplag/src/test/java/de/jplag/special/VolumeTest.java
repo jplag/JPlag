@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.special;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,6 +14,7 @@ import java.util.Map;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import de.jplag.TestBase;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
