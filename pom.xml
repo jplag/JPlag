@@ -43,6 +43,7 @@
 
     <modules>
         <module>jplag.frontend-utils</module>
+        <module>jplag.frontend-testutils</module>
         <module>jplag.frontend.chars</module>
         <module>jplag.frontend.cpp</module>
         <module>jplag.frontend.csharp-6</module>
@@ -175,18 +176,16 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>frontend-testutils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>jplag</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <build>
         <pluginManagement>
