@@ -1,25 +1,25 @@
 package de.jplag.cli;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.CommandLineArgument;
 
-public class BaseCodeOptionTest extends CommandLineInterfaceTest {
+class BaseCodeOptionTest extends CommandLineInterfaceTest {
 
     private static final String NAME = "BaseCodeName";
 
     @Test
-    public void testDefaultValue() {
+    void testDefaultValue() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
         assertEquals(Optional.empty(), options.getBaseCodeSubmissionName());
     }
 
     @Test
-    public void testCustomName() {
+    void testCustomName() {
         String argument = buildArgument(CommandLineArgument.BASE_CODE, NAME);
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(NAME, options.getBaseCodeSubmissionName().get());

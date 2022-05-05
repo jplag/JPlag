@@ -1,10 +1,10 @@
 package de.jplag.clustering.algorithm;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BayesianOptimizationTest {
 

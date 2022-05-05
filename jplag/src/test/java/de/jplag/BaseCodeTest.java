@@ -1,11 +1,12 @@
 package de.jplag;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
@@ -14,24 +15,24 @@ import de.jplag.exceptions.RootDirectoryException;
 public class BaseCodeTest extends TestBase {
 
     @Test
-    public void testBasecodeUserSubmissionComparison() throws ExitException {
+    void testBasecodeUserSubmissionComparison() throws ExitException {
         JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base"));
         verifyResults(result);
     }
 
-    @Test(expected = BasecodeException.class)
-    public void testTinyBasecode() throws ExitException {
-        runJPlag("TinyBasecode", it -> it.setBaseCodeSubmissionName("base"));
+    @Test
+    void testTinyBasecode() {
+        assertThrows(BasecodeException.class, () -> runJPlag("TinyBasecode", it -> it.setBaseCodeSubmissionName("base")));
     }
 
     @Test
-    public void testEmptySubmission() throws ExitException {
+    void testEmptySubmission() throws ExitException {
         JPlagResult result = runJPlag("emptysubmission", it -> it.setBaseCodeSubmissionName("base"));
         verifyResults(result);
     }
 
     @Test
-    public void testAutoTrimFileSeparators() throws ExitException {
+    void testAutoTrimFileSeparators() throws ExitException {
         JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName(File.separator + "base" + File.separator));
         verifyResults(result);
     }
@@ -45,23 +46,23 @@ public class BaseCodeTest extends TestBase {
     }
 
     @Test
-    public void testBasecodePathComparison() throws ExitException {
+    void testBasecodePathComparison() throws ExitException {
         JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName(getBasePath("basecode-base")));
         assertEquals(3, result.getNumberOfSubmissions()); // "basecode/base" is now a user submission.
     }
 
-    @Test(expected = RootDirectoryException.class)
-    public void testInvalidRoot() throws ExitException {
-        runJPlag("basecode", it -> it.setSubmissionDirectories(List.of("WrongRoot")));
+    @Test
+    void testInvalidRoot() throws ExitException {
+        assertThrows(RootDirectoryException.class, () -> runJPlag("basecode", it -> it.setSubmissionDirectories(List.of("WrongRoot"))));
     }
 
-    @Test(expected = BasecodeException.class)
-    public void testInvalidBasecode() throws ExitException {
-        runJPlag("basecode", it -> it.setBaseCodeSubmissionName("WrongBasecode"));
+    @Test
+    void testInvalidBasecode() {
+        assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> it.setBaseCodeSubmissionName("WrongBasecode")));
     }
 
-    @Test(expected = BasecodeException.class)
-    public void testBasecodeUserSubmissionWithDots() throws ExitException {
-        runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base.ext"));
+    @Test
+    void testBasecodeUserSubmissionWithDots() {
+        assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base.ext")));
     }
 }

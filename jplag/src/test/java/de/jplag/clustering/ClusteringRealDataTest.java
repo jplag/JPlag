@@ -1,28 +1,18 @@
 package de.jplag.clustering;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
@@ -64,7 +54,7 @@ public class ClusteringRealDataTest {
     private URL loadFromClasspath(String file) throws FileNotFoundException {
         URL url = getClass().getClassLoader().getResource(file);
         if (url == null) {
-            assumeTrue(file + " not found. 'de/jpag/PseudonymizedReports' must contain the data from the PseudonymizedReports repository.", false);
+            assumeTrue(false, file + " not found. 'de/jpag/PseudonymizedReports' must contain the data from the PseudonymizedReports repository.");
         }
         return url;
     }

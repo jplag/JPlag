@@ -80,6 +80,13 @@ public abstract class Token {
     }
 
     /**
+     * @return the type identifier of the token.
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
      * Sets the character index which denotes where the code sections represented by this token starts in the line.
      * @param column is the index in characters to set.
      */

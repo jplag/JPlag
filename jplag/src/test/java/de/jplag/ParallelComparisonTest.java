@@ -1,11 +1,11 @@
 package de.jplag;
 
 import static de.jplag.strategy.ComparisonMode.PARALLEL;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.strategy.ParallelComparisonStrategy;
