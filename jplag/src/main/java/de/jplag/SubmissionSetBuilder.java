@@ -140,8 +140,7 @@ public class SubmissionSetBuilder {
                 // Single root-directory, try the legacy way of specifying basecode.
                 baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
             }
-            // TODO Optional.of() will cause a NPTR-Exception of baseCode is null. Is this a bug?
-            baseCodeSubmission = Optional.of(baseCode);
+            baseCodeSubmission = Optional.ofNullable(baseCode);
             logger.info("Basecode directory \"{}\" will be used.", baseCode.getName());
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
@@ -211,8 +210,8 @@ public class SubmissionSetBuilder {
             // No base code found at all, report an error.
             throw new BasecodeException(String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
         } else {
-            // Found a base code as a submission, report about legacy usage.
-            logger.info("Legacy use of the -bc option found, please specify the basecode by path instead of by name!");
+            // Found a base code as a submission, warn about legacy usage.
+            logger.warn("Legacy use of the base code option found, please specify the basecode by path instead of by name!");
         }
         return baseCode;
     }
