@@ -2,6 +2,9 @@ package de.jplag.testutils;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.ErrorConsumer;
 
 /**
@@ -9,16 +12,17 @@ import de.jplag.ErrorConsumer;
  * @author Timur Saglam
  */
 public class TestErrorConsumer implements ErrorConsumer {
+    private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
 
     @Override
     public void addError(String errorMessage) {
-        System.err.println(errorMessage);
+        logger.error(errorMessage);
         fail(errorMessage);
     }
 
     @Override
     public void print(String message, String longMessage) {
-        System.out.println(message);
+        logger.info(message);
     }
 
 }

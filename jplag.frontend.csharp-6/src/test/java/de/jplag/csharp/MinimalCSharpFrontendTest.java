@@ -13,6 +13,8 @@ import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.TokenConstants;
@@ -21,6 +23,8 @@ import de.jplag.TokenPrinter;
 import de.jplag.testutils.TestErrorConsumer;
 
 class MinimalCSharpFrontendTest {
+    private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
+
     private static final int EXPEXTED_NUMBER_OF_TOKENS = 15;
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "csharp");
     private static final String TEST_SUBJECT = "TestClass.cs";
@@ -44,7 +48,7 @@ class MinimalCSharpFrontendTest {
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
         TokenList result = frontend.parse(baseDirectory, input);
-        System.out.println(TokenPrinter.printTokens(result, baseDirectory, Arrays.asList(input)));
+        logger.info(TokenPrinter.printTokens(result, baseDirectory, Arrays.asList(input)));
 
         // Compare parsed tokens:
         assertEquals(EXPEXTED_NUMBER_OF_TOKENS, result.size());

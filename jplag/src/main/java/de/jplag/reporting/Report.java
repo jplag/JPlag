@@ -2,6 +2,9 @@ package de.jplag.reporting;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.JPlagResult;
 
 // ReportStrategy -> Report
@@ -10,6 +13,8 @@ import de.jplag.JPlagResult;
  * Strategy interface for reporting. A report generator should implement this interface.
  */
 public interface Report {
+
+    Logger logger = LoggerFactory.getLogger(Report.class);
 
     /**
      * This function returns a list containing the report objects as simple strings. The first element is the string of the

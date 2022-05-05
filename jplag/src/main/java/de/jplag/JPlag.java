@@ -12,6 +12,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
@@ -26,6 +29,8 @@ import de.jplag.strategy.ParallelComparisonStrategy;
  * This class coordinates the whole errorConsumer flow.
  */
 public class JPlag {
+    private static final Logger logger = LoggerFactory.getLogger("JPlag");
+
     private final JPlagOptions options;
 
     private final Language language;
@@ -63,7 +68,7 @@ public class JPlag {
             }
             return excludedFileNames;
         } catch (IOException e) {
-            System.out.println("Could not read exclusion file: " + e.getMessage());
+            logger.error("Could not read exclusion file: " + e.getMessage(), e);
             return Collections.emptySet();
         }
     }
@@ -114,7 +119,7 @@ public class JPlag {
 
             this.options.setLanguage(language);
             this.options.setLanguageDefaults(language);
-            System.out.println("Initialized language " + language.getName());
+            logger.info("Initialized language " + language.getName());
             return language;
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
