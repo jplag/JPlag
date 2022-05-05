@@ -1,34 +1,6 @@
 package de.jplag;
 
-import static de.jplag.CommandLineArgument.BASE_CODE;
-import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY;
-import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_THRESHOLD;
-import static de.jplag.CommandLineArgument.CLUSTER_ALGORITHM;
-import static de.jplag.CommandLineArgument.CLUSTER_ENABLE;
-import static de.jplag.CommandLineArgument.CLUSTER_METRIC;
-import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_CDF;
-import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_NONE;
-import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE;
-import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_THRESHOLD;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_BANDWIDTH;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_KMEANS_ITERATIONS;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MAX_RUNS;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MIN_RUNS;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_NOISE;
-import static de.jplag.CommandLineArgument.COMPARISON_MODE;
-import static de.jplag.CommandLineArgument.DEBUG;
-import static de.jplag.CommandLineArgument.EXCLUDE_FILE;
-import static de.jplag.CommandLineArgument.LANGUAGE;
-import static de.jplag.CommandLineArgument.MIN_TOKEN_MATCH;
-import static de.jplag.CommandLineArgument.NEW_DIRECTORY;
-import static de.jplag.CommandLineArgument.OLD_DIRECTORY;
-import static de.jplag.CommandLineArgument.RESULT_FOLDER;
-import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
-import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
-import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
-import static de.jplag.CommandLineArgument.SUBDIRECTORY;
-import static de.jplag.CommandLineArgument.SUFFIXES;
-import static de.jplag.CommandLineArgument.VERBOSITY;
+import static de.jplag.CommandLineArgument.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +11,9 @@ import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
@@ -58,6 +33,8 @@ import de.jplag.strategy.ComparisonMode;
  * @see CLI#main(String[])
  */
 public class CLI {
+
+    private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
     private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. JPlag logo designed by Sandro Koch. Currently maintained by Sebastian Hahner and Timur Saglam.";
 
@@ -81,12 +58,12 @@ public class CLI {
             Namespace arguments = cli.parseArguments(args);
             JPlagOptions options = cli.buildOptionsFromArguments(arguments);
             JPlag program = new JPlag(options);
-            System.out.println("JPlag initialized");
+            logger.info("JPlag initialized");
             JPlagResult result = program.run();
             Report report = new JsonReport();
             report.saveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
         } catch (ExitException exception) {
-            System.out.println("Error: " + exception.getMessage());
+            logger.error(exception.getMessage(), exception);
             System.exit(1);
         }
     }
@@ -148,7 +125,7 @@ public class CLI {
         options.setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace));
         options.setMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
         ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(options::setComparisonMode,
-                () -> System.out.println("Unknown comparison mode, using default mode!"));
+                () -> logger.warn("Unknown comparison mode, using default mode!"));
 
         ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
         Optional.ofNullable((Boolean) CLUSTER_ENABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);

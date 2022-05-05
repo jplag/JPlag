@@ -10,11 +10,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.strategy.ComparisonMode;
 
 public class JPlagOptions {
+
+    private static final Logger logger = LoggerFactory.getLogger("JPlag");
 
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
@@ -284,10 +289,10 @@ public class JPlagOptions {
 
     public void setSimilarityThreshold(float similarityThreshold) {
         if (similarityThreshold > 100) {
-            System.out.println("Maximum threshold of 100 used instead of " + similarityThreshold);
+            logger.warn("Maximum threshold of 100 used instead of " + similarityThreshold);
             this.similarityThreshold = 100;
         } else if (similarityThreshold < 0) {
-            System.out.println("Minimum threshold of 0 used instead of " + similarityThreshold);
+            logger.warn("Minimum threshold of 0 used instead of " + similarityThreshold);
             this.similarityThreshold = 0;
         } else {
             this.similarityThreshold = similarityThreshold;

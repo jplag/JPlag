@@ -27,7 +27,7 @@ public class JsonReport implements Report {
         File dir = new File(path);
         if (!dir.exists()) {
             if (!dir.mkdir()) {
-                System.out.println("Failed to create dir.");
+                logger.error("Failed to create dir.");
             }
         }
         return JsonFactory.saveJsonFiles(report, path);

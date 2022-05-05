@@ -5,6 +5,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,6 +18,8 @@ import de.jplag.reporting.reportobject.model.JPlagReport;
  * Factory class, responsible for creating Json strings and writing them to files.
  */
 public class JsonFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(JsonFactory.class);
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -31,7 +36,7 @@ public class JsonFactory {
                 jsonReports.add(mapper.writeValueAsString(comparisonReport));
             }
         } catch (JsonProcessingException e) {
-            System.out.println("Error converting object to json " + e.getMessage());
+            logger.error("Error converting object to json " + e.getMessage());
         }
         return jsonReports;
     }
@@ -49,7 +54,7 @@ public class JsonFactory {
                 mapper.writeValue(Path.of(folderPath, name).toFile(), report);
             }
         } catch (IOException e) {
-            System.out.println("Failed to save json files: " + e.getMessage());
+            logger.error("Failed to save json files: " + e.getMessage(), e);
             return false;
         }
         return true;

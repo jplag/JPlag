@@ -1,8 +1,13 @@
 package de.jplag.python3;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.Token;
 
 public class Python3Token extends Token implements Python3TokenConstants {
+
+    private static final Logger logger = LoggerFactory.getLogger(Python3Token.class);
 
     public Python3Token(int type, String file, int line, int column, int length) {
         super(type, file, line, column, length);
@@ -76,7 +81,7 @@ public class Python3Token extends Token implements Python3TokenConstants {
             case WITH_END:
                 return "}WITH   ";
             default:
-                System.err.println("*UNKNOWN: " + type);
+                logger.error("*UNKNOWN: " + type);
                 return "*UNKNOWN" + type;
         }
     }

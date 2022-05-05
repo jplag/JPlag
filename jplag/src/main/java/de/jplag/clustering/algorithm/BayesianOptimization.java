@@ -14,11 +14,15 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.random.HaltonSequenceGenerator;
 import org.apache.commons.math3.random.RandomVectorGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Maximizes a function using bayesian optimization.
  */
 public class BayesianOptimization {
+
+    private static final Logger logger = LoggerFactory.getLogger(BayesianOptimization.class);
 
     private static final int STOP_AFTER_CONSECUTIVE_RANDOM_PICKS = 3;
     private static final int MAX_NON_ZERO_ACQ_FN_EVALS_PER_ITERATION = 50;
@@ -156,7 +160,7 @@ public class BayesianOptimization {
                 // GPR
                 GaussianProcess gpr = fit(testedCoordinates, observations);
                 if (debug) {
-                    System.out.println(gpr.toString(minima, maxima, 100, 25, 0));
+                    logger.debug(gpr.toString(minima, maxima, 100, 25, 0));
                 }
                 // TODO Check that best is not null here
                 coordinates = maxAcq(gpr, best.score, poiSampler, zeroAcquisitionsCounter);

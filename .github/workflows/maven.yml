@@ -31,6 +31,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: "JPlag"
-        path: "jplag/target/jplag-*-jar-with-dependencies.jar"
+        path: "jplag.cli/target/jplag-*-jar-with-dependencies.jar"
       
 

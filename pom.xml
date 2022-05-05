@@ -52,6 +52,7 @@
         <module>jplag.frontend.scheme</module>
         <module>jplag.frontend.text</module>
         <module>jplag</module>
+        <module>jplag.cli</module>
     </modules>
     <scm>
         <connection>scm:git:git://github.com/jplag/JPlag.git</connection>
@@ -83,6 +84,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <spotless.version>2.22.4</spotless.version>
+        <slf4j.version>1.7.36</slf4j.version>
         <!-- The Revision of JPlag -->
         <revision>4.0.0-SNAPSHOT</revision>
     </properties>
@@ -115,11 +117,22 @@
                 <artifactId>antlr3-runtime</artifactId>
                 <version>3.5</version>
             </dependency>
-
             <dependency>
                 <groupId>net.sourceforge.argparse4j</groupId>
                 <artifactId>argparse4j</artifactId>
                 <version>0.9.0</version>
+            </dependency>
+
+            <!-- LOGGER -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
 
             <!-- JPLAG -->
@@ -193,6 +206,15 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>4.5.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

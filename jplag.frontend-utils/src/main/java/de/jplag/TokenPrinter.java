@@ -11,6 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Utility class for printing JPlag tokens from a submission. Each line of code is printed starting with the line
  * number. Under these lines the tokens are annotated in the format <code>|TOKEN|</code>. The first vertical line marks
@@ -20,7 +23,7 @@ import java.util.Map;
  * @author Timur Saglam
  */
 public final class TokenPrinter {
-
+    private static final Logger logger = LoggerFactory.getLogger(TokenPrinter.class);
     // Representation:
     private static final String BAR = "|";
     private static final String TAB = "\t";
@@ -145,8 +148,7 @@ public final class TokenPrinter {
         try {
             return Files.readAllLines(file.toPath());
         } catch (IOException exception) {
-            System.err.println("Cannot read " + file.getAbsolutePath() + ":");
-            exception.printStackTrace();
+            logger.error("Cannot read " + file.getAbsolutePath() + ":", exception);
         }
         return Collections.emptyList();
     }

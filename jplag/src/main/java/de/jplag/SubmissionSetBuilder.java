@@ -2,17 +2,11 @@ package de.jplag;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
@@ -25,6 +19,8 @@ import de.jplag.options.JPlagOptions;
  * @author Timur Saglam
  */
 public class SubmissionSetBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(SubmissionSetBuilder.class);
 
     private final Language language;
     private final JPlagOptions options;
@@ -98,7 +94,7 @@ public class SubmissionSetBuilder {
             rootDirectory = makeCanonical(rootDirectory, it -> new RootDirectoryException("Cannot read root directory: " + rootDirectoryName, it));
             if (!canonicalRootDirectories.add(rootDirectory)) {
                 // Root directory was already added, report a warning.
-                System.out.printf("Warning: Root directory \"%s\" was specified more than once, duplicates will be ignored.", rootDirectoryName);
+                logger.warn("Root directory \"{}\" was specified more than once, duplicates will be ignored.", rootDirectoryName);
             }
         }
         return canonicalRootDirectories;
@@ -119,7 +115,7 @@ public class SubmissionSetBuilder {
         // former use can be removed without affecting the result of the checks.
         oldSubmissionDirectories.removeAll(commonRootdirectories);
         for (File rootDirectory : commonRootdirectories) {
-            System.out.println("Warning: Root directory \"" + rootDirectory.toString()
+            logger.warn("Root directory \"" + rootDirectory.toString()
                     + "\" is specified both for plagiarism checking and for prior submissions, will perform plagiarism checking only.");
         }
     }
@@ -144,14 +140,13 @@ public class SubmissionSetBuilder {
                 // Single root-directory, try the legacy way of specifying basecode.
                 baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
             }
-            // TODO Optional.of() will cause a NPTR-Exception of baseCode is null. Is this a bug?
-            baseCodeSubmission = Optional.of(baseCode);
-            System.out.printf("Basecode directory \"%s\" will be used.%n", baseCode.getName());
+            baseCodeSubmission = Optional.ofNullable(baseCode);
+            logger.info("Basecode directory \"{}\" will be used.", baseCode.getName());
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
             Submission removed = foundSubmissions.remove(baseCode.getRoot());
             if (removed != null) {
-                System.out.printf("Submission \"%s\" is the specified basecode, it will be skipped during comparison.%n", removed.getName());
+                logger.info("Submission \"{}\" is the specified basecode, it will be skipped during comparison.", removed.getName());
             }
         }
         return baseCodeSubmission;
@@ -215,8 +210,8 @@ public class SubmissionSetBuilder {
             // No base code found at all, report an error.
             throw new BasecodeException(String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
         } else {
-            // Found a base code as a submission, report about legacy usage.
-            System.out.println("Legacy use of the -bc option found, please specify the basecode by path instead of by name!");
+            // Found a base code as a submission, warn about legacy usage.
+            logger.warn("Legacy use of the base code option found, please specify the basecode by path instead of by name!");
         }
         return baseCode;
     }
@@ -306,7 +301,7 @@ public class SubmissionSetBuilder {
                 Submission submission = processSubmission(submissionName, submissionFile, isNew);
                 foundSubmissions.put(submission.getRoot(), submission);
             } else {
-                System.out.println(errorMessage);
+                logger.error(errorMessage);
             }
         }
     }
