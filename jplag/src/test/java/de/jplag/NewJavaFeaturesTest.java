@@ -1,8 +1,8 @@
 package de.jplag;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
 
@@ -19,11 +19,11 @@ public class NewJavaFeaturesTest extends TestBase {
         JPlagResult result = runJPlagWithExclusionFile(ROOT_DIRECTORY, EXCLUSION_FILE_NAME);
 
         // Ensure test input did not change:
-        assertEquals(String.format(CHANGE_MESSAGE, "Submissions"), 2, result.getNumberOfSubmissions());
+        assertEquals(2, result.getNumberOfSubmissions(), String.format(CHANGE_MESSAGE, "Submissions"));
         for (Submission submission : result.getSubmissions().getSubmissions()) {
-            assertEquals(String.format(CHANGE_MESSAGE, "Files"), 6, submission.getFiles().size());
+            assertEquals(6, submission.getFiles().size(), String.format(CHANGE_MESSAGE, "Files"));
         }
-        assertEquals(String.format(CHANGE_MESSAGE, "Comparisons"), 1, result.getComparisons().size());
+        assertEquals(1, result.getComparisons().size(), String.format(CHANGE_MESSAGE, "Comparisons"));
 
         // Check similarity and number of matches:
         var comparison = result.getComparisons().get(0);

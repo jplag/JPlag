@@ -1,7 +1,7 @@
 package de.jplag.special;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.TestBase;
 import de.jplag.exceptions.ExitException;
@@ -39,7 +39,7 @@ public class VolumeTest extends TestBase {
      * Accepts a derivation of 0.1% in the matching percentage
      */
     @Test
-    @Ignore
+    @Disabled
     public void volumeComparisonTest() throws ExitException, IOException {
 
         // Always succeed if not executed in an appropriate environment

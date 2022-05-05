@@ -1,17 +1,17 @@
 package de.jplag.clustering;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ClusteringResultTest {
+class ClusteringResultTest {
 
     @Test
-    public void perfectClustering() {
+    void perfectClustering() {
         RealMatrix similarity = new Array2DRowRealMatrix(4, 4);
 
         // These are similar
@@ -27,7 +27,7 @@ public class ClusteringResultTest {
     }
 
     @Test
-    public void uniformClustering() {
+    void uniformClustering() {
         RealMatrix similarity = new Array2DRowRealMatrix(4, 4);
 
         // We'd obtain such weights by pre-selecting the clusters,

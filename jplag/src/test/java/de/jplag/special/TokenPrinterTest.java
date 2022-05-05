@@ -1,11 +1,11 @@
 package de.jplag.special;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.function.Consumer;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
@@ -26,7 +26,7 @@ public class TokenPrinterTest extends TestBase {
     private static final int MIN_TOKEN_MATCH = 5;
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
 
-    @Ignore
+    @Disabled
     @Test
     public void printCPPFiles() {
         printSubmissions(options -> {
@@ -35,7 +35,7 @@ public class TokenPrinterTest extends TestBase {
         });
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void printJavaFiles() {
         printSubmissions(options -> {

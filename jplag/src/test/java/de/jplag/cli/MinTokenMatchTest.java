@@ -1,20 +1,14 @@
 package de.jplag.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.CommandLineArgument;
 import de.jplag.JPlag;
 
 public class MinTokenMatchTest extends CommandLineInterfaceTest {
-
-    @Rule
-    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
     public void testLanguageDefault() {
@@ -32,17 +26,17 @@ public class MinTokenMatchTest extends CommandLineInterfaceTest {
     }
 
     @Test
-    public void testInvalidInput() {
-        exit.expectSystemExitWithStatus(1);
+    public void testInvalidInput() throws Exception {
         String argument = buildArgument(CommandLineArgument.MIN_TOKEN_MATCH, "Not an integer...");
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+        int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
+        assertEquals(1, statusCode);
     }
 
     @Test
-    public void testUpperBound() {
-        exit.expectSystemExitWithStatus(1);
+    public void testUpperBound() throws Exception {
         String argument = buildArgument(CommandLineArgument.MIN_TOKEN_MATCH, "2147483648"); // max value plus one
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+        int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
+        assertEquals(1, statusCode);
     }
 
     @Test

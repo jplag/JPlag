@@ -1,23 +1,23 @@
 package de.jplag;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 
-public class NormalComparisonTest extends TestBase {
+class NormalComparisonTest extends TestBase {
 
     /**
      * The simple duplicate contains obvious plagiarism.
      */
     @Test
-    public void testSimpleDuplicate() throws ExitException {
+    void testSimpleDuplicate() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("SimpleDuplicate");
 
         assertEquals(2, result.getNumberOfSubmissions());
@@ -31,7 +31,7 @@ public class NormalComparisonTest extends TestBase {
      * The classes in no duplicate have nearly nothing in common.
      */
     @Test
-    public void testNoDuplicate() throws ExitException {
+    void testNoDuplicate() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("NoDuplicate");
 
         assertEquals(3, result.getNumberOfSubmissions());
@@ -48,7 +48,7 @@ public class NormalComparisonTest extends TestBase {
      * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java errorConsumer
      */
     @Test
-    public void testPartialPlagiarism() throws ExitException {
+    void testPartialPlagiarism() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
 
         assertEquals(5, result.getNumberOfSubmissions());
@@ -88,7 +88,7 @@ public class NormalComparisonTest extends TestBase {
     }
 
     @Test
-    public void testMultiRootDirNoBasecode() throws ExitException {
+    void testMultiRootDirNoBasecode() throws ExitException {
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 3 + 2 submissions.
         JPlagResult result = runJPlag(paths, options -> {
         });
@@ -96,7 +96,7 @@ public class NormalComparisonTest extends TestBase {
     }
 
     @Test
-    public void testMultiRootDirSeparateBasecode() throws ExitException {
+    void testMultiRootDirSeparateBasecode() throws ExitException {
         String basecodePath = getBasePath("basecode-base");
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 3 + 2 submissions.
         JPlagResult result = runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
@@ -111,12 +111,11 @@ public class NormalComparisonTest extends TestBase {
         assertEquals(4, result.getNumberOfSubmissions());
     }
 
-    @Test(expected = BasecodeException.class)
+    @Test
     public void testMultiRootDirBasecodeName() throws ExitException {
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate"));
         String basecodePath = "base"; // Should *not* find basecode/base
-        runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath));
-        fail("No basecode exception was thrown!");
+        assertThrows(BasecodeException.class, () -> runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath)));
     }
 
     @Test
@@ -130,7 +129,7 @@ public class NormalComparisonTest extends TestBase {
     }
 
     @Test
-    public void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
+    void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
         List<String> newDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
         List<String> oldDirectories = List.of(getBasePath("SimpleDuplicate"));
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> {
@@ -140,7 +139,7 @@ public class NormalComparisonTest extends TestBase {
     }
 
     @Test
-    public void testBasecodeInOldDirectory() throws ExitException {
+    void testBasecodeInOldDirectory() throws ExitException {
         String basecodePath = getBasePath("basecode", "base");
         List<String> newDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
         List<String> oldDirectories = List.of(getBasePath("basecode")); // 3 - 1 submissions

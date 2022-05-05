@@ -1,6 +1,6 @@
 package de.jplag.clustering.algorithm;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -58,7 +58,7 @@ public enum ClusteringData {
     }
 
     public void assertValid(Collection<? extends Collection<Integer>> actual) {
-        assertEquals(this.name() + " not clustered correctly", expected, makeSets(actual));
+        assertEquals(expected, makeSets(actual), this.name() + " not clustered correctly");
     }
 
     private static void setEntries(RealMatrix matrix, int i, int j, double value) {

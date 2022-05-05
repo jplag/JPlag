@@ -86,6 +86,7 @@
         <!-- The Revision of JPlag -->
         <revision>4.0.0-SNAPSHOT</revision>
     </properties>
+
     <dependencyManagement>
         <dependencies>
             <!-- ANTLR -->
@@ -119,18 +120,6 @@
                 <groupId>net.sourceforge.argparse4j</groupId>
                 <artifactId>argparse4j</artifactId>
                 <version>0.9.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.stefanbirkner</groupId>
-                <artifactId>system-rules</artifactId>
-                <version>1.19.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.2</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- JPLAG -->
@@ -186,6 +175,27 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-lambda</artifactId>
+            <version>1.2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>4.5.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <pluginManagement>
@@ -304,6 +314,11 @@
                 <artifactId>flatten-maven-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M6</version>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -358,6 +373,7 @@
                         <phase>verify</phase>
                         <configuration>
                             <keyname>0xC6E9DAC2</keyname>
+                            <!--suppress UnresolvedMavenProperty -->
                             <passphrase>${env.GPG_PASSPHRASE}</passphrase>
                         </configuration>
                     </execution>
@@ -381,6 +397,7 @@
                 <configuration>
                     <java>
                         <eclipse>
+                            <!--suppress UnresolvedMavenProperty -->
                             <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
                         </eclipse>
 

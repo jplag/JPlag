@@ -1,10 +1,10 @@
 package de.jplag.clustering.preprocessors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CumulativeDistributionFunctionPreprocessorTest extends PreprocessingTestBase {
 
@@ -12,7 +12,7 @@ public class CumulativeDistributionFunctionPreprocessorTest extends Preprocessin
 
     CumulativeDistributionFunctionPreprocessor preprocessor;
 
-    @Before
+    @BeforeEach
     public void init() {
         preprocessor = new CumulativeDistributionFunctionPreprocessor();
     }

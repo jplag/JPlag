@@ -2,7 +2,7 @@ package de.jplag.clustering.algorithm;
 
 import java.util.Collection;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SpectralClusteringTest {
 

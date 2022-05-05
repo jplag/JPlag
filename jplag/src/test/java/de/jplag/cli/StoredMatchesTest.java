@@ -1,18 +1,14 @@
 package de.jplag.cli;
 
-import static org.junit.Assert.assertEquals;
+import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.CommandLineArgument;
 import de.jplag.options.JPlagOptions;
 
 public class StoredMatchesTest extends CommandLineInterfaceTest {
-
-    @Rule
-    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
     public void testDefault() {
@@ -44,9 +40,9 @@ public class StoredMatchesTest extends CommandLineInterfaceTest {
     }
 
     @Test
-    public void testInvalidThreshold() {
-        exit.expectSystemExitWithStatus(1);
+    public void testInvalidThreshold() throws Exception {
         String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, "Not an integer...");
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+        int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
+        assertEquals(1, statusCode);
     }
 }

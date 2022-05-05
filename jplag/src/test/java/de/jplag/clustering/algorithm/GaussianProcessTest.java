@@ -1,13 +1,13 @@
 package de.jplag.clustering.algorithm;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class GaussianProcessTest {
 
@@ -30,8 +30,8 @@ public class GaussianProcessTest {
             double x = i / 2.0;
             vx.setEntry(0, x);
             double[] prediction = gp.predict(vx);
-            assertTrue("The prediction error can't very high", Math.abs(prediction[0] - x) < 1);
-            assertTrue("The standard deviation must be greater than 0", prediction[1] > 0);
+            assertTrue(Math.abs(prediction[0] - x) < 1, "The prediction error can't very high");
+            assertTrue(prediction[1] > 0, "The standard deviation must be greater than 0");
         }
     }
 }

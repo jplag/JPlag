@@ -1,19 +1,17 @@
 package de.jplag;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 
-public class InvalidSubmissionTest extends TestBase {
+class InvalidSubmissionTest extends TestBase {
 
     private static final String SAMPLE_NAME = "InvalidSubmissions";
 
@@ -22,7 +20,7 @@ public class InvalidSubmissionTest extends TestBase {
      * invalid submissions being stored.
      */
     @Test
-    public void testInvalidSubmissionsWithDebug() throws ExitException {
+    void testInvalidSubmissionsWithDebug() throws ExitException {
         try {
             runJPlag(SAMPLE_NAME, it -> it.setDebugParser(true));
             fail("No submission exception was thrown!");

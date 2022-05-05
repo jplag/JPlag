@@ -1,11 +1,11 @@
 package de.jplag.clustering.preprocessors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PercentilePreprocessorTest extends PreprocessingTestBase {
 
@@ -13,7 +13,7 @@ public class PercentilePreprocessorTest extends PreprocessingTestBase {
 
     PercentileThresholdProcessor preprocessor;
 
-    @Before
+    @BeforeEach
     public void init() {
         preprocessor = new PercentileThresholdProcessor(0.5f);
     }

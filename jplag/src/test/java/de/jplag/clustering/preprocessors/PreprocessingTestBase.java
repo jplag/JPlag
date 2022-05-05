@@ -1,13 +1,9 @@
 package de.jplag.clustering.preprocessors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.Collectors;
@@ -46,19 +42,19 @@ public class PreprocessingTestBase {
     public void validPreprocessing(double[][] originalArray, double[][] resultArray, IntUnaryOperator originalIndex) {
         RealMatrix result = new Array2DRowRealMatrix(resultArray, false);
         RealMatrix original = new Array2DRowRealMatrix(originalArray, false);
-        assertEquals("not a square matrix", result.getColumnDimension(), result.getRowDimension());
+        assertEquals(result.getColumnDimension(), result.getRowDimension(), "not a square matrix");
 
         List<Integer> usedOriginalIndices = IntStream.range(0, result.getColumnDimension()).map(originalIndex).boxed().collect(Collectors.toList());
 
-        assertEquals("original indices not unique", usedOriginalIndices.size(), new HashSet<>(usedOriginalIndices).size());
+        assertEquals(usedOriginalIndices.size(), new HashSet<>(usedOriginalIndices).size(), "original indices not unique");
 
-        assertTrue("original indices valid", usedOriginalIndices.stream().allMatch(index -> index >= 0 && index < original.getColumnDimension()));
+        assertTrue(usedOriginalIndices.stream().allMatch(index -> index >= 0 && index < original.getColumnDimension()), "original indices valid");
 
         double[] columnNorms = IntStream.range(0, result.getColumnDimension()).mapToObj(index -> result.getColumn(index))
                 .mapToDouble(array -> new ArrayRealVector(array, false).getNorm()).toArray();
 
         for (int i = 0; i < columnNorms.length; i++) {
-            assertTrue("produced zero column in column " + i, columnNorms[i] > EPSILON);
+            assertTrue(columnNorms[i] > EPSILON, "produced zero column in column " + i);
         }
     }
 

@@ -1,11 +1,11 @@
 package de.jplag.testutils;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import de.jplag.ErrorConsumer;
 
 /**
- * Mock error consumer that fails the test case on error occurence.
+ * Mock error consumer that fails the test case on error occurrence.
  * @author Timur Saglam
  */
 public class TestErrorConsumer implements ErrorConsumer {
