@@ -9,6 +9,8 @@
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
 [![Lines of code](https://img.shields.io/tokei/lines/github/jplag/jplag)](https://github.com/jplag/jplag/graphs/contributors)
 
+JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development. JPlag currently supports Java, C#, C, C++, Python 3, Scheme, and natural language text.
+
 ## Download and Installation
 
 ### Downloading a release
