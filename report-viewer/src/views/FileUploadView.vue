@@ -2,12 +2,12 @@
   Starting view of the application. Presents the options for loading a JPlag report.
 -->
 <template>
-  <div class="container" @dragover.prevent @drop.prevent>
+  <div class="container" @dragover.prevent @drop.prevent="uploadFile">
     <img alt="JPlag" src="@/assets/logo-nobg.png"/>
     <h1>JPlag Report Viewer</h1>
     <h2>Select an overview or comparison file or a zip to display.</h2>
-    <div class="drop-container" @drop="uploadFile">
-      <p> Drop a .json or .zip file here</p>
+    <div class="drop-container" >
+      <p> Drop a .json or .zip on this page</p>
     </div>
     <div v-if="hasLocalFile" class="local-files-container">
       <p class="local-files-text">Detected local files!</p>
