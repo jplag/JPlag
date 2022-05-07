@@ -25,7 +25,6 @@ import de.jplag.testutils.TestErrorConsumer;
 class MinimalCSharpFrontendTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
 
-    private static final int EXPEXTED_NUMBER_OF_TOKENS = 15;
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "csharp");
     private static final String TEST_SUBJECT = "TestClass.cs";
 
@@ -42,8 +41,10 @@ class MinimalCSharpFrontendTest {
 
     @Test
     void testParsingTestClass() {
-        List<Integer> expectedToken = List.of(CLASS, CLASS_BEGIN, DECLARE_VAR, CONSTRUCTOR, METHOD, METHOD_BEGIN, INVOCATION, METHOD_END, PROPERTY,
-                DECLARE_VAR, PROPERTY, RETURN, ASSIGNMENT, CLASS_END, TokenConstants.FILE_END);
+        List<Integer> expectedToken = List.of(CLASS, CLASS_BEGIN, FIELD, CONSTRUCTOR, LOCAL_VARIABLE, METHOD, METHOD_BEGIN, IF, IF_BEGIN, INVOCATION,
+                IF_END, IF_BEGIN, INVOCATION, IF_END, METHOD_END, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, ACCESSOR_END, ACCESSOR_BEGIN,
+                ACCESSOR_END, ACCESSORS_END, FIELD, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, RETURN, ACCESSOR_END, ACCESSOR_BEGIN, ASSIGNMENT,
+                ACCESSOR_END, ACCESSORS_END, CLASS_END, TokenConstants.FILE_END);
 
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
@@ -51,7 +52,7 @@ class MinimalCSharpFrontendTest {
         logger.info(TokenPrinter.printTokens(result, baseDirectory, Arrays.asList(input)));
 
         // Compare parsed tokens:
-        assertEquals(EXPEXTED_NUMBER_OF_TOKENS, result.size());
+        assertEquals(expectedToken.size(), result.size());
         List<Integer> actualToken = StreamSupport.stream(result.allTokens().spliterator(), false).map(Token::getType).collect(toList());
         assertEquals(expectedToken, actualToken);
     }
