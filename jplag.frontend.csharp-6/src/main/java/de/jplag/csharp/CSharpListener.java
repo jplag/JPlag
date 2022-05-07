@@ -2,6 +2,8 @@ package de.jplag.csharp;
 
 import org.antlr.v4.runtime.Token;
 
+import de.jplag.csharp.grammar.CSharpParser.Accessor_bodyContext;
+import de.jplag.csharp.grammar.CSharpParser.Accessor_declarationsContext;
 import de.jplag.csharp.grammar.CSharpParser.Array_initializerContext;
 import de.jplag.csharp.grammar.CSharpParser.Assignment_operatorContext;
 import de.jplag.csharp.grammar.CSharpParser.AttributeContext;
@@ -10,7 +12,7 @@ import de.jplag.csharp.grammar.CSharpParser.Catch_clausesContext;
 import de.jplag.csharp.grammar.CSharpParser.CheckedStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.Class_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Class_definitionContext;
-import de.jplag.csharp.grammar.CSharpParser.Constant_declaratorContext;
+import de.jplag.csharp.grammar.CSharpParser.Constant_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.Constructor_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.ContinueStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.Delegate_definitionContext;
@@ -20,6 +22,7 @@ import de.jplag.csharp.grammar.CSharpParser.Enum_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Enum_definitionContext;
 import de.jplag.csharp.grammar.CSharpParser.Enum_member_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.Event_declarationContext;
+import de.jplag.csharp.grammar.CSharpParser.Field_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.Finally_clauseContext;
 import de.jplag.csharp.grammar.CSharpParser.FixedStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.ForStatementContext;
@@ -30,6 +33,7 @@ import de.jplag.csharp.grammar.CSharpParser.If_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Indexer_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.Interface_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Interface_definitionContext;
+import de.jplag.csharp.grammar.CSharpParser.Local_variable_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.LockStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.Method_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Method_declarationContext;
@@ -49,7 +53,6 @@ import de.jplag.csharp.grammar.CSharpParser.UncheckedExpressionContext;
 import de.jplag.csharp.grammar.CSharpParser.UnsafeStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.UsingStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.Using_directivesContext;
-import de.jplag.csharp.grammar.CSharpParser.Variable_declaratorContext;
 import de.jplag.csharp.grammar.CSharpParser.WhileStatementContext;
 import de.jplag.csharp.grammar.CSharpParserBaseListener;
 
@@ -103,18 +106,6 @@ public class CSharpListener extends CSharpParserBaseListener implements CSharpTo
     }
 
     @Override
-    public void enterVariable_declarator(Variable_declaratorContext context) {
-        transformToken(DECLARE_VAR, context.getStart());
-        super.enterVariable_declarator(context);
-    }
-
-    @Override
-    public void enterConstant_declarator(Constant_declaratorContext context) {
-        transformToken(DECLARE_CONST, context.getStart());
-        super.enterConstant_declarator(context);
-    }
-
-    @Override
     public void enterIfStatement(IfStatementContext context) {
         transformToken(IF, context.getStart());
         super.enterIfStatement(context);
@@ -128,7 +119,7 @@ public class CSharpListener extends CSharpParserBaseListener implements CSharpTo
 
     @Override
     public void exitIf_body(If_bodyContext context) {
-        transformToken(END_IF, context.getStop());
+        transformToken(IF_END, context.getStop());
         super.exitIf_body(context);
     }
 
@@ -420,4 +411,45 @@ public class CSharpListener extends CSharpParserBaseListener implements CSharpTo
         super.enterFixedStatement(context);
     }
 
+    @Override
+    public void enterAccessor_declarations(Accessor_declarationsContext context) {
+        transformToken(ACCESSORS_BEGIN, context.getStart());
+        super.enterAccessor_declarations(context);
+    }
+
+    @Override
+    public void exitAccessor_declarations(Accessor_declarationsContext context) {
+        transformToken(ACCESSORS_END, context.getStart());
+        super.enterAccessor_declarations(context);
+    }
+
+    @Override
+    public void enterAccessor_body(Accessor_bodyContext context) {
+        transformToken(ACCESSOR_BEGIN, context.getStart());
+        super.enterAccessor_body(context);
+    }
+
+    @Override
+    public void exitAccessor_body(Accessor_bodyContext context) {
+        transformToken(ACCESSOR_END, context.getStart());
+        super.exitAccessor_body(context);
+    }
+
+    @Override
+    public void enterConstant_declaration(Constant_declarationContext context) {
+        transformToken(CONSTANT, context.getStart());
+        super.enterConstant_declaration(context);
+    }
+
+    @Override
+    public void enterField_declaration(Field_declarationContext context) {
+        transformToken(FIELD, context.getStart());
+        super.enterField_declaration(context);
+    }
+
+    @Override
+    public void enterLocal_variable_declaration(Local_variable_declarationContext context) {
+        transformToken(LOCAL_VARIABLE, context.getStart());
+        super.enterLocal_variable_declaration(context);
+    }
 }

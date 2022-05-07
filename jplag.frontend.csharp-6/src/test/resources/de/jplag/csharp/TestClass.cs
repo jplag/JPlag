@@ -7,12 +7,18 @@ public class MyClass
 
     public MyClass()
     {
+        int i = -1;
     }
 
     public void MyMethod(int parameter1, string parameter2)
     {
-        Console.WriteLine("First Parameter {0}, second parameter {1}", 
+        if(parameter1 == 0) {
+            Console.WriteLine("Second parameter {0}", parameter2);
+        } else {
+            Console.WriteLine("First Parameter {0}, second parameter {1}", 
                                                     parameter1, parameter2);
+        }
+        
     }
 
     public int MyAutoImplementedProperty { get; set; }

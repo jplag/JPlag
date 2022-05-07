@@ -29,11 +29,10 @@ public class CSharpToken extends Token implements CSharpTokenConstants {
             case OBJECT_CREATION -> "OBJECT";
             case ARRAY_CREATION -> "ARRAY";
             case ASSIGNMENT -> "ASSIGN";
-            case DECLARE_VAR -> "VAR";
-            case DECLARE_CONST -> "CONST";
+            case FIELD -> "FIELD";
+            case CONSTANT -> "CONST";
             case IF -> "IF";
-            case ELSE -> "ELSE";
-            case END_IF -> "}IF";
+            case IF_END -> "}IF";
             case SWITCH_BEGIN -> "SWITCH{";
             case SWITCH_END -> "}SWITCH";
             case CASE -> "CASE";
@@ -74,7 +73,6 @@ public class CSharpToken extends Token implements CSharpTokenConstants {
             case ATTRIBUTE -> "ATTRIBUTE";
             case UNSAFE -> "UNSAFE";
             case FIXED -> "FIXED";
-            // new:
             case METHOD_BEGIN -> "METHOD{";
             case METHOD_END -> "}METHOD";
             case STRUCT -> "STRUCT";
@@ -84,7 +82,12 @@ public class CSharpToken extends Token implements CSharpTokenConstants {
             case ENUM_BEGIN -> "ENUM{";
             case ENUM_END -> "}ENUM";
             case ENUMERAL -> "ENUMERAL";
-            default -> "<UNKNOWN>";
+            case LOCAL_VARIABLE -> "LOCAL_VAR";
+            case ACCESSORS_BEGIN -> "ACCESSORS{";
+            case ACCESSORS_END -> "}ACCESSORS";
+            case ACCESSOR_BEGIN -> "ACCESSORS{";
+            case ACCESSOR_END -> "}ACCESSORS";
+            default -> "<UNKNOWN" + type + ">";
         };
     }
 }

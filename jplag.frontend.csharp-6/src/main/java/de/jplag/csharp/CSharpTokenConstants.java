@@ -3,9 +3,7 @@ package de.jplag.csharp;
 import de.jplag.TokenConstants;
 
 /**
- * Based on the legacy CSharp-1.2 constants. The constants L_BRACE, R_BRACE, and STATIC_CONSTR were removed. Moreover,
- * the following constants were added: METHOD_BEGIN, METHOD_END, STRUCT, IF_BEGIN, CLASS, INTERFACE, ENUM_BEGIN,
- * ENUM_END and ENUMERAL.
+ * Based on the legacy CSharp-1.2 constants.
  * @author Timur Saglam
  */
 public interface CSharpTokenConstants extends TokenConstants {
@@ -16,10 +14,10 @@ public interface CSharpTokenConstants extends TokenConstants {
     int OBJECT_CREATION = 3;
     int ARRAY_CREATION = 4;
     int ASSIGNMENT = 5;
-    int DECLARE_VAR = 6;
-    int DECLARE_CONST = 7;
-    int IF = 8;
-    int ELSE = 9; // TODO TS does not exist
+    int FIELD = 6;
+    int CONSTANT = 7;
+    int LOCAL_VARIABLE = 8;
+    int IF = 9;
     int SWITCH_BEGIN = 10;
     int SWITCH_END = 11;
     int CASE = 12;
@@ -58,7 +56,7 @@ public interface CSharpTokenConstants extends TokenConstants {
     int ENUM = 45;
     int DELEGATE = 46;
     int ATTRIBUTE = 47;
-    int END_IF = 48;
+    int IF_END = 48;
     int UNSAFE = 49;
     int FIXED = 50;
     int METHOD_BEGIN = 51;
@@ -70,9 +68,13 @@ public interface CSharpTokenConstants extends TokenConstants {
     int ENUM_BEGIN = 57;
     int ENUM_END = 58;
     int ENUMERAL = 59;
+    int ACCESSORS_BEGIN = 60;
+    int ACCESSORS_END = 61;
+    int ACCESSOR_BEGIN = 62;
+    int ACCESSOR_END = 63;
 
     /*
      * Number of token constants:
      */
-    int NUM_DIFF_TOKENS = 61;
+    int NUM_DIFF_TOKENS = 64;
 }
