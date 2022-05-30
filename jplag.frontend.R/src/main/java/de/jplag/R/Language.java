@@ -5,12 +5,15 @@ import java.io.File;
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
+/**
+ * This represents the R language as a language supported by JPlag.
+ */
 public class Language implements de.jplag.Language {
 
     public static final String NAME = "R Parser";
     public static final String SHORT_NAME = "R";
     public static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private RParserAdapter parserAdapter;
+    private final RParserAdapter parserAdapter;
 
     public Language(ErrorConsumer consumer) {
         this.parserAdapter = new RParserAdapter(consumer);

@@ -26,10 +26,20 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
     private String currentFile;
     private TokenList tokens;
 
+    /**
+     * Creates the RParserAdapter
+     * @param errorConsumer the ErrorConsumer that parser errors are passed on to.
+     */
     public RParserAdapter(ErrorConsumer errorConsumer) {
         super(errorConsumer);
     }
 
+    /**
+     * Parsers a list of files into a single {@link TokenList}.
+     * @param directory the directory of the files.
+     * @param fileNames the file names of the files.
+     * @return a {@link TokenList} containing all tokens of all files.
+     */
     public TokenList parse(File directory, String[] fileNames) {
         tokens = new TokenList();
         errors = 0;
@@ -73,6 +83,13 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
         return true;
     }
 
+    /**
+     * Adds a new {@link de.jplag.Token} to the current {@link TokenList}.
+     * @param type the type of the new {@link de.jplag.Token}
+     * @param line the line of the Token in the current file
+     * @param start the start column of the Token in the line
+     * @param end the end column of the Token in the line
+     */
     /* package-private */ void addToken(int type, int line, int start, int end) {
         tokens.addToken(new RToken(type, currentFile, line, start, end - start));
 
