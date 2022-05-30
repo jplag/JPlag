@@ -9,13 +9,13 @@
   },
   "dependencies": {
     "@highlightjs/vue-plugin": "^2.1.0",
-    "chart.js": "^3.7.1",
+    "chart.js": "^3.8.0",
     "chartjs-plugin-datalabels": "^2.0.0",
     "core-js": "^3.22.5",
     "gitart-vue-dialog": "^2.0.5",
     "highlight.js": "^11.5.1",
     "jszip": "^3.9.1",
-    "vue": "^3.2.33",
+    "vue": "^3.2.36",
     "vue-chart-3": "^3.1.8",
     "vue-draggable-next": "^2.1.1",
     "vue-router": "^4.0.15",
@@ -33,12 +33,12 @@
     "@vue/compiler-sfc": "^3.2.36",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^10.0.0",
-    "eslint": "^8.15.0",
+    "eslint": "^8.16.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.7.1",
     "lint-staged": "^12.4.2",
     "prettier": "^2.6.2",
-    "typescript": "~4.6.4"
+    "typescript": "~4.7.2"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
