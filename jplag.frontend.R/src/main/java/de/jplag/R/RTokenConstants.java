@@ -3,8 +3,9 @@ package de.jplag.R;
 import de.jplag.TokenConstants;
 
 /**
- * Tokens in R that are deemed important when comparing submissions for plagiarisms.
- * Based on an R frontend for JPlag v2.15 by Olmo Kramer, see their <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag fork</a>.
+ * Tokens in R that are deemed important when comparing submissions for plagiarisms. Based on an R frontend for JPlag
+ * v2.15 by Olmo Kramer, see their <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag
+ * fork</a>.
  * @author Robin Maisch
  */
 public interface RTokenConstants extends TokenConstants {
