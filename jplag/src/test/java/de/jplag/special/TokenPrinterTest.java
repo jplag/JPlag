@@ -2,6 +2,7 @@ package de.jplag.special;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Disabled;
@@ -40,6 +41,14 @@ public class TokenPrinterTest extends TestBase {
     public void printJavaFiles() {
         printSubmissions(options -> {
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
+        });
+    }
+
+    @Disabled
+    @Test
+    public void printKotlinFiles() {
+        printSubmissions(options -> {
+            options.setLanguageOption(LanguageOption.KOTLIN);
         });
     }
 
