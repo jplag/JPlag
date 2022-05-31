@@ -86,14 +86,14 @@ public final class TokenPrinter {
                     currentLine = currentLine.replace(TAB, TAB_REPLACEMENT);
                 }
                 appendCodeLinePrefix(builder, lineIndex).append(currentLine);
-                appendTokenLinePrefix(builder);
+                appendTokenLinePrefix(builder, lineIndex);
             }
 
             assert currentLine != null;
 
             // New line if already past token index:
             if (columnIndex > token.getColumn()) {
-                appendTokenLinePrefix(builder);
+                appendTokenLinePrefix(builder, lineIndex);
                 columnIndex = 1;
             }
             // Move to token index:
@@ -123,11 +123,14 @@ public final class TokenPrinter {
     }
 
     private static StringBuilder appendCodeLinePrefix(StringBuilder builder, int index) {
-        return builder.append(System.lineSeparator()).append(index).append(TAB);
+        String padding = index >= 1000 ? SPACE : TAB;
+        return builder.append(System.lineSeparator()).append(index).append(padding);
     }
 
-    private static StringBuilder appendTokenLinePrefix(StringBuilder builder) {
-        return builder.append(System.lineSeparator()).append(TAB);
+    private static StringBuilder appendTokenLinePrefix(StringBuilder builder, int index) {
+        int paddingLength = Math.max(("" + index).length() + 1, 4);
+        String padding = TAB.repeat(paddingLength / 4) + SPACE.repeat(paddingLength % 4);
+        return builder.append(System.lineSeparator()).append(padding);
     }
 
     /**
