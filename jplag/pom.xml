@@ -47,6 +47,10 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>go</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>scheme</artifactId>
         </dependency>
         <dependency>
