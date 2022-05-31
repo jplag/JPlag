@@ -31,7 +31,7 @@ public final class TokenPrinter {
     private static final String TAB_REPLACEMENT = "        "; // might depend on files
 
     // Configuration:
-    private static final boolean INDICATE_TINY_TOKEN = true; // print token with length <= 1 in lowercase
+    private static final boolean INDICATE_TINY_TOKEN = false; // print token with length <= 1 in lowercase
     private static final boolean REPLACE_TABS = false;
 
     private TokenPrinter() {
@@ -62,6 +62,7 @@ public final class TokenPrinter {
         int lineIndex = 0;
         int columnIndex = 1;
         String file = null; // no file yet
+        String currentLine = null;
 
         for (Token token : tokens.allTokens()) {
             // New code file:
@@ -80,13 +81,15 @@ public final class TokenPrinter {
                 columnIndex = 1;
 
                 String fileName = token.getFile().isEmpty() ? root.getName() : token.getFile();
-                String currentLine = filesToLines.get(fileName).get(lineIndex - 1);
+                currentLine = filesToLines.get(fileName).get(lineIndex - 1);
                 if (REPLACE_TABS) {
                     currentLine = currentLine.replace(TAB, TAB_REPLACEMENT);
                 }
                 appendCodeLinePrefix(builder, lineIndex).append(currentLine);
                 appendTokenLinePrefix(builder);
             }
+
+            assert currentLine != null;
 
             // New line if already past token index:
             if (columnIndex > token.getColumn()) {
@@ -95,7 +98,7 @@ public final class TokenPrinter {
             }
             // Move to token index:
             while (columnIndex < token.getColumn()) {
-                builder.append(SPACE);
+                builder.append(currentLine.length() > columnIndex && currentLine.charAt(columnIndex - 1) == '\t'? TAB : SPACE);
                 columnIndex++;
             }
 
@@ -107,7 +110,7 @@ public final class TokenPrinter {
             // Move up to token end:
             int tokenEndIndex = token.getColumn() + token.getLength() - 1;
             while (columnIndex < tokenEndIndex) {
-                builder.append(SPACE);
+                builder.append(currentLine.length() > columnIndex && currentLine.charAt(columnIndex - 1) == '\t'? TAB : SPACE);
                 columnIndex++;
             }
             // Print token end if not already past it:
@@ -120,7 +123,7 @@ public final class TokenPrinter {
     }
 
     private static StringBuilder appendCodeLinePrefix(StringBuilder builder, int index) {
-        return builder.append(System.lineSeparator()).append(index + TAB);
+        return builder.append(System.lineSeparator()).append(index).append(TAB);
     }
 
     private static StringBuilder appendTokenLinePrefix(StringBuilder builder) {
@@ -138,7 +141,7 @@ public final class TokenPrinter {
      * Turns a list of files into a map which maps the file names to a list of the contained lines of that file.
      */
     private static Map<String, List<String>> readFiles(Collection<File> allFiles) {
-        return allFiles.stream().collect(toMap(it -> it.getName(), it -> linesFromFile(it)));
+        return allFiles.stream().collect(toMap(File::getName, TokenPrinter::linesFromFile));
     }
 
     /**
