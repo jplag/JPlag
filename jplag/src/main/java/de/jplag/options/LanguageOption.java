@@ -13,6 +13,7 @@ public enum LanguageOption {
     PYTHON_3("python3", "de.jplag.python3.Language"),
     C_CPP("cpp", "de.jplag.cpp.Language"),
     C_SHARP("csharp", "de.jplag.csharp.Language"),
+    GO("go", "de.jplag.go.Language"),
     KOTLIN("kotlin", "de.jplag.kotlin.Language"),
     R("R", "de.jplag.R.Language"),
     CHAR("char", "de.jplag.chars.Language"),

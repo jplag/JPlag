@@ -47,6 +47,7 @@
         <module>jplag.frontend.chars</module>
         <module>jplag.frontend.cpp</module>
         <module>jplag.frontend.csharp-6</module>
+        <module>jplag.frontend.go</module>
         <module>jplag.frontend.java</module>
         <module>jplag.frontend.kotlin</module>
         <module>jplag.frontend.python-3</module>
@@ -171,6 +172,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>cpp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>go</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

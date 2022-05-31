@@ -2,7 +2,6 @@ package de.jplag.special;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Disabled;
@@ -47,9 +46,13 @@ public class TokenPrinterTest extends TestBase {
     @Disabled
     @Test
     public void printKotlinFiles() {
-        printSubmissions(options -> {
-            options.setLanguageOption(LanguageOption.KOTLIN);
-        });
+        printSubmissions(options -> options.setLanguageOption(LanguageOption.KOTLIN));
+    }
+
+    @Disabled
+    @Test
+    public void printGoFiles() {
+        printSubmissions(options -> options.setLanguageOption(LanguageOption.GO));
     }
 
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {
