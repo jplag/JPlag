@@ -28,6 +28,13 @@ public class KotlinListener extends KotlinParserBaseListener {
         parserAdapter.addToken(tokenType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
+    /**
+     * Passes a token of the given tokenType to the parserAdapter, representing the current grammatical context given by
+     * start and end.
+     * @param tokenType the custom token type that occurred.
+     * @param start the first Token of the context
+     * @param end the last Token of the context
+     */
     private void transformToken(int tokenType, Token start, Token end) {
         parserAdapter.addToken(tokenType, start.getLine(), start.getCharPositionInLine(), end.getStopIndex() - start.getStartIndex() + 1);
     }
