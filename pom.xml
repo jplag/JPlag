@@ -51,6 +51,7 @@
         <module>jplag.frontend.python-3</module>
         <module>jplag.frontend.scheme</module>
         <module>jplag.frontend.text</module>
+        <module>jplag.frontend.emf</module>
         <module>jplag</module>
         <module>jplag.cli</module>
     </modules>
@@ -169,6 +170,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>chars</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>emf</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
