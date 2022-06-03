@@ -70,6 +70,14 @@ const store = createStore<State>({
      */
     fileString: "",
   },
+  getters: {
+    getOverviewFile: (state) =>  {
+      const index = Object.keys(state.files).filter((name) => {
+        name.endsWith("overview.json");
+      })[0];
+      return state.files[index];
+    },
+  },
   mutations: {
     addAnonymous(state: State, id) {
       for (let i = 0; i < id.length; i++) {
@@ -85,7 +93,9 @@ const store = createStore<State>({
       state.anonymous = new Set();
     },
     saveFile(state, file: File) {
-      state.files[file.fileName] = file.data;
+      const filesCopy = state.files
+      filesCopy[file.fileName] = file.data;
+      store.state.files = filesCopy
     },
     setLoadingType(state, payload: LoadConfiguration) {
       state.local = payload.local;

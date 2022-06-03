@@ -54,8 +54,7 @@
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
-import store from "@/store/store";
+import { computed, defineComponent, ref } from "vue";
 import router from "@/router";
 import TextInformation from "../components/TextInformation";
 import DistributionDiagram from "@/components/DistributionDiagram";
@@ -63,11 +62,19 @@ import MetricButton from "@/components/MetricButton";
 import ComparisonsTable from "@/components/ComparisonsTable";
 import {OverviewFactory} from "@/model/factories/OverviewFactory";
 import IDsList from "@/components/IDsList";
+import { useStore } from "vuex";
 
 export default defineComponent({
   name: "OverviewView",
   components: {IDsList, ComparisonsTable, DistributionDiagram, MetricButton, TextInformation},
   setup() {
+    const store = useStore();
+    const overviewFile = computed(() => {
+      const index = Object.keys(store.state.files).filter((name) =>
+        name.endsWith("overview.json")
+      )[0];
+      return store.state.files[index];
+    });
     let overview;
     //Gets the overview file based on the used mode (zip, local, single).
     if (store.state.local) {
@@ -78,7 +85,8 @@ export default defineComponent({
         router.back()
       }
     } else if (store.state.zip) {
-      overview = OverviewFactory.getOverview(JSON.parse(store.state.files["overview.json"]))
+      const overviewJson = JSON.parse(overviewFile.value);
+      overview = OverviewFactory.getOverview(overviewJson);
     } else if (store.state.single) {
       overview = OverviewFactory.getOverview(JSON.parse(store.state.fileString))
     }
