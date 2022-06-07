@@ -15,7 +15,8 @@ public enum LanguageOption {
     C_SHARP("csharp", "de.jplag.csharp.Language"),
     CHAR("char", "de.jplag.chars.Language"),
     TEXT("text", "de.jplag.text.Language"),
-    SCHEME("scheme", "de.jplag.scheme.Language");
+    SCHEME("scheme", "de.jplag.scheme.Language"),
+    EMF("emf", "de.jplag.emf.Language");
 
     private final String classPath;
     private final String displayName;
