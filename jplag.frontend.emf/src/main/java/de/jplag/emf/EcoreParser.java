@@ -11,6 +11,7 @@ import static de.jplag.emf.MetamodelTokenConstants.OPERATION;
 import static de.jplag.emf.MetamodelTokenConstants.PACKAGE;
 import static de.jplag.emf.MetamodelTokenConstants.PARAMETER;
 import static de.jplag.emf.MetamodelTokenConstants.REFERENCE;
+import static de.jplag.emf.MetamodelTokenConstants.SUPER_TYPE;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -48,13 +49,14 @@ import de.jplag.TokenList;
  * Parser for EMF metamodels.
  * @author Timur Saglam
  */
-public class EcoreParser extends AbstractParser {
+public class EcoreParser extends AbstractParser { // TODO TS: Currently combines parser with the tree view generation.
     private static final String TREE_VIEW_FILE_SUFFIX = ".tmp";
     private TokenList tokens;
     private String currentFile;
     private StringBuilder treeView;
     private int lineIndex;
     private int columnIndex;
+    private int indentation;
 
     /**
      * Creates the parser.
@@ -62,6 +64,10 @@ public class EcoreParser extends AbstractParser {
      */
     public EcoreParser(ErrorConsumer errorConsumer) {
         super(errorConsumer);
+        EcorePackage.eINSTANCE.eClass();
+        final Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
+        final Map<String, Object> extensionMap = registry.getExtensionToFactoryMap();
+        extensionMap.put(EcorePackage.eNAME, new XMIResourceFactoryImpl());
     }
 
     /**
@@ -71,6 +77,7 @@ public class EcoreParser extends AbstractParser {
      * @return the list of parsed tokens.
      */
     public TokenList parse(File directory, List<String> fileNames) {
+        // TODO TS: When the submissions are files, the file names are empty and the directory is the file --> error
         tokens = new TokenList();
         errors = 0;
         for (String fileName : fileNames) {
@@ -81,7 +88,7 @@ public class EcoreParser extends AbstractParser {
             columnIndex = 0;
             parseEPackage(root);
 
-            tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, fileName, -1, -1, -1));
+            tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, currentFile, -1, -1, -1));
             createTreeViewFile(directory, fileName);
         }
         return tokens;
@@ -102,10 +109,7 @@ public class EcoreParser extends AbstractParser {
     }
 
     private EPackage loadModel(String directory, String name) {
-        EcorePackage.eINSTANCE.eClass();
-        final Resource.Factory.Registry registry = Resource.Factory.Registry.INSTANCE;
-        final Map<String, Object> extensionMap = registry.getExtensionToFactoryMap();
-        extensionMap.put(EcorePackage.eNAME, new XMIResourceFactoryImpl());
+
         final ResourceSet resourceSet = new ResourceSetImpl();
         Resource resource = resourceSet.getResource(URI.createFileURI(directory + File.separator + name), true);
         EObject content = resource.getContents().get(0);
@@ -117,9 +121,11 @@ public class EcoreParser extends AbstractParser {
 
     private void parseEPackage(EPackage ePackage) {
         addToken(PACKAGE, ePackage, true);
+        indentation++;
         ePackage.getEClassifiers().forEach(it -> parseEClassifier(it));
         ePackage.getEAnnotations().forEach(it -> parseEAnnotation(it));
         ePackage.getESubpackages().forEach(it -> parseEPackage(it));
+        indentation--;
     }
 
     private void parseEAnnotation(EAnnotation annotation) {
@@ -138,23 +144,32 @@ public class EcoreParser extends AbstractParser {
 
     private void parseEClass(EClass eClass) {
         if (eClass.isInterface()) {
-            addToken(INTERFACE, eClass, true);
+            addToken(INTERFACE, eClass, false);
         } else {
-            addToken(CLASS, eClass, true);
+            addToken(CLASS, eClass, false);
         }
+        indentation++;
         // TODO TS: Extract abstract? probably not
-        // TODO TS: Extract super type relation? probably
+        eClass.getESuperTypes().forEach(it -> parseESuperType(it));
+        addNewLine();
         eClass.getEStructuralFeatures().forEach(it -> parseEStructuralFeature(it));
         eClass.getEOperations().forEach(it -> parseEOperation(it));
+        indentation--;
+    }
+
+    private void parseESuperType(EClass superType) {
+        addToken(SUPER_TYPE, superType, false, " -> ");
     }
 
     private void parseEOperation(EOperation operation) {
         addToken(OPERATION, operation, true);
-        operation.getEParameters().forEach(it -> addToken(PARAMETER, it, false));
+        indentation++;
+        operation.getEParameters().forEach(it -> addToken(PARAMETER, it, true));
         // TODO TS: Extract return type?
         // TODO TS: Extract throws declarations?
         // TODO TS: Parse type parameters & generic type?
         operation.getEAnnotations().forEach(it -> parseEAnnotation(it));
+        indentation--;
     }
 
     private void parseEStructuralFeature(EStructuralFeature structuralFeature) {
@@ -164,7 +179,9 @@ public class EcoreParser extends AbstractParser {
             addToken(REFERENCE, reference, true);
             // TODO TS: Extract containment?
         }
+        indentation++;
         structuralFeature.getEAnnotations().forEach(it -> parseEAnnotation(it));
+        indentation--;
     }
 
     private void parseEDataType(EDataType dataType) {
@@ -173,30 +190,64 @@ public class EcoreParser extends AbstractParser {
         } else {
             addToken(DATATYPE, dataType, true);
         }
+        indentation++;
+        dataType.getEAnnotations().forEach(it -> parseEAnnotation(it));
+        indentation--;
     }
 
     private void parseEEnum(EEnum enumeration) {
         addToken(ENUM, enumeration, true);
+        indentation++;
         enumeration.getELiterals().forEach(it -> parseEEnumLiteral(it));
+        indentation--;
     }
 
     private void parseEEnumLiteral(EEnumLiteral enumeral) {
-        addToken(ENUM_LITERAL, enumeral, false);
+        addToken(ENUM_LITERAL, enumeral, true);
         enumeral.getEAnnotations().forEach(it -> parseEAnnotation(it));
     }
 
     private void addToken(int type, EObject source, boolean newLine) {
+        addToken(type, source, newLine, "");
+    }
+
+    private void addToken(int type, EObject source, boolean newLine, String prefix) {
+        int tokenLength = addTokenText(source, prefix);
+        tokens.addToken(new MetamodelToken(type, currentFile, lineIndex + 1, columnIndex + 1, tokenLength));
+        updateIndices(newLine, tokenLength);
+    }
+
+    private void updateIndices(boolean newLine, int tokenLength) {
         if (newLine) {
-            lineIndex++;
-            treeView.append(System.lineSeparator());
+            addNewLine();
+        } else {
+            columnIndex += tokenLength;
         }
-        String tokenText = source.getClass().getSimpleName().toString() + " ";
+    }
+
+    private void addNewLine() {
+        lineIndex++;
+        columnIndex = 0;
+        treeView.append(System.lineSeparator());
+    }
+
+    private int addTokenText(EObject source, String prefix) {
+        String tokenText = "(" + source.getClass().getInterfaces()[0].getSimpleName().toString() + ")";
         if (source instanceof ENamedElement element) {
-            tokenText += " " + element.getName();
+            tokenText = element.getName() + " " + tokenText;
         }
         int tokenLength = tokenText.length();
+        if (prefix.isEmpty()) {
+            for (int i = 0; i < indentation; i++) {
+                String indentationText = "  ";
+                tokenText = indentationText + tokenText;
+                columnIndex += indentationText.length();
+            }
+        } else {
+            tokenText = prefix + tokenText;
+            columnIndex += prefix.length();
+        }
         treeView.append(tokenText);
-        tokens.addToken(new MetamodelToken(type, currentFile, lineIndex, columnIndex, tokenLength));
-        columnIndex += tokenLength;
+        return tokenLength;
     }
 }

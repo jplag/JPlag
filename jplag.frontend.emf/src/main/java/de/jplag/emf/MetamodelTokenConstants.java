@@ -18,9 +18,10 @@ public interface MetamodelTokenConstants extends TokenConstants {
     int ATTRIBUTE = 10;
     int PARAMETER = 11;
     int INTERFACE = 12;
+    int SUPER_TYPE = 13;
 
     /*
      * Number of token constants:
      */
-    int NUM_DIFF_TOKENS = 13;
+    int NUM_DIFF_TOKENS = 14;
 }

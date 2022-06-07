@@ -35,6 +35,7 @@ public class MetamodelToken extends Token implements MetamodelTokenConstants {
             case ATTRIBUTE -> "EAttribute";
             case PARAMETER -> "EParameter";
             case INTERFACE -> "EInterface";
+            case SUPER_TYPE -> "ESuperType";
             case FILE_END -> "(EOF)";
             default -> "<UNKNOWN" + type + ">";
         };
