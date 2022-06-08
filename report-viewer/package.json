@@ -30,7 +30,7 @@
     "@vue/cli-plugin-router": "~5.0.1",
     "@vue/cli-plugin-typescript": "~5.0.4",
     "@vue/cli-service": "~5.0.4",
-    "@vue/compiler-sfc": "^3.2.36",
+    "@vue/compiler-sfc": "^3.2.37",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^10.0.0",
     "eslint": "^8.16.0",
