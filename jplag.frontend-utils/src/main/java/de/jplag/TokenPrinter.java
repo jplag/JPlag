@@ -98,7 +98,7 @@ public final class TokenPrinter {
             }
             // Move to token index:
             while (columnIndex < token.getColumn()) {
-                builder.append(currentLine.length() > columnIndex && currentLine.charAt(columnIndex - 1) == '\t'? TAB : SPACE);
+                builder.append(currentLine.length() > columnIndex && currentLine.charAt(columnIndex - 1) == '\t' ? TAB : SPACE);
                 columnIndex++;
             }
 
@@ -110,7 +110,7 @@ public final class TokenPrinter {
             // Move up to token end:
             int tokenEndIndex = token.getColumn() + token.getLength() - 1;
             while (columnIndex < tokenEndIndex) {
-                builder.append(currentLine.length() > columnIndex && currentLine.charAt(columnIndex - 1) == '\t'? TAB : SPACE);
+                builder.append(currentLine.length() > columnIndex && currentLine.charAt(columnIndex - 1) == '\t' ? TAB : SPACE);
                 columnIndex++;
             }
             // Print token end if not already past it:

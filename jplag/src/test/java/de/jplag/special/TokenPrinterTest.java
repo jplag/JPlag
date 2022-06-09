@@ -43,18 +43,6 @@ public class TokenPrinterTest extends TestBase {
         });
     }
 
-    @Disabled
-    @Test
-    public void printKotlinFiles() {
-        printSubmissions(options -> options.setLanguageOption(LanguageOption.KOTLIN));
-    }
-
-    @Disabled
-    @Test
-    public void printGoFiles() {
-        printSubmissions(options -> options.setLanguageOption(LanguageOption.GO));
-    }
-
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {
         try {
             JPlagResult result = runJPlag(PRINTER_FOLDER, optionsCustomization);
