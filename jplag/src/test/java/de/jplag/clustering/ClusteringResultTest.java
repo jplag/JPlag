@@ -83,7 +83,6 @@ class ClusteringResultTest {
         setEntries(similarity, 3, 4, 0.5);
         setEntries(similarity, 3, 5, 0.05);
 
-
         ClusteringResult<Integer> result = ClusteringResult.fromIntegerCollections(List.of(List.of(0, 1, 4), List.of(2, 3, 5)), similarity);
         var clusters = new ArrayList<>(result.getClusters());
 

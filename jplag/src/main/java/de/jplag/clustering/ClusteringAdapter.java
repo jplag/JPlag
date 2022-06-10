@@ -28,9 +28,8 @@ public class ClusteringAdapter {
     /**
      * Creates the clustering adapter. Only submissions that appear in those similarities might also appear in
      * {@link ClusteringResult}s obtained from this adapter.
-     *
      * @param comparisons that should be included in the process of clustering
-     * @param metric      function that assigns a similarity to each comparison
+     * @param metric function that assigns a similarity to each comparison
      */
     public ClusteringAdapter(Collection<JPlagComparison> comparisons, Function<JPlagComparison, Float> metric) {
         mapping = new IntegerMapping<>(comparisons.size());
@@ -53,7 +52,6 @@ public class ClusteringAdapter {
     /**
      * Use a generic clustering algorithm to cluster the submissions, that were included in this {@link ClusteringAdapter}'s
      * comparison.
-     *
      * @param algorithm that is used for clustering
      * @return the clustered submissions
      */
