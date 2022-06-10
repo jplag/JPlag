@@ -11,6 +11,7 @@ import de.jplag.TokenList;
  * @author Timur Saglam
  */
 public class Language implements de.jplag.Language {
+    public static final String VIEW_FILE_SUFFIX = ".TreeView";
     private static final String NAME = "EMF metamodels";
     private static final String SHORT_NAME = "EMF";
     private static final String[] FILE_ENDINGS = new String[] {".ecore"};
@@ -63,12 +64,17 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public boolean usesIndex() {
-        return false;
+    public int numberOfTokens() {
+        return MetamodelTokenConstants.NUM_DIFF_TOKENS;
     }
 
     @Override
-    public int numberOfTokens() {
-        return MetamodelTokenConstants.NUM_DIFF_TOKENS;
+    public boolean useViewFiles() {
+        return true;
+    }
+
+    @Override
+    public String viewFileSuffix() {
+        return VIEW_FILE_SUFFIX;
     }
 }

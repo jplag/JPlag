@@ -22,7 +22,6 @@ import de.jplag.TokenList;
  * @author Timur Saglam
  */
 public class EcoreParser extends AbstractParser {
-    private static final String TMP = ".tmp";
     private TokenList tokens;
     private String currentFile;
     private MetamodelTreeView treeView;
@@ -57,8 +56,8 @@ public class EcoreParser extends AbstractParser {
                 visitor = new TokenGeneratingMetamodelVisitor(this);
                 visitor.visit(root);
             }
-            tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, fileName + TMP));
-            treeView.writeToFile(directory, TMP);
+            tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, fileName + Language.VIEW_FILE_SUFFIX));
+            treeView.writeToFile(directory, Language.VIEW_FILE_SUFFIX);
         }
         return tokens;
     }
@@ -71,7 +70,7 @@ public class EcoreParser extends AbstractParser {
     }
 
     public void addToken(int type, EObject source) {
-        MetamodelToken token = new MetamodelToken(type, currentFile + TMP, source);
+        MetamodelToken token = new MetamodelToken(type, currentFile + Language.VIEW_FILE_SUFFIX, source);
         treeView.addToken(token, visitor.getCurrentTreeDepth());
         tokens.addToken(token);
     }
