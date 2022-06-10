@@ -80,6 +80,9 @@ public final class TokenPrinter {
                 columnIndex = 1;
 
                 String fileName = token.getFile().isEmpty() ? root.getName() : token.getFile();
+                if (!filesToLines.containsKey(fileName)) {
+                    throw new IllegalStateException("Cannot find file " + fileName + " in " + filesToLines.keySet());
+                }
                 String currentLine = filesToLines.get(fileName).get(lineIndex - 1);
                 if (REPLACE_TABS) {
                     currentLine = currentLine.replace(TAB, TAB_REPLACEMENT);

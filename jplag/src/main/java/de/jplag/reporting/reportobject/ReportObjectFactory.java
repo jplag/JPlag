@@ -69,12 +69,14 @@ public class ReportObjectFactory {
      */
     private static List<ComparisonReport> generateComparisonReports(JPlagResult result) {
         List<ComparisonReport> comparisons = new ArrayList<>();
+        Language language = result.getOptions().getLanguage();
+        Optional<String> viewFileSuffix = language.useViewFiles() ? Optional.of(language.viewFileSuffix()) : Optional.empty();
         result.getComparisons().forEach(comparison -> comparisons.add( //
                 new ComparisonReport(comparison.getFirstSubmission().getName(), //
                         comparison.getSecondSubmission().getName(), //
                         comparison.similarity(), //
-                        getFilesForSubmission(comparison.getFirstSubmission()), //
-                        getFilesForSubmission(comparison.getSecondSubmission()), //
+                        getFilesForSubmission(comparison.getFirstSubmission(), viewFileSuffix), //
+                        getFilesForSubmission(comparison.getSecondSubmission(), viewFileSuffix), //
                         convertMatchesToReportMatches(result, comparison, comparison.getMatches()) //
                 )));
         return comparisons;
@@ -136,10 +138,12 @@ public class ReportObjectFactory {
 
     /**
      * Converts files of a submission to FilesOFSubmission DTO.
+     * @param viewFileSuffix optional suffix denoting the view files when they are used by the language.
      * @return A list containing FilesOfSubmission DTOs.
      */
-    private static List<FilesOfSubmission> getFilesForSubmission(Submission submission) {
-        return submission.getFiles().stream().map(file -> new FilesOfSubmission(file.getName(), readFileLines(file))).collect(Collectors.toList());
+    private static List<FilesOfSubmission> getFilesForSubmission(Submission submission, Optional<String> viewFileSuffix) {
+        var submissionFiles = submission.getFiles().stream().map(file -> new File(file.getAbsolutePath() + viewFileSuffix.orElse("")));
+        return submissionFiles.map(file -> new FilesOfSubmission(file.getName(), readFileLines(file))).collect(Collectors.toList());
     }
 
     /**

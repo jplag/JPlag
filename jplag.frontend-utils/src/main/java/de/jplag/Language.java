@@ -51,12 +51,30 @@ public interface Language {
     boolean isPreformatted();
 
     /**
-     * Determines whether tokens from the scanner are indexed.
-     */
-    boolean usesIndex();
-
-    /**
-     * Number of defined tokens in the scanner of the language.
+     * Number of defined parse tree tokens in the language.
      */
     int numberOfTokens();
+
+    /**
+     * Determines whether tokens from the scanner are indexed.
+     */
+    default boolean usesIndex() {
+        return false;
+    }
+
+    /**
+     * Indicates whether the input files (code) should be used as representation in the report, or different files that form
+     * a view on the input files.
+     */
+    default boolean useViewFiles() {
+        return false;
+    }
+
+    /**
+     * If the language uses representation files, this method returns the suffix used for the representation files.
+     */
+    default String viewFileSuffix() {
+        return "";
+    }
+
 }
