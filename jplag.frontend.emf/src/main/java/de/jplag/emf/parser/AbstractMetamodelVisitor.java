@@ -1,4 +1,4 @@
-package de.jplag.emf;
+package de.jplag.emf.parser;
 
 import java.util.List;
 

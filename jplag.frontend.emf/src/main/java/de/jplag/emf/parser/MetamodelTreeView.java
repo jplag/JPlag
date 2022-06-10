@@ -1,4 +1,4 @@
-package de.jplag.emf;
+package de.jplag.emf.parser;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.ENamedElement;
+
+import de.jplag.emf.MetamodelToken;
 
 /**
  * Simplcisitc tree view representation of an EMF metamodel.
@@ -40,7 +42,7 @@ public class MetamodelTreeView {
         token.getEObject().ifPresent(it -> {
             tokens.add(token);
 
-            String tokenText = token.type2string();
+            String tokenText = token.toString();
             if (it instanceof ENamedElement element) {
                 tokenText = element.getName() + " : " + tokenText;
             }

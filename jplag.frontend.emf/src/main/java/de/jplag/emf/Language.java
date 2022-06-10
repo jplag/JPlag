@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
+import de.jplag.emf.parser.EcoreParser;
 
 /**
  * Language for Ecore metamodels from the Eclipse Modeling Framework (EMF).

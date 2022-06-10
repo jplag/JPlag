@@ -1,4 +1,4 @@
-package de.jplag.emf;
+package de.jplag.emf.parser;
 
 import java.io.File;
 import java.util.List;
@@ -16,6 +16,8 @@ import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
+import de.jplag.emf.Language;
+import de.jplag.emf.MetamodelToken;
 
 /**
  * Parser for EMF metamodels.
