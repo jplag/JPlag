@@ -16,12 +16,9 @@ public class MetamodelToken extends Token implements MetamodelTokenConstants {
     private final Optional<EObject> eObject;
 
     /**
-     * Creates an Ecore metamodel token.
+     * Creates an Ecore metamodel token that corresponds to an EObject.
      * @param type is the corresponding ID of the {@link TokenConstants}.
      * @param file is the name of the source model file.
-     * @param line is the line index in the metamodel where the token resides. Cannot be smaller than 1.
-     * @param column is the column index, meaning where the token starts in the line.
-     * @param length is the length of the token in the metamodel.
      * @param eObject is the corresponding eObject from which this token was extracted.
      */
     public MetamodelToken(int type, String file, EObject eObject) {
@@ -29,11 +26,19 @@ public class MetamodelToken extends Token implements MetamodelTokenConstants {
         this.eObject = Optional.of(eObject);
     }
 
+    /**
+     * Creates an Ecore metamodel token.
+     * @param type is the corresponding ID of the {@link TokenConstants}.
+     * @param file is the name of the source model file.
+     */
     public MetamodelToken(int type, String file) {
         super(type, file, -1);
         this.eObject = Optional.empty();
     }
 
+    /**
+     * @return the optional corresponding EObject of the token.
+     */
     public Optional<EObject> getEObject() {
         return eObject;
     }

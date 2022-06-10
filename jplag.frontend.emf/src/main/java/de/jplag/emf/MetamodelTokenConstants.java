@@ -28,5 +28,5 @@ public interface MetamodelTokenConstants extends TokenConstants {
     /*
      * Number of token constants:
      */
-    int NUM_DIFF_TOKENS = 14;
+    int NUM_DIFF_TOKENS = 19;
 }

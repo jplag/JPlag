@@ -5,17 +5,20 @@ import java.util.List;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
+/**
+ * Visitor for the containment tree of an EMF Metamodel.
+ * @author Timur Saglam
+ */
 public abstract class AbstractMetamodelVisitor {
 
     private int currentTreeDepth;
 
+    /**
+     * Visits an EObject and all nodes in the containment tree below.
+     * @param eObject is the EObject to visit.
+     */
     public final void visit(EObject eObject) {
-        String name = "";
-        if (eObject instanceof ENamedElement el)
-            name += " " + el.getName();
-        System.out.println(eObject.eClass().getName() + name + " -> " + EcoreUtil.getURI(eObject));
         if (eObject instanceof EPackage ePackage) {
             visitEPackage(ePackage);
         }
@@ -64,10 +67,18 @@ public abstract class AbstractMetamodelVisitor {
         currentTreeDepth--;
     }
 
+    /**
+     * Returns the current depth in the containment tree from the starting point.
+     * @return the depth in tree node levels.
+     */
     public int getCurrentTreeDepth() {
         return currentTreeDepth;
     }
 
+    /**
+     * Visit method that gets called for all annotation nodes.
+     * @param eAnnotation is the node that is visited.
+     */
     protected void visitEAnnotation(EAnnotation eAnnotation) {
     }
 
@@ -107,6 +118,9 @@ public abstract class AbstractMetamodelVisitor {
     protected void visitEStructuralFeature(EStructuralFeature eStructuralFeature) {
     }
 
+    /**
+     * TODO TS: Remove generator method.
+     */
     public static void main(String[] args) {
         List<String> types = List.of("EPackage", "EAnnotation", "EClassifier", "EClass", "EDataType", "EStructuralFeature", "EAttribute",
                 "EReference", "EOperation", "EEnum", "EEnumLiteral", "EParameter");

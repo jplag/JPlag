@@ -26,9 +26,17 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 
+/**
+ * Visits a metamodel containment tree and extracts the relevant token.
+ * @author Timur Saglam
+ */
 public class TokenGeneratingMetamodelVisitor extends AbstractMetamodelVisitor {
     private EcoreParser parser;
 
+    /**
+     * Creates the visitor.
+     * @param parser is the parser which receives the generated tokens.
+     */
     public TokenGeneratingMetamodelVisitor(EcoreParser parser) {
         this.parser = parser;
     }
