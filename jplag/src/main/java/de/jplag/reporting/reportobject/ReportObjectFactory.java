@@ -34,7 +34,6 @@ public class ReportObjectFactory {
 
     /**
      * Generates an Overview DTO of a JPlagResult.
-     * @param numberOfExportedComparisons
      */
     private static OverviewReport generateOverviewReport(JPlagResult result) {
         int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
@@ -67,7 +66,6 @@ public class ReportObjectFactory {
 
     /**
      * Generates detailed ComparisonReport DTO for each comparison in a JPlagResult.
-     * @param numberOfExportedComparisons
      * @return A list with ComparisonReport DTOs.
      */
     private static List<ComparisonReport> generateComparisonReports(JPlagResult result) {

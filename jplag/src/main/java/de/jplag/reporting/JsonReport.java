@@ -26,7 +26,7 @@ public class JsonReport implements Report {
         JPlagReport report = ReportObjectFactory.getReportObject(result);
         File directory = new File(path);
         if (!directory.exists()) {
-            if (!directory.mkdir()) {
+            if (!directory.mkdirs()) {
                 logger.error("Failed to create dir.");
             }
         }
