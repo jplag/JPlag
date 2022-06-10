@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 /**
  * Cluster part of a {@link ClusteringResult}.
+ *
  * @param <T> type of the clusters members
  */
 public class Cluster<T> {
@@ -15,10 +16,13 @@ public class Cluster<T> {
     private final float communityStrength;
     private final Collection<T> members;
     private ClusteringResult<T> clusteringResult = null;
+    private final float averageSimilarity;
 
-    public Cluster(Collection<T> members, float communityStrength) {
+
+    public Cluster(Collection<T> members, float communityStrength, float averageSimilarity) {
         this.members = new ArrayList<>(members);
         this.communityStrength = communityStrength;
+        this.averageSimilarity = averageSimilarity;
     }
 
     public Collection<T> getMembers() {
@@ -26,8 +30,13 @@ public class Cluster<T> {
         return members;
     }
 
+    public float getAverageSimilarity() {
+        return averageSimilarity;
+    }
+
     /**
      * See {@link ClusteringResult#getCommunityStrength}
+     *
      * @return community strength of the cluster
      */
     public float getCommunityStrength() {
@@ -37,6 +46,7 @@ public class Cluster<T> {
     /**
      * Sets this clusters clustering result. Should only be called by classes extending {@link ClusteringResult} on their
      * own clusters.
+     *
      * @param clusteringResult the clustering result
      */
     public void setClusteringResult(ClusteringResult<T> clusteringResult) {
@@ -57,11 +67,11 @@ public class Cluster<T> {
      * Computes a normalized community strength per connection. Can be used as measure for strength of evidence in
      * comparison to other clusters in the same clustering. Guaranteed to be smaller than 1. Negative values indicate
      * non-clusters. This method may only be called on clusters that are part of a ClusteringResult.
+     *
      * @return normalized community strength per connection
      */
     public float getNormalizedCommunityStrengthPerConnection() {
-        List<Cluster<T>> goodClusters = clusteringResult.getClusters().stream().filter(cluster -> cluster.getCommunityStrength() > 0)
-                .collect(Collectors.toList());
+        List<Cluster<T>> goodClusters = clusteringResult.getClusters().stream().filter(cluster -> cluster.getCommunityStrength() > 0).toList();
         float posCommunityStrengthSum = (float) goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
 
         int size = clusteringResult.getClusters().size();
@@ -84,10 +94,11 @@ public class Cluster<T> {
 
     /**
      * Computes the average similarity inside the cluster.
+     *
      * @param similarity function that supplies the similarity of two cluster members.
      * @return average similarity
      */
-    public float averageSimilarity(BiFunction<T, T, Float> similarity) {
+    private float averageSimilarity(BiFunction<T, T, Float> similarity) {
         List<T> members = new ArrayList<>(getMembers());
         if (members.size() < 2) {
             return 1;
@@ -108,6 +119,7 @@ public class Cluster<T> {
 
     /**
      * Whether this cluster is very uninformative or wrong and should be pruned as last step of the clustering process.
+     *
      * @return is bad
      */
     public boolean isBadCluster() {
