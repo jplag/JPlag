@@ -15,6 +15,14 @@ public abstract class AbstractMetamodelVisitor {
     private int currentTreeDepth;
 
     /**
+     * Returns the current depth in the containment tree from the starting point.
+     * @return the depth in tree node levels.
+     */
+    public int getCurrentTreeDepth() {
+        return currentTreeDepth;
+    }
+
+    /**
      * Visits an EObject and all nodes in the containment tree below.
      * @param eObject is the EObject to visit.
      */
@@ -59,6 +67,12 @@ public abstract class AbstractMetamodelVisitor {
         if (eObject instanceof EParameter eParameter) {
             visitEParameter(eParameter);
         }
+        if (eObject instanceof EGenericType eGenericType) {
+            visitEGenericType(eGenericType);
+        }
+        if (eObject instanceof ETypeParameter eTypeParameter) {
+            visitETypeParameter(eTypeParameter);
+        }
 
         currentTreeDepth++;
         for (EObject child : eObject.eContents()) {
@@ -68,22 +82,10 @@ public abstract class AbstractMetamodelVisitor {
     }
 
     /**
-     * Returns the current depth in the containment tree from the starting point.
-     * @return the depth in tree node levels.
-     */
-    public int getCurrentTreeDepth() {
-        return currentTreeDepth;
-    }
-
-    /**
      * Visit method that gets called for all annotation nodes.
      * @param eAnnotation is the node that is visited.
      */
     protected void visitEAnnotation(EAnnotation eAnnotation) {
-    }
-
-    protected void visitEObject(EObject eObject) {
-
     }
 
     protected void visitEAttribute(EAttribute eAttribute) {
@@ -107,6 +109,13 @@ public abstract class AbstractMetamodelVisitor {
     protected void visitEFactory(EFactory eFactory) {
     }
 
+    protected void visitEGenericType(EGenericType eGenericType) {
+    }
+
+    protected void visitEObject(EObject eObject) {
+
+    }
+
     protected void visitEOperation(EOperation eOperation) {
     }
 
@@ -122,12 +131,15 @@ public abstract class AbstractMetamodelVisitor {
     protected void visitEStructuralFeature(EStructuralFeature eStructuralFeature) {
     }
 
+    protected void visitETypeParameter(ETypeParameter eTypeParameter) {
+    }
+
     /**
      * TODO TS: Remove generator method.
      */
     public static void main(String[] args) {
         List<String> types = List.of("EPackage", "EAnnotation", "EClassifier", "EClass", "EDataType", "EStructuralFeature", "EAttribute",
-                "EReference", "EOperation", "EEnum", "EEnumLiteral", "EParameter");
+                "EReference", "EOperation", "EEnum", "EEnumLiteral", "EParameter", "EGenericType", "ETypeParameter");
 
         for (String type : types) {
             System.out.println("if (eObject instanceof " + type + " e" + type.substring(1) + ") {");
