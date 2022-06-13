@@ -26,9 +26,4 @@ public abstract class AbstractParser {
         return errorConsumer;
     }
 
-    /**
-     * Setter for the error consumer that collects and prints errors.
-     * @param errorConsumer is the consumer to set.
-     */
-
 }
