@@ -3,6 +3,7 @@ package de.jplag.emf;
 import de.jplag.TokenConstants;
 
 /**
+ * Ecore meta-metamodel token constants. They define which tokens are extracted from a metamodel.
  * @author Timur Saglam
  */
 public interface MetamodelTokenConstants extends TokenConstants {

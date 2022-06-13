@@ -19,6 +19,7 @@ public abstract class AbstractMetamodelVisitor {
      * @param eObject is the EObject to visit.
      */
     public final void visit(EObject eObject) {
+        visitEObject(eObject);
         if (eObject instanceof EPackage ePackage) {
             visitEPackage(ePackage);
         }
@@ -61,7 +62,6 @@ public abstract class AbstractMetamodelVisitor {
 
         currentTreeDepth++;
         for (EObject child : eObject.eContents()) {
-
             visit(child);
         }
         currentTreeDepth--;
@@ -80,6 +80,10 @@ public abstract class AbstractMetamodelVisitor {
      * @param eAnnotation is the node that is visited.
      */
     protected void visitEAnnotation(EAnnotation eAnnotation) {
+    }
+
+    protected void visitEObject(EObject eObject) {
+
     }
 
     protected void visitEAttribute(EAttribute eAttribute) {

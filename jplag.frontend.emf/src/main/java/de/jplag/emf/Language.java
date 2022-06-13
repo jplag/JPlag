@@ -8,7 +8,7 @@ import de.jplag.TokenList;
 import de.jplag.emf.parser.EcoreParser;
 
 /**
- * Language for Ecore metamodels from the Eclipse Modeling Framework (EMF).
+ * Language for EMF metamodels from the Eclipse Modeling Framework (EMF).
  * @author Timur Saglam
  */
 public class Language implements de.jplag.Language {
@@ -18,10 +18,14 @@ public class Language implements de.jplag.Language {
     private static final String[] FILE_ENDINGS = new String[] {".ecore"};
     private static final int DEFAULT_MIN_TOKEN_MATCH = 5;
 
-    private final EcoreParser parser;
+    protected final EcoreParser parser;
 
     public Language(ErrorConsumer program) {
-        parser = new EcoreParser(program);
+        this(new EcoreParser(program));
+    }
+
+    protected Language(EcoreParser parser) {
+        this.parser = parser;
     }
 
     @Override

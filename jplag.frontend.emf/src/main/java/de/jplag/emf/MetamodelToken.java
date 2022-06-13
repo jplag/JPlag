@@ -8,7 +8,7 @@ import de.jplag.Token;
 import de.jplag.TokenConstants;
 
 /**
- * Ecore metamodel token class.
+ * EMF metamodel token.
  * @author Timur Saglam
  */
 public class MetamodelToken extends Token implements MetamodelTokenConstants {
@@ -19,7 +19,7 @@ public class MetamodelToken extends Token implements MetamodelTokenConstants {
      * Creates an Ecore metamodel token that corresponds to an EObject.
      * @param type is the corresponding ID of the {@link TokenConstants}.
      * @param file is the name of the source model file.
-     * @param eObject is the corresponding eObject from which this token was extracted.
+     * @param eObject is the corresponding eObject in the model from which this token was extracted.
      */
     public MetamodelToken(int type, String file, EObject eObject) {
         super(type, file, -1);

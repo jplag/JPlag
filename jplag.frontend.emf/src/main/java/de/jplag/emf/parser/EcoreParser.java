@@ -24,10 +24,10 @@ import de.jplag.emf.MetamodelToken;
  * @author Timur Saglam
  */
 public class EcoreParser extends AbstractParser {
-    private TokenList tokens;
-    private String currentFile;
-    private MetamodelTreeView treeView;
-    private TokenGeneratingMetamodelVisitor visitor;
+    protected TokenList tokens;
+    protected String currentFile;
+    protected MetamodelTreeView treeView;
+    protected AbstractMetamodelVisitor visitor;
 
     /**
      * Creates the parser.
@@ -55,13 +55,21 @@ public class EcoreParser extends AbstractParser {
             treeView = new MetamodelTreeView(currentFile);
             List<EObject> rootElements = loadModel(directory.toString(), fileName);
             for (EObject root : rootElements) {
-                visitor = new TokenGeneratingMetamodelVisitor(this);
+                visitor = createMetamodelVisitor();
                 visitor.visit(root);
             }
             tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, fileName + Language.VIEW_FILE_SUFFIX));
             treeView.writeToFile(directory, Language.VIEW_FILE_SUFFIX);
         }
         return tokens;
+    }
+
+    /**
+     * Extension point for subclasses to employ different token generators.
+     * @return a token generating metamodel visitor.
+     */
+    protected AbstractMetamodelVisitor createMetamodelVisitor() {
+        return new MetamodelTokenGenerator(this);
     }
 
     private List<EObject> loadModel(String directory, String name) {
