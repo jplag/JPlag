@@ -20,6 +20,9 @@ public class DynamicMetamodelToken extends MetamodelToken {
 
     @Override
     protected String type2string() {
+        if (type < DynamicMetamodelTokenConstants.TOKEN_TYPE_START) {
+            return super.type2string();
+        }
         return DynamicMetamodelTokenConstants.getTokenString(type);
     }
 

@@ -28,6 +28,20 @@ class NormalComparisonTest extends TestBase {
     }
 
     /**
+     * The simple duplicate with a custom min token match.
+     */
+    @Test
+    void testWithMinTokenMatch() throws ExitException {
+        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.setMinimumTokenMatch(5));
+
+        assertEquals(2, result.getNumberOfSubmissions());
+        assertEquals(1, result.getComparisons().size());
+        assertEquals(2, result.getComparisons().get(0).getMatches().size());
+        assertEquals(1, result.getSimilarityDistribution()[9]);
+        assertEquals(96.55f, result.getComparisons().get(0).similarity(), 0.1f);
+    }
+
+    /**
      * The classes in no duplicate have nearly nothing in common.
      */
     @Test

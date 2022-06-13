@@ -12,11 +12,13 @@ import de.jplag.TokenConstants;
  * @author Timur Saglam
  */
 public class DynamicMetamodelTokenConstants implements TokenConstants {
+    private static final String UNKNOWN_TOKEN = "<Unknown>";
+
+    public final static int TOKEN_TYPE_START = 2;
 
     private static Map<EClass, Integer> eClassToTokenType = new HashMap<>();
     private static Map<Integer, EClass> tokenTypeToEClass = new HashMap<>();
-
-    private static int tokenTypeIndex = 2;
+    private static int tokenTypeIndex = TOKEN_TYPE_START;
 
     private DynamicMetamodelTokenConstants() {
         // private constructor for non-instantiability.
@@ -33,7 +35,10 @@ public class DynamicMetamodelTokenConstants implements TokenConstants {
     }
 
     public static String getTokenString(int tokenType) {
-        return tokenTypeToEClass.get(tokenType).getName();
+        if (tokenTypeToEClass.containsKey(tokenType)) {
+            return tokenTypeToEClass.get(tokenType).getName();
+        }
+        return UNKNOWN_TOKEN;
     }
 
     /**

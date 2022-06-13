@@ -16,7 +16,8 @@ public enum LanguageOption {
     CHAR("char", "de.jplag.chars.Language"),
     TEXT("text", "de.jplag.text.Language"),
     SCHEME("scheme", "de.jplag.scheme.Language"),
-    EMF("emf", "de.jplag.emf.Language");
+    EMF("emf", "de.jplag.emf.Language"),
+    EMF_DYNAMIC("emf-dynamic", "de.jplag.emf.dynamic.Language");
 
     private final String classPath;
     private final String displayName;
