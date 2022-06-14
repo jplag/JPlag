@@ -36,7 +36,8 @@ public class ReportObjectFactory {
      * Generates an Overview DTO of a JPlagResult.
      */
     private static OverviewReport generateOverviewReport(JPlagResult result) {
-        List<JPlagComparison> comparisons = result.getComparisons();
+        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
+        List<JPlagComparison> comparisons = result.getComparisons(numberOfComparisons);
         OverviewReport overviewReport = new OverviewReport();
 
         // TODO: Consider to treat entries that were checked differently from old entries with prior work.
@@ -69,7 +70,8 @@ public class ReportObjectFactory {
      */
     private static List<ComparisonReport> generateComparisonReports(JPlagResult result) {
         List<ComparisonReport> comparisons = new ArrayList<>();
-        result.getComparisons().forEach(comparison -> comparisons.add( //
+        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
+        result.getComparisons(numberOfComparisons).forEach(comparison -> comparisons.add( //
                 new ComparisonReport(comparison.getFirstSubmission().getName(), //
                         comparison.getSecondSubmission().getName(), //
                         comparison.similarity(), //
