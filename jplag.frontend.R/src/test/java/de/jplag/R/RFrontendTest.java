@@ -33,7 +33,7 @@ public class RFrontendTest {
      */
     private static final String COMPLETE_TEST_FILE = "Complete.R";
     private final Logger logger = LoggerFactory.getLogger("R frontend test");
-    private final String[] testFiles = new String[] {"Game.r", COMPLETE_TEST_FILE};
+    private final String[] testFiles = new String[] {"Game.R", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "R").toFile();
     private Language language;
 
