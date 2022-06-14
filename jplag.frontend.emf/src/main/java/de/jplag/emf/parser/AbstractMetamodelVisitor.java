@@ -2,9 +2,22 @@ package de.jplag.emf.parser;
 
 import java.util.List;
 
-import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EFactory;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EParameter;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypeParameter;
 
 /**
  * Visitor for the containment tree of an EMF Metamodel.

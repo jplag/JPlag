@@ -8,7 +8,7 @@ import java.io.File;
 public interface Language {
 
     /**
-     * Suffixes for the files containing code of the language.
+     * Suffixes for the files containing code of the language. An empty array means all suffixes are valid.
      */
     String[] suffixes();
 

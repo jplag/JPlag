@@ -3,6 +3,8 @@ package de.jplag.emf;
 import java.io.File;
 import java.util.Arrays;
 
+import org.eclipse.emf.ecore.EcorePackage;
+
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 import de.jplag.emf.parser.EcoreParser;
@@ -15,7 +17,7 @@ public class Language implements de.jplag.Language {
     public static final String VIEW_FILE_SUFFIX = ".TreeView";
     private static final String NAME = "EMF metamodels";
     private static final String SHORT_NAME = "EMF";
-    private static final String[] FILE_ENDINGS = new String[] {".ecore"};
+    private static final String[] FILE_ENDINGS = new String[] {"." + EcorePackage.eNAME};
     private static final int DEFAULT_MIN_TOKEN_MATCH = 5;
 
     protected final EcoreParser parser;
