@@ -36,6 +36,10 @@ public class JplagRListener implements RListener, RFilterListener, RTokenConstan
         parserAdapter.addToken(targetType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
+    private void transformToken(int targetType, Token start, Token end) {
+        parserAdapter.addToken(targetType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
+    }
+
     @Override
     public void enterProg(RParser.ProgContext ctx) {
 
@@ -83,12 +87,12 @@ public class JplagRListener implements RListener, RFilterListener, RTokenConstan
 
     @Override
     public void exitFunction_definition(RParser.Function_definitionContext ctx) {
-        transformToken(END_FUNCTION, ctx.getStart());
+        transformToken(END_FUNCTION, ctx.getStop());
     }
 
     @Override
     public void enterFunction_call(RParser.Function_callContext ctx) {
-        transformToken(FUNCTION_CALL, ctx.getStart());
+        transformToken(FUNCTION_CALL, ctx.getStart(), ctx.getStop());
     }
 
     @Override
@@ -153,7 +157,7 @@ public class JplagRListener implements RListener, RFilterListener, RTokenConstan
 
     @Override
     public void exitIf_statement(RParser.If_statementContext ctx) {
-        transformToken(IF_END, ctx.getStart());
+        transformToken(IF_END, ctx.getStop());
     }
 
     @Override
@@ -163,17 +167,17 @@ public class JplagRListener implements RListener, RFilterListener, RTokenConstan
 
     @Override
     public void exitFor_statement(RParser.For_statementContext ctx) {
-        transformToken(FOR_END, ctx.getStart());
+        transformToken(FOR_END, ctx.getStop());
     }
 
     @Override
     public void enterWhile_statement(RParser.While_statementContext ctx) {
-        transformToken(WHILE_BEGIN, ctx.getStart());
+       transformToken(WHILE_BEGIN, ctx.getStart());
     }
 
     @Override
     public void exitWhile_statement(RParser.While_statementContext ctx) {
-        transformToken(WHILE_END, ctx.getStart());
+        transformToken(WHILE_END, ctx.getStop());
     }
 
     @Override
@@ -183,7 +187,7 @@ public class JplagRListener implements RListener, RFilterListener, RTokenConstan
 
     @Override
     public void exitRepeat_statement(RParser.Repeat_statementContext ctx) {
-        transformToken(REPEAT_END, ctx.getStart());
+        transformToken(REPEAT_END, ctx.getStop());
     }
 
     @Override
@@ -213,7 +217,7 @@ public class JplagRListener implements RListener, RFilterListener, RTokenConstan
 
     @Override
     public void exitCompound_statement(RParser.Compound_statementContext ctx) {
-        transformToken(COMPOUND_END, ctx.getStart());
+        transformToken(COMPOUND_END, ctx.getStop());
     }
 
     @Override
@@ -358,9 +362,7 @@ public class JplagRListener implements RListener, RFilterListener, RTokenConstan
 
     @Override
     public void visitTerminal(TerminalNode node) {
-        if (node.getText().equals("=")) {
-            transformToken(ASSIGN, node.getSymbol());
-        }
+
     }
 
     @Override

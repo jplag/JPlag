@@ -14,7 +14,7 @@ public class RToken extends de.jplag.Token implements RTokenConstants {
     @Override
     public String type2string() {
         return switch (this.type) {
-            case FILE_END -> "***********";
+            case FILE_END -> "<EOF>";
             case SEPARATOR_TOKEN -> "METHOD_SEPARATOR";
             case BEGIN_FUNCTION -> "FUNCTION{";
             case END_FUNCTION -> "}FUNCTION";
@@ -29,7 +29,7 @@ public class RToken extends de.jplag.Token implements RTokenConstants {
             case INDEX -> "INDEX";
             case PACKAGE -> "PACKAGE";
             case IF_BEGIN -> "IF{";
-            case IF_END -> "}IF";
+            case IF_END -> "}IF-ELSE";
             case FOR_BEGIN -> "FOR{";
             case FOR_END -> "}FOR";
             case WHILE_BEGIN -> "WHILE{";

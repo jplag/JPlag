@@ -88,10 +88,10 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
      * @param type the type of the new {@link de.jplag.Token}
      * @param line the line of the Token in the current file
      * @param start the start column of the Token in the line
-     * @param end the end column of the Token in the line
+     * @param length the length of the Token
      */
-    /* package-private */ void addToken(int type, int line, int start, int end) {
-        tokens.addToken(new RToken(type, currentFile, line, start, end - start));
+    /* package-private */ void addToken(int type, int line, int start, int length) {
+        tokens.addToken(new RToken(type, currentFile, line, start, length));
 
     }
 }
