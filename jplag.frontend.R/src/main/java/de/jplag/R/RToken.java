@@ -1,8 +1,8 @@
 package de.jplag.R;
 
 /**
- * This class represents the occurrence of an R Token in the source code.
- * Based on an R frontend for JPlag v2.15 by Olmo Kramer, see their <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag fork</a>.
+ * This class represents the occurrence of an R Token in the source code. Based on an R frontend for JPlag v2.15 by Olmo
+ * Kramer, see their <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag fork</a>.
  * @author Robin Maisch
  */
 public class RToken extends de.jplag.Token implements RTokenConstants {

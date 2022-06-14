@@ -11,8 +11,9 @@ import de.jplag.R.grammar.RListener;
 import de.jplag.R.grammar.RParser;
 
 /**
- * Listener class for visiting the R ANTLR parse tree. Transforms the visited ANTLR token into JPlag tokens.
- * Based on an R frontend for JPlag v2.15 by Olmo Kramer, see their <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag fork</a>.
+ * Listener class for visiting the R ANTLR parse tree. Transforms the visited ANTLR token into JPlag tokens. Based on an
+ * R frontend for JPlag v2.15 by Olmo Kramer, see their
+ * <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag fork</a>.
  * @author Robin Maisch
  */
 public class JplagRListener implements RListener, RFilterListener, RTokenConstants {
@@ -172,7 +173,7 @@ public class JplagRListener implements RListener, RFilterListener, RTokenConstan
 
     @Override
     public void enterWhile_statement(RParser.While_statementContext ctx) {
-       transformToken(WHILE_BEGIN, ctx.getStart());
+        transformToken(WHILE_BEGIN, ctx.getStart());
     }
 
     @Override
