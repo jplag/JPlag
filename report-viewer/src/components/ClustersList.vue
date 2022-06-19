@@ -3,11 +3,18 @@
 -->
 <template>
   <div class="wrapper">
-    <h1>Clusters for comparison {{ comparison.firstSubmissionId }} > {{ comparison.secondSubmissionId }}</h1>
-    <p v-for="( cluster, index ) in clusters" :key="index" @click="toggleDialog">
-      {{ index }} - {{ cluster.averageSimilarity }}
+    <h1>
+      Clusters for comparison {{ comparison.firstSubmissionId }} >
+      {{ comparison.secondSubmissionId }}
+    </h1>
+    <p v-for="(cluster, index) in clusters" :key="index" @click="toggleDialog">
+      {{ index + 1 }}. Members:
+      <span id="members">{{ getMemberNames(cluster) }}</span> - Average
+      similarity: {{ cluster.averageSimilarity }}%
       <GDialog v-model="dialog" fullscreen>
-        <button @click="toggleDialog">Close</button>
+        <div id="dialog-header">
+          <button @click="toggleDialog">Close</button>
+        </div>
         <ClusterRadarChart :cluster="cluster"></ClusterRadarChart>
       </GDialog>
     </p>
@@ -15,26 +22,44 @@
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
-import {GDialog} from "gitart-vue-dialog";
+import { defineComponent, ref } from "vue";
+import { GDialog } from "gitart-vue-dialog";
 import ClusterRadarChart from "@/components/ClusterRadarChart";
 
 export default defineComponent({
   name: "ClustersList",
-  components: {ClusterRadarChart, GDialog},
+  components: { ClusterRadarChart, GDialog },
   props: {
     comparison: {},
-    clusters: Array
+    clusters: Array,
   },
+
   setup() {
-    const dialog = ref(false)
-    const toggleDialog = () => dialog.value = !dialog.value
+    const dialog = ref(false);
+    const toggleDialog = () => (dialog.value = !dialog.value);
+    const getMemberNames = (cluster) => {
+      const members = Object.keys(cluster.members);
+      let concatenatedMembers = "";
+      let i;
+      const maxMembersToShow = 5;
+      for (i = 0; i < Math.min(maxMembersToShow, members.length); i++) {
+        concatenatedMembers += members[i];
+        if (i < maxMembersToShow - 1) {
+          concatenatedMembers += ", ";
+        }
+      }
+      if (members.length > maxMembersToShow) {
+        concatenatedMembers += ",...";
+      }
+      return concatenatedMembers;
+    };
     return {
       dialog,
-      toggleDialog
-    }
-  }
-})
+      toggleDialog,
+      getMemberNames,
+    };
+  },
+});
 </script>
 
 <style scoped>
@@ -60,5 +85,11 @@ p:hover {
   background: var(--primary-color-dark);
   cursor: pointer;
 }
-
+#dialog-header {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right: 1%;
+  margin-top: 0.5%;
+  box-shadow: 5px 10x #888888;
+}
 </style>
