@@ -21,6 +21,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/comparison",
     name: "ComparisonView",
     component: ComparisonView,
+    props: true,
   },
 ];
 
