@@ -26,7 +26,7 @@ public class RFrontendTest {
     /**
      * Regular expression for lines that contain no code.
      */
-    private static final String R_NO_CODE_LINE = "\s*(?:#.*)?";
+    private static final String R_NO_CODE_LINE = "\\s*(?:#.*)?";
 
     /**
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
