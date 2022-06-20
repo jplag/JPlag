@@ -102,37 +102,40 @@
   </table>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
+<script lang="ts">
+import { defineComponent, Ref, ref } from "vue";
 import router from "@/router";
 import { GDialog } from "gitart-vue-dialog";
-import ClustersList from "@/components/ClustersList";
+import ClustersList from "@/components/ClustersList.vue";
 import { useStore } from "vuex";
+import { Cluster } from "@/model/Cluster";
+import { ComparisonListElement } from "@/model/ComparisonListElement";
+import { ClusterListElement } from "@/model/ClusterListElement";
 
 export default defineComponent({
   name: "ComparisonsTable",
   components: { ClustersList, GDialog },
   props: {
     topComparisons: {
-      type: Array,
+      type: Array<ComparisonListElement>,
       required: true,
     },
     clusters: {
-      type: Array,
+      type: Array<Cluster>,
+      required: true,
     },
   },
   setup(props) {
     const store = useStore();
-    console.log(store.state.files);
-    let formattedMatchPercentage = (number) => number.toFixed(2);
-    const dialog = ref([]);
+    let formattedMatchPercentage = (num: number) => num.toFixed(2);
+    const dialog :Ref<Array<boolean>> = ref([]);
     props.topComparisons.forEach(() => dialog.value.push(false));
 
-    const toggleDialog = (index) => {
+    const toggleDialog = (index:number) => {
       dialog.value[index] = true;
     };
 
-    const navigateToComparisonView = (firstId, secondId) => {
+    const navigateToComparisonView = (firstId: string, secondId: string) => {
       if (!store.state.single) {
         router.push({
           name: "ComparisonView",
@@ -141,18 +144,18 @@ export default defineComponent({
       }
     };
 
-    const isInCluster = (id1, id2) => {
+    const isInCluster = (id1: string, id2: string) => {
       return props.clusters.some(
-        (c) => c.members.includes(id1) && c.members.includes(id2)
+        (c: Cluster) => c.members.includes(id1) && c.members.includes(id2)
       );
     };
 
-    const isAnonymous = (id) => {
+    const isAnonymous = (id: string) => {
       return store.state.anonymous.has(id);
     };
 
-    const getParticipatingMatchesForId = (id, others) => {
-      let matches = [];
+    const getParticipatingMatchesForId = (id: string, others : Array<string>) => {
+      let matches : Array<{matchedWith: string, percentage: number,}>= [];
       props.topComparisons.forEach((comparison) => {
         if (
           comparison.firstSubmissionId.includes(id) &&
@@ -175,11 +178,11 @@ export default defineComponent({
       return matches;
     };
 
-    const clustersWithParticipatingMatches = props.clusters.map((cluster) => {
-      let membersArray = {};
-      cluster.members.forEach((member) => {
+    const clustersWithParticipatingMatches: Array<ClusterListElement> = props.clusters.map((cluster) => {
+      let membersArray = new Map<string,Array<{matchedWith: string, percentage: number,}>>();
+      cluster.members.forEach((member: string) => {
         let others = cluster.members.filter((m) => !m.includes(member));
-        membersArray[member] = getParticipatingMatchesForId(member, others);
+        membersArray.set(member ,getParticipatingMatchesForId(member, others));
       });
 
       return {
@@ -189,11 +192,11 @@ export default defineComponent({
       };
     });
 
-    const getClustersFor = (id1, id2) => {
+    const getClustersFor = (id1: string, id2: string) : Array<ClusterListElement> => {
       return clustersWithParticipatingMatches.filter(
         (c) =>
-          Object.keys(c.members).includes(id1) &&
-          Object.keys(c.members).includes(id2)
+          c.members.has(id1) &&
+          c.members.has(id2)
       );
     };
 

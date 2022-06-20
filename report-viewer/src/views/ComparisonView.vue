@@ -22,7 +22,7 @@
         </button>
       </div>
       <TextInformation
-        :anonymous="store.state.anonymous.has(firstId)"
+        :anonymous="isAnonymous(firstId)"
         :value="firstId"
         label="Submission 1"
       />
@@ -58,15 +58,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref } from "vue";
 import { generateLineCodeLink } from "@/utils/Utils";
-import TextInformation from "@/components/TextInformation";
-import MatchTable from "@/components/MatchTable";
+import TextInformation from "@/components/TextInformation.vue";
+import MatchTable from "@/components/MatchTable.vue";
 import { ComparisonFactory } from "@/model/factories/ComparisonFactory";
-import FilesContainer from "@/components/FilesContainer";
+import FilesContainer from "@/components/FilesContainer.vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import { Match } from "@/model/Match";
 
 export default defineComponent({
   name: "ComparisonView",
@@ -110,12 +111,11 @@ export default defineComponent({
         }
       }
     } else if (store.state.zip) {
-      const getComparisonFileFor = (id1, id2) => {
-        const index = Object.keys(store.state.files).filter((name) =>
-          name.endsWith(
-            id1.concat("-").concat(id2).concat(".json") ||
-              name.endsWith(id2.concat("-").concat(id1).concat(".json"))
-          )
+      const getComparisonFileFor = (id1: string, id2: string) => {
+        const index = Object.keys(store.state.files).filter(
+          (name) =>
+            name.endsWith(id1.concat("-").concat(id2).concat(".json")) ||
+            name.endsWith(id2.concat("-").concat(id1).concat(".json"))
         )[0];
         return store.state.files[index];
       };
@@ -132,6 +132,10 @@ export default defineComponent({
       );
     }
 
+    if (!comparison) {
+      console.warn("Could not build comparison file");
+      return;
+    }
     const filesOfFirst = ref(comparison.filesOfFirstSubmission);
     const filesOfSecond = ref(comparison.filesOfSecondSubmission);
 
@@ -139,17 +143,21 @@ export default defineComponent({
      * Collapses a file in the first files container.
      * @param title
      */
-    const toggleCollapseFirst = (title) => {
-      filesOfFirst.value[title].collapsed =
-        !filesOfFirst.value[title].collapsed;
+    const toggleCollapseFirst = (title: string) => {
+      const file = filesOfFirst.value.get(title);
+      if (file) {
+        file.collapsed = !file.collapsed;
+      }
     };
     /**
      * Collapses a file in the second files container.
      * @param title
      */
-    const toggleCollapseSecond = (title) => {
-      filesOfSecond.value[title].collapsed =
-        !filesOfSecond.value[title].collapsed;
+    const toggleCollapseSecond = (title: string) => {
+      const file = filesOfSecond.value.get(title);
+      if (file) {
+        file.collapsed = !file.collapsed;
+      }
     };
     /**
      * Shows a match in the first files container
@@ -158,13 +166,18 @@ export default defineComponent({
      * @param file
      * @param line
      */
-    const showMatchInFirst = (e, panel, file, line) => {
-      if (!filesOfFirst.value[file].collapsed) {
+    const showMatchInFirst = (
+      e: any,
+      panel: number,
+      file: string,
+      line: number
+    ) => {
+      if (!filesOfFirst.value.get(file)?.collapsed) {
         toggleCollapseFirst(file);
       }
       document
         .getElementById(generateLineCodeLink(panel, file, line))
-        .scrollIntoView();
+        ?.scrollIntoView();
     };
     /**
      * Shows a match in the second files container.
@@ -173,20 +186,26 @@ export default defineComponent({
      * @param file
      * @param line
      */
-    const showMatchInSecond = (e, panel, file, line) => {
-      if (!filesOfSecond.value[file].collapsed) {
+    const showMatchInSecond = (
+      e: any,
+      panel: number,
+      file: string,
+      line: number
+    ) => {
+      if (!filesOfSecond.value.get(file)?.collapsed) {
         toggleCollapseSecond(file);
       }
       document
         .getElementById(generateLineCodeLink(panel, file, line))
-        .scrollIntoView();
+        ?.scrollIntoView();
     };
 
-    const showMatch = (e, match) => {
+    const showMatch = (e: any, match: Match) => {
       showMatchInFirst(e, 1, match.firstFile, match.startInFirst);
       showMatchInSecond(e, 2, match.secondFile, match.startInSecond);
     };
 
+    const isAnonymous = (id: string) => store.state.anonymous.has(id);
     //Left panel
     const hideLeftPanel = ref(true);
     const togglePanel = () => {
@@ -205,6 +224,7 @@ export default defineComponent({
       showMatchInSecond,
       showMatch,
       togglePanel,
+      isAnonymous,
 
       store,
     };
