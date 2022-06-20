@@ -24,9 +24,9 @@ import de.jplag.testutils.TestErrorConsumer;
 public class RFrontendTest {
 
     /**
-     * Regular expression for comments.
+     * Regular expression for lines that contain no code.
      */
-    private static final String R_COMMENT = "#.*";
+    private static final String R_NO_CODE_LINE = "\s*(?:#.*)?";
 
     /**
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
@@ -66,10 +66,10 @@ public class RFrontendTest {
 
         try {
             List<String> lines = Files.readAllLines(testFile.toPath());
-            String commentExpression = getCommentExpression();
+            String emptyLineExpression = getNoCodeLineExpression();
 
             // All lines that contain code
-            var codeLines = IntStream.range(1, lines.size() + 1).filter(idx -> !lines.get(idx - 1).matches("\\s*(%s)?".formatted(commentExpression)))
+            var codeLines = IntStream.range(1, lines.size() + 1).filter(idx -> !lines.get(idx - 1).matches(emptyLineExpression))
                     .toArray();
             // All lines that contain token
             var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().toArray();
@@ -106,8 +106,8 @@ public class RFrontendTest {
         assertArrayEquals(allTokens, foundTokens);
     }
 
-    private static String getCommentExpression() {
-        return R_COMMENT;
+    private static String getNoCodeLineExpression() {
+        return R_NO_CODE_LINE;
     }
 
 }

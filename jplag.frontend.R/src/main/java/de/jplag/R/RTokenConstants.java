@@ -9,8 +9,6 @@ import de.jplag.TokenConstants;
  * @author Robin Maisch
  */
 public interface RTokenConstants extends TokenConstants {
-    int FILE_END = 0;
-    int SEPARATOR_TOKEN = 1;
 
     int BEGIN_FUNCTION = 2;
     int END_FUNCTION = 3;
