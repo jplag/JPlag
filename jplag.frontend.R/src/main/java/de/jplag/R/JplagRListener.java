@@ -1,10 +1,8 @@
 package de.jplag.R;
 
-import de.jplag.R.grammar.*;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.TerminalNode;
+
+import de.jplag.R.grammar.*;
 
 /**
  * Listener class for visiting the R ANTLR parse tree. Transforms the visited ANTLR token into JPlag tokens. Based on an
@@ -37,7 +35,7 @@ public class JplagRListener extends RCombinedBaseListener implements RTokenConst
         parserAdapter.addToken(targetType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 
-       @Override
+    @Override
     public void enterIndex_statement(RParser.Index_statementContext context) {
         transformToken(INDEX, context.getStart(), context.getStop());
     }

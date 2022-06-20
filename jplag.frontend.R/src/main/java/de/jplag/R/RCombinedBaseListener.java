@@ -1,12 +1,13 @@
 package de.jplag.R;
 
-import de.jplag.R.grammar.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import de.jplag.R.grammar.*;
+
 /**
- *  Empty base implementation for {@link RListener} and {@link RFilterListener}.
+ * Empty base implementation for {@link RListener} and {@link RFilterListener}.
  */
 public class RCombinedBaseListener implements RListener, RFilterListener {
     @Override

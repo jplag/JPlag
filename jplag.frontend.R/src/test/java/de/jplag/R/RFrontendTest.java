@@ -69,8 +69,7 @@ public class RFrontendTest {
             String emptyLineExpression = getNoCodeLineExpression();
 
             // All lines that contain code
-            var codeLines = IntStream.range(1, lines.size() + 1).filter(idx -> !lines.get(idx - 1).matches(emptyLineExpression))
-                    .toArray();
+            var codeLines = IntStream.range(1, lines.size() + 1).filter(idx -> !lines.get(idx - 1).matches(emptyLineExpression)).toArray();
             // All lines that contain token
             var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().toArray();
 
