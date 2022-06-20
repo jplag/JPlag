@@ -11,10 +11,12 @@ public class KotlinToken extends Token {
     }
 
     @Override
-    protected String type2string() {
+    public String type2string() {
         return switch (type) {
             case FILE_END -> "<EOF>";
             case SEPARATOR_TOKEN -> "-----";
+            case PACKAGE -> "PACKAGE";
+            case IMPORT -> "IMPORT";
             case CLASS_DECLARATION -> "CLASS";
             case OBJECT_DECLARATION -> "OBJECT";
             case COMPANION_DECLARATION -> "COMPANION";
@@ -56,6 +58,9 @@ public class KotlinToken extends Token {
             case RETURN -> "RETURN";
             case CONTINUE -> "CONTINUE";
             case BREAK -> "BREAK";
+            case INCR -> "INCR";
+            case DECR -> "DECR";
+            case STRING -> "STRING";
             default -> "<UNKNOWN%d>".formatted(type);
         };
     }

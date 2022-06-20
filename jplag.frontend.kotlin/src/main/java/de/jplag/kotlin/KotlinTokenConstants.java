@@ -4,61 +4,71 @@ import de.jplag.TokenConstants;
 
 public interface KotlinTokenConstants extends TokenConstants {
 
-    int CLASS_DECLARATION = 3;
-    int OBJECT_DECLARATION = 4;
-    int COMPANION_DECLARATION = 5;
+    int PACKAGE = 2;
+    int IMPORT = 3;
+    int CLASS_DECLARATION = 4;
+    int OBJECT_DECLARATION = 5;
+    int COMPANION_DECLARATION = 6;
 
-    int TYPE_PARAMETER = 6;
-    int CONSTRUCTOR = 7;
+    int TYPE_PARAMETER = 7;
+    int CONSTRUCTOR = 8;
 
-    int CLASS_BODY_BEGIN = 8;
-    int CLASS_BODY_END = 9;
+    int CLASS_BODY_BEGIN = 9;
+    int CLASS_BODY_END = 10;
 
-    int PROPERTY_DECLARATION = 10;
+    int PROPERTY_DECLARATION = 11;
 
-    int INITIALIZER = 11;
+    int INITIALIZER = 12;
 
-    int FUNCTION = 12;
+    int FUNCTION = 13;
 
-    int GETTER = 13;
-    int SETTER = 14;
-    int FUNCTION_PARAMETER = 15;
-    int FUNCTION_BODY_BEGIN = 16;
-    int FUNCTION_BODY_END = 17;
+    int GETTER = 14;
+    int SETTER = 15;
+    int FUNCTION_PARAMETER = 16;
+    int FUNCTION_BODY_BEGIN = 17;
+    int FUNCTION_BODY_END = 18;
 
-    int BLOCK_BEGIN = 18;
-    int BLOCK_END = 19;
+    int FUNCTION_LITERAL_BEGIN = 19;
+    int FUNCTION_LITERAL_END = 20;
 
-    int FOR_EXPRESSION_BEGIN = 20;
-    int FOR_EXPRESSION_END = 21;
+    int BLOCK_BEGIN = 21;
+    int BLOCK_END = 22;
 
-    int IF_EXPRESSION_START = 22;
-    int IF_EXPRESSION_END = 23;
+    int FOR_EXPRESSION_BEGIN = 23;
+    int FOR_EXPRESSION_END = 24;
 
-    int WHILE_EXPRESSION_START = 24;
-    int WHILE_EXPRESSION_END = 25;
+    int IF_EXPRESSION_START = 25;
+    int IF_EXPRESSION_END = 26;
 
-    int DO_WHILE_EXPRESSION_START = 26;
-    int DO_WHILE_EXPRESSION_END = 27;
+    int WHILE_EXPRESSION_START = 27;
+    int WHILE_EXPRESSION_END = 28;
 
-    int TRY_EXPRESSION_START = 28;
-    int TRY_EXPRESSION_END = 29;
-    int CATCH = 30;
-    int FINALLY = 31;
-    int WHEN_EXPRESSION_START = 32;
-    int WHEN_EXPRESSION_END = 33;
-    int WHEN_CONDITION = 34;
+    int DO_WHILE_EXPRESSION_START = 29;
+    int DO_WHILE_EXPRESSION_END = 30;
 
-    int DO = 35;
-    int VARIABLE_DECLARATION = 36;
-    int FUNCTION_INVOCATION = 37;
-    int CREATE_OBJECT = 38;
-    int ASSIGNMENT = 39;
+    int TRY_EXPRESSION_START = 31;
+    int TRY_EXPRESSION_END = 32;
+    int CATCH = 33;
+    int FINALLY = 34;
+    int WHEN_EXPRESSION_START = 35;
+    int WHEN_EXPRESSION_END = 36;
+    int WHEN_CONDITION = 37;
 
-    int THROW = 40;
-    int RETURN = 41;
-    int CONTINUE = 42;
-    int BREAK = 43;
+    int DO = 38;
 
-    int NUMBER_DIFF_TOKENS = 43;
+    int VARIABLE_DECLARATION = 39;
+    int FUNCTION_INVOCATION = 40;
+    int CREATE_OBJECT = 41;
+    int ASSIGNMENT = 42;
+
+    int THROW = 43;
+    int RETURN = 44;
+    int CONTINUE = 45;
+    int BREAK = 46;
+
+    int INCR = 47;
+    int DECR = 48;
+
+    int STRING = 49;
+    int NUMBER_DIFF_TOKENS = 50;
 }

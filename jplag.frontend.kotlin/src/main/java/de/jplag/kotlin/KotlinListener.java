@@ -40,6 +40,18 @@ public class KotlinListener extends KotlinParserBaseListener {
     }
 
     @Override
+    public void enterPackageHeader(KotlinParser.PackageHeaderContext ctx) {
+        transformToken(PACKAGE, ctx.getStart(), ctx.getStop());
+        super.enterPackageHeader(ctx);
+    }
+
+    @Override
+    public void enterImportHeader(KotlinParser.ImportHeaderContext ctx) {
+        transformToken(IMPORT, ctx.getStart(), ctx.getStop());
+        super.enterImportHeader(ctx);
+    }
+
+    @Override
     public void enterClassDeclaration(KotlinParser.ClassDeclarationContext ctx) {
         transformToken(CLASS_DECLARATION, ctx.getStart(), ctx.getStop());
         super.enterClassDeclaration(ctx);
@@ -133,12 +145,25 @@ public class KotlinListener extends KotlinParserBaseListener {
     public void enterFunctionBody(KotlinParser.FunctionBodyContext ctx) {
         transformToken(FUNCTION_BODY_BEGIN, ctx.getStart());
         super.enterFunctionBody(ctx);
+        super.enterFunctionBody(ctx);
     }
 
     @Override
     public void exitFunctionBody(KotlinParser.FunctionBodyContext ctx) {
         transformToken(FUNCTION_BODY_END, ctx.getStop());
         super.exitFunctionBody(ctx);
+    }
+
+    @Override
+    public void enterFunctionLiteral(KotlinParser.FunctionLiteralContext ctx) {
+        transformToken(FUNCTION_LITERAL_BEGIN, ctx.getStart());
+        super.enterFunctionLiteral(ctx);
+    }
+
+    @Override
+    public void exitFunctionLiteral(KotlinParser.FunctionLiteralContext ctx) {
+        transformToken(FUNCTION_LITERAL_END, ctx.getStop());
+        super.exitFunctionLiteral(ctx);
     }
 
     @Override
@@ -274,6 +299,12 @@ public class KotlinListener extends KotlinParserBaseListener {
     }
 
     @Override
+    public void enterStringLiteral(KotlinParser.StringLiteralContext ctx) {
+        transformToken(STRING, ctx.getStart(), ctx.getStop());
+        super.enterStringLiteral(ctx);
+    }
+
+    @Override
     public void visitTerminal(TerminalNode node) {
         Token token = node.getSymbol();
         String tokenText = token.getText();
@@ -285,6 +316,8 @@ public class KotlinListener extends KotlinParserBaseListener {
             case "return", "return@" -> Optional.of(RETURN);
             case "continue", "continue@" -> Optional.of(CONTINUE);
             case "break", "break@" -> Optional.of(BREAK);
+            case "++" -> Optional.of(INCR);
+            case "--" -> Optional.of(DECR);
             default -> Optional.empty();
         };
 
