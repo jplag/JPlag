@@ -50,6 +50,10 @@ class Container<T>(value : T) : Any() {
     }
 }
 
+enum class Enumeration {
+    VALUE1, VALUE2, VALUE3;
+}
+
 fun main(args : Array<String>) {
     val complete = Complete();
     for (idx in 1..3) {
@@ -85,11 +89,10 @@ fun main(args : Array<String>) {
         else -> {
             if (!Regex("[A-Z][a-z]*").matches(weekday)) {
                 throw IllegalArgumentException("$weekday is not a valid day of the week!")
-            } else {
-                "It's almost weekend. Stay strong :)"
-            }
+            } else "It's almost weekend. Stay strong :)"
         }
     }
+
     int--
     println(int)
 }

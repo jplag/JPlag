@@ -4,9 +4,7 @@ import static de.jplag.kotlin.KotlinTokenConstants.*;
 
 import java.util.Optional;
 
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.jplag.kotlin.grammar.KotlinParser;
@@ -40,268 +38,279 @@ public class KotlinListener extends KotlinParserBaseListener {
     }
 
     @Override
-    public void enterPackageHeader(KotlinParser.PackageHeaderContext ctx) {
-        transformToken(PACKAGE, ctx.getStart(), ctx.getStop());
-        super.enterPackageHeader(ctx);
+    public void enterPackageHeader(KotlinParser.PackageHeaderContext context) {
+        transformToken(PACKAGE, context.getStart(), context.getStop());
+        super.enterPackageHeader(context);
     }
 
     @Override
-    public void enterImportHeader(KotlinParser.ImportHeaderContext ctx) {
-        transformToken(IMPORT, ctx.getStart(), ctx.getStop());
-        super.enterImportHeader(ctx);
+    public void enterImportHeader(KotlinParser.ImportHeaderContext context) {
+        transformToken(IMPORT, context.getStart(), context.getStop());
+        super.enterImportHeader(context);
     }
 
     @Override
-    public void enterClassDeclaration(KotlinParser.ClassDeclarationContext ctx) {
-        transformToken(CLASS_DECLARATION, ctx.getStart(), ctx.getStop());
-        super.enterClassDeclaration(ctx);
+    public void enterClassDeclaration(KotlinParser.ClassDeclarationContext context) {
+        transformToken(CLASS_DECLARATION, context.getStart(), context.getStop());
+        super.enterClassDeclaration(context);
     }
 
     @Override
-    public void enterObjectDeclaration(KotlinParser.ObjectDeclarationContext ctx) {
-        transformToken(OBJECT_DECLARATION, ctx.getStart(), ctx.getStop());
-        super.enterObjectDeclaration(ctx);
+    public void enterObjectDeclaration(KotlinParser.ObjectDeclarationContext context) {
+        transformToken(OBJECT_DECLARATION, context.getStart(), context.getStop());
+        super.enterObjectDeclaration(context);
     }
 
     @Override
-    public void enterCompanionObject(KotlinParser.CompanionObjectContext ctx) {
-        transformToken(COMPANION_DECLARATION, ctx.getStart(), ctx.getStop());
-        super.enterCompanionObject(ctx);
+    public void enterCompanionObject(KotlinParser.CompanionObjectContext context) {
+        transformToken(COMPANION_DECLARATION, context.getStart(), context.getStop());
+        super.enterCompanionObject(context);
     }
 
     @Override
-    public void enterTypeParameter(KotlinParser.TypeParameterContext ctx) {
-        transformToken(TYPE_PARAMETER, ctx.getStart(), ctx.getStop());
-        super.enterTypeParameter(ctx);
+    public void enterTypeParameter(KotlinParser.TypeParameterContext context) {
+        transformToken(TYPE_PARAMETER, context.getStart(), context.getStop());
+        super.enterTypeParameter(context);
     }
 
     @Override
-    public void enterPrimaryConstructor(KotlinParser.PrimaryConstructorContext ctx) {
-        transformToken(CONSTRUCTOR, ctx.getStart(), ctx.getStop());
-        super.enterPrimaryConstructor(ctx);
+    public void enterPrimaryConstructor(KotlinParser.PrimaryConstructorContext context) {
+        transformToken(CONSTRUCTOR, context.getStart(), context.getStop());
+        super.enterPrimaryConstructor(context);
     }
 
     @Override
-    public void enterClassParameter(KotlinParser.ClassParameterContext ctx) {
-        transformToken(PROPERTY_DECLARATION, ctx.getStart(), ctx.getStop());
-        super.enterClassParameter(ctx);
+    public void enterClassParameter(KotlinParser.ClassParameterContext context) {
+        transformToken(PROPERTY_DECLARATION, context.getStart(), context.getStop());
+        super.enterClassParameter(context);
     }
 
     @Override
-    public void enterClassBody(KotlinParser.ClassBodyContext ctx) {
-        transformToken(CLASS_BODY_BEGIN, ctx.getStart());
-        super.enterClassBody(ctx);
+    public void enterClassBody(KotlinParser.ClassBodyContext context) {
+        transformToken(CLASS_BODY_BEGIN, context.getStart());
+        super.enterClassBody(context);
     }
 
     @Override
-    public void exitClassBody(KotlinParser.ClassBodyContext ctx) {
-        transformToken(CLASS_BODY_END, ctx.getStop());
-        super.exitClassBody(ctx);
+    public void exitClassBody(KotlinParser.ClassBodyContext context) {
+        transformToken(CLASS_BODY_END, context.getStop());
+        super.exitClassBody(context);
     }
 
     @Override
-    public void enterSecondaryConstructor(KotlinParser.SecondaryConstructorContext ctx) {
-        transformToken(CONSTRUCTOR, ctx.getStart(), ctx.getStop());
-        super.enterSecondaryConstructor(ctx);
+    public void enterEnumClassBody(KotlinParser.EnumClassBodyContext context) {
+        transformToken(ENUM_CLASS_BODY_BEGIN, context.getStart());
+        super.enterEnumClassBody(context);
     }
 
     @Override
-    public void enterPropertyDeclaration(KotlinParser.PropertyDeclarationContext ctx) {
-        transformToken(PROPERTY_DECLARATION, ctx.getStart(), ctx.getStop());
-        super.enterPropertyDeclaration(ctx);
+    public void exitEnumClassBody(KotlinParser.EnumClassBodyContext context) {
+        transformToken(ENUM_CLASS_BODY_END, context.getStop());
+        super.exitEnumClassBody(context);
     }
 
     @Override
-    public void enterAnonymousInitializer(KotlinParser.AnonymousInitializerContext ctx) {
-        transformToken(INITIALIZER, ctx.getStart());
-        super.enterAnonymousInitializer(ctx);
+    public void enterEnumEntry(KotlinParser.EnumEntryContext context) {
+        transformToken(ENUM_ENTRY, context.getStart());
+        super.enterEnumEntry(context);
     }
 
     @Override
-    public void enterFunctionDeclaration(KotlinParser.FunctionDeclarationContext ctx) {
-        transformToken(FUNCTION, ctx.getStart());
-        super.enterFunctionDeclaration(ctx);
+    public void enterSecondaryConstructor(KotlinParser.SecondaryConstructorContext context) {
+        transformToken(CONSTRUCTOR, context.getStart(), context.getStop());
+        super.enterSecondaryConstructor(context);
     }
 
     @Override
-    public void enterGetter(KotlinParser.GetterContext ctx) {
-        transformToken(GETTER, ctx.getStart());
-        super.enterGetter(ctx);
+    public void enterPropertyDeclaration(KotlinParser.PropertyDeclarationContext context) {
+        transformToken(PROPERTY_DECLARATION, context.getStart(), context.getStop());
+        super.enterPropertyDeclaration(context);
     }
 
     @Override
-    public void enterSetter(KotlinParser.SetterContext ctx) {
-        transformToken(SETTER, ctx.getStart());
-        super.enterSetter(ctx);
+    public void enterAnonymousInitializer(KotlinParser.AnonymousInitializerContext context) {
+        transformToken(INITIALIZER, context.getStart());
+        super.enterAnonymousInitializer(context);
     }
 
     @Override
-    public void enterFunctionValueParameter(KotlinParser.FunctionValueParameterContext ctx) {
-        transformToken(FUNCTION_PARAMETER, ctx.getStart(), ctx.getStop());
-        super.enterFunctionValueParameter(ctx);
+    public void enterFunctionDeclaration(KotlinParser.FunctionDeclarationContext context) {
+        transformToken(FUNCTION, context.getStart());
+        super.enterFunctionDeclaration(context);
     }
 
     @Override
-    public void enterFunctionBody(KotlinParser.FunctionBodyContext ctx) {
-        transformToken(FUNCTION_BODY_BEGIN, ctx.getStart());
-        super.enterFunctionBody(ctx);
-        super.enterFunctionBody(ctx);
+    public void enterGetter(KotlinParser.GetterContext context) {
+        transformToken(GETTER, context.getStart());
+        super.enterGetter(context);
     }
 
     @Override
-    public void exitFunctionBody(KotlinParser.FunctionBodyContext ctx) {
-        transformToken(FUNCTION_BODY_END, ctx.getStop());
-        super.exitFunctionBody(ctx);
+    public void enterSetter(KotlinParser.SetterContext context) {
+        transformToken(SETTER, context.getStart());
+        super.enterSetter(context);
     }
 
     @Override
-    public void enterFunctionLiteral(KotlinParser.FunctionLiteralContext ctx) {
-        transformToken(FUNCTION_LITERAL_BEGIN, ctx.getStart());
-        super.enterFunctionLiteral(ctx);
+    public void enterFunctionValueParameter(KotlinParser.FunctionValueParameterContext context) {
+        transformToken(FUNCTION_PARAMETER, context.getStart(), context.getStop());
+        super.enterFunctionValueParameter(context);
     }
 
     @Override
-    public void exitFunctionLiteral(KotlinParser.FunctionLiteralContext ctx) {
-        transformToken(FUNCTION_LITERAL_END, ctx.getStop());
-        super.exitFunctionLiteral(ctx);
+    public void enterFunctionBody(KotlinParser.FunctionBodyContext context) {
+        transformToken(FUNCTION_BODY_BEGIN, context.getStart());
+        super.enterFunctionBody(context);
     }
 
     @Override
-    public void enterBlock(KotlinParser.BlockContext ctx) {
-        transformToken(BLOCK_BEGIN, ctx.getStart());
-        super.enterBlock(ctx);
+    public void exitFunctionBody(KotlinParser.FunctionBodyContext context) {
+        transformToken(FUNCTION_BODY_END, context.getStop());
+        super.exitFunctionBody(context);
     }
 
     @Override
-    public void exitBlock(KotlinParser.BlockContext ctx) {
-        transformToken(BLOCK_END, ctx.getStop());
-        super.exitBlock(ctx);
+    public void enterFunctionLiteral(KotlinParser.FunctionLiteralContext context) {
+        transformToken(FUNCTION_LITERAL_BEGIN, context.getStart());
+        super.enterFunctionLiteral(context);
     }
 
     @Override
-    public void enterForExpression(KotlinParser.ForExpressionContext ctx) {
-        transformToken(FOR_EXPRESSION_BEGIN, ctx.getStart());
-        super.enterForExpression(ctx);
+    public void exitFunctionLiteral(KotlinParser.FunctionLiteralContext context) {
+        transformToken(FUNCTION_LITERAL_END, context.getStop());
+        super.exitFunctionLiteral(context);
     }
 
     @Override
-    public void exitForExpression(KotlinParser.ForExpressionContext ctx) {
-        transformToken(FOR_EXPRESSION_END, ctx.getStop());
-        super.exitForExpression(ctx);
+    public void enterBlock(KotlinParser.BlockContext context) {
+        transformToken(BLOCK_BEGIN, context.getStart());
+        super.enterBlock(context);
     }
 
     @Override
-    public void enterIfExpression(KotlinParser.IfExpressionContext ctx) {
-        transformToken(IF_EXPRESSION_START, ctx.getStart());
-        super.enterIfExpression(ctx);
+    public void exitBlock(KotlinParser.BlockContext context) {
+        transformToken(BLOCK_END, context.getStop());
+        super.exitBlock(context);
     }
 
     @Override
-    public void exitIfExpression(KotlinParser.IfExpressionContext ctx) {
-        transformToken(IF_EXPRESSION_END, ctx.getStop());
-        super.exitIfExpression(ctx);
+    public void enterForExpression(KotlinParser.ForExpressionContext context) {
+        transformToken(FOR_EXPRESSION_BEGIN, context.getStart());
+        super.enterForExpression(context);
     }
 
     @Override
-    public void enterWhileExpression(KotlinParser.WhileExpressionContext ctx) {
-        transformToken(WHILE_EXPRESSION_START, ctx.getStart());
-        super.enterWhileExpression(ctx);
+    public void exitForExpression(KotlinParser.ForExpressionContext context) {
+        transformToken(FOR_EXPRESSION_END, context.getStop());
+        super.exitForExpression(context);
     }
 
     @Override
-    public void exitWhileExpression(KotlinParser.WhileExpressionContext ctx) {
-        transformToken(WHILE_EXPRESSION_END, ctx.getStop());
-        super.exitWhileExpression(ctx);
+    public void enterIfExpression(KotlinParser.IfExpressionContext context) {
+        transformToken(IF_EXPRESSION_START, context.getStart());
+        super.enterIfExpression(context);
     }
 
     @Override
-    public void enterDoWhileExpression(KotlinParser.DoWhileExpressionContext ctx) {
-        transformToken(DO_WHILE_EXPRESSION_START, ctx.getStart());
-        super.enterDoWhileExpression(ctx);
+    public void exitIfExpression(KotlinParser.IfExpressionContext context) {
+        transformToken(IF_EXPRESSION_END, context.getStop());
+        super.exitIfExpression(context);
     }
 
     @Override
-    public void exitDoWhileExpression(KotlinParser.DoWhileExpressionContext ctx) {
-        transformToken(DO_WHILE_EXPRESSION_END, ctx.getStop());
-        super.exitDoWhileExpression(ctx);
+    public void enterWhileExpression(KotlinParser.WhileExpressionContext context) {
+        transformToken(WHILE_EXPRESSION_START, context.getStart());
+        super.enterWhileExpression(context);
     }
 
     @Override
-    public void enterTryExpression(KotlinParser.TryExpressionContext ctx) {
-        transformToken(TRY_EXPRESSION_START, ctx.getStart());
-        super.enterTryExpression(ctx);
+    public void exitWhileExpression(KotlinParser.WhileExpressionContext context) {
+        transformToken(WHILE_EXPRESSION_END, context.getStop());
+        super.exitWhileExpression(context);
     }
 
     @Override
-    public void exitTryExpression(KotlinParser.TryExpressionContext ctx) {
-        transformToken(TRY_EXPRESSION_END, ctx.getStop());
-        super.exitTryExpression(ctx);
+    public void enterDoWhileExpression(KotlinParser.DoWhileExpressionContext context) {
+        transformToken(DO_WHILE_EXPRESSION_START, context.getStart());
+        super.enterDoWhileExpression(context);
     }
 
     @Override
-    public void enterCatchBlock(KotlinParser.CatchBlockContext ctx) {
-        transformToken(CATCH, ctx.getStart());
-        super.enterCatchBlock(ctx);
+    public void exitDoWhileExpression(KotlinParser.DoWhileExpressionContext context) {
+        transformToken(DO_WHILE_EXPRESSION_END, context.getStop());
+        super.exitDoWhileExpression(context);
     }
 
     @Override
-    public void enterFinallyBlock(KotlinParser.FinallyBlockContext ctx) {
-        transformToken(FINALLY, ctx.getStart());
-        super.enterFinallyBlock(ctx);
+    public void enterTryExpression(KotlinParser.TryExpressionContext context) {
+        transformToken(TRY_EXPRESSION_START, context.getStart());
+        super.enterTryExpression(context);
     }
 
     @Override
-    public void enterWhenExpression(KotlinParser.WhenExpressionContext ctx) {
-        transformToken(WHEN_EXPRESSION_START, ctx.getStart());
-        super.enterWhenExpression(ctx);
+    public void exitTryExpression(KotlinParser.TryExpressionContext context) {
+        transformToken(TRY_EXPRESSION_END, context.getStop());
+        super.exitTryExpression(context);
     }
 
     @Override
-    public void exitWhenExpression(KotlinParser.WhenExpressionContext ctx) {
-        transformToken(WHEN_EXPRESSION_END, ctx.getStop());
-        super.exitWhenExpression(ctx);
+    public void enterCatchBlock(KotlinParser.CatchBlockContext context) {
+        transformToken(CATCH, context.getStart());
+        super.enterCatchBlock(context);
     }
 
     @Override
-    public void enterWhenCondition(KotlinParser.WhenConditionContext ctx) {
-        transformToken(WHEN_CONDITION, ctx.getStart(), ctx.getStop());
-        super.enterWhenCondition(ctx);
+    public void enterFinallyBlock(KotlinParser.FinallyBlockContext context) {
+        transformToken(FINALLY, context.getStart());
+        super.enterFinallyBlock(context);
     }
 
     @Override
-    public void enterControlStructureBody(KotlinParser.ControlStructureBodyContext ctx) {
-        transformToken(DO, ctx.getStart(), ctx.getStop());
-        super.enterControlStructureBody(ctx);
+    public void enterWhenExpression(KotlinParser.WhenExpressionContext context) {
+        transformToken(WHEN_EXPRESSION_START, context.getStart());
+        super.enterWhenExpression(context);
     }
 
     @Override
-    public void enterVariableDeclaration(KotlinParser.VariableDeclarationContext ctx) {
-        transformToken(VARIABLE_DECLARATION, ctx.getStart());
-        super.enterVariableDeclaration(ctx);
+    public void exitWhenExpression(KotlinParser.WhenExpressionContext context) {
+        transformToken(WHEN_EXPRESSION_END, context.getStop());
+        super.exitWhenExpression(context);
     }
 
     @Override
-    public void enterConstructorInvocation(KotlinParser.ConstructorInvocationContext ctx) {
-        transformToken(CREATE_OBJECT, ctx.getStart(), ctx.getStop());
-        super.enterConstructorInvocation(ctx);
+    public void enterWhenCondition(KotlinParser.WhenConditionContext context) {
+        transformToken(WHEN_CONDITION, context.getStart(), context.getStop());
+        super.enterWhenCondition(context);
     }
 
     @Override
-    public void enterCallSuffix(KotlinParser.CallSuffixContext ctx) {
-        transformToken(FUNCTION_INVOCATION, ctx.getStart(), ctx.getStop());
-        super.enterCallSuffix(ctx);
+    public void enterControlStructureBody(KotlinParser.ControlStructureBodyContext context) {
+        transformToken(DO, context.getStart(), context.getStop());
+        super.enterControlStructureBody(context);
     }
 
     @Override
-    public void enterAssignmentOperator(KotlinParser.AssignmentOperatorContext ctx) {
-        transformToken(ASSIGNMENT, ctx.getStart());
-        super.enterAssignmentOperator(ctx);
+    public void enterVariableDeclaration(KotlinParser.VariableDeclarationContext context) {
+        transformToken(VARIABLE_DECLARATION, context.getStart());
+        super.enterVariableDeclaration(context);
     }
 
     @Override
-    public void enterStringLiteral(KotlinParser.StringLiteralContext ctx) {
-        transformToken(STRING, ctx.getStart(), ctx.getStop());
-        super.enterStringLiteral(ctx);
+    public void enterConstructorInvocation(KotlinParser.ConstructorInvocationContext context) {
+        transformToken(CREATE_OBJECT, context.getStart(), context.getStop());
+        super.enterConstructorInvocation(context);
+    }
+
+    @Override
+    public void enterCallSuffix(KotlinParser.CallSuffixContext context) {
+        transformToken(FUNCTION_INVOCATION, context.getStart(), context.getStop());
+        super.enterCallSuffix(context);
+    }
+
+    @Override
+    public void enterAssignmentOperator(KotlinParser.AssignmentOperatorContext context) {
+        transformToken(ASSIGNMENT, context.getStart());
+        super.enterAssignmentOperator(context);
     }
 
     @Override
@@ -322,21 +331,6 @@ public class KotlinListener extends KotlinParserBaseListener {
         };
 
         type.ifPresent(tokenType -> transformToken(tokenType, token));
-    }
-
-    @Override
-    public void visitErrorNode(ErrorNode node) {
-
-    }
-
-    @Override
-    public void enterEveryRule(ParserRuleContext ctx) {
-
-    }
-
-    @Override
-    public void exitEveryRule(ParserRuleContext ctx) {
-
     }
 
 }

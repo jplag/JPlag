@@ -60,7 +60,6 @@ public class KotlinToken extends Token {
             case BREAK -> "BREAK";
             case INCR -> "INCR";
             case DECR -> "DECR";
-            case STRING -> "STRING";
             default -> "<UNKNOWN%d>".formatted(type);
         };
     }

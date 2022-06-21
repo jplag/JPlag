@@ -25,14 +25,25 @@ import de.jplag.testutils.TestErrorConsumer;
 public class KotlinFrontendTest {
 
     /**
-     * Regular expression for comment lines.
-     */
-    private static final String KOTLIN_COMMENT = "(?://.*|/\\*.*\\*/\s*$)";
-
-    /**
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
      */
     private static final String COMPLETE_TEST_FILE = "Complete.kt";
+
+    /**
+     * Regular expression that describes lines consisting only of whitespace and optionally a line comment.
+     */
+    private static final String EMPTY_OR_SINGLE_LINE_COMMENT = "\\s*(//.*|/\\*.*\\*/)?";
+
+    /**
+     * Regular expression that describes lines containing the start of a multiline comment and no code before it.
+     */
+    private static final String DELIMITED_COMMENT_START = "\\s*/\\*(?:(?!\\*/).)*$";
+
+    /**
+     * Regular expression that describes lines containing the end of a multiline comment and no more code after that.
+     */
+    private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
+
     private final Logger logger = LoggerFactory.getLogger("Kotlin frontend test");
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "kotlin").toFile();
@@ -67,11 +78,9 @@ public class KotlinFrontendTest {
 
         try {
             List<String> lines = Files.readAllLines(testFile.toPath());
-            String commentExpression = getCommentExpression();
 
             // All lines that contain code
-            var codeLines = IntStream.range(1, lines.size() + 1).filter(idx -> !lines.get(idx - 1).matches("\\s*(%s)?".formatted(commentExpression)))
-                    .toArray();
+            var codeLines = getCodeLines(lines);
             // All lines that contain token
             var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().toArray();
 
@@ -86,6 +95,37 @@ public class KotlinFrontendTest {
             logger.info("Error while reading test file %s".formatted(fileName), exception);
             fail();
         }
+    }
+
+    /**
+     * Gets the line numbers of lines containing actual code, omitting empty lines and comment lines.
+     * @param lines lines of a code file
+     * @return an array of the line numbers of code lines
+     */
+    private int[] getCodeLines(List<String> lines) {
+        // This boxed boolean can be accessed from within the lambda method below
+        var state = new Object() {
+            boolean insideComment = false;
+        };
+
+        var codeLines = IntStream.rangeClosed(1, lines.size()).sequential().filter(idx -> {
+            String line = lines.get(idx - 1);
+            if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT))
+                return false;
+            else if (line.matches(DELIMITED_COMMENT_START)) {
+                state.insideComment = true;
+                return false;
+            } else if (state.insideComment) {
+                if (line.matches(DELIMITED_COMMENT_END)) {
+                    state.insideComment = false;
+                }
+                return false;
+            }
+            return true;
+        });
+
+        return codeLines.toArray();
+
     }
 
     /**
@@ -105,10 +145,6 @@ public class KotlinFrontendTest {
                     .formatted(new KotlinToken(allTokens[lineIdx], fileName, -1, -1, -1).type2string(), fileName)));
         }
         assertArrayEquals(allTokens, foundTokens);
-    }
-
-    private static String getCommentExpression() {
-        return KOTLIN_COMMENT;
     }
 
 }
