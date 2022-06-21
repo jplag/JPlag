@@ -6,16 +6,12 @@
         <artifactId>aggregator</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>emf-dynamic</artifactId>
+    <artifactId>emf-metamodel</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>frontend-utils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.jplag</groupId>
-            <artifactId>emf</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>

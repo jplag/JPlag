@@ -2,6 +2,7 @@ package de.jplag.emf.dynamic;
 
 import de.jplag.ErrorConsumer;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
+import de.jplag.emf.parser.EcoreParser;
 
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF). This language is based on a dynamically
@@ -9,12 +10,15 @@ import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
  * @author Timur Saglam
  */
 public class Language extends de.jplag.emf.Language {
-    public static final String VIEW_FILE_SUFFIX = ".TreeView";
     private static final String NAME = "EMF metamodels (dynamically created token set)";
-    private static final String SHORT_NAME = "EMF (dynamic)";
+    private static final String SHORT_NAME = "EMF metamodel (dynamic)";
 
     public Language(ErrorConsumer program) {
         super(new DynamicEcoreParser(program));
+    }
+
+    protected Language(EcoreParser parser) {
+        super(parser);
     }
 
     @Override

@@ -15,9 +15,10 @@ import de.jplag.emf.parser.EcoreParser;
  */
 public class Language implements de.jplag.Language {
     public static final String VIEW_FILE_SUFFIX = ".TreeView";
-    private static final String NAME = "EMF metamodels";
-    private static final String SHORT_NAME = "EMF";
-    private static final String[] FILE_ENDINGS = new String[] {"." + EcorePackage.eNAME};
+    public static final String FILE_ENDING = "." + EcorePackage.eNAME;
+
+    private static final String NAME = "EMF metamodel";
+    private static final String SHORT_NAME = "EMF metamodel";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 5;
 
     protected final EcoreParser parser;
@@ -32,7 +33,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        return FILE_ENDINGS;
+        return new String[] {FILE_ENDING};
     }
 
     @Override

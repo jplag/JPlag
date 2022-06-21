@@ -51,7 +51,8 @@
         <module>jplag.frontend.python-3</module>
         <module>jplag.frontend.scheme</module>
         <module>jplag.frontend.text</module>
-        <module>jplag.frontend.emf</module>
+        <module>jplag.frontend.emf-metamodel</module>
+        <module>jplag.frontend.emf-metamodel-dynamic</module>
         <module>jplag</module>
         <module>jplag.cli</module>
     </modules>
@@ -174,7 +175,12 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>emf</artifactId>
+                <artifactId>emf-metamodel</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>emf-metamodel-dynamic</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

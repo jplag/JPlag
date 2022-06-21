@@ -1,5 +1,8 @@
 package de.jplag.emf.dynamic;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +50,13 @@ public class DynamicMetamodelTokenConstants implements TokenConstants {
      */
     public static int getNumberOfTokens() {
         return eClassToTokenType.size();
+    }
+
+    /**
+     * @return a read only view on the collection of token strings.
+     */
+    public static Collection<String> getTokenStrings() {
+        return eClassToTokenType.keySet().stream().map(EClass::getName).collect(toList());
     }
 
 }
