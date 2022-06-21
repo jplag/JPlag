@@ -1,10 +1,12 @@
 package de.jplag.emf.parser;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
@@ -12,12 +14,16 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for EMF specific functionality.
  * @author Timur Saglam
  */
 public final class EMFUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(EMFUtil.class.getSimpleName());
 
     private EMFUtil() {
         // private constructor for non-instantiability.
@@ -52,12 +58,18 @@ public final class EMFUtil {
     /**
      * Loads a model or metamodel from a absolute file path.
      * @param filePath is the absolute path to the (meta)model.
-     * @return the content of the loaded (meta)model resFource.
+     * @return the content of the loaded (meta)model resource or null if it could not be loaded.
      */
     public static List<EObject> loadModel(String filePath) {
         final ResourceSet resourceSet = new ResourceSetImpl();
-        final Resource resource = resourceSet.getResource(URI.createFileURI(filePath), true);
-        return resource.getContents();
+        try {
+            final Resource resource = resourceSet.getResource(URI.createFileURI(filePath), true);
+            return resource.getContents();
+        } catch (WrappedException exception) {
+            String name = new File(filePath).getName();
+            logger.error("Could not load " + name + ": " + exception.getCause().getMessage());
+        }
+        return null;
     }
 
 }

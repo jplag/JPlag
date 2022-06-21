@@ -53,6 +53,7 @@
         <module>jplag.frontend.text</module>
         <module>jplag.frontend.emf-metamodel</module>
         <module>jplag.frontend.emf-metamodel-dynamic</module>
+        <module>jplag.frontend.emf-model</module>
         <module>jplag</module>
         <module>jplag.cli</module>
     </modules>
@@ -181,6 +182,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>emf-metamodel-dynamic</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>emf-model</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

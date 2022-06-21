@@ -1,6 +1,7 @@
 package de.jplag;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Common interface for all languages. Each language-front end must provide a concrete language implementation.
@@ -75,6 +76,24 @@ public interface Language {
      */
     default String viewFileSuffix() {
         return "";
+    }
+
+    /**
+     * By default, most frontends do not care about the order of the submissions.
+     * @return true, if this frontends does care about the order of submissions.
+     */
+    default boolean expectsSubmissionOrder() {
+        return false;
+    }
+
+    /**
+     * Re-orders the submissions if {@link Language#expectsSubmissionOrder()} returns true.
+     * @param submissionNames are root files of the submissions, meaning a file for single file submissions or a directory
+     * for multi-file submissions.
+     * @return the re-ordered submission files.
+     */
+    default List<File> customizeSubmissionOrder(List<File> submissionNames) {
+        return submissionNames;
     }
 
 }

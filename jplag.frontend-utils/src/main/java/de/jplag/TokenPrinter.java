@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toMap;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -150,6 +151,8 @@ public final class TokenPrinter {
     private static List<String> linesFromFile(File file) {
         try {
             return Files.readAllLines(file.toPath());
+        } catch (NoSuchFileException exception) {
+            logger.error("File does not exist, thus no tokens are printed: " + file.getAbsolutePath());
         } catch (IOException exception) {
             logger.error("Cannot read " + file.getAbsolutePath() + ":", exception);
         }

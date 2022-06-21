@@ -38,6 +38,7 @@ public class EcoreParser extends AbstractParser {
      * @return the list of parsed tokens.
      */
     public TokenList parse(File directory, List<String> fileNames) {
+        errors = 0;
         tokens = new TokenList();
         for (String fileName : fileNames) {
             currentFile = fileName;
@@ -53,12 +54,17 @@ public class EcoreParser extends AbstractParser {
      */
     protected void parseModelFile(String filePath) {
         treeView = new MetamodelTreeView(filePath);
-        for (EObject root : EMFUtil.loadModel(filePath)) {
-            visitor = createMetamodelVisitor();
-            visitor.visit(root);
+        List<EObject> model = EMFUtil.loadModel(filePath);
+        if (model == null) {
+            errors++;
+        } else {
+            for (EObject root : model) {
+                visitor = createMetamodelVisitor();
+                visitor.visit(root);
+            }
+            tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, currentFile + Language.VIEW_FILE_SUFFIX));
+            treeView.writeToFile(Language.VIEW_FILE_SUFFIX);
         }
-        tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, currentFile + Language.VIEW_FILE_SUFFIX));
-        treeView.writeToFile(Language.VIEW_FILE_SUFFIX);
     }
 
     /**
