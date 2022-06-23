@@ -10,6 +10,7 @@ public class Language implements de.jplag.Language {
     public static final String NAME = "Kotlin Parser";
     public static final String SHORT_NAME = "Kotlin";
     public static final int DEFAULT_MIN_TOKEN_MATCH = 8;
+    public static final String[] FILE_EXTENSIONS = {".kt"};
     private final KotlinParserAdapter parserAdapter;
 
     public Language(ErrorConsumer consumer) {
@@ -18,7 +19,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".kt"};
+        return FILE_EXTENSIONS;
     }
 
     @Override
@@ -43,17 +44,17 @@ public class Language implements de.jplag.Language {
 
     @Override
     public boolean hasErrors() {
-        return false;
+        return parserAdapter.hasErrors();
     }
 
     @Override
     public boolean supportsColumns() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isPreformatted() {
-        return false;
+        return true;
     }
 
     @Override
