@@ -3,6 +3,8 @@ package de.jplag.csharp;
 import java.io.File;
 import java.util.Arrays;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
@@ -10,6 +12,7 @@ import de.jplag.TokenList;
  * C# language with full support of C# 6 features and below.
  * @author Timur Saglam
  */
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
     private static final String NAME = "C# 6 Parser";
     private static final String SHORT_NAME = "C# 6";
@@ -18,8 +21,20 @@ public class Language implements de.jplag.Language {
 
     private final CSharpParserAdapter parser;
 
-    public Language(ErrorConsumer program) {
+    /**
+     * Prototype Constructor for {@link MetaInfServices}.
+     */
+    public Language() {
+        this.parser = null;
+    }
+
+    Language(ErrorConsumer program) {
         parser = new CSharpParserAdapter(program);
+    }
+
+    @Override
+    public de.jplag.Language initializeLanguage(ErrorConsumer errorConsumer) {
+        return new Language(errorConsumer);
     }
 
     @Override

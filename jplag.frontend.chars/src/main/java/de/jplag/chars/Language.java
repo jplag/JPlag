@@ -2,18 +2,33 @@ package de.jplag.chars;
 
 import java.io.File;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /*
  * read in text files as characters
  */
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
     private final Parser parser;
 
-    public Language(ErrorConsumer program) {
+    /**
+     * Prototype Constructor for {@link MetaInfServices}.
+     */
+    public Language() {
+        this.parser = null;
+    }
+
+    private Language(ErrorConsumer program) {
         parser = new Parser(program);
+    }
+
+    @Override
+    public de.jplag.Language initializeLanguage(ErrorConsumer errorConsumer) {
+        return new Language(errorConsumer);
     }
 
     @Override

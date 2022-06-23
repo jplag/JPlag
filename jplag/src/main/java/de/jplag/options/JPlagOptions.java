@@ -21,6 +21,8 @@ public class JPlagOptions {
 
     private static final Logger logger = LoggerFactory.getLogger("JPlag");
 
+    public static final String DEFAULT_LANGUAGE = "java";
+
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 30;
@@ -117,11 +119,6 @@ public class JPlagOptions {
     private String subdirectoryName;
 
     /**
-     * Language to use when parsing the submissions.
-     */
-    private LanguageOption languageOption;
-
-    /**
      * Level of output verbosity.
      */
     private Verbosity verbosity;
@@ -134,10 +131,10 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, LanguageOption languageOption) {
+    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, Language language) {
         this.submissionDirectories = submissionDirectories;
         this.oldSubmissionDirectories = oldSubmissionDirectories;
-        this.languageOption = languageOption;
+        this.language = language;
     }
 
     public Optional<String> getBaseCodeSubmissionName() {
@@ -162,10 +159,6 @@ public class JPlagOptions {
 
     public Language getLanguage() {
         return language;
-    }
-
-    public LanguageOption getLanguageOption() {
-        return languageOption;
     }
 
     public int getMaximumNumberOfComparisons() {
@@ -257,10 +250,6 @@ public class JPlagOptions {
         if (!hasFileSuffixes()) {
             fileSuffixes = language.suffixes();
         }
-    }
-
-    public void setLanguageOption(LanguageOption languageOption) {
-        this.languageOption = languageOption;
     }
 
     public void setMaximumNumberOfComparisons(int maximumNumberOfComparisons) {

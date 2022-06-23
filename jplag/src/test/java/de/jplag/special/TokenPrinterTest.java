@@ -7,13 +7,9 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.JPlagResult;
-import de.jplag.Submission;
-import de.jplag.TestBase;
-import de.jplag.TokenPrinter;
+import de.jplag.*;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 
 /**
  * Special test case the does not really test anything but prints the tokens and the corresponding line of code.
@@ -26,11 +22,13 @@ public class TokenPrinterTest extends TestBase {
     private static final int MIN_TOKEN_MATCH = 5;
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
 
+    private static final String LANGUAGE_CPP = "cpp";
+
     @Disabled
     @Test
     public void printCPPFiles() {
         printSubmissions(options -> {
-            options.setLanguageOption(LanguageOption.C_CPP);
+            options.setLanguage(LanguageLoader.loadLanguage(LANGUAGE_CPP).orElseThrow());
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }

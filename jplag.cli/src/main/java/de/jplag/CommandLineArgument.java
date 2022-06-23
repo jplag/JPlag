@@ -22,7 +22,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
-import de.jplag.options.LanguageOption;
+import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.strategy.ComparisonMode;
 
@@ -34,7 +34,7 @@ public enum CommandLineArgument {
     ROOT_DIRECTORY(new Builder("rootDir", String.class).nargs(NumberOfArgumentValues.ZERO_OR_MORE_VALUES)),
     NEW_DIRECTORY(new Builder("-new", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     OLD_DIRECTORY(new Builder("-old", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
-    LANGUAGE(new Builder("-l", String.class).defaultsTo(LanguageOption.getDefault().getDisplayName()).choices(LanguageOption.getAllDisplayNames())),
+    LANGUAGE(new Builder("-l", String.class).defaultsTo(JPlagOptions.DEFAULT_LANGUAGE).choices(LanguageLoader.getAllLanguageNames())),
     BASE_CODE("-bc", String.class),
     VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices(List.of("quiet", "long"))), // TODO SH: Replace verbosity when integrating a
                                                                                                       // real logging library

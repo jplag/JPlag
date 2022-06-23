@@ -2,14 +2,29 @@ package de.jplag.cpp;
 
 import java.io.File;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
     private final Scanner scanner; // cpp code is scanned not parsed
 
-    public Language(ErrorConsumer errorConsumer) {
+    /**
+     * Prototype Constructor for {@link MetaInfServices}.
+     */
+    public Language() {
+        this.scanner = null;
+    }
+
+    private Language(ErrorConsumer errorConsumer) {
         scanner = new Scanner(errorConsumer);
+    }
+
+    @Override
+    public de.jplag.Language initializeLanguage(ErrorConsumer errorConsumer) {
+        return new Language(errorConsumer);
     }
 
     @Override

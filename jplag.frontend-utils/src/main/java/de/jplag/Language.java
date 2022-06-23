@@ -8,6 +8,13 @@ import java.io.File;
 public interface Language {
 
     /**
+     * This function creates the actual initialized language.
+     * @param errorConsumer the error consumer for errors during parsing.
+     * @return the initialized language frontend
+     */
+    Language initializeLanguage(ErrorConsumer errorConsumer);
+
+    /**
      * Suffixes for the files containing code of the language.
      */
     String[] suffixes();
