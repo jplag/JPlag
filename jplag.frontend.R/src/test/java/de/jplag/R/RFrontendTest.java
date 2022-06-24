@@ -32,6 +32,8 @@ public class RFrontendTest {
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
      */
     private static final String COMPLETE_TEST_FILE = "Complete.R";
+    public static final int NOT_SET = -1;
+
     private final Logger logger = LoggerFactory.getLogger("R frontend test");
     private final String[] testFiles = new String[] {"Game.R", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "R").toFile();
@@ -75,7 +77,7 @@ public class RFrontendTest {
 
             if (codeLines.length > tokenLines.length) {
                 var diffLine = IntStream.range(0, codeLines.length)
-                        .dropWhile(lineIdx -> lineIdx < tokenLines.length && codeLines[lineIdx] == tokenLines[lineIdx]).findFirst();
+                        .dropWhile(lineIndex -> lineIndex < tokenLines.length && codeLines[lineIndex] == tokenLines[lineIndex]).findFirst();
                 diffLine.ifPresent(
                         lineIdx -> fail("Line %d of file '%s' is not represented in the token list.".formatted(codeLines[lineIdx], fileName)));
             }
@@ -98,9 +100,9 @@ public class RFrontendTest {
 
         if (allTokens.length > foundTokens.length) {
             var diffLine = IntStream.range(0, allTokens.length)
-                    .dropWhile(lineIdx -> lineIdx < foundTokens.length && allTokens[lineIdx] == foundTokens[lineIdx]).findFirst();
+                    .dropWhile(lineIndex -> lineIndex < foundTokens.length && allTokens[lineIndex] == foundTokens[lineIndex]).findFirst();
             diffLine.ifPresent(lineIdx -> fail("Token type %s was not found in the complete code example '%s'."
-                    .formatted(new RToken(allTokens[lineIdx], fileName, -1, -1, -1).type2string(), fileName)));
+                    .formatted(new RToken(allTokens[lineIdx], fileName, NOT_SET, NOT_SET, NOT_SET).type2string(), fileName)));
         }
         assertArrayEquals(allTokens, foundTokens);
     }

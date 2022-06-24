@@ -9,7 +9,7 @@ import de.jplag.R.grammar.*;
 /**
  * Empty base implementation for {@link RListener} and {@link RFilterListener}.
  */
-public class RCombinedBaseListener implements RListener, RFilterListener {
+public abstract class RCombinedBaseListener implements RListener, RFilterListener {
     @Override
     public void enterStream(RFilter.StreamContext context) {
 
