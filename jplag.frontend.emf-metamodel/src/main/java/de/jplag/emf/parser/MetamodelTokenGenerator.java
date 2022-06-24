@@ -3,6 +3,7 @@ package de.jplag.emf.parser;
 import static de.jplag.emf.MetamodelTokenConstants.ABSTRACT_CLASS;
 import static de.jplag.emf.MetamodelTokenConstants.ANNOTATION;
 import static de.jplag.emf.MetamodelTokenConstants.ATTRIBUTE;
+import static de.jplag.emf.MetamodelTokenConstants.BOUND;
 import static de.jplag.emf.MetamodelTokenConstants.CLASS;
 import static de.jplag.emf.MetamodelTokenConstants.CONTAINMENT;
 import static de.jplag.emf.MetamodelTokenConstants.DATATYPE;
@@ -17,11 +18,11 @@ import static de.jplag.emf.MetamodelTokenConstants.REFERENCE;
 import static de.jplag.emf.MetamodelTokenConstants.RETURN_TYPE;
 import static de.jplag.emf.MetamodelTokenConstants.SUPER_TYPE;
 import static de.jplag.emf.MetamodelTokenConstants.THROWS_DECLARATION;
+import static de.jplag.emf.MetamodelTokenConstants.TYPE_PARAMETER;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
@@ -29,6 +30,7 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.ETypeParameter;
 
 /**
  * Visits a metamodel containment tree and extracts the relevant token.
@@ -57,7 +59,6 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
         } else {
             parser.addToken(ATTRIBUTE, eAttribute);
         }
-
     }
 
     @Override
@@ -70,11 +71,6 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
             parser.addToken(CLASS, eClass);
         }
         eClass.getESuperTypes().forEach(it -> parser.addToken(SUPER_TYPE, it));
-    }
-
-    @Override
-    protected void visitEClassifier(EClassifier eClassifier) {
-        // TODO TS: Parse type parameters & generic type?
     }
 
     @Override
@@ -101,7 +97,7 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
             parser.addToken(RETURN_TYPE, eOperation);
         }
         eOperation.getEExceptions().forEach(it -> parser.addToken(THROWS_DECLARATION, it));
-        // TODO TS: Parse type parameters & generic type?
+        // TODO TS: Parse generic type?
     }
 
     @Override
@@ -121,7 +117,12 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
         } else {
             parser.addToken(REFERENCE, eReference);
         }
+    }
 
+    @Override
+    protected void visitETypeParameter(ETypeParameter eTypeParameter) {
+        parser.addToken(TYPE_PARAMETER, eTypeParameter);
+        eTypeParameter.getEBounds().forEach(it -> parser.addToken(BOUND, it));
     }
 
 }

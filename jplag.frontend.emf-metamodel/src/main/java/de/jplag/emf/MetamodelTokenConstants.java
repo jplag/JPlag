@@ -25,9 +25,11 @@ public interface MetamodelTokenConstants extends TokenConstants {
     int ABSTRACT_CLASS = 16;
     int RETURN_TYPE = 17;
     int THROWS_DECLARATION = 18;
+    int TYPE_PARAMETER = 19;
+    int BOUND = 20;
 
     /*
      * Number of token constants:
      */
-    int NUM_DIFF_TOKENS = 19;
+    int NUM_DIFF_TOKENS = 21;
 }
