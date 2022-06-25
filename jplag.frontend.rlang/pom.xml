@@ -6,7 +6,7 @@
         <artifactId>aggregator</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>R</artifactId>
+    <artifactId>rlang</artifactId>
 
     <dependencies>
         <dependency>
