@@ -16,6 +16,11 @@ public class Cluster<T> {
     private ClusteringResult<T> clusteringResult = null;
     private final float averageSimilarity;
 
+    /**
+     * @param members Members of the cluster.
+     * @param communityStrength A metric of how strongly the members of this cluster are connected.
+     * @param averageSimilarity The average similarity between all tuple comparisons of the members in this cluster.
+     */
     public Cluster(Collection<T> members, float communityStrength, float averageSimilarity) {
         this.members = new ArrayList<>(members);
         this.communityStrength = communityStrength;
