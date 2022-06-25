@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.*;
+import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.model.*;
 import de.jplag.reporting.reportobject.model.Match;
 
@@ -21,6 +22,7 @@ import de.jplag.reporting.reportobject.model.Match;
 public class ReportObjectFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
+    private static final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper();
 
     /**
      * Converts a JPlagResult to a JPlagReport.
@@ -59,7 +61,7 @@ public class ReportObjectFactory {
         overviewReport.setExecutionTime(result.getDuration());
         overviewReport.setComparisonNames(getComparisonNames(comparisons));
         overviewReport.setMetrics(getMetrics(result));
-        overviewReport.setClusters(getClusters(result));
+        overviewReport.setClusters(clusteringResultMapper.map(result));
 
         return overviewReport;
     }
@@ -166,13 +168,6 @@ public class ReportObjectFactory {
         int tokens = match.getLength();
 
         return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
-    }
-
-    // TODO implement after PR Read clustering #281
-    private static List<Cluster> getClusters(JPlagResult result) {
-        // List<ClusteringResult<Submission>> clusters = result.getClusteringResult();
-        // return clusters.map( c -> new Cluster(getAvgSimilarity, getStrength, c.getMembers().map(Submission::getName)))
-        return List.of();
     }
 
     private static List<String> readFileLines(File file) {
