@@ -45,7 +45,7 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(newPaths, oldPaths, LanguageLoader.loadLanguage(JPlagOptions.DEFAULT_LANGUAGE).orElseThrow());
+        JPlagOptions options = new JPlagOptions(newPaths, oldPaths, JPlagOptions.DEFAULT_LANGUAGE);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);

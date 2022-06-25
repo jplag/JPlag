@@ -112,8 +112,7 @@ public class CLI {
         addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectories);
         addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
 
-        Language language = LanguageLoader.loadLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
-        JPlagOptions options = new JPlagOptions(submissionDirectories, oldSubmissionDirectories, language);
+        JPlagOptions options = new JPlagOptions(submissionDirectories, oldSubmissionDirectories, LANGUAGE.getFrom(namespace));
         options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
         options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
         options.setDebugParser(DEBUG.getFrom(namespace));

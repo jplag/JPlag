@@ -30,6 +30,11 @@ public class JPlagOptions {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
 
     /**
+     * The short name of the language used to parse the submissions.
+     */
+    private String languageShortName;
+
+    /**
      * Language used to parse the submissions.
      */
     private Language language;
@@ -131,10 +136,10 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, Language language) {
+    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, String languageShortName) {
         this.submissionDirectories = submissionDirectories;
         this.oldSubmissionDirectories = oldSubmissionDirectories;
-        this.language = language;
+        this.languageShortName = languageShortName;
     }
 
     public Optional<String> getBaseCodeSubmissionName() {
@@ -155,6 +160,10 @@ public class JPlagOptions {
 
     public String[] getFileSuffixes() {
         return fileSuffixes;
+    }
+
+    public String getLanguageShortName() {
+        return languageShortName;
     }
 
     public Language getLanguage() {

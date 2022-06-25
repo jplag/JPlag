@@ -44,7 +44,7 @@ public class JPlag {
         this.options = options;
         errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
-        language = initializeLanguage();
+        language = initializeLanguage(this.options, this.errorCollector);
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
         excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
         options.setExcludedFiles(excludedFileNames); // store for report
@@ -105,13 +105,12 @@ public class JPlag {
         };
     }
 
-    private Language initializeLanguage() {
-        Language uninitializedLanguage = this.options.getLanguage();
-
+    private static Language initializeLanguage(JPlagOptions options, ErrorConsumer errorCollector) {
+        Language uninitializedLanguage = LanguageLoader.loadLanguage(options.getLanguageShortName()).orElseThrow();
         Language language = uninitializedLanguage.initializeLanguage(errorCollector);
-        this.options.setLanguage(language);
-        this.options.setLanguageDefaults(language);
-        logger.info("Initialized language " + language.getName());
+        options.setLanguage(language);
+        options.setLanguageDefaults(language);
+        logger.info("Initialized language {}", language.getName());
         return language;
     }
 }
