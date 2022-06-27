@@ -35,7 +35,7 @@ jobs:
         distribution: 'temurin'
             
     - name: Run Tests
-      run: mvn test -B
+      run: mvn verify -B -U
       
     - name: Build Assembly
       run: mvn clean package assembly:single

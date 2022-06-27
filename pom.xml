@@ -42,20 +42,6 @@
         </developer>
     </developers>
 
-    <modules>
-        <module>jplag.frontend-utils</module>
-        <module>jplag.frontend-testutils</module>
-        <module>jplag.frontend.chars</module>
-        <module>jplag.frontend.cpp</module>
-        <module>jplag.frontend.csharp-6</module>
-        <module>jplag.frontend.java</module>
-        <module>jplag.frontend.python-3</module>
-        <module>jplag.frontend.rlang</module>
-        <module>jplag.frontend.scheme</module>
-        <module>jplag.frontend.text</module>
-        <module>jplag</module>
-        <module>jplag.cli</module>
-    </modules>
     <scm>
         <connection>scm:git:git://github.com/jplag/JPlag.git</connection>
         <developerConnection>scm:git:ssh://github.com:jplag/JPlag.git</developerConnection>
@@ -291,6 +277,16 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.0.0-M7</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.0.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0-M2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -366,25 +362,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <phase>verify</phase>
-                        <configuration>
-                            <keyname>0xC6E9DAC2</keyname>
-                            <!--suppress UnresolvedMavenProperty -->
-                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <version>1.6.13</version>
@@ -423,4 +400,67 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>module-defaults</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>jplag.frontend-utils</module>
+                <module>jplag.frontend-testutils</module>
+                <module>jplag.frontend.chars</module>
+                <module>jplag.frontend.cpp</module>
+                <module>jplag.frontend.csharp-6</module>
+                <module>jplag.frontend.java</module>
+                <module>jplag.frontend.python-3</module>
+                <module>jplag.frontend.rlang</module>
+                <module>jplag.frontend.scheme</module>
+                <module>jplag.frontend.text</module>
+                <module>jplag</module>
+                <module>jplag.cli</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>deployment</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>jplag.frontend-utils</module>
+                <module>jplag.frontend-testutils</module>
+                <module>jplag.frontend.chars</module>
+                <module>jplag.frontend.cpp</module>
+                <module>jplag.frontend.csharp-6</module>
+                <module>jplag.frontend.java</module>
+                <module>jplag.frontend.python-3</module>
+                <module>jplag.frontend.rlang</module>
+                <module>jplag.frontend.scheme</module>
+                <module>jplag.frontend.text</module>
+                <module>jplag</module>
+            </modules>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>verify</phase>
+                                <configuration>
+                                    <keyname>0xC6E9DAC2</keyname>
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
