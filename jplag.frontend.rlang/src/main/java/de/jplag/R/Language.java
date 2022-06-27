@@ -30,7 +30,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public de.jplag.Language initializeLanguage(ErrorConsumer errorConsumer) {
+    public de.jplag.Language createInitializedLanguage(ErrorConsumer errorConsumer) {
         return new Language(errorConsumer);
     }
 

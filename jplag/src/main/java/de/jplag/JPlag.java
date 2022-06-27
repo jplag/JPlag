@@ -107,7 +107,7 @@ public class JPlag {
 
     private static Language initializeLanguage(JPlagOptions options, ErrorConsumer errorCollector) {
         Language uninitializedLanguage = LanguageLoader.loadLanguage(options.getLanguageShortName()).orElseThrow();
-        Language language = uninitializedLanguage.initializeLanguage(errorCollector);
+        Language language = uninitializedLanguage.createInitializedLanguage(errorCollector);
         options.setLanguage(language);
         options.setLanguageDefaults(language);
         logger.info("Initialized language {}", language.getName());

@@ -18,8 +18,8 @@ public final class LanguageLoader {
 
     /**
      * Load all languages that are currently in the classpath.<br>
-     * Please remember to invoke {@link Language#initializeLanguage(ErrorConsumer)} to initialize the language. This method
-     * does only return prototypes.
+     * Please remember to invoke {@link Language#createInitializedLanguage(ErrorConsumer)} to initialize the language. This
+     * method does only return prototypes.
      * @return the languages
      */
     public static List<Language> loadLanguages() {
@@ -37,8 +37,8 @@ public final class LanguageLoader {
 
     /**
      * Load a language that is currently in the classpath by its short name.<br>
-     * Please remember to invoke {@link Language#initializeLanguage(ErrorConsumer)} to initialize the language. This method
-     * does only return prototypes.
+     * Please remember to invoke {@link Language#createInitializedLanguage(ErrorConsumer)} to initialize the language. This
+     * method does only return prototypes.
      * @param shortName the short name of the language
      * @return the language or an empty optional if no language has been found.
      */

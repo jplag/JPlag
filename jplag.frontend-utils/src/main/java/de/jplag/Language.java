@@ -12,7 +12,7 @@ public interface Language {
      * @param errorConsumer the error consumer for errors during parsing.
      * @return the initialized language frontend
      */
-    Language initializeLanguage(ErrorConsumer errorConsumer);
+    Language createInitializedLanguage(ErrorConsumer errorConsumer);
 
     /**
      * Suffixes for the files containing code of the language.
