@@ -12,13 +12,13 @@ If there are any major updates or fixes to the grammar<a href="#footnote-1"><sup
 
 ### Token Extraction
 
-The choice of tokens is intended to be similar to the Java or C# frontends. It includes all nesting structures (class, method, control flow expressions), variable declaration, object creation, assignment, and control flow altering keywords.
+The choice of tokens is intended to be similar to the Java or C# frontends. It includes a range of nesting structures (class, method, control flow expressions) as well as variable declaration, object creation, assignment, and control flow altering keywords.
 
 More syntactic elements of Kotlin may turn out to be helpful to include in the future.
 
 ### Usage
 
-To use the R frontend, add the `-l kotlin` flag in the CLI, or use a `JPlagOption` object set to `LanguageOption.KOTLIN` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+To use the Kotlin frontend, add the `-l kotlin` flag in the CLI, or use a `JPlagOption` object set to `LanguageOption.KOTLIN` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
 
 <br>
 
