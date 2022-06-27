@@ -1,12 +1,6 @@
 package de.jplag.clustering;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.DoubleStream;
 
@@ -20,7 +14,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 public class ClusteringResult<T> {
 
     private final List<Cluster<T>> clusters;
-    private float communityStrength = 0;
+    private final float communityStrength;
 
     public ClusteringResult(Collection<Cluster<T>> clusters, float communityStrength) {
         this.clusters = List.copyOf(clusters);
@@ -92,11 +86,36 @@ public class ClusteringResult<T> {
             for (int i = 0; i < clustering.size(); i++) {
                 double outWeightSum = percentagesOfSimilaritySums.getRowVector(i).getL1Norm();
                 double clusterCommunityStrength = percentagesOfSimilaritySums.getEntry(i, i) - outWeightSum * outWeightSum;
-                clusters.add(new Cluster<>(clustering.get(i), (float) clusterCommunityStrength));
+                float averageSimilarity = calculateAverageSimilarityFor(clustering.get(i), similarity);
+                clusters.add(new Cluster<>(clustering.get(i), (float) clusterCommunityStrength, averageSimilarity));
                 communityStrength += clusterCommunityStrength;
             }
         }
         return new ClusteringResult<>(clusters, communityStrength);
+    }
+
+    private static float calculateAverageSimilarityFor(Collection<Integer> cluster, RealMatrix similarityMatrix) {
+        var sumOfSimilarities = 0f;
+        List<Integer> indices = List.copyOf(cluster);
+        for (int i = 1; i < cluster.size(); i++) {
+            int indexOfSubmission1 = indices.get(i);
+            for (int j = 0; j < i; j++) { // as the similarity matrix is symmetrical we need only iterate over one half of it
+                int indexOfSubmission2 = indices.get(j);
+                sumOfSimilarities += similarityMatrix.getEntry(indexOfSubmission1, indexOfSubmission2);
+            }
+        }
+        int nMinusOne = cluster.size() - 1;
+        float numberOfComparisons = (nMinusOne * (nMinusOne + 1))
+                / 2f; /*
+                       * Use Gauss sum to calculate number of comparisons in cluster: Given cluster of size n we need Gauss sum of n-1
+                       * comparisons: compare first element of cluster to all other except itself: n-1 comparisons. compare second element to
+                       * all other except itself and first element (as these two were already compared when we processed the first element),
+                       * n-2 comparisons. compare third element to all other but itself and all previously compared: n-3 comparisons and so
+                       * on. when we reach the second to last element we have n-(n-1)=1 comparisons left. when we reach the last element it
+                       * has already been compared to all other. adding up all comparisons we get: (n-1) + (n-2) + (n-3) + ... + (n-(n-1)) =
+                       * Gauss sum of (n-1)
+                       */
+        return sumOfSimilarities / numberOfComparisons;
     }
 
 }

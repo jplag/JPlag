@@ -60,7 +60,7 @@ public class ClusteringAdapter {
         ClusteringResult<Integer> modularityClusterResult = ClusteringResult.fromIntegerCollections(new ArrayList<>(intResult), similarityMatrix);
         List<Cluster<Submission>> mappedClusters = modularityClusterResult.getClusters().stream()
                 .map(unmappedCluster -> new Cluster<>(unmappedCluster.getMembers().stream().map(mapping::unmap).collect(Collectors.toList()),
-                        unmappedCluster.getCommunityStrength()))
+                        unmappedCluster.getCommunityStrength(), unmappedCluster.getAverageSimilarity()))
                 .collect(Collectors.toList());
         return new ClusteringResult<>(mappedClusters, modularityClusterResult.getCommunityStrength());
     }
