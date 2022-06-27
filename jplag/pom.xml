@@ -47,6 +47,10 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>rlang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>scheme</artifactId>
         </dependency>
         <dependency>
