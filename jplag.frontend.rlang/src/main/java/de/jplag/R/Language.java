@@ -2,12 +2,15 @@ package de.jplag.R;
 
 import java.io.File;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /**
  * This represents the R language as a language supported by JPlag.
  */
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
     public static final String NAME = "R Parser";
@@ -15,8 +18,20 @@ public class Language implements de.jplag.Language {
     public static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private final RParserAdapter parserAdapter;
 
-    public Language(ErrorConsumer consumer) {
+    /**
+     * Prototype Constructor for {@link MetaInfServices}.
+     */
+    public Language() {
+        this.parserAdapter = null;
+    }
+
+    Language(ErrorConsumer consumer) {
         this.parserAdapter = new RParserAdapter(consumer);
+    }
+
+    @Override
+    public de.jplag.Language initializeLanguage(ErrorConsumer errorConsumer) {
+        return new Language(errorConsumer);
     }
 
     @Override
