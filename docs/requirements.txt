@@ -1,0 +1,3 @@
+﻿furo==2022.6.4.1
+Sphinx==5.0.1
+sphinxcontrib-plantuml==0.23

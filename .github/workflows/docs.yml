@@ -1,0 +1,40 @@
+name: Documentation
+
+on:
+  push:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Fix Deployment for GH Pages
+        run: mkdir -p docs/_build/dirhtml/ && touch docs/_build/dirhtml/.nojekyll
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - run: pip install -r requirements.txt
+        working-directory: docs
+      - run: make html dirhtml
+        working-directory: docs
+
+#      - name: Deploy 🚀
+#        if: github.ref == 'refs/heads/main'
+#        uses: JamesIves/github-pages-deploy-action@v4.3.3
+#        with:
+#          branch: gh-pages
+#          folder: docs/_build/dirhtml/
+#          repository-name: jplag/jplag.docs
+#          token: ${{ secrets.PAT_TOKEN }}
+#          clean: true
+
+

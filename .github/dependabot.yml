@@ -33,6 +33,13 @@ updates:
     commit-message:
       prefix: "Dependency"
       include: "scope"
-
-
-
+  - package-ecosystem: "pip"
+    directory: "/docs/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "11:00"
+      timezone: "Europe/Berlin"
+    commit-message:
+      prefix: "Dependency"
+      include: "scope"
