@@ -99,7 +99,7 @@ public final class TokenPrinter {
                 columnIndex = 1;
             }
             // Move to token index:
-            columnIndex = addPadding(builder, columnIndex, currentLine, token.getColumn());
+            columnIndex = appendPadding(builder, currentLine, columnIndex, token.getColumn());
 
             // Print the actual token:
             String stringRepresentation = getStringRepresentation(token);
@@ -108,7 +108,7 @@ public final class TokenPrinter {
 
             // Move up to token end:
             int tokenEndIndex = token.getColumn() + token.getLength() - 1;
-            columnIndex = addPadding(builder, columnIndex, currentLine, tokenEndIndex);
+            columnIndex = appendPadding(builder, currentLine, columnIndex, tokenEndIndex);
 
             // Print token end if not already past it:
             if (columnIndex == tokenEndIndex) {
@@ -119,6 +119,12 @@ public final class TokenPrinter {
         return builder.toString();
     }
 
+    /**
+     * Appends the code line to the StringBuilder, applying the configuration of this TokenPrinter.
+     * @param builder The StringBuilder to add code to
+     * @param currentLine The line of code to append
+     * @return a reference to that same StringBuilder
+     */
     private static StringBuilder appendCodeLine(StringBuilder builder, String currentLine) {
         if (REPLACE_TABS) {
             currentLine = currentLine.replaceAll(TAB, TAB_REPLACEMENT);
@@ -127,9 +133,16 @@ public final class TokenPrinter {
     }
 
     /**
-     * Adds padding to the given StringBuilder in order to reach the targetPosition.
+     * Appends whitespace padding to the given StringBuilder in order to reach the targetPosition. Note that <b>the indices
+     * are 1-based</b>, whereas the positions in currentLine are 0-based. The convention that lines start at position 1
+     * comes from the frontends, specifically the Java frontend.
+     * @param builder The StringBuilder to add padding to
+     * @param currentLine The current line in the code file, indicating where it containes tab characters
+     * @param currentPosition The (1-based) index of the last character within the currentLine that is labeled, or 1.
+     * @param targetPosition The (1-based) index of the next character within the currentLine that should be labeled
+     * @return the new position, which is the targetPosition or the end of the line.
      */
-    private static int addPadding(StringBuilder builder, int currentPosition, String currentLine, int targetPosition) {
+    private static int appendPadding(StringBuilder builder, String currentLine, int currentPosition, int targetPosition) {
         targetPosition = Math.min(targetPosition, currentLine.length());
         if (currentPosition >= targetPosition) {
             return currentPosition;
@@ -137,7 +150,7 @@ public final class TokenPrinter {
 
         // The replacement operation preserves TAB characters, which is essential for correct alignment
         String padding = currentLine.substring(currentPosition - 1, targetPosition - 1).replaceAll(TAB, REPLACE_TABS ? TAB_REPLACEMENT : TAB)
-                .replaceAll(NON_WHITESPACE, " ");
+                .replaceAll(NON_WHITESPACE, SPACE);
         builder.append(padding);
 
         return targetPosition;
@@ -186,12 +199,12 @@ public final class TokenPrinter {
     /**
      * Returns the number of digits (including a minus) of the given number.
      */
-    private static int digitCount(int index) {
-        if (index == 0) {
+    private static int digitCount(int number) {
+        if (number == 0) {
             return 1;
         }
-        int minusLength = index < 0 ? 1 : 0;
+        int minusLength = number < 0 ? 1 : 0;
         // The 'log10' variant is supposedly faster than the 'toString' variant.
-        return (int) Math.log10(Math.abs(index)) + minusLength + 1;
+        return (int) Math.log10(Math.abs(number)) + minusLength + 1;
     }
 }
