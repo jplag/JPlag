@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
  * the token start, while the last vertical line marks the token end. Tokens that are shorter than the name do not end
  * with a vertical line, e.g. <code>|TOKEN</code>. Tokens with length 1 or 0 are printed in lower case, e.g.
  * <code>|token</code>.
- *
  * @author Timur Saglam
  */
 public final class TokenPrinter {
@@ -34,7 +33,6 @@ public final class TokenPrinter {
     private static final int TAB_LENGTH = 8;
     private static final String TAB_REPLACEMENT = SPACE.repeat(TAB_LENGTH); // might depend on files
 
-
     // Configuration:
     private static final boolean INDICATE_TINY_TOKEN = true; // print token with length <= 1 in lowercase
     private static final boolean REPLACE_TABS = false;
@@ -45,8 +43,7 @@ public final class TokenPrinter {
 
     /**
      * Creates a string representation of a set of files line by line and adds the tokens under the lines.
-     *
-     * @param tokens    is the set of tokens parsed from the files.
+     * @param tokens is the set of tokens parsed from the files.
      * @param directory is the common directory of the files.
      * @param fileNames is a collection of the file names.
      * @return the string representation.
@@ -58,9 +55,8 @@ public final class TokenPrinter {
 
     /**
      * Creates a string representation of a collection of files line by line and adds the tokens under the lines.
-     *
      * @param tokens is the set of tokens parsed from the files.
-     * @param files  are the parsed files.
+     * @param files are the parsed files.
      * @return the string representation.
      */
     public static String printTokens(TokenList tokens, Collection<File> files, File root) {
@@ -140,8 +136,7 @@ public final class TokenPrinter {
         }
 
         // The replacement operation preserves TAB characters, which is essential for correct alignment
-        String padding = currentLine.substring(currentPosition - 1, targetPosition - 1)
-                .replaceAll(TAB, REPLACE_TABS ? TAB_REPLACEMENT : TAB)
+        String padding = currentLine.substring(currentPosition - 1, targetPosition - 1).replaceAll(TAB, REPLACE_TABS ? TAB_REPLACEMENT : TAB)
                 .replaceAll(NON_WHITESPACE, " ");
         builder.append(padding);
 
@@ -189,10 +184,12 @@ public final class TokenPrinter {
     }
 
     /**
-     *  Returns the number of digits (including a minus) of the given number.
+     * Returns the number of digits (including a minus) of the given number.
      */
     private static int digitCount(int index) {
-        if (index == 0) return 1;
+        if (index == 0) {
+            return 1;
+        }
         int minusLength = index < 0 ? 1 : 0;
         // The 'log10' variant is supposedly faster than the 'toString' variant.
         return (int) Math.log10(Math.abs(index)) + minusLength + 1;
