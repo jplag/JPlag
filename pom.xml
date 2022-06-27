@@ -47,7 +47,7 @@
         <module>jplag.frontend.chars</module>
         <module>jplag.frontend.cpp</module>
         <module>jplag.frontend.csharp-6</module>
-        <module>jplag.frontend.go</module>
+        <module>jplag.frontend.golang</module>
         <module>jplag.frontend.java</module>
         <module>jplag.frontend.python-3</module>
         <module>jplag.frontend.scheme</module>
@@ -164,7 +164,7 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>go</artifactId>
+                <artifactId>golang</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
