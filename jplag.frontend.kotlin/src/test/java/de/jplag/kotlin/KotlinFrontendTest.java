@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
@@ -43,9 +44,11 @@ public class KotlinFrontendTest {
      * Regular expression that describes lines containing the end of a multiline comment and no more code after that.
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
+    private static final String NOT_SET_STRING = "";
+    private static final int NOT_SET = -1;
 
     private final Logger logger = LoggerFactory.getLogger("Kotlin frontend test");
-    private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
+    private final String[] testFiles = new String[] {COMPLETE_TEST_FILE, "Game.kt"};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "kotlin").toFile();
     private Language language;
 
@@ -66,6 +69,19 @@ public class KotlinFrontendTest {
             if (fileName.equals(COMPLETE_TEST_FILE))
                 testTokenCoverage(tokens, fileName);
         }
+    }
+
+    @Test
+    public void testToken2String() {
+        var missingToken = IntStream.range(0, language.numberOfTokens())
+                .mapToObj(type -> new KotlinToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET))
+                .filter(token -> token.type2string().contains("UNKNOWN")).toList();
+
+        if (!missingToken.isEmpty()) {
+            var typeList = missingToken.stream().map(Token::getType).map(Object::toString).collect(Collectors.joining(", "));
+            fail("Found token types with no string representation: %s".formatted(typeList));
+        }
+        
     }
 
     /**
@@ -110,12 +126,13 @@ public class KotlinFrontendTest {
 
         var codeLines = IntStream.rangeClosed(1, lines.size()).sequential().filter(idx -> {
             String line = lines.get(idx - 1);
-            if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT))
+            if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT)) {
                 return false;
-            else if (line.matches(DELIMITED_COMMENT_START)) {
+            } else if (line.matches(DELIMITED_COMMENT_START)) {
                 state.insideComment = true;
                 return false;
             } else if (state.insideComment) {
+                // This fails if code follows after '*/'. If the code is formatted well, this should not happen.
                 if (line.matches(DELIMITED_COMMENT_END)) {
                     state.insideComment = false;
                 }

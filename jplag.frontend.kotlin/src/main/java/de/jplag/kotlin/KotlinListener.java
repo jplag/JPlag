@@ -34,7 +34,7 @@ public class KotlinListener extends KotlinParserBaseListener {
      * @param end the last Token of the context
      */
     private void transformToken(int tokenType, Token start, Token end) {
-        parserAdapter.addToken(tokenType, start.getLine(), start.getCharPositionInLine(), end.getStopIndex() - start.getStartIndex() + 1);
+        parserAdapter.addToken(tokenType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 
     @Override

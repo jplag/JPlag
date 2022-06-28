@@ -24,6 +24,8 @@ public class KotlinToken extends Token {
             case CONSTRUCTOR -> "CONSTRUCTOR";
             case CLASS_BODY_BEGIN -> "CLASS{";
             case CLASS_BODY_END -> "}CLASS";
+            case ENUM_CLASS_BODY_BEGIN -> "ENUM{";
+            case ENUM_CLASS_BODY_END -> "}ENUM";
             case PROPERTY_DECLARATION -> "PROPERTY";
             case INITIALIZER -> "INIT";
             case FUNCTION -> "FUN";
@@ -32,6 +34,8 @@ public class KotlinToken extends Token {
             case FUNCTION_PARAMETER -> "PARAM";
             case FUNCTION_BODY_BEGIN -> "FUN{";
             case FUNCTION_BODY_END -> "}FUN";
+            case FUNCTION_LITERAL_BEGIN -> "FUNC_LIT{";
+            case FUNCTION_LITERAL_END -> "}FUNC_LIT";
             case BLOCK_BEGIN -> "{";
             case BLOCK_END -> "}";
             case FOR_EXPRESSION_BEGIN -> "FOR";
@@ -51,6 +55,7 @@ public class KotlinToken extends Token {
             case WHEN_CONDITION -> "COND";
             case DO -> "{";
             case VARIABLE_DECLARATION -> "VARDECL";
+            case ENUM_ENTRY -> "ENUM_ENTRY";
             case FUNCTION_INVOCATION -> "INVOC";
             case CREATE_OBJECT -> "CONST";
             case ASSIGNMENT -> "ASSIGN";
