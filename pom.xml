@@ -49,6 +49,7 @@
         <module>jplag.frontend.csharp-6</module>
         <module>jplag.frontend.java</module>
         <module>jplag.frontend.python-3</module>
+        <module>jplag.frontend.rlang</module>
         <module>jplag.frontend.scheme</module>
         <module>jplag.frontend.text</module>
         <module>jplag</module>
@@ -83,7 +84,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.22.5</spotless.version>
+        <spotless.version>2.22.6</spotless.version>
         <slf4j.version>1.7.36</slf4j.version>
         <!-- The Revision of JPlag -->
         <revision>4.0.0-SNAPSHOT</revision>
@@ -158,6 +159,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>rlang</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>cpp</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -205,7 +211,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>4.5.1</version>
+            <version>4.6.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -338,7 +344,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M6</version>
+                <version>3.0.0-M7</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

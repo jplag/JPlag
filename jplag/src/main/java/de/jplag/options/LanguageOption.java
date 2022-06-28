@@ -13,6 +13,7 @@ public enum LanguageOption {
     PYTHON_3("python3", "de.jplag.python3.Language"),
     C_CPP("cpp", "de.jplag.cpp.Language"),
     C_SHARP("csharp", "de.jplag.csharp.Language"),
+    R_LANG("rlang", "de.jplag.rlang.Language"),
     CHAR("char", "de.jplag.chars.Language"),
     TEXT("text", "de.jplag.text.Language"),
     SCHEME("scheme", "de.jplag.scheme.Language");
@@ -34,7 +35,7 @@ public enum LanguageOption {
     }
 
     public static LanguageOption fromDisplayName(String displayName) {
-        return Arrays.stream(LanguageOption.values()).filter(languageOption -> languageOption.displayName.equals(displayName)).findFirst()
+        return Arrays.stream(LanguageOption.values()).filter(languageOption -> languageOption.displayName.equalsIgnoreCase(displayName)).findFirst()
                 .orElse(getDefault());
     }
 
