@@ -1,4 +1,4 @@
-package de.jplag.R;
+package de.jplag.rlang;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,9 +12,9 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
-import de.jplag.R.grammar.RFilter;
-import de.jplag.R.grammar.RLexer;
-import de.jplag.R.grammar.RParser;
+import de.jplag.rlang.grammar.RFilter;
+import de.jplag.rlang.grammar.RLexer;
+import de.jplag.rlang.grammar.RParser;
 import de.jplag.TokenList;
 
 /**
