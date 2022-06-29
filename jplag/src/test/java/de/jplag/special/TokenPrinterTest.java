@@ -1,5 +1,12 @@
 package de.jplag.special;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.function.Consumer;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.TestBase;
@@ -7,12 +14,6 @@ import de.jplag.TokenPrinter;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import java.util.function.Consumer;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Special test case the does not really test anything but prints the tokens and the corresponding line of code.

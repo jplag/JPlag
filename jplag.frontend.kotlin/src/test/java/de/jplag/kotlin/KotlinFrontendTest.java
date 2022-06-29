@@ -81,7 +81,7 @@ public class KotlinFrontendTest {
             var typeList = missingToken.stream().map(Token::getType).map(Object::toString).collect(Collectors.joining(", "));
             fail("Found token types with no string representation: %s".formatted(typeList));
         }
-        
+
     }
 
     /**
