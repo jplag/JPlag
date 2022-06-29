@@ -108,7 +108,8 @@ public class KotlinFrontendTest {
             if (codeLines.length > tokenLines.length) {
                 var diffLine = IntStream.range(0, codeLines.length)
                         .dropWhile(lineIdx -> lineIdx < tokenLines.length && codeLines[lineIdx] == tokenLines[lineIdx]).findFirst();
-                diffLine.ifPresent(lineIdx -> fail("Line %d of file '%s' is not represented in the token list.".formatted(codeLines[lineIdx], fileName)));
+                diffLine.ifPresent(
+                        lineIdx -> fail("Line %d of file '%s' is not represented in the token list.".formatted(codeLines[lineIdx], fileName)));
             }
             assertArrayEquals(codeLines, tokenLines);
         } catch (IOException exception) {
