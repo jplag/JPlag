@@ -26,7 +26,7 @@ class Complete() {
     }
 
     fun get() : Inner {
-        Inner.accessCount++;
+        Inner.accessCount = Inner.accessCount + 1;
         return Inner
     }
 
@@ -68,7 +68,7 @@ fun main(args : Array<String>) {
             println("Finally!")
             break
         }
-        int++
+        int = int + 2;
     }
 
     try {
@@ -93,7 +93,5 @@ fun main(args : Array<String>) {
         }
     }
 
-    int--
-    println(int)
 }
 

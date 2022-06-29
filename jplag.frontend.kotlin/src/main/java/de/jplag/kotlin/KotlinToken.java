@@ -63,8 +63,6 @@ public class KotlinToken extends Token {
             case RETURN -> "RETURN";
             case CONTINUE -> "CONTINUE";
             case BREAK -> "BREAK";
-            case INCR -> "INCR";
-            case DECR -> "DECR";
             default -> "<UNKNOWN%d>".formatted(type);
         };
     }

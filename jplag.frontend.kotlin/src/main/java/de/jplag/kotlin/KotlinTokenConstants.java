@@ -70,8 +70,5 @@ public interface KotlinTokenConstants extends TokenConstants {
     int CONTINUE = 48;
     int BREAK = 49;
 
-    int INCR = 50;
-    int DECR = 51;
-
-    int NUMBER_DIFF_TOKENS = 52;
+    int NUMBER_DIFF_TOKENS = 50;
 }

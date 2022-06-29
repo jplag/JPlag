@@ -66,19 +66,24 @@ public class KotlinFrontendTest {
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
-            if (fileName.equals(COMPLETE_TEST_FILE))
+            if (fileName.equals(COMPLETE_TEST_FILE)) {
                 testTokenCoverage(tokens, fileName);
+            }
+
         }
     }
 
+    /**
+     * Confirms that every type of KotlinToken has a Sting representation associated to it.
+     */
     @Test
-    public void testToken2String() {
-        var missingToken = IntStream.range(0, language.numberOfTokens())
+    void testToken2String() {
+        var missingTokens = IntStream.range(0, language.numberOfTokens())
                 .mapToObj(type -> new KotlinToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET))
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
 
-        if (!missingToken.isEmpty()) {
-            var typeList = missingToken.stream().map(Token::getType).map(Object::toString).collect(Collectors.joining(", "));
+        if (!missingTokens.isEmpty()) {
+            var typeList = missingTokens.stream().map(Token::getType).map(Object::toString).collect(Collectors.joining(", "));
             fail("Found token types with no string representation: %s".formatted(typeList));
         }
 
@@ -103,8 +108,7 @@ public class KotlinFrontendTest {
             if (codeLines.length > tokenLines.length) {
                 var diffLine = IntStream.range(0, codeLines.length)
                         .dropWhile(lineIdx -> lineIdx < tokenLines.length && codeLines[lineIdx] == tokenLines[lineIdx]).findFirst();
-                diffLine.ifPresent(
-                        lineIdx -> fail("Line %d of file '%s' is not represented in the token list.".formatted(codeLines[lineIdx], fileName)));
+                diffLine.ifPresent(lineIdx -> fail("Line %d of file '%s' is not represented in the token list.".formatted(codeLines[lineIdx], fileName)));
             }
             assertArrayEquals(codeLines, tokenLines);
         } catch (IOException exception) {

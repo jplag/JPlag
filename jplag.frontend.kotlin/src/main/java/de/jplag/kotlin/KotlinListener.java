@@ -325,8 +325,6 @@ public class KotlinListener extends KotlinParserBaseListener {
             case "return", "return@" -> Optional.of(RETURN);
             case "continue", "continue@" -> Optional.of(CONTINUE);
             case "break", "break@" -> Optional.of(BREAK);
-            case "++" -> Optional.of(INCR);
-            case "--" -> Optional.of(DECR);
             default -> Optional.empty();
         };
 
