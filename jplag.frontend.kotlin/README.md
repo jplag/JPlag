@@ -23,4 +23,4 @@ To use the Kotlin frontend, add the `-l kotlin` flag in the CLI, or use a `JPlag
 <br>
 
 #### Footnotes
-<section id="footnote-1"><sup>1 </sup>Currently, the grammar is taken from grammar-v4, commit 9644ff9 of February 2021.</section>
+<section id="footnote-1"><sup>1 </sup>Currently, the grammar is taken from grammar-v4, commit 9644ff9 from February 2021.</section>
