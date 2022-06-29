@@ -1,4 +1,4 @@
-package de.jplag.R;
+package de.jplag.rlang;
 
 /**
  * This class represents the occurrence of an R Token in the source code. Based on an R frontend for JPlag v2.15 by Olmo

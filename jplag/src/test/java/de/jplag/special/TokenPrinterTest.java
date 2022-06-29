@@ -43,6 +43,15 @@ public class TokenPrinterTest extends TestBase {
         });
     }
 
+    @Disabled
+    @Test
+    public void printRLangFiles() {
+        printSubmissions(options -> {
+            options.setLanguageOption(LanguageOption.R_LANG);
+            options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
+        });
+    }
+
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {
         try {
             JPlagResult result = runJPlag(PRINTER_FOLDER, optionsCustomization);
