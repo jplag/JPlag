@@ -11,7 +11,7 @@
     "@highlightjs/vue-plugin": "^2.1.0",
     "chart.js": "^3.8.0",
     "chartjs-plugin-datalabels": "^2.0.0",
-    "core-js": "^3.22.7",
+    "core-js": "^3.23.3",
     "gitart-vue-dialog": "^2.0.5",
     "highlight.js": "^11.5.1",
     "jszip": "^3.10.0",
