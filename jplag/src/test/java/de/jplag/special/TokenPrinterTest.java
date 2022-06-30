@@ -23,7 +23,7 @@ public class TokenPrinterTest extends TestBase {
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
 
     private static final String LANGUAGE_CPP = "cpp";
-    private static final String LANGUAGE_R = "R";
+    private static final String LANGUAGE_R = "rlang";
 
     @Disabled
     @Test

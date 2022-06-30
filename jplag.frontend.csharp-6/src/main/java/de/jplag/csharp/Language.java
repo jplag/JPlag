@@ -15,7 +15,7 @@ import de.jplag.TokenList;
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
     private static final String NAME = "C# 6 Parser";
-    private static final String SHORT_NAME = "C# 6";
+    private static final String SHORT_NAME = "csharp";
     private static final String[] FILE_ENDINGS = new String[] {".cs", ".CS"};
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
 
