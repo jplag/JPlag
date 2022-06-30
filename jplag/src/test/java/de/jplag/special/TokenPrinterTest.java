@@ -23,6 +23,7 @@ public class TokenPrinterTest extends TestBase {
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
 
     private static final String LANGUAGE_CPP = "cpp";
+    private static final String LANGUAGE_R = "R";
 
     @Disabled
     @Test
@@ -45,7 +46,7 @@ public class TokenPrinterTest extends TestBase {
     @Test
     public void printRLangFiles() {
         printSubmissions(options -> {
-            options.setLanguageOption(LanguageOption.R_LANG);
+            options.setLanguage(LanguageLoader.loadLanguage(LANGUAGE_R).orElseThrow());
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }
