@@ -1,4 +1,4 @@
-package de.jplag.R;
+package de.jplag.rlang;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -36,7 +36,7 @@ public class RFrontendTest {
 
     private final Logger logger = LoggerFactory.getLogger("R frontend test");
     private final String[] testFiles = new String[] {"Game.R", COMPLETE_TEST_FILE};
-    private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "R").toFile();
+    private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rlang").toFile();
     private Language language;
 
     @BeforeEach
