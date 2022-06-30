@@ -49,15 +49,8 @@ export default defineComponent({
       const membersIterator = cluster.members.keys();
       const members = Array.from(membersIterator);
       let concatenatedMembers = "";
-      let i;
       const maxMembersToShow = 5;
-      const numOfMembersActuallyShown = Math.min(maxMembersToShow, members.length);
-      for (i = 0; i < numOfMembersActuallyShown; i++) {
-        concatenatedMembers += members[i];
-        if (i < numOfMembersActuallyShown - 1) {
-          concatenatedMembers += ", ";
-        }
-      }
+      concatenatedMembers = members.slice(0, maxMembersToShow).join(", ");
       if (members.length > maxMembersToShow) {
         concatenatedMembers += ",...";
       }

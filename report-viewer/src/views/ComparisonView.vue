@@ -112,12 +112,14 @@ export default defineComponent({
       }
     } else if (store.state.zip) {
       const getComparisonFileFor = (id1: string, id2: string) => {
-        const index = Object.keys(store.state.files).filter(
+        const index = Object.keys(store.state.files).find(
           (name) =>
             name.endsWith(id1.concat("-").concat(id2).concat(".json")) ||
             name.endsWith(id2.concat("-").concat(id1).concat(".json"))
-        )[0];
-        return store.state.files[index];
+        );
+        return index != undefined
+          ? store.state.files[index]
+          : console.log("Could not find comparison file."); // TODO introduce error page to navigate to
       };
 
       let comparisonFile = getComparisonFileFor(props.firstId, props.secondId);
@@ -167,7 +169,7 @@ export default defineComponent({
      * @param line
      */
     const showMatchInFirst = (
-      e: any,
+      e: unknown,
       panel: number,
       file: string,
       line: number
@@ -187,7 +189,7 @@ export default defineComponent({
      * @param line
      */
     const showMatchInSecond = (
-      e: any,
+      e: unknown,
       panel: number,
       file: string,
       line: number
@@ -200,7 +202,7 @@ export default defineComponent({
         ?.scrollIntoView();
     };
 
-    const showMatch = (e: any, match: Match) => {
+    const showMatch = (e: unknown, match: Match) => {
       showMatchInFirst(e, 1, match.firstFile, match.startInFirst);
       showMatchInSecond(e, 2, match.secondFile, match.startInSecond);
     };

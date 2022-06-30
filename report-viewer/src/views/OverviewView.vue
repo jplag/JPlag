@@ -113,10 +113,12 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const overviewFile = computed(() => {
-      const index = Object.keys(store.state.files).filter((name) =>
+      const index = Object.keys(store.state.files).find((name) =>
         name.endsWith("overview.json")
-      )[0];
-      return store.state.files[index];
+      );
+      return index != undefined
+        ? store.state.files[index]
+        : console.log("Could not find overview.json"); // TODO introduce error page to navigate to
     });
 
     const getOverview = (): Overview => {
@@ -195,7 +197,9 @@ export default defineComponent({
     let distributions = ref(overview.metrics.map((m) => m.distribution));
 
     //Top Comparisons
-    let topComps : Ref<Array<Array<ComparisonListElement>>>= ref(overview.metrics.map((m) => m.comparisons));
+    let topComps: Ref<Array<Array<ComparisonListElement>>> = ref(
+      overview.metrics.map((m) => m.comparisons)
+    );
 
     const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1;
     const submissionPathValue = hasMoreSubmissionPaths

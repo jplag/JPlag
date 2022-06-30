@@ -71,7 +71,7 @@ export default defineComponent({
      * @param file
      * @param line
      */
-    const lineSelected = (e: any, index: number, file: string, line: number) => {
+    const lineSelected = (e: unknown, index: number, file: string, line: number) => {
       emit("lineSelected", e, index, file, line);
     };
     return {

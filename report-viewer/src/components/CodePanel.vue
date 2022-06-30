@@ -151,15 +151,9 @@ export default defineComponent({
           file: m.linked_file,
           line: m.linked_line,
         };
-        //check whether line is start of match and assign true if yes
-        if (i === m.start) {
-          isFirst.value[i] = true;
-        }
-        //check whether line is end of match and assign true if yes
-        if (i === m.end) {
-          isLast.value[i] = true;
-        }
       }
+      isFirst.value[m.start] = true;
+      isLast.value[m.end] = true;
     });
     //assign default values for all line which are not contained in matches
     for (let i = 0; i < props.lines.length; i++) {

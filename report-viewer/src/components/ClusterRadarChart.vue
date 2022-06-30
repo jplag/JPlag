@@ -4,16 +4,21 @@
 -->
 <template>
   <div class="wrapper">
-    <select v-model="selectedMember">
-      <option v-for="(member, index) in cluster.members.keys()" :key="index">
-        {{ member }}
-      </option>
-    </select>
-    <RadarChart
-      :chartData="chartData"
-      :options="options"
-      class="chart"
-    ></RadarChart>
+    <div v-if="!hasNoMember" class="wrapper">
+      <select v-model="selectedMember">
+        <option v-for="(member, index) in cluster.members.keys()" :key="index">
+          {{ member }}
+        </option>
+      </select>
+      <RadarChart
+        :chartData="chartData"
+        :options="options"
+        class="chart"
+      ></RadarChart>
+    </div>
+    <div v-if="hasNoMember" class="no-member">
+      <span>This cluster has no members.</span>
+    </div>
   </div>
 </template>
 
@@ -23,6 +28,10 @@ import { RadarChart } from "vue-chart-3";
 import { Chart, ChartData, registerables } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { ClusterListElement } from "@/model/ClusterListElement";
+import {
+  radarChartStyle,
+  radarChartOptions,
+} from "@/assets/radar-chart-configuration";
 
 Chart.register(...registerables);
 Chart.register(ChartDataLabels);
@@ -37,9 +46,11 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const getIdOfFirstSubmission = () =>
-      props.cluster.members.keys().next().value;
-    const selectedMember = ref(getIdOfFirstSubmission());
+    const getIdOfFirstSubmission = () => {
+      const firstMember = props.cluster.members.keys().next().value;
+      hasNoMember = !firstMember;
+      return firstMember;
+    };
 
     const createLabelsFor = (member: string): Array<string> => {
       let matchedWith = new Array<string>();
@@ -58,39 +69,21 @@ export default defineComponent({
     const roundToTwoDecimals = (num: number): number =>
       Math.round((num + Number.EPSILON) * 100) / 100;
 
-    const chartStyle = {
-      fill: true,
-      backgroundColor: "rgba(149, 168, 241, 0.5)",
-      borderColor: "rgba(149, 168, 241, 1)",
-      pointBackgroundColor: "rgba(149, 168, 241, 1)",
-      pointBorderColor: "#fff",
-      pointHoverBackgroundColor: "#fff",
-      pointHoverBorderColor: "rgb(255, 99, 132)",
-    };
+    const selectedMember = ref(getIdOfFirstSubmission());
 
     const chartData: Ref<ChartData<"radar", (number | null)[], unknown>> = ref({
       labels: createLabelsFor(getIdOfFirstSubmission()),
       datasets: [
         {
-          ...chartStyle,
+          ...radarChartStyle,
           label: getIdOfFirstSubmission(),
           data: createDataSetFor(getIdOfFirstSubmission()),
         },
       ],
     });
 
-    const options = ref({
-      legend: {
-        display: false,
-      },
-      scales: {
-        r: {
-          suggestedMin: 50,
-          suggestedMax: 100,
-        },
-      },
-    });
-
+    const options = ref(radarChartOptions);
+    let hasNoMember = false;
     watch(
       () => selectedMember.value,
       (val) => {
@@ -98,7 +91,7 @@ export default defineComponent({
           labels: createLabelsFor(val),
           datasets: [
             {
-              ...chartStyle,
+              ...radarChartStyle,
               label: val,
               data: createDataSetFor(val),
             },
@@ -111,6 +104,7 @@ export default defineComponent({
       selectedMember,
       chartData,
       options,
+      hasNoMember,
     };
   },
 });
@@ -122,7 +116,11 @@ export default defineComponent({
   flex-direction: column;
   flex-wrap: nowrap;
 }
-
+.no-member {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
 .chart {
   height: 50vw;
 }
