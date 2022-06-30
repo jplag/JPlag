@@ -28,7 +28,10 @@ public final class TokenPrinter {
     private static final String BAR = "|";
     private static final String TAB = "\t";
     private static final String SPACE = " ";
-    private static final String TAB_REPLACEMENT = "        "; // might depend on files
+    public static final String NON_WHITESPACE = "\\S";
+    public static final int MIN_PADDING = 1;
+    private static final int TAB_LENGTH = 8;
+    private static final String TAB_REPLACEMENT = SPACE.repeat(TAB_LENGTH); // might depend on files
 
     // Configuration:
     private static final boolean INDICATE_TINY_TOKEN = true; // print token with length <= 1 in lowercase
@@ -62,6 +65,7 @@ public final class TokenPrinter {
         int lineIndex = 0;
         int columnIndex = 1;
         String file = null; // no file yet
+        String currentLine = null;
 
         for (Token token : tokens.allTokens()) {
             // New code file:
@@ -80,24 +84,22 @@ public final class TokenPrinter {
                 columnIndex = 1;
 
                 String fileName = token.getFile().isEmpty() ? root.getName() : token.getFile();
-                String currentLine = filesToLines.get(fileName).get(lineIndex - 1);
-                if (REPLACE_TABS) {
-                    currentLine = currentLine.replace(TAB, TAB_REPLACEMENT);
-                }
-                appendCodeLinePrefix(builder, lineIndex).append(currentLine);
-                appendTokenLinePrefix(builder);
+                currentLine = filesToLines.get(fileName).get(lineIndex - 1);
+
+                appendCodeLinePrefix(builder, lineIndex);
+                appendCodeLine(builder, currentLine);
+                appendTokenLinePrefix(builder, lineIndex);
             }
+
+            assert currentLine != null;
 
             // New line if already past token index:
             if (columnIndex > token.getColumn()) {
-                appendTokenLinePrefix(builder);
+                appendTokenLinePrefix(builder, lineIndex);
                 columnIndex = 1;
             }
             // Move to token index:
-            while (columnIndex < token.getColumn()) {
-                builder.append(SPACE);
-                columnIndex++;
-            }
+            columnIndex = appendPadding(builder, currentLine, columnIndex, token.getColumn());
 
             // Print the actual token:
             String stringRepresentation = getStringRepresentation(token);
@@ -106,10 +108,8 @@ public final class TokenPrinter {
 
             // Move up to token end:
             int tokenEndIndex = token.getColumn() + token.getLength() - 1;
-            while (columnIndex < tokenEndIndex) {
-                builder.append(SPACE);
-                columnIndex++;
-            }
+            columnIndex = appendPadding(builder, currentLine, columnIndex, tokenEndIndex);
+
             // Print token end if not already past it:
             if (columnIndex == tokenEndIndex) {
                 builder.append(BAR);
@@ -119,12 +119,55 @@ public final class TokenPrinter {
         return builder.toString();
     }
 
-    private static StringBuilder appendCodeLinePrefix(StringBuilder builder, int index) {
-        return builder.append(System.lineSeparator()).append(index + TAB);
+    /**
+     * Appends the code line to the StringBuilder, applying the configuration of this TokenPrinter.
+     * @param builder The StringBuilder to add code to
+     * @param currentLine The line of code to append
+     * @return a reference to that same StringBuilder
+     */
+    private static StringBuilder appendCodeLine(StringBuilder builder, String currentLine) {
+        if (REPLACE_TABS) {
+            currentLine = currentLine.replaceAll(TAB, TAB_REPLACEMENT);
+        }
+        return builder.append(currentLine);
     }
 
-    private static StringBuilder appendTokenLinePrefix(StringBuilder builder) {
-        return builder.append(System.lineSeparator()).append(TAB);
+    /**
+     * Appends whitespace padding to the given StringBuilder in order to reach the targetPosition. Note that <b>the indices
+     * are 1-based</b>, whereas the positions in currentLine are 0-based. The convention that lines start at position 1
+     * comes from the frontends, specifically the Java frontend.
+     * @param builder The StringBuilder to add padding to
+     * @param currentLine The current line in the code file, indicating where it containes tab characters
+     * @param currentPosition The (1-based) index of the last character within the currentLine that is labeled, or 1.
+     * @param targetPosition The (1-based) index of the next character within the currentLine that should be labeled
+     * @return the new position, which is the targetPosition or the end of the line.
+     */
+    private static int appendPadding(StringBuilder builder, String currentLine, int currentPosition, int targetPosition) {
+        targetPosition = Math.min(targetPosition, currentLine.length());
+        if (currentPosition >= targetPosition) {
+            return currentPosition;
+        }
+
+        // The replacement operation preserves TAB characters, which is essential for correct alignment
+        String padding = currentLine.substring(currentPosition - 1, targetPosition - 1).replaceAll(TAB, REPLACE_TABS ? TAB_REPLACEMENT : TAB)
+                .replaceAll(NON_WHITESPACE, SPACE);
+        builder.append(padding);
+
+        return targetPosition;
+    }
+
+    private static StringBuilder appendCodeLinePrefix(StringBuilder builder, int index) {
+        builder.append(System.lineSeparator()).append(index);
+
+        // Code line should be padded up to at least one tab length, and no less than MIN_PADDING
+        int paddingLength = Math.max(TAB_LENGTH - digitCount(index), MIN_PADDING);
+        return builder.append(SPACE.repeat(paddingLength));
+    }
+
+    private static StringBuilder appendTokenLinePrefix(StringBuilder builder, int index) {
+        int paddingLength = Math.max(digitCount(index) + MIN_PADDING, TAB_LENGTH);
+        String padding = SPACE.repeat(paddingLength);
+        return builder.append(System.lineSeparator()).append(padding);
     }
 
     /**
@@ -138,7 +181,7 @@ public final class TokenPrinter {
      * Turns a list of files into a map which maps the file names to a list of the contained lines of that file.
      */
     private static Map<String, List<String>> readFiles(Collection<File> allFiles) {
-        return allFiles.stream().collect(toMap(it -> it.getName(), it -> linesFromFile(it)));
+        return allFiles.stream().collect(toMap(File::getName, TokenPrinter::linesFromFile));
     }
 
     /**
@@ -151,5 +194,17 @@ public final class TokenPrinter {
             logger.error("Cannot read " + file.getAbsolutePath() + ":", exception);
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Returns the number of digits (including a minus) of the given number.
+     */
+    private static int digitCount(int number) {
+        if (number == 0) {
+            return 1;
+        }
+        int minusLength = number < 0 ? 1 : 0;
+        // The 'log10' variant is supposedly faster than the 'toString' variant.
+        return (int) Math.log10(Math.abs(number)) + minusLength + 1;
     }
 }
