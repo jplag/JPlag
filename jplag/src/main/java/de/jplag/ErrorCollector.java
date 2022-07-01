@@ -44,7 +44,7 @@ public class ErrorCollector implements ErrorConsumer {
             logger.info(message);
         }
         if (longMessage != null && verbosity == LONG) {
-            logger.info(message);
+            logger.info(longMessage);
         }
     }
 

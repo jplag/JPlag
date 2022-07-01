@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 /**
  * Cluster part of a {@link ClusteringResult}.
@@ -15,15 +14,26 @@ public class Cluster<T> {
     private final float communityStrength;
     private final Collection<T> members;
     private ClusteringResult<T> clusteringResult = null;
+    private final float averageSimilarity;
 
-    public Cluster(Collection<T> members, float communityStrength) {
+    /**
+     * @param members Members of the cluster.
+     * @param communityStrength A metric of how strongly the members of this cluster are connected.
+     * @param averageSimilarity The average similarity between all tuple comparisons of the members in this cluster.
+     */
+    public Cluster(Collection<T> members, float communityStrength, float averageSimilarity) {
         this.members = new ArrayList<>(members);
         this.communityStrength = communityStrength;
+        this.averageSimilarity = averageSimilarity;
     }
 
     public Collection<T> getMembers() {
         // TODO Check why access to local attribute.
         return members;
+    }
+
+    public float getAverageSimilarity() {
+        return averageSimilarity;
     }
 
     /**
@@ -60,8 +70,7 @@ public class Cluster<T> {
      * @return normalized community strength per connection
      */
     public float getNormalizedCommunityStrengthPerConnection() {
-        List<Cluster<T>> goodClusters = clusteringResult.getClusters().stream().filter(cluster -> cluster.getCommunityStrength() > 0)
-                .collect(Collectors.toList());
+        List<Cluster<T>> goodClusters = clusteringResult.getClusters().stream().filter(cluster -> cluster.getCommunityStrength() > 0).toList();
         float posCommunityStrengthSum = (float) goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
 
         int size = clusteringResult.getClusters().size();
@@ -87,7 +96,7 @@ public class Cluster<T> {
      * @param similarity function that supplies the similarity of two cluster members.
      * @return average similarity
      */
-    public float averageSimilarity(BiFunction<T, T, Float> similarity) {
+    private float averageSimilarity(BiFunction<T, T, Float> similarity) {
         List<T> members = new ArrayList<>(getMembers());
         if (members.size() < 2) {
             return 1;

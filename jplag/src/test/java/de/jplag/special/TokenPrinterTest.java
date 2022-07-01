@@ -45,6 +45,15 @@ public class TokenPrinterTest extends TestBase {
 
     @Disabled
     @Test
+    public void printRLangFiles() {
+        printSubmissions(options -> {
+            options.setLanguageOption(LanguageOption.R_LANG);
+            options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
+        });
+    }
+
+    @Disabled
+    @Test
     public void printGoFiles() {
         printSubmissions(options -> options.setLanguageOption(LanguageOption.GO));
     }
