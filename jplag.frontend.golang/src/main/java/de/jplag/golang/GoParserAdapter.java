@@ -1,4 +1,4 @@
-package de.jplag.go;
+package de.jplag.golang;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,8 +13,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
-import de.jplag.go.grammar.GoLexer;
-import de.jplag.go.grammar.GoParser;
+import de.jplag.golang.grammar.GoLexer;
+import de.jplag.golang.grammar.GoParser;
 
 public class GoParserAdapter extends AbstractParser {
     private String currentFile;

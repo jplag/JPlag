@@ -1,4 +1,4 @@
-package de.jplag.go.grammar;
+package de.jplag.golang.grammar;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.Parser;

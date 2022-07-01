@@ -1,6 +1,6 @@
-package de.jplag.go;
+package de.jplag.golang;
 
-import static de.jplag.go.GoTokenConstants.*;
+import static de.jplag.golang.GoTokenConstants.*;
 
 import de.jplag.Token;
 
@@ -14,7 +14,7 @@ public class GoToken extends Token {
     protected String type2string() {
         return switch (type) {
             case FILE_END -> "<EOF>";
-            case SEPARATOR_TOKEN -> "-----";
+            case SEPARATOR_TOKEN -> "---------";
 
             case STRUCT_DECLARATION_BEGIN -> "STRUCT";
             case STRUCT_BODY_BEGIN -> "STRUCT{";

@@ -55,7 +55,7 @@ public class TokenPrinterTest extends TestBase {
     @Disabled
     @Test
     public void printGoFiles() {
-        printSubmissions(options -> options.setLanguageOption(LanguageOption.GO));
+        printSubmissions(options -> options.setLanguageOption(LanguageOption.GO_LANG));
     }
 
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {

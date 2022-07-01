@@ -1,4 +1,4 @@
-package de.jplag.go;
+package de.jplag.golang;
 
 import java.io.File;
 
@@ -58,7 +58,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public boolean usesIndex() {
-        return true;
+        return false;
     }
 
     @Override

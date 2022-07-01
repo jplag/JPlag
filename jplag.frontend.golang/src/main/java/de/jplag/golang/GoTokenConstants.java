@@ -1,4 +1,4 @@
-package de.jplag.go;
+package de.jplag.golang;
 
 import de.jplag.TokenConstants;
 
