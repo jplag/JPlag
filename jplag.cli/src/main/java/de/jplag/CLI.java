@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import de.jplag.exceptions.RootDirectoryException;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
@@ -27,6 +28,7 @@ import de.jplag.options.Verbosity;
 import de.jplag.reporting.JsonReport;
 import de.jplag.reporting.Report;
 import de.jplag.strategy.ComparisonMode;
+import de.jplag.logger.CollectedLogger;
 
 /**
  * Command line interface class, allows using via command line.
@@ -62,8 +64,10 @@ public class CLI {
             JPlagResult result = program.run();
             Report report = new JsonReport();
             report.saveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
+            CollectedLogger.finalizeInstances();
         } catch (ExitException exception) {
             logger.error(exception.getMessage(), exception);
+            CollectedLogger.finalizeInstances();
             System.exit(1);
         }
     }
