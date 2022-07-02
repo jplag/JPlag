@@ -25,7 +25,6 @@ public class Parser extends AbstractParser {
 
     /**
      * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
     public Parser() {
         super();
