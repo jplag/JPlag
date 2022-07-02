@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import de.jplag.exceptions.RootDirectoryException;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
@@ -21,6 +20,7 @@ import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.exceptions.ExitException;
+import de.jplag.logger.CollectedLogger;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.SimilarityMetric;
@@ -28,7 +28,6 @@ import de.jplag.options.Verbosity;
 import de.jplag.reporting.JsonReport;
 import de.jplag.reporting.Report;
 import de.jplag.strategy.ComparisonMode;
-import de.jplag.logger.CollectedLogger;
 
 /**
  * Command line interface class, allows using via command line.

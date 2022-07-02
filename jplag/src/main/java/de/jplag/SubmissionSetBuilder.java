@@ -24,20 +24,17 @@ public class SubmissionSetBuilder {
 
     private final Language language;
     private final JPlagOptions options;
-    private final ErrorCollector errorCollector;
     private final Set<String> excludedFileNames; // Set of file names to be excluded in comparison.
 
     /**
      * Creates a builder for submission sets.
      * @param language is the language of the submissions.
      * @param options are the configured options.
-     * @param errorCollector is the interface for error reporting.
      * @param excludedFileNames a list of file names to be excluded
      */
-    public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames) {
+    public SubmissionSetBuilder(Language language, JPlagOptions options, Set<String> excludedFileNames) {
         this.language = language;
         this.options = options;
-        this.errorCollector = errorCollector;
         this.excludedFileNames = excludedFileNames;
     }
 
@@ -69,7 +66,7 @@ public class SubmissionSetBuilder {
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
-        return new SubmissionSet(submissions, baseCodeSubmission, errorCollector, options);
+        return new SubmissionSet(submissions, baseCodeSubmission, options);
     }
 
     /**
@@ -280,7 +277,7 @@ public class SubmissionSetBuilder {
         }
 
         submissionFile = makeCanonical(submissionFile, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language, errorCollector);
+        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language);
     }
 
     /**

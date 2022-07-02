@@ -3,7 +3,6 @@ package de.jplag.csharp;
 import java.io.File;
 import java.util.Arrays;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /**
@@ -18,8 +17,8 @@ public class Language implements de.jplag.Language {
 
     private final CSharpParserAdapter parser;
 
-    public Language(ErrorConsumer program) {
-        parser = new CSharpParserAdapter(program);
+    public Language() {
+        parser = new CSharpParserAdapter();
     }
 
     @Override

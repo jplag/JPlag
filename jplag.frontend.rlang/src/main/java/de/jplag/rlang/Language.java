@@ -2,7 +2,6 @@ package de.jplag.rlang;
 
 import java.io.File;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /**
@@ -15,8 +14,8 @@ public class Language implements de.jplag.Language {
     public static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private final RParserAdapter parserAdapter;
 
-    public Language(ErrorConsumer consumer) {
-        this.parserAdapter = new RParserAdapter(consumer);
+    public Language() {
+        this.parserAdapter = new RParserAdapter();
     }
 
     @Override

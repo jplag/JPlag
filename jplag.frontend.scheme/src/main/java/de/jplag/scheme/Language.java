@@ -2,14 +2,13 @@ package de.jplag.scheme;
 
 import java.io.File;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
     private final de.jplag.scheme.Parser parser;
 
-    public Language(ErrorConsumer program) {
-        parser = new Parser(program);
+    public Language() {
+        parser = new Parser();
     }
 
     @Override

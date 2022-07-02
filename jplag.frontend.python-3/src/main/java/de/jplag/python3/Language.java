@@ -2,15 +2,14 @@ package de.jplag.python3;
 
 import java.io.File;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
     private final Parser parser;
 
-    public Language(ErrorConsumer errorConsumer) {
-        parser = new Parser(errorConsumer);
+    public Language() {
+        parser = new Parser();
     }
 
     @Override
