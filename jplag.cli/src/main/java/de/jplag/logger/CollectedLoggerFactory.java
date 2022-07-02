@@ -31,16 +31,4 @@ public final class CollectedLoggerFactory implements ILoggerFactory {
             return oldInstance == null ? newInstance : oldInstance;
         }
     }
-
-    /**
-     * Clear the internal logger cache.
-     * <p>
-     * This method is intended to be called by classes (in the same package) for testing purposes. This method is internal.
-     * It can be modified, renamed or removed at any time without notice.
-     * <p>
-     * You are strongly discouraged from calling this method in production code.
-     */
-    void reset() {
-        loggerMap.clear();
-    }
 }
