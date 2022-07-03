@@ -4,25 +4,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class FilesOfSubmission {
-
-    @JsonProperty("file_name")
-    private final String fileName;
-
-    @JsonProperty("lines")
-    private final List<String> lines;
-
-    public FilesOfSubmission(String fileName, List<String> file_code) {
+public record FilesOfSubmission(@JsonProperty("file_name") String fileName, @JsonProperty("lines") List<Long> lines) {
+    public FilesOfSubmission(String fileName, List<Long> lines) {
         this.fileName = fileName;
-        this.lines = List.copyOf(file_code);
+        this.lines = List.copyOf(lines);
     }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public List<String> getLines() {
-        return lines;
-    }
-
 }
