@@ -7,6 +7,8 @@ It is based on the [Kotlin ANTLR4 grammar](https://github.com/antlr/grammars-v4/
 
 The underlying grammar definition does not specify which version of Kotlin it is built on, but the presence of the `inline` keyword and the lack of support for trailing commas in argument lists indicate that it complies with Kotlin 1.3, released in late 2018.
 
+The grammar in this repo contains a fix and some modifications to allow for easier token generation, see the comment in the [KotlinParser](src/main/antlr4/de/jplag/kotlin/grammar/KotlinParser.g4).
+
 If there are any major updates or fixes to the grammar<a href="#footnote-1"><sup>1</sup></a>, they should surely be applied to this module as well. 
 
 

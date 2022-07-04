@@ -10,6 +10,11 @@
  * https://github.com/JetBrains/kotlin/tree/master/compiler/testData/psi
  */
 
+/*
+ * Source: https://github.com/antlr/grammars-v4
+ * Licenced under the Apache 2.0.
+ */
+
 lexer grammar KotlinLexer;
 
 import UnicodeClasses;

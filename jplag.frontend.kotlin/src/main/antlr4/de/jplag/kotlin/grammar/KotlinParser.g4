@@ -11,9 +11,13 @@
  */
 
 /*
- Source: https://github.com/antlr/grammars-v4
- Modified at line 194: Add "NL*" twice. - Robin Maisch
- Licenced under the Apache 2.0.
+ * Source: https://github.com/antlr/grammars-v4
+ * Licenced under the Apache 2.0.
+ *
+ * Modifications:
+ * 'propertyDeclaration' rule: Add "NL*" twice (suspected fault in orginial).
+ * 'block' rule: Introduced specific types of blocks for each occurrence, namely 'tryBody', 'catchBody', 'finallyBody'.
+ * - Robin Maisch
 */
 
 parser grammar KotlinParser;
@@ -118,7 +122,11 @@ classMemberDeclaration
     ;
 
 anonymousInitializer
-    : INIT NL* block
+    : INIT NL* initBlock
+    ;
+
+initBlock
+    : block
     ;
 
 secondaryConstructor
@@ -205,7 +213,7 @@ variableDeclaration
 
 getter
     : modifierList? GETTER
-    | modifierList? GETTER NL* LPAREN RPAREN (NL* COLON NL* type)? NL* (block | ASSIGNMENT NL* expression)
+    | modifierList? GETTER NL* LPAREN RPAREN (NL* COLON NL* type)? NL* functionBody
     ;
 
 setter
@@ -531,15 +539,27 @@ typeTest
     ;
 
 tryExpression
-    : TRY NL* block (NL* catchBlock)* (NL* finallyBlock)?
+    : TRY NL* tryBody (NL* catchStatement)* (NL* finallyStatement)?
     ;
 
-catchBlock
-    : CATCH NL* LPAREN annotations* simpleIdentifier COLON userType RPAREN NL* block
+tryBody
+    : block
     ;
 
-finallyBlock
-    : FINALLY NL* block
+catchStatement
+    : CATCH NL* LPAREN annotations* simpleIdentifier COLON userType RPAREN NL* catchBody
+    ;
+
+catchBody
+    : block
+    ;
+
+finallyStatement
+    : FINALLY NL* finallyBody
+    ;
+
+finallyBody
+    : block
     ;
 
 loopExpression

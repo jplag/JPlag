@@ -51,7 +51,7 @@ public class KotlinListener extends KotlinParserBaseListener {
 
     @Override
     public void enterClassDeclaration(KotlinParser.ClassDeclarationContext context) {
-        transformToken(CLASS_DECLARATION, context.getStart(), context.getStop());
+        transformToken(CLASS_DECLARATION, context.getStart());
         super.enterClassDeclaration(context);
     }
 
@@ -63,7 +63,7 @@ public class KotlinListener extends KotlinParserBaseListener {
 
     @Override
     public void enterCompanionObject(KotlinParser.CompanionObjectContext context) {
-        transformToken(COMPANION_DECLARATION, context.getStart(), context.getStop());
+        transformToken(COMPANION_DECLARATION, context.getStart());
         super.enterCompanionObject(context);
     }
 
@@ -123,7 +123,7 @@ public class KotlinListener extends KotlinParserBaseListener {
 
     @Override
     public void enterPropertyDeclaration(KotlinParser.PropertyDeclarationContext context) {
-        transformToken(PROPERTY_DECLARATION, context.getStart(), context.getStop());
+        transformToken(PROPERTY_DECLARATION, context.getStart());
         super.enterPropertyDeclaration(context);
     }
 
@@ -131,6 +131,18 @@ public class KotlinListener extends KotlinParserBaseListener {
     public void enterAnonymousInitializer(KotlinParser.AnonymousInitializerContext context) {
         transformToken(INITIALIZER, context.getStart());
         super.enterAnonymousInitializer(context);
+    }
+
+    @Override
+    public void enterInitBlock(KotlinParser.InitBlockContext context) {
+        transformToken(INITIALIZER_BODY_START, context.getStart());
+        super.enterInitBlock(context);
+    }
+
+    @Override
+    public void exitInitBlock(KotlinParser.InitBlockContext context) {
+        transformToken(INITIALIZER_BODY_END, context.getStop());
+        super.exitInitBlock(context);
     }
 
     @Override
@@ -179,18 +191,6 @@ public class KotlinListener extends KotlinParserBaseListener {
     public void exitFunctionLiteral(KotlinParser.FunctionLiteralContext context) {
         transformToken(FUNCTION_LITERAL_END, context.getStop());
         super.exitFunctionLiteral(context);
-    }
-
-    @Override
-    public void enterBlock(KotlinParser.BlockContext context) {
-        transformToken(BLOCK_BEGIN, context.getStart());
-        super.enterBlock(context);
-    }
-
-    @Override
-    public void exitBlock(KotlinParser.BlockContext context) {
-        transformToken(BLOCK_END, context.getStop());
-        super.exitBlock(context);
     }
 
     @Override
@@ -243,26 +243,56 @@ public class KotlinListener extends KotlinParserBaseListener {
 
     @Override
     public void enterTryExpression(KotlinParser.TryExpressionContext context) {
-        transformToken(TRY_EXPRESSION_START, context.getStart());
+        transformToken(TRY_EXPRESSION, context.getStart());
         super.enterTryExpression(context);
     }
 
     @Override
-    public void exitTryExpression(KotlinParser.TryExpressionContext context) {
-        transformToken(TRY_EXPRESSION_END, context.getStop());
-        super.exitTryExpression(context);
+    public void enterTryBody(KotlinParser.TryBodyContext ctx) {
+        transformToken(TRY_BODY_START, ctx.getStart());
+        super.enterTryBody(ctx);
     }
 
     @Override
-    public void enterCatchBlock(KotlinParser.CatchBlockContext context) {
+    public void exitTryBody(KotlinParser.TryBodyContext ctx) {
+        transformToken(TRY_BODY_END, ctx.getStop());
+        super.exitTryBody(ctx);
+    }
+
+    @Override
+    public void enterCatchStatement(KotlinParser.CatchStatementContext context) {
         transformToken(CATCH, context.getStart());
-        super.enterCatchBlock(context);
+        super.enterCatchStatement(context);
     }
 
     @Override
-    public void enterFinallyBlock(KotlinParser.FinallyBlockContext context) {
+    public void enterCatchBody(KotlinParser.CatchBodyContext context) {
+        transformToken(CATCH_BODY_START, context.getStart());
+        super.enterCatchBody(context);
+    }
+
+    @Override
+    public void exitCatchBody(KotlinParser.CatchBodyContext context) {
+        transformToken(CATCH_BODY_END, context.getStop());
+        super.exitCatchBody(context);
+    }
+
+    @Override
+    public void enterFinallyStatement(KotlinParser.FinallyStatementContext context) {
         transformToken(FINALLY, context.getStart());
-        super.enterFinallyBlock(context);
+        super.enterFinallyStatement(context);
+    }
+
+    @Override
+    public void enterFinallyBody(KotlinParser.FinallyBodyContext context) {
+        transformToken(FINALLY_BODY_START, context.getStart());
+        super.enterFinallyBody(context);
+    }
+
+    @Override
+    public void exitFinallyBody(KotlinParser.FinallyBodyContext context) {
+        transformToken(FINALLY_BODY_END, context.getStop());
+        super.exitFinallyBody(context);
     }
 
     @Override
@@ -285,8 +315,14 @@ public class KotlinListener extends KotlinParserBaseListener {
 
     @Override
     public void enterControlStructureBody(KotlinParser.ControlStructureBodyContext context) {
-        transformToken(DO, context.getStart(), context.getStop());
+        transformToken(CONTROL_STRUCTURE_BODY_START, context.getStart());
         super.enterControlStructureBody(context);
+    }
+
+    @Override
+    public void exitControlStructureBody(KotlinParser.ControlStructureBodyContext context) {
+        transformToken(CONTROL_STRUCTURE_BODY_END, context.getStop());
+        super.exitControlStructureBody(context);
     }
 
     @Override

@@ -22,20 +22,19 @@ public interface KotlinTokenConstants extends TokenConstants {
     int PROPERTY_DECLARATION = 13;
 
     int INITIALIZER = 14;
+    int INITIALIZER_BODY_START = 15;
+    int INITIALIZER_BODY_END = 16;
 
-    int FUNCTION = 15;
+    int FUNCTION = 17;
 
-    int GETTER = 16;
-    int SETTER = 17;
-    int FUNCTION_PARAMETER = 18;
-    int FUNCTION_BODY_BEGIN = 19;
-    int FUNCTION_BODY_END = 20;
+    int GETTER = 18;
+    int SETTER = 19;
+    int FUNCTION_PARAMETER = 20;
+    int FUNCTION_BODY_BEGIN = 21;
+    int FUNCTION_BODY_END = 22;
 
-    int FUNCTION_LITERAL_BEGIN = 21;
-    int FUNCTION_LITERAL_END = 22;
-
-    int BLOCK_BEGIN = 23;
-    int BLOCK_END = 24;
+    int FUNCTION_LITERAL_BEGIN = 23;
+    int FUNCTION_LITERAL_END = 24;
 
     int FOR_EXPRESSION_BEGIN = 25;
     int FOR_EXPRESSION_END = 26;
@@ -49,26 +48,32 @@ public interface KotlinTokenConstants extends TokenConstants {
     int DO_WHILE_EXPRESSION_START = 31;
     int DO_WHILE_EXPRESSION_END = 32;
 
-    int TRY_EXPRESSION_START = 33;
-    int TRY_EXPRESSION_END = 34;
-    int CATCH = 35;
-    int FINALLY = 36;
-    int WHEN_EXPRESSION_START = 37;
-    int WHEN_EXPRESSION_END = 38;
-    int WHEN_CONDITION = 39;
+    int TRY_EXPRESSION = 33;
+    int TRY_BODY_START = 34;
+    int TRY_BODY_END = 35;
+    int CATCH = 36;
+    int CATCH_BODY_START = 37;
+    int CATCH_BODY_END = 38;
+    int FINALLY = 39;
+    int FINALLY_BODY_START = 40;
+    int FINALLY_BODY_END = 41;
+    int WHEN_EXPRESSION_START = 42;
+    int WHEN_EXPRESSION_END = 43;
+    int WHEN_CONDITION = 44;
 
-    int DO = 40;
+    int CONTROL_STRUCTURE_BODY_START = 45;
+    int CONTROL_STRUCTURE_BODY_END = 46;
 
-    int VARIABLE_DECLARATION = 41;
-    int ENUM_ENTRY = 42;
-    int FUNCTION_INVOCATION = 43;
-    int CREATE_OBJECT = 44;
-    int ASSIGNMENT = 45;
+    int VARIABLE_DECLARATION = 47;
+    int ENUM_ENTRY = 48;
+    int FUNCTION_INVOCATION = 49;
+    int CREATE_OBJECT = 50;
+    int ASSIGNMENT = 51;
 
-    int THROW = 46;
-    int RETURN = 47;
-    int CONTINUE = 48;
-    int BREAK = 49;
+    int THROW = 52;
+    int RETURN = 53;
+    int CONTINUE = 54;
+    int BREAK = 55;
 
-    int NUMBER_DIFF_TOKENS = 50;
+    int NUMBER_DIFF_TOKENS = 56;
 }
