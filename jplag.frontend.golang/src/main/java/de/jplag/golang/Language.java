@@ -10,6 +10,7 @@ public class Language implements de.jplag.Language {
     private static final String SHORT_NAME = "Go";
     private static final String NAME = "Go Parser";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
+    private static final String[] FILE_EXTENSIONS = {".go"};
     private final GoParserAdapter parserAdapter;
 
     public Language(ErrorConsumer consumer) {
@@ -18,7 +19,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".go"};
+        return FILE_EXTENSIONS;
     }
 
     @Override

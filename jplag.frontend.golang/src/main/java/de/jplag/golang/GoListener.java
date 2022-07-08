@@ -3,6 +3,7 @@ package de.jplag.golang;
 import static de.jplag.golang.GoTokenConstants.*;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Stack;
 
 import org.antlr.v4.runtime.Token;
@@ -13,6 +14,7 @@ import de.jplag.golang.grammar.GoParserBaseListener;
 
 public class GoListener extends GoParserBaseListener {
 
+    public static final int NONE = -1;
     private final GoParserAdapter parserAdapter;
     private final Stack<GoBlockContext> blockContexts;
 
@@ -50,7 +52,43 @@ public class GoListener extends GoParserBaseListener {
         assert Arrays.stream(contexts).anyMatch(context -> context == topContext);
     }
 
+    private GoBlockContext getCurrentContext() {
+        return blockContexts.peek();
+    }
+
     /* TOP LEVEL STRUCTURES */
+
+    @Override
+    public void enterPackageClause(GoParser.PackageClauseContext context) {
+        transformToken(PACKAGE, context.getStart(), context.getStop());
+        super.enterPackageClause(context);
+    }
+
+    @Override
+    public void enterImportDecl(GoParser.ImportDeclContext context) {
+        transformToken(IMPORT_DECL, context.getStart());
+
+        // if the children contain TerminalNodes, then it must be '(' and ')'
+        Optional<TerminalNode> listStart = context.children.stream().filter(tree -> tree instanceof TerminalNode).map(TerminalNode.class::cast)
+                .findFirst();
+        listStart.ifPresent(lParenTree -> transformToken(IMPORT_CLAUSE_BEGIN, lParenTree.getSymbol()));
+
+        super.enterImportDecl(context);
+    }
+
+    @Override
+    public void exitImportDecl(GoParser.ImportDeclContext context) {
+        if (context.getStop().getText().equals(")")) {
+            transformToken(IMPORT_CLAUSE_END, context.getStop());
+        }
+        super.exitImportDecl(context);
+    }
+
+    @Override
+    public void enterImportSpec(GoParser.ImportSpecContext context) {
+        transformToken(IMPORT_CLAUSE, context.getStart(), context.getStop());
+        super.enterImportSpec(context);
+    }
 
     /* STRUCT */
 
@@ -107,20 +145,6 @@ public class GoListener extends GoParserBaseListener {
         super.enterParameterDecl(context);
     }
 
-    @Override
-    public void enterBlock(GoParser.BlockContext context) {
-        int tokenType = blockContexts.peek().getBegin();
-        transformToken(tokenType, context.getStart());
-        super.enterBlock(context);
-    }
-
-    @Override
-    public void exitBlock(GoParser.BlockContext context) {
-        int tokenType = blockContexts.peek().getEnd();
-        transformToken(tokenType, context.getStop());
-        super.enterBlock(context);
-    }
-
     /* CONTROL FLOW STATEMENTS */
 
     @Override
@@ -163,19 +187,91 @@ public class GoListener extends GoParserBaseListener {
     }
 
     @Override
-    public void enterExprSwitchCase(GoParser.ExprSwitchCaseContext context) {
+    public void enterExprCaseClause(GoParser.ExprCaseClauseContext context) {
         transformToken(SWITCH_CASE, context.getStart());
-        enterContext(GoBlockContext.CASE_BLOCK);
-        super.enterExprSwitchCase(context);
+        var caseBlock = context.getChild(GoParser.StatementListContext.class, 0);
+        if (caseBlock != null) {
+            enterContext(GoBlockContext.CASE_BLOCK);
+            transformToken(CASE_BLOCK_BEGIN, caseBlock.getStart());
+        }
+        super.enterExprCaseClause(context);
     }
 
     @Override
-    public void exitExprSwitchCase(GoParser.ExprSwitchCaseContext context) {
-        expectAndLeave(GoBlockContext.CASE_BLOCK);
-        super.exitExprSwitchCase(context);
+    public void exitExprCaseClause(GoParser.ExprCaseClauseContext context) {
+        if (getCurrentContext() == GoBlockContext.CASE_BLOCK) {
+            transformToken(CASE_BLOCK_END, context.getStop());
+            expectAndLeave(GoBlockContext.CASE_BLOCK);
+        }
+        super.exitExprCaseClause(context);
+    }
+
+    @Override
+    public void enterTypeCaseClause(GoParser.TypeCaseClauseContext context) {
+        transformToken(SWITCH_CASE, context.getStart());
+        var caseBlock = context.getChild(GoParser.StatementListContext.class, 0);
+        if (caseBlock != null) {
+            enterContext(GoBlockContext.CASE_BLOCK);
+            transformToken(CASE_BLOCK_BEGIN, caseBlock.getStart());
+        }
+        super.enterTypeCaseClause(context);
+    }
+
+    @Override
+    public void exitTypeCaseClause(GoParser.TypeCaseClauseContext context) {
+        if (getCurrentContext() == GoBlockContext.CASE_BLOCK) {
+            transformToken(CASE_BLOCK_END, context.getStop());
+            expectAndLeave(GoBlockContext.CASE_BLOCK);
+        }
+        super.exitTypeCaseClause(context);
+    }
+
+    @Override
+    public void enterSelectStmt(GoParser.SelectStmtContext context) {
+        transformToken(SELECT_STATEMENT, context.getStart());
+        enterContext(GoBlockContext.SELECT_CONTEXT);
+        super.enterSelectStmt(context);
+    }
+
+    @Override
+    public void exitSelectStmt(GoParser.SelectStmtContext context) {
+        expectAndLeave(GoBlockContext.SELECT_CONTEXT);
+        super.exitSelectStmt(context);
+    }
+
+    @Override
+    public void enterCommCase(GoParser.CommCaseContext context) {
+        transformToken(SWITCH_CASE, context.getStart());
+        var caseBlock = context.getChild(GoParser.StatementListContext.class, 0);
+        if (caseBlock != null) {
+            enterContext(GoBlockContext.CASE_BLOCK);
+            transformToken(CASE_BLOCK_BEGIN, caseBlock.getStart());
+        }
+        super.enterCommCase(context);
+    }
+
+    @Override
+    public void exitCommCase(GoParser.CommCaseContext context) {
+        if (getCurrentContext() == GoBlockContext.CASE_BLOCK) {
+            transformToken(CASE_BLOCK_END, context.getStop());
+            expectAndLeave(GoBlockContext.CASE_BLOCK);
+        }
+        super.exitCommCase(context);
     }
 
     /* STATEMENTS */
+
+    @Override
+    public void enterVarDecl(GoParser.VarDeclContext context) {
+        transformToken(VARIABLE_DECLARATION, context.getStart(), context.getStop());
+        super.enterVarDecl(context);
+    }
+
+    @Override
+    public void enterConstSpec(GoParser.ConstSpecContext context) {
+        transformToken(CONSTANT_DECLARATION, context.getStart());
+        super.enterConstSpec(context);
+    }
 
     @Override
     public void enterFunctionLit(GoParser.FunctionLitContext context) {
@@ -197,15 +293,20 @@ public class GoListener extends GoParserBaseListener {
     }
 
     @Override
+    public void enterShortVarDecl(GoParser.ShortVarDeclContext context) {
+        transformToken(VARIABLE_DECLARATION, context.getStart());
+        transformToken(ASSIGNMENT, context.getStart());
+        super.enterShortVarDecl(context);
+    }
+
+    @Override
     public void enterArguments(GoParser.ArgumentsContext context) {
         transformToken(INVOCATION, context.getStart(), context.getStop());
 
         // Arguments consist of ExpressionLists, which consist of Expressions
         // Get all Expressions of all ExpressionLists in this ArgumentsContext
-        context.children.stream().filter(child -> child instanceof GoParser.ExpressionListContext)
-                .map(child -> (GoParser.ExpressionListContext) child)
-                .flatMap(child -> child.children.stream()).filter(child -> child instanceof GoParser.ExpressionContext)
-                .map(child -> (GoParser.ExpressionContext) child)
+        context.getRuleContexts(GoParser.ExpressionListContext.class).stream()
+                .flatMap(child -> child.getRuleContexts(GoParser.ExpressionContext.class).stream())
                 .forEachOrdered(arg -> transformToken(ARGUMENT, arg.getStart(), arg.getStop()));
         super.enterArguments(context);
     }
@@ -225,33 +326,56 @@ public class GoListener extends GoParserBaseListener {
     /* OBJECT CREATION */
 
     @Override
-    public void enterCompositeLit(GoParser.CompositeLitContext context) {
-        transformToken(STRUCT_CONSTRUCTOR, context.getStart());
-        super.enterCompositeLit(context);
-    }
-
-    @Override
     public void enterKeyedElement(GoParser.KeyedElementContext context) {
-        transformToken(STRUCT_VALUE, context.getStart(), context.getStop());
+        int tokenType = getCurrentContext().getElement();
+        transformToken(tokenType, context.getStart(), context.getStop());
+
         super.enterKeyedElement(context);
     }
 
     @Override
     public void enterArrayType(GoParser.ArrayTypeContext context) {
-        transformToken(ARRAY_CONSTRUCTOR, context.getStart(), context.getStop());
+        // otherwise, it is just a type expression
+        if (context.parent.parent instanceof GoParser.CompositeLitContext) {
+            enterContext(GoBlockContext.ARRAY_BODY);
+            transformToken(ARRAY_CONSTRUCTOR, context.getStart(), context.getStop());
+        }
         super.enterArrayType(context);
     }
 
     @Override
     public void enterSliceType(GoParser.SliceTypeContext context) {
-        transformToken(SLICE_CONSTRUCTOR, context.getStart(), context.getStop());
+        // otherwise, it is just a type expression
+        if (context.parent.parent instanceof GoParser.CompositeLitContext) {
+            enterContext(GoBlockContext.SLICE_BODY);
+            transformToken(SLICE_CONSTRUCTOR, context.getStart(), context.getStop());
+        }
         super.enterSliceType(context);
     }
 
     @Override
+    public void exitCompositeLit(GoParser.CompositeLitContext context) {
+        expectAndLeave(GoBlockContext.MAP_BODY, GoBlockContext.SLICE_BODY, GoBlockContext.ARRAY_BODY, GoBlockContext.NAMED_TYPE_BODY);
+        super.exitCompositeLit(context);
+    }
+
+    @Override
     public void enterMapType(GoParser.MapTypeContext context) {
-        transformToken(MAP_CONSTRUCTOR, context.getStart(), context.getStop());
+        // otherwise, it is just a type expression
+        if (context.parent.parent instanceof GoParser.CompositeLitContext) {
+            enterContext(GoBlockContext.MAP_BODY);
+            transformToken(MAP_CONSTRUCTOR, context.getStart(), context.getStop());
+        }
         super.enterMapType(context);
+    }
+
+    @Override
+    public void enterTypeName(GoParser.TypeNameContext context) {
+        if (context.parent.parent instanceof GoParser.CompositeLitContext) {
+            transformToken(NAMED_TYPE_CONSTRUCTOR, context.getStart());
+            enterContext(GoBlockContext.NAMED_TYPE_BODY);
+        }
+        super.enterTypeName(context);
     }
 
     /* CONTROL FLOW KEYWORDS */
@@ -275,6 +399,12 @@ public class GoListener extends GoParserBaseListener {
     }
 
     @Override
+    public void enterFallthroughStmt(GoParser.FallthroughStmtContext context) {
+        transformToken(FALLTHROUGH, context.getStart(), context.getStop());
+        super.enterFallthroughStmt(context);
+    }
+
+    @Override
     public void enterGotoStmt(GoParser.GotoStmtContext context) {
         transformToken(GOTO, context.getStart(), context.getStop());
         super.enterGotoStmt(context);
@@ -293,30 +423,55 @@ public class GoListener extends GoParserBaseListener {
     }
 
     @Override
+    public void enterSendStmt(GoParser.SendStmtContext ctx) {
+        transformToken(SEND_STATEMENT, ctx.getStart(), ctx.getStop());
+        super.enterSendStmt(ctx);
+    }
+
+    @Override
+    public void enterRecvStmt(GoParser.RecvStmtContext ctx) {
+        transformToken(RECEIVE_STATEMENT, ctx.getStart(), ctx.getStop());
+        super.enterRecvStmt(ctx);
+    }
+
+    @Override
     public void visitTerminal(TerminalNode node) {
-        if (node.getSymbol().getText().equals("else")) {
-            expectAndLeave(GoBlockContext.IF_BLOCK);
-            enterContext(GoBlockContext.ELSE_BLOCK);
+        Token token = node.getSymbol();
+        switch (token.getText()) {
+            case "else" -> {
+                expectAndLeave(GoBlockContext.IF_BLOCK);
+                enterContext(GoBlockContext.ELSE_BLOCK);
+            }
+            case "{" -> transformToken(getCurrentContext().getBegin(), token);
+            case "}" -> transformToken(getCurrentContext().getEnd(), token);
         }
         super.visitTerminal(node);
     }
 
     private enum GoBlockContext {
-        STRUCT_BODY(STRUCT_BODY_BEGIN, STRUCT_BODY_END),
-        FUNCTION_BODY(FUNCTION_BODY_BEGIN, FUNCTION_BODY_END),
-        IF_BLOCK(IF_BLOCK_BEGIN, IF_BLOCK_END),
-        ELSE_BLOCK(ELSE_BLOCK_BEGIN, ELSE_BLOCK_END),
-        FOR_BLOCK(FOR_BLOCK_BEGIN, FOR_BLOCK_END),
-        SWITCH_BLOCK(SWITCH_BLOCK_BEGIN, SWITCH_BLOCK_END),
-        CASE_BLOCK(CASE_BLOCK_BEGIN, CASE_BLOCK_END),
-        STATEMENT_BLOCK(STATEMENT_BLOCK_BEGIN, STATEMENT_BLOCK_END);
+        ARRAY_BODY(ARRAY_BODY_BEGIN, ARRAY_BODY_END, ARRAY_ELEMENT),
+        STRUCT_BODY(STRUCT_BODY_BEGIN, STRUCT_BODY_END, MEMBER_DECLARATION),
+        MAP_BODY(MAP_BODY_BEGIN, MAP_BODY_END, MAP_ELEMENT),
+        SLICE_BODY(SLICE_BODY_BEGIN, SLICE_BODY_END, SLICE_ELEMENT),
+        NAMED_TYPE_BODY(NAMED_TYPE_BODY_BEGIN, NAMED_TYPE_BODY_END, NAMED_TYPE_ELEMENT),
+        FUNCTION_BODY(FUNCTION_BODY_BEGIN, FUNCTION_BODY_END, NONE),
+
+        IF_BLOCK(IF_BLOCK_BEGIN, IF_BLOCK_END, NONE),
+        ELSE_BLOCK(ELSE_BLOCK_BEGIN, ELSE_BLOCK_END, NONE),
+        FOR_BLOCK(FOR_BLOCK_BEGIN, FOR_BLOCK_END, NONE),
+        SWITCH_BLOCK(SWITCH_BLOCK_BEGIN, SWITCH_BLOCK_END, NONE),
+        SELECT_CONTEXT(SELECT_BLOCK_BEGIN, SELECT_BLOCK_END, NONE),
+        STATEMENT_BLOCK(STATEMENT_BLOCK_BEGIN, STATEMENT_BLOCK_END, NONE),
+        CASE_BLOCK(CASE_BLOCK_BEGIN, CASE_BLOCK_END, NONE);
 
         private final int beginTokenType;
         private final int endTokenType;
+        private final int elementTokenType;
 
-        GoBlockContext(int beginTokenType, int endTokenType) {
+        GoBlockContext(int beginTokenType, int endTokenType, int elementTokenType) {
             this.beginTokenType = beginTokenType;
             this.endTokenType = endTokenType;
+            this.elementTokenType = elementTokenType;
         }
 
         int getBegin() {
@@ -325,6 +480,10 @@ public class GoListener extends GoParserBaseListener {
 
         int getEnd() {
             return this.endTokenType;
+        }
+
+        public int getElement() {
+            return this.elementTokenType;
         }
     }
 }

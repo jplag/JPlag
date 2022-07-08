@@ -16,9 +16,27 @@ public class GoToken extends Token {
             case FILE_END -> "<EOF>";
             case SEPARATOR_TOKEN -> "---------";
 
+            case PACKAGE -> "PACKAGE";
+            case IMPORT_CLAUSE -> "IMPORT";
+            case IMPORT_CLAUSE_BEGIN -> "IMPORT(";
+            case IMPORT_CLAUSE_END -> ")IMPORT";
+            case IMPORT_DECL -> "IMPORT_DECL";
+
+            case ARRAY_BODY_BEGIN -> "ARRAY{";
+            case ARRAY_BODY_END -> "}ARRAY";
+
             case STRUCT_DECLARATION_BEGIN -> "STRUCT";
             case STRUCT_BODY_BEGIN -> "STRUCT{";
             case STRUCT_BODY_END -> "}STRUCT";
+
+            case MAP_BODY_BEGIN -> "MAP{";
+            case MAP_BODY_END -> "}MAP";
+
+            case SLICE_BODY_BEGIN -> "SLICE{";
+            case SLICE_BODY_END -> "}SLICE";
+
+            case NAMED_TYPE_BODY_BEGIN -> "NAMED_TYPE{";
+            case NAMED_TYPE_BODY_END -> "}NAMED_TYPE";
 
             case MEMBER_DECLARATION -> "FIELD";
 
@@ -43,30 +61,42 @@ public class GoToken extends Token {
             case SWITCH_BLOCK_BEGIN -> "SWITCH{";
             case SWITCH_BLOCK_END -> "}SWITCH";
             case SWITCH_CASE -> "CASE";
+            case SELECT_STATEMENT -> "SELECT";
+            case SELECT_BLOCK_BEGIN -> "SELECT{";
+            case SELECT_BLOCK_END -> "}SELECT";
             case CASE_BLOCK_BEGIN -> "CASE{";
             case CASE_BLOCK_END -> "}CASE";
 
             // Statements
 
+            case VARIABLE_DECLARATION -> "VAR_DECL";
+            case CONSTANT_DECLARATION -> "CONST_DECL";
             case FUNCTION_LITERAL -> "FUNC_LIT";
             case ASSIGNMENT -> "ASSIGN";
+            case SEND_STATEMENT -> "SEND";
+            case RECEIVE_STATEMENT -> "RECV";
             case INVOCATION -> "INVOC";
             case ARGUMENT -> "ARG";
             case STATEMENT_BLOCK_BEGIN -> "INNER{";
             case STATEMENT_BLOCK_END -> "}INNER";
 
             // Object Creation
-            case STRUCT_CONSTRUCTOR -> "STRUCT()";
-            case STRUCT_VALUE -> "ARG";
+
+            case ARRAY_ELEMENT -> "ARRAY_ELEM";
+            case MAP_ELEMENT -> "MAP_ELEM";
+            case SLICE_ELEMENT -> "SLICE_ELEM";
+            case NAMED_TYPE_ELEMENT -> "CTYPE_ELEM";
             case ARRAY_CONSTRUCTOR -> "ARRAY()";
             case SLICE_CONSTRUCTOR -> "SLICE()";
             case MAP_CONSTRUCTOR -> "MAP()";
+            case NAMED_TYPE_CONSTRUCTOR -> "CTYPE()";
 
             // Control Flow Keywords
 
             case RETURN -> "RETURN";
             case BREAK -> "BREAK";
             case CONTINUE -> "CONTINUE";
+            case FALLTHROUGH -> "FALLTHROUGH";
             case GOTO -> "GOTO";
             case GO -> "GO";
             case DEFER -> "DEFER";

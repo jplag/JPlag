@@ -6,59 +6,83 @@ public interface GoTokenConstants extends TokenConstants {
 
     // Top level structures
 
-    int STRUCT_DECLARATION_BEGIN = 2;
-    int STRUCT_BODY_BEGIN = 3;
-    int STRUCT_BODY_END = 4;
-    int MEMBER_DECLARATION = 5;
-    int FUNCTION_DECLARATION = 6;
-    int METHOD_DECLARATION = 7;
-    int FUNCTION_PARAMETER = 8;
-    int FUNCTION_BODY_BEGIN = 9;
-    int FUNCTION_BODY_END = 10;
+    int PACKAGE = 2;
+    int IMPORT_CLAUSE = 3;
+    int IMPORT_CLAUSE_BEGIN = 4;
+    int IMPORT_CLAUSE_END = 5;
+    int IMPORT_DECL = 6;
+    int ARRAY_BODY_BEGIN = 7;
+    int ARRAY_BODY_END = 8;
+    int STRUCT_DECLARATION_BEGIN = 9;
+    int STRUCT_BODY_BEGIN = 10;
+    int STRUCT_BODY_END = 11;
+    int MAP_BODY_BEGIN = 12;
+    int MAP_BODY_END = 13;
+    int SLICE_BODY_BEGIN = 14;
+    int SLICE_BODY_END = 15;
+    int NAMED_TYPE_BODY_BEGIN = 16;
+    int NAMED_TYPE_BODY_END = 17;
+    int MEMBER_DECLARATION = 18;
+    int FUNCTION_DECLARATION = 19;
+    int METHOD_DECLARATION = 20;
+    int FUNCTION_PARAMETER = 21;
+    int FUNCTION_BODY_BEGIN = 22;
+    int FUNCTION_BODY_END = 23;
 
     // Control flow statements
 
-    int IF_STATEMENT = 11;
-    int IF_BLOCK_BEGIN = 12;
-    int IF_BLOCK_END = 13;
-    int ELSE_BLOCK_BEGIN = 14;
-    int ELSE_BLOCK_END = 15;
-    int FOR_STATEMENT = 16;
-    int FOR_BLOCK_BEGIN = 17;
-    int FOR_BLOCK_END = 18;
-    int SWITCH_STATEMENT = 19;
-    int SWITCH_BLOCK_BEGIN = 20;
-    int SWITCH_BLOCK_END = 21;
-    int SWITCH_CASE = 22;
-    int CASE_BLOCK_BEGIN = 23;
-    int CASE_BLOCK_END = 24;
+    int IF_STATEMENT = 24;
+    int IF_BLOCK_BEGIN = 25;
+    int IF_BLOCK_END = 26;
+    int ELSE_BLOCK_BEGIN = 27;
+    int ELSE_BLOCK_END = 28;
+    int FOR_STATEMENT = 29;
+    int FOR_BLOCK_BEGIN = 30;
+    int FOR_BLOCK_END = 31;
+    int SWITCH_STATEMENT = 32;
+    int SWITCH_BLOCK_BEGIN = 33;
+    int SWITCH_BLOCK_END = 34;
+    int SWITCH_CASE = 35;
+    int SELECT_STATEMENT = 36;
+    int SELECT_BLOCK_BEGIN = 37;
+    int SELECT_BLOCK_END = 38;
+    int CASE_BLOCK_BEGIN = 39;
+    int CASE_BLOCK_END = 40;
 
     // Statements
 
-    int FUNCTION_LITERAL = 25;
-    int ASSIGNMENT = 26;
-    int INVOCATION = 27;
-    int ARGUMENT = 28;
-    int STATEMENT_BLOCK_BEGIN = 29;
-    int STATEMENT_BLOCK_END = 30;
+    int VARIABLE_DECLARATION = 41;
+    int CONSTANT_DECLARATION = 42;
+    int FUNCTION_LITERAL = 43;
+    int ASSIGNMENT = 44;
+    int SEND_STATEMENT = 45;
+    int RECEIVE_STATEMENT = 46;
+    int INVOCATION = 47;
+    int ARGUMENT = 48;
+    int STATEMENT_BLOCK_BEGIN = 49;
+    int STATEMENT_BLOCK_END = 50;
 
-    // Object Creation
+    // Object creation
 
-    int STRUCT_CONSTRUCTOR = 31;
-    int STRUCT_VALUE = 32;
-    int ARRAY_CONSTRUCTOR = 33;
-    int SLICE_CONSTRUCTOR = 34;
-    int MAP_CONSTRUCTOR = 35;
+    int ARRAY_ELEMENT = 51;
+    int MAP_ELEMENT = 52;
+    int SLICE_ELEMENT = 53;
+    int NAMED_TYPE_ELEMENT = 54;
+    int ARRAY_CONSTRUCTOR = 55;
+    int MAP_CONSTRUCTOR = 56;
+    int SLICE_CONSTRUCTOR = 57;
+    int NAMED_TYPE_CONSTRUCTOR = 58;
 
-    // Control Flow Keywords
+    // Control flow keywords
 
-    int RETURN = 36;
-    int BREAK = 37;
-    int CONTINUE = 38;
-    int GOTO = 39;
-    int GO = 40;
-    int DEFER = 41;
+    int RETURN = 59;
+    int BREAK = 60;
+    int CONTINUE = 61;
+    int FALLTHROUGH = 62;
+    int GOTO = 63;
+    int GO = 64;
+    int DEFER = 65;
 
-    int NUM_DIFF_TOKENS = 42;
+    int NUM_DIFF_TOKENS = 66;
 
 }
