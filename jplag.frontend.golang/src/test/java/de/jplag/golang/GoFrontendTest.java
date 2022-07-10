@@ -27,7 +27,7 @@ import de.jplag.TokenPrinter;
 import de.jplag.golang.grammar.GoTokenUtils;
 import de.jplag.testutils.TestErrorConsumer;
 
-public class GoFrontendTest {
+class GoFrontendTest {
     /**
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
      */

@@ -2,9 +2,7 @@ package de.jplag.golang;
 
 import static de.jplag.golang.GoTokenConstants.*;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Stack;
+import java.util.*;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -16,11 +14,11 @@ public class GoListener extends GoParserBaseListener {
 
     public static final int NONE = -1;
     private final GoParserAdapter parserAdapter;
-    private final Stack<GoBlockContext> blockContexts;
+    private final Deque<GoBlockContext> blockContexts;
 
     public GoListener(GoParserAdapter parserAdapter) {
         this.parserAdapter = parserAdapter;
-        blockContexts = new Stack<>();
+        blockContexts = new LinkedList<>();
     }
 
     /**
@@ -477,6 +475,9 @@ public class GoListener extends GoParserBaseListener {
             }
             case "{" -> transformToken(getCurrentContext().getBegin(), token);
             case "}" -> transformToken(getCurrentContext().getEnd(), token);
+            default -> {
+                // do nothing.
+            }
         }
         super.visitTerminal(node);
     }

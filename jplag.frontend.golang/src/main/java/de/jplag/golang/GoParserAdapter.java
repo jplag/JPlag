@@ -44,8 +44,8 @@ public class GoParserAdapter extends AbstractParser {
             currentFile = fileName;
 
             GoLexer lexer = new GoLexer(CharStreams.fromStream(inputStream));
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            GoParser parser = new GoParser(tokens);
+            CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+            GoParser parser = new GoParser(tokenStream);
 
             ParserRuleContext entryContext = parser.sourceFile();
             ParseTreeWalker treeWalker = new ParseTreeWalker();

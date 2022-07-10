@@ -14,4 +14,8 @@ public class GoTokenUtils {
     public static GoToken getDummyToken(int type, String fileName) {
         return new GoToken(type, fileName, NOT_SET, NOT_SET, NOT_SET);
     }
+
+    private GoTokenUtils() {
+        // Utility class, should not be instantiated.
+    }
 }

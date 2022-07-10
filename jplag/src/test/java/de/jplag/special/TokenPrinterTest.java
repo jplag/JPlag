@@ -52,9 +52,9 @@ public class TokenPrinterTest extends TestBase {
         });
     }
 
-    @Disabled
+    @Disabled("No meaningful test, just an aid to design frontend")
     @Test
-    public void printGoFiles() {
+    void printGoFiles() {
         printSubmissions(options -> options.setLanguageOption(LanguageOption.GO_LANG));
     }
 
