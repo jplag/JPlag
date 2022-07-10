@@ -16,6 +16,9 @@ import de.jplag.TokenList;
 import de.jplag.golang.grammar.GoLexer;
 import de.jplag.golang.grammar.GoParser;
 
+import static de.jplag.TokenConstants.FILE_END;
+import static de.jplag.golang.grammar.GoTokenUtils.getDummyToken;
+
 public class GoParserAdapter extends AbstractParser {
     private String currentFile;
     private TokenList tokens;
@@ -30,7 +33,7 @@ public class GoParserAdapter extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.addToken(new GoToken(GoTokenConstants.FILE_END, file, -1, -1, -1));
+            tokens.addToken(getDummyToken(FILE_END, file));
         }
         return tokens;
     }

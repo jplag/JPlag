@@ -1,5 +1,6 @@
 package de.jplag.golang;
 
+import static de.jplag.golang.grammar.GoTokenUtils.getDummyToken;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
+import de.jplag.golang.grammar.GoTokenUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -45,8 +47,6 @@ public class GoFrontendTest {
      * Regular expression that describes lines containing the end of a multiline comment and no more code after that.
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
-    private static final String NOT_SET_STRING = "";
-    public static final int NOT_SET = -1;
 
     private final Logger logger = LoggerFactory.getLogger("GoLang frontend test");
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
@@ -79,7 +79,7 @@ public class GoFrontendTest {
     @Test
     void testToken2String() {
         var missingTokens = IntStream.range(0, language.numberOfTokens())
-                .mapToObj(type -> new GoToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET))
+                .mapToObj(GoTokenUtils::getDummyToken)
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
 
         if (!missingTokens.isEmpty()) {
@@ -176,7 +176,4 @@ public class GoFrontendTest {
 
     }
 
-    private GoToken getDummyToken(int type) {
-        return new GoToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET);
-    }
 }
