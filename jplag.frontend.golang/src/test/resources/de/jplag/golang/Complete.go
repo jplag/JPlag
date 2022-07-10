@@ -141,3 +141,27 @@ func goExample() {
 	ch := make(chan<- int)
 	go innerBlock(ch, 42)
 }
+
+type InterfaceExample interface {
+	f1(arg int) string
+	f2(arg string) int
+	MySuperType
+}
+
+type MySuperType interface {
+	superMethod()
+}
+
+type Implementation struct {}
+
+func (imp Implementation) f1(arg int) string {
+	return "A"
+}
+
+func (imp Implementation) f2(arg string) int {
+	return 1
+}
+
+func typeAssertion(InterfaceExample i) {
+	fmt.Println(i.(Implementation))
+}

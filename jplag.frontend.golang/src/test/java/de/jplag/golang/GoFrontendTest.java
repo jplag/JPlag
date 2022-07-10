@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
@@ -45,7 +46,7 @@ public class GoFrontendTest {
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
     private static final String NOT_SET_STRING = "";
-    private static final int NOT_SET = -1;
+    public static final int NOT_SET = -1;
 
     private final Logger logger = LoggerFactory.getLogger("GoLang frontend test");
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
@@ -96,31 +97,31 @@ public class GoFrontendTest {
     private void testSourceCoverage(String fileName, TokenList tokens) {
         File testFile = new File(testFileLocation, fileName);
 
+        List<String> lines = null;
         try {
-            List<String> lines = Files.readAllLines(testFile.toPath());
-
-            // All lines that contain code
-            var codeLines = getCodeLines(lines);
-            // All lines that contain token
-            var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().boxed().toList();
-
-            if (codeLines.size() > tokenLines.size()) {
-                List<Integer> missedLinesIndices = new ArrayList<>(codeLines);
-                missedLinesIndices.removeAll(tokenLines);
-                var missedLines = missedLinesIndices.stream().filter(index -> !lines.get(index - 1).matches(".*(\\+\\+|--).*")).map(Object::toString)
-                        .collect(Collectors.joining(", "));
-                if (!missedLines.isBlank()) {
-                    fail("Found lines in file '%s' that are not represented in the token list. \n\tMissed lines: %s".formatted(fileName,
-                            missedLines));
-                }
-            }
-            IntStream.range(0, codeLines.size()).dropWhile(index -> Objects.equals(codeLines.get(index), tokenLines.get(index))).findAny()
-                    .ifPresent(i -> fail(
-                            "Not all lines of code in '%s' are represented in tokens, starting with line %d.".formatted(fileName, codeLines.get(i))));
+            lines = Files.readAllLines(testFile.toPath());
         } catch (IOException exception) {
             logger.info("Error while reading test file %s".formatted(fileName), exception);
             fail();
         }
+
+        // All lines that contain code
+        var codeLines = getCodeLines(lines);
+        // All lines that contain a token
+        var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().boxed().toList();
+
+        if (codeLines.size() > tokenLines.size()) {
+            List<Integer> missedLinesIndices = new ArrayList<>(codeLines);
+            missedLinesIndices.removeAll(tokenLines);
+            var missedLines = missedLinesIndices.stream().map(Object::toString).collect(Collectors.joining(", "));
+            if (!missedLines.isBlank()) {
+                fail("Found lines in file '%s' that are not represented in the token list. \n\tMissed lines: %s".formatted(fileName, missedLines));
+            }
+        }
+        OptionalInt differingLine = IntStream.range(0, codeLines.size())
+                .dropWhile(index -> Objects.equals(codeLines.get(index), tokenLines.get(index))).findAny();
+        differingLine.ifPresent(
+                i -> fail("Not all lines of code in '%s' are represented in tokens, starting with line %d.".formatted(fileName, codeLines.get(i))));
     }
 
     /**
@@ -161,16 +162,21 @@ public class GoFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).sorted().distinct().toArray();
-        // Exclude SEPARATOR_TOKEN, as it does not occur
-        var allTokens = IntStream.range(0, language.numberOfTokens()).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
+        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).sorted().distinct().boxed().toList();
 
-        if (allTokens.length > foundTokens.length) {
-            var diffLine = IntStream.range(0, allTokens.length)
-                    .dropWhile(lineIdx -> lineIdx < foundTokens.length && allTokens[lineIdx] == foundTokens[lineIdx]).findFirst();
-            diffLine.ifPresent(lineIdx -> fail("Token type %s was not found in the complete code example '%s'."
-                    .formatted(new GoToken(allTokens[lineIdx], fileName, -1, -1, -1).type2string(), fileName)));
+        // Exclude SEPARATOR_TOKEN, as it does not occur
+        var missingTokenTypes = IntStream.range(0, language.numberOfTokens()).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).boxed()
+                .collect(Collectors.toList());
+        missingTokenTypes.removeAll(foundTokens);
+
+        if (!missingTokenTypes.isEmpty()) {
+            String missingTypesList = missingTokenTypes.stream().map(type -> getDummyToken(type).type2string()).collect(Collectors.joining(", "));
+            fail("Some Token types were not found in the complete code example '%s': %s.".formatted(fileName, missingTypesList));
         }
-        assertArrayEquals(allTokens, foundTokens);
+
+    }
+
+    private GoToken getDummyToken(int type) {
+        return new GoToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET);
     }
 }

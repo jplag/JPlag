@@ -20,14 +20,22 @@ public class GoToken extends Token {
             case IMPORT_CLAUSE -> "IMPORT";
             case IMPORT_CLAUSE_BEGIN -> "IMPORT(";
             case IMPORT_CLAUSE_END -> ")IMPORT";
-            case IMPORT_DECL -> "IMPORT_DECL";
+            case IMPORT_DECLARATION -> "IMPORT_DECL";
 
             case ARRAY_BODY_BEGIN -> "ARRAY{";
             case ARRAY_BODY_END -> "}ARRAY";
 
-            case STRUCT_DECLARATION_BEGIN -> "STRUCT";
+            case STRUCT_DECLARATION -> "STRUCT";
             case STRUCT_BODY_BEGIN -> "STRUCT{";
             case STRUCT_BODY_END -> "}STRUCT";
+
+            case INTERFACE_DECLARATION -> "INTERFACE";
+            case INTERFACE_BLOCK_BEGIN -> "INTERFACE{";
+            case INTERFACE_BLOCK_END -> "}INTERFACE";
+
+            case INTERFACE_METHOD -> "INTERFACE_METHOD";
+            case TYPE_CONSTRAINT -> "TYPE_CONSTRAINT";
+            case TYPE_ASSERTION -> "TYPE_ASSERTION";
 
             case MAP_BODY_BEGIN -> "MAP{";
             case MAP_BODY_END -> "}MAP";
@@ -35,13 +43,16 @@ public class GoToken extends Token {
             case SLICE_BODY_BEGIN -> "SLICE{";
             case SLICE_BODY_END -> "}SLICE";
 
-            case NAMED_TYPE_BODY_BEGIN -> "NAMED_TYPE{";
-            case NAMED_TYPE_BODY_END -> "}NAMED_TYPE";
+            case NAMED_TYPE_BODY_BEGIN -> "CTYPE{";
+            case NAMED_TYPE_BODY_END -> "}CTYPE";
 
             case MEMBER_DECLARATION -> "FIELD";
 
+            // Functions and Methods
+
             case FUNCTION_DECLARATION -> "FUNC";
             case METHOD_DECLARATION -> "METHOD";
+            case RECEIVER -> "RECEIVER";
             case FUNCTION_PARAMETER -> "PARAM";
             case FUNCTION_BODY_BEGIN -> "FUNC{";
             case FUNCTION_BODY_END -> "}FUNC";

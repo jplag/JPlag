@@ -66,7 +66,7 @@ public class GoListener extends GoParserBaseListener {
 
     @Override
     public void enterImportDecl(GoParser.ImportDeclContext context) {
-        transformToken(IMPORT_DECL, context.getStart());
+        transformToken(IMPORT_DECLARATION, context.getStart());
 
         // if the children contain TerminalNodes, then it must be '(' and ')'
         Optional<TerminalNode> listStart = context.children.stream().filter(tree -> tree instanceof TerminalNode).map(TerminalNode.class::cast)
@@ -90,11 +90,26 @@ public class GoListener extends GoParserBaseListener {
         super.enterImportSpec(context);
     }
 
+    /* INTERFACE */
+
+    @Override
+    public void enterInterfaceType(GoParser.InterfaceTypeContext context) {
+        transformToken(INTERFACE_DECLARATION, context.getStart());
+        enterContext(GoBlockContext.INTERFACE_BODY);
+        super.enterInterfaceType(context);
+    }
+
+    @Override
+    public void exitInterfaceType(GoParser.InterfaceTypeContext context) {
+        expectAndLeave(GoBlockContext.INTERFACE_BODY);
+        super.exitInterfaceType(context);
+    }
+
     /* STRUCT */
 
     @Override
     public void enterStructType(GoParser.StructTypeContext context) {
-        transformToken(STRUCT_DECLARATION_BEGIN, context.getStart());
+        transformToken(STRUCT_DECLARATION, context.getStart());
         enterContext(GoBlockContext.STRUCT_BODY);
         super.enterStructType(context);
     }
@@ -141,7 +156,11 @@ public class GoListener extends GoParserBaseListener {
 
     @Override
     public void enterParameterDecl(GoParser.ParameterDeclContext context) {
-        transformToken(FUNCTION_PARAMETER, context.getStart(), context.getStop());
+        if (context.parent.parent instanceof GoParser.ReceiverContext) {
+            transformToken(RECEIVER, context.getStart(), context.getStop());
+        } else {
+            transformToken(FUNCTION_PARAMETER, context.getStart(), context.getStop());
+        }
         super.enterParameterDecl(context);
     }
 
@@ -374,8 +393,22 @@ public class GoListener extends GoParserBaseListener {
         if (context.parent.parent instanceof GoParser.CompositeLitContext) {
             transformToken(NAMED_TYPE_CONSTRUCTOR, context.getStart());
             enterContext(GoBlockContext.NAMED_TYPE_BODY);
+        } else if (context.parent instanceof GoParser.InterfaceTypeContext) {
+            transformToken(TYPE_CONSTRAINT, context.getStart(), context.getStop());
         }
         super.enterTypeName(context);
+    }
+
+    @Override
+    public void enterTypeAssertion(GoParser.TypeAssertionContext context) {
+        transformToken(TYPE_ASSERTION, context.getStart(), context.getStop());
+        super.enterTypeAssertion(context);
+    }
+
+    @Override
+    public void enterMethodSpec(GoParser.MethodSpecContext context) {
+        transformToken(INTERFACE_METHOD, context.getStart(), context.getStop());
+        super.enterMethodSpec(context);
     }
 
     /* CONTROL FLOW KEYWORDS */
@@ -462,7 +495,8 @@ public class GoListener extends GoParserBaseListener {
         SWITCH_BLOCK(SWITCH_BLOCK_BEGIN, SWITCH_BLOCK_END, NONE),
         SELECT_CONTEXT(SELECT_BLOCK_BEGIN, SELECT_BLOCK_END, NONE),
         STATEMENT_BLOCK(STATEMENT_BLOCK_BEGIN, STATEMENT_BLOCK_END, NONE),
-        CASE_BLOCK(CASE_BLOCK_BEGIN, CASE_BLOCK_END, NONE);
+        CASE_BLOCK(CASE_BLOCK_BEGIN, CASE_BLOCK_END, NONE),
+        INTERFACE_BODY(INTERFACE_BLOCK_BEGIN, INTERFACE_BLOCK_END, NONE);
 
         private final int beginTokenType;
         private final int endTokenType;
