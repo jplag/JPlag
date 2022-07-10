@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
-import de.jplag.golang.grammar.GoTokenUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -25,6 +24,7 @@ import de.jplag.Token;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
+import de.jplag.golang.grammar.GoTokenUtils;
 import de.jplag.testutils.TestErrorConsumer;
 
 public class GoFrontendTest {
@@ -78,8 +78,7 @@ public class GoFrontendTest {
      */
     @Test
     void testToken2String() {
-        var missingTokens = IntStream.range(0, language.numberOfTokens())
-                .mapToObj(GoTokenUtils::getDummyToken)
+        var missingTokens = IntStream.range(0, language.numberOfTokens()).mapToObj(GoTokenUtils::getDummyToken)
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
 
         if (!missingTokens.isEmpty()) {
