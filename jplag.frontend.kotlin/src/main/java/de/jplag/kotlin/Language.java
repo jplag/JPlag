@@ -7,10 +7,10 @@ import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
-    public static final String NAME = "Kotlin Parser";
-    public static final String SHORT_NAME = "Kotlin";
-    public static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    public static final String[] FILE_EXTENSIONS = {".kt"};
+    private static final String NAME = "Kotlin Parser";
+    private static final String SHORT_NAME = "Kotlin";
+    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
+    private static final String[] FILE_EXTENSIONS = {".kt"};
     private final KotlinParserAdapter parserAdapter;
 
     public Language(ErrorConsumer consumer) {

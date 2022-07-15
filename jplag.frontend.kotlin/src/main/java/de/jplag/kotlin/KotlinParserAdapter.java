@@ -12,12 +12,14 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
+import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 import de.jplag.kotlin.grammar.KotlinLexer;
 import de.jplag.kotlin.grammar.KotlinParser;
 
 public class KotlinParserAdapter extends AbstractParser {
 
+    public static final int NOT_SET = -1;
     private String currentFile;
     private TokenList tokens;
 
@@ -41,7 +43,7 @@ public class KotlinParserAdapter extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.addToken(new KotlinToken(KotlinTokenConstants.FILE_END, file, -1, -1, -1));
+            tokens.addToken(new KotlinToken(TokenConstants.FILE_END, file, NOT_SET, NOT_SET, NOT_SET));
         }
         return tokens;
     }
@@ -52,8 +54,8 @@ public class KotlinParserAdapter extends AbstractParser {
             currentFile = fileName;
 
             KotlinLexer lexer = new KotlinLexer(CharStreams.fromStream(inputStream));
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            KotlinParser parser = new KotlinParser(tokens);
+            CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+            KotlinParser parser = new KotlinParser(tokenStream);
 
             ParserRuleContext entryContext = parser.kotlinFile();
             ParseTreeWalker treeWalker = new ParseTreeWalker();

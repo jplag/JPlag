@@ -23,7 +23,7 @@ import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 import de.jplag.testutils.TestErrorConsumer;
 
-public class KotlinFrontendTest {
+class KotlinFrontendTest {
 
     /**
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
