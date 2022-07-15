@@ -354,13 +354,13 @@ public class KotlinListener extends KotlinParserBaseListener {
         Token token = node.getSymbol();
         String tokenText = token.getText();
         if (tokenText.contains("@")) {
-            tokenText = tokenText.substring(0, tokenText.indexOf("@"));
+            tokenText = tokenText.substring(0, tokenText.indexOf("@") - 1);
         }
         Optional<Integer> type = switch (tokenText) {
             case "throw" -> Optional.of(THROW);
-            case "return", "return@" -> Optional.of(RETURN);
-            case "continue", "continue@" -> Optional.of(CONTINUE);
-            case "break", "break@" -> Optional.of(BREAK);
+            case "return" -> Optional.of(RETURN);
+            case "continue" -> Optional.of(CONTINUE);
+            case "break" -> Optional.of(BREAK);
             default -> Optional.empty();
         };
 
