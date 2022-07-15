@@ -26,4 +26,4 @@ To use the Go frontend, add the `-l golang` flag in the CLI, or use a `JPlagOpti
 <br>
 
 #### Footnotes
-<section id="footnote-1"><sup>1 </sup>Currently, the grammar is taken from grammar-v4, commit 51ecccf from April 2022.</section>
+<section id="footnote-1"><sup>1 </sup>The grammar files are taken from grammar-v4, with the most recent modifiactions in <a href="https://github.com/antlr/grammars-v4/tree/51ecccf87b75e96177287367b96cfa99e9f304b8/golang">commit 51ecccf</a> from April 2022.</section>
