@@ -3,38 +3,66 @@
 -->
 <template>
   <div class="wrapper">
-    <h1>Clusters for comparison {{ comparison.firstSubmissionId }} > {{ comparison.secondSubmissionId }}</h1>
-    <p v-for="( cluster, index ) in clusters" :key="index" @click="toggleDialog">
-      {{ index }} - {{ cluster.averageSimilarity }}
+    <h1>
+      Clusters for comparison {{ comparison.firstSubmissionId }} >
+      {{ comparison.secondSubmissionId }}
+    </h1>
+    <p v-for="(cluster, index) in clusters" :key="index" @click="toggleDialog">
+      {{ index + 1 }}. Members:
+      <span id="members">{{ getMemberNames(cluster) }}</span> - Average
+      similarity: {{ cluster.averageSimilarity }}%
       <GDialog v-model="dialog" fullscreen>
-        <button @click="toggleDialog">Close</button>
+        <div id="dialog-header">
+          <button @click="toggleDialog">Close</button>
+        </div>
         <ClusterRadarChart :cluster="cluster"></ClusterRadarChart>
       </GDialog>
     </p>
   </div>
 </template>
 
-<script>
-import {defineComponent, ref} from "vue";
-import {GDialog} from "gitart-vue-dialog";
-import ClusterRadarChart from "@/components/ClusterRadarChart";
-
+<script lang="ts">
+import { defineComponent, ref, PropType } from "vue";
+import { GDialog } from "gitart-vue-dialog";
+import ClusterRadarChart from "@/components/ClusterRadarChart.vue";
+import { ClusterListElement } from "@/model/ClusterListElement";
+import { ComparisonListElement } from "@/model/ComparisonListElement";
 export default defineComponent({
   name: "ClustersList",
-  components: {ClusterRadarChart, GDialog},
+  components: { ClusterRadarChart, GDialog },
   props: {
-    comparison: {},
-    clusters: Array
+    comparison: {
+      type: Object as PropType<ComparisonListElement>,
+      required: true,
+
+    },
+    clusters: {
+      type: Array<ClusterListElement>,
+      required: true
   },
+  },
+
   setup() {
-    const dialog = ref(false)
-    const toggleDialog = () => dialog.value = !dialog.value
+    const dialog = ref(false);
+    const toggleDialog = () => (dialog.value = !dialog.value);
+    const getMemberNames = (cluster: ClusterListElement) => {
+      const membersIterator = cluster.members.keys();
+      const members = Array.from(membersIterator);
+      let concatenatedMembers = "";
+      const maxMembersToShow = 5;
+      concatenatedMembers = members.slice(0, maxMembersToShow).join(", ");
+      if (members.length > maxMembersToShow) {
+        concatenatedMembers += ",...";
+      }
+      return concatenatedMembers;
+    };
     return {
       dialog,
-      toggleDialog
-    }
-  }
-})
+      toggleDialog,
+      getMemberNames,
+    };
+  },
+});
 </script>
 
 <style scoped>
@@ -60,5 +88,11 @@ p:hover {
   background: var(--primary-color-dark);
   cursor: pointer;
 }
-
+#dialog-header {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right: 1%;
+  margin-top: 0.5%;
+  box-shadow: 5px 10x #888888;
+}
 </style>
