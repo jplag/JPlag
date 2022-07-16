@@ -32,7 +32,7 @@ import de.jplag.strategy.ComparisonMode;
  * Command line interface class, allows using via command line.
  * @see CLI#main(String[])
  */
-public class CLI {
+public final class CLI {
 
     private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
@@ -172,7 +172,6 @@ public class CLI {
         if (argumentValues == null) {
             return;
         }
-
-        argumentValues.stream().forEach(value -> destinationRootDirectories.addAll(value));
+        argumentValues.forEach(destinationRootDirectories::addAll);
     }
 }

@@ -115,7 +115,7 @@ public class JPlagResult {
     /**
      * Note: Before, comparisons with a similarity below the given threshold were also included in the similarity matrix.
      */
-    private int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
+    private static int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
         int[] similarityDistribution = new int[10];
 
         comparisons.stream().map(JPlagComparison::similarity).map(percent -> percent / 10).map(Float::intValue).map(index -> index == 10 ? 9 : index)

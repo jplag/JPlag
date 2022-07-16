@@ -31,12 +31,12 @@ public class JsonFactory {
     public static List<String> getJsonStrings(JPlagReport jPlagReport) {
         List<String> jsonReports = new ArrayList<>();
         try {
-            jsonReports.add(mapper.writeValueAsString(jPlagReport.getOverviewReport()));
-            for (ComparisonReport comparisonReport : jPlagReport.getComparisons()) {
+            jsonReports.add(mapper.writeValueAsString(jPlagReport.overviewReport()));
+            for (ComparisonReport comparisonReport : jPlagReport.comparisons()) {
                 jsonReports.add(mapper.writeValueAsString(comparisonReport));
             }
         } catch (JsonProcessingException e) {
-            logger.error("Error converting object to json " + e.getMessage());
+            logger.error("Error converting object to json " + e.getMessage(), e);
         }
         return jsonReports;
     }
@@ -48,9 +48,9 @@ public class JsonFactory {
     public static boolean saveJsonFiles(JPlagReport jPlagReport, String folderPath) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(Path.of(folderPath, "overview.json").toFile(), jPlagReport.getOverviewReport());
-            for (ComparisonReport report : jPlagReport.getComparisons()) {
-                String name = report.getFirstSubmissionId().concat("-").concat(report.getSecondSubmissionId()).concat(".json");
+            mapper.writeValue(Path.of(folderPath, "overview.json").toFile(), jPlagReport.overviewReport());
+            for (ComparisonReport report : jPlagReport.comparisons()) {
+                String name = report.firstSubmissionId().concat("-").concat(report.secondSubmissionId()).concat(".json");
                 mapper.writeValue(Path.of(folderPath, name).toFile(), report);
             }
         } catch (IOException e) {

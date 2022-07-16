@@ -4,19 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Metric {
-
-    @JsonProperty("name")
-    private final String name;
-
-    @JsonProperty("threshold")
-    private final float threshold;
-
-    @JsonProperty("distribution")
-    private final List<Integer> distribution;
-
-    @JsonProperty("topComparisons")
-    private final List<TopComparison> topComparisons;
+public record Metric(@JsonProperty("name") String name, @JsonProperty("threshold") float threshold,
+        @JsonProperty("distribution") List<Integer> distribution, @JsonProperty("topComparisons") List<TopComparison> topComparisons) {
 
     public Metric(String name, float threshold, List<Integer> distribution, List<TopComparison> topComparisons) {
         this.name = name;
@@ -25,19 +14,23 @@ public class Metric {
         this.topComparisons = List.copyOf(topComparisons);
     }
 
-    public String getName() {
+    @Override
+    public String name() {
         return name;
     }
 
-    public float getThreshold() {
+    @Override
+    public float threshold() {
         return threshold;
     }
 
-    public List<Integer> getDistribution() {
+    @Override
+    public List<Integer> distribution() {
         return distribution;
     }
 
-    public List<TopComparison> getTopComparisons() {
+    @Override
+    public List<TopComparison> topComparisons() {
         return topComparisons;
     }
 }

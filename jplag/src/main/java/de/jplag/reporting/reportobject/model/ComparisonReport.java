@@ -4,25 +4,10 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ComparisonReport {
-
-    @JsonProperty("first_submission_id")
-    private final String firstSubmissionId;
-
-    @JsonProperty("second_submission_id")
-    private final String secondSubmissionId;
-
-    @JsonProperty("match_percentage")
-    private final float matchPercentage;
-
-    @JsonProperty("files_of_first_submission")
-    private final List<FilesOfSubmission> filesOfFirstSubmission;
-
-    @JsonProperty("files_of_second_submission")
-    private final List<FilesOfSubmission> filesOfSecondSubmission;
-
-    @JsonProperty("matches")
-    private final List<Match> matches;
+public record ComparisonReport(@JsonProperty("first_submission_id") String firstSubmissionId,
+        @JsonProperty("second_submission_id") String secondSubmissionId, @JsonProperty("match_percentage") float matchPercentage,
+        @JsonProperty("files_of_first_submission") List<FilesOfSubmission> filesOfFirstSubmission,
+        @JsonProperty("files_of_second_submission") List<FilesOfSubmission> filesOfSecondSubmission, @JsonProperty("matches") List<Match> matches) {
 
     public ComparisonReport(String firstSubmissionId, String secondSubmissionId, float matchPercentage,
             List<FilesOfSubmission> filesOfFirstSubmission, List<FilesOfSubmission> filesOfSecondSubmission, List<Match> matches) {
@@ -35,27 +20,33 @@ public class ComparisonReport {
         this.matches = matches;
     }
 
-    public String getFirstSubmissionId() {
+    @Override
+    public String firstSubmissionId() {
         return firstSubmissionId;
     }
 
-    public String getSecondSubmissionId() {
+    @Override
+    public String secondSubmissionId() {
         return secondSubmissionId;
     }
 
-    public float getMatchPercentage() {
+    @Override
+    public float matchPercentage() {
         return matchPercentage;
     }
 
-    public List<FilesOfSubmission> getFilesOfFirstSubmission() {
+    @Override
+    public List<FilesOfSubmission> filesOfFirstSubmission() {
         return filesOfFirstSubmission;
     }
 
-    public List<FilesOfSubmission> getFilesOfSecondSubmission() {
+    @Override
+    public List<FilesOfSubmission> filesOfSecondSubmission() {
         return filesOfSecondSubmission;
     }
 
-    public List<Match> getMatches() {
+    @Override
+    public List<Match> matches() {
         return matches;
     }
 }

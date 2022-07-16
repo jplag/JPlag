@@ -21,7 +21,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
     protected JPlagOptions options;
 
-    public AbstractComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
+    protected AbstractComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
         this.greedyStringTiling = greedyStringTiling;
         this.options = options;
     }
@@ -47,7 +47,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
      */
     protected Optional<JPlagComparison> compareSubmissions(Submission first, Submission second, boolean withBaseCode) {
         JPlagComparison comparison = greedyStringTiling.compare(first, second);
-        logger.info("Comparing " + first.getName() + "-" + second.getName() + ": " + comparison.similarity());
+        logger.info("Comparing {}-{}: {}", first.getName(), second.getName(), comparison.similarity());
 
         if (options.getSimilarityMetric().isAboveThreshold(comparison, options.getSimilarityThreshold())) {
             return Optional.of(comparison);

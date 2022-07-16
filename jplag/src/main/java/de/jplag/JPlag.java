@@ -119,7 +119,7 @@ public class JPlag {
 
             this.options.setLanguage(language);
             this.options.setLanguageDefaults(language);
-            logger.info("Initialized language " + language.getName());
+            logger.info("Initialized language {}", language.getName());
             return language;
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {

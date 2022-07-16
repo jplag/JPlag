@@ -1,7 +1,5 @@
 package de.jplag.strategy;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
@@ -40,7 +38,7 @@ public enum ComparisonMode {
      * @return a collections of all mode names.
      */
     public static Collection<String> allNames() {
-        return Arrays.stream(values()).map(ComparisonMode::getName).collect(toList());
+        return Arrays.stream(values()).map(ComparisonMode::getName).toList();
     }
 
     /**

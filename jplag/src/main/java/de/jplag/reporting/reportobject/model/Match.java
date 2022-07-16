@@ -2,28 +2,9 @@ package de.jplag.reporting.reportobject.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Match {
-
-    @JsonProperty("first_file_name")
-    private final String firstFileName;
-
-    @JsonProperty("second_file_name")
-    private final String secondFileName;
-
-    @JsonProperty("start_in_first")
-    private final int startInFirst;
-
-    @JsonProperty("end_in_first")
-    private final int endInFirst;
-
-    @JsonProperty("start_in_second")
-    private final int startInSecond;
-
-    @JsonProperty("end_in_second")
-    private final int endInSecond;
-
-    @JsonProperty("tokens")
-    private final int tokens;
+public record Match(@JsonProperty("first_file_name") String firstFileName, @JsonProperty("second_file_name") String secondFileName,
+        @JsonProperty("start_in_first") int startInFirst, @JsonProperty("end_in_first") int endInFirst,
+        @JsonProperty("start_in_second") int startInSecond, @JsonProperty("end_in_second") int endInSecond, @JsonProperty("tokens") int tokens) {
 
     public Match(String firstFileName, String secondFileName, int startInFirst, int endInFirst, int startInSecond, int endInSecond, int tokens) {
         this.firstFileName = firstFileName;
@@ -35,31 +16,38 @@ public class Match {
         this.tokens = tokens;
     }
 
-    public String getFirstFileName() {
+    @Override
+    public String firstFileName() {
         return firstFileName;
     }
 
-    public String getSecondFileName() {
+    @Override
+    public String secondFileName() {
         return secondFileName;
     }
 
-    public int getStartInFirst() {
+    @Override
+    public int startInFirst() {
         return startInFirst;
     }
 
-    public int getEndInFirst() {
+    @Override
+    public int endInFirst() {
         return endInFirst;
     }
 
-    public int getStartInSecond() {
+    @Override
+    public int startInSecond() {
         return startInSecond;
     }
 
-    public int getEndInSecond() {
+    @Override
+    public int endInSecond() {
         return endInSecond;
     }
 
-    public int getTokens() {
+    @Override
+    public int tokens() {
         return tokens;
     }
 }
