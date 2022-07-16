@@ -82,7 +82,7 @@ code.hljs {
 
 .hljs {
   background: transparent !important;
-  font-family: "JetBrains Mono", serif !important;
+  font-family: "JetBrains Mono NL", serif !important;
   font-weight: bold;    font-size: x-small !important;
 }
 
