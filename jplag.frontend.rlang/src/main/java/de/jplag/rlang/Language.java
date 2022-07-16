@@ -1,4 +1,4 @@
-package de.jplag.R;
+package de.jplag.rlang;
 
 import java.io.File;
 

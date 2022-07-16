@@ -1,10 +1,10 @@
-package de.jplag.R;
+package de.jplag.rlang;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.jplag.R.grammar.*;
+import de.jplag.rlang.grammar.*;
 
 /**
  * Empty base implementation for {@link RListener} and {@link RFilterListener}.

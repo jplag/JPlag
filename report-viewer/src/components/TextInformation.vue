@@ -130,7 +130,7 @@ hr {
   margin: 3% 0;
   box-shadow: inset var(--shadow-color) 0 0 3px;
   border-radius: 10px;
-  font-family: "JetBrains Mono", serif;
+  font-family: "JetBrains  NL", serif;
   font-size: smaller;
 }
 

@@ -67,7 +67,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.22.8</spotless.version>
+        <spotless.version>2.23.0</spotless.version>
         <slf4j.version>1.7.36</slf4j.version>
 
         <antlr2.version>2.7.7</antlr2.version>
@@ -255,7 +255,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.4.0</version>
                     <configuration>
                         <descriptorRefs>
                             <descriptorRef>jar-with-dependencies</descriptorRef>

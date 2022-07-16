@@ -5,13 +5,13 @@
 
 <style>
 @font-face {
-  font-family: "JetBrains Mono";
-  src: url("./fonts/jetbrains-mono/JetBrainsMono-Light.ttf");
+  font-family: "JetBrains Mono NL";
+  src: url("./fonts/jetbrains-mono/JetBrainsMonoNL-Light.ttf");
 }
 
 @font-face {
-  font-family: "JetBrains Mono";
-  src: url("./fonts/jetbrains-mono/JetBrainsMono-Bold.ttf");
+  font-family: "JetBrains Mono NL";
+  src: url("./fonts/jetbrains-mono/JetBrainsMonoNL-Bold.ttf");
   font-weight: bold;
 }
 
