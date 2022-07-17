@@ -1,5 +1,6 @@
 package de.jplag.emf.parser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EAnnotation;
@@ -11,6 +12,7 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
@@ -24,6 +26,12 @@ import org.eclipse.emf.ecore.ETypeParameter;
  * @author Timur Saglam
  */
 public abstract class AbstractMetamodelVisitor {
+
+    private final boolean sortContainmentsByType;
+
+    protected AbstractMetamodelVisitor(boolean sortContainmentsByType) {
+        this.sortContainmentsByType = sortContainmentsByType;
+    }
 
     private int currentTreeDepth;
 
@@ -86,12 +94,23 @@ public abstract class AbstractMetamodelVisitor {
         if (eObject instanceof ETypeParameter eTypeParameter) {
             visitETypeParameter(eTypeParameter);
         }
+        if (eObject instanceof ENamedElement eNamedElement) {
+            visitENamedElement(eNamedElement);
+        }
+
+        var children = new ArrayList<>(eObject.eContents());
+        if (sortContainmentsByType) {
+            children.sort((first, second) -> first.eClass().getName().compareTo(second.eClass().getName()));
+        }
 
         currentTreeDepth++;
-        for (EObject child : eObject.eContents()) {
+        for (EObject child : children) {
             visit(child);
         }
         currentTreeDepth--;
+    }
+
+    protected void visitENamedElement(ENamedElement eNamedElement) {
     }
 
     /**
