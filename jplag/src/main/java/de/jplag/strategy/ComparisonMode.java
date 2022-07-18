@@ -14,7 +14,7 @@ public enum ComparisonMode {
     private final String name;
     private final String description;
 
-    private ComparisonMode(String description) {
+    ComparisonMode(String description) {
         this.description = description;
         name = toString().toLowerCase();
     }

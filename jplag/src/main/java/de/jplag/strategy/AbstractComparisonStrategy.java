@@ -19,7 +19,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
     private final GreedyStringTiling greedyStringTiling;
 
-    protected JPlagOptions options;
+    protected final JPlagOptions options;
 
     protected AbstractComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
         this.greedyStringTiling = greedyStringTiling;

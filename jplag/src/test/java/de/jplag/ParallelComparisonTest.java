@@ -41,9 +41,7 @@ public class ParallelComparisonTest extends TestBase {
         assertEquals(3, result.getNumberOfSubmissions());
         assertEquals(3, result.getComparisons().size());
 
-        result.getComparisons().forEach(comparison -> {
-            assertEquals(0f, comparison.similarity(), DELTA);
-        });
+        result.getComparisons().forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
     }
 
     /**

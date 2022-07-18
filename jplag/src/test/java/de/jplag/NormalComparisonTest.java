@@ -37,9 +37,7 @@ class NormalComparisonTest extends TestBase {
         assertEquals(3, result.getNumberOfSubmissions());
         assertEquals(3, result.getComparisons().size());
 
-        result.getComparisons().forEach(comparison -> {
-            assertEquals(0f, comparison.similarity(), 0.1f);
-        });
+        result.getComparisons().forEach(comparison -> assertEquals(0f, comparison.similarity(), 0.1f));
     }
 
     /**
@@ -112,7 +110,7 @@ class NormalComparisonTest extends TestBase {
     }
 
     @Test
-    public void testMultiRootDirBasecodeName() throws ExitException {
+    public void testMultiRootDirBasecodeName() {
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate"));
         String basecodePath = "base"; // Should *not* find basecode/base
         assertThrows(BasecodeException.class, () -> runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath)));

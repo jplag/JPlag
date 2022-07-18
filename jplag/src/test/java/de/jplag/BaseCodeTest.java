@@ -52,7 +52,7 @@ public class BaseCodeTest extends TestBase {
     }
 
     @Test
-    void testInvalidRoot() throws ExitException {
+    void testInvalidRoot() {
         assertThrows(RootDirectoryException.class, () -> runJPlag("basecode", it -> it.setSubmissionDirectories(List.of("WrongRoot"))));
     }
 

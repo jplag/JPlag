@@ -13,24 +13,4 @@ public record Metric(@JsonProperty("name") String name, @JsonProperty("threshold
         this.distribution = List.copyOf(distribution);
         this.topComparisons = List.copyOf(topComparisons);
     }
-
-    @Override
-    public String name() {
-        return name;
-    }
-
-    @Override
-    public float threshold() {
-        return threshold;
-    }
-
-    @Override
-    public List<Integer> distribution() {
-        return distribution;
-    }
-
-    @Override
-    public List<TopComparison> topComparisons() {
-        return topComparisons;
-    }
 }

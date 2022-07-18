@@ -50,7 +50,7 @@ public class PreprocessingTestBase {
 
         assertTrue(usedOriginalIndices.stream().allMatch(index -> index >= 0 && index < original.getColumnDimension()), "original indices valid");
 
-        double[] columnNorms = IntStream.range(0, result.getColumnDimension()).mapToObj(index -> result.getColumn(index))
+        double[] columnNorms = IntStream.range(0, result.getColumnDimension()).mapToObj(result::getColumn)
                 .mapToDouble(array -> new ArrayRealVector(array, false).getNorm()).toArray();
 
         for (int i = 0; i < columnNorms.length; i++) {
