@@ -100,7 +100,7 @@ public class SubmissionSet {
         try {
             parseSubmissions(allSubmissions);
             if (baseCodeSubmission != null) {
-                parseBaseCodeSubmission(baseCodeSubmission); // cannot use ifPresent because of throws declaration
+                parseBaseCodeSubmission(baseCodeSubmission);
             }
         } catch (OutOfMemoryError exception) {
             throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"", exception);
