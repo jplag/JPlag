@@ -62,11 +62,11 @@ fun main(args : Array<String>) {
     println(complete.getAccessCount())
 
     var int : Int = 0;
-    while (true) {
+    loop@ while (true) {
         val box = Container(int);
         if (box.isTheAnswer()) {
             println("Finally!")
-            break
+            break@loop
         }
         int = int + 2;
     }
