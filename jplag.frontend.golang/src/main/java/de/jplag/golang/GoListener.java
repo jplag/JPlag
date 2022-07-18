@@ -141,7 +141,7 @@ public class GoListener extends GoParserBaseListener {
 
     @Override
     public void enterMethodDecl(GoParser.MethodDeclContext context) {
-        transformToken(METHOD_DECLARATION, context.getStart());
+        transformToken(FUNCTION_DECLARATION, context.getStart());
         enterContext(GoBlockContext.FUNCTION_BODY);
         super.enterMethodDecl(context);
     }
@@ -286,7 +286,7 @@ public class GoListener extends GoParserBaseListener {
 
     @Override
     public void enterConstSpec(GoParser.ConstSpecContext context) {
-        transformToken(CONSTANT_DECLARATION, context.getStart());
+        transformToken(VARIABLE_DECLARATION, context.getStart());
         super.enterConstSpec(context);
     }
 

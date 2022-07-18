@@ -51,7 +51,6 @@ public class GoToken extends Token {
             // Functions and Methods
 
             case FUNCTION_DECLARATION -> "FUNC";
-            case METHOD_DECLARATION -> "METHOD";
             case RECEIVER -> "RECEIVER";
             case FUNCTION_PARAMETER -> "PARAM";
             case FUNCTION_BODY_BEGIN -> "FUNC{";
@@ -81,7 +80,6 @@ public class GoToken extends Token {
             // Statements
 
             case VARIABLE_DECLARATION -> "VAR_DECL";
-            case CONSTANT_DECLARATION -> "CONST_DECL";
             case FUNCTION_LITERAL -> "FUNC_LIT";
             case ASSIGNMENT -> "ASSIGN";
             case SEND_STATEMENT -> "SEND";
