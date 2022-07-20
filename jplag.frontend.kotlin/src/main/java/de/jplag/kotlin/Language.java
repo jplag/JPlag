@@ -5,6 +5,9 @@ import java.io.File;
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
+/**
+ * This represents the Kotlin language as a language supported by JPlag.
+ */
 public class Language implements de.jplag.Language {
 
     private static final String NAME = "Kotlin Parser";
