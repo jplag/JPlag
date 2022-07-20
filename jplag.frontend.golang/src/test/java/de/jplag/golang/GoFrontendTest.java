@@ -77,7 +77,7 @@ class GoFrontendTest {
      * Confirms that every type of GoToken has a Sting representation associated to it.
      */
     @Test
-    void testToken2String() {
+    void testTokenToString() {
         var missingTokens = IntStream.range(0, language.numberOfTokens()).mapToObj(GoTokenUtils::getDummyToken)
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
 

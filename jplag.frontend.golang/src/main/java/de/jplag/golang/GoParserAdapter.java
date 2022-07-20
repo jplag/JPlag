@@ -50,7 +50,7 @@ public class GoParserAdapter extends AbstractParser {
             ParserRuleContext entryContext = parser.sourceFile();
             ParseTreeWalker treeWalker = new ParseTreeWalker();
 
-            GoListener listener = new GoListener(this);
+            JPlagGoListener listener = new JPlagGoListener(this);
             for (int i = 0; i < entryContext.getChildCount(); i++) {
                 ParseTree parseTree = entryContext.getChild(i);
                 treeWalker.walk(listener, parseTree);

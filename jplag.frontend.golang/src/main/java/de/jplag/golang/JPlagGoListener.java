@@ -10,13 +10,13 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import de.jplag.golang.grammar.GoParser;
 import de.jplag.golang.grammar.GoParserBaseListener;
 
-public class GoListener extends GoParserBaseListener {
+public class JPlagGoListener extends GoParserBaseListener {
 
     public static final int NONE = -1;
     private final GoParserAdapter parserAdapter;
     private final Deque<GoBlockContext> blockContexts;
 
-    public GoListener(GoParserAdapter parserAdapter) {
+    public JPlagGoListener(GoParserAdapter parserAdapter) {
         this.parserAdapter = parserAdapter;
         blockContexts = new LinkedList<>();
     }
