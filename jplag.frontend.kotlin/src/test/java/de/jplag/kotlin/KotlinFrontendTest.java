@@ -77,7 +77,7 @@ class KotlinFrontendTest {
      * Confirms that every type of KotlinToken has a Sting representation associated to it.
      */
     @Test
-    void testToken2String() {
+    void testTokenToString() {
         var missingTokens = IntStream.range(0, language.numberOfTokens())
                 .mapToObj(type -> new KotlinToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET))
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
