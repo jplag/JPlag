@@ -60,7 +60,7 @@ public class KotlinParserAdapter extends AbstractParser {
             ParserRuleContext entryContext = parser.kotlinFile();
             ParseTreeWalker treeWalker = new ParseTreeWalker();
 
-            KotlinListener listener = new KotlinListener(this);
+            JPlagKotlinListener listener = new JPlagKotlinListener(this);
             for (int i = 0; i < entryContext.getChildCount(); i++) {
                 ParseTree parseTree = entryContext.getChild(i);
                 treeWalker.walk(listener, parseTree);

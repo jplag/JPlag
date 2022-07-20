@@ -10,10 +10,10 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import de.jplag.kotlin.grammar.KotlinParser;
 import de.jplag.kotlin.grammar.KotlinParserBaseListener;
 
-public class KotlinListener extends KotlinParserBaseListener {
+public class JPlagKotlinListener extends KotlinParserBaseListener {
     private final KotlinParserAdapter parserAdapter;
 
-    public KotlinListener(KotlinParserAdapter parserAdapter) {
+    public JPlagKotlinListener(KotlinParserAdapter parserAdapter) {
         this.parserAdapter = parserAdapter;
     }
 

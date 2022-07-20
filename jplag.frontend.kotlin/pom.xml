@@ -14,8 +14,6 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
         </dependency>
-
-        <!-- JPlag -->
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>frontend-utils</artifactId>
