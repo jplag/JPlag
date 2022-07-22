@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.*;
+import de.jplag.reporting.jsonfactory.JsonWriter;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.FilesOfSubmission;
 import de.jplag.reporting.reportobject.model.Match;
@@ -20,27 +21,28 @@ public class ComparisonReportMapper {
     private static final Logger logger = LoggerFactory.getLogger(ComparisonReportMapper.class);
     private final HashMap<Long, String> lineLookUpTable = new HashMap<>();
     private long currentLineIndex;
+    private static final JsonWriter jsonWriter = new JsonWriter();
 
     /**
      * Generates detailed ComparisonReport DTO for each comparison in a JPlagResult.
      * @param jPlagResult The JPlagResult to generate the comparison reports from.
+     * @param path
      * @return A ComparisonReportMapperResult consisting of two DTOs: the list of ComparisonsReport. A ComparisonReport
      * contains information about a comparison between two submission - including their files. These files are not saved in
      * plain text though, they are saved as numbers. these numbers are indices to the second DTO of the
      * ComparisonReportMapperResult, the lineLookUpTable.
      */
-    public ComparisonReportMapperResult generateComparisonReports(JPlagResult jPlagResult) {
-        List<ComparisonReport> comparisons = new ArrayList<>();
+    public void writeComparisonReports(JPlagResult jPlagResult, String path) {
         int maxNumOfComparisons = jPlagResult.getOptions().getMaximumNumberOfComparisons();
-        jPlagResult.getComparisons(maxNumOfComparisons).forEach(comparison -> comparisons.add( //
-                new ComparisonReport(comparison.getFirstSubmission().getName(), //
-                        comparison.getSecondSubmission().getName(), //
-                        comparison.similarity(), //
-                        getFilesForSubmission(comparison.getFirstSubmission()), //
-                        getFilesForSubmission(comparison.getSecondSubmission()), //
-                        convertMatchesToReportMatches(jPlagResult, comparison) //
-                )));
-        return new ComparisonReportMapperResult(comparisons, lineLookUpTable);
+
+        for (JPlagComparison comparison : jPlagResult.getComparisons(maxNumOfComparisons)) {
+            var comparisonReport = new ComparisonReport(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(),
+                    comparison.similarity(), getFilesForSubmission(comparison.getFirstSubmission()),
+                    getFilesForSubmission(comparison.getSecondSubmission()), convertMatchesToReportMatches(jPlagResult, comparison));
+            String fileName = comparisonReport.firstSubmissionId().concat("-").concat(comparisonReport.secondSubmissionId()).concat(".json");
+            jsonWriter.saveFile(comparisonReport, path, fileName);
+        }
+        jsonWriter.saveFile(lineLookUpTable, path, "lookup.json");
     }
 
     private List<FilesOfSubmission> getFilesForSubmission(Submission submission) {
