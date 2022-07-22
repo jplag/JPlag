@@ -8,11 +8,10 @@ import java.util.List;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
+import de.jplag.reporting.jsonfactory.JsonWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.ComparisonReportMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
-import de.jplag.reporting.reportobject.model.ComparisonReport;
-import de.jplag.reporting.reportobject.model.JPlagReport;
 import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
 
@@ -24,16 +23,16 @@ public class ReportObjectFactory {
     private static final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper();
     private static final MetricMapper metricMapper = new MetricMapper();
     private static final ComparisonReportMapper comparisonReportMapper = new ComparisonReportMapper();
+    private static final JsonWriter jsonWriter = new JsonWriter();
 
     /**
      * Converts a JPlagResult to a JPlagReport.
      * @return JPlagReport for the given JPlagResult.
      */
-    public static JPlagReport getReportObject(JPlagResult result) {
+    public static void saveReport(JPlagResult result, String path) {
         OverviewReport overviewReport = generateOverviewReport(result);
-        var comparisonReportMapperResult = comparisonReportMapper.generateComparisonReports(result);
-        List<ComparisonReport> comparisons = comparisonReportMapperResult.comparisonReports();
-        return new JPlagReport(overviewReport, comparisons, comparisonReportMapperResult.lineLookupTable());
+        jsonWriter.saveFile(overviewReport, path, "overview.json");
+        comparisonReportMapper.writeComparisonReports(result, path);
     }
 
     /**
