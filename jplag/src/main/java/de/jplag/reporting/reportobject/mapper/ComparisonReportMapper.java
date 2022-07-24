@@ -1,33 +1,30 @@
 package de.jplag.reporting.reportobject.mapper;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.nio.file.Files;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+import de.jplag.Token;
+import de.jplag.TokenList;
 import de.jplag.reporting.jsonfactory.JsonWriter;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
-import de.jplag.reporting.reportobject.model.FilesOfSubmission;
 import de.jplag.reporting.reportobject.model.Match;
 
 public class ComparisonReportMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(ComparisonReportMapper.class);
-    private final HashMap<Long, String> lineLookUpTable = new HashMap<>();
-    private long currentLineIndex;
     private static final JsonWriter jsonWriter = new JsonWriter();
 
     /**
      * Generates detailed ComparisonReport DTO for each comparison in a JPlagResult.
      * @param jPlagResult The JPlagResult to generate the comparison reports from.
-     * @param path
-     * @return A ComparisonReportMapperResult consisting of two DTOs: the list of ComparisonsReport. A ComparisonReport
      * contains information about a comparison between two submission - including their files. These files are not saved in
      * plain text though, they are saved as numbers. these numbers are indices to the second DTO of the
      * ComparisonReportMapperResult, the lineLookUpTable.
@@ -35,42 +32,33 @@ public class ComparisonReportMapper {
     public void writeComparisonReports(JPlagResult jPlagResult, String path) {
         int maxNumOfComparisons = jPlagResult.getOptions().getMaximumNumberOfComparisons();
 
-        for (JPlagComparison comparison : jPlagResult.getComparisons(maxNumOfComparisons)) {
+        List<JPlagComparison> comparisons = jPlagResult.getComparisons(maxNumOfComparisons);
+
+        var allSubmissions = comparisons.stream().map(JPlagComparison::getFirstSubmission).collect(Collectors.toSet());
+        for (var submission : allSubmissions) {
+
+            File directory = new File(path.concat("/").concat(submission.getName()));
+            if (!directory.exists()) {
+                if (!directory.mkdirs()) {
+                    logger.error("Failed to create dir.");
+                }
+            }
+            for (var file : submission.getFiles()) {
+
+                try {
+                    Files.copy(file.toPath(), (new File(directory, file.getName())).toPath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        for (JPlagComparison comparison : comparisons) {
             var comparisonReport = new ComparisonReport(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(),
-                    comparison.similarity(), getFilesForSubmission(comparison.getFirstSubmission()),
-                    getFilesForSubmission(comparison.getSecondSubmission()), convertMatchesToReportMatches(jPlagResult, comparison));
+                    comparison.similarity(), convertMatchesToReportMatches(jPlagResult, comparison));
             String fileName = comparisonReport.firstSubmissionId().concat("-").concat(comparisonReport.secondSubmissionId()).concat(".json");
             jsonWriter.saveFile(comparisonReport, path, fileName);
         }
-        jsonWriter.saveFile(lineLookUpTable, path, "lookup.json");
-    }
-
-    private List<FilesOfSubmission> getFilesForSubmission(Submission submission) {
-        return submission.getFiles().stream().map(file -> new FilesOfSubmission(file.getName(), readFileLines(file))).collect(Collectors.toList());
-    }
-
-    private List<Long> readFileLines(File file) {
-        List<Long> lineIndices = new ArrayList<>();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                if (!lineLookUpTable.containsValue(line)) {
-                    lineLookUpTable.put(currentLineIndex, line);
-                    lineIndices.add(currentLineIndex);
-                    currentLineIndex++;
-                } else {
-                    lineIndices.add(getIndexOfLine(line));
-                }
-            }
-        } catch (IOException exception) {
-            logger.error("Could not read file: " + exception.getMessage());
-        }
-        return lineIndices;
-    }
-
-    private Long getIndexOfLine(String line) {
-        return lineLookUpTable.entrySet().stream().filter(entry -> Objects.equals(entry.getValue(), line)).map(Map.Entry::getKey).findFirst()
-                .orElseThrow();
     }
 
     private List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison) {
@@ -101,9 +89,6 @@ public class ComparisonReportMapper {
         int tokens = match.getLength();
 
         return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
-    }
-
-    public record ComparisonReportMapperResult(List<ComparisonReport> comparisonReports, Map<Long, String> lineLookupTable) {
     }
 
 }
