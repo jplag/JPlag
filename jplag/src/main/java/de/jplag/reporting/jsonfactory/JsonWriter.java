@@ -2,6 +2,7 @@ package de.jplag.reporting.jsonfactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,5 +20,4 @@ public class JsonWriter {
             logger.error("Failed to save json file " + fileName + ": " + e.getMessage(), e);
         }
     }
-
 }
