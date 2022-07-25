@@ -7,7 +7,8 @@
     <packaging>pom</packaging>
 
     <name>JPlag Plagiarism Detector</name>
-    <description>JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development.</description>
+    <description>JPlag is a system that finds similarities among multiple sets of source code files. This way it can
+        detect software plagiarism and collusion in software development.</description>
     <url>http://jplag.de</url>
     <organization>
         <name>Karlsruhe Institute of Technology (KIT), KASTEL – Institute of Information Security and Dependability</name>
@@ -41,21 +42,6 @@
         </developer>
     </developers>
 
-    <modules>
-        <module>jplag.frontend-utils</module>
-        <module>jplag.frontend-testutils</module>
-        <module>jplag.frontend.chars</module>
-        <module>jplag.frontend.cpp</module>
-        <module>jplag.frontend.csharp-6</module>
-        <module>jplag.frontend.java</module>
-        <module>jplag.frontend.python-3</module>
-        <module>jplag.frontend.rlang</module>
-        <module>jplag.frontend.rust</module>
-        <module>jplag.frontend.scheme</module>
-        <module>jplag.frontend.text</module>
-        <module>jplag</module>
-        <module>jplag.cli</module>
-    </modules>
     <scm>
         <connection>scm:git:git://github.com/jplag/JPlag.git</connection>
         <developerConnection>scm:git:ssh://github.com:jplag/JPlag.git</developerConnection>
@@ -71,10 +57,6 @@
         <url>https://github.com/jplag/jplag/actions</url>
     </ciManagement>
     <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
@@ -87,6 +69,11 @@
         <maven.compiler.target>17</maven.compiler.target>
         <spotless.version>2.23.0</spotless.version>
         <slf4j.version>1.7.36</slf4j.version>
+
+        <antlr2.version>2.7.7</antlr2.version>
+        <antlr3.version>3.5</antlr3.version>
+        <antlr4.version>4.10.1</antlr4.version>
+
         <!-- The Revision of JPlag -->
         <revision>4.0.0-SNAPSHOT</revision>
     </properties>
@@ -97,27 +84,27 @@
             <dependency>
                 <groupId>antlr</groupId>
                 <artifactId>antlr</artifactId>
-                <version>2.7.7</version>
+                <version>${antlr2.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-runtime</artifactId>
-                <version>4.10.1</version>
+                <version>${antlr4.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4</artifactId>
-                <version>4.10.1</version>
+                <version>${antlr4.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr3</artifactId>
-                <version>3.5</version>
+                <version>${antlr3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr3-runtime</artifactId>
-                <version>3.5</version>
+                <version>${antlr3.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.argparse4j</groupId>
@@ -139,59 +126,64 @@
 
             <!-- JPLAG -->
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>text</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>java</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>python-3</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>csharp-6</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>rlang</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>cpp</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
+                <artifactId>kotlin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
                 <artifactId>scheme</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>chars</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>frontend-utils</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>frontend-testutils</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>de.jplag</groupId>
                 <artifactId>jplag</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -230,41 +222,9 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.2.7</version>
-                    <configuration>
-                        <updatePomFile>true</updatePomFile>
-                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>flatten</id>
-                            <goals>
-                                <goal>flatten</goal>
-                            </goals>
-                            <phase>process-resources</phase>
-                        </execution>
-                        <execution>
-                            <id>flatten.clean</id>
-                            <goals>
-                                <goal>clean</goal>
-                            </goals>
-                            <phase>clean</phase>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
                     <groupId>com.helger.maven</groupId>
                     <artifactId>ph-javacc-maven-plugin</artifactId>
                     <version>4.1.5</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -274,10 +234,11 @@
                 <plugin>
                     <groupId>org.antlr</groupId>
                     <artifactId>antlr4-maven-plugin</artifactId>
-                    <version>4.10.1</version>
+                    <version>${antlr4.version}</version>
                 </plugin>
 
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.2.2</version>
                     <configuration>
@@ -297,8 +258,9 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.4.1</version>
                     <configuration>
                         <descriptorRefs>
                             <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -313,27 +275,18 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>attach-javadocs</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>3.0.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.0.0-M2</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -341,15 +294,32 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M7</version>
+                <version>1.2.7</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <phase>clean</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -369,6 +339,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -381,30 +352,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <phase>verify</phase>
-                        <configuration>
-                            <keyname>0xC6E9DAC2</keyname>
-                            <!--suppress UnresolvedMavenProperty -->
-                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -447,4 +401,71 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>module-defaults</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>jplag.frontend-utils</module>
+                <module>jplag.frontend-testutils</module>
+                <module>jplag.frontend.chars</module>
+                <module>jplag.frontend.cpp</module>
+                <module>jplag.frontend.csharp-6</module>
+                <module>jplag.frontend.java</module>
+                <module>jplag.frontend.kotlin</module>
+                <module>jplag.frontend.python-3</module>
+                <module>jplag.frontend.rlang</module>
+                <module>jplag.frontend.rust</module>
+                <module>jplag.frontend.scheme</module>
+                <module>jplag.frontend.text</module>
+                <module>jplag</module>
+                <module>jplag.cli</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>deployment</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>jplag.frontend-utils</module>
+                <module>jplag.frontend-testutils</module>
+                <module>jplag.frontend.chars</module>
+                <module>jplag.frontend.cpp</module>
+                <module>jplag.frontend.csharp-6</module>
+                <module>jplag.frontend.java</module>
+                <module>jplag.frontend.kotlin</module>
+                <module>jplag.frontend.python-3</module>
+                <module>jplag.frontend.rlang</module>
+                <module>jplag.frontend.rust</module>
+                <module>jplag.frontend.scheme</module>
+                <module>jplag.frontend.text</module>
+                <module>jplag</module>
+            </modules>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>verify</phase>
+                                <configuration>
+                                    <keyname>0xC6E9DAC2</keyname>
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
