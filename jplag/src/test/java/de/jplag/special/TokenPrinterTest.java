@@ -25,6 +25,8 @@ public class TokenPrinterTest extends TestBase {
     private static final String LANGUAGE_CPP = "cpp";
     private static final String LANGUAGE_R = "rlang";
 
+    private static final String LANGUAGE_KOTLIN = "kotlin";
+
     @Disabled
     @Test
     void printCPPFiles() {
@@ -54,7 +56,7 @@ public class TokenPrinterTest extends TestBase {
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printKotlinFiles() {
-        printSubmissions(options -> options.setLanguageOption(LanguageOption.KOTLIN));
+        printSubmissions(options -> options.setLanguage(LanguageLoader.loadLanguage(LANGUAGE_KOTLIN).orElseThrow()));
     }
 
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {

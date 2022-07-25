@@ -11,6 +11,6 @@ class LanguageTest {
     @Test
     void testLoading() {
         var languages = LanguageLoader.loadLanguages();
-        Assertions.assertEquals(8, languages.size());
+        Assertions.assertEquals(9, languages.size());
     }
 }

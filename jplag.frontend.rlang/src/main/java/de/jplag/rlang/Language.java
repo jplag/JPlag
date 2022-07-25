@@ -14,7 +14,7 @@ import de.jplag.TokenList;
 public class Language implements de.jplag.Language {
 
     private static final String NAME = "R Parser";
-    private static final String SHORT_NAME = "R";
+    private static final String SHORT_NAME = "rlang";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSION = {".R", ".r"};
     private final RParserAdapter parserAdapter;
