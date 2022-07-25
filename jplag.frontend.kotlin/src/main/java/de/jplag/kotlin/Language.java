@@ -1,4 +1,4 @@
-package de.jplag.rlang;
+package de.jplag.kotlin;
 
 import java.io.File;
 
@@ -6,23 +6,23 @@ import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /**
- * This represents the R language as a language supported by JPlag.
+ * This represents the Kotlin language as a language supported by JPlag.
  */
 public class Language implements de.jplag.Language {
 
-    private static final String NAME = "R Parser";
-    private static final String SHORT_NAME = "R";
+    private static final String NAME = "Kotlin Parser";
+    private static final String SHORT_NAME = "Kotlin";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private static final String[] FILE_EXTENSION = {".R", ".r"};
-    private final RParserAdapter parserAdapter;
+    private static final String[] FILE_EXTENSIONS = {".kt"};
+    private final KotlinParserAdapter parserAdapter;
 
     public Language(ErrorConsumer consumer) {
-        this.parserAdapter = new RParserAdapter(consumer);
+        this.parserAdapter = new KotlinParserAdapter(consumer);
     }
 
     @Override
     public String[] suffixes() {
-        return FILE_EXTENSION;
+        return FILE_EXTENSIONS;
     }
 
     @Override
@@ -67,6 +67,6 @@ public class Language implements de.jplag.Language {
 
     @Override
     public int numberOfTokens() {
-        return RTokenConstants.NUM_DIFF_TOKENS;
+        return KotlinTokenConstants.NUMBER_DIFF_TOKENS;
     }
 }
