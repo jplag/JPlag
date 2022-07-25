@@ -7,7 +7,7 @@
         <artifactId>aggregator</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>rlang</artifactId>
+    <artifactId>kotlin</artifactId>
 
     <dependencies>
         <dependency>
@@ -40,7 +40,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>

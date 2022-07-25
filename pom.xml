@@ -157,6 +157,11 @@
             </dependency>
             <dependency>
                 <groupId>de.jplag</groupId>
+                <artifactId>kotlin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
                 <artifactId>scheme</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -255,7 +260,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.4.1</version>
                     <configuration>
                         <descriptorRefs>
                             <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -409,6 +414,7 @@
                 <module>jplag.frontend.cpp</module>
                 <module>jplag.frontend.csharp-6</module>
                 <module>jplag.frontend.java</module>
+                <module>jplag.frontend.kotlin</module>
                 <module>jplag.frontend.python-3</module>
                 <module>jplag.frontend.rlang</module>
                 <module>jplag.frontend.scheme</module>
@@ -429,6 +435,7 @@
                 <module>jplag.frontend.cpp</module>
                 <module>jplag.frontend.csharp-6</module>
                 <module>jplag.frontend.java</module>
+                <module>jplag.frontend.kotlin</module>
                 <module>jplag.frontend.python-3</module>
                 <module>jplag.frontend.rlang</module>
                 <module>jplag.frontend.scheme</module>
