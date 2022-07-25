@@ -23,6 +23,6 @@ jobs:
           gpg_private_key: ${{ secrets.PGP_SECRET }}
           passphrase: ${{ secrets.PGP_PW }}
       - name: Publish package
-        run: mvn --batch-mode deploy
+        run: mvn -P deployment -U -B deploy
         env:
           GPG_PASSPHRASE: ${{ secrets.PGP_PW }}
