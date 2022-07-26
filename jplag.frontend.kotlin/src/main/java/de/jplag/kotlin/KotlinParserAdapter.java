@@ -11,7 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 import de.jplag.kotlin.grammar.KotlinLexer;
@@ -25,10 +24,9 @@ public class KotlinParserAdapter extends AbstractParser {
 
     /**
      * Creates the KotlinParserAdapter
-     * @param consumer the ErrorConsumer that parser errors are passed on to.
      */
-    public KotlinParserAdapter(ErrorConsumer consumer) {
-        super(consumer);
+    public KotlinParserAdapter() {
+        super();
     }
 
     /**
@@ -66,7 +64,7 @@ public class KotlinParserAdapter extends AbstractParser {
                 treeWalker.walk(listener, parseTree);
             }
         } catch (IOException exception) {
-            getErrorConsumer().addError("Parsing Error in '%s': %s%s".formatted(fileName, File.separator, exception));
+            logger.error("Parsing Error in '{}': {}{}", fileName, File.separator, exception);
             return false;
         }
         return true;
