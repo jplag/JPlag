@@ -3,7 +3,9 @@ package de.jplag.csharp.grammar;
 import java.util.HashSet;
 import java.util.Stack;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.TokenStream;
 
 /**
  * This class was taken from <a href="https://github.com/antlr/grammars-v4/tree/master/csharp">antlr/grammars-v4</a>. It
@@ -65,7 +67,7 @@ abstract class CSharpPreprocessorParserBase extends Parser {
         CSharpPreprocessorParser.PreprocessorConditionalContext d = (CSharpPreprocessorParser.PreprocessorConditionalContext) c;
         if (!conditions.peek()) {
             conditions.pop();
-            d.value = true && AllConditions();
+            d.value = AllConditions();
             conditions.push(true);
         } else {
             d.value = false;
