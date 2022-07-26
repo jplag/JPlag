@@ -11,7 +11,6 @@ public abstract class Token {
     private int length;
     private String file;
 
-    private boolean marked;
     private boolean basecode = false;
     private int hash = -1; // hash-value. set and used by main algorithm (GSTiling)
 
@@ -123,13 +122,6 @@ public abstract class Token {
         return basecode;
     }
 
-    /**
-     * @return whether this token is marked by the comparison algorithm.
-     */
-    /* package-private */ boolean isMarked() {
-        return marked;
-    }
-
     /* package-private */ boolean setBasecode(boolean basecode) {
         this.basecode = basecode;
         return basecode;
@@ -141,10 +133,5 @@ public abstract class Token {
 
     /* package-private */ void setHash(int hash) {
         this.hash = hash;
-    }
-
-    /* package-private */ boolean setMarked(boolean marked) {
-        this.marked = marked;
-        return marked;
     }
 }

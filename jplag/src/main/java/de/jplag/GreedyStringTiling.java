@@ -4,7 +4,9 @@ import static de.jplag.TokenConstants.FILE_END;
 import static de.jplag.TokenConstants.SEPARATOR_TOKEN;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.jplag.options.JPlagOptions;
 
@@ -28,10 +30,11 @@ public class GreedyStringTiling {
      * Creating hashes in linear time. The hash-code will be written in every Token for the next &lt;hashLength&gt; token
      * (includes the Token itself).
      * @param tokenList contains the tokens.
+     * @param markedTokens contains the marked tokens.
      * @param hashLength is the hash length (condition: 1 &lt; hashLength &lt; 26)
      * @param makeTable determines if a simple hash table is created in the structure.
      */
-    public void createHashes(TokenList tokenList, int hashLength, boolean makeTable) {
+    public void createHashes(TokenList tokenList, Set<Token> markedTokens, int hashLength, boolean makeTable) {
         // Here the upper boundary of the hash length is set.
         // It is determined by the number of bits of the 'int' data type and the number of tokens.
         if (hashLength < 1) {
@@ -52,7 +55,7 @@ public class GreedyStringTiling {
         for (int i = 0; i < hashLength; i++) {
             hash = (2 * hash) + (tokenList.getToken(i).type & modulo);
             hashedLength++;
-            if (tokenList.getToken(i).isMarked()) {
+            if (markedTokens.contains(tokenList.getToken(i))) {
                 hashedLength = 0;
             }
         }
@@ -68,7 +71,7 @@ public class GreedyStringTiling {
                 }
                 hash -= factor * (tokenList.getToken(i).type & modulo);
                 hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
-                if (tokenList.getToken(i + hashLength).isMarked()) {
+                if (markedTokens.contains(tokenList.getToken(i + hashLength))) {
                     hashedLength = 0;
                 } else {
                     hashedLength++;
@@ -79,7 +82,7 @@ public class GreedyStringTiling {
                 tokenList.getToken(i).setHash((hashedLength >= hashLength) ? hash : -1);
                 hash -= factor * (tokenList.getToken(i).type & modulo);
                 hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
-                if (tokenList.getToken(i + hashLength).isMarked()) {
+                if (markedTokens.contains(tokenList.getToken(i + hashLength))) {
                     hashedLength = 0;
                 } else {
                     hashedLength++;
@@ -135,15 +138,15 @@ public class GreedyStringTiling {
             return comparison;
         }
 
-        markTokens(first, isBaseCodeComparison);
-        markTokens(second, isBaseCodeComparison);
+        Set<Token> leftMarkedTokens = initiallyMarkedTokens(first, isBaseCodeComparison);
+        Set<Token> rightMarkedTokens = initiallyMarkedTokens(second, isBaseCodeComparison);
 
         // create hashes:
         if (first.hashLength != minimumTokenMatch) {
-            createHashes(first, minimumTokenMatch, isBaseCodeComparison); // don't make table if it is not a base code comparison
+            createHashes(first, leftMarkedTokens, minimumTokenMatch, isBaseCodeComparison); // don't make table if it is not a base code comparison
         }
         if (second.hashLength != minimumTokenMatch || second.tokenHashes == null) {
-            createHashes(second, minimumTokenMatch, true);
+            createHashes(second, rightMarkedTokens, minimumTokenMatch, true);
         }
 
         List<Match> matches = new ArrayList<>();
@@ -154,27 +157,27 @@ public class GreedyStringTiling {
             maxMatch = minimumTokenMatch;
             matches.clear();
             for (int x = 0; x < first.size() - maxMatch; x++) {
-                List<Integer> hashedTokens = second.tokenHashes.get(first.getToken(x).getHash());
-                if (first.getToken(x).isMarked() || first.getToken(x).getHash() == -1) {
+                if (leftMarkedTokens.contains(first.getToken(x)) || first.getToken(x).getHash() == -1) {
                     continue;
                 }
+                List<Integer> hashedTokens = second.tokenHashes.get(first.getToken(x).getHash());
                 inner: for (Integer y : hashedTokens) {
-                    if (second.getToken(y).isMarked() || maxMatch >= second.size() - y) { // >= because of pivots!
+                    if (rightMarkedTokens.contains(second.getToken(y)) || maxMatch >= second.size() - y) { // >= because of pivots!
                         continue;
                     }
 
                     int j, hx, hy;
                     for (j = maxMatch - 1; j >= 0; j--) { // begins comparison from behind
-                        if (first.getToken(hx = x + j).type != second.getToken(hy = y + j).type || first.getToken(hx).isMarked()
-                                || second.getToken(hy).isMarked()) {
+                        if (first.getToken(hx = x + j).type != second.getToken(hy = y + j).type || leftMarkedTokens.contains(first.getToken(hx))
+                                || rightMarkedTokens.contains(second.getToken(hy))) {
                             continue inner;
                         }
                     }
 
                     // expand match
                     j = maxMatch;
-                    while (first.getToken(hx = x + j).type == second.getToken(hy = y + j).type && !first.getToken(hx).isMarked()
-                            && !second.getToken(hy).isMarked()) {
+                    while (first.getToken(hx = x + j).type == second.getToken(hy = y + j).type && !leftMarkedTokens.contains(first.getToken(hx))
+                            && !rightMarkedTokens.contains(second.getToken(hy))) {
                         j++;
                     }
 
@@ -192,8 +195,8 @@ public class GreedyStringTiling {
                 comparison.addMatch(x, y, matches.get(i).getLength());
                 // in order that "Match" will be newly build (because reusing)
                 for (int j = matches.get(i).getLength(); j > 0; j--) {
-                    first.getToken(x).setMarked(true); // mark all Tokens!
-                    second.getToken(y).setMarked(true);
+                    leftMarkedTokens.add(first.getToken(x));
+                    rightMarkedTokens.add(second.getToken(y));
                     if (isBaseCodeComparison) {
                         first.getToken(x).setBasecode(true);
                         second.getToken(y).setBasecode(true);
@@ -217,18 +220,13 @@ public class GreedyStringTiling {
         matches.add(new Match(startA, startB, length));
     }
 
-    /**
-     * Disable finding a match at separator tokens and basecode matches for non-basecode comparisons.
-     * @param tokenList Tokens to mark.
-     * @param isBaseCodeComparison Whether the {@link Token#basecode} matches should be enabled for matching.
-     */
-    private void markTokens(TokenList tokenList, boolean isBaseCodeComparison) {
-        for (Token token : tokenList.allTokens()) {
-            if (isBaseCodeComparison) {
-                token.setMarked(token.type == FILE_END || token.type == SEPARATOR_TOKEN);
-            } else {
-                token.setMarked(token.type == FILE_END || token.type == SEPARATOR_TOKEN || (token.isBasecode() && options.hasBaseCode()));
+    private Set<Token> initiallyMarkedTokens(TokenList tokenList, boolean isBaseCodeComparison) {
+        Set<Token> markedTokens = new HashSet<Token>();
+        for (Token token: tokenList) {
+            if (token.type == FILE_END || token.type == SEPARATOR_TOKEN || (!isBaseCodeComparison && token.isBasecode() && options.hasBaseCode())) {
+                markedTokens.add(token);
             }
         }
+        return markedTokens;
     }
 }
