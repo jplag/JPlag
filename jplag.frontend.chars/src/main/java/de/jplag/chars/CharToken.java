@@ -38,11 +38,6 @@ public class CharToken extends Token {
     }
 
     @Override
-    public void setLength(int length) {
-        // Do nothing!
-    }
-
-    @Override
     protected String type2string() {
         if (character == null) {
             return "FILE_END";

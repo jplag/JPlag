@@ -95,14 +95,6 @@ public abstract class Token {
     }
 
     /**
-     * Sets the length if the code sections represented by this token.
-     * @param length is the length in characters to set.
-     */
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-    /**
      * Sets the line index denoting in which line the code sections represented by this token starts.
      * @param line is the line index to set.
      */
