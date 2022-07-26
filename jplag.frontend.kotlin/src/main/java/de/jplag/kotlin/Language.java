@@ -2,9 +2,10 @@ package de.jplag.kotlin;
 
 import java.io.File;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
-import org.kohsuke.MetaInfServices;
 
 /**
  * This represents the Kotlin language as a language supported by JPlag.
