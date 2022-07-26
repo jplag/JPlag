@@ -61,32 +61,21 @@ public class GreedyStringTiling {
         }
         int factor = (hashLength != 1 ? (2 << (hashLength - 2)) : 1);
 
-        if (makeTable) {
-            for (int i = 0; i < loops; i++) {
-                if (hashedLength >= hashLength) {
-                    tokenList.getToken(i).setHash(hash);
+        for (int i = 0; i < loops; i++) {
+            if (hashedLength >= hashLength) {
+                tokenList.getToken(i).setHash(hash);
+                if (makeTable) {
                     tokenList.tokenHashes.put(hash, i);   // add into hashtable
-                } else {
-                    tokenList.getToken(i).setHash(-1);
                 }
-                hash -= factor * (tokenList.getToken(i).type & modulo);
-                hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
-                if (markedTokens.contains(tokenList.getToken(i + hashLength))) {
-                    hashedLength = 0;
-                } else {
-                    hashedLength++;
-                }
+            } else {
+                tokenList.getToken(i).setHash(-1);
             }
-        } else {
-            for (int i = 0; i < loops; i++) {
-                tokenList.getToken(i).setHash((hashedLength >= hashLength) ? hash : -1);
-                hash -= factor * (tokenList.getToken(i).type & modulo);
-                hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
-                if (markedTokens.contains(tokenList.getToken(i + hashLength))) {
-                    hashedLength = 0;
-                } else {
-                    hashedLength++;
-                }
+            hash -= factor * (tokenList.getToken(i).type & modulo);
+            hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
+            if (markedTokens.contains(tokenList.getToken(i + hashLength))) {
+                hashedLength = 0;
+            } else {
+                hashedLength++;
             }
         }
         tokenList.hashLength = hashLength;
