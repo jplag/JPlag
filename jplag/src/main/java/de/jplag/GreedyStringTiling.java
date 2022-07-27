@@ -67,8 +67,8 @@ public class GreedyStringTiling {
      */
     private JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
         // first and second refer to the list of tokens of the first and second submission:
-        TokenList first = firstSubmission.getTokenList();
-        TokenList second = secondSubmission.getTokenList();
+        List<Token> first = firstSubmission.getTokenList().allTokens();
+        List<Token> second = secondSubmission.getTokenList().allTokens();
 
         // Initialize:
         JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
@@ -93,27 +93,27 @@ public class GreedyStringTiling {
             matches.clear();
             for (int x = 0; x < first.size() - maxMatch; x++) {
                 int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(x);
-                if (leftMarkedTokens.contains(first.getToken(x)) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
+                if (leftMarkedTokens.contains(first.get(x)) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
                     continue;
                 }
                 List<Integer> hashedTokens = rightLookupTable.startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
                 inner: for (Integer y : hashedTokens) {
-                    if (rightMarkedTokens.contains(second.getToken(y)) || maxMatch >= second.size() - y) { // >= because of pivots!
+                    if (rightMarkedTokens.contains(second.get(y)) || maxMatch >= second.size() - y) { // >= because of pivots!
                         continue;
                     }
 
                     int j, hx, hy;
                     for (j = maxMatch - 1; j >= 0; j--) { // begins comparison from behind
-                        if (first.getToken(hx = x + j).type != second.getToken(hy = y + j).type || leftMarkedTokens.contains(first.getToken(hx))
-                                || rightMarkedTokens.contains(second.getToken(hy))) {
+                        if (first.get(hx = x + j).type != second.get(hy = y + j).type || leftMarkedTokens.contains(first.get(hx))
+                                || rightMarkedTokens.contains(second.get(hy))) {
                             continue inner;
                         }
                     }
 
                     // expand match
                     j = maxMatch;
-                    while (first.getToken(hx = x + j).type == second.getToken(hy = y + j).type && !leftMarkedTokens.contains(first.getToken(hx))
-                            && !rightMarkedTokens.contains(second.getToken(hy))) {
+                    while (first.get(hx = x + j).type == second.get(hy = y + j).type && !leftMarkedTokens.contains(first.get(hx))
+                            && !rightMarkedTokens.contains(second.get(hy))) {
                         j++;
                     }
 
@@ -131,11 +131,11 @@ public class GreedyStringTiling {
                 comparison.addMatch(x, y, matches.get(i).getLength());
                 // in order that "Match" will be newly build (because reusing)
                 for (int j = matches.get(i).getLength(); j > 0; j--) {
-                    leftMarkedTokens.add(first.getToken(x));
-                    rightMarkedTokens.add(second.getToken(y));
+                    leftMarkedTokens.add(first.get(x));
+                    rightMarkedTokens.add(second.get(y));
                     if (isBaseCodeComparison) {
-                        first.getToken(x).setBasecode(true);
-                        second.getToken(y).setBasecode(true);
+                        first.get(x).setBasecode(true);
+                        second.get(y).setBasecode(true);
                     }
                     x++;
                     y++;
@@ -156,9 +156,9 @@ public class GreedyStringTiling {
         matches.add(new Match(startA, startB, length));
     }
 
-    private Set<Token> initiallyMarkedTokens(TokenList tokenList, boolean isBaseCodeComparison) {
+    private Set<Token> initiallyMarkedTokens(List<Token> tokens, boolean isBaseCodeComparison) {
         Set<Token> markedTokens = new HashSet<Token>();
-        for (Token token: tokenList) {
+        for (Token token: tokens) {
             if (token.type == FILE_END || token.type == SEPARATOR_TOKEN || (!isBaseCodeComparison && token.isBasecode() && options.hasBaseCode())) {
                 markedTokens.add(token);
             }
