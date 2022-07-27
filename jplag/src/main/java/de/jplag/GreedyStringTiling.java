@@ -4,8 +4,10 @@ import static de.jplag.TokenConstants.FILE_END;
 import static de.jplag.TokenConstants.SEPARATOR_TOKEN;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import de.jplag.options.JPlagOptions;
@@ -21,61 +23,10 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
 
     private final JPlagOptions options;
+    private Map<Submission, SubsequenceHashLookupTable> hashLookupTables = new HashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
         this.options = options;
-    }
-
-    /**
-     * Creating hashes in linear time. The hash-code will be written in every Token for the next &lt;hashLength&gt; token
-     * (includes the Token itself).
-     * @param tokenList contains the tokens.
-     * @param markedTokens contains the marked tokens.
-     * @param hashLength is the hash length (condition: 1 &lt; hashLength &lt; 26)
-     */
-    public void createHashes(TokenList tokenList, Set<Token> markedTokens, int hashLength) {
-        // Here the upper boundary of the hash length is set.
-        // It is determined by the number of bits of the 'int' data type and the number of tokens.
-        if (hashLength < 1) {
-            hashLength = 1;
-        }
-        hashLength = (hashLength < 26 ? hashLength : 25);
-
-        if (tokenList.size() < hashLength) {
-            return;
-        }
-
-        int modulo = ((1 << 6) - 1);   // Modulo 64!
-
-        int loops = tokenList.size() - hashLength;
-        tokenList.tokenHashes = new TokenHashMap(3 * loops);
-        int hash = 0;
-        int hashedLength = 0;
-        for (int i = 0; i < hashLength; i++) {
-            hash = (2 * hash) + (tokenList.getToken(i).type & modulo);
-            hashedLength++;
-            if (markedTokens.contains(tokenList.getToken(i))) {
-                hashedLength = 0;
-            }
-        }
-        int factor = (hashLength != 1 ? (2 << (hashLength - 2)) : 1);
-
-        for (int i = 0; i < loops; i++) {
-            if (hashedLength >= hashLength) {
-                tokenList.getToken(i).setHash(hash);
-                tokenList.tokenHashes.put(hash, i);   // add into hashtable
-            } else {
-                tokenList.getToken(i).setHash(-1);
-            }
-            hash -= factor * (tokenList.getToken(i).type & modulo);
-            hash = (2 * hash) + (tokenList.getToken(i + hashLength).type & modulo);
-            if (markedTokens.contains(tokenList.getToken(i + hashLength))) {
-                hashedLength = 0;
-            } else {
-                hashedLength++;
-            }
-        }
-        tokenList.hashLength = hashLength;
     }
 
     /**
@@ -84,7 +35,7 @@ public class GreedyStringTiling {
      * @param baseSubmission is the base code submission. Must not be null.
      */
     public void preprocessBaseCodeSubmission(Submission baseSubmission) {
-        createHashes(baseSubmission.getTokenList(), Set.of(), options.getMinimumTokenMatch());
+        subsequenceHashLookupTableForSubmission(baseSubmission, Set.of());
     }
 
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
@@ -130,13 +81,8 @@ public class GreedyStringTiling {
         Set<Token> leftMarkedTokens = initiallyMarkedTokens(first, isBaseCodeComparison);
         Set<Token> rightMarkedTokens = initiallyMarkedTokens(second, isBaseCodeComparison);
 
-        // create hashes:
-        if (first.hashLength != minimumTokenMatch) {
-            createHashes(first, leftMarkedTokens, minimumTokenMatch); // don't make table if it is not a base code comparison
-        }
-        if (second.hashLength != minimumTokenMatch || second.tokenHashes == null) {
-            createHashes(second, rightMarkedTokens, minimumTokenMatch);
-        }
+        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(firstSubmission, leftMarkedTokens);
+        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(secondSubmission, rightMarkedTokens);
 
         List<Match> matches = new ArrayList<>();
 
@@ -146,10 +92,11 @@ public class GreedyStringTiling {
             maxMatch = minimumTokenMatch;
             matches.clear();
             for (int x = 0; x < first.size() - maxMatch; x++) {
-                if (leftMarkedTokens.contains(first.getToken(x)) || first.getToken(x).getHash() == -1) {
+                int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(x);
+                if (leftMarkedTokens.contains(first.getToken(x)) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
                     continue;
                 }
-                List<Integer> hashedTokens = second.tokenHashes.get(first.getToken(x).getHash());
+                List<Integer> hashedTokens = rightLookupTable.startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
                 inner: for (Integer y : hashedTokens) {
                     if (rightMarkedTokens.contains(second.getToken(y)) || maxMatch >= second.size() - y) { // >= because of pivots!
                         continue;
@@ -217,5 +164,14 @@ public class GreedyStringTiling {
             }
         }
         return markedTokens;
+    }
+
+    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, Set<Token> markedTokens) {
+        if (hashLookupTables.containsKey(submission)) {
+            return hashLookupTables.get(submission);
+        }
+        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(options.getMinimumTokenMatch(), submission.getTokenList().allTokens(), markedTokens);
+        hashLookupTables.put(submission, lookupTable);
+        return lookupTable;
     }
 }

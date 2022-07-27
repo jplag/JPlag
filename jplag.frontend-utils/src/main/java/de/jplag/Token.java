@@ -12,7 +12,6 @@ public abstract class Token {
     private String file;
 
     private boolean basecode = false;
-    private int hash = -1; // hash-value. set and used by main algorithm (GSTiling)
 
     protected int type;
 
@@ -111,10 +110,6 @@ public abstract class Token {
      */
     protected abstract String type2string();
 
-    /* package-private */ int getHash() {
-        return hash;
-    }
-
     /**
      * @return whether this token is part of a basecode.
      */
@@ -129,9 +124,5 @@ public abstract class Token {
 
     /* package-private */ void setFile(String file) {
         this.file = file;
-    }
-
-    /* package-private */ void setHash(int hash) {
-        this.hash = hash;
     }
 }

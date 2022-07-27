@@ -3,15 +3,14 @@ package de.jplag;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
- * List of tokens. Allows random access to individual tokens. Contains a hash map for token hashes.
+ * List of tokens. Allows random access to individual tokens.
  */
-public class TokenList {
+public class TokenList implements Iterable<Token> {
     private final List<Token> tokens;
-    TokenHashMap tokenHashes = null;
-    int hashLength = -1;
 
     /**
      * Creates an empty token list.
@@ -48,7 +47,7 @@ public class TokenList {
      * Returns a view on all tokens.
      * @return all tokens.
      */
-    public Iterable<Token> allTokens() {
+    public List<Token> allTokens() {
         return new ArrayList<>(tokens);
     }
 
@@ -73,5 +72,10 @@ public class TokenList {
         } catch (OutOfMemoryError exception) {
             return "Token list to large for output: " + tokens.size() + " Tokens";
         }
+    }
+
+    @Override
+    public Iterator<Token> iterator() {
+        return tokens.iterator();
     }
 }
