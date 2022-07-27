@@ -14,8 +14,8 @@ import de.jplag.options.JPlagOptions;
 
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
- * to the classes {@link Token}, and {@link Match}. While this class was reworked, it still contains
- * some quirks from the initial version.
+ * to the classes {@link Token}, and {@link Match}. While this class was reworked, it still contains some quirks from
+ * the initial version.
  * @see <a href=
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
  * String Similarity via Greedy String Tiling and Running Karp−Rabin Matching </a>
@@ -30,8 +30,8 @@ public class GreedyStringTiling {
     }
 
     /**
-     * Preprocesses the given base code submission.
-     * Should be called before computing comparisons if there is a base code submission.
+     * Preprocesses the given base code submission. Should be called before computing comparisons if there is a base code
+     * submission.
      * @param baseSubmission is the base code submission. Must not be null.
      */
     public void preprocessBaseCodeSubmission(Submission baseSubmission) {
@@ -145,8 +145,8 @@ public class GreedyStringTiling {
     }
 
     /**
-     * Checks if the two referenced subsequences are equal and not marked.
-     * Comparison is performed backwards based on the assumption that the further tokens are away, the more likely they differ.
+     * Checks if the two referenced subsequences are equal and not marked. Comparison is performed backwards based on the
+     * assumption that the further tokens are away, the more likely they differ.
      * @param subsequenceLength the length of the subsequence to consider.
      * @param leftTokens The complete list of left tokens.
      * @param leftStartIndex The startIndex in the left token list.
@@ -156,7 +156,8 @@ public class GreedyStringTiling {
      * @param rightMarkedTokens The marked tokens of the right token list.
      * @return
      */
-    private boolean subsequencesAreMatchingAndNotMarked(int subsequenceLength, List<Token> leftTokens, int leftStartIndex, Set<Token> leftMarkedTokens, List<Token> rightTokens, int rightStartIndex, Set<Token> rightMarkedTokens) {
+    private boolean subsequencesAreMatchingAndNotMarked(int subsequenceLength, List<Token> leftTokens, int leftStartIndex,
+            Set<Token> leftMarkedTokens, List<Token> rightTokens, int rightStartIndex, Set<Token> rightMarkedTokens) {
         for (int offset = subsequenceLength - 1; offset >= 0; offset--) {
             Token leftToken = leftTokens.get(leftStartIndex + offset);
             Token rightToken = rightTokens.get(rightStartIndex + offset);
@@ -178,7 +179,7 @@ public class GreedyStringTiling {
 
     private Set<Token> initiallyMarkedTokens(List<Token> tokens, boolean isBaseCodeComparison) {
         Set<Token> markedTokens = new HashSet<Token>();
-        for (Token token: tokens) {
+        for (Token token : tokens) {
             if (token.type == FILE_END || token.type == SEPARATOR_TOKEN || (!isBaseCodeComparison && token.isBasecode() && options.hasBaseCode())) {
                 markedTokens.add(token);
             }
@@ -190,7 +191,8 @@ public class GreedyStringTiling {
         if (hashLookupTables.containsKey(submission)) {
             return hashLookupTables.get(submission);
         }
-        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(options.getMinimumTokenMatch(), submission.getTokenList(), markedTokens);
+        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(options.getMinimumTokenMatch(), submission.getTokenList(),
+                markedTokens);
         hashLookupTables.put(submission, lookupTable);
         return lookupTable;
     }

@@ -14,8 +14,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
-import de.jplag.TokenConstants;
 import de.jplag.Token;
+import de.jplag.TokenConstants;
 import de.jplag.kotlin.grammar.KotlinLexer;
 import de.jplag.kotlin.grammar.KotlinParser;
 

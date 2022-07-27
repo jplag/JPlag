@@ -29,8 +29,7 @@ public abstract class Token {
         this.file = file;
         if (type == TokenConstants.FILE_END) {
             this.line = NO_VALUE;
-        }
-        else {
+        } else {
             this.line = line > 0 ? line : 1;
         }
     }

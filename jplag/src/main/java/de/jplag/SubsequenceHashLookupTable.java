@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A class to generate and store hashes over a fixed length subsequence of a given list of tokens.
- * Hash generation is optimized to work in O(n).
+ * A class to generate and store hashes over a fixed length subsequence of a given list of tokens. Hash generation is
+ * optimized to work in O(n).
  */
 public class SubsequenceHashLookupTable {
     private static final int MAX_HASH_LENGTH = 25;
@@ -23,8 +23,7 @@ public class SubsequenceHashLookupTable {
     private Map<Integer, List<Integer>> hashTable;
 
     /**
-     * Generates a new subsequence hash lookup table.
-     * Performance is optimized to compute hashes in O(n).
+     * Generates a new subsequence hash lookup table. Performance is optimized to compute hashes in O(n).
      * @param windowSize the size of the subsequences.
      * @param tokens the tokens to hash over.
      * @param markedTokens the set of marked tokens.
@@ -76,10 +75,10 @@ public class SubsequenceHashLookupTable {
     }
 
     /**
-     * Creates hashes for all subsequences with windowSize.
-     * Code is optimized to perform in O(n) using a windowing approach.
+     * Creates hashes for all subsequences with windowSize. Code is optimized to perform in O(n) using a windowing approach.
      * Hashes are computed by \sum from (i=0 to windowSize) with hash(tokens[offset+i]) * pow(2, hashLength-1-i)
-     * @param markedTokens contains the marked tokens. Subsequences containing a marked token will receive the NO_HASH value.
+     * @param markedTokens contains the marked tokens. Subsequences containing a marked token will receive the NO_HASH
+     * value.
      */
     private void computeSubsequenceHashes(Set<Token> markedTokens) {
         int hash = 0;
@@ -113,9 +112,8 @@ public class SubsequenceHashLookupTable {
     private void addToHashTable(int startIndex, int subsequenceHash) {
         if (hashTable.containsKey(subsequenceHash)) {
             hashTable.get(subsequenceHash).add(startIndex);
-        }
-        else {
-            List<Integer> startIndexes = new  ArrayList<>();
+        } else {
+            List<Integer> startIndexes = new ArrayList<>();
             startIndexes.add(startIndex);
             hashTable.put(subsequenceHash, startIndexes);
         }
