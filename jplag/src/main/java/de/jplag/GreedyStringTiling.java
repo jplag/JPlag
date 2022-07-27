@@ -32,9 +32,8 @@ public class GreedyStringTiling {
      * @param tokenList contains the tokens.
      * @param markedTokens contains the marked tokens.
      * @param hashLength is the hash length (condition: 1 &lt; hashLength &lt; 26)
-     * @param makeTable determines if a simple hash table is created in the structure.
      */
-    public void createHashes(TokenList tokenList, Set<Token> markedTokens, int hashLength, boolean makeTable) {
+    public void createHashes(TokenList tokenList, Set<Token> markedTokens, int hashLength) {
         // Here the upper boundary of the hash length is set.
         // It is determined by the number of bits of the 'int' data type and the number of tokens.
         if (hashLength < 1) {
@@ -49,7 +48,7 @@ public class GreedyStringTiling {
         int modulo = ((1 << 6) - 1);   // Modulo 64!
 
         int loops = tokenList.size() - hashLength;
-        tokenList.tokenHashes = (makeTable ? new TokenHashMap(3 * loops) : null);
+        tokenList.tokenHashes = new TokenHashMap(3 * loops);
         int hash = 0;
         int hashedLength = 0;
         for (int i = 0; i < hashLength; i++) {
@@ -64,9 +63,7 @@ public class GreedyStringTiling {
         for (int i = 0; i < loops; i++) {
             if (hashedLength >= hashLength) {
                 tokenList.getToken(i).setHash(hash);
-                if (makeTable) {
-                    tokenList.tokenHashes.put(hash, i);   // add into hashtable
-                }
+                tokenList.tokenHashes.put(hash, i);   // add into hashtable
             } else {
                 tokenList.getToken(i).setHash(-1);
             }
@@ -98,12 +95,6 @@ public class GreedyStringTiling {
             smallerSubmission = firstSubmission;
             largerSubmission = secondSubmission;
         }
-        // if hashtable exists in first but not in second structure: flip around!
-        if (largerSubmission.getTokenList().tokenHashes == null && smallerSubmission.getTokenList().tokenHashes != null) {
-            Submission swap = smallerSubmission;
-            smallerSubmission = largerSubmission;
-            largerSubmission = swap;
-        }
         return compare(smallerSubmission, largerSubmission, isBaseCodeComparison);
     }
 
@@ -132,10 +123,10 @@ public class GreedyStringTiling {
 
         // create hashes:
         if (first.hashLength != minimumTokenMatch) {
-            createHashes(first, leftMarkedTokens, minimumTokenMatch, isBaseCodeComparison); // don't make table if it is not a base code comparison
+            createHashes(first, leftMarkedTokens, minimumTokenMatch); // don't make table if it is not a base code comparison
         }
         if (second.hashLength != minimumTokenMatch || second.tokenHashes == null) {
-            createHashes(second, rightMarkedTokens, minimumTokenMatch, true);
+            createHashes(second, rightMarkedTokens, minimumTokenMatch);
         }
 
         List<Match> matches = new ArrayList<>();
