@@ -78,6 +78,15 @@ public class GreedyStringTiling {
         tokenList.hashLength = hashLength;
     }
 
+    /**
+     * Preprocesses the given base code submission.
+     * Should be called before computing comparisons if there is a base code submission.
+     * @param baseSubmission is the base code submission. Must not be null.
+     */
+    public void preprocessBaseCodeSubmission(Submission baseSubmission) {
+        createHashes(baseSubmission.getTokenList(), Set.of(), options.getMinimumTokenMatch());
+    }
+
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
         return swapAndCompare(firstSubmission, secondSubmission, false);
     }

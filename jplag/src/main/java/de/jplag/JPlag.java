@@ -84,7 +84,7 @@ public class JPlag {
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
         if (submissionSet.hasBaseCode()) {
-            coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), Set.of(), options.getMinimumTokenMatch(), true);
+            coreAlgorithm.preprocessBaseCodeSubmission(submissionSet.getBaseCode());
         }
 
         int submissionCount = submissionSet.numberOfSubmissions();
