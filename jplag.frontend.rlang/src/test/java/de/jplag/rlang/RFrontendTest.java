@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 import de.jplag.testutils.TestErrorConsumer;
 
@@ -48,7 +47,7 @@ public class RFrontendTest {
     @Test
     void parseTestFiles() {
         for (String fileName : testFiles) {
-            TokenList tokens = language.parse(testFileLocation, new String[] {fileName});
+            List<Token> tokens = language.parse(testFileLocation, new String[] {fileName});
             String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
             logger.info(output);
 
@@ -61,9 +60,9 @@ public class RFrontendTest {
     /**
      * Confirms that the code is covered to a basic extent, i.e. each line of code contains at least one token.
      * @param fileName a code sample file name
-     * @param tokens the TokenList generated from the sample
+     * @param tokens the list of Tokens generated from the sample
      */
-    private void testSourceCoverage(String fileName, TokenList tokens) {
+    private void testSourceCoverage(String fileName, List<Token> tokens) {
         File testFile = new File(testFileLocation, fileName);
 
         try {
@@ -73,7 +72,7 @@ public class RFrontendTest {
             // All lines that contain code
             var codeLines = IntStream.range(1, lines.size() + 1).filter(idx -> !lines.get(idx - 1).matches(emptyLineExpression)).toArray();
             // All lines that contain token
-            var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().toArray();
+            var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::get).mapToInt(Token::getLine).filter(l -> l != Token.NO_VALUE).distinct().toArray();
 
             if (codeLines.length > tokenLines.length) {
                 var diffLine = IntStream.range(0, codeLines.length)
@@ -93,8 +92,8 @@ public class RFrontendTest {
      * @param tokens TokenList which is supposed to contain all types of tokens
      * @param fileName The file name of the complete code example
      */
-    private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).sorted().distinct().toArray();
+    private void testTokenCoverage(List<Token> tokens, String fileName) {
+        var foundTokens = StreamSupport.stream(tokens.spliterator(), true).mapToInt(Token::getType).sorted().distinct().toArray();
         // Exclude SEPARATOR_TOKEN, as it does not occur
         var allTokens = IntStream.range(0, RTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
 

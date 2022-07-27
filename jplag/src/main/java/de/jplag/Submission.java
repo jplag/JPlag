@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents a single submission. A submission can contain multiple files.
@@ -43,7 +44,7 @@ public class Submission implements Comparable<Submission> {
     /**
      * Parse result, tokens from all files.
      */
-    private TokenList tokenList;
+    private List<Token> tokenList;
 
     /**
      * Base code comparison
@@ -130,7 +131,7 @@ public class Submission implements Comparable<Submission> {
     /**
      * @return Parse result of the submission.
      */
-    public TokenList getTokenList() {
+    public List<Token> getTokenList() {
         return tokenList;
     }
 
@@ -159,7 +160,7 @@ public class Submission implements Comparable<Submission> {
      * Resets the base code flag for all tokens of this submission.
      */
     public void resetBaseCode() {
-        for (Token token : tokenList.allTokens()) {
+        for (Token token : tokenList) {
             token.setBasecode(false);
         }
     }
@@ -176,7 +177,7 @@ public class Submission implements Comparable<Submission> {
      * Sets the tokens that have been parsed from the files this submission consists of.
      * @param tokenList is the list of these tokens.
      */
-    public void setTokenList(TokenList tokenList) {
+    public void setTokenList(List<Token> tokenList) {
         this.tokenList = tokenList;
     }
 

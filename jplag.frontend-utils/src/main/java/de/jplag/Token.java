@@ -6,6 +6,9 @@ package de.jplag;
  * The language parsers decide what is a token and what is not.
  */
 public abstract class Token {
+    /** Indicates that the requested field has no value. */
+    public static int NO_VALUE = -1;
+
     private int line;
     private int column;
     private int length;
@@ -24,7 +27,12 @@ public abstract class Token {
     public Token(int type, String file, int line) {
         this.type = type;
         this.file = file;
-        setLine(line > 0 ? line : 1);
+        if (type == TokenConstants.FILE_END) {
+            this.line = NO_VALUE;
+        }
+        else {
+            this.line = line > 0 ? line : 1;
+        }
     }
 
     /**
@@ -58,7 +66,7 @@ public abstract class Token {
 
     // this is made to distinguish the character front end. Maybe other front ends can use it too?
     public int getIndex() {
-        return -1;
+        return NO_VALUE;
     }
 
     /**

@@ -1,9 +1,10 @@
 package de.jplag.python3;
 
 import java.io.File;
+import java.util.List;
 
 import de.jplag.ErrorConsumer;
-import de.jplag.TokenList;
+import de.jplag.Token;
 
 public class Language implements de.jplag.Language {
 
@@ -34,7 +35,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public TokenList parse(File dir, String[] files) {
+    public List<Token> parse(File dir, String[] files) {
         return this.parser.parse(dir, files);
     }
 

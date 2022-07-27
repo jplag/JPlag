@@ -1,9 +1,10 @@
 package de.jplag.java;
 
 import java.io.File;
+import java.util.List;
 
 import de.jplag.ErrorConsumer;
-import de.jplag.TokenList;
+import de.jplag.Token;
 
 /**
  * Language for Java 9 and newer.
@@ -56,7 +57,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public TokenList parse(File directory, String[] files) {
+    public List<Token> parse(File directory, String[] files) {
         return this.parser.parse(directory, files);
     }
 

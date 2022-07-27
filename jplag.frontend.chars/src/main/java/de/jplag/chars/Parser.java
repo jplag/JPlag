@@ -3,15 +3,17 @@ package de.jplag.chars;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
+import de.jplag.Token;
 import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 
 public class Parser extends AbstractParser {
 
-    private TokenList tokens;
+    private List<Token> tokens;
 
     /**
      * Creates the parser.
@@ -21,14 +23,14 @@ public class Parser extends AbstractParser {
         super(errorConsumer);
     }
 
-    public TokenList parse(File directory, String[] files) {
-        tokens = new TokenList();
+    public List<Token> parse(File directory, String[] files) {
+        tokens = new ArrayList<>();
         errors = 0;
         for (String file : files) {
             getErrorConsumer().print(null, "Parsing file " + file);
             if (!parseFile(directory, file))
                 errors++;
-            tokens.addToken(new CharToken(TokenConstants.FILE_END, file, this));
+            tokens.add(new CharToken(TokenConstants.FILE_END, file, this));
         }
         if (errors == 0)
             errorConsumer.print(null, "OK");
@@ -52,7 +54,7 @@ public class Parser extends AbstractParser {
 
                 for (int i = 0; i < length; i++) {
                     if (buffer[i] <= 127 && (type = mapping[buffer[i]]) > 1) {
-                        tokens.addToken(new CharToken(type, file, offset + i, buffer[i], this));
+                        tokens.add(new CharToken(type, file, offset + i, buffer[i], this));
                     }
                 }
                 offset += length;

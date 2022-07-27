@@ -2,7 +2,9 @@ package de.jplag.text;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +14,6 @@ import antlr.Token;
 import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
 import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 
 public class Parser extends AbstractParser {
 
@@ -21,7 +22,7 @@ public class Parser extends AbstractParser {
     protected Hashtable<String, Integer> table = new Hashtable<>();
     protected int serial = 1; // 0 is FILE_END token
 
-    private TokenList tokens;
+    private List<de.jplag.Token> tokens;
 
     private String currentFile;
 
@@ -35,24 +36,21 @@ public class Parser extends AbstractParser {
         super(errorConsumer);
     }
 
-    public TokenList parse(File directory, String[] files) {
-        tokens = new TokenList();
+    public List<de.jplag.Token> parse(File directory, String[] files) {
+        tokens = new ArrayList<>();
         errors = 0;
         for (String file : files) {
             getErrorConsumer().print("", "Parsing file " + file);
             if (!parseFile(directory, file))
                 errors++;
-            tokens.addToken(new TextToken(TokenConstants.FILE_END, file, this));
+            tokens.add(new TextToken(TokenConstants.FILE_END, file, this));
         }
-
-        TokenList tmp = tokens;
-        tokens = null;
-        return tmp;
+        return tokens;
     }
 
     public void add(Token token) {
         ParserToken parserToken = (ParserToken) token;
-        tokens.addToken(new TextToken(token.getText(), currentFile, parserToken.getLine(), parserToken.getColumn(), parserToken.getLength(), this));
+        tokens.add(new TextToken(token.getText(), currentFile, parserToken.getLine(), parserToken.getColumn(), parserToken.getLength(), this));
     }
 
     public void outOfSerials() {

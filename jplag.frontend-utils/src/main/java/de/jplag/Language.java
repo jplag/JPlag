@@ -1,6 +1,7 @@
 package de.jplag;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Common interface for all languages. Each language-front end must provide a concrete language implementation.
@@ -33,7 +34,7 @@ public interface Language {
      * @param files are the names of the files to parse.
      * @return the list of parsed JPlag tokens.
      */
-    TokenList parse(File directory, String[] files);
+    List<Token> parse(File directory, String[] files);
 
     /**
      * Whether errors were found during the last {@link #parse}.

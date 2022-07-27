@@ -1,15 +1,16 @@
 package de.jplag.cpp;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
-import de.jplag.TokenList;
 
 public class Scanner extends AbstractParser {
     private String currentFile;
 
-    private TokenList tokens;
+    private List<de.jplag.Token> tokens;
 
     /**
      * Creates the parser.
@@ -19,8 +20,8 @@ public class Scanner extends AbstractParser {
         super(errorConsumer);
     }
 
-    public TokenList scan(File directory, String[] files) {
-        tokens = new TokenList();
+    public List<de.jplag.Token> scan(File directory, String[] files) {
+        tokens = new ArrayList<>();
         errors = 0;
         for (String currentFile : files) {
             this.currentFile = currentFile;
@@ -28,13 +29,13 @@ public class Scanner extends AbstractParser {
             if (!CPPScanner.scanFile(directory, currentFile, this)) {
                 errors++;
             }
-            tokens.addToken(new CPPToken(CPPTokenConstants.FILE_END, currentFile));
+            tokens.add(new CPPToken(CPPTokenConstants.FILE_END, currentFile));
         }
         return tokens;
     }
 
     public void add(int type, Token token) {
         int length = token.endColumn - token.beginColumn + 1;
-        tokens.addToken(new CPPToken(type, currentFile, token.beginLine, token.beginColumn, length));
+        tokens.add(new CPPToken(type, currentFile, token.beginLine, token.beginColumn, length));
     }
 }

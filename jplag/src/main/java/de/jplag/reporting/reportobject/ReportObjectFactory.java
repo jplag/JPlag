@@ -143,12 +143,12 @@ public class ReportObjectFactory {
      * @return A Match DTO.
      */
     private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, Boolean usesIndex) {
-        TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
-        TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
-        Token startTokenFirst = tokensFirst.getToken(match.getStartOfFirst());
-        Token endTokenFirst = tokensFirst.getToken(match.getStartOfFirst() + match.getLength() - 1);
-        Token startTokenSecond = tokensSecond.getToken(match.getStartOfSecond());
-        Token endTokenSecond = tokensSecond.getToken(match.getStartOfSecond() + match.getLength() - 1);
+        List<Token> tokensFirst = comparison.getFirstSubmission().getTokenList();
+        List<Token> tokensSecond = comparison.getSecondSubmission().getTokenList();
+        Token startTokenFirst = tokensFirst.get(match.getStartOfFirst());
+        Token endTokenFirst = tokensFirst.get(match.getStartOfFirst() + match.getLength() - 1);
+        Token startTokenSecond = tokensSecond.get(match.getStartOfSecond());
+        Token endTokenSecond = tokensSecond.get(match.getStartOfSecond() + match.getLength() - 1);
 
         int startFirst = usesIndex ? startTokenFirst.getIndex() : startTokenFirst.getLine();
         int endFirst = usesIndex ? endTokenFirst.getIndex() : endTokenFirst.getLine();

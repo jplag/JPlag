@@ -28,11 +28,6 @@ public class CharToken extends Token {
     }
 
     @Override
-    public void setLine(int line) {
-        // Do nothing!
-    }
-
-    @Override
     public void setColumn(int column) {
         // Do nothing!
     }

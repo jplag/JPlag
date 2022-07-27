@@ -14,7 +14,7 @@ import de.jplag.options.JPlagOptions;
 
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
- * to the classes {@link TokenList}, {@link Token}, and {@link Match}. While this class was reworked, it still contains
+ * to the classes {@link Token}, and {@link Match}. While this class was reworked, it still contains
  * some quirks from the initial version.
  * @see <a href=
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
@@ -67,8 +67,8 @@ public class GreedyStringTiling {
      */
     private JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
         // first and second refer to the list of tokens of the first and second submission:
-        List<Token> first = firstSubmission.getTokenList().allTokens();
-        List<Token> second = secondSubmission.getTokenList().allTokens();
+        List<Token> first = firstSubmission.getTokenList();
+        List<Token> second = secondSubmission.getTokenList();
 
         // Initialize:
         JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
@@ -190,7 +190,7 @@ public class GreedyStringTiling {
         if (hashLookupTables.containsKey(submission)) {
             return hashLookupTables.get(submission);
         }
-        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(options.getMinimumTokenMatch(), submission.getTokenList().allTokens(), markedTokens);
+        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(options.getMinimumTokenMatch(), submission.getTokenList(), markedTokens);
         hashLookupTables.put(submission, lookupTable);
         return lookupTable;
     }
