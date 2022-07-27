@@ -1,11 +1,9 @@
 package de.jplag.scala
 
+import de.jplag.scala.ScalaTokenConstants._
 import de.jplag.{AbstractParser, ErrorConsumer, TokenList}
 
 import java.io.File
-import ScalaTokenConstants._
-
-import scala.meta.Term.ApplyInfix
 import scala.meta._
 
 
@@ -14,11 +12,14 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
 
   var tokens : TokenList = _
 
+  private var lastInMethod: List[Boolean] = List[Boolean]()
+
   private val traverser: Traverser = new Traverser {
 
     case class TR(before: Option[ScalaTokenConstants.Value] = None,
                   after: Option[ScalaTokenConstants.Value] = None,
-                  traverse: Tree => Unit = _.children.foreach(traverser.apply))
+                  traverse: Tree => Unit = _.children.foreach(traverser.apply)
+                 )
 
     private def maybeAddAndApply(tree: Option[Tree], token: ScalaTokenConstants.Value): Unit = tree match {
       case Some(exp) =>
@@ -29,8 +30,13 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
 
     private def processCases(cases: List[Case]) : Unit = cases.foreach {
       c =>
-        add(ScalaTokenConstants.Case, c, fromEnd=false)
+        add(ScalaTokenConstants.CaseBegin, c, fromEnd=false)
         apply(c)
+        add(ScalaTokenConstants.CaseEnd, c, fromEnd=true)
+    }
+
+    def isNotArithmetic(op: Term.Name) = {
+      op.value.matches("""[_\w]+""")
     }
 
     private def doMatch(tree: Tree): TR = {
@@ -38,21 +44,22 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
         case Term.Do(_) => TR(Some(DoBegin), Some(DoEnd))
         case Term.Assign(_) => TR(Some(Assign), None)
         case Term.While(_) => TR(Some(WhileBegin), Some(WhileEnd))
-        case Term.For(_) => TR(Some(ForBegin), Some(ForEnd))
-        case Term.Try(expr, catchp, finallyp) => TR(Some(TryBegin),
+        case Term.For(_) =>
+          TR(Some(ForBegin), Some(ForEnd))
+        case Term.Try(expr, catchExpr, finallyExpr) => TR(Some(TryBegin),
           traverse = _ => {
             apply(expr)
-            if (catchp.nonEmpty) {
-              val start = catchp.head.pos
-              val end = catchp.last.pos
+            if (catchExpr.nonEmpty) {
+              val start = catchExpr.head.pos
+              val end = catchExpr.last.pos
               val len = end.endLine - start.startLine
 
               add(CatchBegin, start.startLine, start.startColumn, len)
-              processCases(catchp)
+              processCases(catchExpr)
               add(CatchEnd, end.endLine, end.endColumn, len)
             }
 
-            maybeAddAndApply(finallyp, ScalaTokenConstants.Finally)
+            maybeAddAndApply(finallyExpr, ScalaTokenConstants.Finally)
           })
         case Term.TryWithHandler(expr, catchp, finallyp) => TR(Some(TryBegin),
           traverse = _ => {
@@ -102,20 +109,24 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
 
           add(ForEnd, tree, fromEnd = true)
         })
-        case Term.If(cond, thenp, elsep) => TR(traverse = _ => {
-          add(IfBegin, tree, fromEnd=false)
-          apply(cond)
+        case Term.If(conditionExpr, thenExpression, elseExpression) => TR(traverse = _ => {
+          add(If, tree, fromEnd=false)
+          apply(conditionExpr)
+          add(IfBegin, thenExpression, fromEnd=false)
 
-          apply(thenp)
+          apply(thenExpression)
+          add(IfEnd, thenExpression, fromEnd=true)
 
-          elsep match {
-            case Lit.Unit() =>
+          elseExpression match {
+            case Lit.Unit() => apply(elseExpression)
             case _ =>
-              add(ScalaTokenConstants.Else, elsep, fromEnd=false)
+              val elseStart = tree.pos.text.indexOf("else", thenExpression.pos.end - tree.pos.start)
+              val elsePosition = Position.Range(tree.pos.input, tree.pos.start + elseStart, tree.pos.start + elseStart + 4)
+              add(Else, elsePosition.startLine + 1, elsePosition.startColumn + 1, elsePosition.text.length)
+              add(ElseBegin, elseExpression, fromEnd = false)
+              apply(elseExpression)
+              add(ElseEnd, elseExpression, fromEnd = true)
           }
-          apply(elsep)
-
-          add(IfEnd, tree, fromEnd=true)
         })
 
         case scala.meta.Pkg(_) => TR(Some(Package))
@@ -166,9 +177,27 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
 
         case Term.Param(_) => TR(traverse = _ => add(Parameter, tree, fromEnd = false))
         case Term.NewAnonymous(_) => TR(Some(ClassBegin), Some(ClassEnd))
-        case Term.ApplyInfix(_, op, _, _) if op.value.contains("=") && !op.value.equals("==") =>
-          TR(Some(Assign), None)
-
+        case Term.ApplyInfix(_, op, _, _) if op.value.contains("=") && !Array("==", "!=").contains(op.value) => TR(Some(Assign))
+        case Term.ApplyInfix(fun, op, typeArgs, args) if isNotArithmetic(op) => TR(traverse = _ => {
+          add(Apply, tree, fromEnd = false)
+          apply(fun)
+          for (typeArg <- typeArgs) {
+            add(TypeArgument, typeArg, fromEnd = false)
+            apply(typeArg)
+          }
+          for (arg <- args) {
+            add(Argument, arg, fromEnd = false)
+            apply(arg)
+          }
+        })
+        case Term.ApplyType(fun, typeArgs) => TR(traverse = _ => {
+          add(Apply, tree, fromEnd = false)
+          for (typeArg <- typeArgs) add(TypeArgument, typeArg, fromEnd = false)
+        })
+        case Term.New(_) => TR(Some(NewObject))
+        case Self(_) => TR(Some(SelfType))
+        case Term.Block(_) => TR(Some(BlockStart), Some(BlockEnd))
+        case Enumerator.Generator(_) => TR(Some(EnumGenerator))
         case _ => TR()
       }
     }
@@ -219,7 +248,7 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
       val ast = input.parse[Source].get
       traverser(ast)
 
-      add(FileEnd, text.count(_ == '\n') + 1, 0, 0)
+      add(FileEnd, text.count(_ == '\n')-1, 0, 0)
     } catch {
       case e: Throwable =>
         e.printStackTrace()
@@ -229,12 +258,17 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
     true
   }
 
-  private def add(typ: ScalaTokenConstants.Value, line: Int, column: Int, length: Int): Unit = {
-    tokens.addToken(new ScalaToken(typ.id, currentFile, line, column, length))
+  private def add(tType: ScalaTokenConstants.Value, line: Int, column: Int, length: Int): Unit = {
+    tokens.addToken(new ScalaToken(tType.id, currentFile, line, column, length))
   }
+
 
 
   private def add(tType: ScalaTokenConstants.Value, node: Tree, fromEnd: Boolean): Unit = {
-    tokens.addToken(new ScalaToken(node, fromEnd, currentFile, tType))
+    if (node.pos.text.nonEmpty) {
+      // SELF type tokens with no text content mess up the sequence
+      tokens.addToken(new ScalaToken(tType, currentFile, node.pos, fromEnd))
+    }
   }
+
 }

@@ -7,10 +7,9 @@ import java.io.File
 
 class Language(val consumer: ErrorConsumer) extends de.jplag.Language {
   private val parser = new Parser(consumer)
+  private final val fileExtensions = Array(".scala")
 
-  override def suffixes: Array[String] = {
-    Array(".scala")
-  }
+  override def suffixes: Array[String] = fileExtensions
 
   override def getName = "Scala parser"
 

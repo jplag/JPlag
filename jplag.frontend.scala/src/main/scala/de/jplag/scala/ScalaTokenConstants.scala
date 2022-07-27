@@ -2,6 +2,8 @@ package de.jplag.scala
 
 import de.jplag.{Token, TokenConstants}
 
+import scala.meta.inputs.Position
+
 object ScalaTokenConstants extends Enumeration with TokenConstants {
 
   val FileEnd: Value = Value(TokenConstants.FILE_END, "<EOF>")
@@ -19,14 +21,18 @@ object ScalaTokenConstants extends Enumeration with TokenConstants {
   val WhileEnd: Value = Value("}WHILE")
   val ForBegin: Value = Value("FOR{")
   val ForEnd: Value = Value("}FOR")
-  val Case: Value = Value("CASE")
+  val CaseBegin: Value = Value("CASE{")
+  val CaseEnd: Value = Value("}CASE")
   val TryBegin: Value = Value("TRY{")
   val CatchBegin: Value = Value("CATCH{")
   val CatchEnd: Value = Value("}CATCH")
   val Finally: Value = Value("FINALLY")
+  val If: Value = Value("IF")
   val IfBegin: Value = Value("IF{")
-  val Else: Value = Value("ELSE{")
   val IfEnd: Value = Value("}IF")
+  val Else: Value = Value("ELSE")
+  val ElseBegin: Value = Value("ELSE{")
+  val ElseEnd: Value = Value("}ELSE")
   val Return: Value = Value("RETURN")
   val Throw: Value = Value("THROW")
   val NewCreationBegin: Value = Value("NEW{")
@@ -68,6 +74,12 @@ object ScalaTokenConstants extends Enumeration with TokenConstants {
   val Parameter: Value = Value("PARAM")
   val Assignment: Value = Value("ASSIGN")
   val Argument: Value = Value("ARG")
+  val NewObject: Value = Value("NEW()")
+  val SelfType: Value = Value("SELF")
+  val TypeArgument: Value = Value("T_ARG")
+  val BlockStart: Value = Value("{")
+  val BlockEnd: Value = Value("}")
+  val EnumGenerator: Value = Value("ENUMERATE")
 }
 
 class ScalaToken(tType: Int,
@@ -77,13 +89,13 @@ class ScalaToken(tType: Int,
                  var length: Int)
   extends Token(tType, file, line, column, length) {
 
-  def this(node: scala.meta.Tree, fromEnd: Boolean, file: String, typ: ScalaTokenConstants.Value) {
+  def this(tType: ScalaTokenConstants.Value, file: String, pos: Position, fromEnd: Boolean) {
     this(
-      typ.id,
+      tType.id,
       file,
-      (if (fromEnd) node.pos.endLine else node.pos.startLine) + 1,
-      (if (fromEnd) node.pos.endColumn else node.pos.startColumn) + 1,
-      node.toString().length
+      (if (fromEnd) pos.endLine else pos.startLine) + 1,
+      (if (fromEnd) pos.endColumn else pos.startColumn) + 1,
+      pos.text.length
     )
   }
 
