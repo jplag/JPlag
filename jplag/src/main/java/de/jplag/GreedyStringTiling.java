@@ -97,21 +97,18 @@ public class GreedyStringTiling {
                     continue;
                 }
                 List<Integer> hashedTokens = rightLookupTable.startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
-                inner: for (Integer y : hashedTokens) {
+                for (Integer y : hashedTokens) {
                     if (rightMarkedTokens.contains(second.get(y)) || maxMatch >= second.size() - y) { // >= because of pivots!
                         continue;
                     }
 
-                    int j, hx, hy;
-                    for (j = maxMatch - 1; j >= 0; j--) { // begins comparison from behind
-                        if (first.get(hx = x + j).type != second.get(hy = y + j).type || leftMarkedTokens.contains(first.get(hx))
-                                || rightMarkedTokens.contains(second.get(hy))) {
-                            continue inner;
-                        }
+                    if (!subsequencesAreMatchingAndNotMarked(maxMatch, first, x, leftMarkedTokens, second, y, rightMarkedTokens)) {
+                        continue;
                     }
 
                     // expand match
-                    j = maxMatch;
+                    int j = maxMatch;
+                    int hx, hy;
                     while (first.get(hx = x + j).type == second.get(hy = y + j).type && !leftMarkedTokens.contains(first.get(hx))
                             && !rightMarkedTokens.contains(second.get(hy))) {
                         j++;
@@ -145,6 +142,29 @@ public class GreedyStringTiling {
         } while (maxMatch != minimumTokenMatch);
 
         return comparison;
+    }
+
+    /**
+     * Checks if the two referenced subsequences are equal and not marked.
+     * Comparison is performed backwards based on the assumption that the further tokens are away, the more likely they differ.
+     * @param subsequenceLength the length of the subsequence to consider.
+     * @param leftTokens The complete list of left tokens.
+     * @param leftStartIndex The startIndex in the left token list.
+     * @param leftMarkedTokens The marked tokens of the left token list.
+     * @param rightTokens The complete list of right tokens.
+     * @param rightStartIndex The startIndex in the right token list.
+     * @param rightMarkedTokens The marked tokens of the right token list.
+     * @return
+     */
+    private boolean subsequencesAreMatchingAndNotMarked(int subsequenceLength, List<Token> leftTokens, int leftStartIndex, Set<Token> leftMarkedTokens, List<Token> rightTokens, int rightStartIndex, Set<Token> rightMarkedTokens) {
+        for (int offset = subsequenceLength - 1; offset >= 0; offset--) {
+            Token leftToken = leftTokens.get(leftStartIndex + offset);
+            Token rightToken = rightTokens.get(rightStartIndex + offset);
+            if (leftToken.type != rightToken.type || leftMarkedTokens.contains(leftToken) || rightMarkedTokens.contains(rightToken)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void addMatchIfNotOverlapping(List<Match> matches, int startA, int startB, int length) {
