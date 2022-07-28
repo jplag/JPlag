@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.*;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
+import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.*;
 import de.jplag.reporting.reportobject.model.Match;
 
@@ -23,6 +24,7 @@ public class ReportObjectFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
     private static final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper();
+    private static final MetricMapper metricMapper = new MetricMapper();
 
     /**
      * Converts a JPlagResult to a JPlagReport.
@@ -38,8 +40,7 @@ public class ReportObjectFactory {
      * Generates an Overview DTO of a JPlagResult.
      */
     private static OverviewReport generateOverviewReport(JPlagResult result) {
-        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
-        List<JPlagComparison> comparisons = result.getComparisons(numberOfComparisons);
+        List<JPlagComparison> comparisons = getComparisons(result);
         OverviewReport overviewReport = new OverviewReport();
 
         // TODO: Consider to treat entries that were checked differently from old entries with prior work.
@@ -72,8 +73,7 @@ public class ReportObjectFactory {
      */
     private static List<ComparisonReport> generateComparisonReports(JPlagResult result) {
         List<ComparisonReport> comparisons = new ArrayList<>();
-        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
-        result.getComparisons(numberOfComparisons).forEach(comparison -> comparisons.add( //
+        getComparisons(result).forEach(comparison -> comparisons.add( //
                 new ComparisonReport(comparison.getFirstSubmission().getName(), //
                         comparison.getSecondSubmission().getName(), //
                         comparison.similarity(), //
@@ -82,6 +82,11 @@ public class ReportObjectFactory {
                         convertMatchesToReportMatches(result, comparison, comparison.getMatches()) //
                 )));
         return comparisons;
+    }
+
+    private static List<JPlagComparison> getComparisons(JPlagResult result) {
+        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
+        return result.getComparisons(numberOfComparisons);
     }
 
     private static List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison, List<de.jplag.Match> matches) {
@@ -113,29 +118,13 @@ public class ReportObjectFactory {
         return names;
     }
 
-    // Currently, only one metric can be obtained.
-
     /**
-     * Gets the used metric in a JPlag comparison.
+     * Gets the used metrics in a JPlag comparison. As Max Metric is included in every JPlag run, this always include Max
+     * Metric.
      * @return A list contains Metric DTOs.
      */
     private static List<Metric> getMetrics(JPlagResult result) {
-        List<Metric> metrics = new ArrayList<>();
-        metrics.add(new Metric(result.getOptions().getSimilarityMetric().name(), result.getOptions().getSimilarityThreshold(),
-                intArrayToList(result.getSimilarityDistribution()), getTopComparisons(result.getComparisons())));
-        return metrics;
-    }
-
-    /**
-     * Converts JPlagComparison to a DTO for displaying only comparisons. See
-     * {@link #generateComparisonReports(JPlagResult)} for a more detailed representation of a comparison.
-     * @return List containing TopComparison DTOs.
-     */
-    private static List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons) {
-        List<TopComparison> topComparisons = new ArrayList<>();
-        comparisons.forEach(comparison -> topComparisons.add(
-                new TopComparison(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(), comparison.similarity())));
-        return topComparisons;
+        return List.of(metricMapper.getAverageMetric(result), metricMapper.getMaxMetric(result));
     }
 
     /**
@@ -189,7 +178,4 @@ public class ReportObjectFactory {
         return dateFormat.format(date);
     }
 
-    private static List<Integer> intArrayToList(int[] array) {
-        return Arrays.stream(array).boxed().collect(Collectors.toList());
-    }
 }

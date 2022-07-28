@@ -39,10 +39,10 @@ public class BaseCodeTest extends TestBase {
 
     private void verifyResults(JPlagResult result) {
         assertEquals(2, result.getNumberOfSubmissions());
-        assertEquals(1, result.getComparisons().size());
-        assertEquals(1, result.getComparisons().get(0).getMatches().size());
-        assertEquals(1, result.getSimilarityDistribution()[8]);
-        assertEquals(85f, result.getComparisons().get(0).similarity(), DELTA);
+        assertEquals(1, result.getAllComparisons().size());
+        assertEquals(1, result.getAllComparisons().get(0).getMatches().size());
+        assertEquals(1, result.getSimilarityDistribution()[1]);
+        assertEquals(85f, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class BaseCodeTest extends TestBase {
     }
 
     @Test
-    void testInvalidRoot() throws ExitException {
+    void testInvalidRoot() {
         assertThrows(RootDirectoryException.class, () -> runJPlag("basecode", it -> it.setSubmissionDirectories(List.of("WrongRoot"))));
     }
 
