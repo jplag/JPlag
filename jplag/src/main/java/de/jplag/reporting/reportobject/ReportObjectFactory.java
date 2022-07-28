@@ -1,14 +1,19 @@
 package de.jplag.reporting.reportobject;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
-import de.jplag.reporting.jsonfactory.JsonWriter;
+import de.jplag.Submission;
+import de.jplag.reporting.jsonfactory.FileWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.ComparisonReportMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
@@ -19,26 +24,25 @@ import de.jplag.reporting.reportobject.model.OverviewReport;
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.
  */
 public class ReportObjectFactory {
+    private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
 
     private static final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper();
     private static final MetricMapper metricMapper = new MetricMapper();
     private static final ComparisonReportMapper comparisonReportMapper = new ComparisonReportMapper();
-    private static final JsonWriter jsonWriter = new JsonWriter();
+    private static final FileWriter fileWriter = new FileWriter();
 
     /**
-     * Converts a JPlagResult to a JPlagReport.
      * @return JPlagReport for the given JPlagResult.
+     * @param result The JPlagResult to be converted into a report.
+     * @param path The Path to save the report to
      */
     public static void saveReport(JPlagResult result, String path) {
-        OverviewReport overviewReport = generateOverviewReport(result);
-        jsonWriter.saveFile(overviewReport, path, "overview.json");
+        writeOverview(result, path);
+        copySubmissionFilesToReport(path, result);
         comparisonReportMapper.writeComparisonReports(result, path);
     }
 
-    /**
-     * Generates an Overview DTO of a JPlagResult.
-     */
-    private static OverviewReport generateOverviewReport(JPlagResult result) {
+    private static void writeOverview(JPlagResult result, String path) {
         List<JPlagComparison> comparisons = getComparisons(result);
         OverviewReport overviewReport = new OverviewReport();
 
@@ -63,7 +67,41 @@ public class ReportObjectFactory {
         overviewReport.setMetrics(getMetrics(result));
         overviewReport.setClusters(clusteringResultMapper.map(result));
 
-        return overviewReport;
+        fileWriter.saveAsJSON(overviewReport, path, "overview.json");
+
+    }
+
+    private static void copySubmissionFilesToReport(String path, JPlagResult result) {
+        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().getMaximumNumberOfComparisons());
+        var submissions = getSubmissions(comparisons);
+        var submissionsPath = createDirectory(path, "Submissions");
+        for (var submission : submissions) {
+            File directory = createDirectory(submissionsPath.getPath(), submission.getName());
+            for (var file : submission.getFiles()) {
+                try {
+                    Files.copy(file.toPath(), (new File(directory, file.getName())).toPath());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private static Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
+        var submissions = comparisons.stream().map(JPlagComparison::getFirstSubmission).collect(Collectors.toSet());
+        Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::getSecondSubmission).collect(Collectors.toSet());
+        submissions.addAll(secondSubmissions);
+        return submissions;
+    }
+
+    private static File createDirectory(String path, String name) {
+        File directory = new File(path.concat("/").concat(name));
+        if (!directory.exists()) {
+            if (!directory.mkdirs()) {
+                logger.error("Failed to create dir.");
+            }
+        }
+        return directory;
     }
 
     private static List<JPlagComparison> getComparisons(JPlagResult result) {

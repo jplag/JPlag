@@ -8,12 +8,18 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class JsonWriter {
-    private static final Logger logger = LoggerFactory.getLogger(JsonWriter.class);
+public class FileWriter {
+    private static final Logger logger = LoggerFactory.getLogger(FileWriter.class);
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public void saveFile(Object fileToSave, String folderPath, String fileName) {
+    /**
+     * Saves the provided object to the provided path under the provided name
+     * @param fileToSave The object to save
+     * @param folderPath The path to save the object to
+     * @param fileName The name to save the object under
+     */
+    public void saveAsJSON(Object fileToSave, String folderPath, String fileName) {
         try {
             objectMapper.writeValue(Path.of(folderPath, fileName).toFile(), fileToSave);
         } catch (IOException e) {

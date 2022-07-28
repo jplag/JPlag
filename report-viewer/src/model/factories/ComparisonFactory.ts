@@ -2,14 +2,22 @@ import { Comparison } from "../Comparison";
 import { Match } from "../Match";
 import { SubmissionFile } from "../SubmissionFile";
 import { MatchInSingleFile } from "../MatchInSingleFile";
+import store from "@/store/store";
 
 export class ComparisonFactory {
   static getComparison(json: Record<string, unknown>): Comparison {
-    const filesOfFirst = this.convertToFilesByName(
-      json.files_of_first_submission as Array<Record<string, unknown>>
+    const filesOfFirstSubmission = store.getters.filesOfSubmission(
+      json.first_submission_id
     );
-    const filesOfSecond = this.convertToFilesByName(
-      json.files_of_second_submission as Array<Record<string, unknown>>
+    const filesOfSecondSubmission = store.getters.filesOfSubmission(
+      json.second_submission_id
+    );
+
+    const filesOfFirstConverted = this.convertToFilesByName(
+      filesOfFirstSubmission
+    );
+    const filesOfSecondConverted = this.convertToFilesByName(
+      filesOfSecondSubmission
     );
 
     const matches = json.matches as Array<Record<string, unknown>>;
@@ -26,8 +34,8 @@ export class ComparisonFactory {
       json.second_submission_id as string,
       json.match_percentage as number
     );
-    comparison.filesOfFirstSubmission = filesOfFirst;
-    comparison.filesOfSecondSubmission = filesOfSecond;
+    comparison.filesOfFirstSubmission = filesOfFirstConverted;
+    comparison.filesOfSecondSubmission = filesOfSecondConverted;
     comparison.colors = colors;
     comparison.allMatches = coloredMatches;
     comparison.matchesInFirstSubmission = matchesInFirst;
@@ -37,18 +45,18 @@ export class ComparisonFactory {
   }
 
   private static convertToFilesByName(
-    files: Array<Record<string, unknown>>
+    files: Array<{ name: string; value: string }>
   ): Map<string, SubmissionFile> {
     const map = new Map<string, SubmissionFile>();
     files.forEach((val) => {
-      if (!map.get(val.file_name as string)) {
-        map.set(val.file_name as string, {
+      if (!map.get(val.name)) {
+        map.set(val.name as string, {
           lines: [],
           collapsed: false,
         });
       }
-      map.set(val.file_name as string, {
-        lines: val.lines as Array<string>,
+      map.set(val.name as string, {
+        lines: val.value.split(/\r?\n/),
         collapsed: false,
       });
     });
