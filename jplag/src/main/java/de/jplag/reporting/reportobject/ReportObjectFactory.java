@@ -3,6 +3,7 @@ package de.jplag.reporting.reportobject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -93,7 +94,7 @@ public class ReportObjectFactory {
             File directory = createDirectory(submissionsPath.getPath(), submission.getName());
             for (var file : submission.getFiles()) {
                 try {
-                    Files.copy(file.toPath(), (new File(directory, file.getName())).toPath());
+                    Files.copy(file.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     logger.error("Could not save submission file " + file, e);
                 }
