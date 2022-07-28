@@ -64,8 +64,7 @@
             :id="metric.metricName"
             :key="metric.metricName"
             :is-selected="selectedMetric[index]"
-            :metric-name="metric.metricName"
-            :metric-threshold="metric.metricThreshold"
+            :metric="metric"
             @click="selectMetric(index)"
           />
         </div>
