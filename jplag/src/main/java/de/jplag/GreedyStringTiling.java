@@ -102,7 +102,8 @@ public class GreedyStringTiling {
                         continue;
                     }
 
-                    if (!subsequencesAreMatchingAndNotMarked(maxMatch, first, x, leftMarkedTokens, second, y, rightMarkedTokens)) {
+                    if (!subsequencesAreMatchingAndNotMarked(first.subList(x, x + maxMatch), leftMarkedTokens, second.subList(y, y + maxMatch),
+                            rightMarkedTokens)) {
                         continue;
                     }
 
@@ -145,22 +146,20 @@ public class GreedyStringTiling {
     }
 
     /**
-     * Checks if the two referenced subsequences are equal and not marked. Comparison is performed backwards based on the
-     * assumption that the further tokens are away, the more likely they differ.
-     * @param subsequenceLength the length of the subsequence to consider.
-     * @param leftTokens The complete list of left tokens.
-     * @param leftStartIndex The startIndex in the left token list.
+     * Checks if the two provided subsequences are equal and not marked. Comparison is performed backwards based on the
+     * assumption that the further tokens are away, the more likely they differ. leftTokens and rightTokens must be of equal
+     * size.
+     * @param leftTokens The subsequence of left tokens.
      * @param leftMarkedTokens The marked tokens of the left token list.
-     * @param rightTokens The complete list of right tokens.
-     * @param rightStartIndex The startIndex in the right token list.
+     * @param rightTokens The subsequence of right tokens.
      * @param rightMarkedTokens The marked tokens of the right token list.
      * @return
      */
-    private boolean subsequencesAreMatchingAndNotMarked(int subsequenceLength, List<Token> leftTokens, int leftStartIndex,
-            Set<Token> leftMarkedTokens, List<Token> rightTokens, int rightStartIndex, Set<Token> rightMarkedTokens) {
-        for (int offset = subsequenceLength - 1; offset >= 0; offset--) {
-            Token leftToken = leftTokens.get(leftStartIndex + offset);
-            Token rightToken = rightTokens.get(rightStartIndex + offset);
+    private boolean subsequencesAreMatchingAndNotMarked(List<Token> leftTokens, Set<Token> leftMarkedTokens, List<Token> rightTokens,
+            Set<Token> rightMarkedTokens) {
+        for (int offset = leftTokens.size() - 1; offset >= 0; offset--) {
+            Token leftToken = leftTokens.get(offset);
+            Token rightToken = rightTokens.get(offset);
             if (leftToken.type != rightToken.type || leftMarkedTokens.contains(leftToken) || rightMarkedTokens.contains(rightToken)) {
                 return false;
             }
