@@ -192,7 +192,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.8.2</version>
+            <version>5.9.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -260,7 +260,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.4.2</version>
                     <configuration>
                         <descriptorRefs>
                             <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -286,7 +286,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M2</version>
+                    <version>3.0.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -352,7 +352,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

@@ -25,10 +25,10 @@ public class ParallelComparisonTest extends TestBase {
         JPlagResult result = runJPlag("SimpleDuplicate", it -> it.setComparisonMode(PARALLEL));
 
         assertEquals(2, result.getNumberOfSubmissions());
-        assertEquals(1, result.getComparisons().size());
-        assertEquals(1, result.getComparisons().get(0).getMatches().size());
-        assertEquals(1, result.getSimilarityDistribution()[6]);
-        assertEquals(62.07f, result.getComparisons().get(0).similarity(), DELTA);
+        assertEquals(1, result.getAllComparisons().size());
+        assertEquals(1, result.getAllComparisons().get(0).getMatches().size());
+        assertEquals(1, result.getSimilarityDistribution()[3]);
+        assertEquals(62.07f, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     /**
@@ -39,11 +39,9 @@ public class ParallelComparisonTest extends TestBase {
         JPlagResult result = runJPlag("NoDuplicate", it -> it.setComparisonMode(PARALLEL));
 
         assertEquals(3, result.getNumberOfSubmissions());
-        assertEquals(3, result.getComparisons().size());
+        assertEquals(3, result.getAllComparisons().size());
 
-        result.getComparisons().forEach(comparison -> {
-            assertEquals(0f, comparison.similarity(), DELTA);
-        });
+        result.getAllComparisons().forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
     }
 
     /**
@@ -56,10 +54,10 @@ public class ParallelComparisonTest extends TestBase {
         JPlagResult result = runJPlag("PartialPlagiarism", it -> it.setComparisonMode(PARALLEL));
 
         assertEquals(5, result.getNumberOfSubmissions());
-        assertEquals(10, result.getComparisons().size());
+        assertEquals(10, result.getAllComparisons().size());
 
         // All comparisons with E shall have no matches
-        result.getComparisons().stream()
+        result.getAllComparisons().stream()
                 .filter(comparison -> comparison.getSecondSubmission().getName().equals("E") || comparison.getFirstSubmission().getName().equals("E"))
                 .forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
 
@@ -85,7 +83,7 @@ public class ParallelComparisonTest extends TestBase {
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
-        return result.getComparisons().stream().filter(
+        return result.getAllComparisons().stream().filter(
                 comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
                         || comparison.getFirstSubmission().getName().equals(nameB) && comparison.getSecondSubmission().getName().equals(nameA))
                 .findFirst();

@@ -1,9 +1,11 @@
 package de.jplag;
 
 import java.util.List;
+import java.util.function.Function;
 
 import de.jplag.clustering.ClusteringResult;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.SimilarityMetric;
 
 /**
  * Encapsulates the results of a comparison of a set of source code submissions.
@@ -21,6 +23,7 @@ public class JPlagResult {
     private final int[] similarityDistribution; // 10-element array representing the similarity distribution of the detected matches.
 
     private List<ClusteringResult<Submission>> clusteringResult;
+    private final int SIMILARITY_DISTRIBUTION_SIZE = 10;
 
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         this.comparisons = comparisons;
@@ -47,7 +50,7 @@ public class JPlagResult {
     /**
      * @return a list of all comparisons sorted by percentage (descending)
      */
-    public List<JPlagComparison> getComparisons() {
+    public List<JPlagComparison> getAllComparisons() {
         return comparisons;
     }
 
@@ -93,13 +96,25 @@ public class JPlagResult {
     }
 
     /**
-     * Returns the similarity distribution of detected matches in a 10-element array. Each entry represents the absolute
-     * frequency of matches whose similarity lies within the respective interval. Intervals: 0: [0% - 10%), 1: [10% - 20%),
-     * 2: [20% - 30%), ..., 9: [90% - 100%]
+     * For the {@link SimilarityMetric} JPlag was run with, this returns the similarity distribution of detected matches in
+     * a 10-element array. Each entry represents the absolute frequency of matches whose similarity lies within the
+     * respective interval. Intervals: 0: [0% - 10%), 1: [10% - 20%), 2: [20% - 30%), ..., 9: [90% - 100%]
      * @return the similarity distribution array.
      */
     public int[] getSimilarityDistribution() {
         return similarityDistribution;
+    }
+
+    /**
+     * For the {@link SimilarityMetric#MAX} that is built in to every {@link JPlagComparison}, this returns the similarity
+     * distribution of detected matches in a 10-element array. Each entry represents the absolute frequency of matches whose
+     * similarity lies within the respective interval. Intervals: 0: [0% - 10%), 1: [10% - 20%), 2: [20% - 30%), ..., 9:
+     * [90% - 100%]
+     * @return the similarity distribution array. When JPlag was run with the {@link SimilarityMetric#MAX}, this will return
+     * the same distribution as {@link JPlagResult#getSimilarityDistribution()}
+     */
+    public int[] getMaxSimilarityDistribution() {
+        return calculateDistributionFor(comparisons, (JPlagComparison::maximalSimilarity));
     }
 
     public List<ClusteringResult<Submission>> getClusteringResult() {
@@ -108,7 +123,7 @@ public class JPlagResult {
 
     @Override
     public String toString() {
-        return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getComparisons().size(),
+        return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getAllComparisons().size(),
                 getDuration(), getOptions().getLanguage().getName(), submissions.numberOfSubmissions());
     }
 
@@ -116,11 +131,14 @@ public class JPlagResult {
      * Note: Before, comparisons with a similarity below the given threshold were also included in the similarity matrix.
      */
     private int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
-        int[] similarityDistribution = new int[10];
+        return calculateDistributionFor(comparisons, (JPlagComparison::similarity));
+    }
 
-        comparisons.stream().map(JPlagComparison::similarity).map(percent -> percent / 10).map(Float::intValue).map(index -> index == 10 ? 9 : index)
-                .forEach(index -> similarityDistribution[index]++);
-
+    private int[] calculateDistributionFor(List<JPlagComparison> comparisons, Function<JPlagComparison, Float> similarityExtractor) {
+        int[] similarityDistribution = new int[SIMILARITY_DISTRIBUTION_SIZE];
+        comparisons.stream().map(similarityExtractor).map(percent -> percent / SIMILARITY_DISTRIBUTION_SIZE).map(Float::intValue)
+                .map(index -> index == SIMILARITY_DISTRIBUTION_SIZE ? SIMILARITY_DISTRIBUTION_SIZE - 1 : index)
+                .forEach(index -> similarityDistribution[SIMILARITY_DISTRIBUTION_SIZE - 1 - index]++);
         return similarityDistribution;
     }
 }
