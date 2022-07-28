@@ -2,9 +2,7 @@ package de.jplag;
 
 import static de.jplag.CLI.CLUSTERING_GROUP_NAME;
 import static de.jplag.CLI.CLUSTERING_PREPROCESSING_GROUP_NAME;
-import static de.jplag.options.JPlagOptions.DEFAULT_COMPARISON_MODE;
-import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
-import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
+import static de.jplag.options.JPlagOptions.*;
 import static net.sourceforge.argparse4j.impl.Arguments.append;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
@@ -13,16 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.Argument;
-import net.sourceforge.argparse4j.inf.ArgumentAction;
-import net.sourceforge.argparse4j.inf.ArgumentContainer;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.*;
 
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
-import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.strategy.ComparisonMode;
 
@@ -34,7 +27,7 @@ public enum CommandLineArgument {
     ROOT_DIRECTORY(new Builder("rootDir", String.class).nargs(NumberOfArgumentValues.ZERO_OR_MORE_VALUES)),
     NEW_DIRECTORY(new Builder("-new", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     OLD_DIRECTORY(new Builder("-old", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
-    LANGUAGE(new Builder("-l", String.class).defaultsTo(JPlagOptions.DEFAULT_LANGUAGE).choices(LanguageLoader.getAllLanguageNames())),
+    LANGUAGE(new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.SHORT_NAME).choices(LanguageLoader.getAllLanguageNames())),
     BASE_CODE("-bc", String.class),
     VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices(List.of("quiet", "long"))), // TODO SH: Replace verbosity when integrating a
                                                                                                       // real logging library

@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 public final class LanguageLoader {
     private static final Logger logger = LoggerFactory.getLogger(LanguageLoader.class);
 
+    private static List<Language> loaded = null;
+
     private LanguageLoader() {
         throw new IllegalAccessError();
     }
@@ -22,17 +24,28 @@ public final class LanguageLoader {
      * method does only return prototypes.
      * @return the languages
      */
-    public static List<Language> loadLanguages() {
+    public static synchronized List<Language> loadLanguages() {
+        if (loaded != null)
+            return loaded;
+
+        Set<String> loadedShortNames = new HashSet<>();
         List<Language> languages = new ArrayList<>();
 
         for (Language notInitializedLanguage : ServiceLoader.load(Language.class)) {
+            String shortName = notInitializedLanguage.getShortName();
+            if (!loadedShortNames.add(shortName)) {
+                logger.error("Multiple implementations for a language '{}' are present in the classpath! Skipping ..", shortName);
+                languages.removeIf(l -> Objects.equals(shortName, l.getShortName()));
+                continue;
+            }
             logger.info("Loading Language Frontend '{}'", notInitializedLanguage.getName());
             languages.add(notInitializedLanguage);
         }
 
         languages.sort(Comparator.comparing(Language::getShortName));
 
-        return languages;
+        loaded = Collections.unmodifiableList(languages);
+        return loaded;
     }
 
     /**
@@ -55,5 +68,12 @@ public final class LanguageLoader {
      */
     public static List<String> getAllLanguageNames() {
         return loadLanguages().stream().map(Language::getShortName).toList();
+    }
+
+    /**
+     * Resets the internal cache of all loaded languages
+     */
+    public static synchronized void reload() {
+        loaded = null;
     }
 }

@@ -20,9 +20,6 @@ import de.jplag.strategy.ComparisonMode;
 public class JPlagOptions {
 
     private static final Logger logger = LoggerFactory.getLogger("JPlag");
-
-    public static final String DEFAULT_LANGUAGE = "java";
-
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 30;

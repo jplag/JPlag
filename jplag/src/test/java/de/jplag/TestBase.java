@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import de.jplag.exceptions.ExitException;
+import de.jplag.java.Language;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.Verbosity;
 
@@ -45,7 +46,7 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(newPaths, oldPaths, JPlagOptions.DEFAULT_LANGUAGE);
+        JPlagOptions options = new JPlagOptions(newPaths, oldPaths, Language.SHORT_NAME);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);

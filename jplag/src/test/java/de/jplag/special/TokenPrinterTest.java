@@ -15,6 +15,7 @@ import de.jplag.options.JPlagOptions;
  * Special test case the does not really test anything but prints the tokens and the corresponding line of code.
  * @author Timur Saglam
  */
+// TODO DF: We could move some tests to their language frontends.
 public class TokenPrinterTest extends TestBase {
     private static final String LARGE_SPACE = "   ";
     private static final String LINE = "------------------";
@@ -22,10 +23,9 @@ public class TokenPrinterTest extends TestBase {
     private static final int MIN_TOKEN_MATCH = 5;
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
 
-    private static final String LANGUAGE_CPP = "cpp";
-    private static final String LANGUAGE_R = "rlang";
-
-    private static final String LANGUAGE_KOTLIN = "kotlin";
+    private static final String LANGUAGE_CPP = de.jplag.cpp.Language.SHORT_NAME;
+    private static final String LANGUAGE_R = de.jplag.rlang.Language.SHORT_NAME;
+    private static final String LANGUAGE_KOTLIN = de.jplag.kotlin.Language.SHORT_NAME;
 
     @Disabled
     @Test
