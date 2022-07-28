@@ -81,7 +81,7 @@ public class ReportObjectFactory {
                 try {
                     Files.copy(file.toPath(), (new File(directory, file.getName())).toPath());
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    logger.error("Could not save submission file " + file, e);
                 }
             }
         }
