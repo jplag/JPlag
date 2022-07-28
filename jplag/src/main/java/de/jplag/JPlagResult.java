@@ -131,14 +131,17 @@ public class JPlagResult {
      * Note: Before, comparisons with a similarity below the given threshold were also included in the similarity matrix.
      */
     private int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
-        return calculateDistributionFor(comparisons, (JPlagComparison::similarity));
+        return calculateDistributionFor(comparisons, JPlagComparison::similarity);
     }
 
     private int[] calculateDistributionFor(List<JPlagComparison> comparisons, Function<JPlagComparison, Float> similarityExtractor) {
         int[] similarityDistribution = new int[SIMILARITY_DISTRIBUTION_SIZE];
-        comparisons.stream().map(similarityExtractor).map(percent -> percent / SIMILARITY_DISTRIBUTION_SIZE).map(Float::intValue)
-                .map(index -> index == SIMILARITY_DISTRIBUTION_SIZE ? SIMILARITY_DISTRIBUTION_SIZE - 1 : index)
-                .forEach(index -> similarityDistribution[SIMILARITY_DISTRIBUTION_SIZE - 1 - index]++);
+        for (JPlagComparison comparison : comparisons) {
+            Float similarity = similarityExtractor.apply(comparison);
+            int index = (int) (similarity / SIMILARITY_DISTRIBUTION_SIZE);
+            index = index == SIMILARITY_DISTRIBUTION_SIZE ? SIMILARITY_DISTRIBUTION_SIZE - 1 : index;
+            similarityDistribution[SIMILARITY_DISTRIBUTION_SIZE - 1 - index]++;
+        }
         return similarityDistribution;
     }
 }
