@@ -48,7 +48,7 @@ public final class TokenPrinter {
      * @param fileNames is a collection of the file names.
      * @return the string representation.
      */
-    public static String printTokens(Iterable<Token> tokens, File directory, Collection<String> fileNames) {
+    public static String printTokens(List<Token> tokens, File directory, Collection<String> fileNames) {
         Collection<File> files = fileNames.stream().map(name -> new File(directory, name)).collect(toList());
         return printTokens(tokens, files, directory);
     }
@@ -59,7 +59,7 @@ public final class TokenPrinter {
      * @param files are the parsed files.
      * @return the string representation.
      */
-    public static String printTokens(Iterable<Token> tokens, Collection<File> files, File root) {
+    public static String printTokens(List<Token> tokens, Collection<File> files, File root) {
         Map<String, List<String>> filesToLines = readFiles(files);
         StringBuilder builder = new StringBuilder();
         int lineIndex = 0;
