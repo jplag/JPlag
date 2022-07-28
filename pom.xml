@@ -65,9 +65,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- CLI is the last project that will be build ! -->
-        <!--suppress UnresolvedMavenProperty -->
-        <sonar.coverage.jacoco.xmlReportPaths>jplag.cli/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/report-aggregate/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <spotless.version>2.23.0</spotless.version>
@@ -441,6 +439,7 @@
                 <module>jplag.frontend.text</module>
                 <module>jplag</module>
                 <module>jplag.cli</module>
+                <module>report-aggregate-module</module>
             </modules>
         </profile>
         <profile>
