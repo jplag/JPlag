@@ -90,6 +90,8 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         if (errors.isEmpty())
             return;
 
+        this.allErrors.removeAll(errors);
+
         info("Summary of all Errors:");
         errors.forEach(error -> log(LOG_LEVEL_ERROR, error.first(), error.second(), error.third()));
         isFinalizing = false;

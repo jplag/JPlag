@@ -34,6 +34,9 @@ public final class CollectedLoggerFactory implements ILoggerFactory {
         }
     }
 
+    /**
+     * Print all errors of existing instances of {@link CollectedLogger}.
+     */
     public void finalizeInstances() {
         List<CollectedLogger> copy = new ArrayList<>(loggerMap.values());
         copy.forEach(CollectedLogger::printAllErrorsForLogger);
