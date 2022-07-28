@@ -72,8 +72,7 @@ public class RFrontendTest {
             // All lines that contain code
             var codeLines = IntStream.range(1, lines.size() + 1).filter(idx -> !lines.get(idx - 1).matches(emptyLineExpression)).toArray();
             // All lines that contain token
-            var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::get).mapToInt(Token::getLine).filter(l -> l != Token.NO_VALUE)
-                    .distinct().toArray();
+            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().toArray();
 
             if (codeLines.length > tokenLines.length) {
                 var diffLine = IntStream.range(0, codeLines.length)
@@ -94,7 +93,7 @@ public class RFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.spliterator(), true).mapToInt(Token::getType).sorted().distinct().toArray();
+        var foundTokens = StreamSupport.stream(tokens.spliterator(), true).mapToInt(Token::getType).distinct().sorted().toArray();
         // Exclude SEPARATOR_TOKEN, as it does not occur
         var allTokens = IntStream.range(0, RTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
 
