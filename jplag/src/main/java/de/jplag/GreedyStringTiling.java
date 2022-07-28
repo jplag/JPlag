@@ -42,8 +42,8 @@ public class GreedyStringTiling {
         return swapAndCompare(firstSubmission, secondSubmission, false);
     }
 
-    public final JPlagComparison compareWithBaseCode(Submission firstSubmission, Submission secondSubmission) {
-        return swapAndCompare(firstSubmission, secondSubmission, true);
+    public final JPlagComparison compareWithBaseCode(Submission submission, Submission baseCodeSubmission) {
+        return swapAndCompare(submission, baseCodeSubmission, true);
     }
 
     private JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
@@ -108,35 +108,34 @@ public class GreedyStringTiling {
                     }
 
                     // expand match
-                    int j = maxMatch;
-                    int hx, hy;
-                    while (first.get(hx = x + j).type == second.get(hy = y + j).type && !leftMarkedTokens.contains(first.get(hx))
-                            && !rightMarkedTokens.contains(second.get(hy))) {
-                        j++;
+                    int offset = maxMatch;
+                    while (first.get(x + offset).type == second.get(y + offset).type && !leftMarkedTokens.contains(first.get(x + offset))
+                            && !rightMarkedTokens.contains(second.get(y + offset))) {
+                        offset++;
                     }
 
-                    if (j > maxMatch && !isBaseCodeComparison || j != maxMatch && isBaseCodeComparison) {  // new biggest match? -> delete current
-                                                                                                           // smaller
+                    if (offset > maxMatch && !isBaseCodeComparison || offset != maxMatch && isBaseCodeComparison) {  // new biggest match? -> delete
+                                                                                                                     // current
+                        // smaller
                         matches.clear();
-                        maxMatch = j;
+                        maxMatch = offset;
                     }
-                    addMatchIfNotOverlapping(matches, x, y, j);
+                    addMatchIfNotOverlapping(matches, x, y, offset);
                 }
             }
             for (int i = matches.size() - 1; i >= 0; i--) {
-                int x = matches.get(i).getStartOfFirst();  // Beginning of/in sequence A
-                int y = matches.get(i).getStartOfSecond();  // Beginning of/in sequence B
-                comparison.addMatch(x, y, matches.get(i).getLength());
+                Match match = matches.get(i);
+                comparison.addMatch(match);
                 // in order that "Match" will be newly build (because reusing)
-                for (int j = matches.get(i).getLength(); j > 0; j--) {
-                    leftMarkedTokens.add(first.get(x));
-                    rightMarkedTokens.add(second.get(y));
+                int x = match.getStartOfFirst();  // Beginning of/in sequence A
+                int y = match.getStartOfSecond();  // Beginning of/in sequence B
+                for (int j = 0; j < match.getLength(); j++) {
+                    leftMarkedTokens.add(first.get(x + j));
+                    rightMarkedTokens.add(second.get(y + j));
                     if (isBaseCodeComparison) {
-                        first.get(x).setBasecode(true);
-                        second.get(y).setBasecode(true);
+                        first.get(x + j).setBasecode(true);
+                        second.get(y + j).setBasecode(true);
                     }
-                    x++;
-                    y++;
                 }
             }
 
@@ -168,12 +167,13 @@ public class GreedyStringTiling {
     }
 
     private void addMatchIfNotOverlapping(List<Match> matches, int startA, int startB, int length) {
+        Match match = new Match(startA, startB, length);
         for (int i = matches.size() - 1; i >= 0; i--) { // starting at the end is better(?)
-            if (matches.get(i).overlap(startA, startB, length)) {
+            if (matches.get(i).overlaps(match)) {
                 return; // no overlaps allowed!
             }
         }
-        matches.add(new Match(startA, startB, length));
+        matches.add(match);
     }
 
     private Set<Token> initiallyMarkedTokens(List<Token> tokens, boolean isBaseCodeComparison) {

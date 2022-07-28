@@ -24,15 +24,14 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
 
     /**
      * Add a match to the comparison (token indices and number of tokens), if it does not overlap with the existing matches.
-     * @see Match#Match(int, int, int)
      */
-    /* package-private */ final void addMatch(int startOfFirst, int startOfSecond, int length) {
-        for (Match match : matches) {
-            if (match.overlap(startOfFirst, startOfSecond, length)) {
+    final void addMatch(Match match) {
+        for (Match existingMatch : matches) {
+            if (existingMatch.overlaps(match)) {
                 return;
             }
         }
-        matches.add(new Match(startOfFirst, startOfSecond, length));
+        matches.add(match);
     }
 
     @Override

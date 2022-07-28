@@ -46,21 +46,21 @@ public class Match {
      * Checks if two matches overlap.
      * @return true if they do.
      */
-    public final boolean overlap(int otherStartOfFirst, int otherStartOfSecond, int oLength) {
-        if (startOfFirst < otherStartOfFirst) {
-            if ((otherStartOfFirst - startOfFirst) < length) {
+    public final boolean overlaps(Match other) {
+        if (startOfFirst < other.startOfFirst) {
+            if ((other.startOfFirst - startOfFirst) < length) {
                 return true;
             }
         } else {
-            if ((startOfFirst - otherStartOfFirst) < oLength) {
+            if ((startOfFirst - other.startOfFirst) < other.length) {
                 return true;
             }
         }
 
-        if (startOfSecond < otherStartOfSecond) {
-            return (otherStartOfSecond - startOfSecond) < length;
+        if (startOfSecond < other.startOfSecond) {
+            return (other.startOfSecond - startOfSecond) < length;
         } else {
-            return (startOfSecond - otherStartOfSecond) < oLength;
+            return (startOfSecond - other.startOfSecond) < other.length;
         }
     }
 }
