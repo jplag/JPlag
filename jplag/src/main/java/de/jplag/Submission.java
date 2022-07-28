@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -132,7 +133,7 @@ public class Submission implements Comparable<Submission> {
      * @return Parse result of the submission.
      */
     public List<Token> getTokenList() {
-        return tokenList;
+        return tokenList == null ? null : Collections.unmodifiableList(tokenList);
     }
 
     /**
