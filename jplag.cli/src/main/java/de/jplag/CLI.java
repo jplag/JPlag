@@ -12,6 +12,7 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.exceptions.ExitException;
-import de.jplag.logger.CollectedLogger;
+import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.SimilarityMetric;
@@ -63,12 +64,19 @@ public class CLI {
             JPlagResult result = program.run();
             Report report = new JsonReport();
             report.saveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
-            CollectedLogger.finalizeInstances();
+            finalizeLogger();
         } catch (ExitException exception) {
             logger.error(exception.getMessage(), exception);
-            CollectedLogger.finalizeInstances();
+            finalizeLogger();
             System.exit(1);
         }
+    }
+
+    private static void finalizeLogger() {
+        ILoggerFactory factory = LoggerFactory.getILoggerFactory();
+        if (!(factory instanceof CollectedLoggerFactory collectedLoggerFactory))
+            return;
+        collectedLoggerFactory.finalizeInstances();
     }
 
     /**

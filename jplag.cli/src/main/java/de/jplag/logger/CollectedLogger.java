@@ -5,7 +5,6 @@ import java.io.Serial;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.slf4j.helpers.FormattingTuple;
@@ -18,14 +17,6 @@ import org.slf4j.spi.LocationAwareLogger;
  * @author Dominik Fuchss
  */
 public final class CollectedLogger extends MarkerIgnoringBase {
-
-    private static final ConcurrentLinkedDeque<CollectedLogger> instances = new ConcurrentLinkedDeque<>();
-
-    public static void finalizeInstances() {
-        List<CollectedLogger> copy = new ArrayList<>(instances);
-        copy.forEach(instances::remove);
-        copy.forEach(CollectedLogger::printAllErrorsForLogger);
-    }
 
     @Serial
     private static final long serialVersionUID = -1278670638921140275L;
@@ -55,7 +46,6 @@ public final class CollectedLogger extends MarkerIgnoringBase {
 
     CollectedLogger(String name) {
         this.name = name;
-        instances.add(this);
     }
 
     private void log(int level, String message, Throwable t) {
@@ -93,7 +83,7 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         write(buf, t);
     }
 
-    private void printAllErrorsForLogger() {
+    void printAllErrorsForLogger() {
         this.isFinalizing = true;
         // Copy errors to prevent infinite recursion
         var errors = new ArrayList<>(this.allErrors);

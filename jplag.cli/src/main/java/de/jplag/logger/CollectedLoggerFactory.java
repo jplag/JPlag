@@ -1,5 +1,7 @@
 package de.jplag.logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -12,7 +14,7 @@ import org.slf4j.Logger;
  */
 public final class CollectedLoggerFactory implements ILoggerFactory {
 
-    private final ConcurrentMap<String, Logger> loggerMap;
+    private final ConcurrentMap<String, CollectedLogger> loggerMap;
 
     public CollectedLoggerFactory() {
         loggerMap = new ConcurrentHashMap<>();
@@ -22,13 +24,18 @@ public final class CollectedLoggerFactory implements ILoggerFactory {
      * Return an appropriate {@link CollectedLogger} instance by name.
      */
     public Logger getLogger(String name) {
-        Logger simpleLogger = loggerMap.get(name);
+        CollectedLogger simpleLogger = loggerMap.get(name);
         if (simpleLogger != null) {
             return simpleLogger;
         } else {
-            Logger newInstance = new CollectedLogger(name);
+            CollectedLogger newInstance = new CollectedLogger(name);
             Logger oldInstance = loggerMap.putIfAbsent(name, newInstance);
             return oldInstance == null ? newInstance : oldInstance;
         }
+    }
+
+    public void finalizeInstances() {
+        List<CollectedLogger> copy = new ArrayList<>(loggerMap.values());
+        copy.forEach(CollectedLogger::printAllErrorsForLogger);
     }
 }
