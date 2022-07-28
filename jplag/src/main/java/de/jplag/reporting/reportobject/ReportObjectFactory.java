@@ -32,14 +32,28 @@ public class ReportObjectFactory {
     private static final FileWriter fileWriter = new FileWriter();
 
     /**
-     * @return JPlagReport for the given JPlagResult.
      * @param result The JPlagResult to be converted into a report.
      * @param path The Path to save the report to
      */
-    public static void saveReport(JPlagResult result, String path) {
+    public static void createAndSaveReport(JPlagResult result, String path) {
+        createDirectory(path);
         writeOverview(result, path);
         copySubmissionFilesToReport(path, result);
         comparisonReportMapper.writeComparisonReports(result, path);
+    }
+
+    private static File createDirectory(String path, String name) {
+        File directory = new File(path.concat("/").concat(name));
+        if (!directory.exists()) {
+            if (!directory.mkdirs()) {
+                logger.error("Failed to create dir.");
+            }
+        }
+        return directory;
+    }
+
+    private static void createDirectory(String path) {
+        createDirectory(path, "");
     }
 
     private static void writeOverview(JPlagResult result, String path) {
@@ -92,16 +106,6 @@ public class ReportObjectFactory {
         Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::getSecondSubmission).collect(Collectors.toSet());
         submissions.addAll(secondSubmissions);
         return submissions;
-    }
-
-    private static File createDirectory(String path, String name) {
-        File directory = new File(path.concat("/").concat(name));
-        if (!directory.exists()) {
-            if (!directory.mkdirs()) {
-                logger.error("Failed to create dir.");
-            }
-        }
-        return directory;
     }
 
     private static List<JPlagComparison> getComparisons(JPlagResult result) {
