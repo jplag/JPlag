@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +27,7 @@ class ModelInstanceTest {
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "books");
 
-    private de.jplag.Language frontend;
+    private Language frontend;
     private File baseDirectory;
 
     @BeforeEach
@@ -38,19 +39,20 @@ class ModelInstanceTest {
     }
 
     @Test
-    void testParsingTestClass() {
+    void testBookStoreInstances() {
         File baseFile = new File(BASE_PATH.toString());
-        var testSubjects = Arrays.stream(baseFile.listFiles()).map(File::getName).filter(it -> !it.endsWith(Language.VIEW_FILE_SUFFIX))
-                .toArray(String[]::new);
+        var sortedFiles = frontend.customizeSubmissionOrder(new ArrayList<>(Arrays.stream(baseFile.listFiles()).toList()));
+        var testSubjects = sortedFiles.stream().map(File::getName).filter(it -> !it.endsWith(Language.VIEW_FILE_SUFFIX)).toArray(String[]::new);
 
         TokenList result = frontend.parse(baseDirectory, testSubjects);
         assertNotEquals(0, result.size());
-        List<String> treeViewFiles = Arrays.stream(testSubjects).map(it -> it + Language.VIEW_FILE_SUFFIX).collect(toList());
-        System.out.println(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles));
 
+        List<String> treeViewFiles = Arrays.stream(testSubjects).map(it -> it + Language.VIEW_FILE_SUFFIX).collect(toList());
+        logger.info(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles));
         logger.info("Dynamic token set: " + DynamicMetamodelTokenConstants.getTokenStrings());
-        logger.info(result.allTokens().toString());
-        assertEquals(6, result.size());
+        logger.info("Parsed tokens: " + result.allTokens().toString());
+
+        assertEquals(7, result.size());
     }
 
     @AfterEach
