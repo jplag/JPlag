@@ -12,6 +12,7 @@ public class JavaToken extends Token implements JavaTokenConstants {
 
     public JavaToken(int type, String file, int line, int column, int length) {
         super(type, file, line, column, length);
+        System.out.println("Just for testing. Never ever merge this!");
     }
 
     @Override
