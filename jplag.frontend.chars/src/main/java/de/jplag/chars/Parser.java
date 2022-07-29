@@ -44,9 +44,7 @@ public class Parser extends AbstractParser {
         int length;
         int offset = 0;
 
-        try {
-            FileReader reader = new FileReader(new File(dir, file), StandardCharsets.UTF_8);
-
+        try (FileReader reader = new FileReader(new File(dir, file), StandardCharsets.UTF_8)){
             do {
                 length = reader.read(buffer);
 
@@ -57,9 +55,6 @@ public class Parser extends AbstractParser {
                 }
                 offset += length;
             } while (length != -1);
-
-            // close file
-            reader.close();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
