@@ -127,14 +127,13 @@ public class GreedyStringTiling {
                     addMatchIfNotOverlapping(matches, leftStartIndex, rightStartIndex, offset);
                 }
             }
-            for (int i = matches.size() - 1; i >= 0; i--) {
-                Match match = matches.get(i);
+            for (Match match : matches) {
                 comparison.addMatch(match);
-                int x = match.getStartOfFirst();  // Beginning of/in sequence A
-                int y = match.getStartOfSecond();  // Beginning of/in sequence B
-                for (int j = 0; j < match.getLength(); j++) {
-                    leftMarkedTokens.add(first.get(x + j));
-                    rightMarkedTokens.add(second.get(y + j));
+                int leftStartIndex = match.getStartOfFirst();
+                int rightStartIndex = match.getStartOfSecond();
+                for (int offset = 0; offset < match.getLength(); offset++) {
+                    leftMarkedTokens.add(first.get(leftStartIndex + offset));
+                    rightMarkedTokens.add(second.get(rightStartIndex + offset));
                 }
             }
         } while (maximumMatchLength != minimumMatchLength);
