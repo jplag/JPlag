@@ -57,12 +57,12 @@ public class TokenPrinterTest extends TestBase {
     void printGoFiles() {
         printSubmissions(options -> options.setLanguageOption(LanguageOption.GO_LANG));
     }
-    
+
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printKotlinFiles() {
         printSubmissions(options -> options.setLanguageOption(LanguageOption.KOTLIN));
-    }  
+    }
 
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {
         try {
