@@ -5,10 +5,10 @@ import static de.jplag.TokenConstants.SEPARATOR_TOKEN;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.jplag.options.JPlagOptions;
 
@@ -30,20 +30,28 @@ public class GreedyStringTiling {
     }
 
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
-        return swapAndCompare(firstSubmission, secondSubmission, false);
+        return swapAndCompare(firstSubmission, secondSubmission);
     }
 
     public final JPlagComparison compareWithBaseCode(Submission submission, Submission baseCodeSubmission) {
-        JPlagComparison comparison = swapAndCompare(submission, baseCodeSubmission, true);
+        JPlagComparison comparison = swapAndCompare(submission, baseCodeSubmission);
         // Remove the hashLookupTable as the isBaseCode tagging for the tokens changed which will affect the computed hashes.
         // This is a performance optimization to not suggest subsequences with baseCode for the matching.
         // Removing this optimization would not change the result as the baseCode matches are additionally checked by validating
         // that no match has a marked token (which baseCode-containing tokens are).
         hashLookupTables.remove(submission);
+
+        List<Token> submissionTokenList = submission.getTokenList();
+        for (Match match : comparison.getMatches()) {
+            int start = comparison.getFirstSubmission() == submission ? match.getStartOfFirst() : match.getStartOfSecond();
+            for (int offset = 0; offset < match.getLength(); offset++) {
+                submissionTokenList.get(start + offset).setBasecode(true);
+            }
+        }
         return comparison;
     }
 
-    private JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
+    private JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission) {
         Submission smallerSubmission, largerSubmission;
         if (firstSubmission.getTokenList().size() > secondSubmission.getTokenList().size()) {
             smallerSubmission = secondSubmission;
@@ -52,17 +60,16 @@ public class GreedyStringTiling {
             smallerSubmission = firstSubmission;
             largerSubmission = secondSubmission;
         }
-        return compare(smallerSubmission, largerSubmission, isBaseCodeComparison);
+        return compareInternal(smallerSubmission, largerSubmission);
     }
 
     /**
      * Compares two submissions. FILE_END is used as pivot
      * @param firstSubmission is the submission with the smaller sequence.
      * @param secondSubmission is the submission with the larger sequence.
-     * @param isBaseCodeComparison specifies whether one of the submissions is the base code.
      * @return the comparison results.
      */
-    private JPlagComparison compare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
+    private JPlagComparison compareInternal(Submission firstSubmission, Submission secondSubmission) {
         // first and second refer to the list of tokens of the first and second submission:
         List<Token> first = firstSubmission.getTokenList();
         List<Token> second = secondSubmission.getTokenList();
@@ -75,8 +82,8 @@ public class GreedyStringTiling {
             return comparison;
         }
 
-        Set<Token> leftMarkedTokens = initiallyMarkedTokens(first, isBaseCodeComparison);
-        Set<Token> rightMarkedTokens = initiallyMarkedTokens(second, isBaseCodeComparison);
+        Set<Token> leftMarkedTokens = initiallyMarkedTokens(first);
+        Set<Token> rightMarkedTokens = initiallyMarkedTokens(second);
 
         SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(firstSubmission, leftMarkedTokens);
         SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(secondSubmission, rightMarkedTokens);
@@ -127,13 +134,8 @@ public class GreedyStringTiling {
                 for (int j = 0; j < match.getLength(); j++) {
                     leftMarkedTokens.add(first.get(x + j));
                     rightMarkedTokens.add(second.get(y + j));
-                    if (isBaseCodeComparison) {
-                        first.get(x + j).setBasecode(true);
-                        second.get(y + j).setBasecode(true);
-                    }
                 }
             }
-
         } while (maxMatch != minimumTokenMatch);
 
         return comparison;
@@ -171,14 +173,9 @@ public class GreedyStringTiling {
         matches.add(match);
     }
 
-    private Set<Token> initiallyMarkedTokens(List<Token> tokens, boolean isBaseCodeComparison) {
-        Set<Token> markedTokens = new HashSet<Token>();
-        for (Token token : tokens) {
-            if (token.type == FILE_END || token.type == SEPARATOR_TOKEN || (!isBaseCodeComparison && token.isBasecode() && options.hasBaseCode())) {
-                markedTokens.add(token);
-            }
-        }
-        return markedTokens;
+    private Set<Token> initiallyMarkedTokens(List<Token> tokens) {
+        return tokens.stream().filter(token -> token.type == FILE_END || token.type == SEPARATOR_TOKEN || token.isBasecode())
+                .collect(Collectors.toSet());
     }
 
     private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, Set<Token> markedTokens) {
