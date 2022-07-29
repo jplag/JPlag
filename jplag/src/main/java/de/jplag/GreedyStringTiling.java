@@ -74,11 +74,11 @@ public class GreedyStringTiling {
         List<Token> first = firstSubmission.getTokenList();
         List<Token> second = secondSubmission.getTokenList();
 
-        // Initialize:
         JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
-        int minimumTokenMatch = options.getMinimumTokenMatch(); // minimal required token match
+        int minimumMatchLength = options.getMinimumTokenMatch();
 
-        if (first.size() <= minimumTokenMatch || second.size() <= minimumTokenMatch) { // <= because of pivots!
+        // comparison uses <= because it is assumed that the last token is a pivot (FILE_END)
+        if (first.size() <= minimumMatchLength || second.size() <= minimumMatchLength) {
             return comparison;
         }
 
@@ -90,45 +90,46 @@ public class GreedyStringTiling {
 
         List<Match> matches = new ArrayList<>();
 
-        // start the black magic:
-        int maxMatch;
+        int maximumMatchLength;
         do {
-            maxMatch = minimumTokenMatch;
+            maximumMatchLength = minimumMatchLength;
             matches.clear();
-            for (int x = 0; x < first.size() - maxMatch; x++) {
-                int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(x);
-                if (leftMarkedTokens.contains(first.get(x)) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
+            for (int leftStartIndex = 0; leftStartIndex < first.size() - maximumMatchLength; leftStartIndex++) {
+                int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(leftStartIndex);
+                if (leftMarkedTokens.contains(first.get(leftStartIndex)) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
                     continue;
                 }
-                List<Integer> hashedTokens = rightLookupTable.startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
-                for (Integer y : hashedTokens) {
-                    if (rightMarkedTokens.contains(second.get(y)) || maxMatch >= second.size() - y) { // >= because of pivots!
+                List<Integer> possiblyMatchingRightStartIndexes = rightLookupTable
+                        .startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
+                for (Integer rightStartIndex : possiblyMatchingRightStartIndexes) {
+                    // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
+                    if (rightMarkedTokens.contains(second.get(rightStartIndex)) || maximumMatchLength >= second.size() - rightStartIndex) {
                         continue;
                     }
 
-                    if (!subsequencesAreMatchingAndNotMarked(first.subList(x, x + maxMatch), leftMarkedTokens, second.subList(y, y + maxMatch),
-                            rightMarkedTokens)) {
+                    if (!subsequencesAreMatchingAndNotMarked(first.subList(leftStartIndex, leftStartIndex + maximumMatchLength), leftMarkedTokens,
+                            second.subList(rightStartIndex, rightStartIndex + maximumMatchLength), rightMarkedTokens)) {
                         continue;
                     }
 
                     // expand match
-                    int offset = maxMatch;
-                    while (first.get(x + offset).type == second.get(y + offset).type && !leftMarkedTokens.contains(first.get(x + offset))
-                            && !rightMarkedTokens.contains(second.get(y + offset))) {
+                    int offset = maximumMatchLength;
+                    while (first.get(leftStartIndex + offset).type == second.get(rightStartIndex + offset).type
+                            && !leftMarkedTokens.contains(first.get(leftStartIndex + offset))
+                            && !rightMarkedTokens.contains(second.get(rightStartIndex + offset))) {
                         offset++;
                     }
 
-                    if (offset > maxMatch) {
+                    if (offset > maximumMatchLength) {
                         matches.clear();
-                        maxMatch = offset;
+                        maximumMatchLength = offset;
                     }
-                    addMatchIfNotOverlapping(matches, x, y, offset);
+                    addMatchIfNotOverlapping(matches, leftStartIndex, rightStartIndex, offset);
                 }
             }
             for (int i = matches.size() - 1; i >= 0; i--) {
                 Match match = matches.get(i);
                 comparison.addMatch(match);
-                // in order that "Match" will be newly build (because reusing)
                 int x = match.getStartOfFirst();  // Beginning of/in sequence A
                 int y = match.getStartOfSecond();  // Beginning of/in sequence B
                 for (int j = 0; j < match.getLength(); j++) {
@@ -136,8 +137,7 @@ public class GreedyStringTiling {
                     rightMarkedTokens.add(second.get(y + j));
                 }
             }
-        } while (maxMatch != minimumTokenMatch);
-
+        } while (maximumMatchLength != minimumMatchLength);
         return comparison;
     }
 
