@@ -34,7 +34,13 @@ public class GreedyStringTiling {
     }
 
     public final JPlagComparison compareWithBaseCode(Submission submission, Submission baseCodeSubmission) {
-        return swapAndCompare(submission, baseCodeSubmission, true);
+        JPlagComparison comparison = swapAndCompare(submission, baseCodeSubmission, true);
+        // Remove the hashLookupTable as the isBaseCode tagging for the tokens changed which will affect the computed hashes.
+        // This is a performance optimization to not suggest subsequences with baseCode for the matching.
+        // Removing this optimization would not change the result as the baseCode matches are additionally checked by validating
+        // that no match has a marked token (which baseCode-containing tokens are).
+        hashLookupTables.remove(submission);
+        return comparison;
     }
 
     private JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
