@@ -2,6 +2,7 @@ package de.jplag.emf.dynamic;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -18,8 +19,9 @@ import org.slf4j.LoggerFactory;
 import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 import de.jplag.testutils.TestErrorConsumer;
+import de.jplag.testutils.TokenUtils;
 
-class MinimalEmfFrontendTest {
+class MinimalDynamicMetamodelTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "models");
@@ -46,6 +48,12 @@ class MinimalEmfFrontendTest {
         logger.info("parsed tokens: " + result.allTokens().toString());
         assertEquals(7, DynamicMetamodelTokenConstants.getTokenStrings().size());
         assertEquals(64, result.size());
+
+        var bookstoreTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECT[0]);
+        var bookstoreRenamedTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECT[2]);
+        var bookstoreExtendedTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECT[1]);
+        assertTrue(bookstoreTokens.size() < bookstoreExtendedTokens.size());
+        assertIterableEquals(bookstoreTokens, bookstoreRenamedTokens);
     }
 
     @AfterEach
@@ -53,5 +61,4 @@ class MinimalEmfFrontendTest {
         File baseFile = new File(BASE_PATH.toString());
         Arrays.stream(baseFile.listFiles()).filter(it -> it.getName().endsWith(Language.VIEW_FILE_SUFFIX)).forEach(File::delete);
     }
-
 }

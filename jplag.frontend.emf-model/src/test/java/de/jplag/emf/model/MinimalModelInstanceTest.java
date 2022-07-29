@@ -22,7 +22,7 @@ import de.jplag.TokenPrinter;
 import de.jplag.emf.dynamic.DynamicMetamodelTokenConstants;
 import de.jplag.testutils.TestErrorConsumer;
 
-class ModelInstanceTest {
+class MinimalModelInstanceTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "books");

@@ -69,6 +69,7 @@ public class BookStoreFactory {
         bookName.setEType(theCorePackage.getEString());
         EAttribute bookISBN = theCoreFactory.createEAttribute();
         bookISBN.setName("isbn");
+        bookISBN.setID(true);
         bookISBN.setEType(theCorePackage.getEInt());
 
         bookStoreEClass.getEStructuralFeatures().add(bookStoreOwner);
