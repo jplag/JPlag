@@ -20,7 +20,7 @@ public class SubsequenceHashLookupTable {
     private int windowSize;
     private List<Token> tokens;
     private int[] subsequenceHashes;
-    private Map<Integer, List<Integer>> hashTable;
+    private Map<Integer, List<Integer>> startIndexToSubsequenceHashesMap;
 
     /**
      * Generates a new subsequence hash lookup table. Performance is optimized to compute hashes in O(n).
@@ -39,7 +39,7 @@ public class SubsequenceHashLookupTable {
         }
 
         subsequenceHashes = new int[tokens.size() - windowSize];
-        hashTable = new HashMap<>(subsequenceHashes.length);
+        startIndexToSubsequenceHashesMap = new HashMap<>(subsequenceHashes.length);
         computeSubsequenceHashes(markedTokens);
     }
 
@@ -68,8 +68,8 @@ public class SubsequenceHashLookupTable {
      * @return a list with possible matching start indexes.
      */
     public List<Integer> startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(int subsequenceHash) {
-        if (hashTable.containsKey(subsequenceHash)) {
-            return hashTable.get(subsequenceHash);
+        if (startIndexToSubsequenceHashesMap.containsKey(subsequenceHash)) {
+            return startIndexToSubsequenceHashesMap.get(subsequenceHash);
         }
         return List.of();
     }
@@ -90,7 +90,7 @@ public class SubsequenceHashLookupTable {
             if (windowStartIndex >= 0) {
                 if (hashedLength >= windowSize) {
                     subsequenceHashes[windowStartIndex] = hash;
-                    addToHashTable(windowStartIndex, hash);
+                    addToStartIndexesToHashesMap(windowStartIndex, hash);
                 } else {
                     subsequenceHashes[windowStartIndex] = NO_HASH;
                 }
@@ -109,13 +109,13 @@ public class SubsequenceHashLookupTable {
         return token.type % TOKEN_HASH_MODULO;
     }
 
-    private void addToHashTable(int startIndex, int subsequenceHash) {
-        if (hashTable.containsKey(subsequenceHash)) {
-            hashTable.get(subsequenceHash).add(startIndex);
+    private void addToStartIndexesToHashesMap(int startIndex, int subsequenceHash) {
+        if (startIndexToSubsequenceHashesMap.containsKey(subsequenceHash)) {
+            startIndexToSubsequenceHashesMap.get(subsequenceHash).add(startIndex);
         } else {
             List<Integer> startIndexes = new ArrayList<>();
             startIndexes.add(startIndex);
-            hashTable.put(subsequenceHash, startIndexes);
+            startIndexToSubsequenceHashesMap.put(subsequenceHash, startIndexes);
         }
     }
 }

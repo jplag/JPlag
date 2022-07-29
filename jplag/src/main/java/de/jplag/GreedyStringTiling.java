@@ -68,58 +68,56 @@ public class GreedyStringTiling {
 
     /**
      * Compares two submissions. FILE_END is used as pivot
-     * @param firstSubmission is the submission with the smaller sequence.
-     * @param secondSubmission is the submission with the larger sequence.
+     * @param leftSubmission is the submission with the smaller sequence.
+     * @param rightSubmission is the submission with the larger sequence.
      * @return the comparison results.
      */
-    private JPlagComparison compareInternal(Submission firstSubmission, Submission secondSubmission) {
+    private JPlagComparison compareInternal(Submission leftSubmission, Submission rightSubmission) {
         // first and second refer to the list of tokens of the first and second submission:
-        List<Token> first = firstSubmission.getTokenList();
-        List<Token> second = secondSubmission.getTokenList();
+        List<Token> leftTokens = leftSubmission.getTokenList();
+        List<Token> rightTokens = rightSubmission.getTokenList();
 
-        JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
+        JPlagComparison comparison = new JPlagComparison(leftSubmission, rightSubmission);
         int minimumMatchLength = options.getMinimumTokenMatch();
 
         // comparison uses <= because it is assumed that the last token is a pivot (FILE_END)
-        if (first.size() <= minimumMatchLength || second.size() <= minimumMatchLength) {
+        if (leftTokens.size() <= minimumMatchLength || rightTokens.size() <= minimumMatchLength) {
             return comparison;
         }
 
-        Set<Token> leftMarkedTokens = initiallyMarkedTokens(firstSubmission);
-        Set<Token> rightMarkedTokens = initiallyMarkedTokens(secondSubmission);
+        Set<Token> leftMarkedTokens = initiallyMarkedTokens(leftSubmission);
+        Set<Token> rightMarkedTokens = initiallyMarkedTokens(rightSubmission);
 
-        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(firstSubmission, leftMarkedTokens);
-        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(secondSubmission, rightMarkedTokens);
-
-        List<Match> matches = new ArrayList<>();
+        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarkedTokens);
+        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarkedTokens);
 
         int maximumMatchLength;
         do {
             maximumMatchLength = minimumMatchLength;
-            matches.clear();
-            for (int leftStartIndex = 0; leftStartIndex < first.size() - maximumMatchLength; leftStartIndex++) {
+            List<Match> matches = new ArrayList<>();
+            for (int leftStartIndex = 0; leftStartIndex < leftTokens.size() - maximumMatchLength; leftStartIndex++) {
                 int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(leftStartIndex);
-                if (leftMarkedTokens.contains(first.get(leftStartIndex)) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
+                if (leftMarkedTokens.contains(leftTokens.get(leftStartIndex)) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
                     continue;
                 }
                 List<Integer> possiblyMatchingRightStartIndexes = rightLookupTable
                         .startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
                 for (Integer rightStartIndex : possiblyMatchingRightStartIndexes) {
                     // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
-                    if (rightMarkedTokens.contains(second.get(rightStartIndex)) || maximumMatchLength >= second.size() - rightStartIndex) {
+                    if (rightMarkedTokens.contains(rightTokens.get(rightStartIndex)) || maximumMatchLength >= rightTokens.size() - rightStartIndex) {
                         continue;
                     }
 
-                    if (!subsequencesAreMatchingAndNotMarked(first.subList(leftStartIndex, leftStartIndex + maximumMatchLength), leftMarkedTokens,
-                            second.subList(rightStartIndex, rightStartIndex + maximumMatchLength), rightMarkedTokens)) {
+                    if (!subsequencesAreMatchingAndNotMarked(leftTokens.subList(leftStartIndex, leftStartIndex + maximumMatchLength),
+                            leftMarkedTokens, rightTokens.subList(rightStartIndex, rightStartIndex + maximumMatchLength), rightMarkedTokens)) {
                         continue;
                     }
 
                     // expand match
                     int offset = maximumMatchLength;
-                    while (first.get(leftStartIndex + offset).type == second.get(rightStartIndex + offset).type
-                            && !leftMarkedTokens.contains(first.get(leftStartIndex + offset))
-                            && !rightMarkedTokens.contains(second.get(rightStartIndex + offset))) {
+                    while (leftTokens.get(leftStartIndex + offset).type == rightTokens.get(rightStartIndex + offset).type
+                            && !leftMarkedTokens.contains(leftTokens.get(leftStartIndex + offset))
+                            && !rightMarkedTokens.contains(rightTokens.get(rightStartIndex + offset))) {
                         offset++;
                     }
 
@@ -135,8 +133,8 @@ public class GreedyStringTiling {
                 int leftStartIndex = match.getStartOfFirst();
                 int rightStartIndex = match.getStartOfSecond();
                 for (int offset = 0; offset < match.getLength(); offset++) {
-                    leftMarkedTokens.add(first.get(leftStartIndex + offset));
-                    rightMarkedTokens.add(second.get(rightStartIndex + offset));
+                    leftMarkedTokens.add(leftTokens.get(leftStartIndex + offset));
+                    rightMarkedTokens.add(rightTokens.get(rightStartIndex + offset));
                 }
             }
         } while (maximumMatchLength != minimumMatchLength);
