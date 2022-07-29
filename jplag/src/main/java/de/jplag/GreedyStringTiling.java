@@ -111,9 +111,7 @@ public class GreedyStringTiling {
                         offset++;
                     }
 
-                    if (offset > maxMatch && !isBaseCodeComparison || offset != maxMatch && isBaseCodeComparison) {  // new biggest match? -> delete
-                                                                                                                     // current
-                        // smaller
+                    if (offset > maxMatch) {
                         matches.clear();
                         maxMatch = offset;
                     }
