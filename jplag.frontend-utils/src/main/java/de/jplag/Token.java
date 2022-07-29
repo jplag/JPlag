@@ -14,8 +14,6 @@ public abstract class Token {
     private int length;
     private String file;
 
-    private boolean basecode = false;
-
     protected int type;
 
     /**
@@ -116,18 +114,6 @@ public abstract class Token {
      * @return a string representation depending on the type of the token.
      */
     protected abstract String type2string();
-
-    /**
-     * @return whether this token is part of a basecode.
-     */
-    /* package-private */ boolean isBasecode() {
-        return basecode;
-    }
-
-    /* package-private */ boolean setBasecode(boolean basecode) {
-        this.basecode = basecode;
-        return basecode;
-    }
 
     /* package-private */ void setFile(String file) {
         this.file = file;

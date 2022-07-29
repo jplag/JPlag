@@ -5,6 +5,7 @@ import static de.jplag.TokenConstants.SEPARATOR_TOKEN;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ public class GreedyStringTiling {
 
     private final JPlagOptions options;
     private Map<Submission, SubsequenceHashLookupTable> hashLookupTables = new HashMap<>();
+    private Map<Submission, Set<Token>> baseCodeMarkings = new HashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
         this.options = options;
@@ -42,12 +44,13 @@ public class GreedyStringTiling {
         hashLookupTables.remove(submission);
 
         List<Token> submissionTokenList = submission.getTokenList();
+        Set<Token> baseCodeMarking = new HashSet<>();
         for (Match match : comparison.getMatches()) {
-            int start = comparison.getFirstSubmission() == submission ? match.getStartOfFirst() : match.getStartOfSecond();
-            for (int offset = 0; offset < match.getLength(); offset++) {
-                submissionTokenList.get(start + offset).setBasecode(true);
-            }
+            int startIndex = comparison.getFirstSubmission() == submission ? match.getStartOfFirst() : match.getStartOfSecond();
+            baseCodeMarking.addAll(submissionTokenList.subList(startIndex, startIndex + match.getLength()));
         }
+        baseCodeMarkings.put(submission, baseCodeMarking);
+
         return comparison;
     }
 
@@ -82,8 +85,8 @@ public class GreedyStringTiling {
             return comparison;
         }
 
-        Set<Token> leftMarkedTokens = initiallyMarkedTokens(first);
-        Set<Token> rightMarkedTokens = initiallyMarkedTokens(second);
+        Set<Token> leftMarkedTokens = initiallyMarkedTokens(firstSubmission);
+        Set<Token> rightMarkedTokens = initiallyMarkedTokens(secondSubmission);
 
         SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(firstSubmission, leftMarkedTokens);
         SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(secondSubmission, rightMarkedTokens);
@@ -172,8 +175,10 @@ public class GreedyStringTiling {
         matches.add(match);
     }
 
-    private Set<Token> initiallyMarkedTokens(List<Token> tokens) {
-        return tokens.stream().filter(token -> token.type == FILE_END || token.type == SEPARATOR_TOKEN || token.isBasecode())
+    private Set<Token> initiallyMarkedTokens(Submission submission) {
+        Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
+        return submission.getTokenList().stream().filter(
+                token -> token.type == FILE_END || token.type == SEPARATOR_TOKEN || (baseCodeTokens != null && baseCodeTokens.contains(token)))
                 .collect(Collectors.toSet());
     }
 
