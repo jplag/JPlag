@@ -7,7 +7,7 @@ package de.jplag;
  */
 public abstract class Token {
     /** Indicates that the requested field has no value. */
-    public static int NO_VALUE = -1;
+    public static final int NO_VALUE = -1;
 
     private int line;
     private int column;

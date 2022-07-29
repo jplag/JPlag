@@ -16,6 +16,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
+import de.jplag.TokenConstants;
 import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
@@ -41,7 +42,7 @@ public class Parser extends AbstractParser {
             if (!parseFile(directory, files[i])) {
                 errors++;
             }
-            tokens.add(new Python3Token(Python3TokenConstants.FILE_END, files[i], -1, -1, -1));
+            tokens.add(new Python3Token(TokenConstants.FILE_END, files[i], -1, -1, -1));
         }
         return tokens;
     }

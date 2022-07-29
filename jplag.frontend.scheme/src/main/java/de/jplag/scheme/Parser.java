@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.jplag.AbstractParser;
 import de.jplag.ErrorConsumer;
+import de.jplag.TokenConstants;
 
 public class Parser extends AbstractParser {
     private String currentFile;
@@ -28,7 +29,7 @@ public class Parser extends AbstractParser {
             getErrorConsumer().print(null, "Parsing file " + files[i]);
             if (!SchemeParser.parseFile(directory, files[i], null, this))
                 errors++;
-            tokens.add(new SchemeToken(SchemeTokenConstants.FILE_END, currentFile));
+            tokens.add(new SchemeToken(TokenConstants.FILE_END, currentFile));
         }
         return tokens;
     }
