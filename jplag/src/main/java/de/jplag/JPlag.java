@@ -83,10 +83,6 @@ public class JPlag {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, errorCollector, excludedFileNames);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
-        if (submissionSet.hasBaseCode()) {
-            coreAlgorithm.preprocessBaseCodeSubmission(submissionSet.getBaseCode());
-        }
-
         int submissionCount = submissionSet.numberOfSubmissions();
         if (submissionCount < 2) {
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");

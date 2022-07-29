@@ -29,15 +29,6 @@ public class GreedyStringTiling {
         this.options = options;
     }
 
-    /**
-     * Preprocesses the given base code submission. Should be called before computing comparisons if there is a base code
-     * submission.
-     * @param baseSubmission is the base code submission. Must not be null.
-     */
-    public void preprocessBaseCodeSubmission(Submission baseSubmission) {
-        subsequenceHashLookupTableForSubmission(baseSubmission, Set.of());
-    }
-
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
         return swapAndCompare(firstSubmission, secondSubmission, false);
     }
