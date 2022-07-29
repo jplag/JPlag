@@ -40,7 +40,7 @@ public final class CollectedLogger extends MarkerIgnoringBase {
      */
     private transient boolean isFinalizing = false;
 
-    private final transient SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss_SSS");
+    private final transient SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss_SSS");
 
     private final ConcurrentLinkedDeque<Triple<String, Throwable, Date>> allErrors = new ConcurrentLinkedDeque<>();
 
@@ -48,39 +48,39 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         this.name = name;
     }
 
-    private void log(int level, String message, Throwable t) {
-        log(level, message, t, null);
+    private void log(int level, String message, Throwable throwable) {
+        log(level, message, throwable, null);
     }
 
-    private void log(int level, String message, Throwable t, Date timeOfError) {
+    private void log(int level, String message, Throwable throwable, Date timeOfError) {
         if (!isLevelEnabled(level)) {
             return;
         }
 
         if (level == LOG_LEVEL_ERROR && !isFinalizing) {
             // Buffer errors for the final output
-            allErrors.add(new Triple<>(message, t, new Date()));
+            allErrors.add(new Triple<>(message, throwable, new Date()));
             return;
         }
 
-        StringBuilder buf = new StringBuilder(32);
+        StringBuilder builder = new StringBuilder(32);
 
         // Append date-time
-        buf.append(sdf.format(timeOfError == null ? new Date() : timeOfError)).append(' ');
+        builder.append(dateFormat.format(timeOfError == null ? new Date() : timeOfError)).append(' ');
 
         // Append current thread name
-        buf.append('[').append(Thread.currentThread().getName()).append("] ");
+        builder.append('[').append(Thread.currentThread().getName()).append("] ");
         // Append current Level
-        buf.append('[').append(renderLevel(level)).append(']').append(' ');
+        builder.append('[').append(renderLevel(level)).append(']').append(' ');
 
         // Append the name of the log instance
         if (shortLogName == null)
             shortLogName = computeShortName();
-        buf.append(shortLogName).append(" - ");
+        builder.append(shortLogName).append(" - ");
         // Append the message
-        buf.append(message);
+        builder.append(message);
 
-        write(buf, t);
+        write(builder, throwable);
     }
 
     void printAllErrorsForLogger() {
@@ -98,17 +98,17 @@ public final class CollectedLogger extends MarkerIgnoringBase {
     }
 
     @SuppressWarnings("java:S106")
-    void write(StringBuilder buf, Throwable t) {
+    void write(StringBuilder buf, Throwable throwable) {
         PrintStream targetStream = System.out;
 
         targetStream.println(buf.toString());
-        writeThrowable(t, targetStream);
+        writeThrowable(throwable, targetStream);
         targetStream.flush();
     }
 
-    private void writeThrowable(Throwable t, PrintStream targetStream) {
-        if (t != null) {
-            t.printStackTrace(targetStream);
+    private void writeThrowable(Throwable throwable, PrintStream targetStream) {
+        if (throwable != null) {
+            throwable.printStackTrace(targetStream);
         }
     }
 
@@ -136,8 +136,8 @@ public final class CollectedLogger extends MarkerIgnoringBase {
     }
 
     @Override
-    public void trace(String msg) {
-        log(LOG_LEVEL_TRACE, msg, null);
+    public void trace(String message) {
+        log(LOG_LEVEL_TRACE, message, null);
     }
 
     public void trace(String format, Object param1) {
@@ -152,16 +152,16 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         formatAndLog(LOG_LEVEL_TRACE, format, argArray);
     }
 
-    public void trace(String msg, Throwable t) {
-        log(LOG_LEVEL_TRACE, msg, t);
+    public void trace(String message, Throwable t) {
+        log(LOG_LEVEL_TRACE, message, t);
     }
 
     public boolean isDebugEnabled() {
         return isLevelEnabled(LOG_LEVEL_DEBUG);
     }
 
-    public void debug(String msg) {
-        log(LOG_LEVEL_DEBUG, msg, null);
+    public void debug(String message) {
+        log(LOG_LEVEL_DEBUG, message, null);
     }
 
     public void debug(String format, Object param1) {
@@ -176,16 +176,16 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         formatAndLog(LOG_LEVEL_DEBUG, format, argArray);
     }
 
-    public void debug(String msg, Throwable t) {
-        log(LOG_LEVEL_DEBUG, msg, t);
+    public void debug(String message, Throwable throwable) {
+        log(LOG_LEVEL_DEBUG, message, throwable);
     }
 
     public boolean isInfoEnabled() {
         return isLevelEnabled(LOG_LEVEL_INFO);
     }
 
-    public void info(String msg) {
-        log(LOG_LEVEL_INFO, msg, null);
+    public void info(String message) {
+        log(LOG_LEVEL_INFO, message, null);
     }
 
     public void info(String format, Object arg) {
@@ -200,16 +200,16 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         formatAndLog(LOG_LEVEL_INFO, format, argArray);
     }
 
-    public void info(String msg, Throwable t) {
-        log(LOG_LEVEL_INFO, msg, t);
+    public void info(String message, Throwable throwable) {
+        log(LOG_LEVEL_INFO, message, throwable);
     }
 
     public boolean isWarnEnabled() {
         return isLevelEnabled(LOG_LEVEL_WARN);
     }
 
-    public void warn(String msg) {
-        log(LOG_LEVEL_WARN, msg, null);
+    public void warn(String message) {
+        log(LOG_LEVEL_WARN, message, null);
     }
 
     public void warn(String format, Object arg) {
@@ -224,16 +224,16 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         formatAndLog(LOG_LEVEL_WARN, format, argArray);
     }
 
-    public void warn(String msg, Throwable t) {
-        log(LOG_LEVEL_WARN, msg, t);
+    public void warn(String message, Throwable throwable) {
+        log(LOG_LEVEL_WARN, message, throwable);
     }
 
     public boolean isErrorEnabled() {
         return isLevelEnabled(LOG_LEVEL_ERROR);
     }
 
-    public void error(String msg) {
-        log(LOG_LEVEL_ERROR, msg, null);
+    public void error(String message) {
+        log(LOG_LEVEL_ERROR, message, null);
     }
 
     public void error(String format, Object arg) {
@@ -248,23 +248,23 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         formatAndLog(LOG_LEVEL_ERROR, format, argArray);
     }
 
-    public void error(String msg, Throwable t) {
-        log(LOG_LEVEL_ERROR, msg, t);
+    public void error(String message, Throwable throwable) {
+        log(LOG_LEVEL_ERROR, message, throwable);
     }
 
     private void formatAndLog(int level, String format, Object arg1, Object arg2) {
         if (!isLevelEnabled(level)) {
             return;
         }
-        FormattingTuple tp = MessageFormatter.format(format, arg1, arg2);
-        log(level, tp.getMessage(), tp.getThrowable());
+        FormattingTuple formattingTuple = MessageFormatter.format(format, arg1, arg2);
+        log(level, formattingTuple.getMessage(), formattingTuple.getThrowable());
     }
 
     private void formatAndLog(int level, String format, Object... arguments) {
         if (!isLevelEnabled(level)) {
             return;
         }
-        FormattingTuple tp = MessageFormatter.arrayFormat(format, arguments);
-        log(level, tp.getMessage(), tp.getThrowable());
+        FormattingTuple formattingTuple = MessageFormatter.arrayFormat(format, arguments);
+        log(level, formattingTuple.getMessage(), formattingTuple.getThrowable());
     }
 }
