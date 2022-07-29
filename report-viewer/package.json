@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@highlightjs/vue-plugin": "^2.1.0",
-    "chart.js": "^3.8.0",
+    "chart.js": "^3.8.2",
     "chartjs-plugin-datalabels": "^2.0.0",
-    "core-js": "^3.23.5",
+    "core-js": "^3.24.0",
     "gitart-vue-dialog": "^2.4.0",
     "highlight.js": "^11.6.0",
     "jszip": "^3.10.0",
@@ -23,8 +23,8 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.30.7",
-    "@typescript-eslint/parser": "^5.30.7",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-plugin-router": "~5.0.8",
