@@ -38,7 +38,6 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
         for (Submission currentSubmission : submissionSet.getSubmissions()) {
             JPlagComparison baseCodeComparison = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
             currentSubmission.setBaseCodeComparison(baseCodeComparison);
-            baseCodeSubmission.resetBaseCode();
         }
     }
 

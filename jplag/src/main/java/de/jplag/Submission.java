@@ -158,15 +158,6 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Resets the base code flag for all tokens of this submission.
-     */
-    public void resetBaseCode() {
-        for (Token token : tokenList) {
-            token.setBasecode(false);
-        }
-    }
-
-    /**
      * Sets the base code comparison
      * @param baseCodeComparison is submissions matches with the base code
      */

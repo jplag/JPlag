@@ -97,14 +97,6 @@ public abstract class Token {
         this.column = column;
     }
 
-    /**
-     * Sets the line index denoting in which line the code sections represented by this token starts.
-     * @param line is the line index to set.
-     */
-    public void setLine(int line) {
-        this.line = line;
-    }
-
     @Override
     public String toString() {
         return type2string();
@@ -114,8 +106,4 @@ public abstract class Token {
      * @return a string representation depending on the type of the token.
      */
     protected abstract String type2string();
-
-    /* package-private */ void setFile(String file) {
-        this.file = file;
-    }
 }
