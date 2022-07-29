@@ -5,63 +5,65 @@
   <div class="files-container">
     <h1>Files of {{ filesOwner }}</h1>
     <VueDraggableNext>
-      <CodePanel v-for="(file, index) in Object.keys(files)"
-                 :key="file.concat(index)"
-                 :collapse="files[file].collapsed"
-                 :file-index="index"
-                 :lines="files[file].lines"
-                 :matches="!matches[file] ? [] : matches[file]"
-                 :panel-id="containerId"
-                 :title="file"
-                 @toggle-collapse="$emit('toggle-collapse', file)"
-                 @line-selected="lineSelected"
+      <CodePanel
+        v-for="(file, index) in files.keys()"
+        :key="file.concat(index.toString())"
+        :collapse="files.get(file)?.collapsed"
+        :file-index="index"
+        :lines="!files.get(file)?.lines ? [] : files.get(file)?.lines"
+        :matches="!matches.get(file) ? [] : matches.get(file)"
+        :panel-id="containerId"
+        :title="file"
+        @toggle-collapse="$emit('toggle-collapse', file)"
+        @line-selected="lineSelected"
       />
     </VueDraggableNext>
   </div>
 </template>
 
-<script>
-import {defineComponent} from "vue";
-import CodePanel from "@/components/CodePanel";
-import {VueDraggableNext} from "vue-draggable-next"
+<script lang="ts">
+import { defineComponent } from "vue";
+import CodePanel from "../components/CodePanel.vue";
+import { VueDraggableNext } from "vue-draggable-next";
+import { SubmissionFile } from "@/model/SubmissionFile";
+import { MatchInSingleFile } from "@/model/MatchInSingleFile";
 
 export default defineComponent({
   name: "FilesContainer",
-  components: {CodePanel, VueDraggableNext},
+  components: { CodePanel, VueDraggableNext },
   props: {
     /**
      * Id of the files container. We have only two so it is either 1 or 2.
      */
     containerId: {
       type: Number,
-      required: true
+      required: true,
     },
     /**
      * Id of the submission to thich the files belong.
      */
     filesOwner: {
       type: String,
-      required: true
+      required: true,
     },
     /**
      * Files of the submission.
      * type: Array<SubmissionFile>
      */
     files: {
+      type: Map<string,SubmissionFile>,
       required: true,
-
     },
     /**
      * Matche of submission.
-     * type: Array<MatchInSingleFile>
      */
     matches: {
-      required: true
-    }
+     type: Map<string,MatchInSingleFile>,
+      required: true,
+    },
   },
 
-  setup(props, {emit}) {
-
+  setup(props, { emit }) {
     /**
      * Passes lineSelected event, emitted from LineOfCode, to parent.
      * @param e
@@ -69,14 +71,14 @@ export default defineComponent({
      * @param file
      * @param line
      */
-    const lineSelected = (e, index, file, line) => {
-      emit('lineSelected', e, index, file, line)
-    }
+    const lineSelected = (e: unknown, index: number, file: string, line: number) => {
+      emit("lineSelected", e, index, file, line);
+    };
     return {
-      lineSelected
-    }
-  }
-})
+      lineSelected,
+    };
+  },
+});
 </script>
 
 <style scoped>

@@ -28,7 +28,7 @@ public class TokenPrinterTest extends TestBase {
 
     @Disabled
     @Test
-    public void printCPPFiles() {
+    void printCPPFiles() {
         printSubmissions(options -> {
             options.setLanguageOption(LanguageOption.C_CPP);
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
@@ -37,26 +37,32 @@ public class TokenPrinterTest extends TestBase {
 
     @Disabled
     @Test
-    public void printJavaFiles() {
+    void printJavaFiles() {
         printSubmissions(options -> {
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }
 
-    @Disabled
+    @Disabled("Not a meaningful test, used for designing the token set")
     @Test
-    public void printRLangFiles() {
+    void printRLangFiles() {
         printSubmissions(options -> {
             options.setLanguageOption(LanguageOption.R_LANG);
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }
 
-    @Disabled("No meaningful test, just an aid to design frontend")
+    @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printGoFiles() {
         printSubmissions(options -> options.setLanguageOption(LanguageOption.GO_LANG));
     }
+    
+    @Disabled("Not a meaningful test, used for designing the token set")
+    @Test
+    void printKotlinFiles() {
+        printSubmissions(options -> options.setLanguageOption(LanguageOption.KOTLIN));
+    }  
 
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {
         try {

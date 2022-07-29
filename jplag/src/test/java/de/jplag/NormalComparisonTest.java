@@ -21,10 +21,10 @@ class NormalComparisonTest extends TestBase {
         JPlagResult result = runJPlagWithDefaultOptions("SimpleDuplicate");
 
         assertEquals(2, result.getNumberOfSubmissions());
-        assertEquals(1, result.getComparisons().size());
-        assertEquals(1, result.getComparisons().get(0).getMatches().size());
-        assertEquals(1, result.getSimilarityDistribution()[6]);
-        assertEquals(62.07f, result.getComparisons().get(0).similarity(), 0.1f);
+        assertEquals(1, result.getAllComparisons().size());
+        assertEquals(1, result.getAllComparisons().get(0).getMatches().size());
+        assertEquals(1, result.getSimilarityDistribution()[3]);
+        assertEquals(62.07f, result.getAllComparisons().get(0).similarity(), 0.1f);
     }
 
     /**
@@ -35,11 +35,9 @@ class NormalComparisonTest extends TestBase {
         JPlagResult result = runJPlagWithDefaultOptions("NoDuplicate");
 
         assertEquals(3, result.getNumberOfSubmissions());
-        assertEquals(3, result.getComparisons().size());
+        assertEquals(3, result.getAllComparisons().size());
 
-        result.getComparisons().forEach(comparison -> {
-            assertEquals(0f, comparison.similarity(), 0.1f);
-        });
+        result.getAllComparisons().forEach(comparison -> assertEquals(0f, comparison.similarity(), 0.1f));
     }
 
     /**
@@ -52,10 +50,10 @@ class NormalComparisonTest extends TestBase {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
 
         assertEquals(5, result.getNumberOfSubmissions());
-        assertEquals(10, result.getComparisons().size());
+        assertEquals(10, result.getAllComparisons().size());
 
         // All comparisons with E shall have no matches
-        result.getComparisons().stream()
+        result.getAllComparisons().stream()
                 .filter(comparison -> comparison.getSecondSubmission().getName().equals("E") || comparison.getFirstSubmission().getName().equals("E"))
                 .forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
 
@@ -81,7 +79,7 @@ class NormalComparisonTest extends TestBase {
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
-        return result.getComparisons().stream().filter(
+        return result.getAllComparisons().stream().filter(
                 comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
                         || comparison.getFirstSubmission().getName().equals(nameB) && comparison.getSecondSubmission().getName().equals(nameA))
                 .findFirst();
@@ -112,7 +110,7 @@ class NormalComparisonTest extends TestBase {
     }
 
     @Test
-    public void testMultiRootDirBasecodeName() throws ExitException {
+    public void testMultiRootDirBasecodeName() {
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate"));
         String basecodePath = "base"; // Should *not* find basecode/base
         assertThrows(BasecodeException.class, () -> runJPlag(paths, it -> it.setBaseCodeSubmissionName(basecodePath)));
@@ -125,7 +123,7 @@ class NormalComparisonTest extends TestBase {
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> {
         });
         int numberOfExpectedComparison = 1 + 3 * 2;
-        assertEquals(numberOfExpectedComparison, result.getComparisons().size());
+        assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
     }
 
     @Test
@@ -135,7 +133,7 @@ class NormalComparisonTest extends TestBase {
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> {
         });
         int numberOfExpectedComparison = 1;
-        assertEquals(numberOfExpectedComparison, result.getComparisons().size());
+        assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
     }
 
     @Test
@@ -145,6 +143,6 @@ class NormalComparisonTest extends TestBase {
         List<String> oldDirectories = List.of(getBasePath("basecode")); // 3 - 1 submissions
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it.setBaseCodeSubmissionName(basecodePath));
         int numberOfExpectedComparison = 1 + 2 * 2;
-        assertEquals(numberOfExpectedComparison, result.getComparisons().size());
+        assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
     }
 }

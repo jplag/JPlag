@@ -51,10 +51,10 @@ public class VolumeTest extends TestBase {
 
         var csv = readCSVResults(String.format("%s/%s", this.getBasePath(), "matches_avg.csv"));
 
-        assertEquals(csv.size(), results.getComparisons().size());
+        assertEquals(csv.size(), results.getAllComparisons().size());
         System.out.println("Volume test size: " + csv.size());
 
-        results.getComparisons().forEach(result -> {
+        results.getAllComparisons().forEach(result -> {
             var key = result.getFirstSubmission().getName() + result.getSecondSubmission().getName();
 
             assertTrue(csv.containsKey(key));

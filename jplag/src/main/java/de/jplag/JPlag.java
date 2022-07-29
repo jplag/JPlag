@@ -96,7 +96,7 @@ public class JPlag {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         errorCollector.print("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()), null);
 
-        result.setClusteringResult(ClusteringFactory.getClusterings(result.getComparisons(), options.getClusteringOptions()));
+        result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.getClusteringOptions()));
 
         return result;
     }

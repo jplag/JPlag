@@ -23,10 +23,10 @@ public class NewJavaFeaturesTest extends TestBase {
         for (Submission submission : result.getSubmissions().getSubmissions()) {
             assertEquals(6, submission.getFiles().size(), String.format(CHANGE_MESSAGE, "Files"));
         }
-        assertEquals(1, result.getComparisons().size(), String.format(CHANGE_MESSAGE, "Comparisons"));
+        assertEquals(1, result.getAllComparisons().size(), String.format(CHANGE_MESSAGE, "Comparisons"));
 
         // Check similarity and number of matches:
-        var comparison = result.getComparisons().get(0);
+        var comparison = result.getAllComparisons().get(0);
         assertEquals(EXPECTED_SIMILARITY, comparison.similarity(), DELTA);
         assertEquals(EXPECTED_MATCHES, comparison.getMatches().size());
     }

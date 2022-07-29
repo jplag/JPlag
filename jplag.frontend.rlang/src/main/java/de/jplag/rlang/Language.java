@@ -10,9 +10,10 @@ import de.jplag.TokenList;
  */
 public class Language implements de.jplag.Language {
 
-    public static final String NAME = "R Parser";
-    public static final String SHORT_NAME = "R";
-    public static final int DEFAULT_MIN_TOKEN_MATCH = 8;
+    private static final String NAME = "R Parser";
+    private static final String SHORT_NAME = "R";
+    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
+    private static final String[] FILE_EXTENSION = {".R", ".r"};
     private final RParserAdapter parserAdapter;
 
     public Language(ErrorConsumer consumer) {
@@ -21,7 +22,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".R", ".r"};
+        return FILE_EXTENSION;
     }
 
     @Override
