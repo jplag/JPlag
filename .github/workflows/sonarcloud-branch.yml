@@ -1,4 +1,4 @@
-name: SonarCloud Scan (triggered by maven.yml)
+name: SonarCloud Scan (master branch)
 
 on:
   push:
