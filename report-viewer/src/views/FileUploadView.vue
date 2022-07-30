@@ -60,7 +60,7 @@ export default defineComponent({
     const handleZipFile = (file: File) => {
       jszip.loadAsync(file).then(async (zip) => {
         for (const fileName of Object.keys(zip.files)) {
-          if (fileName.match(/Submissions\/(.+)\/(.+)/)) {
+          if (fileName.match(/submissions\/(.+)\/(.+)/)) {
             const filePath = path.parse(fileName);
             const submissionName = filePath.dir.split("/")[2];
             await zip.files[fileName].async("string").then((data) => {
@@ -98,7 +98,7 @@ export default defineComponent({
           fileString: str,
         });
         navigateToOverview();
-      } else if (json["first_submission_id"] && json["second_submission_id"]) {
+      } else if (json["id1"] && json["id2"]) {
         store.commit("setLoadingType", {
           local: false,
           zip: false,
@@ -106,8 +106,8 @@ export default defineComponent({
           fileString: str,
         });
         navigateToComparisonView(
-          json["first_submission_id"],
-          json["second_submission_id"]
+          json["id1"],
+          json["id2"]
         );
       }
     };

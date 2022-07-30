@@ -31,6 +31,8 @@ public class ReportObjectFactory {
     private static final MetricMapper metricMapper = new MetricMapper();
     private static final ComparisonReportMapper comparisonReportMapper = new ComparisonReportMapper();
     private static final FileWriter fileWriter = new FileWriter();
+    public static final String OVERVIEW_FILE_NAME = "overview.json";
+    public static final String SUBMISSIONS_FOLDER = "submissions";
 
     /**
      * @param result The JPlagResult to be converted into a report.
@@ -82,14 +84,14 @@ public class ReportObjectFactory {
         overviewReport.setMetrics(getMetrics(result));
         overviewReport.setClusters(clusteringResultMapper.map(result));
 
-        fileWriter.saveAsJSON(overviewReport, path, "overview.json");
+        fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 
     }
 
     private static void copySubmissionFilesToReport(String path, JPlagResult result) {
         List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().getMaximumNumberOfComparisons());
         var submissions = getSubmissions(comparisons);
-        var submissionsPath = createDirectory(path, "Submissions");
+        var submissionsPath = createDirectory(path, SUBMISSIONS_FOLDER);
         for (var submission : submissions) {
             File directory = createDirectory(submissionsPath.getPath(), submission.getName());
             for (var file : submission.getFiles()) {

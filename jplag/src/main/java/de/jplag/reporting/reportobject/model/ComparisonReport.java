@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param matchPercentage similarity in percent. between 0f and 100f.
  * @param matches the list of matches found in the comparison of the two submissions
  */
-public record ComparisonReport(@JsonProperty("first_submission_id") String firstSubmissionId,
-        @JsonProperty("second_submission_id") String secondSubmissionId, @JsonProperty("match_percentage") float matchPercentage,
+public record ComparisonReport(@JsonProperty("id1") String firstSubmissionId,
+        @JsonProperty("id2") String secondSubmissionId, @JsonProperty("similarity") float matchPercentage,
         @JsonProperty("matches") List<Match> matches) {
 
 }

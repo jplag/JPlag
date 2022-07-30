@@ -7,10 +7,10 @@ import store from "@/store/store";
 export class ComparisonFactory {
   static getComparison(json: Record<string, unknown>): Comparison {
     const filesOfFirstSubmission = store.getters.filesOfSubmission(
-      json.first_submission_id
+      json.id1
     );
     const filesOfSecondSubmission = store.getters.filesOfSubmission(
-      json.second_submission_id
+      json.id2
     );
 
     const filesOfFirstConverted = this.convertToFilesByName(
@@ -30,9 +30,9 @@ export class ComparisonFactory {
     const matchesInSecond = this.groupMatchesByFileName(coloredMatches, 2);
 
     const comparison = new Comparison(
-      json.first_submission_id as string,
-      json.second_submission_id as string,
-      json.match_percentage as number
+      json.id1 as string,
+      json.id2 as string,
+      json.similarity as number
     );
     comparison.filesOfFirstSubmission = filesOfFirstConverted;
     comparison.filesOfSecondSubmission = filesOfSecondConverted;
@@ -116,12 +116,12 @@ export class ComparisonFactory {
     color: string
   ): Match {
     return {
-      firstFile: match.first_file_name as string,
-      secondFile: match.second_file_name as string,
-      startInFirst: match.start_in_first as number,
-      endInFirst: match.end_in_first as number,
-      startInSecond: match.start_in_second as number,
-      endInSecond: match.end_in_second as number,
+      firstFile: match.file1 as string,
+      secondFile: match.file2 as string,
+      startInFirst: match.start1 as number,
+      endInFirst: match.end1 as number,
+      startInSecond: match.start2 as number,
+      endInSecond: match.end2 as number,
       tokens: match.tokens as number,
       color: color,
     };
