@@ -13,10 +13,33 @@ on:
   workflow_dispatch:
 
 jobs:
+  get-info:
+    name: "Get information about the source run"
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      sourceHeadRepo: ${{ steps.source-run-info.outputs.sourceHeadRepo }}
+      sourceHeadBranch: ${{ steps.source-run-info.outputs.sourceHeadBranch }}
+      sourceHeadSha: ${{ steps.source-run-info.outputs.sourceHeadSha }}
+      mergeCommitSha: ${{ steps.source-run-info.outputs.mergeCommitSha }}
+      targetCommitSha: ${{ steps.source-run-info.outputs.targetCommitSha }}
+      pullRequestNumber: ${{ steps.source-run-info.outputs.pullRequestNumber }}
+      pullRequestLabels: ${{ steps.source-run-info.outputs.pullRequestLabels }}
+      targetBranch: ${{ steps.source-run-info.outputs.targetBranch }}
+      sourceEvent: ${{ steps.source-run-info.outputs.sourceEvent }}
+    steps:
+      - name: "Get information about the origin 'CI' run"
+        uses: potiuk/get-workflow-origin@v1_3
+        id: source-run-info
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sourceRunId: ${{ github.event.workflow_run.id }}
+
   sonar:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
+    needs: get-info
 
     steps:
       - uses: actions/checkout@v3
@@ -42,8 +65,27 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+          
+      - name: Build and analyze (PR)
+        if: ${{ needs.get-info.outputs.sourceEvent == 'pull_request' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }} -Dsonar.pullrequest.key=${{ github.event.workflow_run.pull_requests[0] != null && github.event.workflow_run.pull_requests[0].number }} -Dsonar.pullrequest.branch=${{ github.event.workflow_run.pull_requests[0] != null && github.event.workflow_run.pull_requests[0].head.ref }} -Dsonar.pullrequest.base=${{ github.event.workflow_run.pull_requests[0] != null && github.event.workflow_run.pull_requests[0].base.ref }} -U -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: >
+          mvn 
+          -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }} 
+          -Dsonar.pullrequest.key=${{ needs.get-info.outputs.pullRequestNumber }} 
+          -Dsonar.pullrequest.branch=${{ needs.get-info.outputs.sourceHeadBranch }} 
+          -Dsonar.pullrequest.base=${{ needs.get-info.outputs.pullRequestNumber }} 
+          -U -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          
+      - name: Build and analyze (Branch)
+        if: ${{ needs.get-info.outputs.sourceEvent != 'pull_request' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          mvn 
+          -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }} 
+          -U -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+
