@@ -3,7 +3,7 @@ package de.jplag.java;
 import de.jplag.TokenConstants;
 
 public interface JavaTokenConstants extends TokenConstants {
-
+    int justTesting = 42;
     int J_PACKAGE = 2;                // check
     int J_IMPORT = 3;                // check
     int J_CLASS_BEGIN = 4;            // check
