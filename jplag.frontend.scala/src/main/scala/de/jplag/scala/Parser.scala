@@ -74,7 +74,7 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                     // `f()` can also be written as `f`, so we simply don't see `f()` as a function call
                     // But Java style function calls with no args should still be recognized
                     TR(traverse = _ => {
-                        add(Apply, tree, fromEnd=false)
+                        add(Apply, fun, fromEnd=false)
                         apply(fun)
                         for (arg <- args) {
                             add(Argument, arg, fromEnd = false)
@@ -132,7 +132,16 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                 case scala.meta.Pkg(_) => TR(Some(Package))
                 case scala.meta.Import(_) => TR(Some(ScalaTokenConstants.Import))
 
-                case Defn.Def(_) => TR(Some(MethodBegin), Some(MethodEnd))
+                case Defn.Def(_, name, typeParams, paramss, _, body) =>
+                    TR(traverse = _ => {
+                        add(MethodDef, name, fromEnd = false)
+                        for (tParam <- typeParams) add(TypeParameter, tParam, fromEnd = false)
+                        for (params <- paramss)
+                            for (param <- params) add(Parameter, param, fromEnd = false)
+                        add(MethodBegin, body, fromEnd = false)
+                        apply(body)
+                        add(MethodEnd, body, fromEnd = true)
+                    })
                 case Defn.Macro(_) => TR(Some(MacroBegin), Some(MacroEnd))
                 case Defn.Class(_) => TR(Some(ClassBegin), Some(ClassEnd))
                 case Defn.Object(_) => TR(Some(ObjectBegin), Some(ObjectEnd))
@@ -190,7 +199,13 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                         apply(arg)
                     }
                 })
-                case Term.ApplyType(fun, typeArgs) => TR(traverse = _ => {
+                case Term.Select(refObj, member) =>
+                    TR(traverse = _ => {
+                        apply(refObj)
+                        add(ScalaTokenConstants.Member, member, fromEnd = false)
+                        apply(member)
+                    })
+                case Term.ApplyType(_, typeArgs) => TR(traverse = _ => {
                     add(Apply, tree, fromEnd = false)
                     for (typeArg <- typeArgs) add(TypeArgument, typeArg, fromEnd = false)
                 })
@@ -198,6 +213,7 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                 case Self(_) => TR(Some(SelfType))
                 case Term.Block(_) => TR(Some(BlockStart), Some(BlockEnd))
                 case Enumerator.Generator(_) => TR(Some(EnumGenerator))
+                case meta.Type.Param(_) => TR(Some(TypeParameter))
                 case _ => TR()
             }
         }

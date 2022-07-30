@@ -1,6 +1,5 @@
 package de.jplag.scala;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
@@ -9,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
@@ -161,18 +159,19 @@ class ScalaFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).sorted().distinct().boxed().toList();
-        // Exclude SEPARATOR_TOKEN, as it does not occur
-        var allTokens = IntStream.range(0, language.numberOfTokens()).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).boxed().toList();
+        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).distinct().boxed().toList();
+        var allTokens = IntStream.range(0, language.numberOfTokens()).boxed().toList();
         allTokens = new ArrayList<>(allTokens);
 
         // Only non-found tokens are left
         allTokens.removeAll(foundTokens);
+        // Exclude SEPARATOR_TOKEN, as it does not occur
+        allTokens.remove((Integer) (TokenConstants.SEPARATOR_TOKEN));
 
         if (!allTokens.isEmpty()) {
             var notFoundTypes = allTokens.stream().map(ScalaTokenConstants::apply).toList();
-            fail("Some %d token types were not found in the complete code example '%s':\n%s"
-                    .formatted(notFoundTypes.size(), fileName, notFoundTypes));
+            fail("Some %d token types were not found in the complete code example '%s':\n%s".formatted(notFoundTypes.size(), fileName,
+                    notFoundTypes));
         }
 
     }
