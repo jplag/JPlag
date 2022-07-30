@@ -1,31 +1,18 @@
-name: SonarCloud Scan
+name: SonarCloud Scan (master branch)
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    types: [opened, synchronize, reopened]
-
+    branches:
+      - master
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  pre_job:
-    runs-on: ubuntu-latest
-    outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
-    steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@master
-        with:
-          concurrent_skipping: 'same_content_newer'
-          skip_after_successful_duplicate: 'true'
   sonar:
-    needs: pre_job
     name: SonarCloud Scan
     runs-on: ubuntu-latest
-    if: ${{ needs.pre_job.outputs.should_skip != 'true' && github.actor != 'dependabot[bot]' }}
+    if: ${{ github.actor != 'dependabot[bot]' }}
 
     steps:
       - uses: actions/checkout@v3
@@ -49,6 +36,7 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+          
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
