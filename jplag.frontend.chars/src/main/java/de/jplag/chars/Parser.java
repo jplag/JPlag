@@ -44,7 +44,7 @@ public class Parser extends AbstractParser {
         int length;
         int offset = 0;
 
-        try (FileReader reader = new FileReader(new File(dir, file), StandardCharsets.UTF_8)){
+        try (FileReader reader = new FileReader(new File(dir, file), StandardCharsets.UTF_8)) {
             do {
                 length = reader.read(buffer);
 

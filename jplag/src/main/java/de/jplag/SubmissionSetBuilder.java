@@ -115,8 +115,9 @@ public class SubmissionSetBuilder {
         // former use can be removed without affecting the result of the checks.
         oldSubmissionDirectories.removeAll(commonRootdirectories);
         for (File rootDirectory : commonRootdirectories) {
-            logger.warn("Root directory \"" + rootDirectory.toString()
-                    + "\" is specified both for plagiarism checking and for prior submissions, will perform plagiarism checking only.");
+            logger.warn(
+                    "Root directory \"{}\" is specified both for plagiarism checking and for prior submissions, will perform plagiarism checking only.",
+                    rootDirectory);
         }
     }
 
@@ -134,7 +135,7 @@ public class SubmissionSetBuilder {
                 }
 
                 // There is one root directory, and the submissionDirectories variable has been checked to be non-empty.
-                // That set thus contains the the one and only root directory.
+                // That set thus contains the one and only root directory.
                 File rootDirectory = submissionDirectories.iterator().next();
 
                 // Single root-directory, try the legacy way of specifying basecode.

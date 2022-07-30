@@ -36,6 +36,8 @@ public final class CLI {
 
     private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
+    private static final Random RANDOM = new Random();
+
     private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. JPlag logo designed by Sandro Koch. Currently maintained by Sebastian Hahner and Timur Saglam.";
 
     private static final String[] DESCRIPTIONS = {"Detecting Software Plagiarism", "Software-Archaeological Playground", "Since 1996",
@@ -141,12 +143,12 @@ public final class CLI {
         Optional.ofNullable((InterClusterSimilarity) CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace))
                 .ifPresent(clusteringBuilder::agglomerativeInterClusterSimilarity);
         Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_NONE.getFrom(namespace)).ifPresent(none -> {
-            if (none) {
+            if (Boolean.TRUE.equals(none)) {
                 clusteringBuilder.preprocessor(Preprocessing.NONE);
             }
         });
         Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_CDF.getFrom(namespace)).ifPresent(cdf -> {
-            if (cdf) {
+            if (Boolean.TRUE.equals(cdf)) {
                 clusteringBuilder.preprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
             }
         });
@@ -164,8 +166,8 @@ public final class CLI {
     }
 
     private String generateDescription() {
-        var randomDescription = DESCRIPTIONS[new Random().nextInt(DESCRIPTIONS.length)];
-        return String.format("JPlag - %s" + System.lineSeparator() + CREDITS, randomDescription);
+        var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
+        return String.format("JPlag - %s%n%s", CREDITS, randomDescription);
     }
 
     private void addAllMultiValueArgument(List<List<String>> argumentValues, List<String> destinationRootDirectories) {
