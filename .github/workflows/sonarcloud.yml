@@ -1,35 +1,51 @@
-name: SonarCloud Scan
+name: SonarCloud Scan (triggered by maven.yml)
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows:
+      - Build
+    types:
+      - completed
+
 
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  pre_job:
+  get-info:
+    name: "Get information about the source run"
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
     outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+      sourceHeadRepo: ${{ steps.source-run-info.outputs.sourceHeadRepo }}
+      sourceHeadBranch: ${{ steps.source-run-info.outputs.sourceHeadBranch }}
+      sourceHeadSha: ${{ steps.source-run-info.outputs.sourceHeadSha }}
+      mergeCommitSha: ${{ steps.source-run-info.outputs.mergeCommitSha }}
+      targetCommitSha: ${{ steps.source-run-info.outputs.targetCommitSha }}
+      pullRequestNumber: ${{ steps.source-run-info.outputs.pullRequestNumber }}
+      pullRequestLabels: ${{ steps.source-run-info.outputs.pullRequestLabels }}
+      targetBranch: ${{ steps.source-run-info.outputs.targetBranch }}
+      sourceEvent: ${{ steps.source-run-info.outputs.sourceEvent }}
     steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@master
+      - name: "Get information about the origin 'CI' run"
+        uses: potiuk/get-workflow-origin@v1_3
+        id: source-run-info
         with:
-          concurrent_skipping: 'same_content_newer'
-          skip_after_successful_duplicate: 'true'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sourceRunId: ${{ github.event.workflow_run.id }}
+
   sonar:
-    needs: pre_job
     name: SonarCloud Scan
     runs-on: ubuntu-latest
-    if: ${{ needs.pre_job.outputs.should_skip != 'true' && github.actor != 'dependabot[bot]' }}
+    if: ${{ github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' }}
+    needs: get-info
 
     steps:
       - uses: actions/checkout@v3
         with:
+          repository: ${{ github.event.workflow_run.head_repository.full_name }}
+          ref: ${{ github.event.workflow_run.head_branch }}
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -49,8 +65,27 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
+          
+      - name: Build and analyze (PR)
+        if: ${{ needs.get-info.outputs.sourceEvent == 'pull_request' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -U -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: >
+          mvn 
+          -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }} 
+          -Dsonar.pullrequest.key=${{ needs.get-info.outputs.pullRequestNumber }} 
+          -Dsonar.pullrequest.branch=${{ needs.get-info.outputs.sourceHeadBranch }} 
+          -Dsonar.pullrequest.base=${{ needs.get-info.outputs.pullRequestNumber }} 
+          -U -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+          
+      - name: Build and analyze (Branch)
+        if: ${{ needs.get-info.outputs.sourceEvent != 'pull_request' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          mvn 
+          -Dsonar.scm.revision=${{ github.event.workflow_run.head_sha }} 
+          -U -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+
