@@ -28,7 +28,7 @@ jobs:
       targetBranch: ${{ steps.source-run-info.outputs.targetBranch }}
       sourceEvent: ${{ steps.source-run-info.outputs.sourceEvent }}
       # Get the information about the build job of the maven.yml workflow
-      buildSkipped: ${{ fromJson(steps.get_jobs_of_parent.outputs.data).jobs[1].conclusion }}
+      buildResult: ${{ fromJson(steps.get_jobs_of_parent.outputs.data).jobs[1].conclusion }}
     steps:
       - name: "Get information about the origin 'CI' run"
         uses: potiuk/get-workflow-origin@v1_3
@@ -47,7 +47,7 @@ jobs:
   sonar:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
-    if: ${{ needs.get-info.outputs.sourceEvent == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' && needs.get-info.outputs.buildSkipped == 'success' }}
+    if: ${{ needs.get-info.outputs.sourceEvent == 'pull_request' && github.actor != 'dependabot[bot]' && github.event.workflow_run.conclusion == 'success' && needs.get-info.outputs.buildResult == 'success' }}
     needs: get-info
 
     steps:
