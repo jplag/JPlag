@@ -1,4 +1,4 @@
-name: SonarCloud Scan (triggered by maven.yml)
+name: SonarCloud Scan (PRs triggered by maven.yml)
 
 on:
   workflow_run:
