@@ -17,7 +17,7 @@ import de.jplag.options.JPlagOptions;
  * line arguments, thus these tests do not test the functionality of the options during the comparison.
  * @author Timur Saglam
  */
-public class CommandLineInterfaceTest {
+public abstract class CommandLineInterfaceTest {
     protected static final String CURRENT_DIRECTORY = ".";
     protected static final float DELTA = 0.0001f;
 
