@@ -43,22 +43,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
     public boolean isPreformatted() {
         return false;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return parser.serial;
     }
 }

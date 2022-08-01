@@ -32,21 +32,6 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
     public TokenList parse(File dir, String[] files) {
         return this.scanner.scan(dir, files);
     }
@@ -54,10 +39,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return this.scanner.hasErrors();
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return CPPTokenConstants.NUM_DIFF_TOKENS;
     }
 }

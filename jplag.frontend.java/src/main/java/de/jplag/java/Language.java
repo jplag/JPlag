@@ -35,26 +35,6 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return JavaTokenConstants.NUM_DIFF_TOKENS;
-    }
-
-    @Override
     public TokenList parse(File directory, String[] files) {
         return this.parser.parse(directory, files);
     }

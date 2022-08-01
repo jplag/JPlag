@@ -54,14 +54,4 @@ public class Language implements de.jplag.Language {
     public boolean isPreformatted() {
         return false;
     }
-
-    @Override
-    public boolean usesIndex() {
-        return true;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return 36;
-    }
 }

@@ -76,7 +76,7 @@ class KotlinFrontendTest {
      */
     @Test
     void testTokenToString() {
-        var missingTokens = IntStream.range(0, language.numberOfTokens())
+        var missingTokens = IntStream.range(0, KotlinTokenConstants.NUMBER_DIFF_TOKENS)
                 .mapToObj(type -> new KotlinToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET))
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
 
@@ -156,7 +156,7 @@ class KotlinFrontendTest {
     private void testTokenCoverage(TokenList tokens, String fileName) {
         var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).sorted().distinct().toArray();
         // Exclude SEPARATOR_TOKEN, as it does not occur
-        var allTokens = IntStream.range(0, language.numberOfTokens()).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
+        var allTokens = IntStream.range(0, KotlinTokenConstants.NUMBER_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
 
         if (allTokens.length > foundTokens.length) {
             var diffLine = IntStream.range(0, allTokens.length)
