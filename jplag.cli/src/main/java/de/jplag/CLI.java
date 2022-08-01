@@ -149,7 +149,7 @@ public final class CLI {
             }
         });
         Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_CDF.getFrom(namespace)).ifPresent(cdf -> {
-            if (Boolean.TRUE.equals(cdf)) {
+            if (cdf) {
                 clusteringBuilder.preprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
             }
         });
