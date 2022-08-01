@@ -47,10 +47,8 @@ public class ReportObjectFactory {
 
     private static File createDirectory(String path, String name) {
         File directory = new File(path.concat("/").concat(name));
-        if (!directory.exists()) {
-            if (!directory.mkdirs()) {
-                logger.error("Failed to create dir.");
-            }
+        if (!directory.exists() && !directory.mkdirs()) {
+            logger.error("Failed to create dir.");
         }
         return directory;
     }

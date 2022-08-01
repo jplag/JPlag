@@ -40,7 +40,7 @@ public class MetricMapper {
         return comparisons.stream().sorted(Comparator.comparing(similarityExtractor).reversed())
                 .map(comparison -> new TopComparison(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(),
                         similarityExtractor.apply(comparison)))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private static List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons) {

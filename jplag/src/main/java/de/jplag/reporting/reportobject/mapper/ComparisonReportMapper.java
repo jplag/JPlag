@@ -1,7 +1,6 @@
 package de.jplag.reporting.reportobject.mapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.jplag.*;
 import de.jplag.reporting.jsonfactory.FileWriter;
@@ -34,23 +33,22 @@ public class ComparisonReportMapper {
 
     private List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison) {
         return comparison.getMatches().stream()
-                .map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().usesIndex()))
-                .collect(Collectors.toList());
+                .map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().supportsColumns())).toList();
     }
 
-    private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, Boolean usesIndex) {
+    private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean usesIndex) {
         TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
         TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
-        Token startTokenFirst = tokensFirst.getToken(match.getStartOfFirst());
-        Token endTokenFirst = tokensFirst.getToken(match.getStartOfFirst() + match.getLength() - 1);
-        Token startTokenSecond = tokensSecond.getToken(match.getStartOfSecond());
-        Token endTokenSecond = tokensSecond.getToken(match.getStartOfSecond() + match.getLength() - 1);
+        Token startTokenFirst = tokensFirst.getToken(match.startOfFirst());
+        Token endTokenFirst = tokensFirst.getToken(match.startOfFirst() + match.length() - 1);
+        Token startTokenSecond = tokensSecond.getToken(match.startOfSecond());
+        Token endTokenSecond = tokensSecond.getToken(match.startOfSecond() + match.length() - 1);
 
         int startFirst = usesIndex ? startTokenFirst.getIndex() : startTokenFirst.getLine();
         int endFirst = usesIndex ? endTokenFirst.getIndex() : endTokenFirst.getLine();
         int startSecond = usesIndex ? startTokenSecond.getIndex() : startTokenSecond.getLine();
         int endSecond = usesIndex ? endTokenSecond.getIndex() : endTokenSecond.getLine();
-        int tokens = match.getLength();
+        int tokens = match.length();
 
         return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
     }

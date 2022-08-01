@@ -140,10 +140,10 @@ public class JPlagResult {
         for (JPlagComparison comparison : comparisons) {
             float similarity = similarityExtractor.apply(comparison); // extract similarity in percent: 0f <= similarity <= 100f
             int index = (int) (similarity / similarityDistributionBucketSize); // divide similarity by bucket size to find index of correct bucket.
-            if (index == SIMILARITY_DISTRIBUTION_SIZE)
-                index--; // index is out of bounds when similarity is 100%. decrease by one to count towards the highest value bucket
+            index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1);// index is out of bounds when similarity is 100%. decrease by one to count
+                                                                      // towards the highest value bucket
             similarityDistribution[SIMILARITY_DISTRIBUTION_SIZE - 1 - index]++; // count comparison towards its determined bucket. bucket order is
-                                                                                // reversed, so that the highest value bucket has the lowest index
+            // reversed, so that the highest value bucket has the lowest index
         }
         return similarityDistribution;
     }
