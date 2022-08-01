@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.ErrorConsumer;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
-import de.jplag.emf.parser.EMFUtil;
+import de.jplag.emf.util.EMFUtil;
 
 /**
  * Parser for EMF metamodels based on dynamically created tokens.

@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
+import de.jplag.testutils.FileUtil;
 import de.jplag.testutils.TestErrorConsumer;
 import de.jplag.testutils.TokenUtils;
 
@@ -26,7 +27,7 @@ class MinimalMetamodelTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "models");
-    private static final String[] TEST_SUBJECT = {"bookstore.ecore", "bookstoreExtended.ecore", "bookstoreRenamed.ecore"};
+    private static final String[] TEST_SUBJECTS = {"bookStore.ecore", "bookStoreExtended.ecore", "bookStoreRenamed.ecore"};
 
     private de.jplag.Language frontend;
     private File baseDirectory;
@@ -36,13 +37,13 @@ class MinimalMetamodelTest {
         TestErrorConsumer consumer = new TestErrorConsumer();
         frontend = new Language(consumer);
         baseDirectory = BASE_PATH.toFile();
-        assertTrue(baseDirectory.exists(), "Could not find base directory!");
+        FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }
 
     @Test
     void testBookstoreMetamodels() {
-        TokenList result = frontend.parse(baseDirectory, TEST_SUBJECT);
-        List<String> treeViewFiles = Arrays.stream(TEST_SUBJECT).map(it -> it + Language.VIEW_FILE_SUFFIX).collect(toList());
+        TokenList result = frontend.parse(baseDirectory, TEST_SUBJECTS);
+        List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).collect(toList());
 
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles));
         Field[] fields = MetamodelTokenConstants.class.getFields();
@@ -52,17 +53,16 @@ class MinimalMetamodelTest {
         assertEquals(21, constants.size());
         assertEquals(43, result.size());
 
-        var bookstoreTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECT[0]);
-        var bookstoreRenamedTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECT[2]);
-        var bookstoreExtendedTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECT[1]);
+        var bookstoreTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[0]);
+        var bookstoreRenamedTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[2]);
+        var bookstoreExtendedTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[1]);
         assertTrue(bookstoreTokens.size() < bookstoreExtendedTokens.size());
         assertIterableEquals(bookstoreTokens, bookstoreRenamedTokens);
     }
 
     @AfterEach
     public void tearDown() {
-        File baseFile = new File(BASE_PATH.toString());
-        Arrays.stream(baseFile.listFiles()).filter(it -> it.getName().endsWith(Language.VIEW_FILE_SUFFIX)).forEach(File::delete);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), Language.VIEW_FILE_SUFFIX);
     }
 
 }

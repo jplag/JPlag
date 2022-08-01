@@ -3,7 +3,6 @@ package de.jplag.emf.model;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -20,12 +19,14 @@ import org.slf4j.LoggerFactory;
 import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 import de.jplag.emf.dynamic.DynamicMetamodelTokenConstants;
+import de.jplag.testutils.FileUtil;
 import de.jplag.testutils.TestErrorConsumer;
 
 class MinimalModelInstanceTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "books");
+    private static final String[] TEST_SUBJECTS = {"bookStore.ecore", "bookStore.xml", "bookStore2.xml"};
 
     private Language frontend;
     private File baseDirectory;
@@ -35,7 +36,7 @@ class MinimalModelInstanceTest {
         TestErrorConsumer consumer = new TestErrorConsumer();
         frontend = new Language(consumer);
         baseDirectory = BASE_PATH.toFile();
-        assertTrue(baseDirectory.exists(), "Could not find base directory!");
+        FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }
 
     @Test
@@ -57,8 +58,7 @@ class MinimalModelInstanceTest {
 
     @AfterEach
     public void tearDown() {
-        File baseFile = new File(BASE_PATH.toString());
-        Arrays.stream(baseFile.listFiles()).filter(it -> it.getName().endsWith(Language.VIEW_FILE_SUFFIX)).forEach(File::delete);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), Language.VIEW_FILE_SUFFIX);
     }
 
 }
