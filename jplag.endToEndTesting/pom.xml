@@ -1,10 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>de.jplag</groupId>
-    <artifactId>aggregator</artifactId>
-    <version>${revision}</version>
-  </parent>
-  <artifactId>jplag.endToEndTesting</artifactId>
-  <name>jplag.endToEndTesting</name>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>de.jplag</groupId>
+		<artifactId>aggregator</artifactId>
+		<version>${revision}</version>
+	</parent>
+	<artifactId>jplag.endToEndTesting</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>de.jplag</groupId>
+			<artifactId>jplag</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.9</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20070829</version>
+		</dependency>
+	</dependencies>
 </project>
