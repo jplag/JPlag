@@ -11,13 +11,13 @@ public record Match(int startOfFirst, int startOfSecond, int length) {
      * Checks if two matches overlap.
      * @return true if they do.
      */
-    public boolean overlap(int otherStartOfFirst, int otherStartOfSecond, int oLength) {
+    public boolean overlap(int otherStartOfFirst, int otherStartOfSecond, int otherLength) {
         if (startOfFirst < otherStartOfFirst) {
             if ((otherStartOfFirst - startOfFirst) < length) {
                 return true;
             }
         } else {
-            if ((startOfFirst - otherStartOfFirst) < oLength) {
+            if ((startOfFirst - otherStartOfFirst) < otherLength) {
                 return true;
             }
         }
@@ -25,7 +25,7 @@ public record Match(int startOfFirst, int startOfSecond, int length) {
         if (startOfSecond < otherStartOfSecond) {
             return (otherStartOfSecond - startOfSecond) < length;
         } else {
-            return (startOfSecond - otherStartOfSecond) < oLength;
+            return (startOfSecond - otherStartOfSecond) < otherLength;
         }
     }
 }
