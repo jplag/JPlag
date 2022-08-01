@@ -47,7 +47,7 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
 	}
 
 	/**
@@ -63,7 +63,7 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
 	}
 
 	/**
@@ -79,7 +79,7 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
 	}
 
 	/**
@@ -95,11 +95,11 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
 	}
 
 	/**
-	 * Changing the program flow (token generation) (statments and functions must be
+	 * Changing the program flow (token generation) (statements and functions must be
 	 * independent from each other)
 	 * 
 	 * @throws Exception
@@ -112,11 +112,11 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
 	}
 
 	/**
-	 * Variable decleration at the beginning of the program (Detecting Source Code
+	 * Variable declaration at the beginning of the program (Detecting Source Code
 	 * Plagiarism [...])
 	 * @throws Exception 
 	 */
@@ -128,6 +128,6 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
 	}
 }
