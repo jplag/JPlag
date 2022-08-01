@@ -13,12 +13,17 @@ import java.util.List;
 
 import javax.annotation.processing.FilerException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.endToEndTesting.constants.Constant;
 import de.jplag.options.LanguageOption;
 import model.ResultJsonModel;
 import model.TestCaseModel;
 
 public class JPlagTestSuiteHelper {
+
+	private static final Logger logger = LoggerFactory.getLogger("EndToEndTesting");
 
 	private String[] resourceNames;
 	private String tempFolderPath;
@@ -39,7 +44,7 @@ public class JPlagTestSuiteHelper {
 
 		this.resultModel = JsonHelper
 				.getResultModelFromPath(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toAbsolutePath().toString());
-		System.out.println(String.format("temp path at [%s]", this.tempFolderPath));
+		logger.info(String.format("temp path at [%s]", this.temporaryFolderPath));
 	}
 
 	public TestCaseModel createNewTestCase(String[] classNames) throws Exception {
@@ -48,6 +53,9 @@ public class JPlagTestSuiteHelper {
 		ResultJsonModel resultJsonModel = resultModel.stream()
 				.filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny().orElse(null);
 		return new TestCaseModel(tempFolderPath, resultJsonModel, languageOption);
+	public void clear() throws Exception {
+		logger.info("Class instance was cleaned!");
+		deleteCopiedFiles(new File(temporaryFolderPath));
 	}
 
 	/**
@@ -74,12 +82,12 @@ public class JPlagTestSuiteHelper {
 					directory.mkdirs();
 				}
 
-				System.out.println(String.format("Copy file from [%s] to [%s]", originalPath, copiePath));
+				logger.info(String.format("Copy file from [%s] to [%s]", originalPath, copiePath));
 				Files.copy(originalPath, copiePath, StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException e) {
-				throw new FilerException(
-						String.format("The specified file could not be copied! [%s] \n Exception [%s] ",
-								classNames[counter], e.getMessage()));
+			} catch (IOException ioException) {
+				logger.error(String.format("The specified file could not be copied! [%s] \n Exception [%s] ",
+						classNames[counter], ioException.getMessage()));
+				throw ioException;
 			}
 		}
 	}
@@ -121,24 +129,13 @@ public class JPlagTestSuiteHelper {
 				if (f.isDirectory()) {
 					deleteCopiedFiles(f);
 				} else {
-					System.out.println(String.format("Delete file in folder: [%s]", f.toString()));
+					logger.info(String.format("Delete file in folder: [%s]", f.toString()));
 					f.delete();
 				}
 			}
 		}
-		System.out.println(String.format("Delete folder: [%s]", folder.toString()));
+		logger.info(String.format("Delete folder: [%s]", folder.toString()));
 		folder.delete();
-	}
-
-	/**
-	 * The copied data should be deleted after instance closure
-	 * 
-	 * @throws Exception
-	 */
-	public void clear() throws Exception {
-		System.out.println("Class instance is terminated!");
-		System.out.println(new File(tempFolderPath));
-		deleteCopiedFiles(new File(tempFolderPath));
 	}
 
 }
