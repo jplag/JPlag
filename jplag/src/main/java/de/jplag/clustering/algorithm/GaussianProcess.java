@@ -74,7 +74,7 @@ public class GaussianProcess {
      */
     public static GaussianProcess fit(List<RealVector> observedCoordinates, double[] observations, double noise, boolean normalize,
             double[] lengthScale) {
-        if (observedCoordinates.size() < 1)
+        if (observedCoordinates.isEmpty())
             throw new IllegalArgumentException("Observed coordinates are empty");
         if (observedCoordinates.size() != observations.length) {
             throw new IllegalArgumentException(MessageFormat.format("Observed coordinates and observations are of different dimensions {0} and {1}",

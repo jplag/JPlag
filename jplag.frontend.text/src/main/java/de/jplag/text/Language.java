@@ -1,17 +1,15 @@
-
 package de.jplag.text;
 
 import java.io.File;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
     private final Parser parser;
 
-    public Language(ErrorConsumer errorConsumer) {
-        parser = new Parser(errorConsumer);
+    public Language() {
+        parser = new Parser();
     }
 
     @Override
@@ -45,22 +43,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
     public boolean isPreformatted() {
         return false;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return parser.serial;
     }
 }

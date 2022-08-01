@@ -3,7 +3,6 @@ package de.jplag.csharp;
 import java.io.File;
 import java.util.Arrays;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /**
@@ -18,8 +17,8 @@ public class Language implements de.jplag.Language {
 
     private final CSharpParserAdapter parser;
 
-    public Language(ErrorConsumer program) {
-        parser = new CSharpParserAdapter(program);
+    public Language() {
+        parser = new CSharpParserAdapter();
     }
 
     @Override
@@ -50,25 +49,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return parser.hasErrors();
-    }
-
-    @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return CSharpTokenConstants.NUM_DIFF_TOKENS;
     }
 }

@@ -1,14 +1,18 @@
 package de.jplag.csharp.grammar;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Stack;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.TokenStream;
 
 /**
  * This class was taken from <a href="https://github.com/antlr/grammars-v4/tree/master/csharp">antlr/grammars-v4</a>. It
  * was originally written by Ken Domino. Note that this class is licensed under Eclipse Public License - v 1.0.
  */
+@SuppressWarnings("java:S100")
 abstract class CSharpPreprocessorParserBase extends Parser {
     protected CSharpPreprocessorParserBase(TokenStream input) {
         super(input);
@@ -16,7 +20,7 @@ abstract class CSharpPreprocessorParserBase extends Parser {
         ConditionalSymbols.add("DEBUG");
     }
 
-    Stack<Boolean> conditions = new Stack<Boolean>();
+    Stack<Boolean> conditions = new Stack<>();
     public HashSet<String> ConditionalSymbols = new HashSet<String>();
 
     protected Boolean AllConditions() {
@@ -51,7 +55,7 @@ abstract class CSharpPreprocessorParserBase extends Parser {
     protected void OnPreprocessorDirectiveElif() {
         ParserRuleContext c = this._ctx;
         CSharpPreprocessorParser.PreprocessorConditionalContext d = (CSharpPreprocessorParser.PreprocessorConditionalContext) c;
-        if (!conditions.peek()) {
+        if (Boolean.FALSE.equals(conditions.peek())) {
             conditions.pop();
             d.value = d.expr.value.equals("true") && AllConditions();
             conditions.push(d.expr.value.equals("true"));
@@ -63,9 +67,9 @@ abstract class CSharpPreprocessorParserBase extends Parser {
     protected void OnPreprocessorDirectiveElse() {
         ParserRuleContext c = this._ctx;
         CSharpPreprocessorParser.PreprocessorConditionalContext d = (CSharpPreprocessorParser.PreprocessorConditionalContext) c;
-        if (!conditions.peek()) {
+        if (Boolean.FALSE.equals(conditions.peek())) {
             conditions.pop();
-            d.value = true && AllConditions();
+            d.value = AllConditions();
             conditions.push(true);
         } else {
             d.value = false;
@@ -154,13 +158,13 @@ abstract class CSharpPreprocessorParserBase extends Parser {
     protected void OnPreprocessorExpressionConditionalEq() {
         ParserRuleContext c = this._ctx;
         CSharpPreprocessorParser.Preprocessor_expressionContext d = (CSharpPreprocessorParser.Preprocessor_expressionContext) c;
-        d.value = (d.expr1.value == d.expr2.value ? "true" : "false");
+        d.value = (Objects.equals(d.expr1.value, d.expr2.value) ? "true" : "false");
     }
 
     protected void OnPreprocessorExpressionConditionalNe() {
         ParserRuleContext c = this._ctx;
         CSharpPreprocessorParser.Preprocessor_expressionContext d = (CSharpPreprocessorParser.Preprocessor_expressionContext) c;
-        d.value = (d.expr1.value != d.expr2.value ? "true" : "false");
+        d.value = (!Objects.equals(d.expr1.value, d.expr2.value) ? "true" : "false");
     }
 
     protected void OnPreprocessorExpressionConditionalAnd() {
