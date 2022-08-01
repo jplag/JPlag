@@ -215,8 +215,7 @@ public class CSharpListener extends CSharpParserBaseListener implements CSharpTo
 
     @Override
     public void enterUsingStatement(UsingStatementContext context) {
-        // TODO DF: This causes a null pointer.
-        transformToken(USING, null);
+        transformToken(USING, context.getStart());
         super.enterUsingStatement(context);
     }
 
