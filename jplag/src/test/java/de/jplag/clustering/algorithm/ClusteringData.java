@@ -38,7 +38,7 @@ public enum ClusteringData {
     private final Set<Set<Integer>> expected;
     private final ClusteringOptions options;
 
-    private ClusteringData(Supplier<RealMatrix> similarity, int[][] expected, ClusteringOptions.Builder options) {
+    ClusteringData(Supplier<RealMatrix> similarity, int[][] expected, ClusteringOptions.Builder options) {
         this.similarity = similarity.get();
         this.expected = makeSets(
                 Arrays.stream(expected).map(intArray -> Arrays.stream(intArray).boxed().collect(Collectors.toList())).collect(Collectors.toList()));

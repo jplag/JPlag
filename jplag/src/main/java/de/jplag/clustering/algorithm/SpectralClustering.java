@@ -105,6 +105,7 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
     private Collection<Collection<Integer>> cluster(int numberOfClusters, int dimension, List<Integer> eigenValueIds, EigenDecomposition ed) {
         RealMatrix concatenatedEigenVectors = new Array2DRowRealMatrix(dimension, numberOfClusters);
         concatenatedEigenVectors.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
+            @Override
             public double visit(int row, int column, double value) {
                 int eigenVectorId = eigenValueIds.get(column);
                 RealVector eigenVector = ed.getEigenvector(eigenVectorId);
@@ -113,8 +114,7 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         });
 
         List<ClusterableEigenVector> normRows = IntStream.range(0, dimension).filter(i -> concatenatedEigenVectors.getRowVector(i).getNorm() > 0)
-                .mapToObj(row -> new ClusterableEigenVector(row, concatenatedEigenVectors.getRowVector(row).unitVector()))
-                .collect(Collectors.toList());
+                .mapToObj(row -> new ClusterableEigenVector(row, concatenatedEigenVectors.getRowVector(row).unitVector())).toList();
 
         Clusterer<ClusterableEigenVector> clusterer = new KMeansPlusPlusClusterer<>(numberOfClusters, options.getSpectralMaxKMeansIterationPerRun());
         List<? extends Cluster<ClusterableEigenVector>> clusters = clusterer.cluster(normRows);

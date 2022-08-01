@@ -2,6 +2,7 @@ package de.jplag;
 
 import static de.jplag.CommandLineArgument.*;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,9 +35,11 @@ import de.jplag.strategy.ComparisonMode;
  * Command line interface class, allows using via command line.
  * @see CLI#main(String[])
  */
-public class CLI {
+public final class CLI {
 
     private static final Logger logger = LoggerFactory.getLogger(CLI.class);
+
+    private static final Random RANDOM = new SecureRandom();
 
     private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. JPlag logo designed by Sandro Koch. Currently maintained by Sebastian Hahner and Timur Saglam.";
 
@@ -175,15 +178,14 @@ public class CLI {
     }
 
     private String generateDescription() {
-        var randomDescription = DESCRIPTIONS[new Random().nextInt(DESCRIPTIONS.length)];
-        return String.format("JPlag - %s" + System.lineSeparator() + CREDITS, randomDescription);
+        var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
+        return String.format("JPlag - %s%n%s", CREDITS, randomDescription);
     }
 
     private void addAllMultiValueArgument(List<List<String>> argumentValues, List<String> destinationRootDirectories) {
         if (argumentValues == null) {
             return;
         }
-
-        argumentValues.stream().forEach(value -> destinationRootDirectories.addAll(value));
+        argumentValues.forEach(destinationRootDirectories::addAll);
     }
 }

@@ -40,6 +40,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
         return Float.compare(comparison2.similarity(), comparison1.similarity()); // comparison2 first!
     }
 
+    // TODO DF: hashCode is not implemented!!
     @Override
     public boolean equals(Object other) {
         if (!(other instanceof JPlagComparison)) {
@@ -76,7 +77,7 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
         int numberOfMatchedTokens = 0;
 
         for (Match match : matches) {
-            numberOfMatchedTokens += match.getLength();
+            numberOfMatchedTokens += match.length();
         }
 
         return numberOfMatchedTokens;

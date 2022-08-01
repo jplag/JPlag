@@ -187,7 +187,7 @@ public class Submission implements Comparable<Submission> {
      * String representation of the code files contained in this submission, annotated with all tokens.
      * @return the annotated code as string.
      */
-    public String getTokenAnnotatedSourcCode() {
+    public String getTokenAnnotatedSourceCode() {
         return TokenPrinter.printTokens(tokenList, files, submissionRootFile);
     }
 

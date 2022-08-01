@@ -1,10 +1,7 @@
 package de.jplag;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -31,16 +28,18 @@ public class SubmissionSet {
     /**
      * Base code submission if it exists.
      */
-    private final Optional<Submission> baseCodeSubmission;
+    private final Submission baseCodeSubmission;
+
     private final JPlagOptions options;
     private int errors = 0;
     private String currentSubmissionName;
 
     /**
      * @param submissions Submissions to check for plagiarism.
-     * @param baseCode Base code submission if it exists.
+     * @param baseCode Base code submission if it exists or {@code null}.
      */
-    public SubmissionSet(List<Submission> submissions, Optional<Submission> baseCode, JPlagOptions options) throws ExitException {
+    public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options)
+            throws ExitException {
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.options = options;
@@ -53,7 +52,7 @@ public class SubmissionSet {
      * @return Whether a basecode is available for this collection.
      */
     public boolean hasBaseCode() {
-        return baseCodeSubmission.isPresent();
+        return baseCodeSubmission != null;
     }
 
     /**
@@ -63,10 +62,10 @@ public class SubmissionSet {
      * @see #hasBaseCode
      */
     public Submission getBaseCode() {
-        if (baseCodeSubmission.isEmpty()) {
+        if (baseCodeSubmission == null) {
             throw new AssertionError("Querying a non-existing basecode submission.");
         }
-        return baseCodeSubmission.get();
+        return baseCodeSubmission;
     }
 
     /**
@@ -97,14 +96,14 @@ public class SubmissionSet {
     }
 
     private List<Submission> filterInvalidSubmissions() {
-        return allSubmissions.stream().filter(Submission::hasErrors).collect(toList());
+        return allSubmissions.stream().filter(Submission::hasErrors).toList();
     }
 
     private void parseAllSubmissions() throws ExitException {
         try {
             parseSubmissions(allSubmissions);
-            if (baseCodeSubmission.isPresent()) {
-                parseBaseCodeSubmission(baseCodeSubmission.get()); // cannot use ifPresent because of throws declaration
+            if (baseCodeSubmission != null) {
+                parseBaseCodeSubmission(baseCodeSubmission);
             }
         } catch (OutOfMemoryError exception) {
             throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"", exception);
