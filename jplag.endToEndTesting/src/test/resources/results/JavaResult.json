@@ -1,28 +1,26 @@
-{ "results" :
-	[
-    	{
-			"functionName":"normalizationLevelTest_one",
-			"resultSimilarity": 100.0
-		}, 
-    	{
-			"functionName":"normalizationLevelTest_two",
-			"resultSimilarity": 100.0
-		}, 
-    	{
-			"functionName":"normalizationLevelTest_three",
-			"resultSimilarity": 100.0
-		},
-		{
-			"functionName":"tokenGenerationLevelTest_one",
-			"resultSimilarity": 64.0
-		},
-		{
-			"functionName":"tokenGenerationLevelTest_two",
-			"resultSimilarity": 73.04348
-		},
-		{
-			"functionName":"tokenGenerationLevelTest_three",
-			"resultSimilarity": 73.94958
-		}
-	]
-}
+[
+   {
+      "functionName":"normalizationLevelTest_one",
+      "resultSimilarity":100.0
+   },
+   {
+      "functionName":"normalizationLevelTest_two",
+      "resultSimilarity":100.0
+   },
+   {
+      "functionName":"normalizationLevelTest_three",
+      "resultSimilarity":100.0
+   },
+   {
+      "functionName":"tokenGenerationLevelTest_one",
+      "resultSimilarity":64.0
+   },
+   {
+      "functionName":"tokenGenerationLevelTest_two",
+      "resultSimilarity":73.04348
+   },
+   {
+      "functionName":"tokenGenerationLevelTest_three",
+      "resultSimilarity":73.94958
+   }
+]

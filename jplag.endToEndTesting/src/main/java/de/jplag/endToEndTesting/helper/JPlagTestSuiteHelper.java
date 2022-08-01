@@ -9,34 +9,21 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.processing.FilerException;
 
 import de.jplag.endToEndTesting.constants.Constant;
+import de.jplag.options.LanguageOption;
+import model.ResultJsonModel;
+import model.TestCaseModel;
 
 public class JPlagTestSuiteHelper {
 
 	private String[] resourceNames;
 	private String tempFolderPath;
-	private String[] classNames;
-
-	/**
-	 * 
-	 * @return the used temporary folder where the test data is copied to build the
-	 *         structure for the jplag api
-	 */
-	public String getFolderPath() {
-		return tempFolderPath;
-	}
-
-	/**
-	 * 
-	 * @return the class names for the current test instance that were passed in the
-	 *         constructor
-	 */
-	public String[] resourceNames() {
-		return resourceNames;
-	}
+	private List<ResultJsonModel> resultModel;
+	private LanguageOption languageOption;
 
 	/**
 	 * Helper class for the endToEnd tests. In this class the necessary resources
@@ -45,13 +32,22 @@ public class JPlagTestSuiteHelper {
 	 * @param classNames of the resources that are required for the tests
 	 * @throws Exception
 	 */
-	public JPlagTestSuiteHelper(String[] classNames) throws Exception {
-		this.classNames = classNames;
+	public JPlagTestSuiteHelper(LanguageOption languageOption) throws Exception {
+		this.languageOption = languageOption;
 		this.resourceNames = loadResource();
 		this.tempFolderPath = getTempFolderPath();
 
+		this.resultModel = JsonHelper
+				.getResultModelFromPath(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toAbsolutePath().toString());
 		System.out.println(String.format("temp path at [%s]", this.tempFolderPath));
-		createNewTestCaseDirectory();
+	}
+
+	public TestCaseModel createNewTestCase(String[] classNames) throws Exception {
+		createNewTestCaseDirectory(classNames);
+		var functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
+		ResultJsonModel resultJsonModel = resultModel.stream()
+				.filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny().orElse(null);
+		return new TestCaseModel(tempFolderPath, resultJsonModel, languageOption);
 	}
 
 	/**
@@ -59,7 +55,7 @@ public class JPlagTestSuiteHelper {
 	 * 
 	 * @throws Exception
 	 */
-	private void createNewTestCaseDirectory() throws Exception {
+	private void createNewTestCaseDirectory(String[] classNames) throws Exception {
 		// before copying files to the test path, check if all files are in the resource
 		// directory
 		for (String className : classNames) {
@@ -139,7 +135,7 @@ public class JPlagTestSuiteHelper {
 	 * 
 	 * @throws Exception
 	 */
-	public void close() throws Exception {
+	public void clear() throws Exception {
 		System.out.println("Class instance is terminated!");
 		System.out.println(new File(tempFolderPath));
 		deleteCopiedFiles(new File(tempFolderPath));

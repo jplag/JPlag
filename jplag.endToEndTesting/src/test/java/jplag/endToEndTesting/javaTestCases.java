@@ -1,242 +1,133 @@
 package jplag.endToEndTesting;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
 import de.jplag.JPlag;
-import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.endToEndTesting.constants.Constant;
 import de.jplag.endToEndTesting.helper.JPlagTestSuiteHelper;
-import de.jplag.endToEndTesting.helper.ResultComparison;
-import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 
+import model.TestCaseModel;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class javaTestCases {
+	private JPlagTestSuiteHelper jplagTestSuiteHelper;
 
-	@Before
-	public void setUp() {
+	@BeforeAll
+	public void setUp() throws Exception {
+		jplagTestSuiteHelper = new JPlagTestSuiteHelper(LanguageOption.JAVA);
 		assertTrue(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toFile().exists(), "Could not find base directory!");
-		try {
-			assertTrue(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toFile().exists(),
-					"Could not find java result xml at " + Constant.BASE_PATH_TO_JAVA_RESULT_JSON + "!");
+		assertTrue(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toFile().exists(),
+				"Could not find java result json at " + Constant.BASE_PATH_TO_JAVA_RESULT_JSON + "!");
+	}
 
-		} catch (Exception e) {
-			assertTrue(false, e.getMessage());
-		}
+	@AfterEach
+	public void teardown() throws Exception {
+		// after close the created directories are deleted
+		jplagTestSuiteHelper.clear();
 	}
 
 	/**
 	 * Inserting comments or empty lines (normalization level)
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	void normalizationLevelTest_one() {
+	void normalizationLevelTest_one() throws Exception {
 
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo1.java" };
 
-		try {
-			var testSuiteHelper = new JPlagTestSuiteHelper(testClassNames);
+		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
 
-			List<String> submissionTestPaths = new ArrayList<String>();
-			submissionTestPaths.add(testSuiteHelper.getFolderPath());
+		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-			JPlagOptions options = new JPlagOptions(submissionTestPaths, new ArrayList<String>(), LanguageOption.JAVA);
-
-			JPlag jplag = new JPlag(options);
-			JPlagResult result = jplag.run();
-			// after close the created directories are deleted
-			testSuiteHelper.close();
-
-			ResultComparison resultComparison = new ResultComparison(new Object() {
-			}.getClass().getEnclosingMethod().getName());
-
-			// for the fine-granular testing strategy, the result object contains only one
-			// comparison.
-			for (JPlagComparison jPlagComparison : result.getAllComparisons()) {
-				System.out.println("Comparison of the stored values and the current equality values");
-				assertEquals(resultComparison.getSimilarity(), jPlagComparison.similarity());
-			}
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
 	}
 
 	/**
 	 * Changing variable names or function names (normalization level)
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	void normalizationLevelTest_two() {
+	void normalizationLevelTest_two() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo2.java" };
 
-		try {
-			var testSuiteHelper = new JPlagTestSuiteHelper(testClassNames);
+		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
 
-			List<String> tempList = new ArrayList<String>();
-			tempList.add(testSuiteHelper.getFolderPath());
+		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-			JPlagOptions options = new JPlagOptions(tempList, new ArrayList<String>(), LanguageOption.JAVA);
-
-			JPlag jplag = new JPlag(options);
-			JPlagResult result = jplag.run();
-			// after close the created directories are deleted
-			testSuiteHelper.close();
-
-			ResultComparison resultComparison = new ResultComparison(new Object() {
-			}.getClass().getEnclosingMethod().getName());
-			// for the fine-granular testing strategy, the result object contains only one
-			// comparison.
-			for (JPlagComparison jPlagComparison : result.getAllComparisons()) {
-				System.out.println("Comparison of the stored values and the current equality values");
-				assertEquals(resultComparison.getSimilarity(), jPlagComparison.similarity());
-			}
-			// after close the created directories are deleted
-
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
 	}
 
 	/**
 	 * Inserting comments or empty lines (normalization level)
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	void normalizationLevelTest_three() {
+	void normalizationLevelTest_three() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo1.java", "SortAlgo2.java" };
 
-		try {
-			var testSuiteHelper = new JPlagTestSuiteHelper(testClassNames);
+		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
 
-			List<String> tempList = new ArrayList<String>();
-			tempList.add(testSuiteHelper.getFolderPath());
+		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-			JPlagOptions options = new JPlagOptions(tempList, new ArrayList<String>(), LanguageOption.JAVA);
-
-			JPlag jplag = new JPlag(options);
-			JPlagResult result = jplag.run();
-			// after close the created directories are deleted
-			testSuiteHelper.close();
-
-			ResultComparison resultComparison = new ResultComparison(new Object() {
-			}.getClass().getEnclosingMethod().getName());
-			// for the fine-granular testing strategy, the result object contains only one
-			// comparison.
-			for (JPlagComparison jPlagComparison : result.getAllComparisons()) {
-				System.out.println("Comparison of the stored values and the current equality values");
-				assertEquals(resultComparison.getSimilarity(), jPlagComparison.similarity());
-			}
-
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
 	}
 
 	/**
 	 * Insertion of unnecessary or changed code lines (token generation)
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	void tokenGenerationLevelTest_one() {
+	void tokenGenerationLevelTest_one() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo3.java" };
 
-		try {
-			var testSuiteHelper = new JPlagTestSuiteHelper(testClassNames);
+		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
 
-			List<String> tempList = new ArrayList<String>();
-			tempList.add(testSuiteHelper.getFolderPath());
+		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-			JPlagOptions options = new JPlagOptions(tempList, new ArrayList<String>(), LanguageOption.JAVA);
-
-			JPlag jplag = new JPlag(options);
-			JPlagResult result = jplag.run();
-			// after close the created directories are deleted
-			testSuiteHelper.close();
-
-			ResultComparison resultComparison = new ResultComparison(new Object() {
-			}.getClass().getEnclosingMethod().getName());
-			// for the fine-granular testing strategy, the result object contains only one
-			// comparison.
-			for (JPlagComparison jPlagComparison : result.getAllComparisons()) {
-				System.out.println("Comparison of the stored values and the current equality values");
-				assertEquals(resultComparison.getSimilarity(), jPlagComparison.similarity());
-			}
-
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
 	}
 
 	/**
 	 * Changing the program flow (token generation) (statments and functions must be
 	 * independent from each other)
+	 * 
+	 * @throws Exception
 	 */
 	@Test
-	void tokenGenerationLevelTest_two() {
+	void tokenGenerationLevelTest_two() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo4.java" };
 
-		try {
-			var testSuiteHelper = new JPlagTestSuiteHelper(testClassNames);
+		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
 
-			List<String> tempList = new ArrayList<String>();
-			tempList.add(testSuiteHelper.getFolderPath());
+		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-			JPlagOptions options = new JPlagOptions(tempList, new ArrayList<String>(), LanguageOption.JAVA);
-
-			JPlag jplag = new JPlag(options);
-			JPlagResult result = jplag.run();
-			// after close the created directories are deleted
-			testSuiteHelper.close();
-
-			ResultComparison resultComparison = new ResultComparison(new Object() {
-			}.getClass().getEnclosingMethod().getName());
-			// for the fine-granular testing strategy, the result object contains only one
-			// comparison.
-			for (JPlagComparison jPlagComparison : result.getAllComparisons()) {
-				System.out.println("Comparison of the stored values and the current equality values");
-				assertEquals(resultComparison.getSimilarity(), jPlagComparison.similarity());
-			}
-
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
 	}
 
 	/**
 	 * Variable decleration at the beginning of the program (Detecting Source Code
 	 * Plagiarism [...])
+	 * @throws Exception 
 	 */
 	@Test
-	void tokenGenerationLevelTest_three() {
+	void tokenGenerationLevelTest_three() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo4d1.java" };
 
-		try {
-			var testSuiteHelper = new JPlagTestSuiteHelper(testClassNames);
+		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
 
-			List<String> tempList = new ArrayList<String>();
-			tempList.add(testSuiteHelper.getFolderPath());
+		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-			JPlagOptions options = new JPlagOptions(tempList, new ArrayList<String>(), LanguageOption.JAVA);
-
-			JPlag jplag = new JPlag(options);
-			JPlagResult result = jplag.run();
-			// after close the created directories are deleted
-			testSuiteHelper.close();
-
-			ResultComparison resultComparison = new ResultComparison(new Object() {
-			}.getClass().getEnclosingMethod().getName());
-			// for the fine-granular testing strategy, the result object contains only one
-			// comparison.
-			for (JPlagComparison jPlagComparison : result.getAllComparisons()) {
-				System.out.println("Comparison of the stored values and the current equality values");
-				assertEquals(resultComparison.getSimilarity(), jPlagComparison.similarity());
-			}
-
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "dose not match");
 	}
 }
