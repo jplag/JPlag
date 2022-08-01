@@ -42,9 +42,4 @@ public class Language implements de.jplag.Language {
     public boolean hasErrors() {
         return this.parser.hasErrors();
     }
-
-    @Override
-    public int numberOfTokens() {
-        return Python3TokenConstants.NUM_DIFF_TOKENS;
-    }
 }

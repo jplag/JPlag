@@ -51,9 +51,4 @@ public class Language implements de.jplag.Language {
     public boolean hasErrors() {
         return parser.hasErrors();
     }
-
-    @Override
-    public int numberOfTokens() {
-        return CSharpTokenConstants.NUM_DIFF_TOKENS;
-    }
 }

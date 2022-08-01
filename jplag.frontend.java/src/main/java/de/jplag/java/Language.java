@@ -36,11 +36,6 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public int numberOfTokens() {
-        return JavaTokenConstants.NUM_DIFF_TOKENS;
-    }
-
-    @Override
     public TokenList parse(File directory, String[] files) {
         return this.parser.parse(directory, files);
     }

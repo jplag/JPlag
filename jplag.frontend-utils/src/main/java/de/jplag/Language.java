@@ -41,12 +41,6 @@ public interface Language {
     boolean hasErrors();
 
     /**
-     * Number of tokens defined by the language. Some languages may have a fixed token set, others a dynamic one where the
-     * number of tokens may vary, as the token set is dynamically created for the parsed submissions.
-     */
-    int numberOfTokens();
-
-    /**
      * Determines whether the parser provide column information. If that is the case, line and column indices are used
      * instead of a single token index.
      */

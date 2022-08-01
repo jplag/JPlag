@@ -41,9 +41,4 @@ public class Language implements de.jplag.Language {
     public boolean hasErrors() {
         return this.scanner.hasErrors();
     }
-
-    @Override
-    public int numberOfTokens() {
-        return CPPTokenConstants.NUM_DIFF_TOKENS;
-    }
 }
