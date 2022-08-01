@@ -67,8 +67,7 @@ public class JPlagGoListener extends GoParserBaseListener {
         transformToken(IMPORT_DECLARATION, context.getStart());
 
         // if the children contain TerminalNodes, then it must be '(' and ')'
-        Optional<TerminalNode> listStart = context.children.stream().filter(TerminalNode.class::isInstance).map(TerminalNode.class::cast)
-                .findFirst();
+        Optional<TerminalNode> listStart = context.children.stream().filter(TerminalNode.class::isInstance).map(TerminalNode.class::cast).findFirst();
         listStart.ifPresent(lParenTree -> transformToken(IMPORT_CLAUSE_BEGIN, lParenTree.getSymbol()));
 
         super.enterImportDecl(context);
