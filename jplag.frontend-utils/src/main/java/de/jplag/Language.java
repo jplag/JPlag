@@ -8,14 +8,7 @@ import java.io.File;
 public interface Language {
 
     /**
-     * This function creates the actual initialized language.
-     * @param errorConsumer the error consumer for errors during parsing.
-     * @return the initialized language frontend
-     */
-    Language createInitializedLanguage(ErrorConsumer errorConsumer);
-
-    /**
-     * Suffixes for the files containing code of the language.
+     * Suffixes for the files containing code of the language. An empty array means all suffixes are valid.
      */
     String[] suffixes();
 
@@ -48,22 +41,17 @@ public interface Language {
     boolean hasErrors();
 
     /**
-     * Determines whether the parser provide column information.
+     * Determines whether the parser provide column information. If that is the case, line and column indices are used
+     * instead of a single token index.
      */
-    boolean supportsColumns();
+    default boolean supportsColumns() {
+        return true;
+    }
 
     /**
-     * Determines whether JPlag should use a fixed-width font in its reports.
+     * Determines whether a fixed-width font should be used to display that language.
      */
-    boolean isPreformatted();
-
-    /**
-     * Determines whether tokens from the scanner are indexed.
-     */
-    boolean usesIndex();
-
-    /**
-     * Number of defined tokens in the scanner of the language.
-     */
-    int numberOfTokens();
+    default boolean isPreformatted() {
+        return true;
+    }
 }

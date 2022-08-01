@@ -1,15 +1,18 @@
 package de.jplag;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Abstract parser class. Counts errors and manages an error consumer.
  * @author Emeric Kwemou
  */
 public abstract class AbstractParser {
-    protected ErrorConsumer errorConsumer;
     protected int errors = 0;
+    public final Logger logger;
 
-    public AbstractParser(ErrorConsumer errorConsumer) {
-        this.errorConsumer = errorConsumer;
+    protected AbstractParser() {
+        this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
     /**
@@ -17,12 +20,5 @@ public abstract class AbstractParser {
      */
     public boolean hasErrors() {
         return errors != 0;
-    }
-
-    /**
-     * @return the error consumer that collects and prints errors.
-     */
-    public ErrorConsumer getErrorConsumer() {
-        return errorConsumer;
     }
 }

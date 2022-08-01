@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /*
@@ -16,20 +15,8 @@ public class Language implements de.jplag.Language {
     public static final String SHORT_NAME = "char";
     private final Parser parser;
 
-    /**
-     * Prototype Constructor for {@link MetaInfServices}.
-     */
     public Language() {
-        this.parser = null;
-    }
-
-    private Language(ErrorConsumer program) {
-        parser = new Parser(program);
-    }
-
-    @Override
-    public de.jplag.Language createInitializedLanguage(ErrorConsumer errorConsumer) {
-        return new Language(errorConsumer);
+        parser = new Parser();
     }
 
     @Override
@@ -70,15 +57,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean isPreformatted() {
         return false;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return true;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return 36;
     }
 }

@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 @MetaInfServices(de.jplag.Language.class)
@@ -13,20 +12,8 @@ public class Language implements de.jplag.Language {
     public static final String SHORT_NAME = "scheme";
     private final de.jplag.scheme.Parser parser;
 
-    /**
-     * Prototype Constructor for {@link MetaInfServices}.
-     */
     public Language() {
-        this.parser = null;
-    }
-
-    private Language(ErrorConsumer program) {
-        parser = new Parser(program);
-    }
-
-    @Override
-    public de.jplag.Language createInitializedLanguage(ErrorConsumer errorConsumer) {
-        return new Language(errorConsumer);
+        parser = new Parser();
     }
 
     @Override
@@ -50,21 +37,6 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
     public TokenList parse(File dir, String[] files) {
         return this.parser.parse(dir, files);
     }
@@ -72,10 +44,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return this.parser.hasErrors();
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return SchemeTokenConstants.NUM_DIFF_TOKENS;
     }
 }

@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 @MetaInfServices(de.jplag.Language.class)
@@ -14,20 +13,8 @@ public class Language implements de.jplag.Language {
 
     private final Parser parser;
 
-    /**
-     * Prototype Constructor for {@link MetaInfServices}.
-     */
     public Language() {
-        this.parser = null;
-    }
-
-    private Language(ErrorConsumer errorConsumer) {
-        parser = new Parser(errorConsumer);
-    }
-
-    @Override
-    public de.jplag.Language createInitializedLanguage(ErrorConsumer errorConsumer) {
-        return new Language(errorConsumer);
+        parser = new Parser();
     }
 
     @Override
@@ -58,25 +45,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return this.parser.hasErrors();
-    }
-
-    @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return Python3TokenConstants.NUM_DIFF_TOKENS;
     }
 }

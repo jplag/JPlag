@@ -1,11 +1,9 @@
-
 package de.jplag.text;
 
 import java.io.File;
 
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 @MetaInfServices(de.jplag.Language.class)
@@ -14,20 +12,8 @@ public class Language implements de.jplag.Language {
     public static final String SHORT_NAME = "text";
     private final Parser parser;
 
-    /**
-     * Prototype Constructor for {@link MetaInfServices}.
-     */
     public Language() {
-        this.parser = null;
-    }
-
-    private Language(ErrorConsumer errorConsumer) {
-        parser = new Parser(errorConsumer);
-    }
-
-    @Override
-    public de.jplag.Language createInitializedLanguage(ErrorConsumer errorConsumer) {
-        return new Language(errorConsumer);
+        parser = new Parser();
     }
 
     @Override
@@ -61,22 +47,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
     public boolean isPreformatted() {
         return false;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return parser.serial;
     }
 }

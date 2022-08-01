@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /**
@@ -21,20 +20,8 @@ public class Language implements de.jplag.Language {
 
     private final CSharpParserAdapter parser;
 
-    /**
-     * Prototype Constructor for {@link MetaInfServices}.
-     */
     public Language() {
-        this.parser = null;
-    }
-
-    Language(ErrorConsumer program) {
-        parser = new CSharpParserAdapter(program);
-    }
-
-    @Override
-    public de.jplag.Language createInitializedLanguage(ErrorConsumer errorConsumer) {
-        return new Language(errorConsumer);
+        parser = new CSharpParserAdapter();
     }
 
     @Override
@@ -65,25 +52,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return parser.hasErrors();
-    }
-
-    @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return CSharpTokenConstants.NUM_DIFF_TOKENS;
     }
 }

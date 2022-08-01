@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
@@ -15,25 +14,24 @@ public class Parser extends AbstractParser {
 
     /**
      * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
-    public Parser(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public Parser() {
+        super();
     }
 
     public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         for (String file : files) {
-            getErrorConsumer().print(null, "Parsing file " + file);
+            logger.trace("Parsing file {}", file);
             if (!parseFile(directory, file))
                 errors++;
             tokens.addToken(new CharToken(TokenConstants.FILE_END, file, this));
         }
         if (errors == 0)
-            errorConsumer.print(null, "OK");
+            logger.trace("OK");
         else
-            errorConsumer.print(null, errors + " ERROR" + (errors > 1 ? "S" : ""));
+            logger.error(errors + " ERROR" + (errors > 1 ? "S" : ""));
 
         return tokens;
     }
@@ -56,7 +54,7 @@ public class Parser extends AbstractParser {
                 offset += length;
             } while (length != -1);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return false;
         }
         return true;

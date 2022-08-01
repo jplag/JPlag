@@ -2,7 +2,16 @@ package de.jplag;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -24,20 +33,17 @@ public class SubmissionSetBuilder {
 
     private final Language language;
     private final JPlagOptions options;
-    private final ErrorCollector errorCollector;
     private final Set<String> excludedFileNames; // Set of file names to be excluded in comparison.
 
     /**
      * Creates a builder for submission sets.
      * @param language is the language of the submissions.
      * @param options are the configured options.
-     * @param errorCollector is the interface for error reporting.
      * @param excludedFileNames a list of file names to be excluded
      */
-    public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames) {
+    public SubmissionSetBuilder(Language language, JPlagOptions options, Set<String> excludedFileNames) {
         this.language = language;
         this.options = options;
-        this.errorCollector = errorCollector;
         this.excludedFileNames = excludedFileNames;
     }
 
@@ -69,7 +75,7 @@ public class SubmissionSetBuilder {
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
-        return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), errorCollector, options);
+        return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options);
     }
 
     /**
@@ -283,7 +289,7 @@ public class SubmissionSetBuilder {
         }
 
         submissionFile = makeCanonical(submissionFile, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language, errorCollector);
+        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language);
     }
 
     /**

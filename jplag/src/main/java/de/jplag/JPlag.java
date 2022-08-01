@@ -26,14 +26,13 @@ import de.jplag.strategy.ParallelComparisonStrategy;
  * This class coordinates the whole errorConsumer flow.
  */
 public class JPlag {
-    private static final Logger logger = LoggerFactory.getLogger("JPlag");
+    private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
     private final JPlagOptions options;
 
     private final Language language;
     private final ComparisonStrategy comparisonStrategy;
     private final GreedyStringTiling coreAlgorithm; // Contains the comparison logic.
-    private final ErrorCollector errorCollector;
     private final Set<String> excludedFileNames;
 
     /**
@@ -42,9 +41,8 @@ public class JPlag {
      */
     public JPlag(JPlagOptions options) {
         this.options = options;
-        errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
-        language = initializeLanguage(this.options, this.errorCollector);
+        language = initializeLanguage(this.options);
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
         excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
         options.setExcludedFiles(excludedFileNames); // store for report
@@ -58,9 +56,9 @@ public class JPlag {
         try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
             final var excludedFileNames = reader.lines().collect(Collectors.toSet());
             if (options.getVerbosity() == LONG) {
-                errorCollector.print(null, "Excluded files:");
+                logger.info("Excluded files:");
                 for (var excludedFilename : excludedFileNames) {
-                    errorCollector.print(null, " " + excludedFilename);
+                    logger.info(excludedFilename);
                 }
             }
             return excludedFileNames;
@@ -77,7 +75,7 @@ public class JPlag {
      */
     public JPlagResult run() throws ExitException {
         // Parse and validate submissions.
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, errorCollector, excludedFileNames);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, excludedFileNames);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
         if (submissionSet.hasBaseCode()) {
@@ -91,7 +89,8 @@ public class JPlag {
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
-        errorCollector.print("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()), null);
+        if (logger.isInfoEnabled())
+            logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
 
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.getClusteringOptions()));
 
@@ -105,12 +104,19 @@ public class JPlag {
         };
     }
 
-    private static Language initializeLanguage(JPlagOptions options, ErrorConsumer errorCollector) {
-        Language uninitializedLanguage = LanguageLoader.loadLanguage(options.getLanguageShortName()).orElseThrow();
-        Language language = uninitializedLanguage.createInitializedLanguage(errorCollector);
+    private static Language initializeLanguage(JPlagOptions options) {
+        String languageShortName = options.getLanguageShortName();
+        Language currentLanguage = options.getLanguage();
+
+        if (currentLanguage != null && (languageShortName == null || languageShortName.equals(currentLanguage.getShortName()))) {
+            // Ensure that we do not rely on the ServiceLoader API. We can also load an arbitrary language via Options
+            return currentLanguage;
+        }
+
+        Language language = LanguageLoader.loadLanguage(languageShortName).orElseThrow();
         options.setLanguage(language);
         options.setLanguageDefaults(language);
-        logger.info("Initialized language {}", language.getName());
+        logger.info("Loaded language {}", language.getName());
         return language;
     }
 }
