@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import de.jplag.options.LanguageOption;
 
 class javaTestCases {
 
-	@BeforeEach
+	@Before
 	public void setUp() {
 		assertTrue(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toFile().exists(), "Could not find base directory!");
 		try {
