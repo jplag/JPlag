@@ -38,8 +38,7 @@ public class SubmissionSet {
      * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
      */
-    public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options)
-            throws ExitException {
+    public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.options = options;
