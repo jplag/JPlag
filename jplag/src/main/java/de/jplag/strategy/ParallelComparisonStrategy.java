@@ -3,22 +3,14 @@ package de.jplag.strategy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.GreedyStringTiling;
-import de.jplag.JPlagComparison;
-import de.jplag.JPlagResult;
-import de.jplag.Submission;
-import de.jplag.SubmissionSet;
+import de.jplag.*;
 import de.jplag.options.JPlagOptions;
 
 /**

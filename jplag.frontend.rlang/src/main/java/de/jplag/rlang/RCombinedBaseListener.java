@@ -4,10 +4,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.jplag.rlang.grammar.RFilter;
-import de.jplag.rlang.grammar.RFilterListener;
-import de.jplag.rlang.grammar.RListener;
-import de.jplag.rlang.grammar.RParser;
+import de.jplag.rlang.grammar.*;
 
 /**
  * Empty base implementation for {@link RListener} and {@link RFilterListener}.

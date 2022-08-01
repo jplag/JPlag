@@ -2,7 +2,7 @@ package de.jplag.rlang;
 
 import org.antlr.v4.runtime.Token;
 
-import de.jplag.rlang.grammar.RParser;
+import de.jplag.rlang.grammar.*;
 
 /**
  * Listener class for visiting the R ANTLR parse tree. Transforms the visited ANTLR token into JPlag tokens. Based on an

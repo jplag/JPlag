@@ -13,19 +13,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.JPlagComparison;
-import de.jplag.JPlagResult;
-import de.jplag.Submission;
-import de.jplag.Token;
-import de.jplag.TokenList;
+import de.jplag.*;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
-import de.jplag.reporting.reportobject.model.ComparisonReport;
-import de.jplag.reporting.reportobject.model.FilesOfSubmission;
-import de.jplag.reporting.reportobject.model.JPlagReport;
+import de.jplag.reporting.reportobject.model.*;
 import de.jplag.reporting.reportobject.model.Match;
-import de.jplag.reporting.reportobject.model.Metric;
-import de.jplag.reporting.reportobject.model.OverviewReport;
 
 /**
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.

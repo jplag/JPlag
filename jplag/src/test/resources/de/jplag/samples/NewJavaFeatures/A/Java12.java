@@ -7,9 +7,10 @@ public class Java12 { // Java 12 has no new relevant structural features
         String text = "ABCD";
         text.indent(5);
         text.transform(it -> it + "!");
-
+        
         // Compact number format:
-        NumberFormat fmt = NumberFormat.getCompactNumberInstance(new Locale("hi", "IN"), NumberFormat.Style.SHORT);
+        NumberFormat fmt = NumberFormat.getCompactNumberInstance(
+                new Locale("hi", "IN"), NumberFormat.Style.SHORT);
         String result = fmt.format(1000);
         System.out.println(result);
     }
