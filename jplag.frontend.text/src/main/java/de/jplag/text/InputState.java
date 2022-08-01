@@ -10,6 +10,7 @@ import antlr.LexerSharedInputState;
  * This object contains the data associated with an input stream of characters. Multiple lexers share a single
  * LexerSharedInputState to lex the same input stream.
  */
+@SuppressWarnings({"java:S1104", "java:S2387"})
 public class InputState extends LexerSharedInputState {
     public int column = 0;
     public int tokenColumn = 0;

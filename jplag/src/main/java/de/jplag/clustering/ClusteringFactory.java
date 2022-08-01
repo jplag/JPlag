@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
@@ -42,8 +41,7 @@ public class ClusteringFactory {
     }
 
     private static ClusteringResult<Submission> removeBadClusters(final ClusteringResult<Submission> clustering) {
-        List<Cluster<Submission>> filtered = clustering.getClusters().stream().filter(cluster -> !cluster.isBadCluster())
-                .collect(Collectors.toList());
+        List<Cluster<Submission>> filtered = clustering.getClusters().stream().filter(cluster -> !cluster.isBadCluster()).toList();
         return new ClusteringResult<>(filtered, clustering.getCommunityStrength());
     }
 }

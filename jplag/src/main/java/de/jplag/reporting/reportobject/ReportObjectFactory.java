@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +93,7 @@ public class ReportObjectFactory {
 
     private static List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison, List<de.jplag.Match> matches) {
         return matches.stream().map(match -> convertMatchToReportMatch(comparison, match, !result.getOptions().getLanguage().supportsColumns()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -132,7 +134,7 @@ public class ReportObjectFactory {
      * @return A list containing FilesOfSubmission DTOs.
      */
     private static List<FilesOfSubmission> getFilesForSubmission(Submission submission) {
-        return submission.getFiles().stream().map(file -> new FilesOfSubmission(file.getName(), readFileLines(file))).collect(Collectors.toList());
+        return submission.getFiles().stream().map(file -> new FilesOfSubmission(file.getName(), readFileLines(file))).toList();
     }
 
     /**
@@ -142,19 +144,19 @@ public class ReportObjectFactory {
      * @param usesIndex Indicates whether the language uses indexes.
      * @return A Match DTO.
      */
-    private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, Boolean usesIndex) {
+    private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean usesIndex) {
         TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
         TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
-        Token startTokenFirst = tokensFirst.getToken(match.getStartOfFirst());
-        Token endTokenFirst = tokensFirst.getToken(match.getStartOfFirst() + match.getLength() - 1);
-        Token startTokenSecond = tokensSecond.getToken(match.getStartOfSecond());
-        Token endTokenSecond = tokensSecond.getToken(match.getStartOfSecond() + match.getLength() - 1);
+        Token startTokenFirst = tokensFirst.getToken(match.startOfFirst());
+        Token endTokenFirst = tokensFirst.getToken(match.startOfFirst() + match.length() - 1);
+        Token startTokenSecond = tokensSecond.getToken(match.startOfSecond());
+        Token endTokenSecond = tokensSecond.getToken(match.startOfSecond() + match.length() - 1);
 
         int startFirst = usesIndex ? startTokenFirst.getIndex() : startTokenFirst.getLine();
         int endFirst = usesIndex ? endTokenFirst.getIndex() : endTokenFirst.getLine();
         int startSecond = usesIndex ? startTokenSecond.getIndex() : startTokenSecond.getLine();
         int endSecond = usesIndex ? endTokenSecond.getIndex() : endTokenSecond.getLine();
-        int tokens = match.getLength();
+        int tokens = match.length();
 
         return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
     }
@@ -167,7 +169,7 @@ public class ReportObjectFactory {
                 lines.add(line);
             }
         } catch (IOException exception) {
-            logger.error("Could not read file: " + exception.getMessage());
+            logger.error("Could not read file: " + exception.getMessage(), exception);
         }
         return lines;
     }
@@ -177,5 +179,4 @@ public class ReportObjectFactory {
         Date date = new Date();
         return dateFormat.format(date);
     }
-
 }

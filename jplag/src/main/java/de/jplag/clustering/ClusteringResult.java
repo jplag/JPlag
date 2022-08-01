@@ -66,7 +66,7 @@ public class ClusteringResult<T> {
         }
         List<Cluster<Integer>> clusters = new ArrayList<>(clustering.size());
         float communityStrength = 0;
-        if (clustering.size() > 0) {
+        if (!clustering.isEmpty()) {
             RealMatrix percentagesOfSimilaritySums = new Array2DRowRealMatrix(clustering.size(), clustering.size());
             percentagesOfSimilaritySums = percentagesOfSimilaritySums.scalarMultiply(0);
             for (int i = 0; i < numberOfSubmissions; i++) {

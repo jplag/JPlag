@@ -54,7 +54,7 @@ public class CSharpParserAdapter extends AbstractParser {
 
     private boolean parseFile(File directory, String fileName) {
         File file = new File(directory, fileName);
-        try (FileInputStream inputStream = new FileInputStream(file);) {
+        try (FileInputStream inputStream = new FileInputStream(file)) {
             currentFile = fileName;
 
             // create a lexer, a parser and a buffer between them.
