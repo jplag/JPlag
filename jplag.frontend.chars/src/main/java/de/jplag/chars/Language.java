@@ -57,11 +57,6 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public boolean usesIndex() {
-        return true;
-    }
-
-    @Override
     public int numberOfTokens() {
         return 36;
     }

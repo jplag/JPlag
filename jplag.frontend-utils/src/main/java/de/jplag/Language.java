@@ -8,7 +8,7 @@ import java.io.File;
 public interface Language {
 
     /**
-     * Suffixes for the files containing code of the language.
+     * Suffixes for the files containing code of the language. An empty array means all suffixes are valid.
      */
     String[] suffixes();
 
@@ -41,22 +41,23 @@ public interface Language {
     boolean hasErrors();
 
     /**
-     * Determines whether the parser provide column information.
-     */
-    boolean supportsColumns();
-
-    /**
-     * Determines whether JPlag should use a fixed-width font in its reports.
-     */
-    boolean isPreformatted();
-
-    /**
-     * Determines whether tokens from the scanner are indexed.
-     */
-    boolean usesIndex();
-
-    /**
-     * Number of defined tokens in the scanner of the language.
+     * Number of tokens defined by the language. Some languages may have a fixed token set, others a dynamic one where the
+     * number of tokens may vary, as the token set is dynamically created for the parsed submissions.
      */
     int numberOfTokens();
+
+    /**
+     * Determines whether the parser provide column information. If that is the case, line and column indices are used
+     * instead of a single token index.
+     */
+    default boolean supportsColumns() {
+        return true;
+    }
+
+    /**
+     * Determines whether a fixed-width font should be used to display that language.
+     */
+    default boolean isPreformatted() {
+        return true;
+    }
 }

@@ -90,7 +90,7 @@ public class ReportObjectFactory {
     }
 
     private static List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison, List<de.jplag.Match> matches) {
-        return matches.stream().map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().usesIndex()))
+        return matches.stream().map(match -> convertMatchToReportMatch(comparison, match, !result.getOptions().getLanguage().supportsColumns()))
                 .collect(Collectors.toList());
     }
 
