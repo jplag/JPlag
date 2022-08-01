@@ -1,6 +1,25 @@
 package de.jplag.csharp;
 
-import static de.jplag.csharp.CSharpTokenConstants.*;
+import static de.jplag.csharp.CSharpTokenConstants.ACCESSORS_BEGIN;
+import static de.jplag.csharp.CSharpTokenConstants.ACCESSORS_END;
+import static de.jplag.csharp.CSharpTokenConstants.ACCESSOR_BEGIN;
+import static de.jplag.csharp.CSharpTokenConstants.ACCESSOR_END;
+import static de.jplag.csharp.CSharpTokenConstants.ASSIGNMENT;
+import static de.jplag.csharp.CSharpTokenConstants.CLASS;
+import static de.jplag.csharp.CSharpTokenConstants.CLASS_BEGIN;
+import static de.jplag.csharp.CSharpTokenConstants.CLASS_END;
+import static de.jplag.csharp.CSharpTokenConstants.CONSTRUCTOR;
+import static de.jplag.csharp.CSharpTokenConstants.FIELD;
+import static de.jplag.csharp.CSharpTokenConstants.IF;
+import static de.jplag.csharp.CSharpTokenConstants.IF_BEGIN;
+import static de.jplag.csharp.CSharpTokenConstants.IF_END;
+import static de.jplag.csharp.CSharpTokenConstants.INVOCATION;
+import static de.jplag.csharp.CSharpTokenConstants.LOCAL_VARIABLE;
+import static de.jplag.csharp.CSharpTokenConstants.METHOD;
+import static de.jplag.csharp.CSharpTokenConstants.METHOD_BEGIN;
+import static de.jplag.csharp.CSharpTokenConstants.METHOD_END;
+import static de.jplag.csharp.CSharpTokenConstants.PROPERTY;
+import static de.jplag.csharp.CSharpTokenConstants.RETURN;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

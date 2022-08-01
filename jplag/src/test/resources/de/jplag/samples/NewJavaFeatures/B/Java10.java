@@ -3,9 +3,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class Java10 {
-    
+
     List<Optional<String>> test;
-    
+
     public Java10() {
         // Typed variables as usual:
         test = new ArrayList<>();

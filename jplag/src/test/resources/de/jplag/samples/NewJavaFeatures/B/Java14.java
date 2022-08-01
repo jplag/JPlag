@@ -10,8 +10,11 @@ public enum Java14 {
         boolean isWeekend;
         switch (MONDAY) {
             case SATURDAY:
-            case SUNDAY: isWeekend = true; break;
-            default: isWeekend = false;
+            case SUNDAY:
+                isWeekend = true;
+                break;
+            default:
+                isWeekend = false;
         }
         System.out.println(isWeekend);
     }
