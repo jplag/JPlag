@@ -20,7 +20,6 @@ import de.jplag.Token;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
-import de.jplag.testutils.TestErrorConsumer;
 
 class MinimalCSharpFrontendTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
@@ -33,8 +32,7 @@ class MinimalCSharpFrontendTest {
 
     @BeforeEach
     public void setUp() {
-        TestErrorConsumer consumer = new TestErrorConsumer();
-        frontend = new Language(consumer);
+        frontend = new Language();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }

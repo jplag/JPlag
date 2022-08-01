@@ -6,12 +6,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Collections;
 
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
+import javax.tools.*;
 import javax.tools.JavaCompiler.CompilationTask;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
+
+import org.slf4j.Logger;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
@@ -19,7 +17,6 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenConstants;
 
 public class JavacAdapter {
@@ -39,7 +36,7 @@ public class JavacAdapter {
             ast.accept(new TokenGeneratingTreeScanner(filename, parser, map, positions, ast), null);
             parser.add(TokenConstants.FILE_END, filename, 1, -1, -1);
         }
-        return processErrors(parser.getErrorConsumer(), listener);
+        return processErrors(parser.logger, listener);
     }
 
     private Iterable<? extends CompilationUnitTree> executeCompilationTask(final CompilationTask task) {
@@ -60,11 +57,11 @@ public class JavacAdapter {
         }
     }
 
-    private int processErrors(final ErrorConsumer consumer, DiagnosticCollector<Object> listener) {
+    private int processErrors(Logger logger, DiagnosticCollector<Object> listener) {
         int errors = 0;
         for (Diagnostic<?> diagnosticItem : listener.getDiagnostics()) {
             if (diagnosticItem.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
-                consumer.addError(diagnosticItem.toString());
+                logger.error("{}", diagnosticItem);
                 errors++;
             }
         }

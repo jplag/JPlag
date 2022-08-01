@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
@@ -13,6 +16,8 @@ import de.jplag.options.JPlagOptions;
  * Collection of all submissions and their basecode if it exists. Parses all submissions upon creation.
  */
 public class SubmissionSet {
+    private static final Logger logger = LoggerFactory.getLogger(SubmissionSet.class);
+
     /**
      * Submissions to check for plagiarism.
      */
@@ -25,7 +30,6 @@ public class SubmissionSet {
      */
     private final Submission baseCodeSubmission;
 
-    private final ErrorCollector errorCollector;
     private final JPlagOptions options;
     private int errors = 0;
     private String currentSubmissionName;
@@ -34,11 +38,9 @@ public class SubmissionSet {
      * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
      */
-    public SubmissionSet(List<Submission> submissions, Submission baseCode, ErrorCollector errorCollector, JPlagOptions options)
-            throws ExitException {
+    public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
-        this.errorCollector = errorCollector;
         this.options = options;
         parseAllSubmissions();
         this.submissions = filterValidSubmissions();
@@ -105,9 +107,6 @@ public class SubmissionSet {
         } catch (OutOfMemoryError exception) {
             throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"", exception);
         }
-        if (errorCollector.hasErrors()) {
-            errorCollector.printCollectedErrors();
-        }
     }
 
     /**
@@ -115,16 +114,15 @@ public class SubmissionSet {
      */
     private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException {
         long startTime = System.currentTimeMillis();
-        errorCollector.print("----- Parsing basecode submission: " + baseCode.getName(), null);
+        logger.info("----- Parsing basecode submission: " + baseCode.getName());
         if (!baseCode.parse(options.isDebugParser())) {
-            errorCollector.printCollectedErrors();
             throw new BasecodeException("Could not successfully parse basecode submission!");
         } else if (baseCode.getNumberOfTokens() < options.getMinimumTokenMatch()) {
             throw new BasecodeException("Basecode submission contains fewer tokens than minimum match length allows!");
         }
-        errorCollector.print("Basecode submission parsed!", null);
+        logger.info("Basecode submission parsed!");
         long duration = System.currentTimeMillis() - startTime;
-        errorCollector.print(null, "Time for parsing Basecode: " + TimeUtil.formatDuration(duration));
+        logger.trace("Time for parsing Basecode: " + TimeUtil.formatDuration(duration));
 
     }
 
@@ -133,7 +131,7 @@ public class SubmissionSet {
      */
     private void parseSubmissions(List<Submission> submissions) {
         if (submissions.isEmpty()) {
-            errorCollector.print("No submissions to parse!", null);
+            logger.warn("No submissions to parse!");
             return;
         }
 
@@ -143,16 +141,15 @@ public class SubmissionSet {
         for (Submission submission : submissions) {
             boolean ok;
 
-            errorCollector.print(null, "------ Parsing submission: " + submission.getName());
+            logger.trace("------ Parsing submission: " + submission.getName());
             currentSubmissionName = submission.getName();
-            errorCollector.setCurrentSubmissionName(currentSubmissionName);
 
             if (!(ok = submission.parse(options.isDebugParser()))) {
                 errors++;
             }
 
             if (submission.getTokenList() != null && submission.getNumberOfTokens() < options.getMinimumTokenMatch()) {
-                errorCollector.addError("Submission contains fewer tokens than minimum match length allows!");
+                logger.error("Submission {} contains fewer tokens than minimum match length allows!", currentSubmissionName);
                 submission.setTokenList(null);
                 tooShort++;
                 ok = false;
@@ -160,31 +157,30 @@ public class SubmissionSet {
             }
 
             if (ok) {
-                errorCollector.print(null, "OK");
+                logger.trace("OK");
             } else {
-                errorCollector.print(null, "ERROR -> Submission removed");
+                logger.error("ERROR -> Submission {} removed", currentSubmissionName);
             }
         }
 
         int validSubmissions = submissions.size() - errors - tooShort;
-        errorCollector.print(validSubmissions + " submissions parsed successfully!", null);
-        errorCollector.print(errors + " parser error" + (errors != 1 ? "s!" : "!") + "", null);
-        errorCollector.print(tooShort + " too short submission" + (tooShort != 1 ? "s!" : "!") + "", null);
+        logger.trace(validSubmissions + " submissions parsed successfully!");
+        logger.trace(errors + " parser error" + (errors != 1 ? "s!" : "!"));
+        logger.trace(tooShort + " too short submission" + (tooShort != 1 ? "s!" : "!"));
         printDetails(submissions, startTime, tooShort);
-        errorCollector.print("", null); // new line
     }
 
     private void printDetails(List<Submission> submissions, long startTime, int tooShort) {
         if (tooShort == 1) {
-            errorCollector.print(null, tooShort + " submission is not valid because it contains fewer tokens than minimum match length allows.");
+            logger.trace(tooShort + " submission is not valid because it contains fewer tokens than minimum match length allows.");
         } else if (tooShort > 1) {
-            errorCollector.print(null, tooShort + " submissions are not valid because they contain fewer tokens than minimum match length allows.");
+            logger.trace(tooShort + " submissions are not valid because they contain fewer tokens than minimum match length allows.");
         }
 
         long duration = System.currentTimeMillis() - startTime;
-        String timePerSubmission = !submissions.isEmpty() ? Long.toString(duration / submissions.size()) : "n/a";
-        errorCollector.print(null, "Total time for parsing: " + TimeUtil.formatDuration(duration));
-        errorCollector.print(null, "Time per parsed submission: " + timePerSubmission + " msec");
+        String timePerSubmission = submissions.size() > 0 ? Long.toString(duration / submissions.size()) : "n/a";
+        logger.trace("Total time for parsing: " + TimeUtil.formatDuration(duration));
+        logger.trace("Time per parsed submission: " + timePerSubmission + " msec");
     }
 
 }

@@ -2,14 +2,13 @@ package de.jplag.cpp;
 
 import java.io.File;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
     private final Scanner scanner; // cpp code is scanned not parsed
 
-    public Language(ErrorConsumer errorConsumer) {
-        scanner = new Scanner(errorConsumer);
+    public Language() {
+        scanner = new Scanner();
     }
 
     @Override

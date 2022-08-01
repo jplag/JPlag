@@ -19,9 +19,8 @@ import de.jplag.Token;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
-import de.jplag.testutils.TestErrorConsumer;
 
-public class RFrontendTest {
+class RFrontendTest {
 
     /**
      * Regular expression for lines that contain no code.
@@ -41,8 +40,7 @@ public class RFrontendTest {
 
     @BeforeEach
     void setup() {
-        TestErrorConsumer consumer = new TestErrorConsumer();
-        language = new Language(consumer);
+        language = new Language();
     }
 
     @Test

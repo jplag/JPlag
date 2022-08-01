@@ -2,7 +2,6 @@ package de.jplag.kotlin;
 
 import java.io.File;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 /**
@@ -16,8 +15,8 @@ public class Language implements de.jplag.Language {
     private static final String[] FILE_EXTENSIONS = {".kt"};
     private final KotlinParserAdapter parserAdapter;
 
-    public Language(ErrorConsumer consumer) {
-        this.parserAdapter = new KotlinParserAdapter(consumer);
+    public Language() {
+        this.parserAdapter = new KotlinParserAdapter();
     }
 
     @Override
