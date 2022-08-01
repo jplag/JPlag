@@ -36,7 +36,7 @@ public class JsonFactory {
                 jsonReports.add(mapper.writeValueAsString(comparisonReport));
             }
         } catch (JsonProcessingException e) {
-            logger.error("Error converting object to json " + e.getMessage());
+            logger.error("Error converting object to json " + e.getMessage(), e);
         }
         return jsonReports;
     }
@@ -50,7 +50,7 @@ public class JsonFactory {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(Path.of(folderPath, "overview.json").toFile(), jPlagReport.overviewReport());
             for (ComparisonReport report : jPlagReport.comparisons()) {
-                String name = report.getFirstSubmissionId().concat("-").concat(report.getSecondSubmissionId()).concat(".json");
+                String name = report.firstSubmissionId().concat("-").concat(report.secondSubmissionId()).concat(".json");
                 mapper.writeValue(Path.of(folderPath, name).toFile(), report);
             }
         } catch (IOException e) {

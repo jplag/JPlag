@@ -24,7 +24,7 @@ public class PreprocessorHelper {
         mapping = new IntegerMapping<>(connections.length);
         RealMatrix similarity = new Array2DRowRealMatrix(connections, true);
         for (int i = 0; i < similarity.getRowDimension(); i++) {
-            if (DoubleStream.of(similarity.getRow(i)).filter(x -> x > 0).findAny().isPresent()) {
+            if (DoubleStream.of(similarity.getRow(i)).anyMatch(x -> x > 0)) {
                 rowList.add(i);
                 mapping.map(i);
             }

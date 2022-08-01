@@ -131,7 +131,7 @@ public class JPlagResult {
      * Note: Before, comparisons with a similarity below the given threshold were also included in the similarity matrix.
      */
     private int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
-        return calculateDistributionFor(comparisons, (JPlagComparison::similarity));
+        return calculateDistributionFor(comparisons, JPlagComparison::similarity);
     }
 
     private int[] calculateDistributionFor(List<JPlagComparison> comparisons, Function<JPlagComparison, Float> similarityExtractor) {

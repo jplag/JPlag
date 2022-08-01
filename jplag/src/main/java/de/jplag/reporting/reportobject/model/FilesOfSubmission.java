@@ -12,9 +12,9 @@ public class FilesOfSubmission {
     @JsonProperty("lines")
     private final List<String> lines;
 
-    public FilesOfSubmission(String fileName, List<String> file_code) {
+    public FilesOfSubmission(String fileName, List<String> fileCode) {
         this.fileName = fileName;
-        this.lines = List.copyOf(file_code);
+        this.lines = List.copyOf(fileCode);
     }
 
     public String getFileName() {

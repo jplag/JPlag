@@ -159,7 +159,7 @@ public class BayesianOptimization {
             } else {
                 // GPR
                 GaussianProcess gpr = fit(testedCoordinates, observations);
-                if (debug) {
+                if (debug && logger.isDebugEnabled()) {
                     logger.debug(gpr.toString(minima, maxima, 100, 25, 0));
                 }
                 // TODO Check that best is not null here
@@ -169,9 +169,7 @@ public class BayesianOptimization {
             OptimizationResult<T> result = objectiveFunction.apply(coordinates);
             result.params = coordinates;
             observations.add(result.getScore());
-            if (best == null) {
-                best = result;
-            } else if (result.score > best.score) {
+            if (best == null || result.score > best.score) {
                 best = result;
             }
         }
