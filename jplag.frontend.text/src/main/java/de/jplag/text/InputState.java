@@ -6,11 +6,15 @@ import java.io.Reader;
 import antlr.InputBuffer;
 import antlr.LexerSharedInputState;
 
+import de.jplag.annotations.FinalAttributesIgnore;
+import de.jplag.annotations.ShadowParentIgnore;
+
 /**
  * This object contains the data associated with an input stream of characters. Multiple lexers share a single
  * LexerSharedInputState to lex the same input stream.
  */
-@SuppressWarnings({"java:S1104", "java:S2387"})
+@ShadowParentIgnore(details = "Change the visibility breaks this frontend. If we have more tests, we should consider refactorings")
+@FinalAttributesIgnore(details = "Change the final state may break this frontend. If we have more tests, we should consider refactorings")
 public class InputState extends LexerSharedInputState {
     public int column = 0;
     public int tokenColumn = 0;
