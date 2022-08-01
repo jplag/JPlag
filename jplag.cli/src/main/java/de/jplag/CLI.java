@@ -144,7 +144,7 @@ public final class CLI {
         Optional.ofNullable((InterClusterSimilarity) CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace))
                 .ifPresent(clusteringBuilder::agglomerativeInterClusterSimilarity);
         Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_NONE.getFrom(namespace)).ifPresent(none -> {
-            if (Boolean.TRUE.equals(none)) {
+            if (none) {
                 clusteringBuilder.preprocessor(Preprocessing.NONE);
             }
         });
