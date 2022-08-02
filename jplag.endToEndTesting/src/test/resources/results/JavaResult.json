@@ -1,26 +1,26 @@
 [
    {
-      "functionName":"normalizationLevelTest_one",
+      "functionName":"normalizationLevelTestOne",
       "resultSimilarity":100.0
    },
    {
-      "functionName":"normalizationLevelTest_two",
+      "functionName":"normalizationLevelTestTwo",
       "resultSimilarity":100.0
    },
    {
-      "functionName":"normalizationLevelTest_three",
+      "functionName":"normalizationLevelTestThree",
       "resultSimilarity":100.0
    },
    {
-      "functionName":"tokenGenerationLevelTest_one",
+      "functionName":"tokenGenerationLevelTestOne",
       "resultSimilarity":64.0
    },
    {
-      "functionName":"tokenGenerationLevelTest_two",
+      "functionName":"tokenGenerationLevelTestTwo",
       "resultSimilarity":73.04348
    },
    {
-      "functionName":"tokenGenerationLevelTest_three",
+      "functionName":"tokenGenerationLevelTestThree",
       "resultSimilarity":73.94958
    }
 ]

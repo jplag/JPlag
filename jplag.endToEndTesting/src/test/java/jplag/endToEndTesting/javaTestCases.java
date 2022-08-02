@@ -39,7 +39,7 @@ class javaTestCases {
 	 * @throws Exception
 	 */
 	@Test
-	void normalizationLevelTest_one() throws Exception {
+	void normalizationLevelTestOne() throws Exception {
 
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo1.java" };
 
@@ -56,7 +56,7 @@ class javaTestCases {
 	 * @throws Exception
 	 */
 	@Test
-	void normalizationLevelTest_two() throws Exception {
+	void normalizationLevelTestTwo() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo2.java" };
 
 		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
@@ -72,7 +72,7 @@ class javaTestCases {
 	 * @throws Exception
 	 */
 	@Test
-	void normalizationLevelTest_three() throws Exception {
+	void normalizationLevelTestThree() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo1.java", "SortAlgo2.java" };
 
 		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
@@ -88,7 +88,7 @@ class javaTestCases {
 	 * @throws Exception
 	 */
 	@Test
-	void tokenGenerationLevelTest_one() throws Exception {
+	void tokenGenerationLevelTestOne() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo3.java" };
 
 		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
@@ -105,7 +105,7 @@ class javaTestCases {
 	 * @throws Exception
 	 */
 	@Test
-	void tokenGenerationLevelTest_two() throws Exception {
+	void tokenGenerationLevelTestTwo() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo4.java" };
 
 		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
@@ -121,7 +121,7 @@ class javaTestCases {
 	 * @throws Exception 
 	 */
 	@Test
-	void tokenGenerationLevelTest_three() throws Exception {
+	void tokenGenerationLevelTestThree() throws Exception {
 		String[] testClassNames = new String[] { "SortAlgo.java", "SortAlgo4d1.java" };
 
 		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
