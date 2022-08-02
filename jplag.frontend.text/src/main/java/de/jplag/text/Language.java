@@ -6,10 +6,10 @@ import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
-    private final Parser parser;
+    private final ParserAdapter parserAdapter;
 
     public Language() {
-        parser = new Parser();
+        parserAdapter = new ParserAdapter();
     }
 
     @Override
@@ -19,7 +19,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Text Parser";
+        return "Text ParserAdapter";
     }
 
     @Override
@@ -34,12 +34,12 @@ public class Language implements de.jplag.Language {
 
     @Override
     public TokenList parse(File dir, String[] files) {
-        return this.parser.parse(dir, files);
+        return parserAdapter.parse(dir, files);
     }
 
     @Override
     public boolean hasErrors() {
-        return this.parser.hasErrors();
+        return parserAdapter.hasErrors();
     }
 
     @Override

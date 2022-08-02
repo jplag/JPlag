@@ -10,7 +10,7 @@ public class TextToken extends Token {
         super(type, file, -1, -1, -1);
     }
 
-    public TextToken(String text, int type, String file, ParserToken parserToken) {
+    public TextToken(String text, int type, String file, AntlrParserToken parserToken) {
         super(type, file, parserToken.getLine(), parserToken.getColumn(), parserToken.getLength());
         this.text = text.toLowerCase();
     }

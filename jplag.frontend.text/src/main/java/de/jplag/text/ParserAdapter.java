@@ -3,6 +3,7 @@ package de.jplag.text;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Hashtable;
+import java.util.Map;
 
 import antlr.Token;
 
@@ -10,23 +11,13 @@ import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
-public class Parser extends AbstractParser {
+public class ParserAdapter extends AbstractParser {
 
-    private final Hashtable<String, Integer> tokenTypes = new Hashtable<>();
-    protected int serial = 1; // 0 is FILE_END token, SEPARATOR is not used as there are no methods.
+    private final Map<String, Integer> tokenTypes = new Hashtable<>();
+    private int serial = 1; // 0 is FILE_END token, SEPARATOR is not used as there are no methods.
 
     private TokenList tokens;
-
     private String currentFile;
-
-    private boolean runOut = false;
-
-    /**
-     * Creates the parser.
-     */
-    public Parser() {
-        super();
-    }
 
     public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
@@ -41,15 +32,18 @@ public class Parser extends AbstractParser {
         return tokens;
     }
 
+    /**
+     * Converts a ANTLR token into a JPlag token and adds it to the token list.
+     * @param token is the ANTLR token to convert.
+     */
     public void add(Token token) {
-        if (token instanceof ParserToken parserToken) {
+        if (token instanceof AntlrParserToken parserToken) {
             String text = token.getText();
             int type = getTokenType(text);
             tokens.addToken(new TextToken(text, type, currentFile, parserToken));
         } else {
             throw new IllegalArgumentException("Illegal token implementation: " + token);
         }
-
     }
 
     private boolean parseFile(File directory, String file) {
@@ -60,12 +54,12 @@ public class Parser extends AbstractParser {
             inputState = new InputState(inputStream);
             TextLexer lexer = new TextLexer(inputState);
             lexer.setFilename(file);
-            lexer.setTokenObjectClass("de.jplag.text.ParserToken");
+            lexer.setTokenObjectClass("de.jplag.text.AntlrParserToken");
 
             // Create a parser that reads from the scanner
             TextParser parser = new TextParser(lexer);
             parser.setFilename(file);
-            parser.setParser(this);
+            parser.setParserAdapter(this);
 
             // start parsing at the compilationUnit rule
             parser.file();

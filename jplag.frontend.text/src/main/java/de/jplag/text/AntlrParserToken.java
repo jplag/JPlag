@@ -2,7 +2,10 @@ package de.jplag.text;
 
 import antlr.Token;
 
-public class ParserToken extends Token {
+/**
+ * Token of the ANTLR grammar, needs to be converted into a JPlag token by the parser adapter.
+ */
+public class AntlrParserToken extends Token {
     /**
      * This variable holds the line number of the current token.
      */
@@ -23,7 +26,7 @@ public class ParserToken extends Token {
      */
     private int id = -1;
 
-    public ParserToken() {
+    public AntlrParserToken() {
         super();
     }
 

@@ -1,34 +1,29 @@
-header
-{
-
+header {
 package de.jplag.text;
-
 }
 
 // tell ANTLR that we want to generate Java source code
-options
-{
+options {
   language="Java";
 }
 
 class TextParser extends Parser;
-options
-{
+options {
   k = 2;			  // two token lookahead
   //  exportVocab=Text;	          // Call its vocabulary "Text"
   codeGenMakeSwitchThreshold = 2; // Some optimizations
   codeGenBitsetTestThreshold = 3;
   defaultErrorHandler = true;
   buildAST = false;
-  ASTLabelType = "ParserToken";
+  ASTLabelType = "AntlrParserToken";
 }
 
 {
-  private de.jplag.text.Parser parser;
+    private de.jplag.text.ParserAdapter parser;
 
-  public void setParser(de.jplag.text.Parser parser) {
-      this.parser = parser;
-  }
+    public void setParserAdapter(de.jplag.text.ParserAdapter adapter) {
+        this.parser = adapter;
+    }
 }
 
 file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
@@ -39,16 +34,15 @@ file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
 
 {
 import de.jplag.text.InputState;
-import de.jplag.text.ParserToken;
+import de.jplag.text.AntlrParserToken;
 }
 
 class TextLexer extends Lexer;
-options
-{
-  //  exportVocab=Text;        // call the vocabulary "Text"
-  testLiterals = false;    // don't automatically test for literals
-  k = 2;                   // two characters of lookahead
-  charVocabulary = '\u0000'..'\u00FF';
+options {
+    //  exportVocab=Text;    // call the vocabulary "Text"
+    testLiterals = false;    // don't automatically test for literals
+    k = 2;                   // two characters of lookahead
+    charVocabulary = '\u0000'..'\u00FF';
 }
 
 {
@@ -70,7 +64,7 @@ options
     }
 
     protected Token makeToken(int t) {
-        ParserToken token = (ParserToken) super.makeToken(t);
+        AntlrParserToken token = (AntlrParserToken) super.makeToken(t);
         token.setColumn(((InputState) inputState).getTokenColumnIndex());
         return token;
     }
