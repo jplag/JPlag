@@ -2,7 +2,7 @@ package de.jplag.text;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 import antlr.Token;
@@ -13,7 +13,7 @@ import de.jplag.TokenList;
 
 public class ParserAdapter extends AbstractParser {
 
-    private final Map<String, Integer> tokenTypes = new Hashtable<>();
+    private final Map<String, Integer> tokenTypes = new HashMap<>();
     private int serial = 1; // 0 is FILE_END token, SEPARATOR is not used as there are no methods.
 
     private TokenList tokens;
