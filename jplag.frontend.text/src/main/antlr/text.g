@@ -50,7 +50,7 @@ options
 {
     public void newline() {
         super.newline();
-        ((InputState) inputState).column = 1;
+        ((InputState) inputState).setColumnIndex(1);
     }
 
     public void consume() throws antlr.CharStreamException {
@@ -58,16 +58,16 @@ options
             InputState state = (InputState) inputState;
             if (text.length() == 0) {
                 // remember token start column
-                state.tokenColumn = state.column;
+                state.setTokenColumnIndex(state.getColumnIndex());
             }
-            state.column++;
+            state.setColumnIndex(state.getColumnIndex() + 1);
         }
         super.consume();
     }
 
     protected Token makeToken(int t) {
         ParserToken token = (ParserToken) super.makeToken(t);
-        token.setColumn(((InputState) inputState).tokenColumn);
+        token.setColumn(((InputState) inputState).getTokenColumnIndex());
         return token;
     }
 }
@@ -88,7 +88,7 @@ SPECIALS : ('#' | '$' | '%' | '&' | '+' | '<' | '=' | '*' |
 
 // Whitespace -- ignored
 SPACE : ( ' '
-	  |	'\t' //{ ((InputState)inputState).column += 7; }
+	  |	'\t' //{ ((InputState)inputState).setColumnIndex((InputState)inputState).getColumnIndex() + 7); }
 	  |	'\f'
 	  |     '\240'
 	  |     ('\001' .. '\010')

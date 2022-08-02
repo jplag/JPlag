@@ -10,14 +10,14 @@ public class TextToken extends Token {
 
     private static int getSerial(String text, Parser parser) {
         text = text.toLowerCase();
-        Integer serial = parser.table.get(text);
+        Integer serial = parser.getTable().get(text);
         if (serial == null) {
             serial = parser.serial;
             if (parser.serial == Integer.MAX_VALUE)
                 parser.outOfSerials();
             else
                 parser.serial++;
-            parser.table.put(text, serial);
+            parser.getTable().put(text, serial);
         }
         return serial;
     }

@@ -12,7 +12,7 @@ import de.jplag.TokenList;
 
 public class Parser extends AbstractParser {
 
-    protected Hashtable<String, Integer> table = new Hashtable<>();
+    private final Hashtable<String, Integer> table = new Hashtable<>();
     protected int serial = 1; // 0 is FILE_END token
 
     private TokenList tokens;
@@ -83,5 +83,9 @@ public class Parser extends AbstractParser {
             return false;
         }
         return true;
+    }
+
+    protected Hashtable<String, Integer> getTable() {
+        return table;
     }
 }
