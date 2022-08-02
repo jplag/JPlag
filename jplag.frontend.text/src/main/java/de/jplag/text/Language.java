@@ -4,6 +4,11 @@ import java.io.File;
 
 import de.jplag.TokenList;
 
+/**
+ * Language class for parsing (natural language) text. This language module employs a primitive approach where
+ * individual words are interpreted as token types. Whitespace and special characters are ignored. This approach works,
+ * but there are better approaches for text plagiarism out there (based on NLP techniques).
+ */
 public class Language implements de.jplag.Language {
 
     private final ParserAdapter parserAdapter;
@@ -19,7 +24,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Text ParserAdapter";
+        return "Text Parser (naive)";
     }
 
     @Override
