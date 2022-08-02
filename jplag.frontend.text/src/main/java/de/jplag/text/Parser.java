@@ -12,8 +12,8 @@ import de.jplag.TokenList;
 
 public class Parser extends AbstractParser {
 
-    private final Hashtable<String, Integer> table = new Hashtable<>();
-    protected int serial = 1; // 0 is FILE_END token
+    private final Hashtable<String, Integer> tokenTypes = new Hashtable<>();
+    protected int serial = 1; // 0 is FILE_END token, SEPARATOR is not used as there are no methods.
 
     private TokenList tokens;
 
@@ -33,33 +33,28 @@ public class Parser extends AbstractParser {
         errors = 0;
         for (String file : files) {
             logger.trace("Parsing file {}", file);
-            if (!parseFile(directory, file))
+            if (!parseFile(directory, file)) {
                 errors++;
-            tokens.addToken(new TextToken(TokenConstants.FILE_END, file, this));
+            }
+            tokens.addToken(new TextToken(TokenConstants.FILE_END, file));
         }
-
-        TokenList tmp = tokens;
-        tokens = null;
-        return tmp;
+        return tokens;
     }
 
     public void add(Token token) {
-        ParserToken parserToken = (ParserToken) token;
-        tokens.addToken(new TextToken(token.getText(), currentFile, parserToken.getLine(), parserToken.getColumn(), parserToken.getLength(), this));
-    }
+        if (token instanceof ParserToken parserToken) {
+            String text = token.getText();
+            int type = getTokenType(text);
+            tokens.addToken(new TextToken(text, type, currentFile, parserToken));
+        } else {
+            throw new IllegalArgumentException("Illegal token implementation: " + token);
+        }
 
-    public void outOfSerials() {
-        if (runOut)
-            return;
-        runOut = true;
-        errors++;
-        logger.error("Out of serials!");
     }
 
     private boolean parseFile(File directory, String file) {
         InputState inputState = null;
-        try {
-            FileInputStream inputStream = new FileInputStream(new File(directory, file));
+        try (FileInputStream inputStream = new FileInputStream(new File(directory, file))) {
             currentFile = file;
             // Create a scanner that reads from the input stream passed to us
             inputState = new InputState(inputStream);
@@ -70,22 +65,26 @@ public class Parser extends AbstractParser {
             // Create a parser that reads from the scanner
             TextParser parser = new TextParser(lexer);
             parser.setFilename(file);
-            parser.parser = this;// Added by Emeric 26.01.05 BAD
+            parser.setParser(this);
 
             // start parsing at the compilationUnit rule
             parser.file();
-
-            // close file
-            inputStream.close();
         } catch (Exception e) {
-            logger.error("Parsing Error in '" + file + "' (line " + (inputState != null ? "" + inputState.getLine() : "") + "):\n  " + e.getMessage(),
-                    e);
+            logger.error("Parsing Error in " + file + " (line " + (inputState != null ? "" + inputState.getLine() : "") + "):" + e.getMessage(), e);
             return false;
         }
         return true;
     }
 
-    protected Hashtable<String, Integer> getTable() {
-        return table;
+    private int getTokenType(String text) {
+        text = text.toLowerCase();
+        tokenTypes.computeIfAbsent(text, it -> {
+            if (serial == Integer.MAX_VALUE) {
+                throw new IllegalStateException("Out of serials!");
+            }
+            return ++serial;
+        });
+        return tokenTypes.get(text);
+
     }
 }

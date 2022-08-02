@@ -24,7 +24,11 @@ options
 }
 
 {
-public de.jplag.text.Parser parser;
+  private de.jplag.text.Parser parser;
+
+  public void setParser(de.jplag.text.Parser parser) {
+      this.parser = parser;
+  }
 }
 
 file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
