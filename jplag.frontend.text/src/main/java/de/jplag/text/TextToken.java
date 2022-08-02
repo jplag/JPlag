@@ -4,10 +4,12 @@ import de.jplag.Token;
 
 public class TextToken extends Token {
 
+    private static final String NO_TEXT = "<unknown>";
     private String text;
 
     public TextToken(int type, String file) {
         super(type, file, -1, -1, -1);
+        this.text = NO_TEXT;
     }
 
     public TextToken(String text, int type, String file, AntlrParserToken parserToken) {
