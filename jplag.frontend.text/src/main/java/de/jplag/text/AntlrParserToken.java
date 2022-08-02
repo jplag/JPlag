@@ -12,7 +12,7 @@ public class AntlrParserToken extends Token {
     private int line = -1;
 
     /**
-     * This variable holds the columnIndex of the current token in its line.
+     * This variable holds the column of the current token in its line.
      */
     private int column = -1;
 

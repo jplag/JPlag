@@ -14,7 +14,7 @@ import de.jplag.TokenList;
 public class ParserAdapter extends AbstractParser {
 
     private final Map<String, Integer> tokenTypes = new HashMap<>();
-    private int serial = 1; // 0 is FILE_END token, SEPARATOR is not used as there are no methods.
+    private int tokenTypeIndex = 1; // 0 is FILE_END token, SEPARATOR is not used as there are no methods.
 
     private TokenList tokens;
     private String currentFile;
@@ -73,10 +73,10 @@ public class ParserAdapter extends AbstractParser {
     private int getTokenType(String text) {
         text = text.toLowerCase();
         tokenTypes.computeIfAbsent(text, it -> {
-            if (serial == Integer.MAX_VALUE) {
-                throw new IllegalStateException("Out of serials!");
+            if (tokenTypeIndex == Integer.MAX_VALUE) {
+                throw new IllegalStateException("Too many token types, should not happen!");
             }
-            return ++serial;
+            return ++tokenTypeIndex;
         });
         return tokenTypes.get(text);
 
