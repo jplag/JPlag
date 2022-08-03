@@ -19,10 +19,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import de.jplag.cpp.NewlineStream;
-
 public class CPPScanner implements CPPTokenConstants {
-    private static Scanner delegatingScanner;
+    private Scanner delegatingScanner;
 
     public static boolean scanFile(File dir, String fileName, Scanner delegatingScanner) {
         CPPScanner scanner;
