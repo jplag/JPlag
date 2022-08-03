@@ -7,7 +7,7 @@ import de.jplag.TokenList;
 public class Language implements de.jplag.Language {
 
     private static final String NAME = "Go Parser";
-    public static final String SHORT_NAME = "go";
+    public static final String IDENTIFIER = "go";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".go"};
     private final GoParserAdapter parserAdapter;
@@ -27,8 +27,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override

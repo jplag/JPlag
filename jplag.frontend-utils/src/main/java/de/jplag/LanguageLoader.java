@@ -35,14 +35,14 @@ public final class LanguageLoader {
         Map<String, Language> languages = new TreeMap<>();
 
         for (Language language : ServiceLoader.load(Language.class)) {
-            String shortName = language.getShortName();
-            if (languages.containsKey(shortName)) {
-                logger.error("Multiple implementations for a language '{}' are present in the classpath! Skipping ..", shortName);
-                languages.remove(shortName);
+            String languageIdentifier = language.getIdentifier();
+            if (languages.containsKey(languageIdentifier)) {
+                logger.error("Multiple implementations for a language '{}' are present in the classpath! Skipping ..", languageIdentifier);
+                languages.remove(languageIdentifier);
                 continue;
             }
             logger.info("Loading Language Frontend '{}'", language.getName());
-            languages.put(shortName, language);
+            languages.put(languageIdentifier, language);
         }
 
         loaded = Collections.unmodifiableMap(languages);
@@ -51,13 +51,14 @@ public final class LanguageLoader {
 
     /**
      * Load a language that is currently in the classpath by its short name.
-     * @param shortName the short name of the language
+     * @param identifier the short name of the language
      * @return the language or an empty optional if no language has been found.
+     * @see Language#getIdentifier()
      */
-    public static Optional<Language> getLanguage(String shortName) {
-        var result = getAllAvailableLanguages().stream().filter(it -> Objects.equals(it.getShortName(), shortName)).findFirst();
+    public static Optional<Language> getLanguage(String identifier) {
+        var result = getAllAvailableLanguages().stream().filter(it -> Objects.equals(it.getIdentifier(), identifier)).findFirst();
         if (result.isEmpty())
-            logger.warn("Attempt to load Language {} was not successful", shortName);
+            logger.warn("Attempt to load Language {} was not successful", identifier);
         return result;
     }
 
@@ -65,8 +66,8 @@ public final class LanguageLoader {
      * Get a list of all available languages with their short name.
      * @return the list of all languages
      */
-    public static List<String> getAllAvailableLanguageShortNames() {
-        return getAllAvailableLanguages().stream().map(Language::getShortName).toList();
+    public static List<String> getAllAvailableLanguageIdentifiers() {
+        return getAllAvailableLanguages().stream().map(Language::getIdentifier).toList();
     }
 
     /**

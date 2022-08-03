@@ -105,10 +105,10 @@ public class JPlag {
     }
 
     private static Language initializeLanguage(JPlagOptions options) {
-        String languageShortName = options.getLanguageShortName();
+        String languageShortName = options.getLanguageIdentifier();
         Language currentLanguage = options.getLanguage();
 
-        if (currentLanguage != null && (languageShortName == null || languageShortName.equals(currentLanguage.getShortName()))) {
+        if (currentLanguage != null && (languageShortName == null || languageShortName.equals(currentLanguage.getIdentifier()))) {
             // Ensure that we do not rely on the ServiceLoader API. We can also load an arbitrary language via Options
             return currentLanguage;
         }

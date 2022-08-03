@@ -9,7 +9,7 @@ import de.jplag.TokenList;
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
-    public static final String SHORT_NAME = "python3";
+    public static final String IDENTIFIER = "python3";
 
     private final Parser parser;
 
@@ -28,8 +28,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override

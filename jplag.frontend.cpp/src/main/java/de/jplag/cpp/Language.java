@@ -8,7 +8,7 @@ import de.jplag.TokenList;
 
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
-    public static final String SHORT_NAME = "cpp";
+    public static final String IDENTIFIER = "cpp";
 
     private final Scanner scanner; // cpp code is scanned not parsed
 
@@ -27,8 +27,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override

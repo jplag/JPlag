@@ -14,7 +14,7 @@ import de.jplag.TokenList;
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
-    public static final String SHORT_NAME = "text";
+    public static final String IDENTIFIER = "text";
     private final ParserAdapter parserAdapter;
 
     public Language() {
@@ -32,8 +32,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override

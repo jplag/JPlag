@@ -29,7 +29,7 @@ public class JPlagOptions {
     /**
      * The short name of the language used to parse the submissions.
      */
-    private String languageShortName;
+    private String languageIdentifier;
 
     /**
      * Language used to parse the submissions.
@@ -133,10 +133,10 @@ public class JPlagOptions {
     /**
      * Constructor with required attributes.
      */
-    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, String languageShortName) {
+    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, String languageIdentifier) {
         this.submissionDirectories = submissionDirectories;
         this.oldSubmissionDirectories = oldSubmissionDirectories;
-        this.languageShortName = languageShortName;
+        this.languageIdentifier = languageIdentifier;
     }
 
     public Optional<String> getBaseCodeSubmissionName() {
@@ -159,8 +159,8 @@ public class JPlagOptions {
         return fileSuffixes;
     }
 
-    public String getLanguageShortName() {
-        return languageShortName;
+    public String getLanguageIdentifier() {
+        return languageIdentifier;
     }
 
     public Language getLanguage() {

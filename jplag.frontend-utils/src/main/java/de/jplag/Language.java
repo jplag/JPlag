@@ -20,7 +20,7 @@ public interface Language {
     /**
      * Short name of the language used for CLI options.
      */
-    String getShortName();
+    String getIdentifier();
 
     /**
      * Minimum number of tokens required for a match.

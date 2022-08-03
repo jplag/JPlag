@@ -34,8 +34,8 @@ public enum CommandLineArgument {
     NEW_DIRECTORY(new Builder("-new", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     OLD_DIRECTORY(new Builder("-old", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     LANGUAGE(
-            new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.SHORT_NAME)
-                    .choices(LanguageLoader.getAllAvailableLanguageShortNames())),
+            new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.IDENTIFIER)
+                    .choices(LanguageLoader.getAllAvailableLanguageIdentifiers())),
     BASE_CODE("-bc", String.class),
     VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices(List.of("quiet", "long"))), // TODO SH: Replace verbosity when integrating a
                                                                                                       // real logging library
@@ -89,7 +89,7 @@ public enum CommandLineArgument {
     /**
      * The short name of the default {@link Language}.
      */
-    public static final String DEFAULT_LANGUAGE = de.jplag.java.Language.SHORT_NAME;
+    public static final String DEFAULT_LANGUAGE_IDENTIFIER = de.jplag.java.Language.IDENTIFIER;
 
     private final String flag;
     private final NumberOfArgumentValues numberOfValues;

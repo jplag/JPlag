@@ -15,7 +15,7 @@ class LanguageTest extends CommandLineInterfaceTest {
     @Test
     void testDefaultLanguage() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(CommandLineArgument.DEFAULT_LANGUAGE, options.getLanguageShortName());
+        assertEquals(CommandLineArgument.DEFAULT_LANGUAGE_IDENTIFIER, options.getLanguageIdentifier());
     }
 
     @Test
@@ -34,9 +34,9 @@ class LanguageTest extends CommandLineInterfaceTest {
     @Test
     void testValidLanguages() {
         for (Language language : LanguageLoader.getAllAvailableLanguages()) {
-            String argument = buildArgument(CommandLineArgument.LANGUAGE, language.getShortName());
+            String argument = buildArgument(CommandLineArgument.LANGUAGE, language.getIdentifier());
             buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-            assertEquals(language.getShortName(), options.getLanguageShortName());
+            assertEquals(language.getIdentifier(), options.getLanguageIdentifier());
         }
     }
 
