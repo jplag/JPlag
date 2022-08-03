@@ -46,15 +46,6 @@ public class Language implements de.jplag.Language {
         return parserAdapter.hasErrors();
     }
 
-    @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
 
     public int numberOfTokens() {
         return GoTokenConstants.NUM_DIFF_TOKENS;
