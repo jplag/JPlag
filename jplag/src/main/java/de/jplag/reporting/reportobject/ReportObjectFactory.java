@@ -1,32 +1,29 @@
 package de.jplag.reporting.reportobject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
+import de.jplag.reporting.reportobject.mapper.ComparisonReportMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
-import de.jplag.reporting.reportobject.model.*;
-import de.jplag.reporting.reportobject.model.Match;
+import de.jplag.reporting.reportobject.model.ComparisonReport;
+import de.jplag.reporting.reportobject.model.JPlagReport;
+import de.jplag.reporting.reportobject.model.Metric;
+import de.jplag.reporting.reportobject.model.OverviewReport;
 
 /**
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.
  */
 public class ReportObjectFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
     private static final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper();
     private static final MetricMapper metricMapper = new MetricMapper();
+    private static final ComparisonReportMapper comparisonReportMapper = new ComparisonReportMapper();
 
     /**
      * Converts a JPlagResult to a JPlagReport.
@@ -34,8 +31,9 @@ public class ReportObjectFactory {
      */
     public static JPlagReport getReportObject(JPlagResult result) {
         OverviewReport overviewReport = generateOverviewReport(result);
-        List<ComparisonReport> comparisons = generateComparisonReports(result);
-        return new JPlagReport(overviewReport, comparisons);
+        var comparisonReportMapperResult = comparisonReportMapper.generateComparisonReports(result);
+        List<ComparisonReport> comparisons = comparisonReportMapperResult.comparisonReports();
+        return new JPlagReport(overviewReport, comparisons, comparisonReportMapperResult.lineLookupTable());
     }
 
     /**
@@ -69,31 +67,9 @@ public class ReportObjectFactory {
         return overviewReport;
     }
 
-    /**
-     * Generates detailed ComparisonReport DTO for each comparison in a JPlagResult.
-     * @return A list with ComparisonReport DTOs.
-     */
-    private static List<ComparisonReport> generateComparisonReports(JPlagResult result) {
-        List<ComparisonReport> comparisons = new ArrayList<>();
-        getComparisons(result).forEach(comparison -> comparisons.add( //
-                new ComparisonReport(comparison.getFirstSubmission().getName(), //
-                        comparison.getSecondSubmission().getName(), //
-                        comparison.similarity(), //
-                        getFilesForSubmission(comparison.getFirstSubmission()), //
-                        getFilesForSubmission(comparison.getSecondSubmission()), //
-                        convertMatchesToReportMatches(result, comparison, comparison.getMatches()) //
-                )));
-        return comparisons;
-    }
-
     private static List<JPlagComparison> getComparisons(JPlagResult result) {
         int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
         return result.getComparisons(numberOfComparisons);
-    }
-
-    private static List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison, List<de.jplag.Match> matches) {
-        return matches.stream().map(match -> convertMatchToReportMatch(comparison, match, !result.getOptions().getLanguage().supportsColumns()))
-                .toList();
     }
 
     /**
@@ -127,51 +103,6 @@ public class ReportObjectFactory {
      */
     private static List<Metric> getMetrics(JPlagResult result) {
         return List.of(metricMapper.getAverageMetric(result), metricMapper.getMaxMetric(result));
-    }
-
-    /**
-     * Converts files of a submission to FilesOFSubmission DTO.
-     * @return A list containing FilesOfSubmission DTOs.
-     */
-    private static List<FilesOfSubmission> getFilesForSubmission(Submission submission) {
-        return submission.getFiles().stream().map(file -> new FilesOfSubmission(file.getName(), readFileLines(file))).toList();
-    }
-
-    /**
-     * Converts a JPlag Match object to a Match DTO.
-     * @param comparison The comparison from which the match originates.
-     * @param match The match to be converted.
-     * @param usesIndex Indicates whether the language uses indexes.
-     * @return A Match DTO.
-     */
-    private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean usesIndex) {
-        TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
-        TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
-        Token startTokenFirst = tokensFirst.getToken(match.startOfFirst());
-        Token endTokenFirst = tokensFirst.getToken(match.startOfFirst() + match.length() - 1);
-        Token startTokenSecond = tokensSecond.getToken(match.startOfSecond());
-        Token endTokenSecond = tokensSecond.getToken(match.startOfSecond() + match.length() - 1);
-
-        int startFirst = usesIndex ? startTokenFirst.getIndex() : startTokenFirst.getLine();
-        int endFirst = usesIndex ? endTokenFirst.getIndex() : endTokenFirst.getLine();
-        int startSecond = usesIndex ? startTokenSecond.getIndex() : startTokenSecond.getLine();
-        int endSecond = usesIndex ? endTokenSecond.getIndex() : endTokenSecond.getLine();
-        int tokens = match.length();
-
-        return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
-    }
-
-    private static List<String> readFileLines(File file) {
-        List<String> lines = new ArrayList<>();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                lines.add(line);
-            }
-        } catch (IOException exception) {
-            logger.error("Could not read file: " + exception.getMessage(), exception);
-        }
-        return lines;
     }
 
     private static String getDate() {

@@ -10,7 +10,6 @@ public record ComparisonReport(@JsonProperty("first_submission_id") String first
         @JsonProperty("files_of_second_submission") List<FilesOfSubmission> filesOfSecondSubmission, @JsonProperty("matches") List<Match> matches) {
     public ComparisonReport(String firstSubmissionId, String secondSubmissionId, float matchPercentage,
             List<FilesOfSubmission> filesOfFirstSubmission, List<FilesOfSubmission> filesOfSecondSubmission, List<Match> matches) {
-
         this.firstSubmissionId = firstSubmissionId;
         this.secondSubmissionId = secondSubmissionId;
         this.matchPercentage = matchPercentage;
