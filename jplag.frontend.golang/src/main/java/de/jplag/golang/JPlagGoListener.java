@@ -474,6 +474,11 @@ public class JPlagGoListener extends GoParserBaseListener {
             }
             case "{" -> transformToken(getCurrentContext().getBegin(), token);
             case "}" -> transformToken(getCurrentContext().getEnd(), token);
+            case "<EOF>" -> {
+                if (node.getParent() instanceof GoParser.SourceFileContext) {
+                    transformToken(FILE_END, token);
+                }
+            }
             default -> {
                 // do nothing.
             }
@@ -481,6 +486,13 @@ public class JPlagGoListener extends GoParserBaseListener {
         super.visitTerminal(node);
     }
 
+    /**
+     * This enumeration provides sets of information regarding different types of nesting structures in Go. Each element is
+     * a tuple of a token for the beginning of a block, the end of the block, and optionally, for the elements contained.
+     * <p>
+     * As the Go parser does not differentiate between different kinds of blocks, a stack of these GoBlockContexts is
+     * required to be able to assign the correct token types for each block.
+     */
     private enum GoBlockContext {
         ARRAY_BODY(ARRAY_BODY_BEGIN, ARRAY_BODY_END, ARRAY_ELEMENT),
         STRUCT_BODY(STRUCT_BODY_BEGIN, STRUCT_BODY_END, MEMBER_DECLARATION),

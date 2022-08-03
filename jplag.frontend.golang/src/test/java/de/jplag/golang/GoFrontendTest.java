@@ -1,14 +1,7 @@
 package de.jplag.golang;
 
-import de.jplag.Token;
-import de.jplag.TokenConstants;
-import de.jplag.TokenList;
-import de.jplag.TokenPrinter;
-import de.jplag.golang.grammar.GoTokenUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static de.jplag.golang.GoTokenTestUtils.getDummyToken;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +15,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
-import static de.jplag.golang.grammar.GoTokenUtils.getDummyToken;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.jplag.Token;
+import de.jplag.TokenConstants;
+import de.jplag.TokenList;
+import de.jplag.TokenPrinter;
 
 class GoFrontendTest {
     /**
@@ -75,7 +75,7 @@ class GoFrontendTest {
      */
     @Test
     void testTokenToString() {
-        var missingTokens = IntStream.range(0, language.numberOfTokens()).mapToObj(GoTokenUtils::getDummyToken)
+        var missingTokens = IntStream.range(0, language.numberOfTokens()).mapToObj(GoTokenTestUtils::getDummyToken)
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
 
         if (!missingTokens.isEmpty()) {

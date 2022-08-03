@@ -1,8 +1,8 @@
 package de.jplag.golang;
 
-import de.jplag.TokenList;
-
 import java.io.File;
+
+import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 

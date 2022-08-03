@@ -1,13 +1,11 @@
-package de.jplag.golang.grammar;
+package de.jplag.golang;
 
-import de.jplag.golang.GoToken;
-
-public class GoTokenUtils {
+public class GoTokenTestUtils {
 
     private static final int NOT_SET = -1;
     private static final String EMPTY_STRING = "";
 
-    private GoTokenUtils() {
+    private GoTokenTestUtils() {
         // Utility class, should not be instantiated.
     }
 

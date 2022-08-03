@@ -1,8 +1,5 @@
 package de.jplag.golang;
 
-import static de.jplag.TokenConstants.FILE_END;
-import static de.jplag.golang.grammar.GoTokenUtils.getDummyToken;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,7 +25,6 @@ public class GoParserAdapter extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.addToken(getDummyToken(FILE_END, file));
         }
         return tokens;
     }
