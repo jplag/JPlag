@@ -1,13 +1,13 @@
 package de.jplag.scala
 
 import de.jplag.scala.ScalaTokenConstants._
-import de.jplag.{AbstractParser, ErrorConsumer, TokenList}
+import de.jplag.{AbstractParser, TokenList}
 
 import java.io.File
 import scala.meta._
 
 
-class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
+class Parser extends AbstractParser {
     private var currentFile : String = _
 
     var tokens : TokenList = _

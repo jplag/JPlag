@@ -1,12 +1,12 @@
 package de.jplag.scala
 
-import de.jplag.{ErrorConsumer, TokenList}
+import de.jplag.TokenList
 
 import java.io.File
 
 
-class Language(val consumer: ErrorConsumer) extends de.jplag.Language {
-  private val parser = new Parser(consumer)
+class Language extends de.jplag.Language {
+  private val parser = new Parser
   private final val fileExtensions = Array(".scala")
 
   override def suffixes: Array[String] = fileExtensions
@@ -25,7 +25,5 @@ class Language(val consumer: ErrorConsumer) extends de.jplag.Language {
 
   override def isPreformatted = true
 
-  override def usesIndex = false
-
-  override def numberOfTokens: Int = ScalaTokenConstants.maxId
+  def numberOfTokens: Int = ScalaTokenConstants.maxId
 }

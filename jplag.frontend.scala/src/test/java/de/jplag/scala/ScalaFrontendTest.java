@@ -1,6 +1,13 @@
 package de.jplag.scala;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import de.jplag.Token;
+import de.jplag.TokenConstants;
+import de.jplag.TokenList;
+import de.jplag.TokenPrinter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,16 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.jplag.Token;
-import de.jplag.TokenConstants;
-import de.jplag.TokenList;
-import de.jplag.TokenPrinter;
-import de.jplag.testutils.TestErrorConsumer;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ScalaFrontendTest {
 
@@ -48,20 +46,19 @@ class ScalaFrontendTest {
     private static final int NOT_SET = -1;
 
     private final Logger logger = LoggerFactory.getLogger("Scala frontend test");
-    private final String[] testFiles = new String[] {"Complete.scala", "Parser.scala"};
+    private final String[] testFiles = new String[]{"Complete.scala", "Parser.scala"};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "scala").toFile();
     private Language language;
 
     @BeforeEach
     void setup() {
-        TestErrorConsumer consumer = new TestErrorConsumer();
-        language = new Language(consumer);
+        language = new Language();
     }
 
     @Test
     void parseTestFiles() {
         for (String fileName : testFiles) {
-            TokenList tokens = language.parse(testFileLocation, new String[] {fileName});
+            TokenList tokens = language.parse(testFileLocation, new String[]{fileName});
             String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
             logger.info(output);
 
@@ -91,8 +88,9 @@ class ScalaFrontendTest {
 
     /**
      * Confirms that the code is covered to a basic extent, i.e. each line of code contains at least one token.
+     *
      * @param fileName a code sample file name
-     * @param tokens the TokenList generated from the sample
+     * @param tokens   the TokenList generated from the sample
      */
     private void testSourceCoverage(String fileName, TokenList tokens) {
         File testFile = new File(testFileLocation, fileName);
@@ -127,6 +125,7 @@ class ScalaFrontendTest {
 
     /**
      * Gets the line numbers of lines containing actual code, omitting empty lines and comment lines.
+     *
      * @param lines lines of a code file
      * @return an array of the line numbers of code lines
      */
@@ -159,7 +158,8 @@ class ScalaFrontendTest {
 
     /**
      * Confirms that all Token types are 'reachable' with a complete code example.
-     * @param tokens TokenList which is supposed to contain all types of tokens
+     *
+     * @param tokens   TokenList which is supposed to contain all types of tokens
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
