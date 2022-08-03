@@ -40,10 +40,9 @@ public class JPlagComparison { // FIXME TS: contains a lot of code duplication
         if (other == this) {
             return true;
         }
-        if (!(other instanceof JPlagComparison)) {
+        if (!(other instanceof JPlagComparison otherComparison)) {
             return false;
         }
-        JPlagComparison otherComparison = (JPlagComparison) other;
         return firstSubmission.equals(otherComparison.getFirstSubmission()) && secondSubmission.equals(otherComparison.getSecondSubmission())
                 && matches.equals(otherComparison.matches);
     }

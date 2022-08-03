@@ -158,7 +158,7 @@ public class SubmissionSetBuilder {
                 logger.info("Submission \"{}\" is the specified basecode, it will be skipped during comparison.", removed.getName());
             }
         }
-        return Optional.of(baseCode);
+        return Optional.ofNullable(baseCode);
     }
 
     /**

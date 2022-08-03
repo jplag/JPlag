@@ -83,10 +83,11 @@ public class Submission implements Comparable<Submission> {
     public boolean equals(Object obj) {
         if (obj == this) {
             return true;
-        } else if (!(obj instanceof Submission)) {
+        }
+        if (!(obj instanceof Submission otherSubmission)) {
             return false;
         }
-        return ((Submission) obj).getName().equals(name);
+        return otherSubmission.getName().equals(name);
     }
 
     @Override
