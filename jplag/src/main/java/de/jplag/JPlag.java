@@ -113,7 +113,7 @@ public class JPlag {
             return currentLanguage;
         }
 
-        Language language = LanguageLoader.loadLanguage(languageShortName).orElseThrow();
+        Language language = LanguageLoader.getLanguage(languageShortName).orElseThrow();
         options.setLanguage(language);
         options.setLanguageDefaults(language);
         logger.info("Loaded language {}", language.getName());

@@ -7,7 +7,11 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.*;
+import de.jplag.JPlagResult;
+import de.jplag.LanguageLoader;
+import de.jplag.Submission;
+import de.jplag.TestBase;
+import de.jplag.TokenPrinter;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
@@ -31,7 +35,7 @@ public class TokenPrinterTest extends TestBase {
     @Test
     void printCPPFiles() {
         printSubmissions(options -> {
-            options.setLanguage(LanguageLoader.loadLanguage(LANGUAGE_CPP).orElseThrow());
+            options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_CPP).orElseThrow());
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }
@@ -48,7 +52,7 @@ public class TokenPrinterTest extends TestBase {
     @Test
     void printRLangFiles() {
         printSubmissions(options -> {
-            options.setLanguage(LanguageLoader.loadLanguage(LANGUAGE_R).orElseThrow());
+            options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_R).orElseThrow());
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }
@@ -56,7 +60,7 @@ public class TokenPrinterTest extends TestBase {
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printKotlinFiles() {
-        printSubmissions(options -> options.setLanguage(LanguageLoader.loadLanguage(LANGUAGE_KOTLIN).orElseThrow()));
+        printSubmissions(options -> options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_KOTLIN).orElseThrow()));
     }
 
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {

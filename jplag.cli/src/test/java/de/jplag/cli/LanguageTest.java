@@ -27,13 +27,13 @@ class LanguageTest extends CommandLineInterfaceTest {
 
     @Test
     void testLoading() {
-        var languages = LanguageLoader.loadLanguages();
+        var languages = LanguageLoader.getAllAvailableLanguages();
         Assertions.assertEquals(9, languages.size());
     }
 
     @Test
     void testValidLanguages() {
-        for (Language language : LanguageLoader.loadLanguages()) {
+        for (Language language : LanguageLoader.getAllAvailableLanguages()) {
             String argument = buildArgument(CommandLineArgument.LANGUAGE, language.getShortName());
             buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
             assertEquals(language.getShortName(), options.getLanguageShortName());
