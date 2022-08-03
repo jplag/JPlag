@@ -46,7 +46,4 @@ public class Language implements de.jplag.Language {
         return parserAdapter.hasErrors();
     }
 
-    public int numberOfTokens() {
-        return GoTokenConstants.NUM_DIFF_TOKENS;
-    }
 }

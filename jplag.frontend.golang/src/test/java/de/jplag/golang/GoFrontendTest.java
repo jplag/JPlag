@@ -75,7 +75,7 @@ class GoFrontendTest {
      */
     @Test
     void testTokenToString() {
-        var missingTokens = IntStream.range(0, language.numberOfTokens()).mapToObj(GoTokenTestUtils::getDummyToken)
+        var missingTokens = IntStream.range(0, GoTokenConstants.NUM_DIFF_TOKENS).mapToObj(GoTokenTestUtils::getDummyToken)
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
 
         if (!missingTokens.isEmpty()) {
@@ -161,7 +161,7 @@ class GoFrontendTest {
         var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).sorted().distinct().boxed().toList();
 
         // Exclude SEPARATOR_TOKEN, as it does not occur
-        var missingTokenTypes = IntStream.range(0, language.numberOfTokens()).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).boxed()
+        var missingTokenTypes = IntStream.range(0, GoTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).boxed()
                 .collect(Collectors.toList());
         missingTokenTypes.removeAll(foundTokens);
 
