@@ -19,8 +19,7 @@ public enum LanguageOption {
     TEXT("text", "de.jplag.text.Language"),
     SCHEME("scheme", "de.jplag.scheme.Language"),
     EMF("emf-metamodel", "de.jplag.emf.Language"),
-    EMF_DYNAMIC("emf-metamodel-dynamic", "de.jplag.emf.dynamic.Language"),
-    EMF_MODEL("emf-model", "de.jplag.emf.model.Language");
+    EMF_DYNAMIC("emf-metamodel-dynamic", "de.jplag.emf.dynamic.Language");
 
     private final String classPath;
     private final String displayName;

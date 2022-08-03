@@ -189,11 +189,6 @@
             </dependency>
             <dependency>
                 <groupId>de.jplag</groupId>
-                <artifactId>emf-model</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.jplag</groupId>
                 <artifactId>frontend-utils</artifactId>
                 <version>${revision}</version>
             </dependency>
