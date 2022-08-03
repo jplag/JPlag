@@ -1,7 +1,14 @@
 package de.jplag.golang;
 
-import static de.jplag.golang.grammar.GoTokenUtils.getDummyToken;
-import static org.junit.jupiter.api.Assertions.*;
+import de.jplag.Token;
+import de.jplag.TokenConstants;
+import de.jplag.TokenList;
+import de.jplag.TokenPrinter;
+import de.jplag.golang.grammar.GoTokenUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,17 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.jplag.Token;
-import de.jplag.TokenConstants;
-import de.jplag.TokenList;
-import de.jplag.TokenPrinter;
-import de.jplag.golang.grammar.GoTokenUtils;
-import de.jplag.testutils.TestErrorConsumer;
+import static de.jplag.golang.grammar.GoTokenUtils.getDummyToken;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class GoFrontendTest {
     /**
@@ -55,8 +53,7 @@ class GoFrontendTest {
 
     @BeforeEach
     void setup() {
-        TestErrorConsumer consumer = new TestErrorConsumer();
-        language = new Language(consumer);
+        language = new Language();
     }
 
     @Test

@@ -14,7 +14,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 import de.jplag.golang.grammar.GoLexer;
 import de.jplag.golang.grammar.GoParser;
@@ -22,10 +21,6 @@ import de.jplag.golang.grammar.GoParser;
 public class GoParserAdapter extends AbstractParser {
     private String currentFile;
     private TokenList tokens;
-
-    public GoParserAdapter(ErrorConsumer consumer) {
-        super(consumer);
-    }
 
     public TokenList parse(File directory, String[] fileNames) {
         tokens = new TokenList();
@@ -56,7 +51,7 @@ public class GoParserAdapter extends AbstractParser {
                 treeWalker.walk(listener, parseTree);
             }
         } catch (IOException exception) {
-            getErrorConsumer().addError("Parsing Error in '%s': %s%s".formatted(fileName, File.separator, exception));
+            logger.error("Parsing Error in '%s':".formatted(fileName), exception);
             return false;
         }
         return true;

@@ -1,9 +1,8 @@
 package de.jplag.golang;
 
-import java.io.File;
-
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
+
+import java.io.File;
 
 public class Language implements de.jplag.Language {
 
@@ -13,8 +12,8 @@ public class Language implements de.jplag.Language {
     private static final String[] FILE_EXTENSIONS = {".go"};
     private final GoParserAdapter parserAdapter;
 
-    public Language(ErrorConsumer consumer) {
-        this.parserAdapter = new GoParserAdapter(consumer);
+    public Language() {
+        this.parserAdapter = new GoParserAdapter();
     }
 
     @Override
@@ -57,12 +56,6 @@ public class Language implements de.jplag.Language {
         return true;
     }
 
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
     public int numberOfTokens() {
         return GoTokenConstants.NUM_DIFF_TOKENS;
     }
