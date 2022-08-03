@@ -12,18 +12,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import de.jplag.clustering.ClusteringAlgorithm;
-import de.jplag.clustering.ClusteringOptions;
-import de.jplag.clustering.algorithm.InterClusterSimilarity;
-import de.jplag.options.SimilarityMetric;
-import de.jplag.strategy.ComparisonMode;
-
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.ArgumentAction;
 import net.sourceforge.argparse4j.inf.ArgumentContainer;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.Namespace;
+
+import de.jplag.clustering.ClusteringAlgorithm;
+import de.jplag.clustering.ClusteringOptions;
+import de.jplag.clustering.algorithm.InterClusterSimilarity;
+import de.jplag.options.SimilarityMetric;
+import de.jplag.strategy.ComparisonMode;
 
 /**
  * Command line arguments for the JPlag CLI. Each argument is defined through an enumeral.
@@ -33,7 +33,9 @@ public enum CommandLineArgument {
     ROOT_DIRECTORY(new Builder("rootDir", String.class).nargs(NumberOfArgumentValues.ZERO_OR_MORE_VALUES)),
     NEW_DIRECTORY(new Builder("-new", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     OLD_DIRECTORY(new Builder("-old", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
-    LANGUAGE(new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.SHORT_NAME).choices(LanguageLoader.getAllAvailableLanguageShortNames())),
+    LANGUAGE(
+            new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.SHORT_NAME)
+                    .choices(LanguageLoader.getAllAvailableLanguageShortNames())),
     BASE_CODE("-bc", String.class),
     VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices(List.of("quiet", "long"))), // TODO SH: Replace verbosity when integrating a
                                                                                                       // real logging library

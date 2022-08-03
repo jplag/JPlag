@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public final class LanguageLoader {
     private static final Logger logger = LoggerFactory.getLogger(LanguageLoader.class);
 
-    private static Map<String,Language> loaded = null;
+    private static Map<String, Language> loaded = null;
 
     private LanguageLoader() {
         throw new IllegalAccessError();
