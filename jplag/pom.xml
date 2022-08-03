@@ -47,11 +47,15 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>rlang</artifactId>
+            <artifactId>golang</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>kotlin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>rlang</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>

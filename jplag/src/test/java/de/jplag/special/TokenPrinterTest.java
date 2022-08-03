@@ -43,13 +43,19 @@ public class TokenPrinterTest extends TestBase {
         });
     }
 
-    @Disabled
+    @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printRLangFiles() {
         printSubmissions(options -> {
             options.setLanguageOption(LanguageOption.R_LANG);
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
+    }
+
+    @Disabled("Not a meaningful test, used for designing the token set")
+    @Test
+    void printGoFiles() {
+        printSubmissions(options -> options.setLanguageOption(LanguageOption.GO_LANG));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
