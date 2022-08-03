@@ -4,7 +4,6 @@ import de.jplag.TokenList
 
 import java.io.File
 
-
 class Language extends de.jplag.Language {
   private val parser = new Parser
   private final val fileExtensions = Array(".scala")
@@ -20,10 +19,6 @@ class Language extends de.jplag.Language {
   override def parse(dir: File, files: Array[String]): TokenList = this.parser.parse(dir, files)
 
   override def hasErrors: Boolean = this.parser.hasErrors
-
-  override def supportsColumns = true
-
-  override def isPreformatted = true
 
   def numberOfTokens: Int = ScalaTokenConstants.maxId
 }
