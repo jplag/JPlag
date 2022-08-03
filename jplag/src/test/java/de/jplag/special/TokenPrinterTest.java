@@ -31,6 +31,8 @@ public class TokenPrinterTest extends TestBase {
     private static final String LANGUAGE_R = de.jplag.rlang.Language.SHORT_NAME;
     private static final String LANGUAGE_KOTLIN = de.jplag.kotlin.Language.SHORT_NAME;
 
+    private static final String LANGUAGE_GO = de.jplag.golang.Language.SHORT_NAME;
+
     @Disabled
     @Test
     void printCPPFiles() {
@@ -48,13 +50,19 @@ public class TokenPrinterTest extends TestBase {
         });
     }
 
-    @Disabled
+    @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printRLangFiles() {
         printSubmissions(options -> {
             options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_R).orElseThrow());
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
+    }
+
+    @Disabled("Not a meaningful test, used for designing the token set")
+    @Test
+    void printGoFiles() {
+        printSubmissions(options -> options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_GO).orElseThrow()));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
