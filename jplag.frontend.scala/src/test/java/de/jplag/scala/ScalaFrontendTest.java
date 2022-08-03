@@ -28,7 +28,7 @@ class ScalaFrontendTest {
     /**
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
      */
-    private static final String COMPLETE_TEST_FILE = "Typers.scala";
+    private static final String COMPLETE_TEST_FILE = "Complete.scala";
 
     /**
      * Regular expression that describes lines consisting only of whitespace and optionally a line comment.
@@ -48,7 +48,7 @@ class ScalaFrontendTest {
     private static final int NOT_SET = -1;
 
     private final Logger logger = LoggerFactory.getLogger("Scala frontend test");
-    private final String[] testFiles = new String[] {"Typers.scala", "Parser.scala"};
+    private final String[] testFiles = new String[] {"Complete.scala", "Parser.scala"};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "scala").toFile();
     private Language language;
 
@@ -107,14 +107,18 @@ class ScalaFrontendTest {
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
-            System.out.println(codeLines);
 
-            /*
-             * if (codeLines.length > tokenLines.length) { var diffLine = IntStream.range(0, codeLines.length) .dropWhile(lineIdx ->
-             * lineIdx < tokenLines.length && codeLines[lineIdx] == tokenLines[lineIdx]).findFirst(); diffLine.ifPresent( lineIdx ->
-             * fail("Line %d of file '%s' is not represented in the token list.".formatted(codeLines[lineIdx], fileName))); }
-             * assertArrayEquals(codeLines, tokenLines);
-             */
+            double coverage = 1.d - (codeLines.size() * 1.d / (codeLines.size() + tokenLines.size()));
+            if (coverage == 1) {
+                logger.info("All lines covered.");
+            } else {
+                logger.info("Coverage: %.1f%%.".formatted(coverage * 100));
+                logger.info("Missing lines {}", codeLines);
+                if (coverage < 0.9) {
+                    fail("Source coverage is unsatisfactory");
+                }
+            }
+
         } catch (IOException exception) {
             logger.info("Error while reading test file %s".formatted(fileName), exception);
             fail();

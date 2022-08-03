@@ -29,10 +29,12 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
         }
 
         private def processCases(cases: List[Case]) : Unit = cases.foreach {
-            c =>
-                add(ScalaTokenConstants.CaseBegin, c, fromEnd=false)
-                apply(c)
-                add(ScalaTokenConstants.CaseEnd, c, fromEnd=true)
+            case c@Case(pattern, condition, body) =>
+                add(ScalaTokenConstants.CaseStatement, c, fromEnd = false)
+                apply(pattern)
+                apply(condition)
+                enclose(body, TR(Some(CaseBegin), Some(CaseEnd)))
+            case _ =>
         }
 
         def isNotArithmetic(op: Term.Name) : Boolean = {
@@ -41,11 +43,20 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
 
         private def doMatch(tree: Tree): TR = {
             tree match {
-                case Term.Do(_) => TR(Some(DoBegin), Some(DoEnd))
+                case Term.Do(body, condition) => TR(Some(DoWhile), Some(DoWhileEnd), traverse = _ => {
+                    enclose(body, TR(Some(DoBodyBegin), Some(DoBodyEnd)))
+                    apply(condition)
+                })
                 case Term.Assign(_) => TR(Some(Assign), None)
-                case Term.While(_) => TR(Some(WhileBegin), Some(WhileEnd))
-                case Term.For(_) =>
-                    TR(Some(ForBegin), Some(ForEnd))
+                case Term.While(condition, body) => TR(Some(While), traverse = _ => {
+                    apply(condition)
+                    enclose(body, TR(Some(WhileBodyBegin), Some(WhileBodyEnd)))
+                })
+                case Term.For(enumerators, body) =>
+                    TR(Some(For), traverse = _ => {
+                        apply(enumerators)
+                        enclose(body, TR(Some(ForBodyBegin), Some(ForBodyEnd)))
+                    })
                 case Term.Try(expr, catchExpr, finallyExpr) => TR(Some(TryBegin),
                     traverse = _ => {
                         apply(expr)
@@ -64,9 +75,7 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                 case Term.TryWithHandler(expr, catchp, finallyp) => TR(Some(TryBegin),
                     traverse = _ => {
                         apply(expr)
-                        add(CatchBegin, catchp, fromEnd=false)
-                        apply(catchp)
-                        add(CatchEnd, catchp, fromEnd = true)
+                        enclose(catchp, TR(Some(CatchBegin), Some(CatchEnd)))
 
                         maybeAddAndApply(finallyp, ScalaTokenConstants.Finally)
                     })
@@ -86,7 +95,7 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                             }
                         }
                     })
-                case Term.NewAnonymous(_) => TR(Some(NewCreationBegin), Some(ScalaTokenConstants.NewCreationBegin))
+                case Term.NewAnonymous(_) => TR(Some(NewCreationBegin), Some(NewCreationEnd))
                 case Term.Return(_) => TR(Some(ScalaTokenConstants.Return))
                 case Term.Match(expr, cases) => TR(traverse = _ => {
                     add(MatchBegin, tree, fromEnd=false)
@@ -102,20 +111,18 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                     add(PartialFunctionEnd, tree, fromEnd=true)
                 })
                 case Term.ForYield(_) => TR(traverse = _ => {
-                    add(ForBegin, tree, fromEnd=false)
+                    add(ForBodyBegin, tree, fromEnd=false)
                     add(Yield, tree, fromEnd = false)
 
                     tree.children.foreach(apply)
 
-                    add(ForEnd, tree, fromEnd = true)
+                    add(ForBodyEnd, tree, fromEnd = true)
                 })
                 case Term.If(conditionExpr, thenExpression, elseExpression) => TR(traverse = _ => {
                     add(If, tree, fromEnd=false)
                     apply(conditionExpr)
-                    add(IfBegin, thenExpression, fromEnd=false)
 
-                    apply(thenExpression)
-                    add(IfEnd, thenExpression, fromEnd=true)
+                    enclose(thenExpression, TR(Some(IfBegin), Some(IfEnd)))
 
                     elseExpression match {
                         case Lit.Unit() => apply(elseExpression)
@@ -123,27 +130,31 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                             val elseStart = tree.pos.text.indexOf("else", thenExpression.pos.end - tree.pos.start)
                             val elsePosition = Position.Range(tree.pos.input, tree.pos.start + elseStart, tree.pos.start + elseStart + 4)
                             add(Else, elsePosition.startLine + 1, elsePosition.startColumn + 1, elsePosition.text.length)
-                            add(ElseBegin, elseExpression, fromEnd = false)
-                            apply(elseExpression)
-                            add(ElseEnd, elseExpression, fromEnd = true)
+                            enclose(elseExpression, TR(Some(ElseBegin), Some(ElseEnd)))
                     }
                 })
 
                 case scala.meta.Pkg(_) => TR(Some(Package))
                 case scala.meta.Import(_) => TR(Some(ScalaTokenConstants.Import))
 
-                case Defn.Def(_, name, typeParams, paramss, _, body) =>
+                case Defn.Def(mods, name, typeParams, paramss, _, body) =>
                     TR(traverse = _ => {
+                        applyRecursively(mods)
                         add(MethodDef, name, fromEnd = false)
                         for (tParam <- typeParams) add(TypeParameter, tParam, fromEnd = false)
                         for (params <- paramss)
                             for (param <- params) add(Parameter, param, fromEnd = false)
-                        add(MethodBegin, body, fromEnd = false)
-                        apply(body)
-                        add(MethodEnd, body, fromEnd = true)
+
+                        enclose(body, TR(Some(MethodBegin), Some(MethodEnd)))
                     })
-                case Defn.Macro(_) => TR(Some(MacroBegin), Some(MacroEnd))
-                case Defn.Class(_) => TR(Some(ClassBegin), Some(ClassEnd))
+                case Defn.Macro(mods, name, tparams, paramss, declType, body) => TR(Some(Macro), traverse = _ => {
+                    applyRecursively(mods)
+                    applyRecursively(tparams)
+                    applyRecursively(paramss)
+                    enclose(body, TR(Some(MacroBegin), Some(MacroEnd)))
+                })
+                case Defn.Class(_) =>
+                    TR(Some(ClassBegin), Some(ClassEnd))
                 case Defn.Object(_) => TR(Some(ObjectBegin), Some(ObjectEnd))
                 case Defn.Trait(_) => TR(Some(TraitBegin), Some(TraitEnd))
                 case Defn.Type(_) => TR(Some(ScalaTokenConstants.Type))
@@ -176,12 +187,20 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                 })
 
                 case Decl.Var(_) => TR(Some(VariableDefinition))
-                case Decl.Var(_) => TR(Some(VariableDefinition))
+                case Decl.Val(_) => TR(Some(VariableDefinition))
                 case Decl.Def(_) => TR(Some(MethodBegin), Some(MethodEnd))
                 case Decl.Type(_) => TR(Some(ScalaTokenConstants.Type))
 
-                case Ctor.Secondary(_) => TR(Some(ConstructorBegin), Some(ConstructorEnd))
-
+                case Ctor.Secondary(_) =>
+                    TR(Some(ConstructorBegin), Some(ConstructorEnd))
+                case Init(tpe, name, argss) if argss.nonEmpty => TR(traverse = _ => {
+                    for (args <- argss) {
+                        for (arg <- args) {
+                            add(Argument, arg, fromEnd = false)
+                            apply(arg)
+                        }
+                    }
+                })
                 case Enumerator.Guard(_) => TR(Some(Guard))
 
                 case Term.Param(_) => TR(traverse = _ => add(Parameter, tree, fromEnd = false))
@@ -211,24 +230,45 @@ class Parser(consumer: ErrorConsumer) extends AbstractParser(consumer) {
                 })
                 case Term.New(_) => TR(Some(NewObject))
                 case Self(_) => TR(Some(SelfType))
-                case Term.Block(_) => TR(Some(BlockStart), Some(BlockEnd))
+                case block@Term.Block(_) if block.parent.nonEmpty && block.parent.get.isInstanceOf[Term.Apply] =>
+                    TR(Some(BlockStart), Some(BlockEnd))
                 case Enumerator.Generator(_) => TR(Some(EnumGenerator))
                 case meta.Type.Param(_) => TR(Some(TypeParameter))
+
                 case _ => TR()
             }
         }
 
-        override def apply(tree: Tree): Unit = {
-            val res = doMatch(tree)
+        def applyRecursively[T](els: List[T]): Unit = els.foreach( {
+             case tree: Tree => apply(tree)
+             case treeList: List[_] => applyRecursively(treeList)
+        })
 
-            res.before match {
+        override def apply(tree: Tree): Unit = {
+            val record : TR = doMatch(tree)
+
+            record.before match {
                 case Some(value) => add(value, tree, fromEnd = false)
                 case None =>
             }
 
-            res.traverse(tree)
+            record.traverse(tree)
 
-            res.after match {
+            record.after match {
+                case Some(value) => add(value, tree, fromEnd = true)
+                case None =>
+            }
+        }
+
+        def enclose(tree: Tree, record: TR): Unit = {
+            record.before match {
+                case Some(value) => add(value, tree, fromEnd = false)
+                case None =>
+            }
+
+            apply(tree)
+
+            record.after match {
                 case Some(value) => add(value, tree, fromEnd = true)
                 case None =>
             }

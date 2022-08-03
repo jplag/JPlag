@@ -1,9 +1,10 @@
 package de.jplag.scala
 
-import de.jplag.{Token, TokenConstants}
+import de.jplag.TokenConstants
 
-import scala.meta.inputs.Position
-
+/**
+ * This Java-compatible enumeration stores the possible types of tokens.
+ */
 object ScalaTokenConstants extends Enumeration with TokenConstants {
 
   val FileEnd: Value = Value(TokenConstants.FILE_END, "<EOF>")
@@ -16,12 +17,17 @@ object ScalaTokenConstants extends Enumeration with TokenConstants {
   val MethodBegin: Value = Value("METHOD{")
   val MethodEnd: Value = Value("}METHOD")
   val VariableDefinition: Value = Value("VAR_DEF")
-  val DoBegin: Value = Value("DO{")
-  val DoEnd: Value = Value("}DO")
-  val WhileBegin: Value = Value("WHILE{")
-  val WhileEnd: Value = Value("}WHILE")
-  val ForBegin: Value = Value("FOR{")
-  val ForEnd: Value = Value("}FOR")
+  val DoWhile: Value = Value("DO-WHILE")
+  val DoWhileEnd: Value = Value("END-DO-WHILE")
+  val DoBodyBegin: Value = Value("DO{")
+  val DoBodyEnd: Value = Value("}DO")
+  val While: Value = Value("WHILE")
+  val WhileBodyBegin: Value = Value("WHILE{")
+  val WhileBodyEnd: Value = Value("}WHILE")
+  val For: Value = Value("FOR")
+  val ForBodyBegin: Value = Value("FOR{")
+  val ForBodyEnd: Value = Value("}FOR")
+  val CaseStatement: Value = Value("CASE")
   val CaseBegin: Value = Value("CASE{")
   val CaseEnd: Value = Value("}CASE")
   val TryBegin: Value = Value("TRY{")
@@ -44,23 +50,12 @@ object ScalaTokenConstants extends Enumeration with TokenConstants {
   val TraitEnd: Value = Value("}TRAIT")
   val ConstructorBegin: Value = Value("CONSTR{")
   val ConstructorEnd: Value = Value("}CONSTR")
-  val InitBegin: Value = Value("INIT{")
-  val InitEnd: Value = Value("}INIT")
-  val ArrayInitBegin: Value = Value("ARRAY(){")
-  val ArrayInitEnd: Value = Value("}ARRAY")
   val MatchBegin: Value = Value("MATCH{")
   val MatchEnd: Value = Value("}MATCH")
   val Guard: Value = Value("GUARD")
-  val Anno: Value = Value("ANNO")
-  val AnnoMarker: Value = Value("ANNO_MARKER")
-  val AnnoMBegin: Value = Value("ANNO_M{")
-  val AnnoMEnd: Value = Value("}ANNO_M")
-  val AnnoTBegin: Value = Value("ANNO_T{")
-  val AnnoTEnd: Value = Value("}ANNO_T")
-  val AnnoCBegin: Value = Value("ANNO_C{")
-  val AnnoCEnd: Value = Value("}ANNO_C")
   val ObjectBegin: Value = Value("OBJECT{")
   val ObjectEnd: Value = Value("}OBJECT")
+  val Macro: Value = Value("MACRO")
   val MacroBegin: Value = Value("MACRO{")
   val MacroEnd: Value = Value("}MACRO")
   val Type: Value = Value("TYPE")
@@ -82,5 +77,6 @@ object ScalaTokenConstants extends Enumeration with TokenConstants {
   val BlockEnd: Value = Value("}")
   val EnumGenerator: Value = Value("ENUMERATE")
   val Member: Value = Value("MEMBER")
+
 }
 
