@@ -20,7 +20,6 @@ import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 import de.jplag.emf.dynamic.DynamicMetamodelTokenConstants;
 import de.jplag.testutils.FileUtil;
-import de.jplag.testutils.TestErrorConsumer;
 
 class MinimalModelInstanceTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
@@ -33,8 +32,7 @@ class MinimalModelInstanceTest {
 
     @BeforeEach
     public void setUp() {
-        TestErrorConsumer consumer = new TestErrorConsumer();
-        frontend = new Language(consumer);
+        frontend = new Language();
         baseDirectory = BASE_PATH.toFile();
         FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }

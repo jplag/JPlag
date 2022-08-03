@@ -215,7 +215,7 @@ public class CSharpListener extends CSharpParserBaseListener implements CSharpTo
 
     @Override
     public void enterUsingStatement(UsingStatementContext context) {
-        transformToken(USING, null);
+        transformToken(USING, context.getStart());
         super.enterUsingStatement(context);
     }
 

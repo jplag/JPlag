@@ -42,25 +42,18 @@ public interface Language {
     boolean hasErrors();
 
     /**
-     * Determines whether the parser provide column information.
+     * Determines whether the parser provide column information. If that is the case, line and column indices are used
+     * instead of a single token index.
      */
-    boolean supportsColumns();
+    default boolean supportsColumns() {
+        return true;
+    }
 
     /**
-     * Determines whether JPlag should use a fixed-width font in its reports.
+     * Determines whether a fixed-width font should be used to display that language.
      */
-    boolean isPreformatted();
-
-    /**
-     * Number of defined parse tree tokens in the language.
-     */
-    int numberOfTokens();
-
-    /**
-     * Determines whether tokens from the scanner are indexed.
-     */
-    default boolean usesIndex() {
-        return false;
+    default boolean isPreformatted() {
+        return true;
     }
 
     /**

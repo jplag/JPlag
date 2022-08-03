@@ -2,14 +2,13 @@ package de.jplag.cpp;
 
 import java.io.File;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
     private final Scanner scanner; // cpp code is scanned not parsed
 
-    public Language(ErrorConsumer errorConsumer) {
-        scanner = new Scanner(errorConsumer);
+    public Language() {
+        scanner = new Scanner();
     }
 
     @Override
@@ -33,21 +32,6 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
     public TokenList parse(File dir, String[] files) {
         return this.scanner.scan(dir, files);
     }
@@ -55,10 +39,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return this.scanner.hasErrors();
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return CPPTokenConstants.NUM_DIFF_TOKENS;
     }
 }

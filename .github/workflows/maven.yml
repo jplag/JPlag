@@ -1,4 +1,4 @@
-name: CI Build
+name: Build
 
 on:
   push: 
@@ -17,7 +17,7 @@ jobs:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@master
         with:
-          concurrent_skipping: 'same_content'
+          concurrent_skipping: 'same_content_newer'
           skip_after_successful_duplicate: 'true'
 
   build:
@@ -35,7 +35,7 @@ jobs:
         distribution: 'temurin'
             
     - name: Run Tests
-      run: mvn test -B
+      run: mvn verify -B -U
       
     - name: Build Assembly
       run: mvn clean package assembly:single

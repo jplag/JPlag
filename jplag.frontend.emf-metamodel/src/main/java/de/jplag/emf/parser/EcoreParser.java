@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 import de.jplag.emf.Language;
@@ -25,10 +24,8 @@ public class EcoreParser extends AbstractParser {
 
     /**
      * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
-    public EcoreParser(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public EcoreParser() {
         EMFUtil.registerEcoreExtension();
     }
 

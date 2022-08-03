@@ -37,10 +37,10 @@ public class CPPScanner implements CPPTokenConstants {
         try {
             scanner.scan();
         } catch (ParseException e) {
-            delegatingScanner.getErrorConsumer().addError("  Parsing Error in '" + fileName + "':\n  " + e.getMessage());
+            delegatingScanner.logger.error("Parsing Error in '" + fileName + "': " + e.getMessage());
             return false;
         } catch (TokenMgrException e) {
-            delegatingScanner.getErrorConsumer().addError("  Scanning Error in '" + fileName + "':\n  " + e.getMessage());
+            delegatingScanner.logger.error("Scanning Error in '" + fileName + "': " + e.getMessage());
             return false;
         }
         return true;

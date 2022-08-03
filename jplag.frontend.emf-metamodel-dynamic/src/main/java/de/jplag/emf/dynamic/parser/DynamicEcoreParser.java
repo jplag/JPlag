@@ -2,7 +2,6 @@ package de.jplag.emf.dynamic.parser;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.dynamic.DynamicMetamodelToken;
 import de.jplag.emf.dynamic.Language;
@@ -14,14 +13,6 @@ import de.jplag.emf.parser.EcoreParser;
  * @author Timur Saglam
  */
 public class DynamicEcoreParser extends EcoreParser {
-
-    /**
-     * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
-     */
-    public DynamicEcoreParser(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
-    }
 
     @Override
     protected AbstractMetamodelVisitor createMetamodelVisitor() {

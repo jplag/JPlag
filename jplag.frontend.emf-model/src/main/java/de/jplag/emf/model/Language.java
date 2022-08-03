@@ -3,7 +3,6 @@ package de.jplag.emf.model;
 import java.io.File;
 import java.util.List;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.emf.model.parser.DynamicModelParser;
 
 /**
@@ -15,8 +14,8 @@ public class Language extends de.jplag.emf.dynamic.Language {
     private static final String NAME = "EMF models (dynamically created token set)";
     private static final String SHORT_NAME = "EMF models (dynamic)";
 
-    public Language(ErrorConsumer program) {
-        super(new DynamicModelParser(program));
+    public Language() {
+        super(new DynamicModelParser());
     }
 
     @Override

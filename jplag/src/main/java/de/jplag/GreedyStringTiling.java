@@ -98,7 +98,8 @@ public class GreedyStringTiling {
     }
 
     private JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission, boolean isBaseCodeComparison) {
-        Submission smallerSubmission, largerSubmission;
+        Submission smallerSubmission;
+        Submission largerSubmission;
         if (firstSubmission.getTokenList().size() > secondSubmission.getTokenList().size()) {
             smallerSubmission = secondSubmission;
             largerSubmission = firstSubmission;
@@ -187,11 +188,11 @@ public class GreedyStringTiling {
                 }
             }
             for (int i = matches.size() - 1; i >= 0; i--) {
-                int x = matches.get(i).getStartOfFirst();  // Beginning of/in sequence A
-                int y = matches.get(i).getStartOfSecond();  // Beginning of/in sequence B
-                comparison.addMatch(x, y, matches.get(i).getLength());
+                int x = matches.get(i).startOfFirst();  // Beginning of/in sequence A
+                int y = matches.get(i).startOfSecond();  // Beginning of/in sequence B
+                comparison.addMatch(x, y, matches.get(i).length());
                 // in order that "Match" will be newly build (because reusing)
-                for (int j = matches.get(i).getLength(); j > 0; j--) {
+                for (int j = matches.get(i).length(); j > 0; j--) {
                     first.getToken(x).setMarked(true); // mark all Tokens!
                     second.getToken(y).setMarked(true);
                     if (isBaseCodeComparison) {
@@ -220,7 +221,7 @@ public class GreedyStringTiling {
     /**
      * Disable finding a match at separator tokens and basecode matches for non-basecode comparisons.
      * @param tokenList Tokens to mark.
-     * @param isBaseCodeComparison Whether the {@link Token#basecode} matches should be enabled for matching.
+     * @param isBaseCodeComparison Whether the {@link Token#isBasecode()} matches should be enabled for matching.
      */
     private void markTokens(TokenList tokenList, boolean isBaseCodeComparison) {
         for (Token token : tokenList.allTokens()) {

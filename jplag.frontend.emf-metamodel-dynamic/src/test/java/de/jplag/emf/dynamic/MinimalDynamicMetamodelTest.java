@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 import de.jplag.testutils.FileUtil;
-import de.jplag.testutils.TestErrorConsumer;
 import de.jplag.testutils.TokenUtils;
 
 class MinimalDynamicMetamodelTest {
@@ -33,8 +32,7 @@ class MinimalDynamicMetamodelTest {
 
     @BeforeEach
     public void setUp() {
-        TestErrorConsumer consumer = new TestErrorConsumer();
-        frontend = new Language(consumer);
+        frontend = new Language();
         baseDirectory = BASE_PATH.toFile();
         FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }

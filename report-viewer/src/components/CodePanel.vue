@@ -2,36 +2,61 @@
   Panel which displays a submission files with its line of code.
 -->
 <template>
-  <div :id="panelId.toString().concat(title).concat(fileIndex.toString())" class="code-panel-container">
+  <div
+    :id="panelId.toString().concat(title).concat(fileIndex.toString())"
+    class="code-panel-container"
+  >
     <div class="file-title">
       <p style="width: 90%">{{ title }}</p>
-      <button class="collapse-button" style="width: 10%" @click="$emit('toggleCollapse')">
-        <img v-if="collapse" alt="hide info" src="../assets/keyboard_double_arrow_up_black_18dp.svg">
-        <img v-else alt="additional info" src="../assets/keyboard_double_arrow_down_black_18dp.svg">
+      <button
+        class="collapse-button"
+        style="width: 10%"
+        @click="$emit('toggleCollapse')"
+      >
+        <img
+          v-if="collapse"
+          alt="hide info"
+          src="../assets/keyboard_double_arrow_up_black_18dp.svg"
+        />
+        <img
+          v-else
+          alt="additional info"
+          src="../assets/keyboard_double_arrow_down_black_18dp.svg"
+        />
       </button>
     </div>
-    <div :class="{ hidden : !collapse }" class="code-container">
-      <LineOfCode v-for="(line, index) in lines"
-                  :id="String(panelId).concat(title).concat(index)"
-                  :key="index"
-                  :color="coloringArray[index]"
-                  :is-first="isFirst[index]"
-                  :is-last="isLast[index]"
-                  :line-number="index"
-                  :text="line"
-                  :visible="collapse"
-                  @click="$emit('lineSelected', $event, linksArray[index].panel, linksArray[index].file, linksArray[index].line )"/>
+    <div :class="{ hidden: !collapse }" class="code-container">
+      <LineOfCode
+        v-for="(line, index) in lines"
+        :id="String(panelId).concat(title).concat(index)"
+        :key="index"
+        :color="coloringArray[index]"
+        :is-first="isFirst[index]"
+        :is-last="isLast[index]"
+        :line-number="index + 1"
+        :text="line"
+        :visible="collapse"
+        @click="
+          $emit(
+            'lineSelected',
+            $event,
+            linksArray[index].panel,
+            linksArray[index].file,
+            linksArray[index].line
+          )
+        "
+      />
     </div>
   </div>
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
+import { defineComponent, ref } from "vue";
 import LineOfCode from "./LineOfCode";
 
 export default defineComponent({
   name: "CodePanel",
-  components: {LineOfCode},
+  components: { LineOfCode },
   props: {
     /**
      * Title of the displayed file.
@@ -43,7 +68,7 @@ export default defineComponent({
      * Index of file amongst other files in submission.
      */
     fileIndex: {
-      type: Number
+      type: Number,
     },
     /**
      * Code lines of the file.
@@ -51,27 +76,27 @@ export default defineComponent({
      */
     lines: {
       type: Array,
-      required: true
+      required: true,
     },
     /**
      * Matches in the file
      * type: Array<MatchInSingleFile>
      */
     matches: {
-      type: Array
+      type: Array,
     },
     /**
      * Id of the FilesContainer. Needed for lines link generation.
      */
     panelId: {
-      type: Number
+      type: Number,
     },
     /**
      * Indicates whether files is collapsed or not.
      */
     collapse: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   setup(props) {
     /**
@@ -86,7 +111,7 @@ export default defineComponent({
      * }
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const coloringArray = ref({})
+    const coloringArray = ref({});
     /**
      * An object containing an object from which an id is to of the line to which this is linked is constructed.
      * Id object contains panel, file name, first line number of linked matched.
@@ -101,44 +126,42 @@ export default defineComponent({
      * Key is line number, value is id of linked line.
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const linksArray = ref({})
+    const linksArray = ref({});
     /**
      * Indicates whether the line is last line of match. Key is line number, value is true or false.
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const isLast = ref({})
+    const isLast = ref({});
     /**
      * Indicates whether the line is the first line of a match. Key is line number, value is true or false.
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const isFirst = ref({})
+    const isFirst = ref({});
 
     /**
      * Initializing the the upper arrays.
      */
-    props.matches.forEach(m => {
+    props.matches.forEach((m) => {
       for (let i = m.start; i <= m.end; i++) {
         //assign match color to line
-        coloringArray.value[i] = m.color
+        coloringArray.value[i] = m.color;
         //assign link object to line.
-        linksArray.value[i] = {panel: m.linked_panel, file: m.linked_file, line: m.linked_line}
-        //check whether line is start of match and assign true if yes
-        if (i === m.start) {
-          isFirst.value[i] = true
-        }
-        //check whether line is end of match and assign true if yes
-        if (i === m.end) {
-          isLast.value[i] = true
-        }
+        linksArray.value[i] = {
+          panel: m.linked_panel,
+          file: m.linked_file,
+          line: m.linked_line,
+        };
       }
-    })
+      isFirst.value[m.start] = true;
+      isLast.value[m.end] = true;
+    });
     //assign default values for all line which are not contained in matches
     for (let i = 0; i < props.lines.length; i++) {
       if (!coloringArray.value[i]) {
-        coloringArray.value[i] = "#FFFFFF"
-        linksArray.value[i] = "-1"
-        isFirst.value[i] = false
-        isLast.value[i] = false
+        coloringArray.value[i] = "#FFFFFF";
+        linksArray.value[i] = "-1";
+        isFirst.value[i] = false;
+        isLast.value[i] = false;
       }
     }
 
@@ -147,9 +170,9 @@ export default defineComponent({
       linksArray,
       isFirst,
       isLast,
-    }
-  }
-})
+    };
+  },
+});
 </script>
 
 <style scoped>

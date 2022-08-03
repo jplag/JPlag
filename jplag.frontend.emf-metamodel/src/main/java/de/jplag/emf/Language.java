@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import org.eclipse.emf.ecore.EcorePackage;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 import de.jplag.emf.parser.EcoreParser;
 
@@ -23,8 +22,8 @@ public class Language implements de.jplag.Language {
 
     protected final EcoreParser parser;
 
-    public Language(ErrorConsumer program) {
-        this(new EcoreParser(program));
+    public Language() {
+        this(new EcoreParser());
     }
 
     protected Language(EcoreParser parser) {
@@ -59,21 +58,6 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return parser.hasErrors();
-    }
-
-    @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return MetamodelTokenConstants.NUM_DIFF_TOKENS;
     }
 
     @Override

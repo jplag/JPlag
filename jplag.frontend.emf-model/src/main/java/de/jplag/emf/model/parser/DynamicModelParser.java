@@ -8,7 +8,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
 import de.jplag.emf.util.EMFUtil;
 
@@ -23,10 +22,8 @@ public class DynamicModelParser extends DynamicEcoreParser {
 
     /**
      * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
-    public DynamicModelParser(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public DynamicModelParser() {
         EMFUtil.registerModelExtension(ALL_EXTENSIONS);
     }
 

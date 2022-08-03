@@ -1,6 +1,5 @@
 package de.jplag.emf.dynamic;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
 import de.jplag.emf.parser.EcoreParser;
 
@@ -15,8 +14,8 @@ public class Language extends de.jplag.emf.Language {
 
     private static final int DEFAULT_MIN_TOKEN_MATCH = 7;
 
-    public Language(ErrorConsumer program) {
-        super(new DynamicEcoreParser(program));
+    public Language() {
+        super(new DynamicEcoreParser());
     }
 
     protected Language(EcoreParser parser) {
@@ -36,10 +35,5 @@ public class Language extends de.jplag.emf.Language {
     @Override
     public int minimumTokenMatch() {
         return DEFAULT_MIN_TOKEN_MATCH;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return DynamicMetamodelTokenConstants.getNumberOfTokens();
     }
 }

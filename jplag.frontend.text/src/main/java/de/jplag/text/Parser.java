@@ -4,19 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Hashtable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import antlr.Token;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
 public class Parser extends AbstractParser {
-
-    private static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
     protected Hashtable<String, Integer> table = new Hashtable<>();
     protected int serial = 1; // 0 is FILE_END token
@@ -29,17 +23,16 @@ public class Parser extends AbstractParser {
 
     /**
      * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
-    public Parser(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public Parser() {
+        super();
     }
 
     public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
         for (String file : files) {
-            getErrorConsumer().print("", "Parsing file " + file);
+            logger.trace("Parsing file {}", file);
             if (!parseFile(directory, file))
                 errors++;
             tokens.addToken(new TextToken(TokenConstants.FILE_END, file, this));
@@ -60,8 +53,7 @@ public class Parser extends AbstractParser {
             return;
         runOut = true;
         errors++;
-        errorConsumer.print("ERROR: Out of serials!", null);
-        logger.error("de.jplag.text.Parser: ERROR: Out of serials!");
+        logger.error("Out of serials!");
     }
 
     private boolean parseFile(File directory, String file) {
@@ -86,8 +78,8 @@ public class Parser extends AbstractParser {
             // close file
             inputStream.close();
         } catch (Exception e) {
-            getErrorConsumer().addError(
-                    "  Parsing Error in '" + file + "' (line " + (inputState != null ? "" + inputState.getLine() : "") + "):\n  " + e.getMessage());
+            logger.error("Parsing Error in '" + file + "' (line " + (inputState != null ? "" + inputState.getLine() : "") + "):\n  " + e.getMessage(),
+                    e);
             return false;
         }
         return true;

@@ -5,13 +5,18 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.*;
+import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
+import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.*;
 import de.jplag.reporting.reportobject.model.Match;
 
@@ -21,6 +26,8 @@ import de.jplag.reporting.reportobject.model.Match;
 public class ReportObjectFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
+    private static final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper();
+    private static final MetricMapper metricMapper = new MetricMapper();
 
     /**
      * Converts a JPlagResult to a JPlagReport.
@@ -36,7 +43,7 @@ public class ReportObjectFactory {
      * Generates an Overview DTO of a JPlagResult.
      */
     private static OverviewReport generateOverviewReport(JPlagResult result) {
-        List<JPlagComparison> comparisons = result.getComparisons();
+        List<JPlagComparison> comparisons = getComparisons(result);
         OverviewReport overviewReport = new OverviewReport();
 
         // TODO: Consider to treat entries that were checked differently from old entries with prior work.
@@ -58,7 +65,7 @@ public class ReportObjectFactory {
         overviewReport.setExecutionTime(result.getDuration());
         overviewReport.setComparisonNames(getComparisonNames(comparisons));
         overviewReport.setMetrics(getMetrics(result));
-        overviewReport.setClusters(getClusters(result));
+        overviewReport.setClusters(clusteringResultMapper.map(result));
 
         return overviewReport;
     }
@@ -71,7 +78,7 @@ public class ReportObjectFactory {
         List<ComparisonReport> comparisons = new ArrayList<>();
         Language language = result.getOptions().getLanguage();
         Optional<String> viewFileSuffix = language.useViewFiles() ? Optional.of(language.viewFileSuffix()) : Optional.empty();
-        result.getComparisons().forEach(comparison -> comparisons.add( //
+        getComparisons(result).forEach(comparison -> comparisons.add( //
                 new ComparisonReport(comparison.getFirstSubmission().getName(), //
                         comparison.getSecondSubmission().getName(), //
                         comparison.similarity(), //
@@ -82,9 +89,14 @@ public class ReportObjectFactory {
         return comparisons;
     }
 
+    private static List<JPlagComparison> getComparisons(JPlagResult result) {
+        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
+        return result.getComparisons(numberOfComparisons);
+    }
+
     private static List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison, List<de.jplag.Match> matches) {
-        return matches.stream().map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().usesIndex()))
-                .collect(Collectors.toList());
+        return matches.stream().map(match -> convertMatchToReportMatch(comparison, match, !result.getOptions().getLanguage().supportsColumns()))
+                .toList();
     }
 
     /**
@@ -111,29 +123,13 @@ public class ReportObjectFactory {
         return names;
     }
 
-    // Currently, only one metric can be obtained.
-
     /**
-     * Gets the used metric in a JPlag comparison.
+     * Gets the used metrics in a JPlag comparison. As Max Metric is included in every JPlag run, this always include Max
+     * Metric.
      * @return A list contains Metric DTOs.
      */
     private static List<Metric> getMetrics(JPlagResult result) {
-        List<Metric> metrics = new ArrayList<>();
-        metrics.add(new Metric(result.getOptions().getSimilarityMetric().name(), result.getOptions().getSimilarityThreshold(),
-                intArrayToList(result.getSimilarityDistribution()), getTopComparisons(result.getComparisons())));
-        return metrics;
-    }
-
-    /**
-     * Converts JPlagComparison to a DTO for displaying only comparisons. See
-     * {@link #generateComparisonReports(JPlagResult)} for a more detailed representation of a comparison.
-     * @return List containing TopComparison DTOs.
-     */
-    private static List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons) {
-        List<TopComparison> topComparisons = new ArrayList<>();
-        comparisons.forEach(comparison -> topComparisons.add(
-                new TopComparison(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(), comparison.similarity())));
-        return topComparisons;
+        return List.of(metricMapper.getAverageMetric(result), metricMapper.getMaxMetric(result));
     }
 
     /**
@@ -143,7 +139,7 @@ public class ReportObjectFactory {
      */
     private static List<FilesOfSubmission> getFilesForSubmission(Submission submission, Optional<String> viewFileSuffix) {
         var submissionFiles = submission.getFiles().stream().map(file -> new File(file.getAbsolutePath() + viewFileSuffix.orElse("")));
-        return submissionFiles.map(file -> new FilesOfSubmission(file.getName(), readFileLines(file))).collect(Collectors.toList());
+        return submissionFiles.map(file -> new FilesOfSubmission(file.getName(), readFileLines(file))).toList();
     }
 
     /**
@@ -153,28 +149,21 @@ public class ReportObjectFactory {
      * @param usesIndex Indicates whether the language uses indexes.
      * @return A Match DTO.
      */
-    private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, Boolean usesIndex) {
+    private static Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean usesIndex) {
         TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
         TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
-        Token startTokenFirst = tokensFirst.getToken(match.getStartOfFirst());
-        Token endTokenFirst = tokensFirst.getToken(match.getStartOfFirst() + match.getLength() - 1);
-        Token startTokenSecond = tokensSecond.getToken(match.getStartOfSecond());
-        Token endTokenSecond = tokensSecond.getToken(match.getStartOfSecond() + match.getLength() - 1);
+        Token startTokenFirst = tokensFirst.getToken(match.startOfFirst());
+        Token endTokenFirst = tokensFirst.getToken(match.startOfFirst() + match.length() - 1);
+        Token startTokenSecond = tokensSecond.getToken(match.startOfSecond());
+        Token endTokenSecond = tokensSecond.getToken(match.startOfSecond() + match.length() - 1);
 
         int startFirst = usesIndex ? startTokenFirst.getIndex() : startTokenFirst.getLine();
         int endFirst = usesIndex ? endTokenFirst.getIndex() : endTokenFirst.getLine();
         int startSecond = usesIndex ? startTokenSecond.getIndex() : startTokenSecond.getLine();
         int endSecond = usesIndex ? endTokenSecond.getIndex() : endTokenSecond.getLine();
-        int tokens = match.getLength();
+        int tokens = match.length();
 
         return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
-    }
-
-    // TODO implement after PR Read clustering #281
-    private static List<Cluster> getClusters(JPlagResult result) {
-        // List<ClusteringResult<Submission>> clusters = result.getClusteringResult();
-        // return clusters.map( c -> new Cluster(getAvgSimilarity, getStrength, c.getMembers().map(Submission::getName)))
-        return List.of();
     }
 
     private static List<String> readFileLines(File file) {
@@ -185,7 +174,7 @@ public class ReportObjectFactory {
                 lines.add(line);
             }
         } catch (IOException exception) {
-            logger.error("Could not read file: " + exception.getMessage());
+            logger.error("Could not read file: " + exception.getMessage(), exception);
         }
         return lines;
     }
@@ -194,9 +183,5 @@ public class ReportObjectFactory {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
         Date date = new Date();
         return dateFormat.format(date);
-    }
-
-    private static List<Integer> intArrayToList(int[] array) {
-        return Arrays.stream(array).boxed().collect(Collectors.toList());
     }
 }
