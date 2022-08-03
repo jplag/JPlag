@@ -15,7 +15,7 @@ class LanguageTest extends CommandLineInterfaceTest {
     @Test
     void testDefaultLanguage() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(de.jplag.java.Language.SHORT_NAME, options.getLanguageShortName());
+        assertEquals(CommandLineArgument.DEFAULT_LANGUAGE, options.getLanguageShortName());
     }
 
     @Test

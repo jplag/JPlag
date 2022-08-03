@@ -86,6 +86,11 @@ public enum CommandLineArgument {
     CLUSTER_PREPROCESSING_THRESHOLD(
             new Builder("--cluster-pp-threshold", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("threshold"));
 
+    /**
+     * The short name of the default {@link Language}.
+     */
+    public static final String DEFAULT_LANGUAGE = de.jplag.java.Language.SHORT_NAME;
+
     private final String flag;
     private final NumberOfArgumentValues numberOfValues;
     private final String description;
@@ -97,11 +102,11 @@ public enum CommandLineArgument {
     private final Optional<String> metaVar;
     private final Class<?> type;
 
-    private CommandLineArgument(String flag, Class<?> type) {
+    CommandLineArgument(String flag, Class<?> type) {
         this(new Builder(flag, type));
     }
 
-    private CommandLineArgument(Builder builder) {
+    CommandLineArgument(Builder builder) {
         this.flag = builder.flag;
         this.type = builder.type;
         this.defaultValue = builder.defaultValue;
