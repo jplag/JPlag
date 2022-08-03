@@ -1,7 +1,5 @@
 package de.jplag.testutils;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -22,7 +20,7 @@ public final class TokenUtils {
      */
     public static List<Integer> tokenTypesByFile(TokenList tokenList, String name) {
         var tokens = tokensByFile(tokenList, name);
-        return tokens.stream().map(Token::getType).collect(toList());
+        return tokens.stream().map(Token::getType).toList();
     }
 
     /**
@@ -33,7 +31,7 @@ public final class TokenUtils {
      */
     public static List<Token> tokensByFile(TokenList tokenList, String name) {
         var tokens = StreamSupport.stream(tokenList.allTokens().spliterator(), false);
-        return tokens.filter(it -> it.getFile().startsWith(name)).collect(toList());
+        return tokens.filter(it -> it.getFile().startsWith(name)).toList();
     }
 
 }

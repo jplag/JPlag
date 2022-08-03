@@ -10,7 +10,7 @@ import de.jplag.emf.util.AbstractMetamodelVisitor;
  * @author Timur Saglam
  */
 public class DynamicMetamodelTokenGenerator extends AbstractMetamodelVisitor {
-    final private DynamicEcoreParser parser;
+    private final DynamicEcoreParser parser;
 
     /**
      * Creates the visitor.

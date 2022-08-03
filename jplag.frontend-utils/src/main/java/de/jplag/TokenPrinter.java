@@ -1,6 +1,5 @@
 package de.jplag;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.io.File;
@@ -50,7 +49,7 @@ public final class TokenPrinter {
      * @return the string representation.
      */
     public static String printTokens(TokenList tokens, File directory, Collection<String> fileNames) {
-        Collection<File> files = fileNames.stream().map(name -> new File(directory, name)).collect(toList());
+        Collection<File> files = fileNames.stream().map(name -> new File(directory, name)).toList();
         return printTokens(tokens, files, directory);
     }
 

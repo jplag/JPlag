@@ -1,7 +1,5 @@
 package de.jplag.emf.dynamic;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +15,7 @@ import de.jplag.TokenConstants;
 public class DynamicMetamodelTokenConstants implements TokenConstants {
     private static final String UNKNOWN_TOKEN = "<Unknown>";
 
-    public final static int TOKEN_TYPE_START = 2;
+    public static final int TOKEN_TYPE_START = 2;
 
     private static Map<EClass, Integer> eClassToTokenType = new HashMap<>();
     private static Map<Integer, EClass> tokenTypeToEClass = new HashMap<>();
@@ -56,7 +54,7 @@ public class DynamicMetamodelTokenConstants implements TokenConstants {
      * @return a read only view on the collection of token strings.
      */
     public static Collection<String> getTokenStrings() {
-        return eClassToTokenType.keySet().stream().map(EClass::getName).collect(toList());
+        return eClassToTokenType.keySet().stream().map(EClass::getName).toList();
     }
 
 }

@@ -1,6 +1,5 @@
 package de.jplag.emf;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,11 +40,11 @@ class MinimalMetamodelTest {
     @Test
     void testBookstoreMetamodels() {
         TokenList result = frontend.parse(baseDirectory, TEST_SUBJECTS);
-        List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).collect(toList());
+        List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).toList();
 
-        logger.debug(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles));
+        logger.info(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles));
         Field[] fields = MetamodelTokenConstants.class.getFields();
-        var constants = Arrays.stream(fields).map(Field::getName).filter(it -> !it.equals("NUM_DIFF_TOKENS")).collect(toList());
+        var constants = Arrays.stream(fields).map(Field::getName).filter(it -> !it.equals("NUM_DIFF_TOKENS")).toList();
         logger.info(("Handcrafted token set: " + constants));
         logger.info("Parsed tokens: " + result.allTokens().toString());
         assertEquals(21, constants.size());

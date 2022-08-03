@@ -20,7 +20,7 @@ public class MetamodelTreeView {
     private int lineIndex;
     private int columnIndex;
     private final StringBuilder viewBuilder;
-    private final static String INDENTATION = "  ";
+    private static final String INDENTATION = "  ";
     public final Logger logger;
 
     /**
@@ -53,12 +53,11 @@ public class MetamodelTreeView {
             token.setLength(tokenText.length());
 
             if (prefix.isEmpty()) {
-                String indentedText = tokenText;
                 for (int i = 0; i < treeDepth; i++) {
-                    indentedText = INDENTATION + indentedText;
+                    viewBuilder.append(INDENTATION);
                     columnIndex += INDENTATION.length();
                 }
-                viewBuilder.append(indentedText);
+                viewBuilder.append(tokenText);
             } else {
                 viewBuilder.append(prefix + tokenText);
                 columnIndex += prefix.length();
@@ -80,7 +79,7 @@ public class MetamodelTreeView {
         File treeViewFile = new File(filePath + suffix);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(treeViewFile));) {
             if (!treeViewFile.createNewFile()) {
-                logger.warn("Overwriting tree view file: " + treeViewFile);
+                logger.warn("Overwriting tree view file: {}", treeViewFile);
             }
             writer.append(viewBuilder.toString());
         } catch (IOException exception) {

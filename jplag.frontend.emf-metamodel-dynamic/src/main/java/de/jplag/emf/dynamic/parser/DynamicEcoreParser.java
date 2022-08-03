@@ -2,9 +2,9 @@ package de.jplag.emf.dynamic.parser;
 
 import org.eclipse.emf.ecore.EObject;
 
+import de.jplag.emf.Language;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.dynamic.DynamicMetamodelToken;
-import de.jplag.emf.dynamic.Language;
 import de.jplag.emf.parser.EcoreParser;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 

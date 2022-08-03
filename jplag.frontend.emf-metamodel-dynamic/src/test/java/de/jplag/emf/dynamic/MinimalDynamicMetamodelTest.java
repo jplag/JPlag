@@ -1,6 +1,5 @@
 package de.jplag.emf.dynamic;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,7 +39,7 @@ class MinimalDynamicMetamodelTest {
     @Test
     void testBookstoreMetamodels() {
         TokenList result = frontend.parse(baseDirectory, TEST_SUBJECTS);
-        List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).collect(toList());
+        List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).toList();
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles));
         logger.info(("Dynamic token set: " + DynamicMetamodelTokenConstants.getTokenStrings()));
         logger.info("parsed tokens: " + result.allTokens().toString());
