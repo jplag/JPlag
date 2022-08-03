@@ -74,7 +74,7 @@
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.23.0</spotless.version>
+        <spotless.version>2.24.0</spotless.version>
         <slf4j.version>1.7.36</slf4j.version>
 
         <antlr2.version>2.7.7</antlr2.version>
@@ -154,17 +154,22 @@
             </dependency>
             <dependency>
                 <groupId>de.jplag</groupId>
-                <artifactId>rlang</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.jplag</groupId>
                 <artifactId>cpp</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>de.jplag</groupId>
+                <artifactId>golang</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
                 <artifactId>kotlin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>rlang</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -458,6 +463,7 @@
                 <module>jplag.frontend.chars</module>
                 <module>jplag.frontend.cpp</module>
                 <module>jplag.frontend.csharp-6</module>
+                <module>jplag.frontend.golang</module>
                 <module>jplag.frontend.java</module>
                 <module>jplag.frontend.kotlin</module>
                 <module>jplag.frontend.python-3</module>
@@ -481,6 +487,7 @@
                 <module>jplag.frontend.chars</module>
                 <module>jplag.frontend.cpp</module>
                 <module>jplag.frontend.csharp-6</module>
+                <module>jplag.frontend.golang</module>
                 <module>jplag.frontend.java</module>
                 <module>jplag.frontend.kotlin</module>
                 <module>jplag.frontend.python-3</module>
