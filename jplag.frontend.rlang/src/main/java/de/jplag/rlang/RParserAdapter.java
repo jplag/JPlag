@@ -11,7 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 import de.jplag.rlang.grammar.RFilter;
 import de.jplag.rlang.grammar.RLexer;
@@ -28,10 +27,9 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
 
     /**
      * Creates the RParserAdapter
-     * @param errorConsumer the ErrorConsumer that parser errors are passed on to.
      */
-    public RParserAdapter(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public RParserAdapter() {
+        super();
     }
 
     /**
@@ -77,7 +75,7 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
                 treeWalker.walk(new JplagRListener(this), parseTree);
             }
         } catch (IOException exception) {
-            getErrorConsumer().addError("Parsing Error in '" + fileName + "':" + File.separator + exception);
+            logger.error("Parsing Error in '" + fileName + "': " + File.separator + exception.getMessage(), exception);
             return false;
         }
         return true;

@@ -3,7 +3,6 @@ package de.jplag.scheme;
 import java.io.File;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Parser extends AbstractParser {
@@ -13,19 +12,18 @@ public class Parser extends AbstractParser {
 
     /**
      * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
-    public Parser(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public Parser() {
+        super();
     }
 
     public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
         errors = 0;
-        for (int i = 0; i < files.length; i++) {
-            currentFile = files[i];
-            getErrorConsumer().print(null, "Parsing file " + files[i]);
-            if (!SchemeParser.parseFile(directory, files[i], null, this))
+        for (String file : files) {
+            currentFile = file;
+            logger.trace("Parsing file {}", file);
+            if (!SchemeParser.parseFile(directory, file, null, this))
                 errors++;
             tokens.addToken(new SchemeToken(SchemeTokenConstants.FILE_END, currentFile));
         }
