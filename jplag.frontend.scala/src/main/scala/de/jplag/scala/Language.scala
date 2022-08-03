@@ -20,5 +20,4 @@ class Language extends de.jplag.Language {
 
   override def hasErrors: Boolean = this.parser.hasErrors
 
-  def numberOfTokens: Int = ScalaTokenConstants.maxId
 }

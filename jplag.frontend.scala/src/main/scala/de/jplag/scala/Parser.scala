@@ -8,11 +8,9 @@ import scala.meta._
 
 
 class Parser extends AbstractParser {
-    private var currentFile : String = _
+    private var currentFile: String = _
 
-    var tokens : TokenList = _
-
-    private var lastInMethod: List[Boolean] = List[Boolean]()
+    var tokens: TokenList = _
 
     private val traverser: Traverser = new Traverser {
 
@@ -28,7 +26,7 @@ class Parser extends AbstractParser {
             case None =>
         }
 
-        private def processCases(cases: List[Case]) : Unit = cases.foreach {
+        private def processCases(cases: List[Case]): Unit = cases.foreach {
             case c@Case(pattern, condition, body) =>
                 add(ScalaTokenConstants.CaseStatement, c, fromEnd = false)
                 apply(pattern)
@@ -37,7 +35,7 @@ class Parser extends AbstractParser {
             case _ =>
         }
 
-        def isNotArithmetic(op: Term.Name) : Boolean = {
+        def isNotArithmetic(op: Term.Name): Boolean = {
             op.value.matches("""[_\w]+""")
         }
 
@@ -83,7 +81,7 @@ class Parser extends AbstractParser {
                     // `f()` can also be written as `f`, so we simply don't see `f()` as a function call
                     // But Java style function calls with no args should still be recognized
                     TR(traverse = _ => {
-                        add(Apply, fun, fromEnd=false)
+                        add(Apply, fun, fromEnd = false)
                         apply(fun)
                         for (arg <- args) {
                             add(Argument, arg, fromEnd = false)
@@ -97,29 +95,22 @@ class Parser extends AbstractParser {
                     })
                 case Term.NewAnonymous(_) => TR(Some(NewCreationBegin), Some(NewCreationEnd))
                 case Term.Return(_) => TR(Some(ScalaTokenConstants.Return))
-                case Term.Match(expr, cases) => TR(traverse = _ => {
-                    add(MatchBegin, tree, fromEnd=false)
+                case Term.Match(expr, cases) => TR(Some(MatchBegin), Some(MatchEnd), traverse = _ => {
                     apply(expr)
                     processCases(cases)
-                    add(MatchEnd, tree, fromEnd=true)
                 })
                 case Term.Throw(_) => TR(Some(Throw))
                 case Term.Function(_) => TR(Some(FunctionBegin), Some(FunctionEnd))
-                case Term.PartialFunction(cases) => TR(traverse = _ => {
-                    add(PartialFunctionBegin, tree, fromEnd=false)
+                case Term.PartialFunction(cases) => TR(Some(PartialFunctionBegin), Some(PartialFunctionEnd), traverse = _ => {
                     processCases(cases)
-                    add(PartialFunctionEnd, tree, fromEnd=true)
                 })
-                case Term.ForYield(_) => TR(traverse = _ => {
-                    add(ForBodyBegin, tree, fromEnd=false)
-                    add(Yield, tree, fromEnd = false)
-
-                    tree.children.foreach(apply)
-
-                    add(ForBodyEnd, tree, fromEnd = true)
+                case Term.ForYield(enumerators, body) => TR(traverse = _ => {
+                    apply(enumerators)
+                    add(ForBodyBegin, body, fromEnd = false)
+                    enclose(body, TR(Some(Yield), Some(ForBodyEnd)))
                 })
                 case Term.If(conditionExpr, thenExpression, elseExpression) => TR(traverse = _ => {
-                    add(If, tree, fromEnd=false)
+                    add(If, tree, fromEnd = false)
                     apply(conditionExpr)
 
                     enclose(thenExpression, TR(Some(IfBegin), Some(IfEnd)))
@@ -161,13 +152,13 @@ class Parser extends AbstractParser {
                 case Defn.Var(mods, pats, decltype, rhs) => TR(traverse = _ => {
                     apply(mods)
                     for (pat <- pats) {
-                        add(VariableDefinition, pat, fromEnd=false)
+                        add(VariableDefinition, pat, fromEnd = false)
                         apply(pat)
                         apply(decltype)
 
                         rhs match {
                             case Some(realRhs) =>
-                                add(Assign, realRhs, fromEnd=false)
+                                add(Assign, realRhs, fromEnd = false)
                                 apply(realRhs)
                             case None =>
                         }
@@ -176,11 +167,11 @@ class Parser extends AbstractParser {
                 case Defn.Val(mods, pats, decltype, rhs) => TR(traverse = _ => {
                     apply(mods)
                     for (pat <- pats) {
-                        add(VariableDefinition, pat, fromEnd=false)
+                        add(VariableDefinition, pat, fromEnd = false)
                         apply(pat)
                         apply(decltype)
 
-                        add(Assign, rhs, fromEnd=false)
+                        add(Assign, rhs, fromEnd = false)
                         apply(rhs)
                     }
 
@@ -239,13 +230,13 @@ class Parser extends AbstractParser {
             }
         }
 
-        def applyRecursively[T](els: List[T]): Unit = els.foreach( {
-             case tree: Tree => apply(tree)
-             case treeList: List[_] => applyRecursively(treeList)
+        def applyRecursively[T](els: List[T]): Unit = els.foreach({
+            case tree: Tree => apply(tree)
+            case treeList: List[_] => applyRecursively(treeList)
         })
 
         override def apply(tree: Tree): Unit = {
-            val record : TR = doMatch(tree)
+            val record: TR = doMatch(tree)
 
             record.before match {
                 case Some(value) => add(value, tree, fromEnd = false)
@@ -276,7 +267,6 @@ class Parser extends AbstractParser {
     }
 
 
-
     def parse(dir: File, files: Array[String]): TokenList = {
         tokens = new TokenList
         errors = 0
@@ -304,7 +294,7 @@ class Parser extends AbstractParser {
             val ast = input.parse[Source].get
             traverser(ast)
 
-            add(FileEnd, text.count(_ == '\n')-1, 0, 0)
+            add(FileEnd, text.count(_ == '\n') - 1, 0, 0)
         } catch {
             case e: Throwable =>
                 e.printStackTrace()
@@ -317,7 +307,6 @@ class Parser extends AbstractParser {
     private def add(tType: ScalaTokenConstants.Value, line: Int, column: Int, length: Int): Unit = {
         tokens.addToken(new ScalaToken(tType.id, currentFile, line, column, length))
     }
-
 
 
     private def add(tType: ScalaTokenConstants.Value, node: Tree, fromEnd: Boolean): Unit = {
