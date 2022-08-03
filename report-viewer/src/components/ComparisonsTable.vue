@@ -87,7 +87,15 @@
           @click="toggleDialog(index)"
         />
       </td>
-      <GDialog v-model="dialog[index]">
+      <GDialog
+        v-if="
+          isInCluster(
+            comparison.firstSubmissionId,
+            comparison.secondSubmissionId
+          )
+        "
+        v-model="dialog[index]"
+      >
         <ClustersList
           :clusters="
             getClustersFor(
@@ -128,10 +136,10 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
     let formattedMatchPercentage = (num: number) => num.toFixed(2);
-    const dialog :Ref<Array<boolean>> = ref([]);
+    const dialog: Ref<Array<boolean>> = ref([]);
     props.topComparisons.forEach(() => dialog.value.push(false));
 
-    const toggleDialog = (index:number) => {
+    const toggleDialog = (index: number) => {
       dialog.value[index] = true;
     };
 
@@ -154,8 +162,11 @@ export default defineComponent({
       return store.state.anonymous.has(id);
     };
 
-    const getParticipatingMatchesForId = (id: string, others : Array<string>) => {
-      let matches : Array<{matchedWith: string, percentage: number,}>= [];
+    const getParticipatingMatchesForId = (
+      id: string,
+      others: Array<string>
+    ) => {
+      let matches: Array<{ matchedWith: string; percentage: number }> = [];
       props.topComparisons.forEach((comparison) => {
         if (
           comparison.firstSubmissionId.includes(id) &&
@@ -178,25 +189,33 @@ export default defineComponent({
       return matches;
     };
 
-    const clustersWithParticipatingMatches: Array<ClusterListElement> = props.clusters.map((cluster) => {
-      let membersArray = new Map<string,Array<{matchedWith: string, percentage: number,}>>();
-      cluster.members.forEach((member: string) => {
-        let others = cluster.members.filter((m) => !m.includes(member));
-        membersArray.set(member ,getParticipatingMatchesForId(member, others));
+    const clustersWithParticipatingMatches: Array<ClusterListElement> =
+      props.clusters.map((cluster) => {
+        let membersArray = new Map<
+          string,
+          Array<{ matchedWith: string; percentage: number }>
+        >();
+        cluster.members.forEach((member: string) => {
+          let others = cluster.members.filter((m) => !m.includes(member));
+          membersArray.set(
+            member,
+            getParticipatingMatchesForId(member, others)
+          );
+        });
+
+        return {
+          averageSimilarity: cluster.averageSimilarity,
+          strength: cluster.strength,
+          members: membersArray,
+        };
       });
 
-      return {
-        averageSimilarity: cluster.averageSimilarity,
-        strength: cluster.strength,
-        members: membersArray,
-      };
-    });
-
-    const getClustersFor = (id1: string, id2: string) : Array<ClusterListElement> => {
+    const getClustersFor = (
+      id1: string,
+      id2: string
+    ): Array<ClusterListElement> => {
       return clustersWithParticipatingMatches.filter(
-        (c) =>
-          c.members.has(id1) &&
-          c.members.has(id2)
+        (c) => c.members.has(id1) && c.members.has(id2)
       );
     };
 
