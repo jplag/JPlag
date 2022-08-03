@@ -3,19 +3,14 @@ package de.jplag.strategy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.jplag.GreedyStringTiling;
-import de.jplag.JPlagComparison;
-import de.jplag.JPlagResult;
-import de.jplag.Submission;
-import de.jplag.SubmissionSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.jplag.*;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -23,6 +18,8 @@ import de.jplag.options.JPlagOptions;
  * @author Timur Saglam
  */
 public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
+    private static final Logger logger = LoggerFactory.getLogger("JPlag");
+
     private static final int TIMEOUT_IN_SECONDS = 5;
     private final ConcurrentMap<String, Lock> submissionLocks;
     private ExecutorService threadPool;
@@ -60,8 +57,9 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         while (successfulComparisons < tuples.size()) {
             try {
                 Thread.sleep(5);
-            } catch (InterruptedException exception) {
-                exception.printStackTrace();
+            } catch (InterruptedException e) {
+                logger.error(e.getMessage(), e);
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -81,13 +79,13 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         return new Runnable() {
             @Override
             public void run() {
-                Lock leftLock = getOrCreateLock(tuple.getLeft().getName());
-                Lock rightLock = getOrCreateLock(tuple.getRight().getName());
+                Lock leftLock = getOrCreateLock(tuple.left().getName());
+                Lock rightLock = getOrCreateLock(tuple.right().getName());
                 boolean hasLeft = leftLock.tryLock();
                 boolean hasRight = hasLeft && rightLock.tryLock();
                 try {
                     if (hasLeft && hasRight) { // both locks acquired!
-                        compareSubmissions(tuple.getLeft(), tuple.getRight(), withBaseCode).ifPresent(comparisons::add);
+                        compareSubmissions(tuple.left(), tuple.right(), withBaseCode).ifPresent(comparisons::add);
                         synchronized (this) {
                             successfulComparisons++;
                         }
@@ -123,8 +121,9 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
             if (!threadPool.awaitTermination(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)) {
                 throw new IllegalStateException("Parallel comparison calculation timed out!");
             }
-        } catch (InterruptedException exception) {
-            throw new IllegalStateException("Thread pool interrupted during comparison: " + exception.getMessage());
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage(), e);
+            Thread.currentThread().interrupt();
         }
     }
 

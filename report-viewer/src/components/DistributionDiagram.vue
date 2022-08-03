@@ -3,11 +3,11 @@
 -->
 <template>
   <div class="wrapper">
-    <BarChart :chartData="chartData" :options="options" class="chart"/>
+    <BarChart :chartData="chartData" :options="options" class="chart" />
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {defineComponent, ref, watch} from "vue";
 import {BarChart} from "vue-chart-3"
 import {Chart, registerables} from 'chart.js';
@@ -21,7 +21,7 @@ export default defineComponent({
   components: {BarChart},
   props: {
     distribution: {
-      type: Array,
+      type: Array<number>,
       required: true
     }
   },
@@ -111,11 +111,9 @@ export default defineComponent({
   box-shadow: #777777 2px 3px 3px;
   display: flex;
   height: 100%;
-
 }
 
 .chart {
   width: 100%;
-
 }
 </style>

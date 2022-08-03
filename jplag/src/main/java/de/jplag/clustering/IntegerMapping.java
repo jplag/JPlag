@@ -3,14 +3,15 @@ package de.jplag.clustering;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Creates a mapping of any set to integers
  */
 public class IntegerMapping<T> {
 
-    private HashMap<T, Integer> mapping;
-    private List<T> backMapping;
+    private final Map<T, Integer> mapping;
+    private final List<T> backMapping;
     private int size = 0;
 
     public IntegerMapping(int initialCapacity) {

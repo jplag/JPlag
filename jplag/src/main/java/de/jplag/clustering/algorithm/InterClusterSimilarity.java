@@ -1,7 +1,7 @@
 package de.jplag.clustering.algorithm;
 
 import java.util.List;
-import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
@@ -11,9 +11,9 @@ public enum InterClusterSimilarity {
     AVERAGE(0, Float::sum);
 
     private final float neutralElement;
-    private final BiFunction<Float, Float, Float> accumulator;
+    private final BinaryOperator<Float> accumulator;
 
-    InterClusterSimilarity(float neutralElement, BiFunction<Float, Float, Float> accumulator) {
+    InterClusterSimilarity(float neutralElement, BinaryOperator<Float> accumulator) {
         this.neutralElement = neutralElement;
         this.accumulator = accumulator;
     }
