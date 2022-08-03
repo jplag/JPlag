@@ -12,7 +12,7 @@ public class Language extends de.jplag.emf.Language {
     private static final String NAME = "EMF metamodels (dynamically created token set)";
     private static final String SHORT_NAME = "EMF metamodel (dynamic)";
 
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 7;
+    private static final int DEFAULT_MIN_TOKEN_MATCH = 10;
 
     public Language() {
         super(new DynamicEcoreParser());

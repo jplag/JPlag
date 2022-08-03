@@ -18,7 +18,7 @@ public class Language implements de.jplag.Language {
 
     private static final String NAME = "EMF metamodel";
     private static final String SHORT_NAME = "EMF metamodel";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 5;
+    private static final int DEFAULT_MIN_TOKEN_MATCH = 6;
 
     protected final EcoreParser parser;
 
