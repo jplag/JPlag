@@ -20,7 +20,7 @@ public class ClusteringResultMapper {
     private Cluster convertCluster(de.jplag.clustering.Cluster<Submission> from) {
         var strength = from.getCommunityStrength();
         var avgSimilarity = from.getAverageSimilarity();
-        var member = from.getMembers().stream().map(Submission::getName).toList();
+        var member = from.getMembers().stream().map(Submission::getNameSanitized).toList();
         return new Cluster(avgSimilarity, strength, member);
     }
 }

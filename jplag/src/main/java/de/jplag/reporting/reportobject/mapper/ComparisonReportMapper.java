@@ -24,8 +24,10 @@ public class ComparisonReportMapper {
 
     private void writeComparisons(JPlagResult jPlagResult, String path, List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
-            var comparisonReport = new ComparisonReport(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(),
-                    comparison.similarity(), convertMatchesToReportMatches(jPlagResult, comparison));
+            String firstSubmissionId = comparison.getFirstSubmission().getNameSanitized();
+            String secondSubmissionId = comparison.getSecondSubmission().getNameSanitized();
+            var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
+                    convertMatchesToReportMatches(jPlagResult, comparison));
             String fileName = comparisonReport.firstSubmissionId().concat("-").concat(comparisonReport.secondSubmissionId()).concat(".json");
             FILE_WRITER.saveAsJSON(comparisonReport, path, fileName);
         }

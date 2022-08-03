@@ -97,7 +97,7 @@ public class ReportObjectFactory {
         var submissionsPath = createDirectory(path, SUBMISSIONS_FOLDER);
         Language language = result.getOptions().getLanguage();
         for (var submission : submissions) {
-            File directory = createDirectory(submissionsPath.getPath(), submission.getName());
+            File directory = createDirectory(submissionsPath.getPath(), submission.getNameSanitized());
             for (var file : submission.getFiles()) {
                 var fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
                 try {
@@ -140,8 +140,8 @@ public class ReportObjectFactory {
      */
     private static List<String> getComparisonNames(List<JPlagComparison> comparisons) {
         List<String> names = new ArrayList<>();
-        comparisons.forEach(
-                comparison -> names.add(String.join("-", comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName())));
+        comparisons.forEach(comparison -> names
+                .add(String.join("-", comparison.getFirstSubmission().getNameSanitized(), comparison.getSecondSubmission().getNameSanitized())));
         return names;
     }
 
