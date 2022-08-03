@@ -76,7 +76,7 @@ class ScalaFrontendTest {
      */
     @Test
     void testTokenToString() {
-        var missingTokens = IntStream.range(0, language.numberOfTokens())
+        var missingTokens = IntStream.range(0, ScalaTokenConstants.numberOfTokens())
                 .mapToObj(type -> new ScalaToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET))
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
 
@@ -162,7 +162,7 @@ class ScalaFrontendTest {
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
         var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).distinct().boxed().toList();
-        var allTokens = IntStream.range(0, language.numberOfTokens()).boxed().toList();
+        var allTokens = IntStream.range(0, ScalaTokenConstants.numberOfTokens()).boxed().toList();
         allTokens = new ArrayList<>(allTokens);
 
         // Only non-found tokens are left

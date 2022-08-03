@@ -78,5 +78,6 @@ object ScalaTokenConstants extends Enumeration with TokenConstants {
   val EnumGenerator: Value = Value("ENUMERATE")
   val Member: Value = Value("MEMBER")
 
+  def numberOfTokens() : Int = maxId
 }
 
