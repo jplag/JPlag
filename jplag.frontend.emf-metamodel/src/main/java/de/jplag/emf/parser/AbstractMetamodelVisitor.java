@@ -1,7 +1,6 @@
 package de.jplag.emf.parser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
@@ -164,24 +163,6 @@ public abstract class AbstractMetamodelVisitor {
     }
 
     protected void visitETypeParameter(ETypeParameter eTypeParameter) {
-    }
-
-    /**
-     * TODO TS: Remove generator method.
-     */
-    public static void main(String[] args) {
-        List<String> types = List.of("EPackage", "EAnnotation", "EClassifier", "EClass", "EDataType", "EStructuralFeature", "EAttribute",
-                "EReference", "EOperation", "EEnum", "EEnumLiteral", "EParameter", "EGenericType", "ETypeParameter");
-
-        for (String type : types) {
-            System.out.println("if (eObject instanceof " + type + " e" + type.substring(1) + ") {");
-            System.out.println("    visit" + type + "(e" + type.substring(1) + ");");
-            System.out.println("}");
-        }
-
-        for (String type : types) {
-            System.out.println("protected void visit" + type + "(" + type + " e" + type.substring(1) + ") {}");
-        }
     }
 
 }

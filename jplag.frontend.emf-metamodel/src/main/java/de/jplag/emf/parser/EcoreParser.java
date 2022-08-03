@@ -73,9 +73,13 @@ public class EcoreParser extends AbstractParser {
         return new MetamodelTokenGenerator(this);
     }
 
-    public void addToken(int type, EObject source) {
+    public void addToken(int type, EObject source, String prefix) {
         MetamodelToken token = new MetamodelToken(type, currentFile + Language.VIEW_FILE_SUFFIX, source);
-        treeView.addToken(token, visitor.getCurrentTreeDepth());
+        treeView.addToken(token, visitor.getCurrentTreeDepth(), prefix);
         tokens.addToken(token);
+    }
+
+    public void addToken(int type, EObject source) {
+        addToken(type, source, "");
     }
 }

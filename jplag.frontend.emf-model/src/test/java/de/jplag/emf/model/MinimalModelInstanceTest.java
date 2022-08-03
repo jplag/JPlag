@@ -47,7 +47,7 @@ class MinimalModelInstanceTest {
         assertNotEquals(0, result.size());
 
         List<String> treeViewFiles = Arrays.stream(testSubjects).map(it -> it + Language.VIEW_FILE_SUFFIX).collect(toList());
-        logger.info(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles));
+        logger.debug(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles));
         logger.info("Dynamic token set: " + DynamicMetamodelTokenConstants.getTokenStrings());
         logger.info("Parsed tokens: " + result.allTokens().toString());
 

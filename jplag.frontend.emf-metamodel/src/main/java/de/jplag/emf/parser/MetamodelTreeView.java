@@ -4,24 +4,24 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.emf.ecore.ENamedElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.emf.MetamodelToken;
 
 /**
- * Simplcisitc tree view representation of an EMF metamodel.
+ * Simplistic tree view representation of an EMF metamodel.
  * @author Timur Saglam
  */
 public class MetamodelTreeView {
     private final String filePath;
-    private final List<MetamodelToken> tokens;
     private int lineIndex;
     private int columnIndex;
     private final StringBuilder viewBuilder;
     private final static String INDENTATION = "  ";
+    public final Logger logger;
 
     /**
      * Creates a tree view for a metamodel.
@@ -29,7 +29,7 @@ public class MetamodelTreeView {
      */
     public MetamodelTreeView(String filePath) {
         this.filePath = filePath;
-        tokens = new ArrayList<>();
+        logger = LoggerFactory.getLogger(this.getClass());
         viewBuilder = new StringBuilder();
     }
 
@@ -38,9 +38,13 @@ public class MetamodelTreeView {
      * @param token is the token to add.
      * @param treeDepth is the current containment tree depth, required for the indentation.
      */
-    public void addToken(MetamodelToken token, int treeDepth) {
+    public void addToken(MetamodelToken token, int treeDepth, String prefix) {
         token.getEObject().ifPresent(it -> {
-            tokens.add(token);
+            if (prefix.isEmpty() && treeDepth > 0) {
+                lineIndex++;
+                columnIndex = 0;
+                viewBuilder.append(System.lineSeparator());
+            }
 
             String tokenText = token.toString();
             if (it instanceof ENamedElement element) {
@@ -48,26 +52,24 @@ public class MetamodelTreeView {
             }
             token.setLength(tokenText.length());
 
-            String prefix = ""; // TS TODO implement prefix for non new lines
             if (prefix.isEmpty()) {
+                String indentedText = tokenText;
                 for (int i = 0; i < treeDepth; i++) {
-                    tokenText = INDENTATION + tokenText;
+                    indentedText = INDENTATION + indentedText;
                     columnIndex += INDENTATION.length();
                 }
+                viewBuilder.append(indentedText);
             } else {
-                tokenText = prefix + tokenText;
+                viewBuilder.append(prefix + tokenText);
                 columnIndex += prefix.length();
             }
-            viewBuilder.append(tokenText);
 
             token.setLine(lineIndex + 1);
             token.setColumn(columnIndex + 1);
 
-            lineIndex++;
-            columnIndex = 0;
-            viewBuilder.append(System.lineSeparator());
-        });
+            columnIndex += tokenText.length();
 
+        });
     }
 
     /**
@@ -77,12 +79,12 @@ public class MetamodelTreeView {
     public void writeToFile(String suffix) {
         File treeViewFile = new File(filePath + suffix);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(treeViewFile));) {
-            if (!treeViewFile.exists()) {
-                treeViewFile.createNewFile();
+            if (!treeViewFile.createNewFile()) {
+                logger.warn("Overwriting tree view file: " + treeViewFile);
             }
             writer.append(viewBuilder.toString());
         } catch (IOException exception) {
-            exception.printStackTrace();
+            logger.error("Could not write tree view file!", exception);
         }
     }
 
