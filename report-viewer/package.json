@@ -10,7 +10,7 @@
   "dependencies": {
     "@highlightjs/vue-plugin": "^2.1.0",
     "chart.js": "^3.8.2",
-    "chartjs-plugin-datalabels": "^2.0.0",
+    "chartjs-plugin-datalabels": "^2.1.0",
     "core-js": "^3.24.0",
     "gitart-vue-dialog": "^2.4.0",
     "highlight.js": "^11.6.0",
