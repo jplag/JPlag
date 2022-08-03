@@ -1,4 +1,4 @@
-package de.jplag.emf.parser;
+package de.jplag.emf.util;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -32,6 +32,8 @@ import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
 
+import de.jplag.emf.util.AbstractMetamodelVisitor;
+
 /**
  * Visits a metamodel containment tree and extracts the relevant token.
  * @author Timur Saglam

@@ -10,7 +10,9 @@ import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 import de.jplag.emf.Language;
 import de.jplag.emf.MetamodelToken;
+import de.jplag.emf.util.AbstractMetamodelVisitor;
 import de.jplag.emf.util.EMFUtil;
+import de.jplag.emf.util.MetamodelTreeView;
 
 /**
  * Parser for EMF metamodels.
