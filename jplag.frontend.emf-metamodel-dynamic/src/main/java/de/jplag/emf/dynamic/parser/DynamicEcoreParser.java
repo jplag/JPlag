@@ -2,7 +2,6 @@ package de.jplag.emf.dynamic.parser;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.jplag.emf.Language;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.dynamic.DynamicMetamodelToken;
 import de.jplag.emf.parser.EcoreParser;
@@ -23,7 +22,7 @@ public class DynamicEcoreParser extends EcoreParser {
 
     @Override
     public void addToken(int type, EObject source) {
-        MetamodelToken token = new DynamicMetamodelToken(type, currentFile + Language.VIEW_FILE_SUFFIX, source);
+        MetamodelToken token = new DynamicMetamodelToken(type, currentFile, source);
         treeView.addToken(token, visitor.getCurrentTreeDepth(), NO_PREFIX);
         tokens.addToken(token);
     }

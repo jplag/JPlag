@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +43,7 @@ class MinimalMetamodelTest {
         TokenList result = frontend.parse(baseDirectory, TEST_SUBJECTS);
         List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).toList();
 
-        logger.info(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles));
+        logger.debug(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles, Optional.of(Language.VIEW_FILE_SUFFIX)));
         Field[] fields = MetamodelTokenConstants.class.getFields();
         var constants = Arrays.stream(fields).map(Field::getName).filter(it -> !it.equals("NUM_DIFF_TOKENS")).toList();
         logger.info(("Handcrafted token set: " + constants));

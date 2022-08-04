@@ -4,7 +4,7 @@
 <template>
   <div class="container">
     <div class="column-container" style="width: 30%">
-      <h1>JPlag Report</h1>
+        <h1>JPlag Report</h1>
       <p class="section-title">Main Info:</p>
       <div id="basicInfo">
         <TextInformation
@@ -56,19 +56,19 @@
     </div>
 
     <div class="column-container" style="width: 35%">
-      <div id="metrics">
+        <div id="metrics">
         <p class="section-title">Metric:</p>
-        <div id="metrics-list">
-          <MetricButton
-            v-for="(metric, index) in overview.metrics"
-            :id="metric.metricName"
-            :key="metric.metricName"
-            :is-selected="selectedMetric[index]"
-            :metric="metric"
-            @click="selectMetric(index)"
-          />
+          <div id="metrics-list">
+            <MetricButton
+              v-for="(metric, index) in overview.metrics"
+              :id="metric.metricName"
+              :key="metric.metricName"
+              :is-selected="selectedMetric[index]"
+              :metric="metric"
+              @click="selectMetric(index)"
+            />
+          </div>
         </div>
-      </div>
       <p class="section-title">Distribution:</p>
       <DistributionDiagram
         :distribution="distributions[selectedMetricIndex]"
@@ -78,12 +78,12 @@
     <div class="column-container" style="width: 35%">
       <p class="section-title">Top Comparisons:</p>
       <div id="comparisonsList">
-        <ComparisonsTable
-          :clusters="overview.clusters"
-          :top-comparisons="topComps[selectedMetricIndex]"
-        />
-      </div>
+      <ComparisonsTable
+        :clusters="overview.clusters"
+        :top-comparisons="topComps[selectedMetricIndex]"
+      />
     </div>
+  </div>
   </div>
 </template>
 
@@ -182,12 +182,10 @@ export default defineComponent({
      * @type {Ref<UnwrapRef<number>>}
      */
     let selectedMetricIndex = ref(0);
-    selectedMetric.value[0] = true;
+    selectedMetric.value[selectedMetricIndex.value] = true;
 
     const selectMetric = (metric: number) => {
-      selectedMetric.value = selectedMetric.value.map(() => {
-        return false;
-      });
+      selectedMetric.value = selectedMetric.value.map(() => false);
       selectedMetric.value[metric] = true;
       selectedMetricIndex.value = metric;
     };

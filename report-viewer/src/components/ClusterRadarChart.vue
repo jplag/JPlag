@@ -46,6 +46,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    let hasNoMember = false;
     const getIdOfFirstSubmission = () => {
       const firstMember = props.cluster.members.keys().next().value;
       hasNoMember = !firstMember;
@@ -83,7 +84,6 @@ export default defineComponent({
     });
 
     const options = ref(radarChartOptions);
-    let hasNoMember = false;
     watch(
       () => selectedMember.value,
       (val) => {

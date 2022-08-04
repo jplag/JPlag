@@ -62,7 +62,7 @@ public class EcoreParser extends AbstractParser {
                 visitor = createMetamodelVisitor();
                 visitor.visit(root);
             }
-            tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, currentFile + Language.VIEW_FILE_SUFFIX));
+            tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, currentFile));
             treeView.writeToFile(Language.VIEW_FILE_SUFFIX);
         }
     }
@@ -76,7 +76,7 @@ public class EcoreParser extends AbstractParser {
     }
 
     public void addToken(int type, EObject source, String prefix) {
-        MetamodelToken token = new MetamodelToken(type, currentFile + Language.VIEW_FILE_SUFFIX, source);
+        MetamodelToken token = new MetamodelToken(type, currentFile, source);
         treeView.addToken(token, visitor.getCurrentTreeDepth(), prefix);
         tokens.addToken(token);
     }
