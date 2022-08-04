@@ -132,6 +132,8 @@ public class JPlagOptions {
 
     /**
      * Constructor with required attributes.
+     * @param languageIdentifier the identifier of the language to use. If set to {@code null} you have to use
+     * {@link #setLanguage(Language)} to set the language programmatically.
      */
     public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, String languageIdentifier) {
         this.submissionDirectories = submissionDirectories;

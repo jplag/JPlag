@@ -110,6 +110,7 @@ public class JPlag {
 
         if (currentLanguage != null && (languageShortName == null || languageShortName.equals(currentLanguage.getIdentifier()))) {
             // Ensure that we do not rely on the ServiceLoader API. We can also load an arbitrary language via Options
+            options.setLanguageDefaults(currentLanguage);
             return currentLanguage;
         }
 
