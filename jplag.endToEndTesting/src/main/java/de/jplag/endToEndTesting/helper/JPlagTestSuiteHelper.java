@@ -42,8 +42,7 @@ public class JPlagTestSuiteHelper {
 		this.languageOption = languageOption;
 		this.resourceNames = new File(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString()).list();
 
-		this.resultModel = JsonHelper
-				.getResultModelFromPath(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toAbsolutePath().toString());
+		this.resultModel = JsonHelper.getResultModelFromPath();
 		logger.info(String.format("temp path at [%s]", Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
 	}
 
@@ -91,8 +90,8 @@ public class JPlagTestSuiteHelper {
 		// Copy the resources data to the temporary path
 		for (int counter = 0; counter < classNames.length; counter++) {
 			Path originalPath = Path.of(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString(), classNames[counter]);
-			Path copiePath = Path.of(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME, Constant.TEMPORARY_DIRECTORY_NAME + (counter + 1),
-					classNames[counter]);
+			Path copiePath = Path.of(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME,
+					Constant.TEMPORARY_DIRECTORY_NAME + (counter + 1), classNames[counter]);
 
 			File directory = new File(copiePath.toString());
 			if (!directory.exists()) {

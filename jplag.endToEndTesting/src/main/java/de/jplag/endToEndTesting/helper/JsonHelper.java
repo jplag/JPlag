@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import de.jplag.endToEndTesting.constants.Constant;
 import model.ResultJsonModel;
 
 public final class JsonHelper {
@@ -26,8 +27,9 @@ public final class JsonHelper {
 	 * @throws JsonProcessingException
 	 * @throws Exception
 	 */
-	public static List<ResultJsonModel> getResultModelFromPath(String pathToJsonFile)
+	public static List<ResultJsonModel> getResultModelFromPath()
 			throws JsonMappingException, JsonProcessingException, Exception {
-		return Arrays.asList(new ObjectMapper().readValue(Paths.get(pathToJsonFile).toFile(), ResultJsonModel[].class));
+		return Arrays.asList(
+				new ObjectMapper().readValue(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toFile(), ResultJsonModel[].class));
 	}
 }
