@@ -1,13 +1,17 @@
 package jplag.endToEndTesting;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlag;
+import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.endToEndTesting.constants.Constant;
 import de.jplag.endToEndTesting.helper.JPlagTestSuiteHelper;
@@ -17,6 +21,8 @@ import model.TestCaseModel;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class javaTestCases {
+	private static final Logger logger = LoggerFactory.getLogger("EndToEndTesting");
+	
 	private JPlagTestSuiteHelper jplagTestSuiteHelper;
 
 	@BeforeAll
@@ -46,8 +52,13 @@ class javaTestCases {
 		TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
-
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
+		
+		var resultJsonModel = testCaseModel.getCurrentResultJsonModel();
+		
+		for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
+			logger.info("Comparison of the stored values and the current equality values");
+			assertEquals( resultJsonModel.similarity(), jPlagComparison.similarity() , "The JPlag results [similarity] do not match the stored values!");
+		}
 	}
 
 	/**
@@ -63,7 +74,12 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
+		var resultJsonModel = testCaseModel.getCurrentResultJsonModel();
+		
+		for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
+			logger.info("Comparison of the stored values and the current equality values");
+			assertEquals( resultJsonModel.similarity(), jPlagComparison.similarity() , "The JPlag results [similarity] do not match the stored values!");
+		}
 	}
 
 	/**
@@ -79,7 +95,12 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
+		var resultJsonModel = testCaseModel.getCurrentResultJsonModel();
+		
+		for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
+			logger.info("Comparison of the stored values and the current equality values");
+			assertEquals( resultJsonModel.similarity(), jPlagComparison.similarity() , "The JPlag results [similarity] do not match the stored values!");
+		}
 	}
 
 	/**
@@ -95,7 +116,12 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
+		var resultJsonModel = testCaseModel.getCurrentResultJsonModel();
+		
+		for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
+			logger.info("Comparison of the stored values and the current equality values");
+			assertEquals( resultJsonModel.similarity(), jPlagComparison.similarity() , "The JPlag results [similarity] do not match the stored values!");
+		}
 	}
 
 	/**
@@ -112,7 +138,12 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
+		var resultJsonModel = testCaseModel.getCurrentResultJsonModel();
+		
+		for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
+			logger.info("Comparison of the stored values and the current equality values");
+			assertEquals( resultJsonModel.similarity(), jPlagComparison.similarity() , "The JPlag results [similarity] do not match the stored values!");
+		}
 	}
 
 	/**
@@ -128,6 +159,11 @@ class javaTestCases {
 
 		JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-		assertTrue(testCaseModel.compaireModelProperties(jplagResult), "The JPlag results do not match the stored values!");
+		var resultJsonModel = testCaseModel.getCurrentResultJsonModel();
+		
+		for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
+			logger.info("Comparison of the stored values and the current equality values");
+			assertEquals( resultJsonModel.similarity(), jPlagComparison.similarity() , "The JPlag results [similarity] do not match the stored values!");
+		}
 	}
 }

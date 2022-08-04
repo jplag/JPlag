@@ -50,10 +50,12 @@ public class JPlagTestSuiteHelper {
 	}
 
 	/**
-	 * creates all necessary folder paths and objects for a test run.
+	 * creates all necessary folder paths and objects for a test run. Also searches
+	 * for the stored previous results of the test in order to compare them with the
+	 * current results.
 	 * 
 	 * @param classNames
-	 * @return
+	 * @return comparison results saved for the test
 	 * @throws Exception
 	 */
 	public TestCaseModel createNewTestCase(String[] classNames) throws Exception {
@@ -106,19 +108,14 @@ public class JPlagTestSuiteHelper {
 			Path originalPath = Path.of(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString(), classNames[counter]);
 			Path copiePath = Path.of(temporaryFolderPath, Constant.TEMP_DIRECTORY_NAME + (counter + 1),
 					classNames[counter]);
-			try {
-				File directory = new File(copiePath.toString());
-				if (!directory.exists()) {
-					directory.mkdirs();
-				}
 
-				logger.info(String.format("Copy file from [%s] to [%s]", originalPath, copiePath));
-				Files.copy(originalPath, copiePath, StandardCopyOption.REPLACE_EXISTING);
-			} catch (IOException ioException) {
-				logger.error(String.format("The specified file could not be copied! [%s] \n Exception [%s] ",
-						classNames[counter], ioException.getMessage()));
-				throw ioException;
+			File directory = new File(copiePath.toString());
+			if (!directory.exists()) {
+				directory.mkdirs();
 			}
+
+			Files.copy(originalPath, copiePath, StandardCopyOption.REPLACE_EXISTING);
+			logger.info(String.format("Copy file from [%s] to [%s]", originalPath, copiePath));
 		}
 	}
 

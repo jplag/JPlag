@@ -23,24 +23,16 @@ public class TestCaseModel {
 		this.resultJsonModel = resultJsonModel;
 		this.languageOption = languageOption;
 	}
-
+	
 	/**
-	 * compares the current result with the values stored in the object
-	 * @param jplagResult
-	 * @return true if the values match otherwise false
+	 * returns the, for the test, current result model that has been persisted in the saved list. 
+	 * @return ResultJsonModel loaded for the test
 	 */
-	public Boolean compaireModelProperties(JPlagResult jplagResult) {
-		// for the fine granular testing strategy, the result object contains only one
-		// comparison.
-		for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
-			logger.info("Comparison of the stored values and the current equality values");
-			if (Float.compare(jPlagComparison.similarity(), resultJsonModel.similarity()) != 0) {
-				return false;
-			}
-		}
-		return true;
+	public ResultJsonModel getCurrentResultJsonModel()
+	{
+		return resultJsonModel;
 	}
-
+	
 	/**
 	 * creates the JPlag options for the test run from the values passed in the constructor.
 	 * @return current JPlag options for the created object
