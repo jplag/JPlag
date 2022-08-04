@@ -136,9 +136,15 @@ public class JPlagResult {
 
     private int[] calculateDistributionFor(List<JPlagComparison> comparisons, Function<JPlagComparison, Float> similarityExtractor) {
         int[] similarityDistribution = new int[SIMILARITY_DISTRIBUTION_SIZE];
-        comparisons.stream().map(similarityExtractor).map(percent -> percent / SIMILARITY_DISTRIBUTION_SIZE).map(Float::intValue)
-                .map(index -> index == SIMILARITY_DISTRIBUTION_SIZE ? SIMILARITY_DISTRIBUTION_SIZE - 1 : index)
-                .forEach(index -> similarityDistribution[SIMILARITY_DISTRIBUTION_SIZE - 1 - index]++);
+        int similarityDistributionBucketSize = 100 / SIMILARITY_DISTRIBUTION_SIZE;
+        for (JPlagComparison comparison : comparisons) {
+            float similarity = similarityExtractor.apply(comparison); // extract similarity in percent: 0f <= similarity <= 100f
+            int index = (int) (similarity / similarityDistributionBucketSize); // divide similarity by bucket size to find index of correct bucket.
+            index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1);// index is out of bounds when similarity is 100%. decrease by one to count
+                                                                      // towards the highest value bucket
+            similarityDistribution[SIMILARITY_DISTRIBUTION_SIZE - 1 - index]++; // count comparison towards its determined bucket. bucket order is
+            // reversed, so that the highest value bucket has the lowest index
+        }
         return similarityDistribution;
     }
 }

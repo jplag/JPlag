@@ -26,8 +26,7 @@ import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.options.Verbosity;
-import de.jplag.reporting.JsonReport;
-import de.jplag.reporting.Report;
+import de.jplag.reporting.reportobject.ReportObjectFactory;
 import de.jplag.strategy.ComparisonMode;
 
 /**
@@ -64,9 +63,8 @@ public final class CLI {
             JPlag program = new JPlag(options);
             logger.info("JPlag initialized");
             JPlagResult result = program.run();
-            Report report = new JsonReport();
-            report.saveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
-            finalizeLogger();
+            ReportObjectFactory.createAndSaveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
+
         } catch (ExitException exception) {
             logger.error(exception.getMessage(), exception);
             finalizeLogger();

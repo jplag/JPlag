@@ -129,27 +129,27 @@ public class SubmissionSetBuilder {
 
     private Optional<Submission> loadBaseCode(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             Map<File, Submission> foundSubmissions) throws ExitException {
-        // Extract the basecode submission if necessary.
-        Optional<Submission> baseCodeSubmission = Optional.empty();
-        if (options.hasBaseCode()) {
-            String baseCodeName = options.getBaseCodeSubmissionName().orElseThrow();
-            Submission baseCode = loadBaseCodeAsPath(baseCodeName);
-            if (baseCode == null) {
-                int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
-                if (numberOfRootDirectories > 1) {
-                    throw new BasecodeException("The base code submission needs to be specified by path instead of by name!");
-                }
+        if (!options.hasBaseCode()) {
+            return Optional.empty();
+        }
 
-                // There is one root directory, and the submissionDirectories variable has been checked to be non-empty.
-                // That set thus contains the one and only root directory.
-                File rootDirectory = submissionDirectories.iterator().next();
-
-                // Single root-directory, try the legacy way of specifying basecode.
-                baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
+        String baseCodeName = options.getBaseCodeSubmissionName().orElseThrow();
+        Submission baseCode = loadBaseCodeAsPath(baseCodeName);
+        if (baseCode == null) {
+            int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
+            if (numberOfRootDirectories > 1) {
+                throw new BasecodeException("The base code submission needs to be specified by path instead of by name!");
             }
-            // TODO DF: Here the method assumes that baseCode can be null. later, this is not assumed anymore
-            baseCodeSubmission = Optional.ofNullable(baseCode);
 
+            // There is one root directory, and the submissionDirectories variable has been checked to be non-empty.
+            // That set thus contains the one and only root directory.
+            File rootDirectory = submissionDirectories.iterator().next();
+
+            // Single root-directory, try the legacy way of specifying basecode.
+            baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
+        }
+
+        if (baseCode != null) {
             logger.info("Basecode directory \"{}\" will be used.", baseCode.getName());
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
@@ -158,7 +158,7 @@ public class SubmissionSetBuilder {
                 logger.info("Submission \"{}\" is the specified basecode, it will be skipped during comparison.", removed.getName());
             }
         }
-        return baseCodeSubmission;
+        return Optional.ofNullable(baseCode);
     }
 
     /**

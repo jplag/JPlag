@@ -13,6 +13,7 @@ interface State {
    * Stored files if zip mode is used. Stores the files as key - file name, value - file string
    */
   files: Record<string, string>;
+  submissions: Record<string, Map<string, string>>;
   /**
    * Indicates whether local mode is used.
    */
@@ -35,6 +36,10 @@ interface File {
   fileName: string;
   data: string;
 }
+interface SubmissionFile {
+  name: string;
+  file: File;
+}
 
 interface LoadConfiguration {
   local: boolean;
@@ -53,6 +58,7 @@ const store = createStore<State>({
      * Stored files if zip mode is used. Stores the files as key - file name, value - file string
      */
     files: {},
+    submissions: {},
     /**
      * Indicates whether local mode is used.
      */
@@ -70,6 +76,14 @@ const store = createStore<State>({
      */
     fileString: "",
   },
+  getters: {
+    filesOfSubmission: (state) => (name: string) => {
+      return Array.from(state.submissions[name], ([name, value]) => ({
+        name,
+        value,
+      }));
+    },
+  },
   mutations: {
     addAnonymous(state: State, id) {
       for (let i = 0; i < id.length; i++) {
@@ -86,6 +100,15 @@ const store = createStore<State>({
     },
     saveFile(state, file: File) {
       state.files[file.fileName] = file.data;
+    },
+    saveSubmissionFile(state, submissionFile: SubmissionFile) {
+      if (!state.submissions[submissionFile.name]) {
+        state.submissions[submissionFile.name] = new Map();
+      }
+      state.submissions[submissionFile.name].set(
+        submissionFile.file.fileName,
+        submissionFile.file.data
+      );
     },
     setLoadingType(state, payload: LoadConfiguration) {
       state.local = payload.local;

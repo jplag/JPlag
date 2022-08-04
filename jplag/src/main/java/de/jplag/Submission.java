@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,8 +76,23 @@ public class Submission implements Comparable<Submission> {
 
     @Override
     public int compareTo(Submission other) {
-        // TODO DF: "equals(Object obj)" should be overridden along with the "compareTo(T obj)" method
         return name.compareTo(other.name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Submission otherSubmission)) {
+            return false;
+        }
+        return otherSubmission.getName().equals(name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     /**
