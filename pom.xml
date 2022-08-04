@@ -482,6 +482,7 @@
                 <module>jplag.frontend.rlang</module>
                 <module>jplag.frontend.scheme</module>
                 <module>jplag.frontend.text</module>
+                <module>jplag.endToEndTesting</module>
                 <module>jplag</module>
             </modules>
             <build>
