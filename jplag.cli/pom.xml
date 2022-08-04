@@ -14,10 +14,6 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>jplag</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.jplag</groupId>
             <artifactId>frontend-utils</artifactId>
         </dependency>
         <dependency>

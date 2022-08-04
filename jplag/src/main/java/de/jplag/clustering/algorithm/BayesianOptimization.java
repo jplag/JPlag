@@ -45,6 +45,9 @@ public class BayesianOptimization {
      * @param lengthScale width parameter for the matern kernel
      */
     public BayesianOptimization(RealVector minima, RealVector maxima, int initPoints, int maxEvaluations, double noise, RealVector lengthScale) {
+        if (minima.getDimension() == 0) {
+            throw new IllegalArgumentException("explored parameters must at least have one dimension");
+        }
         if (minima.getDimension() != maxima.getDimension()) {
             throw new DimensionMismatchException(minima.getDimension(), maxima.getDimension());
         }
@@ -162,7 +165,6 @@ public class BayesianOptimization {
                 if (debug && logger.isDebugEnabled()) {
                     logger.debug(gpr.toString(minima, maxima, 100, 25, 0));
                 }
-                // TODO Check that best is not null here
                 coordinates = maxAcq(gpr, best.score, poiSampler, zeroAcquisitionsCounter);
                 testedCoordinates.add(coordinates);
             }
@@ -173,7 +175,6 @@ public class BayesianOptimization {
                 best = result;
             }
         }
-
         return best;
     }
 

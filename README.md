@@ -48,7 +48,7 @@ Usage: JPlag [ options ] [ <root-dir> ... ] [ -new <new-dir> ... ] [ -old <old-d
 
 named arguments:
   -h, --help       show this help message and exit
-  -l               {java,python3,cpp,csharp,rlang,kotlin,char,text,scheme} Select the language to parse the submissions (default: java)
+  -l               {java,python3,cpp,csharp,golang,kotlin,rlang,char,text,scheme} Select the language to parse the submissions (default: java)
   -bc BC           Path of the directory containing the base code (common framework used in all submissions)
   -v               {quiet,long} Verbosity of the logging (default: quiet)
   -d               Debug parser. Non-parsable files will be stored (default: false)

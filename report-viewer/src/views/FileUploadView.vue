@@ -24,6 +24,7 @@ import jszip from "jszip";
 import router from "@/router";
 import store from "@/store/store";
 import { getFileExtension } from "@/utils/Utils";
+import path from "path";
 
 export default defineComponent({
   name: "FileUploadView",
@@ -43,7 +44,6 @@ export default defineComponent({
         name: "OverviewView",
       });
     };
-
     const navigateToComparisonView = (firstId: string, secondId: string) => {
       router.push({
         name: "ComparisonView",
@@ -60,10 +60,20 @@ export default defineComponent({
     const handleZipFile = (file: File) => {
       jszip.loadAsync(file).then(async (zip) => {
         for (const fileName of Object.keys(zip.files)) {
-          console.log(fileName);
-          await zip.files[fileName].async("string").then((data) => {
-            store.commit("saveFile", { fileName: fileName, data: data });
-          });
+          if (fileName.match(/submissions\/(.+)\/(.+)/)) {
+            const filePath = path.parse(fileName);
+            const submissionName = filePath.dir.split("/")[2];
+            await zip.files[fileName].async("string").then((data) => {
+              store.commit("saveSubmissionFile", {
+                name: submissionName,
+                file: { fileName: filePath.base, data: data },
+              });
+            });
+          } else {
+            await zip.files[fileName].async("string").then((data) => {
+              store.commit("saveFile", { fileName: fileName, data: data });
+            });
+          }
         }
         store.commit("setLoadingType", {
           local: false,
@@ -88,7 +98,7 @@ export default defineComponent({
           fileString: str,
         });
         navigateToOverview();
-      } else if (json["first_submission_id"] && json["second_submission_id"]) {
+      } else if (json["id1"] && json["id2"]) {
         store.commit("setLoadingType", {
           local: false,
           zip: false,
@@ -96,8 +106,8 @@ export default defineComponent({
           fileString: str,
         });
         navigateToComparisonView(
-          json["first_submission_id"],
-          json["second_submission_id"]
+          json["id1"],
+          json["id2"]
         );
       }
     };
