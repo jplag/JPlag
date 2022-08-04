@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResultJsonModel {
 
-	@JsonProperty("functionName")
+	@JsonProperty("function_name")
 	private String functionName;
-	@JsonProperty("resultSimilarity")
+	@JsonProperty("result_similarity")
 	private String resultSimilarity;
 	
 	public ResultJsonModel(String functionName, String resultSimilarity)

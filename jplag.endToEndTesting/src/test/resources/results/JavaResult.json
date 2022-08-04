@@ -1,26 +1,26 @@
 [
    {
-      "functionName":"normalizationLevelTestOne",
-      "resultSimilarity":100.0
+      "function_name":"normalizationLevelTestOne",
+      "result_similarity":100.0
    },
    {
-      "functionName":"normalizationLevelTestTwo",
-      "resultSimilarity":100.0
+      "function_name":"normalizationLevelTestTwo",
+      "result_similarity":100.0
    },
    {
-      "functionName":"normalizationLevelTestThree",
-      "resultSimilarity":100.0
+      "function_name":"normalizationLevelTestThree",
+      "result_similarity":100.0
    },
    {
-      "functionName":"tokenGenerationLevelTestOne",
-      "resultSimilarity":64.0
+      "function_name":"tokenGenerationLevelTestOne",
+      "result_similarity":64.0
    },
    {
-      "functionName":"tokenGenerationLevelTestTwo",
-      "resultSimilarity":73.04348
+      "function_name":"tokenGenerationLevelTestTwo",
+      "result_similarity":73.04348
    },
    {
-      "functionName":"tokenGenerationLevelTestThree",
-      "resultSimilarity":73.94958
+      "function_name":"tokenGenerationLevelTestThree",
+      "result_similarity":73.94958
    }
 ]
