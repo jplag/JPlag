@@ -18,7 +18,7 @@ public interface Language {
     String getName();
 
     /**
-     * Short name of the language used for CLI options.
+     * Identifier of the language for CLI options and for dynamic loading of language.
      */
     String getIdentifier();
 

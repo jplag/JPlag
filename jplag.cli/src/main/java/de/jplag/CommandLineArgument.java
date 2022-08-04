@@ -87,7 +87,8 @@ public enum CommandLineArgument {
             new Builder("--cluster-pp-threshold", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("threshold"));
 
     /**
-     * The short name of the default {@link Language}.
+     * The identifier of the default {@link Language}.
+     * @see Language#getIdentifier()
      */
     public static final String DEFAULT_LANGUAGE_IDENTIFIER = de.jplag.java.Language.IDENTIFIER;
 

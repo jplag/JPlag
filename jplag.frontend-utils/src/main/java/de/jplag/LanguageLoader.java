@@ -51,7 +51,7 @@ public final class LanguageLoader {
 
     /**
      * Load a language that is currently in the classpath by its short name.
-     * @param identifier the short name of the language
+     * @param identifier the identifier of the language
      * @return the language or an empty optional if no language has been found.
      * @see Language#getIdentifier()
      */
@@ -63,7 +63,7 @@ public final class LanguageLoader {
     }
 
     /**
-     * Get a list of all available languages with their short name.
+     * Get a list of all available languages with their identifiers.
      * @return the list of all languages
      */
     public static List<String> getAllAvailableLanguageIdentifiers() {
