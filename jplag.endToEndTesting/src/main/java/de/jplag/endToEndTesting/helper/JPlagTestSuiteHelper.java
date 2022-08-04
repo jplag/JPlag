@@ -26,7 +26,6 @@ public class JPlagTestSuiteHelper {
 	private static final Logger logger = LoggerFactory.getLogger("EndToEndTesting");
 
 	private String[] resourceNames;
-	private String temporaryFolderPath;
 	private List<ResultJsonModel> resultModel;
 	private LanguageOption languageOption;
 
@@ -42,11 +41,10 @@ public class JPlagTestSuiteHelper {
 	public JPlagTestSuiteHelper(LanguageOption languageOption) throws Exception {
 		this.languageOption = languageOption;
 		this.resourceNames = new File(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString()).list();
-		this.temporaryFolderPath = getTempFolderPath();
 
 		this.resultModel = JsonHelper
 				.getResultModelFromPath(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toAbsolutePath().toString());
-		logger.info(String.format("temp path at [%s]", this.temporaryFolderPath));
+		logger.info(String.format("temp path at [%s]", Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
 	}
 
 	/**
@@ -63,20 +61,7 @@ public class JPlagTestSuiteHelper {
 		var functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
 		ResultJsonModel resultJsonModel = resultModel.stream()
 				.filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny().orElse(null);
-		return new TestCaseModel(temporaryFolderPath, resultJsonModel, languageOption);
-	}
-
-	/**
-	 * Loads a suitable system path to temporarily store the test cases.
-	 * 
-	 * @return The temporary system folder, if any, or the path of the current
-	 *         runtime environment
-	 * @throws IOException
-	 */
-	private String getTempFolderPath() throws IOException {
-		return !System.getProperty(Constant.TEMP_SYSTEM_DIRECTORY).isBlank()
-				? Path.of(System.getProperty(Constant.TEMP_SYSTEM_DIRECTORY), Constant.TEMP_DIRECTORY_NAME).toString()
-				: Path.of(new File(".").getCanonicalPath(), Constant.TEMP_DIRECTORY_NAME).toString();
+		return new TestCaseModel(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME, resultJsonModel, languageOption);
 	}
 
 	/**
@@ -86,7 +71,7 @@ public class JPlagTestSuiteHelper {
 	 */
 	public void clear() throws Exception {
 		logger.info("Class instance was cleaned!");
-		deleteCopiedFiles(new File(temporaryFolderPath));
+		deleteCopiedFiles(new File(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
 	}
 
 	/**
@@ -106,7 +91,7 @@ public class JPlagTestSuiteHelper {
 		// Copy the resources data to the temporary path
 		for (int counter = 0; counter < classNames.length; counter++) {
 			Path originalPath = Path.of(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString(), classNames[counter]);
-			Path copiePath = Path.of(temporaryFolderPath, Constant.TEMP_DIRECTORY_NAME + (counter + 1),
+			Path copiePath = Path.of(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME, Constant.TEMPORARY_DIRECTORY_NAME + (counter + 1),
 					classNames[counter]);
 
 			File directory = new File(copiePath.toString());
