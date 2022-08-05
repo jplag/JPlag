@@ -43,7 +43,8 @@ public abstract class AbstractMetamodelVisitor {
     }
 
     /**
-     * Visits an EObject and all nodes in the containment tree below.
+     * Visits an EObject and all nodes in the containment tree below. Note that multiple visitor method may be called for a
+     * single element. For example <code>visitEClass()</code> and <code>visitEObject()</code>.
      * @param eObject is the EObject to visit.
      */
     public final void visit(EObject eObject) {

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class EMFUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(EMFUtil.class.getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(EMFUtil.class);
 
     private EMFUtil() {
         // private constructor for non-instantiability.

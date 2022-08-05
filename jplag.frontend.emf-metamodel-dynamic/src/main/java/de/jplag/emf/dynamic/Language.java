@@ -1,7 +1,6 @@
 package de.jplag.emf.dynamic;
 
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
-import de.jplag.emf.parser.EcoreParser;
 
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF). This language is based on a dynamically
@@ -16,10 +15,6 @@ public class Language extends de.jplag.emf.Language {
 
     public Language() {
         super(new DynamicEcoreParser());
-    }
-
-    protected Language(EcoreParser parser) {
-        super(parser);
     }
 
     @Override
