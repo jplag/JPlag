@@ -3,7 +3,6 @@ package de.jplag.endToEndTesting.helper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -11,16 +10,23 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.processing.FilerException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.endToEndTesting.constants.Constant;
-import de.jplag.options.LanguageOption;
-import model.ResultJsonModel;
-import model.TestCaseModel;
+import de.jplag.endToEndTesting.model.ResultJsonModel;
+import de.jplag.endToEndTesting.model.TestCaseModel;
 
+import de.jplag.options.LanguageOption;
+
+/**
+ * This helper class deals with creating the test cases as well as copying and
+ * deleting for the end-to-end tests. The required plagiarisms are copied from
+ * the resource folder to a temporary location, thus creating a folder structure
+ * that can be tested by JPlag. Models are instantiated here and required
+ * information for the tests is loaded.
+ *
+ */
 public class JPlagTestSuiteHelper {
 
 	private static final Logger logger = LoggerFactory.getLogger("EndToEndTesting");
@@ -36,9 +42,11 @@ public class JPlagTestSuiteHelper {
 	 * run with the specified language
 	 * 
 	 * @param languageOption for loading language-specific resources
-	 * @throws Exception
+	 * @throws IOException is thrown for all problems that may occur while parsing
+	 *                     the json file. This includes both reading and parsing
+	 *                     problems.
 	 */
-	public JPlagTestSuiteHelper(LanguageOption languageOption) throws Exception {
+	public JPlagTestSuiteHelper(LanguageOption languageOption) throws IOException {
 		this.languageOption = languageOption;
 		this.resourceNames = new File(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString()).list();
 
@@ -51,11 +59,13 @@ public class JPlagTestSuiteHelper {
 	 * for the stored previous results of the test in order to compare them with the
 	 * current results.
 	 * 
-	 * @param classNames
+	 * @param classNames Array of class names with language specific extension to be
+	 *                   prepared for a test.
 	 * @return comparison results saved for the test
-	 * @throws Exception
+	 * @throws IOException Exception can be thrown in cases that involve reading,
+	 *                     copying or locating files.
 	 */
-	public TestCaseModel createNewTestCase(String[] classNames) throws Exception {
+	public TestCaseModel createNewTestCase(String[] classNames) throws IOException {
 		createNewTestCaseDirectory(classNames);
 		var functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
 		ResultJsonModel resultJsonModel = resultModel.stream()
@@ -66,9 +76,8 @@ public class JPlagTestSuiteHelper {
 	/**
 	 * The copied data should be deleted after instance closure
 	 * 
-	 * @throws Exception
 	 */
-	public void clear() throws Exception {
+	public void clear() {
 		logger.info("Class instance was cleaned!");
 		deleteCopiedFiles(new File(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
 	}
@@ -76,9 +85,10 @@ public class JPlagTestSuiteHelper {
 	/**
 	 * Copies the passed filenames to a temporary path to use them in the tests
 	 * 
-	 * @throws Exception
+	 * @throws IOException Exception can be thrown in cases that involve reading,
+	 *                     copying or locating files.
 	 */
-	private void createNewTestCaseDirectory(String[] classNames) throws Exception {
+	private void createNewTestCaseDirectory(String[] classNames) throws IOException {
 		// before copying files to the test path, check if all files are in the resource
 		// directory
 		for (String className : classNames) {
@@ -106,17 +116,17 @@ public class JPlagTestSuiteHelper {
 	/**
 	 * Delete directory with including files
 	 * 
-	 * @param file
+	 * @param file Path to a folder or file to be deleted. This happens recursively to the path
 	 */
 	private void deleteCopiedFiles(File folder) {
 		File[] files = folder.listFiles();
 		if (files != null) { // some JVMs return null for empty dirs
-			for (File f : files) {
-				if (f.isDirectory()) {
-					deleteCopiedFiles(f);
+			for (File file : files) {
+				if (file.isDirectory()) {
+					deleteCopiedFiles(file);
 				} else {
-					logger.info(String.format("Delete file in folder: [%s]", f.toString()));
-					f.delete();
+					logger.info(String.format("Delete file in folder: [%s]", file.toString()));
+					file.delete();
 				}
 			}
 		}
