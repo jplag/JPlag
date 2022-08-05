@@ -1,4 +1,4 @@
-package de.jplag.endToEndTesting.helper;
+package de.jplag.end_to_end_testing.helper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,9 +12,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.endToEndTesting.constants.Constant;
-import de.jplag.endToEndTesting.model.ResultJsonModel;
-import de.jplag.endToEndTesting.model.TestCaseModel;
+import de.jplag.end_to_end_testing.constants.Constant;
+import de.jplag.end_to_end_testing.model.ResultJsonModel;
+import de.jplag.end_to_end_testing.model.TestCaseModel;
 import de.jplag.options.LanguageOption;
 
 /**
@@ -24,7 +24,7 @@ import de.jplag.options.LanguageOption;
  */
 public class JPlagTestSuiteHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger("EndToEndTesting");
+    private static final Logger logger = LoggerFactory.getLogger(JPlagTestSuiteHelper.class);
 
     private String[] resourceNames;
     private List<ResultJsonModel> resultModel;
@@ -43,7 +43,7 @@ public class JPlagTestSuiteHelper {
         this.resourceNames = new File(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString()).list();
 
         this.resultModel = JsonHelper.getResultModelFromPath();
-        logger.info(String.format("temp path at [%s]", Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
+        logger.info("temp path at [{}]", Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME);
     }
 
     /**
@@ -93,7 +93,7 @@ public class JPlagTestSuiteHelper {
             }
 
             Files.copy(originalPath, copiePath, StandardCopyOption.REPLACE_EXISTING);
-            logger.info(String.format("Copy file from [%s] to [%s]", originalPath, copiePath));
+            logger.info("Copy file from [{}] to [{}]", originalPath, copiePath);
         }
     }
 
@@ -108,16 +108,16 @@ public class JPlagTestSuiteHelper {
                 if (file.isDirectory()) {
                     deleteCopiedFiles(file);
                 } else {
-                    logger.info(String.format("Delete file in folder: [%s]", file.toString()));
+                    logger.info("Delete file in folder: [{}]", file.toString());
                     if (!file.delete()) {
-                        logger.error(String.format("The file at [%s] could not be deleted", file.toString()));
+                        logger.error("The file at [{}] could not be deleted", file.toString());
                     }
                 }
             }
         }
-        logger.info(String.format("Delete folder: [%s]", folder.toString()));
+        logger.info("Delete folder: [{}]", folder.toString());
         if (!folder.delete()) {
-            logger.error(String.format("The folder at [%s] could not be deleted", folder.toString()));
+            logger.error("The folder at [{}] could not be deleted", folder.toString());
         }
     }
 

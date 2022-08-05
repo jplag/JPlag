@@ -1,4 +1,4 @@
-package de.jplag.endToEndTesting.constants;
+package de.jplag.end_to_end_testing.constants;
 
 import java.nio.file.Path;
 
@@ -11,10 +11,6 @@ public final class Constant {
         // private constructor to prevent instantiation
     }
 
-    /**
-     * Empty string to be able to query possible empty return values.
-     */
-    public static final String EMPTY_STRING = "";
     /**
      * Name for the folder to copy the submissions to in order to test them with JPlag
      */

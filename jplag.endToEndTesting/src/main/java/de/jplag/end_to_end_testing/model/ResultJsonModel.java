@@ -1,4 +1,4 @@
-package de.jplag.endToEndTesting.model;
+package de.jplag.end_to_end_testing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,4 +1,4 @@
-package de.jplag.endToEndTesting.helper;
+package de.jplag.end_to_end_testing.helper;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.jplag.endToEndTesting.constants.Constant;
-import de.jplag.endToEndTesting.model.ResultJsonModel;
+import de.jplag.end_to_end_testing.constants.Constant;
+import de.jplag.end_to_end_testing.model.ResultJsonModel;
 
 /**
  * Helper class for serializing and creating all json dependent events.
@@ -18,6 +18,7 @@ public final class JsonHelper {
      * private constructor to prevent instantiation
      */
     private JsonHelper() {
+    	// For Serialization 
     }
 
     /**

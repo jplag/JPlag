@@ -1,4 +1,4 @@
-package jplag.endToEndTesting;
+package de.jplag.end_to_end_testing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
-import de.jplag.endToEndTesting.constants.Constant;
-import de.jplag.endToEndTesting.helper.JPlagTestSuiteHelper;
-import de.jplag.endToEndTesting.model.TestCaseModel;
+import de.jplag.end_to_end_testing.constants.Constant;
+import de.jplag.end_to_end_testing.helper.JPlagTestSuiteHelper;
+import de.jplag.end_to_end_testing.model.TestCaseModel;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.LanguageOption;
 
@@ -28,7 +28,7 @@ import de.jplag.options.LanguageOption;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class javaTestCases {
-    private static final Logger logger = LoggerFactory.getLogger("EndToEndTesting");
+    private static final Logger logger = LoggerFactory.getLogger(JPlagTestSuiteHelper.class);
 
     private JPlagTestSuiteHelper jplagTestSuiteHelper;
 
