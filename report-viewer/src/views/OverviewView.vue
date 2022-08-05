@@ -161,7 +161,7 @@ export default defineComponent({
           if (store.state.anonymous.size === 0) {
             store.commit(
               "addAnonymous",
-              overview.submissionIds.filter((s) => s !== id[0])
+              overview.submissionIds.map(s => s.submissionId).filter((s) => s !== id[0])
             );
           } else {
             store.commit("addAnonymous", id);

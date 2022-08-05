@@ -1,3 +1,4 @@
+import { SubmissionName } from "@/model/SubmissionName";
 import { createStore } from "vuex";
 
 /**
@@ -30,6 +31,8 @@ interface State {
    * Files string if single mode is used.
    */
   fileString: string;
+
+  fileIdToDisplayName: Map<string, string>;
 }
 
 interface File {
@@ -75,6 +78,7 @@ const store = createStore<State>({
      * Files string if single mode is used.
      */
     fileString: "",
+    fileIdToDisplayName: new Map(),
   },
   getters: {
     filesOfSubmission: (state) => (name: string) => {
@@ -82,6 +86,9 @@ const store = createStore<State>({
         name,
         value,
       }));
+    },
+    submissionDisplayName: (state) => (id: string) => {
+      return state.fileIdToDisplayName.get(id);
     },
   },
   mutations: {
@@ -100,6 +107,11 @@ const store = createStore<State>({
     },
     saveFile(state, file: File) {
       state.files[file.fileName] = file.data;
+    },
+    saveSubmissionNames(state, names: Array<SubmissionName>) {
+      state.fileIdToDisplayName = new Map(
+        names.map((name) => [name.submissionId, name.displayName])
+      );
     },
     saveSubmissionFile(state, submissionFile: SubmissionFile) {
       if (!state.submissions[submissionFile.name]) {
