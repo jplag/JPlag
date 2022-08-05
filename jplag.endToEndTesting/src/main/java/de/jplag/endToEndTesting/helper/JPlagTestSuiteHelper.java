@@ -116,7 +116,8 @@ public class JPlagTestSuiteHelper {
 	/**
 	 * Delete directory with including files
 	 * 
-	 * @param file Path to a folder or file to be deleted. This happens recursively to the path
+	 * @param file Path to a folder or file to be deleted. This happens recursively
+	 *             to the path
 	 */
 	private void deleteCopiedFiles(File folder) {
 		File[] files = folder.listFiles();
@@ -126,12 +127,16 @@ public class JPlagTestSuiteHelper {
 					deleteCopiedFiles(file);
 				} else {
 					logger.info(String.format("Delete file in folder: [%s]", file.toString()));
-					file.delete();
+					if (!file.delete()) {
+						logger.error(String.format("The file at [%s] could not be deleted", file.toString()));
+					}
 				}
 			}
 		}
 		logger.info(String.format("Delete folder: [%s]", folder.toString()));
-		folder.delete();
+		if (!folder.delete()) {
+			logger.error(String.format("The folder at [%s] could not be deleted", folder.toString()));
+		}
 	}
 
 }
