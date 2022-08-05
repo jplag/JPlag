@@ -4,7 +4,7 @@
 <template>
   <div class="container">
     <div class="column-list">
-      <p v-for="(id, index) in ids" :key="index"
+      <p v-for="(id, index) in ids.map(s => s.displayName)" :key="index"
          :class="{'selected' : !store.state.anonymous.has(id) && store.state.anonymous.size !== 0 }"
          @click="$emit('idSent', [id])">
         {{ id }}
@@ -14,15 +14,16 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {defineComponent} from "vue";
-import store from "@/store/store.ts"
+import store from "@/store/store"
+import { SubmissionName } from "@/model/SubmissionName";
 
 export default defineComponent({
   name: "IDsList",
   props: {
     ids: {
-      type: Array,
+      type: Array<SubmissionName>,
       required: true
     }
   },

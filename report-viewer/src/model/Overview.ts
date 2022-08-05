@@ -1,5 +1,6 @@
 import { Metric } from "./Metric";
 import { Cluster } from "@/model/Cluster";
+import { SubmissionName } from "./SubmissionName";
 
 export class Overview {
   private readonly _submissionFolderPath: Array<string>;
@@ -7,7 +8,7 @@ export class Overview {
   private readonly _language: string;
   private readonly _fileExtensions: Array<string>;
   private readonly _matchSensitivity: number;
-  private readonly _submissionIds: Array<string>;
+  private readonly _submissionIds: Array<SubmissionName>;
   private readonly _dateOfExecution: string;
   private readonly _durationOfExecution: number;
   private readonly _metrics: Array<Metric>;
@@ -19,7 +20,7 @@ export class Overview {
     language: string,
     fileExtensions: Array<string>,
     matchSensitivity: number,
-    submissionIds: Array<string>,
+    submissionIds: Array<SubmissionName>,
     dateOfExecution: string,
     durationOfExecution: number,
     metrics: Array<Metric>,
@@ -57,7 +58,7 @@ export class Overview {
     return this._matchSensitivity;
   }
 
-  get submissionIds(): Array<string> {
+  get submissionIds(): Array<SubmissionName> {
     return this._submissionIds;
   }
 

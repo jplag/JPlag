@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.jplag.reporting.reportobject.model.SubmissionName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,8 @@ import de.jplag.reporting.reportobject.mapper.ComparisonReportMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
+
+import static de.jplag.reporting.reportobject.mapper.SubmissionNameMapper.submissionNameOf;
 
 /**
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.
@@ -125,14 +128,16 @@ public class ReportObjectFactory {
      * Gets the names of all submissions.
      * @return A list containing all submission names.
      */
-    private static List<String> extractSubmissionNames(List<JPlagComparison> comparisons) {
-        HashSet<String> names = new HashSet<>();
+    private static List<SubmissionName> extractSubmissionNames(List<JPlagComparison> comparisons) {
+        HashSet<SubmissionName> names = new HashSet<>();
         comparisons.forEach(comparison -> {
-            names.add(comparison.getFirstSubmission().getName());
-            names.add(comparison.getSecondSubmission().getName());
+            names.add(submissionNameOf(comparison.getFirstSubmission()));
+            names.add(submissionNameOf(comparison.getSecondSubmission()));
         });
         return new ArrayList<>(names);
     }
+
+
 
     /**
      * Gets the names of all comparison.

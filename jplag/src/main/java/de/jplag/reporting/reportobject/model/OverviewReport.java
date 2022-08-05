@@ -20,7 +20,7 @@ public class OverviewReport {
     private List<String> fileExtensions;
 
     @JsonProperty("submission_ids")
-    private List<String> submissionIds;
+    private List<SubmissionName> submissionIds;
 
     @JsonProperty("failed_submission_names")
     private List<String> failedSubmissionNames;
@@ -80,7 +80,7 @@ public class OverviewReport {
         return fileExtensions;
     }
 
-    public List<String> getSubmissionIds() {
+    public List<SubmissionName> getSubmissionIds() {
         return submissionIds;
     }
 
@@ -136,7 +136,7 @@ public class OverviewReport {
         this.fileExtensions = List.copyOf(fileExtensions);
     }
 
-    public void setSubmissionIds(List<String> submissionIds) {
+    public void setSubmissionIds(List<SubmissionName> submissionIds) {
         this.submissionIds = List.copyOf(submissionIds);
     }
 
