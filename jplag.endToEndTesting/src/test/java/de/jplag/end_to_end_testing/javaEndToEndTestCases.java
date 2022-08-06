@@ -52,16 +52,18 @@ class javaEndToEndTestCases {
     }
 
     /**
-     * @return
+     * Test cases created for the normalization level
+     * @return the classes to be tested with the corresponding identifier
      */
-    private static Stream<Arguments> stringArrayProvider() {
+    private static Stream<Arguments> normalizationLevelTestArguments() {
         return Stream.of(Arguments.of((Object) new String[] {"SortAlgo.java", "SortAlgo1.java"}, 0),
                 Arguments.of((Object) new String[] {"SortAlgo.java", "SortAlgo2.java"}, 1),
                 Arguments.of((Object) new String[] {"SortAlgo1.java", "SortAlgo2.java"}, 2));
     }
 
     /**
-     * @return
+     * Test cases for the token generation level
+     * @return the classes to be tested with the corresponding identifier    
      */
     private static Stream<Arguments> tokenGenerationLevelTestArguments() {
         return Stream.of(Arguments.of((Object) new String[] {"SortAlgo.java", "SortAlgo3.java"}, 0),
@@ -78,7 +80,7 @@ class javaEndToEndTestCases {
      * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
      */
     @ParameterizedTest
-    @MethodSource("stringArrayProvider")
+    @MethodSource("normalizationLevelTestArguments")
     void normalizationLevelTest(String[] testClassNames, int testId) throws IOException, ExitException {
 
         TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
