@@ -1,21 +1,92 @@
 # JPlag Scala language frontend
 
 The JPlag Scala frontend allows the use of JPlag with submissions in Scala. <br>
-It is based on the [Scalameta library](https://scalameta.org/) parser, and is adapted from the [CodeGra-de Scala frontend](https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.scala) for JPlag, both licensed under BSD-3.
+It is based on the [Scalameta library](https://scalameta.org/) parser, and is adapted from
+the [CodeGra-de Scala frontend](https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.scala) for JPlag, both
+licensed under BSD-3.
 
 ### Scala specification compatibility
 
-The dependencies only allow compatibility up to Scala 2.12 (April 2018), so more recent syntactical features like enums are not supported yet. 
+The dependencies only allow compatibility up to Scala 2.12 (April 2018), so more recent syntactical features like enums
+are not supported yet.
 
-Due to intercompatibility issues between dependencies, previous attempts to upgrade to Scala 3 were unsuccessful. We will continue our efforts to support Scala 3. 
- 
+Due to intercompatibility issues between dependencies, previous attempts to upgrade to Scala 3 were unsuccessful. We
+will continue our efforts to support Scala 3.
+
 ### Token Extraction
 
-The choice of tokens is intended to be similar to the Java or C# frontends. Specifically, among others, it includes a range of nesting structures (class and method declarations, control flow expressions) as well as variable declaration, object creation, assignment, and control flow altering keywords. <br>
-Blocks are distinguished by their context, i.e. there are separate `TokenConstants` for `if` blocks, `for` blocks, class bodies, method bodies, array constructors, and the like.
+#### General
 
-More syntactic elements of Scala may turn out to be helpful to include in the future, especially those that are newly introduced.
+The choice of tokens is intended to be similar to the Java or C# frontends. Specifically, among others, it includes a
+range of nesting structures (class and method declarations, control flow expressions) as well as variable declaration,
+object creation, assignment, and control flow altering keywords. <br>
+Blocks are distinguished by their context, i.e. there are separate `TokenConstants` for `if` blocks, `for` blocks, class
+bodies, method bodies, array constructors, and the like.
+
+More syntactic elements of Scala may turn out to be helpful to include in the future, especially those that are newly
+introduced.
+
+#### Problem in Scala (1): Method calls
+
+The syntax of Scala allows to omit the parentheses when calling methods without arguments. These method calls are
+indistinguishable from member references. This makes the system vulnerable to attacks where an empty set of brackets is
+simply added after the member name. To address this, method calls with no arguments are not marked with an `APPLY`
+token, even though they are recognizable as method calls.
+
+```scala
+myObject.member // may be member reference or method call
+// gets no tokens
+
+myObject.member2() // must be method call
+// gets no tokens either!
+
+myObject.member3(arg1, arg2) // must be method call
+// gets APPLY ARG ARG tokens
+```
+
+#### Problem in Scala (2): Operators
+
+Operators are implemented as regular method calls. Additionally, custom operators on objects/classes can be defined,
+possibly overloading existing ones like `+`, `&=` etc.
+
+In other frontends, operations are not assigned tokens but "regular" method calls are. This calls for the task to try to
+distinguish operations from what we understand as "regular" method calls. This is not entirely possible with only
+parsing information, so we decided to go about this problem as follows:
+
+- Calls to methods with an identifier that is used as an operator are NOT treated as a method call. This is accomplished
+  by comparing to a hard-coded list of standard operators on numbers, booleans, lists, and types (although type
+  operators cannot be used in the same contexts as the others). This applies in infix and dot notation.
+- Calls to methods with any other identifier, be it alphanumerical, symbolic or any combination, are treated as method
+  calls and are assigned `APPLY` and `ARG` tokens if applicable, see (1).
+
+#### Problem in Scala (3): `return` is optional and discouraged
+
+In Scala, the use of the `return` keyword is regarded as a bad smell because it may disrupt the control flow in ways
+unintended by the less experienced Scala developer.
+Instead, like any block of code, the method body is evaluated to the last expression that is evaluated.
+
+```scala
+def power(base: Int, exponent: Int): Int = {
+    if (exponent == 0) 1                                // mark this return value?
+    else if (exponent == 1) base                        // and this one?
+    else if (exponent % 2 == 0) 
+        ((i: Int) => i*i)(power(base, exponent / 2))    // and this one?
+    else base * power(base, exponent - 1)               // and this one?
+}
+```
+That raises the question whether to try and mark these more implicit return values, so that the output of this frontend
+would be consistent with others.
+
+To determine all possible return values, semantic information about control structures is necessary which may be tedious
+to extract from the AST, but possible (e.g. by means of a stack mechanic).
+On the other hand, "the last expression of a block" does not hold the same _syntactical_ weight to it as a return
+statement.
+
+For the moment, implicit block values are neglected.
 
 ### Usage
 
-To use the Scala frontend, add the `-l scala` flag in the CLI, or use a `JPlagOption` object set to `LanguageOption.SCALA` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+To use the Scala frontend, add the `-l scala` flag in the CLI, or use a `JPlagOption` object set
+to `LanguageOption.SCALA` in the Java API as described in the usage information in
+the [readme of the main project](https://github.com/jplag/JPlag#usage)
+and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).

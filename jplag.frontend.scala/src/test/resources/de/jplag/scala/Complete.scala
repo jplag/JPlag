@@ -109,9 +109,43 @@ class Complete extends SuperClass with MyTrait {
         }
         println("b is not accessible here.")
     }
+
+    def operators(): Unit = {
+        // This is not treated as a function call
+        val a = 1 + 2
+        // This is treated as a function call
+        val b = (1).+(2)
+    }
+
+    def functionObject(): Unit = {
+        var f : Int => Int = _ * 2
+        f(2)
+
+        ((i: Int) => i * 2)(2)
+    }
+
+    def memberChain(): Unit = {
+        a.b.c
+    }
+
+    def infix() : Unit = {
+        val list = List(1,2,3)
+        val list2 = list reverse_::: list
+    }
+
+    def power(base: Int, exponent: Int): Int = {
+        if (exponent == 0) 1
+        else if (exponent == 1) base
+        else if (exponent % 2 == 0) {
+            ((i: Int) => i * i) (power(base, exponent / 2))
+        }
+        else base * power(base, exponent - 1)
+    }
+
     /*
-    Enums are a feature of Scala3, not supported by the parser.
+    Enums are a feature of Scala3, not yet supported by the parser.
     enum Menu:
         case PizzaMargharita, SpaghettiBolognese, Fries
     */
+
 }
