@@ -214,7 +214,6 @@ class Parser extends AbstractParser {
                 case Enumerator.Guard(_) => TR(Some(Guard))
 
                 case Term.Param(_) => TR(traverse = _ => add(Parameter, tree, fromEnd = false))
-                case Term.NewAnonymous(_) => TR(Some(ClassBegin), Some(ClassEnd))
                 case Term.ApplyInfix(_, op, _, _) if op.value.contains("=") && !Array("==", "!=").contains(op.value) => TR(Some(Assign))
                 case Term.ApplyInfix(fun, op, typeArgs, args) if !isStandardOperator(op.value) => TR(traverse = _ => {
                     add(Apply, tree, fromEnd = false)
@@ -316,7 +315,6 @@ class Parser extends AbstractParser {
 
         for (file <- files) {
             currentFile = file
-            // getProgram.print(null, "Parsing file" + file + "\n")
             if (!parseFile(dir, file)) {
                 errors += 1
             }
