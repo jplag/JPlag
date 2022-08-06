@@ -142,6 +142,17 @@ class Complete extends SuperClass with MyTrait {
         else base * power(base, exponent - 1)
     }
 
+    def methodCall() : Unit = {
+        myObject.member // may be member reference or method call
+        // gets MEMBER token
+
+        myObject.member2() // must be method call
+        // gets MEMBER token
+
+        myObject.member3(arg1, arg2) // must be method call
+        // gets APPLY MEMBER ARG ARG tokens
+    }
+
     /*
     Enums are a feature of Scala3, not yet supported by the parser.
     enum Menu:

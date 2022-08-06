@@ -35,13 +35,13 @@ token, even though they are recognizable as method calls.
 
 ```scala
 myObject.member // may be member reference or method call
-// gets no tokens
+// gets MEMBER token
 
 myObject.member2() // must be method call
-// gets no tokens either!
+// gets MEMBER token
 
 myObject.member3(arg1, arg2) // must be method call
-// gets APPLY ARG ARG tokens
+// gets APPLY MEMBER ARG ARG tokens
 ```
 
 #### Problem in Scala (2): Operators
