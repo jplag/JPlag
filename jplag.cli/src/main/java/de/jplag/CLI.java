@@ -127,10 +127,16 @@ public final class CLI {
         if (comparisonMode.isEmpty())
             logger.warn("Unknown comparison mode, using default mode!");
 
-        JPlagOptions options = new JPlagOptions(language, DEBUG.getFrom(namespace), Arrays.stream(fileSuffixes).toList(),
-                SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace), MIN_TOKEN_MATCH.getFrom(namespace),
-                EXCLUDE_FILE.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, BASE_CODE.getFrom(namespace),
-                SUBDIRECTORY.getFrom(namespace), Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
+        JPlagOptions options = new JPlagOptions(language, submissionDirectories, oldSubmissionDirectories) //
+                .withDebugParser(DEBUG.getFrom(namespace)) //
+                .withFileSuffixes(Arrays.stream(fileSuffixes).toList()) //
+                .withSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace)) //
+                .withMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace)) //
+                .withMinimumTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace)) //
+                .withExclusionFileName(EXCLUDE_FILE.getFrom(namespace)) //
+                .withBaseCodeSubmissionName(BASE_CODE.getFrom(namespace)) //
+                .withSubdirectoryName(SUBDIRECTORY.getFrom(namespace)) //
+                .withVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
 
         if (comparisonMode.isPresent())
             options = options.withComparisonMode(comparisonMode.get());

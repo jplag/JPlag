@@ -46,8 +46,7 @@ public abstract class TestBase {
 
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization)
             throws ExitException {
-        JPlagOptions options = new JPlagOptions(LanguageOption.JAVA, false, null, JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD,
-                JPlagOptions.DEFAULT_SHOWN_COMPARISONS, null, null, newPaths, oldPaths, null, null, null);
+        JPlagOptions options = new JPlagOptions(LanguageOption.JAVA, newPaths, oldPaths);
         options = customization.apply(options);
         options = options.withVerbosity(Verbosity.LONG);
         JPlag jplag = new JPlag(options);
