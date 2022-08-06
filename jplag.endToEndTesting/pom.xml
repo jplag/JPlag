@@ -18,7 +18,7 @@
             <artifactId>junit-jupiter</artifactId>
             <version>5.9.0</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>frontend-testutils</artifactId>

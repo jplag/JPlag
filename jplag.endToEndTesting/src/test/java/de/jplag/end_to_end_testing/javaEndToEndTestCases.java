@@ -12,8 +12,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +61,7 @@ class javaEndToEndTestCases {
 
     /**
      * Test cases for the token generation level
-     * @return the classes to be tested with the corresponding identifier    
+     * @return the classes to be tested with the corresponding identifier
      */
     private static Stream<Arguments> tokenGenerationLevelTestArguments() {
         return Stream.of(Arguments.of((Object) new String[] {"SortAlgo.java", "SortAlgo3.java"}, 0),
