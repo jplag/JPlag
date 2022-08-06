@@ -1,13 +1,13 @@
 package de.jplag;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This method represents the whole result of a comparison between two submissions.
  */
-public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME TS: contains a lot of code duplication
+public class JPlagComparison { // FIXME TS: contains a lot of code duplication
 
     private static final int ROUNDING_FACTOR = 10;
 
@@ -36,17 +36,20 @@ public class JPlagComparison implements Comparator<JPlagComparison> { // FIXME T
     }
 
     @Override
-    public int compare(JPlagComparison comparison1, JPlagComparison comparison2) {
-        return Float.compare(comparison2.similarity(), comparison1.similarity()); // comparison2 first!
-    }
-
-    // TODO DF: hashCode is not implemented!!
-    @Override
     public boolean equals(Object other) {
-        if (!(other instanceof JPlagComparison)) {
+        if (other == this) {
+            return true;
+        }
+        if (!(other instanceof JPlagComparison otherComparison)) {
             return false;
         }
-        return (compare(this, (JPlagComparison) other) == 0);
+        return firstSubmission.equals(otherComparison.getFirstSubmission()) && secondSubmission.equals(otherComparison.getSecondSubmission())
+                && matches.equals(otherComparison.matches);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstSubmission, secondSubmission, matches);
     }
 
     /**

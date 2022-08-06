@@ -34,7 +34,7 @@ export class OverviewFactory {
         metricThreshold: metric.threshold as number,
         distribution: metric.distribution as Array<number>,
         comparisons: comparisons,
-        description: metric.description as string
+        description: metric.description as string,
       });
     });
 
