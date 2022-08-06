@@ -194,11 +194,11 @@ public record JPlagOptions(LanguageOption languageOption, ComparisonMode compari
 
     @Override
     public Integer minimumTokenMatch() {
-        Integer croppedMinimumTokenMatch = (minimumTokenMatch != null && minimumTokenMatch < 1) ? Integer.valueOf(1) : minimumTokenMatch;
+        Integer fixedMinimumTokenMatch = (minimumTokenMatch != null && minimumTokenMatch < 1) ? Integer.valueOf(1) : minimumTokenMatch;
         var language = language();
-        if (croppedMinimumTokenMatch == null && language != null)
+        if (fixedMinimumTokenMatch == null && language != null)
             return language.minimumTokenMatch();
-        return minimumTokenMatch;
+        return fixedMinimumTokenMatch;
     }
 
     @Override
