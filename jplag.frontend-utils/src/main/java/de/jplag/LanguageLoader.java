@@ -1,12 +1,6 @@
 package de.jplag;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ServiceLoader;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,19 +12,20 @@ import org.slf4j.LoggerFactory;
 public final class LanguageLoader {
     private static final Logger logger = LoggerFactory.getLogger(LanguageLoader.class);
 
-    private static Map<String, Language> loaded = null;
+    private static Map<String, Language> cachedLanguageInstances = null;
 
     private LanguageLoader() {
         throw new IllegalAccessError();
     }
 
     /**
-     * Load all languages that are currently in the classpath.
-     * @return the languages
+     * Get all languages that are currently in the classpath. The languages will be cached. Use {@link #clearCache()} to
+     * obtain new instances.
+     * @return the languages as unmodifiable map from identifier to language instance.
      */
-    public static synchronized List<Language> getAllAvailableLanguages() {
-        if (loaded != null)
-            return loaded.values().stream().toList();
+    public static synchronized Map<String, Language> getAllAvailableLanguages() {
+        if (cachedLanguageInstances != null)
+            return cachedLanguageInstances;
 
         Map<String, Language> languages = new TreeMap<>();
 
@@ -45,8 +40,8 @@ public final class LanguageLoader {
             languages.put(languageIdentifier, language);
         }
 
-        loaded = Collections.unmodifiableMap(languages);
-        return loaded.values().stream().toList();
+        cachedLanguageInstances = Collections.unmodifiableMap(languages);
+        return cachedLanguageInstances;
     }
 
     /**
@@ -56,24 +51,25 @@ public final class LanguageLoader {
      * @see Language#getIdentifier()
      */
     public static Optional<Language> getLanguage(String identifier) {
-        var result = getAllAvailableLanguages().stream().filter(it -> Objects.equals(it.getIdentifier(), identifier)).findFirst();
-        if (result.isEmpty())
+        var language = getAllAvailableLanguages().get(identifier);
+        if (language == null)
             logger.warn("Attempt to load Language {} was not successful", identifier);
-        return result;
+        return Optional.ofNullable(language);
     }
 
     /**
-     * Get a list of all available languages with their identifiers.
-     * @return the list of all languages
+     * Get an unmodifiable set of all available languages with their identifiers.
+     * @return identifiers of all available languages
+     * @see Language#getIdentifier()
      */
-    public static List<String> getAllAvailableLanguageIdentifiers() {
-        return getAllAvailableLanguages().stream().map(Language::getIdentifier).toList();
+    public static Set<String> getAllAvailableLanguageIdentifiers() {
+        return new TreeSet<>(getAllAvailableLanguages().keySet());
     }
 
     /**
      * Resets the internal cache of all loaded languages
      */
     public static synchronized void clearCache() {
-        loaded = null;
+        cachedLanguageInstances = null;
     }
 }

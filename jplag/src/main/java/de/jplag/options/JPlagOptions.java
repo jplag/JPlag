@@ -27,9 +27,9 @@ public class JPlagOptions {
     public static final Charset CHARSET = StandardCharsets.UTF_8;
 
     /**
-     * The short name of the language used to parse the submissions.
+     * The identifier of the language used to parse the submissions.
      */
-    private String languageIdentifier;
+    private final String languageIdentifier;
 
     /**
      * Language used to parse the submissions.

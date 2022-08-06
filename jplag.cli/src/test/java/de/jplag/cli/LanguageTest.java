@@ -33,7 +33,7 @@ class LanguageTest extends CommandLineInterfaceTest {
 
     @Test
     void testValidLanguages() {
-        for (Language language : LanguageLoader.getAllAvailableLanguages()) {
+        for (Language language : LanguageLoader.getAllAvailableLanguages().values()) {
             String argument = buildArgument(CommandLineArgument.LANGUAGE, language.getIdentifier());
             buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
             assertEquals(language.getIdentifier(), options.getLanguageIdentifier());
