@@ -130,7 +130,7 @@ public class GreedyStringTiling {
 
         // Initialize:
         JPlagComparison comparison = new JPlagComparison(firstSubmission, secondSubmission);
-        int minimumTokenMatch = options.getMinimumTokenMatch(); // minimal required token match
+        int minimumTokenMatch = options.minimumTokenMatch(); // minimal required token match
 
         if (first.size() <= minimumTokenMatch || second.size() <= minimumTokenMatch) { // <= because of pivots!
             return comparison;

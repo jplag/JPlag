@@ -28,7 +28,7 @@ public class MetricMapper {
     }
 
     private List<JPlagComparison> getComparisons(JPlagResult result) {
-        int maxNumberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
+        int maxNumberOfComparisons = result.getOptions().maximumNumberOfComparisons();
         return result.getComparisons(maxNumberOfComparisons);
     }
 

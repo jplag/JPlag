@@ -3,10 +3,7 @@ package de.jplag;
 import static de.jplag.CommandLineArgument.*;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -126,18 +123,17 @@ public final class CLI {
         addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
 
         LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(submissionDirectories, oldSubmissionDirectories, language);
-        options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
-        options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
-        options.setDebugParser(DEBUG.getFrom(namespace));
-        options.setSubdirectoryName(SUBDIRECTORY.getFrom(namespace));
-        options.setFileSuffixes(fileSuffixes);
-        options.setExclusionFileName(EXCLUDE_FILE.getFrom(namespace));
-        options.setMinimumTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace));
-        options.setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace));
-        options.setMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
-        ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(options::setComparisonMode,
-                () -> logger.warn("Unknown comparison mode, using default mode!"));
+        var comparisonMode = ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace));
+        if (comparisonMode.isEmpty())
+            logger.warn("Unknown comparison mode, using default mode!");
+
+        JPlagOptions options = new JPlagOptions(language, DEBUG.getFrom(namespace), Arrays.stream(fileSuffixes).toList(),
+                SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace), MIN_TOKEN_MATCH.getFrom(namespace),
+                EXCLUDE_FILE.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, BASE_CODE.getFrom(namespace),
+                SUBDIRECTORY.getFrom(namespace), Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
+
+        if (comparisonMode.isPresent())
+            options = options.withComparisonMode(comparisonMode.get());
 
         ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
         Optional.ofNullable((Boolean) CLUSTER_ENABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);
@@ -170,8 +166,8 @@ public final class CLI {
             clusteringBuilder.preprocessor(Preprocessing.THRESHOLD);
             clusteringBuilder.preprocessorPercentile(threshold);
         });
-        options.setClusteringOptions(clusteringBuilder.build());
 
+        options = options.withClusteringOptions(clusteringBuilder.build());
         return options;
     }
 

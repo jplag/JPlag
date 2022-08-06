@@ -1,17 +1,5 @@
 package de.jplag;
 
-import static de.jplag.options.Verbosity.LONG;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +7,6 @@ import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 import de.jplag.strategy.ComparisonMode;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.NormalComparisonStrategy;
@@ -36,7 +23,6 @@ public class JPlag {
     private final Language language;
     private final ComparisonStrategy comparisonStrategy;
     private final GreedyStringTiling coreAlgorithm; // Contains the comparison logic.
-    private final Set<String> excludedFileNames;
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
@@ -45,30 +31,8 @@ public class JPlag {
     public JPlag(JPlagOptions options) {
         this.options = options;
         coreAlgorithm = new GreedyStringTiling(options);
-        language = initializeLanguage();
-        comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
-        excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
-        options.setExcludedFiles(excludedFileNames); // store for report
-    }
-
-    /**
-     * If an exclusion file is given, it is read in and all strings are saved in the set "excluded".
-     * @param exclusionFileName the file name or path
-     */
-    private Set<String> readExclusionFile(final String exclusionFileName) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
-            final var excludedFileNames = reader.lines().collect(Collectors.toSet());
-            if (options.getVerbosity() == LONG) {
-                logger.info("Excluded files:");
-                for (var excludedFilename : excludedFileNames) {
-                    logger.info(excludedFilename);
-                }
-            }
-            return excludedFileNames;
-        } catch (IOException e) {
-            logger.error("Could not read exclusion file: " + e.getMessage(), e);
-            return Collections.emptySet();
-        }
+        language = options.language();
+        comparisonStrategy = initializeComparisonStrategy(options.comparisonMode());
     }
 
     /**
@@ -78,11 +42,11 @@ public class JPlag {
      */
     public JPlagResult run() throws ExitException {
         // Parse and validate submissions.
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, excludedFileNames);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
         if (submissionSet.hasBaseCode()) {
-            coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
+            coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.minimumTokenMatch(), true);
         }
 
         int submissionCount = submissionSet.numberOfSubmissions();
@@ -94,7 +58,7 @@ public class JPlag {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         logger.info("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()));
 
-        result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.getClusteringOptions()));
+        result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 
         return result;
     }
@@ -104,24 +68,5 @@ public class JPlag {
             case NORMAL -> new NormalComparisonStrategy(options, coreAlgorithm);
             case PARALLEL -> new ParallelComparisonStrategy(options, coreAlgorithm);
         };
-    }
-
-    private Language initializeLanguage() {
-        LanguageOption languageOption = this.options.getLanguageOption();
-
-        try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor();
-            Language language = (Language) constructor.newInstance();
-
-            this.options.setLanguage(language);
-            this.options.setLanguageDefaults(language);
-            logger.info("Initialized language {}", language.getName());
-            return language;
-        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException e) {
-            logger.error(e.getMessage(), e);
-            throw new IllegalStateException("Language instantiation failed:" + e.getMessage(), e);
-        }
-
     }
 }

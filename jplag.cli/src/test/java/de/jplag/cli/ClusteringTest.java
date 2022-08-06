@@ -15,22 +15,22 @@ class ClusteringTest extends CommandLineInterfaceTest {
     void parsePercentilePreProcessor() {
         String argument = CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE.flag() + "=" + 0.5f;
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(Preprocessing.PERCENTILE, options.getClusteringOptions().getPreprocessor());
-        assertEquals(0.5, options.getClusteringOptions().getPreprocessorPercentile(), EPSILON);
+        assertEquals(Preprocessing.PERCENTILE, options.clusteringOptions().getPreprocessor());
+        assertEquals(0.5, options.clusteringOptions().getPreprocessorPercentile(), EPSILON);
     }
 
     @Test
     void parseCdfPreProcessor() {
         String argument = CommandLineArgument.CLUSTER_PREPROCESSING_CDF.flag();
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, options.getClusteringOptions().getPreprocessor());
+        assertEquals(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, options.clusteringOptions().getPreprocessor());
     }
 
     @Test
     void parseNoPreProcessor() {
         String argument = CommandLineArgument.CLUSTER_PREPROCESSING_NONE.flag();
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(Preprocessing.NONE, options.getClusteringOptions().getPreprocessor());
+        assertEquals(Preprocessing.NONE, options.clusteringOptions().getPreprocessor());
     }
 
 }

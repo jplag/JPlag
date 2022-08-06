@@ -13,7 +13,7 @@ public class LanguageOptionTest extends CommandLineInterfaceTest {
     @Test
     public void testDefaultLanguage() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(LanguageOption.getDefault(), options.getLanguageOption());
+        assertEquals(LanguageOption.getDefault(), options.languageOption());
     }
 
     @Test
@@ -28,7 +28,7 @@ public class LanguageOptionTest extends CommandLineInterfaceTest {
         for (LanguageOption language : LanguageOption.values()) {
             String argument = buildArgument(CommandLineArgument.LANGUAGE, language.getDisplayName());
             buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-            assertEquals(language, options.getLanguageOption());
+            assertEquals(language, options.languageOption());
         }
     }
 

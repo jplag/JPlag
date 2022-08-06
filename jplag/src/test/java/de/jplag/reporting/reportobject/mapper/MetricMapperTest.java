@@ -76,7 +76,7 @@ public class MetricMapperTest {
         }
 
         JPlagOptions options = mock(JPlagOptions.class);
-        doReturn(createComparisonsDto.length).when(options).getMaximumNumberOfComparisons();
+        doReturn(createComparisonsDto.length).when(options).maximumNumberOfComparisons();
         doReturn(options).when(jPlagResult).getOptions();
 
         List<JPlagComparison> comparisonList = new ArrayList<>();

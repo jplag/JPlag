@@ -17,7 +17,7 @@ public class ComparisonReportMapper {
      * between two submission. The JPlagResult is used to extract the information on matches between two submissions.
      */
     public void writeComparisonReports(JPlagResult jPlagResult, String path) {
-        int numberOfComparisons = jPlagResult.getOptions().getMaximumNumberOfComparisons();
+        int numberOfComparisons = jPlagResult.getOptions().maximumNumberOfComparisons();
         List<JPlagComparison> comparisons = jPlagResult.getComparisons(numberOfComparisons);
         writeComparisons(jPlagResult, path, comparisons);
     }
@@ -33,7 +33,7 @@ public class ComparisonReportMapper {
 
     private List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison) {
         return comparison.getMatches().stream()
-                .map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().supportsColumns())).toList();
+                .map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().language().supportsColumns())).toList();
     }
 
     private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean usesIndex) {

@@ -63,19 +63,19 @@ public class ReportObjectFactory {
 
         // TODO: Consider to treat entries that were checked differently from old entries with prior work.
         List<String> folders = new ArrayList<>();
-        folders.addAll(result.getOptions().getSubmissionDirectories());
-        folders.addAll(result.getOptions().getOldSubmissionDirectories());
+        folders.addAll(result.getOptions().submissionDirectories());
+        folders.addAll(result.getOptions().oldSubmissionDirectories());
         overviewReport.setSubmissionFolderPath(folders);
 
-        String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().getBaseCodeSubmissionName().orElse("") : "";
+        String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionName() : "";
         overviewReport.setBaseCodeFolderPath(baseCodePath);
 
-        overviewReport.setLanguage(result.getOptions().getLanguage().getName());
-        overviewReport.setFileExtensions(List.of(result.getOptions().getFileSuffixes()));
+        overviewReport.setLanguage(result.getOptions().language().getName());
+        overviewReport.setFileExtensions(result.getOptions().fileSuffixes());
         overviewReport.setSubmissionIds(extractSubmissionNames(comparisons));
         overviewReport.setFailedSubmissionNames(List.of());  // No number of failed submissions
-        overviewReport.setExcludedFiles(result.getOptions().getExcludedFiles());
-        overviewReport.setMatchSensitivity(result.getOptions().getMinimumTokenMatch());
+        overviewReport.setExcludedFiles(result.getOptions().excludedFiles());
+        overviewReport.setMatchSensitivity(result.getOptions().minimumTokenMatch());
         overviewReport.setDateOfExecution(getDate());
         overviewReport.setExecutionTime(result.getDuration());
         overviewReport.setComparisonNames(getComparisonNames(comparisons));
@@ -87,7 +87,7 @@ public class ReportObjectFactory {
     }
 
     private static void copySubmissionFilesToReport(String path, JPlagResult result) {
-        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().getMaximumNumberOfComparisons());
+        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
         var submissions = getSubmissions(comparisons);
         var submissionsPath = createDirectory(path, SUBMISSIONS_FOLDER);
         for (var submission : submissions) {
@@ -110,7 +110,7 @@ public class ReportObjectFactory {
     }
 
     private static List<JPlagComparison> getComparisons(JPlagResult result) {
-        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
+        int numberOfComparisons = result.getOptions().maximumNumberOfComparisons();
         return result.getComparisons(numberOfComparisons);
     }
 
