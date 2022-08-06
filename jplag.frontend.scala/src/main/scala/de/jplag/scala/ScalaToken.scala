@@ -29,20 +29,6 @@ class ScalaToken(tType: Int,
         }
     }
 
-    override def setLine(line: Int): Unit = this.line = line
-
-    override def setColumn(column: Int): Unit = this.column = column
-
-    override def setLength(length: Int): Unit = this.length = length
-
-    override def getLine: Int = this.line
-
-    override def getColumn: Int = this.column
-
-    override def getLength: Int = this.length
-
-    def numberOfTokens: Int = ScalaTokenConstants.maxId
-
     /**
      * @return a string representation depending on the type of the token.
      */

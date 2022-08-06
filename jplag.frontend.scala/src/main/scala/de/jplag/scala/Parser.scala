@@ -30,7 +30,7 @@ class Parser extends AbstractParser {
          * @param after opt. token type to insert at the end of the tree
          * @param traverse custom method of traversing the tree
          */
-        case class TR(before: Option[ScalaTokenConstants.Value] = None,
+        private case class TR(before: Option[ScalaTokenConstants.Value] = None,
                       after: Option[ScalaTokenConstants.Value] = None,
                       traverse: Tree => Unit = _.children.foreach(traverser.apply)
                      )
@@ -252,7 +252,7 @@ class Parser extends AbstractParser {
          * @param els a sequence of values, Trees or Lists
          * @tparam T the type of elements
          */
-        def applyRecursively[T](els: Seq[T]): Unit = els.foreach {
+        private def applyRecursively[T](els: Seq[T]): Unit = els.foreach {
             case tree: Tree => apply(tree)
             case treeList: List[_] => applyRecursively(treeList)
             case _ =>
@@ -281,7 +281,7 @@ class Parser extends AbstractParser {
          *                   @param doApply if true, the substructure of each element is traversed
          * @tparam T list may contain more lists or leaves
          */
-        def assignRecursively[T](els: List[T], tokenType: ScalaTokenConstants.Value, doApply: Boolean = false): Unit = els.foreach {
+        private def assignRecursively[T](els: List[T], tokenType: ScalaTokenConstants.Value, doApply: Boolean = false): Unit = els.foreach {
             case treeList: List[_] => assignRecursively(treeList, tokenType)
             case el: Tree =>
                 add(tokenType, el, fromEnd = false)
@@ -295,7 +295,7 @@ class Parser extends AbstractParser {
          * @param tree Tree to enclose and traverse
          * @param record contains token types
          */
-        def encloseAndApply(tree: Tree, record: TR): Unit = {
+        private def encloseAndApply(tree: Tree, record: TR): Unit = {
             record.before match {
                 case Some(value) => add(value, tree, fromEnd = false)
                 case None =>
@@ -309,7 +309,6 @@ class Parser extends AbstractParser {
             }
         }
     }
-
 
     def parse(dir: File, files: Array[String]): TokenList = {
         tokens = new TokenList
