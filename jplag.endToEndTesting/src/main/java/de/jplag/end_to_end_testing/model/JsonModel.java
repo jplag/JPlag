@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class JsonModel {
     @JsonProperty("function_name")
     private String functionName;
-    @JsonProperty("testResults")
+    @JsonProperty("test_results")
     private ResultModel[] results;
 
     /**

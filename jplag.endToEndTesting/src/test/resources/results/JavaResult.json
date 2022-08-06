@@ -1,35 +1,35 @@
 [
   {
     "function_name": "normalizationLevelTest",
-    "testResults": [
+    "test_results": [
       {
         "result_similarity": 100,
-        "testIdentifier": 0
+        "test_identifier": 0
       },
       {
         "result_similarity": 100,
-        "testIdentifier": 1
+        "test_identifier": 1
       },
       {
         "result_similarity": 100,
-        "testIdentifier": 2
+        "test_identifier": 2
       }
     ]
   },
   {
     "function_name": "tokenGenerationLevelTest",
-    "testResults": [
+    "test_results": [
       {
         "result_similarity": 64.0,
-        "testIdentifier": 0
+        "test_identifier": 0
       },
       {
         "result_similarity": 73.04348,
-        "testIdentifier": 1
+        "test_identifier": 1
       },
       {
         "result_similarity": 73.94958,
-        "testIdentifier": 2
+        "test_identifier": 2
       }
     ]
   }

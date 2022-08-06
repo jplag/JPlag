@@ -10,7 +10,7 @@ public class ResultModel {
 
     @JsonProperty("result_similarity")
     private float resultSimilarity;
-    @JsonProperty("testIdentifier")
+    @JsonProperty("test_identifier")
     private Integer testIdentifier;
 
     /**
