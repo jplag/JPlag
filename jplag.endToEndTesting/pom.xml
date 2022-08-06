@@ -6,7 +6,8 @@
         <artifactId>aggregator</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>jplag.endToEndTesting</artifactId>
+    <artifactId>endToEndTesting</artifactId>
+    
     <dependencies>
         <dependency>
             <groupId>de.jplag</groupId>
