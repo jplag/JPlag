@@ -7,7 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.jplag.end_to_end_testing.constants.Constant;
-import de.jplag.end_to_end_testing.model.ResultJsonModel;
+import de.jplag.end_to_end_testing.model.JsonModel;
 
 /**
  * Helper class for serializing and creating all json dependent events.
@@ -18,7 +18,7 @@ public final class JsonHelper {
      * private constructor to prevent instantiation
      */
     private JsonHelper() {
-    	// For Serialization 
+        // For Serialization
     }
 
     /**
@@ -27,7 +27,7 @@ public final class JsonHelper {
      * @throws IOException is thrown for all problems that may occur while parsing the json file. This includes both reading
      * and parsing problems.
      */
-    public static List<ResultJsonModel> getResultModelFromPath() throws IOException {
-        return Arrays.asList(new ObjectMapper().readValue(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toFile(), ResultJsonModel[].class));
+    public static List<JsonModel> getResultModelFromPath() throws IOException {
+        return Arrays.asList(new ObjectMapper().readValue(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toFile(), JsonModel[].class));
     }
 }

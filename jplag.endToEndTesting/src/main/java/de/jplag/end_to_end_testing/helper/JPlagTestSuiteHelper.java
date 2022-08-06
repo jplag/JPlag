@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.end_to_end_testing.constants.Constant;
-import de.jplag.end_to_end_testing.model.ResultJsonModel;
+import de.jplag.end_to_end_testing.model.JsonModel;
 import de.jplag.end_to_end_testing.model.TestCaseModel;
 import de.jplag.options.LanguageOption;
 
@@ -27,7 +27,7 @@ public class JPlagTestSuiteHelper {
     private static final Logger logger = LoggerFactory.getLogger(JPlagTestSuiteHelper.class);
 
     private String[] resourceNames;
-    private List<ResultJsonModel> resultModel;
+    private List<JsonModel> resultModel;
     private LanguageOption languageOption;
 
     /**
@@ -56,8 +56,7 @@ public class JPlagTestSuiteHelper {
     public TestCaseModel createNewTestCase(String[] classNames) throws IOException {
         createNewTestCaseDirectory(classNames);
         var functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
-        ResultJsonModel resultJsonModel = resultModel.stream().filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny()
-                .orElse(null);
+        JsonModel resultJsonModel = resultModel.stream().filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny().orElse(null);
         return new TestCaseModel(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME, resultJsonModel, languageOption);
     }
 

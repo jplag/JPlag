@@ -1,26 +1,36 @@
 [
-   {
-      "function_name":"normalizationLevelTestOne",
-      "result_similarity":100.0
-   },
-   {
-      "function_name":"normalizationLevelTestTwo",
-      "result_similarity":100.0
-   },
-   {
-      "function_name":"normalizationLevelTestThree",
-      "result_similarity":100.0
-   },
-   {
-      "function_name":"tokenGenerationLevelTestOne",
-      "result_similarity":64.0
-   },
-   {
-      "function_name":"tokenGenerationLevelTestTwo",
-      "result_similarity":73.04348
-   },
-   {
-      "function_name":"tokenGenerationLevelTestThree",
-      "result_similarity":73.94958
-   }
+  {
+    "function_name": "normalizationLevelTest",
+    "testResults": [
+      {
+        "result_similarity": 100,
+        "testIdentifier": 0
+      },
+      {
+        "result_similarity": 100,
+        "testIdentifier": 1
+      },
+      {
+        "result_similarity": 100,
+        "testIdentifier": 2
+      }
+    ]
+  },
+  {
+    "function_name": "tokenGenerationLevelTest",
+    "testResults": [
+      {
+        "result_similarity": 64.0,
+        "testIdentifier": 0
+      },
+      {
+        "result_similarity": 73.04348,
+        "testIdentifier": 1
+      },
+      {
+        "result_similarity": 73.94958,
+        "testIdentifier": 2
+      }
+    ]
+  }
 ]

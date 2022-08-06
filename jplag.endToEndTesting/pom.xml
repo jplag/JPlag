@@ -12,6 +12,20 @@
             <groupId>de.jplag</groupId>
             <artifactId>jplag</artifactId>
         </dependency>
+        <!-- dependency needed to run parameterized tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.9.0</version>
+            <scope>test</scope>
+        </dependency>        
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>frontend-testutils</artifactId>
+            <version>${revision}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

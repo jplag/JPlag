@@ -12,19 +12,19 @@ import de.jplag.options.LanguageOption;
  */
 public class TestCaseModel {
 
-    private ResultJsonModel resultJsonModel;
+    private JsonModel jsonModel;
     private LanguageOption languageOption;
     private String submissionFolderPath;
 
     /**
      * Constructor for creating the instance
      * @param submissionFolderPath path to the plagiarism folder structure to be tested using Jplag
-     * @param resultJsonModel the parsed result model needed for the test to be able to match it later in the tests.
+     * @param jsonModel the parsed result model needed for the test to be able to match it later in the tests.
      * @param languageOption the language selection in which the tests take place
      */
-    public TestCaseModel(String submissionFolderPath, ResultJsonModel resultJsonModel, LanguageOption languageOption) {
+    public TestCaseModel(String submissionFolderPath, JsonModel jsonModel, LanguageOption languageOption) {
         this.submissionFolderPath = submissionFolderPath;
-        this.resultJsonModel = resultJsonModel;
+        this.jsonModel = jsonModel;
         this.languageOption = languageOption;
     }
 
@@ -32,8 +32,8 @@ public class TestCaseModel {
      * returns the, for the test, current result model that has been persisted in the saved list.
      * @return ResultJsonModel loaded for the test
      */
-    public ResultJsonModel getCurrentResultJsonModel() {
-        return resultJsonModel;
+    public JsonModel getCurrentJsonModel() {
+        return jsonModel;
     }
 
     /**
@@ -41,6 +41,6 @@ public class TestCaseModel {
      * @return current JPlag options for the created object
      */
     public JPlagOptions getJPlagOptionsFromCurrentModel() {
-        return new JPlagOptions(new ArrayList<String>(Arrays.asList(submissionFolderPath)), new ArrayList<String>(), languageOption);
+        return new JPlagOptions(new ArrayList<>(Arrays.asList(submissionFolderPath)), new ArrayList<>(), languageOption);
     }
 }
