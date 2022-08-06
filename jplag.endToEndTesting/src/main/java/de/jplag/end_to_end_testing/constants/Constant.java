@@ -33,5 +33,5 @@ public final class Constant {
     /**
      * Base path to the saved results of the previous tests in a *.json file
      */
-    public static final Path BASE_PATH_TO_JAVA_RESULT_JSON = Path.of("src", "test", "resources", "results", "javaResult.json");
+    public static final Path BASE_PATH_TO_JAVA_RESULT_JSON = Path.of("src", "test", "resources", "results", "JavaResult.json");
 }
