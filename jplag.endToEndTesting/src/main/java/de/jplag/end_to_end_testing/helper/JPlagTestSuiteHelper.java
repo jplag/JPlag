@@ -107,16 +107,16 @@ public class JPlagTestSuiteHelper {
                 if (file.isDirectory()) {
                     deleteCopiedFiles(file);
                 } else {
-                    logger.info("Delete file in folder: [{}]", file.toString());
+                    logger.info("Delete file in folder: [{}]", file);
                     if (!file.delete()) {
-                        logger.error("The file at [{}] could not be deleted", file.toString());
+                        logger.error("The file at [{}] could not be deleted", file);
                     }
                 }
             }
         }
         logger.info("Delete folder: [{}]", folder.toString());
         if (!folder.delete()) {
-            logger.error("The folder at [{}] could not be deleted", folder.toString());
+            logger.error("The folder at [{}] could not be deleted", folder);
         }
     }
 
