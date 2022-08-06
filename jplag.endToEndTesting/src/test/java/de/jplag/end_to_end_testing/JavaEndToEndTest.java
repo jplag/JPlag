@@ -12,8 +12,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
@@ -31,7 +29,6 @@ import de.jplag.options.LanguageOption;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JavaEndToEndTest {
-    private static final Logger logger = LoggerFactory.getLogger(JavaEndToEndTest.class);
 
     private JPlagTestSuiteHelper jplagTestSuiteHelper;
 
@@ -39,8 +36,7 @@ class JavaEndToEndTest {
     public void setUp() throws IOException {
         jplagTestSuiteHelper = new JPlagTestSuiteHelper(LanguageOption.JAVA);
         assertTrue(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toFile().exists(), "Could not find base directory!");
-        assertTrue(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toFile().exists(),
-                "Could not find java result json at " + Constant.BASE_PATH_TO_JAVA_RESULT_JSON + "!");
+        assertTrue(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toFile().isFile(), "Could not find java result json!");
     }
 
     @AfterEach
