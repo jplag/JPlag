@@ -30,8 +30,8 @@ import de.jplag.options.LanguageOption;
  * original class. The results are compared with the results from previous tests and changes are detected.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class javaEndToEndTestCases {
-    private static final Logger logger = LoggerFactory.getLogger(javaEndToEndTestCases.class);
+class JavaEndToEndTest {
+    private static final Logger logger = LoggerFactory.getLogger(JavaEndToEndTest.class);
 
     private JPlagTestSuiteHelper jplagTestSuiteHelper;
 
