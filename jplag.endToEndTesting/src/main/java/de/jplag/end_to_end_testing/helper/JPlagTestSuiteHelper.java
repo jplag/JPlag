@@ -61,8 +61,9 @@ public class JPlagTestSuiteHelper {
 
     /**
      * The copied data should be deleted after instance closure
+     * @throws IOException if an I/O error occurs
      */
-    public void clear() {
+    public void clear() throws IOException {
         logger.info("Class instance was cleaned!");
         deleteCopiedFiles(new File(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
     }
@@ -98,25 +99,22 @@ public class JPlagTestSuiteHelper {
     /**
      * Delete directory with including files
      * @param file Path to a folder or file to be deleted. This happens recursively to the path
+     * @throws IOException if an I/O error occurs
      */
-    private void deleteCopiedFiles(File folder) {
+    private void deleteCopiedFiles(File folder) throws IOException {
         File[] files = folder.listFiles();
         if (files != null) { // some JVMs return null for empty dirs
             for (File file : files) {
                 if (file.isDirectory()) {
                     deleteCopiedFiles(file);
                 } else {
+                    Files.delete(file.toPath());
                     logger.info("Delete file in folder: [{}]", file);
-                    if (!file.delete()) {
-                        logger.error("The file at [{}] could not be deleted", file);
-                    }
                 }
             }
         }
-        logger.info("Delete folder: [{}]", folder.toString());
-        if (!folder.delete()) {
-            logger.error("The folder at [{}] could not be deleted", folder);
-        }
+        Files.delete(folder.toPath());
+        logger.info("Delete folder: [{}]", folder);
     }
 
 }
