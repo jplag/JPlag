@@ -7,11 +7,11 @@ licensed under BSD-3.
 
 ### Scala specification compatibility
 
-The dependencies only allow compatibility up to Scala 2.12 (April 2018), so more recent syntactical features like enums
+The dependencies only allow compatibility up to Scala 2.13.8 (January 2022), so the new syntactical features of Scala 3 
 are not supported yet.
 
-Due to intercompatibility issues between dependencies, previous attempts to upgrade to Scala 3 were unsuccessful. We
-will continue our efforts to support Scala 3.
+As of now, Scalameta is not available for Scala 3 yet (see the [GitHub issue](https://github.com/scalameta/scalameta/issues/2485)), 
+so the upgrade needs to wait. It would seem that once this frontend is equipped with Scalameta for Scala 3, it will be able to handle both Scala 2 and 3 equally as [the syntax is backwards compatible](https://scala-lang.org/2019/12/18/road-to-scala-3.html#:~:text=Scala%203%20is%20backwards%20compatible%20with%20Scala%202) for the most part.
 
 ### Token Extraction
 
@@ -79,7 +79,7 @@ would be consistent with others.
 
 To determine all possible return values, semantic information about control structures is necessary which may be tedious
 to extract from the AST, but possible (e.g. by means of a stack mechanic).
-On the other hand, "the last expression of a block" does not hold the same _syntactical_ weight to it as a return
+On the other hand, "the last expression of a block evaluated" does not hold the same _syntactical_ weight to it as a return
 statement.
 
 For the moment, implicit block values are neglected.
