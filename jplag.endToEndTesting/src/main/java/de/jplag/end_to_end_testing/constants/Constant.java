@@ -1,7 +1,10 @@
 package de.jplag.end_to_end_testing.constants;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import de.jplag.options.LanguageOption;
 
@@ -28,6 +31,23 @@ public final class Constant {
      * Base path to the created plagiarism and the main file located in the project resources.
      */
     public static final Path BASE_PATH_TO_JAVA_RESOURCES_SORTALGO = Path.of("src", "test", "resources", "java", "sortAlgo");
+
+    /**
+     * Base path to the created plagiarism and the main file located in the project resources.
+     */
+    public static final Path BASE_PATH_TO_C_SHARP_RESOURCES_SORTALGO = Path.of("src", "test", "resources", "csharp", "sortAlgo");
+
+    /**
+     * @return mapper for the language specific stored result json data
+     */
+    public static final HashMap<LanguageOption, List<Path>> RESOURCE_PATH_MAPPER() {
+        HashMap<LanguageOption, List<Path>> languageSpecificResultMapper = new HashMap<LanguageOption, List<Path>>();
+        languageSpecificResultMapper.put(LanguageOption.JAVA, Collections.unmodifiableList(Arrays.asList(BASE_PATH_TO_JAVA_RESOURCES_SORTALGO)));
+        languageSpecificResultMapper.put(LanguageOption.C_SHARP,
+                Collections.unmodifiableList(Arrays.asList(BASE_PATH_TO_C_SHARP_RESOURCES_SORTALGO)));
+
+        return languageSpecificResultMapper;
+    }
 
     /**
      * @return mapper for the language specific stored result json data

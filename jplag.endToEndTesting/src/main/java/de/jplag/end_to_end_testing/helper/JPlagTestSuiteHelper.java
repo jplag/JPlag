@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.JPlagComparison;
 import de.jplag.end_to_end_testing.constants.Constant;
 import de.jplag.end_to_end_testing.model.JsonModel;
 import de.jplag.end_to_end_testing.model.TestCaseModel;
@@ -41,7 +43,7 @@ public class JPlagTestSuiteHelper {
      */
     public JPlagTestSuiteHelper(LanguageOption languageOption) throws IOException {
         this.languageOption = languageOption;
-        this.resourceNames = new File(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString()).list();
+        this.resourceNames = loadAllTestFileNames(Constant.RESOURCE_PATH_MAPPER().get(languageOption));
         this.resultJsonPath = Constant.RESULT_PATH_MAPPER().get(languageOption);
         this.resultModel = JsonHelper.getResultModelFromPath(resultJsonPath);
 
@@ -75,6 +77,44 @@ public class JPlagTestSuiteHelper {
      */
     public Path getResultJsonPath() {
         return resultJsonPath;
+    }
+
+    /**
+     * @return all resources names for the current specified language
+     */
+    public String[] getAllTestFileNames() {
+        return resourceNames;
+    }
+
+    /**
+     * Creates a unique hash from the submissions in the JPlagComparison object which is used to find the results in the
+     * json files.
+     * @param jPlagComparison object from which the hash should be generated
+     * @return unique identifier for test case recognition
+     */
+    public int getTestHashCode(JPlagComparison jPlagComparison) {
+        String testFileNamesInFirstSubmission = new String();
+        String testFileNamesInSecondSubmission = new String();
+        for (File file : jPlagComparison.getFirstSubmission().getFiles()) {
+            testFileNamesInFirstSubmission += file.getName().toString();
+        }
+        for (File file : jPlagComparison.getSecondSubmission().getFiles()) {
+            testFileNamesInSecondSubmission += file.getName().toString();
+        }
+        return (testFileNamesInFirstSubmission + testFileNamesInSecondSubmission).hashCode();
+    }
+
+    /**
+     * @param resourcenPaths list of paths that lead to test resources
+     * @return all filenames contained in the paths
+     */
+    private String[] loadAllTestFileNames(List<Path> resourcenPaths) {
+        ArrayList<String> temporaryResourceNames = new ArrayList<>();
+        for (Path path : resourcenPaths) {
+            temporaryResourceNames.addAll(Arrays.asList(path.toFile().list()));
+        }
+
+        return temporaryResourceNames.toArray(new String[temporaryResourceNames.size()]);
     }
 
     /**
