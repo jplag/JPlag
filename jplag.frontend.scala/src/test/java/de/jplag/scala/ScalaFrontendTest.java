@@ -113,7 +113,7 @@ class ScalaFrontendTest {
             } else {
                 logger.info("Coverage: %.1f%%.".formatted(coverage * 100));
                 logger.info("Missing lines {}", codeLines);
-                if (coverage - 0.9 > EPSILON) {
+                if (coverage - 0.9 <= EPSILON) {
                     fail("Source coverage is unsatisfactory");
                 }
             }
