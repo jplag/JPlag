@@ -3,7 +3,6 @@ package de.jplag.cpp;
 import java.io.File;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
 
 public class Scanner extends AbstractParser {
@@ -13,10 +12,9 @@ public class Scanner extends AbstractParser {
 
     /**
      * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
-    public Scanner(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public Scanner() {
+        super();
     }
 
     public TokenList scan(File directory, String[] files) {
@@ -24,7 +22,7 @@ public class Scanner extends AbstractParser {
         errors = 0;
         for (String currentFile : files) {
             this.currentFile = currentFile;
-            getErrorConsumer().print(null, "Scanning file " + currentFile);
+            logger.trace("Scanning file {}", currentFile);
             if (!CPPScanner.scanFile(directory, currentFile, this)) {
                 errors++;
             }

@@ -5,6 +5,7 @@ import {ComparisonListElement} from "./ComparisonListElement";
  */
 export type Metric = {
     metricName: string,
+    description: string,
     metricThreshold: number,
     distribution: Array<number>,
     comparisons: Array<ComparisonListElement>

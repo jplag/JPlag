@@ -1,30 +1,29 @@
-header
-{
-
+header {
 package de.jplag.text;
-
 }
 
 // tell ANTLR that we want to generate Java source code
-options
-{
+options {
   language="Java";
 }
 
 class TextParser extends Parser;
-options
-{
+options {
   k = 2;			  // two token lookahead
   //  exportVocab=Text;	          // Call its vocabulary "Text"
   codeGenMakeSwitchThreshold = 2; // Some optimizations
   codeGenBitsetTestThreshold = 3;
   defaultErrorHandler = true;
   buildAST = false;
-  ASTLabelType = "ParserToken";
+  ASTLabelType = "AntlrParserToken";
 }
 
 {
-public de.jplag.text.Parser parser;
+    private de.jplag.text.ParserAdapter parser;
+
+    public void setParserAdapter(de.jplag.text.ParserAdapter adapter) {
+        this.parser = adapter;
+    }
 }
 
 file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
@@ -35,22 +34,21 @@ file : ( w:WORD { parser.add(w); } | PUNCTUATION | SPECIALS )* EOF ;
 
 {
 import de.jplag.text.InputState;
-import de.jplag.text.ParserToken;
+import de.jplag.text.AntlrParserToken;
 }
 
 class TextLexer extends Lexer;
-options
-{
-  //  exportVocab=Text;        // call the vocabulary "Text"
-  testLiterals = false;    // don't automatically test for literals
-  k = 2;                   // two characters of lookahead
-  charVocabulary = '\u0000'..'\u00FF';
+options {
+    //  exportVocab=Text;    // call the vocabulary "Text"
+    testLiterals = false;    // don't automatically test for literals
+    k = 2;                   // two characters of lookahead
+    charVocabulary = '\u0000'..'\u00FF';
 }
 
 {
     public void newline() {
         super.newline();
-        ((InputState) inputState).column = 1;
+        ((InputState) inputState).setColumnIndex(1);
     }
 
     public void consume() throws antlr.CharStreamException {
@@ -58,16 +56,16 @@ options
             InputState state = (InputState) inputState;
             if (text.length() == 0) {
                 // remember token start column
-                state.tokenColumn = state.column;
+                state.setTokenColumnIndex(state.getColumnIndex());
             }
-            state.column++;
+            state.setColumnIndex(state.getColumnIndex() + 1);
         }
         super.consume();
     }
 
     protected Token makeToken(int t) {
-        ParserToken token = (ParserToken) super.makeToken(t);
-        token.setColumn(((InputState) inputState).tokenColumn);
+        AntlrParserToken token = (AntlrParserToken) super.makeToken(t);
+        token.setColumn(((InputState) inputState).getTokenColumnIndex());
         return token;
     }
 }
@@ -88,7 +86,7 @@ SPECIALS : ('#' | '$' | '%' | '&' | '+' | '<' | '=' | '*' |
 
 // Whitespace -- ignored
 SPACE : ( ' '
-	  |	'\t' //{ ((InputState)inputState).column += 7; }
+	  |	'\t' //{ ((InputState)inputState).setColumnIndex((InputState)inputState).getColumnIndex() + 7); }
 	  |	'\f'
 	  |     '\240'
 	  |     ('\001' .. '\010')

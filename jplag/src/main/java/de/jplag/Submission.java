@@ -5,11 +5,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a single submission. A submission can contain multiple files.
  */
 public class Submission implements Comparable<Submission> {
+    private static final Logger logger = LoggerFactory.getLogger(Submission.class);
+
     /**
      * Directory name for storing submission files with parse errors if so requested.
      */
@@ -51,7 +57,6 @@ public class Submission implements Comparable<Submission> {
     private JPlagComparison baseCodeComparison;
 
     private final Language language;
-    private final ErrorCollector errorCollector;
 
     /**
      * Creates a submission.
@@ -60,20 +65,34 @@ public class Submission implements Comparable<Submission> {
      * @param isNew states whether the submission must be checked for plagiarism.
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
      * @param language is the language of the submission.
-     * @param errorCollector is the interface for error reporting.
      */
-    public Submission(String name, File submissionRootFile, boolean isNew, Collection<File> files, Language language, ErrorCollector errorCollector) {
+    public Submission(String name, File submissionRootFile, boolean isNew, Collection<File> files, Language language) {
         this.name = name;
         this.submissionRootFile = submissionRootFile;
         this.isNew = isNew;
         this.files = files;
         this.language = language;
-        this.errorCollector = errorCollector;
     }
 
     @Override
     public int compareTo(Submission other) {
         return name.compareTo(other.name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Submission otherSubmission)) {
+            return false;
+        }
+        return otherSubmission.getName().equals(name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     /**
@@ -184,7 +203,7 @@ public class Submission implements Comparable<Submission> {
      * String representation of the code files contained in this submission, annotated with all tokens.
      * @return the annotated code as string.
      */
-    public String getTokenAnnotatedSourcCode() {
+    public String getTokenAnnotatedSourceCode() {
         return TokenPrinter.printTokens(tokenList, files, submissionRootFile);
     }
 
@@ -204,12 +223,12 @@ public class Submission implements Comparable<Submission> {
             try {
                 Files.copy(file.toPath(), new File(submissionDirectory, file.getName()).toPath());
             } catch (IOException exception) {
-                errorCollector.print("Error copying file: " + exception + "\n", null);
+                logger.error("Error copying file: " + exception.getMessage(), exception);
             }
         }
     }
 
-    private File createSubdirectory(File parent, String... subdirectoryNames) {
+    private static File createSubdirectory(File parent, String... subdirectoryNames) {
         File subdirectory = parent;
         for (String name : subdirectoryNames) {
             subdirectory = new File(subdirectory, name);
@@ -246,8 +265,8 @@ public class Submission implements Comparable<Submission> {
      * @return Whether parsing was successful.
      */
     /* package-private */ boolean parse(boolean debugParser) {
-        if (files == null || files.size() == 0) {
-            errorCollector.print("ERROR: nothing to parse for submission \"" + name + "\"", null);
+        if (files == null || files.isEmpty()) {
+            logger.error("ERROR: nothing to parse for submission \"{}\"", name);
             tokenList = null;
             hasErrors = true; // invalidate submission
             return false;
@@ -258,7 +277,7 @@ public class Submission implements Comparable<Submission> {
         tokenList = language.parse(submissionRootFile, relativeFilePaths);
         if (!language.hasErrors()) {
             if (tokenList.size() < 3) {
-                errorCollector.print("Submission \"" + name + "\" is too short!", null);
+                logger.error("Submission \"{}\" is too short!", name);
                 tokenList = null;
                 hasErrors = true; // invalidate submission
                 return false;

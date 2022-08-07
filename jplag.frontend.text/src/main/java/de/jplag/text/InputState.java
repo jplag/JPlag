@@ -11,29 +11,39 @@ import antlr.LexerSharedInputState;
  * LexerSharedInputState to lex the same input stream.
  */
 public class InputState extends LexerSharedInputState {
-    public int column = 0;
-    public int tokenColumn = 0;
+    private int columnIndex = 1;
+    private int tokenColumnIndex = 1;
 
     public InputState(InputBuffer inputBuffer) {
         super(inputBuffer);
-        column = 1;
-        line = 1;
     }
 
     public InputState(InputStream inputStream) {
         super(inputStream);
-        column = 1;
-        line = 1;
     }
 
     public InputState(Reader inputReader) {
         super(inputReader);
-        column = 1;
-        line = 1;
     }
 
     @Override
     public int getLine() {
         return line;
+    }
+
+    public int getColumnIndex() {
+        return columnIndex;
+    }
+
+    public void setColumnIndex(int columnIndex) {
+        this.columnIndex = columnIndex;
+    }
+
+    public int getTokenColumnIndex() {
+        return tokenColumnIndex;
+    }
+
+    public void setTokenColumnIndex(int tokenColumnIndex) {
+        this.tokenColumnIndex = tokenColumnIndex;
     }
 }

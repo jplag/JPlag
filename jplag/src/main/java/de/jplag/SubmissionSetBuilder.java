@@ -2,7 +2,16 @@ package de.jplag;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -24,20 +33,17 @@ public class SubmissionSetBuilder {
 
     private final Language language;
     private final JPlagOptions options;
-    private final ErrorCollector errorCollector;
     private final Set<String> excludedFileNames; // Set of file names to be excluded in comparison.
 
     /**
      * Creates a builder for submission sets.
      * @param language is the language of the submissions.
      * @param options are the configured options.
-     * @param errorCollector is the interface for error reporting.
      * @param excludedFileNames a list of file names to be excluded
      */
-    public SubmissionSetBuilder(Language language, JPlagOptions options, ErrorCollector errorCollector, Set<String> excludedFileNames) {
+    public SubmissionSetBuilder(Language language, JPlagOptions options, Set<String> excludedFileNames) {
         this.language = language;
         this.options = options;
-        this.errorCollector = errorCollector;
         this.excludedFileNames = excludedFileNames;
     }
 
@@ -69,7 +75,7 @@ public class SubmissionSetBuilder {
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
-        return new SubmissionSet(submissions, baseCodeSubmission, errorCollector, options);
+        return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options);
     }
 
     /**
@@ -115,32 +121,35 @@ public class SubmissionSetBuilder {
         // former use can be removed without affecting the result of the checks.
         oldSubmissionDirectories.removeAll(commonRootdirectories);
         for (File rootDirectory : commonRootdirectories) {
-            logger.warn("Root directory \"" + rootDirectory.toString()
-                    + "\" is specified both for plagiarism checking and for prior submissions, will perform plagiarism checking only.");
+            logger.warn(
+                    "Root directory \"{}\" is specified both for plagiarism checking and for prior submissions, will perform plagiarism checking only.",
+                    rootDirectory);
         }
     }
 
     private Optional<Submission> loadBaseCode(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             Map<File, Submission> foundSubmissions) throws ExitException {
-        // Extract the basecode submission if necessary.
-        Optional<Submission> baseCodeSubmission = Optional.empty();
-        if (options.hasBaseCode()) {
-            String baseCodeName = options.getBaseCodeSubmissionName().get();
-            Submission baseCode = loadBaseCodeAsPath(baseCodeName);
-            if (baseCode == null) {
-                int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
-                if (numberOfRootDirectories > 1) {
-                    throw new BasecodeException("The base code submission needs to be specified by path instead of by name!");
-                }
+        if (!options.hasBaseCode()) {
+            return Optional.empty();
+        }
 
-                // There is one root directory, and the submissionDirectories variable has been checked to be non-empty.
-                // That set thus contains the the one and only root directory.
-                File rootDirectory = submissionDirectories.iterator().next();
-
-                // Single root-directory, try the legacy way of specifying basecode.
-                baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
+        String baseCodeName = options.getBaseCodeSubmissionName().orElseThrow();
+        Submission baseCode = loadBaseCodeAsPath(baseCodeName);
+        if (baseCode == null) {
+            int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
+            if (numberOfRootDirectories > 1) {
+                throw new BasecodeException("The base code submission needs to be specified by path instead of by name!");
             }
-            baseCodeSubmission = Optional.ofNullable(baseCode);
+
+            // There is one root directory, and the submissionDirectories variable has been checked to be non-empty.
+            // That set thus contains the one and only root directory.
+            File rootDirectory = submissionDirectories.iterator().next();
+
+            // Single root-directory, try the legacy way of specifying basecode.
+            baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
+        }
+
+        if (baseCode != null) {
             logger.info("Basecode directory \"{}\" will be used.", baseCode.getName());
 
             // Basecode may also be registered as a user submission. If so, remove the latter.
@@ -149,7 +158,7 @@ public class SubmissionSetBuilder {
                 logger.info("Submission \"{}\" is the specified basecode, it will be skipped during comparison.", removed.getName());
             }
         }
-        return baseCodeSubmission;
+        return Optional.ofNullable(baseCode);
     }
 
     /**
@@ -280,7 +289,7 @@ public class SubmissionSetBuilder {
         }
 
         submissionFile = makeCanonical(submissionFile, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language, errorCollector);
+        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language);
     }
 
     /**

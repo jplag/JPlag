@@ -23,7 +23,7 @@ public class ClusteringAdapterTest {
 
     @Test
     public void testClustering() {
-        List<Submission> submissions = IntStream.range(0, 4).mapToObj(x -> mock(Submission.class)).collect(Collectors.toList());
+        List<Submission> submissions = IntStream.range(0, 4).mapToObj(x -> mock(Submission.class)).toList();
         List<JPlagComparison> comparisons = new ArrayList<>(6);
         for (int i = 0; i < submissions.size(); i++) {
             for (int j = i + 1; j < submissions.size(); j++) {
@@ -38,8 +38,7 @@ public class ClusteringAdapterTest {
         GenericClusteringAlgorithm algorithm = mock(GenericClusteringAlgorithm.class);
         when(algorithm.cluster(any(RealMatrix.class))).then((InvocationOnMock invocation) -> {
             RealMatrix arg = invocation.getArgument(0);
-            Collection<Collection<Integer>> result = List.of(IntStream.range(0, arg.getRowDimension()).boxed().collect(Collectors.toList()));
-            return result;
+            return List.of(IntStream.range(0, arg.getRowDimension()).boxed().collect(Collectors.toList()));
         });
 
         ClusteringAdapter clustering = new ClusteringAdapter(comparisons, x -> 0.f);
