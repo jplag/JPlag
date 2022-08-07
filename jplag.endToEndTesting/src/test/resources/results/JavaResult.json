@@ -3,15 +3,24 @@
     "function_name": "normalizationLevelTest",
     "test_results": [
       {
-        "result_similarity": 100,
+        "result_similarity": 100.0,
+		"result_minimal_similarity" : 100.0,
+		"result_maximum_similarity" : 100.0,
+		"result_matched_token_number" : 56,
         "test_identifier": 0
       },
       {
-        "result_similarity": 100,
+        "result_similarity": 100.0,
+		"result_minimal_similarity" : 100.0,
+		"result_maximum_similarity" : 100.0,
+		"result_matched_token_number" : 56,
         "test_identifier": 1
       },
       {
-        "result_similarity": 100,
+        "result_similarity": 100.0,
+		"result_minimal_similarity" : 100.0,
+		"result_maximum_similarity" : 100.0,
+		"result_matched_token_number" : 56,
         "test_identifier": 2
       }
     ]
@@ -21,14 +30,23 @@
     "test_results": [
       {
         "result_similarity": 64.0,
+		"result_minimal_similarity" : 57.971016,
+		"result_maximum_similarity" : 71.42857,
+		"result_matched_token_number" : 40,
         "test_identifier": 0
       },
       {
         "result_similarity": 73.04348,
+		"result_minimal_similarity" : 71.18644,
+		"result_maximum_similarity" : 75.0,
+		"result_matched_token_number" : 42,
         "test_identifier": 1
       },
       {
         "result_similarity": 73.94958,
+		"result_minimal_similarity" : 69.84127,
+		"result_maximum_similarity" : 78.57143,
+		"result_matched_token_number" : 44,
         "test_identifier": 2
       }
     ]

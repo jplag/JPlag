@@ -109,6 +109,12 @@ class JavaEndToEndTest {
         for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
             assertEquals(testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier).getResultSimilarity(), jPlagComparison.similarity(),
                     "The JPlag results [similarity] do not match the stored values!");
+            assertEquals(testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier).getMinimalSimilarity(),
+                    jPlagComparison.minimalSimilarity(), "The JPlag results [minimalSimilarity] do not match the stored values!");
+            assertEquals(testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier).getMaximalSimilarity(),
+                    jPlagComparison.maximalSimilarity(), "The JPlag results [maximalSimilarity] do not match the stored values!");
+            assertEquals(testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier).getNumberOfMatchedTokens(),
+                    jPlagComparison.getNumberOfMatchedTokens(), "The JPlag results [numberOfMatchedTokens] do not match the stored values!");
         }
     }
 }
