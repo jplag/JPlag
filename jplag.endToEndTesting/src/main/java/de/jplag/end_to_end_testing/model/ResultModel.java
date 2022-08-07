@@ -11,7 +11,7 @@ public class ResultModel {
     @JsonProperty("result_similarity")
     private float resultSimilarity;
     @JsonProperty("test_identifier")
-    private Integer testIdentifier;
+    private int testIdentifier;
 
     /**
      * Constructor for the ResultModel. The model is the serialization of the Json file in the form of a Java object.
@@ -19,7 +19,7 @@ public class ResultModel {
      * @param testIdentifier specifies which associated test results are needed for a test case and are therefore associated
      * with this Id.
      */
-    public ResultModel(float resultSimilarity, Integer testIdentifier) {
+    public ResultModel(float resultSimilarity, int testIdentifier) {
         this.resultSimilarity = resultSimilarity;
         this.testIdentifier = testIdentifier;
     }
@@ -35,7 +35,7 @@ public class ResultModel {
     /**
      * @return Identifier assigned to the result
      */
-    public Integer getTestId() {
+    public int getTestId() {
         return testIdentifier;
     }
 

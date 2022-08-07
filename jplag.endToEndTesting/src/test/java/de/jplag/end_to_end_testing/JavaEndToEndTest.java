@@ -69,24 +69,14 @@ class JavaEndToEndTest {
      * Inserting comments or empty lines (normalization level) -> id = 0 Changing variable names or function names
      * (normalization level) -> id = 1 Inserting comments or empty lines (normalization level) -> id = 2
      * @param testClassNames Plagiarized classes names in the resource directorie which are needed for the test
-     * @param testId name of the testId to load and identify the stored results
+     * @param testIdentifier name of the testId to load and identify the stored results
      * @throws IOException is thrown in case of problems with copying the plagiarism classes
      * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
      */
     @ParameterizedTest
     @MethodSource("normalizationLevelTestArguments")
-    void normalizationLevelTest(String[] testClassNames, int testId) throws IOException, ExitException {
-
-        TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
-
-        JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
-
-        var jsonModel = testCaseModel.getCurrentJsonModel();
-
-        for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
-            assertEquals(jsonModel.getResultModelById(testId).getResultSimilarity(), jPlagComparison.similarity(),
-                    "The JPlag results [similarity] do not match the stored values!");
-        }
+    void normalizationLevelTest(String[] testClassNames, int testIdentifier) throws IOException, ExitException {
+        runJPlagTestSuite(testClassNames, testIdentifier);
     }
 
     /**
@@ -94,22 +84,30 @@ class JavaEndToEndTest {
      * generation) (statements and functions must be independent from each other) -> id = 1 Variable declaration at the
      * beginning of the program (Detecting Source Code Plagiarism [...]) -> id = 2
      * @param testClassNames Plagiarized classes names in the resource directorie which are needed for the test
-     * @param testId name of the testId to load and identify the stored results
+     * @param testIdentifier name of the testId to load and identify the stored results
      * @throws IOException is thrown in case of problems with copying the plagiarism classes
      * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
      */
     @ParameterizedTest
     @MethodSource("tokenGenerationLevelTestArguments")
-    void tokenGenerationLevelTest(String[] testClassNames, int testId) throws IOException, ExitException {
+    void tokenGenerationLevelTest(String[] testClassNames, int testIdentifier) throws IOException, ExitException {
+        runJPlagTestSuite(testClassNames, testIdentifier);
+    }
 
-        TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames);
-
+    /**
+     * This method creates the necessary results as well as models for a test run and summarizes them for a comparison.
+     * @param testClassNames Plagiarized classes names in the resource directorie which are needed for the test
+     * @param testIdentifier name of the testId to load and identify the stored results
+     * @throws IOException is thrown in case of problems with copying the plagiarism classes
+     * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
+     */
+    private void runJPlagTestSuite(String[] testClassNames, int testIdentifier) throws IOException, ExitException {
+        String functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
+        TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames, functionName);
         JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
-        var jsonModel = testCaseModel.getCurrentJsonModel();
-
         for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
-            assertEquals(jsonModel.getResultModelById(testId).getResultSimilarity(), jPlagComparison.similarity(),
+            assertEquals(testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier).getResultSimilarity(), jPlagComparison.similarity(),
                     "The JPlag results [similarity] do not match the stored values!");
         }
     }

@@ -53,9 +53,8 @@ public class JPlagTestSuiteHelper {
      * @return comparison results saved for the test
      * @throws IOException Exception can be thrown in cases that involve reading, copying or locating files.
      */
-    public TestCaseModel createNewTestCase(String[] classNames) throws IOException {
+    public TestCaseModel createNewTestCase(String[] classNames, String functionName) throws IOException {
         createNewTestCaseDirectory(classNames);
-        var functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
         JsonModel resultJsonModel = resultModel.stream().filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny().orElse(null);
         return new TestCaseModel(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME, resultJsonModel, languageOption);
     }
