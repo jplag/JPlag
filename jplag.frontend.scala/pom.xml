@@ -10,10 +10,8 @@
     <artifactId>scala</artifactId>
 
     <properties>
-        <encoding>UTF-8</encoding>
-        <scala.version>2.12.6</scala.version>
-        <scala.compat.version>2.12</scala.compat.version>
-        <spec2.version>4.2.0</spec2.version>
+        <scala.version>2.13.8</scala.version>
+        <scala.compat.version>2.13</scala.compat.version>
     </properties>
 
     <dependencies>
@@ -31,8 +29,8 @@
         <!-- https://mvnrepository.com/artifact/org.scalameta/scalameta -->
         <dependency>
             <groupId>org.scalameta</groupId>
-            <artifactId>scalameta_2.12</artifactId>
-            <version>4.0.0</version>
+            <artifactId>scalameta_${scala.compat.version}</artifactId>
+            <version>4.5.9</version>
         </dependency>
 
         <!-- Test -->

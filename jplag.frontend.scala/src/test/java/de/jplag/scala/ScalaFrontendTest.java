@@ -43,8 +43,9 @@ class ScalaFrontendTest {
      * Regular expression that describes lines containing the end of a multiline comment and no more code after that.
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
-    private static final String NOT_SET_STRING = "";
+    private static final String EMPTY_STRING = "";
     private static final int NOT_SET = -1;
+    private static final double EPSILON = 1E-6;
 
     private final Logger logger = LoggerFactory.getLogger("Scala frontend test");
     private final String[] testFiles = new String[] {"Complete.scala", "Parser.scala"};
@@ -77,7 +78,7 @@ class ScalaFrontendTest {
     @Test
     void testTokenToString() {
         var missingTokens = IntStream.range(0, ScalaTokenConstants.numberOfTokens())
-                .mapToObj(type -> new ScalaToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET))
+                .mapToObj(type -> new ScalaToken(type, EMPTY_STRING, NOT_SET, NOT_SET, NOT_SET))
                 .filter(token -> token.type2string().contains("UNKNOWN")).toList();
 
         if (!missingTokens.isEmpty()) {
@@ -112,7 +113,7 @@ class ScalaFrontendTest {
             } else {
                 logger.info("Coverage: %.1f%%.".formatted(coverage * 100));
                 logger.info("Missing lines {}", codeLines);
-                if (coverage < 0.9) {
+                if (coverage - 0.9 > EPSILON) {
                     fail("Source coverage is unsatisfactory");
                 }
             }
