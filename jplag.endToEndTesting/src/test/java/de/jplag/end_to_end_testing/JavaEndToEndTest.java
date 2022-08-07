@@ -40,7 +40,7 @@ class JavaEndToEndTest {
     }
 
     @AfterEach
-    public void teardown() {
+    public void teardown() throws IOException {
         // after close the created directories are deleted
         jplagTestSuiteHelper.clear();
     }
