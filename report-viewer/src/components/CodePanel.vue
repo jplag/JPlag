@@ -25,27 +25,32 @@
         />
       </button>
     </div>
-    <div :class="{ hidden: !collapse }" class="code-container">
-      <LineOfCode
-        v-for="(line, index) in lines"
-        :id="String(panelId).concat(title).concat(index)"
-        :key="index"
-        :color="coloringArray[index]"
-        :is-first="isFirst[index]"
-        :is-last="isLast[index]"
-        :line-number="index + 1"
-        :text="line"
-        :visible="collapse"
-        @click="
-          $emit(
-            'lineSelected',
-            $event,
-            linksArray[index].panel,
-            linksArray[index].file,
-            linksArray[index].line
-          )
-        "
-      />
+    <div :class="{ hidden: !collapse }">
+      <div v-if="!isEmpty(lines)" class="code-container">
+        <LineOfCode
+          v-for="(line, index) in lines"
+          :id="String(panelId).concat(title).concat(index)"
+          :key="index"
+          :color="coloringArray[index]"
+          :is-first="isFirst[index]"
+          :is-last="isLast[index]"
+          :line-number="index + 1"
+          :text="line"
+          :visible="collapse"
+          @click="
+            $emit(
+              'lineSelected',
+              $event,
+              linksArray[index].panel,
+              linksArray[index].file,
+              linksArray[index].line
+            )
+          "
+        />
+      </div>
+      <div v-else class="code-container">
+        <p>Empty File</p>
+      </div>
     </div>
   </div>
 </template>
@@ -112,6 +117,9 @@ export default defineComponent({
      * @type {Ref<UnwrapRef<{}>>}
      */
     const coloringArray = ref({});
+    const isEmpty = (lines) => {
+      return lines.length === 0 || lines.every((line) => !(line.trim()));
+    };
     /**
      * An object containing an object from which an id is to of the line to which this is linked is constructed.
      * Id object contains panel, file name, first line number of linked matched.
@@ -170,6 +178,7 @@ export default defineComponent({
       linksArray,
       isFirst,
       isLast,
+      isEmpty,
     };
   },
 });
