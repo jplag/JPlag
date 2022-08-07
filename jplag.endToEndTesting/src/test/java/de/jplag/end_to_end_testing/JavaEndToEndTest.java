@@ -18,6 +18,7 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.end_to_end_testing.constants.Constant;
 import de.jplag.end_to_end_testing.helper.JPlagTestSuiteHelper;
+import de.jplag.end_to_end_testing.model.ResultModel;
 import de.jplag.end_to_end_testing.model.TestCaseModel;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.LanguageOption;
@@ -36,7 +37,7 @@ class JavaEndToEndTest {
     public void setUp() throws IOException {
         jplagTestSuiteHelper = new JPlagTestSuiteHelper(LanguageOption.JAVA);
         assertTrue(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toFile().exists(), "Could not find base directory!");
-        assertTrue(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toFile().isFile(), "Could not find java result json!");
+        assertTrue(jplagTestSuiteHelper.getResultJsonPath().toFile().isFile(), "Could not find result json for the specified language!");
     }
 
     @AfterEach
@@ -106,15 +107,16 @@ class JavaEndToEndTest {
         TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames, functionName);
         JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
 
+        ResultModel resultModel = testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier);
         for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
-            assertEquals(testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier).getResultSimilarity(), jPlagComparison.similarity(),
+            assertEquals(resultModel.getResultSimilarity(), jPlagComparison.similarity(),
                     "The JPlag results [similarity] do not match the stored values!");
-            assertEquals(testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier).getMinimalSimilarity(),
-                    jPlagComparison.minimalSimilarity(), "The JPlag results [minimalSimilarity] do not match the stored values!");
-            assertEquals(testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier).getMaximalSimilarity(),
-                    jPlagComparison.maximalSimilarity(), "The JPlag results [maximalSimilarity] do not match the stored values!");
-            assertEquals(testCaseModel.getCurrentJsonModel().getResultModelById(testIdentifier).getNumberOfMatchedTokens(),
-                    jPlagComparison.getNumberOfMatchedTokens(), "The JPlag results [numberOfMatchedTokens] do not match the stored values!");
+            assertEquals(resultModel.getMinimalSimilarity(), jPlagComparison.minimalSimilarity(),
+                    "The JPlag results [minimalSimilarity] do not match the stored values!");
+            assertEquals(resultModel.getMaximalSimilarity(), jPlagComparison.maximalSimilarity(),
+                    "The JPlag results [maximalSimilarity] do not match the stored values!");
+            assertEquals(resultModel.getNumberOfMatchedTokens(), jPlagComparison.getNumberOfMatchedTokens(),
+                    "The JPlag results [numberOfMatchedTokens] do not match the stored values!");
         }
     }
 }

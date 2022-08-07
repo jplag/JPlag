@@ -29,6 +29,7 @@ public class JPlagTestSuiteHelper {
     private String[] resourceNames;
     private List<JsonModel> resultModel;
     private LanguageOption languageOption;
+    private Path resultJsonPath;
 
     /**
      * Helper class for the endToEnd tests. In this class the necessary resources are loaded, prepared and copied for the
@@ -41,8 +42,9 @@ public class JPlagTestSuiteHelper {
     public JPlagTestSuiteHelper(LanguageOption languageOption) throws IOException {
         this.languageOption = languageOption;
         this.resourceNames = new File(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString()).list();
+        this.resultJsonPath = Constant.RESULT_PATH_MAPPER().get(languageOption);
+        this.resultModel = JsonHelper.getResultModelFromPath(resultJsonPath);
 
-        this.resultModel = JsonHelper.getResultModelFromPath();
         logger.info("temp path at [{}]", Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME);
     }
 
@@ -66,6 +68,13 @@ public class JPlagTestSuiteHelper {
     public void clear() throws IOException {
         logger.info("Class instance was cleaned!");
         deleteCopiedFiles(new File(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
+    }
+
+    /**
+     * @return Path to the stored test results
+     */
+    public Path getResultJsonPath() {
+        return resultJsonPath;
     }
 
     /**
