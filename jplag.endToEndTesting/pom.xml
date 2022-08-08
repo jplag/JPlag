@@ -15,6 +15,11 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>frontend-testutils</artifactId>
             <version>${revision}</version>
             <type>test-jar</type>

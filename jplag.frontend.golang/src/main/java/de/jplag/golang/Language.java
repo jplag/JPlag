@@ -2,8 +2,11 @@ package de.jplag.golang;
 
 import java.io.File;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.TokenList;
 
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
     private static final String NAME = "Go Parser";
