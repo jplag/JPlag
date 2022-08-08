@@ -13,20 +13,24 @@
         <th>File 2</th>
         <th>Tokens</th>
       </tr>
-      <tr v-for="( match, index ) in matches"
-          :key="String(index).concat(match.startInFirst).concat(match.startInSecond)"
-          :style="{ background : match.color }"
-          @click="$emit('matchSelected', $event, match)">
+      <tr
+        v-for="(match, index) in matches"
+        :key="
+          String(index).concat(match.startInFirst).concat(match.startInSecond)
+        "
+        :style="{ background: match.color }"
+        @click="$emit('matchSelected', $event, match)"
+      >
         <td>
           <div class="td-content">
             <p>{{ match.firstFile }}</p>
-            <p>({{ match.startInFirst }} - {{ match.endInFirst }})</p>
+            <p>({{ match.startInFirst + 1 }} - {{ match.endInFirst + 1 }})</p>
           </div>
         </td>
         <td>
           <div class="td-content">
             <p>{{ match.secondFile }}</p>
-            <p>({{ match.startInSecond }} - {{ match.endInSecond }})</p>
+            <p>({{ match.startInSecond + 1 }} - {{ match.endInSecond + 1 }})</p>
           </div>
         </td>
         <td>{{ match.tokens }}</td>
@@ -36,7 +40,7 @@
 </template>
 
 <script>
-import {defineComponent} from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "MatchTable",
@@ -46,25 +50,25 @@ export default defineComponent({
      * type: Array<Match>
      */
     matches: {
-      type: Array
+      type: Array,
     },
     /**
      * ID of first submission
      */
     id1: {
-      type: String
+      type: String,
     },
     /**
      * ID of second submission
      */
     id2: {
-      type: String
-    }
+      type: String,
+    },
   },
   setup() {
-    return {}
-  }
-})
+    return {};
+  },
+});
 </script>
 
 <style scoped>
@@ -97,13 +101,11 @@ table {
 th {
   color: var(--on-primary-color);
   text-align: center;
-
 }
 
 td {
   font-size: small;
   text-align: center;
   padding: 2%;
-
 }
 </style>
