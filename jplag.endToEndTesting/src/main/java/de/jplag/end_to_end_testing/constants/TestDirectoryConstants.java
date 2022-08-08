@@ -5,9 +5,9 @@ import java.nio.file.Path;
 /**
  * All constant values that are needed in the test cases or helper classes.
  */
-public final class Constant {
+public final class TestDirectoryConstants {
 
-    private Constant() {
+    private TestDirectoryConstants() {
         // private constructor to prevent instantiation
     }
 

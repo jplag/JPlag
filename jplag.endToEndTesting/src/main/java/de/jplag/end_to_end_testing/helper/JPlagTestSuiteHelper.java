@@ -12,7 +12,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.end_to_end_testing.constants.Constant;
+import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.end_to_end_testing.model.JsonModel;
 import de.jplag.end_to_end_testing.model.TestCaseModel;
 import de.jplag.options.LanguageOption;
@@ -40,10 +40,10 @@ public class JPlagTestSuiteHelper {
      */
     public JPlagTestSuiteHelper(LanguageOption languageOption) throws IOException {
         this.languageOption = languageOption;
-        this.resourceNames = new File(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString()).list();
+        this.resourceNames = new File(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString()).list();
 
         this.resultModel = JsonHelper.getResultModelFromPath();
-        logger.info("temp path at [{}]", Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME);
+        logger.debug("temp path at [{}]", TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME);
     }
 
     /**
@@ -56,7 +56,7 @@ public class JPlagTestSuiteHelper {
     public TestCaseModel createNewTestCase(String[] classNames, String functionName) throws IOException {
         createNewTestCaseDirectory(classNames);
         JsonModel resultJsonModel = resultModel.stream().filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny().orElse(null);
-        return new TestCaseModel(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME, resultJsonModel, languageOption);
+        return new TestCaseModel(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME, resultJsonModel, languageOption);
     }
 
     /**
@@ -64,8 +64,8 @@ public class JPlagTestSuiteHelper {
      * @throws IOException if an I/O error occurs
      */
     public void clear() throws IOException {
-        logger.info("Class instance was cleaned!");
-        deleteCopiedFiles(new File(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
+        logger.debug("Class instance was cleaned!");
+        deleteCopiedFiles(new File(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
     }
 
     /**
@@ -82,9 +82,9 @@ public class JPlagTestSuiteHelper {
         }
         // Copy the resources data to the temporary path
         for (int counter = 0; counter < classNames.length; counter++) {
-            Path originalPath = Path.of(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString(), classNames[counter]);
-            Path copiePath = Path.of(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME, Constant.TEMPORARY_DIRECTORY_NAME + (counter + 1),
-                    classNames[counter]);
+            Path originalPath = Path.of(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString(), classNames[counter]);
+            Path copiePath = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME,
+                    TestDirectoryConstants.TEMPORARY_DIRECTORY_NAME + (counter + 1), classNames[counter]);
 
             File directory = new File(copiePath.toString());
             if (!directory.exists()) {
@@ -92,7 +92,7 @@ public class JPlagTestSuiteHelper {
             }
 
             Files.copy(originalPath, copiePath, StandardCopyOption.REPLACE_EXISTING);
-            logger.info("Copy file from [{}] to [{}]", originalPath, copiePath);
+            logger.debug("Copy file from [{}] to [{}]", originalPath, copiePath);
         }
     }
 
@@ -109,12 +109,12 @@ public class JPlagTestSuiteHelper {
                     deleteCopiedFiles(file);
                 } else {
                     Files.delete(file.toPath());
-                    logger.info("Delete file in folder: [{}]", file);
+                    logger.debug("Delete file in folder: [{}]", file);
                 }
             }
         }
         Files.delete(folder.toPath());
-        logger.info("Delete folder: [{}]", folder);
+        logger.debug("Delete folder: [{}]", folder);
     }
 
 }

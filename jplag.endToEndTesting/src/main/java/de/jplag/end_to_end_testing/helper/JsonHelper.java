@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.jplag.end_to_end_testing.constants.Constant;
+import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.end_to_end_testing.model.JsonModel;
 
 /**
@@ -28,6 +28,6 @@ public final class JsonHelper {
      * and parsing problems.
      */
     public static List<JsonModel> getResultModelFromPath() throws IOException {
-        return Arrays.asList(new ObjectMapper().readValue(Constant.BASE_PATH_TO_JAVA_RESULT_JSON.toFile(), JsonModel[].class));
+        return Arrays.asList(new ObjectMapper().readValue(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESULT_JSON.toFile(), JsonModel[].class));
     }
 }
