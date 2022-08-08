@@ -121,7 +121,7 @@ class JavaEndToEndTest {
         String functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
         TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames, functionName);
         JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
-        // jplagTestSuiteHelper.saveResult(jplagResult.getAllComparisons());
+        jplagTestSuiteHelper.saveResult(jplagResult.getAllComparisons());
 
         for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
             int hashCode = jplagTestSuiteHelper.getTestHashCode(jPlagComparison);

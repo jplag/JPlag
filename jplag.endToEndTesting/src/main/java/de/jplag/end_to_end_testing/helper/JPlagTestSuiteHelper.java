@@ -90,10 +90,17 @@ public class JPlagTestSuiteHelper {
         return resourceNames;
     }
 
+    /**
+     * saves all temporary results for a test into a json file
+     * @param jplagComparisonList
+     * @throws StreamWriteException
+     * @throws DatabindException
+     * @throws IOException
+     */
     public void saveResult(List<JPlagComparison> jplagComparisonList) throws StreamWriteException, DatabindException, IOException {
         for (JPlagComparison jplagComparison : jplagComparisonList) {
             JsonHelper.writeObjectToJsonFile(new ResultModel(jplagComparison, getTestHashCode(jplagComparison)),
-                    TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME);
+                    getTemporaryFileNameForJson(jplagComparison));
         }
     }
 
@@ -126,6 +133,25 @@ public class JPlagTestSuiteHelper {
         }
 
         return temporaryResourceNames.toArray(new String[temporaryResourceNames.size()]);
+    }
+    
+    /**
+     * Creates a transitional name from the tested file names to store the test results temporarily
+     * @param jplagComparison for which a temporary name with the extension .json is to be created
+     * @return temporary storage name for a json file
+     */
+    private String getTemporaryFileNameForJson(JPlagComparison jplagComparison)
+    {    	
+    	String firstFileNameFromFirstSubmission = jplagComparison.getFirstSubmission().getFiles().stream().findFirst().get().getName();
+    	String secondFileNameFromSecondSubmission = jplagComparison.getSecondSubmission().getFiles().stream().findFirst().get().getName();
+    	//remove file extension
+    	int positionFromExtensionFirstSubmission = firstFileNameFromFirstSubmission.lastIndexOf(".");
+    	int positionFromExtensionSecondSubmission = secondFileNameFromSecondSubmission.lastIndexOf(".");
+    	if (positionFromExtensionFirstSubmission > 0 && positionFromExtensionSecondSubmission > 0 ) {
+    		firstFileNameFromFirstSubmission = firstFileNameFromFirstSubmission.substring(0, positionFromExtensionFirstSubmission);
+    		secondFileNameFromSecondSubmission = secondFileNameFromSecondSubmission.substring(0, positionFromExtensionSecondSubmission);
+    	}
+    	return firstFileNameFromFirstSubmission + "_" +  secondFileNameFromSecondSubmission + ".json";
     }
 
     /**
