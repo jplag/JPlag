@@ -5,8 +5,6 @@ import de.jplag.TokenConstants;
 public interface RustTokenConstants extends TokenConstants {
     int NONE = -1;
 
-    // TOP LEVEL ELEMENTS
-
     int INNER_ATTRIBUTE = 2;
     int OUTER_ATTRIBUTE = 3;
 
@@ -61,16 +59,22 @@ public interface RustTokenConstants extends TokenConstants {
     int EXTERN_BLOCK_START = 41;
     int EXTERN_BLOCK_END = 42;
 
-    int IF_BODY_START = 43;
-    int IF_BODY_END = 44;
+    int IF_STATEMENT = 43;
+    int IF_BODY_START = 44;
+    int IF_BODY_END = 45;
 
-    int INNER_BLOCK_START = 45;
-    int INNER_BLOCK_END = 46;
+    int LABEL = 46;
+    int LOOP_STATEMENT = 47;
+    int LOOP_BODY_START = 48;
+    int LOOP_BODY_END = 49;
 
-    int ASSIGNMENT = 47;
+    int INNER_BLOCK_START = 50;
+    int INNER_BLOCK_END = 51;
 
-    int VARIABLE_DECLARATION = 48;
+    int ASSIGNMENT = 52;
 
-    int NUMBER_DIFF_TOKENS = 49;
+    int VARIABLE_DECLARATION = 53;
+
+    int NUMBER_DIFF_TOKENS = 54;
 
 }

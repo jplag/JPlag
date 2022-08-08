@@ -213,7 +213,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterFunction_(RustParser.Function_Context ctx) {
-        Token fn = ((TerminalNodeImpl) ctx.getChild(1)).getSymbol();
+        Token fn = ctx.getChild(TerminalNodeImpl.class, 0).getSymbol();
         transformToken(FUNCTION, fn);
         enterBlockContext(RustBlockContext.FUNCTION_BODY);
         super.enterFunction_(ctx);
@@ -253,6 +253,39 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
     public void exitExpressionWithBlock(RustParser.ExpressionWithBlockContext ctx) {
         expectAndLeave(RustBlockContext.INNER_BLOCK);
         super.exitExpressionWithBlock(ctx);
+    }
+
+    @Override
+    public void enterIfExpression(RustParser.IfExpressionContext ctx) {
+        transformToken(IF_STATEMENT, ctx.getStart());
+        enterBlockContext(RustBlockContext.IF_BODY);
+        super.enterIfExpression(ctx);
+    }
+
+    @Override
+    public void exitIfExpression(RustParser.IfExpressionContext ctx) {
+        expectAndLeave(RustBlockContext.IF_BODY);
+        super.exitIfExpression(ctx);
+    }
+
+    @Override
+    public void enterLoopLabel(RustParser.LoopLabelContext ctx) {
+        transformToken(LABEL, ctx.getStart());
+        super.enterLoopLabel(ctx);
+    }
+
+    @Override
+    public void enterInfiniteLoopExpression(RustParser.InfiniteLoopExpressionContext ctx) {
+        Token loopKeyword = ctx.getChild(TerminalNodeImpl.class, 0).getSymbol();
+        transformToken(LOOP_STATEMENT, loopKeyword);
+        enterBlockContext(RustBlockContext.LOOP_BODY);
+        super.enterInfiniteLoopExpression(ctx);
+    }
+
+    @Override
+    public void exitInfiniteLoopExpression(RustParser.InfiniteLoopExpressionContext ctx) {
+        expectAndLeave(RustBlockContext.LOOP_BODY);
+        super.exitInfiniteLoopExpression(ctx);
     }
 
     @Override
@@ -328,6 +361,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
         FUNCTION_BODY(FUNCTION_BODY_START, FUNCTION_BODY_END),
         STRUCT_BODY(STRUCT_BODY_BEGIN, STRUCT_BODY_END),
         IF_BODY(IF_BODY_START, IF_BODY_END),
+        LOOP_BODY(LOOP_BODY_START, LOOP_BODY_END),
         INNER_BLOCK(INNER_BLOCK_START, INNER_BLOCK_END),
         USE_TREE(NONE, NONE),
         ATTRIBUTE_TREE(NONE, NONE),
@@ -345,7 +379,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
         private final int startType;
         private final int endType;
 
-        <T extends ParserRuleContext> RustBlockContext(int startType, int endType) {
+        RustBlockContext(int startType, int endType) {
             this.startType = startType;
             this.endType = endType;
         }

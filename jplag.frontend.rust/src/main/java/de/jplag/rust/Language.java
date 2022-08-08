@@ -1,9 +1,8 @@
 package de.jplag.rust;
 
-import java.io.File;
-
-import de.jplag.ErrorConsumer;
 import de.jplag.TokenList;
+
+import java.io.File;
 
 public class Language implements de.jplag.Language {
 
@@ -14,8 +13,8 @@ public class Language implements de.jplag.Language {
 
     private final RustParserAdapter parserAdapter;
 
-    public Language(ErrorConsumer consumer) {
-        this.parserAdapter = new RustParserAdapter(consumer);
+    public Language() {
+        this.parserAdapter = new RustParserAdapter();
     }
 
     @Override
@@ -48,23 +47,4 @@ public class Language implements de.jplag.Language {
         return parserAdapter.hasErrors();
     }
 
-    @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return RustTokenConstants.NUMBER_DIFF_TOKENS;
-    }
 }

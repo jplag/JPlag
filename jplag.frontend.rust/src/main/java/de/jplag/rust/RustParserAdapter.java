@@ -1,34 +1,24 @@
 package de.jplag.rust;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
+import de.jplag.AbstractParser;
+import de.jplag.TokenList;
+import de.jplag.rust.grammar.RustLexer;
+import de.jplag.rust.grammar.RustParser;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
-import de.jplag.TokenList;
-import de.jplag.rust.RustTokenConstants.*;
-import de.jplag.rust.grammar.RustLexer;
-import de.jplag.rust.grammar.RustParser;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class RustParserAdapter extends AbstractParser {
 
+    private static final int NOT_SET = -1;
     private String currentFile;
     private TokenList tokens;
-
-    /**
-     * Creates the RustParserAdapter
-     * @param consumer the ErrorConsumer that parser errors are passed on to.
-     */
-    public RustParserAdapter(ErrorConsumer consumer) {
-        super(consumer);
-    }
 
     /**
      * Parsers a list of files into a single {@link TokenList}.
@@ -43,7 +33,7 @@ public class RustParserAdapter extends AbstractParser {
             if (!parseFile(directory, fileName)) {
                 errors++;
             }
-            tokens.addToken(new RustToken(RustTokenConstants.FILE_END, fileName, -1, -1, -1));
+            tokens.addToken(new RustToken(RustTokenConstants.FILE_END, fileName, NOT_SET, NOT_SET, NOT_SET));
         }
         return tokens;
     }
@@ -69,7 +59,7 @@ public class RustParserAdapter extends AbstractParser {
                 treeWalker.walk(new JplagRustListener(this), parseTree);
             }
         } catch (IOException exception) {
-            getErrorConsumer().addError("Parsing Error in '" + fileName + "':" + File.separator + exception);
+            logger.error("Parsing Error in '" + fileName + "':" + File.separator, exception);
             return false;
         }
         return true;

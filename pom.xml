@@ -174,6 +174,11 @@
             </dependency>
             <dependency>
                 <groupId>de.jplag</groupId>
+                <artifactId>rust</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
                 <artifactId>scheme</artifactId>
                 <version>${revision}</version>
             </dependency>

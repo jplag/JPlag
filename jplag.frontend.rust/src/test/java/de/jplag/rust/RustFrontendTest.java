@@ -1,26 +1,25 @@
 package de.jplag.rust;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
-
+import de.jplag.Token;
+import de.jplag.TokenConstants;
+import de.jplag.TokenList;
+import de.jplag.TokenPrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.Token;
-import de.jplag.TokenConstants;
-import de.jplag.TokenList;
-import de.jplag.TokenPrinter;
-import de.jplag.testutils.TestErrorConsumer;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RustFrontendTest {
 
@@ -37,6 +36,7 @@ public class RustFrontendTest {
     private static final String COMPLETE_TEST_FILE = "Complete.rs";
     public static final int NOT_SET = -1;
     private static final String RUST_SHEBANG = "#!.*$";
+    private static final double EPSILON = 1E-6;
 
     private final Logger logger = LoggerFactory.getLogger("Rust frontend test");
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
@@ -45,8 +45,7 @@ public class RustFrontendTest {
 
     @BeforeEach
     void setup() {
-        TestErrorConsumer consumer = new TestErrorConsumer();
-        language = new Language(consumer);
+        language = new Language();
     }
 
     @Test
@@ -72,27 +71,33 @@ public class RustFrontendTest {
 
         try {
             List<String> lines = Files.readAllLines(testFile.toPath());
-            String emptyLineExpression = SINGLE_LINE_COMMENT();
 
             // All lines that contain code
-            var codeLines = getCodeLines(lines);
+            var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().toArray();
+            var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().boxed().toList();
 
-            if (codeLines.length > tokenLines.length) {
-                var diffLine = IntStream.range(0, codeLines.length)
-                        .dropWhile(lineIndex -> lineIndex < tokenLines.length && codeLines[lineIndex] == tokenLines[lineIndex]).findFirst();
-                diffLine.ifPresent(
-                        lineIdx -> fail("Line %d of file '%s' is not represented in the token list.".formatted(codeLines[lineIdx], fileName)));
+            // Keep only lines that have no tokens
+            codeLines.removeAll(tokenLines);
+
+            double coverage = 1.d - (codeLines.size() * 1.d / (codeLines.size() + tokenLines.size()));
+            if (coverage == 1) {
+                logger.info("All lines covered.");
+            } else {
+                logger.info("Coverage: %.1f%%.".formatted(coverage * 100));
+                logger.info("Missing lines {}", codeLines);
+                if (coverage - 0.9 <= EPSILON) {
+                    fail("Source coverage is unsatisfactory");
+                }
             }
-            assertArrayEquals(codeLines, tokenLines);
+
         } catch (IOException exception) {
             logger.info("Error while reading test file %s".formatted(fileName), exception);
             fail();
         }
     }
 
-    private int[] getCodeLines(List<String> lines) {
+    private List<Integer> getCodeLines(List<String> lines) {
         var state = new Object() {
             boolean insideMultilineComment = false;
 
@@ -113,7 +118,7 @@ public class RustFrontendTest {
             } else {
                 return !state.insideMultilineComment;
             }
-        }).toArray();
+        }).boxed().toList();
     }
 
     /**
@@ -135,7 +140,7 @@ public class RustFrontendTest {
         assertArrayEquals(allTokens, foundTokens);
     }
 
-    private static String SINGLE_LINE_COMMENT() {
+    private static String getSingleLineCommentPattern() {
         return RUST_EMPTY_OR_SINGLE_LINE_COMMENT;
     }
 
