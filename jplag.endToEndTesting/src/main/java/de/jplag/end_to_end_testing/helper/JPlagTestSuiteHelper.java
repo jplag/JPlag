@@ -13,9 +13,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
+
 import de.jplag.JPlagComparison;
 import de.jplag.end_to_end_testing.constants.Constant;
 import de.jplag.end_to_end_testing.model.JsonModel;
+import de.jplag.end_to_end_testing.model.ResultModel;
 import de.jplag.end_to_end_testing.model.TestCaseModel;
 import de.jplag.options.LanguageOption;
 
@@ -86,6 +90,13 @@ public class JPlagTestSuiteHelper {
         return resourceNames;
     }
 
+    public void saveResult(List<JPlagComparison> jplagComparisonList) throws StreamWriteException, DatabindException, IOException {
+        for (JPlagComparison jplagComparison : jplagComparisonList) {
+            JsonHelper.writeObjectToJsonFile(new ResultModel(jplagComparison, getTestHashCode(jplagComparison)),
+                    Constant.TEMPORARY_RESULT_DIRECTORY_NAME);
+        }
+    }
+
     /**
      * Creates a unique hash from the submissions in the JPlagComparison object which is used to find the results in the
      * json files.
@@ -132,8 +143,7 @@ public class JPlagTestSuiteHelper {
         // Copy the resources data to the temporary path
         for (int counter = 0; counter < classNames.length; counter++) {
             Path originalPath = Path.of(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString(), classNames[counter]);
-            Path copiePath = Path.of(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME, Constant.TEMPORARY_DIRECTORY_NAME + (counter + 1),
-                    classNames[counter]);
+            Path copiePath = Path.of(Constant.TEMPORARY_SUBMISSION_DIRECTORY_NAME, "submission" + (counter + 1), classNames[counter]);
 
             File directory = new File(copiePath.toString());
             if (!directory.exists()) {

@@ -2,6 +2,8 @@ package de.jplag.end_to_end_testing.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.jplag.JPlagComparison;
+
 /**
  * The ResultModel contains all information and comparison values that are important for a test and that could be parsed
  * from the json file.
@@ -31,6 +33,14 @@ public class ResultModel {
         this.resultSimilarityMinimum = resultSimilarityMinimum;
         this.resultSimilarityMaximum = resultSimilarityMaximum;
         this.resultMatchedTokenNumber = resultMatchedTokenNumber;
+        this.testIdentifier = testIdentifier;
+    }
+
+    public ResultModel(JPlagComparison jplagComparison, int testIdentifier) {
+        this.resultSimilarity = jplagComparison.similarity();
+        this.resultMatchedTokenNumber = jplagComparison.getNumberOfMatchedTokens();
+        this.resultSimilarityMinimum = jplagComparison.minimalSimilarity();
+        this.resultSimilarityMaximum = jplagComparison.maximalSimilarity();
         this.testIdentifier = testIdentifier;
     }
 

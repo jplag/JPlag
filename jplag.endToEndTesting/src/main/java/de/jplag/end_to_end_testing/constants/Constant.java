@@ -20,12 +20,22 @@ public final class Constant {
     /**
      * Name for the folder to copy the submissions to in order to test them with JPlag
      */
-    public static final String TEMPORARY_DIRECTORY_NAME = "testing-directory-submission";
+    private static final String SUBMISSION_DIRECTORY_NAME = "testing-directory-submission";
+
+    /**
+     * Name for the folder to copy the submissions to in order to test them with JPlag
+     */
+    private static final String RESULT_DIRECTORY_NAME = "testing-directory-temporary-result";
     /**
      * Create the complete path to the submission files. Here the temporary system path is extended with the
-     * "TEMPORARY_DIRECTORY_NAME", which is predefined in this class.
+     * "SUBMISSION_DIRECTORY_NAME", which is predefined in this class.
      */
-    public static final String TEMPORARY_SUBMISSION_DIRECTORY_NAME = Path.of("target", TEMPORARY_DIRECTORY_NAME).toString();
+    public static final String TEMPORARY_SUBMISSION_DIRECTORY_NAME = Path.of("target", SUBMISSION_DIRECTORY_NAME).toString();
+    /**
+     * Create the complete path to the temporary result files. Here the temporary system path is extended with the
+     * "RESULT_DIRECTORY_NAME", which is predefined in this class.
+     */
+    public static final Path TEMPORARY_RESULT_DIRECTORY_NAME = Path.of("target", RESULT_DIRECTORY_NAME);
 
     /**
      * Base path to the created plagiarism and the main file located in the project resources.
