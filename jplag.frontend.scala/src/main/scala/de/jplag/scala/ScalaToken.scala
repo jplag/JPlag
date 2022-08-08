@@ -4,20 +4,20 @@ import de.jplag.Token
 
 import scala.meta.inputs.Position
 
-class ScalaToken(tType: Int,
+class ScalaToken(tokenType: Int,
                  file: java.lang.String,
                  var line: Int,
                  var column: Int,
                  var length: Int)
-  extends Token(tType, file, line, column, length) {
+  extends Token(tokenType, file, line, column, length) {
 
-    def this(tType: ScalaTokenConstants.Value, file: String, pos: Position, fromEnd: Boolean) {
+    def this(tokenType: ScalaTokenConstants.Value, file: String, position: Position, fromEnd: Boolean) {
         this(
-            tType.id,
+            tokenType.id,
             file,
-            (if (fromEnd) pos.endLine else pos.startLine) + 1,
-            (if (fromEnd) pos.endColumn else pos.startColumn) + 1,
-            pos.text.length
+            (if (fromEnd) position.endLine else position.startLine) + 1,
+            (if (fromEnd) position.endColumn else position.startColumn) + 1,
+            if (fromEnd) 0 else position.text.length,
         )
     }
 
@@ -32,5 +32,5 @@ class ScalaToken(tType: Int,
     /**
      * @return a string representation depending on the type of the token.
      */
-    override protected def type2string(): String = ScalaTokenConstants.apply(tType).toString
+    override protected def type2string(): String = ScalaTokenConstants.apply(tokenType).toString
 }

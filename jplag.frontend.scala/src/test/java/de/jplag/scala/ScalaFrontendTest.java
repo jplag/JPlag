@@ -48,7 +48,7 @@ class ScalaFrontendTest {
     private static final double EPSILON = 1E-6;
 
     private final Logger logger = LoggerFactory.getLogger("Scala frontend test");
-    private final String[] testFiles = new String[] {"Complete.scala", "Parser.scala"};
+    private final String[] testFiles = new String[] {"Parser.scala", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "scala").toFile();
     private Language language;
 
@@ -94,10 +94,10 @@ class ScalaFrontendTest {
      * @param tokens the TokenList generated from the sample
      */
     private void testSourceCoverage(String fileName, TokenList tokens) {
-        File testFile = new File(testFileLocation, fileName);
+        var testFile = new File(testFileLocation, fileName);
 
         try {
-            List<String> lines = Files.readAllLines(testFile.toPath());
+            var lines = Files.readAllLines(testFile.toPath());
 
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
@@ -107,7 +107,7 @@ class ScalaFrontendTest {
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
 
-            double coverage = 1.d - (codeLines.size() * 1.d / (codeLines.size() + tokenLines.size()));
+            var coverage = 1.d - (codeLines.size() * 1.d / (codeLines.size() + tokenLines.size()));
             if (coverage == 1) {
                 logger.info("All lines covered.");
             } else {
@@ -150,9 +150,9 @@ class ScalaFrontendTest {
                 return false;
             }
             return true;
-        });
+        }).boxed().toList();
 
-        return codeLines.boxed().toList();
+        return codeLines;
 
     }
 

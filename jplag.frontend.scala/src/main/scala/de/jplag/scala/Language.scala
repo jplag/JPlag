@@ -6,7 +6,7 @@ import java.io.File
 
 class Language extends de.jplag.Language {
   private val parser = new Parser
-  private final val fileExtensions = Array(".scala")
+  private final val fileExtensions = Array(".scala", ".sc")
 
   override def suffixes: Array[String] = fileExtensions
 
