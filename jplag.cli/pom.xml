@@ -53,6 +53,10 @@
             <artifactId>chars</artifactId>
         </dependency>
         <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>endToEndTesting</artifactId>
+        </dependency>
+        <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>
             <artifactId>argparse4j</artifactId>
         </dependency>
