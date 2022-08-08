@@ -51,5 +51,6 @@ public final class JsonHelper {
 
         // convert book object to JSON file
         writer.writeValue(Paths.get("book.json").toFile(), resultModel);
+
     }
 }

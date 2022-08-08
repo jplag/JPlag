@@ -18,7 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
-import de.jplag.end_to_end_testing.constants.Constant;
+import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.end_to_end_testing.helper.JPlagTestSuiteHelper;
 import de.jplag.end_to_end_testing.model.ResultModel;
 import de.jplag.end_to_end_testing.model.TestCaseModel;
@@ -38,7 +38,7 @@ class JavaEndToEndTest {
     @BeforeAll
     public void setUp() throws IOException {
         jplagTestSuiteHelper = new JPlagTestSuiteHelper(LanguageOption.JAVA);
-        assertTrue(Constant.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toFile().exists(), "Could not find base directory!");
+        assertTrue(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toFile().exists(), "Could not find base directory!");
         assertTrue(jplagTestSuiteHelper.getResultJsonPath().toFile().isFile(), "Could not find result json for the specified language!");
     }
 

@@ -11,9 +11,9 @@ import de.jplag.options.LanguageOption;
 /**
  * All constant values that are needed in the test cases or helper classes.
  */
-public final class Constant {
+public final class TestDirectoryConstants {
 
-    private Constant() {
+    private TestDirectoryConstants() {
         // private constructor to prevent instantiation
     }
 
@@ -64,8 +64,8 @@ public final class Constant {
      */
     public static final HashMap<LanguageOption, Path> RESULT_PATH_MAPPER() {
         HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<LanguageOption, Path>();
-        languageSpecificResultMapper.put(LanguageOption.JAVA, Constant.BASE_PATH_TO_JAVA_RESULT_JSON);
-        languageSpecificResultMapper.put(LanguageOption.C_SHARP, Constant.BASE_PATH_TO_C_SHARP_RESULT_JSON);
+        languageSpecificResultMapper.put(LanguageOption.JAVA, BASE_PATH_TO_JAVA_RESULT_JSON);
+        languageSpecificResultMapper.put(LanguageOption.C_SHARP, BASE_PATH_TO_C_SHARP_RESULT_JSON);
 
         return languageSpecificResultMapper;
     }
