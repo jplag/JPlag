@@ -2,7 +2,6 @@ import { Overview } from "../Overview";
 import { Metric } from "../Metric";
 import { ComparisonListElement } from "../ComparisonListElement";
 import { Cluster } from "@/model/Cluster";
-import { SubmissionName } from "../SubmissionName";
 import store from "@/store/store";
 
 export class OverviewFactory {
@@ -12,7 +11,8 @@ export class OverviewFactory {
     const language = json.language as string;
     const fileExtensions = json.file_extensions as Array<string>;
     const matchSensitivity = json.match_sensitivity as number;
-    const submissions = json.submission_ids as Array<SubmissionName>;
+    const jsonSubmissions = json.submission_ids as Map<string,string>;
+    const map = new Map<string, string>(Object.entries(jsonSubmissions));
     const dateOfExecution = json.date_of_execution as string;
     const duration = json.execution_time as number as number;
     const metrics = [] as Array<Metric>;
@@ -39,7 +39,7 @@ export class OverviewFactory {
         description: metric.description as string,
       });
     });
-    store.commit("saveSubmissionNames", submissions);
+    store.commit("saveSubmissionNames", map);
     if (json.clusters) {
       (json.clusters as Array<unknown>).forEach((jsonCluster) => {
         const cluster = jsonCluster as Record<string, unknown>;
@@ -58,11 +58,11 @@ export class OverviewFactory {
       language,
       fileExtensions,
       matchSensitivity,
-      submissions,
       dateOfExecution,
       duration,
       metrics,
-      clusters
+      clusters,
+      new Map()
     );
   }
 }

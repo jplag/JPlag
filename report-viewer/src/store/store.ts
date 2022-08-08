@@ -1,4 +1,3 @@
-import { SubmissionName } from "@/model/SubmissionName";
 import { createStore } from "vuex";
 
 /**
@@ -90,6 +89,9 @@ const store = createStore<State>({
     submissionDisplayName: (state) => (id: string) => {
       return state.fileIdToDisplayName.get(id);
     },
+    getSubmissionIds(state) : Array<string> {
+      return Array.from(state.fileIdToDisplayName.keys());
+    },
   },
   mutations: {
     addAnonymous(state: State, id) {
@@ -108,10 +110,8 @@ const store = createStore<State>({
     saveFile(state, file: File) {
       state.files[file.fileName] = file.data;
     },
-    saveSubmissionNames(state, names: Array<SubmissionName>) {
-      state.fileIdToDisplayName = new Map(
-        names.map((name) => [name.submissionId, name.displayName])
-      );
+    saveSubmissionNames(state, names: Map<string, string>) {
+      state.fileIdToDisplayName = names;
     },
     saveSubmissionFile(state, submissionFile: SubmissionFile) {
       if (!state.submissions[submissionFile.name]) {
