@@ -1,13 +1,7 @@
 package de.jplag.rust;
 
-import de.jplag.Token;
-import de.jplag.TokenConstants;
-import de.jplag.TokenList;
-import de.jplag.TokenPrinter;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +12,15 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.jplag.Token;
+import de.jplag.TokenConstants;
+import de.jplag.TokenList;
+import de.jplag.TokenPrinter;
 
 public class RustFrontendTest {
 
@@ -139,9 +140,5 @@ public class RustFrontendTest {
         }
         assertArrayEquals(allTokens, foundTokens);
     }
-
-    private static String getSingleLineCommentPattern() {
-        return RUST_EMPTY_OR_SINGLE_LINE_COMMENT;
-    }
-
+    
 }

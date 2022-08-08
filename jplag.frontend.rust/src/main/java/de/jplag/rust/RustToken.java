@@ -36,7 +36,7 @@ public class RustToken extends Token {
             case UNION -> "UNION";
             case UNION_BODY_START -> "UNION{";
             case UNION_BODY_END -> "}UNION";
-            
+
             case TRAIT -> "TRAIT";
             case TRAIT_BODY_START -> "TRAIT{";
             case TRAIT_BODY_END -> "}TRAIT";
@@ -72,7 +72,7 @@ public class RustToken extends Token {
             case LOOP_STATEMENT -> "LOOP";
             case LOOP_BODY_START -> "LOOP{";
             case LOOP_BODY_END -> "}LOOP";
-            
+
             case INNER_BLOCK_START -> "INNER{";
             case INNER_BLOCK_END -> "}INNER";
 

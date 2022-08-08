@@ -1,18 +1,19 @@
 package de.jplag.rust;
 
-import de.jplag.AbstractParser;
-import de.jplag.TokenList;
-import de.jplag.rust.grammar.RustLexer;
-import de.jplag.rust.grammar.RustParser;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import de.jplag.AbstractParser;
+import de.jplag.TokenList;
+import de.jplag.rust.grammar.RustLexer;
+import de.jplag.rust.grammar.RustParser;
 
 public class RustParserAdapter extends AbstractParser {
 
