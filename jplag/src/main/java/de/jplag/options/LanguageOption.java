@@ -17,6 +17,7 @@ public enum LanguageOption {
     KOTLIN("kotlin", "de.jplag.kotlin.Language"),
     R_LANG("rlang", "de.jplag.rlang.Language"),
     RUST("rust", "de.jplag.rust.Language"),
+    SCALA("scala", "de.jplag.scala.Language"),
     CHAR("char", "de.jplag.chars.Language"),
     TEXT("text", "de.jplag.text.Language"),
     SCHEME("scheme", "de.jplag.scheme.Language");
