@@ -35,11 +35,11 @@
         />
         <TextInformation
           :has-additional-info="true"
-          :value="overview.submissionIds.length"
+          :value="store.getters.getSubmissionIds.size"
           additional-info-title="Submission IDs:"
           label="Submissions"
         >
-          <IDsList :ids="overview.submissionIds" @id-sent="handleId" />
+          <IDsList :ids="store.getters.getSubmissionIds" @id-sent="handleId" />
         </TextInformation>
         <TextInformation
           :value="overview.dateOfExecution"
@@ -145,26 +145,26 @@ export default defineComponent({
      * Handles the selection of an Id to anonymize.
      * If all submission ids are provided as parameter it hides or displays them based on their previous state.
      * If a single id is provided it hides all of the other ids except for the chosen one.
-     * @param id
+     * @param ids
      */
-    const handleId = (id: string) => {
-      if (id.length === overview.submissionIds.length) {
+    const handleId = (ids: Array<string>) => {
+      if (ids.length === store.getters.getSubmissionIds.size) {
         if (store.state.anonymous.size > 0) {
           store.commit("resetAnonymous");
         } else {
-          store.commit("addAnonymous", id);
+          store.commit("addAnonymous", ids);
         }
       } else {
-        if (store.state.anonymous.has(id[0])) {
-          store.commit("removeAnonymous", id);
+        if (store.state.anonymous.has(ids[0])) {
+          store.commit("removeAnonymous", ids);
         } else {
           if (store.state.anonymous.size === 0) {
             store.commit(
               "addAnonymous",
-              overview.submissionIds.map(s => s.submissionId).filter((s) => s !== id[0])
+              store.getters.getSubmissionIds.filter((s: string) => s !== ids[0])
             );
           } else {
-            store.commit("addAnonymous", id);
+            store.commit("addAnonymous", ids);
           }
         }
       }

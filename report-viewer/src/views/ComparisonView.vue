@@ -23,12 +23,12 @@
       </div>
       <TextInformation
         :anonymous="isAnonymous(firstId)"
-        :value="firstId"
+        :value="store.getters.submissionDisplayName(firstId)"
         label="Submission 1"
       />
       <TextInformation
         :anonymous="store.state.anonymous.has(secondId)"
-        :value="secondId"
+        :value="store.getters.submissionDisplayName(secondId)"
         label="Submission 2"
       />
       <TextInformation :value="comparison.match_percentage" label="Match %" />
@@ -133,7 +133,6 @@ export default defineComponent({
         JSON.parse(store.state.fileString)
       );
     }
-
     if (!comparison) {
       console.warn("Could not build comparison file");
       return;
@@ -219,6 +218,7 @@ export default defineComponent({
       filesOfFirst,
       filesOfSecond,
       hideLeftPanel,
+      store,
 
       toggleCollapseFirst,
       toggleCollapseSecond,
@@ -228,7 +228,6 @@ export default defineComponent({
       togglePanel,
       isAnonymous,
 
-      store,
     };
   },
 });
