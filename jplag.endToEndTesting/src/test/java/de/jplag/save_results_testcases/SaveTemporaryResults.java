@@ -1,4 +1,4 @@
-package de.jplag.end_to_end_testing;
+package de.jplag.save_results_testcases;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.Disabled;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
@@ -20,6 +21,7 @@ import de.jplag.end_to_end_testing.model.JsonModel;
 import de.jplag.end_to_end_testing.model.ResultModel;
 import de.jplag.options.LanguageOption;
 
+// to avoid running these tests during the maven build, this class should not end with "Test".
 class SaveTemporaryResults {
 
     /**
@@ -29,7 +31,7 @@ class SaveTemporaryResults {
      * @throws StreamReadException
      */
     @Disabled
-    void SaveJavaResults() throws StreamReadException, DatabindException, IOException {
+    public void SaveJavaResults() throws StreamReadException, DatabindException, IOException {
         insertNewTestResultsIntoJsonStore(LanguageOption.JAVA);
     }
 
@@ -37,9 +39,12 @@ class SaveTemporaryResults {
      * stores the created temporary json results in the current result file. It should be kept in mind that the results are
      * stored only for the specific languages.
      * @param languageOption the language option to which the results of the tests should be saved
-     * @throws StreamReadException
-     * @throws DatabindException
-     * @throws IOException
+     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
+     * includingparsing and input value coercion problems.
+     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
+     * stream-level problems or I/O issues below.
+     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
+     * exceptions produced by failed orinterrupted I/O operations.
      */
     private void insertNewTestResultsIntoJsonStore(LanguageOption languageOption) throws StreamReadException, DatabindException, IOException {
         // load the current stored values for the test cases
@@ -61,7 +66,6 @@ class SaveTemporaryResults {
 
         ArrayList<JsonModel> intersectedResultList = getNewResultJsonList(oldJsonModelList, newJsonModelList);
 
-        var test = new ResultModel();
         JsonHelper.writeJsonModelsToJsonFile(intersectedResultList, resultJsonPath);
 
         assertTrue(true);
