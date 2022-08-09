@@ -42,11 +42,10 @@ public class JsonModel {
     public String getFunctionName() {
         return functionName;
     }
-    
+
     @JsonIgnore
-    public ResultModel[] getAllResultModels()
-    {
-    	return results;
+    public ResultModel[] getAllResultModels() {
+        return results;
     }
 
     /**

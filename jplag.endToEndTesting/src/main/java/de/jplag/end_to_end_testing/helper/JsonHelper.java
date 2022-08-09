@@ -1,10 +1,7 @@
 package de.jplag.end_to_end_testing.helper;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +13,6 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.end_to_end_testing.model.JsonModel;
 import de.jplag.end_to_end_testing.model.ResultModel;
 
@@ -44,12 +40,19 @@ public final class JsonHelper {
     }
 
     /**
-     * @param resultModel
-     * @throws StreamWriteException
-     * @throws DatabindException
-     * @throws IOException
+     * Saves the passed object to the specified path
+     * @param resultModel elements to be saved
+     * @param temporaryResultDirectory path to the temporary storage location
+     * @param functionName name of the function for which the element is to be saved
+     * @param fileName the name of the file under which the object should be stored
+     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
+     * includingparsing and input value coercion problems.
+     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
+     * stream-level problems or I/O issues below.
+     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
+     * exceptions produced by failed orinterrupted I/O operations.
      */
-    public static void writeResultModelToJsonFile(ResultModel resultModel,String temporaryResultDirectory, String functionName, String fileName)
+    public static void writeResultModelToJsonFile(ResultModel resultModel, String temporaryResultDirectory, String functionName, String fileName)
             throws StreamWriteException, DatabindException, IOException {
         // create an instance of DefaultPrettyPrinter
         ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
@@ -65,41 +68,48 @@ public final class JsonHelper {
         writer.writeValue(temporaryFile, resultModel);
 
     }
-    
+
     /**
-     * @param resultModel
-     * @throws StreamWriteException
-     * @throws DatabindException
-     * @throws IOException
+     * Saves the passed object as a json file to the given path
+     * @param jsonModelList list of elements to be saved
+     * @param temporaryResultDirectory path to the temporary storage location
+     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
+     * includingparsing and input value coercion problems.
+     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
+     * stream-level problems or I/O issues below.
+     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
+     * exceptions produced by failed orinterrupted I/O operations.
      */
-    public static void writeJsonModelsToJsonFile(List<JsonModel> jsonModelList ,Path temporaryResultDirectory)
+    public static void writeJsonModelsToJsonFile(List<JsonModel> jsonModelList, Path temporaryResultDirectory)
             throws StreamWriteException, DatabindException, IOException {
         // create an instance of DefaultPrettyPrinter
         ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
-        
+
         if (!temporaryResultDirectory.getParent().toFile().exists()) {
-        	temporaryResultDirectory.getParent().toFile().mkdirs();
+            temporaryResultDirectory.getParent().toFile().mkdirs();
         }
         if (!temporaryResultDirectory.toFile().exists()) {
-        	temporaryResultDirectory.toFile().createNewFile();
+            temporaryResultDirectory.toFile().createNewFile();
         }
-        
+
         // convert book object to JSON file
-        
+
         writer.writeValue(temporaryResultDirectory.toFile(), jsonModelList.toArray());
 
     }
 
     /**
-     * 
-     * @param jsonFile
-     * @return
-     * @throws StreamReadException
-     * @throws DatabindException
-     * @throws IOException
+     * @param jsonFile json file which should be returned as objet
+     * @return the serialized object at the specified pdaf
+     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
+     * includingparsing and input value coercion problems.
+     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
+     * stream-level problems or I/O issues below.
+     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
+     * exceptions produced by failed orinterrupted I/O operations.
      */
     public static ResultModel getResultModelFromPath(File jsonFile) throws StreamReadException, DatabindException, IOException {
         return new ObjectMapper().readValue(jsonFile, ResultModel.class);
     }
-   
+
 }
