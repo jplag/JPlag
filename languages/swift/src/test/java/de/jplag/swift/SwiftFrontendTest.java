@@ -35,6 +35,11 @@ class SwiftFrontendTest {
     private static final String EMPTY_OR_SINGLE_LINE_COMMENT = "\\s*(//.*|/\\*.*\\*/)?";
 
     /**
+     * Lines containing this tag are expected to not contain any token.
+     */
+    private static final String NO_TOKEN_ANNOTATION = "//NO TOKEN";
+
+    /**
      * Regular expression that describes lines containing the start of a multiline comment and no code before it.
      */
     private static final String DELIMITED_COMMENT_START = "\\s*/\\*(?:(?!\\*/).)*$";
@@ -129,7 +134,7 @@ class SwiftFrontendTest {
 
         var codeLines = IntStream.rangeClosed(1, lines.size()).sequential().filter(idx -> {
             String line = lines.get(idx - 1);
-            if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT)) {
+            if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT) || line.contains(NO_TOKEN_ANNOTATION)) {
                 return false;
             } else if (line.matches(DELIMITED_COMMENT_START)) {
                 state.insideComment = true;

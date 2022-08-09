@@ -1,9 +1,7 @@
 package de.jplag.swift;
 
 import java.io.File;
-import java.util.List;
 
-import de.jplag.Token;
 import de.jplag.TokenList;
 
 /**
@@ -49,15 +47,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return parserAdapter.hasErrors();
-    }
-
-    @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
     }
 }
