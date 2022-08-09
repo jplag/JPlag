@@ -31,7 +31,7 @@ import de.jplag.strategy.ComparisonMode;
  * similarity below this threshold will be ignored. The default value of 0 allows all matches to be stored. This affects
  * which comparisons are stored and thus make it into the result object. See also {@link #similarityMetric()}.
  * @param maximumNumberOfComparisons The maximum number of comparisons that will be shown in the generated report. If
- * set to -1 all comparisons will be shown.
+ * set to {@link #SHOW_ALL_COMPARISONS} all comparisons will be shown.
  * @param similarityMetric The similarity metric determines how the minimum similarity threshold required for a
  * comparison (of two submissions) is calculated. This affects which comparisons are stored and thus make it into the
  * result object.
@@ -54,6 +54,7 @@ public record JPlagOptions(LanguageOption languageOption, ComparisonMode compari
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 30;
+    public static final int SHOW_ALL_COMPARISONS = -1;
     public static final SimilarityMetric DEFAULT_SIMILARITY_METRIC = SimilarityMetric.AVG;
     public static final Charset CHARSET = StandardCharsets.UTF_8;
 
