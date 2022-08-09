@@ -14,6 +14,7 @@ public class ComparisonReportWriter {
     private static final FileWriter FILE_WRITER = new FileWriter();
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new HashMap<>();
+    private int comparisonCount = 0;
 
     public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction) {
         this.submissionToIdFunction = submissionToIdFunction;
@@ -36,7 +37,7 @@ public class ComparisonReportWriter {
         for (JPlagComparison comparison : comparisons) {
             String firstSubmissionId = getId(comparison.getFirstSubmission());
             String secondSubmissionId = getId(comparison.getSecondSubmission());
-            String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
+            String fileName = generateComparisonName();
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
                     convertMatchesToReportMatches(jPlagResult, comparison));
@@ -59,8 +60,9 @@ public class ComparisonReportWriter {
         }
     }
 
-    private String generateComparisonName(String firstSubmissionId, String secondSubmissionId) {
-        return firstSubmissionId.concat("-").concat(secondSubmissionId).concat(".json");
+    private String generateComparisonName() {
+        return  (comparisonCount++ + "").concat(".json");
+
 
     }
 
