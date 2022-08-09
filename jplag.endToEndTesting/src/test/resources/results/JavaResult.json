@@ -1,54 +1,1072 @@
-[
-  {
-    "function_name": "normalizationLevelTest",
-    "test_results": [
-      {
-        "result_similarity": 100.0,
-		"result_minimal_similarity" : 100.0,
-		"result_maximum_similarity" : 100.0,
-		"result_matched_token_number" : 56,
-        "test_identifier": "85FF00F531A497F002D40E9C8430CB159EFC40E618925FD757E35EB2A533227E" 
-      },
-      {
-        "result_similarity": 100.0,
-		"result_minimal_similarity" : 100.0,
-		"result_maximum_similarity" : 100.0,
-		"result_matched_token_number" : 56,
-        "test_identifier": "0CA596F411FB0853C97216132D812A928A6A55CFAD5611A8B54857FF3E02D49F"
-      },
-      {
-        "result_similarity": 100.0,
-		"result_minimal_similarity" : 100.0,
-		"result_maximum_similarity" : 100.0,
-		"result_matched_token_number" : 56,
-        "test_identifier": "7F33B3C9DE2C754B30BBA5E19D864613585B233E7BB68F8B6AE32355BA301FC4"
-      }
-    ]
-  },
-  {
-    "function_name": "tokenGenerationLevelTest",
-    "test_results": [
-      {
-        "result_similarity": 64.0,
-		"result_minimal_similarity" : 57.971016,
-		"result_maximum_similarity" : 71.42857,
-		"result_matched_token_number" : 40,
-        "test_identifier": "FAC19201CD9FD1D59896A59C1743F941650691FF7CECDBE8006EE8D6D2A74A6A"
-      },
-      {
-        "result_similarity": 73.04348,
-		"result_minimal_similarity" : 71.18644,
-		"result_maximum_similarity" : 75.0,
-		"result_matched_token_number" : 42,
-        "test_identifier": "3BCE66F7BC5F362060B92CF621EE8F517F6C5086A5A14EEE1FC8486B4226F771"
-      },
-      {
-        "result_similarity": 73.94958,
-		"result_minimal_similarity" : 69.84127,
-		"result_maximum_similarity" : 78.57143,
-		"result_matched_token_number" : 44,
-        "test_identifier": "8A99FBFBBE565D3C77A2F493395FA63AEC443BC784C272ABE338974E4774EC7F"
-      }
-    ]
-  }
-]
+[ {
+  "function_name" : "normalizationLevelTest",
+  "test_results" : [ {
+    "result_similarity" : 100.0,
+    "result_minimal_similarity" : 100.0,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "85FF00F531A497F002D40E9C8430CB159EFC40E618925FD757E35EB2A533227E"
+  }, {
+    "result_similarity" : 100.0,
+    "result_minimal_similarity" : 100.0,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "0CA596F411FB0853C97216132D812A928A6A55CFAD5611A8B54857FF3E02D49F"
+  }, {
+    "result_similarity" : 100.0,
+    "result_minimal_similarity" : 100.0,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "7F33B3C9DE2C754B30BBA5E19D864613585B233E7BB68F8B6AE32355BA301FC4"
+  } ]
+}, {
+  "function_name" : "overAllTests",
+  "test_results" : [ {
+    "result_similarity" : 52.980133,
+    "result_minimal_similarity" : 52.63158,
+    "result_maximum_similarity" : 53.333332,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "D4B0CDBD394F2330E50F2A3A5BFE85B2FE63FB9BDC9673876764F289993BB634"
+  }, {
+    "result_similarity" : 63.703705,
+    "result_minimal_similarity" : 56.57895,
+    "result_maximum_similarity" : 72.881355,
+    "result_matched_token_number" : 43,
+    "test_identifier" : "56337F16C4E115C95113186E7025F8AA85C2930D33A4BEDA7888362119AB1C02"
+  }, {
+    "result_similarity" : 50.74627,
+    "result_minimal_similarity" : 45.333332,
+    "result_maximum_similarity" : 57.627117,
+    "result_matched_token_number" : 34,
+    "test_identifier" : "449A9B43AA61B173B07621E3D0CFB32DBC904EB906DB635C4E8DAFE14C14D6C0"
+  }, {
+    "result_similarity" : 67.22689,
+    "result_minimal_similarity" : 66.666664,
+    "result_maximum_similarity" : 67.79661,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "D23DFEF4DEE5BD48FFC52C6710BB2471F7EDF1275E0B6BAF32C3D3C49025B708"
+  }, {
+    "result_similarity" : 53.658535,
+    "result_minimal_similarity" : 51.5625,
+    "result_maximum_similarity" : 55.932205,
+    "result_matched_token_number" : 33,
+    "test_identifier" : "6C130035512502B681FDB08E1E7EF8FF3AD4D70C6D63C3F9F6D031819D57B13F"
+  }, {
+    "result_similarity" : 54.545456,
+    "result_minimal_similarity" : 53.225807,
+    "result_maximum_similarity" : 55.932205,
+    "result_matched_token_number" : 33,
+    "test_identifier" : "4E61DE8AEC10C220AACDAA6EE57218678AC8BA7CC4C9E06AB6C34FAD5F5CC879"
+  }, {
+    "result_similarity" : 57.142857,
+    "result_minimal_similarity" : 53.731342,
+    "result_maximum_similarity" : 61.01695,
+    "result_matched_token_number" : 36,
+    "test_identifier" : "BF09ACA10F3A0F18F5123EE18CA836D3ECEBE0921BE4A80649EB0BC59ADDD11E"
+  }, {
+    "result_similarity" : 21.212122,
+    "result_minimal_similarity" : 18.421053,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "1572A11E97FB3E675F046E629BA5B6633894B45D1E63A49CD6120F5513296D6C"
+  }, {
+    "result_similarity" : 13.7404585,
+    "result_minimal_similarity" : 12.0,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "AC8C5B690B0BC7F558E4D8460A0D02E9129CF2C3A970D590A53C4C62681955FB"
+  }, {
+    "result_similarity" : 22.608696,
+    "result_minimal_similarity" : 22.033897,
+    "result_maximum_similarity" : 23.214285,
+    "result_matched_token_number" : 13,
+    "test_identifier" : "96CC06C36A016F932214226222B3DBF5B2CAAF586F99E56AD03923A33E11E3EE"
+  }, {
+    "result_similarity" : 24.137932,
+    "result_minimal_similarity" : 23.333334,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "796D7728B32E41C7424EF2490C001C9FEC9E7EA0C38527414B4B67C260C962D8"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "C718A1DAB6F1366729AAB1A943D897376EDCFA7AF728CA7A5B9954BD6688ED06"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "DBC0BE3DEE378950643E971B953C969FF45082226B4D2EC344CD977DD8F06691"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "D44A293506394B9B280C708421EB6323AF63FCBC225D6568DDF868955EA56DDA"
+  }, {
+    "result_similarity" : 100.0,
+    "result_minimal_similarity" : 100.0,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "031B51E4C587894E29EA7CDEAE9253DED532AFDC5A2BB145A857016B879E9BA6"
+  }, {
+    "result_similarity" : 14.634147,
+    "result_minimal_similarity" : 13.432836,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "346A3808CE0411628D63675BB0C4FE5A40624FD4C35FE0FBABF89E3A4FA042FF"
+  }, {
+    "result_similarity" : 63.235294,
+    "result_minimal_similarity" : 56.57895,
+    "result_maximum_similarity" : 71.666664,
+    "result_matched_token_number" : 43,
+    "test_identifier" : "B7A9B6B8E9A82AD64B9943EE156B362D3A45475B0224840697D7E1E3BB72F499"
+  }, {
+    "result_similarity" : 35.555557,
+    "result_minimal_similarity" : 32.0,
+    "result_maximum_similarity" : 40.0,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "2110C1CE4C65C61A7627FDA79EE863A7FDDC54FEEE8B53A4DC130BFED651DEA4"
+  }, {
+    "result_similarity" : 37.096775,
+    "result_minimal_similarity" : 35.9375,
+    "result_maximum_similarity" : 38.333332,
+    "result_matched_token_number" : 23,
+    "test_identifier" : "80AC21AD44C1C094DA85DB8498FF030E71FA15EFD99CC9F5D2C4965E7D7079C2"
+  }, {
+    "result_similarity" : 37.704918,
+    "result_minimal_similarity" : 37.096775,
+    "result_maximum_similarity" : 38.333332,
+    "result_matched_token_number" : 23,
+    "test_identifier" : "D45A53F8A4F96402CE2706609445AAEF7FCE58AC968AC66D0C93814295F6B551"
+  }, {
+    "result_similarity" : 86.614174,
+    "result_minimal_similarity" : 82.089554,
+    "result_maximum_similarity" : 91.666664,
+    "result_matched_token_number" : 55,
+    "test_identifier" : "C9BE0529FA7DDC4928513785EFF057D7142806917FDBE7DAD53A0F95DA9ADF57"
+  }, {
+    "result_similarity" : 100.0,
+    "result_minimal_similarity" : 100.0,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "85FF00F531A497F002D40E9C8430CB159EFC40E618925FD757E35EB2A533227E"
+  }, {
+    "result_similarity" : 84.84849,
+    "result_minimal_similarity" : 73.68421,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "EFAD8621BB09A7074131AE5C5953318995615007F3A43BDA9C5A465ACD2FAFD0"
+  }, {
+    "result_similarity" : 61.068703,
+    "result_minimal_similarity" : 53.333332,
+    "result_maximum_similarity" : 71.42857,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "3C3F5566F76A868F76B4AD99F563FF8820AD16C26BE787C4281BD738AA55CCDD"
+  }, {
+    "result_similarity" : 71.304344,
+    "result_minimal_similarity" : 69.49152,
+    "result_maximum_similarity" : 73.21429,
+    "result_matched_token_number" : 41,
+    "test_identifier" : "FD84ADE43DBC3744A6144A664C19636E8BD2EC95867F16EB5BADBB122B68A13F"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "BD3B8949508D7096CF63F1044AA380B103BDFCF3030B2180FE012354F6D5E6D6"
+  }, {
+    "result_similarity" : 58.62069,
+    "result_minimal_similarity" : 56.666668,
+    "result_maximum_similarity" : 60.714287,
+    "result_matched_token_number" : 34,
+    "test_identifier" : "E1EDB95C78B6296AA4AD8AD61A4959E99F89044F1AF2188144B47EA98C484C9A"
+  }, {
+    "result_similarity" : 100.0,
+    "result_minimal_similarity" : 100.0,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "402FC951848B95DC30130175C17DE7642A17D028FA729C7DFF60DC0331E3DFC9"
+  }, {
+    "result_similarity" : 73.333336,
+    "result_minimal_similarity" : 68.75,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "27CCDAC4F9845BD3547061153F6317F7DD494460504A6C6711BF37FB50239CD0"
+  }, {
+    "result_similarity" : 74.57627,
+    "result_minimal_similarity" : 70.96774,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "3A6545B246972A104A5D52FDA3247546CEFE489830A2B4FEADF3FABD3180A831"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "34133DAC215F34E00609B8381C9D4F80045EFAFB8D82C22056F49B1D2D3938A0"
+  }, {
+    "result_similarity" : 47.154472,
+    "result_minimal_similarity" : 43.28358,
+    "result_maximum_similarity" : 51.785713,
+    "result_matched_token_number" : 29,
+    "test_identifier" : "97DFCBEAB49013FE959F975929DB3C7E6BBF142C628F725E2826CEE51CB65EC6"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "E6F239A6A634F63317CA45D9385BA7C7339AD93B9317FBBB522F54BFC93DF6E4"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "5DFE271E5171E0EF9FB758C866C1D1F2D10ECD9DE3564345806114B79C993702"
+  }, {
+    "result_similarity" : 21.212122,
+    "result_minimal_similarity" : 18.421053,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "7043AA7A5D6BA1835FD87B13E2C89E11BF109636DF6F6483F2364EB6695DD560"
+  }, {
+    "result_similarity" : 13.7404585,
+    "result_minimal_similarity" : 12.0,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "D2A37DDE2DA0C8AB08294F36EA18F7870E9CF11331C7EE604A8F1580448FF095"
+  }, {
+    "result_similarity" : 22.608696,
+    "result_minimal_similarity" : 22.033897,
+    "result_maximum_similarity" : 23.214285,
+    "result_matched_token_number" : 13,
+    "test_identifier" : "1428AB68C680EEE05FFBD0D331125FFA3D74E4743C45D516B24F657A64153CA8"
+  }, {
+    "result_similarity" : 100.0,
+    "result_minimal_similarity" : 100.0,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "DBAB5BD3DB86E7615881DB485726420ECCBFE9512A22DC33185144268A7DA4DB"
+  }, {
+    "result_similarity" : 24.137932,
+    "result_minimal_similarity" : 23.333334,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "CB6592E0289EFE99A9933F34455732B1AE603FB59071D931AFEAE4045E303E8A"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "DF581B40005F0E15B2482763591F466CB2FEE289491E825BD7DEF49603CD371F"
+  }, {
+    "result_similarity" : 14.4,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "80A1B35D660E7A86780DA296223DB2BB5FFC4CD8F43FAEC27BB82BFFF1FF96C6"
+  }, {
+    "result_similarity" : 65.6,
+    "result_minimal_similarity" : 59.420288,
+    "result_maximum_similarity" : 73.21429,
+    "result_matched_token_number" : 41,
+    "test_identifier" : "C1A23BA5456AFE0EE7C486302289A14DE709444619304DC4B14CC0EDB5E32DB7"
+  }, {
+    "result_similarity" : 13.7404585,
+    "result_minimal_similarity" : 12.0,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "E09EA3D74067B650D19689E052DC762873F554686CAB60BA602974EC9085C93B"
+  }, {
+    "result_similarity" : 24.347826,
+    "result_minimal_similarity" : 23.728813,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "2142DDA16BB049D0809A610C20AE7E791D5868EF15945234DDC244DB496E4397"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "79F1B4016FDE680B181A0D8F2411E5A5259B60A6857665410D13D425794397CC"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "453019BB1FE9561225079898C3F7DE494FA9C660DAB0AD43BCF7B126B4F6456A"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "B2075EDB4D26845D76BC022D5DD5B41D2B5A8CE904D9C6391EADDBC8571A2A0E"
+  }, {
+    "result_similarity" : 100.0,
+    "result_minimal_similarity" : 100.0,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "E1B3B5A196CDA07A2DBCA436B1F15FDE22A603614BB055E18E8F5F7765751B84"
+  }, {
+    "result_similarity" : 14.634147,
+    "result_minimal_similarity" : 13.432836,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "644C53C3CE04415F4C7376F5F7AA3610B7C7F876C4FB1A7A96EF991DA28893BE"
+  }, {
+    "result_similarity" : 84.84849,
+    "result_minimal_similarity" : 73.68421,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "72C05A739B22AE7DAEA6076C5822D89C33F515132BDDAE61615989B02C64E9E8"
+  }, {
+    "result_similarity" : 61.068703,
+    "result_minimal_similarity" : 53.333332,
+    "result_maximum_similarity" : 71.42857,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "597518363176CCA519DA2D92B3BC610414BA339EE5514DF455EA9A77FB1617BC"
+  }, {
+    "result_similarity" : 71.304344,
+    "result_minimal_similarity" : 69.49152,
+    "result_maximum_similarity" : 73.21429,
+    "result_matched_token_number" : 41,
+    "test_identifier" : "AA458F4CAFE0DC99596ADF4DE06FE4E36C3A93DDBF5BAEE0FF0E8752F53D3070"
+  }, {
+    "result_similarity" : 58.62069,
+    "result_minimal_similarity" : 56.666668,
+    "result_maximum_similarity" : 60.714287,
+    "result_matched_token_number" : 34,
+    "test_identifier" : "EE413C212C19E70272C443A3344D6547395A1314F6A36D8D2259E71165E54E8A"
+  }, {
+    "result_similarity" : 73.333336,
+    "result_minimal_similarity" : 68.75,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "A6AC3E4C156FFE4084B74C42BAAFCB8142EBF3725D6EBF7F486D36FB1239EEB4"
+  }, {
+    "result_similarity" : 74.57627,
+    "result_minimal_similarity" : 70.96774,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "04F9367BC1AC57658D8A30E937CFD899630FEBFC6F6EC8E983092AAAD42304EA"
+  }, {
+    "result_similarity" : 47.154472,
+    "result_minimal_similarity" : 43.28358,
+    "result_maximum_similarity" : 51.785713,
+    "result_matched_token_number" : 29,
+    "test_identifier" : "B50180802CE5015FCBD5DEBBAB1EFACFEB709A3F21D90F3BC1D9BB1F4F10CD59"
+  }, {
+    "result_similarity" : 14.4,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "748EAF8629290AABB2E403367F1A0E927EDF27407AA0DEB2F671696B420D3C90"
+  }, {
+    "result_similarity" : 14.4,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "EAA4841D489CE5352E288C993C9A39C46C73E94C4ACC9619A332B470A3716FBB"
+  }, {
+    "result_similarity" : 12.413794,
+    "result_minimal_similarity" : 11.842105,
+    "result_maximum_similarity" : 13.043478,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "2BF678FBC37D041CFA945F61A683D7F5F8281F0E1CC482E2DFC9511B4295EEF8"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 24.0,
+    "result_maximum_similarity" : 26.086956,
+    "result_matched_token_number" : 18,
+    "test_identifier" : "CB9AAB723F58E635275301B36431A772D1527A7E46400A7228855B20F6F1E897"
+  }, {
+    "result_similarity" : 14.0625,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 15.254237,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "59900B53161BE8D97F33D60FB0E93C9B29CE2B5E0FF191ACA8C11AE29832D2FA"
+  }, {
+    "result_similarity" : 65.6,
+    "result_minimal_similarity" : 59.420288,
+    "result_maximum_similarity" : 73.21429,
+    "result_matched_token_number" : 41,
+    "test_identifier" : "EC56B96B07B3B371D0BC76801AD7903D02DDD1B9607A8649A050876721979430"
+  }, {
+    "result_similarity" : 13.953488,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 15.0,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "B2E8A282C7EC490357D7424F575F8A8695B64D14E3DB2D417B504B875484E4C2"
+  }, {
+    "result_similarity" : 14.4,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "E394C7AB1216453AC6F93FE0196DFA5CE5E6F98345B8FAB56C7B1A3C2923CD04"
+  }, {
+    "result_similarity" : 16.666666,
+    "result_minimal_similarity" : 16.0,
+    "result_maximum_similarity" : 17.391304,
+    "result_matched_token_number" : 12,
+    "test_identifier" : "E7E4192D34FDF920D389E941F54120209D8EB3CF37A66BFE94AC076FE2516537"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "4AFF71F62F91E8ADA98A57CEC19A5681B103442F27F9FF3E1B669180ED411C48"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "3AFA42C5EB936CFBAB2587D3A6DDC2C00665442496299468A27773C30A3706DA"
+  }, {
+    "result_similarity" : 65.6,
+    "result_minimal_similarity" : 59.420288,
+    "result_maximum_similarity" : 73.21429,
+    "result_matched_token_number" : 41,
+    "test_identifier" : "DCB681AFDFBF88A815FD39A0EFE4F714459131850D4F5E40502B9CBF3C471236"
+  }, {
+    "result_similarity" : 17.647058,
+    "result_minimal_similarity" : 17.391304,
+    "result_maximum_similarity" : 17.910448,
+    "result_matched_token_number" : 12,
+    "test_identifier" : "9376EA9D15E828A59A97E92FC0B09C91965B291E87C655A38538508D98DE337F"
+  }, {
+    "result_similarity" : 36.64122,
+    "result_minimal_similarity" : 32.0,
+    "result_maximum_similarity" : 42.857143,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "C8F0DA4C5B2E0EA4036FC32B88A1C1953E85B161B8B0A779B70490E9D216598B"
+  }, {
+    "result_similarity" : 36.64122,
+    "result_minimal_similarity" : 32.0,
+    "result_maximum_similarity" : 42.857143,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "3B9507CA36137AC03D3EB6F5148DDD36AF50A8E1DDC44A8452F5831B06736AB3"
+  }, {
+    "result_similarity" : 31.78808,
+    "result_minimal_similarity" : 31.578947,
+    "result_maximum_similarity" : 32.0,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "BE81ADA9B42DF9A94D192157A8B74BBB96E945F8E21971DD23BDAE4740AF2DD3"
+  }, {
+    "result_similarity" : 32.0,
+    "result_minimal_similarity" : 32.0,
+    "result_maximum_similarity" : 32.0,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "F956723744AF8C3AE030DAA7E3E4821B40E4D423E6D6BA44A9AD3A4FB7034C2C"
+  }, {
+    "result_similarity" : 35.820896,
+    "result_minimal_similarity" : 32.0,
+    "result_maximum_similarity" : 40.677967,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "784026B7172BF60D89E19F977D7AB6A79247303D9C94D6DDCA2FC8FA8FC4C32F"
+  }, {
+    "result_similarity" : 13.7404585,
+    "result_minimal_similarity" : 12.0,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "A18650229A94C16456F1411F4B4E78E773AAE1B1B3177F9516C846536F60E9EB"
+  }, {
+    "result_similarity" : 63.703705,
+    "result_minimal_similarity" : 57.333332,
+    "result_maximum_similarity" : 71.666664,
+    "result_matched_token_number" : 43,
+    "test_identifier" : "F74DBF721A1E2217802FC64BC4FEA6E1A8EA16304969026595E0E40E37DD2CCC"
+  }, {
+    "result_similarity" : 36.64122,
+    "result_minimal_similarity" : 32.0,
+    "result_maximum_similarity" : 42.857143,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "9ECAE14A484F437949CFB90261FF45B8A8627E5F329D7A704863BEB118D167E9"
+  }, {
+    "result_similarity" : 33.093525,
+    "result_minimal_similarity" : 30.666666,
+    "result_maximum_similarity" : 35.9375,
+    "result_matched_token_number" : 23,
+    "test_identifier" : "9134DE33962FA491682E9951CFD3AD1342A96497F3A2DFDC1F4B3AD0E2286F3D"
+  }, {
+    "result_similarity" : 33.57664,
+    "result_minimal_similarity" : 30.666666,
+    "result_maximum_similarity" : 37.096775,
+    "result_matched_token_number" : 23,
+    "test_identifier" : "B35948EF46E63C6D12C6193826078B692278ECAF1F0B9146F8F68DCE87EB8D06"
+  }, {
+    "result_similarity" : 13.7404585,
+    "result_minimal_similarity" : 12.0,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "B0CE2D79E34483BD5A23D8CF4C320874272A72785889A67DACE6D28C6C90B7EA"
+  }, {
+    "result_similarity" : 77.46479,
+    "result_minimal_similarity" : 73.333336,
+    "result_maximum_similarity" : 82.089554,
+    "result_matched_token_number" : 55,
+    "test_identifier" : "6CF27FE88C872262C28340638CACD3C21935DB519108134227DD1B9EB6E96717"
+  }, {
+    "result_similarity" : 64.0,
+    "result_minimal_similarity" : 57.971016,
+    "result_maximum_similarity" : 71.42857,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "53A426D460C841DEF04A3623CFA2C5BED39128FFCA57A8FA62C63C6238580F51"
+  }, {
+    "result_similarity" : 64.0,
+    "result_minimal_similarity" : 57.971016,
+    "result_maximum_similarity" : 71.42857,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "00FDB2D8CA27B43E51292C880B6D5C09E88CECC9015E8208D240414612C26FC6"
+  }, {
+    "result_similarity" : 55.172413,
+    "result_minimal_similarity" : 52.63158,
+    "result_maximum_similarity" : 57.971016,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "50BE29CD434C5774C37890D7876F506384BD23EC4B8F0EC8C99F4878F7D7B091"
+  }, {
+    "result_similarity" : 75.0,
+    "result_minimal_similarity" : 72.0,
+    "result_maximum_similarity" : 78.26087,
+    "result_matched_token_number" : 54,
+    "test_identifier" : "0C26D12D84E31881834769EC718ED10F8C301B5114772426BBFF63519DB21FCD"
+  }, {
+    "result_similarity" : 53.125,
+    "result_minimal_similarity" : 49.275364,
+    "result_maximum_similarity" : 57.627117,
+    "result_matched_token_number" : 34,
+    "test_identifier" : "FB1F863E00B362F1662E79F9AA9B312F44FDF5DECCF040A47F667B36858485A3"
+  }, {
+    "result_similarity" : 14.4,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "B283F506E46ACF35CD211206DBF0C61ECDB79BEC8988165981DB5721E6CF1344"
+  }, {
+    "result_similarity" : 37.2093,
+    "result_minimal_similarity" : 34.782608,
+    "result_maximum_similarity" : 40.0,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "CAD1FA95C862270990E6E97EB02C449F5017E9A89E18088AB4BD0DE28E62A68E"
+  }, {
+    "result_similarity" : 64.0,
+    "result_minimal_similarity" : 57.971016,
+    "result_maximum_similarity" : 71.42857,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "EFAE3A719C92BC6ADB91BA7DE3CEB3B54F959CCE179E1B2B97777463B1E753D2"
+  }, {
+    "result_similarity" : 17.391304,
+    "result_minimal_similarity" : 17.391304,
+    "result_maximum_similarity" : 17.391304,
+    "result_matched_token_number" : 12,
+    "test_identifier" : "4C9A3154748A289804B447FF0E7AD591D44B1B091C4899ADAEA2D67BDED2C494"
+  }, {
+    "result_similarity" : 72.22222,
+    "result_minimal_similarity" : 69.333336,
+    "result_maximum_similarity" : 75.36232,
+    "result_matched_token_number" : 52,
+    "test_identifier" : "1366D7C155867C1745197349209EBD240C5669D060B8F74A4951BF81584EB953"
+  }, {
+    "result_similarity" : 58.646618,
+    "result_minimal_similarity" : 56.52174,
+    "result_maximum_similarity" : 60.9375,
+    "result_matched_token_number" : 39,
+    "test_identifier" : "C9F70313D3FE2441FFF55717D59BD3E0CFAF936B28161C2EE13FD8759863A885"
+  }, {
+    "result_similarity" : 59.541985,
+    "result_minimal_similarity" : 56.52174,
+    "result_maximum_similarity" : 62.903225,
+    "result_matched_token_number" : 39,
+    "test_identifier" : "9A84FE9BE1448039849E43E078B9CB49296BA180E721DCD3912BD147D797BE45"
+  }, {
+    "result_similarity" : 14.4,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "8AADF895D83F5F39CC7B9D68085650EF6A48DB3CE9C8A71FC51FD3C204CB3571"
+  }, {
+    "result_similarity" : 52.941177,
+    "result_minimal_similarity" : 52.173912,
+    "result_maximum_similarity" : 53.731342,
+    "result_matched_token_number" : 36,
+    "test_identifier" : "794B29976F39A11D5B9EA611206320603B212FB411B0F12DE5B2CF273D4E32C4"
+  }, {
+    "result_similarity" : 73.94958,
+    "result_minimal_similarity" : 69.84127,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "5BBF37C908EB6187CF782F96FA022386A6B637212C75A631A107D49C0C1FA38B"
+  }, {
+    "result_similarity" : 73.94958,
+    "result_minimal_similarity" : 69.84127,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "487D91D36A9C8F399559332AA8A595BAC5DD5D54B23F0DD8B59E40BD5D898283"
+  }, {
+    "result_similarity" : 63.309353,
+    "result_minimal_similarity" : 57.894737,
+    "result_maximum_similarity" : 69.84127,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "064296F11AA76B68406213573AB1D992272126618BAFFC82FCD79E8FED2F4AC5"
+  }, {
+    "result_similarity" : 57.971016,
+    "result_minimal_similarity" : 53.333332,
+    "result_maximum_similarity" : 63.49206,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "A116232648D78A6BD1BB93925FC0DBF2D067587AE8BC53DC7F02B604BFF8D96C"
+  }, {
+    "result_similarity" : 54.098362,
+    "result_minimal_similarity" : 52.38095,
+    "result_maximum_similarity" : 55.932205,
+    "result_matched_token_number" : 33,
+    "test_identifier" : "3206FF8CC5A61989ED05DB725EE918F6C4775281AC10CC324F729678232145DD"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "DBB5BCE9454F50015DC725B2B617BB82D073570CE60F68DEFCBA0A19142CAB96"
+  }, {
+    "result_similarity" : 37.398373,
+    "result_minimal_similarity" : 36.50794,
+    "result_maximum_similarity" : 38.333332,
+    "result_matched_token_number" : 23,
+    "test_identifier" : "AD41E5F36F1E0D791FAA645159E951D93A031D11B1C640314BF74043A97843F3"
+  }, {
+    "result_similarity" : 73.94958,
+    "result_minimal_similarity" : 69.84127,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "3CE5882C1990A44EC314C4402E25E08CF5A1C5E4FAF9E9AB969F61E70BA82A46"
+  }, {
+    "result_similarity" : 59.090908,
+    "result_minimal_similarity" : 56.52174,
+    "result_maximum_similarity" : 61.904762,
+    "result_matched_token_number" : 39,
+    "test_identifier" : "65412692A8F186B0CD09754ED498096BD27CF2E1A584FB2CA79A5570DA54083E"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "A36394ED52C4A726F8E1D874A302A8FC8B69469EC173C36D3BE5E2762681D7C0"
+  }, {
+    "result_similarity" : 33.333332,
+    "result_minimal_similarity" : 30.666666,
+    "result_maximum_similarity" : 36.50794,
+    "result_matched_token_number" : 23,
+    "test_identifier" : "71252423AB90E6F2F9E0BEDDDAC32762EF8418DE02D12A5A268D9A8DC7F985C5"
+  }, {
+    "result_similarity" : 99.2126,
+    "result_minimal_similarity" : 98.4375,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 63,
+    "test_identifier" : "A06E388703E61E37786F87643A2EAD6354E2478E316E98F6A8C404B90CA7683F"
+  }, {
+    "result_similarity" : 96.0,
+    "result_minimal_similarity" : 95.2381,
+    "result_maximum_similarity" : 96.77419,
+    "result_matched_token_number" : 60,
+    "test_identifier" : "10C57CAB5EF59511CFBEC2A17C850FD5E27EDF638D39DD0C8BCBF1C742CA1043"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "724113427EFB132CDD47CEA12F6558C37A2642EAA24360B6BF893A8959929C7A"
+  }, {
+    "result_similarity" : 35.384617,
+    "result_minimal_similarity" : 34.328358,
+    "result_maximum_similarity" : 36.50794,
+    "result_matched_token_number" : 23,
+    "test_identifier" : "91C39583EC8CFA36EB78A6DB60E1C22E91B2CD4919CA5F9CE159CD9F9090950C"
+  }, {
+    "result_similarity" : 62.857143,
+    "result_minimal_similarity" : 57.894737,
+    "result_maximum_similarity" : 68.75,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "C07EA86CD2CDB21833A8ABA38B1D069D838EBFDF23D3BEE41204C4317AFA8535"
+  }, {
+    "result_similarity" : 57.553955,
+    "result_minimal_similarity" : 53.333332,
+    "result_maximum_similarity" : 62.5,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "3D961859F6E0B9E9E48C0CA519C9AEDA9416CD02AC9C9617440621E980E954D3"
+  }, {
+    "result_similarity" : 35.114502,
+    "result_minimal_similarity" : 34.328358,
+    "result_maximum_similarity" : 35.9375,
+    "result_matched_token_number" : 23,
+    "test_identifier" : "9ED285D5CBACE9001337AF8C765FECEC152780D7B6C0A113C8D9D58388C6A2A0"
+  }, {
+    "result_similarity" : 63.768116,
+    "result_minimal_similarity" : 57.894737,
+    "result_maximum_similarity" : 70.96774,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "A605BFFD41B3CB50DDAD96304C6D5F2086D4BEBFB11B4AA267F1F05DC4A10AEE"
+  }, {
+    "result_similarity" : 58.39416,
+    "result_minimal_similarity" : 53.333332,
+    "result_maximum_similarity" : 64.51613,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "0E0BC36C5827D874E992F8CF98C73D8E33045317F92E98AD084D926802DEFEC9"
+  }, {
+    "result_similarity" : 95.2381,
+    "result_minimal_similarity" : 93.75,
+    "result_maximum_similarity" : 96.77419,
+    "result_matched_token_number" : 60,
+    "test_identifier" : "16AB7DE877D52AD163BAAE3D157920EE848A9169630595AD60056436DEB42578"
+  }, {
+    "result_similarity" : 35.658916,
+    "result_minimal_similarity" : 34.328358,
+    "result_maximum_similarity" : 37.096775,
+    "result_matched_token_number" : 23,
+    "test_identifier" : "59DADFE014EC44E50B5E588611B83E0183A84350ACACA9A851736FF236A653B4"
+  }, {
+    "result_similarity" : 73.04348,
+    "result_minimal_similarity" : 71.18644,
+    "result_maximum_similarity" : 75.0,
+    "result_matched_token_number" : 42,
+    "test_identifier" : "D77097E5D899A73EA3E93203D1F4AE438E171D2D8872AB0EFC65AA338E57CFEB"
+  }, {
+    "result_similarity" : 73.04348,
+    "result_minimal_similarity" : 71.18644,
+    "result_maximum_similarity" : 75.0,
+    "result_matched_token_number" : 42,
+    "test_identifier" : "ECDE33EF7B3D400FC8EB5211FD303602E18E4C86E454EF1B43DBF2F6AF9C57F0"
+  }, {
+    "result_similarity" : 71.111115,
+    "result_minimal_similarity" : 63.157894,
+    "result_maximum_similarity" : 81.355934,
+    "result_matched_token_number" : 48,
+    "test_identifier" : "B442142E3E60AB10E1D097F5B0D86539AED1E898C111681329ACC70CD238D000"
+  }, {
+    "result_similarity" : 41.791046,
+    "result_minimal_similarity" : 37.333332,
+    "result_maximum_similarity" : 47.457626,
+    "result_matched_token_number" : 28,
+    "test_identifier" : "78977D4FF638A72D240BC5A05A73B25E149138CBD4D5392528BC8A54753B8DB7"
+  }, {
+    "result_similarity" : 94.91525,
+    "result_minimal_similarity" : 94.91525,
+    "result_maximum_similarity" : 94.91525,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "541F548E9A051AFAA1CA7061ADCAFC2DEE09772398EB72550C8F3B9F15947D09"
+  }, {
+    "result_similarity" : 24.347826,
+    "result_minimal_similarity" : 23.728813,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "EDE60AB808105DC49A5812F0C590519EF86E75C65DA9DC43D271E55C22CED5F9"
+  }, {
+    "result_similarity" : 68.90756,
+    "result_minimal_similarity" : 68.333336,
+    "result_maximum_similarity" : 69.49152,
+    "result_matched_token_number" : 41,
+    "test_identifier" : "4C8FA419A722D76ABD0A37E33A5301270948D62F1E727A4C0B478DD40D8D13D0"
+  }, {
+    "result_similarity" : 73.04348,
+    "result_minimal_similarity" : 71.18644,
+    "result_maximum_similarity" : 75.0,
+    "result_matched_token_number" : 42,
+    "test_identifier" : "F9A4BC3C2EBD6EC8F07F07FE0F027FF1168BEEA8B7856DDDC0005805B6E1A586"
+  }, {
+    "result_similarity" : 43.75,
+    "result_minimal_similarity" : 40.579712,
+    "result_maximum_similarity" : 47.457626,
+    "result_matched_token_number" : 28,
+    "test_identifier" : "4F63A73DB199202CA0BAC30E224DFC03E7B559875D29F8C7E1EB257F2EB26F66"
+  }, {
+    "result_similarity" : 14.0625,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 15.254237,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "5B95E44F493E172B304EE57442740B3D83753F8A541067516490DE367EF47AFD"
+  }, {
+    "result_similarity" : 26.865671,
+    "result_minimal_similarity" : 24.0,
+    "result_maximum_similarity" : 30.508474,
+    "result_matched_token_number" : 18,
+    "test_identifier" : "00DE664114C3DC3FDFC08521604B7EFBB926BAB9B0269476DD3EE5BFF7A89FED"
+  }, {
+    "result_similarity" : 45.901638,
+    "result_minimal_similarity" : 44.444443,
+    "result_maximum_similarity" : 47.457626,
+    "result_matched_token_number" : 28,
+    "test_identifier" : "DB989BEE511C9236CB6E203C9E8280F06AF7E8C38436BAA6805E9D713EB5FC9D"
+  }, {
+    "result_similarity" : 45.528454,
+    "result_minimal_similarity" : 43.75,
+    "result_maximum_similarity" : 47.457626,
+    "result_matched_token_number" : 28,
+    "test_identifier" : "04CFABDABE5CF4DBFFA62467F18E70031D48E6F88FD243245C0F65CAD8BE79E7"
+  }, {
+    "result_similarity" : 46.28099,
+    "result_minimal_similarity" : 45.16129,
+    "result_maximum_similarity" : 47.457626,
+    "result_matched_token_number" : 28,
+    "test_identifier" : "5BC754BD8899AF6ABFBCF696245372EE815ECE1CF6DA78AA0EE654501E61B5F7"
+  }, {
+    "result_similarity" : 24.347826,
+    "result_minimal_similarity" : 23.728813,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "0D0A3D8766ED55A2531321B5DAA78966E318513E7BE38021E37BC5D91CC29B51"
+  }, {
+    "result_similarity" : 47.61905,
+    "result_minimal_similarity" : 44.77612,
+    "result_maximum_similarity" : 50.847458,
+    "result_matched_token_number" : 30,
+    "test_identifier" : "064F0AAAD8DDE13AE26F01020EFD4CB3F3777F1BFF8F55E38651F122E48412AC"
+  }, {
+    "result_similarity" : 21.212122,
+    "result_minimal_similarity" : 18.421053,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "28BFB9A67EE9B273F1AE545CCC7BA684D0301FEF8F7848E97B7271D387E67EFC"
+  }, {
+    "result_similarity" : 13.7404585,
+    "result_minimal_similarity" : 12.0,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "E3036C0FD3CC820DDCB1DB09CAB2F95D08800DF847B45FCAD7F92E223C101645"
+  }, {
+    "result_similarity" : 22.608696,
+    "result_minimal_similarity" : 22.033897,
+    "result_maximum_similarity" : 23.214285,
+    "result_matched_token_number" : 13,
+    "test_identifier" : "A3DD779FCC1CC2CE3B157C3CBE17065588D378EE1DC1F2F64F325B3145413EE9"
+  }, {
+    "result_similarity" : 24.137932,
+    "result_minimal_similarity" : 23.333334,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "13C2AF552ED9CEC0FEC9AF383A5805859BE69CF509A8021C2CA98FBC0FD8BF98"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "693C0E74363FA776F96ECBFEBD72BF9F627BE6C1B4A273E373E911CEBFD453FB"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "7F1D9A6513816338D72644BF345CC7E014FE88E95A8BBBB74A8868FB42BD4289"
+  }, {
+    "result_similarity" : 0.0,
+    "result_minimal_similarity" : 0.0,
+    "result_maximum_similarity" : 0.0,
+    "result_matched_token_number" : 0,
+    "test_identifier" : "E31D9C3F02BE278B4BF6458C820B5793FCA84A67D53B843C8A18C05AB9D2E388"
+  }, {
+    "result_similarity" : 14.634147,
+    "result_minimal_similarity" : 13.432836,
+    "result_maximum_similarity" : 16.071428,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "67FEE957AA6DEDA5B7AEBC492B15DDE88E18CE42AFD6FE2345598B141EE0D414"
+  }, {
+    "result_similarity" : 53.146854,
+    "result_minimal_similarity" : 50.0,
+    "result_maximum_similarity" : 56.71642,
+    "result_matched_token_number" : 38,
+    "test_identifier" : "DAEA8BCC576A211F132EEE1E1C29D06A40D6011A69AA8139A742AEFF002A421B"
+  }, {
+    "result_similarity" : 33.80282,
+    "result_minimal_similarity" : 32.0,
+    "result_maximum_similarity" : 35.820896,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "35159E22824AF3036146B812858C7CCC5589A5A626C574B8BA156DD5F3D6F4DF"
+  }, {
+    "result_similarity" : 83.63636,
+    "result_minimal_similarity" : 82.14286,
+    "result_maximum_similarity" : 85.18519,
+    "result_matched_token_number" : 46,
+    "test_identifier" : "88F86D6253814A03B9C881FD10BBB2C946FC32571BA636E6AD22BB0C58779016"
+  }, {
+    "result_similarity" : 83.63636,
+    "result_minimal_similarity" : 82.14286,
+    "result_maximum_similarity" : 85.18519,
+    "result_matched_token_number" : 46,
+    "test_identifier" : "DF087E561B4E40B6D340F080A7D69754C2C86BB556A5A185D94907A4BA710EC3"
+  }, {
+    "result_similarity" : 70.76923,
+    "result_minimal_similarity" : 60.526318,
+    "result_maximum_similarity" : 85.18519,
+    "result_matched_token_number" : 46,
+    "test_identifier" : "0EAA2A850675104A4593F291E15C4CE1BB2C44E336247F39C5CE5CE97B3B78D4"
+  }, {
+    "result_similarity" : 62.015503,
+    "result_minimal_similarity" : 53.333332,
+    "result_maximum_similarity" : 74.07407,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "BB755AA986BE07440DF366253452FBAF9785F8386D70AE84043696293449A3B2"
+  }, {
+    "result_similarity" : 72.56637,
+    "result_minimal_similarity" : 69.49152,
+    "result_maximum_similarity" : 75.92593,
+    "result_matched_token_number" : 41,
+    "test_identifier" : "1F784E8428D4E55157CB629F14AA07C1A3FD44C006BEF5ED114C6276F8511DBB"
+  }, {
+    "result_similarity" : 25.454546,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.925926,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "C427A454112F5B8D4E1EB5886E13F87214E2CD4E82D37C5B7DC15D8F77EB6250"
+  }, {
+    "result_similarity" : 59.649124,
+    "result_minimal_similarity" : 56.666668,
+    "result_maximum_similarity" : 62.962963,
+    "result_matched_token_number" : 34,
+    "test_identifier" : "BDEAD67D9697850EB33A416C0B6DC0F00BFF8600F3D1032D8A2B5B4DC1550E63"
+  }, {
+    "result_similarity" : 83.63636,
+    "result_minimal_similarity" : 82.14286,
+    "result_maximum_similarity" : 85.18519,
+    "result_matched_token_number" : 46,
+    "test_identifier" : "B3A5367E2957209176F4B36F6B42E89E6F6899307DDE0F9AD590147F30C09070"
+  }, {
+    "result_similarity" : 25.454546,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.925926,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "70334552CF2E12BA79FD2BF09A3D0CC157A18D97B916D77A2E902F0BED471264"
+  }, {
+    "result_similarity" : 65.04065,
+    "result_minimal_similarity" : 57.971016,
+    "result_maximum_similarity" : 74.07407,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "8F266DB697062B38BC345CD8BB4DDFCEB8E84708163A7E7AF24FFA1B1EBA16DD"
+  }, {
+    "result_similarity" : 14.634147,
+    "result_minimal_similarity" : 13.043478,
+    "result_maximum_similarity" : 16.666666,
+    "result_matched_token_number" : 9,
+    "test_identifier" : "D38E61AEB4CBE094EDB296BA387D9A0A12586253A034CA85F998E8801CFC799F"
+  }, {
+    "result_similarity" : 37.2093,
+    "result_minimal_similarity" : 32.0,
+    "result_maximum_similarity" : 44.444443,
+    "result_matched_token_number" : 24,
+    "test_identifier" : "8AE8F4B962908C88DF05BE7BE5A26D97BFEF3AC3DE596351B1133DAC25C2C985"
+  }, {
+    "result_similarity" : 74.33628,
+    "result_minimal_similarity" : 71.18644,
+    "result_maximum_similarity" : 77.77778,
+    "result_matched_token_number" : 42,
+    "test_identifier" : "BFDC6555253A6129852EABE51A19FF8013687B83E79A87E55E0E687FFD3068CE"
+  }, {
+    "result_similarity" : 68.37607,
+    "result_minimal_similarity" : 63.49206,
+    "result_maximum_similarity" : 74.07407,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "F8E2CE3CC241CC78EA666124801FFBCE424B8A870553560DCBFA805C281EE4F4"
+  }, {
+    "result_similarity" : 67.79661,
+    "result_minimal_similarity" : 62.5,
+    "result_maximum_similarity" : 74.07407,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "473B87FC44848014A439A31E1A4489E08E8EE3AA68F32A34EFBE26E06775D605"
+  }, {
+    "result_similarity" : 68.965515,
+    "result_minimal_similarity" : 64.51613,
+    "result_maximum_similarity" : 74.07407,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "3A3D03F8D2E6698E8158915831DC37C91975C5B5D5CAACC6989402FC43143C4F"
+  }, {
+    "result_similarity" : 25.454546,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.925926,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "8F952C92607620ECE8093AE7726D93CA0451F4D16A44DF1C5B969C6AD42916A3"
+  }, {
+    "result_similarity" : 47.933884,
+    "result_minimal_similarity" : 43.28358,
+    "result_maximum_similarity" : 53.703705,
+    "result_matched_token_number" : 29,
+    "test_identifier" : "E43FA8E27B686678A717B8CBC5E37DFAA7F1F687DED41439BAD1A55D48F52D3D"
+  }, {
+    "result_similarity" : 84.84849,
+    "result_minimal_similarity" : 73.68421,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "F9C3258C2BA3B1EE26DBF490ECCC238A186347E737419489B3885AC209ED222C"
+  }, {
+    "result_similarity" : 61.068703,
+    "result_minimal_similarity" : 53.333332,
+    "result_maximum_similarity" : 71.42857,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "477B115B49693C33EA2CAEE9938DE385207D4D13EE426E537FB3C6232659F7B0"
+  }, {
+    "result_similarity" : 71.304344,
+    "result_minimal_similarity" : 69.49152,
+    "result_maximum_similarity" : 73.21429,
+    "result_matched_token_number" : 41,
+    "test_identifier" : "E3378BAB96577CDA7DB2B0000417D2880BB0D3D0B29A62B43B20A7B3B1BCD7F9"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "BEF4B36479974BD842CC15A12EFA6DD9ADF14D234392D84A929CBC26CA5AB96B"
+  }, {
+    "result_similarity" : 58.62069,
+    "result_minimal_similarity" : 56.666668,
+    "result_maximum_similarity" : 60.714287,
+    "result_matched_token_number" : 34,
+    "test_identifier" : "33F0684901C561E057AB9D3E20A07F44E28C6110A5D44068525A51154638D203"
+  }, {
+    "result_similarity" : 100.0,
+    "result_minimal_similarity" : 100.0,
+    "result_maximum_similarity" : 100.0,
+    "result_matched_token_number" : 56,
+    "test_identifier" : "59EC8CF91F5F053F60754F97112698F3D0F07904A0D9E68F2A0662672E784E61"
+  }, {
+    "result_similarity" : 73.333336,
+    "result_minimal_similarity" : 68.75,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "CD7990E500D40F8E2928086B64DA005FFBC61C593EE43ED3C4B48C03ACF0244D"
+  }, {
+    "result_similarity" : 74.57627,
+    "result_minimal_similarity" : 70.96774,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "EAA12AA1AE0E55F0569AEA7F6254D7C6674BF9CB349A35FEBFA2219511CF5B54"
+  }, {
+    "result_similarity" : 25.0,
+    "result_minimal_similarity" : 25.0,
+    "result_maximum_similarity" : 25.0,
+    "result_matched_token_number" : 14,
+    "test_identifier" : "DC5D688C3A4069E0BA3ABC5118498CA8609EF8DBAAA09EE2BE14BEFAF406F81E"
+  }, {
+    "result_similarity" : 47.154472,
+    "result_minimal_similarity" : 43.28358,
+    "result_maximum_similarity" : 51.785713,
+    "result_matched_token_number" : 29,
+    "test_identifier" : "544780E31811861989BCA1D45AA747F001EB3CFA799085963B9FDB71107AFDDF"
+  } ]
+}, {
+  "function_name" : "tokenGenerationLevelTest",
+  "test_results" : [ {
+    "result_similarity" : 64.0,
+    "result_minimal_similarity" : 57.971016,
+    "result_maximum_similarity" : 71.42857,
+    "result_matched_token_number" : 40,
+    "test_identifier" : "FAC19201CD9FD1D59896A59C1743F941650691FF7CECDBE8006EE8D6D2A74A6A"
+  }, {
+    "result_similarity" : 73.04348,
+    "result_minimal_similarity" : 71.18644,
+    "result_maximum_similarity" : 75.0,
+    "result_matched_token_number" : 42,
+    "test_identifier" : "3BCE66F7BC5F362060B92CF621EE8F517F6C5086A5A14EEE1FC8486B4226F771"
+  }, {
+    "result_similarity" : 73.94958,
+    "result_minimal_similarity" : 69.84127,
+    "result_maximum_similarity" : 78.57143,
+    "result_matched_token_number" : 44,
+    "test_identifier" : "8A99FBFBBE565D3C77A2F493395FA63AEC443BC784C272ABE338974E4774EC7F"
+  } ]
+} ]

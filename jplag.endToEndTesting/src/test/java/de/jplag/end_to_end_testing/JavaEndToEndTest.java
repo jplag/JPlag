@@ -108,7 +108,7 @@ class JavaEndToEndTest {
      * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
      * @throws NoSuchAlgorithmException when no hash algorithm could be found
      */
-    @Disabled
+    @Test
     void overAllTests() throws IOException, ExitException, NoSuchAlgorithmException {
         String[] testClassNames = jplagTestSuiteHelper.getAllTestFileNames();
         runJPlagTestSuite(testClassNames);
@@ -127,7 +127,7 @@ class JavaEndToEndTest {
         TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames, functionName);
         JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
         var test = jplagResult.getAllComparisons();
-        jplagTestSuiteHelper.saveResult(test,functionName );
+        jplagTestSuiteHelper.saveResult(test, functionName);
 
         for (JPlagComparison jPlagComparison : test) {
             String hashCode = jplagTestSuiteHelper.getTestHashCode(jPlagComparison);

@@ -2,6 +2,7 @@ package de.jplag.end_to_end_testing.model;
 
 import java.util.Arrays;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -37,8 +38,15 @@ public class JsonModel {
     /**
      * @return the name of the currently used function stored in json
      */
+    @JsonIgnore
     public String getFunctionName() {
         return functionName;
+    }
+    
+    @JsonIgnore
+    public ResultModel[] getAllResultModels()
+    {
+    	return results;
     }
 
     /**
@@ -46,6 +54,7 @@ public class JsonModel {
      * @param identifier for the comparative values
      * @return associated comparison values that have been assigned to the identifier
      */
+    @JsonIgnore
     public ResultModel getResultModelById(String identifier) {
         return Arrays.asList(results).stream().filter(resultModel -> identifier.equals(resultModel.getTestIdentifier())).findAny().orElse(null);
     }
