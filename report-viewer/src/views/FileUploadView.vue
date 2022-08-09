@@ -53,6 +53,13 @@ export default defineComponent({
         },
       });
     };
+    const extractSubmissionFileName = (filePath: path.ParsedPath) => {
+      const folders = filePath.dir.split("/");
+      const submissionFolderIndex = folders.findIndex(
+        (folder) => folder === "submissions"
+      );
+      return folders[submissionFolderIndex + 1];
+    };
     /**
      * Handles zip file on drop. It extracts the zip and saves each file in the store.
      * @param file
@@ -60,12 +67,15 @@ export default defineComponent({
     const handleZipFile = (file: File) => {
       jszip.loadAsync(file).then(async (zip) => {
         for (const fileName of Object.keys(zip.files)) {
-          if (fileName.match(/submissions\/(.+)\/(.+)/)) {
+          if (
+            /((.+\/)*)submissions\/(.+)\/(.+)/.test(fileName) &&
+            !/^__MACOSX\//.test(fileName)
+          ) {
             const filePath = path.parse(fileName);
-            const submissionName = filePath.dir.split("/")[2];
+            const submissionFileName = extractSubmissionFileName(filePath);
             await zip.files[fileName].async("string").then((data) => {
               store.commit("saveSubmissionFile", {
-                name: submissionName,
+                name: submissionFileName,
                 file: { fileName: filePath.base, data: data },
               });
             });
@@ -105,10 +115,7 @@ export default defineComponent({
           single: true,
           fileString: str,
         });
-        navigateToComparisonView(
-          json["id1"],
-          json["id2"]
-        );
+        navigateToComparisonView(json["id1"], json["id2"]);
       }
     };
     /**
