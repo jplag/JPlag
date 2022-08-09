@@ -5,13 +5,14 @@ import { Cluster } from "@/model/Cluster";
 import store from "@/store/store";
 
 export class OverviewFactory {
+
   static getOverview(json: Record<string, unknown>): Overview {
     const submissionFolder = json.submission_folder_path as Array<string>;
     const baseCodeFolder = "";
     const language = json.language as string;
     const fileExtensions = json.file_extensions as Array<string>;
     const matchSensitivity = json.match_sensitivity as number;
-    const jsonSubmissions = json.submission_ids as Map<string,string>;
+    const jsonSubmissions = json.submission_ids as Map<string, string>;
     const map = new Map<string, string>(Object.entries(jsonSubmissions));
     const dateOfExecution = json.date_of_execution as string;
     const duration = json.execution_time as number as number;
@@ -51,7 +52,8 @@ export class OverviewFactory {
         clusters.push(newCluster);
       });
     }
-
+    
+    OverviewFactory.saveSubmissionsToComparisonNameMap(json);
     return new Overview(
       submissionFolder,
       baseCodeFolder,
@@ -64,5 +66,23 @@ export class OverviewFactory {
       clusters,
       new Map()
     );
+  }
+
+  private static  saveSubmissionsToComparisonNameMap(json: Record<string, unknown>){
+    const submissionIdsToComparisonName =
+    json.submissionIdsToComparisonFileName as Map<
+      string,
+      Map<string, string>
+    >;
+  const test: Array<Array<string | object>> = Object.entries(
+    submissionIdsToComparisonName
+  );
+  const comparisonMap = new Map<string, Map<string, string>>(
+  );
+  for (const [key, value] of test) {
+    comparisonMap.set(key as string, new Map(Object.entries(value as object)));
+  }
+
+  store.commit("saveComparisonFileLookup", comparisonMap);
   }
 }

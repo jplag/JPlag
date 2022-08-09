@@ -44,10 +44,12 @@ public class ReportObjectFactory {
      * @param path The Path to save the report to
      */
     public void createAndSaveReport(JPlagResult result, String path) {
-        createDirectory(path);
-        copySubmissionFilesToReport(path, result);
+
 
         buildSubmissionToIdMap(result);
+
+        createDirectory(path);
+        copySubmissionFilesToReport(path, result);
 
         writeComparisons(result, path);
         writeOverview(result, path);
@@ -98,7 +100,7 @@ public class ReportObjectFactory {
         var submissionsPath = createDirectory(path, SUBMISSIONS_FOLDER);
         Language language = result.getOptions().getLanguage();
         for (var submission : submissions) {
-            File directory = createDirectory(submissionsPath.getPath(), submission.getNameSanitized());
+            File directory = createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission));
             for (var file : submission.getFiles()) {
                 var fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
                 try {
