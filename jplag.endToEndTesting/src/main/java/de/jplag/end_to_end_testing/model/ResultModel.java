@@ -20,7 +20,7 @@ public class ResultModel {
 	@JsonProperty("result_matched_token_number")
 	private int resultMatchedTokenNumber;
 	@JsonProperty("test_identifier")
-	private int testIdentifier;
+	private String testIdentifier;
 
 	/**
 	 * Constructor for the ResultModel. The model is the serialization of the Json
@@ -31,7 +31,7 @@ public class ResultModel {
 	 *                         for a test case and are therefore associated with
 	 *                         this Id.
 	 */
-	public ResultModel(float resultSimilarity, float resultSimilarityMinimum, float resultSimilarityMaximum, int resultMatchedTokenNumber, int testIdentifier) {
+	public ResultModel(float resultSimilarity, float resultSimilarityMinimum, float resultSimilarityMaximum, int resultMatchedTokenNumber, String testIdentifier) {
 		this.resultSimilarity = resultSimilarity;
 		this.resultSimilarityMinimum = resultSimilarityMinimum;
 		this.resultSimilarityMaximum = resultSimilarityMaximum;
@@ -39,7 +39,7 @@ public class ResultModel {
 		this.testIdentifier = testIdentifier;
 	}
 
-	public ResultModel(JPlagComparison jplagComparison, int testIdentifier) {
+	public ResultModel(JPlagComparison jplagComparison, String testIdentifier) {
 		this.resultSimilarity = jplagComparison.similarity();
 		this.resultMatchedTokenNumber = jplagComparison.getNumberOfMatchedTokens();
 		this.resultSimilarityMinimum = jplagComparison.minimalSimilarity();
@@ -60,7 +60,7 @@ public class ResultModel {
 	 * @return Identifier assigned to the result
 	 */
 	@JsonIgnore
-	public int getTestIdentifier() {
+	public String getTestIdentifier() {
 		return testIdentifier;
 	}
 

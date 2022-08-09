@@ -5,11 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -74,10 +76,11 @@ class JavaEndToEndTest {
      * @param testClassNames Plagiarized classes names in the resource directorie which are needed for the test
      * @throws IOException is thrown in case of problems with copying the plagiarism classes
      * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
+     * @throws NoSuchAlgorithmException when no hash algorithm could be found
      */
     @ParameterizedTest
     @MethodSource("normalizationLevelTestArguments")
-    void normalizationLevelTest(String[] testClassNames) throws IOException, ExitException {
+    void normalizationLevelTest(String[] testClassNames) throws IOException, ExitException, NoSuchAlgorithmException {
         runJPlagTestSuite(testClassNames);
     }
 
@@ -88,10 +91,11 @@ class JavaEndToEndTest {
      * @param testClassNames Plagiarized classes names in the resource directorie which are needed for the test
      * @throws IOException is thrown in case of problems with copying the plagiarism classes
      * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
+     * @throws NoSuchAlgorithmException when no hash algorithm could be found
      */
     @ParameterizedTest
     @MethodSource("tokenGenerationLevelTestArguments")
-    void tokenGenerationLevelTest(String[] testClassNames) throws IOException, ExitException {
+    void tokenGenerationLevelTest(String[] testClassNames) throws IOException, ExitException, NoSuchAlgorithmException {
         runJPlagTestSuite(testClassNames);
     }
 
@@ -102,11 +106,11 @@ class JavaEndToEndTest {
      * @param testClassNames Plagiarized classes names in the resource directorie which are needed for the test
      * @throws IOException is thrown in case of problems with copying the plagiarism classes
      * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
+     * @throws NoSuchAlgorithmException when no hash algorithm could be found
      */
     @Disabled
-    void overAllTests() throws IOException, ExitException {
+    void overAllTests() throws IOException, ExitException, NoSuchAlgorithmException {
         String[] testClassNames = jplagTestSuiteHelper.getAllTestFileNames();
-
         runJPlagTestSuite(testClassNames);
     }
 
@@ -116,15 +120,17 @@ class JavaEndToEndTest {
      * @param testIdentifier name of the testId to load and identify the stored results
      * @throws IOException is thrown in case of problems with copying the plagiarism classes
      * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
+     * @throws NoSuchAlgorithmException when no hash algorithm could be found
      */
-    private void runJPlagTestSuite(String[] testClassNames) throws IOException, ExitException {
+    private void runJPlagTestSuite(String[] testClassNames) throws IOException, ExitException, NoSuchAlgorithmException {
         String functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
         TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames, functionName);
         JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
-        jplagTestSuiteHelper.saveResult(jplagResult.getAllComparisons());
+        var test = jplagResult.getAllComparisons();
+        jplagTestSuiteHelper.saveResult(test,functionName );
 
-        for (JPlagComparison jPlagComparison : jplagResult.getAllComparisons()) {
-            int hashCode = jplagTestSuiteHelper.getTestHashCode(jPlagComparison);
+        for (JPlagComparison jPlagComparison : test) {
+            String hashCode = jplagTestSuiteHelper.getTestHashCode(jPlagComparison);
             ResultModel resultModel = testCaseModel.getCurrentJsonModel().getResultModelById(hashCode);
             assertNotNull(resultModel, "No stored result could be found for the identifier! " + hashCode);
             assertEquals(resultModel.getResultSimilarity(), jPlagComparison.similarity(),

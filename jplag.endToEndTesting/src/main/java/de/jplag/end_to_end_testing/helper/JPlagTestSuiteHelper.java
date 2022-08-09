@@ -3,9 +3,12 @@ package de.jplag.end_to_end_testing.helper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +52,7 @@ public class JPlagTestSuiteHelper {
         this.languageOption = languageOption;
         this.resourceNames = loadAllTestFileNames(TestDirectoryConstants.RESOURCE_PATH_MAPPER().get(languageOption));
         this.resultJsonPath = TestDirectoryConstants.RESULT_PATH_MAPPER().get(languageOption);
-        this.resultModel = JsonHelper.getResultModelFromPath(resultJsonPath);
+        this.resultModel = JsonHelper.getResultModelListFromPath(resultJsonPath);
 
         logger.debug("temp path at [{}]", TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME);
     }
@@ -96,10 +99,12 @@ public class JPlagTestSuiteHelper {
      * @throws StreamWriteException
      * @throws DatabindException
      * @throws IOException
+     * @throws NoSuchAlgorithmException when no hash algorithm could be found
      */
-    public void saveResult(List<JPlagComparison> jplagComparisonList) throws StreamWriteException, DatabindException, IOException {
+    public void saveResult(List<JPlagComparison> jplagComparisonList, String functionName) throws StreamWriteException, DatabindException, IOException, NoSuchAlgorithmException {
         for (JPlagComparison jplagComparison : jplagComparisonList) {
             JsonHelper.writeObjectToJsonFile(new ResultModel(jplagComparison, getTestHashCode(jplagComparison)),
+            		functionName,
                     getTemporaryFileNameForJson(jplagComparison));
         }
     }
@@ -109,8 +114,9 @@ public class JPlagTestSuiteHelper {
      * json files.
      * @param jPlagComparison object from which the hash should be generated
      * @return unique identifier for test case recognition
+     * @throws NoSuchAlgorithmException when no hash algorithm could be found
      */
-    public int getTestHashCode(JPlagComparison jPlagComparison) {
+    public String getTestHashCode(JPlagComparison jPlagComparison) throws NoSuchAlgorithmException {
         String testFileNamesInFirstSubmission = new String();
         String testFileNamesInSecondSubmission = new String();
         for (File file : jPlagComparison.getFirstSubmission().getFiles()) {
@@ -119,7 +125,16 @@ public class JPlagTestSuiteHelper {
         for (File file : jPlagComparison.getSecondSubmission().getFiles()) {
             testFileNamesInSecondSubmission += file.getName().toString();
         }
-        return (testFileNamesInFirstSubmission + testFileNamesInSecondSubmission).hashCode();
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] encodedhash = digest.digest(
+        		(testFileNamesInFirstSubmission + testFileNamesInSecondSubmission).getBytes(StandardCharsets.UTF_8));
+        
+        StringBuilder stringBuilder = new StringBuilder();
+        for (byte nextByte : encodedhash) {
+        	stringBuilder.append(String.format("%02X", nextByte));
+        }
+        
+        return stringBuilder.toString();
     }
 
     /**
@@ -139,19 +154,23 @@ public class JPlagTestSuiteHelper {
      * Creates a transitional name from the tested file names to store the test results temporarily
      * @param jplagComparison for which a temporary name with the extension .json is to be created
      * @return temporary storage name for a json file
+     * @throws FileNotFoundException if no suitable file name could be found
      */
-    private String getTemporaryFileNameForJson(JPlagComparison jplagComparison)
+    private String getTemporaryFileNameForJson(JPlagComparison jplagComparison) throws FileNotFoundException
     {    	
-    	String firstFileNameFromFirstSubmission = jplagComparison.getFirstSubmission().getFiles().stream().findFirst().get().getName();
-    	String secondFileNameFromSecondSubmission = jplagComparison.getSecondSubmission().getFiles().stream().findFirst().get().getName();
+    	String fileNameFromFirstSubmission = jplagComparison.getFirstSubmission().getFiles().stream().findFirst().get().getName();
+    	String fileNameFromSecondSubmission = jplagComparison.getSecondSubmission().getFiles().stream().findFirst().get().getName();
     	//remove file extension
-    	int positionFromExtensionFirstSubmission = firstFileNameFromFirstSubmission.lastIndexOf(".");
-    	int positionFromExtensionSecondSubmission = secondFileNameFromSecondSubmission.lastIndexOf(".");
-    	if (positionFromExtensionFirstSubmission > 0 && positionFromExtensionSecondSubmission > 0 ) {
-    		firstFileNameFromFirstSubmission = firstFileNameFromFirstSubmission.substring(0, positionFromExtensionFirstSubmission);
-    		secondFileNameFromSecondSubmission = secondFileNameFromSecondSubmission.substring(0, positionFromExtensionSecondSubmission);
+    	int extensionPositionFirstSubmission = fileNameFromFirstSubmission.lastIndexOf(".");
+    	int extensionPositionSecondSubmission = fileNameFromSecondSubmission.lastIndexOf(".");
+    	if (extensionPositionFirstSubmission > 0 && extensionPositionSecondSubmission > 0 ) {
+    		fileNameFromFirstSubmission = fileNameFromFirstSubmission.substring(0, extensionPositionFirstSubmission);
+    		fileNameFromSecondSubmission = fileNameFromSecondSubmission.substring(0, extensionPositionSecondSubmission);
     	}
-    	return firstFileNameFromFirstSubmission + "_" +  secondFileNameFromSecondSubmission + ".json";
+    	else {
+    		throw new FileNotFoundException("No suitable file name could be found.");
+    	}
+    	return fileNameFromFirstSubmission + "_" +  fileNameFromSecondSubmission + ".json";
     }
 
     /**

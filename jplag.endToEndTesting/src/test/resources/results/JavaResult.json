@@ -7,21 +7,21 @@
 		"result_minimal_similarity" : 100.0,
 		"result_maximum_similarity" : 100.0,
 		"result_matched_token_number" : 56,
-        "test_identifier": 1104413839
+        "test_identifier": "85FF00F531A497F002D40E9C8430CB159EFC40E618925FD757E35EB2A533227E" 
       },
       {
         "result_similarity": 100.0,
 		"result_minimal_similarity" : 100.0,
 		"result_maximum_similarity" : 100.0,
 		"result_matched_token_number" : 56,
-        "test_identifier": 259941968
+        "test_identifier": "0CA596F411FB0853C97216132D812A928A6A55CFAD5611A8B54857FF3E02D49F"
       },
       {
         "result_similarity": 100.0,
 		"result_minimal_similarity" : 100.0,
 		"result_maximum_similarity" : 100.0,
 		"result_matched_token_number" : 56,
-        "test_identifier": -501008705
+        "test_identifier": "7F33B3C9DE2C754B30BBA5E19D864613585B233E7BB68F8B6AE32355BA301FC4"
       }
     ]
   },
@@ -33,21 +33,21 @@
 		"result_minimal_similarity" : 57.971016,
 		"result_maximum_similarity" : 71.42857,
 		"result_matched_token_number" : 40,
-        "test_identifier": -1436753427
+        "test_identifier": "FAC19201CD9FD1D59896A59C1743F941650691FF7CECDBE8006EE8D6D2A74A6A"
       },
       {
         "result_similarity": 73.04348,
 		"result_minimal_similarity" : 71.18644,
 		"result_maximum_similarity" : 75.0,
 		"result_matched_token_number" : 42,
-        "test_identifier": -1408124276
+        "test_identifier": "3BCE66F7BC5F362060B92CF621EE8F517F6C5086A5A14EEE1FC8486B4226F771"
       },
       {
         "result_similarity": 73.94958,
 		"result_minimal_similarity" : 69.84127,
 		"result_maximum_similarity" : 78.57143,
 		"result_matched_token_number" : 44,
-        "test_identifier": -1291487393
+        "test_identifier": "8A99FBFBBE565D3C77A2F493395FA63AEC443BC784C272ABE338974E4774EC7F"
       }
     ]
   }

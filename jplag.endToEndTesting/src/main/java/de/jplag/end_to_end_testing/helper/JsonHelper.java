@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -38,7 +39,7 @@ public final class JsonHelper {
 	 *                     the json file. This includes both reading and parsing
 	 *                     problems.
 	 */
-	public static List<JsonModel> getResultModelFromPath(Path resultJsonPath) throws IOException {
+	public static List<JsonModel> getResultModelListFromPath(Path resultJsonPath) throws IOException {
 		return Arrays.asList(new ObjectMapper().readValue(resultJsonPath.toFile(), JsonModel[].class));
 	}
 
@@ -48,15 +49,15 @@ public final class JsonHelper {
 	 * @throws DatabindException
 	 * @throws IOException
 	 */
-	public static void writeObjectToJsonFile(ResultModel resultModel, String fileName)
+	public static void writeObjectToJsonFile(ResultModel resultModel, String functionName, String fileName)
 			throws StreamWriteException, DatabindException, IOException {
 		// create an instance of DefaultPrettyPrinter
 		ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
-		File temporaryFile = Path.of(TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toString(), fileName)
+    		File temporaryDirectorie = Path.of(TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toString(), functionName).toFile();
+		File temporaryFile = Path.of(temporaryDirectorie.toString(), fileName)
 				.toFile();
-		if (!TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toFile().exists()) {
-			TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toFile().mkdir();
-			// If you require it to make the entire directory path including parents,
+		if (!temporaryDirectorie.exists()) {
+			temporaryDirectorie.mkdirs();			
 		}
 		if (!temporaryFile.exists()) {
 			temporaryFile.createNewFile();
@@ -64,5 +65,10 @@ public final class JsonHelper {
 		// convert book object to JSON file
 		writer.writeValue(temporaryFile, resultModel);
 
+	}
+	
+	public static ResultModel getResultModelFromPath(File jsonFile) throws StreamReadException, DatabindException, IOException
+	{
+		return new ObjectMapper().readValue(jsonFile, ResultModel.class);
 	}
 }

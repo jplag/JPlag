@@ -46,7 +46,7 @@ public class JsonModel {
      * @param identifier for the comparative values
      * @return associated comparison values that have been assigned to the identifier
      */
-    public ResultModel getResultModelById(Integer identifier) {
+    public ResultModel getResultModelById(String identifier) {
         return Arrays.asList(results).stream().filter(resultModel -> identifier.equals(resultModel.getTestIdentifier())).findAny().orElse(null);
     }
 }
