@@ -25,7 +25,6 @@ public class SwiftParserAdapter extends AbstractParser {
 
     /**
      * Creates the SwiftParserAdapter
-     * @param consumer the ErrorConsumer that parser errors are passed on to.
      */
     public SwiftParserAdapter() {
         super();
