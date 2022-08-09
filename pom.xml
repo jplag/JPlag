@@ -175,6 +175,11 @@
             </dependency>
             <dependency>
                 <groupId>de.jplag</groupId>
+                <artifactId>scala</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
                 <artifactId>scheme</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -470,6 +475,7 @@
                 <module>jplag.frontend.kotlin</module>
                 <module>jplag.frontend.python-3</module>
                 <module>jplag.frontend.rlang</module>
+                <module>jplag.frontend.scala</module>
                 <module>jplag.frontend.scheme</module>
                 <module>jplag.frontend.text</module>
                 <module>jplag.endToEndTesting</module>
@@ -493,6 +499,7 @@
                 <module>jplag.frontend.kotlin</module>
                 <module>jplag.frontend.python-3</module>
                 <module>jplag.frontend.rlang</module>
+                <module>jplag.frontend.scala</module>
                 <module>jplag.frontend.scheme</module>
                 <module>jplag.frontend.text</module>
                 <module>jplag</module>
