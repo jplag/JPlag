@@ -32,6 +32,7 @@ interface State {
   fileString: string;
 
   fileIdToDisplayName: Map<string, string>;
+  submissionIdsToComparisonFileName: Map<string, Map<string, string>>;
 }
 
 interface File {
@@ -52,6 +53,7 @@ interface LoadConfiguration {
 
 const store = createStore<State>({
   state: {
+    submissionIdsToComparisonFileName: new Map<string, Map<string, string>>(),
     /**
      * The set of ids to be hidden.
      */
@@ -89,15 +91,37 @@ const store = createStore<State>({
     submissionDisplayName: (state) => (id: string) => {
       return state.fileIdToDisplayName.get(id);
     },
-    getSubmissionIds(state) : Array<string> {
+    getSubmissionIds(state): Array<string> {
       return Array.from(state.fileIdToDisplayName.keys());
     },
+    getComparisonFileName:
+      (state) => (submissionId: string, fileId: string) => {
+        return state.submissionIdsToComparisonFileName
+          .get(submissionId)
+          ?.get(fileId);
+      },
+      getComparisonFileForSubmissions: (state, getters) => (submissionId1: string, submissionId2: string) => {
+        const expectedFileName = getters.getComparisonFileName(submissionId1, submissionId2);
+        const index = Object.keys(store.state.files).find(
+          (name) =>
+             name.endsWith(expectedFileName)
+        );
+        return index != undefined
+          ? store.state.files[index]
+          : undefined
+      }
   },
   mutations: {
     addAnonymous(state: State, id) {
       for (let i = 0; i < id.length; i++) {
         state.anonymous.add(id[i]);
       }
+    },
+    saveComparisonFileLookup(
+      state: State,
+      map: Map<string, Map<string, string>>
+    ) {
+      state.submissionIdsToComparisonFileName = map;
     },
     removeAnonymous(state, id) {
       for (let i = 0; i < id.length; i++) {

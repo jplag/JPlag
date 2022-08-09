@@ -85,12 +85,6 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
     const router = useRouter();
-    /**
-     * Name of the comparison file. Comparison files should be named {ID1}-{ID2}
-     * @type {string}
-     */
-    const fileName1 = props.firstId.concat("-").concat(props.secondId);
-    const fileName2 = props.firstId.concat("-").concat(props.secondId);
 
     let comparison;
     //getting the comparison file based on the used mode (zip, local, single)
@@ -98,35 +92,25 @@ export default defineComponent({
       try {
         comparison = ComparisonFactory.getComparison(
           // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require(`../files/${fileName1}.json`)
+          require(`../files/${store.getters.getComparisonFileName(
+            props.firstId,
+            props.secondId
+          )}.json`)
         );
       } catch (exception) {
-        try {
-          comparison = ComparisonFactory.getComparison(
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            require(`../files/${fileName2}.json`)
-          );
-        } catch (exception) {
-          router.back();
-        }
+        router.back();
       }
     } else if (store.state.zip) {
-      const getComparisonFileFor = (id1: string, id2: string) => {
-        const index = Object.keys(store.state.files).find(
-          (name) =>
-            name.endsWith(id1.concat("-").concat(id2).concat(".json")) ||
-            name.endsWith(id2.concat("-").concat(id1).concat(".json"))
-        );
-        return index != undefined
-          ? store.state.files[index]
-          : console.log("Could not find comparison file."); // TODO introduce error page to navigate to
-      };
-
-      let comparisonFile = getComparisonFileFor(props.firstId, props.secondId);
+      let comparisonFile = store.getters.getComparisonFileForSubmissions(
+        props.firstId,
+        props.secondId
+      );
       if (comparisonFile) {
         comparison = ComparisonFactory.getComparison(
           JSON.parse(comparisonFile)
         );
+      } else {
+        console.log("Could not find comparison file."); // TODO introduce error page to navigate to
       }
     } else if (store.state.single) {
       comparison = ComparisonFactory.getComparison(
@@ -227,7 +211,6 @@ export default defineComponent({
       showMatch,
       togglePanel,
       isAnonymous,
-
     };
   },
 });
