@@ -12,38 +12,32 @@ import de.jplag.options.LanguageOption;
 public class LanguageToPathMapper {
 
     /**
-     * @return mapper for the language specific stored result json data
+     * @return Mapper for the language specific stored result json data
      */
     private static final HashMap<LanguageOption, Path> TEMPORARY_RESULT_PATH_MAPPER() {
         HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<LanguageOption, Path>();
         languageSpecificResultMapper.put(LanguageOption.JAVA,
                 Path.of(TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toString(), LanguageOption.JAVA.toString()));
-        languageSpecificResultMapper.put(LanguageOption.C_SHARP,
-                Path.of(TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toString(), LanguageOption.C_SHARP.toString()));
 
         return languageSpecificResultMapper;
     }
 
     /**
-     * @return mapper for the language specific stored result json data
+     * @return Mapper for the language-specific stored test plagiarism classes
      */
     private static final HashMap<LanguageOption, List<Path>> RESOURCE_PATH_MAPPER() {
         HashMap<LanguageOption, List<Path>> languageSpecificResultMapper = new HashMap<LanguageOption, List<Path>>();
         languageSpecificResultMapper.put(LanguageOption.JAVA,
                 Collections.unmodifiableList(Arrays.asList(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO)));
-        languageSpecificResultMapper.put(LanguageOption.C_SHARP,
-                Collections.unmodifiableList(Arrays.asList(TestDirectoryConstants.BASE_PATH_TO_C_SHARP_RESOURCES_SORTALGO)));
-
         return languageSpecificResultMapper;
     }
 
     /**
-     * @return mapper for the language specific stored result json data
+     * @return Mapper for the language specific stored result json data
      */
     private static final HashMap<LanguageOption, Path> RESULT_PATH_MAPPER() {
         HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<LanguageOption, Path>();
         languageSpecificResultMapper.put(LanguageOption.JAVA, TestDirectoryConstants.BASE_PATH_TO_JAVA_RESULT_JSON);
-        languageSpecificResultMapper.put(LanguageOption.C_SHARP, TestDirectoryConstants.BASE_PATH_TO_C_SHARP_RESULT_JSON);
 
         return languageSpecificResultMapper;
     }

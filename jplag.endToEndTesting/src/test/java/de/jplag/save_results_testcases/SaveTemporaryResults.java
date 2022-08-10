@@ -39,20 +39,6 @@ class SaveTemporaryResults {
     }
 
     /**
-     * only for C# results
-     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
-     * includingparsing and input value coercion problems.
-     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
-     * stream-level problems or I/O issues below.
-     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
-     * exceptions produced by failed orinterrupted I/O operations.
-     */
-    @Disabled
-    public void SaveCSharpResults() throws StreamReadException, DatabindException, IOException {
-        insertNewTestResultsIntoJsonStore(LanguageOption.C_SHARP);
-    }
-
-    /**
      * stores the created temporary json results in the current result file. It should be kept in mind that the results are
      * stored only for the specific languages.
      * @param languageOption the language option to which the results of the tests should be saved
@@ -98,6 +84,11 @@ class SaveTemporaryResults {
         // the new list is necessary to be able to remove the elements
         var oldResultLinkedList = new LinkedList<JsonModel>(oldResults);
 
+        // if the current result file is empfy no need to compaire the files
+        if (oldResultLinkedList.size() == 0) {
+            returnModel.addAll(newResults);
+            return returnModel;
+        }
         for (int counter = 0; counter < oldResultLinkedList.size(); counter++) {
             var oldJsonResult = oldResultLinkedList.get(counter);
             JsonModel duplicate = newResults.stream()

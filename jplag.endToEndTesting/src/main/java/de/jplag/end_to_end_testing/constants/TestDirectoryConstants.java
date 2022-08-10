@@ -26,49 +26,6 @@ public final class TestDirectoryConstants {
      * Base path to the created plagiarism and the main file located in the project resources.
      */
     public static final Path BASE_PATH_TO_JAVA_RESOURCES_SORTALGO = Path.of("src", "test", "resources", "java", "sortAlgo");
-
-    /**
-     * Base path to the created plagiarism and the main file located in the project resources.
-     */
-    public static final Path BASE_PATH_TO_C_SHARP_RESOURCES_SORTALGO = Path.of("src", "test", "resources", "csharp", "sortAlgo");
-    //
-    // /**
-    // * @return mapper for the language specific stored result json data
-    // */
-    // public static final HashMap<LanguageOption, List<Path>> RESOURCE_PATH_MAPPER() {
-    // HashMap<LanguageOption, List<Path>> languageSpecificResultMapper = new HashMap<LanguageOption, List<Path>>();
-    // languageSpecificResultMapper.put(LanguageOption.JAVA,
-    // Collections.unmodifiableList(Arrays.asList(BASE_PATH_TO_JAVA_RESOURCES_SORTALGO)));
-    // languageSpecificResultMapper.put(LanguageOption.C_SHARP,
-    // Collections.unmodifiableList(Arrays.asList(BASE_PATH_TO_C_SHARP_RESOURCES_SORTALGO)));
-    //
-    // return languageSpecificResultMapper;
-    // }
-    //
-    // /**
-    // * @return mapper for the language specific stored result json data
-    // */
-    // public static final HashMap<LanguageOption, Path> RESULT_PATH_MAPPER() {
-    // HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<LanguageOption, Path>();
-    // languageSpecificResultMapper.put(LanguageOption.JAVA, BASE_PATH_TO_JAVA_RESULT_JSON);
-    // languageSpecificResultMapper.put(LanguageOption.C_SHARP, BASE_PATH_TO_C_SHARP_RESULT_JSON);
-    //
-    // return languageSpecificResultMapper;
-    // }
-    //
-    // /**
-    // * @return mapper for the language specific stored result json data
-    // */
-    // public static final HashMap<LanguageOption, Path> TEMPORARY_RESULT_PATH_MAPPER() {
-    // HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<LanguageOption, Path>();
-    // languageSpecificResultMapper.put(LanguageOption.JAVA, Path.of(TEMPORARY_RESULT_DIRECTORY_NAME.toString(),
-    // LanguageOption.JAVA.toString()));
-    // languageSpecificResultMapper.put(LanguageOption.C_SHARP,
-    // Path.of(TEMPORARY_RESULT_DIRECTORY_NAME.toString(), LanguageOption.C_SHARP.toString()));
-    //
-    // return languageSpecificResultMapper;
-    // }
-
     /**
      * Base path to the saved results
      */
@@ -77,8 +34,4 @@ public final class TestDirectoryConstants {
      * Base path to the saved results of the previous tests in a *.json file for java
      */
     public static final Path BASE_PATH_TO_JAVA_RESULT_JSON = Path.of(BASE_PATH_TO_RESULT_JSON.toString(), "JavaResult.json");
-    /**
-     * Base path to the saved results of the previous tests in a *.json file for csharp
-     */
-    public static final Path BASE_PATH_TO_C_SHARP_RESULT_JSON = Path.of(BASE_PATH_TO_RESULT_JSON.toString(), "CSharpResult.json");
 }

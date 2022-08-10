@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
@@ -125,10 +126,10 @@ class JavaEndToEndTest {
         String functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
         TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames, functionName);
         JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
-        var test = jplagResult.getAllComparisons();
-        jplagTestSuiteHelper.saveTemporaryResult(test, functionName);
+        List<JPlagComparison> currentJPlagComparison = jplagResult.getAllComparisons();
+        jplagTestSuiteHelper.saveTemporaryResult(currentJPlagComparison, functionName);
 
-        for (JPlagComparison jPlagComparison : test) {
+        for (JPlagComparison jPlagComparison : currentJPlagComparison) {
             String hashCode = jplagTestSuiteHelper.getTestHashCode(jPlagComparison);
             ResultModel resultModel = testCaseModel.getCurrentJsonModel().getResultModelById(hashCode);
             assertNotNull(resultModel, "No stored result could be found for the identifier! " + hashCode);
