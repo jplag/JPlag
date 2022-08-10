@@ -51,6 +51,7 @@ public interface Language {
     /**
      * Determines whether a fixed-width font should be used to display that language.
      */
+    // TODO DF: This method is not used!
     default boolean isPreformatted() {
         return true;
     }
