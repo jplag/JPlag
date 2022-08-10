@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 
 import de.jplag.JPlagComparison;
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
+import de.jplag.end_to_end_testing.mapper.LanguageToPathMapper;
 import de.jplag.end_to_end_testing.model.JsonModel;
 import de.jplag.end_to_end_testing.model.ResultModel;
 import de.jplag.end_to_end_testing.model.TestCaseModel;
@@ -50,8 +51,8 @@ public class JPlagTestSuiteHelper {
      */
     public JPlagTestSuiteHelper(LanguageOption languageOption) throws IOException {
         this.languageOption = languageOption;
-        this.resourceNames = loadAllTestFileNames(TestDirectoryConstants.RESOURCE_PATH_MAPPER().get(languageOption));
-        this.resultJsonPath = TestDirectoryConstants.RESULT_PATH_MAPPER().get(languageOption);
+        this.resourceNames = loadAllTestFileNames(LanguageToPathMapper.getResourcePathsFromLanguageOption(languageOption));
+        this.resultJsonPath = LanguageToPathMapper.getTestResultPathFromLanguageOption(languageOption);
         this.resultModel = JsonHelper.getJsonModelListFromPath(resultJsonPath);
         logger.debug("temp path at [{}]", TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME);
     }
@@ -107,7 +108,7 @@ public class JPlagTestSuiteHelper {
             throws StreamWriteException, DatabindException, IOException, NoSuchAlgorithmException {
         for (JPlagComparison jplagComparison : jplagComparisonList) {
             JsonHelper.writeResultModelToJsonFile(new ResultModel(jplagComparison, getTestHashCode(jplagComparison)),
-                    TestDirectoryConstants.TEMPORARY_RESULT_PATH_MAPPER().get(languageOption).toString(), functionName,
+                    LanguageToPathMapper.getTemporaryResultPathFromLanguageOption(languageOption).toString(), functionName,
                     getTemporaryFileNameForJson(jplagComparison));
         }
     }

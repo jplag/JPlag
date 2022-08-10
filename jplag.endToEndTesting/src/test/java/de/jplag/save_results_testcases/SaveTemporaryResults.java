@@ -15,8 +15,8 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 
-import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.end_to_end_testing.helper.JsonHelper;
+import de.jplag.end_to_end_testing.mapper.LanguageToPathMapper;
 import de.jplag.end_to_end_testing.model.JsonModel;
 import de.jplag.end_to_end_testing.model.ResultModel;
 import de.jplag.options.LanguageOption;
@@ -26,13 +26,30 @@ class SaveTemporaryResults {
 
     /**
      * only for java results
-     * @throws IOException
-     * @throws DatabindException
-     * @throws StreamReadException
+     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
+     * includingparsing and input value coercion problems.
+     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
+     * stream-level problems or I/O issues below.
+     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
+     * exceptions produced by failed orinterrupted I/O operations.
      */
     @Disabled
     public void SaveJavaResults() throws StreamReadException, DatabindException, IOException {
         insertNewTestResultsIntoJsonStore(LanguageOption.JAVA);
+    }
+
+    /**
+     * only for C# results
+     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
+     * includingparsing and input value coercion problems.
+     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
+     * stream-level problems or I/O issues below.
+     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
+     * exceptions produced by failed orinterrupted I/O operations.
+     */
+    @Disabled
+    public void SaveCSharpResults() throws StreamReadException, DatabindException, IOException {
+        insertNewTestResultsIntoJsonStore(LanguageOption.C_SHARP);
     }
 
     /**
@@ -48,11 +65,10 @@ class SaveTemporaryResults {
      */
     private void insertNewTestResultsIntoJsonStore(LanguageOption languageOption) throws StreamReadException, DatabindException, IOException {
         // load the current stored values for the test cases
-        Path resultJsonPath = TestDirectoryConstants.RESULT_PATH_MAPPER().get(languageOption);
+        Path resultJsonPath = LanguageToPathMapper.getTestResultPathFromLanguageOption(languageOption);
         List<JsonModel> oldJsonModelList = JsonHelper.getJsonModelListFromPath(resultJsonPath);
-
         // select all temporary stored results
-        File[] fileArrayFromTemporaryResultPath = TestDirectoryConstants.TEMPORARY_RESULT_PATH_MAPPER().get(languageOption).toFile().listFiles();
+        File[] fileArrayFromTemporaryResultPath = LanguageToPathMapper.getTemporaryResultPathFromLanguageOption(languageOption).toFile().listFiles();
         // directory structure with ResultModels mapped to functionName
         List<JsonModel> newJsonModelList = new ArrayList<JsonModel>();
 
