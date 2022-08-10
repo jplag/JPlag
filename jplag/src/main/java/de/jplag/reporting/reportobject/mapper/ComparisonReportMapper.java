@@ -33,10 +33,10 @@ public class ComparisonReportMapper {
 
     private List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison) {
         return comparison.getMatches().stream()
-                .map(match -> convertMatchToReportMatch(comparison, match, !result.getOptions().getLanguage().supportsColumns())).toList();
+                .map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().supportsColumns())).toList();
     }
 
-    private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean usesIndex) {
+    private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean languageSupportsColumnsAndLines) {
         TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
         TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
         Token startTokenFirst = tokensFirst.getToken(match.startOfFirst());
@@ -44,13 +44,17 @@ public class ComparisonReportMapper {
         Token startTokenSecond = tokensSecond.getToken(match.startOfSecond());
         Token endTokenSecond = tokensSecond.getToken(match.startOfSecond() + match.length() - 1);
 
-        int startFirst = usesIndex ? startTokenFirst.getIndex() : startTokenFirst.getLine();
-        int endFirst = usesIndex ? endTokenFirst.getIndex() : endTokenFirst.getLine();
-        int startSecond = usesIndex ? startTokenSecond.getIndex() : startTokenSecond.getLine();
-        int endSecond = usesIndex ? endTokenSecond.getIndex() : endTokenSecond.getLine();
+        int startFirst = getPosition(languageSupportsColumnsAndLines, startTokenFirst);
+        int endFirst = getPosition(languageSupportsColumnsAndLines, endTokenFirst);
+        int startSecond = getPosition(languageSupportsColumnsAndLines, startTokenSecond);
+        int endSecond = getPosition(languageSupportsColumnsAndLines, endTokenSecond);
         int tokens = match.length();
 
         return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
+    }
+
+    private int getPosition(boolean languageSupportsColumnsAndLines, Token token) {
+        return languageSupportsColumnsAndLines ? token.getLine() : token.getIndex();
     }
 
 }
