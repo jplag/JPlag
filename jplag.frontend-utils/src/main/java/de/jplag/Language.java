@@ -54,4 +54,20 @@ public interface Language {
     default boolean isPreformatted() {
         return true;
     }
+
+    /**
+     * Indicates whether the input files (code) should be used as representation in the report, or different files that form
+     * a view on the input files.
+     */
+    default boolean useViewFiles() {
+        return false;
+    }
+
+    /**
+     * If the language uses representation files, this method returns the suffix used for the representation files.
+     */
+    default String viewFileSuffix() {
+        return "";
+    }
+
 }

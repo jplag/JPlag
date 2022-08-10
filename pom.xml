@@ -74,13 +74,16 @@
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.24.0</spotless.version>
+        <spotless.version>2.24.1</spotless.version>
         <slf4j.version>1.7.36</slf4j.version>
         <junit.version>5.9.0</junit.version>
 
         <antlr2.version>2.7.7</antlr2.version>
         <antlr3.version>3.5</antlr3.version>
         <antlr4.version>4.10.1</antlr4.version>
+        <emf.version>2.27.0</emf.version>
+        <emf.ecore.version>2.25.0</emf.ecore.version>
+        <emf.ecore.xmi.version>2.16.0</emf.ecore.xmi.version>
 
         <!-- The Revision of JPlag -->
         <revision>4.0.0-SNAPSHOT</revision>
@@ -186,6 +189,16 @@
             <dependency>
                 <groupId>de.jplag</groupId>
                 <artifactId>chars</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>emf-metamodel</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>emf-metamodel-dynamic</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -478,6 +491,8 @@
                 <module>jplag.frontend.scala</module>
                 <module>jplag.frontend.scheme</module>
                 <module>jplag.frontend.text</module>
+                <module>jplag.frontend.emf-metamodel</module>
+                <module>jplag.frontend.emf-metamodel-dynamic</module>
                 <module>jplag.endToEndTesting</module>
                 <module>jplag</module>
                 <module>jplag.cli</module>
@@ -502,6 +517,8 @@
                 <module>jplag.frontend.scala</module>
                 <module>jplag.frontend.scheme</module>
                 <module>jplag.frontend.text</module>
+                <module>jplag.frontend.emf-metamodel</module>
+                <module>jplag.frontend.emf-metamodel-dynamic</module>
                 <module>jplag</module>
             </modules>
             <build>
