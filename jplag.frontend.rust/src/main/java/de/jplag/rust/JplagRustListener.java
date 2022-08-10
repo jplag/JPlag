@@ -2,11 +2,8 @@ package de.jplag.rust;
 
 import static de.jplag.rust.RustTokenConstants.*;
 
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.LinkedList;
-
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.*;
 
@@ -16,11 +13,12 @@ import de.jplag.rust.grammar.RustParserBaseListener;
 public class JplagRustListener extends RustParserBaseListener implements ParseTreeListener {
 
     private final RustParserAdapter parserAdapter;
-    private final Deque<RustBlockContext> blockContexts;
+
+    private final ParserState<RustContext> contexts = new ParserState<>();
 
     public JplagRustListener(RustParserAdapter parserAdapter) {
         this.parserAdapter = parserAdapter;
-        this.blockContexts = new LinkedList<>();
+        contexts.enter(RustContext.FILE);
     }
 
     private void transformToken(int targetType, Token token) {
@@ -31,273 +29,567 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
         parserAdapter.addToken(targetType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 
-    private void enterBlockContext(RustBlockContext context) {
-        blockContexts.push(context);
-    }
-
-    private void expectAndLeave(RustBlockContext... contexts) {
-        RustBlockContext topContext = blockContexts.pop();
-        assert Arrays.stream(contexts).anyMatch(context -> context == topContext);
+    @Override
+    public void enterInnerAttribute(RustParser.InnerAttributeContext context) {
+        transformToken(INNER_ATTRIBUTE, context.getStart(), context.getStop());
+        super.enterInnerAttribute(context);
     }
 
     @Override
-    public void enterInnerAttribute(RustParser.InnerAttributeContext ctx) {
-        transformToken(INNER_ATTRIBUTE, ctx.getStart(), ctx.getStop());
-        super.enterInnerAttribute(ctx);
+    public void enterOuterAttribute(RustParser.OuterAttributeContext context) {
+        transformToken(OUTER_ATTRIBUTE, context.getStart(), context.getStop());
+        super.enterOuterAttribute(context);
     }
 
     @Override
-    public void enterOuterAttribute(RustParser.OuterAttributeContext ctx) {
-        transformToken(OUTER_ATTRIBUTE, ctx.getStart(), ctx.getStop());
-        super.enterOuterAttribute(ctx);
+    public void enterUseDeclaration(RustParser.UseDeclarationContext context) {
+        transformToken(USE_DECLARATION, context.getStart());
+        super.enterUseDeclaration(context);
     }
 
     @Override
-    public void enterUseDeclaration(RustParser.UseDeclarationContext ctx) {
-        transformToken(USE_DECLARATION, ctx.getStart());
-        super.enterUseDeclaration(ctx);
+    public void enterUseTree(RustParser.UseTreeContext context) {
+        contexts.enter(RustContext.USE_TREE);
+        super.enterUseTree(context);
     }
 
     @Override
-    public void enterUseTree(RustParser.UseTreeContext ctx) {
-        enterBlockContext(RustBlockContext.USE_TREE);
-        super.enterUseTree(ctx);
+    public void exitUseTree(RustParser.UseTreeContext context) {
+        contexts.leave(RustContext.USE_TREE);
+        super.exitUseTree(context);
     }
 
     @Override
-    public void exitUseTree(RustParser.UseTreeContext ctx) {
-        expectAndLeave(RustBlockContext.USE_TREE);
-        super.exitUseTree(ctx);
-    }
-
-    @Override
-    public void enterAttr(RustParser.AttrContext ctx) {
-        enterBlockContext(RustBlockContext.ATTRIBUTE_TREE);
-        super.enterAttr(ctx);
-    }
-
-    @Override
-    public void exitAttr(RustParser.AttrContext ctx) {
-        expectAndLeave(RustBlockContext.ATTRIBUTE_TREE);
-        super.exitAttr(ctx);
-    }
-
-    @Override
-    public void enterSimplePath(RustParser.SimplePathContext ctx) {
-        if (ctx.parent instanceof RustParser.UseTreeContext) {
-            if (ctx.parent.getChildCount() > 1 && ctx.parent.getChild(1).getText().equals("::")) {
+    public void enterSimplePath(RustParser.SimplePathContext context) {
+        if (contexts.getCurrent() == RustContext.USE_TREE) {
+            if (context.parent.getChildCount() > 1 && context.parent.getChild(1).getText().equals("::")) {
                 // Not a leaf
                 return;
             }
 
-            transformToken(USE_ITEM, ctx.getStart(), ctx.getStop());
+            transformToken(USE_ITEM, context.getStart(), context.getStop());
         }
-        super.enterSimplePath(ctx);
+        super.enterSimplePath(context);
     }
 
     @Override
-    public void enterModule(RustParser.ModuleContext ctx) {
-        transformToken(MODULE, ctx.getStart());
-        enterBlockContext(RustBlockContext.MODULE_BODY);
-        super.enterModule(ctx);
+    public void enterModule(RustParser.ModuleContext context) {
+        transformToken(MODULE, context.getStart());
+        contexts.enter(RustContext.MODULE_BODY);
+        super.enterModule(context);
     }
 
     @Override
-    public void enterStruct_(RustParser.Struct_Context ctx) {
-        transformToken(STRUCT, ctx.getStart());
-        enterBlockContext(RustBlockContext.STRUCT_BODY);
-        super.enterStruct_(ctx);
+    public void enterStruct_(RustParser.Struct_Context context) {
+        transformToken(STRUCT, context.getStart());
+        contexts.enter(RustContext.STRUCT_BODY);
+        super.enterStruct_(context);
     }
 
     @Override
-    public void exitStruct_(RustParser.Struct_Context ctx) {
-        expectAndLeave(RustBlockContext.STRUCT_BODY);
-        super.exitStruct_(ctx);
+    public void exitStruct_(RustParser.Struct_Context context) {
+        contexts.leave(RustContext.STRUCT_BODY);
+        super.exitStruct_(context);
     }
 
     @Override
-    public void enterUnion_(RustParser.Union_Context ctx) {
-        transformToken(UNION, ctx.getStart());
-        enterBlockContext(RustBlockContext.UNION_BODY);
-        super.enterUnion_(ctx);
+    public void enterStructExpression(RustParser.StructExpressionContext context) {
+        transformToken(STRUCT, context.getStart());
+        contexts.enter(RustContext.STRUCT_BODY);
+        super.enterStructExpression(context);
     }
 
     @Override
-    public void exitUnion_(RustParser.Union_Context ctx) {
-        expectAndLeave(RustBlockContext.UNION_BODY);
-        super.exitUnion_(ctx);
+    public void exitStructExpression(RustParser.StructExpressionContext context) {
+        contexts.leave(RustContext.STRUCT_BODY);
+        super.exitStructExpression(context);
     }
 
     @Override
-    public void enterTrait_(RustParser.Trait_Context ctx) {
-        transformToken(TRAIT, ctx.getStart());
-        enterBlockContext(RustBlockContext.TRAIT_BODY);
-        super.enterTrait_(ctx);
+    public void enterStructField(RustParser.StructFieldContext context) {
+        transformToken(STRUCT_FIELD, context.getStart());
+        super.enterStructField(context);
     }
 
     @Override
-    public void exitTrait_(RustParser.Trait_Context ctx) {
-        expectAndLeave(RustBlockContext.TRAIT_BODY);
-        super.exitTrait_(ctx);
+    public void enterStructExprField(RustParser.StructExprFieldContext context) {
+        transformToken(STRUCT_FIELD, context.getStart());
+        super.enterStructExprField(context);
     }
 
     @Override
-    public void enterImplementation(RustParser.ImplementationContext ctx) {
-        enterBlockContext(RustBlockContext.IMPL_BODY);
-        super.enterImplementation(ctx);
+    public void enterStructPattern(RustParser.StructPatternContext context) {
+        transformToken(STRUCT, context.getStart());
+        contexts.enter(RustContext.STRUCT_BODY);
+        super.enterStructPattern(context);
     }
 
     @Override
-    public void enterEnumeration(RustParser.EnumerationContext ctx) {
-        transformToken(ENUM, ctx.getStart());
-        enterBlockContext(RustBlockContext.ENUM_BODY);
-        super.enterEnumeration(ctx);
+    public void exitStructPattern(RustParser.StructPatternContext context) {
+        contexts.leave(RustContext.STRUCT_BODY);
+        super.exitStructPattern(context);
     }
 
     @Override
-    public void exitEnumeration(RustParser.EnumerationContext ctx) {
-        expectAndLeave(RustBlockContext.ENUM_BODY);
-        super.exitEnumeration(ctx);
+    public void enterStructPatternField(RustParser.StructPatternFieldContext context) {
+        transformToken(STRUCT_FIELD, context.getStart());
+        super.enterStructPatternField(context);
     }
 
     @Override
-    public void enterMacroRulesDefinition(RustParser.MacroRulesDefinitionContext ctx) {
-        transformToken(MACRO_RULES_DEFINITION, ctx.getStart());
-        enterBlockContext(RustBlockContext.MACRO_RULES_DEFINITION_BODY);
-        super.enterMacroRulesDefinition(ctx);
+    public void enterTupleElements(RustParser.TupleElementsContext context) {
+        if (context.getChildCount() <= 2)
+            contexts.enter(RustContext.REDUNDANT_TUPLE);
+        super.enterTupleElements(context);
     }
 
     @Override
-    public void exitMacroRulesDefinition(RustParser.MacroRulesDefinitionContext ctx) {
-        expectAndLeave(RustBlockContext.MACRO_RULES_DEFINITION_BODY);
-        super.exitMacroRulesDefinition(ctx);
+    public void exitTupleElements(RustParser.TupleElementsContext context) {
+        contexts.maybeLeave(RustContext.REDUNDANT_TUPLE);
+        super.exitTupleElements(context);
     }
 
     @Override
-    public void enterMacroRule(RustParser.MacroRuleContext ctx) {
-        transformToken(MACRO_RULE, ctx.getStart());
-        enterBlockContext(RustBlockContext.MACRO_RULE_BODY);
-        super.enterMacroRule(ctx);
+    public void enterTupleField(RustParser.TupleFieldContext context) {
+        if (contexts.getCurrent() != RustContext.REDUNDANT_TUPLE) {
+            transformToken(TUPLE_ELEMENT, context.getStart());
+        }
+        super.enterTupleField(context);
     }
 
     @Override
-    public void exitMacroRule(RustParser.MacroRuleContext ctx) {
-        expectAndLeave(RustBlockContext.MACRO_RULE_BODY);
-        super.exitMacroRule(ctx);
+    public void enterTupleStructPattern(RustParser.TupleStructPatternContext context) {
+        transformToken(STRUCT, context.getStart());
+        contexts.enter(RustContext.STRUCT_BODY);
+        super.enterTupleStructPattern(context);
     }
 
     @Override
-    public void enterMacroInvocationSemi(RustParser.MacroInvocationSemiContext ctx) {
-        transformToken(MACRO_INVOCATION, ctx.getStart());
-        enterBlockContext(RustBlockContext.MACRO_INVOCATION_BODY);
-        super.enterMacroInvocationSemi(ctx);
+    public void exitTupleStructPattern(RustParser.TupleStructPatternContext context) {
+        contexts.leave(RustContext.STRUCT_BODY);
+        super.exitTupleStructPattern(context);
     }
 
     @Override
-    public void exitMacroInvocationSemi(RustParser.MacroInvocationSemiContext ctx) {
-        expectAndLeave(RustBlockContext.MACRO_INVOCATION_BODY);
-        super.exitMacroInvocationSemi(ctx);
+    public void enterTupleStructItems(RustParser.TupleStructItemsContext context) {
+        contexts.enter(RustContext.TUPLE_STRUCT_PATTERN);
+        if (context.getChildCount() <= 2)
+            contexts.enter(RustContext.REDUNDANT_TUPLE);
+        super.enterTupleStructItems(context);
     }
 
     @Override
-    public void enterExternBlock(RustParser.ExternBlockContext ctx) {
-        enterBlockContext(RustBlockContext.EXTERN_BLOCK);
-        super.enterExternBlock(ctx);
+    public void exitTupleStructItems(RustParser.TupleStructItemsContext context) {
+        contexts.maybeLeave(RustContext.REDUNDANT_TUPLE);
+        contexts.leave(RustContext.TUPLE_STRUCT_PATTERN);
+        super.exitTupleStructItems(context);
     }
 
     @Override
-    public void exitExternBlock(RustParser.ExternBlockContext ctx) {
-        expectAndLeave(RustBlockContext.EXTERN_BLOCK);
-        super.exitExternBlock(ctx);
+    public void enterTuplePatternItems(RustParser.TuplePatternItemsContext context) {
+        contexts.enter(RustContext.TUPLE_PATTERN);
+        super.enterTuplePatternItems(context);
     }
 
     @Override
-    public void enterFunction_(RustParser.Function_Context ctx) {
-        Token fn = ctx.getChild(TerminalNodeImpl.class, 0).getSymbol();
+    public void exitTuplePatternItems(RustParser.TuplePatternItemsContext context) {
+        contexts.leave(RustContext.TUPLE_PATTERN);
+        super.exitTuplePatternItems(context);
+    }
+
+    @Override
+    public void enterUnion_(RustParser.Union_Context context) {
+        transformToken(UNION, context.getStart());
+        contexts.enter(RustContext.UNION_BODY);
+        super.enterUnion_(context);
+    }
+
+    @Override
+    public void exitUnion_(RustParser.Union_Context context) {
+        contexts.leave(RustContext.UNION_BODY);
+        super.exitUnion_(context);
+    }
+
+    @Override
+    public void enterTrait_(RustParser.Trait_Context context) {
+        transformToken(TRAIT, context.getStart());
+        contexts.enter(RustContext.TRAIT_BODY);
+        super.enterTrait_(context);
+    }
+
+    @Override
+    public void exitTrait_(RustParser.Trait_Context context) {
+        contexts.leave(RustContext.TRAIT_BODY);
+        super.exitTrait_(context);
+    }
+
+    @Override
+    public void enterTypeAlias(RustParser.TypeAliasContext context) {
+        transformToken(TYPE_ALIAS, context.getStart());
+        super.enterTypeAlias(context);
+    }
+
+    @Override
+    public void enterImplementation(RustParser.ImplementationContext context) {
+        transformToken(IMPLEMENTATION, context.getStart());
+        contexts.enter(RustContext.IMPLEMENTATION_BODY);
+        super.enterImplementation(context);
+    }
+
+    @Override
+    public void exitImplementation(RustParser.ImplementationContext context) {
+        contexts.leave(RustContext.IMPLEMENTATION_BODY);
+        super.exitImplementation(context);
+    }
+
+    @Override
+    public void enterEnumeration(RustParser.EnumerationContext context) {
+        transformToken(ENUM, context.getStart());
+        contexts.enter(RustContext.ENUM_BODY);
+        super.enterEnumeration(context);
+    }
+
+    @Override
+    public void exitEnumeration(RustParser.EnumerationContext context) {
+        contexts.leave(RustContext.ENUM_BODY);
+        super.exitEnumeration(context);
+    }
+
+    @Override
+    public void enterEnumItem(RustParser.EnumItemContext context) {
+        transformToken(ENUM_ITEM, context.getStart());
+        super.enterEnumItem(context);
+    }
+
+    @Override
+    public void enterMacroRulesDefinition(RustParser.MacroRulesDefinitionContext context) {
+        transformToken(MACRO_RULES_DEFINITION, context.getStart());
+        contexts.enter(RustContext.MACRO_RULES_DEFINITION_BODY);
+        super.enterMacroRulesDefinition(context);
+    }
+
+    @Override
+    public void exitMacroRulesDefinition(RustParser.MacroRulesDefinitionContext context) {
+        contexts.leave(RustContext.MACRO_RULES_DEFINITION_BODY);
+        super.exitMacroRulesDefinition(context);
+    }
+
+    @Override
+    public void enterMacroRule(RustParser.MacroRuleContext context) {
+        transformToken(MACRO_RULE, context.getStart());
+        contexts.enter(RustContext.MACRO_RULE_BODY);
+        super.enterMacroRule(context);
+    }
+
+    @Override
+    public void exitMacroRule(RustParser.MacroRuleContext context) {
+        contexts.leave(RustContext.MACRO_RULE_BODY);
+        super.exitMacroRule(context);
+    }
+
+    @Override
+    public void enterMacroInvocationSemi(RustParser.MacroInvocationSemiContext context) {
+        transformToken(MACRO_INVOCATION, context.getStart());
+        contexts.enter(RustContext.MACRO_INVOCATION_BODY);
+        super.enterMacroInvocationSemi(context);
+    }
+
+    @Override
+    public void exitMacroInvocationSemi(RustParser.MacroInvocationSemiContext context) {
+        contexts.leave(RustContext.MACRO_INVOCATION_BODY);
+        super.exitMacroInvocationSemi(context);
+    }
+
+    @Override
+    public void enterMacroInvocation(RustParser.MacroInvocationContext context) {
+        transformToken(MACRO_INVOCATION, context.getStart());
+        contexts.enter(RustContext.MACRO_INVOCATION_BODY);
+        super.enterMacroInvocation(context);
+    }
+
+    @Override
+    public void exitMacroInvocation(RustParser.MacroInvocationContext context) {
+        contexts.leave(RustContext.MACRO_INVOCATION_BODY);
+        super.exitMacroInvocation(context);
+    }
+
+    @Override
+    public void enterExternBlock(RustParser.ExternBlockContext context) {
+        transformToken(EXTERN_BLOCK, context.getStart());
+        contexts.enter(RustContext.EXTERN_BLOCK);
+        super.enterExternBlock(context);
+    }
+
+    @Override
+    public void exitExternBlock(RustParser.ExternBlockContext context) {
+        contexts.leave(RustContext.EXTERN_BLOCK);
+        super.exitExternBlock(context);
+    }
+
+    @Override
+    public void enterExternCrate(RustParser.ExternCrateContext context) {
+        transformToken(EXTERN_CRATE, context.getStart());
+        super.enterExternCrate(context);
+    }
+
+    @Override
+    public void enterStaticItem(RustParser.StaticItemContext context) {
+        transformToken(STATIC_ITEM, context.getStart());
+        super.enterStaticItem(context);
+    }
+
+    @Override
+    public void enterFunction_(RustParser.Function_Context context) {
+        Token fn = context.getChild(TerminalNodeImpl.class, 0).getSymbol();
         transformToken(FUNCTION, fn);
-        enterBlockContext(RustBlockContext.FUNCTION_BODY);
-        super.enterFunction_(ctx);
+        boolean hasReturnType = context.getChild(RustParser.FunctionReturnTypeContext.class, 0) != null;
+        contexts.enter(hasReturnType ? RustContext.FUNCTION_BODY : RustContext.PROCEDURE_BODY);
+        super.enterFunction_(context);
     }
 
     @Override
-    public void exitFunction_(RustParser.Function_Context ctx) {
-        expectAndLeave(RustBlockContext.FUNCTION_BODY);
-        super.exitFunction_(ctx);
+    public void exitFunction_(RustParser.Function_Context context) {
+        contexts.leave(RustContext.FUNCTION_BODY, RustContext.PROCEDURE_BODY);
+        super.exitFunction_(context);
     }
 
     @Override
-    public void enterSelfParam(RustParser.SelfParamContext ctx) {
-        transformToken(FUNCTION_PARAMETER, ctx.getStart(), ctx.getStop());
-        super.enterSelfParam(ctx);
+    public void enterSelfParam(RustParser.SelfParamContext context) {
+        transformToken(FUNCTION_PARAMETER, context.getStart(), context.getStop());
+        super.enterSelfParam(context);
     }
 
     @Override
-    public void enterFunctionParam(RustParser.FunctionParamContext ctx) {
-        transformToken(FUNCTION_PARAMETER, ctx.getStart(), ctx.getStop());
-        super.enterFunctionParam(ctx);
+    public void enterFunctionParam(RustParser.FunctionParamContext context) {
+        transformToken(FUNCTION_PARAMETER, context.getStart(), context.getStop());
+        super.enterFunctionParam(context);
     }
 
     @Override
-    public void enterGenericParam(RustParser.GenericParamContext ctx) {
-        transformToken(TYPE_PARAMETER, ctx.getStart(), ctx.getStop());
-        super.enterGenericParam(ctx);
+    public void enterGenericParam(RustParser.GenericParamContext context) {
+        transformToken(TYPE_PARAMETER, context.getStart(), context.getStop());
+        super.enterGenericParam(context);
     }
 
     @Override
-    public void enterExpressionWithBlock(RustParser.ExpressionWithBlockContext ctx) {
-        enterBlockContext(RustBlockContext.INNER_BLOCK);
-        super.enterExpressionWithBlock(ctx);
+    public void enterExpressionWithBlock(RustParser.ExpressionWithBlockContext context) {
+        contexts.enter(RustContext.INNER_BLOCK);
+        super.enterExpressionWithBlock(context);
     }
 
     @Override
-    public void exitExpressionWithBlock(RustParser.ExpressionWithBlockContext ctx) {
-        expectAndLeave(RustBlockContext.INNER_BLOCK);
-        super.exitExpressionWithBlock(ctx);
+    public void exitExpressionWithBlock(RustParser.ExpressionWithBlockContext context) {
+        contexts.leave(RustContext.INNER_BLOCK);
+        super.exitExpressionWithBlock(context);
     }
 
     @Override
-    public void enterIfExpression(RustParser.IfExpressionContext ctx) {
-        transformToken(IF_STATEMENT, ctx.getStart());
-        enterBlockContext(RustBlockContext.IF_BODY);
-        super.enterIfExpression(ctx);
+    public void enterIfExpression(RustParser.IfExpressionContext context) {
+        transformToken(IF_STATEMENT, context.getStart());
+        contexts.enter(RustContext.IF_BODY);
+        super.enterIfExpression(context);
     }
 
     @Override
-    public void exitIfExpression(RustParser.IfExpressionContext ctx) {
-        expectAndLeave(RustBlockContext.IF_BODY);
-        super.exitIfExpression(ctx);
+    public void exitIfExpression(RustParser.IfExpressionContext context) {
+        contexts.maybeLeave(RustContext.ELSE_BODY);
+        contexts.leave(RustContext.IF_BODY, RustContext.ELSE_BODY);
+        super.exitIfExpression(context);
     }
 
     @Override
-    public void enterLoopLabel(RustParser.LoopLabelContext ctx) {
-        transformToken(LABEL, ctx.getStart());
-        super.enterLoopLabel(ctx);
+    public void enterLoopLabel(RustParser.LoopLabelContext context) {
+        transformToken(LABEL, context.getStart());
+        super.enterLoopLabel(context);
     }
 
     @Override
-    public void enterInfiniteLoopExpression(RustParser.InfiniteLoopExpressionContext ctx) {
-        Token loopKeyword = ctx.getChild(TerminalNodeImpl.class, 0).getSymbol();
+    public void enterInfiniteLoopExpression(RustParser.InfiniteLoopExpressionContext context) {
+        Token loopKeyword = context.getChild(TerminalNodeImpl.class, 0).getSymbol();
         transformToken(LOOP_STATEMENT, loopKeyword);
-        enterBlockContext(RustBlockContext.LOOP_BODY);
-        super.enterInfiniteLoopExpression(ctx);
+        contexts.enter(RustContext.LOOP_BODY);
+        super.enterInfiniteLoopExpression(context);
     }
 
     @Override
-    public void exitInfiniteLoopExpression(RustParser.InfiniteLoopExpressionContext ctx) {
-        expectAndLeave(RustBlockContext.LOOP_BODY);
-        super.exitInfiniteLoopExpression(ctx);
+    public void exitInfiniteLoopExpression(RustParser.InfiniteLoopExpressionContext context) {
+        contexts.leave(RustContext.LOOP_BODY);
+        super.exitInfiniteLoopExpression(context);
     }
 
     @Override
-    public void enterCompoundAssignOperator(RustParser.CompoundAssignOperatorContext ctx) {
-        transformToken(ASSIGNMENT, ctx.getStart());
-        super.enterCompoundAssignOperator(ctx);
+    public void enterPredicateLoopExpression(RustParser.PredicateLoopExpressionContext context) {
+        Token whileKeyword = context.getChild(TerminalNodeImpl.class, 0).getSymbol();
+        transformToken(LOOP_STATEMENT, whileKeyword);
+        contexts.enter(RustContext.LOOP_BODY);
+        super.enterPredicateLoopExpression(context);
     }
 
     @Override
-    public void enterConstantItem(RustParser.ConstantItemContext ctx) {
-        transformToken(VARIABLE_DECLARATION, ctx.getStart());
-        super.enterConstantItem(ctx);
+    public void exitPredicateLoopExpression(RustParser.PredicateLoopExpressionContext context) {
+        contexts.leave(RustContext.LOOP_BODY);
+        super.exitPredicateLoopExpression(context);
+    }
+
+    @Override
+    public void enterPredicatePatternLoopExpression(RustParser.PredicatePatternLoopExpressionContext context) {
+        Token whileKeyword = context.getChild(TerminalNodeImpl.class, 0).getSymbol();
+        transformToken(LOOP_STATEMENT, whileKeyword);
+        contexts.enter(RustContext.LOOP_BODY);
+        super.enterPredicatePatternLoopExpression(context);
+    }
+
+    @Override
+    public void exitPredicatePatternLoopExpression(RustParser.PredicatePatternLoopExpressionContext context) {
+        contexts.leave(RustContext.LOOP_BODY);
+        super.exitPredicatePatternLoopExpression(context);
+    }
+
+    @Override
+    public void enterIteratorLoopExpression(RustParser.IteratorLoopExpressionContext context) {
+        Token forKeyword = context.getChild(TerminalNodeImpl.class, 0).getSymbol();
+        transformToken(FOR_STATEMENT, forKeyword);
+        contexts.enter(RustContext.FOR_BODY);
+        super.enterIteratorLoopExpression(context);
+    }
+
+    @Override
+    public void exitIteratorLoopExpression(RustParser.IteratorLoopExpressionContext context) {
+        contexts.leave(RustContext.FOR_BODY);
+        super.exitIteratorLoopExpression(context);
+    }
+
+    @Override
+    public void enterBreakExpression(RustParser.BreakExpressionContext context) {
+        transformToken(BREAK, context.getStart());
+        super.enterBreakExpression(context);
+    }
+
+    @Override
+    public void enterMatchExpression(RustParser.MatchExpressionContext context) {
+        transformToken(MATCH_EXPRESSION, context.getStart());
+        contexts.enter(RustContext.MATCH_BODY);
+        super.enterMatchExpression(context);
+    }
+
+    @Override
+    public void exitMatchExpression(RustParser.MatchExpressionContext context) {
+        contexts.leave(RustContext.MATCH_BODY);
+        super.exitMatchExpression(context);
+    }
+
+    @Override
+    public void enterMatchArm(RustParser.MatchArmContext context) {
+        transformToken(MATCH_CASE, context.getStart());
+        super.enterMatchArm(context);
+    }
+
+    @Override
+    public void enterMatchArmGuard(RustParser.MatchArmGuardContext context) {
+        transformToken(MATCH_GUARD, context.getStart());
+        super.enterMatchArmGuard(context);
+    }
+
+    @Override
+    public void enterRangeExpression(RustParser.RangeExpressionContext context) {
+        // Ranges are ignored for now.
+        super.enterRangeExpression(context);
+    }
+
+    @Override
+    public void enterCompoundAssignOperator(RustParser.CompoundAssignOperatorContext context) {
+        transformToken(ASSIGNMENT, context.getStart());
+        super.enterCompoundAssignOperator(context);
+    }
+
+    @Override
+    public void enterCallExpression(RustParser.CallExpressionContext context) {
+        transformToken(APPLY, context.getStart());
+        super.enterCallExpression(context);
+    }
+
+    @Override
+    public void enterMethodCallExpression(RustParser.MethodCallExpressionContext context) {
+        transformToken(APPLY, context.getStart());
+        super.enterMethodCallExpression(context);
+    }
+
+    @Override
+    public void enterConstantItem(RustParser.ConstantItemContext context) {
+        transformToken(VARIABLE_DECLARATION, context.getStart());
+        super.enterConstantItem(context);
+    }
+
+    @Override
+    public void enterArrayExpression(RustParser.ArrayExpressionContext context) {
+        transformToken(ARRAY_BODY_START, context.getStart());
+        super.enterArrayExpression(context);
+    }
+
+    @Override
+    public void exitArrayExpression(RustParser.ArrayExpressionContext context) {
+        transformToken(ARRAY_BODY_END, context.getStop());
+        super.exitArrayExpression(context);
+    }
+
+    @Override
+    public void enterTuplePattern(RustParser.TuplePatternContext context) {
+        transformToken(TUPLE, context.getStart());
+        contexts.enter(RustContext.TUPLE);
+        super.enterTuplePattern(context);
+    }
+
+    @Override
+    public void exitTuplePattern(RustParser.TuplePatternContext context) {
+        contexts.leave(RustContext.TUPLE);
+        super.exitTuplePattern(context);
+    }
+
+    @Override
+    public void enterClosureExpression(RustParser.ClosureExpressionContext context) {
+        transformToken(CLOSURE, context.getStart());
+        contexts.enter(RustContext.CLOSURE_BODY);
+        super.enterClosureExpression(context);
+    }
+
+    @Override
+    public void exitClosureExpression(RustParser.ClosureExpressionContext context) {
+        contexts.leave(RustContext.CLOSURE_BODY);
+        super.exitClosureExpression(context);
+    }
+
+    @Override
+    public void enterClosureParam(RustParser.ClosureParamContext context) {
+        transformToken(FUNCTION_PARAMETER, context.getStart());
+        super.enterClosureParam(context);
+    }
+
+    @Override
+    public void enterReturnExpression(RustParser.ReturnExpressionContext context) {
+        transformToken(RETURN, context.getStart());
+        super.enterReturnExpression(context);
+    }
+
+    @Override
+    public void enterExpressionStatement(RustParser.ExpressionStatementContext context) {
+        // may be return value
+        RuleContext maybeFunctionBlock = context.parent.parent;
+        boolean isImplicitReturnValue = maybeFunctionBlock instanceof RustParser.StatementsContext && (maybeFunctionBlock.getChildCount() == 1)
+                && (contexts.getCurrent() == RustContext.FUNCTION_BODY) && !(context.getChild(0) instanceof RustParser.ReturnExpressionContext);
+
+        if (isImplicitReturnValue) {
+            transformToken(RETURN, context.getStart());
+        }
+        super.enterExpressionStatement(context);
+    }
+
+    @Override
+    public void enterPattern(RustParser.PatternContext context) {
+        switch (contexts.getCurrent()) {
+            case TUPLE_STRUCT_PATTERN -> transformToken(STRUCT_FIELD, context.getStart());
+            case TUPLE_PATTERN -> transformToken(TUPLE_ELEMENT, context.getStart());
+        }
+        super.enterPattern(context);
     }
 
     @Override
@@ -310,17 +602,68 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
                 }
             }
             case "let" -> transformToken(VARIABLE_DECLARATION, token);
-            case "=" -> transformToken(ASSIGNMENT, token);
+            case "=" -> {
+                if (!(node.getParent() instanceof RustParser.AttrInputContext || node.getParent() instanceof RustParser.TypeParamContext
+                        || node.getParent() instanceof RustParser.GenericArgsBindingContext)) {
+                    transformToken(ASSIGNMENT, token);
+                }
+            }
             case "{" -> {
-                int startType = getCurrentContext().getStartType();
+                int startType = contexts.getCurrent().getStartType();
                 if (startType != NONE) {
                     transformToken(startType, token);
                 }
+                switch (contexts.getCurrent()) {
+                    case MACRO_RULES_DEFINITION_BODY, MACRO_INVOCATION_BODY, MACRO_INNER -> contexts.enter(RustContext.MACRO_INNER);
+                }
+                
             }
             case "}" -> {
-                int endType = getCurrentContext().getEndType();
+                int endType = contexts.getCurrent().getEndType();
                 if (endType != NONE) {
                     transformToken(endType, token);
+                }
+
+                if (contexts.getCurrent() == RustContext.MACRO_INNER) {
+                    // maybe this is the end of a macro invocation/definition
+                    contexts.leave(RustContext.MACRO_INNER);
+                    if (contexts.getCurrent() == RustContext.MACRO_INVOCATION_BODY) {
+                        transformToken(MACRO_INVOCATION_BODY_END, token);
+                    } else if (contexts.getCurrent() == RustContext.MACRO_RULES_DEFINITION_BODY) {
+                        transformToken(MACRO_RULES_DEFINITION_BODY_END, token);
+                    }
+                }
+            }
+            case "(" -> {
+                switch (contexts.getCurrent()) {
+                    case STRUCT_BODY -> transformToken(RustContext.STRUCT_BODY.getStartType(), token);
+                    case TUPLE -> transformToken(RustContext.TUPLE.getStartType(), token);
+                    case MACRO_INVOCATION_BODY -> {
+                        transformToken(MACRO_INVOCATION_BODY_START, token);
+                        contexts.enter(RustContext.MACRO_INNER);
+                    }
+                    case MACRO_INNER -> contexts.enter(RustContext.MACRO_INNER);
+                }
+            }
+            case ")" -> {
+                switch (contexts.getCurrent()) {
+                    case STRUCT_BODY -> transformToken(RustContext.STRUCT_BODY.getEndType(), token);
+                    case TUPLE -> transformToken(RustContext.TUPLE.getEndType(), token);
+                    case MACRO_INVOCATION_BODY -> {
+                        /* do nothing */ }
+                    case MACRO_INNER -> {
+                        contexts.leave(RustContext.MACRO_INNER);
+                        if (contexts.getCurrent() == RustContext.MACRO_INVOCATION_BODY) {
+                            transformToken(MACRO_INVOCATION_BODY_END, token);
+                        }
+                    }
+
+                }
+            }
+            case "else" -> {
+                if (contexts.getCurrent() == RustContext.IF_BODY) {
+                    transformToken(ELSE_STATEMENT, token);
+                    contexts.enter(RustContext.ELSE_BODY);
                 }
             }
             default -> {
@@ -329,8 +672,16 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
         }
     }
 
-    private RustBlockContext getCurrentContext() {
-        return blockContexts.peek();
+    @Override
+    public void enterType_(RustParser.Type_Context context) {
+        contexts.enter(RustContext.TYPE);
+        super.enterType_(context);
+    }
+
+    @Override
+    public void exitType_(RustParser.Type_Context context) {
+        contexts.leave(RustContext.TYPE);
+        super.exitType_(context);
     }
 
     @Override
@@ -339,55 +690,105 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
     }
 
     @Override
-    public void enterEveryRule(ParserRuleContext ctx) {
-
+    public void enterEveryRule(ParserRuleContext context) {
+        // ExpressionContext gets no own enter/exit method
+        // used in various 'lists' of elements
+        if (context instanceof RustParser.ExpressionContext expression) {
+            if (context.parent instanceof RustParser.ArrayElementsContext) {
+                transformToken(ARRAY_ELEMENT, expression.getStart());
+            } else if (context.parent instanceof RustParser.CallParamsContext) {
+                transformToken(ARGUMENT, expression.getStart());
+            } else if (context.parent instanceof RustParser.TuplePatternItemsContext || context.parent instanceof RustParser.TupleElementsContext) {
+                if (contexts.getCurrent() == RustContext.REDUNDANT_TUPLE)
+                    return;
+                transformToken(TUPLE_ELEMENT, expression.getStart());
+            } else if (context.parent instanceof RustParser.ClosureExpressionContext) {
+                transformToken(CLOSURE_BODY_START, context.getStart());
+                transformToken(RETURN, expression.getStart());
+            }
+        }
     }
 
     @Override
-    public void exitEveryRule(ParserRuleContext ctx) {
-
-    }
-
-    private RustParser.ExpressionContext getAttibutedSubTree(RustParser.ExpressionContext context) {
-        RustParser.ExpressionContext tree = context;
-        while (tree.getChild(0)instanceof RustParser.AttributedExpressionContext attrExpr) {
-            tree = attrExpr.children.stream().dropWhile(subTree -> subTree instanceof RustParser.OuterAttributeContext).findFirst()
-                    .map(subTree -> (RustParser.ExpressionContext) subTree).get();
+    public void exitEveryRule(ParserRuleContext context) {
+        if (context instanceof RustParser.ExpressionContext) {
+            if (context.parent instanceof RustParser.ClosureExpressionContext) {
+                transformToken(CLOSURE_BODY_END, context.getStop());
+            }
         }
-        return tree;
     }
 
-    private enum RustBlockContext {
+    /**
+     * Implementation of Context for the Rust language
+     */
+    enum RustContext implements ParserState.Context {
+        /** This is used to make sure that the stack is not empty -> getCurrent() != null **/
+        FILE(NONE, NONE),
+
+        /**
+         * These contexts are used to assign the correct tokens to '{' and '}' terminals.
+         **/
         FUNCTION_BODY(FUNCTION_BODY_START, FUNCTION_BODY_END),
+        PROCEDURE_BODY(FUNCTION_BODY_START, FUNCTION_BODY_END),
         STRUCT_BODY(STRUCT_BODY_BEGIN, STRUCT_BODY_END),
         IF_BODY(IF_BODY_START, IF_BODY_END),
+        ELSE_BODY(ELSE_BODY_START, ELSE_BODY_END),
         LOOP_BODY(LOOP_BODY_START, LOOP_BODY_END),
         INNER_BLOCK(INNER_BLOCK_START, INNER_BLOCK_END),
-        USE_TREE(NONE, NONE),
-        ATTRIBUTE_TREE(NONE, NONE),
-
         TRAIT_BODY(TRAIT_BODY_START, TRAIT_BODY_END),
         ENUM_BODY(ENUM_BODY_START, ENUM_BODY_END),
         MACRO_RULES_DEFINITION_BODY(MACRO_RULES_DEFINITION_BODY_START, MACRO_RULES_DEFINITION_BODY_END),
         MACRO_RULE_BODY(MACRO_RULE_BODY_START, MACRO_RULE_BODY_END),
-        MACRO_INVOCATION_BODY(MACRO_INVOCATION_BODY_START, MACRO_INVOCATION_BODY_END),
-        IMPL_BODY(IMPL_BODY_START, IMPL_BODY_END),
+        MACRO_INVOCATION_BODY(MACRO_INVOCATION_BODY_START, NONE),
+        IMPLEMENTATION_BODY(IMPLEMENTATION_BODY_START, IMPLEMENTATION_BODY_END),
         EXTERN_BLOCK(EXTERN_BLOCK_START, EXTERN_BLOCK_END),
         MODULE_BODY(MODULE_START, MODULE_END),
-        UNION_BODY(UNION_BODY_START, UNION_BODY_END);
+        UNION_BODY(UNION_BODY_START, UNION_BODY_END),
+        CLOSURE_BODY(CLOSURE_BODY_START, CLOSURE_BODY_END),
+        MATCH_BODY(MATCH_BODY_START, MATCH_BODY_END),
+        FOR_BODY(FOR_BODY_START, FOR_BODY_END),
+        TUPLE(TUPLE_START, TUPLE_END),
+
+        /**
+         * This is to avoid the empty type `()` being parsed as an empty tuple etc.
+         **/
+        TYPE(NONE, NONE),
+
+        /**
+         * These are to identify expressions as elements of tuples.
+         */
+        TUPLE_STRUCT_PATTERN(NONE, NONE),
+        TUPLE_PATTERN(NONE, NONE),
+
+        /**
+         * This is used so that cascades of tuples like '((((1),2),(3)))' generate only as many tokens as necessary.
+         */
+        REDUNDANT_TUPLE(NONE, NONE),
+
+        /**
+         * This is used to be able to correctly assign MACRO_INVOCATION_BODY_END to a '}' symbol.
+         */
+        MACRO_INNER(NONE, NONE),
+
+        /**
+         * In this context, leaves are USE_ITEMS.
+         */
+        USE_TREE(NONE, NONE);
 
         private final int startType;
         private final int endType;
 
-        RustBlockContext(int startType, int endType) {
+        RustContext(int startType, int endType) {
             this.startType = startType;
             this.endType = endType;
         }
 
+        @Override
         public int getStartType() {
             return startType;
         }
 
+        @Override
         public int getEndType() {
             return endType;
         }

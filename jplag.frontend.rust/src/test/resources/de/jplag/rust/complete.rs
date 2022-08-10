@@ -1,5 +1,6 @@
 #!/she-bang line
 // Source: https://github.com/antlr/grammars-v4/blob/7d9d9adb3c73f1775d62100766d155df8adcc4c9/rust/examples/intellijrust_test_allinone.rs
+// Modified starting at line 716
 //inner attributes
 #![crate_type = "lib"]
 #![crate_name = "rary"]
@@ -712,6 +713,14 @@ fn main() {
     }
 }
 
+/* Addition to original */
+fn match_with_guard() {
+    match () {
+        () if true => {}
+        () if false => {}
+    }
+}
+/* End of addition */
 
 mod arith {
 
