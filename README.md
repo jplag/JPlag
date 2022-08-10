@@ -9,7 +9,27 @@
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
 [![Lines of code](https://img.shields.io/tokei/lines/github/jplag/jplag)](https://github.com/jplag/jplag/graphs/contributors)
 
-JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development. JPlag currently supports Java, C#, C, C++, Python 3, Scheme, and natural language text.
+JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development. JPlag currently supports various programming languages, EMF metamodels, and natural language text.
+
+## Supported Languages
+
+In the following, a list of all supported languages with their supported language version is provided. A language can be selected from the command line using the `-l <cli argument name>` argument.
+
+| Language | Version | CLI Argument Name
+| --- | ---: | --- |
+| [C++](https://isocpp.org) | ? | cpp |
+| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/) | 6 | csharp |
+| [Go](https://go.dev) | 1.17 | golang |
+| [Java](https://www.java.com) | 17 | java
+| [Kotlin](https://kotlinlang.org) | 1.3 | kotlin |
+| [Python](https://www.python.org) | 3 | python3 |
+| [R](https://www.r-project.org/) | 3.5.0 | rlang |
+| [Scala](https://www.scala-lang.org) | 2.13.8 | scala |
+| [Scheme](http://www.scheme-reports.org) | ? | scheme |
+| [EMF Metamodel](https://www.eclipse.org/modeling/emf/) (static) | 2.25.0 | emf-metamodel |
+| [EMF Metamodel](https://www.eclipse.org/modeling/emf/) (dynamic) | 2.25.0 | emf-metamodel-dynamic |
+| Char | - | char |
+| Text (naive) | - | text |
 
 ## Download and Installation
 
