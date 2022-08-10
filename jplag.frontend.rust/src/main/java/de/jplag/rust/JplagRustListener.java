@@ -616,7 +616,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
                 switch (contexts.getCurrent()) {
                     case MACRO_RULES_DEFINITION_BODY, MACRO_INVOCATION_BODY, MACRO_INNER -> contexts.enter(RustContext.MACRO_INNER);
                 }
-                
+
             }
             case "}" -> {
                 int endType = contexts.getCurrent().getEndType();
