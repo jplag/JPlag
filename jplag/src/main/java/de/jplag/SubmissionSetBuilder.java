@@ -75,6 +75,7 @@ public class SubmissionSetBuilder {
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
+
         return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options);
     }
 

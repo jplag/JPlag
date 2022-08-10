@@ -20,7 +20,9 @@ public enum LanguageOption {
     SCALA("scala", "de.jplag.scala.Language"),
     CHAR("char", "de.jplag.chars.Language"),
     TEXT("text", "de.jplag.text.Language"),
-    SCHEME("scheme", "de.jplag.scheme.Language");
+    SCHEME("scheme", "de.jplag.scheme.Language"),
+    EMF("emf-metamodel", "de.jplag.emf.Language"),
+    EMF_DYNAMIC("emf-metamodel-dynamic", "de.jplag.emf.dynamic.Language");
 
     private final String classPath;
     private final String displayName;
