@@ -1,8 +1,8 @@
-#JPlag - End To End Testing
+# JPlag - End To End Testing
 With the help of the end-to-end module, changes to the detection of JPlag are to be tested.
 With the help of elaborated plagiarisms, which have been worked out from suggestions in the literature on the topic of "plagiarism detection and avoidance", a wide range of detectable change can be covered. The selected plagiarisms are the decisive factor here as to whether a change in recognition can be perceived. 
 
-##References
+## References
 These elaborations provide basic ideas on how a modification of the plagiarized source code can look like or be adapted.
 These code adaptations refer to a wide range of changes starting from
 adding/removing comments to architectural changes in the deliverables.
@@ -13,7 +13,7 @@ The following elaborations were used to be able to create the plagiarisms with t
 - [Detecting Disguised Plagiarism - Hatem A. Mahmoud](https://arxiv.org/abs/1711.02149 "Detecting Disguised Plagiarism - Hatem A. Mahmoud")
 - [Instructor-centric source code plagiarism detection and plagiarism corpus](https://dl.acm.org/doi/abs/10.1145/2325296.2325328 "Instructor-centric source code plagiarism detection and plagiarism corpus")
 
-##Steps Towards Plagiarism
+## Steps Towards Plagiarism
 The following changes were applied to sample tasks to create test cases:
 <ul type="1">
 	<li>Inserting comments or empty lines (normalization level)</li>
@@ -47,7 +47,7 @@ More detailed information about the create as well as about the subject to the i
 
 Software is according to [§ 2 of the copyright law](https://www.gesetze-im-internet.de/urhg/__2.html "§ 2 of the copyright law") a protected work which may not be plagiarized. 
 
-##JPlag - End To End TestSuite Structure
+## JPlag - End To End TestSuite Structure
 The construction of an end to end test is done with the help of the JPlag api. 
 
 ``` java 
@@ -113,10 +113,10 @@ This was done by storing the data in a *.json file which is read at the beginnin
 ```
 --- 
 
-##Create New Language End To End Tests
+## Create New Language End To End Tests
 
 This section explains how to create new end to end tests in the existing test suite. 
-###Creating The Plagiarism
+### Creating The Plagiarism
 Before you add a new language to the end to end tests i would like to point out that the quality of the tests depends dreadfully on the plagiarism techniques you choose wicht were explaint in sechtion [Steps Towards Plagiarism](#steps-towards-plagiarism).
 If you need more information about the creation of plans for this purpose, you can also read the elaborations that can be found under [References](#references).
 The more and varied changes you apply, the more accurate the end-to-end tests for the language will be.
@@ -165,7 +165,7 @@ public void BubbleSortWithoutRecursion(Integer arr[]) {
 //[...]
 }
 ```
-###Copying Plagiarism To The Resources
+### Copying Plagiarism To The Resources
 
 The plagiarisms created in [Creating The Plagiarism](#creating-the-plagiarism) must now be copied to the corresponding resources folder. It is important not to mix the languages of the plagiarisms or to copy the data into bottle resource paths.
 
@@ -203,7 +203,7 @@ languageSpecificResultMapper.put(LanguageOption.YOUR-LANGUAGE,
                 Collections.unmodifiableList(Arrays.asList(TestDirectoryConstants.BASE_PATH_TO_YOUR-LANGUAGE_RESOURCES_YOUR-FOLDER)));
 ```
 
-###Json Result Path
+### Json Result Path
 
 - The path to the result json file must also be created, even if it is empty during the first test run. For this they create a variable in the `TestDirectoryConstants.java ` classe as follows:
 
@@ -222,7 +222,7 @@ languageSpecificResultMapper.put(LanguageOption.YOUR-LANGUAGE,
  languageSpecificResultMapper.put(LanguageOption.YOUR-LANGUAGE, TestDirectoryConstants.BASE_PATH_TO_YOUR-LANGUAGE_RESULT_JSON);
 ```
 
-###Register The Temporary Result Path
+### Register The Temporary Result Path
 - The new language must now be added to the `TEMPORARY_RESULT_PATH_MAPPER`.  This can be found in the `LanguageToPathMapper.java` also. 
 
 ``` java 
@@ -230,7 +230,7 @@ languageSpecificResultMapper.put(LanguageOption.YOUR-LANGUAGE,
                 Path.of(TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toString(), LanguageOption.YOUR-LANGUAGE.toString()));
 ```
 
-###Create Save Test Function
+### Create Save Test Function
 In order to be able to save the current test results, another test must be created beforehand, which saves the temporary test results. 
 These tests can be found in the `SaveTemporaryResults.java` class at `de.jplag.save_results_testcases`. 
 
@@ -247,7 +247,7 @@ These tests can be found in the `SaveTemporaryResults.java` class at `de.jplag.s
 It is important to leave the not needed languages on `@Disabled` to avoid unwanted changes. If you want to save the current results, set the test to `@Test` and run the class as `"JUnit Test"`.
 
 
-###Write The Test Cases
+### Write The Test Cases
 After all of the previous steps have been completed, only the test class for the new language can be created. 
 
 **Annotation:**
