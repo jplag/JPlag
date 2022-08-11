@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -36,14 +35,11 @@ public final class JsonHelper {
      * and parsing problems.
      */
     public static List<JsonModel> getJsonModelListFromPath(Path resultJsonPath) throws IOException {
-    	if(resultJsonPath.toFile().exists() && resultJsonPath.toFile().length() > 0)
-    	{
-    		return Arrays.asList(new ObjectMapper().readValue(resultJsonPath.toFile(), JsonModel[].class));
-    	}
-    	else
-    	{
-    		return null;
-    	}
+        if (resultJsonPath.toFile().exists() && resultJsonPath.toFile().length() > 0) {
+            return Arrays.asList(new ObjectMapper().readValue(resultJsonPath.toFile(), JsonModel[].class));
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -61,8 +57,8 @@ public final class JsonHelper {
      */
     public static void writeResultModelToJsonFile(ResultModel resultModel, String temporaryResultDirectory, String functionName, String fileName)
             throws StreamWriteException, DatabindException, IOException {
-        //create an instance of DefaultPrettyPrinter
-    	//new DefaultPrettyPrinter()
+        // create an instance of DefaultPrettyPrinter
+        // new DefaultPrettyPrinter()
         ObjectWriter writer = new ObjectMapper().writer();
         File temporaryDirectorie = Path.of(temporaryResultDirectory, functionName).toFile();
         File temporaryFile = Path.of(temporaryDirectorie.toString(), fileName).toFile();
@@ -91,7 +87,7 @@ public final class JsonHelper {
     public static void writeJsonModelsToJsonFile(List<JsonModel> jsonModelList, Path temporaryResultDirectory)
             throws StreamWriteException, DatabindException, IOException {
         // create an instance of DefaultPrettyPrinter
-    	//new DefaultPrettyPrinter()
+        // new DefaultPrettyPrinter()
         ObjectWriter writer = new ObjectMapper().writer();
 
         if (!temporaryResultDirectory.getParent().toFile().exists()) {

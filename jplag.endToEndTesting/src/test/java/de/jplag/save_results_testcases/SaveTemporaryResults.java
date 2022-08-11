@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
@@ -84,9 +83,8 @@ class SaveTemporaryResults {
         var returnModel = new ArrayList<JsonModel>();
         // the new list is necessary to be able to remove the elements
         LinkedList<JsonModel> oldResultLinkedList = new LinkedList<JsonModel>();
-        if(oldResults != null)
-        {
-        	oldResultLinkedList.addAll(oldResultLinkedList);
+        if (oldResults != null) {
+            oldResultLinkedList.addAll(oldResultLinkedList);
         }
 
         // if the current result file is empfy no need to compaire the files
