@@ -66,7 +66,11 @@ public class JPlagTestSuiteHelper {
      */
     public TestCaseModel createNewTestCase(String[] classNames, String functionName) throws IOException {
         createNewTestCaseDirectory(classNames);
-        JsonModel resultJsonModel = resultModel.stream().filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny().orElse(null);
+        JsonModel resultJsonModel = null;
+        if(resultModel != null)
+        {
+        	resultJsonModel = resultModel.stream().filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny().orElse(null);	
+        }
         return new TestCaseModel(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME, resultJsonModel, languageOption);
     }
 

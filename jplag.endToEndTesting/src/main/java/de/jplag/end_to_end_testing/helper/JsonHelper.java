@@ -36,7 +36,14 @@ public final class JsonHelper {
      * and parsing problems.
      */
     public static List<JsonModel> getJsonModelListFromPath(Path resultJsonPath) throws IOException {
-        return Arrays.asList(new ObjectMapper().readValue(resultJsonPath.toFile(), JsonModel[].class));
+    	if(resultJsonPath.toFile().exists() && resultJsonPath.toFile().length() > 0)
+    	{
+    		return Arrays.asList(new ObjectMapper().readValue(resultJsonPath.toFile(), JsonModel[].class));
+    	}
+    	else
+    	{
+    		return null;
+    	}
     }
 
     /**
@@ -54,8 +61,9 @@ public final class JsonHelper {
      */
     public static void writeResultModelToJsonFile(ResultModel resultModel, String temporaryResultDirectory, String functionName, String fileName)
             throws StreamWriteException, DatabindException, IOException {
-        // create an instance of DefaultPrettyPrinter
-        ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
+        //create an instance of DefaultPrettyPrinter
+    	//new DefaultPrettyPrinter()
+        ObjectWriter writer = new ObjectMapper().writer();
         File temporaryDirectorie = Path.of(temporaryResultDirectory, functionName).toFile();
         File temporaryFile = Path.of(temporaryDirectorie.toString(), fileName).toFile();
         if (!temporaryDirectorie.exists()) {
@@ -83,7 +91,8 @@ public final class JsonHelper {
     public static void writeJsonModelsToJsonFile(List<JsonModel> jsonModelList, Path temporaryResultDirectory)
             throws StreamWriteException, DatabindException, IOException {
         // create an instance of DefaultPrettyPrinter
-        ObjectWriter writer = new ObjectMapper().writer(new DefaultPrettyPrinter());
+    	//new DefaultPrettyPrinter()
+        ObjectWriter writer = new ObjectMapper().writer();
 
         if (!temporaryResultDirectory.getParent().toFile().exists()) {
             temporaryResultDirectory.getParent().toFile().mkdirs();
