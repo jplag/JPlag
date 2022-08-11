@@ -64,7 +64,8 @@ public final class CLI {
             JPlag program = new JPlag(options);
             logger.info("JPlag initialized");
             JPlagResult result = program.run();
-            ReportObjectFactory.createAndSaveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
+            ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
+            reportObjectFactory.createAndSaveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
 
         } catch (ExitException exception) {
             logger.error(exception.getMessage(), exception);

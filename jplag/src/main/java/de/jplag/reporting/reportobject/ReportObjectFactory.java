@@ -1,18 +1,17 @@
 package de.jplag.reporting.reportobject;
 
+import static de.jplag.reporting.jsonfactory.DirectoryCreator.createDirectory;
+import static de.jplag.reporting.reportobject.mapper.SubmissionNameToIdMapper.buildSubmissionNameToIdMap;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.jplag.reporting.reportobject.model.SubmissionName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,14 +19,12 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.Submission;
+import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.jsonfactory.FileWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
-import de.jplag.reporting.reportobject.mapper.ComparisonReportMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
-
-import static de.jplag.reporting.reportobject.mapper.SubmissionNameMapper.submissionNameOf;
 
 /**
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.
@@ -35,66 +32,67 @@ import static de.jplag.reporting.reportobject.mapper.SubmissionNameMapper.submis
 public class ReportObjectFactory {
     private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
 
-    private static final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper();
-    private static final MetricMapper metricMapper = new MetricMapper();
-    private static final ComparisonReportMapper comparisonReportMapper = new ComparisonReportMapper();
     private static final FileWriter fileWriter = new FileWriter();
     public static final String OVERVIEW_FILE_NAME = "overview.json";
     public static final String SUBMISSIONS_FOLDER = "submissions";
+    private Map<String, String> submissionNameToIdMap;
+    private Function<Submission, String> submissionToIdFunction;
+    private Map<String, Map<String, String>> submissionNameToNameToComparisonFileName;
 
     /**
      * @param result The JPlagResult to be converted into a report.
      * @param path The Path to save the report to
      */
-    public static void createAndSaveReport(JPlagResult result, String path) {
+    public void createAndSaveReport(JPlagResult result, String path) {
         createDirectory(path);
-        writeOverview(result, path);
         copySubmissionFilesToReport(path, result);
-        comparisonReportMapper.writeComparisonReports(result, path);
+
+        buildSubmissionToIdMap(result);
+
+        writeComparisons(result, path);
+        writeOverview(result, path);
+
     }
 
-    private static File createDirectory(String path, String name) {
-        File directory = new File(path.concat("/").concat(name));
-        if (!directory.exists() && !directory.mkdirs()) {
-            logger.error("Failed to create dir.");
-        }
-        return directory;
+    private void writeComparisons(JPlagResult result, String path) {
+        ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction);
+        submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result, path);
     }
 
-    private static void createDirectory(String path) {
-        createDirectory(path, "");
+    private void buildSubmissionToIdMap(JPlagResult result) {
+        submissionNameToIdMap = buildSubmissionNameToIdMap(result);
+        submissionToIdFunction = (Submission submission) -> submissionNameToIdMap.get(submission.getName());
     }
 
-    private static void writeOverview(JPlagResult result, String path) {
-        List<JPlagComparison> comparisons = getComparisons(result);
-        OverviewReport overviewReport = new OverviewReport();
+    private void writeOverview(JPlagResult result, String path) {
 
-        // TODO: Consider to treat entries that were checked differently from old entries with prior work.
         List<String> folders = new ArrayList<>();
         folders.addAll(result.getOptions().getSubmissionDirectories());
         folders.addAll(result.getOptions().getOldSubmissionDirectories());
-        overviewReport.setSubmissionFolderPath(folders);
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().getBaseCodeSubmissionName().orElse("") : "";
-        overviewReport.setBaseCodeFolderPath(baseCodePath);
+        ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
 
-        overviewReport.setLanguage(result.getOptions().getLanguage().getName());
-        overviewReport.setFileExtensions(List.of(result.getOptions().getFileSuffixes()));
-        overviewReport.setSubmissionIds(extractSubmissionNames(comparisons));
-        overviewReport.setFailedSubmissionNames(List.of());  // No number of failed submissions
-        overviewReport.setExcludedFiles(result.getOptions().getExcludedFiles());
-        overviewReport.setMatchSensitivity(result.getOptions().getMinimumTokenMatch());
-        overviewReport.setDateOfExecution(getDate());
-        overviewReport.setExecutionTime(result.getDuration());
-        overviewReport.setComparisonNames(getComparisonNames(comparisons));
-        overviewReport.setMetrics(getMetrics(result));
-        overviewReport.setClusters(clusteringResultMapper.map(result));
+        OverviewReport overviewReport = new OverviewReport(folders, // submissionFolderPath
+                baseCodePath, // baseCodeFolderPath
+                result.getOptions().getLanguage().getName(), // language
+                List.of(result.getOptions().getFileSuffixes()), // fileExtensions
+                submissionNameToIdMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)), // submissionIds
+                submissionNameToNameToComparisonFileName, // result.getOptions().getMinimumTokenMatch(),
+                List.of(), // failedSubmissionNames
+                result.getOptions().getExcludedFiles(), // excludedFiles
+                result.getOptions().getMinimumTokenMatch(), // matchSensitivity
+                getDate(),// dateOfExecution
+                result.getDuration(), // executionTime
+                getComparisonNames(submissionNameToNameToComparisonFileName), // comparisonNames
+                getMetrics(result),// metrics
+                clusteringResultMapper.map(result)); // clusters
 
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 
     }
 
-    private static void copySubmissionFilesToReport(String path, JPlagResult result) {
+    private void copySubmissionFilesToReport(String path, JPlagResult result) {
         List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().getMaximumNumberOfComparisons());
         var submissions = getSubmissions(comparisons);
         var submissionsPath = createDirectory(path, SUBMISSIONS_FOLDER);
@@ -112,42 +110,19 @@ public class ReportObjectFactory {
         }
     }
 
-    private static Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
+    private Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
         var submissions = comparisons.stream().map(JPlagComparison::getFirstSubmission).collect(Collectors.toSet());
         Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::getSecondSubmission).collect(Collectors.toSet());
         submissions.addAll(secondSubmissions);
         return submissions;
     }
 
-    private static List<JPlagComparison> getComparisons(JPlagResult result) {
-        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
-        return result.getComparisons(numberOfComparisons);
-    }
-
-    /**
-     * Gets the names of all submissions.
-     * @return A list containing all submission names.
-     */
-    private static List<SubmissionName> extractSubmissionNames(List<JPlagComparison> comparisons) {
-        HashSet<SubmissionName> names = new HashSet<>();
-        comparisons.forEach(comparison -> {
-            names.add(submissionNameOf(comparison.getFirstSubmission()));
-            names.add(submissionNameOf(comparison.getSecondSubmission()));
-        });
-        return new ArrayList<>(names);
-    }
-
-
-
     /**
      * Gets the names of all comparison.
      * @return A list containing all comparisons.
      */
-    private static List<String> getComparisonNames(List<JPlagComparison> comparisons) {
-        List<String> names = new ArrayList<>();
-        comparisons.forEach(comparison -> names
-                .add(String.join("-", comparison.getFirstSubmission().getNameSanitized(), comparison.getSecondSubmission().getNameSanitized())));
-        return names;
+    private Collection<String> getComparisonNames(Map<String, Map<String, String>> submissionNameToNameToComparisonFileName) {
+        return submissionNameToNameToComparisonFileName.values().stream().flatMap(map -> map.values().stream()).collect(Collectors.toSet());
     }
 
     /**
@@ -155,11 +130,12 @@ public class ReportObjectFactory {
      * Metric.
      * @return A list contains Metric DTOs.
      */
-    private static List<Metric> getMetrics(JPlagResult result) {
+    private List<Metric> getMetrics(JPlagResult result) {
+        MetricMapper metricMapper = new MetricMapper(submissionToIdFunction);
         return List.of(metricMapper.getAverageMetric(result), metricMapper.getMaxMetric(result));
     }
 
-    private static String getDate() {
+    private String getDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
         Date date = new Date();
         return dateFormat.format(date);
