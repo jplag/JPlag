@@ -14,13 +14,37 @@ import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 public class ComparisonReportWriterTest extends TestBase {
 
     @Test
-    public void test() throws ExitException {
+    public void firsLevelOfLookupMapComplete() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
         var mapper = new ComparisonReportWriter(Submission::getName);
 
         Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result, "");
 
         firstLevelOfMapContains(stringMapMap, "A", "B", "C", "D", "E");
+    }
+
+    @Test
+    public void secondLevelOfLookupMapComplete() throws ExitException {
+        JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
+        var mapper = new ComparisonReportWriter(Submission::getName);
+
+        Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result, "");
+
+        secondLevelOfMapContains(stringMapMap, "A", "B", "C", "D", "E");
+        secondLevelOfMapContains(stringMapMap, "B", "A", "C", "D", "E");
+        secondLevelOfMapContains(stringMapMap, "C", "B", "A", "D", "E");
+        secondLevelOfMapContains(stringMapMap, "D", "B", "C", "A", "E");
+        secondLevelOfMapContains(stringMapMap, "E", "B", "C", "D", "A");
+    }
+
+    private void secondLevelOfMapContains(Map<String, Map<String, String>> stringMapMap, String firstLevelSubmission,
+            String... secondLevelSubmissions) {
+        for (String secondLevelSubmission : secondLevelSubmissions) {
+            Assertions.assertNotNull(stringMapMap.get(firstLevelSubmission).get(secondLevelSubmission));
+            Assertions.assertFalse(stringMapMap.get(firstLevelSubmission).get(secondLevelSubmission).isEmpty());
+
+        }
+
     }
 
     private void firstLevelOfMapContains(Map<String, Map<String, String>> stringMapMap, String... names) {
