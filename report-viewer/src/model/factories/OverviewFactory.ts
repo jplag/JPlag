@@ -12,7 +12,7 @@ export class OverviewFactory {
     const language = json.language as string;
     const fileExtensions = json.file_extensions as Array<string>;
     const matchSensitivity = json.match_sensitivity as number;
-    const jsonSubmissions = json.submission_ids as Map<string, string>;
+    const jsonSubmissions = json.submission_id_to_display_name as Map<string, string>;
     const map = new Map<string, string>(Object.entries(jsonSubmissions));
     const dateOfExecution = json.date_of_execution as string;
     const duration = json.execution_time as number as number;
@@ -70,7 +70,7 @@ export class OverviewFactory {
 
   private static  saveSubmissionsToComparisonNameMap(json: Record<string, unknown>){
     const submissionIdsToComparisonName =
-    json.submissionIdsToComparisonFileName as Map<
+    json.submission_ids_to_comparison_file_name as Map<
       string,
       Map<string, string>
     >;

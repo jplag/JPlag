@@ -17,8 +17,8 @@ public record OverviewReport(
 
         @JsonProperty("file_extensions") List<String> fileExtensions,
 
-        @JsonProperty("submission_ids") Map<String, String> submissionIds,
-        @JsonProperty("submissionIdsToComparisonFileName") Map<String, Map<String, String>> submissionIdsToComparisonFileName,
+        @JsonProperty("submission_id_to_display_name") Map<String, String> submissionIds,
+        @JsonProperty("submission_ids_to_comparison_file_name") Map<String, Map<String, String>> submissionIdsToComparisonFileName,
 
         @JsonProperty("failed_submission_names") List<String> failedSubmissionNames,
 
