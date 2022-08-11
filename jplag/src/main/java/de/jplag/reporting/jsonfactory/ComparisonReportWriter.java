@@ -21,10 +21,14 @@ public class ComparisonReportWriter {
     }
 
     /**
-     * Generates detailed ComparisonReport DTO for each comparison in a JPlagResult.
+     * Generates detailed ComparisonReport DTO for each comparison in a JPlagResult and writes them to the disk as json
+     * files.
      * @param jPlagResult The JPlagResult to generate the comparison reports from. contains information about a comparison
-     * between two submission. The JPlagResult is used to extract the information on matches between two submissions.
-     * @return
+     * @param path The path to write the comparison files to
+     * @return Nested map that associates each pair of submissions (by their ids) to their comparison file name. The
+     * comparison file name for submission with id id1 and id2 can be fetched by executing get two times:
+     * map.get(id1).get(id2). The nested map is symmetrical therefore, both map.get(id1).get(id2) and map.get(id2).get(id1)
+     * yield the same result.
      */
     public Map<String, Map<String, String>> writeComparisonReports(JPlagResult jPlagResult, String path) {
         int numberOfComparisons = jPlagResult.getOptions().getMaximumNumberOfComparisons();
@@ -35,8 +39,8 @@ public class ComparisonReportWriter {
 
     private void writeComparisons(JPlagResult jPlagResult, String path, List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
-            String firstSubmissionId = getId(comparison.getFirstSubmission());
-            String secondSubmissionId = getId(comparison.getSecondSubmission());
+            String firstSubmissionId = submissionToIdFunction.apply(comparison.getFirstSubmission());
+            String secondSubmissionId = submissionToIdFunction.apply(comparison.getSecondSubmission());
             String fileName = generateComparisonName();
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
@@ -61,13 +65,8 @@ public class ComparisonReportWriter {
     }
 
     private String generateComparisonName() {
-        return  (comparisonCount++ + "").concat(".json");
+        return (comparisonCount++ + "").concat(".json");
 
-
-    }
-
-    private String getId(Submission submission) {
-        return submissionToIdFunction.apply(submission);
     }
 
     private List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison) {

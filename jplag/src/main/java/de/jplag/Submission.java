@@ -146,10 +146,6 @@ public class Submission implements Comparable<Submission> {
         return divisor;
     }
 
-    public String getNameSanitized() {
-        return getName().replace(File.separator, "_");
-    }
-
     /**
      * @return Parse result of the submission.
      */
