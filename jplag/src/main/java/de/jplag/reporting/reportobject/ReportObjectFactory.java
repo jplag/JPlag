@@ -48,11 +48,16 @@ public class ReportObjectFactory {
     public void createAndSaveReport(JPlagResult result, String path) {
 
         buildSubmissionToIdMap(result);
-        createDirectory(path);
-        copySubmissionFilesToReport(path, result);
+        try {
+            createDirectory(path);
+            copySubmissionFilesToReport(path, result);
 
-        writeComparisons(result, path);
-        writeOverview(result, path);
+            writeComparisons(result, path);
+            writeOverview(result, path);
+
+        } catch (IOException e) {
+            logger.error("Could not create directory " + path + " for report viewer generation", e);
+        }
 
     }
 
@@ -61,6 +66,49 @@ public class ReportObjectFactory {
         submissionToIdFunction = (Submission submission) -> submissionNameToIdMap.get(submission.getName());
     }
 
+    private void copySubmissionFilesToReport(String path, JPlagResult result) {
+        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().getMaximumNumberOfComparisons());
+        var submissions = getSubmissions(comparisons);
+        var submissionsPath = createSubmissionsDirectory(path);
+        if (submissionsPath == null)
+            return;
+        Language language = result.getOptions().getLanguage();
+        for (var submission : submissions) {
+            File directory = createSubmissionDirectory(path, submissionsPath, submission);
+            if (directory == null)
+                continue;   for (var file : submission.getFiles()) {
+                var fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
+                try {
+                    Files.copy(fileToCopy.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    logger.error("Could not save submission file " + fileToCopy, e);
+                }
+            }
+        }
+    }
+
+
+    private File createSubmissionDirectory(String path, File submissionsPath, Submission submission) {
+        File directory;
+        try {
+            directory = createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission));
+        } catch (IOException e) {
+            logger.error("Could not create directory " + path + " for report viewer generation", e);
+            return null;
+        }
+        return directory;
+    }
+
+    private File createSubmissionsDirectory(String path) {
+        File submissionsPath;
+        try {
+            submissionsPath = createDirectory(path, SUBMISSIONS_FOLDER);
+        } catch (IOException e) {
+            logger.error("Could not create directory " + path + " for report viewer generation", e);
+            return null;
+        }
+        return submissionsPath;
+    }
 
     private void writeComparisons(JPlagResult result, String path) {
         ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction);
@@ -94,23 +142,6 @@ public class ReportObjectFactory {
 
     }
 
-    private void copySubmissionFilesToReport(String path, JPlagResult result) {
-        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().getMaximumNumberOfComparisons());
-        var submissions = getSubmissions(comparisons);
-        var submissionsPath = createDirectory(path, SUBMISSIONS_FOLDER);
-        Language language = result.getOptions().getLanguage();
-        for (var submission : submissions) {
-            File directory = createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission));
-            for (var file : submission.getFiles()) {
-                var fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
-                try {
-                    Files.copy(fileToCopy.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    logger.error("Could not save submission file " + fileToCopy, e);
-                }
-            }
-        }
-    }
 
     private Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
         var submissions = comparisons.stream().map(JPlagComparison::getFirstSubmission).collect(Collectors.toSet());
