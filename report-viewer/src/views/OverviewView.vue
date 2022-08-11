@@ -4,7 +4,7 @@
 <template>
   <div class="container">
     <div class="column-container" style="width: 30%">
-        <h1>JPlag Report</h1>
+      <h1>JPlag Report</h1>
       <p class="section-title">Main Info:</p>
       <div id="basicInfo">
         <TextInformation
@@ -56,19 +56,19 @@
     </div>
 
     <div class="column-container" style="width: 35%">
-        <div id="metrics">
+      <div id="metrics">
         <p class="section-title">Metric:</p>
-          <div id="metrics-list">
-            <MetricButton
-              v-for="(metric, index) in overview.metrics"
-              :id="metric.metricName"
-              :key="metric.metricName"
-              :is-selected="selectedMetric[index]"
-              :metric="metric"
-              @click="selectMetric(index)"
-            />
-          </div>
+        <div id="metrics-list">
+          <MetricButton
+            v-for="(metric, index) in overview.metrics"
+            :id="metric.metricName"
+            :key="metric.metricName"
+            :is-selected="selectedMetric[index]"
+            :metric="metric"
+            @click="selectMetric(index)"
+          />
         </div>
+      </div>
       <p class="section-title">Distribution:</p>
       <DistributionDiagram
         :distribution="distributions[selectedMetricIndex]"
@@ -78,12 +78,12 @@
     <div class="column-container" style="width: 35%">
       <p class="section-title">Top Comparisons:</p>
       <div id="comparisonsList">
-      <ComparisonsTable
-        :clusters="overview.clusters"
-        :top-comparisons="topComps[selectedMetricIndex]"
-      />
+        <ComparisonsTable
+          :clusters="overview.clusters"
+          :top-comparisons="topComps[selectedMetricIndex]"
+        />
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -148,7 +148,7 @@ export default defineComponent({
      * @param ids
      */
     const handleId = (ids: Array<string>) => {
-      if (ids.length === store.getters.getSubmissionIds.size) {
+      if (ids.length === store.getters.getSubmissionIds.length) {
         if (store.state.anonymous.size > 0) {
           store.commit("resetAnonymous");
         } else {
