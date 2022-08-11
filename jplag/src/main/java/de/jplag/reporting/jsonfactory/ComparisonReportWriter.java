@@ -40,7 +40,7 @@ public class ComparisonReportWriter {
         for (JPlagComparison comparison : comparisons) {
             String firstSubmissionId = submissionToIdFunction.apply(comparison.getFirstSubmission());
             String secondSubmissionId = submissionToIdFunction.apply(comparison.getSecondSubmission());
-            String fileName = generateComparisonName(firstSubmissionId,secondSubmissionId);
+            String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
                     convertMatchesToReportMatches(jPlagResult, comparison));
@@ -64,8 +64,22 @@ public class ComparisonReportWriter {
     }
 
     private String generateComparisonName(String firstSubmissionId, String secondSubmissionId) {
-        return firstSubmissionId.concat("-").concat(secondSubmissionId).concat(".json");
+        String name = concatenate(firstSubmissionId, secondSubmissionId);
+        String finalName = name;
+        var timesNameAlreadyExists = submissionIdToComparisonFileName.values().stream().filter(map -> map.containsValue(finalName)).count();
+        if (timesNameAlreadyExists > 0) {
+            name = concatenate(firstSubmissionId, secondSubmissionId, timesNameAlreadyExists + 1);
+        }
+        return name;
 
+    }
+
+    private String concatenate(String firstSubmissionId, String secondSubmissionId, long index) {
+        return firstSubmissionId.concat("-").concat(secondSubmissionId).concat(index > 0 ? "-" + index : "").concat(".json");
+    }
+
+    private String concatenate(String firstSubmissionId, String secondSubmissionId) {
+        return concatenate(firstSubmissionId, secondSubmissionId, 0);
     }
 
     private List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison) {
