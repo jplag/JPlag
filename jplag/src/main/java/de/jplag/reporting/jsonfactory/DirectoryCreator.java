@@ -1,6 +1,7 @@
 package de.jplag.reporting.jsonfactory;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +15,10 @@ public class DirectoryCreator {
      * @param name The name of the new directory
      * @return The created directory
      */
-    public static File createDirectory(String path, String name) {
+    public static File createDirectory(String path, String name) throws IOException {
         File directory = new File(path.concat("/").concat(name));
         if (!directory.exists() && !directory.mkdirs()) {
-            logger.error("Failed to create dir.");
+            throw new IOException("Failed to create dir.");
         }
         return directory;
     }
@@ -26,7 +27,7 @@ public class DirectoryCreator {
      * Create a directory with the given path
      * @param path The path of the new directory
      */
-    public static void createDirectory(String path) {
+    public static void createDirectory(String path) throws IOException {
         createDirectory(path, "");
     }
 }
