@@ -27,7 +27,8 @@ import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
 
 /**
- * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes.
+ * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes and writing it
+ * to the disk.
  */
 public class ReportObjectFactory {
     private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
@@ -40,14 +41,13 @@ public class ReportObjectFactory {
     private Map<String, Map<String, String>> submissionNameToNameToComparisonFileName;
 
     /**
+     * Creates all necessary report viewer files and writes them to the disk.
      * @param result The JPlagResult to be converted into a report.
      * @param path The Path to save the report to
      */
     public void createAndSaveReport(JPlagResult result, String path) {
 
-
         buildSubmissionToIdMap(result);
-
         createDirectory(path);
         copySubmissionFilesToReport(path, result);
 
@@ -56,14 +56,15 @@ public class ReportObjectFactory {
 
     }
 
-    private void writeComparisons(JPlagResult result, String path) {
-        ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction);
-        submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result, path);
-    }
-
     private void buildSubmissionToIdMap(JPlagResult result) {
         submissionNameToIdMap = buildSubmissionNameToIdMap(result);
         submissionToIdFunction = (Submission submission) -> submissionNameToIdMap.get(submission.getName());
+    }
+
+
+    private void writeComparisons(JPlagResult result, String path) {
+        ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction);
+        submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result, path);
     }
 
     private void writeOverview(JPlagResult result, String path) {
