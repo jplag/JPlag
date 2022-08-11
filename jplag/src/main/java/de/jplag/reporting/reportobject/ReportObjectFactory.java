@@ -87,7 +87,6 @@ public class ReportObjectFactory {
                 result.getOptions().getMinimumTokenMatch(), // matchSensitivity
                 getDate(),// dateOfExecution
                 result.getDuration(), // executionTime
-                getComparisonNames(submissionNameToNameToComparisonFileName), // comparisonNames
                 getMetrics(result),// metrics
                 clusteringResultMapper.map(result)); // clusters
 
@@ -118,14 +117,6 @@ public class ReportObjectFactory {
         Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::getSecondSubmission).collect(Collectors.toSet());
         submissions.addAll(secondSubmissions);
         return submissions;
-    }
-
-    /**
-     * Gets the names of all comparison.
-     * @return A list containing all comparisons.
-     */
-    private Collection<String> getComparisonNames(Map<String, Map<String, String>> submissionNameToNameToComparisonFileName) {
-        return submissionNameToNameToComparisonFileName.values().stream().flatMap(map -> map.values().stream()).collect(Collectors.toSet());
     }
 
     /**

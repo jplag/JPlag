@@ -1,6 +1,5 @@
 package de.jplag.reporting.reportobject.model;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,8 +28,6 @@ public record OverviewReport(
         @JsonProperty("date_of_execution") String dateOfExecution,
 
         @JsonProperty("execution_time") long executionTime,
-
-        @JsonProperty("comparison_names") Collection<String> comparisonNames,
 
         @JsonProperty("metrics") List<Metric> metrics,
 
