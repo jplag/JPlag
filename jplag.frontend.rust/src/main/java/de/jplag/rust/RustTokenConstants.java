@@ -109,8 +109,10 @@ public interface RustTokenConstants extends TokenConstants {
 
     int VARIABLE_DECLARATION = 80;
 
-    int RETURN = 81;
+    int TYPE_ARGUMENT = 81;
 
-    int NUMBER_DIFF_TOKENS = 82;
+    int RETURN = 82;
+
+    int NUMBER_DIFF_TOKENS = 83;
 
 }

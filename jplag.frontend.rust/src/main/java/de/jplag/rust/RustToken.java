@@ -118,6 +118,8 @@ public class RustToken extends Token {
 
             case VARIABLE_DECLARATION -> "VAR_DECL";
 
+            case TYPE_ARGUMENT -> "T_ARG";
+
             case RETURN -> "RETURN";
 
             default -> "<UNKNOWN%d>".formatted(type);
