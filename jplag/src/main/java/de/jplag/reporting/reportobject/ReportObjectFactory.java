@@ -1,6 +1,6 @@
 package de.jplag.reporting.reportobject;
 
-import static de.jplag.reporting.jsonfactory.DirectoryCreator.createDirectory;
+import static de.jplag.reporting.jsonfactory.DirectoryManager.*;
 import static de.jplag.reporting.reportobject.mapper.SubmissionNameToIdMapper.buildSubmissionNameToIdMap;
 
 import java.io.File;
@@ -41,24 +41,35 @@ public class ReportObjectFactory {
     private Map<String, Map<String, String>> submissionNameToNameToComparisonFileName;
 
     /**
-     * Creates all necessary report viewer files and writes them to the disk.
+     * Creates all necessary report viewer files, writes them to the disk as zip.
      * @param result The JPlagResult to be converted into a report.
      * @param path The Path to save the report to
      */
     public void createAndSaveReport(JPlagResult result, String path) {
 
-        buildSubmissionToIdMap(result);
         try {
             createDirectory(path);
+            buildSubmissionToIdMap(result);
+
             copySubmissionFilesToReport(path, result);
 
             writeComparisons(result, path);
             writeOverview(result, path);
 
+            zipAndDelete(path);
         } catch (IOException e) {
             logger.error("Could not create directory " + path + " for report viewer generation", e);
         }
 
+    }
+
+    private void zipAndDelete(String path) {
+        var zipWasSuccessful = zipDirectory(path);
+        if (zipWasSuccessful) {
+            deleteDirectory(path);
+        } else {
+            logger.error("Could not zip results. The results are still available uncompressed at " + path);
+        }
     }
 
     private void buildSubmissionToIdMap(JPlagResult result) {
@@ -76,7 +87,8 @@ public class ReportObjectFactory {
         for (var submission : submissions) {
             File directory = createSubmissionDirectory(path, submissionsPath, submission);
             if (directory == null)
-                continue;   for (var file : submission.getFiles()) {
+                continue;
+            for (var file : submission.getFiles()) {
                 var fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
                 try {
                     Files.copy(fileToCopy.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -86,7 +98,6 @@ public class ReportObjectFactory {
             }
         }
     }
-
 
     private File createSubmissionDirectory(String path, File submissionsPath, Submission submission) {
         File directory;
@@ -141,7 +152,6 @@ public class ReportObjectFactory {
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 
     }
-
 
     private Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
         var submissions = comparisons.stream().map(JPlagComparison::getFirstSubmission).collect(Collectors.toSet());
