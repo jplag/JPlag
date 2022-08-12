@@ -58,10 +58,12 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>emf-metamodel</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>emf-metamodel-dynamic</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
