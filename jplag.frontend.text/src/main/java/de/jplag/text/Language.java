@@ -50,9 +50,4 @@ public class Language implements de.jplag.Language {
     public boolean hasErrors() {
         return parserAdapter.hasErrors();
     }
-
-    @Override
-    public boolean isPreformatted() {
-        return false;
-    }
 }
