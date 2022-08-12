@@ -22,7 +22,7 @@ In the following, a list of all supported languages with their supported languag
 | [Go](https://go.dev) | 1.17 | golang |
 | [Java](https://www.java.com) | 17 | java
 | [Kotlin](https://kotlinlang.org) | 1.3 | kotlin |
-| [Python](https://www.python.org) | 3 | python3 |
+| [Python](https://www.python.org) | 3.6 | python3 |
 | [R](https://www.r-project.org/) | 3.5.0 | rlang |
 | [Scala](https://www.scala-lang.org) | 2.13.8 | scala |
 | [Scheme](http://www.scheme-reports.org) | ? | scheme |
