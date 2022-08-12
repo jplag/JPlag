@@ -49,14 +49,6 @@ public interface Language {
     }
 
     /**
-     * Determines whether a fixed-width font should be used to display that language.
-     */
-    // TODO DF: This method is not used!
-    default boolean isPreformatted() {
-        return true;
-    }
-
-    /**
      * Indicates whether the input files (code) should be used as representation in the report, or different files that form
      * a view on the input files.
      */
