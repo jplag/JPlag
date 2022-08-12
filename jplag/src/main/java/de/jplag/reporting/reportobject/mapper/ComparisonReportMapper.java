@@ -19,24 +19,23 @@ public class ComparisonReportMapper {
     public void writeComparisonReports(JPlagResult jPlagResult, String path) {
         int numberOfComparisons = jPlagResult.getOptions().getMaximumNumberOfComparisons();
         List<JPlagComparison> comparisons = jPlagResult.getComparisons(numberOfComparisons);
-        writeComparisons(jPlagResult, path, comparisons);
+        writeComparisons(path, comparisons);
     }
 
-    private void writeComparisons(JPlagResult jPlagResult, String path, List<JPlagComparison> comparisons) {
+    private void writeComparisons(String path, List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
             var comparisonReport = new ComparisonReport(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(),
-                    comparison.similarity(), convertMatchesToReportMatches(jPlagResult, comparison));
+                    comparison.similarity(), convertMatchesToReportMatches(comparison));
             String fileName = comparisonReport.firstSubmissionId().concat("-").concat(comparisonReport.secondSubmissionId()).concat(".json");
             FILE_WRITER.saveAsJSON(comparisonReport, path, fileName);
         }
     }
 
-    private List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison) {
-        return comparison.getMatches().stream()
-                .map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().supportsColumns())).toList();
+    private List<Match> convertMatchesToReportMatches(JPlagComparison comparison) {
+        return comparison.getMatches().stream().map(match -> convertMatchToReportMatch(comparison, match)).toList();
     }
 
-    private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean languageSupportsColumnsAndLines) {
+    private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
         TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
         TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
         Token startTokenFirst = tokensFirst.getToken(match.startOfFirst());
@@ -44,17 +43,12 @@ public class ComparisonReportMapper {
         Token startTokenSecond = tokensSecond.getToken(match.startOfSecond());
         Token endTokenSecond = tokensSecond.getToken(match.startOfSecond() + match.length() - 1);
 
-        int startFirst = getPosition(languageSupportsColumnsAndLines, startTokenFirst);
-        int endFirst = getPosition(languageSupportsColumnsAndLines, endTokenFirst);
-        int startSecond = getPosition(languageSupportsColumnsAndLines, startTokenSecond);
-        int endSecond = getPosition(languageSupportsColumnsAndLines, endTokenSecond);
+        int startFirst = startTokenFirst.getLine();
+        int endFirst = endTokenFirst.getLine();
+        int startSecond = startTokenSecond.getLine();
+        int endSecond = endTokenSecond.getLine();
         int tokens = match.length();
 
         return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
     }
-
-    private int getPosition(boolean languageSupportsColumnsAndLines, Token token) {
-        return languageSupportsColumnsAndLines ? token.getLine() : token.getIndex();
-    }
-
 }
