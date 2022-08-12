@@ -76,7 +76,8 @@ public class ReportObjectFactory {
         for (var submission : submissions) {
             File directory = createSubmissionDirectory(path, submissionsPath, submission);
             if (directory == null)
-                continue;   for (var file : submission.getFiles()) {
+                continue;
+            for (var file : submission.getFiles()) {
                 var fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
                 try {
                     Files.copy(fileToCopy.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -86,7 +87,6 @@ public class ReportObjectFactory {
             }
         }
     }
-
 
     private File createSubmissionDirectory(String path, File submissionsPath, Submission submission) {
         File directory;
@@ -141,7 +141,6 @@ public class ReportObjectFactory {
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 
     }
-
 
     private Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
         var submissions = comparisons.stream().map(JPlagComparison::getFirstSubmission).collect(Collectors.toSet());
