@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
+import de.jplag.strategy.ComparisonMode;
 
 /**
  * Median class for trading the results and the paths used in the tests. Also the JPlagOptions used for a test run are
@@ -41,6 +42,11 @@ public class TestCaseModel {
      * @return current JPlag options for the created object
      */
     public JPlagOptions getJPlagOptionsFromCurrentModel() {
-        return new JPlagOptions(new ArrayList<>(Arrays.asList(submissionFolderPath)), new ArrayList<>(), languageOption);
+        JPlagOptions jplagOptions = new JPlagOptions(new ArrayList<>(Arrays.asList(submissionFolderPath)), new ArrayList<>(), languageOption);
+
+        jplagOptions.setComparisonMode(ComparisonMode.PARALLEL);
+        jplagOptions.setComparisonMode(ComparisonMode.NORMAL);
+
+        return jplagOptions;
     }
 }

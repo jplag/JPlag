@@ -8,7 +8,6 @@ These code adaptations refer to a wide range of changes starting from
 adding/removing comments to architectural changes in the deliverables.
 
 The following elaborations were used to be able to create the plagiarisms with the largest coverage:
-- [Mossad: defeating software plagiarism detection](https://dl.acm.org/doi/abs/10.1145/3428206 "Mossad: defeating software plagiarism detection")
 - [Detecting Source Code Plagiarism on Introductory Programming Course Assignments Using a Bytecode Approach - Oscar Karnalim](https://ieeexplore.ieee.org/abstract/document/7910274 "Detecting Source Code Plagiarism on Introductory Programming Course Assignments Using a Bytecode Approach - Oscar Karnalim")
 - [Detecting Disguised Plagiarism - Hatem A. Mahmoud](https://arxiv.org/abs/1711.02149 "Detecting Disguised Plagiarism - Hatem A. Mahmoud")
 - [Instructor-centric source code plagiarism detection and plagiarism corpus](https://dl.acm.org/doi/abs/10.1145/2325296.2325328 "Instructor-centric source code plagiarism detection and plagiarism corpus")

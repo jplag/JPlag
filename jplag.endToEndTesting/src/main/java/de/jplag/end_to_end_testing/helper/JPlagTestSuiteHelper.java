@@ -3,11 +3,9 @@ package de.jplag.end_to_end_testing.helper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,37 +108,42 @@ public class JPlagTestSuiteHelper {
     public void saveTemporaryResult(List<JPlagComparison> jplagComparisonList, String functionName)
             throws StreamWriteException, DatabindException, IOException, NoSuchAlgorithmException {
         for (JPlagComparison jplagComparison : jplagComparisonList) {
-            JsonHelper.writeResultModelToJsonFile(new ResultModel(jplagComparison, getTestHashCode(jplagComparison)),
+            JsonHelper.writeResultModelToJsonFile(new ResultModel(jplagComparison, getTestIdentifier(jplagComparison)),
                     LanguageToPathMapper.getTemporaryResultPathFromLanguageOption(languageOption).toString(), functionName,
                     getTemporaryFileNameForJson(jplagComparison));
         }
     }
 
     /**
-     * Creates a unique hash from the submissions in the JPlagComparison object which is used to find the results in the
-     * json files.
+     * Creates a unique identifier from the submissions in the JPlagComparison object which is used to find the results in
+     * the json files.
      * @param jPlagComparison object from which the hash should be generated
      * @return unique identifier for test case recognition
-     * @throws NoSuchAlgorithmException when no hash algorithm could be found
      */
-    public String getTestHashCode(JPlagComparison jPlagComparison) throws NoSuchAlgorithmException {
+    public String getTestIdentifier(JPlagComparison jPlagComparison) {
         String testFileNamesInFirstSubmission = new String();
         String testFileNamesInSecondSubmission = new String();
         for (File file : jPlagComparison.getFirstSubmission().getFiles()) {
-            testFileNamesInFirstSubmission += file.getName().toString();
+            String fileName = file.getName().toString();
+            testFileNamesInFirstSubmission += fileName.substring(0, fileName.lastIndexOf('.'));
         }
         for (File file : jPlagComparison.getSecondSubmission().getFiles()) {
-            testFileNamesInSecondSubmission += file.getName().toString();
-        }
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] encodedhash = digest.digest((testFileNamesInFirstSubmission + testFileNamesInSecondSubmission).getBytes(StandardCharsets.UTF_8));
-
-        StringBuilder stringBuilder = new StringBuilder();
-        for (byte nextByte : encodedhash) {
-            stringBuilder.append(String.format("%02X", nextByte));
+            String fileName = file.getName().toString();
+            testFileNamesInSecondSubmission += fileName.substring(0, fileName.lastIndexOf('.'));
         }
 
-        return stringBuilder.toString();
+        int compaire = testFileNamesInFirstSubmission.compareTo(testFileNamesInSecondSubmission);
+
+        String returnIdentifier;
+
+        if (compaire != 0) {
+            returnIdentifier = compaire < 0 ? testFileNamesInFirstSubmission + testFileNamesInSecondSubmission
+                    : testFileNamesInSecondSubmission + testFileNamesInFirstSubmission;
+        } else {
+            returnIdentifier = testFileNamesInFirstSubmission + testFileNamesInSecondSubmission;
+        }
+
+        return returnIdentifier;
     }
 
     /**

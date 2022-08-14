@@ -130,7 +130,8 @@ class JavaEndToEndTest {
         jplagTestSuiteHelper.saveTemporaryResult(currentJPlagComparison, functionName);
 
         for (JPlagComparison jPlagComparison : currentJPlagComparison) {
-            String hashCode = jplagTestSuiteHelper.getTestHashCode(jPlagComparison);
+
+            String hashCode = jplagTestSuiteHelper.getTestIdentifier(jPlagComparison);
             ResultModel resultModel = testCaseModel.getCurrentJsonModel().getResultModelById(hashCode);
             assertNotNull(resultModel, "No stored result could be found for the identifier! " + hashCode);
             assertEquals(resultModel.getResultSimilarity(), jPlagComparison.similarity(),
