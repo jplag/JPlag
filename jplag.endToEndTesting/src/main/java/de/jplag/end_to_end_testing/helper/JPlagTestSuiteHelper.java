@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.naming.NameNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,9 +106,10 @@ public class JPlagTestSuiteHelper {
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      * @throws NoSuchAlgorithmException when no hash algorithm could be found
+     * @throws NameNotFoundException if the no filenames coud be found in the JPlagCOmparison object
      */
     public void saveTemporaryResult(List<JPlagComparison> jplagComparisonList, String functionName)
-            throws StreamWriteException, DatabindException, IOException, NoSuchAlgorithmException {
+            throws StreamWriteException, DatabindException, IOException, NoSuchAlgorithmException, NameNotFoundException {
         for (JPlagComparison jplagComparison : jplagComparisonList) {
             JsonHelper.writeResultModelToJsonFile(new ResultModel(jplagComparison, getTestIdentifier(jplagComparison)),
                     LanguageToPathMapper.getTemporaryResultPathFromLanguageOption(languageOption).toString(), functionName,
@@ -164,10 +167,21 @@ public class JPlagTestSuiteHelper {
      * @param jplagComparison for which a temporary name with the extension .json is to be created
      * @return temporary storage name for a json file
      * @throws FileNotFoundException if no suitable file name could be found
+     * @throws NameNotFoundException if the no filenames coud be found in the JPlagCOmparison object
      */
-    private String getTemporaryFileNameForJson(JPlagComparison jplagComparison) throws FileNotFoundException {
-        String fileNameFromFirstSubmission = jplagComparison.getFirstSubmission().getFiles().stream().findFirst().get().getName();
-        String fileNameFromSecondSubmission = jplagComparison.getSecondSubmission().getFiles().stream().findFirst().get().getName();
+    private String getTemporaryFileNameForJson(JPlagComparison jplagComparison) throws FileNotFoundException, NameNotFoundException {
+        var firstSubmissionStreamResult = jplagComparison.getFirstSubmission().getFiles().stream().findFirst();
+        var secondSubmissionStreamResult = jplagComparison.getSecondSubmission().getFiles().stream().findFirst();
+
+        String fileNameFromFirstSubmission = firstSubmissionStreamResult.isPresent() ? firstSubmissionStreamResult.get().getName() : null;
+        String fileNameFromSecondSubmission = secondSubmissionStreamResult.isPresent() ? secondSubmissionStreamResult.get().getName() : null;
+
+        if (fileNameFromFirstSubmission == null || fileNameFromSecondSubmission == null) {
+            String message = fileNameFromFirstSubmission == null ? "fileNameFromFirstSubmission is null" : "";
+            message += fileNameFromSecondSubmission == null ? (message.isBlank() ? "" : " and ") + "fileNameFromSecondSubmission is null" : "";
+            throw new NameNotFoundException(message);
+
+        }
         // remove file extension
         int extensionPositionFirstSubmission = fileNameFromFirstSubmission.lastIndexOf(".");
         int extensionPositionSecondSubmission = fileNameFromSecondSubmission.lastIndexOf(".");

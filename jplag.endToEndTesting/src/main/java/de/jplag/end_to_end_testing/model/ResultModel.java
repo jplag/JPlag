@@ -11,8 +11,6 @@ import de.jplag.JPlagComparison;
  */
 public class ResultModel {
 
-    @JsonProperty("result_similarity")
-    private float resultSimilarity;
     @JsonProperty("result_minimal_similarity")
     private float resultSimilarityMinimum;
     @JsonProperty("result_maximum_similarity")
@@ -24,21 +22,26 @@ public class ResultModel {
 
     /**
      * Constructor for the ResultModel. The model is the serialization of the Json file in the form of a Java object.
-     * @param resultSimilarity stored comparative value of the similarity
+     * @param resultSimilarityMinimum comparative value of the minimum similarity
+     * @param resultSimilarityMaximum comparative value of the maximum similarity
+     * @param resultMatchedTokenNumber comparative value of the matched token number
      * @param testIdentifier specifies which associated test results are needed for a test case and are therefore associated
      * with this Id.
      */
-    public ResultModel(float resultSimilarity, float resultSimilarityMinimum, float resultSimilarityMaximum, int resultMatchedTokenNumber,
-            String testIdentifier) {
-        this.resultSimilarity = resultSimilarity;
+    public ResultModel(float resultSimilarityMinimum, float resultSimilarityMaximum, int resultMatchedTokenNumber, String testIdentifier) {
         this.resultSimilarityMinimum = resultSimilarityMinimum;
         this.resultSimilarityMaximum = resultSimilarityMaximum;
         this.resultMatchedTokenNumber = resultMatchedTokenNumber;
         this.testIdentifier = testIdentifier;
     }
 
+    /**
+     * Constructor for the ResultModel. The model is the serialization of the Json file in the form of a Java object.
+     * @param jplagComparison object from witch the values need to be stored
+     * @param testIdentifier specifies which associated test results are needed for a test case and are therefore associated
+     * with this Id.
+     */
     public ResultModel(JPlagComparison jplagComparison, String testIdentifier) {
-        this.resultSimilarity = jplagComparison.similarity();
         this.resultMatchedTokenNumber = jplagComparison.getNumberOfMatchedTokens();
         this.resultSimilarityMinimum = jplagComparison.minimalSimilarity();
         this.resultSimilarityMaximum = jplagComparison.maximalSimilarity();
@@ -59,14 +62,6 @@ public class ResultModel {
     @JsonIgnore
     public String getTestIdentifier() {
         return testIdentifier;
-    }
-
-    /**
-     * @return of the comparative similarity
-     */
-    @JsonIgnore
-    public float getResultSimilarity() {
-        return resultSimilarity;
     }
 
     /**

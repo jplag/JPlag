@@ -63,10 +63,15 @@ public final class JsonHelper {
         File temporaryDirectorie = Path.of(temporaryResultDirectory, functionName).toFile();
         File temporaryFile = Path.of(temporaryDirectorie.toString(), fileName).toFile();
         if (!temporaryDirectorie.exists()) {
-            temporaryDirectorie.mkdirs();
+            if (!temporaryDirectorie.mkdirs()) {
+                throw new IOException("the file at the location [" + temporaryDirectorie.toString() + "] could not be created!");
+            }
         }
         if (!temporaryFile.exists()) {
-            temporaryFile.createNewFile();
+            if (!temporaryFile.createNewFile()) {
+                throw new IOException("the file at the location [" + temporaryFile.toString() + "] could not be created!");
+            }
+
         }
         // convert book object to JSON file
         writer.writeValue(temporaryFile, resultModel);
@@ -91,10 +96,14 @@ public final class JsonHelper {
         ObjectWriter writer = new ObjectMapper().writer();
 
         if (!temporaryResultDirectory.getParent().toFile().exists()) {
-            temporaryResultDirectory.getParent().toFile().mkdirs();
+            if (!temporaryResultDirectory.getParent().toFile().mkdirs()) {
+                throw new IOException("the file at the location [" + temporaryResultDirectory.toString() + "] could not be created!");
+            }
         }
         if (!temporaryResultDirectory.toFile().exists()) {
-            temporaryResultDirectory.toFile().createNewFile();
+            if (!temporaryResultDirectory.toFile().createNewFile()) {
+                throw new IOException("the file at the location [" + temporaryResultDirectory.toString() + "] could not be created!");
+            }
         }
 
         // convert book object to JSON file
