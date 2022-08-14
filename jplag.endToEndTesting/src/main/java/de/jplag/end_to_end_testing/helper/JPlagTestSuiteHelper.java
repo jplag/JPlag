@@ -172,29 +172,23 @@ public class JPlagTestSuiteHelper {
      * @throws NameNotFoundException if the no filenames coud be found in the JPlagCOmparison object
      */
     private String getTemporaryFileNameForJson(JPlagComparison jplagComparison) throws FileNotFoundException, NameNotFoundException {
-        var firstSubmissionStreamResult = jplagComparison.getFirstSubmission().getFiles().stream().findFirst();
-        var secondSubmissionStreamResult = jplagComparison.getSecondSubmission().getFiles().stream().findFirst();
-
-        String fileNameFromFirstSubmission = firstSubmissionStreamResult.isPresent() ? firstSubmissionStreamResult.get().getName() : null;
-        String fileNameFromSecondSubmission = secondSubmissionStreamResult.isPresent() ? secondSubmissionStreamResult.get().getName() : null;
-
-        if (fileNameFromFirstSubmission == null || fileNameFromSecondSubmission == null) {
-            String message = fileNameFromFirstSubmission == null ? "fileNameFromFirstSubmission is null" : "";
-            message += message.isBlank() && fileNameFromSecondSubmission == null ? "" : " and ";
-            message += fileNameFromSecondSubmission == null ? (message.isBlank() ? "" : " and ") + "fileNameFromSecondSubmission is null" : "";
+        // load submission via stream into variable to get the names from the submission object
+        var firstSubmissionStream = jplagComparison.getFirstSubmission().getFiles().stream().findFirst();
+        var secondSubmissionStream = jplagComparison.getSecondSubmission().getFiles().stream().findFirst();
+        // if the stream for the comparison objects contains a name, this name is written as string into the new variables
+        String fileNameFirstSubmission = firstSubmissionStream.isPresent() ? firstSubmissionStream.get().getName() : null;
+        String fileNameSecondSubmission = secondSubmissionStream.isPresent() ? secondSubmissionStream.get().getName() : null;
+        // if one of the name fields is empty an exception is thrown
+        if (fileNameFirstSubmission == null || fileNameSecondSubmission == null) {
+            String message = fileNameFirstSubmission == null ? "fileNameFromFirstSubmission is null" : "";
+            message += message.isBlank() && fileNameSecondSubmission == null ? "" : " and ";
+            message += fileNameSecondSubmission == null ? "fileNameFromSecondSubmission is null" : "";
             throw new NameNotFoundException(message);
-
         }
         // remove file extension
-        int extensionPositionFirstSubmission = fileNameFromFirstSubmission.lastIndexOf(".");
-        int extensionPositionSecondSubmission = fileNameFromSecondSubmission.lastIndexOf(".");
-        if (extensionPositionFirstSubmission > 0 && extensionPositionSecondSubmission > 0) {
-            fileNameFromFirstSubmission = fileNameFromFirstSubmission.substring(0, extensionPositionFirstSubmission);
-            fileNameFromSecondSubmission = fileNameFromSecondSubmission.substring(0, extensionPositionSecondSubmission);
-        } else {
-            throw new FileNotFoundException("No suitable file name could be found.");
-        }
-        return fileNameFromFirstSubmission + "_" + fileNameFromSecondSubmission + ".json";
+        fileNameFirstSubmission = fileNameFirstSubmission.substring(0, fileNameFirstSubmission.lastIndexOf('.'));
+        fileNameSecondSubmission = fileNameSecondSubmission.substring(0, fileNameSecondSubmission.lastIndexOf('.'));
+        return fileNameFirstSubmission + "_" + fileNameSecondSubmission + ".json";
     }
 
     /**

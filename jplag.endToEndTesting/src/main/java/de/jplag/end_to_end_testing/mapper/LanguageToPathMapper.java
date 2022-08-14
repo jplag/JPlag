@@ -15,12 +15,6 @@ public class LanguageToPathMapper {
         // private constructor to prevent instantiation
     }
 
-    private static final EnumMap<LanguageOption, Path> test() {
-        EnumMap<LanguageOption, Path> test123 = new EnumMap<>(LanguageOption.class);
-        test123.put(LanguageOption.JAVA, Path.of(TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toString(), LanguageOption.JAVA.toString()));
-        return test123;
-    };
-
     /**
      * @return Mapper for the language specific stored result json data
      */
