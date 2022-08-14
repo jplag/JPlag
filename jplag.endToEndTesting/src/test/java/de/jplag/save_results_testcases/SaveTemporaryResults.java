@@ -25,7 +25,7 @@ class SaveTemporaryResults {
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      */
-    @Disabled // to prevent execution during the build or test run. Should only be active if you want to save the results.
+    @Disabled("to prevent execution during the build or test run. Should only be active if you want to save the results.")
     public void SaveJavaResults() throws IOException {
         insertNewTestResultsIntoJsonStore(LanguageOption.JAVA);
     }

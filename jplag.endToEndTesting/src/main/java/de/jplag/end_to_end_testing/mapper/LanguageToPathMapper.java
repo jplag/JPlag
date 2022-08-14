@@ -3,7 +3,7 @@ package de.jplag.end_to_end_testing.mapper;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
@@ -15,11 +15,17 @@ public class LanguageToPathMapper {
         // private constructor to prevent instantiation
     }
 
+    private static final EnumMap<LanguageOption, Path> test() {
+        EnumMap<LanguageOption, Path> test123 = new EnumMap<>(LanguageOption.class);
+        test123.put(LanguageOption.JAVA, Path.of(TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toString(), LanguageOption.JAVA.toString()));
+        return test123;
+    };
+
     /**
      * @return Mapper for the language specific stored result json data
      */
-    private static final HashMap<LanguageOption, Path> temporaryResultPathMapper() {
-        HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<>();
+    private static final EnumMap<LanguageOption, Path> temporaryResultPathMapper() {
+        EnumMap<LanguageOption, Path> languageSpecificResultMapper = new EnumMap<>(LanguageOption.class);
         languageSpecificResultMapper.put(LanguageOption.JAVA,
                 Path.of(TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toString(), LanguageOption.JAVA.toString()));
 
@@ -29,8 +35,8 @@ public class LanguageToPathMapper {
     /**
      * @return Mapper for the language-specific stored test plagiarism classes
      */
-    private static final HashMap<LanguageOption, List<Path>> resourcePathMapper() {
-        HashMap<LanguageOption, List<Path>> languageSpecificResultMapper = new HashMap<>();
+    private static final EnumMap<LanguageOption, List<Path>> resourcePathMapper() {
+        EnumMap<LanguageOption, List<Path>> languageSpecificResultMapper = new EnumMap<>(LanguageOption.class);
         languageSpecificResultMapper.put(LanguageOption.JAVA,
                 Collections.unmodifiableList(Arrays.asList(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO)));
         return languageSpecificResultMapper;
@@ -39,8 +45,8 @@ public class LanguageToPathMapper {
     /**
      * @return Mapper for the language specific stored result json data
      */
-    private static final HashMap<LanguageOption, Path> resultPathMapper() {
-        HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<>();
+    private static final EnumMap<LanguageOption, Path> resultPathMapper() {
+        EnumMap<LanguageOption, Path> languageSpecificResultMapper = new EnumMap<>(LanguageOption.class);
         languageSpecificResultMapper.put(LanguageOption.JAVA, TestDirectoryConstants.BASE_PATH_TO_JAVA_RESULT_JSON);
 
         return languageSpecificResultMapper;

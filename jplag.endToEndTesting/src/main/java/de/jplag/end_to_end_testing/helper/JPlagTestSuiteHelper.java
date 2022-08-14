@@ -180,6 +180,7 @@ public class JPlagTestSuiteHelper {
 
         if (fileNameFromFirstSubmission == null || fileNameFromSecondSubmission == null) {
             String message = fileNameFromFirstSubmission == null ? "fileNameFromFirstSubmission is null" : "";
+            message += message.isBlank() && fileNameFromSecondSubmission == null ? "" : " and ";
             message += fileNameFromSecondSubmission == null ? (message.isBlank() ? "" : " and ") + "fileNameFromSecondSubmission is null" : "";
             throw new NameNotFoundException(message);
 
