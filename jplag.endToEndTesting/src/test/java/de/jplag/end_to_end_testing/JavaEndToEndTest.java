@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -13,7 +14,8 @@ import javax.naming.NameNotFoundException;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -84,7 +86,8 @@ class JavaEndToEndTest {
     @ParameterizedTest
     @MethodSource("normalizationLevelTestArguments")
     void normalizationLevelTest(String[] testClassNames) throws IOException, ExitException, NoSuchAlgorithmException, NameNotFoundException {
-        runJPlagTestSuite(testClassNames);
+        runJPlagTestSuite(testClassNames, new Object() {
+        }.getClass().getEnclosingMethod().getName());
     }
 
     /**
@@ -100,23 +103,38 @@ class JavaEndToEndTest {
     @ParameterizedTest
     @MethodSource("tokenGenerationLevelTestArguments")
     void tokenGenerationLevelTest(String[] testClassNames) throws IOException, ExitException, NoSuchAlgorithmException, NameNotFoundException {
-        runJPlagTestSuite(testClassNames);
+        runJPlagTestSuite(testClassNames, new Object() {
+        }.getClass().getEnclosingMethod().getName());
     }
 
     /**
-     * Insertion of unnecessary or changed code lines (token generation) -> id = 0 Changing the program flow (token
-     * generation) (statements and functions must be independent from each other) -> id = 1 Variable declaration at the
-     * beginning of the program (Detecting Source Code Plagiarism [...]) -> id = 2
-     * @param testClassNames Plagiarized classes names in the resource directorie which are needed for the test
-     * @throws IOException is thrown in case of problems with copying the plagiarism classes
-     * @throws ExitException in case the plagiarism detection with JPlag is preemptively terminated would be of the test.
-     * @throws NoSuchAlgorithmException when no hash algorithm could be found
-     * @throws NameNotFoundException if the no filenames cloud be found in the JPlagCOmparison object
+     * In this test case, all test cases contained for the language are tested against each other and compared. This happens
+     * at runtime and is made possible by DynamicTest streams.
+     * @return A DynamicTest is a test case generated at runtime.
      */
-    @Test
-    void overAllTests() throws IOException, ExitException, NoSuchAlgorithmException, NameNotFoundException {
-        String[] testClassNames = jplagTestSuiteHelper.getAllTestFileNames();
-        runJPlagTestSuite(testClassNames);
+    @TestFactory
+    Stream<DynamicTest> dynamicOverAllTest() {
+        // test cases calculated with (n over k)
+        var fileNames = jplagTestSuiteHelper.getAllTestFileNames();
+        ArrayList<String[]> testCases = new ArrayList<>();
+        int outerCounter = 1;
+        for (String fileName : fileNames) {
+            for (int counter = outerCounter; counter < fileNames.length; counter++) {
+                testCases.add(new String[] {fileName, fileNames[counter]});
+            }
+            outerCounter++;
+        }
+        String functionName = new Object() {
+        }.getClass().getEnclosingMethod().getName();
+
+        return testCases.stream().map(testCase -> DynamicTest.dynamicTest("Testing: " + testCase[0] + " " + testCase[1], () -> {
+            try {
+                runJPlagTestSuite(testCase, functionName);
+            } finally {
+                jplagTestSuiteHelper.clear();
+            }
+
+        }));
     }
 
     /**
@@ -128,15 +146,16 @@ class JavaEndToEndTest {
      * @throws NoSuchAlgorithmException when no hash algorithm could be found
      * @throws NameNotFoundException if the no filenames cloud be found in the JPlagCOmparison object
      */
-    private void runJPlagTestSuite(String[] testClassNames) throws IOException, ExitException, NoSuchAlgorithmException, NameNotFoundException {
-        String functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get()).getMethodName();
+    private void runJPlagTestSuite(String[] testClassNames, String functionName)
+            throws IOException, ExitException, NoSuchAlgorithmException, NameNotFoundException {
+        // String functionName = StackWalker.getInstance().walk(stream -> stream.skip(1).findFirst().get())
+        // .getMethodName();
         TestCaseModel testCaseModel = jplagTestSuiteHelper.createNewTestCase(testClassNames, functionName);
         JPlagResult jplagResult = new JPlag(testCaseModel.getJPlagOptionsFromCurrentModel()).run();
         List<JPlagComparison> currentJPlagComparison = jplagResult.getAllComparisons();
         jplagTestSuiteHelper.saveTemporaryResult(currentJPlagComparison, functionName);
 
         for (JPlagComparison jPlagComparison : currentJPlagComparison) {
-
             String hashCode = jplagTestSuiteHelper.getTestIdentifier(jPlagComparison);
             ResultModel resultModel = testCaseModel.getCurrentJsonModel().getResultModelById(hashCode);
             assertNotNull(resultModel, "No stored result could be found for the identifier! " + hashCode);

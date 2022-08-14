@@ -168,14 +168,15 @@ public class JPlagTestSuiteHelper {
      * Creates a transitional name from the tested file names to store the test results temporarily
      * @param jplagComparison for which a temporary name with the extension .json is to be created
      * @return temporary storage name for a json file
-     * @throws FileNotFoundException if no suitable file name could be found
      * @throws NameNotFoundException if the no filenames coud be found in the JPlagCOmparison object
      */
-    private String getTemporaryFileNameForJson(JPlagComparison jplagComparison) throws FileNotFoundException, NameNotFoundException {
-        // load submission via stream into variable to get the names from the submission object
+    private String getTemporaryFileNameForJson(JPlagComparison jplagComparison) throws NameNotFoundException {
+        // load submission via stream into variable to get the names from the submission
+        // object
         var firstSubmissionStream = jplagComparison.getFirstSubmission().getFiles().stream().findFirst();
         var secondSubmissionStream = jplagComparison.getSecondSubmission().getFiles().stream().findFirst();
-        // if the stream for the comparison objects contains a name, this name is written as string into the new variables
+        // if the stream for the comparison objects contains a name, this name is
+        // written as string into the new variables
         String fileNameFirstSubmission = firstSubmissionStream.isPresent() ? firstSubmissionStream.get().getName() : null;
         String fileNameSecondSubmission = secondSubmissionStream.isPresent() ? secondSubmissionStream.get().getName() : null;
         // if one of the name fields is empty an exception is thrown
@@ -224,19 +225,21 @@ public class JPlagTestSuiteHelper {
      * @throws IOException if an I/O error occurs
      */
     private void deleteCopiedFiles(File folder) throws IOException {
-        File[] files = folder.listFiles();
-        if (files != null) { // some JVMs return null for empty dirs
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    deleteCopiedFiles(file);
-                } else {
-                    Files.delete(file.toPath());
-                    logger.debug("Delete file in folder: [{}]", file);
+        if (folder.exists()) {
+            File[] files = folder.listFiles();
+            if (files != null) { // some JVMs return null for empty dirs
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteCopiedFiles(file);
+                    } else {
+                        Files.delete(file.toPath());
+                        logger.debug("Delete file in folder: [{}]", file);
+                    }
                 }
             }
+            Files.delete(folder.toPath());
+            logger.debug("Delete folder: [{}]", folder);
         }
-        Files.delete(folder.toPath());
-        logger.debug("Delete folder: [{}]", folder);
     }
 
 }
