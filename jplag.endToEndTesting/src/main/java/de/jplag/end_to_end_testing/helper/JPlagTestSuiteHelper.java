@@ -9,15 +9,13 @@ import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.naming.NameNotFoundException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
 
 import de.jplag.JPlagComparison;
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
@@ -99,17 +97,13 @@ public class JPlagTestSuiteHelper {
     /**
      * saves all temporary results for a test into a json file
      * @param jplagComparisonList list of elements to be saved
-     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
-     * includingparsing and input value coercion problems.
-     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
-     * stream-level problems or I/O issues below.
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      * @throws NoSuchAlgorithmException when no hash algorithm could be found
      * @throws NameNotFoundException if the no filenames coud be found in the JPlagCOmparison object
      */
     public void saveTemporaryResult(List<JPlagComparison> jplagComparisonList, String functionName)
-            throws StreamWriteException, DatabindException, IOException, NoSuchAlgorithmException, NameNotFoundException {
+            throws IOException, NoSuchAlgorithmException, NameNotFoundException {
         for (JPlagComparison jplagComparison : jplagComparisonList) {
             JsonHelper.writeResultModelToJsonFile(new ResultModel(jplagComparison, getTestIdentifier(jplagComparison)),
                     LanguageToPathMapper.getTemporaryResultPathFromLanguageOption(languageOption).toString(), functionName,
@@ -124,16 +118,9 @@ public class JPlagTestSuiteHelper {
      * @return unique identifier for test case recognition
      */
     public String getTestIdentifier(JPlagComparison jPlagComparison) {
-        String testFileNamesInFirstSubmission = new String();
-        String testFileNamesInSecondSubmission = new String();
-        for (File file : jPlagComparison.getFirstSubmission().getFiles()) {
-            String fileName = file.getName().toString();
-            testFileNamesInFirstSubmission += fileName.substring(0, fileName.lastIndexOf('.'));
-        }
-        for (File file : jPlagComparison.getSecondSubmission().getFiles()) {
-            String fileName = file.getName().toString();
-            testFileNamesInSecondSubmission += fileName.substring(0, fileName.lastIndexOf('.'));
-        }
+
+        String testFileNamesInFirstSubmission = getEnclosedFileNamesFromCollection(jPlagComparison.getFirstSubmission().getFiles());
+        String testFileNamesInSecondSubmission = getEnclosedFileNamesFromCollection(jPlagComparison.getSecondSubmission().getFiles());
 
         int compaire = testFileNamesInFirstSubmission.compareTo(testFileNamesInSecondSubmission);
 
@@ -147,6 +134,21 @@ public class JPlagTestSuiteHelper {
         }
 
         return returnIdentifier;
+    }
+
+    /**
+     * Merges all contained filenames together without extension
+     * @param files whose names are to be merged
+     * @return merged filenames
+     */
+    private String getEnclosedFileNamesFromCollection(Collection<File> files) {
+        StringBuilder stringBuilder = new StringBuilder(files.size());
+        for (File file : files) {
+            String fileName = file.getName();
+            stringBuilder.append(fileName.substring(0, fileName.lastIndexOf('.')));
+        }
+
+        return stringBuilder.toString();
     }
 
     /**

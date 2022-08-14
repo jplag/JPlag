@@ -11,11 +11,15 @@ import de.jplag.options.LanguageOption;
 
 public class LanguageToPathMapper {
 
+    private LanguageToPathMapper() {
+        // private constructor to prevent instantiation
+    }
+
     /**
      * @return Mapper for the language specific stored result json data
      */
-    private static final HashMap<LanguageOption, Path> TEMPORARY_RESULT_PATH_MAPPER() {
-        HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<LanguageOption, Path>();
+    private static final HashMap<LanguageOption, Path> temporaryResultPathMapper() {
+        HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<>();
         languageSpecificResultMapper.put(LanguageOption.JAVA,
                 Path.of(TestDirectoryConstants.TEMPORARY_RESULT_DIRECTORY_NAME.toString(), LanguageOption.JAVA.toString()));
 
@@ -25,8 +29,8 @@ public class LanguageToPathMapper {
     /**
      * @return Mapper for the language-specific stored test plagiarism classes
      */
-    private static final HashMap<LanguageOption, List<Path>> RESOURCE_PATH_MAPPER() {
-        HashMap<LanguageOption, List<Path>> languageSpecificResultMapper = new HashMap<LanguageOption, List<Path>>();
+    private static final HashMap<LanguageOption, List<Path>> resourcePathMapper() {
+        HashMap<LanguageOption, List<Path>> languageSpecificResultMapper = new HashMap<>();
         languageSpecificResultMapper.put(LanguageOption.JAVA,
                 Collections.unmodifiableList(Arrays.asList(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO)));
         return languageSpecificResultMapper;
@@ -35,8 +39,8 @@ public class LanguageToPathMapper {
     /**
      * @return Mapper for the language specific stored result json data
      */
-    private static final HashMap<LanguageOption, Path> RESULT_PATH_MAPPER() {
-        HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<LanguageOption, Path>();
+    private static final HashMap<LanguageOption, Path> resultPathMapper() {
+        HashMap<LanguageOption, Path> languageSpecificResultMapper = new HashMap<>();
         languageSpecificResultMapper.put(LanguageOption.JAVA, TestDirectoryConstants.BASE_PATH_TO_JAVA_RESULT_JSON);
 
         return languageSpecificResultMapper;
@@ -48,7 +52,7 @@ public class LanguageToPathMapper {
      * @return path to which the temporary results for the tests are to be stored.
      */
     public static Path getTemporaryResultPathFromLanguageOption(LanguageOption languageOption) {
-        return TEMPORARY_RESULT_PATH_MAPPER().get(languageOption);
+        return temporaryResultPathMapper().get(languageOption);
     }
 
     /**
@@ -57,7 +61,7 @@ public class LanguageToPathMapper {
      * @return path to result json file
      */
     public static Path getTestResultPathFromLanguageOption(LanguageOption languageOption) {
-        return RESULT_PATH_MAPPER().get(languageOption);
+        return resultPathMapper().get(languageOption);
     }
 
     /**
@@ -66,6 +70,6 @@ public class LanguageToPathMapper {
      * @return List of paths to the added resource files for the tests
      */
     public static List<Path> getResourcePathsFromLanguageOption(LanguageOption languageOption) {
-        return RESOURCE_PATH_MAPPER().get(languageOption);
+        return resourcePathMapper().get(languageOption);
     }
 }

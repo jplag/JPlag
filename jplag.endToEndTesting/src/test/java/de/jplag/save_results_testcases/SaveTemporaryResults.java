@@ -11,10 +11,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
-
 import de.jplag.end_to_end_testing.helper.JsonHelper;
 import de.jplag.end_to_end_testing.mapper.LanguageToPathMapper;
 import de.jplag.end_to_end_testing.model.JsonModel;
@@ -26,15 +22,11 @@ class SaveTemporaryResults {
 
     /**
      * only for java results
-     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
-     * includingparsing and input value coercion problems.
-     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
-     * stream-level problems or I/O issues below.
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      */
-    @Disabled
-    public void SaveJavaResults() throws StreamReadException, DatabindException, IOException {
+    @Disabled // to prevent execution during the build or test run. Should only be active if you want to save the results.
+    public void SaveJavaResults() throws IOException {
         insertNewTestResultsIntoJsonStore(LanguageOption.JAVA);
     }
 
@@ -42,14 +34,10 @@ class SaveTemporaryResults {
      * stores the created temporary json results in the current result file. It should be kept in mind that the results are
      * stored only for the specific languages.
      * @param languageOption the language option to which the results of the tests should be saved
-     * @throws StreamWriteException Intermediate base class for all read-side streaming processing problems,
-     * includingparsing and input value coercion problems.
-     * @throws DatabindException Intermediate base class for all databind level processing problems, asdistinct from
-     * stream-level problems or I/O issues below.
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      */
-    private void insertNewTestResultsIntoJsonStore(LanguageOption languageOption) throws StreamReadException, DatabindException, IOException {
+    private void insertNewTestResultsIntoJsonStore(LanguageOption languageOption) throws IOException {
         // load the current stored values for the test cases
         Path resultJsonPath = LanguageToPathMapper.getTestResultPathFromLanguageOption(languageOption);
         List<JsonModel> oldJsonModelList = JsonHelper.getJsonModelListFromPath(resultJsonPath);
