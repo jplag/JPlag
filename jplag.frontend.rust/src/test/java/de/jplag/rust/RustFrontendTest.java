@@ -1,6 +1,5 @@
 package de.jplag.rust;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
@@ -22,7 +21,7 @@ import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 
-public class RustFrontendTest {
+class RustFrontendTest {
 
     /**
      * Regular expression for empty lines and single line comments.
@@ -36,6 +35,7 @@ public class RustFrontendTest {
      */
     private static final String COMPLETE_TEST_FILE = "complete.rs";
     public static final int NOT_SET = -1;
+    private static final String EMPTY_STRING = "";
     private static final String RUST_SHEBANG = "#!.*$";
     private static final double EPSILON = 1E-6;
 
@@ -129,17 +129,20 @@ public class RustFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).sorted().distinct().toArray();
-        // Exclude SEPARATOR_TOKEN, as it does not occur
-        var allTokens = IntStream.range(0, RustTokenConstants.NUMBER_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
+        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).distinct().boxed().toList();
+        var allTokens = IntStream.range(0, RustTokenConstants.NUMBER_DIFF_TOKENS).boxed().toList();
+        allTokens = new ArrayList<>(allTokens);
 
-        if (allTokens.length > foundTokens.length) {
-            var diffLine = IntStream.range(0, allTokens.length)
-                    .dropWhile(lineIndex -> lineIndex < foundTokens.length && allTokens[lineIndex] == foundTokens[lineIndex]).findFirst();
-            diffLine.ifPresent(lineIdx -> fail("Token type %s was not found in the complete code example '%s'."
-                    .formatted(new RustToken(allTokens[lineIdx], fileName, NOT_SET, NOT_SET, NOT_SET).type2string(), fileName)));
+        // Only non-found tokens are left
+        allTokens.removeAll(foundTokens);
+        // Exclude SEPARATOR_TOKEN, as it does not occur
+        allTokens.remove((Integer) (TokenConstants.SEPARATOR_TOKEN));
+
+        if (!allTokens.isEmpty()) {
+            var notFoundTypes = allTokens.stream().map(type -> new RustToken(type, EMPTY_STRING, NOT_SET, NOT_SET, NOT_SET).type2string()).toList();
+            fail("Some %d token types were not found in the complete code example '%s':\n%s".formatted(notFoundTypes.size(), fileName,
+                    notFoundTypes));
         }
-        assertArrayEquals(allTokens, foundTokens);
     }
 
 }

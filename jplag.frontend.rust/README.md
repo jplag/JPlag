@@ -37,9 +37,7 @@ or _etcetera_ pattern `..` is used to skip a number of elements, so that the ele
 the assigned object.
 
 These `let` pattern assignments can be replaced with a sequence of more basic assignments. This is a possible
-vulnerability of this frontend. 
-
-[...]
+vulnerability of this frontend.
 
 #### Problem in Rust (2): `return` is optional
 
@@ -68,7 +66,7 @@ On the other hand, "the last expression of a block evaluated" does not hold the 
 return
 statement.
 
-For the moment, implicit block values are neglected.
+For the moment, implicit block values get no special tokens.
 
 #### Problem in Rust (3): Macros
 
@@ -76,7 +74,8 @@ Macros are a vital part of Rust. They allow to expand brief statements into more
 
 The expansion of the macro arguments into the macro code and the expansion of the macro code itself are purely textual, so a Rust parser does not parse their syntax (apart from the bracket structure). This makes it hard to generate meaningful tokens for them.
 
-[...]
+Currently, macro rule definition bodies and macro macro invocation arguments/bodies get no tokens.
+
 ### Usage
 
 To use the Rust frontend, add the `-l rust` flag in the CLI, or use a `JPlagOption` object set

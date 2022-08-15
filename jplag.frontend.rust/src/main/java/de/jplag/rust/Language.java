@@ -6,7 +6,7 @@ import de.jplag.TokenList;
 
 public class Language implements de.jplag.Language {
 
-    public static final String[] FILE_EXTENSIONS = {".rs"};
+    protected static final String[] FILE_EXTENSIONS = {".rs"};
     public static final String NAME = "Rust frontend";
     public static final String SHORT_NAME = "Rust";
     public static final int MINIMUM_TOKEN_MATCH = 8;

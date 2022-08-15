@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import de.jplag.TokenConstants;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -34,7 +35,7 @@ public class RustParserAdapter extends AbstractParser {
             if (!parseFile(directory, fileName)) {
                 errors++;
             }
-            tokens.addToken(new RustToken(RustTokenConstants.FILE_END, fileName, NOT_SET, NOT_SET, NOT_SET));
+            tokens.addToken(new RustToken(TokenConstants.FILE_END, fileName, NOT_SET, NOT_SET, NOT_SET));
         }
         return tokens;
     }
@@ -46,9 +47,9 @@ public class RustParserAdapter extends AbstractParser {
 
             // create a lexer, a parser and a buffer between them.
             RustLexer lexer = new RustLexer(CharStreams.fromStream(inputStream));
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 
-            RustParser parser = new RustParser(tokens);
+            RustParser parser = new RustParser(tokenStream);
 
             // Create a tree walker and the entry context defined by the parser grammar
             ParserRuleContext entryContext = parser.crate();

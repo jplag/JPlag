@@ -31,7 +31,7 @@ public class ParserState<C extends ParserState.Context> {
      * @param contexts The contexts to expect to end here
      */
     @SafeVarargs
-    final protected void leave(C... contexts) {
+    protected final void leave(C... contexts) {
         C topContext = blockContexts.pop();
         assert Arrays.stream(contexts).anyMatch(context -> context == topContext);
     }
