@@ -1,9 +1,11 @@
-package de.jplag.end_to_end_testing.model;
+package de.jplag.end_to_end_testing.oldModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import de.jplag.JPlagComparison;
+import de.jplag.options.JPlagOptions;
 
 /**
  * The ResultModel contains all information and comparison values that are important for a test and that could be parsed
@@ -19,19 +21,23 @@ public class ResultModel {
     private int resultMatchedTokenNumber;
     @JsonProperty("test_identifier")
     private String testIdentifier;
+    @JsonProperty("minimum_token_match")
+    private int minimumTokenMatch;
 
     /**
      * Constructor for the ResultModel. The model is the serialization of the Json file in the form of a Java object.
      * @param resultSimilarityMinimum comparative value of the minimum similarity
      * @param resultSimilarityMaximum comparative value of the maximum similarity
      * @param resultMatchedTokenNumber comparative value of the matched token number
+     * @param minimumTokenMatch 
      * @param testIdentifier specifies which associated test results are needed for a test case and are therefore associated
      * with this Id.
      */
-    public ResultModel(float resultSimilarityMinimum, float resultSimilarityMaximum, int resultMatchedTokenNumber, String testIdentifier) {
+    public ResultModel(float resultSimilarityMinimum, float resultSimilarityMaximum, int resultMatchedTokenNumber, int minimumTokenMatch ,String testIdentifier) {
         this.resultSimilarityMinimum = resultSimilarityMinimum;
         this.resultSimilarityMaximum = resultSimilarityMaximum;
         this.resultMatchedTokenNumber = resultMatchedTokenNumber;
+        this.minimumTokenMatch = minimumTokenMatch;
         this.testIdentifier = testIdentifier;
     }
 
@@ -41,10 +47,11 @@ public class ResultModel {
      * @param testIdentifier specifies which associated test results are needed for a test case and are therefore associated
      * with this Id.
      */
-    public ResultModel(JPlagComparison jplagComparison, String testIdentifier) {
+    public ResultModel(JPlagComparison jplagComparison, String testIdentifier, JPlagOptions jplagOptions) {
         this.resultMatchedTokenNumber = jplagComparison.getNumberOfMatchedTokens();
         this.resultSimilarityMinimum = jplagComparison.minimalSimilarity();
         this.resultSimilarityMaximum = jplagComparison.maximalSimilarity();
+        this.minimumTokenMatch = jplagOptions.getMinimumTokenMatch();
         this.testIdentifier = testIdentifier;
     }
 
@@ -86,5 +93,11 @@ public class ResultModel {
     @JsonIgnore
     public int getNumberOfMatchedTokens() {
         return resultMatchedTokenNumber;
+    }
+    
+    @JsonIgnore
+    public int getJPlagOptions()
+    {
+    	return minimumTokenMatch;
     }
 }

@@ -1,4 +1,4 @@
-package de.jplag.end_to_end_testing.model;
+package de.jplag.end_to_end_testing.oldModel;
 
 import java.util.Arrays;
 
