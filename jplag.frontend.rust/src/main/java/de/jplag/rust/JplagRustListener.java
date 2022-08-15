@@ -2,6 +2,8 @@ package de.jplag.rust;
 
 import static de.jplag.rust.RustTokenConstants.*;
 
+import java.util.Objects;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
@@ -9,8 +11,6 @@ import org.antlr.v4.runtime.tree.*;
 
 import de.jplag.rust.grammar.RustParser;
 import de.jplag.rust.grammar.RustParserBaseListener;
-
-import java.util.Objects;
 
 public class JplagRustListener extends RustParserBaseListener implements ParseTreeListener {
 
@@ -786,8 +786,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
     }
 
     @Override
-    public void
-    enterEveryRule(ParserRuleContext context) {
+    public void enterEveryRule(ParserRuleContext context) {
         // ExpressionContext gets no own enter/exit method
         // used in various 'lists' of elements
         if (context instanceof RustParser.ExpressionContext expression) {
