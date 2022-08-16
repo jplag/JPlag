@@ -1,18 +1,21 @@
-
 package de.jplag.text;
 
 import java.io.File;
 import java.util.List;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.Token;
 
+/**
+ * Language class for parsing (natural language) text. This language module employs a primitive approach where
+ * individual words are interpreted as token types. Whitespace and special characters are ignored. This approach works,
+ * but there are better approaches for text plagiarism out there (based on NLP techniques).
+ */
 public class Language implements de.jplag.Language {
 
-    private final Parser parser;
+    private final ParserAdapter parserAdapter;
 
-    public Language(ErrorConsumer errorConsumer) {
-        parser = new Parser(errorConsumer);
+    public Language() {
+        parserAdapter = new ParserAdapter();
     }
 
     @Override
@@ -22,7 +25,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Text Parser";
+        return "Text Parser (naive)";
     }
 
     @Override
@@ -37,31 +40,16 @@ public class Language implements de.jplag.Language {
 
     @Override
     public List<Token> parse(File dir, String[] files) {
-        return this.parser.parse(dir, files);
+        return parserAdapter.parse(dir, files);
     }
 
     @Override
     public boolean hasErrors() {
-        return this.parser.hasErrors();
-    }
-
-    @Override
-    public boolean supportsColumns() {
-        return true;
+        return parserAdapter.hasErrors();
     }
 
     @Override
     public boolean isPreformatted() {
         return false;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return parser.serial;
     }
 }

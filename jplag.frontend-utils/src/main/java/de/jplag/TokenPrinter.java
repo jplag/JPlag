@@ -1,15 +1,16 @@
 package de.jplag;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +47,24 @@ public final class TokenPrinter {
      * @param tokens is the set of tokens parsed from the files.
      * @param directory is the common directory of the files.
      * @param fileNames is a collection of the file names.
+     * @param suffix is the optional view file suffix.
+     * @return the string representation.
+     */
+    public static String printTokens(List<Token> tokens, File directory, Collection<String> fileNames, Optional<String> suffix) {
+        Collection<File> files = fileNames.stream().map(name -> new File(directory, name)).toList();
+        return printTokens(tokens, files, directory, suffix);
+    }
+
+    /**
+     * Creates a string representation of a set of files line by line and adds the tokens under the lines.
+     * @param tokens is the set of tokens parsed from the files.
+     * @param directory is the common directory of the files.
+     * @param fileNames is a collection of the file names.
      * @return the string representation.
      */
     public static String printTokens(List<Token> tokens, File directory, Collection<String> fileNames) {
-        Collection<File> files = fileNames.stream().map(name -> new File(directory, name)).collect(toList());
-        return printTokens(tokens, files, directory);
+        Collection<File> files = fileNames.stream().map(name -> new File(directory, name)).toList();
+        return printTokens(tokens, files, directory, Optional.empty());
     }
 
     /**
@@ -60,6 +74,17 @@ public final class TokenPrinter {
      * @return the string representation.
      */
     public static String printTokens(List<Token> tokens, Collection<File> files, File root) {
+        return printTokens(tokens, files, root, Optional.empty());
+    }
+
+    /**
+     * Creates a string representation of a collection of files line by line and adds the tokens under the lines.
+     * @param tokens is the set of tokens parsed from the files.
+     * @param files are the parsed files.
+     * @param suffix is the optional view file suffix.
+     * @return the string representation.
+     */
+    public static String printTokens(List<Token> tokens, Collection<File> files, File root, Optional<String> suffix) {
         Map<String, List<String>> filesToLines = readFiles(files);
         StringBuilder builder = new StringBuilder();
         int lineIndex = 0;
@@ -84,14 +109,17 @@ public final class TokenPrinter {
                 columnIndex = 1;
 
                 String fileName = token.getFile().isEmpty() ? root.getName() : token.getFile();
+                fileName = fileName + suffix.orElse("");
+                if (!filesToLines.containsKey(fileName)) {
+                    throw new IllegalStateException("Cannot find file " + fileName + " in " + filesToLines.keySet());
+                }
+
                 currentLine = filesToLines.get(fileName).get(lineIndex - 1);
 
                 appendCodeLinePrefix(builder, lineIndex);
                 appendCodeLine(builder, currentLine);
                 appendTokenLinePrefix(builder, lineIndex);
             }
-
-            assert currentLine != null;
 
             // New line if already past token index:
             if (columnIndex > token.getColumn()) {
@@ -190,6 +218,8 @@ public final class TokenPrinter {
     private static List<String> linesFromFile(File file) {
         try {
             return Files.readAllLines(file.toPath());
+        } catch (NoSuchFileException exception) {
+            logger.error("File does not exist, thus no tokens are printed: " + file.getAbsolutePath());
         } catch (IOException exception) {
             logger.error("Cannot read " + file.getAbsolutePath() + ":", exception);
         }

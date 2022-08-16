@@ -24,6 +24,7 @@ import jszip from "jszip";
 import router from "@/router";
 import store from "@/store/store";
 import { getFileExtension } from "@/utils/Utils";
+import path from "path";
 
 export default defineComponent({
   name: "FileUploadView",
@@ -43,7 +44,6 @@ export default defineComponent({
         name: "OverviewView",
       });
     };
-
     const navigateToComparisonView = (firstId: string, secondId: string) => {
       router.push({
         name: "ComparisonView",
@@ -53,6 +53,13 @@ export default defineComponent({
         },
       });
     };
+    const extractSubmissionFileName = (filePath: path.ParsedPath) => {
+      const folders = filePath.dir.split("/");
+      const submissionFolderIndex = folders.findIndex(
+        (folder) => folder === "submissions"
+      );
+      return folders[submissionFolderIndex + 1];
+    };
     /**
      * Handles zip file on drop. It extracts the zip and saves each file in the store.
      * @param file
@@ -60,10 +67,23 @@ export default defineComponent({
     const handleZipFile = (file: File) => {
       jszip.loadAsync(file).then(async (zip) => {
         for (const fileName of Object.keys(zip.files)) {
-          console.log(fileName);
-          await zip.files[fileName].async("string").then((data) => {
-            store.commit("saveFile", { fileName: fileName, data: data });
-          });
+          if (
+            /((.+\/)*)submissions\/(.+)\/(.+)/.test(fileName) &&
+            !/^__MACOSX\//.test(fileName)
+          ) {
+            const filePath = path.parse(fileName);
+            const submissionFileName = extractSubmissionFileName(filePath);
+            await zip.files[fileName].async("string").then((data) => {
+              store.commit("saveSubmissionFile", {
+                name: submissionFileName,
+                file: { fileName: filePath.base, data: data },
+              });
+            });
+          } else {
+            await zip.files[fileName].async("string").then((data) => {
+              store.commit("saveFile", { fileName: fileName, data: data });
+            });
+          }
         }
         store.commit("setLoadingType", {
           local: false,
@@ -88,17 +108,14 @@ export default defineComponent({
           fileString: str,
         });
         navigateToOverview();
-      } else if (json["first_submission_id"] && json["second_submission_id"]) {
+      } else if (json["id1"] && json["id2"]) {
         store.commit("setLoadingType", {
           local: false,
           zip: false,
           single: true,
           fileString: str,
         });
-        navigateToComparisonView(
-          json["first_submission_id"],
-          json["second_submission_id"]
-        );
+        navigateToComparisonView(json["id1"], json["id2"]);
       }
     };
     /**

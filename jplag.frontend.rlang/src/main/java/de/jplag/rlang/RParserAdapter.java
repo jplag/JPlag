@@ -13,7 +13,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.Token;
 import de.jplag.rlang.grammar.RFilter;
 import de.jplag.rlang.grammar.RLexer;
@@ -30,17 +29,16 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
 
     /**
      * Creates the RParserAdapter
-     * @param errorConsumer the ErrorConsumer that parser errors are passed on to.
      */
-    public RParserAdapter(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public RParserAdapter() {
+        super();
     }
 
     /**
-     * Parsers a list of files into a single list of {@link Token}s.
+     * Parsers a list of files into a single {@link TokenList}.
      * @param directory the directory of the files.
      * @param fileNames the file names of the files.
-     * @return a list containing all tokens of all files.
+     * @return a {@link TokenList} containing all tokens of all files.
      */
     public List<Token> parse(File directory, String[] fileNames) {
         tokens = new ArrayList<>();
@@ -79,15 +77,15 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
                 treeWalker.walk(new JplagRListener(this), parseTree);
             }
         } catch (IOException exception) {
-            getErrorConsumer().addError("Parsing Error in '" + fileName + "':" + File.separator + exception);
+            logger.error("Parsing Error in '" + fileName + "': " + File.separator + exception.getMessage(), exception);
             return false;
         }
         return true;
     }
 
     /**
-     * Adds a new {@link Token} to the current token list.
-     * @param type the type of the new {@link Token}
+     * Adds a new {@link de.jplag.Token} to the current {@link TokenList}.
+     * @param type the type of the new {@link de.jplag.Token}
      * @param line the line of the Token in the current file
      * @param start the start column of the Token in the line
      * @param length the length of the Token

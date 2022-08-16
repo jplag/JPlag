@@ -9,7 +9,7 @@ import java.util.List;
 public interface Language {
 
     /**
-     * Suffixes for the files containing code of the language.
+     * Suffixes for the files containing code of the language. An empty array means all suffixes are valid.
      */
     String[] suffixes();
 
@@ -42,22 +42,33 @@ public interface Language {
     boolean hasErrors();
 
     /**
-     * Determines whether the parser provide column information.
+     * Determines whether the parser provide column information. If that is the case, line and column indices are used
+     * instead of a single token index.
      */
-    boolean supportsColumns();
+    default boolean supportsColumns() {
+        return true;
+    }
 
     /**
-     * Determines whether JPlag should use a fixed-width font in its reports.
+     * Determines whether a fixed-width font should be used to display that language.
      */
-    boolean isPreformatted();
+    default boolean isPreformatted() {
+        return true;
+    }
 
     /**
-     * Determines whether tokens from the scanner are indexed.
+     * Indicates whether the input files (code) should be used as representation in the report, or different files that form
+     * a view on the input files.
      */
-    boolean usesIndex();
+    default boolean useViewFiles() {
+        return false;
+    }
 
     /**
-     * Number of defined tokens in the scanner of the language.
+     * If the language uses representation files, this method returns the suffix used for the representation files.
      */
-    int numberOfTokens();
+    default String viewFileSuffix() {
+        return "";
+    }
+
 }

@@ -47,7 +47,7 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>rlang</artifactId>
+            <artifactId>golang</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
@@ -55,11 +55,23 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>rlang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>scala</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>scheme</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>chars</artifactId>
+            <artifactId>emf-metamodel</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>emf-metamodel-dynamic</artifactId>
         </dependency>
     </dependencies>
 </project>

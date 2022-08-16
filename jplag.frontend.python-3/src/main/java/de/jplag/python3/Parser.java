@@ -15,8 +15,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
-import de.jplag.TokenConstants;
 import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
@@ -28,21 +26,20 @@ public class Parser extends AbstractParser {
 
     /**
      * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
-    public Parser(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public Parser() {
+        super();
     }
 
     public List<de.jplag.Token> parse(File directory, String[] files) {
         tokens = new ArrayList<>();
         errors = 0;
-        for (int i = 0; i < files.length; i++) {
-            getErrorConsumer().print(null, "Parsing file " + files[i]);
-            if (!parseFile(directory, files[i])) {
+        for (String file : files) {
+            logger.trace("Parsing file {}", file);
+            if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.add(new Python3Token(TokenConstants.FILE_END, files[i], -1, -1, -1));
+            tokens.add(new Python3Token(Python3TokenConstants.FILE_END, file, -1, -1, -1));
         }
         return tokens;
     }
@@ -73,7 +70,7 @@ public class Parser extends AbstractParser {
             }
 
         } catch (IOException e) {
-            getErrorConsumer().addError("Parsing Error in '" + file + "':\n" + e.getMessage());
+            logger.error("Parsing Error in '" + file + "': " + e.getMessage(), e);
             return false;
         }
 

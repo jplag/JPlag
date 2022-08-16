@@ -289,10 +289,10 @@ public class JPlagOptions {
 
     public void setSimilarityThreshold(float similarityThreshold) {
         if (similarityThreshold > 100) {
-            logger.warn("Maximum threshold of 100 used instead of " + similarityThreshold);
+            logger.warn("Maximum threshold of 100 used instead of {}", similarityThreshold);
             this.similarityThreshold = 100;
         } else if (similarityThreshold < 0) {
-            logger.warn("Minimum threshold of 0 used instead of " + similarityThreshold);
+            logger.warn("Minimum threshold of 0 used instead of {}", similarityThreshold);
             this.similarityThreshold = 0;
         } else {
             this.similarityThreshold = similarityThreshold;

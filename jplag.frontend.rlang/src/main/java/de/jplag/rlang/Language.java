@@ -3,7 +3,6 @@ package de.jplag.rlang;
 import java.io.File;
 import java.util.List;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.Token;
 
 /**
@@ -17,8 +16,8 @@ public class Language implements de.jplag.Language {
     private static final String[] FILE_EXTENSION = {".R", ".r"};
     private final RParserAdapter parserAdapter;
 
-    public Language(ErrorConsumer consumer) {
-        this.parserAdapter = new RParserAdapter(consumer);
+    public Language() {
+        this.parserAdapter = new RParserAdapter();
     }
 
     @Override
@@ -49,25 +48,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return parserAdapter.hasErrors();
-    }
-
-    @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return RTokenConstants.NUM_DIFF_TOKENS;
     }
 }

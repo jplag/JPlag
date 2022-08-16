@@ -13,9 +13,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
@@ -30,10 +28,9 @@ public class CSharpParserAdapter extends AbstractParser {
 
     /**
      * Creates the parser adapter.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
-    public CSharpParserAdapter(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public CSharpParserAdapter() {
+        super();
     }
 
     /**
@@ -49,14 +46,14 @@ public class CSharpParserAdapter extends AbstractParser {
             if (!parseFile(directory, fileName)) {
                 errors++;
             }
-            tokens.add(new CSharpToken(TokenConstants.FILE_END, fileName, -1, -1, -1));
+            tokens.add(new CSharpToken(CSharpTokenConstants.FILE_END, fileName, -1, -1, -1));
         }
         return tokens;
     }
 
     private boolean parseFile(File directory, String fileName) {
         File file = new File(directory, fileName);
-        try (FileInputStream inputStream = new FileInputStream(file);) {
+        try (FileInputStream inputStream = new FileInputStream(file)) {
             currentFile = fileName;
 
             // create a lexer, a parser and a buffer between them.
@@ -74,7 +71,7 @@ public class CSharpParserAdapter extends AbstractParser {
                 treeWalker.walk(new CSharpListener(this), parseTree);
             }
         } catch (IOException exception) {
-            getErrorConsumer().addError("Parsing Error in '" + fileName + "':" + File.separator + exception.toString());
+            logger.error("Parsing Error in '" + fileName + "':" + File.separator + exception, exception);
             return false;
         }
         return true;

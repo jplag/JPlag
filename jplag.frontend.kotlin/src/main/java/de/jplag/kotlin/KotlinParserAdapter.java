@@ -13,9 +13,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
-import de.jplag.Token;
 import de.jplag.TokenConstants;
+import de.jplag.Token;
 import de.jplag.kotlin.grammar.KotlinLexer;
 import de.jplag.kotlin.grammar.KotlinParser;
 
@@ -27,17 +26,16 @@ public class KotlinParserAdapter extends AbstractParser {
 
     /**
      * Creates the KotlinParserAdapter
-     * @param consumer the ErrorConsumer that parser errors are passed on to.
      */
-    public KotlinParserAdapter(ErrorConsumer consumer) {
-        super(consumer);
+    public KotlinParserAdapter() {
+        super();
     }
 
     /**
-     * Parsers a list of files into a single list of {@link Token}s.
+     * Parsers a list of files into a single {@link TokenList}.
      * @param directory the directory of the files.
      * @param fileNames the file names of the files.
-     * @return a list containing all tokens of all files.
+     * @return a {@link TokenList} containing all tokens of all files.
      */
     public List<Token> parse(File directory, String[] fileNames) {
         tokens = new ArrayList<>();
@@ -68,15 +66,15 @@ public class KotlinParserAdapter extends AbstractParser {
                 treeWalker.walk(listener, parseTree);
             }
         } catch (IOException exception) {
-            getErrorConsumer().addError("Parsing Error in '%s': %s%s".formatted(fileName, File.separator, exception));
+            logger.error("Parsing Error in '{}': {}{}", fileName, File.separator, exception);
             return false;
         }
         return true;
     }
 
     /**
-     * Adds a new {@link Token} to the current token list.
-     * @param tokenType the type of the new {@link Token}
+     * Adds a new {@link de.jplag.Token} to the current {@link TokenList}.
+     * @param tokenType the type of the new {@link de.jplag.Token}
      * @param line the line of the Token in the current file
      * @param column the start column of the Token in the line
      * @param length the length of the Token

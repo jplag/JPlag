@@ -29,14 +29,13 @@ import de.jplag.strategy.ParallelComparisonStrategy;
  * This class coordinates the whole errorConsumer flow.
  */
 public class JPlag {
-    private static final Logger logger = LoggerFactory.getLogger("JPlag");
+    private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
     private final JPlagOptions options;
 
     private final Language language;
     private final ComparisonStrategy comparisonStrategy;
     private final GreedyStringTiling coreAlgorithm; // Contains the comparison logic.
-    private final ErrorCollector errorCollector;
     private final Set<String> excludedFileNames;
 
     /**
@@ -45,7 +44,6 @@ public class JPlag {
      */
     public JPlag(JPlagOptions options) {
         this.options = options;
-        errorCollector = new ErrorCollector(options);
         coreAlgorithm = new GreedyStringTiling(options);
         language = initializeLanguage();
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
@@ -61,9 +59,9 @@ public class JPlag {
         try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
             final var excludedFileNames = reader.lines().collect(Collectors.toSet());
             if (options.getVerbosity() == LONG) {
-                errorCollector.print(null, "Excluded files:");
+                logger.info("Excluded files:");
                 for (var excludedFilename : excludedFileNames) {
-                    errorCollector.print(null, " " + excludedFilename);
+                    logger.info(excludedFilename);
                 }
             }
             return excludedFileNames;
@@ -80,7 +78,7 @@ public class JPlag {
      */
     public JPlagResult run() throws ExitException {
         // Parse and validate submissions.
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, errorCollector, excludedFileNames);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, excludedFileNames);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
         int submissionCount = submissionSet.numberOfSubmissions();
@@ -90,7 +88,7 @@ public class JPlag {
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
-        errorCollector.print("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()), null);
+        logger.info("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()));
 
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.getClusteringOptions()));
 
@@ -108,19 +106,17 @@ public class JPlag {
         LanguageOption languageOption = this.options.getLanguageOption();
 
         try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor(ErrorConsumer.class);
-            Object[] constructorParams = {errorCollector};
-
-            Language language = (Language) constructor.newInstance(constructorParams);
+            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor();
+            Language language = (Language) constructor.newInstance();
 
             this.options.setLanguage(language);
             this.options.setLanguageDefaults(language);
-            logger.info("Initialized language " + language.getName());
+            logger.info("Initialized language {}", language.getName());
             return language;
         } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
                 | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
-            throw new IllegalStateException("Language instantiation failed:" + e.getMessage());
+            logger.error(e.getMessage(), e);
+            throw new IllegalStateException("Language instantiation failed:" + e.getMessage(), e);
         }
 
     }

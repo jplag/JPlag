@@ -10,11 +10,11 @@ public abstract class ExitException extends Exception {
     @Serial
     private static final long serialVersionUID = 7091658804288889231L; // generated
 
-    public ExitException(String message) {
+    protected ExitException(String message) {
         super(message);
     }
 
-    public ExitException(String message, Throwable cause) {
+    protected ExitException(String message, Throwable cause) {
         super(message, cause);
     }
 }

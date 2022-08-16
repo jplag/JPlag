@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.jplag.AbstractParser;
-import de.jplag.ErrorConsumer;
-import de.jplag.TokenConstants;
 
 public class Scanner extends AbstractParser {
     private String currentFile;
@@ -15,10 +13,9 @@ public class Scanner extends AbstractParser {
 
     /**
      * Creates the parser.
-     * @param errorConsumer is the consumer for any occurring errors.
      */
-    public Scanner(ErrorConsumer errorConsumer) {
-        super(errorConsumer);
+    public Scanner() {
+        super();
     }
 
     public List<de.jplag.Token> scan(File directory, String[] files) {
@@ -26,11 +23,11 @@ public class Scanner extends AbstractParser {
         errors = 0;
         for (String currentFile : files) {
             this.currentFile = currentFile;
-            getErrorConsumer().print(null, "Scanning file " + currentFile);
+            logger.trace("Scanning file {}", currentFile);
             if (!CPPScanner.scanFile(directory, currentFile, this)) {
                 errors++;
             }
-            tokens.add(new CPPToken(TokenConstants.FILE_END, currentFile));
+            tokens.add(new CPPToken(CPPTokenConstants.FILE_END, currentFile));
         }
         return tokens;
     }

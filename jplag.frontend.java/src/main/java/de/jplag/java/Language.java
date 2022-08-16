@@ -3,7 +3,6 @@ package de.jplag.java;
 import java.io.File;
 import java.util.List;
 
-import de.jplag.ErrorConsumer;
 import de.jplag.Token;
 
 /**
@@ -12,8 +11,8 @@ import de.jplag.Token;
 public class Language implements de.jplag.Language {
     private final Parser parser;
 
-    public Language(ErrorConsumer errorConsumer) {
-        parser = new Parser(errorConsumer);
+    public Language() {
+        parser = new Parser();
     }
 
     @Override
@@ -34,26 +33,6 @@ public class Language implements de.jplag.Language {
     @Override
     public int minimumTokenMatch() {
         return 9;
-    }
-
-    @Override
-    public boolean supportsColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return true;
-    }
-
-    @Override
-    public boolean usesIndex() {
-        return false;
-    }
-
-    @Override
-    public int numberOfTokens() {
-        return JavaTokenConstants.NUM_DIFF_TOKENS;
     }
 
     @Override

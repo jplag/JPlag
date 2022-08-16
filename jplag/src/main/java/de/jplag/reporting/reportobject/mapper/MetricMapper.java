@@ -1,7 +1,7 @@
 package de.jplag.reporting.reportobject.mapper;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,10 +37,10 @@ public class MetricMapper {
     }
 
     private static List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons, Function<JPlagComparison, Float> similarityExtractor) {
-        List<TopComparison> topComparisons = new ArrayList<>();
-        comparisons.forEach(comparison -> topComparisons.add(new TopComparison(comparison.getFirstSubmission().getName(),
-                comparison.getSecondSubmission().getName(), similarityExtractor.apply(comparison))));
-        return topComparisons;
+        return comparisons.stream().sorted(Comparator.comparing(similarityExtractor).reversed())
+                .map(comparison -> new TopComparison(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(),
+                        similarityExtractor.apply(comparison)))
+                .toList();
     }
 
     private static List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons) {
