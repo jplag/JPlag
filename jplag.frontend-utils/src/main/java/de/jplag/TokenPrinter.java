@@ -35,8 +35,10 @@ public final class TokenPrinter {
     private static final String TAB_REPLACEMENT = SPACE.repeat(TAB_LENGTH); // might depend on files
 
     // Configuration:
-    private static final boolean INDICATE_TINY_TOKEN = true; // print token with length <= 1 in lowercase
+    private static final boolean INDICATE_TINY_TOKEN = true;    // print token with length <= 1 in lowercase
     private static final boolean REPLACE_TABS = false;
+    private static final boolean PRINT_EMPTY_LINES = true;      // print code lines with no tokens
+    private static final boolean SPACIOUS = true;               // print empty line after last token of a line
 
     private TokenPrinter() {
         // Utility class, no public constructor.
@@ -104,9 +106,14 @@ public final class TokenPrinter {
             }
 
             // New code line:
-            if (token.getLine() > lineIndex) {
-                lineIndex = token.getLine();
+            boolean previousLineEmpty = false;
+            while (token.getLine() > lineIndex) {
+                lineIndex++;
                 columnIndex = 1;
+
+                boolean currentLineEmpty = token.getLine() > lineIndex;
+                if (currentLineEmpty && !PRINT_EMPTY_LINES)
+                    continue;
 
                 String fileName = token.getFile().isEmpty() ? root.getName() : token.getFile();
                 fileName = fileName + suffix.orElse("");
@@ -116,9 +123,16 @@ public final class TokenPrinter {
 
                 currentLine = filesToLines.get(fileName).get(lineIndex - 1);
 
+                if (!previousLineEmpty) {
+                    appendCodeLinePadding(builder);
+                }
                 appendCodeLinePrefix(builder, lineIndex);
                 appendCodeLine(builder, currentLine);
-                appendTokenLinePrefix(builder, lineIndex);
+
+                if (!currentLineEmpty) {
+                    appendTokenLinePrefix(builder, lineIndex);
+                }
+                previousLineEmpty = currentLineEmpty;
             }
 
             // New line if already past token index:
@@ -145,6 +159,15 @@ public final class TokenPrinter {
             }
         }
         return builder.toString();
+    }
+
+    /**
+     * In SPACIOUS mode, appends an empty line before the next code line.
+     * @param builder The StringBuilder to add code to
+     * @return a reference to that same StringBuilder
+     */
+    private static StringBuilder appendCodeLinePadding(StringBuilder builder) {
+        return SPACIOUS ? builder.append(System.lineSeparator()) : builder;
     }
 
     /**
