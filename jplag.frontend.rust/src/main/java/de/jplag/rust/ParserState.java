@@ -61,7 +61,7 @@ public class ParserState<C extends ParserState.Context> {
     protected interface Context {
 
         /**
-         *  Used as start or end type to indicate that no token shall be added for this context.
+         * Used as start or end type to indicate that no token shall be added for this context.
          */
         int NONE = -1;
 

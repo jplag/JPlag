@@ -139,15 +139,15 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
         super.enterStructPatternField(context);
     }
 
-
     @Override
     public void enterTupleExpression(RustParser.TupleExpressionContext context) {
         state.enter(RustContext.TUPLE);
 
         var elements = context.getChild(RustParser.TupleElementsContext.class, 0);
         // one child = exactly one subtree and no trailing comma
-        if (Objects.nonNull(elements) && 0 < elements.getChildCount() && elements.getChildCount() == 1)
+        if (Objects.nonNull(elements) && elements.getChildCount() == 1) {
             state.enter(RustContext.REDUNDANT_TUPLE);
+        }
 
         super.enterTupleExpression(context);
     }
@@ -353,8 +353,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterStaticItem(RustParser.StaticItemContext context) {
-        int tokenType = context.getParent() instanceof RustParser.ExternalItemContext ?
-                STATIC_ITEM : VARIABLE_DECLARATION;
+        int tokenType = context.getParent() instanceof RustParser.ExternalItemContext ? STATIC_ITEM : VARIABLE_DECLARATION;
         transformToken(tokenType, context.getStart());
         super.enterStaticItem(context);
     }
@@ -654,8 +653,9 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
                 }
             }
             case "=" -> {
-                if (!(parentNode instanceof RustParser.AttrInputContext || parentNode instanceof RustParser.MacroPunctuationTokenContext || parentNode instanceof RustParser.TypeParamContext
-                        || parentNode instanceof RustParser.GenericArgsBindingContext) && stateContext != RustContext.MACRO_INNER) {
+                if (!(parentNode instanceof RustParser.AttrInputContext || parentNode instanceof RustParser.MacroPunctuationTokenContext
+                        || parentNode instanceof RustParser.TypeParamContext || parentNode instanceof RustParser.GenericArgsBindingContext)
+                        && stateContext != RustContext.MACRO_INNER) {
                     transformToken(ASSIGNMENT, token);
                 }
             }
@@ -760,7 +760,10 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterType_(RustParser.Type_Context context) {
-        // No TYPE_ARGUMENT token here, only for generic method type arguments
+        if (context.getParent() instanceof RustParser.GenericArgsTypesContext
+                && context.getParent().getParent().getParent() instanceof RustParser.PathExprSegmentContext) {
+            transformToken(TYPE_ARGUMENT, context.getStart(), context.getStop());
+        }
         state.enter(RustContext.TYPE);
         super.enterType_(context);
     }
@@ -812,7 +815,6 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
      * Implementation of Context for the Rust language
      */
     enum RustContext implements ParserState.Context {
-
 
         /**
          * This is used to make sure that the stack is not empty -> getCurrent() != null

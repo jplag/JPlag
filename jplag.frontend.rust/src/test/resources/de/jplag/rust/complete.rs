@@ -720,6 +720,16 @@ fn match_with_guard() {
         () if false => {}
     }
 }
+
+fn genericMethod<E>(element: E) -> i32 {
+    return 1;
+}
+
+fn callGeneric() {
+    genericMethod("Okay!");
+    let f = genericMethod::<i32>;
+    f("Not okay!"); // type mismatch
+}
 /* End of addition */
 
 mod arith {

@@ -25,8 +25,6 @@ public interface RustTokenConstants extends TokenConstants {
     int STRUCT_BODY_END = 16;
     int STRUCT_INITIALISATION = 17;
 
-
-
     int STRUCT_FIELD = 18;
 
     int UNION = 19;
@@ -73,7 +71,6 @@ public interface RustTokenConstants extends TokenConstants {
     int ELSE_BODY_START = 51;
     int ELSE_BODY_END = 52;
 
-
     int LABEL = 53;
     int LOOP_STATEMENT = 54;
     int LOOP_BODY_START = 55;
@@ -102,7 +99,6 @@ public interface RustTokenConstants extends TokenConstants {
     int TUPLE_END = 73;
     int TUPLE_ELEMENT = 74;
 
-
     int CLOSURE = 75;
     int CLOSURE_BODY_START = 76;
     int CLOSURE_BODY_END = 77;
@@ -118,6 +114,5 @@ public interface RustTokenConstants extends TokenConstants {
     int RETURN = 83;
 
     int NUMBER_DIFF_TOKENS = 84;
-
 
 }
