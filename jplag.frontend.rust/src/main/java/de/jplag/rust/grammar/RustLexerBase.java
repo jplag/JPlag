@@ -3,7 +3,7 @@ package de.jplag.rust.grammar;
 import org.antlr.v4.runtime.*;
 
 public abstract class RustLexerBase extends Lexer {
-    public RustLexerBase(CharStream input) {
+    protected RustLexerBase(CharStream input) {
         super(input);
     }
 

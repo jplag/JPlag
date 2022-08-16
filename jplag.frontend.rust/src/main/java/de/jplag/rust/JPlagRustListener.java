@@ -631,6 +631,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
             case TUPLE_STRUCT_PATTERN -> transformToken(ARGUMENT, context.getStart(), context.getStop());
             case TUPLE_PATTERN -> transformToken(TUPLE_ELEMENT, context.getStart());
             default -> {
+                // do nothing
             }
         }
         super.enterPattern(context);
@@ -667,6 +668,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
                 switch (stateContext) {
                     case MACRO_RULE_BODY, MACRO_INVOCATION_BODY, MACRO_INNER -> state.enter(RustContext.MACRO_INNER);
                     default -> {
+                        // do nothing
                     }
                 }
 
@@ -697,10 +699,11 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
                     case MACRO_INNER -> state.enter(RustContext.MACRO_INNER);
                     case CALL -> transformToken(APPLY, token);
                     default -> {
+                        // do nothing
                     }
                 }
             }
-            case ")" -> {
+            case ")", "]" -> {
                 switch (stateContext) {
                     case STRUCT_DECLARATION_BODY -> transformToken(RustContext.STRUCT_DECLARATION_BODY.getEndType(), token);
                     case TUPLE -> transformToken(RustContext.TUPLE.getEndType(), token);
@@ -715,6 +718,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
                         }
                     }
                     default -> {
+                        // do nothing
                     }
 
                 }
@@ -727,25 +731,11 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
                     }
                     case MACRO_INNER -> state.enter(RustContext.MACRO_INNER);
                     default -> {
+                        // do nothing
                     }
                 }
             }
-            case "]" -> {
-                switch (stateContext) {
-                    case MACRO_INVOCATION_BODY -> {
-                        /* do nothing */
-                    }
-                    case MACRO_INNER -> {
-                        state.leaveAsserted(RustContext.MACRO_INNER);
-                        stateContext = state.getCurrentContext();
-                        if (stateContext == RustContext.MACRO_INVOCATION_BODY) {
-                            transformToken(MACRO_INVOCATION_BODY_END, token);
-                        }
-                    }
-                    default -> {
-                    }
-                }
-            }
+
             case "else" -> {
                 if (stateContext == RustContext.IF_BODY) {
                     transformToken(ELSE_STATEMENT, token);
