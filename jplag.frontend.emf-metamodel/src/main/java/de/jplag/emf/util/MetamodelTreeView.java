@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Optional;
 
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
@@ -45,8 +46,9 @@ public class MetamodelTreeView {
         int length = Token.NO_VALUE;
         int line = Token.NO_VALUE;
         int column = Token.NO_VALUE;
-        if (token.getEObject().isPresent()) {
-            EObject eObject = token.getEObject().get();
+        Optional<EObject> optionalEObject = token.getEObject();
+        if (optionalEObject.isPresent()) {
+            EObject eObject = optionalEObject.get();
             if (prefix.isEmpty() && treeDepth > 0) {
                 lineIndex++;
                 columnIndex = 0;
