@@ -20,7 +20,16 @@ bodies, method bodies, array constructors, and the like.
 More syntactic elements of Rust may turn out to be helpful to include in the future, especially those that are newly
 introduced.
 
-#### Problem in Rust (1): Pattern resolution
+#### Problem in Rust (1): Grammar formulation
+
+In contrast to other grammars used in frontends, the underlying Rust ANTLR4 grammar uses very general syntactic categories 
+that do not provide very much _semantic_ information. For example, the ifExpression rule features a `blockExpression` as
+its body instead of a separate `ifBody` rule. This makes it hard to differentiate different uses of those `blockExpression`s.
+
+It should be possible to refactor the grammar to include more specific rules. While not hard, this will still be tedious. Most of the
+`ParserState` mechanism should become obsolete if this is done.
+
+#### Problem in Rust (2): Pattern resolution
 
 Rust allows to destruct complex objects using pattern matching.
 
@@ -39,7 +48,7 @@ the assigned object.
 These `let` pattern assignments can be replaced with a sequence of more basic assignments. This is a possible
 problem of this frontend.
 
-#### Problem in Rust (2): `return` is optional
+#### Problem in Rust (3): `return` is optional
 
 In Rust, the `return` keyword is optional. If omitted, the last expression evaluated in the function body is used as the
 return value.
@@ -68,7 +77,7 @@ statement.
 
 For the moment, implicit block values get no special tokens.
 
-#### Problem in Rust (3): Macros
+#### Problem in Rust (4): Macros
 
 Macros are a vital part of Rust. They allow to expand brief statements into more complex, repeating code at compile time.
 
