@@ -6,9 +6,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.eclipse.emf.ecore.ENamedElement;
+import org.eclipse.emf.ecore.EObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.Token;
 import de.jplag.emf.MetamodelToken;
 
 /**
@@ -34,12 +36,17 @@ public class MetamodelTreeView {
     }
 
     /**
-     * Adds a token to the view, thus adding the index information to the token.
+     * Adds a token to the view, thus adding the index information to the token. Returns a new token enriched with the index
+     * metadata.
      * @param token is the token to add.
      * @param treeDepth is the current containment tree depth, required for the indentation.
      */
-    public void addToken(MetamodelToken token, int treeDepth, String prefix) {
-        token.getEObject().ifPresent(it -> {
+    public MetamodelToken convertToMetadataEnrichedTokenAndAdd(MetamodelToken token, int treeDepth, String prefix) {
+        int length = Token.NO_VALUE;
+        int line = Token.NO_VALUE;
+        int column = Token.NO_VALUE;
+        if (token.getEObject().isPresent()) {
+            EObject eObject = token.getEObject().get();
             if (prefix.isEmpty() && treeDepth > 0) {
                 lineIndex++;
                 columnIndex = 0;
@@ -47,11 +54,10 @@ public class MetamodelTreeView {
             }
 
             String tokenText = token.toString();
-            if (it instanceof ENamedElement element) {
+            if (eObject instanceof ENamedElement element) {
                 tokenText = element.getName() + " : " + tokenText;
             }
-            // TODO: should be set on token creation
-            // token.setLength(tokenText.length());
+            length = tokenText.length();
 
             if (prefix.isEmpty()) {
                 for (int i = 0; i < treeDepth; i++) {
@@ -64,13 +70,12 @@ public class MetamodelTreeView {
                 columnIndex += prefix.length();
             }
 
-            // TODO: should be set on token creation
-            // token.setLine(lineIndex + 1);
-            token.setColumn(columnIndex + 1);
+            line = lineIndex + 1;
+            column = columnIndex + 1;
 
             columnIndex += tokenText.length();
-
-        });
+        }
+        return new MetamodelToken(token.getType(), token.getFile(), line, column, length, token.getEObject());
     }
 
     /**
