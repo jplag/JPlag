@@ -31,8 +31,9 @@ public class RustToken extends Token {
             case FUNCTION_BODY_END -> "}FUNC";
 
             case STRUCT -> "STRUCT";
-            case STRUCT_BODY_BEGIN -> "STRUCT{";
+            case STRUCT_BODY_START -> "STRUCT{";
             case STRUCT_BODY_END -> "}STRUCT";
+            case STRUCT_INITIALISATION -> "STRUCT()";
 
             case STRUCT_FIELD -> "FIELD";
 

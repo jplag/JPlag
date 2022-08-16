@@ -1,5 +1,6 @@
 package de.jplag.rust;
 
+import static de.jplag.rust.ParserState.Context.NONE;
 import static de.jplag.rust.RustTokenConstants.*;
 
 import java.util.Objects;
@@ -12,13 +13,13 @@ import org.antlr.v4.runtime.tree.*;
 import de.jplag.rust.grammar.RustParser;
 import de.jplag.rust.grammar.RustParserBaseListener;
 
-public class JplagRustListener extends RustParserBaseListener implements ParseTreeListener {
+public class JPlagRustListener extends RustParserBaseListener implements ParseTreeListener {
 
     private final RustParserAdapter parserAdapter;
 
     private final ParserState<RustContext> state = new ParserState<>();
 
-    public JplagRustListener(RustParserAdapter parserAdapter) {
+    public JPlagRustListener(RustParserAdapter parserAdapter) {
         this.parserAdapter = parserAdapter;
         state.enter(RustContext.FILE);
     }
@@ -57,13 +58,13 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitUseTree(RustParser.UseTreeContext context) {
-        state.leave(RustContext.USE_TREE);
+        state.leaveAsserted(RustContext.USE_TREE);
         super.exitUseTree(context);
     }
 
     @Override
     public void enterSimplePath(RustParser.SimplePathContext context) {
-        if (state.getCurrent() == RustContext.USE_TREE) {
+        if (state.getCurrentContext() == RustContext.USE_TREE) {
             if (context.parent.getChildCount() > 1 && context.parent.getChild(1).getText().equals("::")) {
                 // Not a leaf
                 return;
@@ -84,26 +85,26 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
     @Override
     public void enterStruct_(RustParser.Struct_Context context) {
         transformToken(STRUCT, context.getStart());
-        state.enter(RustContext.STRUCT_BODY);
+        state.enter(RustContext.STRUCT_DECLARATION_BODY);
         super.enterStruct_(context);
     }
 
     @Override
     public void exitStruct_(RustParser.Struct_Context context) {
-        state.leave(RustContext.STRUCT_BODY);
+        state.leaveAsserted(RustContext.STRUCT_DECLARATION_BODY);
         super.exitStruct_(context);
     }
 
     @Override
     public void enterStructExpression(RustParser.StructExpressionContext context) {
-        transformToken(STRUCT, context.getStart());
-        state.enter(RustContext.STRUCT_BODY);
+        transformToken(RustTokenConstants.STRUCT_INITIALISATION, context.getStart());
+        state.enter(RustContext.STRUCT_INITIALISATION);
         super.enterStructExpression(context);
     }
 
     @Override
     public void exitStructExpression(RustParser.StructExpressionContext context) {
-        state.leave(RustContext.STRUCT_BODY);
+        state.leaveAsserted(RustContext.STRUCT_INITIALISATION);
         super.exitStructExpression(context);
     }
 
@@ -115,20 +116,20 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterStructExprField(RustParser.StructExprFieldContext context) {
-        transformToken(STRUCT_FIELD, context.getStart());
+        transformToken(ARGUMENT, context.getStart(), context.getStop());
         super.enterStructExprField(context);
     }
 
     @Override
     public void enterStructPattern(RustParser.StructPatternContext context) {
         transformToken(STRUCT, context.getStart());
-        state.enter(RustContext.STRUCT_BODY);
+        state.enter(RustContext.STRUCT_DECLARATION_BODY);
         super.enterStructPattern(context);
     }
 
     @Override
     public void exitStructPattern(RustParser.StructPatternContext context) {
-        state.leave(RustContext.STRUCT_BODY);
+        state.leaveAsserted(RustContext.STRUCT_DECLARATION_BODY);
         super.exitStructPattern(context);
     }
 
@@ -137,6 +138,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
         transformToken(STRUCT_FIELD, context.getStart());
         super.enterStructPatternField(context);
     }
+
 
     @Override
     public void enterTupleExpression(RustParser.TupleExpressionContext context) {
@@ -152,14 +154,14 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitTupleExpression(RustParser.TupleExpressionContext ctx) {
-        state.maybeLeave(RustContext.REDUNDANT_TUPLE);
-        state.leave(RustContext.TUPLE);
+        state.leaveIfInContext(RustContext.REDUNDANT_TUPLE);
+        state.leaveAsserted(RustContext.TUPLE);
         super.exitTupleExpression(ctx);
     }
 
     @Override
     public void enterTupleField(RustParser.TupleFieldContext context) {
-        if (state.getCurrent() != RustContext.REDUNDANT_TUPLE) {
+        if (state.getCurrentContext() != RustContext.REDUNDANT_TUPLE) {
             transformToken(TUPLE_ELEMENT, context.getStart());
         }
         super.enterTupleField(context);
@@ -167,29 +169,26 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterTupleStructPattern(RustParser.TupleStructPatternContext context) {
-        transformToken(STRUCT, context.getStart());
-        state.enter(RustContext.STRUCT_BODY);
+        transformToken(STRUCT_INITIALISATION, context.getStart());
+        state.enter(RustContext.STRUCT_INITIALISATION);
         super.enterTupleStructPattern(context);
     }
 
     @Override
     public void exitTupleStructPattern(RustParser.TupleStructPatternContext context) {
-        state.leave(RustContext.STRUCT_BODY);
+        state.leaveAsserted(RustContext.STRUCT_INITIALISATION);
         super.exitTupleStructPattern(context);
     }
 
     @Override
     public void enterTupleStructItems(RustParser.TupleStructItemsContext context) {
         state.enter(RustContext.TUPLE_STRUCT_PATTERN);
-        if (context.getChildCount() <= 2)
-            state.enter(RustContext.REDUNDANT_TUPLE);
         super.enterTupleStructItems(context);
     }
 
     @Override
     public void exitTupleStructItems(RustParser.TupleStructItemsContext context) {
-        state.maybeLeave(RustContext.REDUNDANT_TUPLE);
-        state.leave(RustContext.TUPLE_STRUCT_PATTERN);
+        state.leaveAsserted(RustContext.TUPLE_STRUCT_PATTERN);
         super.exitTupleStructItems(context);
     }
 
@@ -201,7 +200,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitTuplePatternItems(RustParser.TuplePatternItemsContext context) {
-        state.leave(RustContext.TUPLE_PATTERN);
+        state.leaveAsserted(RustContext.TUPLE_PATTERN);
         super.exitTuplePatternItems(context);
     }
 
@@ -214,7 +213,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitUnion_(RustParser.Union_Context context) {
-        state.leave(RustContext.UNION_BODY);
+        state.leaveAsserted(RustContext.UNION_BODY);
         super.exitUnion_(context);
     }
 
@@ -227,7 +226,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitTrait_(RustParser.Trait_Context context) {
-        state.leave(RustContext.TRAIT_BODY);
+        state.leaveAsserted(RustContext.TRAIT_BODY);
         super.exitTrait_(context);
     }
 
@@ -246,7 +245,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitImplementation(RustParser.ImplementationContext context) {
-        state.leave(RustContext.IMPLEMENTATION_BODY);
+        state.leaveAsserted(RustContext.IMPLEMENTATION_BODY);
         super.exitImplementation(context);
     }
 
@@ -259,7 +258,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitEnumeration(RustParser.EnumerationContext context) {
-        state.leave(RustContext.ENUM_BODY);
+        state.leaveAsserted(RustContext.ENUM_BODY);
         super.exitEnumeration(context);
     }
 
@@ -271,7 +270,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitEnumItemTuple(RustParser.EnumItemTupleContext ctx) {
-        state.leave(RustContext.TUPLE);
+        state.leaveAsserted(RustContext.TUPLE);
         super.exitEnumItemTuple(ctx);
     }
 
@@ -290,7 +289,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitMacroRulesDefinition(RustParser.MacroRulesDefinitionContext context) {
-        state.leave(RustContext.MACRO_RULES_DEFINITION_BODY);
+        state.leaveAsserted(RustContext.MACRO_RULES_DEFINITION_BODY);
         super.exitMacroRulesDefinition(context);
     }
 
@@ -303,7 +302,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitMacroRule(RustParser.MacroRuleContext context) {
-        state.leave(RustContext.MACRO_RULE_BODY);
+        state.leaveAsserted(RustContext.MACRO_RULE_BODY);
         super.exitMacroRule(context);
     }
 
@@ -316,7 +315,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitMacroInvocationSemi(RustParser.MacroInvocationSemiContext context) {
-        state.leave(RustContext.MACRO_INVOCATION_BODY);
+        state.leaveAsserted(RustContext.MACRO_INVOCATION_BODY);
         super.exitMacroInvocationSemi(context);
     }
 
@@ -329,7 +328,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitMacroInvocation(RustParser.MacroInvocationContext context) {
-        state.leave(RustContext.MACRO_INVOCATION_BODY);
+        state.leaveAsserted(RustContext.MACRO_INVOCATION_BODY);
         super.exitMacroInvocation(context);
     }
 
@@ -342,7 +341,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitExternBlock(RustParser.ExternBlockContext context) {
-        state.leave(RustContext.EXTERN_BLOCK);
+        state.leaveAsserted(RustContext.EXTERN_BLOCK);
         super.exitExternBlock(context);
     }
 
@@ -354,7 +353,9 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterStaticItem(RustParser.StaticItemContext context) {
-        transformToken(STATIC_ITEM, context.getStart());
+        int tokenType = context.getParent() instanceof RustParser.ExternalItemContext ?
+                STATIC_ITEM : VARIABLE_DECLARATION;
+        transformToken(tokenType, context.getStart());
         super.enterStaticItem(context);
     }
 
@@ -369,7 +370,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitFunction_(RustParser.Function_Context context) {
-        state.leave(RustContext.FUNCTION_BODY, RustContext.PROCEDURE_BODY);
+        state.leaveAsserted(RustContext.FUNCTION_BODY, RustContext.PROCEDURE_BODY);
         super.exitFunction_(context);
     }
 
@@ -387,7 +388,9 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterGenericParam(RustParser.GenericParamContext context) {
-        transformToken(TYPE_PARAMETER, context.getStart(), context.getStop());
+        if (!(context.getParent().getParent() instanceof RustParser.ForLifetimesContext)) {
+            transformToken(TYPE_PARAMETER, context.getStart(), context.getStop());
+        }
         super.enterGenericParam(context);
     }
 
@@ -399,7 +402,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitExpressionWithBlock(RustParser.ExpressionWithBlockContext context) {
-        state.leave(RustContext.INNER_BLOCK);
+        state.leaveAsserted(RustContext.INNER_BLOCK);
         super.exitExpressionWithBlock(context);
     }
 
@@ -412,8 +415,8 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitIfExpression(RustParser.IfExpressionContext context) {
-        state.maybeLeave(RustContext.ELSE_BODY);
-        state.leave(RustContext.IF_BODY, RustContext.ELSE_BODY);
+        state.leaveIfInContext(RustContext.ELSE_BODY);
+        state.leaveAsserted(RustContext.IF_BODY, RustContext.ELSE_BODY);
         super.exitIfExpression(context);
     }
 
@@ -426,8 +429,8 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitIfLetExpression(RustParser.IfLetExpressionContext ctx) {
-        state.maybeLeave(RustContext.ELSE_BODY);
-        state.leave(RustContext.IF_BODY);
+        state.leaveIfInContext(RustContext.ELSE_BODY);
+        state.leaveAsserted(RustContext.IF_BODY);
         super.exitIfLetExpression(ctx);
     }
 
@@ -447,7 +450,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitInfiniteLoopExpression(RustParser.InfiniteLoopExpressionContext context) {
-        state.leave(RustContext.LOOP_BODY);
+        state.leaveAsserted(RustContext.LOOP_BODY);
         super.exitInfiniteLoopExpression(context);
     }
 
@@ -461,7 +464,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitPredicateLoopExpression(RustParser.PredicateLoopExpressionContext context) {
-        state.leave(RustContext.LOOP_BODY);
+        state.leaveAsserted(RustContext.LOOP_BODY);
         super.exitPredicateLoopExpression(context);
     }
 
@@ -475,7 +478,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitPredicatePatternLoopExpression(RustParser.PredicatePatternLoopExpressionContext context) {
-        state.leave(RustContext.LOOP_BODY);
+        state.leaveAsserted(RustContext.LOOP_BODY);
         super.exitPredicatePatternLoopExpression(context);
     }
 
@@ -489,7 +492,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitIteratorLoopExpression(RustParser.IteratorLoopExpressionContext context) {
-        state.leave(RustContext.FOR_BODY);
+        state.leaveAsserted(RustContext.FOR_BODY);
         super.exitIteratorLoopExpression(context);
     }
 
@@ -508,7 +511,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitMatchExpression(RustParser.MatchExpressionContext context) {
-        state.leave(RustContext.MATCH_BODY);
+        state.leaveAsserted(RustContext.MATCH_BODY);
         super.exitMatchExpression(context);
     }
 
@@ -538,7 +541,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitCallExpression(RustParser.CallExpressionContext ctx) {
-        state.leave(RustContext.CALL);
+        state.leaveAsserted(RustContext.CALL);
         super.exitCallExpression(ctx);
     }
 
@@ -550,7 +553,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitMethodCallExpression(RustParser.MethodCallExpressionContext ctx) {
-        state.leave(RustContext.CALL);
+        state.leaveAsserted(RustContext.CALL);
         super.exitMethodCallExpression(ctx);
     }
 
@@ -581,7 +584,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitTuplePattern(RustParser.TuplePatternContext context) {
-        state.leave(RustContext.TUPLE);
+        state.leaveAsserted(RustContext.TUPLE);
         super.exitTuplePattern(context);
     }
 
@@ -594,7 +597,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void exitClosureExpression(RustParser.ClosureExpressionContext context) {
-        state.leave(RustContext.CLOSURE_BODY);
+        state.leaveAsserted(RustContext.CLOSURE_BODY);
         super.exitClosureExpression(context);
     }
 
@@ -615,7 +618,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
         // may be return value
         RuleContext maybeFunctionBlock = context.parent.parent;
         boolean isImplicitReturnValue = maybeFunctionBlock instanceof RustParser.StatementsContext && (maybeFunctionBlock.getChildCount() == 1)
-                && (state.getCurrent() == RustContext.FUNCTION_BODY) && !(context.getChild(0) instanceof RustParser.ReturnExpressionContext);
+                && (state.getCurrentContext() == RustContext.FUNCTION_BODY) && !(context.getChild(0) instanceof RustParser.ReturnExpressionContext);
 
         if (isImplicitReturnValue) {
             transformToken(RETURN, context.getStart());
@@ -625,8 +628,8 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterPattern(RustParser.PatternContext context) {
-        switch (state.getCurrent()) {
-            case TUPLE_STRUCT_PATTERN -> transformToken(STRUCT_FIELD, context.getStart());
+        switch (state.getCurrentContext()) {
+            case TUPLE_STRUCT_PATTERN -> transformToken(ARGUMENT, context.getStart(), context.getStop());
             case TUPLE_PATTERN -> transformToken(TUPLE_ELEMENT, context.getStart());
             default -> {
             }
@@ -638,7 +641,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
     public void visitTerminal(TerminalNode node) {
         final Token token = node.getSymbol();
         final ParseTree parentNode = node.getParent();
-        RustContext stateContext = state.getCurrent();
+        RustContext stateContext = state.getCurrentContext();
         switch (node.getText()) {
             case "*" -> {
                 if (parentNode instanceof RustParser.UseTreeContext) {
@@ -651,13 +654,8 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
                 }
             }
             case "=" -> {
-                if (!(parentNode instanceof RustParser.AttrInputContext || parentNode instanceof RustParser.TypeParamContext
+                if (!(parentNode instanceof RustParser.AttrInputContext || parentNode instanceof RustParser.MacroPunctuationTokenContext || parentNode instanceof RustParser.TypeParamContext
                         || parentNode instanceof RustParser.GenericArgsBindingContext) && stateContext != RustContext.MACRO_INNER) {
-                    transformToken(ASSIGNMENT, token);
-                }
-            }
-            case ":" -> {
-                if (parentNode instanceof RustParser.StructExprFieldContext) {
                     transformToken(ASSIGNMENT, token);
                 }
             }
@@ -681,8 +679,8 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
                 if (stateContext == RustContext.MACRO_INNER) {
                     // maybe this is the end of a macro invocation/definition
-                    state.leave(RustContext.MACRO_INNER);
-                    stateContext = state.getCurrent();
+                    state.leaveAsserted(RustContext.MACRO_INNER);
+                    stateContext = state.getCurrentContext();
                     if (stateContext == RustContext.MACRO_INVOCATION_BODY || stateContext == RustContext.MACRO_RULE_BODY) {
                         transformToken(stateContext.getEndType(), token);
                     }
@@ -690,7 +688,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
             }
             case "(" -> {
                 switch (stateContext) {
-                    case STRUCT_BODY -> transformToken(RustContext.STRUCT_BODY.getStartType(), token);
+                    case STRUCT_DECLARATION_BODY -> transformToken(RustContext.STRUCT_DECLARATION_BODY.getStartType(), token);
                     case TUPLE -> transformToken(RustContext.TUPLE.getStartType(), token);
                     case MACRO_INVOCATION_BODY -> {
                         transformToken(MACRO_INVOCATION_BODY_START, token);
@@ -704,14 +702,14 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
             }
             case ")" -> {
                 switch (stateContext) {
-                    case STRUCT_BODY -> transformToken(RustContext.STRUCT_BODY.getEndType(), token);
+                    case STRUCT_DECLARATION_BODY -> transformToken(RustContext.STRUCT_DECLARATION_BODY.getEndType(), token);
                     case TUPLE -> transformToken(RustContext.TUPLE.getEndType(), token);
                     case MACRO_INVOCATION_BODY -> {
                         /* do nothing */
                     }
                     case MACRO_INNER -> {
-                        state.leave(RustContext.MACRO_INNER);
-                        stateContext = state.getCurrent();
+                        state.leaveAsserted(RustContext.MACRO_INNER);
+                        stateContext = state.getCurrentContext();
                         if (stateContext == RustContext.MACRO_INVOCATION_BODY) {
                             transformToken(MACRO_INVOCATION_BODY_END, token);
                         }
@@ -738,8 +736,8 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
                         /* do nothing */
                     }
                     case MACRO_INNER -> {
-                        state.leave(RustContext.MACRO_INNER);
-                        stateContext = state.getCurrent();
+                        state.leaveAsserted(RustContext.MACRO_INNER);
+                        stateContext = state.getCurrentContext();
                         if (stateContext == RustContext.MACRO_INVOCATION_BODY) {
                             transformToken(MACRO_INVOCATION_BODY_END, token);
                         }
@@ -762,17 +760,14 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterType_(RustParser.Type_Context context) {
-        if (context.parent instanceof RustParser.GenericArgsTypesContext) {
-            transformToken(TYPE_ARGUMENT, context.getStart());
-        }
-
+        // No TYPE_ARGUMENT token here, only for generic method type arguments
         state.enter(RustContext.TYPE);
         super.enterType_(context);
     }
 
     @Override
     public void exitType_(RustParser.Type_Context context) {
-        state.leave(RustContext.TYPE);
+        state.leaveAsserted(RustContext.TYPE);
         super.exitType_(context);
     }
 
@@ -780,7 +775,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
     public void enterGenericArg(RustParser.GenericArgContext context) {
         // Only type arguments for methods, not for type expressions
         if (context.getParent().getParent() instanceof RustParser.PathInExpressionContext) {
-            transformToken(TYPE_ARGUMENT, context.getStart());
+            transformToken(TYPE_ARGUMENT, context.getStart(), context.getStop());
         }
         super.enterGenericArg(context);
     }
@@ -793,9 +788,9 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
             if (context.parent instanceof RustParser.ArrayElementsContext) {
                 transformToken(ARRAY_ELEMENT, expression.getStart());
             } else if (context.parent instanceof RustParser.CallParamsContext) {
-                transformToken(ARGUMENT, expression.getStart());
+                transformToken(ARGUMENT, expression.getStart(), expression.getStop());
             } else if (context.parent instanceof RustParser.TuplePatternItemsContext || context.parent instanceof RustParser.TupleElementsContext) {
-                if (state.getCurrent() == RustContext.REDUNDANT_TUPLE)
+                if (state.getCurrentContext() == RustContext.REDUNDANT_TUPLE)
                     return;
                 transformToken(TUPLE_ELEMENT, expression.getStart());
             } else if (context.parent instanceof RustParser.ClosureExpressionContext) {
@@ -817,6 +812,8 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
      * Implementation of Context for the Rust language
      */
     enum RustContext implements ParserState.Context {
+
+
         /**
          * This is used to make sure that the stack is not empty -> getCurrent() != null
          **/
@@ -827,7 +824,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
          **/
         FUNCTION_BODY(FUNCTION_BODY_START, FUNCTION_BODY_END),
         PROCEDURE_BODY(FUNCTION_BODY_START, FUNCTION_BODY_END),
-        STRUCT_BODY(STRUCT_BODY_BEGIN, STRUCT_BODY_END),
+        STRUCT_DECLARATION_BODY(STRUCT_BODY_START, STRUCT_BODY_END),
         IF_BODY(IF_BODY_START, IF_BODY_END),
         ELSE_BODY(ELSE_BODY_START, ELSE_BODY_END),
         LOOP_BODY(LOOP_BODY_START, LOOP_BODY_END),
@@ -836,7 +833,7 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
         ENUM_BODY(ENUM_BODY_START, ENUM_BODY_END),
         MACRO_RULES_DEFINITION_BODY(MACRO_RULES_DEFINITION_BODY_START, MACRO_RULES_DEFINITION_BODY_END),
         MACRO_RULE_BODY(MACRO_RULE_BODY_START, MACRO_RULE_BODY_END),
-        MACRO_INVOCATION_BODY(MACRO_INVOCATION_BODY_START, NONE),
+        MACRO_INVOCATION_BODY(MACRO_INVOCATION_BODY_START, MACRO_INVOCATION_BODY_END),
         IMPLEMENTATION_BODY(IMPLEMENTATION_BODY_START, IMPLEMENTATION_BODY_END),
         EXTERN_BLOCK(EXTERN_BLOCK_START, EXTERN_BLOCK_END),
         MODULE_BODY(MODULE_START, MODULE_END),
@@ -875,7 +872,12 @@ public class JplagRustListener extends RustParserBaseListener implements ParseTr
         /**
          * In this context, '(' should be assigned an APPLY token.
          */
-        CALL(NONE, NONE);
+        CALL(NONE, NONE),
+
+        /**
+         * This context should behave like a function call: No tokens for parentheses.
+         */
+        STRUCT_INITIALISATION(NONE, NONE);
 
         private final int startType;
         private final int endType;

@@ -1,6 +1,6 @@
-# JPlag Scala language frontend
+# JPlag Rust language frontend
 
-The JPlag Scala frontend allows the use of JPlag with submissions in Scala. <br>
+The JPlag Rust frontend allows the use of JPlag with submissions in Scala. <br>
 It is based on the [Rust ANTLR4 grammar](https://github.com/antlr/grammars-v4/tree/master/rust), licensed under MIT.
 
 ### Rust specification compatibility
@@ -37,7 +37,7 @@ or _etcetera_ pattern `..` is used to skip a number of elements, so that the ele
 the assigned object.
 
 These `let` pattern assignments can be replaced with a sequence of more basic assignments. This is a possible
-vulnerability of this frontend.
+problem of this frontend.
 
 #### Problem in Rust (2): `return` is optional
 

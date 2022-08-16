@@ -3,7 +3,6 @@ package de.jplag.rust;
 import de.jplag.TokenConstants;
 
 public interface RustTokenConstants extends TokenConstants {
-    int NONE = -1;
 
     int INNER_ATTRIBUTE = 2;
     int OUTER_ATTRIBUTE = 3;
@@ -22,97 +21,103 @@ public interface RustTokenConstants extends TokenConstants {
     int FUNCTION_BODY_END = 13;
 
     int STRUCT = 14;
-    int STRUCT_BODY_BEGIN = 15;
+    int STRUCT_BODY_START = 15;
     int STRUCT_BODY_END = 16;
+    int STRUCT_INITIALISATION = 17;
 
-    int STRUCT_FIELD = 17;
 
-    int UNION = 18;
-    int UNION_BODY_START = 19;
-    int UNION_BODY_END = 20;
 
-    int TRAIT = 21;
-    int TRAIT_BODY_START = 22;
-    int TRAIT_BODY_END = 23;
+    int STRUCT_FIELD = 18;
 
-    int IMPLEMENTATION = 24;
-    int IMPLEMENTATION_BODY_START = 25;
-    int IMPLEMENTATION_BODY_END = 26;
+    int UNION = 19;
+    int UNION_BODY_START = 20;
+    int UNION_BODY_END = 21;
 
-    int ENUM = 27;
-    int ENUM_BODY_START = 28;
-    int ENUM_BODY_END = 29;
-    int ENUM_ITEM = 30;
+    int TRAIT = 22;
+    int TRAIT_BODY_START = 23;
+    int TRAIT_BODY_END = 24;
 
-    int MACRO_RULES_DEFINITION = 31;
-    int MACRO_RULES_DEFINITION_BODY_START = 32;
-    int MACRO_RULES_DEFINITION_BODY_END = 33;
+    int IMPLEMENTATION = 25;
+    int IMPLEMENTATION_BODY_START = 26;
+    int IMPLEMENTATION_BODY_END = 27;
 
-    int MACRO_RULE = 34;
-    int MACRO_RULE_BODY_START = 35;
-    int MACRO_RULE_BODY_END = 36;
+    int ENUM = 28;
+    int ENUM_BODY_START = 29;
+    int ENUM_BODY_END = 30;
+    int ENUM_ITEM = 31;
 
-    int MACRO_INVOCATION = 37;
-    int MACRO_INVOCATION_BODY_START = 38;
-    int MACRO_INVOCATION_BODY_END = 39;
+    int MACRO_RULES_DEFINITION = 32;
+    int MACRO_RULES_DEFINITION_BODY_START = 33;
+    int MACRO_RULES_DEFINITION_BODY_END = 34;
 
-    int EXTERN_BLOCK = 40;
-    int EXTERN_BLOCK_START = 41;
-    int EXTERN_BLOCK_END = 42;
-    int TYPE_ALIAS = 43;
-    int STATIC_ITEM = 44;
+    int MACRO_RULE = 35;
+    int MACRO_RULE_BODY_START = 36;
+    int MACRO_RULE_BODY_END = 37;
 
-    int EXTERN_CRATE = 45;
+    int MACRO_INVOCATION = 38;
+    int MACRO_INVOCATION_BODY_START = 39;
+    int MACRO_INVOCATION_BODY_END = 40;
 
-    int IF_STATEMENT = 46;
-    int IF_BODY_START = 47;
-    int IF_BODY_END = 48;
-    int ELSE_STATEMENT = 49;
-    int ELSE_BODY_START = 50;
-    int ELSE_BODY_END = 51;
+    int EXTERN_BLOCK = 41;
+    int EXTERN_BLOCK_START = 42;
+    int EXTERN_BLOCK_END = 43;
+    int TYPE_ALIAS = 44;
+    int STATIC_ITEM = 45;
 
-    int LABEL = 52;
-    int LOOP_STATEMENT = 53;
-    int LOOP_BODY_START = 54;
-    int LOOP_BODY_END = 55;
-    int FOR_STATEMENT = 56;
-    int FOR_BODY_START = 57;
-    int FOR_BODY_END = 58;
+    int EXTERN_CRATE = 46;
 
-    int BREAK = 59;
+    int IF_STATEMENT = 47;
+    int IF_BODY_START = 48;
+    int IF_BODY_END = 49;
+    int ELSE_STATEMENT = 50;
+    int ELSE_BODY_START = 51;
+    int ELSE_BODY_END = 52;
 
-    int MATCH_EXPRESSION = 60;
-    int MATCH_BODY_START = 61;
-    int MATCH_BODY_END = 62;
-    int MATCH_CASE = 63;
-    int MATCH_GUARD = 64;
 
-    int INNER_BLOCK_START = 65;
-    int INNER_BLOCK_END = 66;
+    int LABEL = 53;
+    int LOOP_STATEMENT = 54;
+    int LOOP_BODY_START = 55;
+    int LOOP_BODY_END = 56;
+    int FOR_STATEMENT = 57;
+    int FOR_BODY_START = 58;
+    int FOR_BODY_END = 59;
 
-    int ARRAY_BODY_START = 67;
-    int ARRAY_BODY_END = 68;
-    int ARRAY_ELEMENT = 69;
+    int BREAK = 60;
 
-    int TUPLE = 70;
-    int TUPLE_START = 71;
-    int TUPLE_END = 72;
-    int TUPLE_ELEMENT = 73;
+    int MATCH_EXPRESSION = 61;
+    int MATCH_BODY_START = 62;
+    int MATCH_BODY_END = 63;
+    int MATCH_CASE = 64;
+    int MATCH_GUARD = 65;
 
-    int CLOSURE = 74;
-    int CLOSURE_BODY_START = 75;
-    int CLOSURE_BODY_END = 76;
+    int INNER_BLOCK_START = 66;
+    int INNER_BLOCK_END = 67;
 
-    int APPLY = 77;
-    int ARGUMENT = 78;
-    int ASSIGNMENT = 79;
+    int ARRAY_BODY_START = 68;
+    int ARRAY_BODY_END = 69;
+    int ARRAY_ELEMENT = 70;
 
-    int VARIABLE_DECLARATION = 80;
+    int TUPLE = 71;
+    int TUPLE_START = 72;
+    int TUPLE_END = 73;
+    int TUPLE_ELEMENT = 74;
 
-    int TYPE_ARGUMENT = 81;
 
-    int RETURN = 82;
+    int CLOSURE = 75;
+    int CLOSURE_BODY_START = 76;
+    int CLOSURE_BODY_END = 77;
 
-    int NUMBER_DIFF_TOKENS = 83;
+    int APPLY = 78;
+    int ARGUMENT = 79;
+    int ASSIGNMENT = 80;
+
+    int VARIABLE_DECLARATION = 81;
+
+    int TYPE_ARGUMENT = 82;
+
+    int RETURN = 83;
+
+    int NUMBER_DIFF_TOKENS = 84;
+
 
 }

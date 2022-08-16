@@ -31,7 +31,7 @@ public class ParserState<C extends ParserState.Context> {
      * @param contexts The contexts to expect to end here
      */
     @SafeVarargs
-    protected final void leave(C... contexts) {
+    protected final void leaveAsserted(C... contexts) {
         C topContext = blockContexts.pop();
         assert Arrays.stream(contexts).anyMatch(context -> context == topContext);
     }
@@ -40,7 +40,7 @@ public class ParserState<C extends ParserState.Context> {
      * Returns the current context.
      * @return the current context
      */
-    protected C getCurrent() {
+    protected C getCurrentContext() {
         return blockContexts.peek();
     }
 
@@ -48,7 +48,7 @@ public class ParserState<C extends ParserState.Context> {
      * Leaves the current context if it is the given one.
      * @param blockContext the context that may be expected to end here
      */
-    protected void maybeLeave(C blockContext) {
+    protected void leaveIfInContext(C blockContext) {
         if (blockContexts.peek() == blockContext) {
             blockContexts.pop();
         }
@@ -59,6 +59,12 @@ public class ParserState<C extends ParserState.Context> {
      * and an endType, designating the start and the end of the context as a TokenConstant.
      */
     protected interface Context {
+
+        /**
+         *  Used as start or end type to indicate that no token shall be added for this context.
+         */
+        int NONE = -1;
+
         /**
          * Returns the TokenConstant that marks the start of the Context.
          * @return the start type
