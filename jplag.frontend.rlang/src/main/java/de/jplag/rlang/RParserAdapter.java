@@ -35,10 +35,10 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
     }
 
     /**
-     * Parsers a list of files into a single {@link TokenList}.
+     * Parsers a list of files into a single token list of {@link Token}s.
      * @param directory the directory of the files.
      * @param fileNames the file names of the files.
-     * @return a {@link TokenList} containing all tokens of all files.
+     * @return a list containing all tokens of all files.
      */
     public List<Token> parse(File directory, String[] fileNames) {
         tokens = new ArrayList<>();
@@ -84,8 +84,8 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
     }
 
     /**
-     * Adds a new {@link de.jplag.Token} to the current {@link TokenList}.
-     * @param type the type of the new {@link de.jplag.Token}
+     * Adds a new {@link Token} to the current token list.
+     * @param type the type of the new {@link Token}
      * @param line the line of the Token in the current file
      * @param start the start column of the Token in the line
      * @param length the length of the Token

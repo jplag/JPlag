@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 
 class ScalaFrontendTest {
@@ -60,7 +59,7 @@ class ScalaFrontendTest {
     @Test
     void parseTestFiles() {
         for (String fileName : testFiles) {
-            TokenList tokens = language.parse(testFileLocation, new String[] {fileName});
+            List<Token> tokens = language.parse(testFileLocation, new String[] {fileName});
             String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
             logger.info(output);
 
@@ -93,7 +92,7 @@ class ScalaFrontendTest {
      * @param fileName a code sample file name
      * @param tokens the TokenList generated from the sample
      */
-    private void testSourceCoverage(String fileName, TokenList tokens) {
+    private void testSourceCoverage(String fileName, List<Token> tokens) {
         var testFile = new File(testFileLocation, fileName);
 
         try {
@@ -102,7 +101,7 @@ class ScalaFrontendTest {
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().boxed().toList();
+            var tokenLines = tokens.stream().mapToInt(Token::getLine).distinct().boxed().toList();
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
@@ -161,8 +160,8 @@ class ScalaFrontendTest {
      * @param tokens TokenList which is supposed to contain all types of tokens
      * @param fileName The file name of the complete code example
      */
-    private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).distinct().boxed().toList();
+    private void testTokenCoverage(List<Token> tokens, String fileName) {
+        var foundTokens = StreamSupport.stream(tokens.spliterator(), true).mapToInt(Token::getType).distinct().boxed().toList();
         var allTokens = IntStream.range(0, ScalaTokenConstants.numberOfTokens()).boxed().toList();
         allTokens = new ArrayList<>(allTokens);
 

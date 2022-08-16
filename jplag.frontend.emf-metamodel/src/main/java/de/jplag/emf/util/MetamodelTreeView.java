@@ -50,7 +50,8 @@ public class MetamodelTreeView {
             if (it instanceof ENamedElement element) {
                 tokenText = element.getName() + " : " + tokenText;
             }
-            token.setLength(tokenText.length());
+            // TODO: should be set on token creation
+            // token.setLength(tokenText.length());
 
             if (prefix.isEmpty()) {
                 for (int i = 0; i < treeDepth; i++) {
@@ -63,7 +64,8 @@ public class MetamodelTreeView {
                 columnIndex += prefix.length();
             }
 
-            token.setLine(lineIndex + 1);
+            // TODO: should be set on token creation
+            // token.setLine(lineIndex + 1);
             token.setColumn(columnIndex + 1);
 
             columnIndex += tokenText.length();

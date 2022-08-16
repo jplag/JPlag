@@ -24,6 +24,6 @@ public class DynamicEcoreParser extends EcoreParser {
     public void addToken(int type, EObject source) {
         MetamodelToken token = new DynamicMetamodelToken(type, currentFile, source);
         treeView.addToken(token, visitor.getCurrentTreeDepth(), NO_PREFIX);
-        tokens.addToken(token);
+        tokens.add(token);
     }
 }

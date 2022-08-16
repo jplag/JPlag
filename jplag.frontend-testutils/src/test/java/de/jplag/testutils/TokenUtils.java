@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import de.jplag.Token;
-import de.jplag.TokenList;
 
 public final class TokenUtils {
 
@@ -18,7 +17,7 @@ public final class TokenUtils {
      * @param name is the name of the target file.
      * @return the immutable list of token types.
      */
-    public static List<Integer> tokenTypesByFile(TokenList tokenList, String name) {
+    public static List<Integer> tokenTypesByFile(List<Token> tokenList, String name) {
         var tokens = tokensByFile(tokenList, name);
         return tokens.stream().map(Token::getType).toList();
     }
@@ -29,8 +28,8 @@ public final class TokenUtils {
      * @param name is the name of the target file.
      * @return the immutable list of tokens.
      */
-    public static List<Token> tokensByFile(TokenList tokenList, String name) {
-        var tokens = StreamSupport.stream(tokenList.allTokens().spliterator(), false);
+    public static List<Token> tokensByFile(List<Token> tokenList, String name) {
+        var tokens = StreamSupport.stream(tokenList.spliterator(), false);
         return tokens.filter(it -> it.getFile().startsWith(name)).toList();
     }
 

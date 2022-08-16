@@ -1,13 +1,14 @@
 package de.jplag.emf.parser;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.AbstractParser;
+import de.jplag.Token;
 import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 import de.jplag.emf.Language;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
@@ -19,7 +20,7 @@ import de.jplag.emf.util.MetamodelTreeView;
  * @author Timur Saglam
  */
 public class EcoreParser extends AbstractParser {
-    protected TokenList tokens;
+    protected List<Token> tokens;
     protected String currentFile;
     protected MetamodelTreeView treeView;
     protected AbstractMetamodelVisitor visitor;
@@ -37,9 +38,9 @@ public class EcoreParser extends AbstractParser {
      * @param fileNames is the list of file names.
      * @return the list of parsed tokens.
      */
-    public TokenList parse(File directory, List<String> fileNames) {
+    public List<Token> parse(File directory, List<String> fileNames) {
         errors = 0;
-        tokens = new TokenList();
+        tokens = new ArrayList<>();
         for (String fileName : fileNames) {
             currentFile = fileName;
             String filePath = fileName.isEmpty() ? directory.toString() : directory.toString() + File.separator + fileName;
@@ -62,7 +63,7 @@ public class EcoreParser extends AbstractParser {
                 visitor = createMetamodelVisitor();
                 visitor.visit(root);
             }
-            tokens.addToken(new MetamodelToken(TokenConstants.FILE_END, currentFile));
+            tokens.add(new MetamodelToken(TokenConstants.FILE_END, currentFile));
             treeView.writeToFile(Language.VIEW_FILE_SUFFIX);
         }
     }
@@ -78,7 +79,7 @@ public class EcoreParser extends AbstractParser {
     public void addToken(int type, EObject source, String prefix) {
         MetamodelToken token = new MetamodelToken(type, currentFile, source);
         treeView.addToken(token, visitor.getCurrentTreeDepth(), prefix);
-        tokens.addToken(token);
+        tokens.add(token);
     }
 
     public void addToken(int type, EObject source) {

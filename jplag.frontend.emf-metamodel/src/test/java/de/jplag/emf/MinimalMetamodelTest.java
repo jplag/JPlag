@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.TokenList;
+import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.testutils.FileUtil;
 import de.jplag.testutils.TokenUtils;
@@ -40,14 +40,14 @@ class MinimalMetamodelTest {
 
     @Test
     void testBookstoreMetamodels() {
-        TokenList result = frontend.parse(baseDirectory, TEST_SUBJECTS);
+        List<Token> result = frontend.parse(baseDirectory, TEST_SUBJECTS);
         List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).toList();
 
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles, Optional.of(Language.VIEW_FILE_SUFFIX)));
         Field[] fields = MetamodelTokenConstants.class.getFields();
         var constants = Arrays.stream(fields).map(Field::getName).filter(it -> !it.equals("NUM_DIFF_TOKENS")).toList();
         logger.info(("Handcrafted token set: " + constants));
-        logger.info("Parsed tokens: " + result.allTokens().toString());
+        logger.info("Parsed tokens: " + result.toString());
         assertEquals(21, constants.size());
         assertEquals(43, result.size());
 

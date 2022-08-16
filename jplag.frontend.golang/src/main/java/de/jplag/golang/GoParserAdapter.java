@@ -3,6 +3,8 @@ package de.jplag.golang;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -11,16 +13,16 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenList;
+import de.jplag.Token;
 import de.jplag.golang.grammar.GoLexer;
 import de.jplag.golang.grammar.GoParser;
 
 public class GoParserAdapter extends AbstractParser {
     private String currentFile;
-    private TokenList tokens;
+    private List<Token> tokens;
 
-    public TokenList parse(File directory, String[] fileNames) {
-        tokens = new TokenList();
+    public List<Token> parse(File directory, String[] fileNames) {
+        tokens = new ArrayList<>();
         for (String file : fileNames) {
             if (!parseFile(directory, file)) {
                 errors++;
@@ -54,6 +56,6 @@ public class GoParserAdapter extends AbstractParser {
     }
 
     public void addToken(int tokenType, int line, int column, int length) {
-        tokens.addToken(new GoToken(tokenType, currentFile, line, column, length));
+        tokens.add(new GoToken(tokenType, currentFile, line, column, length));
     }
 }
