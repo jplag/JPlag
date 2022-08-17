@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -59,9 +58,9 @@ public class ClusteringAdapter {
         Collection<Collection<Integer>> intResult = algorithm.cluster(similarityMatrix);
         ClusteringResult<Integer> modularityClusterResult = ClusteringResult.fromIntegerCollections(new ArrayList<>(intResult), similarityMatrix);
         List<Cluster<Submission>> mappedClusters = modularityClusterResult.getClusters().stream()
-                .map(unmappedCluster -> new Cluster<>(unmappedCluster.getMembers().stream().map(mapping::unmap).collect(Collectors.toList()),
+                .map(unmappedCluster -> new Cluster<>(unmappedCluster.getMembers().stream().map(mapping::unmap).toList(),
                         unmappedCluster.getCommunityStrength(), unmappedCluster.getAverageSimilarity()))
-                .collect(Collectors.toList());
+                .toList();
         return new ClusteringResult<>(mappedClusters, modularityClusterResult.getCommunityStrength());
     }
 
