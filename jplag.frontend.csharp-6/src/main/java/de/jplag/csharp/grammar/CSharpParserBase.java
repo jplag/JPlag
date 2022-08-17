@@ -17,13 +17,13 @@ public abstract class CSharpParserBase extends Parser {
 
     protected boolean isLocalVariableDeclaration() {
         Local_variable_declarationContext localVariable = (Local_variable_declarationContext) this._ctx;
-        if (localVariable == null)
+        if (localVariable == null) {
             return true;
+        }
         Local_variable_typeContext localVariableType = localVariable.local_variable_type();
-        if (localVariableType == null)
+        if (localVariableType == null) {
             return true;
-        if (localVariableType.getText().equals("var"))
-            return false;
-        return true;
+        }
+        return !localVariableType.getText().equals("var");
     }
 }
