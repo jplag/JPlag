@@ -23,7 +23,6 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>frontend-utils</artifactId>
-            <version>${revision}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.scalameta/scalameta -->

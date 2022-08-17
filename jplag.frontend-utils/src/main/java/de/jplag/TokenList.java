@@ -1,7 +1,5 @@
 package de.jplag;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +66,7 @@ public class TokenList {
     @Override
     public final String toString() {
         try {
-            List<String> tokenStrings = tokens.stream().map(Token::toString).collect(toList());
+            List<String> tokenStrings = tokens.stream().map(Token::toString).toList();
             return String.join(System.lineSeparator(), tokenStrings);
         } catch (OutOfMemoryError exception) {
             return "Token list to large for output: " + tokens.size() + " Tokens";
