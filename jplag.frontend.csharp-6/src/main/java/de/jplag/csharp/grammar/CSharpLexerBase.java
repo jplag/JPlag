@@ -14,8 +14,8 @@ abstract class CSharpLexerBase extends Lexer {
     }
 
     protected int interpolatedStringLevel;
-    protected Stack<Boolean> interpolatedVerbatiums = new Stack<Boolean>();
-    protected Stack<Integer> curlyLevels = new Stack<Integer>();
+    protected Stack<Boolean> interpolatedVerbatiums = new Stack<>();
+    protected Stack<Integer> curlyLevels = new Stack<>();
     protected boolean verbatium;
 
     protected void OnInterpolatedRegularStringStart() {
