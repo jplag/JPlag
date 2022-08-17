@@ -49,7 +49,6 @@ abstract class CSharpLexerBase extends Lexer {
     }
 
     protected void OnColon() {
-
         if (interpolatedStringLevel > 0) {
             int ind = 1;
             boolean switchToFormatString = true;
