@@ -2,7 +2,8 @@ package de.jplag.csharp.grammar;
 
 import java.util.Stack;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.Lexer;
 
 /**
  * This class was taken from <a href="https://github.com/antlr/grammars-v4/tree/master/csharp">antlr/grammars-v4</a>. It
@@ -18,25 +19,25 @@ abstract class CSharpLexerBase extends Lexer {
     protected Stack<Integer> curlyLevels = new Stack<>();
     protected boolean verbatium;
 
-    protected void OnInterpolatedRegularStringStart() {
+    protected void onInterpolatedRegularStringStart() {
         interpolatedStringLevel++;
         interpolatedVerbatiums.push(false);
         verbatium = false;
     }
 
-    protected void OnInterpolatedVerbatiumStringStart() {
+    protected void onInterpolatedVerbatiumStringStart() {
         interpolatedStringLevel++;
         interpolatedVerbatiums.push(true);
         verbatium = true;
     }
 
-    protected void OnOpenBrace() {
+    protected void onOpenBrace() {
         if (interpolatedStringLevel > 0) {
             curlyLevels.push(curlyLevels.pop() + 1);
         }
     }
 
-    protected void OnCloseBrace() {
+    protected void onCloseBrace() {
 
         if (interpolatedStringLevel > 0) {
             curlyLevels.push(curlyLevels.pop() - 1);
@@ -48,7 +49,7 @@ abstract class CSharpLexerBase extends Lexer {
         }
     }
 
-    protected void OnColon() {
+    protected void onColon() {
         if (interpolatedStringLevel > 0) {
             int ind = 1;
             boolean switchToFormatString = true;
@@ -65,25 +66,25 @@ abstract class CSharpLexerBase extends Lexer {
         }
     }
 
-    protected void OpenBraceInside() {
+    protected void openBraceInside() {
         curlyLevels.push(1);
     }
 
-    protected void OnDoubleQuoteInside() {
+    protected void onDoubleQuoteInside() {
         interpolatedStringLevel--;
         interpolatedVerbatiums.pop();
         verbatium = (interpolatedVerbatiums.size() > 0 ? interpolatedVerbatiums.peek() : false);
     }
 
-    protected void OnCloseBraceInside() {
+    protected void onCloseBraceInside() {
         curlyLevels.pop();
     }
 
-    protected boolean IsRegularCharInside() {
+    protected boolean isRegularCharInside() {
         return !verbatium;
     }
 
-    protected boolean IsVerbatiumDoubleQuoteInside() {
+    protected boolean isVerbatiumDoubleQuoteInside() {
         return verbatium;
     }
 }

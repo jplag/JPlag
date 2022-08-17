@@ -26,162 +26,162 @@ abstract class CSharpPreprocessorParserBase extends Parser {
     private static final String TRUE = Boolean.toString(true);
     private static final String DEBUG = "DEBUG";
 
-    private Stack<Boolean> conditions = new Stack<>();
-    private HashSet<String> ConditionalSymbols = new HashSet<>();
+    private final Stack<Boolean> conditions = new Stack<>();
+    private final HashSet<String> conditionalSymbols = new HashSet<>();
 
     protected CSharpPreprocessorParserBase(TokenStream input) {
         super(input);
         conditions.push(true);
-        ConditionalSymbols.add(DEBUG);
+        conditionalSymbols.add(DEBUG);
     }
 
-    protected Boolean AllConditions() {
+    protected Boolean allConditions() {
         return conditions.stream().allMatch(it -> it);
     }
 
-    protected void OnPreprocessorDirectiveDefine() {
+    protected void onPreprocessorDirectiveDefine() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorDeclarationContext context = (PreprocessorDeclarationContext) ruleContext;
-        ConditionalSymbols.add(context.CONDITIONAL_SYMBOL().getText());
-        context.value = AllConditions();
+        conditionalSymbols.add(context.CONDITIONAL_SYMBOL().getText());
+        context.value = allConditions();
     }
 
-    protected void OnPreprocessorDirectiveUndef() {
+    protected void onPreprocessorDirectiveUndef() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorDeclarationContext context = (PreprocessorDeclarationContext) ruleContext;
-        ConditionalSymbols.remove(context.CONDITIONAL_SYMBOL().getText());
-        context.value = AllConditions();
+        conditionalSymbols.remove(context.CONDITIONAL_SYMBOL().getText());
+        context.value = allConditions();
     }
 
-    protected void OnPreprocessorDirectiveIf() {
+    protected void onPreprocessorDirectiveIf() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorConditionalContext context = (PreprocessorConditionalContext) ruleContext;
-        context.value = context.expr.value.equals(TRUE) && AllConditions();
+        context.value = context.expr.value.equals(TRUE) && allConditions();
         conditions.push(context.expr.value.equals(TRUE));
     }
 
-    protected void OnPreprocessorDirectiveElif() {
+    protected void onPreprocessorDirectiveElif() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorConditionalContext context = (PreprocessorConditionalContext) ruleContext;
         if (Boolean.FALSE.equals(conditions.peek())) {
             conditions.pop();
-            context.value = context.expr.value.equals(TRUE) && AllConditions();
+            context.value = context.expr.value.equals(TRUE) && allConditions();
             conditions.push(context.expr.value.equals(TRUE));
         } else {
             context.value = false;
         }
     }
 
-    protected void OnPreprocessorDirectiveElse() {
+    protected void onPreprocessorDirectiveElse() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorConditionalContext context = (PreprocessorConditionalContext) ruleContext;
         if (Boolean.FALSE.equals(conditions.peek())) {
             conditions.pop();
-            context.value = AllConditions();
+            context.value = allConditions();
             conditions.push(true);
         } else {
             context.value = false;
         }
     }
 
-    protected void OnPreprocessorDirectiveEndif() {
+    protected void onPreprocessorDirectiveEndif() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorConditionalContext context = (PreprocessorConditionalContext) ruleContext;
         conditions.pop();
         context.value = conditions.peek();
     }
 
-    protected void OnPreprocessorDirectiveLine() {
+    protected void onPreprocessorDirectiveLine() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorLineContext context = (PreprocessorLineContext) ruleContext;
-        context.value = AllConditions();
+        context.value = allConditions();
     }
 
-    protected void OnPreprocessorDirectiveError() {
+    protected void onPreprocessorDirectiveError() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorDiagnosticContext context = (PreprocessorDiagnosticContext) ruleContext;
-        context.value = AllConditions();
+        context.value = allConditions();
     }
 
-    protected void OnPreprocessorDirectiveWarning() {
+    protected void onPreprocessorDirectiveWarning() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorDiagnosticContext context = (PreprocessorDiagnosticContext) ruleContext;
-        context.value = AllConditions();
+        context.value = allConditions();
     }
 
-    protected void OnPreprocessorDirectiveRegion() {
+    protected void onPreprocessorDirectiveRegion() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorRegionContext context = (PreprocessorRegionContext) ruleContext;
-        context.value = AllConditions();
+        context.value = allConditions();
     }
 
-    protected void OnPreprocessorDirectiveEndregion() {
+    protected void onPreprocessorDirectiveEndregion() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorRegionContext context = (PreprocessorRegionContext) ruleContext;
-        context.value = AllConditions();
+        context.value = allConditions();
     }
 
-    protected void OnPreprocessorDirectivePragma() {
+    protected void onPreprocessorDirectivePragma() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorPragmaContext context = (PreprocessorPragmaContext) ruleContext;
-        context.value = AllConditions();
+        context.value = allConditions();
     }
 
-    protected void OnPreprocessorDirectiveNullable() {
+    protected void onPreprocessorDirectiveNullable() {
         ParserRuleContext ruleContext = this._ctx;
         PreprocessorNullableContext context = (PreprocessorNullableContext) ruleContext;
-        context.value = AllConditions();
+        context.value = allConditions();
     }
 
-    protected void OnPreprocessorExpressionTrue() {
+    protected void onPreprocessorExpressionTrue() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
         context.value = TRUE;
     }
 
-    protected void OnPreprocessorExpressionFalse() {
+    protected void onPreprocessorExpressionFalse() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
         context.value = FALSE;
     }
 
-    protected void OnPreprocessorExpressionConditionalSymbol() {
+    protected void onPreprocessorExpressionConditionalSymbol() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
-        context.value = ConditionalSymbols.contains(context.CONDITIONAL_SYMBOL().getText()) ? TRUE : FALSE;
+        context.value = conditionalSymbols.contains(context.CONDITIONAL_SYMBOL().getText()) ? TRUE : FALSE;
     }
 
-    protected void OnPreprocessorExpressionConditionalOpenParens() {
+    protected void onPreprocessorExpressionConditionalOpenParens() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
         context.value = context.expr.value;
     }
 
-    protected void OnPreprocessorExpressionConditionalBang() {
+    protected void onPreprocessorExpressionConditionalBang() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
         context.value = context.expr.value.equals(TRUE) ? FALSE : TRUE;
     }
 
-    protected void OnPreprocessorExpressionConditionalEq() {
+    protected void onPreprocessorExpressionConditionalEq() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
         context.value = (Objects.equals(context.expr1.value, context.expr2.value) ? TRUE : FALSE);
     }
 
-    protected void OnPreprocessorExpressionConditionalNe() {
+    protected void onPreprocessorExpressionConditionalNe() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
         context.value = (!Objects.equals(context.expr1.value, context.expr2.value) ? TRUE : FALSE);
     }
 
-    protected void OnPreprocessorExpressionConditionalAnd() {
+    protected void onPreprocessorExpressionConditionalAnd() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
         context.value = (context.expr1.value.equals(TRUE) && context.expr2.value.equals(TRUE) ? TRUE : FALSE);
     }
 
-    protected void OnPreprocessorExpressionConditionalOr() {
+    protected void onPreprocessorExpressionConditionalOr() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
         context.value = (context.expr1.value.equals(TRUE) || context.expr2.value.equals(TRUE) ? TRUE : FALSE);
