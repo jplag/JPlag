@@ -18,7 +18,7 @@ In the following, a list of all supported languages with their supported languag
 | Language | Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/3.-Language-Modules) | parser
 | --- | ---: | --- | :---: | :---: |
 | [Java](https://www.java.com) | 17 | java | mature | JavaC |
-| [C++](https://isocpp.org) | ? | cpp | legacy | JavaCC |
+| [C++](https://isocpp.org) | 11 | cpp | legacy | JavaCC |
 | [C#](https://docs.microsoft.com/en-us/dotnet/csharp/) | 8 | csharp | beta | ANTLR 4 |
 | [Go](https://go.dev) | 1.17 | golang | beta | ANTLR 4 |
 | [Kotlin](https://kotlinlang.org) | 1.3 | kotlin | beta | ANTLR 4 |
