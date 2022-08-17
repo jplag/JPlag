@@ -1,7 +1,5 @@
 package de.jplag.options;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -16,9 +14,12 @@ public enum LanguageOption {
     GO_LANG("golang", "de.jplag.golang.Language"),
     KOTLIN("kotlin", "de.jplag.kotlin.Language"),
     R_LANG("rlang", "de.jplag.rlang.Language"),
+    SCALA("scala", "de.jplag.scala.Language"),
     CHAR("char", "de.jplag.chars.Language"),
     TEXT("text", "de.jplag.text.Language"),
-    SCHEME("scheme", "de.jplag.scheme.Language");
+    SCHEME("scheme", "de.jplag.scheme.Language"),
+    EMF("emf-metamodel", "de.jplag.emf.Language"),
+    EMF_DYNAMIC("emf-metamodel-dynamic", "de.jplag.emf.dynamic.Language");
 
     private final String classPath;
     private final String displayName;
@@ -42,7 +43,7 @@ public enum LanguageOption {
     }
 
     public static Collection<String> getAllDisplayNames() {
-        return Arrays.stream(LanguageOption.values()).map(languageOption -> languageOption.displayName).collect(toList());
+        return Arrays.stream(LanguageOption.values()).map(languageOption -> languageOption.displayName).toList();
     }
 
     public static LanguageOption getDefault() {

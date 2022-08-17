@@ -1,5 +1,6 @@
 package de.jplag;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -25,6 +26,21 @@ class NormalComparisonTest extends TestBase {
         assertEquals(1, result.getAllComparisons().get(0).getMatches().size());
         assertEquals(1, result.getSimilarityDistribution()[3]);
         assertEquals(62.07f, result.getAllComparisons().get(0).similarity(), 0.1f);
+    }
+
+    /**
+     * The simple duplicate with a custom min token match.
+     */
+    @Test
+    void testWithMinTokenMatch() throws ExitException {
+        var expectedDistribution = new int[] {1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.setMinimumTokenMatch(5));
+
+        assertEquals(2, result.getNumberOfSubmissions());
+        assertEquals(1, result.getAllComparisons().size());
+        assertEquals(2, result.getAllComparisons().get(0).getMatches().size());
+        assertArrayEquals(expectedDistribution, result.getSimilarityDistribution());
+        assertEquals(96.55f, result.getAllComparisons().get(0).similarity(), 0.1f);
     }
 
     /**

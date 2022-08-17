@@ -5,7 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -13,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
+import de.jplag.Language;
 import de.jplag.Submission;
 import de.jplag.reporting.jsonfactory.FileWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
@@ -90,13 +95,15 @@ public class ReportObjectFactory {
         List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
         var submissions = getSubmissions(comparisons);
         var submissionsPath = createDirectory(path, SUBMISSIONS_FOLDER);
+        Language language = result.getOptions().getLanguage();
         for (var submission : submissions) {
             File directory = createDirectory(submissionsPath.getPath(), submission.getName());
             for (var file : submission.getFiles()) {
+                var fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
                 try {
-                    Files.copy(file.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(fileToCopy.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
-                    logger.error("Could not save submission file " + file, e);
+                    logger.error("Could not save submission file " + fileToCopy, e);
                 }
             }
         }
