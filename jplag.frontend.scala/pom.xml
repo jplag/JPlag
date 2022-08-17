@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.scalameta</groupId>
             <artifactId>scalameta_${scala.compat.version}</artifactId>
-            <version>4.5.11</version>
+            <version>4.5.13</version>
         </dependency>
 
         <!-- Test -->
