@@ -190,9 +190,7 @@ public final class TokenPrinter {
      * @return the shortened file name
      */
     private static String restoreTokenFileName(String fileName, Optional<String> suffix) {
-        if (suffix.isEmpty()) {
-            return fileName;
-        } else if (!fileName.endsWith(suffix.get())) {
+        if (suffix.isEmpty() || !fileName.endsWith(suffix.get())) {
             return fileName;
         }
 
@@ -212,18 +210,6 @@ public final class TokenPrinter {
             logger.error("Cannot read " + file.getAbsolutePath() + ":", exception);
         }
         return Collections.emptyList();
-    }
-
-    /**
-     * Returns the number of digits (including a minus) of the given number.
-     */
-    private static int digitCount(int number) {
-        if (number == 0) {
-            return 1;
-        }
-        int minusLength = number < 0 ? 1 : 0;
-        // The 'log10' variant is supposedly faster than the 'toString' variant.
-        return (int) Math.log10(Math.abs(number)) + minusLength + 1;
     }
 
     /**
@@ -275,6 +261,18 @@ public final class TokenPrinter {
         private int columnIndex = 1;
         private int lineNumber;
         private int trailingLineSeparators = 0;
+
+        /**
+         * Returns the number of digits (including a minus) of the given number.
+         */
+        private static int digitCount(int number) {
+            if (number == 0) {
+                return 1;
+            }
+            int minusLength = number < 0 ? 1 : 0;
+            // The 'log10' variant is supposedly faster than the 'toString' variant.
+            return (int) Math.log10(Math.abs(number)) + minusLength + 1;
+        }
 
         private void resetLinePosition() {
             columnIndex = 1;
@@ -360,8 +358,8 @@ public final class TokenPrinter {
             }
 
             // The replacement operation preserves TAB characters, which is essential for correct alignment
-            String padding = currentLine.substring(columnIndex - 1, targetPosition - 1).replaceAll(TAB, REPLACE_TABS ? TAB_REPLACEMENT : TAB)
-                    .replaceAll(NON_WHITESPACE, SPACE);
+            String padding = currentLine.substring(columnIndex - 1, targetPosition - 1).replace(TAB, REPLACE_TABS ? TAB_REPLACEMENT : TAB)
+                    .replace(NON_WHITESPACE, SPACE);
             append(padding);
 
             return this;

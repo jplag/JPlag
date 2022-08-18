@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -162,7 +161,7 @@ class ScalaFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).distinct().boxed().toList();
+        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).distinct().boxed().toList();
         var allTokens = IntStream.range(0, ScalaTokenConstants.numberOfTokens()).boxed().toList();
         allTokens = new ArrayList<>(allTokens);
 

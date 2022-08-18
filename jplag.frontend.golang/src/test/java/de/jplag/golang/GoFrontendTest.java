@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -158,7 +157,7 @@ class GoFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).sorted().distinct().boxed().toList();
+        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).sorted().distinct().boxed().toList();
 
         // Exclude SEPARATOR_TOKEN, as it does not occur
         var missingTokenTypes = IntStream.range(0, GoTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).boxed()

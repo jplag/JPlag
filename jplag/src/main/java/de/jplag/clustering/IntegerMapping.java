@@ -24,14 +24,11 @@ public class IntegerMapping<T> {
      * @return the associated integer
      */
     public int map(T value) {
-        Integer result = mapping.get(value);
-        if (result == null) {
+        return mapping.computeIfAbsent(value, val -> {
             int newIndex = size++;
-            mapping.put(value, newIndex);
-            backMapping.add(value);
+            backMapping.add(val);
             return newIndex;
-        }
-        return result;
+        });
     }
 
     /**

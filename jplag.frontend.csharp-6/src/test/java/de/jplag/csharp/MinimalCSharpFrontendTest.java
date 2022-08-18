@@ -9,7 +9,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +50,7 @@ class MinimalCSharpFrontendTest {
 
         // Compare parsed tokens:
         assertEquals(expectedToken.size(), result.size());
-        List<Integer> actualToken = StreamSupport.stream(result.allTokens().spliterator(), false).map(Token::getType).collect(toList());
+        List<Integer> actualToken = result.stream().map(Token::getType).collect(toList());
         assertEquals(expectedToken, actualToken);
     }
 
