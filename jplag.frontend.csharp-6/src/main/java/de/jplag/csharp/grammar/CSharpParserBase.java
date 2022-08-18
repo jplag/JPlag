@@ -3,6 +3,9 @@ package de.jplag.csharp.grammar;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.TokenStream;
 
+import de.jplag.csharp.grammar.CSharpParser.Local_variable_declarationContext;
+import de.jplag.csharp.grammar.CSharpParser.Local_variable_typeContext;
+
 /**
  * This class was taken from <a href="https://github.com/antlr/grammars-v4/tree/master/csharp">antlr/grammars-v4</a>. It
  * was originally written by Ken Domino. Note that this class is licensed under Eclipse Public License - v 1.0.
@@ -12,15 +15,15 @@ public abstract class CSharpParserBase extends Parser {
         super(input);
     }
 
-    protected boolean IsLocalVariableDeclaration() {
-        CSharpParser.Local_variable_declarationContext local_var_decl = (CSharpParser.Local_variable_declarationContext) this._ctx;
-        if (local_var_decl == null)
+    protected boolean isLocalVariableDeclaration() {
+        Local_variable_declarationContext localVariable = (Local_variable_declarationContext) this._ctx;
+        if (localVariable == null) {
             return true;
-        CSharpParser.Local_variable_typeContext local_variable_type = local_var_decl.local_variable_type();
-        if (local_variable_type == null)
+        }
+        Local_variable_typeContext localVariableType = localVariable.local_variable_type();
+        if (localVariableType == null) {
             return true;
-        if (local_variable_type.getText().equals("var"))
-            return false;
-        return true;
+        }
+        return !localVariableType.getText().equals("var");
     }
 }

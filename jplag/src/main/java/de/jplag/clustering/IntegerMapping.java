@@ -20,15 +20,15 @@ public class IntegerMapping<T> {
     }
 
     /**
-     * @param value is added to the mapping (if not already present)
+     * @param key is added to the mapping (if not already present)
      * @return the associated integer
      */
-    public int map(T value) {
-        return mapping.computeIfAbsent(value, val -> {
-            int newIndex = size++;
-            backMapping.add(val);
-            return newIndex;
+    public int map(T key) {
+        mapping.computeIfAbsent(key, it -> {
+            backMapping.add(it);
+            return size++;
         });
+        return mapping.get(key);
     }
 
     /**
