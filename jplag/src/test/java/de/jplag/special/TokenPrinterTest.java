@@ -25,6 +25,7 @@ public class TokenPrinterTest extends TestBase {
 
     private static final int MIN_TOKEN_MATCH = 5;
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
+    private static final String FILES_AS_SUBMISSIONS = "FilesAsSubmissions"; // in the folder 'jplag/src/test/resources/samples'
 
     @Disabled
     @Test
@@ -62,6 +63,21 @@ public class TokenPrinterTest extends TestBase {
     @Test
     void printKotlinFiles() {
         printSubmissions(options -> options.setLanguageOption(LanguageOption.KOTLIN));
+    }
+
+    @Test
+    void printFilesAsSubmissions() {
+        try {
+            JPlagResult result = runJPlag(FILES_AS_SUBMISSIONS, options -> {
+            });
+            for (Submission submission : result.getSubmissions().getSubmissions()) {
+                printSubmission(submission);
+            }
+            System.out.println("JPlag printed " + result.getSubmissions().numberOfSubmissions() + " valid submissions!");
+        } catch (ExitException exception) {
+            System.err.println("JPlag threw Error: " + exception.getMessage());
+            fail();
+        }
     }
 
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {
