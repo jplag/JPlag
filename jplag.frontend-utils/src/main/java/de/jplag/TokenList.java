@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * List of tokens. Allows random access to individual tokens. Contains a hash map for token hashes.
@@ -63,6 +65,14 @@ public class TokenList {
             throw new IllegalArgumentException("Cannot access token with index " + index + ", there are only " + tokens.size() + " tokens!");
         }
         return tokens.get(index);
+    }
+
+    /**
+     * Returns a sequential Stream of the tokens.
+     * @return a stream of the tokens
+     */
+    public final Stream<Token> stream() {
+        return StreamSupport.stream(allTokens().spliterator(), false);
     }
 
     @Override
