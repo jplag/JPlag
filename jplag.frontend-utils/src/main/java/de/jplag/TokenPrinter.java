@@ -259,6 +259,7 @@ public final class TokenPrinter {
         @FunctionalInterface
         interface LineDataConsumer {
             void apply(String file, Integer lineNumber, String text, List<Token> tokens);
+
             default void apply(LineData lineData) {
                 apply(lineData.file, lineData.lineNumber, lineData.text, lineData.tokens);
             }
@@ -285,7 +286,7 @@ public final class TokenPrinter {
          * @return this
          */
         public PrinterOutputBuilder append(String str) {
-            //Avoid too many blank lines
+            // Avoid too many blank lines
             trailingLineSeparators = str.equals(LINE_SEPARATOR) ? trailingLineSeparators + 1 : 0;
             if (trailingLineSeparators >= 2)
                 return this;
