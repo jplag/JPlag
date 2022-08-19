@@ -70,13 +70,15 @@ public class ReportObjectFactory {
         List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().getMaximumNumberOfComparisons());
         var submissions = getSubmissions(comparisons);
         var submissionsPath = createSubmissionsDirectory(path);
-        if (submissionsPath == null)
+        if (submissionsPath == null) {
             return;
+        }
         Language language = result.getOptions().getLanguage();
         for (var submission : submissions) {
             File directory = createSubmissionDirectory(path, submissionsPath, submission);
-            if (directory == null)
+            if (directory == null) {
                 continue;
+            }
             for (var file : submission.getFiles()) {
                 var fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
                 try {
@@ -89,25 +91,21 @@ public class ReportObjectFactory {
     }
 
     private File createSubmissionDirectory(String path, File submissionsPath, Submission submission) {
-        File directory;
         try {
-            directory = createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission));
+            return createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission));
         } catch (IOException e) {
             logger.error("Could not create directory " + path + " for report viewer generation", e);
             return null;
         }
-        return directory;
     }
 
     private File createSubmissionsDirectory(String path) {
-        File submissionsPath;
         try {
-            submissionsPath = createDirectory(path, SUBMISSIONS_FOLDER);
+            return createDirectory(path, SUBMISSIONS_FOLDER);
         } catch (IOException e) {
             logger.error("Could not create directory " + path + " for report viewer generation", e);
             return null;
         }
-        return submissionsPath;
     }
 
     private void writeComparisons(JPlagResult result, String path) {

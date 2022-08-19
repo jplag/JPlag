@@ -3,11 +3,10 @@ package de.jplag.reporting.jsonfactory;
 import java.io.File;
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+/**
+ * Provides Methods for creating directories.
+ */
 public class DirectoryCreator {
-    private static final Logger logger = LoggerFactory.getLogger(DirectoryCreator.class);
 
     /**
      * Creates a directory.

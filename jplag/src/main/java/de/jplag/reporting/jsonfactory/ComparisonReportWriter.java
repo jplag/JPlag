@@ -9,6 +9,10 @@ import de.jplag.*;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
 
+/**
+ * Writes {@link ComparisonReport}s of given {@link JPlagResult} to the disk under the specified path. Instantiated with
+ * a function that associates a submission to its id.
+ */
 public class ComparisonReportWriter {
 
     private static final FileWriter FILE_WRITER = new FileWriter();
@@ -54,19 +58,14 @@ public class ComparisonReportWriter {
     }
 
     private void writeToMap(String id1, String id2, String comparisonFileName) {
-        if (submissionIdToComparisonFileName.containsKey(id1)) {
-            submissionIdToComparisonFileName.get(id1).put(id2, comparisonFileName);
-        } else {
-            HashMap<String, String> map = new HashMap<>();
-            map.put(id2, comparisonFileName);
-            submissionIdToComparisonFileName.put(id1, map);
-        }
+        submissionIdToComparisonFileName.putIfAbsent(id1, new HashMap<>());
+        submissionIdToComparisonFileName.get(id1).put(id2, comparisonFileName);
     }
 
     private String generateComparisonName(String firstSubmissionId, String secondSubmissionId) {
         String name = concatenate(firstSubmissionId, secondSubmissionId);
         String finalName = name;
-        var timesNameAlreadyExists = submissionIdToComparisonFileName.values().stream().filter(map -> map.containsValue(finalName)).count();
+        long timesNameAlreadyExists = submissionIdToComparisonFileName.values().stream().filter(map -> map.containsValue(finalName)).count();
         if (timesNameAlreadyExists > 0) {
             name = concatenate(firstSubmissionId, secondSubmissionId, timesNameAlreadyExists + 1);
         }
