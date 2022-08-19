@@ -1,14 +1,17 @@
 package de.jplag.rust.grammar;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.antlr.v4.runtime.*;
 
 public abstract class RustLexerBase extends Lexer {
+    private Token currentToken;
+    private Token previousToken;
+
     protected RustLexerBase(CharStream input) {
         super(input);
     }
-
-    Token lt1;
-    Token lt2;
 
     @Override
     public Token nextToken() {
@@ -16,79 +19,58 @@ public abstract class RustLexerBase extends Lexer {
 
         if (next.getChannel() == Token.DEFAULT_CHANNEL) {
             // Keep track of the last token on the default channel.
-            this.lt2 = this.lt1;
-            this.lt1 = next;
+            this.previousToken = this.currentToken;
+            this.currentToken = next;
         }
 
         return next;
     }
 
-    public boolean SOF() {
-        return _input.LA(-1) <= 0;
-    }
-
-    public boolean next(char expect) {
-        return _input.LA(1) == expect;
+    public boolean atFileStart() {
+        // Before consuming the first token, input.LA(-1) returns IntStream.EOF = -1
+        return _input.LA(-1) == IntStream.EOF;
     }
 
     public boolean floatDotPossible() {
-        int next = _input.LA(1);
         // only block . _ identifier after float
-        if (next == '.' || next == '_')
-            return false;
-        if (next == 'f') {
-            // 1.f32
-            if (_input.LA(2) == '3' && _input.LA(3) == '2')
-                return true;
-            // 1.f64
-            if (_input.LA(2) == '6' && _input.LA(3) == '4')
-                return true;
+        if (lookAheadMatchesOneOf(".", "_")) {
             return false;
         }
-        if (next >= 'a' && next <= 'z')
-            return false;
-        if (next >= 'A' && next <= 'Z')
-            return false;
+        // 1.f32, 1.f64
+        if (lookAheadMatchesOneOf("f32", "f64")) {
+            return true;
+        }
+
+        int next = _input.LA(1);
+        return !Character.isAlphabetic(next);
+    }
+
+    private boolean lookAheadMatches(String expected) {
+        for (int charIndex = 0; charIndex < expected.length(); charIndex++) {
+            if (_input.LA(charIndex + 1) != expected.charAt(charIndex))
+                return false;
+        }
         return true;
     }
 
+    private boolean lookAheadMatchesOneOf(String... expected) {
+        return Arrays.stream(expected).anyMatch(this::lookAheadMatches);
+    }
+
     public boolean floatLiteralPossible() {
-        if (this.lt1 == null || this.lt2 == null)
+        if (this.currentToken == null || this.currentToken.getType() != RustLexer.DOT) {
             return true;
-        if (this.lt1.getType() != RustLexer.DOT)
+        } else if (this.previousToken == null) {
             return true;
-        switch (this.lt2.getType()) {
-            case RustLexer.CHAR_LITERAL:
-            case RustLexer.STRING_LITERAL:
-            case RustLexer.RAW_STRING_LITERAL:
-            case RustLexer.BYTE_LITERAL:
-            case RustLexer.BYTE_STRING_LITERAL:
-            case RustLexer.RAW_BYTE_STRING_LITERAL:
-            case RustLexer.INTEGER_LITERAL:
-            case RustLexer.DEC_LITERAL:
-            case RustLexer.HEX_LITERAL:
-            case RustLexer.OCT_LITERAL:
-            case RustLexer.BIN_LITERAL:
-
-            case RustLexer.KW_SUPER:
-            case RustLexer.KW_SELFVALUE:
-            case RustLexer.KW_SELFTYPE:
-            case RustLexer.KW_CRATE:
-            case RustLexer.KW_DOLLARCRATE:
-
-            case RustLexer.GT:
-            case RustLexer.RCURLYBRACE:
-            case RustLexer.RSQUAREBRACKET:
-            case RustLexer.RPAREN:
-
-            case RustLexer.KW_AWAIT:
-
-            case RustLexer.NON_KEYWORD_IDENTIFIER:
-            case RustLexer.RAW_IDENTIFIER:
-            case RustLexer.KW_MACRORULES:
-                return false;
-            default:
-                return true;
         }
+
+        int type = this.previousToken.getType();
+        List<Integer> noFloatLiteralTypes = List.of(RustLexer.CHAR_LITERAL, RustLexer.STRING_LITERAL, RustLexer.RAW_STRING_LITERAL,
+                RustLexer.BYTE_LITERAL, RustLexer.BYTE_STRING_LITERAL, RustLexer.RAW_BYTE_STRING_LITERAL, RustLexer.INTEGER_LITERAL,
+                RustLexer.DEC_LITERAL, RustLexer.HEX_LITERAL, RustLexer.OCT_LITERAL, RustLexer.BIN_LITERAL, RustLexer.KW_SUPER,
+                RustLexer.KW_SELFVALUE, RustLexer.KW_SELFTYPE, RustLexer.KW_CRATE, RustLexer.KW_DOLLARCRATE, RustLexer.GT, RustLexer.RCURLYBRACE,
+                RustLexer.RSQUAREBRACKET, RustLexer.RPAREN, RustLexer.KW_AWAIT, RustLexer.NON_KEYWORD_IDENTIFIER, RustLexer.RAW_IDENTIFIER,
+                RustLexer.KW_MACRORULES);
+        return !noFloatLiteralTypes.contains(type);
     }
 }
