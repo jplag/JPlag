@@ -75,12 +75,14 @@ public class DirectoryManager {
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
                     logger.error("Unable to zip " + file, exc);
-                    return FileVisitResult.CONTINUE;
+                    throw exc;
                 }
             });
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            deleteDirectory(zipName);
             return false;
         }
         return true;
