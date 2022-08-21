@@ -7,11 +7,11 @@ import de.jplag.JPlagComparison;
 
 public class ExpectedResult {
 
-	@JsonProperty("result_minimal_similarity")
+	@JsonProperty("minimal_similarity")
 	private float resultSimilarityMinimum;
-	@JsonProperty("result_maximum_similarity")
+	@JsonProperty("maximum_similarity")
 	private float resultSimilarityMaximum;
-	@JsonProperty("result_matched_token_number")
+	@JsonProperty("matched_token_number")
 	private int resultMatchedTokenNumber;
 
 	public ExpectedResult(float resultSimilarityMinimum, float resultSimilarityMaximum,
