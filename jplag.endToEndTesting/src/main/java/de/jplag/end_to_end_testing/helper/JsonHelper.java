@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.end_to_end_testing.model.Options;
 import de.jplag.end_to_end_testing.model.ResultDescription;
+import de.jplag.options.LanguageOption;
 
 public class JsonHelper {
 	/**
@@ -22,7 +23,7 @@ public class JsonHelper {
 	private JsonHelper() {
 		// For Serialization
 	}
-	
+
 	/**
 	 * Parsing the old results in the json file as a list from ResultDescription.
 	 * 
@@ -31,14 +32,18 @@ public class JsonHelper {
 	 * @throws IOException is thrown for all problems that may occur while parsing
 	 *                     the json file. This includes both reading
 	 */
-  public static List<ResultDescription> getJsonModelListFromPath(Path resultJsonPath) throws IOException {
-  if (resultJsonPath.toFile().exists() && resultJsonPath.toFile().length() > 0) {
-      return Arrays.asList(new ObjectMapper().readValue(resultJsonPath.toFile(), ResultDescription[].class));
-  } else {
-      return Collections.<ResultDescription>emptyList();
-  }
-}
-	
+	public static List<ResultDescription> getJsonModelListFromPath(String directoryName, LanguageOption languageOption)
+			throws IOException {
+
+		Path jsonPath = Path.of(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toString(), languageOption.toString(),
+				directoryName + ".json");
+
+		if (jsonPath.toFile().exists() && jsonPath.toFile().length() > 0) {
+			return Arrays.asList(new ObjectMapper().readValue(jsonPath.toFile(), ResultDescription[].class));
+		} else {
+			return Collections.<ResultDescription>emptyList();
+		}
+	}
 
 //	public static void writeToJsonFile(ResultDescription resultDescription, String directoryName) throws IOException {
 //		// create an instance of DefaultPrettyPrinter
@@ -55,27 +60,30 @@ public class JsonHelper {
 //
 //	}
 
-  /**
-  * Saves the passed object as a json file to the given path
-  * @param jsonModelList list of elements to be saved
-  * @param temporaryResultDirectory path to the temporary storage location
-  * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
-  * exceptions produced by failed orinterrupted I/O operations.
-  */
- public static void writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptionist, String directoryName) throws IOException {
-     // create an instance of DefaultPrettyPrinter
-     // new DefaultPrettyPrinter()
-     ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
+	/**
+	 * Saves the passed object as a json file to the given path
+	 * 
+	 * @param jsonModelList            list of elements to be saved
+	 * @param temporaryResultDirectory path to the temporary storage location
+	 * @throws IOException Signals that an I/O exception of some sort has occurred.
+	 *                     Thisclass is the general class of exceptions produced by
+	 *                     failed orinterrupted I/O operations.
+	 */
+	public static void writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptionist, String directoryName)
+			throws IOException {
+		// create an instance of DefaultPrettyPrinter
+		// new DefaultPrettyPrinter()
+		ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
-     Path temporaryDirectory = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME,
-    		 resultDescriptionist.get(0).getLanguageOption().toString() , directoryName + ".json");
-    		 
-     FileHelper.createDirectoryIfItDoseNotExist(temporaryDirectory.getParent().toFile());
-     FileHelper.createFileIfItDoseNotExist(temporaryDirectory.toFile());
+		Path temporaryDirectory = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(),
+				resultDescriptionist.get(0).getLanguageOption().toString(), directoryName + ".json");
 
-     // convert book object to JSON file
+		FileHelper.createDirectoryIfItDoseNotExist(temporaryDirectory.getParent().toFile());
+		FileHelper.createFileIfItDoseNotExist(temporaryDirectory.toFile());
 
-     writer.writeValue(temporaryDirectory.toFile(), resultDescriptionist.toArray());
+		// convert book object to JSON file
 
- }
+		writer.writeValue(temporaryDirectory.toFile(), resultDescriptionist.toArray());
+
+	}
 }

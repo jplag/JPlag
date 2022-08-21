@@ -79,6 +79,6 @@ public class JPlagTestSuiteHelper {
      * @throws IOException if an I/O error occurs
      */
     public static void clear() throws IOException {
-        FileHelper.deleteCopiedFiles(new File(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME));
+        FileHelper.deleteCopiedFiles(new File(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString()));
     }
 }

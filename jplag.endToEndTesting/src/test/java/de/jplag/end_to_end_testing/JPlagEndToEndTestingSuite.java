@@ -1,6 +1,7 @@
 package de.jplag.end_to_end_testing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -13,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -57,15 +59,16 @@ public class JPlagEndToEndTestingSuite {
 		options = new ArrayList<>();
 		options.add(new Options(1));
 		options.add(new Options(15));
-		
-		var test = JsonHelper.getJsonModelListFromPath(Path.of(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toString() , "JavaResult.json"));
+
+		// var test =
+		// JsonHelper.getJsonModelListFromPath(Path.of(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toString()
+		// , "JavaResult.json"));
 	}
 
 	@AfterAll
 	public static void tearDown() throws IOException {
-		for(var test : temporaryResultList.entrySet())
-		{
-			JsonHelper.writeJsonModelsToJsonFile(test.getValue() , test.getKey());
+		for (var test : temporaryResultList.entrySet()) {
+			JsonHelper.writeJsonModelsToJsonFile(test.getValue(), test.getKey());
 		}
 		var test = "";
 	}
@@ -82,22 +85,30 @@ public class JPlagEndToEndTestingSuite {
 	/**
 	 * 
 	 * @return
+	 * @throws IOException
 	 */
 	@TestFactory
-	Collection<DynamicTest> dynamicOverAllTest() {
+	Collection<DynamicTest> dynamicOverAllTest() throws IOException {
 		for (Entry<LanguageOption, Map<String, Path>> languageMap : LanguageToTestCaseMapper.entrySet()) {
 			LanguageOption currentLanguageOption = languageMap.getKey();
 			for (Entry<String, Path> languagePaths : languageMap.getValue().entrySet()) {
 				String[] fileNames = FileHelper.loadAllTestFileNames(languagePaths.getValue());
 				var testCases = JPlagTestSuiteHelper.getPermutation(fileNames, languagePaths.getValue());
 				var testCollection = new ArrayList<DynamicTest>();
+				String directoryName = languagePaths.getValue().getFileName().toString();
+				List<ResultDescription> tempResult = JsonHelper.getJsonModelListFromPath(directoryName, currentLanguageOption);
 				for (Options option : options) {
 					for (var testCase : testCases) {
+						Optional<ResultDescription> currentResultDescription = tempResult.stream()
+								.filter(x -> x.getOptions().equals(option)).findFirst();
+						
 						testCollection.add(DynamicTest
 								.dynamicTest(getTestCaseDisplayName(option, currentLanguageOption, testCase), () -> {
 									try {
-										runJPlagTestSuite(languagePaths.getValue().getFileName().toString(), option,
-												currentLanguageOption, testCase);
+										ResultDescription currentResult = currentResultDescription.isPresent() ? 
+												currentResultDescription.get() : null;
+										runJPlagTestSuite(directoryName, option, currentLanguageOption, testCase,
+												currentResult);
 									} finally {
 										JPlagTestSuiteHelper.clear();
 									}
@@ -110,19 +121,10 @@ public class JPlagEndToEndTestingSuite {
 		return null;
 	}
 
-	/**
-	 * 
-	 * @param options
-	 * @param languageOption
-	 * @param testFiles
-	 * @param excludedFileNames
-	 * @throws ExitException
-	 * @throws NoSuchAlgorithmException
-	 * @throws NameNotFoundException
-	 * @throws IOException
-	 */
+
 	private void runJPlagTestSuite(String directoryName, Options options, LanguageOption languageOption,
-			String[] testFiles) throws ExitException, NoSuchAlgorithmException, NameNotFoundException, IOException {
+			String[] testFiles, ResultDescription currentResultDescription)
+			throws ExitException, NoSuchAlgorithmException, NameNotFoundException, IOException {
 		String[] submissionPath = FileHelper.createNewTestCaseDirectory(testFiles);
 
 		JPlagOptions jplagOptions = new JPlagOptions(Arrays.asList(submissionPath), new ArrayList<>(), languageOption);
@@ -130,7 +132,7 @@ public class JPlagEndToEndTestingSuite {
 		jplagOptions.setMinimumTokenMatch(options.getMinimumTokenMatch());
 
 		JPlagResult jplagResult = new JPlag(jplagOptions).run();
-		var currentOption = new Options(jplagOptions);
+		Options currentOption = new Options(jplagOptions);
 
 		List<JPlagComparison> currentJPlagComparison = jplagResult.getAllComparisons();
 
@@ -138,23 +140,19 @@ public class JPlagEndToEndTestingSuite {
 		// ,testCaseModel.getFunctionName());
 
 		for (JPlagComparison jPlagComparison : currentJPlagComparison) {
+			String identifier = JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison);
 			addToTemporaryResultMap(directoryName, options, jPlagComparison, languageOption);
-//			Map<String,ResultDescription> tempMap = new HashMap<>();
-//			tempMap.put(directoryName, new ResultDescription(options, jPlagComparison, languageOption));
-//			//temporaryResultMap.put(directoryName, new ResultDescription(options, jPlagComparison ,languageOption));
-//			temporaryResultList.add(tempMap);
-//			addToTemporaryResultMap(directoryName, new ResultDescription(options, jPlagComparison ,languageOption));
+			assertNotNull(currentResultDescription , "No stored result could be found for the current LanguageOption! " + options.toString());
+			var result = currentResultDescription
+					.getExpectedResultByIdentifier(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison));
 
-//	            String hashCode = JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison);
-//	            
-//	            ResultModel resultModel = testCaseModel.getCurrentJsonModel().getResultModelById(hashCode);
-//	            assertNotNull(resultModel, "No stored result could be found for the identifier! " + hashCode);
-//	            assertEquals(resultModel.getMinimalSimilarity(), jPlagComparison.minimalSimilarity(),
-//	                    "The JPlag results [minimalSimilarity] do not match the stored values!");
-//	            assertEquals(resultModel.getMaximalSimilarity(), jPlagComparison.maximalSimilarity(),
-//	                    "The JPlag results [maximalSimilarity] do not match the stored values!");
-//	            assertEquals(resultModel.getNumberOfMatchedTokens(), jPlagComparison.getNumberOfMatchedTokens(),
-//	                    "The JPlag results [numberOfMatchedTokens] do not match the stored values!");
+			assertNotNull(result, "No stored result could be found for the identifier! " + identifier);
+			assertEquals(result.getResultSimilarityMinimum(), jPlagComparison.minimalSimilarity(),
+					"The JPlag results [minimalSimilarity] do not match the stored values!");
+			assertEquals(result.getResultSimilarityMaximum(), jPlagComparison.maximalSimilarity(),
+					"The JPlag results [maximalSimilarity] do not match the stored values!");
+			assertEquals(result.getResultMatchedTokenNumber(), jPlagComparison.getNumberOfMatchedTokens(),
+					"The JPlag results [numberOfMatchedTokens] do not match the stored values!");
 		}
 		assertEquals(1, 1);
 	}
@@ -162,23 +160,21 @@ public class JPlagEndToEndTestingSuite {
 	private void addToTemporaryResultMap(String directoryName, Options options, JPlagComparison jPlagComparison,
 			LanguageOption languageOption) {
 		var element = temporaryResultList.get(directoryName);
-		if(element != null) {
-			for(var item : element)
-			{
-				if(item.getOptions().equals(options))
-				{
-					item.putIdenfifierToResultMap(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison));
+		if (element != null) {
+			for (var item : element) {
+				if (item.getOptions().equals(options)) {
+					item.putIdenfifierToResultMap(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison),
+							new ExpectedResult(jPlagComparison));
 					return;
 				}
-				
+
 			}
 			element.add(new ResultDescription(options, jPlagComparison, languageOption));
 //			element.get(0).putIdenfifierToResultMap(directoryName, new ExpectedResult(jPlagComparison));
 //			element.add(new ResultDescription(options, jPlagComparison, languageOption));
-		}
-		else {
+		} else {
 			var temporaryNewResultList = new ArrayList<ResultDescription>();
-			temporaryNewResultList.add( new ResultDescription(options, jPlagComparison, languageOption));
+			temporaryNewResultList.add(new ResultDescription(options, jPlagComparison, languageOption));
 			temporaryResultList.put(directoryName, temporaryNewResultList);
 		}
 	}

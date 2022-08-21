@@ -48,5 +48,5 @@ public final class TestDirectoryConstants {
    * Create the complete path to the submission files. Here the temporary system path is extended with the
    * "SUBMISSION_DIRECTORY_NAME", which is predefined in this class.
    */
-  public static final String TEMPORARY_SUBMISSION_DIRECTORY_NAME = Path.of("target", "testing-directory-submission").toString();
+  public static final Path TEMPORARY_SUBMISSION_DIRECTORY_NAME = Path.of("target", "testing-directory-submission");
 }

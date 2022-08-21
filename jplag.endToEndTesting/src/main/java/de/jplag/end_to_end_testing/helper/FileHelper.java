@@ -73,9 +73,9 @@ public class FileHelper {
 		String[] returnSubmissionPath = new String[classNames.length];
 		for (int counter = 0; counter < classNames.length; counter++) {
 			Path originalPath = Path.of(classNames[counter]);
-			returnSubmissionPath[counter] = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME,
+			returnSubmissionPath[counter] = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(),
 					"submission" + (counter + 1)).toAbsolutePath().toString();
-			Path copiePath = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME,
+			Path copiePath = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(),
 					"submission" + (counter + 1), originalPath.getFileName().toString());
 
 			File directory = new File(copiePath.toString());
