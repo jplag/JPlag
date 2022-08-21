@@ -1,7 +1,5 @@
 package de.jplag.options;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -45,7 +43,7 @@ public enum LanguageOption {
     }
 
     public static Collection<String> getAllDisplayNames() {
-        return Arrays.stream(LanguageOption.values()).map(languageOption -> languageOption.displayName).collect(toList());
+        return Arrays.stream(LanguageOption.values()).map(languageOption -> languageOption.displayName).toList();
     }
 
     public static LanguageOption getDefault() {
