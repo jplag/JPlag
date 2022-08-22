@@ -15,6 +15,11 @@ import de.jplag.options.LanguageOption;
 
 public class JPlagTestSuiteHelper {
 
+    /**
+     * Loads all existing test data into a test structure. the complex structure consists of the LanguageOption and their
+     * data to be tested. These are divided into folders. for more information please read the README file
+     * @return mapped LanguageOption to the data under test
+     */
     public static Map<LanguageOption, Map<String, Path>> getAllLanguageResources() {
         String[] languageDirectoryNames = FileHelper.getAllDirectoriesInPath(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES);
         List<LanguageOption> languageInPathList = FileHelper.getLanguageOptionsFromPath(languageDirectoryNames);
@@ -48,6 +53,12 @@ public class JPlagTestSuiteHelper {
                 : testFileNamesInSecondSubmission + "_" + testFileNamesInFirstSubmission;
     }
 
+    /**
+     * Creates the permutation of all data contained in the passed parameters and adds it to the given path.
+     * @param fileNames for which the permutations are needed
+     * @param path to which the permutations are to be copied
+     * @return all permutations of the specified files to the path specified
+     */
     public static ArrayList<String[]> getPermutation(String[] fileNames, Path path) {
         ArrayList<String[]> testCases = new ArrayList<>();
         int outerCounter = 1;
@@ -61,13 +72,6 @@ public class JPlagTestSuiteHelper {
         return testCases;
     }
 
-    public static String[] getExcludetetFileNames(String[] testFileNames, String[] allFileNames) {
-        List<String> list = new ArrayList<String>(Arrays.asList(allFileNames));
-        list.remove(testFileNames);
-        return list.toArray(new String[0]);
-    }
-
-    //
     /**
      * The copied data should be deleted after instance closure
      * @throws IOException if an I/O error occurs

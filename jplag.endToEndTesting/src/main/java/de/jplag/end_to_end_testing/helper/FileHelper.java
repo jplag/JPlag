@@ -13,6 +13,9 @@ import java.util.List;
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.options.LanguageOption;
 
+/**
+ * Helper class to perform all necessary operations or functions on files or folders.
+ */
 public class FileHelper {
 
     /**
@@ -32,6 +35,7 @@ public class FileHelper {
 
     /**
      * Load all possible language is resource path
+     * @param directoryNames folder names for which the language options should be listed.
      * @return list of all LanguageOptions included in the resource path
      */
     public static List<LanguageOption> getLanguageOptionsFromPath(String[] directoryNames) {
@@ -46,8 +50,8 @@ public class FileHelper {
     }
 
     /**
-     * @param directorieRoot
-     * @return
+     * @param directorieRoot path from which all folders should be loaded
+     * @return all folders found in the specified path
      */
     public static String[] getAllDirectoriesInPath(Path directorieRoot) {
         return directorieRoot.toFile().list(new FilenameFilter() {
@@ -60,6 +64,12 @@ public class FileHelper {
 
     /**
      * Copies the passed filenames to a temporary path to use them in the tests
+     * @throws IOException Exception can be thrown in cases that involve reading, copying or locating files.
+     */
+    /**
+     * Copies the passed filenames to a temporary path to use them in the tests
+     * @param classNames for which the test case is to be created
+     * @return paths created to the test submissions
      * @throws IOException Exception can be thrown in cases that involve reading, copying or locating files.
      */
     public static String[] createNewTestCaseDirectory(String[] classNames) throws IOException {
@@ -84,7 +94,7 @@ public class FileHelper {
 
     /**
      * Delete directory with including files
-     * @param file Path to a folder or file to be deleted. This happens recursively to the path
+     * @param folder Path to a folder or file to be deleted. This happens recursively to the path
      * @throws IOException if an I/O error occurs
      */
     public static void deleteCopiedFiles(File folder) throws IOException {
@@ -138,6 +148,10 @@ public class FileHelper {
         return fileNames;
     }
 
+    /**
+     * @param file for which the exception text is to be created
+     * @return exception text for the specified file
+     */
     private static String createNewIOExceptionStringForFileOrFOlderCreation(File file) {
         return "The file/folder at the location [" + file.toString() + "] could not be created!";
     }

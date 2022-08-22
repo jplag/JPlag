@@ -22,8 +22,8 @@ public class JsonHelper {
     }
 
     /**
-     * Parsing the old results in the json file as a list from ResultDescription.
-     * @param resultJsonPath Path to the stored test results
+     * @param directoryName name to the result path
+     * @param languageOption for which the results are to be loaded
      * @return ResultDescription as serialized object
      * @throws IOException is thrown for all problems that may occur while parsing the json file. This includes both reading
      */
@@ -40,8 +40,8 @@ public class JsonHelper {
 
     /**
      * Saves the passed object as a json file to the given path
-     * @param jsonModelList list of elements to be saved
-     * @param temporaryResultDirectory path to the temporary storage location
+     * @param resultDescriptionist list of elements to be saved
+     * @param directoryName path to the temporary storage location
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      */

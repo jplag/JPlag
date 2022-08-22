@@ -34,8 +34,13 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 
+/**
+ * Main test class for end-to-end testing in all language. The test cases aim to detect changes in the detection of
+ * plagiarism in the Java language and to be able to roughly categorize them. The plagiarism is compared with the
+ * original class. The results are compared with the results from previous tests and changes are detected.
+ */
 public class JPlagEndToEndTestingSuite {
-    // Language -> direcotry names and Paths
+    // Language -> directory names and Paths
     private Map<LanguageOption, Map<String, Path>> LanguageToTestCaseMapper;
     private List<Options> options;
 
@@ -51,10 +56,6 @@ public class JPlagEndToEndTestingSuite {
         options = new ArrayList<>();
         options.add(new Options(1));
         options.add(new Options(15));
-
-        // var test =
-        // JsonHelper.getJsonModelListFromPath(Path.of(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toString()
-        // , "JavaResult.json"));
     }
 
     @AfterAll
@@ -64,19 +65,11 @@ public class JPlagEndToEndTestingSuite {
         }
         var test = "";
     }
-    // @AfterAll
-    // public static void tearDown() throws IOException {
-    // for(Entry<String, ResultDescription> temporaryRestultElement : temporaryResultMap.entrySet())
-    // {
-    // var test = temporaryResultMap.get(temporaryRestultElement.getKey());
-    // JsonHelper.writeToJsonFile(temporaryRestultElement.getValue(), temporaryRestultElement.getKey());
-    // }
-    // var tes = "";
-    // }
 
     /**
-     * @return
-     * @throws IOException
+     * Creates the test cases over all language options for which data is available and the current test options.
+     * @return dynamic test cases across all test data and languages
+     * @throws IOException is thrown for all problems that may occur while parsing the json file. This includes both reading
      */
     @TestFactory
     Collection<DynamicTest> dynamicOverAllTest() throws IOException {
