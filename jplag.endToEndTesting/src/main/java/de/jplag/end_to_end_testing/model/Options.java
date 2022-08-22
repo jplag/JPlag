@@ -41,12 +41,22 @@ public class Options {
     @JsonIgnore
     @Override
     public boolean equals(Object options) {
-        if (options instanceof Options) {
-            return minimumTokenMatch == ((Options) options).getMinimumTokenMatch();
+        if (options instanceof Options optionsCaseted) {
+            return minimumTokenMatch == optionsCaseted.getMinimumTokenMatch();
         } else {
             return false;
         }
+    }
 
+    /**
+     * Creates the hashCode for the AKtuelle Options object
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + minimumTokenMatch;
+        return result;
     }
 
     /**

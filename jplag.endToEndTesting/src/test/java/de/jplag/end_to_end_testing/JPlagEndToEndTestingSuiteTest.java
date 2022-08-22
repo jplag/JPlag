@@ -39,7 +39,7 @@ import de.jplag.options.LanguageOption;
  * plagiarism in the Java language and to be able to roughly categorize them. The plagiarism is compared with the
  * original class. The results are compared with the results from previous tests and changes are detected.
  */
-public class JPlagEndToEndTestingSuite {
+public class JPlagEndToEndTestingSuiteTest {
     // Language -> directory names and Paths
     private Map<LanguageOption, Map<String, Path>> LanguageToTestCaseMapper;
     private List<Options> options;
@@ -48,8 +48,8 @@ public class JPlagEndToEndTestingSuite {
     // private static Map<String, ResultDescription> temporaryResultMap;
     // private static Map<String, List<Options , ExpectedResult>>
     // temporaryResultMap;
-
-    public JPlagEndToEndTestingSuite() throws IOException {
+	
+    public JPlagEndToEndTestingSuiteTest() throws IOException {
         LanguageToTestCaseMapper = JPlagTestSuiteHelper.getAllLanguageResources();
         temporaryResultList = new HashMap<>();
 
@@ -132,7 +132,6 @@ public class JPlagEndToEndTestingSuite {
             assertEquals(result.getResultMatchedTokenNumber(), jPlagComparison.getNumberOfMatchedTokens(),
                     "The JPlag results [numberOfMatchedTokens] do not match the stored values!");
         }
-        assertEquals(1, 1);
     }
 
     private void addToTemporaryResultMap(String directoryName, Options options, JPlagComparison jPlagComparison, LanguageOption languageOption) {
