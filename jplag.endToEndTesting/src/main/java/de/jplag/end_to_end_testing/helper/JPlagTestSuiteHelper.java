@@ -16,6 +16,13 @@ import de.jplag.options.LanguageOption;
 public class JPlagTestSuiteHelper {
 
     /**
+     * private constructor to prevent instantiation
+     */
+    private JPlagTestSuiteHelper() {
+        // For Serialization
+    }
+
+    /**
      * Loads all existing test data into a test structure. the complex structure consists of the LanguageOption and their
      * data to be tested. These are divided into folders. for more information please read the README file
      * @return mapped LanguageOption to the data under test
@@ -47,10 +54,10 @@ public class JPlagTestSuiteHelper {
         String testFileNamesInFirstSubmission = FileHelper.getEnclosedFileNamesFromCollection(jPlagComparison.getFirstSubmission().getFiles());
         String testFileNamesInSecondSubmission = FileHelper.getEnclosedFileNamesFromCollection(jPlagComparison.getSecondSubmission().getFiles());
 
-        int compaire = testFileNamesInFirstSubmission.compareTo(testFileNamesInSecondSubmission);
+        int compare = testFileNamesInFirstSubmission.compareTo(testFileNamesInSecondSubmission);
 
-        return compaire < 0 ? testFileNamesInFirstSubmission + "_" + testFileNamesInSecondSubmission
-                : testFileNamesInSecondSubmission + "_" + testFileNamesInFirstSubmission;
+        return compare < 0 ? testFileNamesInFirstSubmission + "-" + testFileNamesInSecondSubmission
+                : testFileNamesInSecondSubmission + "-" + testFileNamesInFirstSubmission;
     }
 
     /**

@@ -45,10 +45,7 @@ public class FileHelper {
     public static List<LanguageOption> getLanguageOptionsFromPath(String[] directoryNames) {
         List<LanguageOption> returnList = new ArrayList<>();
         for (String languageDirectoryName : directoryNames) {
-            try {
-                returnList.add(LanguageOption.valueOf(languageDirectoryName));
-            } catch (IllegalArgumentException e) {
-            }
+            returnList.add(LanguageOption.valueOf(languageDirectoryName));
         }
         return returnList;
     }
