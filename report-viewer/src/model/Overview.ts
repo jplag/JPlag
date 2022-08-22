@@ -7,7 +7,7 @@ export class Overview {
   private readonly _language: string;
   private readonly _fileExtensions: Array<string>;
   private readonly _matchSensitivity: number;
-  private readonly _submissionIds: Array<string>;
+  private readonly _submissionIdsToComparisonFileName: Map<string,Map<string,string>>;
   private readonly _dateOfExecution: string;
   private readonly _durationOfExecution: number;
   private readonly _metrics: Array<Metric>;
@@ -19,22 +19,25 @@ export class Overview {
     language: string,
     fileExtensions: Array<string>,
     matchSensitivity: number,
-    submissionIds: Array<string>,
     dateOfExecution: string,
     durationOfExecution: number,
     metrics: Array<Metric>,
-    clusters: Array<Cluster>
+    clusters: Array<Cluster>,
+    submissionIdsToComparisonFileName: Map<string,Map<string,string>>
   ) {
     this._submissionFolderPath = submissionFolderPath;
     this._baseCodeFolderPath = baseCodeFolderPath;
     this._language = language;
     this._fileExtensions = fileExtensions;
     this._matchSensitivity = matchSensitivity;
-    this._submissionIds = submissionIds;
     this._dateOfExecution = dateOfExecution;
     this._durationOfExecution = durationOfExecution;
     this._metrics = metrics;
     this._clusters = clusters;
+    this. _submissionIdsToComparisonFileName = submissionIdsToComparisonFileName;
+  }
+  get submissionIdsToComparisonFileName(): Map<string,Map<string,string>> {
+    return this.submissionIdsToComparisonFileName;
   }
 
   get submissionFolderPath(): Array<string> {
@@ -57,9 +60,6 @@ export class Overview {
     return this._matchSensitivity;
   }
 
-  get submissionIds(): Array<string> {
-    return this._submissionIds;
-  }
 
   get dateOfExecution(): string {
     return this._dateOfExecution;
