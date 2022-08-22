@@ -18,10 +18,10 @@ import de.jplag.options.LanguageOption;
  */
 public class FileHelper {
 
-	private FileHelper() {
-   	 // private constructor to prevent instantiation
+    private FileHelper() {
+        // private constructor to prevent instantiation
     }
-	
+
     /**
      * Merges all contained filenames together without extension
      * @param files whose names are to be merged

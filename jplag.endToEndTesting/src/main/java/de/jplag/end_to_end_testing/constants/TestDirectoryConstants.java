@@ -7,10 +7,10 @@ import java.nio.file.Path;
  */
 public final class TestDirectoryConstants {
 
-     private TestDirectoryConstants() {
-    	 // private constructor to prevent instantiation
-     }
-    
+    private TestDirectoryConstants() {
+        // private constructor to prevent instantiation
+    }
+
     /**
      * Create the complete path to the temporary result files. Here the temporary system path is extended with the
      * "RESULT_DIRECTORY_NAME", which is predefined in this class.

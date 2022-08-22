@@ -48,7 +48,7 @@ public class JPlagEndToEndTestingSuiteTest {
     // private static Map<String, ResultDescription> temporaryResultMap;
     // private static Map<String, List<Options , ExpectedResult>>
     // temporaryResultMap;
-	
+
     public JPlagEndToEndTestingSuiteTest() throws IOException {
         LanguageToTestCaseMapper = JPlagTestSuiteHelper.getAllLanguageResources();
         temporaryResultList = new HashMap<>();
