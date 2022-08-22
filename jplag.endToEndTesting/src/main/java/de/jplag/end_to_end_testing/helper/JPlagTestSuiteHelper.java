@@ -66,7 +66,7 @@ public class JPlagTestSuiteHelper {
      * @param path to which the permutations are to be copied
      * @return all permutations of the specified files to the path specified
      */
-    public static List<String[]> getPermutation(String[] fileNames, Path path) {
+    public static List<String[]> getTestCases(String[] fileNames, Path path) {
         ArrayList<String[]> testCases = new ArrayList<>();
         int outerCounter = 1;
         for (String fileName : fileNames) {

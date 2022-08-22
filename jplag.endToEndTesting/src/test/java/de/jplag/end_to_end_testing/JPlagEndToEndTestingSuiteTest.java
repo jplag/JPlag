@@ -27,9 +27,9 @@ import de.jplag.JPlagResult;
 import de.jplag.end_to_end_testing.helper.FileHelper;
 import de.jplag.end_to_end_testing.helper.JPlagTestSuiteHelper;
 import de.jplag.end_to_end_testing.helper.JsonHelper;
-import de.jplag.end_to_end_testing.model.ExpectedResult;
-import de.jplag.end_to_end_testing.model.Options;
-import de.jplag.end_to_end_testing.model.ResultDescription;
+import de.jplag.end_to_end_testing.modelRecord.ExpectedResult;
+import de.jplag.end_to_end_testing.modelRecord.Options;
+import de.jplag.end_to_end_testing.modelRecord.ResultDescription;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -47,6 +47,7 @@ public class JPlagEndToEndTestingSuiteTest {
 
     private static Map<String, List<ResultDescription>> temporaryResultList;
     private static List<String> validationErrors;
+    private static LanguageOption languageOption;
 
     public JPlagEndToEndTestingSuiteTest() throws IOException {
         LanguageToTestCaseMapper = JPlagTestSuiteHelper.getAllLanguageResources();
@@ -61,7 +62,7 @@ public class JPlagEndToEndTestingSuiteTest {
     @AfterAll
     public static void tearDown() throws IOException {
         for (var test : temporaryResultList.entrySet()) {
-            JsonHelper.writeJsonModelsToJsonFile(test.getValue(), test.getKey());
+            JsonHelper.writeJsonModelsToJsonFile(test.getValue(), test.getKey(), languageOption);
         }
 
     }
@@ -77,13 +78,14 @@ public class JPlagEndToEndTestingSuiteTest {
             LanguageOption currentLanguageOption = languageMap.getKey();
             for (Entry<String, Path> languagePaths : languageMap.getValue().entrySet()) {
                 String[] fileNames = FileHelper.loadAllTestFileNames(languagePaths.getValue());
-                var testCases = JPlagTestSuiteHelper.getPermutation(fileNames, languagePaths.getValue());
+                var testCases = JPlagTestSuiteHelper.getTestCases(fileNames, languagePaths.getValue());
                 var testCollection = new ArrayList<DynamicTest>();
                 String directoryName = languagePaths.getValue().getFileName().toString();
                 List<ResultDescription> tempResult = JsonHelper.getJsonModelListFromPath(directoryName, currentLanguageOption);
+                languageOption = currentLanguageOption;
                 for (Options option : options) {
                     for (var testCase : testCases) {
-                        Optional<ResultDescription> currentResultDescription = tempResult.stream().filter(x -> x.getOptions().equals(option))
+                        Optional<ResultDescription> currentResultDescription = tempResult.stream().filter(x -> x.options().equals(option))
                                 .findFirst();
                         testCollection.add(DynamicTest.dynamicTest(getTestCaseDisplayName(option, currentLanguageOption, testCase), () -> {
                             runTests(directoryName, option, currentLanguageOption, testCase, currentResultDescription);
@@ -113,7 +115,7 @@ public class JPlagEndToEndTestingSuiteTest {
 
         JPlagOptions jplagOptions = new JPlagOptions(Arrays.asList(submissionPath), new ArrayList<>(), languageOption);
 
-        jplagOptions.setMinimumTokenMatch(options.getMinimumTokenMatch());
+        jplagOptions.setMinimumTokenMatch(options.minimumTokenMatch());
 
         JPlagResult jplagResult = new JPlag(jplagOptions).run();
         Options currentOption = new Options(jplagOptions.getMinimumTokenMatch());
@@ -129,16 +131,16 @@ public class JPlagEndToEndTestingSuiteTest {
             ExpectedResult result = currentResultDescription.getExpectedResultByIdentifier(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison));
             assertNotNull(result, "No stored result could be found for the identifier! " + identifier);
 
-            if (Float.compare(result.getResultSimilarityMinimum(), jPlagComparison.minimalSimilarity()) != 0) {
-                addToValidationErrors("minimalSimilarity", String.valueOf(result.getResultSimilarityMinimum()),
+            if (Float.compare(result.resultSimilarityMinimum(), jPlagComparison.minimalSimilarity()) != 0) {
+                addToValidationErrors("minimalSimilarity", String.valueOf(result.resultSimilarityMinimum()),
+                        String.valueOf(jPlagComparison.minimalSimilarity()));
+            }
+            if (Float.compare(result.resultSimilarityMaximum(), jPlagComparison.maximalSimilarity()) != 0) {
+                addToValidationErrors("maximalSimilarity", String.valueOf(result.resultSimilarityMaximum()),
                         String.valueOf(jPlagComparison.maximalSimilarity()));
             }
-            if (Float.compare(result.getResultSimilarityMaximum(), jPlagComparison.maximalSimilarity()) != 0) {
-                addToValidationErrors("maximalSimilarity", String.valueOf(result.getResultSimilarityMaximum()),
-                        String.valueOf(jPlagComparison.maximalSimilarity()));
-            }
-            if (Integer.compare(result.getResultMatchedTokenNumber(), jPlagComparison.getNumberOfMatchedTokens()) != 0) {
-                addToValidationErrors("numberOfMatchedTokens", String.valueOf(result.getResultMatchedTokenNumber()),
+            if (Integer.compare(result.resultMatchedTokenNumber(), jPlagComparison.getNumberOfMatchedTokens()) != 0) {
+                addToValidationErrors("numberOfMatchedTokens", String.valueOf(result.resultMatchedTokenNumber()),
                         String.valueOf(jPlagComparison.getNumberOfMatchedTokens()));
             }
 
@@ -164,18 +166,21 @@ public class JPlagEndToEndTestingSuiteTest {
         var element = temporaryResultList.get(directoryName);
         if (element != null) {
             for (var item : element) {
-                if (item.getOptions().equals(options)) {
-                    item.putIdenfifierToResultMap(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison));
+                if (item.options().equals(options)) {
+                    item.putIdenfifierToResultMap(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(
+                            jPlagComparison.minimalSimilarity(), jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
                     return;
                 }
             }
             Map<String, ExpectedResult> temporaryHashMap = new HashMap<>();
-            temporaryHashMap.put(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison));
+            temporaryHashMap.put(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
+                    jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
             element.add(new ResultDescription(languageOption, options, temporaryHashMap));
         } else {
             var temporaryNewResultList = new ArrayList<ResultDescription>();
             Map<String, ExpectedResult> temporaryHashMap = new HashMap<>();
-            temporaryHashMap.put(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison));
+            temporaryHashMap.put(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
+                    jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
 
             temporaryNewResultList.add(new ResultDescription(languageOption, options, temporaryHashMap));
 
@@ -185,7 +190,7 @@ public class JPlagEndToEndTestingSuiteTest {
 
     private String getTestCaseDisplayName(Options option, LanguageOption languageOption, String[] testFiles) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("(" + String.valueOf(option.getMinimumTokenMatch()) + ")");
+        stringBuilder.append("(" + String.valueOf(option.minimumTokenMatch()) + ")");
         for (int counter = 0; counter < testFiles.length; counter++) {
             String fileName = Path.of(testFiles[counter]).toFile().getName();
             stringBuilder.append(fileName.substring(0, fileName.lastIndexOf('.')));

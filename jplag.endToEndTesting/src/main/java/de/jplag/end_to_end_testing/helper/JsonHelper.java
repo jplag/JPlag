@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
-import de.jplag.end_to_end_testing.model.ResultDescription;
+import de.jplag.end_to_end_testing.modelRecord.ResultDescription;
 import de.jplag.options.LanguageOption;
 
 public class JsonHelper {
@@ -32,6 +32,7 @@ public class JsonHelper {
         Path jsonPath = Path.of(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toString(), languageOption.toString(), directoryName + ".json");
 
         if (jsonPath.toFile().exists() && jsonPath.toFile().length() > 0) {
+
             return Arrays.asList(new ObjectMapper().readValue(jsonPath.toFile(), ResultDescription[].class));
         } else {
             return Collections.<ResultDescription>emptyList();
@@ -45,13 +46,14 @@ public class JsonHelper {
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      */
-    public static void writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptionist, String directoryName) throws IOException {
+    public static void writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptionist, String directoryName, LanguageOption languageOption)
+            throws IOException {
         // create an instance of DefaultPrettyPrinter
         // new DefaultPrettyPrinter()
         ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
-        Path temporaryDirectory = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(),
-                resultDescriptionist.get(0).getLanguageOption().toString(), directoryName + ".json");
+        Path temporaryDirectory = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(), languageOption.toString(),
+                directoryName + ".json");
 
         FileHelper.createDirectoryIfItDoseNotExist(temporaryDirectory.getParent().toFile());
         FileHelper.createFileIfItDoseNotExist(temporaryDirectory.toFile());
