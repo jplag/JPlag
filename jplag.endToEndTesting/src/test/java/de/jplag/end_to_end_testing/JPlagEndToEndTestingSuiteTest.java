@@ -1,7 +1,5 @@
 package de.jplag.end_to_end_testing;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -44,7 +42,7 @@ import de.jplag.options.LanguageOption;
 public class JPlagEndToEndTestingSuiteTest {
     // Language -> directory names and Paths
     private Map<LanguageOption, Map<String, Path>> LanguageToTestCaseMapper;
-    
+
     private List<Options> options;
 
     private static Map<String, List<ResultDescription>> temporaryResultList;
@@ -65,7 +63,7 @@ public class JPlagEndToEndTestingSuiteTest {
         for (var test : temporaryResultList.entrySet()) {
             JsonHelper.writeJsonModelsToJsonFile(test.getValue(), test.getKey());
         }
-        
+
     }
 
     /**
@@ -88,7 +86,7 @@ public class JPlagEndToEndTestingSuiteTest {
                         Optional<ResultDescription> currentResultDescription = tempResult.stream().filter(x -> x.getOptions().equals(option))
                                 .findFirst();
                         testCollection.add(DynamicTest.dynamicTest(getTestCaseDisplayName(option, currentLanguageOption, testCase), () -> {
-                        	runTests(directoryName, option, currentLanguageOption, testCase, currentResultDescription);
+                            runTests(directoryName, option, currentLanguageOption, testCase, currentResultDescription);
                         }));
                     }
                 }
@@ -99,17 +97,16 @@ public class JPlagEndToEndTestingSuiteTest {
     }
 
     private void runTests(String directoryName, Options option, LanguageOption currentLanguageOption, String[] testFiles,
-    		Optional<ResultDescription> currentResultDescription) throws IOException, NoSuchAlgorithmException, NameNotFoundException, ExitException
-    {
-    	try {
+            Optional<ResultDescription> currentResultDescription) throws IOException, NoSuchAlgorithmException, NameNotFoundException, ExitException {
+        try {
             ResultDescription currentResult = currentResultDescription.isPresent() ? currentResultDescription.get() : null;
             runJPlagTestSuite(directoryName, option, currentLanguageOption, testFiles, currentResult);
         } finally {
-        	validationErrors.clear();
+            validationErrors.clear();
             JPlagTestSuiteHelper.clear();
         }
     }
-    
+
     private void runJPlagTestSuite(String directoryName, Options options, LanguageOption languageOption, String[] testFiles,
             ResultDescription currentResultDescription) throws ExitException, NoSuchAlgorithmException, NameNotFoundException, IOException {
         String[] submissionPath = FileHelper.createNewTestCaseDirectory(testFiles);
@@ -126,46 +123,43 @@ public class JPlagEndToEndTestingSuiteTest {
         for (JPlagComparison jPlagComparison : currentJPlagComparison) {
             String identifier = JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison);
             addToTemporaryResultMap(directoryName, options, jPlagComparison, languageOption);
-            
-            assertNotNull(currentResultDescription, "No stored result could be found for the current LanguageOption! " + options.toString());
-            
-            ExpectedResult result = currentResultDescription.getExpectedResultByIdentifier(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison));
-            assertNotNull(result , "No stored result could be found for the identifier! " + identifier);
 
-            if(Float.compare(result.getResultSimilarityMinimum(), jPlagComparison.minimalSimilarity()) != 0)
-            {
-            	addToValidationErrors("minimalSimilarity",String.valueOf(result.getResultSimilarityMinimum()) , String.valueOf(jPlagComparison.maximalSimilarity()));
+            assertNotNull(currentResultDescription, "No stored result could be found for the current LanguageOption! " + options.toString());
+
+            ExpectedResult result = currentResultDescription.getExpectedResultByIdentifier(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison));
+            assertNotNull(result, "No stored result could be found for the identifier! " + identifier);
+
+            if (Float.compare(result.getResultSimilarityMinimum(), jPlagComparison.minimalSimilarity()) != 0) {
+                addToValidationErrors("minimalSimilarity", String.valueOf(result.getResultSimilarityMinimum()),
+                        String.valueOf(jPlagComparison.maximalSimilarity()));
             }
-            if(Float.compare(result.getResultSimilarityMaximum(), jPlagComparison.maximalSimilarity()) != 0)
-            {
-            	addToValidationErrors("maximalSimilarity",String.valueOf(result.getResultSimilarityMaximum()) , String.valueOf(jPlagComparison.maximalSimilarity()));
+            if (Float.compare(result.getResultSimilarityMaximum(), jPlagComparison.maximalSimilarity()) != 0) {
+                addToValidationErrors("maximalSimilarity", String.valueOf(result.getResultSimilarityMaximum()),
+                        String.valueOf(jPlagComparison.maximalSimilarity()));
             }
-            if(Integer.compare(result.getResultMatchedTokenNumber(), jPlagComparison.getNumberOfMatchedTokens())!= 0)
-            {
-            	addToValidationErrors("numberOfMatchedTokens",String.valueOf(result.getResultMatchedTokenNumber()) , String.valueOf(jPlagComparison.getNumberOfMatchedTokens()));
+            if (Integer.compare(result.getResultMatchedTokenNumber(), jPlagComparison.getNumberOfMatchedTokens()) != 0) {
+                addToValidationErrors("numberOfMatchedTokens", String.valueOf(result.getResultMatchedTokenNumber()),
+                        String.valueOf(jPlagComparison.getNumberOfMatchedTokens()));
             }
-            
-            assertTrue(validationErrors.isEmpty() , createValidationErrorOutout());
+
+            assertTrue(validationErrors.isEmpty(), createValidationErrorOutout());
         }
     }
-   
 
-    private void addToValidationErrors(String valueName, String currentValue ,String expectedValue)
-    {
-    	validationErrors.add(valueName + " was " + currentValue + " but expected " + expectedValue);
+    private void addToValidationErrors(String valueName, String currentValue, String expectedValue) {
+        validationErrors.add(valueName + " was " + currentValue + " but expected " + expectedValue);
     }
-    
-    private String createValidationErrorOutout()
-    {
-    	String errorString = System.lineSeparator() + "There were <" + validationErrors.size() +"> validation error(s):" + System.lineSeparator();
-    	
-    	for (String error : validationErrors) {
-    		errorString += error + System.lineSeparator();
-		}
-    	
-    	return errorString;
+
+    private String createValidationErrorOutout() {
+        String errorString = System.lineSeparator() + "There were <" + validationErrors.size() + "> validation error(s):" + System.lineSeparator();
+
+        for (String error : validationErrors) {
+            errorString += error + System.lineSeparator();
+        }
+
+        return errorString;
     }
-    
+
     private void addToTemporaryResultMap(String directoryName, Options options, JPlagComparison jPlagComparison, LanguageOption languageOption) {
         var element = temporaryResultList.get(directoryName);
         if (element != null) {
@@ -188,7 +182,6 @@ public class JPlagEndToEndTestingSuiteTest {
             temporaryResultList.put(directoryName, temporaryNewResultList);
         }
     }
-
 
     private String getTestCaseDisplayName(Options option, LanguageOption languageOption, String[] testFiles) {
         StringBuilder stringBuilder = new StringBuilder();
