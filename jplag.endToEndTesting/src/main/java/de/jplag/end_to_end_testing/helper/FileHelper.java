@@ -1,7 +1,6 @@
 package de.jplag.end_to_end_testing.helper;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,14 +52,10 @@ public class FileHelper {
     /**
      * @param directorieRoot path from which all folders should be loaded
      * @return all folders found in the specified path
+     * @throws IOException
      */
-    public static String[] getAllDirectoriesInPath(Path directorieRoot) {
-        return directorieRoot.toFile().list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return new File(dir, name).isDirectory();
-            }
-        });
+    public static String[] getAllDirectoriesInPath(Path directorieRoot) throws IOException {
+        return directorieRoot.toFile().list((dir, name) -> new File(dir, name).isDirectory());
     }
 
     /**

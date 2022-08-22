@@ -26,8 +26,9 @@ public class JPlagTestSuiteHelper {
      * Loads all existing test data into a test structure. the complex structure consists of the LanguageOption and their
      * data to be tested. These are divided into folders. for more information please read the README file
      * @return mapped LanguageOption to the data under test
+     * @throws IOException
      */
-    public static Map<LanguageOption, Map<String, Path>> getAllLanguageResources() {
+    public static Map<LanguageOption, Map<String, Path>> getAllLanguageResources() throws IOException {
         String[] languageDirectoryNames = FileHelper.getAllDirectoriesInPath(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES);
         List<LanguageOption> languageInPathList = FileHelper.getLanguageOptionsFromPath(languageDirectoryNames);
         var returnMap = new HashMap<LanguageOption, Map<String, Path>>();
