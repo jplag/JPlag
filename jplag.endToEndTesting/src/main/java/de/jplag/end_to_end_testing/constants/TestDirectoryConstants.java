@@ -25,7 +25,7 @@ public final class TestDirectoryConstants {
     /**
      * Base path to the endToEnd testing resources
      */
-    public static final Path BASE_PATH_TO_LANGUAGE_RESOURCES = Path.of("src", "test", "resources");
+    public static final Path BASE_PATH_TO_LANGUAGE_RESOURCES = Path.of("src", "test", "resources" , "languageTestFiles");
 
     /**
      * Create the complete path to the submission files. Here the temporary system path is extended with the
