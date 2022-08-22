@@ -29,7 +29,7 @@ public final class TokenUtils {
      * @return the immutable list of tokens.
      */
     public static List<Token> tokensByFile(TokenList tokenList, String name) {
-        var tokens = tokenList.stream();
+        var tokens = tokenList.allTokens().stream();
         return tokens.filter(it -> it.getFile().startsWith(name)).toList();
     }
 

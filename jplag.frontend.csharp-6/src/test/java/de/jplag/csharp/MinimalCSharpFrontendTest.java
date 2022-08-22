@@ -50,7 +50,7 @@ class MinimalCSharpFrontendTest {
 
         // Compare parsed tokens:
         assertEquals(expectedToken.size(), result.size());
-        List<Integer> actualToken = result.stream().map(Token::getType).collect(toList());
+        List<Integer> actualToken = result.allTokens().stream().map(Token::getType).collect(toList());
         assertEquals(expectedToken, actualToken);
     }
 

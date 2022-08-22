@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,26 +46,25 @@ public final class TokenPrinter {
     /**
      * Creates a string representation of a set of files line by line and adds the tokens under the lines.
      * @param tokens is the set of tokens parsed from the files.
-     * @param directory is the common directory of the files.
+     * @param rootDirectory is the common rootDirectory of the files.
      * @param fileNames is a collection of the file names.
      * @param suffix is the optional view file suffix.
      * @return the string representation.
      */
-    public static String printTokens(TokenList tokens, File directory, Collection<String> fileNames, Optional<String> suffix) {
-        Collection<File> files = fileNames.stream().map(name -> new File(directory, name)).toList();
-        return printTokens(tokens, files, directory, suffix);
+    public static String printTokens(TokenList tokens, File rootDirectory, Collection<String> fileNames, Optional<String> suffix) {
+        Collection<File> files = fileNames.stream().map(name -> new File(rootDirectory, name)).toList();
+        return printTokens(tokens, files, rootDirectory, suffix);
     }
 
     /**
      * Creates a string representation of a set of files line by line and adds the tokens under the lines.
      * @param tokens is the set of tokens parsed from the files.
-     * @param directory is the common directory of the files.
+     * @param rootDirectory is the common rootDirectory of the files.
      * @param fileNames is a collection of the file names.
      * @return the string representation.
      */
-    public static String printTokens(TokenList tokens, File directory, Collection<String> fileNames) {
-        Collection<File> files = fileNames.stream().map(name -> new File(directory, name)).toList();
-        return printTokens(tokens, files, directory, Optional.empty());
+    public static String printTokens(TokenList tokens, File rootDirectory, Collection<String> fileNames) {
+        return printTokens(tokens, rootDirectory, fileNames, Optional.empty());
     }
 
     /**
@@ -74,31 +73,34 @@ public final class TokenPrinter {
      * @param files are the parsed files.
      * @return the string representation.
      */
-    public static String printTokens(TokenList tokens, Collection<File> files, File root) {
-        return printTokens(tokens, files, root, Optional.empty());
+    public static String printTokens(TokenList tokens, Collection<File> files, File rootDirectory) {
+        return printTokens(tokens, files, rootDirectory, Optional.empty());
     }
 
     /**
      * Creates a string representation of a collection of files line by line and adds the tokens under the lines.
      * @param tokenList is the set of tokens parsed from the files.
      * @param files are the parsed files.
-     * @param root is the common directory of the files.
+     * @param rootDirectory is the common directory of the files.
      * @param suffix is the optional view file suffix.
      * @return the string representation.
      */
-    public static String printTokens(TokenList tokenList, Collection<File> files, File root, Optional<String> suffix) {
+    public static String printTokens(TokenList tokenList, Collection<File> files, File rootDirectory, Optional<String> suffix) {
         PrinterOutputBuilder builder = new PrinterOutputBuilder();
-        Map<String, List<LineData>> fileToLineData = getLineData(files, tokenList, suffix, root);
+        Map<String, List<Token>> fileToTokens = groupTokensByFile(tokenList);
 
-        fileToLineData.forEach((String fileName, List<LineData> lineDatas) -> {
+        fileToTokens.forEach((String fileName, List<Token> fileTokens) -> {
             builder.append(fileName);
 
-            LineData.forEachApply(lineDatas, (String file, Integer lineNumber, String currentLine, List<Token> tokens) -> {
-                builder.setLine(lineNumber);
+            var lineDatas = getLineData(fileTokens, rootDirectory);
+            lineDatas.forEach(lineData -> {
+                builder.setLine(lineData.lineNumber());
 
                 // Print (prefix and) code line
+                String currentLine = lineData.text();
                 builder.appendCodeLine(currentLine);
 
+                List<Token> tokens = lineData.tokens();
                 if (tokens.isEmpty()) {
                     return;
                 }
@@ -125,11 +127,34 @@ public final class TokenPrinter {
                 }
 
                 builder.appendTokenLineSuffix();
+                builder.advanceToNextLine();
             });
             builder.advanceToNextLine();
         });
 
         return builder.toString();
+    }
+
+    private static List<LineData> getLineData(List<Token> fileTokens, File root) {
+        // We expect that all fileTokens share the same Token.file!
+
+        String fileName = fileTokens.get(0).getFile();
+        // handle 'files as submissions' mode
+        File file = fileName.isEmpty() ? root : new File(root, fileName);
+
+        // Sort tokens by file and line -> tokens can be processed without any further checks
+        List<String> lines = linesFromFile(file);
+
+        Map<Integer, List<Token>> lineNumbersToTokens = fileTokens.stream().collect(Collectors.groupingBy(Token::getLine));
+
+        // create LineData for each line -- 1-based line index
+        Stream<Integer> lineNumbers = PRINT_EMPTY_LINES ? IntStream.range(1, lines.size() + 1).boxed() : lineNumbersToTokens.keySet().stream();
+        return lineNumbers.map(lineIndex -> new LineData(lineIndex, lines.get(lineIndex - 1), lineNumbersToTokens.getOrDefault(lineIndex, List.of())))
+                .toList();
+    }
+
+    private static Map<String, List<Token>> groupTokensByFile(TokenList tokenList) {
+        return tokenList.allTokens().stream().collect(Collectors.groupingBy(Token::getFile));
     }
 
     /**
@@ -144,58 +169,6 @@ public final class TokenPrinter {
      */
     private static Map<String, List<String>> readFiles(Collection<File> allFiles) {
         return allFiles.stream().collect(toMap(File::getName, TokenPrinter::linesFromFile));
-    }
-
-    /**
-     * Turns a list of files and a list of tokens into a map of the file name to [a list of LineData objects for the lines
-     * of the file].
-     * @param allFiles a collection of files
-     * @param allTokens a TokenList containing all tokens of the files
-     * @param suffix the optional view file suffix
-     * @param root the root element of the submission
-     * @return map of file -> [LineData]
-     */
-    private static Map<String, List<LineData>> getLineData(Collection<File> allFiles, TokenList allTokens, Optional<String> suffix, File root) {
-        Map<String, List<Token>> filesToTokens = allTokens.stream().collect(Collectors.groupingBy(Token::getFile));
-        Map<String, List<String>> filesToLines = readFiles(allFiles);
-
-        // handle 'files as submissions' mode
-        final String EMPTY_STRING = "";
-        if (filesToTokens.containsKey(EMPTY_STRING)) {
-            filesToTokens.put(root.getName(), filesToTokens.get(EMPTY_STRING));
-            filesToTokens.remove(EMPTY_STRING);
-        }
-
-        // Sort tokens by file and line -> tokens can be processed without any further checks
-        Function<File, List<LineData>> fileToLineDataList = file -> {
-            String fileName = file.getName();
-            String tokenFileName = restoreTokenFileName(file.getName(), suffix);
-
-            List<String> lines = filesToLines.get(fileName);
-            Map<Integer, List<Token>> lineNumbersToTokens = filesToTokens.get(tokenFileName).stream().collect(Collectors.groupingBy(Token::getLine));
-
-            // create LineData for each line -- 1-based line index
-            return IntStream.range(1, lines.size() + 1).mapToObj(
-                    lineIndex -> new LineData(fileName, lineIndex, lines.get(lineIndex - 1), lineNumbersToTokens.getOrDefault(lineIndex, List.of())))
-                    .filter(lineData -> PRINT_EMPTY_LINES || !lineData.tokens.isEmpty()).toList();
-        };
-
-        return allFiles.stream().collect(toMap(File::getName, fileToLineDataList));
-    }
-
-    /**
-     * Returns the fileName with the given suffix cut off at the end, if any.
-     * @param fileName the file name with a suffix
-     * @param suffix the suffix to cut off
-     * @return the shortened file name
-     */
-    private static String restoreTokenFileName(String fileName, Optional<String> suffix) {
-        if (suffix.isEmpty() || !fileName.endsWith(suffix.get())) {
-            return fileName;
-        }
-
-        int newLength = fileName.length() - suffix.get().length();
-        return fileName.substring(0, newLength);
     }
 
     /**
@@ -214,42 +187,12 @@ public final class TokenPrinter {
 
     /**
      * This contains all data concerning a line of code in a file and the tokens found in that line.
-     * @param file the file
      * @param lineNumber the line number inside the file
      * @param text the code line
      * @param tokens the tokens found in the code line
      */
-    private record LineData(String file, Integer lineNumber, String text, List<Token> tokens) {
+    private record LineData(Integer lineNumber, String text, List<Token> tokens) {
 
-        /**
-         * Applies the given LineDataConsumer to this LineData.
-         * @param consumer the LineDataConsumer
-         */
-        public void apply(LineDataConsumer consumer) {
-            consumer.apply(file, lineNumber, text, tokens);
-        }
-
-        /**
-         * Convenience method to apply a LineDataConsumer to all lineDatas in the given collection.
-         * @param lineDatas the LineData objects to apply the consumer to
-         * @param consumer the LineDataConsumer to apply
-         */
-        public static void forEachApply(Collection<LineData> lineDatas, LineDataConsumer consumer) {
-            lineDatas.forEach(lineData -> lineData.apply(consumer));
-        }
-
-        /**
-         * The LineDataConsumer interface allows to declare variables for all fields of a LineData object in a functional
-         * interface, thus saving manually declaring variables for each one.
-         */
-        @FunctionalInterface
-        interface LineDataConsumer {
-            void apply(String file, Integer lineNumber, String text, List<Token> tokens);
-
-            default void apply(LineData lineData) {
-                apply(lineData.file, lineData.lineNumber, lineData.text, lineData.tokens);
-            }
-        }
     }
 
     /**
@@ -286,7 +229,7 @@ public final class TokenPrinter {
         public PrinterOutputBuilder append(String str) {
             // Avoid too many blank lines
             trailingLineSeparators = str.equals(LINE_SEPARATOR) ? trailingLineSeparators + 1 : 0;
-            if (trailingLineSeparators >= 2)
+            if (trailingLineSeparators >= 3)
                 return this;
 
             builder.append(str);
@@ -343,7 +286,7 @@ public final class TokenPrinter {
          */
         PrinterOutputBuilder advanceToTokenPosition(String currentLine, int targetPosition, boolean breakLine) {
             targetPosition = Math.min(targetPosition, currentLine.length());
-            if (positionBeforeOrEqualTo(targetPosition)) {
+            if (!positionBeforeOrEqualTo(targetPosition)) {
                 if (!breakLine) {
                     // we are past targetPosition, do nothing
                     return this;
@@ -351,15 +294,18 @@ public final class TokenPrinter {
 
                 // new line
                 appendTokenLinePrefix();
-                if (positionBeforeOrEqualTo(targetPosition)) {
+                if (!positionBeforeOrEqualTo(targetPosition)) {
                     // still past targetPosition -> negative targetPosition
                     return this;
                 }
             }
 
             // The replacement operation preserves TAB characters, which is essential for correct alignment
-            String padding = currentLine.substring(columnIndex - 1, targetPosition - 1).replace(TAB, REPLACE_TABS ? TAB_REPLACEMENT : TAB)
-                    .replace(NON_WHITESPACE, SPACE);
+            String padding = currentLine.substring(columnIndex - 1, targetPosition - 1)
+                    // TAB is a string, so use replace
+                    .replace(TAB, REPLACE_TABS ? TAB_REPLACEMENT : TAB)
+                    // NON_WHITESPACE is a pattern, so use replaceAll
+                    .replaceAll(NON_WHITESPACE, SPACE);
             append(padding);
 
             return this;
@@ -371,7 +317,7 @@ public final class TokenPrinter {
          * @return true if before or at target position
          */
         private boolean positionBeforeOrEqualTo(int targetPosition) {
-            return columnIndex > targetPosition;
+            return columnIndex <= targetPosition;
         }
 
         /**
@@ -380,7 +326,9 @@ public final class TokenPrinter {
          */
         PrinterOutputBuilder appendTokenLinePrefix() {
             int paddingLength = Math.max(digitCount(lineNumber) + MIN_PADDING, TAB_LENGTH);
-            return advanceToNextLine().appendPadding(paddingLength);
+            advanceToNextLine().appendPadding(paddingLength);
+            resetLinePosition();
+            return this;
         }
 
         /**

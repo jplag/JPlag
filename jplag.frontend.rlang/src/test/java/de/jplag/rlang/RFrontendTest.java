@@ -92,7 +92,7 @@ class RFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).sorted().distinct().toArray();
+        var foundTokens = tokens.allTokens().stream().parallel().mapToInt(Token::getType).sorted().distinct().toArray();
         // Exclude SEPARATOR_TOKEN, as it does not occur
         var allTokens = IntStream.range(0, RTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
 

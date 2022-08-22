@@ -161,7 +161,7 @@ class ScalaFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).distinct().boxed().toList();
+        var foundTokens = tokens.allTokens().stream().parallel().mapToInt(Token::getType).distinct().boxed().toList();
         var allTokens = IntStream.range(0, ScalaTokenConstants.numberOfTokens()).boxed().toList();
         allTokens = new ArrayList<>(allTokens);
 
