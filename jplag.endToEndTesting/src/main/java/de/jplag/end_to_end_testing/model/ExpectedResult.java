@@ -7,47 +7,45 @@ import de.jplag.JPlagComparison;
 
 public class ExpectedResult {
 
-	@JsonProperty("minimal_similarity")
-	private float resultSimilarityMinimum;
-	@JsonProperty("maximum_similarity")
-	private float resultSimilarityMaximum;
-	@JsonProperty("matched_token_number")
-	private int resultMatchedTokenNumber;
+    @JsonProperty("minimal_similarity")
+    private float resultSimilarityMinimum;
+    @JsonProperty("maximum_similarity")
+    private float resultSimilarityMaximum;
+    @JsonProperty("matched_token_number")
+    private int resultMatchedTokenNumber;
 
-	public ExpectedResult(float resultSimilarityMinimum, float resultSimilarityMaximum,
-			int resultMatchedTokenNumber) {
-		this.resultSimilarityMinimum = resultSimilarityMaximum;
-		this.resultSimilarityMaximum = resultSimilarityMaximum;
-		this.resultMatchedTokenNumber = resultMatchedTokenNumber;
-	}
+    public ExpectedResult(float resultSimilarityMinimum, float resultSimilarityMaximum, int resultMatchedTokenNumber) {
+        this.resultSimilarityMinimum = resultSimilarityMaximum;
+        this.resultSimilarityMaximum = resultSimilarityMaximum;
+        this.resultMatchedTokenNumber = resultMatchedTokenNumber;
+    }
 
-	public ExpectedResult(JPlagComparison jPlagComparison)
-	{
-		this.resultSimilarityMinimum = jPlagComparison.minimalSimilarity();
-		this.resultSimilarityMaximum = jPlagComparison.maximalSimilarity();
-		this.resultMatchedTokenNumber = jPlagComparison.getNumberOfMatchedTokens();
-	}
-	/**
-	 * empty constructor in case the serialization contains an empty object to
-	 * prevent throwing exceptions. this constructor was necessary for serialization
-	 * with the Jackson parse extension
-	 */
-	public ExpectedResult() {
-		// For Serialization
-	}
+    public ExpectedResult(JPlagComparison jPlagComparison) {
+        this.resultSimilarityMinimum = jPlagComparison.minimalSimilarity();
+        this.resultSimilarityMaximum = jPlagComparison.maximalSimilarity();
+        this.resultMatchedTokenNumber = jPlagComparison.getNumberOfMatchedTokens();
+    }
 
-	@JsonIgnore
-	public float getResultSimilarityMinimum() {
-		return resultSimilarityMinimum;
-	}
+    /**
+     * empty constructor in case the serialization contains an empty object to prevent throwing exceptions. this constructor
+     * was necessary for serialization with the Jackson parse extension
+     */
+    public ExpectedResult() {
+        // For Serialization
+    }
 
-	@JsonIgnore
-	public float getResultSimilarityMaximum() {
-		return resultSimilarityMaximum;
-	}
+    @JsonIgnore
+    public float getResultSimilarityMinimum() {
+        return resultSimilarityMinimum;
+    }
 
-	@JsonIgnore
-	public int getResultMatchedTokenNumber() {
-		return resultMatchedTokenNumber;
-	}
+    @JsonIgnore
+    public float getResultSimilarityMaximum() {
+        return resultSimilarityMaximum;
+    }
+
+    @JsonIgnore
+    public int getResultMatchedTokenNumber() {
+        return resultMatchedTokenNumber;
+    }
 }

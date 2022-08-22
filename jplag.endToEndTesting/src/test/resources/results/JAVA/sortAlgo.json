@@ -3,20 +3,145 @@
     "minimum_token_match" : 1
   },
   "tests" : {
-    "SortAlgo1_2_SortAlgo1_3" : {
-      "minimal_similarity" : 82.89474,
-      "maximum_similarity" : 84.0,
-      "matched_token_number" : 63
+    "SortAlgo4_SortAlgo5" : {
+      "minimal_similarity" : 77.9661,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
     },
-    "SortAlgo1_2_SortAlgo1_4" : {
-      "minimal_similarity" : 76.31579,
-      "maximum_similarity" : 98.305084,
-      "matched_token_number" : 58
+    "SortAlgo4_SortAlgo6" : {
+      "minimal_similarity" : 88.0597,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 59
     },
-    "SortAlgo1_3_SortAlgo1_4" : {
-      "minimal_similarity" : 77.333336,
-      "maximum_similarity" : 98.305084,
-      "matched_token_number" : 58
+    "SortAlgo1_SortAlgo2_5" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo4_SortAlgo7" : {
+      "minimal_similarity" : 91.52542,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo2_SortAlgo2_5" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_5_SortAlgo3_5" : {
+      "minimal_similarity" : 81.159424,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_5_SortAlgo3_6" : {
+      "minimal_similarity" : 62.666668,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo3_SortAlgo4d1" : {
+      "minimal_similarity" : 88.4058,
+      "maximum_similarity" : 96.82539,
+      "matched_token_number" : 61
+    },
+    "SortAlgo1_6_SortAlgo3_5" : {
+      "minimal_similarity" : 73.91304,
+      "maximum_similarity" : 85.0,
+      "matched_token_number" : 51
+    },
+    "SortAlgo3_SortAlgo4d2" : {
+      "minimal_similarity" : 89.85507,
+      "maximum_similarity" : 96.875,
+      "matched_token_number" : 62
+    },
+    "SortAlgo1_6_SortAlgo3_6" : {
+      "minimal_similarity" : 80.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 60
+    },
+    "SortAlgo3_SortAlgo4d3" : {
+      "minimal_similarity" : 86.95652,
+      "maximum_similarity" : 96.77419,
+      "matched_token_number" : 60
+    },
+    "SortAlgo4_SortAlgo4d3" : {
+      "minimal_similarity" : 90.32258,
+      "maximum_similarity" : 94.91525,
+      "matched_token_number" : 56
+    },
+    "SortAlgo4_SortAlgo4d2" : {
+      "minimal_similarity" : 87.5,
+      "maximum_similarity" : 94.91525,
+      "matched_token_number" : 56
+    },
+    "SortAlgo4_SortAlgo4d1" : {
+      "minimal_similarity" : 87.30159,
+      "maximum_similarity" : 93.22034,
+      "matched_token_number" : 55
+    },
+    "SortAlgo5_SortAlgo7" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 85.18519,
+      "matched_token_number" : 46
+    },
+    "SortAlgo5_SortAlgo6" : {
+      "minimal_similarity" : 70.149254,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo_SortAlgo1_6" : {
+      "minimal_similarity" : 93.333336,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_4_SortAlgo3_5" : {
+      "minimal_similarity" : 72.46377,
+      "maximum_similarity" : 84.745766,
+      "matched_token_number" : 50
+    },
+    "SortAlgo_SortAlgo1_5" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_4_SortAlgo3_6" : {
+      "minimal_similarity" : 78.666664,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 59
+    },
+    "SortAlgo1_2_SortAlgo3_5" : {
+      "minimal_similarity" : 72.36842,
+      "maximum_similarity" : 79.710144,
+      "matched_token_number" : 55
+    },
+    "SortAlgo2_5_SortAlgo4d2" : {
+      "minimal_similarity" : 73.4375,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_2_SortAlgo3_6" : {
+      "minimal_similarity" : 88.1579,
+      "maximum_similarity" : 89.333336,
+      "matched_token_number" : 67
+    },
+    "SortAlgo1_3_SortAlgo3_6" : {
+      "minimal_similarity" : 93.333336,
+      "maximum_similarity" : 93.333336,
+      "matched_token_number" : 70
+    },
+    "SortAlgo2_5_SortAlgo4d1" : {
+      "minimal_similarity" : 73.01588,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_3_SortAlgo3_5" : {
+      "minimal_similarity" : 80.0,
+      "maximum_similarity" : 86.95652,
+      "matched_token_number" : 60
+    },
+    "SortAlgo2_5_SortAlgo4d3" : {
+      "minimal_similarity" : 75.80645,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
     },
     "SortAlgo_SortAlgo1_2" : {
       "minimal_similarity" : 73.68421,
@@ -32,6 +157,706 @@
       "minimal_similarity" : 74.666664,
       "maximum_similarity" : 100.0,
       "matched_token_number" : 56
+    },
+    "SortAlgo1_SortAlgo3_6" : {
+      "minimal_similarity" : 74.666664,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_SortAlgo3_5" : {
+      "minimal_similarity" : 72.46377,
+      "maximum_similarity" : 89.28571,
+      "matched_token_number" : 50
+    },
+    "SortAlgo2_SortAlgo3_6" : {
+      "minimal_similarity" : 74.666664,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_SortAlgo3_5" : {
+      "minimal_similarity" : 72.46377,
+      "maximum_similarity" : 89.28571,
+      "matched_token_number" : 50
+    },
+    "SortAlgo3_6_SortAlgo4d2" : {
+      "minimal_similarity" : 84.0,
+      "maximum_similarity" : 98.4375,
+      "matched_token_number" : 63
+    },
+    "SortAlgo3_5_SortAlgo4d1" : {
+      "minimal_similarity" : 79.710144,
+      "maximum_similarity" : 87.30159,
+      "matched_token_number" : 55
+    },
+    "SortAlgo3_6_SortAlgo4d1" : {
+      "minimal_similarity" : 82.666664,
+      "maximum_similarity" : 98.4127,
+      "matched_token_number" : 62
+    },
+    "SortAlgo3_5_SortAlgo4d2" : {
+      "minimal_similarity" : 81.159424,
+      "maximum_similarity" : 87.5,
+      "matched_token_number" : 56
+    },
+    "SortAlgo3_5_SortAlgo4d3" : {
+      "minimal_similarity" : 78.26087,
+      "maximum_similarity" : 87.09677,
+      "matched_token_number" : 54
+    },
+    "SortAlgo3_6_SortAlgo4d3" : {
+      "minimal_similarity" : 81.333336,
+      "maximum_similarity" : 98.3871,
+      "matched_token_number" : 61
+    },
+    "SortAlgo_SortAlgo4d2" : {
+      "minimal_similarity" : 87.5,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo_SortAlgo4d1" : {
+      "minimal_similarity" : 87.30159,
+      "maximum_similarity" : 98.21429,
+      "matched_token_number" : 55
+    },
+    "SortAlgo_SortAlgo4d3" : {
+      "minimal_similarity" : 90.32258,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo6_SortAlgo7" : {
+      "minimal_similarity" : 80.597015,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo1_2_SortAlgo5" : {
+      "minimal_similarity" : 61.842106,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_2_SortAlgo6" : {
+      "minimal_similarity" : 84.210526,
+      "maximum_similarity" : 95.522385,
+      "matched_token_number" : 64
+    },
+    "SortAlgo1_2_SortAlgo7" : {
+      "minimal_similarity" : 71.052635,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo3_SortAlgo5" : {
+      "minimal_similarity" : 68.115944,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo3_SortAlgo4" : {
+      "minimal_similarity" : 84.05797,
+      "maximum_similarity" : 98.305084,
+      "matched_token_number" : 58
+    },
+    "SortAlgo4d3_SortAlgo6" : {
+      "minimal_similarity" : 89.55224,
+      "maximum_similarity" : 96.77419,
+      "matched_token_number" : 60
+    },
+    "SortAlgo4d3_SortAlgo7" : {
+      "minimal_similarity" : 87.09677,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo4d3_SortAlgo5" : {
+      "minimal_similarity" : 75.80645,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo3_SortAlgo7" : {
+      "minimal_similarity" : 78.26087,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo3_SortAlgo6" : {
+      "minimal_similarity" : 92.753624,
+      "maximum_similarity" : 95.522385,
+      "matched_token_number" : 64
+    },
+    "SortAlgo1_2_SortAlgo2" : {
+      "minimal_similarity" : 73.68421,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_2_SortAlgo3" : {
+      "minimal_similarity" : 82.89474,
+      "maximum_similarity" : 91.304344,
+      "matched_token_number" : 63
+    },
+    "SortAlgo1_2_SortAlgo4" : {
+      "minimal_similarity" : 76.31579,
+      "maximum_similarity" : 98.305084,
+      "matched_token_number" : 58
+    },
+    "SortAlgo_SortAlgo2_5" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo3_5_SortAlgo4" : {
+      "minimal_similarity" : 72.46377,
+      "maximum_similarity" : 84.745766,
+      "matched_token_number" : 50
+    },
+    "SortAlgo3_5_SortAlgo5" : {
+      "minimal_similarity" : 81.159424,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo_SortAlgo2" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_5_SortAlgo4" : {
+      "minimal_similarity" : 77.9661,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo3_5_SortAlgo6" : {
+      "minimal_similarity" : 81.159424,
+      "maximum_similarity" : 83.58209,
+      "matched_token_number" : 56
+    },
+    "SortAlgo_SortAlgo1" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_5_SortAlgo3" : {
+      "minimal_similarity" : 68.115944,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo3_5_SortAlgo7" : {
+      "minimal_similarity" : 69.565216,
+      "maximum_similarity" : 88.888885,
+      "matched_token_number" : 48
+    },
+    "SortAlgo_SortAlgo4" : {
+      "minimal_similarity" : 94.91525,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_5_SortAlgo6" : {
+      "minimal_similarity" : 70.149254,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo_SortAlgo3" : {
+      "minimal_similarity" : 81.159424,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_5_SortAlgo5" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo_SortAlgo6" : {
+      "minimal_similarity" : 83.58209,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo_SortAlgo5" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo2_5_SortAlgo7" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 85.18519,
+      "matched_token_number" : 46
+    },
+    "SortAlgo_SortAlgo7" : {
+      "minimal_similarity" : 96.42857,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo1_5_SortAlgo6" : {
+      "minimal_similarity" : 70.149254,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_5_SortAlgo7" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 85.18519,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_5_SortAlgo4" : {
+      "minimal_similarity" : 77.9661,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_5_SortAlgo5" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_5_SortAlgo2" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_5_SortAlgo3" : {
+      "minimal_similarity" : 68.115944,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo2_5_SortAlgo3_6" : {
+      "minimal_similarity" : 62.666668,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo2_5_SortAlgo3_5" : {
+      "minimal_similarity" : 81.159424,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_5_SortAlgo1_6" : {
+      "minimal_similarity" : 76.666664,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_4_SortAlgo2" : {
+      "minimal_similarity" : 94.91525,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_4_SortAlgo4d3" : {
+      "minimal_similarity" : 90.32258,
+      "maximum_similarity" : 94.91525,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_SortAlgo2" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_4_SortAlgo4d1" : {
+      "minimal_similarity" : 87.30159,
+      "maximum_similarity" : 93.22034,
+      "matched_token_number" : 55
+    },
+    "SortAlgo1_4_SortAlgo5" : {
+      "minimal_similarity" : 77.9661,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_SortAlgo3" : {
+      "minimal_similarity" : 81.159424,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_4_SortAlgo4d2" : {
+      "minimal_similarity" : 87.5,
+      "maximum_similarity" : 94.91525,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_4_SortAlgo6" : {
+      "minimal_similarity" : 88.0597,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 59
+    },
+    "SortAlgo1_4_SortAlgo3" : {
+      "minimal_similarity" : 84.05797,
+      "maximum_similarity" : 98.305084,
+      "matched_token_number" : 58
+    },
+    "SortAlgo1_4_SortAlgo4" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 59
+    },
+    "SortAlgo4d2_SortAlgo4d3" : {
+      "minimal_similarity" : 96.875,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 62
+    },
+    "SortAlgo1_SortAlgo6" : {
+      "minimal_similarity" : 83.58209,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_2_SortAlgo4d1" : {
+      "minimal_similarity" : 76.31579,
+      "maximum_similarity" : 92.06349,
+      "matched_token_number" : 58
+    },
+    "SortAlgo1_3_SortAlgo4d3" : {
+      "minimal_similarity" : 82.666664,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 62
+    },
+    "SortAlgo1_SortAlgo7" : {
+      "minimal_similarity" : 96.42857,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo1_2_SortAlgo4d2" : {
+      "minimal_similarity" : 77.63158,
+      "maximum_similarity" : 92.1875,
+      "matched_token_number" : 59
+    },
+    "SortAlgo1_3_SortAlgo4d2" : {
+      "minimal_similarity" : 85.333336,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 64
+    },
+    "SortAlgo1_SortAlgo4" : {
+      "minimal_similarity" : 94.91525,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_2_SortAlgo4d3" : {
+      "minimal_similarity" : 76.31579,
+      "maximum_similarity" : 93.548386,
+      "matched_token_number" : 58
+    },
+    "SortAlgo1_3_SortAlgo4d1" : {
+      "minimal_similarity" : 84.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 63
+    },
+    "SortAlgo1_4_SortAlgo7" : {
+      "minimal_similarity" : 91.52542,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo4d1_SortAlgo4d2" : {
+      "minimal_similarity" : 98.4375,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 63
+    },
+    "SortAlgo1_SortAlgo5" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo4d1_SortAlgo4d3" : {
+      "minimal_similarity" : 96.82539,
+      "maximum_similarity" : 98.3871,
+      "matched_token_number" : 61
+    },
+    "SortAlgo4d1_SortAlgo5" : {
+      "minimal_similarity" : 73.01588,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo4d1_SortAlgo7" : {
+      "minimal_similarity" : 84.12698,
+      "maximum_similarity" : 98.14815,
+      "matched_token_number" : 53
+    },
+    "SortAlgo4d1_SortAlgo6" : {
+      "minimal_similarity" : 88.0597,
+      "maximum_similarity" : 93.650795,
+      "matched_token_number" : 59
+    },
+    "SortAlgo1_5_SortAlgo4d1" : {
+      "minimal_similarity" : 73.01588,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_5_SortAlgo4d3" : {
+      "minimal_similarity" : 75.80645,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_5_SortAlgo4d2" : {
+      "minimal_similarity" : 73.4375,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_6_SortAlgo4d1" : {
+      "minimal_similarity" : 88.888885,
+      "maximum_similarity" : 93.333336,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_6_SortAlgo4d2" : {
+      "minimal_similarity" : 89.0625,
+      "maximum_similarity" : 95.0,
+      "matched_token_number" : 57
+    },
+    "SortAlgo1_6_SortAlgo4d3" : {
+      "minimal_similarity" : 91.935486,
+      "maximum_similarity" : 95.0,
+      "matched_token_number" : 57
+    },
+    "SortAlgo1_2_SortAlgo1_3" : {
+      "minimal_similarity" : 82.89474,
+      "maximum_similarity" : 84.0,
+      "matched_token_number" : 63
+    },
+    "SortAlgo1_3_SortAlgo1_5" : {
+      "minimal_similarity" : 62.666668,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_2_SortAlgo1_4" : {
+      "minimal_similarity" : 76.31579,
+      "maximum_similarity" : 98.305084,
+      "matched_token_number" : 58
+    },
+    "SortAlgo1_3_SortAlgo1_4" : {
+      "minimal_similarity" : 77.333336,
+      "maximum_similarity" : 98.305084,
+      "matched_token_number" : 58
+    },
+    "SortAlgo3_6_SortAlgo7" : {
+      "minimal_similarity" : 72.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo_SortAlgo3_6" : {
+      "minimal_similarity" : 74.666664,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_2_SortAlgo1_5" : {
+      "minimal_similarity" : 61.842106,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_4_SortAlgo1_5" : {
+      "minimal_similarity" : 77.9661,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo_SortAlgo3_5" : {
+      "minimal_similarity" : 72.46377,
+      "maximum_similarity" : 89.28571,
+      "matched_token_number" : 50
+    },
+    "SortAlgo1_2_SortAlgo1_6" : {
+      "minimal_similarity" : 76.31579,
+      "maximum_similarity" : 96.666664,
+      "matched_token_number" : 58
+    },
+    "SortAlgo1_4_SortAlgo1_6" : {
+      "minimal_similarity" : 98.333336,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 59
+    },
+    "SortAlgo2_SortAlgo7" : {
+      "minimal_similarity" : 96.42857,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo1_3_SortAlgo1_6" : {
+      "minimal_similarity" : 78.666664,
+      "maximum_similarity" : 98.333336,
+      "matched_token_number" : 59
+    },
+    "SortAlgo2_SortAlgo5" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo2_SortAlgo6" : {
+      "minimal_similarity" : 83.58209,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_SortAlgo3" : {
+      "minimal_similarity" : 81.159424,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_SortAlgo4" : {
+      "minimal_similarity" : 94.91525,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo3_SortAlgo3_5" : {
+      "minimal_similarity" : 85.50725,
+      "maximum_similarity" : 85.50725,
+      "matched_token_number" : 59
+    },
+    "SortAlgo3_SortAlgo3_6" : {
+      "minimal_similarity" : 92.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 69
+    },
+    "SortAlgo1_SortAlgo1_6" : {
+      "minimal_similarity" : 93.333336,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo4d2_SortAlgo7" : {
+      "minimal_similarity" : 84.375,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo1_3_SortAlgo5" : {
+      "minimal_similarity" : 62.666668,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_3_SortAlgo4" : {
+      "minimal_similarity" : 77.333336,
+      "maximum_similarity" : 98.305084,
+      "matched_token_number" : 58
+    },
+    "SortAlgo1_3_SortAlgo7" : {
+      "minimal_similarity" : 72.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo1_3_SortAlgo6" : {
+      "minimal_similarity" : 85.333336,
+      "maximum_similarity" : 95.522385,
+      "matched_token_number" : 64
+    },
+    "SortAlgo1_3_SortAlgo3" : {
+      "minimal_similarity" : 92.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 69
+    },
+    "SortAlgo1_3_SortAlgo2" : {
+      "minimal_similarity" : 74.666664,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_6_SortAlgo2_5" : {
+      "minimal_similarity" : 76.666664,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_SortAlgo1_4" : {
+      "minimal_similarity" : 94.91525,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo3_6_SortAlgo4" : {
+      "minimal_similarity" : 78.666664,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 59
+    },
+    "SortAlgo4d2_SortAlgo5" : {
+      "minimal_similarity" : 73.4375,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_SortAlgo1_5" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo4d2_SortAlgo6" : {
+      "minimal_similarity" : 89.55224,
+      "maximum_similarity" : 93.75,
+      "matched_token_number" : 60
+    },
+    "SortAlgo1_SortAlgo1_2" : {
+      "minimal_similarity" : 73.68421,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo3_6_SortAlgo6" : {
+      "minimal_similarity" : 89.333336,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 67
+    },
+    "SortAlgo1_SortAlgo1_3" : {
+      "minimal_similarity" : 74.666664,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_5_SortAlgo2_5" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo3_6_SortAlgo5" : {
+      "minimal_similarity" : 62.666668,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_6_SortAlgo4" : {
+      "minimal_similarity" : 98.333336,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 59
+    },
+    "SortAlgo1_6_SortAlgo3" : {
+      "minimal_similarity" : 85.50725,
+      "maximum_similarity" : 98.333336,
+      "matched_token_number" : 59
+    },
+    "SortAlgo1_6_SortAlgo2" : {
+      "minimal_similarity" : 93.333336,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_6_SortAlgo7" : {
+      "minimal_similarity" : 90.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 54
+    },
+    "SortAlgo1_6_SortAlgo6" : {
+      "minimal_similarity" : 89.55224,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 60
+    },
+    "SortAlgo1_6_SortAlgo5" : {
+      "minimal_similarity" : 76.666664,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_SortAlgo4d2" : {
+      "minimal_similarity" : 87.5,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_SortAlgo4d3" : {
+      "minimal_similarity" : 90.32258,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_SortAlgo4d3" : {
+      "minimal_similarity" : 90.32258,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo3_5_SortAlgo3_6" : {
+      "minimal_similarity" : 78.666664,
+      "maximum_similarity" : 85.50725,
+      "matched_token_number" : 59
+    },
+    "SortAlgo1_SortAlgo4d1" : {
+      "minimal_similarity" : 87.30159,
+      "maximum_similarity" : 98.21429,
+      "matched_token_number" : 55
+    },
+    "SortAlgo2_SortAlgo4d2" : {
+      "minimal_similarity" : 87.5,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_SortAlgo4d1" : {
+      "minimal_similarity" : 87.30159,
+      "maximum_similarity" : 98.21429,
+      "matched_token_number" : 55
+    },
+    "SortAlgo1_2_SortAlgo2_5" : {
+      "minimal_similarity" : 61.842106,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
+    },
+    "SortAlgo1_4_SortAlgo2_5" : {
+      "minimal_similarity" : 77.9661,
+      "maximum_similarity" : 82.14286,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_3_SortAlgo2_5" : {
+      "minimal_similarity" : 62.666668,
+      "maximum_similarity" : 83.92857,
+      "matched_token_number" : 47
     }
   }
 }, {
@@ -39,20 +864,145 @@
     "minimum_token_match" : 15
   },
   "tests" : {
-    "SortAlgo1_2_SortAlgo1_3" : {
-      "minimal_similarity" : 52.63158,
-      "maximum_similarity" : 53.333332,
-      "matched_token_number" : 40
+    "SortAlgo4_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
     },
-    "SortAlgo1_2_SortAlgo1_4" : {
-      "minimal_similarity" : 40.789474,
-      "maximum_similarity" : 52.542374,
-      "matched_token_number" : 31
+    "SortAlgo4_SortAlgo6" : {
+      "minimal_similarity" : 31.343283,
+      "maximum_similarity" : 35.59322,
+      "matched_token_number" : 21
     },
-    "SortAlgo1_3_SortAlgo1_4" : {
+    "SortAlgo1_SortAlgo2_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo4_SortAlgo7" : {
+      "minimal_similarity" : 35.59322,
+      "maximum_similarity" : 38.88889,
+      "matched_token_number" : 21
+    },
+    "SortAlgo2_SortAlgo2_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_5_SortAlgo3_5" : {
+      "minimal_similarity" : 59.420288,
+      "maximum_similarity" : 73.21429,
+      "matched_token_number" : 41
+    },
+    "SortAlgo1_5_SortAlgo3_6" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_SortAlgo4d1" : {
+      "minimal_similarity" : 56.52174,
+      "maximum_similarity" : 61.904762,
+      "matched_token_number" : 39
+    },
+    "SortAlgo1_6_SortAlgo3_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_SortAlgo4d2" : {
+      "minimal_similarity" : 56.52174,
+      "maximum_similarity" : 60.9375,
+      "matched_token_number" : 39
+    },
+    "SortAlgo1_6_SortAlgo3_6" : {
+      "minimal_similarity" : 57.333332,
+      "maximum_similarity" : 71.666664,
+      "matched_token_number" : 43
+    },
+    "SortAlgo3_SortAlgo4d3" : {
+      "minimal_similarity" : 56.52174,
+      "maximum_similarity" : 62.903225,
+      "matched_token_number" : 39
+    },
+    "SortAlgo4_SortAlgo4d3" : {
+      "minimal_similarity" : 29.032259,
+      "maximum_similarity" : 30.508474,
+      "matched_token_number" : 18
+    },
+    "SortAlgo4_SortAlgo4d2" : {
+      "minimal_similarity" : 28.125,
+      "maximum_similarity" : 30.508474,
+      "matched_token_number" : 18
+    },
+    "SortAlgo4_SortAlgo4d1" : {
+      "minimal_similarity" : 28.571428,
+      "maximum_similarity" : 30.508474,
+      "matched_token_number" : 18
+    },
+    "SortAlgo5_SortAlgo7" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo5_SortAlgo6" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo_SortAlgo1_6" : {
+      "minimal_similarity" : 56.666668,
+      "maximum_similarity" : 60.714287,
+      "matched_token_number" : 34
+    },
+    "SortAlgo1_4_SortAlgo3_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo_SortAlgo1_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_4_SortAlgo3_6" : {
       "minimal_similarity" : 32.0,
       "maximum_similarity" : 40.677967,
       "matched_token_number" : 24
+    },
+    "SortAlgo1_2_SortAlgo3_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo2_5_SortAlgo4d2" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_2_SortAlgo3_6" : {
+      "minimal_similarity" : 31.578947,
+      "maximum_similarity" : 32.0,
+      "matched_token_number" : 24
+    },
+    "SortAlgo1_3_SortAlgo3_6" : {
+      "minimal_similarity" : 32.0,
+      "maximum_similarity" : 32.0,
+      "matched_token_number" : 24
+    },
+    "SortAlgo2_5_SortAlgo4d1" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_3_SortAlgo3_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo2_5_SortAlgo4d3" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
     },
     "SortAlgo_SortAlgo1_2" : {
       "minimal_similarity" : 59.210526,
@@ -68,6 +1018,706 @@
       "minimal_similarity" : 53.333332,
       "maximum_similarity" : 71.42857,
       "matched_token_number" : 40
+    },
+    "SortAlgo1_SortAlgo3_6" : {
+      "minimal_similarity" : 32.0,
+      "maximum_similarity" : 42.857143,
+      "matched_token_number" : 24
+    },
+    "SortAlgo1_SortAlgo3_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo2_SortAlgo3_6" : {
+      "minimal_similarity" : 32.0,
+      "maximum_similarity" : 42.857143,
+      "matched_token_number" : 24
+    },
+    "SortAlgo2_SortAlgo3_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_6_SortAlgo4d2" : {
+      "minimal_similarity" : 30.666666,
+      "maximum_similarity" : 35.9375,
+      "matched_token_number" : 23
+    },
+    "SortAlgo3_5_SortAlgo4d1" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_6_SortAlgo4d1" : {
+      "minimal_similarity" : 30.666666,
+      "maximum_similarity" : 36.50794,
+      "matched_token_number" : 23
+    },
+    "SortAlgo3_5_SortAlgo4d2" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_5_SortAlgo4d3" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_6_SortAlgo4d3" : {
+      "minimal_similarity" : 30.666666,
+      "maximum_similarity" : 37.096775,
+      "matched_token_number" : 23
+    },
+    "SortAlgo_SortAlgo4d2" : {
+      "minimal_similarity" : 68.75,
+      "maximum_similarity" : 78.57143,
+      "matched_token_number" : 44
+    },
+    "SortAlgo_SortAlgo4d1" : {
+      "minimal_similarity" : 69.84127,
+      "maximum_similarity" : 78.57143,
+      "matched_token_number" : 44
+    },
+    "SortAlgo_SortAlgo4d3" : {
+      "minimal_similarity" : 70.96774,
+      "maximum_similarity" : 78.57143,
+      "matched_token_number" : 44
+    },
+    "SortAlgo6_SortAlgo7" : {
+      "minimal_similarity" : 43.28358,
+      "maximum_similarity" : 53.703705,
+      "matched_token_number" : 29
+    },
+    "SortAlgo1_2_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_2_SortAlgo6" : {
+      "minimal_similarity" : 38.157894,
+      "maximum_similarity" : 43.28358,
+      "matched_token_number" : 29
+    },
+    "SortAlgo1_2_SortAlgo7" : {
+      "minimal_similarity" : 46.05263,
+      "maximum_similarity" : 64.81481,
+      "matched_token_number" : 35
+    },
+    "SortAlgo3_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_SortAlgo4" : {
+      "minimal_similarity" : 26.086956,
+      "maximum_similarity" : 30.508474,
+      "matched_token_number" : 18
+    },
+    "SortAlgo4d3_SortAlgo6" : {
+      "minimal_similarity" : 34.328358,
+      "maximum_similarity" : 37.096775,
+      "matched_token_number" : 23
+    },
+    "SortAlgo4d3_SortAlgo7" : {
+      "minimal_similarity" : 64.51613,
+      "maximum_similarity" : 74.07407,
+      "matched_token_number" : 40
+    },
+    "SortAlgo4d3_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_SortAlgo7" : {
+      "minimal_similarity" : 57.971016,
+      "maximum_similarity" : 74.07407,
+      "matched_token_number" : 40
+    },
+    "SortAlgo3_SortAlgo6" : {
+      "minimal_similarity" : 52.173912,
+      "maximum_similarity" : 53.731342,
+      "matched_token_number" : 36
+    },
+    "SortAlgo1_2_SortAlgo2" : {
+      "minimal_similarity" : 59.210526,
+      "maximum_similarity" : 80.35714,
+      "matched_token_number" : 45
+    },
+    "SortAlgo1_2_SortAlgo3" : {
+      "minimal_similarity" : 52.63158,
+      "maximum_similarity" : 57.971016,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_2_SortAlgo4" : {
+      "minimal_similarity" : 28.947369,
+      "maximum_similarity" : 37.288136,
+      "matched_token_number" : 22
+    },
+    "SortAlgo_SortAlgo2_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_5_SortAlgo4" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_5_SortAlgo5" : {
+      "minimal_similarity" : 59.420288,
+      "maximum_similarity" : 73.21429,
+      "matched_token_number" : 41
+    },
+    "SortAlgo_SortAlgo2" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_5_SortAlgo4" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_5_SortAlgo6" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo_SortAlgo1" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo2_5_SortAlgo3" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_5_SortAlgo7" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo_SortAlgo4" : {
+      "minimal_similarity" : 35.59322,
+      "maximum_similarity" : 37.5,
+      "matched_token_number" : 21
+    },
+    "SortAlgo2_5_SortAlgo6" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo_SortAlgo3" : {
+      "minimal_similarity" : 57.971016,
+      "maximum_similarity" : 71.42857,
+      "matched_token_number" : 40
+    },
+    "SortAlgo2_5_SortAlgo5" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo_SortAlgo6" : {
+      "minimal_similarity" : 43.28358,
+      "maximum_similarity" : 51.785713,
+      "matched_token_number" : 29
+    },
+    "SortAlgo_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo2_5_SortAlgo7" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo_SortAlgo7" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 85.18519,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_5_SortAlgo6" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_5_SortAlgo7" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_5_SortAlgo4" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_5_SortAlgo5" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_5_SortAlgo2" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_5_SortAlgo3" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo2_5_SortAlgo3_6" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo2_5_SortAlgo3_5" : {
+      "minimal_similarity" : 59.420288,
+      "maximum_similarity" : 73.21429,
+      "matched_token_number" : 41
+    },
+    "SortAlgo1_5_SortAlgo1_6" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_4_SortAlgo2" : {
+      "minimal_similarity" : 52.542374,
+      "maximum_similarity" : 55.357143,
+      "matched_token_number" : 31
+    },
+    "SortAlgo1_4_SortAlgo4d3" : {
+      "minimal_similarity" : 37.096775,
+      "maximum_similarity" : 38.98305,
+      "matched_token_number" : 23
+    },
+    "SortAlgo1_SortAlgo2" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo1_4_SortAlgo4d1" : {
+      "minimal_similarity" : 36.50794,
+      "maximum_similarity" : 38.98305,
+      "matched_token_number" : 23
+    },
+    "SortAlgo1_4_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_SortAlgo3" : {
+      "minimal_similarity" : 57.971016,
+      "maximum_similarity" : 71.42857,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_4_SortAlgo4d2" : {
+      "minimal_similarity" : 35.9375,
+      "maximum_similarity" : 38.98305,
+      "matched_token_number" : 23
+    },
+    "SortAlgo1_4_SortAlgo6" : {
+      "minimal_similarity" : 40.298508,
+      "maximum_similarity" : 45.76271,
+      "matched_token_number" : 27
+    },
+    "SortAlgo1_4_SortAlgo3" : {
+      "minimal_similarity" : 34.782608,
+      "maximum_similarity" : 40.677967,
+      "matched_token_number" : 24
+    },
+    "SortAlgo1_4_SortAlgo4" : {
+      "minimal_similarity" : 79.66102,
+      "maximum_similarity" : 79.66102,
+      "matched_token_number" : 47
+    },
+    "SortAlgo4d2_SortAlgo4d3" : {
+      "minimal_similarity" : 93.75,
+      "maximum_similarity" : 96.77419,
+      "matched_token_number" : 60
+    },
+    "SortAlgo1_SortAlgo6" : {
+      "minimal_similarity" : 43.28358,
+      "maximum_similarity" : 51.785713,
+      "matched_token_number" : 29
+    },
+    "SortAlgo1_2_SortAlgo4d1" : {
+      "minimal_similarity" : 57.894737,
+      "maximum_similarity" : 69.84127,
+      "matched_token_number" : 44
+    },
+    "SortAlgo1_3_SortAlgo4d3" : {
+      "minimal_similarity" : 53.333332,
+      "maximum_similarity" : 64.51613,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_SortAlgo7" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 85.18519,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_2_SortAlgo4d2" : {
+      "minimal_similarity" : 57.894737,
+      "maximum_similarity" : 68.75,
+      "matched_token_number" : 44
+    },
+    "SortAlgo1_3_SortAlgo4d2" : {
+      "minimal_similarity" : 53.333332,
+      "maximum_similarity" : 62.5,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_SortAlgo4" : {
+      "minimal_similarity" : 35.59322,
+      "maximum_similarity" : 37.5,
+      "matched_token_number" : 21
+    },
+    "SortAlgo1_2_SortAlgo4d3" : {
+      "minimal_similarity" : 57.894737,
+      "maximum_similarity" : 70.96774,
+      "matched_token_number" : 44
+    },
+    "SortAlgo1_3_SortAlgo4d1" : {
+      "minimal_similarity" : 53.333332,
+      "maximum_similarity" : 63.49206,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_4_SortAlgo7" : {
+      "minimal_similarity" : 52.542374,
+      "maximum_similarity" : 57.407406,
+      "matched_token_number" : 31
+    },
+    "SortAlgo4d1_SortAlgo4d2" : {
+      "minimal_similarity" : 98.4375,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 63
+    },
+    "SortAlgo1_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo4d1_SortAlgo4d3" : {
+      "minimal_similarity" : 95.2381,
+      "maximum_similarity" : 96.77419,
+      "matched_token_number" : 60
+    },
+    "SortAlgo4d1_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo4d1_SortAlgo7" : {
+      "minimal_similarity" : 63.49206,
+      "maximum_similarity" : 74.07407,
+      "matched_token_number" : 40
+    },
+    "SortAlgo4d1_SortAlgo6" : {
+      "minimal_similarity" : 34.328358,
+      "maximum_similarity" : 36.50794,
+      "matched_token_number" : 23
+    },
+    "SortAlgo1_5_SortAlgo4d1" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_5_SortAlgo4d3" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_5_SortAlgo4d2" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_6_SortAlgo4d1" : {
+      "minimal_similarity" : 36.50794,
+      "maximum_similarity" : 38.333332,
+      "matched_token_number" : 23
+    },
+    "SortAlgo1_6_SortAlgo4d2" : {
+      "minimal_similarity" : 35.9375,
+      "maximum_similarity" : 38.333332,
+      "matched_token_number" : 23
+    },
+    "SortAlgo1_6_SortAlgo4d3" : {
+      "minimal_similarity" : 37.096775,
+      "maximum_similarity" : 38.333332,
+      "matched_token_number" : 23
+    },
+    "SortAlgo1_2_SortAlgo1_3" : {
+      "minimal_similarity" : 52.63158,
+      "maximum_similarity" : 53.333332,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_3_SortAlgo1_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_2_SortAlgo1_4" : {
+      "minimal_similarity" : 40.789474,
+      "maximum_similarity" : 52.542374,
+      "matched_token_number" : 31
+    },
+    "SortAlgo1_3_SortAlgo1_4" : {
+      "minimal_similarity" : 32.0,
+      "maximum_similarity" : 40.677967,
+      "matched_token_number" : 24
+    },
+    "SortAlgo3_6_SortAlgo7" : {
+      "minimal_similarity" : 32.0,
+      "maximum_similarity" : 44.444443,
+      "matched_token_number" : 24
+    },
+    "SortAlgo_SortAlgo3_6" : {
+      "minimal_similarity" : 32.0,
+      "maximum_similarity" : 42.857143,
+      "matched_token_number" : 24
+    },
+    "SortAlgo1_2_SortAlgo1_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_4_SortAlgo1_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo_SortAlgo3_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_2_SortAlgo1_6" : {
+      "minimal_similarity" : 44.736843,
+      "maximum_similarity" : 56.666668,
+      "matched_token_number" : 34
+    },
+    "SortAlgo1_4_SortAlgo1_6" : {
+      "minimal_similarity" : 51.666668,
+      "maximum_similarity" : 52.542374,
+      "matched_token_number" : 31
+    },
+    "SortAlgo2_SortAlgo7" : {
+      "minimal_similarity" : 82.14286,
+      "maximum_similarity" : 85.18519,
+      "matched_token_number" : 46
+    },
+    "SortAlgo1_3_SortAlgo1_6" : {
+      "minimal_similarity" : 32.0,
+      "maximum_similarity" : 40.0,
+      "matched_token_number" : 24
+    },
+    "SortAlgo2_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo2_SortAlgo6" : {
+      "minimal_similarity" : 43.28358,
+      "maximum_similarity" : 51.785713,
+      "matched_token_number" : 29
+    },
+    "SortAlgo2_SortAlgo3" : {
+      "minimal_similarity" : 57.971016,
+      "maximum_similarity" : 71.42857,
+      "matched_token_number" : 40
+    },
+    "SortAlgo2_SortAlgo4" : {
+      "minimal_similarity" : 35.59322,
+      "maximum_similarity" : 37.5,
+      "matched_token_number" : 21
+    },
+    "SortAlgo3_SortAlgo3_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo3_SortAlgo3_6" : {
+      "minimal_similarity" : 56.0,
+      "maximum_similarity" : 60.869564,
+      "matched_token_number" : 42
+    },
+    "SortAlgo1_SortAlgo1_6" : {
+      "minimal_similarity" : 56.666668,
+      "maximum_similarity" : 60.714287,
+      "matched_token_number" : 34
+    },
+    "SortAlgo4d2_SortAlgo7" : {
+      "minimal_similarity" : 62.5,
+      "maximum_similarity" : 74.07407,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_3_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_3_SortAlgo4" : {
+      "minimal_similarity" : 24.0,
+      "maximum_similarity" : 30.508474,
+      "matched_token_number" : 18
+    },
+    "SortAlgo1_3_SortAlgo7" : {
+      "minimal_similarity" : 53.333332,
+      "maximum_similarity" : 74.07407,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_3_SortAlgo6" : {
+      "minimal_similarity" : 32.0,
+      "maximum_similarity" : 35.820896,
+      "matched_token_number" : 24
+    },
+    "SortAlgo1_3_SortAlgo3" : {
+      "minimal_similarity" : 54.666668,
+      "maximum_similarity" : 59.420288,
+      "matched_token_number" : 41
+    },
+    "SortAlgo1_3_SortAlgo2" : {
+      "minimal_similarity" : 53.333332,
+      "maximum_similarity" : 71.42857,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_6_SortAlgo2_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_SortAlgo1_4" : {
+      "minimal_similarity" : 52.542374,
+      "maximum_similarity" : 55.357143,
+      "matched_token_number" : 31
+    },
+    "SortAlgo3_6_SortAlgo4" : {
+      "minimal_similarity" : 24.0,
+      "maximum_similarity" : 30.508474,
+      "matched_token_number" : 18
+    },
+    "SortAlgo4d2_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_SortAlgo1_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo4d2_SortAlgo6" : {
+      "minimal_similarity" : 34.328358,
+      "maximum_similarity" : 35.9375,
+      "matched_token_number" : 23
+    },
+    "SortAlgo1_SortAlgo1_2" : {
+      "minimal_similarity" : 59.210526,
+      "maximum_similarity" : 80.35714,
+      "matched_token_number" : 45
+    },
+    "SortAlgo3_6_SortAlgo6" : {
+      "minimal_similarity" : 73.333336,
+      "maximum_similarity" : 82.089554,
+      "matched_token_number" : 55
+    },
+    "SortAlgo1_SortAlgo1_3" : {
+      "minimal_similarity" : 53.333332,
+      "maximum_similarity" : 71.42857,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_5_SortAlgo2_5" : {
+      "minimal_similarity" : 100.0,
+      "maximum_similarity" : 100.0,
+      "matched_token_number" : 56
+    },
+    "SortAlgo3_6_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_6_SortAlgo4" : {
+      "minimal_similarity" : 35.0,
+      "maximum_similarity" : 35.59322,
+      "matched_token_number" : 21
+    },
+    "SortAlgo1_6_SortAlgo3" : {
+      "minimal_similarity" : 34.782608,
+      "maximum_similarity" : 40.0,
+      "matched_token_number" : 24
+    },
+    "SortAlgo1_6_SortAlgo2" : {
+      "minimal_similarity" : 56.666668,
+      "maximum_similarity" : 60.714287,
+      "matched_token_number" : 34
+    },
+    "SortAlgo1_6_SortAlgo7" : {
+      "minimal_similarity" : 56.666668,
+      "maximum_similarity" : 62.962963,
+      "matched_token_number" : 34
+    },
+    "SortAlgo1_6_SortAlgo6" : {
+      "minimal_similarity" : 82.089554,
+      "maximum_similarity" : 91.666664,
+      "matched_token_number" : 55
+    },
+    "SortAlgo1_6_SortAlgo5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_SortAlgo4d2" : {
+      "minimal_similarity" : 68.75,
+      "maximum_similarity" : 78.57143,
+      "matched_token_number" : 44
+    },
+    "SortAlgo1_SortAlgo4d3" : {
+      "minimal_similarity" : 70.96774,
+      "maximum_similarity" : 78.57143,
+      "matched_token_number" : 44
+    },
+    "SortAlgo2_SortAlgo4d3" : {
+      "minimal_similarity" : 70.96774,
+      "maximum_similarity" : 78.57143,
+      "matched_token_number" : 44
+    },
+    "SortAlgo3_5_SortAlgo3_6" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_SortAlgo4d1" : {
+      "minimal_similarity" : 69.84127,
+      "maximum_similarity" : 78.57143,
+      "matched_token_number" : 44
+    },
+    "SortAlgo2_SortAlgo4d2" : {
+      "minimal_similarity" : 68.75,
+      "maximum_similarity" : 78.57143,
+      "matched_token_number" : 44
+    },
+    "SortAlgo2_SortAlgo4d1" : {
+      "minimal_similarity" : 69.84127,
+      "maximum_similarity" : 78.57143,
+      "matched_token_number" : 44
+    },
+    "SortAlgo1_2_SortAlgo2_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_4_SortAlgo2_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
+    },
+    "SortAlgo1_3_SortAlgo2_5" : {
+      "minimal_similarity" : 0.0,
+      "maximum_similarity" : 0.0,
+      "matched_token_number" : 0
     }
   }
 } ]
