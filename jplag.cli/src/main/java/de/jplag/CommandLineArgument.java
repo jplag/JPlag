@@ -161,8 +161,8 @@ public enum CommandLineArgument {
                 .or(() -> argumentGroup.map(groupHelper::getArgumentGroup)).orElse(parser);
 
         Argument argument = argContainer.addArgument(flag).help(description);
-        choices.ifPresent(it -> argument.choices(it));
-        defaultValue.ifPresent(it -> argument.setDefault(it));
+        choices.ifPresent(argument::choices);
+        defaultValue.ifPresent(argument::setDefault);
         action.ifPresent(argument::action);
         metaVar.ifPresent(argument::metavar);
         argument.type(type);

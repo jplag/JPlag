@@ -178,7 +178,7 @@ public class SubmissionSet {
         }
 
         long duration = System.currentTimeMillis() - startTime;
-        String timePerSubmission = !submissions.isEmpty() ? Long.toString(duration / submissions.size()) : "n/a";
+        String timePerSubmission = submissions.isEmpty() ? "n/a" : Long.toString(duration / submissions.size());
         logger.trace("Total time for parsing: " + TimeUtil.formatDuration(duration));
         logger.trace("Time per parsed submission: " + timePerSubmission + " msec");
     }
