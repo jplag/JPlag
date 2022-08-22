@@ -52,9 +52,8 @@ public class FileHelper {
     /**
      * @param directorieRoot path from which all folders should be loaded
      * @return all folders found in the specified path
-     * @throws IOException Exception can be thrown in cases that involve reading, copying or locating files.
      */
-    public static String[] getAllDirectoriesInPath(Path directorieRoot) throws IOException {
+    public static String[] getAllDirectoriesInPath(Path directorieRoot) {
         return directorieRoot.toFile().list((dir, name) -> new File(dir, name).isDirectory());
     }
 
