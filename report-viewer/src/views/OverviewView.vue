@@ -4,7 +4,7 @@
 <template>
   <div class="container">
     <div class="column-container" style="width: 30%">
-        <h1>JPlag Report</h1>
+      <h1>JPlag Report</h1>
       <p class="section-title">Main Info:</p>
       <div id="basicInfo">
         <TextInformation
@@ -35,11 +35,11 @@
         />
         <TextInformation
           :has-additional-info="true"
-          :value="overview.submissionIds.length"
+          :value="store.getters.getSubmissionIds.size"
           additional-info-title="Submission IDs:"
           label="Submissions"
         >
-          <IDsList :ids="overview.submissionIds" @id-sent="handleId" />
+          <IDsList :ids="store.getters.getSubmissionIds" @id-sent="handleId" />
         </TextInformation>
         <TextInformation
           :value="overview.dateOfExecution"
@@ -56,19 +56,19 @@
     </div>
 
     <div class="column-container" style="width: 35%">
-        <div id="metrics">
+      <div id="metrics">
         <p class="section-title">Metric:</p>
-          <div id="metrics-list">
-            <MetricButton
-              v-for="(metric, index) in overview.metrics"
-              :id="metric.metricName"
-              :key="metric.metricName"
-              :is-selected="selectedMetric[index]"
-              :metric="metric"
-              @click="selectMetric(index)"
-            />
-          </div>
+        <div id="metrics-list">
+          <MetricButton
+            v-for="(metric, index) in overview.metrics"
+            :id="metric.metricName"
+            :key="metric.metricName"
+            :is-selected="selectedMetric[index]"
+            :metric="metric"
+            @click="selectMetric(index)"
+          />
         </div>
+      </div>
       <p class="section-title">Distribution:</p>
       <DistributionDiagram
         :distribution="distributions[selectedMetricIndex]"
@@ -78,12 +78,12 @@
     <div class="column-container" style="width: 35%">
       <p class="section-title">Top Comparisons:</p>
       <div id="comparisonsList">
-      <ComparisonsTable
-        :clusters="overview.clusters"
-        :top-comparisons="topComps[selectedMetricIndex]"
-      />
+        <ComparisonsTable
+          :clusters="overview.clusters"
+          :top-comparisons="topComps[selectedMetricIndex]"
+        />
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -145,26 +145,26 @@ export default defineComponent({
      * Handles the selection of an Id to anonymize.
      * If all submission ids are provided as parameter it hides or displays them based on their previous state.
      * If a single id is provided it hides all of the other ids except for the chosen one.
-     * @param id
+     * @param ids
      */
-    const handleId = (id: string) => {
-      if (id.length === overview.submissionIds.length) {
+    const handleId = (ids: Array<string>) => {
+      if (ids.length === store.getters.getSubmissionIds.length) {
         if (store.state.anonymous.size > 0) {
           store.commit("resetAnonymous");
         } else {
-          store.commit("addAnonymous", id);
+          store.commit("addAnonymous", ids);
         }
       } else {
-        if (store.state.anonymous.has(id[0])) {
-          store.commit("removeAnonymous", id);
+        if (store.state.anonymous.has(ids[0])) {
+          store.commit("removeAnonymous", ids);
         } else {
           if (store.state.anonymous.size === 0) {
             store.commit(
               "addAnonymous",
-              overview.submissionIds.filter((s) => s !== id[0])
+              store.getters.getSubmissionIds.filter((s: string) => s !== ids[0])
             );
           } else {
-            store.commit("addAnonymous", id);
+            store.commit("addAnonymous", ids);
           }
         }
       }
