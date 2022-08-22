@@ -1,8 +1,14 @@
-package de.jplag.end_to_end_testing.modelRecord;
+package de.jplag.end_to_end_testing.model;
+
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * The object contains required options for the endToEndt tests which are important for the test suite. The options were
+ * determined by discussion which can be found at https://github.com/jplag/JPlag/issues/590.
+ */
 public record Options(@JsonProperty("minimum_token_match") Integer minimumTokenMatch) {
 
     /**
@@ -20,17 +26,17 @@ public record Options(@JsonProperty("minimum_token_match") Integer minimumTokenM
     }
 
     /**
-     * Creates the hashCode for the AKtuelle Options object
+     * Creates the hashCode for the current Options object
      */
     @JsonIgnore
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + minimumTokenMatch;
-        return result;
+        return Objects.hash(this);
     }
 
+    /**
+     * Creates a String with the contained values of the object
+     */
     @JsonIgnore
     @Override
     public String toString() {

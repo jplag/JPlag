@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-
-import javax.naming.NameNotFoundException;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DynamicTest;
@@ -27,9 +24,9 @@ import de.jplag.JPlagResult;
 import de.jplag.end_to_end_testing.helper.FileHelper;
 import de.jplag.end_to_end_testing.helper.JPlagTestSuiteHelper;
 import de.jplag.end_to_end_testing.helper.JsonHelper;
-import de.jplag.end_to_end_testing.modelRecord.ExpectedResult;
-import de.jplag.end_to_end_testing.modelRecord.Options;
-import de.jplag.end_to_end_testing.modelRecord.ResultDescription;
+import de.jplag.end_to_end_testing.model.ExpectedResult;
+import de.jplag.end_to_end_testing.model.Options;
+import de.jplag.end_to_end_testing.model.ResultDescription;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -50,21 +47,33 @@ public class JPlagEndToEndTestingSuiteTest {
     private static LanguageOption languageOption;
 
     public JPlagEndToEndTestingSuiteTest() throws IOException {
+        // Loading the test resources
         LanguageToTestCaseMapper = JPlagTestSuiteHelper.getAllLanguageResources();
+        // creating the temporary lists for the test run
         validationErrors = new ArrayList<>();
         temporaryResultList = new HashMap<>();
+        // creating options object for the testSuite
+        setRunOptions();
+    }
 
+    /**
+     * creating the required options object for the endToEnd tests
+     */
+    private void setRunOptions() {
         options = new ArrayList<>();
         options.add(new Options(1));
         options.add(new Options(15));
     }
 
+    /**
+     * Creates the result json files based on the current test results after the test run.
+     * @throws IOException is thrown for all problems that may occur while parsing the json file. This includes both reading
+     */
     @AfterAll
     public static void tearDown() throws IOException {
-        for (var test : temporaryResultList.entrySet()) {
-            JsonHelper.writeJsonModelsToJsonFile(test.getValue(), test.getKey(), languageOption);
+        for (var resultDescriptionItem : temporaryResultList.entrySet()) {
+            JsonHelper.writeJsonModelsToJsonFile(resultDescriptionItem.getValue(), resultDescriptionItem.getKey(), languageOption);
         }
-
     }
 
     /**
@@ -98,8 +107,19 @@ public class JPlagEndToEndTestingSuiteTest {
         return null;
     }
 
+    /**
+     * Superordinate test function to be able to continue to check all data to be tested in case of failed tests
+     * @param directoryName name of the current tested directory
+     * @param options for the current test run
+     * @param languageOption current JPlag language option
+     * @param testFiles files to be tested
+     * @param currentResultDescription results stored for the test data
+     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
+     * exceptions produced by failed orinterrupted I/O operations
+     * @throws ExitException Exceptions for problems during the execution of JPlag that lead to an preemptive exit.
+     */
     private void runTests(String directoryName, Options option, LanguageOption currentLanguageOption, String[] testFiles,
-            Optional<ResultDescription> currentResultDescription) throws IOException, NoSuchAlgorithmException, NameNotFoundException, ExitException {
+            Optional<ResultDescription> currentResultDescription) throws IOException, ExitException {
         try {
             ResultDescription currentResult = currentResultDescription.isPresent() ? currentResultDescription.get() : null;
             runJPlagTestSuite(directoryName, option, currentLanguageOption, testFiles, currentResult);
@@ -109,8 +129,19 @@ public class JPlagEndToEndTestingSuiteTest {
         }
     }
 
+    /**
+     * EndToEnd test for the passed objects
+     * @param directoryName name of the current tested directory
+     * @param options for the current test run
+     * @param languageOption current JPlag language option
+     * @param testFiles files to be tested
+     * @param currentResultDescription results stored for the test data
+     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
+     * exceptions produced by failed orinterrupted I/O operations
+     * @throws ExitException Exceptions for problems during the execution of JPlag that lead to an preemptive exit.
+     */
     private void runJPlagTestSuite(String directoryName, Options options, LanguageOption languageOption, String[] testFiles,
-            ResultDescription currentResultDescription) throws ExitException, NoSuchAlgorithmException, NameNotFoundException, IOException {
+            ResultDescription currentResultDescription) throws IOException, ExitException {
         String[] submissionPath = FileHelper.createNewTestCaseDirectory(testFiles);
 
         JPlagOptions jplagOptions = new JPlagOptions(Arrays.asList(submissionPath), new ArrayList<>(), languageOption);
@@ -118,7 +149,6 @@ public class JPlagEndToEndTestingSuiteTest {
         jplagOptions.setMinimumTokenMatch(options.minimumTokenMatch());
 
         JPlagResult jplagResult = new JPlag(jplagOptions).run();
-        Options currentOption = new Options(jplagOptions.getMinimumTokenMatch());
 
         List<JPlagComparison> currentJPlagComparison = jplagResult.getAllComparisons();
 
@@ -148,10 +178,20 @@ public class JPlagEndToEndTestingSuiteTest {
         }
     }
 
+    /**
+     * Creates the display message for failed tests
+     * @param valueName Name of the failed test object
+     * @param currentValue current test values
+     * @param expectedValue expected test values
+     */
     private void addToValidationErrors(String valueName, String currentValue, String expectedValue) {
         validationErrors.add(valueName + " was " + currentValue + " but expected " + expectedValue);
     }
 
+    /**
+     * Creates the display info from the current failed test results
+     * @return formatted text for the failed comparative values of the current test
+     */
     private String createValidationErrorOutout() {
         String errorString = System.lineSeparator() + "There were <" + validationErrors.size() + "> validation error(s):" + System.lineSeparator();
 
@@ -162,6 +202,13 @@ public class JPlagEndToEndTestingSuiteTest {
         return errorString;
     }
 
+    /**
+     * Add or create the current test results in a temporary list to be able to save them later.
+     * @param directoryName name of the current tested directory
+     * @param options for the current test run
+     * @param jPlagComparison current test results
+     * @param languageOption current JPlag language option
+     */
     private void addToTemporaryResultMap(String directoryName, Options options, JPlagComparison jPlagComparison, LanguageOption languageOption) {
         var element = temporaryResultList.get(directoryName);
         if (element != null) {
@@ -188,6 +235,14 @@ public class JPlagEndToEndTestingSuiteTest {
         }
     }
 
+    /**
+     * Creates the name of the test for better assignment and readability Pattern: Language: (option values)
+     * filename1-filename2
+     * @param option under which the current test run
+     * @param languageOption current language used in the test
+     * @param testFiles test data for assigning by filename
+     * @return display name for the individual tests
+     */
     private String getTestCaseDisplayName(Options option, LanguageOption languageOption, String[] testFiles) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("(" + String.valueOf(option.minimumTokenMatch()) + ")");
@@ -197,9 +252,7 @@ public class JPlagEndToEndTestingSuiteTest {
             if (counter + 1 < testFiles.length) {
                 stringBuilder.append("-");
             }
-
         }
-
         return languageOption.toString() + ": " + stringBuilder.toString();
     }
 }

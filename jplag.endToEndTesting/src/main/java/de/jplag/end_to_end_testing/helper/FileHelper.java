@@ -65,10 +65,6 @@ public class FileHelper {
 
     /**
      * Copies the passed filenames to a temporary path to use them in the tests
-     * @throws IOException Exception can be thrown in cases that involve reading, copying or locating files.
-     */
-    /**
-     * Copies the passed filenames to a temporary path to use them in the tests
      * @param classNames for which the test case is to be created
      * @return paths created to the test submissions
      * @throws IOException Exception can be thrown in cases that involve reading, copying or locating files.

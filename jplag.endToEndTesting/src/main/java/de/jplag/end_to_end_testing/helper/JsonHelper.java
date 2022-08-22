@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
-import de.jplag.end_to_end_testing.modelRecord.ResultDescription;
+import de.jplag.end_to_end_testing.model.ResultDescription;
 import de.jplag.options.LanguageOption;
 
 public class JsonHelper {
