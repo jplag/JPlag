@@ -1,12 +1,12 @@
 package de.jplag;
 
-import org.junit.jupiter.api.Test;
+import static de.jplag.TokenConstants.FILE_END;
+import static de.jplag.simple.TestTokenConstants.STRING;
 
 import java.nio.file.Path;
 import java.util.List;
 
-import static de.jplag.TokenConstants.FILE_END;
-import static de.jplag.simple.TestTokenConstants.STRING;
+import org.junit.jupiter.api.Test;
 
 public class TokenPrinterTest {
 
@@ -57,5 +57,3 @@ public class TokenPrinterTest {
         System.out.print(output); // no additional newline required
     }
 }
-
-
