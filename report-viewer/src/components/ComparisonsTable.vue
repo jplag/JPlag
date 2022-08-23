@@ -18,15 +18,24 @@
         comparison.matchPercentage
       "
       class="selectable"
-      @click="
-        navigateToComparisonView(
-          comparison.firstSubmissionId,
-          comparison.secondSubmissionId
-        )
-      "
     >
-      <td>{{ index + 1 }}.</td>
       <td
+        @click="
+          navigateToComparisonView(
+            comparison.firstSubmissionId,
+            comparison.secondSubmissionId
+          )
+        "
+      >
+        {{ index + 1 }}.
+      </td>
+      <td
+        @click="
+          navigateToComparisonView(
+            comparison.firstSubmissionId,
+            comparison.secondSubmissionId
+          )
+        "
         :class="{
           'anonymous-style': isAnonymous(comparison.firstSubmissionId),
         }"
@@ -37,10 +46,23 @@
             : displayName(comparison.firstSubmissionId)
         }}
       </td>
-      <td>
+      <td
+        @click="
+          navigateToComparisonView(
+            comparison.firstSubmissionId,
+            comparison.secondSubmissionId
+          )
+        "
+      >
         <img alt=">>" src="@/assets/double_arrow_black_18dp.svg" />
       </td>
       <td
+        @click="
+          navigateToComparisonView(
+            comparison.firstSubmissionId,
+            comparison.secondSubmissionId
+          )
+        "
         :class="{
           'anonymous-style': isAnonymous(comparison.secondSubmissionId),
         }"
@@ -51,7 +73,16 @@
             : displayName(comparison.secondSubmissionId)
         }}
       </td>
-      <td>{{ formattedMatchPercentage(comparison.matchPercentage) }}</td>
+      <td
+        @click="
+          navigateToComparisonView(
+            comparison.firstSubmissionId,
+            comparison.secondSubmissionId
+          )
+        "
+      >
+        {{ formattedMatchPercentage(comparison.matchPercentage) }}
+      </td>
       <td>
         <img
           v-if="
