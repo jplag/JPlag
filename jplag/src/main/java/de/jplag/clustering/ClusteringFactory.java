@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
@@ -13,9 +16,17 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
  * Runs the clustering according to an options object.
  */
 public class ClusteringFactory {
+    private static final String CLUSTER_INFORMATION = "Calculating clusters via {} clustering with {} pre-processing...";
+    private static final String NO_CLUSTERS = "Cluster calculation disabled (as requested)!";
+    private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
+
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
-        if (!options.isEnabled())
+        if (!options.isEnabled()) {
+            logger.warn(NO_CLUSTERS);
             return Collections.emptyList();
+        } else {
+            logger.info(CLUSTER_INFORMATION, options.getAlgorithm(), options.getPreprocessor());
+        }
 
         // init algorithm
         GenericClusteringAlgorithm clusteringAlgorithm = options.getAlgorithm().create(options);

@@ -39,4 +39,9 @@ public enum ClusteringAlgorithm {
     public interface ClusteringAlgorithmSupplier {
         GenericClusteringAlgorithm create(ClusteringOptions options);
     }
+
+    @Override
+    public String toString() {
+        return super.toString().toLowerCase();
+    }
 }
