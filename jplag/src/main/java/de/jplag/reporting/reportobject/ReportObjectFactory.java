@@ -20,7 +20,7 @@ import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.Submission;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
-import de.jplag.reporting.jsonfactory.FileWriter;
+import de.jplag.reporting.jsonfactory.ToDiskWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.Metric;
@@ -33,7 +33,7 @@ import de.jplag.reporting.reportobject.model.OverviewReport;
 public class ReportObjectFactory {
     private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
 
-    private static final FileWriter fileWriter = new FileWriter();
+    private static final ToDiskWriter fileWriter = new ToDiskWriter();
     public static final String OVERVIEW_FILE_NAME = "overview.json";
     public static final String SUBMISSIONS_FOLDER = "submissions";
     private Map<String, String> submissionNameToIdMap;
@@ -109,7 +109,7 @@ public class ReportObjectFactory {
     }
 
     private void writeComparisons(JPlagResult result, String path) {
-        ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction);
+        ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction, fileWriter);
         submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result, path);
     }
 
