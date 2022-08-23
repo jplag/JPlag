@@ -16,6 +16,7 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
  * Runs the clustering according to an options object.
  */
 public class ClusteringFactory {
+    private static final String CLUSTER_PATTERN = "    {}: {}";
     private static final String CLUSTERING_RESULT = "{} clusters were found!";
     private static final String CLUSTERING_PARAMETERS = "Calculating clusters via {} clustering with {} pre-processing...";
     private static final String CLUSTERING_DISABLED = "Cluster calculation disabled (as requested)!";
@@ -49,6 +50,9 @@ public class ClusteringFactory {
         // remove bad clusters
         result = removeBadClusters(result);
         logger.info(CLUSTERING_RESULT, result.getClusters().size());
+        for (Cluster<Submission> cluster : result.getClusters()) {
+            logger.info(CLUSTER_PATTERN, cluster.getMembers(), cluster.getCommunityStrength());
+        }
 
         return List.of(result);
     }
