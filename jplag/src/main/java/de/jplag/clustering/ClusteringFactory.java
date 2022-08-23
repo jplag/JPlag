@@ -1,5 +1,6 @@
 package de.jplag.clustering;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -49,10 +50,7 @@ public class ClusteringFactory {
 
         // remove bad clusters
         result = removeBadClusters(result);
-        logger.info(CLUSTERING_RESULT, result.getClusters().size());
-        for (Cluster<Submission> cluster : result.getClusters()) {
-            logger.info(CLUSTER_PATTERN, cluster.getMembers(), cluster.getCommunityStrength());
-        }
+        logClusters(result);
 
         return List.of(result);
     }
@@ -60,5 +58,14 @@ public class ClusteringFactory {
     private static ClusteringResult<Submission> removeBadClusters(final ClusteringResult<Submission> clustering) {
         List<Cluster<Submission>> filtered = clustering.getClusters().stream().filter(cluster -> !cluster.isBadCluster()).toList();
         return new ClusteringResult<>(filtered, clustering.getCommunityStrength());
+    }
+
+    private static void logClusters(ClusteringResult<Submission> result) {
+        logger.info(CLUSTERING_RESULT, result.getClusters().size());
+        var clusters = new ArrayList<>(result.getClusters());
+        Collections.sort(clusters);
+        for (Cluster<Submission> cluster : clusters) {
+            logger.info(CLUSTER_PATTERN, cluster.getMembers(), cluster.getCommunityStrength());
+        }
     }
 }

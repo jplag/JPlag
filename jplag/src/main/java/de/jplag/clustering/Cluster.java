@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
  * Cluster part of a {@link ClusteringResult}.
  * @param <T> type of the clusters members
  */
-public class Cluster<T> {
+public class Cluster<T> implements Comparable<Cluster<T>> {
 
     private final float communityStrength;
     private final Collection<T> members;
@@ -122,4 +122,10 @@ public class Cluster<T> {
     public boolean isBadCluster() {
         return getMembers().size() < 2 || getCommunityStrength() < 0;
     }
+
+    @Override
+    public int compareTo(Cluster<T> other) {
+        return Float.compare(other.getCommunityStrength(), getCommunityStrength());
+    }
+
 }
