@@ -2,15 +2,18 @@ import { Overview } from "../Overview";
 import { Metric } from "../Metric";
 import { ComparisonListElement } from "../ComparisonListElement";
 import { Cluster } from "@/model/Cluster";
+import store from "@/store/store";
 
 export class OverviewFactory {
+
   static getOverview(json: Record<string, unknown>): Overview {
     const submissionFolder = json.submission_folder_path as Array<string>;
     const baseCodeFolder = "";
     const language = json.language as string;
     const fileExtensions = json.file_extensions as Array<string>;
     const matchSensitivity = json.match_sensitivity as number;
-    const submissions = json.submission_ids as Array<string>;
+    const jsonSubmissions = json.submission_id_to_display_name as Map<string, string>;
+    const map = new Map<string, string>(Object.entries(jsonSubmissions));
     const dateOfExecution = json.date_of_execution as string;
     const duration = json.execution_time as number as number;
     const metrics = [] as Array<Metric>;
@@ -37,7 +40,7 @@ export class OverviewFactory {
         description: metric.description as string,
       });
     });
-
+    store.commit("saveSubmissionNames", map);
     if (json.clusters) {
       (json.clusters as Array<unknown>).forEach((jsonCluster) => {
         const cluster = jsonCluster as Record<string, unknown>;
@@ -49,18 +52,37 @@ export class OverviewFactory {
         clusters.push(newCluster);
       });
     }
-
+    
+    OverviewFactory.saveSubmissionsToComparisonNameMap(json);
     return new Overview(
       submissionFolder,
       baseCodeFolder,
       language,
       fileExtensions,
       matchSensitivity,
-      submissions,
       dateOfExecution,
       duration,
       metrics,
-      clusters
+      clusters,
+      new Map()
     );
+  }
+
+  private static  saveSubmissionsToComparisonNameMap(json: Record<string, unknown>){
+    const submissionIdsToComparisonName =
+    json.submission_ids_to_comparison_file_name as Map<
+      string,
+      Map<string, string>
+    >;
+  const test: Array<Array<string | object>> = Object.entries(
+    submissionIdsToComparisonName
+  );
+  const comparisonMap = new Map<string, Map<string, string>>(
+  );
+  for (const [key, value] of test) {
+    comparisonMap.set(key as string, new Map(Object.entries(value as object)));
+  }
+
+  store.commit("saveComparisonFileLookup", comparisonMap);
   }
 }
