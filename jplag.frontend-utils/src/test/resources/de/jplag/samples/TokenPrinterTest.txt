@@ -11,7 +11,7 @@
 
 |   |    | 			token in the middle is set to previous line -- saved by TokenList::addToken method
 
-|   |    | 			token in this line are in reverse order -- that's okay
+|   |    | 			tokens in this line are in reverse order -- that's okay
 
 |					negative column index leads to redundant blank line
 

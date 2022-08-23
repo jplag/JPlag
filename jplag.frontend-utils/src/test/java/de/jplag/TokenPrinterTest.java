@@ -2,6 +2,7 @@ package de.jplag;
 
 import static de.jplag.TokenConstants.FILE_END;
 import static de.jplag.simple.TestTokenConstants.STRING;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -11,7 +12,8 @@ import org.junit.jupiter.api.Test;
 public class TokenPrinterTest {
 
     private static final Path TEST_FILE_LOCATION = Path.of("src", "test", "resources", "de", "jplag", "samples");
-    private static final String TEST_FILE_NAME = "TokenprinterTest.txt";
+    private static final String TEST_FILE_NAME = "TokenPrinterTest.txt";
+    public static final String TOKEN_SEPARATOR = "(\\|)?\s*\\|";
 
     /**
      * Tests the function of the TokenPrinter
@@ -55,5 +57,39 @@ public class TokenPrinterTest {
 
         String output = TokenPrinter.printTokens(tokens, TEST_FILE_LOCATION.toFile(), List.of(TEST_FILE_NAME));
         System.out.print(output); // no additional newline required
+
+        testOutputCorrectness(TEST_FILE_NAME, tokens, output);
+    }
+
+    private static void testOutputCorrectness(String fileName, TokenList tokens, String output) {
+        int lineIndex = 0;
+        int tokenIndex = 0;
+        boolean seenFileName = false;
+        for (String line : output.lines().toList()) {
+            if (line.isEmpty()) {
+                continue;
+            } else if (lineIndex == 0 && line.equals(fileName)) {
+                seenFileName = true;
+            } else if (line.startsWith("" + (lineIndex + 1))) {
+                lineIndex++;
+            } else {
+                line = line.trim();
+                String[] lineTokens = line.split(TOKEN_SEPARATOR);
+                for (String lineToken : lineTokens) {
+                    if (lineToken.isEmpty()) {
+                        continue;
+                    }
+                    Token currentToken = tokens.getToken(tokenIndex);
+                    if (lineToken.equalsIgnoreCase(currentToken.toString()) && currentToken.getLine() == lineIndex) {
+                        tokenIndex++;
+                    } else {
+                        fail("Expected token %s, but found %s".formatted(currentToken, lineToken));
+                    }
+                }
+            }
+        }
+        if (!seenFileName) {
+            fail("Expected file name");
+        }
     }
 }
