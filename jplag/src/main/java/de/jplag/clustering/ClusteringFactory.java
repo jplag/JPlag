@@ -16,16 +16,17 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
  * Runs the clustering according to an options object.
  */
 public class ClusteringFactory {
-    private static final String CLUSTER_INFORMATION = "Calculating clusters via {} clustering with {} pre-processing...";
-    private static final String NO_CLUSTERS = "Cluster calculation disabled (as requested)!";
+    private static final String CLUSTERING_RESULT = "{} clusters were found!";
+    private static final String CLUSTERING_PARAMETERS = "Calculating clusters via {} clustering with {} pre-processing...";
+    private static final String CLUSTERING_DISABLED = "Cluster calculation disabled (as requested)!";
     private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
 
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
         if (!options.isEnabled()) {
-            logger.warn(NO_CLUSTERS);
+            logger.warn(CLUSTERING_DISABLED);
             return Collections.emptyList();
         } else {
-            logger.info(CLUSTER_INFORMATION, options.getAlgorithm(), options.getPreprocessor());
+            logger.info(CLUSTERING_PARAMETERS, options.getAlgorithm(), options.getPreprocessor());
         }
 
         // init algorithm
@@ -47,6 +48,7 @@ public class ClusteringFactory {
 
         // remove bad clusters
         result = removeBadClusters(result);
+        logger.info(CLUSTERING_RESULT, result.getClusters().size());
 
         return List.of(result);
     }
