@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +45,7 @@ class MinimalCSharpFrontendTest {
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
         TokenList result = frontend.parse(baseDirectory, input);
-        logger.info(TokenPrinter.printTokens(result, baseDirectory, Arrays.asList(input)));
+        logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         // Compare parsed tokens:
         assertEquals(expectedToken.size(), result.size());

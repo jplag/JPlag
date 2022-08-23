@@ -204,7 +204,7 @@ public class Submission implements Comparable<Submission> {
      * @return the annotated code as string.
      */
     public String getTokenAnnotatedSourceCode() {
-        return TokenPrinter.printTokens(tokenList, files, submissionRootFile);
+        return TokenPrinter.printTokens(tokenList, submissionRootFile);
     }
 
     @Override

@@ -1,12 +1,13 @@
 package de.jplag;
 
-import static java.util.stream.Collectors.toMap;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -47,52 +48,27 @@ public final class TokenPrinter {
      * Creates a string representation of a set of files line by line and adds the tokens under the lines.
      * @param tokens is the set of tokens parsed from the files.
      * @param rootDirectory is the common rootDirectory of the files.
-     * @param fileNames is a collection of the file names.
-     * @param suffix is the optional view file suffix.
      * @return the string representation.
      */
-    public static String printTokens(TokenList tokens, File rootDirectory, Collection<String> fileNames, Optional<String> suffix) {
-        Collection<File> files = fileNames.stream().map(name -> new File(rootDirectory, name)).toList();
-        return printTokens(tokens, files, rootDirectory, suffix);
-    }
-
-    /**
-     * Creates a string representation of a set of files line by line and adds the tokens under the lines.
-     * @param tokens is the set of tokens parsed from the files.
-     * @param rootDirectory is the common rootDirectory of the files.
-     * @param fileNames is a collection of the file names.
-     * @return the string representation.
-     */
-    public static String printTokens(TokenList tokens, File rootDirectory, Collection<String> fileNames) {
-        return printTokens(tokens, rootDirectory, fileNames, Optional.empty());
-    }
-
-    /**
-     * Creates a string representation of a collection of files line by line and adds the tokens under the lines.
-     * @param tokens is the set of tokens parsed from the files.
-     * @param files are the parsed files.
-     * @return the string representation.
-     */
-    public static String printTokens(TokenList tokens, Collection<File> files, File rootDirectory) {
-        return printTokens(tokens, files, rootDirectory, Optional.empty());
+    public static String printTokens(TokenList tokens, File rootDirectory) {
+        return printTokens(tokens, rootDirectory, Optional.empty());
     }
 
     /**
      * Creates a string representation of a collection of files line by line and adds the tokens under the lines.
      * @param tokenList is the set of tokens parsed from the files.
-     * @param files are the parsed files.
      * @param rootDirectory is the common directory of the files.
      * @param suffix is the optional view file suffix.
      * @return the string representation.
      */
-    public static String printTokens(TokenList tokenList, Collection<File> files, File rootDirectory, Optional<String> suffix) {
+    public static String printTokens(TokenList tokenList, File rootDirectory, Optional<String> suffix) {
         PrinterOutputBuilder builder = new PrinterOutputBuilder();
         Map<String, List<Token>> fileToTokens = groupTokensByFile(tokenList);
 
         fileToTokens.forEach((String fileName, List<Token> fileTokens) -> {
             builder.append(fileName);
 
-            var lineDatas = getLineData(fileTokens, rootDirectory);
+            var lineDatas = getLineData(fileTokens, rootDirectory, suffix);
             lineDatas.forEach(lineData -> {
                 builder.setLine(lineData.lineNumber());
 
@@ -135,12 +111,15 @@ public final class TokenPrinter {
         return builder.toString();
     }
 
-    private static List<LineData> getLineData(List<Token> fileTokens, File root) {
+    private static List<LineData> getLineData(List<Token> fileTokens, File root, Optional<String> suffix) {
         // We expect that all fileTokens share the same Token.file!
 
         String fileName = fileTokens.get(0).getFile();
         // handle 'files as submissions' mode
         File file = fileName.isEmpty() ? root : new File(root, fileName);
+        if (suffix.isPresent()) {
+            file = new File(file.getPath() + suffix.get());
+        }
 
         // Sort tokens by file and line -> tokens can be processed without any further checks
         List<String> lines = linesFromFile(file);
@@ -162,13 +141,6 @@ public final class TokenPrinter {
      */
     private static String getStringRepresentation(Token token) {
         return token.getLength() <= 1 && INDICATE_TINY_TOKEN ? token.toString().toLowerCase() : token.toString();
-    }
-
-    /**
-     * Turns a list of files into a map which maps the file names to a list of the contained lines of that file.
-     */
-    private static Map<String, List<String>> readFiles(Collection<File> allFiles) {
-        return allFiles.stream().collect(toMap(File::getName, TokenPrinter::linesFromFile));
     }
 
     /**

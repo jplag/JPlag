@@ -79,7 +79,7 @@ public class TokenPrinterTest extends TestBase {
         System.out.println(LINE);
         System.out.println(LARGE_SPACE + submission.getName());
         System.out.println(LINE);
-        System.out.println(TokenPrinter.printTokens(submission.getTokenList(), submission.getFiles(), submission.getRoot()));
+        System.out.println(TokenPrinter.printTokens(submission.getTokenList(), submission.getRoot()));
     }
 
 }

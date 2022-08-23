@@ -5,15 +5,18 @@ import static de.jplag.simple.TestTokenConstants.STRING;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.file.Path;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class TokenPrinterTest {
+class TokenPrinterTest {
 
     private static final Path TEST_FILE_LOCATION = Path.of("src", "test", "resources", "de", "jplag", "samples");
     private static final String TEST_FILE_NAME = "TokenPrinterTest.txt";
-    public static final String TOKEN_SEPARATOR = "(\\|)?\s*\\|";
+    private static final String TOKEN_SEPARATOR = "(\\|)?\s*\\|";
+
+    private static final Logger logger = LoggerFactory.getLogger(TokenPrinterTest.class);
 
     /**
      * Tests the function of the TokenPrinter
@@ -55,8 +58,8 @@ public class TokenPrinterTest {
 
         tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 100, 1, 1));
 
-        String output = TokenPrinter.printTokens(tokens, TEST_FILE_LOCATION.toFile(), List.of(TEST_FILE_NAME));
-        System.out.print(output); // no additional newline required
+        String output = TokenPrinter.printTokens(tokens, TEST_FILE_LOCATION.toFile());
+        logger.debug(output); // no additional newline required
 
         testOutputCorrectness(TEST_FILE_NAME, tokens, output);
     }
