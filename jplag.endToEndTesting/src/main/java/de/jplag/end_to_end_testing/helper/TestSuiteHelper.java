@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +14,12 @@ import de.jplag.JPlagComparison;
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.options.LanguageOption;
 
-public class JPlagTestSuiteHelper {
+public class TestSuiteHelper {
 
     /**
      * private constructor to prevent instantiation
      */
-    private JPlagTestSuiteHelper() {
+    private TestSuiteHelper() {
         // For Serialization
     }
 
@@ -26,12 +27,11 @@ public class JPlagTestSuiteHelper {
      * Loads all existing test data into a test structure. the complex structure consists of the LanguageOption and their
      * data to be tested. These are divided into folders. for more information please read the README file
      * @return mapped LanguageOption to the data under test
-     * @throws IOException
      */
-    public static Map<LanguageOption, Map<String, Path>> getAllLanguageResources() throws IOException {
+    public static EnumMap<LanguageOption, Map<String, Path>> getAllLanguageResources() {
         String[] languageDirectoryNames = FileHelper.getAllDirectoriesInPath(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES);
         List<LanguageOption> languageInPathList = FileHelper.getLanguageOptionsFromPath(languageDirectoryNames);
-        var returnMap = new HashMap<LanguageOption, Map<String, Path>>();
+        EnumMap<LanguageOption, Map<String, Path>> returnMap = new EnumMap<>(LanguageOption.class);
 
         for (LanguageOption languageOption : languageInPathList) {
             var tempMap = new HashMap<String, Path>();

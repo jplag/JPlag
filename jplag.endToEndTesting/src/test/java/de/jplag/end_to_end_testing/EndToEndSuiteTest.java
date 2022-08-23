@@ -22,8 +22,8 @@ import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.end_to_end_testing.helper.FileHelper;
-import de.jplag.end_to_end_testing.helper.JPlagTestSuiteHelper;
 import de.jplag.end_to_end_testing.helper.JsonHelper;
+import de.jplag.end_to_end_testing.helper.TestSuiteHelper;
 import de.jplag.end_to_end_testing.model.ExpectedResult;
 import de.jplag.end_to_end_testing.model.Options;
 import de.jplag.end_to_end_testing.model.ResultDescription;
@@ -36,7 +36,7 @@ import de.jplag.options.LanguageOption;
  * plagiarism in the Java language and to be able to roughly categorize them. The plagiarism is compared with the
  * original class. The results are compared with the results from previous tests and changes are detected.
  */
-public class JPlagEndToEndTestingSuiteTest {
+public class EndToEndSuiteTest {
     // Language -> directory names and Paths
     private Map<LanguageOption, Map<String, Path>> LanguageToTestCaseMapper;
 
@@ -46,9 +46,9 @@ public class JPlagEndToEndTestingSuiteTest {
     private static List<String> validationErrors;
     private static LanguageOption languageOption;
 
-    public JPlagEndToEndTestingSuiteTest() throws IOException {
+    public EndToEndSuiteTest() throws IOException {
         // Loading the test resources
-        LanguageToTestCaseMapper = JPlagTestSuiteHelper.getAllLanguageResources();
+        LanguageToTestCaseMapper = TestSuiteHelper.getAllLanguageResources();
         // creating the temporary lists for the test run
         validationErrors = new ArrayList<>();
         temporaryResultList = new HashMap<>();
@@ -87,7 +87,7 @@ public class JPlagEndToEndTestingSuiteTest {
             LanguageOption currentLanguageOption = languageMap.getKey();
             for (Entry<String, Path> languagePaths : languageMap.getValue().entrySet()) {
                 String[] fileNames = FileHelper.loadAllTestFileNames(languagePaths.getValue());
-                var testCases = JPlagTestSuiteHelper.getTestCases(fileNames, languagePaths.getValue());
+                var testCases = TestSuiteHelper.getTestCases(fileNames, languagePaths.getValue());
                 var testCollection = new ArrayList<DynamicTest>();
                 String directoryName = languagePaths.getValue().getFileName().toString();
                 List<ResultDescription> tempResult = JsonHelper.getJsonModelListFromPath(directoryName, currentLanguageOption);
@@ -125,7 +125,7 @@ public class JPlagEndToEndTestingSuiteTest {
             runJPlagTestSuite(directoryName, option, currentLanguageOption, testFiles, currentResult);
         } finally {
             validationErrors.clear();
-            JPlagTestSuiteHelper.clear();
+            TestSuiteHelper.clear();
         }
     }
 
@@ -153,12 +153,12 @@ public class JPlagEndToEndTestingSuiteTest {
         List<JPlagComparison> currentJPlagComparison = jplagResult.getAllComparisons();
 
         for (JPlagComparison jPlagComparison : currentJPlagComparison) {
-            String identifier = JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison);
+            String identifier = TestSuiteHelper.getTestIdentifier(jPlagComparison);
             addToTemporaryResultMap(directoryName, options, jPlagComparison, languageOption);
 
             assertNotNull(currentResultDescription, "No stored result could be found for the current LanguageOption! " + options.toString());
 
-            ExpectedResult result = currentResultDescription.getExpectedResultByIdentifier(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison));
+            ExpectedResult result = currentResultDescription.getExpectedResultByIdentifier(TestSuiteHelper.getTestIdentifier(jPlagComparison));
             assertNotNull(result, "No stored result could be found for the identifier! " + identifier);
 
             if (Float.compare(result.resultSimilarityMinimum(), jPlagComparison.minimalSimilarity()) != 0) {
@@ -214,19 +214,19 @@ public class JPlagEndToEndTestingSuiteTest {
         if (element != null) {
             for (var item : element) {
                 if (item.options().equals(options)) {
-                    item.putIdenfifierToResultMap(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(
+                    item.putIdenfifierToResultMap(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(
                             jPlagComparison.minimalSimilarity(), jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
                     return;
                 }
             }
             Map<String, ExpectedResult> temporaryHashMap = new HashMap<>();
-            temporaryHashMap.put(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
+            temporaryHashMap.put(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
                     jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
             element.add(new ResultDescription(languageOption, options, temporaryHashMap));
         } else {
             var temporaryNewResultList = new ArrayList<ResultDescription>();
             Map<String, ExpectedResult> temporaryHashMap = new HashMap<>();
-            temporaryHashMap.put(JPlagTestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
+            temporaryHashMap.put(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
                     jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
 
             temporaryNewResultList.add(new ResultDescription(languageOption, options, temporaryHashMap));
