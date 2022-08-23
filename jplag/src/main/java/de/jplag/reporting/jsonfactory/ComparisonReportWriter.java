@@ -15,12 +15,13 @@ import de.jplag.reporting.reportobject.model.Match;
  */
 public class ComparisonReportWriter {
 
-    private static final FileWriter FILE_WRITER = new FileWriter();
+    private final FileWriter fileWriter;
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new HashMap<>();
 
-    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction) {
+    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter fileWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
+        this.fileWriter = fileWriter;
     }
 
     /**
@@ -48,7 +49,7 @@ public class ComparisonReportWriter {
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
                     convertMatchesToReportMatches(jPlagResult, comparison));
-            FILE_WRITER.saveAsJSON(comparisonReport, path, fileName);
+            fileWriter.saveAsJSON(comparisonReport, path, fileName);
         }
     }
 
