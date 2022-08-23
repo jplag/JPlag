@@ -28,7 +28,7 @@ public class TestSuiteHelper {
      * data to be tested. These are divided into folders. for more information please read the README file
      * @return mapped LanguageOption to the data under test
      */
-    public static EnumMap<LanguageOption, Map<String, Path>> getAllLanguageResources() {
+    public static Map<LanguageOption, Map<String, Path>> getAllLanguageResources() {
         String[] languageDirectoryNames = FileHelper.getAllDirectoriesInPath(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES);
         List<LanguageOption> languageInPathList = FileHelper.getLanguageOptionsFromPath(languageDirectoryNames);
         EnumMap<LanguageOption, Map<String, Path>> returnMap = new EnumMap<>(LanguageOption.class);
