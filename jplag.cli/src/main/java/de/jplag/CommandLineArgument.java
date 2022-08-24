@@ -1,13 +1,14 @@
 package de.jplag;
 
+import static de.jplag.CLI.ADVANCED_GROUP;
 import static de.jplag.CLI.CLUSTERING_GROUP_NAME;
-import static de.jplag.CLI.CLUSTERING_PREPROCESSING_GROUP_NAME;
 import static de.jplag.options.JPlagOptions.DEFAULT_COMPARISON_MODE;
 import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
 import static net.sourceforge.argparse4j.impl.Arguments.append;
 import static net.sourceforge.argparse4j.impl.Arguments.storeTrue;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.ArgumentAction;
 import net.sourceforge.argparse4j.inf.ArgumentContainer;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.FeatureControl;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 import de.jplag.clustering.ClusteringAlgorithm;
@@ -37,14 +39,16 @@ public enum CommandLineArgument {
             new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.IDENTIFIER)
                     .choices(LanguageLoader.getAllAvailableLanguageIdentifiers())),
     BASE_CODE("-bc", String.class),
-    VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices(List.of("quiet", "long"))), // TODO SH: Replace verbosity when integrating a
-                                                                                                      // real logging library
-    DEBUG("-d", Boolean.class),
-    SUBDIRECTORY("-S", String.class),
-    SUFFIXES("-p", String.class),
-    EXCLUDE_FILE("-x", String.class),
+    VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices("quiet", "long").argumentGroup(ADVANCED_GROUP)), // TODO SH: Replace
+                                                                                                                           // verbosity when
+                                                                                                                           // integrating a
+    // real logging library
+    DEBUG(new Builder("-d", Boolean.class).argumentGroup(ADVANCED_GROUP)),
+    SUBDIRECTORY(new Builder("-S", String.class).argumentGroup(ADVANCED_GROUP)),
+    SUFFIXES(new Builder("-p", String.class).argumentGroup(ADVANCED_GROUP)),
+    EXCLUDE_FILE(new Builder("-x", String.class).argumentGroup(ADVANCED_GROUP)),
     MIN_TOKEN_MATCH("-t", Integer.class),
-    SIMILARITY_THRESHOLD(new Builder("-m", Float.class).defaultsTo(DEFAULT_SIMILARITY_THRESHOLD)),
+    SIMILARITY_THRESHOLD(new Builder("-m", Float.class).defaultsTo(DEFAULT_SIMILARITY_THRESHOLD).argumentGroup(ADVANCED_GROUP)),
     SHOWN_COMPARISONS(new Builder("-n", Integer.class).defaultsTo(DEFAULT_SHOWN_COMPARISONS)),
     RESULT_FOLDER(new Builder("-r", String.class).defaultsTo("result")),
     COMPARISON_MODE(new Builder("-c", String.class).defaultsTo(DEFAULT_COMPARISON_MODE.getName()).choices(ComparisonMode.allNames())),
@@ -56,35 +60,30 @@ public enum CommandLineArgument {
             new Builder("--cluster-metric", SimilarityMetric.class).argumentGroup(CLUSTERING_GROUP_NAME)
                     .defaultsTo(ClusteringOptions.DEFAULTS.getSimilarityMetric())),
     CLUSTER_SPECTRAL_BANDWIDTH(
-            new Builder("--cluster-spectral-bandwidth", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("bandwidth")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralKernelBandwidth())),
+            new Builder("--cluster-spectral-bandwidth", Float.class).metaVar("bandwidth")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralKernelBandwidth()).hidden()),
     CLUSTER_SPECTRAL_NOISE(
-            new Builder("--cluster-spectral-noise", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("noise")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralGaussianProcessVariance())),
+            new Builder("--cluster-spectral-noise", Float.class).metaVar("noise")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralGaussianProcessVariance()).hidden()),
     CLUSTER_SPECTRAL_MIN_RUNS(
-            new Builder("--cluster-spectral-min-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("min")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMinRuns())),
+            new Builder("--cluster-spectral-min-runs", Integer.class).metaVar("min").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMinRuns())
+                    .hidden()),
     CLUSTER_SPECTRAL_MAX_RUNS(
-            new Builder("--cluster-spectral-max-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("max")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxRuns())),
+            new Builder("--cluster-spectral-max-runs", Integer.class).metaVar("max").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxRuns())
+                    .hidden()),
     CLUSTER_SPECTRAL_KMEANS_ITERATIONS(
-            new Builder("--cluster-spectral-kmeans-interations", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("iterations")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxKMeansIterationPerRun())),
+            new Builder("--cluster-spectral-kmeans-interations", Integer.class).metaVar("iterations")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxKMeansIterationPerRun()).hidden()),
     CLUSTER_AGGLOMERATIVE_THRESHOLD(
-            new Builder("--cluster-agglomerative-threshold", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("threshold")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold())),
+            new Builder("--cluster-agglomerative-threshold", Float.class).metaVar("threshold")
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold()).hidden()),
     CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY(
-            new Builder("--cluster-agglomerative-inter-cluster-similarity", InterClusterSimilarity.class).argumentGroup(CLUSTERING_GROUP_NAME)
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity())),
-    CLUSTER_PREPROCESSING_NONE(
-            new Builder("--cluster-pp-none", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME)
-                    .action(Arguments.storeTrue())),
-    CLUSTER_PREPROCESSING_CDF(
-            new Builder("--cluster-pp-cdf", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).action(Arguments.storeTrue())),
-    CLUSTER_PREPROCESSING_PERCENTILE(
-            new Builder("--cluster-pp-percentile", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("percentile")),
-    CLUSTER_PREPROCESSING_THRESHOLD(
-            new Builder("--cluster-pp-threshold", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("threshold"));
+            new Builder("--cluster-agglomerative-inter-cluster-similarity", InterClusterSimilarity.class)
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity()).hidden()),
+    CLUSTER_PREPROCESSING_NONE(new Builder("--cluster-pp-none", Boolean.class).action(Arguments.storeTrue()).hidden()),
+    CLUSTER_PREPROCESSING_CDF(new Builder("--cluster-pp-cdf", Boolean.class).action(Arguments.storeTrue()).hidden()),
+    CLUSTER_PREPROCESSING_PERCENTILE(new Builder("--cluster-pp-percentile", Float.class).metaVar("percentile").hidden()),
+    CLUSTER_PREPROCESSING_THRESHOLD(new Builder("--cluster-pp-threshold", Float.class).metaVar("threshold").hidden());
 
     /**
      * The identifier of the default {@link Language}.
@@ -102,6 +101,7 @@ public enum CommandLineArgument {
     private final Optional<ArgumentAction> action;
     private final Optional<String> metaVar;
     private final Class<?> type;
+    private final boolean hidden;
 
     CommandLineArgument(String flag, Class<?> type) {
         this(new Builder(flag, type));
@@ -117,7 +117,9 @@ public enum CommandLineArgument {
         this.action = builder.action;
         this.metaVar = builder.metaVar;
         this.numberOfValues = builder.nargs.orElse(NumberOfArgumentValues.SINGLE_VALUE);
+        this.hidden = builder.hidden;
         this.description = retrieveDescriptionFromMessages();
+
     }
 
     /**
@@ -176,6 +178,9 @@ public enum CommandLineArgument {
         if (type == Boolean.class) {
             argument.action(storeTrue());
         }
+        if (hidden) {
+            argument.help(FeatureControl.SUPPRESS);
+        }
         if (!numberOfValues.toString().isEmpty()) {
             // For multi-value arguments keep all invocations.
             // This causes the argument value to change its type to 'List<List<String>>'.
@@ -208,6 +213,7 @@ public enum CommandLineArgument {
         private Optional<ArgumentAction> action = Optional.empty();
         private Optional<String> metaVar = Optional.empty();
         private Optional<NumberOfArgumentValues> nargs = Optional.empty();
+        private boolean hidden;
 
         public Builder(String flag, Class<?> type) {
             this.flag = flag;
@@ -219,6 +225,11 @@ public enum CommandLineArgument {
             return this;
         }
 
+        public Builder choices(String... choices) {
+            this.choices = Optional.of(Arrays.asList(choices));
+            return this;
+        }
+
         public Builder choices(Collection<String> choices) {
             this.choices = Optional.of(choices);
             return this;
@@ -226,11 +237,6 @@ public enum CommandLineArgument {
 
         public Builder argumentGroup(String argumentGroup) {
             this.argumentGroup = Optional.of(argumentGroup);
-            return this;
-        }
-
-        public Builder mutuallyExclusiveGroup(String mutuallyExclusiveGroup) {
-            this.mutuallyExclusiveGroup = Optional.of(mutuallyExclusiveGroup);
             return this;
         }
 
@@ -246,6 +252,11 @@ public enum CommandLineArgument {
 
         public Builder nargs(NumberOfArgumentValues nargs) {
             this.nargs = Optional.of(nargs);
+            return this;
+        }
+
+        public Builder hidden() {
+            this.hidden = true;
             return this;
         }
     }
