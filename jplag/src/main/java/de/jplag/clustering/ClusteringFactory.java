@@ -17,8 +17,8 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
  * Runs the clustering according to an options object.
  */
 public class ClusteringFactory {
-    private static final String CLUSTER_PATTERN = "    {}: {}";
-    private static final String CLUSTERING_RESULT = "{} clusters were found!";
+    private static final String CLUSTER_PATTERN = " cluster strength: {}, avg similarity: {}%, members: {}";
+    private static final String CLUSTERING_RESULT = "{} clusters were found:";
     private static final String CLUSTERING_PARAMETERS = "Calculating clusters via {} clustering with {} pre-processing...";
     private static final String CLUSTERING_DISABLED = "Cluster calculation disabled (as requested)!";
     private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
@@ -64,6 +64,6 @@ public class ClusteringFactory {
         var clusters = new ArrayList<>(result.getClusters());
         Collections.sort(clusters, (first, second) -> Float.compare(second.getCommunityStrength(), first.getCommunityStrength()));
         logger.info(CLUSTERING_RESULT, clusters.size());
-        clusters.forEach(it -> logger.info(CLUSTER_PATTERN, it.getMembers(), it.getCommunityStrength()));
+        clusters.forEach(it -> logger.info(CLUSTER_PATTERN, it.getCommunityStrength(), it.getAverageSimilarity(), it.getMembers()));
     }
 }
