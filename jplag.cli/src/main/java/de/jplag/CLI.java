@@ -141,7 +141,7 @@ public final class CLI {
                 () -> logger.warn("Unknown comparison mode, using default mode!"));
 
         ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
-        Optional.ofNullable((Boolean) CLUSTER_ENABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);
+        Optional.ofNullable(!(Boolean) CLUSTER_DISABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);
         Optional.ofNullable((ClusteringAlgorithm) CLUSTER_ALGORITHM.getFrom(namespace)).ifPresent(clusteringBuilder::algorithm);
         Optional.ofNullable((SimilarityMetric) CLUSTER_METRIC.getFrom(namespace)).ifPresent(clusteringBuilder::similarityMetric);
         Optional.ofNullable((Float) CLUSTER_SPECTRAL_BANDWIDTH.getFrom(namespace)).ifPresent(clusteringBuilder::spectralKernelBandwidth);
