@@ -53,7 +53,7 @@ class RustFrontendTest {
     void parseTestFiles() {
         for (String fileName : testFiles) {
             TokenList tokens = language.parse(testFileLocation, new String[] {fileName});
-            String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
+            String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
@@ -129,7 +129,7 @@ class RustFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).distinct().boxed().toList();
+        var foundTokens = tokens.allTokens().stream().mapToInt(Token::getType).distinct().boxed().toList();
         var allTokens = IntStream.range(0, RustTokenConstants.NUMBER_DIFF_TOKENS).boxed().toList();
         allTokens = new ArrayList<>(allTokens);
 
