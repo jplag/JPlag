@@ -8,7 +8,7 @@ public class Language implements de.jplag.Language {
 
     protected static final String[] FILE_EXTENSIONS = {".rs"};
     public static final String NAME = "Rust frontend";
-    public static final String SHORT_NAME = "Rust";
+    public static final String IDENTIFIER = "rust";
     public static final int MINIMUM_TOKEN_MATCH = 8;
 
     private final RustParserAdapter parserAdapter;
@@ -28,8 +28,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override
