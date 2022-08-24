@@ -10,7 +10,7 @@ import org.slf4j.spi.SLF4JServiceProvider;
 
 @MetaInfServices(SLF4JServiceProvider.class)
 public class CollectedLoggerServiceProvider implements SLF4JServiceProvider {
-    public static String REQUESTED_API_VERSION = "2.0.99";
+    public static final String REQUESTED_API_VERSION = "2.0.99";
     private ILoggerFactory loggerFactory;
     private IMarkerFactory markerFactory;
     private MDCAdapter mdcAdapter;
