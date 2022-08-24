@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +59,7 @@ class KotlinFrontendTest {
     void parseTestFiles() {
         for (String fileName : testFiles) {
             TokenList tokens = language.parse(testFileLocation, new String[] {fileName});
-            String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
+            String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
@@ -154,7 +153,7 @@ class KotlinFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.allTokens().spliterator(), true).mapToInt(Token::getType).sorted().distinct().toArray();
+        var foundTokens = tokens.allTokens().stream().parallel().mapToInt(Token::getType).sorted().distinct().toArray();
         // Exclude SEPARATOR_TOKEN, as it does not occur
         var allTokens = IntStream.range(0, KotlinTokenConstants.NUMBER_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
 

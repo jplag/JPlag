@@ -7,9 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,11 +45,11 @@ class MinimalCSharpFrontendTest {
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
         TokenList result = frontend.parse(baseDirectory, input);
-        logger.info(TokenPrinter.printTokens(result, baseDirectory, Arrays.asList(input)));
+        logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         // Compare parsed tokens:
         assertEquals(expectedToken.size(), result.size());
-        List<Integer> actualToken = StreamSupport.stream(result.allTokens().spliterator(), false).map(Token::getType).collect(toList());
+        List<Integer> actualToken = result.allTokens().stream().map(Token::getType).collect(toList());
         assertEquals(expectedToken, actualToken);
     }
 

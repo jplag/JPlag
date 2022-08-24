@@ -28,4 +28,9 @@ public enum Preprocessing {
     public Optional<ClusteringPreprocessor> constructPreprocessor(ClusteringOptions options) {
         return Optional.ofNullable(constructor.apply(options));
     }
+
+    @Override
+    public String toString() {
+        return super.toString().toLowerCase().replace('_', ' ');
+    }
 }

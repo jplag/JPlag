@@ -45,7 +45,7 @@ public final class CLI {
 
     private static final String PROGRAM_NAME = "jplag";
     static final String CLUSTERING_GROUP_NAME = "Clustering";
-    static final String CLUSTERING_PREPROCESSING_GROUP_NAME = "Clustering - Preprocessing";
+    static final String ADVANCED_GROUP = "Advanced";
 
     private final ArgumentParser parser;
 
@@ -61,7 +61,8 @@ public final class CLI {
             JPlag program = new JPlag(options);
             logger.info("JPlag initialized");
             JPlagResult result = program.run();
-            ReportObjectFactory.createAndSaveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
+            ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
+            reportObjectFactory.createAndSaveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
 
         } catch (ExitException exception) {
             logger.error(exception.getMessage(), exception);
@@ -142,7 +143,7 @@ public final class CLI {
             options = options.withComparisonMode(comparisonMode.get());
 
         ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
-        Optional.ofNullable((Boolean) CLUSTER_ENABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);
+        Optional.ofNullable(!(Boolean) CLUSTER_DISABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);
         Optional.ofNullable((ClusteringAlgorithm) CLUSTER_ALGORITHM.getFrom(namespace)).ifPresent(clusteringBuilder::algorithm);
         Optional.ofNullable((SimilarityMetric) CLUSTER_METRIC.getFrom(namespace)).ifPresent(clusteringBuilder::similarityMetric);
         Optional.ofNullable((Float) CLUSTER_SPECTRAL_BANDWIDTH.getFrom(namespace)).ifPresent(clusteringBuilder::spectralKernelBandwidth);

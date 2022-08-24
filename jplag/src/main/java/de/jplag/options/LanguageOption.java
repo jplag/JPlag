@@ -14,6 +14,7 @@ public enum LanguageOption {
     GO_LANG("golang", "de.jplag.golang.Language"),
     KOTLIN("kotlin", "de.jplag.kotlin.Language"),
     R_LANG("rlang", "de.jplag.rlang.Language"),
+    RUST("rust", "de.jplag.rust.Language"),
     SCALA("scala", "de.jplag.scala.Language"),
     CHAR("char", "de.jplag.chars.Language"),
     TEXT("text", "de.jplag.text.Language"),

@@ -1,7 +1,7 @@
 package de.jplag.end_to_end_testing.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -41,6 +41,6 @@ public class TestCaseModel {
      * @return current JPlag options for the created object
      */
     public JPlagOptions getJPlagOptionsFromCurrentModel() {
-        return new JPlagOptions(new ArrayList<>(Arrays.asList(submissionFolderPath)), new ArrayList<>(), languageOption);
+        return new JPlagOptions(languageOption, List.of(submissionFolderPath), new ArrayList<>());
     }
 }

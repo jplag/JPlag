@@ -12,8 +12,21 @@ class ClusteringTest extends CommandLineInterfaceTest {
     private static final double EPSILON = 0.000001;
 
     @Test
+    void parseSkipClustering() {
+        String argument = CommandLineArgument.CLUSTER_DISABLE.flag();
+        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+        assertEquals(false, options.clusteringOptions().isEnabled());
+    }
+
+    @Test
+    void parseDefaultClustering() {
+        buildOptionsFromCLI(CURRENT_DIRECTORY);
+        assertEquals(true, options.clusteringOptions().isEnabled());
+    }
+
+    @Test
     void parsePercentilePreProcessor() {
-        String argument = CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE.flag() + "=" + 0.5f;
+        String argument = buildArgument(CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE, Float.toString(0.5f));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(Preprocessing.PERCENTILE, options.clusteringOptions().getPreprocessor());
         assertEquals(0.5, options.clusteringOptions().getPreprocessorPercentile(), EPSILON);

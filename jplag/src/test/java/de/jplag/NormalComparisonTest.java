@@ -34,7 +34,7 @@ class NormalComparisonTest extends TestBase {
     @Test
     void testWithMinTokenMatch() throws ExitException {
         var expectedDistribution = new int[] {1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.setMinimumTokenMatch(5));
+        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.withMinimumTokenMatch(5));
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());

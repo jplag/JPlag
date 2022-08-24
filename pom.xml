@@ -74,12 +74,11 @@
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.24.1</spotless.version>
-        <slf4j.version>1.7.36</slf4j.version>
+        <spotless.version>2.25.0</spotless.version>
+        <slf4j.version>2.0.0</slf4j.version>
         <junit.version>5.9.0</junit.version>
 
         <antlr2.version>2.7.7</antlr2.version>
-        <antlr3.version>3.5</antlr3.version>
         <antlr4.version>4.10.1</antlr4.version>
         <emf.version>2.27.0</emf.version>
         <emf.ecore.version>2.25.0</emf.ecore.version>
@@ -108,16 +107,6 @@
                 <version>${antlr4.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr3</artifactId>
-                <version>${antlr3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr3-runtime</artifactId>
-                <version>${antlr3.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>net.sourceforge.argparse4j</groupId>
                 <artifactId>argparse4j</artifactId>
                 <version>0.9.0</version>
@@ -133,6 +122,11 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>1.9</version>
             </dependency>
 
             <!-- JPLAG -->
@@ -174,6 +168,11 @@
             <dependency>
                 <groupId>de.jplag</groupId>
                 <artifactId>rlang</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>rust</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -482,6 +481,7 @@
                 <module>jplag.frontend.kotlin</module>
                 <module>jplag.frontend.python-3</module>
                 <module>jplag.frontend.rlang</module>
+                <module>jplag.frontend.rust</module>
                 <module>jplag.frontend.scala</module>
                 <module>jplag.frontend.scheme</module>
                 <module>jplag.frontend.text</module>
@@ -507,6 +507,7 @@
                 <module>jplag.frontend.kotlin</module>
                 <module>jplag.frontend.python-3</module>
                 <module>jplag.frontend.rlang</module>
+                <module>jplag.frontend.rust</module>
                 <module>jplag.frontend.scala</module>
                 <module>jplag.frontend.scheme</module>
                 <module>jplag.frontend.text</module>

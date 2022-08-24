@@ -3,6 +3,7 @@ package de.jplag;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.Function;
 
 import de.jplag.exceptions.ExitException;
@@ -20,11 +21,12 @@ public abstract class TestBase {
     }
 
     protected String getBasePath(String... subs) {
-        String path = BASE_PATH;
+        StringJoiner joiner = new StringJoiner(File.separator);
+        joiner.add(BASE_PATH);
         for (String sub : subs) {
-            path += File.separator + sub;
+            joiner.add(sub);
         }
-        return path;
+        return joiner.toString();
     }
 
     protected JPlagResult runJPlagWithExclusionFile(String testSampleName, String exclusionFileName) throws ExitException {
