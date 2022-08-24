@@ -48,7 +48,6 @@ public final class CLI {
 
     private static final String PROGRAM_NAME = "jplag";
     static final String CLUSTERING_GROUP_NAME = "Clustering";
-    static final String CLUSTERING_PREPROCESSING_GROUP_NAME = "Clustering - Preprocessing";
 
     private final ArgumentParser parser;
 

@@ -1,7 +1,6 @@
 package de.jplag;
 
 import static de.jplag.CLI.CLUSTERING_GROUP_NAME;
-import static de.jplag.CLI.CLUSTERING_PREPROCESSING_GROUP_NAME;
 import static de.jplag.options.JPlagOptions.DEFAULT_COMPARISON_MODE;
 import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
@@ -17,6 +16,7 @@ import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.ArgumentAction;
 import net.sourceforge.argparse4j.inf.ArgumentContainer;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.FeatureControl;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 import de.jplag.clustering.ClusteringAlgorithm;
@@ -56,34 +56,33 @@ public enum CommandLineArgument {
                     .defaultsTo(ClusteringOptions.DEFAULTS.getSimilarityMetric())),
     CLUSTER_SPECTRAL_BANDWIDTH(
             new Builder("--cluster-spectral-bandwidth", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("bandwidth")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralKernelBandwidth())),
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralKernelBandwidth()).hidden()),
     CLUSTER_SPECTRAL_NOISE(
             new Builder("--cluster-spectral-noise", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("noise")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralGaussianProcessVariance())),
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralGaussianProcessVariance()).hidden()),
     CLUSTER_SPECTRAL_MIN_RUNS(
             new Builder("--cluster-spectral-min-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("min")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMinRuns())),
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMinRuns()).hidden()),
     CLUSTER_SPECTRAL_MAX_RUNS(
             new Builder("--cluster-spectral-max-runs", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("max")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxRuns())),
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxRuns()).hidden()),
     CLUSTER_SPECTRAL_KMEANS_ITERATIONS(
             new Builder("--cluster-spectral-kmeans-interations", Integer.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("iterations")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxKMeansIterationPerRun())),
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxKMeansIterationPerRun()).hidden()),
     CLUSTER_AGGLOMERATIVE_THRESHOLD(
             new Builder("--cluster-agglomerative-threshold", Float.class).argumentGroup(CLUSTERING_GROUP_NAME).metaVar("threshold")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold())),
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold()).hidden()),
     CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY(
             new Builder("--cluster-agglomerative-inter-cluster-similarity", InterClusterSimilarity.class).argumentGroup(CLUSTERING_GROUP_NAME)
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity())),
+                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity()).hidden()),
     CLUSTER_PREPROCESSING_NONE(
-            new Builder("--cluster-pp-none", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME)
-                    .action(Arguments.storeTrue())),
+            new Builder("--cluster-pp-none", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_GROUP_NAME).action(Arguments.storeTrue()).hidden()),
     CLUSTER_PREPROCESSING_CDF(
-            new Builder("--cluster-pp-cdf", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).action(Arguments.storeTrue())),
+            new Builder("--cluster-pp-cdf", Boolean.class).mutuallyExclusiveGroup(CLUSTERING_GROUP_NAME).action(Arguments.storeTrue()).hidden()),
     CLUSTER_PREPROCESSING_PERCENTILE(
-            new Builder("--cluster-pp-percentile", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("percentile")),
+            new Builder("--cluster-pp-percentile", Float.class).mutuallyExclusiveGroup(CLUSTERING_GROUP_NAME).metaVar("percentile").hidden()),
     CLUSTER_PREPROCESSING_THRESHOLD(
-            new Builder("--cluster-pp-threshold", Float.class).mutuallyExclusiveGroup(CLUSTERING_PREPROCESSING_GROUP_NAME).metaVar("threshold"));
+            new Builder("--cluster-pp-threshold", Float.class).mutuallyExclusiveGroup(CLUSTERING_GROUP_NAME).metaVar("threshold").hidden());
 
     private final String flag;
     private final NumberOfArgumentValues numberOfValues;
@@ -95,6 +94,7 @@ public enum CommandLineArgument {
     private final Optional<ArgumentAction> action;
     private final Optional<String> metaVar;
     private final Class<?> type;
+    private final boolean hidden;
 
     private CommandLineArgument(String flag, Class<?> type) {
         this(new Builder(flag, type));
@@ -110,7 +110,9 @@ public enum CommandLineArgument {
         this.action = builder.action;
         this.metaVar = builder.metaVar;
         this.numberOfValues = builder.nargs.orElse(NumberOfArgumentValues.SINGLE_VALUE);
+        this.hidden = builder.hidden;
         this.description = retrieveDescriptionFromMessages();
+
     }
 
     /**
@@ -169,6 +171,9 @@ public enum CommandLineArgument {
         if (type == Boolean.class) {
             argument.action(storeTrue());
         }
+        if (hidden) {
+            argument.help(FeatureControl.SUPPRESS);
+        }
         if (!numberOfValues.toString().isEmpty()) {
             // For multi-value arguments keep all invocations.
             // This causes the argument value to change its type to 'List<List<String>>'.
@@ -201,6 +206,7 @@ public enum CommandLineArgument {
         private Optional<ArgumentAction> action = Optional.empty();
         private Optional<String> metaVar = Optional.empty();
         private Optional<NumberOfArgumentValues> nargs = Optional.empty();
+        private boolean hidden;
 
         public Builder(String flag, Class<?> type) {
             this.flag = flag;
@@ -239,6 +245,11 @@ public enum CommandLineArgument {
 
         public Builder nargs(NumberOfArgumentValues nargs) {
             this.nargs = Optional.of(nargs);
+            return this;
+        }
+
+        public Builder hidden() {
+            this.hidden = true;
             return this;
         }
     }
