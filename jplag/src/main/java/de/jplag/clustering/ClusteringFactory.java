@@ -61,11 +61,9 @@ public class ClusteringFactory {
     }
 
     private static void logClusters(ClusteringResult<Submission> result) {
-        logger.info(CLUSTERING_RESULT, result.getClusters().size());
         var clusters = new ArrayList<>(result.getClusters());
-        Collections.sort(clusters);
-        for (Cluster<Submission> cluster : clusters) {
-            logger.info(CLUSTER_PATTERN, cluster.getMembers(), cluster.getCommunityStrength());
-        }
+        Collections.sort(clusters, (first, second) -> Float.compare(second.getCommunityStrength(), first.getCommunityStrength()));
+        logger.info(CLUSTERING_RESULT, clusters.size());
+        clusters.forEach(it -> logger.info(CLUSTER_PATTERN, it.getMembers(), it.getCommunityStrength()));
     }
 }
