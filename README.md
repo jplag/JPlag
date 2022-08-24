@@ -15,20 +15,21 @@ JPlag is a system that finds similarities among multiple sets of source code fil
 
 In the following, a list of all supported languages with their supported language version is provided. A language can be selected from the command line using the `-l <cli argument name>` argument.
 
-| Language | Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/3.-Language-Modules) | parser
-| --- | ---: | --- | :---: | :---: |
-| [Java](https://www.java.com) | 17 | java | mature | JavaC |
-| [C++](https://isocpp.org) | 11 | cpp | legacy | JavaCC |
-| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/) | 8 | csharp | beta | ANTLR 4 |
-| [Go](https://go.dev) | 1.17 | golang | beta | ANTLR 4 |
-| [Kotlin](https://kotlinlang.org) | 1.3 | kotlin | beta | ANTLR 4 |
-| [Python](https://www.python.org) | 3.6 | python3 | legacy | ANTLR 4 |
-| [R](https://www.r-project.org/) | 3.5.0 | rlang | beta | ANTLR 4 |
-| [Scala](https://www.scala-lang.org) | 2.13.8 | scala | beta | Scalameta |
-| [Scheme](http://www.scheme-reports.org) | ? | scheme | unknown | JavaCC |
-| [EMF Metamodel](https://www.eclipse.org/modeling/emf/) | 2.25.0 | emf-metamodel | alpha | EMF |
-| [EMF Metamodel](https://www.eclipse.org/modeling/emf/) (dynamic) | 2.25.0 | emf-metamodel-dynamic | alpha | EMF |
-| Text (naive) | - | text | legacy | ANTLR |
+| Language                                                         | Version | CLI Argument Name     | [state](https://github.com/jplag/JPlag/wiki/3.-Language-Modules) | parser |
+|------------------------------------------------------------------|--------:|-----------------------| :---: | :---: |
+| [Java](https://www.java.com)                                     |      17 | java                  | mature | JavaC |
+| [C++](https://isocpp.org)                                        |      11 | cpp                   | legacy | JavaCC |
+| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)            |       8 | csharp                | beta | ANTLR 4 |
+| [Go](https://go.dev)                                             |    1.17 | golang                | beta | ANTLR 4 |
+| [Kotlin](https://kotlinlang.org)                                 |     1.3 | kotlin                | beta | ANTLR 4 |
+| [Python](https://www.python.org)                                 |     3.6 | python3               | legacy | ANTLR 4 |
+| [R](https://www.r-project.org/)                                  |   3.5.0 | rlang                 | beta | ANTLR 4 |
+| [Rust](https://www.rust-lang.org/)                               |  1.60.0 | rust                  | beta | ANTLR 4 |
+| [Scala](https://www.scala-lang.org)                              |  2.13.8 | scala                 | beta | Scalameta |
+| [Scheme](http://www.scheme-reports.org)                          |       ? | scheme                | unknown | JavaCC |
+| [EMF Metamodel](https://www.eclipse.org/modeling/emf/)           |  2.25.0 | emf-metamodel         | alpha | EMF |
+| [EMF Metamodel](https://www.eclipse.org/modeling/emf/) (dynamic) |  2.25.0 | emf-metamodel-dynamic | alpha | EMF |
+| Text (naive)                                                     |       - | text                  | legacy | ANTLR |
 
 ## Download and Installation
 
