@@ -140,19 +140,19 @@ REAL_LITERAL:        ([0-9] ('_'* [0-9])*)? '.' [0-9] ('_'* [0-9])* ExponentPart
 CHARACTER_LITERAL:                   '\'' (~['\\\r\n\u0085\u2028\u2029] | CommonCharacter) '\'';
 REGULAR_STRING:                      '"'  (~["\\\r\n\u0085\u2028\u2029] | CommonCharacter)* '"';
 VERBATIUM_STRING:                    '@"' (~'"' | '""')* '"';
-INTERPOLATED_REGULAR_STRING_START:   '$"' { this.OnInterpolatedRegularStringStart(); } -> pushMode(INTERPOLATION_STRING);
-INTERPOLATED_VERBATIUM_STRING_START: '$@"'  { this.OnInterpolatedVerbatiumStringStart(); }  -> pushMode(INTERPOLATION_STRING);
+INTERPOLATED_REGULAR_STRING_START:   '$"' { this.onInterpolatedRegularStringStart(); } -> pushMode(INTERPOLATION_STRING);
+INTERPOLATED_VERBATIUM_STRING_START: '$@"'  { this.onInterpolatedVerbatiumStringStart(); }  -> pushMode(INTERPOLATION_STRING);
 
 //B.1.9 Operators And Punctuators
-OPEN_BRACE:               '{' { this.OnOpenBrace(); };
-CLOSE_BRACE:              '}' { this.OnCloseBrace(); };
+OPEN_BRACE:               '{' { this.onOpenBrace(); };
+CLOSE_BRACE:              '}' { this.onCloseBrace(); };
 OPEN_BRACKET:             '[';
 CLOSE_BRACKET:            ']';
 OPEN_PARENS:              '(';
 CLOSE_PARENS:             ')';
 DOT:                      '.';
 COMMA:                    ',';
-COLON:                    ':' { this.OnColon(); };
+COLON:                    ':' { this.onColon(); };
 SEMICOLON:                ';';
 PLUS:                     '+';
 MINUS:                    '-';
@@ -196,17 +196,17 @@ OP_RANGE:                 '..';
 mode INTERPOLATION_STRING;
 
 DOUBLE_CURLY_INSIDE:           '{{';
-OPEN_BRACE_INSIDE:             '{' { this.OpenBraceInside(); } -> skip, pushMode(DEFAULT_MODE);
-REGULAR_CHAR_INSIDE:           { this.IsRegularCharInside() }? SimpleEscapeSequence;
-VERBATIUM_DOUBLE_QUOTE_INSIDE: { this.IsVerbatiumDoubleQuoteInside() }? '""';
-DOUBLE_QUOTE_INSIDE:           '"' { this.OnDoubleQuoteInside(); } -> popMode;
-REGULAR_STRING_INSIDE:         { this.IsRegularCharInside() }? ~('{' | '\\' | '"')+;
-VERBATIUM_INSIDE_STRING:       { this.IsVerbatiumDoubleQuoteInside() }? ~('{' | '"')+;
+OPEN_BRACE_INSIDE:             '{' { this.openBraceInside(); } -> skip, pushMode(DEFAULT_MODE);
+REGULAR_CHAR_INSIDE:           { this.isRegularCharInside() }? SimpleEscapeSequence;
+VERBATIUM_DOUBLE_QUOTE_INSIDE: { this.isVerbatiumDoubleQuoteInside() }? '""';
+DOUBLE_QUOTE_INSIDE:           '"' { this.onDoubleQuoteInside(); } -> popMode;
+REGULAR_STRING_INSIDE:         { this.isRegularCharInside() }? ~('{' | '\\' | '"')+;
+VERBATIUM_INSIDE_STRING:       { this.isVerbatiumDoubleQuoteInside() }? ~('{' | '"')+;
 
 mode INTERPOLATION_FORMAT;
 
 DOUBLE_CURLY_CLOSE_INSIDE:      '}}' -> type(FORMAT_STRING);
-CLOSE_BRACE_INSIDE:             '}' { this.OnCloseBraceInside(); }   -> skip, popMode;
+CLOSE_BRACE_INSIDE:             '}' { this.onCloseBraceInside(); }   -> skip, popMode;
 FORMAT_STRING:                  ~'}'+;
 
 mode DIRECTIVE_MODE;

@@ -7,10 +7,7 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.JPlagResult;
-import de.jplag.Submission;
-import de.jplag.TestBase;
-import de.jplag.TokenPrinter;
+import de.jplag.*;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -82,7 +79,7 @@ public class TokenPrinterTest extends TestBase {
         System.out.println(LINE);
         System.out.println(LARGE_SPACE + submission.getName());
         System.out.println(LINE);
-        System.out.println(TokenPrinter.printTokens(submission.getTokenList(), submission.getFiles(), submission.getRoot()));
+        System.out.println(TokenPrinter.printTokens(submission.getTokenList(), submission.getRoot()));
     }
 
 }

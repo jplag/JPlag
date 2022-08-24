@@ -30,20 +30,20 @@
         {{ index + 1 }}.
       </td>
       <td
-        :class="{
-          'anonymous-style': isAnonymous(comparison.firstSubmissionId),
-        }"
         @click="
           navigateToComparisonView(
             comparison.firstSubmissionId,
             comparison.secondSubmissionId
           )
         "
+        :class="{
+          'anonymous-style': isAnonymous(comparison.firstSubmissionId),
+        }"
       >
         {{
           isAnonymous(comparison.firstSubmissionId)
             ? "Hidden"
-            : comparison.firstSubmissionId
+            : displayName(comparison.firstSubmissionId)
         }}
       </td>
       <td
@@ -57,9 +57,23 @@
         <img alt=">>" src="@/assets/double_arrow_black_18dp.svg" />
       </td>
       <td
+        @click="
+          navigateToComparisonView(
+            comparison.firstSubmissionId,
+            comparison.secondSubmissionId
+          )
+        "
         :class="{
           'anonymous-style': isAnonymous(comparison.secondSubmissionId),
         }"
+      >
+        {{
+          isAnonymous(comparison.secondSubmissionId)
+            ? "Hidden"
+            : displayName(comparison.secondSubmissionId)
+        }}
+      </td>
+      <td
         @click="
           navigateToComparisonView(
             comparison.firstSubmissionId,
@@ -67,13 +81,8 @@
           )
         "
       >
-        {{
-          isAnonymous(comparison.secondSubmissionId)
-            ? "Hidden"
-            : comparison.secondSubmissionId
-        }}
+        {{ formattedMatchPercentage(comparison.matchPercentage) }}
       </td>
-      <td>{{ formattedMatchPercentage(comparison.matchPercentage) }}</td>
       <td>
         <img
           v-if="
@@ -138,6 +147,8 @@ export default defineComponent({
     let formattedMatchPercentage = (num: number) => num.toFixed(2);
     const dialog: Ref<Array<boolean>> = ref([]);
     props.topComparisons.forEach(() => dialog.value.push(false));
+    const displayName = (submissionId: string) =>
+      store.getters.submissionDisplayName(submissionId);
 
     const toggleDialog = (index: number) => {
       dialog.value[index] = true;
@@ -223,6 +234,7 @@ export default defineComponent({
       clustersWithParticipatingMatches,
       dialog,
 
+      displayName,
       isAnonymous,
       getClustersFor,
       toggleDialog,

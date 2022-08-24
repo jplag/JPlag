@@ -41,14 +41,6 @@ public interface Language {
     boolean hasErrors();
 
     /**
-     * Determines whether the parser provide column information. If that is the case, line and column indices are used
-     * instead of a single token index.
-     */
-    default boolean supportsColumns() {
-        return true;
-    }
-
-    /**
      * Determines whether a fixed-width font should be used to display that language.
      */
     default boolean isPreformatted() {

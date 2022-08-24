@@ -23,14 +23,13 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>frontend-utils</artifactId>
-            <version>${revision}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.scalameta/scalameta -->
         <dependency>
             <groupId>org.scalameta</groupId>
             <artifactId>scalameta_${scala.compat.version}</artifactId>
-            <version>4.5.11</version>
+            <version>4.5.13</version>
         </dependency>
 
         <!-- Test -->

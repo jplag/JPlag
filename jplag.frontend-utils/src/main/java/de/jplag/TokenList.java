@@ -1,8 +1,7 @@
 package de.jplag;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -48,7 +47,7 @@ public class TokenList {
      * Returns a view on all tokens.
      * @return all tokens.
      */
-    public Iterable<Token> allTokens() {
+    public Collection<Token> allTokens() {
         return new ArrayList<>(tokens);
     }
 
@@ -68,7 +67,7 @@ public class TokenList {
     @Override
     public final String toString() {
         try {
-            List<String> tokenStrings = tokens.stream().map(Token::toString).collect(toList());
+            List<String> tokenStrings = tokens.stream().map(Token::toString).toList();
             return String.join(System.lineSeparator(), tokenStrings);
         } catch (OutOfMemoryError exception) {
             return "Token list to large for output: " + tokens.size() + " Tokens";
