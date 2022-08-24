@@ -24,13 +24,13 @@ import org.slf4j.LoggerFactory;
  * @author Timur Saglam
  */
 public final class TokenPrinter {
-    public static final String NON_WHITESPACE = "\\S";
-    public static final int MIN_PADDING = 1;
     private static final Logger logger = LoggerFactory.getLogger(TokenPrinter.class);
     // Representation:
     private static final String BAR = "|";
     private static final String TAB = "\t";
     private static final String SPACE = " ";
+    private static final String NON_WHITESPACE = "\\S";
+    private static final int MIN_PADDING = 1;
     private static final int TAB_LENGTH = 8;
     private static final String TAB_REPLACEMENT = SPACE.repeat(TAB_LENGTH); // might depend on files
 
@@ -68,7 +68,7 @@ public final class TokenPrinter {
         fileToTokens.forEach((String fileName, List<Token> fileTokens) -> {
             builder.append(fileName);
 
-            var lineDatas = getLineData(fileTokens, rootDirectory, suffix);
+            List<LineData> lineDatas = getLineData(fileTokens, rootDirectory, suffix);
             lineDatas.forEach(lineData -> {
                 builder.setLine(lineData.lineNumber());
 
