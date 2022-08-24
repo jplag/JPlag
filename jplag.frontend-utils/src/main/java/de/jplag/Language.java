@@ -18,7 +18,7 @@ public interface Language {
     String getName();
 
     /**
-     * Identifier of the language for CLI options and for dynamic loading of language.
+     * Identifier of the language used for CLI options and dynamic loading. You should use some name within {@code [a-z_-]+}
      */
     String getIdentifier();
 
@@ -41,10 +41,9 @@ public interface Language {
     boolean hasErrors();
 
     /**
-     * Determines whether the parser provide column information. If that is the case, line and column indices are used
-     * instead of a single token index.
+     * Determines whether a fixed-width font should be used to display that language.
      */
-    default boolean supportsColumns() {
+    default boolean isPreformatted() {
         return true;
     }
 

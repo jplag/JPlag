@@ -74,12 +74,11 @@
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.24.1</spotless.version>
+        <spotless.version>2.25.0</spotless.version>
         <slf4j.version>1.7.36</slf4j.version>
         <junit.version>5.9.0</junit.version>
 
         <antlr2.version>2.7.7</antlr2.version>
-        <antlr3.version>3.5</antlr3.version>
         <antlr4.version>4.10.1</antlr4.version>
         <emf.version>2.27.0</emf.version>
         <emf.ecore.version>2.25.0</emf.ecore.version>
@@ -106,16 +105,6 @@
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4</artifactId>
                 <version>${antlr4.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr3</artifactId>
-                <version>${antlr3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr3-runtime</artifactId>
-                <version>${antlr3.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.argparse4j</groupId>

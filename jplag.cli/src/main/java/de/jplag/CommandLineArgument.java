@@ -48,7 +48,7 @@ public enum CommandLineArgument {
     SHOWN_COMPARISONS(new Builder("-n", Integer.class).defaultsTo(DEFAULT_SHOWN_COMPARISONS)),
     RESULT_FOLDER(new Builder("-r", String.class).defaultsTo("result")),
     COMPARISON_MODE(new Builder("-c", String.class).defaultsTo(DEFAULT_COMPARISON_MODE.getName()).choices(ComparisonMode.allNames())),
-    CLUSTER_ENABLE(new Builder("--cluster-skip", Boolean.class).argumentGroup(CLUSTERING_GROUP_NAME).action(Arguments.storeTrue())),
+    CLUSTER_DISABLE(new Builder("--cluster-skip", Boolean.class).argumentGroup(CLUSTERING_GROUP_NAME).action(Arguments.storeTrue())),
     CLUSTER_ALGORITHM(
             new Builder("--cluster-alg", ClusteringAlgorithm.class).argumentGroup(CLUSTERING_GROUP_NAME)
                     .defaultsTo(ClusteringOptions.DEFAULTS.getAlgorithm())),
