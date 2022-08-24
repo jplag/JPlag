@@ -27,11 +27,16 @@ public class Cluster<T> {
         this.averageSimilarity = averageSimilarity;
     }
 
+    /**
+     * @return a view on the members of this cluster.
+     */
     public Collection<T> getMembers() {
-        // TODO Check why access to local attribute.
-        return members;
+        return new ArrayList<>(members);
     }
 
+    /**
+     * @return average similarity between all tuple comparisons of the members in this cluster.
+     */
     public float getAverageSimilarity() {
         return averageSimilarity;
     }
@@ -57,7 +62,7 @@ public class Cluster<T> {
      * @return How much each member of this cluster contributes to the {@link ClusteringResult#getCommunityStrength}.
      */
     public float getCommunityStrengthPerConnection() {
-        int size = getMembers().size();
+        int size = members.size();
         if (size < 2)
             return 0;
         return getCommunityStrength() / connections();
@@ -84,7 +89,7 @@ public class Cluster<T> {
      */
     public double getWorth(BiFunction<T, T, Float> similarity) {
         double communityStrength = getCommunityStrength();
-        if (getMembers().size() > 1) {
+        if (members.size() > 1) {
             communityStrength /= connections();
         }
         double averageSimilarity = averageSimilarity(similarity);
@@ -97,7 +102,7 @@ public class Cluster<T> {
      * @return average similarity
      */
     private float averageSimilarity(BiFunction<T, T, Float> similarity) {
-        List<T> members = new ArrayList<>(getMembers());
+        List<T> members = new ArrayList<>(this.members);
         if (members.size() < 2) {
             return 1;
         }
@@ -111,7 +116,7 @@ public class Cluster<T> {
     }
 
     private int connections() {
-        int size = getMembers().size();
+        int size = members.size();
         return ((size - 1) * size) / 2;
     }
 
@@ -120,7 +125,7 @@ public class Cluster<T> {
      * @return is bad
      */
     public boolean isBadCluster() {
-        return getMembers().size() < 2 || getCommunityStrength() < 0;
+        return members.size() < 2 || getCommunityStrength() < 0;
     }
 
 }
