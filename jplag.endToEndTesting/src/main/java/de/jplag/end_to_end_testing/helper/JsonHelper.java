@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.end_to_end_testing.model.ResultDescription;
-import de.jplag.options.LanguageOption;
 
 public class JsonHelper {
     /**
@@ -23,13 +22,13 @@ public class JsonHelper {
 
     /**
      * @param directoryName name to the result path
-     * @param languageOption for which the results are to be loaded
+     * @param languageIdentifier for which the results are to be loaded
      * @return ResultDescription as serialized object
      * @throws IOException is thrown for all problems that may occur while parsing the json file. This includes both reading
      */
-    public static List<ResultDescription> getJsonModelListFromPath(String directoryName, LanguageOption languageOption) throws IOException {
+    public static List<ResultDescription> getJsonModelListFromPath(String directoryName, String languageIdentifier) throws IOException {
 
-        Path jsonPath = Path.of(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toString(), languageOption.toString(), directoryName + ".json");
+        Path jsonPath = Path.of(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toString(), languageIdentifier, directoryName + ".json");
 
         if (jsonPath.toFile().exists() && jsonPath.toFile().length() > 0) {
 
@@ -43,16 +42,17 @@ public class JsonHelper {
      * Saves the passed object as a json file to the given path
      * @param resultDescriptionist list of elements to be saved
      * @param directoryName path to the temporary storage location
+     * @param languageIdentifier for which the results should be stored
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      */
-    public static void writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptionist, String directoryName, LanguageOption languageOption)
+    public static void writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptionist, String directoryName, String languageIdentifier)
             throws IOException {
         // create an instance of DefaultPrettyPrinter
         // new DefaultPrettyPrinter()
         ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
-        Path temporaryDirectory = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(), languageOption.toString(),
+        Path temporaryDirectory = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(), languageIdentifier,
                 directoryName + ".json");
 
         FileHelper.createDirectoryIfItDoesNotExist(temporaryDirectory.getParent().toFile());

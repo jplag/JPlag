@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import java.util.stream.Collectors;
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
-import de.jplag.options.LanguageOption;
 
 public class TestSuiteHelper {
 
@@ -30,12 +28,13 @@ public class TestSuiteHelper {
      * data to be tested. These are divided into folders. for more information please read the README file
      * @return mapped LanguageOption to the data under test
      */
-    public static Map<LanguageOption, Map<String, Path>> getAllLanguageResources() {
+    public static Map<String, Map<String, Path>> getAllLanguageResources() {
         String[] languageDirectoryNames = FileHelper.getAllDirectoriesInPath(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES);
-        List<LanguageOption> languageInPathList = FileHelper.getLanguageOptionsFromPath(languageDirectoryNames);
-        EnumMap<LanguageOption, Map<String, Path>> returnMap = new EnumMap<>(LanguageOption.class);
+        List<String> languageInPathList = FileHelper.getLanguageOptionsFromPath(languageDirectoryNames);
 
-        for (LanguageOption languageOption : languageInPathList) {
+        Map<String, Map<String, Path>> returnMap = new HashMap<>();
+
+        for (String languageOption : languageInPathList) {
             var tempMap = new HashMap<String, Path>();
             var allDirectoriesInPath = FileHelper
                     .getAllDirectoriesInPath(Path.of(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES.toString(), languageOption.toString()));

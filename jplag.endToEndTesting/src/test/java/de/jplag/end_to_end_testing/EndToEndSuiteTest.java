@@ -22,7 +22,6 @@ import org.junit.jupiter.api.TestFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
-import de.jplag.Language;
 import de.jplag.end_to_end_testing.helper.FileHelper;
 import de.jplag.end_to_end_testing.helper.JsonHelper;
 import de.jplag.end_to_end_testing.helper.TestSuiteHelper;
@@ -37,13 +36,13 @@ import de.jplag.options.JPlagOptions;
  */
 public class EndToEndSuiteTest {
     // Language -> directory names and Paths
-    private Map<Language, Map<String, Path>> LanguageToTestCaseMapper;
+    private Map<String, Map<String, Path>> LanguageToTestCaseMapper;
 
     private List<Options> options;
 
     private static Map<String, List<ResultDescription>> temporaryResultList;
     private static List<String> validationErrors;
-    private static Language languageOption;
+    private static String languageIdentifier;
 
     public EndToEndSuiteTest() throws IOException {
         // Loading the test resources
@@ -71,7 +70,7 @@ public class EndToEndSuiteTest {
     @AfterAll
     public static void tearDown() throws IOException {
         for (var resultDescriptionItem : temporaryResultList.entrySet()) {
-            JsonHelper.writeJsonModelsToJsonFile(resultDescriptionItem.getValue(), resultDescriptionItem.getKey(), languageOption);
+            JsonHelper.writeJsonModelsToJsonFile(resultDescriptionItem.getValue(), resultDescriptionItem.getKey(), languageIdentifier);
         }
     }
 
@@ -82,21 +81,21 @@ public class EndToEndSuiteTest {
      */
     @TestFactory
     Collection<DynamicTest> dynamicOverAllTest() throws IOException {
-        for (Entry<LanguageOption, Map<String, Path>> languageMap : LanguageToTestCaseMapper.entrySet()) {
-            LanguageOption currentLanguageOption = languageMap.getKey();
+        for (Entry<String, Map<String, Path>> languageMap : LanguageToTestCaseMapper.entrySet()) {
+            String currentLanguageIdentifier = languageMap.getKey();
             for (Entry<String, Path> languagePaths : languageMap.getValue().entrySet()) {
                 String[] fileNames = FileHelper.loadAllTestFileNames(languagePaths.getValue());
                 var testCases = TestSuiteHelper.getTestCases(fileNames, languagePaths.getValue());
                 var testCollection = new ArrayList<DynamicTest>();
                 String directoryName = languagePaths.getValue().getFileName().toString();
-                List<ResultDescription> tempResult = JsonHelper.getJsonModelListFromPath(directoryName, currentLanguageOption);
-                languageOption = currentLanguageOption;
+                List<ResultDescription> tempResult = JsonHelper.getJsonModelListFromPath(directoryName, currentLanguageIdentifier);
+                languageIdentifier = currentLanguageIdentifier;
                 for (Options option : options) {
                     for (var testCase : testCases) {
                         Optional<ResultDescription> currentResultDescription = tempResult.stream().filter(x -> x.options().equals(option))
                                 .findFirst();
-                        testCollection.add(DynamicTest.dynamicTest(getTestCaseDisplayName(option, currentLanguageOption, testCase), () -> {
-                            runTests(directoryName, option, currentLanguageOption, testCase, currentResultDescription);
+                        testCollection.add(DynamicTest.dynamicTest(getTestCaseDisplayName(option, languageIdentifier, testCase), () -> {
+                            runTests(directoryName, option, currentLanguageIdentifier, testCase, currentResultDescription);
                         }));
                     }
                 }
@@ -110,18 +109,18 @@ public class EndToEndSuiteTest {
      * Superordinate test function to be able to continue to check all data to be tested in case of failed tests
      * @param directoryName name of the current tested directory
      * @param options for the current test run
-     * @param languageOption current JPlag language option
+     * @param currentLanguageIdentifier current JPlag language option
      * @param testFiles files to be tested
      * @param currentResultDescription results stored for the test data
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations
      * @throws ExitException Exceptions for problems during the execution of JPlag that lead to an preemptive exit.
      */
-    private void runTests(String directoryName, Options option, LanguageOption currentLanguageOption, String[] testFiles,
+    private void runTests(String directoryName, Options option, String currentLanguageIdentifier, String[] testFiles,
             Optional<ResultDescription> currentResultDescription) throws IOException, ExitException {
         try {
             ResultDescription currentResult = currentResultDescription.orElse(null);
-            runJPlagTestSuite(directoryName, option, currentLanguageOption, testFiles, currentResult);
+            runJPlagTestSuite(directoryName, option, currentLanguageIdentifier, testFiles, currentResult);
         } finally {
             validationErrors.clear();
             TestSuiteHelper.clear();
@@ -132,18 +131,18 @@ public class EndToEndSuiteTest {
      * EndToEnd test for the passed objects
      * @param directoryName name of the current tested directory
      * @param options for the current test run
-     * @param languageOption current JPlag language option
+     * @param languageIdentifier current JPlag language option
      * @param testFiles files to be tested
      * @param currentResultDescription results stored for the test data
      * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations
      * @throws ExitException Exceptions for problems during the execution of JPlag that lead to an preemptive exit.
      */
-    private void runJPlagTestSuite(String directoryName, Options options, LanguageOption languageOption, String[] testFiles,
+    private void runJPlagTestSuite(String directoryName, Options options, String languageIdentifier, String[] testFiles,
             ResultDescription currentResultDescription) throws IOException, ExitException {
         String[] submissionPath = FileHelper.createNewTestCaseDirectory(testFiles);
 
-        JPlagOptions jplagOptions = new JPlagOptions(Arrays.asList(submissionPath), new ArrayList<>(), languageOption);
+        JPlagOptions jplagOptions = new JPlagOptions(Arrays.asList(submissionPath), new ArrayList<>(), languageIdentifier);
 
         jplagOptions.setMinimumTokenMatch(options.minimumTokenMatch());
 
@@ -153,7 +152,7 @@ public class EndToEndSuiteTest {
 
         for (JPlagComparison jPlagComparison : currentJPlagComparison) {
             String identifier = TestSuiteHelper.getTestIdentifier(jPlagComparison);
-            addToTemporaryResultMap(directoryName, options, jPlagComparison, languageOption);
+            addToTemporaryResultMap(directoryName, options, jPlagComparison, languageIdentifier);
 
             assertNotNull(currentResultDescription, "No stored result could be found for the current LanguageOption! " + options.toString());
 
@@ -207,10 +206,11 @@ public class EndToEndSuiteTest {
      * @param directoryName name of the current tested directory
      * @param options for the current test run
      * @param jPlagComparison current test results
-     * @param languageOption current JPlag language option
+     * @param languageIdentifier current JPlag language option
      */
-    private void addToTemporaryResultMap(String directoryName, Options options, JPlagComparison jPlagComparison, LanguageOption languageOption) {
+    private void addToTemporaryResultMap(String directoryName, Options options, JPlagComparison jPlagComparison, String languageIdentifier) {
         var element = temporaryResultList.get(directoryName);
+
         if (element != null) {
             for (var item : element) {
                 if (item.options().equals(options)) {
@@ -222,14 +222,14 @@ public class EndToEndSuiteTest {
             Map<String, ExpectedResult> temporaryHashMap = new HashMap<>();
             temporaryHashMap.put(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
                     jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
-            element.add(new ResultDescription(languageOption, options, temporaryHashMap));
+            element.add(new ResultDescription(languageIdentifier, options, temporaryHashMap));
         } else {
             var temporaryNewResultList = new ArrayList<ResultDescription>();
             Map<String, ExpectedResult> temporaryHashMap = new HashMap<>();
             temporaryHashMap.put(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
                     jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
 
-            temporaryNewResultList.add(new ResultDescription(languageOption, options, temporaryHashMap));
+            temporaryNewResultList.add(new ResultDescription(languageIdentifier, options, temporaryHashMap));
 
             temporaryResultList.put(directoryName, temporaryNewResultList);
         }
@@ -239,11 +239,11 @@ public class EndToEndSuiteTest {
      * Creates the name of the test for better assignment and readability Pattern: Language: (option values)
      * filename1-filename2
      * @param option under which the current test run
-     * @param languageOption current language used in the test
+     * @param languageIdentifier current language used in the test
      * @param testFiles test data for assigning by filename
      * @return display name for the individual tests
      */
-    private String getTestCaseDisplayName(Options option, LanguageOption languageOption, String[] testFiles) {
+    private String getTestCaseDisplayName(Options option, String languageIdentifier, String[] testFiles) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("(" + String.valueOf(option.minimumTokenMatch()) + ")");
         for (int counter = 0; counter < testFiles.length; counter++) {
@@ -253,6 +253,6 @@ public class EndToEndSuiteTest {
                 stringBuilder.append("-");
             }
         }
-        return languageOption.toString() + ": " + stringBuilder.toString();
+        return languageIdentifier + ": " + stringBuilder.toString();
     }
 }
