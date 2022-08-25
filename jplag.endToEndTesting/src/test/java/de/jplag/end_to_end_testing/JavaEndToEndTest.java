@@ -20,7 +20,7 @@ import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.end_to_end_testing.helper.JPlagTestSuiteHelper;
 import de.jplag.end_to_end_testing.model.TestCaseModel;
 import de.jplag.exceptions.ExitException;
-import de.jplag.options.LanguageOption;
+import de.jplag.java.Language;
 
 /**
  * Main test class for end-to-end testing in the Java language. The test cases aim to detect changes in the detection of
@@ -34,7 +34,7 @@ class JavaEndToEndTest {
 
     @BeforeAll
     public void setUp() throws IOException {
-        jplagTestSuiteHelper = new JPlagTestSuiteHelper(LanguageOption.JAVA);
+        jplagTestSuiteHelper = new JPlagTestSuiteHelper(Language.IDENTIFIER);
         assertTrue(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toFile().exists(), "Could not find base directory!");
         assertTrue(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESULT_JSON.toFile().isFile(), "Could not find java result json!");
     }

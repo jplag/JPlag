@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.end_to_end_testing.model.JsonModel;
 import de.jplag.end_to_end_testing.model.TestCaseModel;
-import de.jplag.options.LanguageOption;
 
 /**
  * This helper class deals with creating the test cases as well as copying and deleting for the end-to-end tests. The
@@ -28,18 +27,18 @@ public class JPlagTestSuiteHelper {
 
     private String[] resourceNames;
     private List<JsonModel> resultModel;
-    private LanguageOption languageOption;
+    private String languageIdentifier;
 
     /**
      * Helper class for the endToEnd tests. In this class the necessary resources are loaded, prepared and copied for the
      * tests based on the passed parameters. An instance of this class loads all necessary paths and properties for a test
      * run with the specified language
-     * @param languageOption for loading language-specific resources
+     * @param languageIdentifier for loading language-specific resources
      * @throws IOException is thrown for all problems that may occur while parsing the json file. This includes both reading
      * and parsing problems.
      */
-    public JPlagTestSuiteHelper(LanguageOption languageOption) throws IOException {
-        this.languageOption = languageOption;
+    public JPlagTestSuiteHelper(String languageIdentifier) throws IOException {
+        this.languageIdentifier = languageIdentifier;
         this.resourceNames = new File(TestDirectoryConstants.BASE_PATH_TO_JAVA_RESOURCES_SORTALGO.toString()).list();
 
         this.resultModel = JsonHelper.getResultModelFromPath();
@@ -56,7 +55,7 @@ public class JPlagTestSuiteHelper {
     public TestCaseModel createNewTestCase(String[] classNames, String functionName) throws IOException {
         createNewTestCaseDirectory(classNames);
         JsonModel resultJsonModel = resultModel.stream().filter(jsonModel -> functionName.equals(jsonModel.getFunctionName())).findAny().orElse(null);
-        return new TestCaseModel(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME, resultJsonModel, languageOption);
+        return new TestCaseModel(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME, resultJsonModel, languageIdentifier);
     }
 
     /**
@@ -98,7 +97,7 @@ public class JPlagTestSuiteHelper {
 
     /**
      * Delete directory with including files
-     * @param file Path to a folder or file to be deleted. This happens recursively to the path
+     * @param folder Path to a folder or file to be deleted. This happens recursively to the path
      * @throws IOException if an I/O error occurs
      */
     private void deleteCopiedFiles(File folder) throws IOException {

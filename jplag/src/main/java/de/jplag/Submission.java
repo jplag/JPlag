@@ -218,7 +218,7 @@ public class Submission implements Comparable<Submission> {
     private void copySubmission() {
         File rootDirectory = submissionRootFile.getParentFile();
         assert rootDirectory != null;
-        File submissionDirectory = createSubdirectory(rootDirectory, ERROR_FOLDER, language.getShortName(), name);
+        File submissionDirectory = createSubdirectory(rootDirectory, ERROR_FOLDER, language.getIdentifier(), name);
         for (File file : files) {
             try {
                 Files.copy(file.toPath(), new File(submissionDirectory, file.getName()).toPath());

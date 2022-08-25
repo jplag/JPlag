@@ -7,8 +7,8 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 
 import de.jplag.exceptions.ExitException;
+import de.jplag.java.Language;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;
 
 public abstract class TestBase {
@@ -48,7 +48,7 @@ public abstract class TestBase {
 
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization)
             throws ExitException {
-        JPlagOptions options = new JPlagOptions(LanguageOption.JAVA, newPaths, oldPaths);
+        JPlagOptions options = new JPlagOptions(LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow(), newPaths, oldPaths);
         options = customization.apply(options);
         options = options.withVerbosity(Verbosity.LONG);
         JPlag jplag = new JPlag(options);

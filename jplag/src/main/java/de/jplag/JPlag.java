@@ -31,7 +31,7 @@ public class JPlag {
     public JPlag(JPlagOptions options) {
         this.options = options;
         coreAlgorithm = new GreedyStringTiling(options);
-        language = options.language();
+        language = this.options.language();
         comparisonStrategy = initializeComparisonStrategy(options.comparisonMode());
     }
 
@@ -56,7 +56,8 @@ public class JPlag {
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
-        logger.info("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()));
+        if (logger.isInfoEnabled())
+            logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
 
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 

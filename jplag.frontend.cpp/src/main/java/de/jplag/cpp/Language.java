@@ -2,9 +2,14 @@ package de.jplag.cpp;
 
 import java.io.File;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.TokenList;
 
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
+    public static final String IDENTIFIER = "cpp";
+
     private final Scanner scanner; // cpp code is scanned not parsed
 
     public Language() {
@@ -22,8 +27,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return "cpp";
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override
