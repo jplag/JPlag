@@ -56,11 +56,13 @@ import de.jplag.csharp.grammar.CSharpParser.Using_directivesContext;
 import de.jplag.csharp.grammar.CSharpParser.WhileStatementContext;
 import de.jplag.csharp.grammar.CSharpParserBaseListener;
 
+import static de.jplag.csharp.CSharpTokenType.*;
+
 /**
  * Listener class for visiting the C# ANTLR parse tree. Transforms selected ANTLR token into JPlag tokens.
  * @author Timur Saglam
  */
-public class CSharpListener extends CSharpParserBaseListener implements CSharpTokenConstants {
+public class CSharpListener extends CSharpParserBaseListener {
 
     private final CSharpParserAdapter parserAdapter;
 
@@ -77,7 +79,7 @@ public class CSharpListener extends CSharpParserBaseListener implements CSharpTo
      * @param targetType is the type of the JPlag token to be created.
      * @param token is the ANTLR token.
      */
-    private void transformToken(int targetType, Token token) {
+    private void transformToken(CSharpTokenType targetType, Token token) {
         parserAdapter.addToken(targetType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
