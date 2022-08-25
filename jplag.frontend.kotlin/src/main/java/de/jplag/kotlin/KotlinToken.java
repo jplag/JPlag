@@ -12,9 +12,4 @@ public class KotlinToken extends Token {
     public KotlinToken(KotlinTokenType type, String file, int line, int column, int length) {
         super(type, file, line, column, length);
     }
-
-    @Override
-    public String type2string() {
-        return "";
-    }
 }

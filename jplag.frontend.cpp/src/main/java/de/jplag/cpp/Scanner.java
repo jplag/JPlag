@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenConstants;
+import de.jplag.SharedTokenType;
 
 public class Scanner extends AbstractParser {
     private String currentFile;
@@ -28,12 +28,12 @@ public class Scanner extends AbstractParser {
             if (!CPPScanner.scanFile(directory, currentFile, this)) {
                 errors++;
             }
-            tokens.add(new CPPToken(TokenConstants.FILE_END, currentFile));
+            tokens.add(new CPPToken(SharedTokenType.FILE_END, currentFile));
         }
         return tokens;
     }
 
-    public void add(int type, Token token) {
+    public void add(CPPTokenType type, Token token) {
         int length = token.endColumn - token.beginColumn + 1;
         tokens.add(new CPPToken(type, currentFile, token.beginLine, token.beginColumn, length));
     }

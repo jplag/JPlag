@@ -135,5 +135,5 @@ public abstract class Token {
     /**
      * @return a string representation depending on the type of the token.
      */
-    protected abstract String type2string();
+    protected String type2string() { return ""; };
 }
