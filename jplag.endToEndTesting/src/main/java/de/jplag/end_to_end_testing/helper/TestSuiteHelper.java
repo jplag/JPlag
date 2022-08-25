@@ -34,13 +34,13 @@ public class TestSuiteHelper {
 
         Map<String, Map<String, Path>> returnMap = new HashMap<>();
 
-        for (String languageOption : languageInPathList) {
+        for (String languageIdentifier : languageInPathList) {
             var tempMap = new HashMap<String, Path>();
             var allDirectoriesInPath = FileHelper
-                    .getAllDirectoriesInPath(Path.of(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES.toString(), languageOption.toString()));
+                    .getAllDirectoriesInPath(Path.of(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES.toString(), languageIdentifier));
             Arrays.asList(allDirectoriesInPath).forEach(directory -> tempMap.put(Path.of(directory).toFile().getName(),
-                    Path.of(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES.toString(), languageOption.toString(), directory)));
-            returnMap.put(languageOption, tempMap);
+                    Path.of(TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES.toString(), languageIdentifier, directory)));
+            returnMap.put(languageIdentifier, tempMap);
         }
         return returnMap;
     }
