@@ -121,7 +121,7 @@ public class EndToEndSuiteTest {
     private void runTests(String directoryName, Options option, LanguageOption currentLanguageOption, String[] testFiles,
             Optional<ResultDescription> currentResultDescription) throws IOException, ExitException {
         try {
-            ResultDescription currentResult = currentResultDescription.isPresent() ? currentResultDescription.get() : null;
+            ResultDescription currentResult = currentResultDescription.orElse(null);
             runJPlagTestSuite(directoryName, option, currentLanguageOption, testFiles, currentResult);
         } finally {
             validationErrors.clear();
