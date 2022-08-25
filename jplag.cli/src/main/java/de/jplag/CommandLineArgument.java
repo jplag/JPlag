@@ -24,7 +24,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
-import de.jplag.options.LanguageOption;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.strategy.ComparisonMode;
 
@@ -36,7 +35,9 @@ public enum CommandLineArgument {
     ROOT_DIRECTORY(new Builder("rootDir", String.class).nargs(NumberOfArgumentValues.ZERO_OR_MORE_VALUES)),
     NEW_DIRECTORY(new Builder("-new", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     OLD_DIRECTORY(new Builder("-old", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
-    LANGUAGE(new Builder("-l", String.class).defaultsTo(LanguageOption.getDefault().getDisplayName()).choices(LanguageOption.getAllDisplayNames())),
+    LANGUAGE(
+            new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.IDENTIFIER)
+                    .choices(LanguageLoader.getAllAvailableLanguageIdentifiers())),
     BASE_CODE("-bc", String.class),
     VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices("quiet", "long").argumentGroup(ADVANCED_GROUP)), // TODO SH: Replace
                                                                                                                            // verbosity when
@@ -84,6 +85,12 @@ public enum CommandLineArgument {
     CLUSTER_PREPROCESSING_PERCENTILE(new Builder("--cluster-pp-percentile", Float.class).metaVar("percentile").hidden()),
     CLUSTER_PREPROCESSING_THRESHOLD(new Builder("--cluster-pp-threshold", Float.class).metaVar("threshold").hidden());
 
+    /**
+     * The identifier of the default {@link Language}.
+     * @see Language#getIdentifier()
+     */
+    public static final String DEFAULT_LANGUAGE_IDENTIFIER = de.jplag.java.Language.IDENTIFIER;
+
     private final String flag;
     private final NumberOfArgumentValues numberOfValues;
     private final String description;
@@ -96,11 +103,11 @@ public enum CommandLineArgument {
     private final Class<?> type;
     private final boolean hidden;
 
-    private CommandLineArgument(String flag, Class<?> type) {
+    CommandLineArgument(String flag, Class<?> type) {
         this(new Builder(flag, type));
     }
 
-    private CommandLineArgument(Builder builder) {
+    CommandLineArgument(Builder builder) {
         this.flag = builder.flag;
         this.type = builder.type;
         this.defaultValue = builder.defaultValue;

@@ -8,4 +8,10 @@
         <version>${revision}</version>
     </parent>
     <artifactId>frontend-utils</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+        </dependency>
+    </dependencies>
 </project>

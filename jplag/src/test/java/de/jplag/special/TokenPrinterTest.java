@@ -10,29 +10,34 @@ import org.junit.jupiter.api.Test;
 import de.jplag.*;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 
 /**
  * Special test case the does not really test anything but prints the tokens and the corresponding line of code.
  * @author Timur Saglam
  */
-public class TokenPrinterTest extends TestBase {
+class TokenPrinterTest extends TestBase {
     private static final String LARGE_SPACE = "   ";
     private static final String LINE = "------------------";
 
     private static final int MIN_TOKEN_MATCH = 5;
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
 
-    @Disabled
+    private static final String LANGUAGE_CPP = de.jplag.cpp.Language.IDENTIFIER;
+    private static final String LANGUAGE_R = de.jplag.rlang.Language.IDENTIFIER;
+    private static final String LANGUAGE_KOTLIN = de.jplag.kotlin.Language.IDENTIFIER;
+
+    private static final String LANGUAGE_GO = de.jplag.golang.Language.IDENTIFIER;
+
+    @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printCPPFiles() {
         printSubmissions(options -> {
-            options.setLanguageOption(LanguageOption.C_CPP);
+            options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_CPP).orElseThrow());
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }
 
-    @Disabled
+    @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printJavaFiles() {
         printSubmissions(options -> {
@@ -44,7 +49,7 @@ public class TokenPrinterTest extends TestBase {
     @Test
     void printRLangFiles() {
         printSubmissions(options -> {
-            options.setLanguageOption(LanguageOption.R_LANG);
+            options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_R).orElseThrow());
             options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
         });
     }
@@ -52,13 +57,13 @@ public class TokenPrinterTest extends TestBase {
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printGoFiles() {
-        printSubmissions(options -> options.setLanguageOption(LanguageOption.GO_LANG));
+        printSubmissions(options -> options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_GO).orElseThrow()));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printKotlinFiles() {
-        printSubmissions(options -> options.setLanguageOption(LanguageOption.KOTLIN));
+        printSubmissions(options -> options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_KOTLIN).orElseThrow()));
     }
 
     private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {

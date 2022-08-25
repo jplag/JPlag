@@ -18,9 +18,9 @@ public interface Language {
     String getName();
 
     /**
-     * Short name of the language used for CLI options.
+     * Identifier of the language used for CLI options and dynamic loading. You should use some name within {@code [a-z_-]+}
      */
-    String getShortName();
+    String getIdentifier();
 
     /**
      * Minimum number of tokens required for a match.

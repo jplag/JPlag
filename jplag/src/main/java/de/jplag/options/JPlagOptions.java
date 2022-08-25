@@ -20,12 +20,16 @@ import de.jplag.strategy.ComparisonMode;
 public class JPlagOptions {
 
     private static final Logger logger = LoggerFactory.getLogger("JPlag");
-
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 30;
 
     public static final Charset CHARSET = StandardCharsets.UTF_8;
+
+    /**
+     * The identifier of the language used to parse the submissions.
+     */
+    private final String languageIdentifier;
 
     /**
      * Language used to parse the submissions.
@@ -117,11 +121,6 @@ public class JPlagOptions {
     private String subdirectoryName;
 
     /**
-     * Language to use when parsing the submissions.
-     */
-    private LanguageOption languageOption;
-
-    /**
      * Level of output verbosity.
      */
     private Verbosity verbosity;
@@ -133,11 +132,13 @@ public class JPlagOptions {
 
     /**
      * Constructor with required attributes.
+     * @param languageIdentifier the identifier of the language to use. If set to {@code null} you have to use
+     * {@link #setLanguage(Language)} to set the language programmatically.
      */
-    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, LanguageOption languageOption) {
+    public JPlagOptions(List<String> submissionDirectories, List<String> oldSubmissionDirectories, String languageIdentifier) {
         this.submissionDirectories = submissionDirectories;
         this.oldSubmissionDirectories = oldSubmissionDirectories;
-        this.languageOption = languageOption;
+        this.languageIdentifier = languageIdentifier;
     }
 
     public Optional<String> getBaseCodeSubmissionName() {
@@ -160,12 +161,12 @@ public class JPlagOptions {
         return fileSuffixes;
     }
 
-    public Language getLanguage() {
-        return language;
+    public String getLanguageIdentifier() {
+        return languageIdentifier;
     }
 
-    public LanguageOption getLanguageOption() {
-        return languageOption;
+    public Language getLanguage() {
+        return language;
     }
 
     public int getMaximumNumberOfComparisons() {
@@ -257,10 +258,6 @@ public class JPlagOptions {
         if (!hasFileSuffixes()) {
             fileSuffixes = language.suffixes();
         }
-    }
-
-    public void setLanguageOption(LanguageOption languageOption) {
-        this.languageOption = languageOption;
     }
 
     public void setMaximumNumberOfComparisons(int maximumNumberOfComparisons) {

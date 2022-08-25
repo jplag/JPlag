@@ -1,5 +1,7 @@
 package de.jplag.emf.dynamic;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
 
 /**
@@ -7,9 +9,10 @@ import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
  * created token set instead of a hand-picked one.
  * @author Timur Saglam
  */
+@MetaInfServices(de.jplag.Language.class)
 public class Language extends de.jplag.emf.Language {
     private static final String NAME = "EMF metamodels (dynamically created token set)";
-    private static final String SHORT_NAME = "EMF metamodel (dynamic)";
+    public static final String IDENTIFIER = "emf-metamodel-dynamic";
 
     private static final int DEFAULT_MIN_TOKEN_MATCH = 10;
 
@@ -23,8 +26,8 @@ public class Language extends de.jplag.emf.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override
