@@ -37,7 +37,7 @@ public class FileHelper {
     }
 
     /**
-     * Load all possible language is resource path
+     * Load all possible languages in resource path
      * @param directoryNames folder names for which the language options should be listed.
      * @return list of all LanguageOptions included in the resource path
      */
