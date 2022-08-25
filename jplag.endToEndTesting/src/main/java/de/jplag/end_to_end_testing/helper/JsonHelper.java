@@ -55,8 +55,8 @@ public class JsonHelper {
         Path temporaryDirectory = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(), languageOption.toString(),
                 directoryName + ".json");
 
-        FileHelper.createDirectoryIfItDoseNotExist(temporaryDirectory.getParent().toFile());
-        FileHelper.createFileIfItDoseNotExist(temporaryDirectory.toFile());
+        FileHelper.createDirectoryIfItDoesNotExist(temporaryDirectory.getParent().toFile());
+        FileHelper.createFileIfItDoesNotExist(temporaryDirectory.toFile());
 
         // convert book object to JSON file
 

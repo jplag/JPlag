@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DynamicTest;
@@ -200,7 +201,7 @@ public class EndToEndSuiteTest {
         validationErrors.stream().forEach(errorLine -> joiner.add(errorLine));
         joiner.add(""); // line break at the end
 
-        return errorString;
+        return joiner.toString();
     }
 
     /**
@@ -215,7 +216,7 @@ public class EndToEndSuiteTest {
         if (element != null) {
             for (var item : element) {
                 if (item.options().equals(options)) {
-                    item.putIdenfifierToResultMap(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(
+                    item.putIdentifierToResultMap(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(
                             jPlagComparison.minimalSimilarity(), jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
                     return;
                 }

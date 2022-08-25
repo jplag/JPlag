@@ -9,8 +9,10 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
+import de.jplag.Submission;
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.options.LanguageOption;
 
@@ -52,12 +54,9 @@ public class TestSuiteHelper {
      */
     public static String getTestIdentifier(JPlagComparison jPlagComparison) {
 
-	return List.of(jPlagComparison.getFirstSubmission(), jPlagComparison.getSecondSubmission()).stream()
-		.map(Submission::getFiles)
-		.map(FileHelper::getEnclosedFileNamesFromCollection)
-		.sorted()
-		.collect(Collectors.joining("-"));
-		
+        return List.of(jPlagComparison.getFirstSubmission(), jPlagComparison.getSecondSubmission()).stream().map(Submission::getFiles)
+                .map(FileHelper::getEnclosedFileNamesFromCollection).sorted().collect(Collectors.joining("-"));
+
     }
 
     /**

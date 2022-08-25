@@ -30,7 +30,7 @@ public record ResultDescription(@JsonIgnore LanguageOption languageOption, @Json
      * @param identifier under which the results should be stored
      * @param expectedResult expected results belonging to the identifier
      */
-    public void putIdenfifierToResultMap(String identifier, ExpectedResult expectedResult) {
+    public void putIdentifierToResultMap(String identifier, ExpectedResult expectedResult) {
         identifierToResultMap.put(identifier, expectedResult);
     }
 }

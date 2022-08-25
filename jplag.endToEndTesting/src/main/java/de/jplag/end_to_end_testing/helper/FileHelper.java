@@ -5,9 +5,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.options.LanguageOption;
@@ -16,6 +21,7 @@ import de.jplag.options.LanguageOption;
  * Helper class to perform all necessary operations or functions on files or folders.
  */
 public class FileHelper {
+    private static final Logger logger = LoggerFactory.getLogger(FileHelper.class);
 
     private FileHelper() {
         // private constructor to prevent instantiation
@@ -27,13 +33,8 @@ public class FileHelper {
      * @return merged filenames
      */
     public static String getEnclosedFileNamesFromCollection(Collection<File> files) {
-        StringBuilder stringBuilder = new StringBuilder(files.size());
-        for (File file : files) {
-            String fileName = file.getName();
-            stringBuilder.append(fileName.substring(0, fileName.lastIndexOf('.')));
-        }
 
-        return stringBuilder.toString();
+        return files.stream().map(File::getName).map(fileName -> fileName.substring(0, fileName.indexOf('.'))).collect(Collectors.joining());
     }
 
     /**
@@ -42,11 +43,7 @@ public class FileHelper {
      * @return list of all LanguageOptions included in the resource path
      */
     public static List<LanguageOption> getLanguageOptionsFromPath(String[] directoryNames) {
-        List<LanguageOption> returnList = new ArrayList<>();
-        for (String languageDirectoryName : directoryNames) {
-            returnList.add(LanguageOption.valueOf(languageDirectoryName));
-        }
-        return returnList;
+        return Arrays.stream(directoryNames).map(language -> getLanguageOptionIfDefined(language)).filter(Objects::nonNull).toList();
     }
 
     /**
@@ -71,14 +68,14 @@ public class FileHelper {
             returnSubmissionPath[counter] = Path
                     .of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(), "submission" + (counter + 1)).toAbsolutePath()
                     .toString();
-            Path copiePath = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(), "submission" + (counter + 1),
+            Path copyPath = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(), "submission" + (counter + 1),
                     originalPath.getFileName().toString());
 
-            File directory = new File(copiePath.toString());
+            File directory = new File(copyPath.toString());
             if (!directory.exists()) {
                 directory.mkdirs();
             }
-            Files.copy(originalPath, copiePath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(originalPath, copyPath, StandardCopyOption.REPLACE_EXISTING);
         }
         return returnSubmissionPath;
     }
@@ -102,9 +99,8 @@ public class FileHelper {
             } else {
                 Files.delete(file.toPath());
             }
-         }
-         Files.delete(folder.toPath());
-    }
+        }
+        Files.delete(folder.toPath());
     }
 
     /**
@@ -112,7 +108,7 @@ public class FileHelper {
      * @param directory to be created
      * @throws IOException if the directory could not be created
      */
-    public static void createDirectoryIfItDoseNotExist(File directory) throws IOException {
+    public static void createDirectoryIfItDoesNotExist(File directory) throws IOException {
         if (!directory.exists() && !directory.mkdirs()) {
             throw new IOException(createNewIOExceptionStringForFileOrFOlderCreation(directory));
         }
@@ -123,7 +119,7 @@ public class FileHelper {
      * @param file to be created
      * @throws IOException if the file could not be created
      */
-    public static void createFileIfItDoseNotExist(File file) throws IOException {
+    public static void createFileIfItDoesNotExist(File file) throws IOException {
         if (!file.exists() && !file.createNewFile()) {
             throw new IOException(createNewIOExceptionStringForFileOrFOlderCreation(file));
         }
@@ -148,5 +144,19 @@ public class FileHelper {
      */
     private static String createNewIOExceptionStringForFileOrFOlderCreation(File file) {
         return "The file/folder at the location [" + file.toString() + "] could not be created!";
+    }
+
+    /**
+     * Checks the passed language name if it is in the language options.
+     * @param languageName which is to be verified
+     * @return true when the language option is present otherwise null
+     */
+    private static LanguageOption getLanguageOptionIfDefined(String languageName) {
+        try {
+            return LanguageOption.valueOf(languageName);
+        } catch (IllegalArgumentException e) {
+            logger.warn("%s is not a valid value of LanguageOption".formatted(languageName));
+            return null;
+        }
     }
 }
