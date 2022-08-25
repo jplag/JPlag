@@ -52,13 +52,12 @@ public class TestSuiteHelper {
      */
     public static String getTestIdentifier(JPlagComparison jPlagComparison) {
 
-        String testFileNamesInFirstSubmission = FileHelper.getEnclosedFileNamesFromCollection(jPlagComparison.getFirstSubmission().getFiles());
-        String testFileNamesInSecondSubmission = FileHelper.getEnclosedFileNamesFromCollection(jPlagComparison.getSecondSubmission().getFiles());
-
-        int compare = testFileNamesInFirstSubmission.compareTo(testFileNamesInSecondSubmission);
-
-        return compare < 0 ? testFileNamesInFirstSubmission + "-" + testFileNamesInSecondSubmission
-                : testFileNamesInSecondSubmission + "-" + testFileNamesInFirstSubmission;
+	return List.of(jPlagComparison.getFirstSubmission(), jPlagComparison.getSecondSubmission()).stream()
+		.map(Submission::getFiles)
+		.map(FileHelper::getEnclosedFileNamesFromCollection)
+		.sorted()
+		.collect(Collectors.joining("-"));
+		
     }
 
     /**
