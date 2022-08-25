@@ -1,6 +1,8 @@
 package de.jplag.kotlin;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
@@ -10,6 +12,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 import de.jplag.TokenPrinter;
+import de.jplag.SharedTokenType;
 
 class KotlinFrontendTest {
 
@@ -41,8 +44,6 @@ class KotlinFrontendTest {
      * Regular expression that describes lines containing the end of a multiline comment and no more code after that.
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
-    private static final String NOT_SET_STRING = "";
-    private static final int NOT_SET = -1;
 
     private final Logger logger = LoggerFactory.getLogger("Kotlin frontend test");
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE, "Game.kt"};
@@ -67,22 +68,6 @@ class KotlinFrontendTest {
             }
 
         }
-    }
-
-    /**
-     * Confirms that every type of KotlinToken has a Sting representation associated to it.
-     */
-    @Test
-    void testTokenToString() {
-        var missingTokens = IntStream.range(0, KotlinTokenConstants.NUMBER_DIFF_TOKENS)
-                .mapToObj(type -> new KotlinToken(type, NOT_SET_STRING, NOT_SET, NOT_SET, NOT_SET))
-                .filter(token -> token.type2string().contains("UNKNOWN")).toList();
-
-        if (!missingTokens.isEmpty()) {
-            var typeList = missingTokens.stream().map(Token::getType).map(Object::toString).collect(Collectors.joining(", "));
-            fail("Found token types with no string representation: %s".formatted(typeList));
-        }
-
     }
 
     /**
@@ -152,17 +137,13 @@ class KotlinFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).sorted().distinct().toArray();
-        // Exclude SEPARATOR_TOKEN, as it does not occur
-        var allTokens = IntStream.range(0, KotlinTokenConstants.NUMBER_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
-
-        if (allTokens.length > foundTokens.length) {
-            var diffLine = IntStream.range(0, allTokens.length)
-                    .dropWhile(lineIdx -> lineIdx < foundTokens.length && allTokens[lineIdx] == foundTokens[lineIdx]).findFirst();
-            diffLine.ifPresent(lineIdx -> fail("Token type %s was not found in the complete code example '%s'."
-                    .formatted(new KotlinToken(allTokens[lineIdx], fileName, -1, -1, -1).type2string(), fileName)));
-        }
-        assertArrayEquals(allTokens, foundTokens);
+        var annotatedTokens = tokens.stream().map(Token::getTokenType).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
+        assertFalse(annotatedTokens.contains(SharedTokenType.SEPARATOR));
+        var annotatedKotlinTokens = annotatedTokens.stream().filter(KotlinTokenType.class::isInstance).collect(Collectors.toSet());
+        var allKotlinTokens = KotlinTokenType.values();
+        var missingKotlinTokens = Arrays.stream(allKotlinTokens).filter(token -> !annotatedKotlinTokens.contains(token)).toList();
+        assertTrue(missingKotlinTokens.isEmpty(), "The following kotlin tokens are missing:\n" + String.join("\n", missingKotlinTokens.stream().map(KotlinTokenType::getDescription).toList()));
     }
 
 }

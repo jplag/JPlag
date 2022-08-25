@@ -1,6 +1,6 @@
 package de.jplag.kotlin;
 
-import static de.jplag.kotlin.KotlinTokenConstants.*;
+import static de.jplag.kotlin.KotlinTokenType.*;
 
 import java.util.Optional;
 
@@ -22,7 +22,7 @@ public class JPlagKotlinListener extends KotlinParserBaseListener {
      * @param tokenType the custom token type that occurred.
      * @param token the corresponding grammar's token
      */
-    private void transformToken(int tokenType, Token token) {
+    private void transformToken(KotlinTokenType tokenType, Token token) {
         parserAdapter.addToken(tokenType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
@@ -33,7 +33,7 @@ public class JPlagKotlinListener extends KotlinParserBaseListener {
      * @param start the first Token of the context
      * @param end the last Token of the context
      */
-    private void transformToken(int tokenType, Token start, Token end) {
+    private void transformToken(KotlinTokenType tokenType, Token start, Token end) {
         parserAdapter.addToken(tokenType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 
@@ -356,7 +356,7 @@ public class JPlagKotlinListener extends KotlinParserBaseListener {
         if (tokenText.contains("@")) {
             tokenText = tokenText.substring(0, tokenText.indexOf("@"));
         }
-        Optional<Integer> type = switch (tokenText) {
+        Optional<KotlinTokenType> type = switch (tokenText) {
             case "throw" -> Optional.of(THROW);
             case "return" -> Optional.of(RETURN);
             case "continue" -> Optional.of(CONTINUE);

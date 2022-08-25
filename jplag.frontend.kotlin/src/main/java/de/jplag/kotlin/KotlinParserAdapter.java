@@ -14,13 +14,13 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
+import de.jplag.SharedTokenType;
 import de.jplag.kotlin.grammar.KotlinLexer;
 import de.jplag.kotlin.grammar.KotlinParser;
 
-public class KotlinParserAdapter extends AbstractParser {
+import static de.jplag.Token.NO_VALUE;
 
-    public static final int NOT_SET = -1;
+public class KotlinParserAdapter extends AbstractParser {
     private String currentFile;
     private List<Token> tokens;
 
@@ -43,7 +43,7 @@ public class KotlinParserAdapter extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.add(new KotlinToken(TokenConstants.FILE_END, file, NOT_SET, NOT_SET, NOT_SET));
+            tokens.add(new KotlinToken(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE));
         }
         return tokens;
     }
@@ -79,7 +79,7 @@ public class KotlinParserAdapter extends AbstractParser {
      * @param column the start column of the Token in the line
      * @param length the length of the Token
      */
-    /* package-private */ void addToken(int tokenType, int line, int column, int length) {
+    /* package-private */ void addToken(KotlinTokenType tokenType, int line, int column, int length) {
         tokens.add(new KotlinToken(tokenType, currentFile, line, column, length));
     }
 }

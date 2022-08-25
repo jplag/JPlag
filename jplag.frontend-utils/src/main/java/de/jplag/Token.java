@@ -13,8 +13,7 @@ public abstract class Token {
     private int column;
     private int length;
     private String file;
-
-    protected int type;
+    private TokenType type;
 
     /**
      * Creates a token without information about the column or the length of the token in the line.
@@ -24,13 +23,30 @@ public abstract class Token {
      * {@link TokenConstants#FILE_END FILE_END} it is automatically set to {@link #NO_VALUE}.
      */
     public Token(int type, String file, int line) {
-        this.type = type;
         this.file = file;
         if (type == TokenConstants.FILE_END) {
             this.line = NO_VALUE;
         } else {
             this.line = line > 0 ? line : 1;
         }
+    }
+
+    /**
+     * Creates a token without information about the column or the length of the token in the line.
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
+     */
+    public Token(TokenType type, String file, int line) {
+        this.type = type;
+        this.file = file;
+        if (type == SharedTokenType.FILE_END) {
+            this.line = NO_VALUE;
+        } else {
+            this.line = line > 0 ? line : 1;
+        }
+        this.column = NO_VALUE;
+        this.length = NO_VALUE;
     }
 
     /**
@@ -42,6 +58,20 @@ public abstract class Token {
      * @param length is the length of the token in the source code.
      */
     public Token(int type, String file, int line, int column, int length) {
+        this(type, file, line);
+        this.column = column;
+        this.length = length;
+    }
+
+    /**
+     * Creates a token with column and length information.
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
+     * @param column is the column index, meaning where the token starts in the line.
+     * @param length is the length of the token in the source code.
+     */
+    public Token(TokenType type, String file, int line, int column, int length) {
         this(type, file, line);
         this.column = column;
         this.length = length;
@@ -82,6 +112,10 @@ public abstract class Token {
      * @return the type identifier of the token.
      */
     public int getType() {
+        return -1;
+    }
+
+    public TokenType getTokenType() {
         return type;
     }
 

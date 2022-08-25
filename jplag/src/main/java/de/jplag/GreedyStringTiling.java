@@ -1,15 +1,14 @@
 package de.jplag;
 
-import static de.jplag.TokenConstants.FILE_END;
-import static de.jplag.TokenConstants.SEPARATOR_TOKEN;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import de.jplag.options.JPlagOptions;
 
@@ -25,9 +24,12 @@ public class GreedyStringTiling {
     private final int minimumMatchLength;
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
+    private Map<TokenType, Integer> tokenTypeHashValues;
 
     public GreedyStringTiling(JPlagOptions options) {
         this.minimumMatchLength = options.minimumTokenMatch();
+        this.tokenTypeHashValues = new HashMap<>();
+        this.tokenTypeHashValues.put(SharedTokenType.FILE_END, 0);
     }
 
     /**
@@ -89,54 +91,47 @@ public class GreedyStringTiling {
         List<Token> leftTokens = leftSubmission.getTokenList();
         List<Token> rightTokens = rightSubmission.getTokenList();
 
+        int[] leftValues = hashedTokenListFromSubmission(leftSubmission);
+        int[] rightValues = hashedTokenListFromSubmission(rightSubmission);
+        
         // comparison uses <= because it is assumed that the last token is a pivot (FILE_END)
         if (leftTokens.size() <= minimumMatchLength || rightTokens.size() <= minimumMatchLength) {
             return new JPlagComparison(leftSubmission, rightSubmission, List.of());
         }
 
-        Set<Token> leftMarkedTokens = initiallyMarkedTokens(leftSubmission);
-        Set<Token> rightMarkedTokens = initiallyMarkedTokens(rightSubmission);
+        Set<Integer> leftMarkedIndexes = initiallyMarkedTokenIndexes(leftSubmission);
+        Set<Integer> rightMarkedIndexes = initiallyMarkedTokenIndexes(rightSubmission);
 
-        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarkedTokens);
-        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarkedTokens);
+        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarkedIndexes);
+        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarkedIndexes);
 
         int maximumMatchLength;
         List<Match> globalMatches = new ArrayList<>();
         do {
             maximumMatchLength = minimumMatchLength;
             List<Match> iterationMatches = new ArrayList<>();
-            for (int leftStartIndex = 0; leftStartIndex < leftTokens.size() - maximumMatchLength; leftStartIndex++) {
+            for (int leftStartIndex = 0; leftStartIndex < leftValues.length - maximumMatchLength; leftStartIndex++) {
                 int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(leftStartIndex);
-                if (leftMarkedTokens.contains(leftTokens.get(leftStartIndex)) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
+                if (leftMarkedIndexes.contains(leftStartIndex) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
                     continue;
                 }
                 List<Integer> possiblyMatchingRightStartIndexes = rightLookupTable
                         .startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
                 for (Integer rightStartIndex : possiblyMatchingRightStartIndexes) {
                     // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
-                    if (rightMarkedTokens.contains(rightTokens.get(rightStartIndex)) || maximumMatchLength >= rightTokens.size() - rightStartIndex) {
+                    if (rightMarkedIndexes.contains(rightStartIndex) || maximumMatchLength >= rightValues.length - rightStartIndex) {
                         continue;
                     }
 
-                    if (!subsequencesAreMatchingAndNotMarked(leftTokens.subList(leftStartIndex, leftStartIndex + maximumMatchLength),
-                            leftMarkedTokens, rightTokens.subList(rightStartIndex, rightStartIndex + maximumMatchLength), rightMarkedTokens)) {
-                        continue;
+                    int subsequenceMatchLength = maximalMatchingSubsequenceLengthNotMarked(leftValues, leftStartIndex, leftMarkedIndexes, rightValues, rightStartIndex, rightMarkedIndexes, maximumMatchLength);
+                    if (subsequenceMatchLength >= maximumMatchLength) {
+                        if (subsequenceMatchLength > maximumMatchLength) {
+                            iterationMatches.clear();
+                            maximumMatchLength = subsequenceMatchLength;
+                        }
+                        Match match = new Match(leftStartIndex, rightStartIndex, subsequenceMatchLength);
+                        addMatchIfNotOverlapping(iterationMatches, match);
                     }
-
-                    // expand match
-                    int offset = maximumMatchLength;
-                    while (leftTokens.get(leftStartIndex + offset).type == rightTokens.get(rightStartIndex + offset).type
-                            && !leftMarkedTokens.contains(leftTokens.get(leftStartIndex + offset))
-                            && !rightMarkedTokens.contains(rightTokens.get(rightStartIndex + offset))) {
-                        offset++;
-                    }
-
-                    if (offset > maximumMatchLength) {
-                        iterationMatches.clear();
-                        maximumMatchLength = offset;
-                    }
-                    Match match = new Match(leftStartIndex, rightStartIndex, offset);
-                    addMatchIfNotOverlapping(iterationMatches, match);
                 }
             }
             for (Match match : iterationMatches) {
@@ -144,8 +139,8 @@ public class GreedyStringTiling {
                 int leftStartIndex = match.startOfFirst();
                 int rightStartIndex = match.startOfSecond();
                 for (int offset = 0; offset < match.length(); offset++) {
-                    leftMarkedTokens.add(leftTokens.get(leftStartIndex + offset));
-                    rightMarkedTokens.add(rightTokens.get(rightStartIndex + offset));
+                    leftMarkedIndexes.add(leftStartIndex + offset);
+                    rightMarkedIndexes.add(rightStartIndex + offset);
                 }
             }
         } while (maximumMatchLength != minimumMatchLength);
@@ -153,25 +148,34 @@ public class GreedyStringTiling {
     }
 
     /**
-     * Checks if the two provided subsequences are equal and not marked. Comparison is performed backwards based on the
-     * assumption that the further tokens are away, the more likely they differ. leftTokens and rightTokens must be of equal
-     * size.
-     * @param leftTokens The subsequence of left tokens.
-     * @param leftMarkedTokens The marked tokens of the left token list.
-     * @param rightTokens The subsequence of right tokens.
-     * @param rightMarkedTokens The marked tokens of the right token list.
-     * @return true if the subsequences are matching and not marked, otherwise false.
+     * Computes the maximal matching subsequence between the two lists starting at their respective indexes.
+     * Values are matching if they are equal and not marked.
+     * Comparison is performed backwards for the minimum sequence length based on the assumption 
+     * that the further tokens are away, the more likely they differ.
+     * @param leftValues The list of left values.
+     * @param leftStartIndex The start index in the left list.
+     * @param leftMarkedIndexes The marked indexes of the left list.
+     * @param rightValues The list of right values.
+     * @param rightStartIndex The start index in the right list.
+     * @param rightMarkedIndexes The marked indexes of the right list.
+     * @param minimumSequenceLength The minimal sequence length for a matching subsequence. Must be not negative.
+     * @return the length of the maximal matching subsequence.
      */
-    private boolean subsequencesAreMatchingAndNotMarked(List<Token> leftTokens, Set<Token> leftMarkedTokens, List<Token> rightTokens,
-            Set<Token> rightMarkedTokens) {
-        for (int offset = leftTokens.size() - 1; offset >= 0; offset--) {
-            Token leftToken = leftTokens.get(offset);
-            Token rightToken = rightTokens.get(offset);
-            if (leftToken.type != rightToken.type || leftMarkedTokens.contains(leftToken) || rightMarkedTokens.contains(rightToken)) {
-                return false;
+    private int maximalMatchingSubsequenceLengthNotMarked(int[] leftValues, int leftStartIndex, Set<Integer> leftMarkedIndexes, int[] rightValues, int rightStartIndex, Set<Integer> rightMarkedIndexes, int minimumSequenceLength) {
+        for (int offset = minimumSequenceLength - 1; offset >= 0; offset--) {
+            int leftIndex = leftStartIndex + offset;
+            int rightIndex = rightStartIndex + offset;
+            if (leftValues[leftIndex] != rightValues[rightIndex] || leftMarkedIndexes.contains(leftIndex) || rightMarkedIndexes.contains(rightIndex)) {
+                return 0;
             }
         }
-        return true;
+        int offset = minimumSequenceLength;
+        while (leftValues[leftStartIndex + offset] == rightValues[rightStartIndex + offset]
+                && !leftMarkedIndexes.contains(leftStartIndex + offset)
+                && !rightMarkedIndexes.contains(rightStartIndex + offset)) {
+            offset++;
+        }
+        return offset;
     }
 
     private void addMatchIfNotOverlapping(List<Match> matches, Match match) {
@@ -183,19 +187,39 @@ public class GreedyStringTiling {
         matches.add(match);
     }
 
-    private Set<Token> initiallyMarkedTokens(Submission submission) {
+    private Set<Integer> initiallyMarkedTokenIndexes(Submission submission) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
-        return submission.getTokenList().stream().filter(
-                token -> token.type == FILE_END || token.type == SEPARATOR_TOKEN || (baseCodeTokens != null && baseCodeTokens.contains(token)))
-                .collect(Collectors.toSet());
+        List<Token> tokens = submission.getTokenList();
+        return IntStream.range(0, tokens.size()).filter(i ->
+             tokens.get(i).getTokenType() == SharedTokenType.FILE_END || tokens.get(i).getTokenType() == SharedTokenType.SEPARATOR || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i)))
+        ).boxed().collect(Collectors.toSet());
     }
 
-    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, Set<Token> markedTokens) {
+    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, Set<Integer> markedIndexes) {
         if (cachedHashLookupTables.containsKey(submission)) {
             return cachedHashLookupTables.get(submission);
         }
-        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(minimumMatchLength, submission.getTokenList(), markedTokens);
+        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(minimumMatchLength, hashedTokenListFromSubmission(submission), markedIndexes);
         cachedHashLookupTables.put(submission, lookupTable);
         return lookupTable;
+    }
+
+    /**
+     * Converts the tokens of the submission to a list of values.
+     * @param submission The submission from which to convert the tokens.
+     */
+    private int[] hashedTokenListFromSubmission(Submission submission) {
+        List<Token> tokens = submission.getTokenList();
+        int[] hashedTokens = new int[tokens.size()];
+        for (int i = 0; i < tokens.size(); i++) {
+            TokenType type = tokens.get(i).getTokenType();
+            Integer hashValue = tokenTypeHashValues.get(type);
+            if (hashValue == null) {
+                hashValue = tokenTypeHashValues.size();
+                tokenTypeHashValues.put(type, hashValue);
+            }
+            hashedTokens[i] = hashValue;
+        }
+        return hashedTokens;
     }
 }
