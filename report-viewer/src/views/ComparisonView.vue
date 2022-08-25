@@ -118,8 +118,7 @@ export default defineComponent({
       );
     }
     if (!comparison) {
-      console.warn("Could not build comparison file");
-      return;
+      throw "Could not build comparison file";
     }
     const filesOfFirst = ref(comparison.filesOfFirstSubmission);
     const filesOfSecond = ref(comparison.filesOfSecondSubmission);
