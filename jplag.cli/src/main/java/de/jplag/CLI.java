@@ -24,7 +24,6 @@ import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.options.Verbosity;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
@@ -48,7 +47,7 @@ public final class CLI {
 
     private static final String PROGRAM_NAME = "jplag";
     static final String CLUSTERING_GROUP_NAME = "Clustering";
-    static final String CLUSTERING_PREPROCESSING_GROUP_NAME = "Clustering - Preprocessing";
+    static final String ADVANCED_GROUP = "Advanced";
 
     private final ArgumentParser parser;
 
@@ -126,8 +125,7 @@ public final class CLI {
         addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectories);
         addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
 
-        LanguageOption language = LanguageOption.fromDisplayName(LANGUAGE.getFrom(namespace));
-        JPlagOptions options = new JPlagOptions(submissionDirectories, oldSubmissionDirectories, language);
+        JPlagOptions options = new JPlagOptions(submissionDirectories, oldSubmissionDirectories, LANGUAGE.getFrom(namespace));
         options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
         options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
         options.setDebugParser(DEBUG.getFrom(namespace));
@@ -141,7 +139,7 @@ public final class CLI {
                 () -> logger.warn("Unknown comparison mode, using default mode!"));
 
         ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
-        Optional.ofNullable((Boolean) CLUSTER_ENABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);
+        Optional.ofNullable(!(Boolean) CLUSTER_DISABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);
         Optional.ofNullable((ClusteringAlgorithm) CLUSTER_ALGORITHM.getFrom(namespace)).ifPresent(clusteringBuilder::algorithm);
         Optional.ofNullable((SimilarityMetric) CLUSTER_METRIC.getFrom(namespace)).ifPresent(clusteringBuilder::similarityMetric);
         Optional.ofNullable((Float) CLUSTER_SPECTRAL_BANDWIDTH.getFrom(namespace)).ifPresent(clusteringBuilder::spectralKernelBandwidth);

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.Language;
 import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
 import de.jplag.options.LanguageOption;
 
@@ -42,7 +43,7 @@ public class FileHelper {
      * @param directoryNames folder names for which the language options should be listed.
      * @return list of all LanguageOptions included in the resource path
      */
-    public static List<LanguageOption> getLanguageOptionsFromPath(String[] directoryNames) {
+    public static List<Language> getLanguageOptionsFromPath(String[] directoryNames) {
         return Arrays.stream(directoryNames).map(language -> getLanguageOptionIfDefined(language)).filter(Objects::nonNull).toList();
     }
 
@@ -151,9 +152,9 @@ public class FileHelper {
      * @param languageName which is to be verified
      * @return true when the language option is present otherwise null
      */
-    private static LanguageOption getLanguageOptionIfDefined(String languageName) {
+    private static Language getLanguageOptionIfDefined(String languageName) {
         try {
-            return LanguageOption.valueOf(languageName);
+            return Language.valueOf(languageName);
         } catch (IllegalArgumentException e) {
             logger.warn("%s is not a valid value of LanguageOption".formatted(languageName));
             return null;

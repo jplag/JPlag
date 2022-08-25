@@ -22,15 +22,13 @@ import org.junit.jupiter.api.TestFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
+import de.jplag.Language;
 import de.jplag.end_to_end_testing.helper.FileHelper;
 import de.jplag.end_to_end_testing.helper.JsonHelper;
 import de.jplag.end_to_end_testing.helper.TestSuiteHelper;
-import de.jplag.end_to_end_testing.model.ExpectedResult;
-import de.jplag.end_to_end_testing.model.Options;
-import de.jplag.end_to_end_testing.model.ResultDescription;
+import de.jplag.end_to_end_testing.model.*;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 
 /**
  * Main test class for end-to-end testing in all language. The test cases aim to detect changes in the detection of
@@ -39,13 +37,13 @@ import de.jplag.options.LanguageOption;
  */
 public class EndToEndSuiteTest {
     // Language -> directory names and Paths
-    private Map<LanguageOption, Map<String, Path>> LanguageToTestCaseMapper;
+    private Map<Language, Map<String, Path>> LanguageToTestCaseMapper;
 
     private List<Options> options;
 
     private static Map<String, List<ResultDescription>> temporaryResultList;
     private static List<String> validationErrors;
-    private static LanguageOption languageOption;
+    private static Language languageOption;
 
     public EndToEndSuiteTest() throws IOException {
         // Loading the test resources

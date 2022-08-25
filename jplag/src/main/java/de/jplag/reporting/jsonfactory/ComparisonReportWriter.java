@@ -15,12 +15,13 @@ import de.jplag.reporting.reportobject.model.Match;
  */
 public class ComparisonReportWriter {
 
-    private static final FileWriter FILE_WRITER = new FileWriter();
+    private final FileWriter fileWriter;
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new HashMap<>();
 
-    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction) {
+    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter fileWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
+        this.fileWriter = fileWriter;
     }
 
     /**
@@ -36,19 +37,19 @@ public class ComparisonReportWriter {
     public Map<String, Map<String, String>> writeComparisonReports(JPlagResult jPlagResult, String path) {
         int numberOfComparisons = jPlagResult.getOptions().getMaximumNumberOfComparisons();
         List<JPlagComparison> comparisons = jPlagResult.getComparisons(numberOfComparisons);
-        writeComparisons(jPlagResult, path, comparisons);
+        writeComparisons(path, comparisons);
         return submissionIdToComparisonFileName;
     }
 
-    private void writeComparisons(JPlagResult jPlagResult, String path, List<JPlagComparison> comparisons) {
+    private void writeComparisons(String path, List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
             String firstSubmissionId = submissionToIdFunction.apply(comparison.getFirstSubmission());
             String secondSubmissionId = submissionToIdFunction.apply(comparison.getSecondSubmission());
             String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
-                    convertMatchesToReportMatches(jPlagResult, comparison));
-            FILE_WRITER.saveAsJSON(comparisonReport, path, fileName);
+                    convertMatchesToReportMatches(comparison));
+            fileWriter.saveAsJSON(comparisonReport, path, fileName);
         }
     }
 
@@ -81,30 +82,20 @@ public class ComparisonReportWriter {
         return concatenate(firstSubmissionId, secondSubmissionId, 0);
     }
 
-    private List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison) {
-        return comparison.getMatches().stream()
-                .map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().supportsColumns())).toList();
+    private List<Match> convertMatchesToReportMatches(JPlagComparison comparison) {
+        return comparison.getMatches().stream().map(match -> convertMatchToReportMatch(comparison, match)).toList();
     }
 
-    private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean languageSupportsColumnsAndLines) {
+    private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
         TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
         TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
-        Token startTokenFirst = tokensFirst.getToken(match.startOfFirst());
-        Token endTokenFirst = tokensFirst.getToken(match.startOfFirst() + match.length() - 1);
-        Token startTokenSecond = tokensSecond.getToken(match.startOfSecond());
-        Token endTokenSecond = tokensSecond.getToken(match.startOfSecond() + match.length() - 1);
+        Token startOfFirst = tokensFirst.getToken(match.startOfFirst());
+        Token endOfFirst = tokensFirst.getToken(match.startOfFirst() + match.length() - 1);
+        Token startOfSecond = tokensSecond.getToken(match.startOfSecond());
+        Token endOfSecond = tokensSecond.getToken(match.startOfSecond() + match.length() - 1);
 
-        int startFirst = getPosition(languageSupportsColumnsAndLines, startTokenFirst);
-        int endFirst = getPosition(languageSupportsColumnsAndLines, endTokenFirst);
-        int startSecond = getPosition(languageSupportsColumnsAndLines, startTokenSecond);
-        int endSecond = getPosition(languageSupportsColumnsAndLines, endTokenSecond);
-        int tokens = match.length();
-
-        return new Match(startTokenFirst.getFile(), startTokenSecond.getFile(), startFirst, endFirst, startSecond, endSecond, tokens);
-    }
-
-    private int getPosition(boolean languageSupportsColumnsAndLines, Token token) {
-        return languageSupportsColumnsAndLines ? token.getLine() : token.getIndex();
+        return new Match(startOfFirst.getFile(), startOfSecond.getFile(), startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(),
+                endOfSecond.getLine(), match.length());
     }
 
 }

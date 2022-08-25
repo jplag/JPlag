@@ -10,13 +10,16 @@ import de.jplag.Submission;
 import de.jplag.TestBase;
 import de.jplag.exceptions.ExitException;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
+import de.jplag.reporting.jsonfactory.DummyWriter;
+import de.jplag.reporting.jsonfactory.FileWriter;
 
 public class ComparisonReportWriterTest extends TestBase {
+    private final FileWriter fileWriter = new DummyWriter();
 
     @Test
     public void firsLevelOfLookupMapComplete() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
-        var mapper = new ComparisonReportWriter(Submission::getName);
+        var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 
         Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result, "");
 
@@ -26,7 +29,7 @@ public class ComparisonReportWriterTest extends TestBase {
     @Test
     public void secondLevelOfLookupMapComplete() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
-        var mapper = new ComparisonReportWriter(Submission::getName);
+        var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 
         Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result, "");
 

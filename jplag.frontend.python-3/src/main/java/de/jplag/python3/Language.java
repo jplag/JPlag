@@ -2,9 +2,14 @@ package de.jplag.python3;
 
 import java.io.File;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.TokenList;
 
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
+
+    public static final String IDENTIFIER = "python3";
 
     private final Parser parser;
 
@@ -23,8 +28,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return "python3";
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override

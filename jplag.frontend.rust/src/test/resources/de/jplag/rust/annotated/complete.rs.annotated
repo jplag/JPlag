@@ -1,0 +1,3814 @@
+1       #!/she-bang line
+2       // Source: https://github.com/antlr/grammars-v4/blob/7d9d9adb3c73f1775d62100766d155df8adcc4c9/rust/examples/intellijrust_test_allinone.rs
+3       // Modified starting at line 716
+4       //inner attributes
+5       #![crate_type = "lib"]
+        |INNER_ATTR          |
+
+6       #![crate_name = "rary"]
+        |INNER_ATTR           |
+
+7       
+8       fn main(){
+        |FUNCTION|func{
+
+9           #![crate_type = "lib"]
+            |INNER_ATTR          |
+
+10          let y = &&& x;
+            |VAR_DECL
+                  |assign
+
+11          y = &a & &b;
+              |assign
+
+12          y = false == false && true
+              |assign
+
+13      }
+        |}func
+
+14      fn main1(){
+        |FUNCTION |func{
+
+15          #[foo]
+            |OUTER_ATTR
+
+16          #[bar]
+            |OUTER_ATTR
+
+17          let x = 1;
+            |VAR_DECL
+                  |assign
+
+18      
+19          let x = #[foo] #[bar]1;
+            |VAR_DECL
+                  |assign
+                    |OUTER_ATTR
+                           |OUTER_ATTR
+
+20          let _ = #[a] - #[b]-1;
+            |VAR_DECL
+                  |assign
+                    |OUTER_ATTR
+                           |OUTER_ATTR
+
+21      
+22          #[foo]
+            |OUTER_ATTR
+
+23          #[bar]
+            |OUTER_ATTR
+
+24          {}
+            |inner{
+             |}inner
+
+25      }
+        |}func
+
+26      
+27      /* associated type defaults are unstable
+28      trait T {
+29          type B;
+30          type A = Self;
+31      }
+32      
+33      struct S;
+34      
+35      impl T for S {
+36          type B = T;
+37      }
+38      */
+39      
+40      async fn foo() {}
+              |FUNCTION|func{
+                        |}func
+
+41      async fn bar() {}
+              |FUNCTION|func{
+                        |}func
+
+42      
+43      trait T {
+        |TRAIT  |trait{
+
+44          async fn foo();
+                  |FUNCTION
+
+45          async fn bar();
+                  |FUNCTION
+
+46      }
+        |}trait
+
+47      
+48      enum E {
+        |ENUM  |enum{
+
+49          #[cfg(test)] F(#[cfg(test)] i32)
+            |enum_item
+            |OUTER_ATTR|  |tuple(
+                           |t_elem
+                           |OUTER_ATTR|
+                                |tuple(
+                                     |)tuple
+                                      |)tuple
+                                           |)tuple
+
+50      }
+        |}enum
+
+51      
+52      #[empty_attr()]
+        |OUTER_ATTR   |
+
+53      const T: i32 = 92;
+        |VAR_DECL    |assign
+
+54      
+55      fn attrs_on_statements() {
+        |FUNCTION                |func{
+
+56          #[cfg(test)]
+            |OUTER_ATTR|
+
+57          let x = 92;
+            |VAR_DECL
+                  |assign
+
+58      
+59          #[cfg(test)]
+            |OUTER_ATTR|
+
+60          loop {}
+            |LOOP|loop{
+                  |}loop
+
+61      
+62          #[cfg(test)]
+            |OUTER_ATTR|
+
+63          x = 1 + 1;
+              |assign
+
+64      
+65          S { #[foo] foo: 92 };
+            |struct()
+                |ARG         |
+                |OUTER_ATTR
+
+66      }
+        |}func
+
+67      
+68      struct S<#[foo]'a, #[may_dangle] T> {}
+        |STRUCT  |<T>   |
+                 |OUTER_ATTR
+                      |}struct
+                           |<T>          |
+                           |OUTER_ATTR |
+                                       |}struct
+                                            |struct{
+                                             |}struct
+
+69      
+70      #[macro_export]
+        |OUTER_ATTR   |
+
+71      macro_rules! give_me_struct {
+        |MACRO_RULES                |macro_rules{
+
+72          ($name:ident) => {
+            |macro_rule      |macro_rule{
+
+73              #[allow(non_camel_case_types)]
+74              struct $name;
+75          }
+            |}macro_rule
+
+76      }
+        |}macro_rules
+
+77      
+78      #[cfg(not(test))]
+        |OUTER_ATTR     |
+
+79      give_me_struct! {
+        |MACRO()     |  |macro(){
+
+80          hello_world
+81      }
+        |}macro()
+
+82      
+83      #[post("/", data = "<todo_form>")]
+        |OUTER_ATTR                      |
+
+84      fn string_value() {}
+        |FUNCTION         |func{
+                           |}func
+
+85      
+86      const C: i32 = 0;
+        |VAR_DECL    |assign
+
+87      
+88      #[cfg(attr(value = C))]
+        |OUTER_ATTR           |
+
+89      fn const_value() {}
+        |FUNCTION        |func{
+                          |}func
+
+90      
+91      #[py::class]
+        |OUTER_ATTR|
+
+92      fn path() {}
+        |FUNCTION |func{
+                   |}func
+
+93      
+94      #[cfg_attr(test, assert_instr(add_a.b))]
+        |OUTER_ATTR                            |
+
+95      fn custom_name() {}
+        |FUNCTION        |func{
+                          |}func
+
+96      
+97      #[attr(foo::{bar, baz}, qwe)]
+        |OUTER_ATTR                 |
+
+98      fn arbitrary_token_tree() {}
+        |FUNCTION                 |func{
+                                   |}func
+
+99      
+100     fn f1(#[attr1] #[attr2] pat: S) {}
+        |FUNCTION
+              |PARAM                 |
+              |OUTER_ATTR
+                       |OUTER_ATTR      |func{
+                                         |}func
+
+101     
+102     fn f2(#[attr] x: S) {}
+        |FUNCTION
+              |PARAM     |
+              |OUTER_ATTR   |func{
+                             |}func
+
+103     
+104     impl S {
+        |IMPL  |impl{
+
+105         fn f3(#[attr] self) {}
+            |FUNCTION
+                  |PARAM     |
+                  |OUTER_ATTR   |func{
+                                 |}func
+
+106     
+107         fn f4(#[attr] &self) {}
+            |FUNCTION
+                  |PARAM      |
+                  |OUTER_ATTR    |func{
+                                  |}func
+
+108     
+109         fn f5<'a>(#[attr] &mut self) {}
+            |FUNCTION
+                  |<T>|PARAM          |
+                      |OUTER_ATTR        |func{
+                                          |}func
+
+110     
+111         fn f6<'a>(#[attr] &'a self) {}
+            |FUNCTION
+                  |<T>|PARAM         |
+                      |OUTER_ATTR       |func{
+                                         |}func
+
+112     
+113         fn f7<'a>(#[attr] &'a mut self, #[attr] x: S, y: S) {}
+            |FUNCTION
+                  |<T>|PARAM             |
+                      |OUTER_ATTR           |PARAM     |
+                                            |OUTER_ATTR   |PARAM|func{
+                                                                 |}func
+
+114     
+115         fn f8(#[attr] self: Self) {}
+            |FUNCTION
+                  |PARAM           |
+                  |OUTER_ATTR         |func{
+                                       |}func
+
+116     
+117         fn f9(#[attr] self: S<Self>) {}
+            |FUNCTION
+                  |PARAM              |
+                  |OUTER_ATTR            |func{
+                                          |}func
+
+118     }
+        |}impl
+
+119     
+120     trait T { fn f10(#[attr] S); }
+        |TRAIT  |trait{
+                  |FUNCTION
+                         |PARAM  |
+                         |OUTER_ATTR |}trait
+
+121     
+122     extern "C" {
+        |EXTERN    |extern{
+
+123         fn f11(#[attr] x: S, #[attr] ...);
+            |FUNCTION
+                   |PARAM     |
+                   |OUTER_ATTR   |PARAM    |
+                                 |OUTER_ATTR
+
+124     }
+        |}extern
+
+125     
+126     // See stuff around `Restrictions::RESTRICTION_STMT_EXPR` in libsyntax
+127     
+128     pub fn foo(x: String) {
+            |FUNCTION
+                   |PARAM  |  |func{
+
+129         // These are not bit and, these are two statements.
+130         { 1 }
+            |inner{
+                |}inner
+
+131         *2;
+132     
+133         { 1 }
+            |inner{
+                |}inner
+
+134         &2;
+135     
+136         loop {}
+            |LOOP|loop{
+                  |}loop
+
+137         *x;
+138     
+139         while true {}
+            |LOOP      |loop{
+                        |}loop
+
+140         &1;
+141     
+142         loop {}
+            |LOOP|loop{
+                  |}loop
+
+143         &mut x;
+144     
+145         let foo = ();
+            |VAR_DECL
+                    |assign
+                      |tuple(
+                       |)tuple
+
+146         {foo}
+            |inner{
+                |}inner
+
+147         ();
+            |apply
+
+148     
+149         // These are binary expressions
+150         let _ = { 1 } * 2;
+            |VAR_DECL
+                  |assign
+                    |inner{
+                        |}inner
+
+151         let _ = { 1 } & 2;
+            |VAR_DECL
+                  |assign
+                    |inner{
+                        |}inner
+
+152         let _ = loop {} * 1;
+            |VAR_DECL
+                  |assign
+                    |LOOP|loop{
+                          |}loop
+
+153         2 & { 1 };
+                |inner{
+                    |}inner
+
+154     
+155         fn bar() {}
+            |FUNCTION|func{
+                      |}func
+
+156         let _ = {bar}();
+            |VAR_DECL
+                  |assign
+                    |inner{
+                        |}inner
+                         |apply
+
+157     }
+        |}func
+
+158     
+159     fn main3() {
+        |FUNCTION  |func{
+
+160         let simple_block = {
+            |VAR_DECL        |assign
+                               |inner{
+
+161             123
+162         };
+            |}inner
+
+163         /* labels on blocks are unstable
+164         let block_with_label = 'block: {
+165             if foo() { break 'block 1; }
+166             if bar() { break 'block 2; }
+167             3
+168         };
+169     
+170         match 123 {
+171             1 => {},
+172             2 => 'b: { break 'b; },
+173             _ => {}
+174         }*/
+175     }
+        |}func
+
+176     
+177     /// Does useful things
+178     /// Really useful
+179     fn documented_function() {
+        |FUNCTION                |func{
+
+180         /// inner items can have docs too!
+181         fn foo() { }
+            |FUNCTION|func{
+                       |}func
+
+182     }
+        |}func
+
+183     
+184     /// doc
+185     mod m {
+        |MODULE
+              |module{
+
+186         //! This is module docs
+187         //! It can span more the one line,
+188         //! like this.
+189         fn undocumented_function() {}
+            |FUNCTION                  |func{
+                                        |}func
+
+190     
+191         /// Does other things
+192         fn documented_function() {}
+            |FUNCTION                |func{
+                                      |}func
+
+193     }
+        |}module
+
+194     
+195     /// Can mix doc comments and outer attributes
+196     #[cfg(test)]
+        |OUTER_ATTR|
+
+197     /// foo
+198     struct S {
+        |STRUCT  |struct{
+
+199         /// Fields can have docs,
+200         /// sometimes long ones.
+201         field: f32
+            |FIELD
+
+202     }
+        |}struct
+
+203     
+204     /// documentation
+205     // simple comments do not interfer with doc comments
+206     struct T (
+        |STRUCT  |struct{
+
+207       /// Even for tuple structs!
+208       i32
+          |T_ELEM
+
+209     );
+        |}struct
+
+210     
+211     /// doc
+212     enum E {
+        |ENUM  |enum{
+
+213         /// doc
+214         Foo,
+            |ENUM_ITEM
+
+215     }
+        |}enum
+
+216     
+217     enum ES {
+        |ENUM   |enum{
+
+218         /// doc
+219         Foo {
+            |ENUM_ITEM
+                |enum{
+
+220             /// field doc
+221             field: usize
+                |FIELD
+
+222         },
+            |}enum
+
+223     }
+        |}enum
+
+224     
+225     extern {
+        |EXTERN|extern{
+
+226         /// Doc
+227         fn foo();
+            |FUNCTION
+
+228     
+229         /// Doc
+230         static errno: i32;
+            |STATIC
+
+231     }
+        |}extern
+
+232     
+233     /// doc
+234     macro_rules! makro {
+        |MACRO_RULES       |macro_rules{
+
+235         () => { };
+            |macro_rule
+                  |macro_rule{
+                    |}macro_rule
+
+236     }
+        |}macro_rules
+
+237     
+238     ////////////////////////////////
+239     // This is not a doc comment ///
+240     ////////////////////////////////
+241     
+242     ///
+243     ///
+244     /// foo
+245     ///
+246     ///
+247     fn blanks() {}
+        |FUNCTION   |func{
+                     |}func
+
+248     
+249     // A blank line after non-doc comment detaches it from item.
+250     
+251     // This multi-line
+252     // non-doc comment should be attached as well
+253     /// Blank lines after doc comments do not matter
+254     
+255     fn foo() {}
+        |FUNCTION|func{
+                  |}func
+
+256     
+257     
+258     /// Non-doc comments after a doc comment do not matter.
+259     // Like this one!
+260     fn bar() {}
+        |FUNCTION|func{
+                  |}func
+
+261     
+262     fn main4() {
+        |FUNCTION  |func{
+
+263         if 1 < 2 {}
+            |IF      |if{
+                      |}if
+
+264         if let Some(x) = o {}
+            |IF|VAR_DECL
+                   |STRUCT()
+                        |arg
+                           |assign
+                               |if{
+                                |}if
+
+265         if let | Err(e) = r {}
+            |IF|VAR_DECL
+                     |STRUCT()
+                         |arg
+                            |assign
+                                |if{
+                                 |}if
+
+266         if let V1(s) | V2(s) = value {}
+            |IF|VAR_DECL
+                   |STRUCT()
+                      |arg |STRUCT()
+                              |arg
+                                 |assign |if{
+                                          |}if
+
+267         if let | Cat(name) | Dog(name) | Parrot(name) = animal {}
+            |IF|VAR_DECL
+                     |STRUCT()
+                         |ARG    |STRUCT()
+                                     |ARG    |STRUCT()
+                                                    |ARG  |assign  |if{
+                                                                    |}if
+
+268         // or-patterns syntax is experimental
+269         // if let Ok(V1(s) | V2(s)) = value {}
+270     
+271         while 1 < 2 {}
+            |LOOP       |loop{
+                         |}loop
+
+272         while let Some(x) = o {}
+            |LOOP |VAR_DECL
+                      |STRUCT()
+                           |arg
+                              |assign
+                                  |loop{
+                                   |}loop
+
+273         while let | Err(e) = r {}
+            |LOOP |VAR_DECL
+                        |STRUCT()
+                            |arg
+                               |assign
+                                   |loop{
+                                    |}loop
+
+274         while let V1(s) | V2(s) = value {}
+            |LOOP |VAR_DECL
+                      |STRUCT()
+                         |arg |STRUCT()
+                                 |arg
+                                    |assign |loop{
+                                             |}loop
+
+275         while let | Cat(name) | Dog(name) | Parrot(name) = animal {}
+            |LOOP |VAR_DECL
+                        |STRUCT()
+                            |ARG    |STRUCT()
+                                        |ARG    |STRUCT()
+                                                       |ARG  |assign  |loop{
+                                                                       |}loop
+
+276         // while let Ok(V1(s) | V2(s)) = value {}
+277     }
+        |}func
+
+278     
+279     /* const generics are unstable
+280     struct S<T, const N: i32, const M: &'static str>;
+281     fn foo<T, const N: i32, const M: &'static str>() {}
+282     fn main() { foo::<S<i32, 0, { x }>, -0, "">() }
+283     */
+284     
+285     const FOO: i32 = 42;
+        |VAR_DECL      |assign
+
+286     const _: i32 = 123;
+        |VAR_DECL    |assign
+
+287     //simply not works
+288     //const NO_TYPE = 42;
+289     //static STATIC_NO_TYPE = 42;
+290     
+291     // Test that empty type parameter list (<>) is synonymous with
+292     // no type parameters at all
+293     
+294     struct S<>;
+        |STRUCT
+
+295     trait T<> {}
+        |TRAIT    |trait{
+                   |}trait
+
+296     enum E<> { V }
+        |ENUM    |enum{
+                   |enum_item
+                     |}enum
+
+297     impl<> T<> for S<> {}
+        |IMPL              |impl{
+                            |}impl
+
+298     impl T for E {}
+        |IMPL        |impl{
+                      |}impl
+
+299     fn foo<>() {}
+        |FUNCTION  |func{
+                    |}func
+
+300     fn bar() {}
+        |FUNCTION|func{
+                  |}func
+
+301     
+302     fn main() {
+        |FUNCTION |func{
+
+303         let _ = S;
+            |VAR_DECL
+                  |assign
+
+304         let _ = S::<>;
+            |VAR_DECL
+                  |assign
+
+305         let _ = E::V;
+            |VAR_DECL
+                  |assign
+
+306         let _ = E::<>::V;
+            |VAR_DECL
+                  |assign
+
+307         foo();
+               |apply
+
+308         foo::<>();
+                   |apply
+
+309     
+310         // Test that we can supply <> to non generic things
+311         bar::<>();
+                   |apply
+
+312         let _: i32<>;
+            |VAR_DECL
+
+313     }
+        |}func
+
+314     
+315     fn foo() where for<> for<> T: T {}
+        |FUNCTION                       |func{
+                                         |}func
+
+316     
+317     fn f() -> i32 {}
+        |FUNCTION     |func{
+                       |}func
+
+318     
+319     fn test() -> u32 {
+        |FUNCTION        |func{
+
+320     
+321         x :: y;         /* path-expr */
+322         :: x :: y;
+323         self :: x :: y;
+324     
+325         x + y - z * 0;  /* binary */
+326     
+327         x = y = z;      /* assignment + ; */
+              |assign
+                  |assign
+
+328     
+329         *x;             /* unary (+ ;) */
+330         &x;
+331         &mut x;
+332     
+333         (x + y) * z;    /* parenthesized */
+334     
+335         t = (0, 1, 2);  /* tuple */
+              |assign
+                |tuple(
+                 |t_elem
+                    |t_elem
+                       |t_elem
+                        |)tuple
+
+336     
+337         t.a;            /* field */
+338         t.0;
+339         //t.0.0; //thanks god...
+340     
+341         f.m();          /* method-invokation */
+               |apply
+
+342     
+343         f();            /* call */
+             |apply
+
+344         <T as Foo>::U::generic_method::<f64>();
+                                            |T_ARG
+                                                |apply
+
+345         S::<isize>::foo::<usize>();
+                |T_ARG        |T_ARG|apply
+
+346         let xs: Box<[()]> = Box::<[(); 0]>::new([]);
+            |VAR_DECL         |assign |T_ARG|      |apply
+                                                    |ARG
+                                                    |array{
+                                                     |}array
+
+347     
+348         t = ();         /* unit */
+              |assign
+                |tuple(
+                 |)tuple
+
+349     
+350         [   0,          /* array */
+            |array{
+                |array_elem
+
+351             1,
+                |array_elem
+
+352             2,
+                |array_elem
+
+353             [ 0 ; 1 ] ];
+                |array_elem
+                |array{
+                  |array_elem
+                      |array_elem
+                        |}array
+                          |}array
+
+354         [];
+            |array{
+             |}array
+
+355         [1,];
+            |array{
+             |array_elem
+               |}array
+
+356         [1;2];
+            |array{
+             |array_elem
+               |array_elem
+                |}array
+
+357     
+358         || {};          /* lambda */
+            |CLOSURE
+               |closure{
+               |return
+               |inner{
+                |}inner
+                |}closure
+
+359         |x| x;
+            |closure
+             |param
+                |closure{
+                |return
+                |}closure
+
+360         |&x| x;
+            |closure
+             |param
+                 |closure{
+                 |return
+                 |}closure
+
+361         //box pattern syntax is experimental
+362         //|box x| x;
+363         //not work
+364         //|x: i32| -> i32 92;
+365         move |x: i32| {
+            |CLOSURE
+                  |param  |closure{
+                          |return
+                          |inner{
+
+366             x
+367         };
+            |}inner
+            |}closure
+
+368     
+369         |x: &mut i32| x = 92;
+            |closure
+             |param       |closure{
+                          |return
+                            |assign
+                              |}CLOSURE
+
+370     
+371         { }             /* block */
+            |inner{
+              |}inner
+
+372     
+373         unsafe { 92 }
+                   |inner{
+                        |}inner
+
+374     
+375         {
+            |inner{
+
+376             {92}.to_string()
+                |inner{
+                   |}inner    |apply
+
+377         }
+            |}inner
+
+378     
+379         //box 92;//box is experimental
+380     
+381         let _ = 1 as i32 <= 1;
+            |VAR_DECL
+                  |assign
+
+382         //type ascription is experimental
+383         //let _ = 1: i32 <= 1;
+384     
+385         const TEN: u32 = 10;
+            |VAR_DECL      |assign
+
+386         let _ = 1 as u32 + TEN;
+            |VAR_DECL
+                  |assign
+
+387         //let _ = 1: u32 + TEN;
+388         let _ = 1 as (i32);
+            |VAR_DECL
+                  |assign
+
+389     
+390         //yield syntax is experimental
+391         //|| { 0; yield 0; };
+392     
+393         return (x = y)  /* return */
+            |RETURN   |assign
+
+394                 + 1
+395     }
+        |}func
+
+396     
+397     
+398     #[link(name = "objc")]
+        |OUTER_ATTR          |
+
+399     extern {
+        |EXTERN|extern{
+
+400         fn foo(name: *const libc::c_uchar);
+            |FUNCTION
+                   |PARAM                   |
+
+401         fn bar(a: i32,  ...) -> i32;
+            |FUNCTION
+                   |PARAM   |PARAM
+
+402     
+403         #[cfg(test)]
+            |OUTER_ATTR|
+
+404         pub fn baz(b: i64, );
+                |FUNCTION
+                       |PARAM
+
+405     
+406         #[doc = "Hello"]
+            |OUTER_ATTR    |
+
+407         pub static X: i32;
+                |STATIC
+
+408         //extern types are experimental
+409         //pub type Y;
+410     }
+        |}extern
+
+411     
+412     extern crate foo;
+        |EXTERN
+
+413     #[macro_use] extern crate bar;
+        |OUTER_ATTR| |EXTERN
+
+414     extern crate spam as eggs;
+        |EXTERN
+
+415     // should be annotated as error
+416     extern crate self;
+        |EXTERN
+
+417     extern crate self as foo;
+        |EXTERN
+
+418     
+419     extern fn baz() {}
+               |FUNCTION|func{
+                         |}func
+
+420     unsafe extern fn foo() {}
+                      |FUNCTION|func{
+                                |}func
+
+421     unsafe extern "C" fn bar() {}
+                          |FUNCTION|func{
+                                    |}func
+
+422     
+423     
+424     fn add(x: i32, y: i32) -> i32 {
+        |FUNCTION
+               |PARAM  |PARAM         |func{
+
+425         return x + y;
+            |RETURN
+
+426     }
+        |}func
+
+427     
+428       fn mul(x: i32, y: i32) -> i32 {
+          |FUNCTION
+                 |PARAM  |PARAM         |func{
+
+429         x * y;
+            |return
+
+430     }
+        |}func
+
+431     
+432       fn id(x: i32,) -> i32 { x }
+          |FUNCTION
+                |PARAM          |func{
+                                    |}func
+
+433     
+434       fn constant() -> i32 { 92 }
+          |FUNCTION            |func{
+                                    |}func
+
+435     
+436       const        fn a() -> () { () }
+                       |FUNCTION    |func{
+                                      |tuple(
+                                       |)tuple
+                                         |}func
+
+437       const unsafe fn b() -> () { () }
+                       |FUNCTION    |func{
+                                      |tuple(
+                                       |)tuple
+                                         |}func
+
+438     
+439       fn diverging() -> ! { panic("! is a type") }
+          |FUNCTION           |func{ |apply
+                                      |ARG        |  |}func
+
+440       /*C-variadic functions are unstable
+441       unsafe extern "C" fn ext_fn1(a: bool, ...) {}
+442       unsafe extern "C" fn ext_fn2(a: bool, args: ...) {}
+443       unsafe extern "C" fn ext_fn3(a: bool, ...,) {}
+444       unsafe extern "C" fn ext_fn4(a: bool, args: ...,) {}
+445       */
+446     
+447       struct S;
+          |STRUCT
+
+448     
+449       trait A {
+          |TRAIT  |trait{
+
+450           type B;
+              |TYPE_ALIAS
+
+451       }
+          |}trait
+
+452     
+453       impl A for S {
+          |IMPL        |impl{
+
+454           type B = S;
+              |TYPE_ALIAS
+                     |assign
+
+455       }
+          |}impl
+
+456     
+457     
+458       trait T { }
+          |TRAIT  |trait{
+                    |}trait
+
+459       trait P<X> { }
+          |TRAIT  |<t>
+                     |trait{
+                       |}trait
+
+460     
+461     
+462       impl T  { }
+          |IMPL   |impl{
+                    |}impl
+
+463       impl (T) { }
+          |IMPL    |impl{
+                     |}impl
+
+464       impl T for S { }
+          |IMPL        |impl{
+                         |}impl
+
+465       // Syntactically invalid
+466       //impl (T) for S { }
+467     
+468       impl<U> P<U> { }
+          |IMPL|<t>    |impl{
+                         |}impl
+
+469       impl<U> (P<U>) { }
+          |IMPL|<t>      |impl{
+                           |}impl
+
+470       impl<U> P<U> for S { }
+          |IMPL|<t>          |impl{
+                               |}impl
+
+471       impl T for <S as A>::B { }
+          |IMPL                  |impl{
+                                   |}impl
+
+472     
+473       // Semantically invalid
+474       impl (<S as A>::B) { }
+          |IMPL              |impl{
+                               |}impl
+
+475     
+476       impl<'a, T> Iterator for Iter<'a, T> + 'a {
+          |IMPL|<T>|<t>                             |impl{
+
+477           type Item = &'a T;
+              |TYPE_ALIAS
+                        |assign
+
+478     
+479           foo!();
+              |MACRO()
+                  |macro(){
+                   |}macro()
+
+480       }
+          |}impl
+
+481     
+482       impl<T> GenVal<T> {
+          |IMPL|<t>         |impl{
+
+483           fn value(&self) -> &T {}
+              |FUNCTION|PARAM       |func{
+                                     |}func
+
+484           fn foo<A, B>(&mut self, a: i32, b: i32) -> &A {}
+              |FUNCTION
+                     |<t>
+                        |<t>
+                           |PARAM  |  |PARAM  |PARAM        |func{
+                                                             |}func
+
+485       }
+          |}impl
+
+486     /*specialization is unstable
+487       impl<T: fmt::Display + ?Sized> ToString for T {
+488           #[inline]
+489           default fn to_string(&self) -> String { }
+490           default fn a() {}
+491           default fn b() {}
+492           default const BAR: u32 = 81;
+493           default type T = i32;
+494           pub default fn c() {}
+495           pub default const C1: i32 = 1;
+496           pub default type T1 = i32;
+497     }
+498     
+499     default unsafe impl<T> const X for X {}
+500     */
+501     mod m {
+        |MODULE
+              |module{
+
+502         #    !    [ cfg ( test ) ]
+            |INNER_ATTR              |
+
+503     }
+        |}module
+
+504     
+505     fn main() {
+        |FUNCTION |func{
+
+506         {} // This should a stmt.
+            |inner{
+             |}inner
+
+507         {} // And this one is an expr.
+            |inner{
+             |}inner
+
+508     }
+        |}func
+
+509     fn main() {
+        |FUNCTION |func{
+
+510         'label: while let Some(_) = Some(92) {}
+            |LABEL  |LOOP |VAR_DECL
+                              |STRUCT()
+                                   |arg
+                                      |assign
+                                            |apply
+                                             |ARG|loop{
+                                                  |}loop
+
+511     
+512         let _  = loop { break 92 };
+            |VAR_DECL
+                   |assign
+                     |LOOP|loop{
+                            |BREAK   |}loop
+
+513         let _ = 'l: loop { break 'l 92 };
+            |VAR_DECL
+                  |assign
+                    |LABEL
+                        |LOOP|loop{
+                               |BREAK      |}loop
+
+514     
+515         'll: loop {
+            |LABEL
+                 |LOOP|loop{
+
+516             break 'll;
+                |BREAK
+
+517         }
+            |}loop
+
+518     }
+        |}func
+
+519     
+520     //not work
+521     //peg! parser_definition(r#"
+522     //"#);
+523     
+524     macro_rules! vec {
+        |MACRO_RULES     |macro_rules{
+
+525         ( $( $x:expr ),* ) => {
+            |macro_rule           |macro_rule{
+
+526             {
+527                 let mut temp_vec = Vec::new();
+528                 $(
+529                     temp_vec.push($x);
+530                 )*
+531                 temp_vec
+532             }
+533         };
+            |}macro_rule
+
+534     }
+        |}macro_rules
+
+535     
+536     macro_rules! comments {
+        |MACRO_RULES          |macro_rules{
+
+537         () => {
+            |macro_rule
+                  |macro_rule{
+
+538             /// doc comment
+539             mod foo() {
+540                 /** doc comment 2 */
+541                 fn bar() {}
+542             }
+543         };
+            |}macro_rule
+
+544     }
+        |}macro_rules
+
+545     
+546     macro_rules! default {
+        |MACRO_RULES         |macro_rules{
+
+547         ($ty: ty) => { /* ANYTHING */ };
+            |macro_rule  |macro_rule{     |}macro_rule
+
+548     }
+        |}macro_rules
+
+549     
+550     macro_rules! foobar {
+        |MACRO_RULES        |macro_rules{
+
+551         ($self: ident) => {  };
+            |macro_rule       |macro_rule{
+                                 |}macro_rule
+
+552     }
+        |}macro_rules
+
+553     
+554     default!(String);
+        |MACRO()|macro(){
+                       |}macro()
+
+555     
+556     thread_local!(static HANDLE: Handle = Handle(0));
+        |MACRO()   | |macro(){                         |}macro()
+
+557     
+558     #[cfg(foo)]
+        |OUTER_ATTR
+
+559     foo!();
+        |MACRO()
+            |macro(){
+             |}macro()
+
+560     
+561     include!("path/to/rust/file.rs");
+        |MACRO()|macro(){              |}macro()
+
+562     const STR: &str = include_str!("foo.in");
+        |VAR_DECL       |assign
+                          |MACRO()  | |macro(){|}macro()
+
+563     const BYTES: &[u8] = include_bytes!("data.data",);
+        |VAR_DECL          |assign
+                             |MACRO()    | |macro(){    |}macro()
+
+564     
+565     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+        |MACRO()|macro(){                                |}macro()
+
+566     
+567     std::include!("path/to/rust/file.rs");
+        |MACRO()     |macro(){              |}macro()
+
+568     ::std::include!("path/to/rust/file.rs");
+        |MACRO()       |macro(){              |}macro()
+
+569     crate::foo! {}
+        |MACRO()    |macro(){
+                     |}macro()
+
+570     self::foo! {}
+        |MACRO()   |macro(){
+                    |}macro()
+
+571     super::foo! {}
+        |MACRO()    |macro(){
+                     |}macro()
+
+572     
+573     fn foo() {
+        |FUNCTION|func{
+
+574         #[cfg(foo)]
+            |OUTER_ATTR
+
+575         foo! {}
+            |MACRO()
+                 |macro(){
+                  |}macro()
+
+576         let a = 0; // needed to check that we parsed the call as a stmt
+            |VAR_DECL
+                  |assign
+
+577     
+578         macro_rules! bar {
+            |MACRO_RULES     |macro_rules{
+
+579             () => {};
+                |macro_rule
+                      |macro_rule{
+                       |}macro_rule
+
+580         }
+            |}macro_rules
+
+581     
+582         let mut macro_rules = 0;
+            |VAR_DECL           |assign
+
+583         macro_rules += 1;
+                        |ASSIGN
+
+584     
+585         foo!() + foo!();
+            |MACRO()
+                |macro(){
+                 |}macro()
+                     |MACRO()
+                         |macro(){
+                          |}macro()
+
+586     
+587     
+588         // -- vec macro ---
+589         let v1 = vec![1, 2, 3];
+            |VAR_DECL
+                   |assign
+                     |MACRO()
+                         |macro(){
+                                 |}macro()
+
+590         let v2 = vec![1; 10];
+            |VAR_DECL
+                   |assign
+                     |MACRO()
+                         |macro(){
+                               |}macro()
+
+591         let v: Vec<i32> = vec![];
+            |VAR_DECL       |assign
+                              |MACRO()
+                                  |macro(){
+                                   |}macro()
+
+592         let vv: Vec<i32> = std::vec![]; // fully qualified macro call
+            |VAR_DECL        |assign
+                               |MACRO() |macro(){
+                                         |}macro()
+
+593         let vvv: Vec<i32> = std::vec /*comment*/ ![]; // fully qualified macro call with comment
+            |VAR_DECL         |assign
+                                |MACRO()              |macro(){
+                                                       |}macro()
+
+594         vec!(Foo[]); // custom vec macro
+            |MACRO()
+                |macro(){
+                      |}macro()
+
+595         // ----------------
+596     
+597         // --- format macros ---
+598         println!("{}", 92);
+            |MACRO()|macro(){|}macro()
+
+599         format!("{argument}", argument = "test");  // => "test"
+            |MACRO()
+                   |macro(){                       |}macro()
+
+600         format_args!("{name} {}", 1, name = 2);    // => "2 1"
+            |MACRO()  | |macro(){                |}macro()
+
+601         format!["hello {}", "world!"];
+            |MACRO()
+                   |macro(){            |}macro()
+
+602         format! {
+            |MACRO()|macro(){
+
+603             "x = {}, y = {y}",
+604             10, y = 30
+605         }
+            |}macro()
+
+606         panic!("division by zero");
+            |MACRO()
+                  |macro(){          |}macro()
+
+607         unimplemented!("{} {} {}", 1, 2, 3);
+            |MACRO()    | |macro(){           |}macro()
+
+608         todo!("it's too {epithet} to implement", epithet = "boring");
+            |MACRO()
+                 |macro(){                                             |}macro()
+
+609         std::println!("{}", 92); // fully qualified macro call
+            |MACRO()     |macro(){|}macro()
+
+610         std::println /*comment*/ !("{}", 92); // fully qualified macro call with comment
+            |MACRO()                  |macro(){|}macro()
+
+611         ::std::println!("{}", 92); // fully qualified macro call beginning with double colon
+            |MACRO()       |macro(){|}macro()
+
+612         eprintln!(Foo[]); // custom format macro
+            |MACRO() |macro(){
+                           |}macro()
+
+613         // -------------------
+614     
+615         // --- expr macros ---
+616         /*deprecated
+617         try!(bar());
+618         try![bar()];
+619         try! {
+620             bar()
+621         }*/
+622         dbg!();
+            |MACRO()
+                |macro(){
+                 |}macro()
+
+623         dbg!("Some text");
+            |MACRO()
+                |macro(){   |}macro()
+
+624         dbg!(123 + 567,);
+            |MACRO()
+                |macro(){  |}macro()
+
+625         std::dbg!(123); // fully qualified macro call
+            |MACRO() |macro(){
+                         |}macro()
+
+626         std::dbg /*comment*/ !(123); // fully qualified macro call with comment
+            |MACRO()              |macro(){
+                                      |}macro()
+
+627         dbg!(Foo[]); // custom expr macro
+            |MACRO()
+                |macro(){
+                      |}macro()
+
+628         // ------------------
+629     
+630         // --- log macros ---
+631         error!();
+            |MACRO()
+                  |macro(){
+                   |}macro()
+
+632         debug!("{a} {c} {b}", a="a", b='b', c=3);  // => "a 3 b"
+            |MACRO()
+                  |macro(){                        |}macro()
+
+633         trace!(target: "smbc", "open_with {:?}", options);
+            |MACRO()
+                  |macro(){                                 |}macro()
+
+634         log::warn!(target: "smbc", "open_with {:?}", options); // fully qualified macro call
+            |MACRO()  |macro(){                                 |}macro()
+
+635         log::info /*comment*/ !(target: "smbc", "open_with {:?}", options); // fully qualified macro call with comment
+            |MACRO()               |macro(){                                 |}macro()
+
+636         debug!(log, "debug values"; "x" => 1, "y" => -1); // custom log macro
+            |MACRO()
+                  |macro(){                                |}macro()
+
+637         // ------------------
+638     
+639         // --- assert macros ---
+640         let a = 42u32;
+            |VAR_DECL
+                  |assign
+
+641         let b = 43u32;
+            |VAR_DECL
+                  |assign
+
+642         assert!(a == b);
+            |MACRO()
+                   |macro(){
+                          |}macro()
+
+643         assert![a == b];
+            |MACRO()
+                   |macro(){
+                          |}macro()
+
+644         assert!{a == b};
+            |MACRO()
+                   |macro(){
+                          |}macro()
+
+645     
+646         assert_eq!(a, b, "Some text");
+            |MACRO()| |macro(){         |}macro()
+
+647         assert_ne!(a, b, "Some text");
+            |MACRO()| |macro(){         |}macro()
+
+648         assert!(a == b, "Some text");
+            |MACRO()
+                   |macro(){           |}macro()
+
+649         assert!(a == b, "Text {} {} syntax", "with", "format");
+            |MACRO()
+                   |macro(){                                     |}macro()
+
+650     
+651         assert!(a == b);
+            |MACRO()
+                   |macro(){
+                          |}macro()
+
+652         debug_assert!(a == b);
+            |MACRO()   | |macro(){
+                                |}macro()
+
+653         assert_eq!(a, b);
+            |MACRO()| |macro(){
+                           |}macro()
+
+654         debug_assert_eq!(a, b);
+            |MACRO()      | |macro(){
+                                 |}macro()
+
+655         assert_ne!(a, b);
+            |MACRO()| |macro(){
+                           |}macro()
+
+656         debug_assert_ne!(a, b);
+            |MACRO()      | |macro(){
+                                 |}macro()
+
+657         std::assert!(a == b); // fully qualified macro call
+            |MACRO()    |macro(){
+                               |}macro()
+
+658         std::assert /*comment*/ !(a == b); // fully qualified macro call with comment
+            |MACRO()                 |macro(){
+                                            |}macro()
+
+659         assert_eq!(Foo[]); // custom assert macro
+            |MACRO()| |macro(){
+                            |}macro()
+
+660         // ---------------------
+661     
+662         // --- concat macros
+663         concat!("abc");
+            |MACRO()
+                   |macro(){
+                         |}macro()
+
+664         concat!("abc", "def");
+            |MACRO()
+                   |macro(){    |}macro()
+
+665         concat!("abc", "def",);
+            |MACRO()
+                   |macro(){     |}macro()
+
+666         std::concat!("abc", "def"); // fully qualified macro call
+            |MACRO()    |macro(){    |}macro()
+
+667         std::concat /*comment*/ !("abc", "def"); // fully qualified macro call with comment
+            |MACRO()                 |macro(){    |}macro()
+
+668         concat!(Foo[]); // custom concat macro
+            |MACRO()
+                   |macro(){
+                         |}macro()
+
+669         // ------------------
+670     
+671         // - env macros
+672         env!("FOO");
+            |MACRO()
+                |macro(){
+                      |}macro()
+
+673         env!("FOO",);
+            |MACRO()
+                |macro(){
+                       |}macro()
+
+674         env!("FOO", "error message");
+            |MACRO()
+                |macro(){              |}macro()
+
+675         env!("FOO", "error message", );
+            |MACRO()
+                |macro(){                |}macro()
+
+676         std::env!("FOO"); // fully qualified macro call
+            |MACRO() |macro(){
+                           |}macro()
+
+677         std::env /*comment*/ !("FOO"); // fully qualified macro call with comment
+            |MACRO()              |macro(){
+                                        |}macro()
+
+678         env!(Foo[]); // custom env macro
+            |MACRO()
+                |macro(){
+                      |}macro()
+
+679         // ------------------
+680     
+681         // - asm macros
+682         asm!("nop");
+            |MACRO()
+                |macro(){
+                      |}macro()
+
+683         asm!("nop", "nop");
+            |MACRO()
+                |macro(){    |}macro()
+
+684         asm!("nop", options(pure, nomem, nostack));
+            |MACRO()
+                |macro(){                            |}macro()
+
+685         asm!("nop", const 5, a = const 5);
+            |MACRO()
+                |macro(){                   |}macro()
+
+686         asm!("nop", sym foo::bar, a = sym foo::bar, const 6);
+            |MACRO()
+                |macro(){                                      |}macro()
+
+687         asm!("nop", a = const A + 1);
+            |MACRO()
+                |macro(){              |}macro()
+
+688         asm!("nop", in(reg) x => y, out("eax") _);
+            |MACRO()
+                |macro(){                           |}macro()
+
+689         asm!("nop", a = const 5, b = sym foo::bar, c = in(reg) _, d = out(reg) a => _);
+            |MACRO()
+                |macro(){                                                                |}macro()
+
+690         std::asm!("nop"); // fully qualified macro call
+            |MACRO() |macro(){
+                           |}macro()
+
+691         std::asm /*comment*/ !("nop"); // fully qualified macro call with comment
+            |MACRO()              |macro(){
+                                        |}macro()
+
+692         // ------------------
+693     }
+        |}func
+
+694     fn main() {
+        |FUNCTION |func{
+
+695         match x {
+            |MATCH  |match{
+
+696             _ => {}
+                |case|inner{
+                      |}inner
+
+697             _ => 1,
+                |case
+
+698             _ => unsafe { 1 }.to_string(),
+                |case       |inner{
+                                |}inner    |apply
+
+699             _ => 92
+                |case
+
+700         };
+            |}match
+
+701     
+702         match x {
+            |MATCH  |match{
+
+703             | 0
+                |case
+
+704             | 1 => 0,
+705             | _ => 42,
+                |case
+
+706         };
+            |}match
+
+707     }
+        |}func
+
+708     
+709     fn main() {
+        |FUNCTION |func{
+
+710         match () {
+            |MATCH|tuple(
+                   |)tuple
+                     |match{
+
+711             () => {}
+                |case
+                |tuple
+                |tuple(
+                 |)tuple
+                      |inner{
+                       |}inner
+
+712             () => {}
+                |case
+                |tuple
+                |tuple(
+                 |)tuple
+                      |inner{
+                       |}inner
+
+713         }
+            |}match
+
+714     }
+        |}func
+
+715     
+716     /* Addition to original */
+717     fn match_with_guard() {
+        |FUNCTION             |func{
+
+718         match () {
+            |MATCH|tuple(
+                   |)tuple
+                     |match{
+
+719             () if true => {}
+                |case
+                |tuple
+                |tuple(
+                 |)tuple
+                   |GUARD     |inner{
+                               |}inner
+
+720             () if false => {}
+                |case
+                |tuple
+                |tuple(
+                 |)tuple
+                   |GUARD      |inner{
+                                |}inner
+
+721         }
+            |}match
+
+722     }
+        |}func
+
+723     
+724     fn genericMethod<E>(element: E) -> i32 {
+        |FUNCTION        |<t>
+                            |PARAM   |         |func{
+
+725         return 1;
+            |RETURN
+
+726     }
+        |}func
+
+727     
+728     fn callGeneric() {
+        |FUNCTION        |func{
+
+729         genericMethod("Okay!");
+                         |apply
+                          |ARG  |
+
+730         let f = genericMethod::<i32>;
+            |VAR_DECL
+                  |assign           |T_ARG
+
+731         f("Not okay!"); // type mismatch
+             |apply
+              |ARG      |
+
+732     }
+        |}func
+
+733     /* End of addition */
+734     
+735     mod arith {
+        |MODULE   |module{
+
+736     
+737         fn add(x: i32, y: i32) -> i32 {
+            |FUNCTION
+                   |PARAM  |PARAM         |func{
+
+738           return x + y;
+              |RETURN
+
+739         }
+            |}func
+
+740     
+741         fn mul(x: i32, y: i32) -> i32 {
+            |FUNCTION
+                   |PARAM  |PARAM         |func{
+
+742           x * y;
+              |return
+
+743         }
+            |}func
+
+744     
+745     }
+        |}module
+
+746     
+747     
+748     mod empty {
+        |MODULE   |module{
+
+749     
+750     }
+        |}module
+
+751     
+752     fn main() {
+        |FUNCTION |func{
+
+753         // Float literals
+754         let _ = 1.0;
+            |VAR_DECL
+                  |assign
+
+755         let _ = 1f32;
+            |VAR_DECL
+                  |assign
+
+756         let _ = 1f64;
+            |VAR_DECL
+                  |assign
+
+757         let _ = 1.0f64;
+            |VAR_DECL
+                  |assign
+
+758         let _ = 1.0e92;
+            |VAR_DECL
+                  |assign
+
+759         let _ = 1.0e92f32;
+            |VAR_DECL
+                  |assign
+
+760         let _ = 1.;
+            |VAR_DECL
+                  |assign
+
+761         let _ = 10e_6;
+            |VAR_DECL
+                  |assign
+
+762         //not work
+763         //let _ = 1f34;
+764         //let _ = 1.0i98;
+765         //shouldn't work
+766         //let _ = 0.0.0;
+767         let _ = 0f32.foo();
+            |VAR_DECL
+                  |assign   |apply
+
+768     
+769         // Integer literals
+770         let _ = 1234567890;
+            |VAR_DECL
+                  |assign
+
+771         let _ = 1234567890i32;
+            |VAR_DECL
+                  |assign
+
+772         let _ = 1_________;
+            |VAR_DECL
+                  |assign
+
+773         let _ = 1_________i32;
+            |VAR_DECL
+                  |assign
+
+774         let _ = 0x1234567890abcdef;
+            |VAR_DECL
+                  |assign
+
+775         let _ = 0o1234567;
+            |VAR_DECL
+                  |assign
+
+776         let _ = 0b10101011101010000111;
+            |VAR_DECL
+                  |assign
+
+777         let _ = 0.foo();
+            |VAR_DECL
+                  |assign|apply
+
+778     }
+        |}func
+
+779     
+780     fn moo() {
+        |FUNCTION|func{
+
+781         a || b || c;
+782         5 | 3 == 2 || 4 | 2 | 0 == 4 || 1 | 0 == 1;
+783     }
+        |}func
+
+784     fn patterns() {
+        |FUNCTION     |func{
+
+785         let S {..} = x;
+            |VAR_DECL
+                |struct
+                  |struct{
+                     |}struct
+                       |assign
+
+786         let S {field} = x;
+            |VAR_DECL
+                |struct
+                  |struct{
+                   |FIELD
+                        |}struct
+                          |assign
+
+787         let S {field,} = x;
+            |VAR_DECL
+                |struct
+                  |struct{
+                   |FIELD|}struct
+                           |assign
+
+788         let S {field, ..} = x;
+            |VAR_DECL
+                |struct
+                  |struct{
+                   |FIELD   |}struct
+                              |assign
+
+789         let T(field, ..) = x;
+            |VAR_DECL
+                |struct()
+                  |ARG|  |ARG|assign
+
+790         let T(.., field) = x;
+            |VAR_DECL
+                |struct()
+                  |ARG|ARG|  |assign
+
+791         let (x, .., y) = (1, 2, 3, 4, 5);
+            |VAR_DECL
+                |tuple
+                |tuple(
+                 |t_elem
+                    |T_ELEM
+                        |t_elem
+                         |)tuple
+                           |assign
+                             |tuple(
+                              |t_elem
+                                 |t_elem
+                                    |t_elem
+                                       |t_elem
+                                          |t_elem
+                                           |)tuple
+
+792         let [x, .., y] = [1, 2, 3, 4];
+            |VAR_DECL      |assign
+                             |array{
+                              |array_elem
+                                 |array_elem
+                                    |array_elem
+                                       |array_elem
+                                        |}array
+
+793         //let [ | x, .., | y] = [1, 2, 3, 4];
+794         let &[x, ref y @ ..] = [1, 2, 3];
+            |VAR_DECL            |assign
+                                   |array{
+                                    |array_elem
+                                       |array_elem
+                                          |array_elem
+                                           |}array
+
+795         let [..] = [1, 2];
+            |VAR_DECL|assign
+                       |array{
+                        |array_elem
+                           |array_elem
+                            |}array
+
+796     
+797         let ref a @ _ = value;
+            |VAR_DECL     |assign
+
+798     
+799         if let Some(x,) = Some(92) { }
+            |IF|VAR_DECL
+                   |STRUCT()
+                        |arg|assign
+                                  |apply
+                                   |ARG|if{
+                                         |}if
+
+800     
+801         let m!(x) = 92;
+            |VAR_DECL
+                |macro()
+                  |macro(){
+                    |}macro()
+                      |assign
+
+802     
+803         let <i32>::foo ... <i32>::bar = 92;
+            |VAR_DECL                     |assign
+
+804         let Option::None = None;
+            |VAR_DECL        |assign
+
+805         /*or-patterns syntax is experimental
+806         let Foo(x) | Bar(x) | Baz(x) = baz;
+807         let | Foo(x) | Bar(x) | Baz(x) = baz;
+808         let Some(Foo(x) | Bar(x) | Baz(x)) = baz;
+809         //let Some(| Foo(x) | Bar(x) | Baz(x)) = baz;
+810         let Some(Foo(x) | Bar(Ok(1 | 2)) | Baz(x)) = baz;
+811         // https://github.com/rust-lang/rfcs/blob/master/text/2535-or-patterns.md#precedence
+812         let i @ p | q = x;
+813         let i @ (p | q) = x;
+814         */
+815         match 10 {
+            |MATCH   |match{
+
+816             -100 => x,
+                |case
+
+817             X => x,
+                |case
+
+818             Q::T => x,
+                |case
+
+819             //exclusive range pattern syntax is experimental
+820             //0..2 => x,
+821             2...4 => x,
+                |case
+
+822             //V..=10 => x,
+823             //W..20 => x,
+824             //Y::Z..50 => x,
+825             //Ok(Foo(x) | Bar(x) | Baz(x)) => x,
+826             _ => x
+                |case
+
+827         };
+            |}match
+
+828     }
+        |}func
+
+829     
+830     fn single_bound<T: Bar>() {}
+        |FUNCTION       |<T> |    |func{
+                                   |}func
+
+831     
+832     fn parenthesized_bound<T: (Bar)>() {}
+        |FUNCTION              |<T>   |    |func{
+                                            |}func
+
+833     
+834     struct QuestionBound<T: ?Sized>(Unique<T>);
+        |STRUCT              |<T>    | |struct{
+                                        |T_ELEM  |}struct
+
+835     
+836     struct ParenthesizedQuestionBound<T: (?Sized)>(Unique<T>);
+        |STRUCT                           |<T>      |
+                                             |struct{
+                                                    |}struct
+                                                      |struct{
+                                                       |T_ELEM  |}struct
+
+837     
+838     fn multiple_bound<T: Bar + Baz>() {}
+        |FUNCTION         |<T>       |    |func{
+                                           |}func
+
+839     
+840     fn parenthesized_multiple_bound<T: (Bar) + (Baz)>() {}
+        |FUNCTION                       |<T>           |    |func{
+                                                             |}func
+
+841     
+842     fn lifetime_bound<'a, T:'a>() {}
+        |FUNCTION         |<T>|<T>    |func{
+                                       |}func
+
+843     
+844     // ('a) syntactically invalid
+845     //fn parenthesized_lifetime_bound<'a, T: ('a)>() {}
+846     
+847     fn for_lifetime_bound<F>(f: F) where F: for<'a> Fn(&'a i32) {}
+        |FUNCTION             |<t>
+                                 |PARAM                             |func{
+                                                                     |}func
+
+848     
+849     fn parenthesized_for_lifetime_bound<F>(f: F) where F: (for<'a> Fn(&'a i32)) {}
+        |FUNCTION                           |<t>
+                                               |PARAM                               |func{
+                                                                                     |}func
+
+850     
+851     fn impl_bound() -> impl Bar {}
+        |FUNCTION                   |func{
+                                     |}func
+
+852     
+853     fn parenthesized_impl_bound() -> impl (Bar) {}
+        |FUNCTION                                   |func{
+                                                     |}func
+
+854     
+855     fn impl_multiple_bound() -> impl Bar + Baz {}
+        |FUNCTION                                  |func{
+                                                    |}func
+
+856     
+857     fn parenthesized_impl_multiple_bound() -> impl (Bar) + (Baz) {}
+        |FUNCTION                                                    |func{
+                                                                      |}func
+
+858     
+859     fn dyn_bound(b: &mut dyn Bar) {}
+        |FUNCTION    |PARAM        |  |func{
+                                       |}func
+
+860     
+861     fn parenthesized_dyn_bound(b: &mut dyn (Bar)) {}
+        |FUNCTION                  |PARAM          |  |func{
+                                                       |}func
+
+862     
+863     //fn dyn_multiple_bound(b: &mut dyn Bar + Baz) {}
+864     
+865     //fn parenthesized_dyn_multiple_bound(b: &mut dyn (Bar) + (Baz)) {}
+866     
+867     fn lifetime_bound_on_Fn_returning_reference<'b, F, Z: 'b>() where F: Fn() -> &'b Z + 'static {}
+        |FUNCTION                                   |<T>|<t>
+                                                           |<T>|                                     |func{
+                                                                                                      |}func
+
+868     //associated type bounds are unstable
+869     /*
+870     fn assoc_type_bounds1<T: Foo<Item: Bar>>(t: T) {}
+871     fn assoc_type_bounds2<T: Foo<Item: Bar+Baz>>(t: T) {}
+872     fn assoc_type_bounds3<T: Foo<Item1: Bar, Item2 = ()>>(t: T) {}
+873     fn assoc_type_bounds4<T: Foo<Item1 = (), Item2: Bar>>(t: T) {}
+874     fn assoc_type_bounds_in_args(t: &dyn Foo<Item: Bar>) {}
+875     */
+876     fn main() {
+        |FUNCTION |func{
+
+877         let a = 1 + 2 * 3;
+            |VAR_DECL
+                  |assign
+
+878         let b = *x == y;
+            |VAR_DECL
+                  |assign
+
+879     }
+        |}func
+
+880     fn main() {
+        |FUNCTION |func{
+
+881         r = 1..2;
+              |assign
+
+882         r =  ..2;
+              |assign
+
+883         r = 1.. ;
+              |assign
+
+884         r =  .. ;
+              |assign
+
+885         r = {1}..{2};
+              |assign
+                |inner{
+                  |}inner
+                     |inner{
+                       |}inner
+
+886         //r = 1...10;
+887         //r = 1 ... 10;
+888         //r = ... 10;
+889         r = 1..=10;
+              |assign
+
+890         r = 1 ..= 10;
+              |assign
+
+891         r = ..= 10;
+              |assign
+
+892         //r = 1..=;
+893         //r = 1...;
+894     
+895         for i in 0.. {
+            |FOR         |for{
+
+896             2
+897         }
+            |}for
+
+898     }
+        |}func
+
+899     /*raw address of syntax is experimental
+900     fn main() {
+901         let _ = &raw mut x;
+902         let _ = &raw const x;
+903         let _ = &raw;
+904         let _ = &raw!();
+905     }*/
+906     /* TODO: fix << >> >>= <<= >= <=
+907     fn expressions() {
+908         // expressions
+909         1 >> 1;
+910         x >>= 1;
+911         x >= 1;
+912         1 << 1;
+913         x <<= 1;
+914         x <= 1;
+915     
+916         // generics
+917         type T = Vec<Vec<_>>;
+918         let x: V<_>= ();
+919         let x: V<V<_>>= ();
+920         x.collect::<Vec<Vec<_>>>();
+921         type U = Vec<<i32 as F>::Q>;
+922     
+923         i < <u32>::max_value();
+924     }*/
+925     
+926     struct S { f: i32 }
+        |STRUCT  |struct{
+                   |field |}struct
+
+927     struct S2 { foo: i32, bar: () }
+        |STRUCT   |struct{
+                    |FIELD    |FIELD  |}struct
+
+928     
+929     fn main() {
+        |FUNCTION |func{
+
+930         if if true { S {f:1}; true } else { S {f:1}; false } {
+            |IF|IF     |if{
+                         |struct()
+                            |ARG       |}if
+                                         |ELSE|else{
+                                                |struct()
+                                                   |ARG        |else}
+                                                                 |if{
+
+931             ()
+                |tuple(
+                 |)tuple
+
+932         } else {
+            |}if
+              |ELSE|else{
+
+933             ()
+                |tuple(
+                 |)tuple
+
+934         };
+            |else}
+
+935     
+936         if {S {f:1}; let _ = S {f:1}; true} {()};
+            |IF|inner{
+                |struct()
+                   |ARG  |VAR_DECL
+                               |assign
+                                 |struct()
+                                    |ARG      |}inner
+                                                |if{
+                                                 |tuple(
+                                                  |)tuple
+                                                   |}if
+
+937     
+938         if { 1 } == 1 { 1; }
+            |IF|inner{
+                   |}inner|if{ |}if
+
+939         if unsafe { 0 } == 0 { 0; }
+            |IF       |inner{
+                          |}inner|if{ |}if
+
+940     
+941         let (foo, bar) = (1, ());
+            |VAR_DECL
+                |tuple
+                |tuple(
+                 |T_ELEM
+                      |T_ELEM
+                         |)tuple
+                           |assign
+                             |tuple(
+                              |t_elem
+                                 |t_elem
+                                 |tuple(
+                                  |)tuple
+                                   |)tuple
+
+942         let s2 = S2 { foo, bar };
+            |VAR_DECL
+                   |assign
+                     |STRUCT()
+                          |ARG |ARG
+
+943     }
+        |}func
+
+944     
+945     struct S1;
+        |STRUCT
+
+946     struct S2 {}
+        |STRUCT   |struct{
+                   |}struct
+
+947     struct S3 { field: f32  }
+        |STRUCT   |struct{
+                    |FIELD      |}struct
+
+948     struct S4 { field: f32, }
+        |STRUCT   |struct{
+                    |FIELD      |}struct
+
+949     struct S5 { #[foo] field: f32 }
+        |STRUCT   |struct{
+                    |field
+                    |OUTER_ATTR
+                         |}struct     |}struct
+
+950     struct S6 { #[foo] field: f32, #[foo] field2: f32 }
+        |STRUCT   |struct{
+                    |field
+                    |OUTER_ATTR
+                         |}struct      |field
+                                       |OUTER_ATTR
+                                            |}struct      |}struct
+
+951     
+952     struct S10();
+        |STRUCT   |struct{
+                   |}struct
+
+953     struct S11(i32);
+        |STRUCT   |struct{
+                   |T_ELEM
+                      |}struct
+
+954     struct S12(i32,);
+        |STRUCT   |struct{
+                   |T_ELEM
+                       |}struct
+
+955     struct S13(i32,i32);
+        |STRUCT   |struct{
+                   |T_ELEM
+                       |T_ELEM
+                          |}struct
+
+956     struct S14(#[foo] i32);
+        |STRUCT   |struct{
+                   |t_elem
+                   |OUTER_ATTR
+                        |}struct
+                             |}struct
+
+957     struct S15(#[foo] i32, #[foo] i32);
+        |STRUCT   |struct{
+                   |t_elem
+                   |OUTER_ATTR
+                        |}struct
+                               |t_elem
+                               |OUTER_ATTR
+                                    |}struct
+                                         |}struct
+
+958     
+959     #[repr(C)]
+        |OUTER_ATTR
+
+960     union U {
+        |UNION  |union{
+
+961         i: i32,
+            |field
+
+962         f: f32,
+            |field
+
+963     }
+        |}union
+
+964     
+965     fn foo() {
+        |FUNCTION|func{
+
+966         struct S1;
+            |STRUCT
+
+967         struct S2 {}
+            |STRUCT   |struct{
+                       |}struct
+
+968         struct S3 { field: f32  }
+            |STRUCT   |struct{
+                        |FIELD      |}struct
+
+969         struct S4 { field: f32, }
+            |STRUCT   |struct{
+                        |FIELD      |}struct
+
+970     
+971         #[repr(C)]
+            |OUTER_ATTR
+
+972         union U {
+            |UNION  |union{
+
+973             i: i32,
+                |field
+
+974             f: f32,
+                |field
+
+975         }
+            |}union
+
+976     }
+        |}func
+
+977     
+978     trait Contains {
+        |TRAIT         |trait{
+
+979         type A;
+            |TYPE_ALIAS
+
+980         fn inner(&self) -> Self::A;
+            |FUNCTION|PARAM
+
+981         fn empty();
+            |FUNCTION
+
+982         fn anon_param(i32);
+            |FUNCTION     |PARAM
+
+983         fn self_type(x: Self, y: Vec<Self>) -> Self;
+            |FUNCTION    |PARAM|  |PARAM     |
+
+984     }
+        |}trait
+
+985     
+986     fn foo() {
+        |FUNCTION|func{
+
+987         trait Inner {};
+            |TRAIT      |trait{
+                         |}trait
+
+988         unsafe trait UnsafeInner {};
+            |TRAIT                   |trait{
+                                      |}trait
+
+989     }
+        |}func
+
+990     
+991     trait bar<T> {
+        |TRAIT    |<t>
+                     |trait{
+
+992         fn baz(&self,);
+            |FUNCTION
+                   |PARAM
+
+993     }
+        |}trait
+
+994     
+995     trait TrailingPlusIsOk: Clone+{}
+        |TRAIT                        |trait{
+                                       |}trait
+
+996     trait EmptyBoundsAreValid: {}
+        |TRAIT                     |trait{
+                                    |}trait
+
+997     
+998     fn main() {
+        |FUNCTION |func{
+
+999         "1".parse::<i32>()?;
+                        |T_ARG
+                            |apply
+
+1000        {x}?;
+            |inner{
+              |}inner
+
+1001        x[y?]?;
+1002        x???;
+1003        Ok(true);
+              |apply
+               |ARG
+
+1004        let question_should_bind_tighter = !x?;
+            |VAR_DECL                        |assign
+
+1005    }
+        |}func
+
+1006    fn main() {
+        |FUNCTION |func{
+
+1007        a::<B<>>
+                |T_ARG
+
+1008    }
+        |}func
+
+1009    type FunType = Fn(f64) -> f64;
+        |TYPE_ALIAS  |assign
+
+1010    type FunType2 = FnOnce::(i32);
+        |TYPE_ALIAS   |assign
+
+1011    
+1012    type FunTypeVoid = Fn();
+        |TYPE_ALIAS      |assign
+
+1013    
+1014    type ColonColon = Vec::<[u8; 8]>;
+        |TYPE_ALIAS     |assign
+
+1015    
+1016    type Sum = Box<A + Copy>;
+        |TYPE_ALIAS
+                 |assign
+
+1017    
+1018    type LifetimeSum = Box<'a + Copy>;
+        |TYPE_ALIAS      |assign
+
+1019    
+1020    type HrtbSum = &(for<'a> Trait1 + for<'b> Trait2);
+        |TYPE_ALIAS  |assign
+
+1021    
+1022    type FunSum = Box<Fn(f64, f64) -> f64 + Send + Sync>;
+        |TYPE_ALIAS |assign
+
+1023    type FunSum2 = Box<Fn() -> () + Send>;
+        |TYPE_ALIAS  |assign
+
+1024    type FunRetDynTrait = Box<Fn() -> dyn Trait + Send>;
+        |TYPE_ALIAS         |assign
+
+1025    
+1026    type Shl = F<<i as B>::Q, T=bool>;
+        |TYPE_ALIAS
+                 |assign
+
+1027    type Shr = Vec<Vec<f64>>;
+        |TYPE_ALIAS
+                 |assign
+
+1028    
+1029    type Path = io::Result<()>;
+        |TYPE_ALIAS
+                  |assign
+
+1030    
+1031    type AssocType = Box<Iterator<Item=(Idx, T)> + 'a>;
+        |TYPE_ALIAS    |assign
+
+1032    
+1033    type GenericAssoc = Foo<T, U=i32>;
+        |TYPE_ALIAS       |assign
+
+1034    
+1035    type Trailing1 = Box<TypeA<'static,>>;
+        |TYPE_ALIAS    |assign
+
+1036    
+1037    type Trailing2<'a> = MyType<'a, (),>;
+        |TYPE_ALIAS    |<T>|assign
+
+1038    
+1039    type TrailingCommaInFn = unsafe extern "system" fn(x: i32,) -> ();
+        |TYPE_ALIAS            |assign
+
+1040    
+1041    fn foo<T>(xs: Vec<T>) -> impl Iterator<Item=impl FnOnce() -> T> + Clone {
+        |FUNCTION
+               |<t>
+                  |PARAM   |                                                    |func{
+
+1042        xs.into_iter().map(|x| || x)
+                        |apply|apply
+                               |ARG   |
+                               |closure
+                                |param
+                                   |CLOSURE{
+                                   |RETURN
+                                   |CLOSURE
+                                      |closure{
+                                      |return
+                                      |}closure
+                                      |}closure
+
+1043    }
+        |}func
+
+1044    
+1045    type DynTrait = dyn Trait;
+        |TYPE_ALIAS   |assign
+
+1046    
+1047    struct S<F>
+        |STRUCT  |<t>
+
+1048        where F: FnMut(&mut Self, &T) -> Result<(), <Self as Encoder>::Error>;
+                          |struct{      |}struct
+
+1049    
+1050    struct EmptyWhere where {}
+        |STRUCT                 |struct{
+                                 |}struct
+
+1051    
+1052    fn bar() -> foo!() { let a: foo!() = 0 as foo!(); a }
+        |FUNCTION   |MACRO()
+                        |macro(){
+                         |}macro()
+                           |func{
+                             |VAR_DECL
+                                    |MACRO()
+                                        |macro(){
+                                         |}macro()
+                                           |assign|MACRO()
+                                                      |macro(){
+                                                       |}macro()
+                                                            |}func
+
+1053    
+1054    
+1055    use self :: y :: { self   };
+        |USE               |USE_ITEM
+
+1056    use           :: { self   };
+        |USE               |USE_ITEM
+
+1057    use           :: { self , };
+        |USE               |USE_ITEM
+
+1058    use           :: {        };
+        |USE
+
+1059    use              { y      };
+        |USE               |use_item
+
+1060    use              { y ,    };
+        |USE               |use_item
+
+1061    use              {        };
+        |USE
+
+1062    use self  ::  y :: *;
+        |USE               |use_item
+
+1063    use self  ::  y as z;
+        |USE|USE_ITEM |
+
+1064    use self  ::  y as _;
+        |USE|USE_ITEM |
+
+1065    use self  ::  y;
+        |USE|USE_ITEM |
+
+1066    use crate  ::  y;
+        |USE|USE_ITEM  |
+
+1067    
+1068    // https://github.com/rust-lang/rfcs/blob/master/text/2128-use-nested-groups.md
+1069    use a::{B, d::{self, *, g::H}};
+        |USE    |use_item
+                       |USE_ITEM
+                             |use_item
+                                |USE_ITEM
+
+1070    use ::{*, *};
+        |USE   |use_item
+                  |use_item
+
+1071    
+1072    use foo::{bar, {baz, quux}};
+        |USE      |USE_ITEM
+                        |USE_ITEM
+                             |USE_ITEM
+
+1073    use {crate::foo, crate::bar, super::baz};
+        |USE |USE_ITEM|  |USE_ITEM|  |USE_ITEM|
+
+1074    
+1075    struct S1;
+        |STRUCT
+
+1076    pub struct S2;
+            |STRUCT
+
+1077    pub(crate) struct S3;
+                   |STRUCT
+
+1078    pub(self) struct S4;
+                  |STRUCT
+
+1079    mod a {
+        |MODULE
+              |module{
+
+1080        pub (super) struct S5;
+                        |STRUCT
+
+1081        pub(in a) struct S6;
+                      |STRUCT
+
+1082        mod b {
+            |MODULE
+                  |module{
+
+1083            pub(in super::super) struct S7;
+                                     |STRUCT
+
+1084            // Syntactically invalid
+1085            //pub(a::b) struct S8;
+1086        }
+            |}module
+
+1087    }
+        |}module
+
+1088    //crate visibility modifier is experimental
+1089    //crate struct S9;
+1090    
+1091    //struct S10(crate ::S1); // path `crate::S1`
+1092    //struct S11(crate S1); // vis `crate`
+1093    
+1094    crate::macro1!();
+        |MACRO()      |macro(){
+                       |}macro()
+
+1095    
+1096    #[macro_export]
+        |OUTER_ATTR   |
+
+1097    #[doc(hidden)]
+        |OUTER_ATTR  |
+
+1098    macro_rules! __diesel_column {
+        |MACRO_RULES                 |macro_rules{
+
+1099        ($($table:ident)::*, $column_name:ident -> $Type:ty) => {
+            |macro_rule                                             |macro_rule{
+
+1100            #[allow(non_camel_case_types, dead_code)]
+1101            #[derive(Debug, Clone, Copy)]
+1102            pub struct $column_name;
+1103    
+1104            impl $crate::expression::Expression for $column_name {
+1105                type SqlType = $Type;
+1106            }
+1107    
+1108            impl<DB> $crate::query_builder::QueryFragment<DB> for $column_name where
+1109                DB: $crate::backend::Backend,
+1110                <$($table)::* as QuerySource>::FromClause: QueryFragment<DB>,
+1111            {
+1112                fn to_sql(&self, out: &mut DB::QueryBuilder) -> $crate::query_builder::BuildQueryResult {
+1113                    try!($($table)::*.from_clause().to_sql(out));
+1114                    out.push_sql(".");
+1115                    out.push_identifier(stringify!($column_name))
+1116                }
+1117    
+1118                fn collect_binds(&self, _out: &mut DB::BindCollector) -> $crate::result::QueryResult<()> {
+1119                    Ok(())
+1120                }
+1121    
+1122                fn is_safe_to_cache_prepared(&self) -> bool {
+1123                    true
+1124                }
+1125            }
+1126    
+1127            impl_query_id!($column_name);
+1128    
+1129            impl SelectableExpression<$($table)::*> for $column_name {
+1130            }
+1131    
+1132        }
+            |}macro_rule
+
+1133    }
+        |}macro_rules
+
+1134    
+1135    #[macro_export]
+        |OUTER_ATTR   |
+
+1136    macro_rules! table {
+        |MACRO_RULES       |macro_rules{
+
+1137        // Put `use` statements at the end because macro_rules! cannot figure out
+1138        // if `use` is an ident or not (hint: It's not)
+1139        (
+            |macro_rule
+
+1140            use $($import:tt)::+; $($rest:tt)+
+1141        ) => {
+                 |macro_rule{
+
+1142            table!($($rest)+ use $($import)::+;);
+1143        };
+            |}macro_rule
+
+1144    
+1145        // Add the primary key if it's not present
+1146        (
+            |macro_rule
+
+1147            $($table_name:ident).+ {$($body:tt)*}
+                                       |macro_rule{ |}macro_rule
+
+1148            $($imports:tt)*
+1149        ) => {
+                 |macro_rule{
+
+1150            table! {
+1151                $($table_name).+ (id) {$($body)*} $($imports)*
+1152            }
+1153        };
+            |}macro_rule
+
+1154    
+1155        // Add the schema name if it's not present
+1156        (
+            |macro_rule
+
+1157            $name:ident $(($($pk:ident),+))* {$($body:tt)*}
+                                                 |macro_rule{ |}macro_rule
+
+1158            $($imports:tt)*
+1159        ) => {
+                 |macro_rule{
+
+1160            table! {
+1161                public . $name $(($($pk),+))* {$($body)*} $($imports)*
+1162            }
+1163        };
+            |}macro_rule
+
+1164    
+1165        // Import `diesel::types::*` if no imports were given
+1166        (
+            |macro_rule
+
+1167            $($table_name:ident).+ $(($($pk:ident),+))* {$($body:tt)*}
+                                                            |macro_rule{ |}macro_rule
+
+1168        ) => {
+                 |macro_rule{
+
+1169            table! {
+1170                $($table_name).+ $(($($pk),+))* {$($body)*}
+1171                use $crate::types::*;
+1172            }
+1173        };
+            |}macro_rule
+
+1174    
+1175        // Terminal with single-column pk
+1176        (
+            |macro_rule
+
+1177            $schema_name:ident . $name:ident ($pk:ident) $body:tt
+1178            $($imports:tt)+
+1179        ) => {
+                 |macro_rule{
+
+1180            table_body! {
+1181                $schema_name . $name ($pk) $body $($imports)+
+1182            }
+1183        };
+            |}macro_rule
+
+1184    
+1185        // Terminal with composite pk (add a trailing comma)
+1186        (
+            |macro_rule
+
+1187            $schema_name:ident . $name:ident ($pk:ident, $($composite_pk:ident),+) $body:tt
+1188            $($imports:tt)+
+1189        ) => {
+                 |macro_rule{
+
+1190            table_body! {
+1191                $schema_name . $name ($pk, $($composite_pk,)+) $body $($imports)+
+1192            }
+1193        };
+            |}macro_rule
+
+1194    }
+        |}macro_rules
+
+1195    
+1196    #[macro_export]
+        |OUTER_ATTR   |
+
+1197    #[doc(hidden)]
+        |OUTER_ATTR  |
+
+1198    macro_rules! table_body {
+        |MACRO_RULES            |macro_rules{
+
+1199        (
+            |macro_rule
+
+1200            $schema_name:ident . $name:ident ($pk:ident) {
+                                                             |macro_rule{
+
+1201                $($column_name:ident -> $Type:ty,)+
+1202            }
+                |}macro_rule
+
+1203            $(use $($import:tt)::+;)+
+1204        ) => {
+                 |macro_rule{
+
+1205            table_body! {
+1206                schema_name = $schema_name,
+1207                table_name = $name,
+1208                primary_key_ty = columns::$pk,
+1209                primary_key_expr = columns::$pk,
+1210                columns = [$($column_name -> $Type,)+],
+1211                imports = ($($($import)::+),+),
+1212            }
+1213        };
+            |}macro_rule
+
+1214    
+1215        (
+            |macro_rule
+
+1216            $schema_name:ident . $name:ident ($($pk:ident,)+) {
+                                                                  |macro_rule{
+
+1217                $($column_name:ident -> $Type:ty,)+
+1218            }
+                |}macro_rule
+
+1219            $(use $($import:tt)::+;)+
+1220        ) => {
+                 |macro_rule{
+
+1221            table_body! {
+1222                schema_name = $schema_name,
+1223                table_name = $name,
+1224                primary_key_ty = ($(columns::$pk,)+),
+1225                primary_key_expr = ($(columns::$pk,)+),
+1226                columns = [$($column_name -> $Type,)+],
+1227                imports = ($($($import)::+),+),
+1228            }
+1229        };
+            |}macro_rule
+
+1230    
+1231        (
+            |macro_rule
+
+1232            schema_name = $schema_name:ident,
+1233            table_name = $table_name:ident,
+1234            primary_key_ty = $primary_key_ty:ty,
+1235            primary_key_expr = $primary_key_expr:expr,
+1236            columns = [$($column_name:ident -> $column_ty:ty,)+],
+1237            imports = ($($($import:tt)::+),+),
+1238        ) => {
+                 |macro_rule{
+
+1239            pub mod $table_name {
+1240                #![allow(dead_code)]
+1241                use $crate::{
+1242                    QuerySource,
+1243                    Table,
+1244                };
+1245                use $crate::associations::HasTable;
+1246                $(use $($import)::+;)+
+1247                __diesel_table_query_source_impl!(table, $schema_name, $table_name);
+1248    
+1249                impl_query_id!(table);
+1250    
+1251                pub mod columns {
+1252                    use super::table;
+1253                    use $crate::result::QueryResult;
+1254                    $(use $($import)::+;)+
+1255    
+1256                    $(__diesel_column!(table, $column_name -> $column_ty);)+
+1257                }
+1258            }
+1259        }
+            |}macro_rule
+
+1260    }
+        |}macro_rules
+
+1261    
+1262    #[macro_export]
+        |OUTER_ATTR   |
+
+1263    #[doc(hidden)]
+        |OUTER_ATTR  |
+
+1264    macro_rules! __diesel_table_query_source_impl {
+        |MACRO_RULES                                  |macro_rules{
+
+1265        ($table_struct:ident, public, $table_name:ident) => {
+            |macro_rule                                         |macro_rule{
+
+1266            impl QuerySource for $table_struct {
+1267                type FromClause = Identifier<'static>;
+1268                type DefaultSelection = <Self as Table>::AllColumns;
+1269    
+1270                fn from_clause(&self) -> Self::FromClause {
+1271                    Identifier(stringify!($table_name))
+1272                }
+1273    
+1274                fn default_selection(&self) -> Self::DefaultSelection {
+1275                    Self::all_columns()
+1276                }
+1277            }
+1278        };
+            |}macro_rule
+
+1279    
+1280        ($table_struct:ident, $schema_name:ident, $table_name:ident) => {
+            |macro_rule                                                     |macro_rule{
+
+1281            impl QuerySource for $table_struct {
+1282                type FromClause = $crate::query_builder::nodes::
+1283                    InfixNode<'static, Identifier<'static>, Identifier<'static>>;
+1284                type DefaultSelection = <Self as Table>::AllColumns;
+1285    
+1286                fn from_clause(&self) -> Self::FromClause {
+1287                    $crate::query_builder::nodes::InfixNode::new(
+1288                        Identifier(stringify!($schema_name)),
+1289                        Identifier(stringify!($table_name)),
+1290                        ".",
+1291                    )
+1292                }
+1293    
+1294                fn default_selection(&self) -> Self::DefaultSelection {
+1295                    Self::all_columns()
+1296                }
+1297            }
+1298        };
+            |}macro_rule
+
+1299    }
+        |}macro_rules
+
+1300    
+1301    #[macro_export]
+        |OUTER_ATTR   |
+
+1302    #[doc(hidden)]
+        |OUTER_ATTR  |
+
+1303    macro_rules! joinable {
+        |MACRO_RULES          |macro_rules{
+
+1304        ($child:ident -> $parent:ident ($source:ident)) => {
+            |macro_rule                                        |macro_rule{
+
+1305            joinable_inner!($child::table => $parent::table : ($child::$source = $parent::table));
+1306            joinable_inner!($parent::table => $child::table : ($child::$source = $parent::table));
+1307        }
+            |}macro_rule
+
+1308    }
+        |}macro_rules
+
+1309    
+1310    #[macro_export]
+        |OUTER_ATTR   |
+
+1311    #[doc(hidden)]
+        |OUTER_ATTR  |
+
+1312    macro_rules! joinable_inner {
+        |MACRO_RULES                |macro_rules{
+
+1313        ($left_table:path => $right_table:path : ($foreign_key:path = $parent_table:path)) => {
+            |macro_rule                                                                           |macro_rule{
+
+1314            joinable_inner!(
+1315                left_table_ty = $left_table,
+1316                right_table_ty = $right_table,
+1317                right_table_expr = $right_table,
+1318                foreign_key = $foreign_key,
+1319                primary_key_ty = <$parent_table as $crate::query_source::Table>::PrimaryKey,
+1320                primary_key_expr = $parent_table.primary_key(),
+1321            );
+1322        };
+            |}macro_rule
+
+1323    
+1324        (
+            |macro_rule
+
+1325            left_table_ty = $left_table_ty:ty,
+1326            right_table_ty = $right_table_ty:ty,
+1327            right_table_expr = $right_table_expr:expr,
+1328            foreign_key = $foreign_key:path,
+1329            primary_key_ty = $primary_key_ty:ty,
+1330            primary_key_expr = $primary_key_expr:expr,
+1331        ) => {
+                 |macro_rule{
+
+1332            impl<JoinType> $crate::JoinTo<$right_table_ty, JoinType> for $left_table_ty {
+1333                type JoinClause = $crate::query_builder::nodes::Join<
+1334                    <$left_table_ty as $crate::QuerySource>::FromClause,
+1335                    <$right_table_ty as $crate::QuerySource>::FromClause,
+1336                    $crate::expression::helper_types::Eq<
+1337                        $crate::expression::nullable::Nullable<$foreign_key>,
+1338                        $crate::expression::nullable::Nullable<$primary_key_ty>,
+1339                    >,
+1340                    JoinType,
+1341                >;
+1342            }
+1343        }
+            |}macro_rule
+
+1344    }
+        |}macro_rules
+
+1345    
+1346    #[macro_export]
+        |OUTER_ATTR   |
+
+1347    #[doc(hidden)]
+        |OUTER_ATTR  |
+
+1348    macro_rules! join_through {
+        |MACRO_RULES              |macro_rules{
+
+1349        ($parent:ident -> $through:ident -> $child:ident) => {
+            |macro_rule                                          |macro_rule{
+
+1350            impl<JoinType: Copy> $crate::JoinTo<$child::table, JoinType> for $parent::table {
+1351                type JoinClause = <
+1352                    <$parent::table as $crate::JoinTo<$through::table, JoinType>>::JoinClause
+1353                    as $crate::query_builder::nodes::CombinedJoin<
+1354                        <$through::table as $crate::JoinTo<$child::table, JoinType>>::JoinClause,
+1355                    >>::Output;
+1356    
+1357                fn join_clause(&self, join_type: JoinType) -> Self::JoinClause {
+1358                    use $crate::query_builder::nodes::CombinedJoin;
+1359                    let parent_to_through = $crate::JoinTo::<$through::table, JoinType>
+1360                        ::join_clause(&$parent::table, join_type);
+1361                    let through_to_child = $crate::JoinTo::<$child::table, JoinType>
+1362                        ::join_clause(&$through::table, join_type);
+1363                    parent_to_through.combine_with(through_to_child)
+1364                }
+1365            }
+1366        }
+            |}macro_rule
+
+1367    }
+        |}macro_rules
+
+1368    
+1369    #[macro_export]
+        |OUTER_ATTR   |
+
+1370    macro_rules! debug_sql {
+        |MACRO_RULES           |macro_rules{
+
+1371        ($query:expr) => {{
+            |macro_rule      |macro_rule{
+
+1372            use $crate::query_builder::{QueryFragment, QueryBuilder};
+1373            use $crate::query_builder::debug::DebugQueryBuilder;
+1374            let mut query_builder = DebugQueryBuilder::new();
+1375            QueryFragment::<$crate::backend::Debug>::to_sql(&$query, &mut query_builder).unwrap();
+1376            query_builder.finish()
+1377        }};
+             |}macro_rule
+
+1378    }
+        |}macro_rules
+
+1379    
+1380    #[macro_export]
+        |OUTER_ATTR   |
+
+1381    macro_rules! print_sql {
+        |MACRO_RULES           |macro_rules{
+
+1382        ($query:expr) => {
+            |macro_rule      |macro_rule{
+
+1383            println!("{}", &debug_sql!($query));
+1384        };
+            |}macro_rule
+
+1385    }
+        |}macro_rules
+
+1386    
+1387    fn main() {
+        |FUNCTION |func{
+
+1388        {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
+            |inner{
+             |inner{
+              |inner{
+               |inner{
+                |inner{
+                 |inner{
+                  |inner{
+                   |inner{
+                    |inner{
+                     |inner{
+                      |inner{
+                       |inner{
+                        |inner{
+                         |inner{
+                          |inner{
+                           |inner{
+                            |inner{
+                             |inner{
+                              |inner{
+                               |inner{
+                                |inner{
+                                 |inner{
+                                  |inner{
+                                   |inner{
+                                    |inner{
+                                     |inner{
+                                      |inner{
+                                       |inner{
+                                        |inner{
+                                         |inner{
+                                          |inner{
+                                           |inner{
+                                            |inner{
+                                             |inner{
+                                              |inner{
+                                               |inner{
+                                                |inner{
+                                                 |inner{
+                                                  |inner{
+                                                   |inner{
+                                                    |inner{
+                                                     |inner{
+                                                      |inner{
+                                                       |inner{
+                                                        |inner{
+                                                         |inner{
+                                                          |inner{
+                                                           |inner{
+                                                            |inner{
+                                                             |inner{
+                                                              |inner{
+                                                               |inner{
+                                                                |inner{
+                                                                 |inner{
+                                                                  |inner{
+                                                                   |inner{
+                                                                    |inner{
+                                                                     |inner{
+                                                                      |inner{
+                                                                       |inner{
+                                                                        |inner{
+                                                                         |inner{
+                                                                          |inner{
+                                                                           |inner{
+                                                                            |inner{
+                                                                             |inner{
+                                                                              |inner{
+                                                                               |inner{
+                                                                                |inner{
+                                                                                 |inner{
+                                                                                  |inner{
+                                                                                   |inner{
+                                                                                    |inner{
+                                                                                     |inner{
+                                                                                      |inner{
+                                                                                       |inner{
+                                                                                        |inner{
+                                                                                         |inner{
+
+1389        ()
+            |tuple(
+             |)tuple
+
+1390        }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+            |}inner
+             |}inner
+              |}inner
+               |}inner
+                |}inner
+                 |}inner
+                  |}inner
+                   |}inner
+                    |}inner
+                     |}inner
+                      |}inner
+                       |}inner
+                        |}inner
+                         |}inner
+                          |}inner
+                           |}inner
+                            |}inner
+                             |}inner
+                              |}inner
+                               |}inner
+                                |}inner
+                                 |}inner
+                                  |}inner
+                                   |}inner
+                                    |}inner
+                                     |}inner
+                                      |}inner
+                                       |}inner
+                                        |}inner
+                                         |}inner
+                                          |}inner
+                                           |}inner
+                                            |}inner
+                                             |}inner
+                                              |}inner
+                                               |}inner
+                                                |}inner
+                                                 |}inner
+                                                  |}inner
+                                                   |}inner
+                                                    |}inner
+                                                     |}inner
+                                                      |}inner
+                                                       |}inner
+                                                        |}inner
+                                                         |}inner
+                                                          |}inner
+                                                           |}inner
+                                                            |}inner
+                                                             |}inner
+                                                              |}inner
+                                                               |}inner
+                                                                |}inner
+                                                                 |}inner
+                                                                  |}inner
+                                                                   |}inner
+                                                                    |}inner
+                                                                     |}inner
+                                                                      |}inner
+                                                                       |}inner
+                                                                        |}inner
+                                                                         |}inner
+                                                                          |}inner
+                                                                           |}inner
+                                                                            |}inner
+                                                                             |}inner
+                                                                              |}inner
+                                                                               |}inner
+                                                                                |}inner
+                                                                                 |}inner
+                                                                                  |}inner
+                                                                                   |}inner
+                                                                                    |}inner
+                                                                                     |}inner
+                                                                                      |}inner
+                                                                                       |}inner
+                                                                                        |}inner
+                                                                                         |}inner
+
+1391    }
+        |}func
+
+1392    pub type T = A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<A<B>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>;
+            |TYPE_ALIAS
+                   |assign
+
+1393    static i: () =
+        |VAR_DECL    |assign
+
+1394    (((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+1395    ()
+        |tuple(
+         |)tuple
+
+1396    )))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+1397    ;
+1398    
+1399    static j:
+        |VAR_DECL
+
+1400    (((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+1401    i32
+1402    )))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+1403    =
+        |assign
+
+1404    (((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+1405    1
+1406    )))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+1407    ;
+1408    
+1409    static k:
+        |VAR_DECL
+
+1410    ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+1411    (i32, )
+1412    ))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+1413    =
+        |assign
+
+1414    (((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+                                                                  |tuple(
+
+1415    1,
+        |t_elem
+
+1416    )))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+        |)tuple
+
+1417    ;
+1418    
+1419    static l:
+        |VAR_DECL
+
+1420    (((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+1421    i32,
+1422    ),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),)
+1423    =
+        |assign
+
+1424    (((((((((((((((((((((((((((((((((((((((((((((((((((((((((((
+        |tuple(
+         |t_elem
+         |tuple(
+          |t_elem
+          |tuple(
+           |t_elem
+           |tuple(
+            |t_elem
+            |tuple(
+             |t_elem
+             |tuple(
+              |t_elem
+              |tuple(
+               |t_elem
+               |tuple(
+                |t_elem
+                |tuple(
+                 |t_elem
+                 |tuple(
+                  |t_elem
+                  |tuple(
+                   |t_elem
+                   |tuple(
+                    |t_elem
+                    |tuple(
+                     |t_elem
+                     |tuple(
+                      |t_elem
+                      |tuple(
+                       |t_elem
+                       |tuple(
+                        |t_elem
+                        |tuple(
+                         |t_elem
+                         |tuple(
+                          |t_elem
+                          |tuple(
+                           |t_elem
+                           |tuple(
+                            |t_elem
+                            |tuple(
+                             |t_elem
+                             |tuple(
+                              |t_elem
+                              |tuple(
+                               |t_elem
+                               |tuple(
+                                |t_elem
+                                |tuple(
+                                 |t_elem
+                                 |tuple(
+                                  |t_elem
+                                  |tuple(
+                                   |t_elem
+                                   |tuple(
+                                    |t_elem
+                                    |tuple(
+                                     |t_elem
+                                     |tuple(
+                                      |t_elem
+                                      |tuple(
+                                       |t_elem
+                                       |tuple(
+                                        |t_elem
+                                        |tuple(
+                                         |t_elem
+                                         |tuple(
+                                          |t_elem
+                                          |tuple(
+                                           |t_elem
+                                           |tuple(
+                                            |t_elem
+                                            |tuple(
+                                             |t_elem
+                                             |tuple(
+                                              |t_elem
+                                              |tuple(
+                                               |t_elem
+                                               |tuple(
+                                                |t_elem
+                                                |tuple(
+                                                 |t_elem
+                                                 |tuple(
+                                                  |t_elem
+                                                  |tuple(
+                                                   |t_elem
+                                                   |tuple(
+                                                    |t_elem
+                                                    |tuple(
+                                                     |t_elem
+                                                     |tuple(
+                                                      |t_elem
+                                                      |tuple(
+                                                       |t_elem
+                                                       |tuple(
+                                                        |t_elem
+                                                        |tuple(
+                                                         |t_elem
+                                                         |tuple(
+                                                          |t_elem
+                                                          |tuple(
+                                                           |t_elem
+                                                           |tuple(
+                                                            |t_elem
+                                                            |tuple(
+                                                             |t_elem
+                                                             |tuple(
+                                                              |t_elem
+                                                              |tuple(
+                                                               |t_elem
+                                                               |tuple(
+                                                                |t_elem
+                                                                |tuple(
+                                                                 |t_elem
+                                                                 |tuple(
+                                                                  |t_elem
+                                                                  |tuple(
+
+1425    1,
+        |t_elem
+
+1426    ),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),),)
+        |)tuple
+          |)tuple
+            |)tuple
+              |)tuple
+                |)tuple
+                  |)tuple
+                    |)tuple
+                      |)tuple
+                        |)tuple
+                          |)tuple
+                            |)tuple
+                              |)tuple
+                                |)tuple
+                                  |)tuple
+                                    |)tuple
+                                      |)tuple
+                                        |)tuple
+                                          |)tuple
+                                            |)tuple
+                                              |)tuple
+                                                |)tuple
+                                                  |)tuple
+                                                    |)tuple
+                                                      |)tuple
+                                                        |)tuple
+                                                          |)tuple
+                                                            |)tuple
+                                                              |)tuple
+                                                                |)tuple
+                                                                  |)tuple
+                                                                    |)tuple
+                                                                      |)tuple
+                                                                        |)tuple
+                                                                          |)tuple
+                                                                            |)tuple
+                                                                              |)tuple
+                                                                                |)tuple
+                                                                                  |)tuple
+                                                                                    |)tuple
+                                                                                      |)tuple
+                                                                                        |)tuple
+                                                                                          |)tuple
+                                                                                            |)tuple
+                                                                                              |)tuple
+                                                                                                |)tuple
+                                                                                                  |)tuple
+                                                                                                    |)tuple
+                                                                                                      |)tuple
+                                                                                                        |)tuple
+                                                                                                          |)tuple
+                                                                                                            |)tuple
+                                                                                                              |)tuple
+                                                                                                                |)tuple
+                                                                                                                  |)tuple
+                                                                                                                    |)tuple
+                                                                                                                      |)tuple
+                                                                                                                        |)tuple
+                                                                                                                          |)tuple
+                                                                                                                            |)tuple
+
+1427    ;
+1428    
+1429    fn main() {}
+        |FUNCTION |func{
+                   |}func
+        |<eof>
+

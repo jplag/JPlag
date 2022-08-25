@@ -12,6 +12,8 @@
             <groupId>de.jplag</groupId>
             <artifactId>jplag</artifactId>
         </dependency>
+
+        <!-- Languages -->
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>frontend-utils</artifactId>
@@ -50,6 +52,10 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>rust</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>scala</artifactId>
         </dependency>
         <dependency>
@@ -67,6 +73,12 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>endToEndTesting</artifactId>
+        </dependency>
+
+        <!-- CLI -->
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
         </dependency>
 
         <dependency>
@@ -87,17 +99,18 @@
                     </archive>
                 </configuration>
             </plugin>
-
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                <configuration combine.self="override">
+                    <descriptors>
+                        <descriptor>src/assembly/src.xml</descriptor>
+                    </descriptors>
                     <archive>
                         <manifest>
                             <mainClass>de.jplag.CLI</mainClass>
                             <packageName>jplag</packageName>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
                     <finalName>jplag-${project.version}</finalName>

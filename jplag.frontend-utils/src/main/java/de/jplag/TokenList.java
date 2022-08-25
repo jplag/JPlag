@@ -1,6 +1,7 @@
 package de.jplag;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public class TokenList {
      * Returns a view on all tokens.
      * @return all tokens.
      */
-    public Iterable<Token> allTokens() {
+    public Collection<Token> allTokens() {
         return new ArrayList<>(tokens);
     }
 

@@ -3,15 +3,18 @@ package de.jplag.csharp;
 import java.io.File;
 import java.util.Arrays;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.TokenList;
 
 /**
  * C# language with full support of C# 6 features and below.
  * @author Timur Saglam
  */
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
     private static final String NAME = "C# 6 Parser";
-    private static final String SHORT_NAME = "C# 6";
+    private static final String IDENTIFIER = "csharp";
     private static final String[] FILE_ENDINGS = new String[] {".cs", ".CS"};
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
 
@@ -32,8 +35,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override

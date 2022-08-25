@@ -5,8 +5,6 @@ import static de.jplag.options.Verbosity.LONG;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
@@ -19,7 +17,6 @@ import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 import de.jplag.strategy.ComparisonMode;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.NormalComparisonStrategy;
@@ -45,7 +42,7 @@ public class JPlag {
     public JPlag(JPlagOptions options) {
         this.options = options;
         coreAlgorithm = new GreedyStringTiling(options);
-        language = initializeLanguage();
+        language = initializeLanguage(this.options);
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
         excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
         options.setExcludedFiles(excludedFileNames); // store for report
@@ -92,7 +89,8 @@ public class JPlag {
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
-        logger.info("\nTotal time for comparing submissions: " + TimeUtil.formatDuration(result.getDuration()));
+        if (logger.isInfoEnabled())
+            logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
 
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.getClusteringOptions()));
 
@@ -106,22 +104,20 @@ public class JPlag {
         };
     }
 
-    private Language initializeLanguage() {
-        LanguageOption languageOption = this.options.getLanguageOption();
+    private static Language initializeLanguage(JPlagOptions options) {
+        String languageIdentifier = options.getLanguageIdentifier();
+        Language currentLanguage = options.getLanguage();
 
-        try {
-            Constructor<?> constructor = Class.forName(languageOption.getClassPath()).getConstructor();
-            Language language = (Language) constructor.newInstance();
-
-            this.options.setLanguage(language);
-            this.options.setLanguageDefaults(language);
-            logger.info("Initialized language {}", language.getName());
-            return language;
-        } catch (NoSuchMethodException | SecurityException | ClassNotFoundException | InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException e) {
-            logger.error(e.getMessage(), e);
-            throw new IllegalStateException("Language instantiation failed:" + e.getMessage(), e);
+        if (currentLanguage != null && (languageIdentifier == null || languageIdentifier.equals(currentLanguage.getIdentifier()))) {
+            // Ensure that we do not rely on the ServiceLoader API. We can also load an arbitrary language via Options
+            options.setLanguageDefaults(currentLanguage);
+            return currentLanguage;
         }
 
+        Language language = LanguageLoader.getLanguage(languageIdentifier).orElseThrow();
+        options.setLanguage(language);
+        options.setLanguageDefaults(language);
+        logger.info("Loaded language {}", language.getName());
+        return language;
     }
 }
