@@ -193,11 +193,12 @@ public class EndToEndSuiteTest {
      * @return formatted text for the failed comparative values of the current test
      */
     private String createValidationErrorOutout() {
-        String errorString = System.lineSeparator() + "There were <" + validationErrors.size() + "> validation error(s):" + System.lineSeparator();
+        StringJoiner joiner = new StringJoiner(System.lineSeparator());
+        joiner.add(""); // empty line at start
+        joiner.add("There were <" + validationErrors.size() + "> validation error(s):");
 
-        for (String error : validationErrors) {
-            errorString += error + System.lineSeparator();
-        }
+        validationErrors.stream().forEach(errorLine -> joiner.add(errorLine));
+        joiner.add(""); // line break at the end
 
         return errorString;
     }
