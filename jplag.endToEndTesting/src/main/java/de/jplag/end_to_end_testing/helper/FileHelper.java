@@ -89,19 +89,22 @@ public class FileHelper {
      * @throws IOException if an I/O error occurs
      */
     public static void deleteCopiedFiles(File folder) throws IOException {
-        if (folder.exists()) {
-            File[] files = folder.listFiles();
-            if (files != null) { // some JVMs return null for empty dirs
-                for (File file : files) {
-                    if (file.isDirectory()) {
-                        deleteCopiedFiles(file);
-                    } else {
-                        Files.delete(file.toPath());
-                    }
-                }
-            }
-            Files.delete(folder.toPath());
+        if (!folder.exists()) {
+            return;
         }
+        File[] files = folder.listFiles();
+        if (files == null) { // some JVMs return null for empty dirs
+            return;
+        }
+        for (File file : files) {
+            if (file.isDirectory()) {
+                deleteCopiedFiles(file);
+            } else {
+                Files.delete(file.toPath());
+            }
+         }
+         Files.delete(folder.toPath());
+    }
     }
 
     /**
