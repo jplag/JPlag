@@ -160,14 +160,15 @@ The plagiarisms created in [Creating The Plagiarism](#creating-the-plagiarism) m
 
 - At the path `JPlag\jplag.endToEndTesting\src\test\resources\languageTestFiles` a new folder for the language should be created if it does not already exist. For example `[...]\resources\languageTestFiles\JAVA`. If you have plagiarized several different code samples, you can also create additional subfolders under the newly created folder for example `[...]\resources\languageTestFiles\JAVA\sortAlgo`.
 
-It is important to note that the resource folder name must be exactly the same as the language option in JPlag. Otherwise the language option cannot be parsed correctly to the enum-type.
- - JAVA
- - PYTHON_3
- - C_CPP
- - C_SHARP
- - GO_LANG
- - KOTLIN
- - R_LANG
- - SCALA
+It is important to note that the resource folder name must be exactly the same as the language identifier name in JPlag/Language. Otherwise the language option cannot be parsed correctly to the enum-type.
+ - c++ with "cpp"
+ - c# with "csharp"
+ - GO with "go"
+ - Java with "java"
+ - Kotlin with "kotlin"
+ - Python3 with "python3"
+ - R with "rlang"
+ - Rust with "rust"
+ - Scala with "scala"
 
 Once the tests have been run for the first time, the information for the tests is stored in the folder `..\target\testing-directory-submission\LANGUAGE`.  This data can be copied to the path `[...]\resources\results\LANGUAGE`. Each subdirectory gets its own result json file as `[...]\resources\results\JAVA\sortAlgo.json`. Once the test data has been copied, the endToEnd tests can be successfully tested. As soon as a change in the detection takes place, the results will differ from the stored results and the tests will fail if the results have changed.
