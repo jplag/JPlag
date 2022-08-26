@@ -208,7 +208,7 @@ public class GreedyStringTiling {
      * Converts the tokens of the submission to a list of values.
      * @param submission The submission from which to convert the tokens.
      */
-    private int[] hashedTokenListFromSubmission(Submission submission) {
+    private synchronized int[] hashedTokenListFromSubmission(Submission submission) {
         List<Token> tokens = submission.getTokenList();
         int[] hashedTokens = new int[tokens.size()];
         for (int i = 0; i < tokens.size(); i++) {
