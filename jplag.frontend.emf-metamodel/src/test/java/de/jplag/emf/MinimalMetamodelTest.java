@@ -1,9 +1,10 @@
 package de.jplag.emf;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -39,13 +40,10 @@ class MinimalMetamodelTest {
     @Test
     void testBookstoreMetamodels() {
         List<Token> result = frontend.parse(baseDirectory, TEST_SUBJECTS);
+        List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).toList();
 
-        logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(Language.VIEW_FILE_SUFFIX)));
-        Field[] fields = MetamodelTokenConstants.class.getFields();
-        var constants = Arrays.stream(fields).map(Field::getName).filter(it -> !it.equals("NUM_DIFF_TOKENS")).toList();
-        logger.info(("Handcrafted token set: " + constants));
+        logger.debug(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles, Optional.of(Language.VIEW_FILE_SUFFIX)));
         logger.info("Parsed tokens: " + result.toString());
-        assertEquals(21, constants.size());
         assertEquals(43, result.size());
 
         var bookstoreTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[0]);

@@ -7,10 +7,11 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.AbstractParser;
+import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 import de.jplag.emf.Language;
 import de.jplag.emf.MetamodelToken;
+import de.jplag.emf.MetamodelTokenType;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 import de.jplag.emf.util.EMFUtil;
 import de.jplag.emf.util.MetamodelTreeView;
@@ -63,7 +64,7 @@ public class EcoreParser extends AbstractParser {
                 visitor = createMetamodelVisitor();
                 visitor.visit(root);
             }
-            tokens.add(new MetamodelToken(TokenConstants.FILE_END, currentFile));
+            tokens.add(new MetamodelToken(SharedTokenType.FILE_END, currentFile));
             treeView.writeToFile(Language.VIEW_FILE_SUFFIX);
         }
     }
@@ -76,13 +77,13 @@ public class EcoreParser extends AbstractParser {
         return new MetamodelTokenGenerator(this);
     }
 
-    public void addToken(int type, EObject source, String prefix) {
+    public void addToken(MetamodelTokenType type, EObject source, String prefix) {
         MetamodelToken token = new MetamodelToken(type, currentFile, source);
         MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedTokenAndAdd(token, visitor.getCurrentTreeDepth(), prefix);
         tokens.add(metadataEnrichedToken);
     }
 
-    public void addToken(int type, EObject source) {
+    public void addToken(MetamodelTokenType type, EObject source) {
         addToken(type, source, "");
     }
 }
