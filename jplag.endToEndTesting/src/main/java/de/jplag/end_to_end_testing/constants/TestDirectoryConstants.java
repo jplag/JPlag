@@ -12,21 +12,24 @@ public final class TestDirectoryConstants {
     }
 
     /**
-     * Name for the folder to copy the submissions to in order to test them with JPlag
+     * Create the complete path to the temporary result files. Here the temporary system path is extended with the
+     * "RESULT_DIRECTORY_NAME", which is predefined in this class.
      */
-    public static final String TEMPORARY_DIRECTORY_NAME = "testing-directory-submission";
-    /**
-     * Create the complete path to the submission files. Here the temporary system path is extended with the
-     * "TEMPORARY_DIRECTORY_NAME", which is predefined in this class.
-     */
-    public static final String TEMPORARY_SUBMISSION_DIRECTORY_NAME = Path.of("target", TEMPORARY_DIRECTORY_NAME).toString();
+    public static final Path TEMPORARY_RESULT_DIRECTORY_NAME = Path.of("target", "testing-directory-temporary-result");
 
     /**
-     * Base path to the created plagiarism and the main file located in the project resources.
+     * Base path to the saved results
      */
-    public static final Path BASE_PATH_TO_JAVA_RESOURCES_SORTALGO = Path.of("src", "test", "resources", "java", "sortAlgo");
+    public static final Path BASE_PATH_TO_RESULT_JSON = Path.of("src", "test", "resources", "results");
+
     /**
-     * Base path to the saved results of the previous tests in a *.json file
+     * Base path to the endToEnd testing resources
      */
-    public static final Path BASE_PATH_TO_JAVA_RESULT_JSON = Path.of("src", "test", "resources", "results", "JavaResult.json");
+    public static final Path BASE_PATH_TO_LANGUAGE_RESOURCES = Path.of("src", "test", "resources", "languageTestFiles");
+
+    /**
+     * Create the complete path to the submission files. Here the temporary system path is extended with the
+     * "SUBMISSION_DIRECTORY_NAME", which is predefined in this class.
+     */
+    public static final Path TEMPORARY_SUBMISSION_DIRECTORY_NAME = Path.of("target", "testing-directory-submission");
 }
