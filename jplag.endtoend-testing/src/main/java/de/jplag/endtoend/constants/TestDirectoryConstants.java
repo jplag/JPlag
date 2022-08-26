@@ -1,4 +1,4 @@
-package de.jplag.end_to_end_testing.constants;
+package de.jplag.endtoend.constants;
 
 import java.nio.file.Path;
 

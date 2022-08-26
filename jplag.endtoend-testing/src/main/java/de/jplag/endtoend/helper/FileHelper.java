@@ -1,4 +1,4 @@
-package de.jplag.end_to_end_testing.helper;
+package de.jplag.endtoend.helper;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
+import de.jplag.endtoend.constants.TestDirectoryConstants;
 
 /**
  * Helper class to perform all necessary operations or functions on files or folders.

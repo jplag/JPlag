@@ -1,4 +1,4 @@
-package de.jplag.end_to_end_testing.helper;
+package de.jplag.endtoend.helper;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,8 +9,8 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
-import de.jplag.end_to_end_testing.model.ResultDescription;
+import de.jplag.endtoend.constants.TestDirectoryConstants;
+import de.jplag.endtoend.model.ResultDescription;
 
 public class JsonHelper {
     /**
