@@ -6,7 +6,7 @@
         <artifactId>aggregator</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>endToEndTesting</artifactId>
+    <artifactId>endtoend-testing</artifactId>
 
     <dependencies>
         <dependency>

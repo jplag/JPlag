@@ -385,9 +385,9 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>core</module>
                 <module>cli</module>
-                <module>endToEndTesting</module>
+                <module>core</module>
+                <module>endtoend-testing</module>
                 <module>languages</module>
                 <module>languages.api</module>
                 <module>languages.testutils</module>

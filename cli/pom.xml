@@ -17,6 +17,11 @@
         <!-- Languages -->
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>languages.api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>text</artifactId>
             <version>${revision}</version>
         </dependency>
@@ -80,13 +85,6 @@
             <artifactId>emf-metamodel-dynamic</artifactId>
             <version>${revision}</version>
         </dependency>
-        <dependency>
-            <groupId>de.jplag</groupId>
-            <artifactId>endToEndTesting</artifactId>
-            <version>${revision}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- CLI -->
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>

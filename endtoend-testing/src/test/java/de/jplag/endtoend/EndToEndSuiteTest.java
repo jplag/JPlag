@@ -1,4 +1,4 @@
-package de.jplag.end_to_end_testing;
+package de.jplag.endtoend;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,10 +22,10 @@ import org.junit.jupiter.api.TestFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
-import de.jplag.end_to_end_testing.helper.FileHelper;
-import de.jplag.end_to_end_testing.helper.JsonHelper;
-import de.jplag.end_to_end_testing.helper.TestSuiteHelper;
-import de.jplag.end_to_end_testing.model.*;
+import de.jplag.endtoend.helper.FileHelper;
+import de.jplag.endtoend.helper.JsonHelper;
+import de.jplag.endtoend.helper.TestSuiteHelper;
+import de.jplag.endtoend.model.*;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
