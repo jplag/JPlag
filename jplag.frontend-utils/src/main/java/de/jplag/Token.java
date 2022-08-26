@@ -22,21 +22,6 @@ public abstract class Token {
      * @param line is the line index in the source code where the token resides. Cannot be smaller than 1. For
      * {@link TokenConstants#FILE_END FILE_END} it is automatically set to {@link #NO_VALUE}.
      */
-    public Token(int type, String file, int line) {
-        this.file = file;
-        if (type == TokenConstants.FILE_END) {
-            this.line = NO_VALUE;
-        } else {
-            this.line = line > 0 ? line : 1;
-        }
-    }
-
-    /**
-     * Creates a token without information about the column or the length of the token in the line.
-     * @param type is the token type.
-     * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
-     */
     public Token(TokenType type, String file, int line) {
         this.type = type;
         this.file = file;
@@ -47,20 +32,6 @@ public abstract class Token {
         }
         this.column = NO_VALUE;
         this.length = NO_VALUE;
-    }
-
-    /**
-     * Creates a token with column and length information.
-     * @param type is the token type.
-     * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
-     * @param column is the column index, meaning where the token starts in the line.
-     * @param length is the length of the token in the source code.
-     */
-    public Token(int type, String file, int line, int column, int length) {
-        this(type, file, line);
-        this.column = column;
-        this.length = length;
     }
 
     /**
@@ -109,13 +80,9 @@ public abstract class Token {
     }
 
     /**
-     * @return the type identifier of the token.
+     * @return the type of the token.
      */
-    public int getType() {
-        return -1;
-    }
-
-    public TokenType getTokenType() {
+    public TokenType getType() {
         return type;
     }
 
@@ -126,14 +93,4 @@ public abstract class Token {
     public void setColumn(int column) {
         this.column = column;
     }
-
-    @Override
-    public String toString() {
-        return type2string();
-    }
-
-    /**
-     * @return a string representation depending on the type of the token.
-     */
-    protected String type2string() { return ""; };
 }

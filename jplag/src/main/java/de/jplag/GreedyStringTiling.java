@@ -191,8 +191,9 @@ public class GreedyStringTiling {
     private Set<Integer> initiallyMarkedTokenIndexes(Submission submission) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
         List<Token> tokens = submission.getTokenList();
-        return IntStream.range(0, tokens.size()).filter(i -> tokens.get(i).getTokenType() == SharedTokenType.FILE_END
-                || tokens.get(i).getTokenType() == SharedTokenType.SEPARATOR || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i))))
+        return IntStream
+                .range(0, tokens.size()).filter(i -> tokens.get(i).getType() == SharedTokenType.FILE_END
+                        || tokens.get(i).getType() == SharedTokenType.SEPARATOR || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i))))
                 .boxed().collect(Collectors.toSet());
     }
 
@@ -214,7 +215,7 @@ public class GreedyStringTiling {
         List<Token> tokens = submission.getTokenList();
         int[] hashedTokens = new int[tokens.size()];
         for (int i = 0; i < tokens.size(); i++) {
-            TokenType type = tokens.get(i).getTokenType();
+            TokenType type = tokens.get(i).getType();
             Integer hashValue = tokenTypeHashValues.get(type);
             if (hashValue == null) {
                 hashValue = tokenTypeHashValues.size();

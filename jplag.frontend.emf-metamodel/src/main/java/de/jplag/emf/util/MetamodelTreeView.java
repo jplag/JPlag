@@ -77,7 +77,7 @@ public class MetamodelTreeView {
 
             columnIndex += tokenText.length();
         }
-        return new MetamodelToken(token.getTokenType(), token.getFile(), line, column, length, token.getEObject());
+        return new MetamodelToken(token.getType(), token.getFile(), line, column, length, token.getEObject());
     }
 
     /**

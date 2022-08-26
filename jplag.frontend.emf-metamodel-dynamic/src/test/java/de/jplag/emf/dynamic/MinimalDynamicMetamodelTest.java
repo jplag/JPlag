@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
+import de.jplag.TokenType;
 import de.jplag.testutils.FileUtil;
 import de.jplag.testutils.TokenUtils;
 
@@ -41,11 +42,12 @@ class MinimalDynamicMetamodelTest {
     @Test
     void testBookstoreMetamodels() {
         List<Token> result = frontend.parse(baseDirectory, TEST_SUBJECTS);
+        List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
         List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).toList();
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles, Optional.of(Language.VIEW_FILE_SUFFIX)));
-        logger.info("parsed tokens: " + result.toString());
-        assertEquals(64, result.size());
-        assertEquals(7, new HashSet<>(result.stream().map(Token::getTokenType).filter(DynamicMetamodelTokenType.class::isInstance).toList()).size());
+        logger.info("parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList().toString());
+        assertEquals(64, tokenTypes.size());
+        assertEquals(7, new HashSet<>(tokenTypes.stream().filter(DynamicMetamodelTokenType.class::isInstance).toList()).size());
 
         var bookstoreTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[0]);
         var bookstoreRenamedTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[2]);

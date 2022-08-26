@@ -3,6 +3,7 @@ package de.jplag.testutils;
 import java.util.List;
 
 import de.jplag.Token;
+import de.jplag.TokenType;
 
 public final class TokenUtils {
 
@@ -16,7 +17,7 @@ public final class TokenUtils {
      * @param name is the name of the target file.
      * @return the immutable list of token types.
      */
-    public static List<Integer> tokenTypesByFile(List<Token> tokens, String name) {
+    public static List<TokenType> tokenTypesByFile(List<Token> tokens, String name) {
         return tokensByFile(tokens, name).stream().map(Token::getType).toList();
     }
 

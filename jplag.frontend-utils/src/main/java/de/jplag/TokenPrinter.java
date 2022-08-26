@@ -152,7 +152,8 @@ public final class TokenPrinter {
      * Determines the string representation of the token.
      */
     private static String getStringRepresentation(Token token) {
-        return token.getLength() <= 1 && INDICATE_TINY_TOKEN ? token.toString().toLowerCase() : token.toString();
+        String description = token.getType().getDescription();
+        return token.getLength() <= 1 && INDICATE_TINY_TOKEN ? description.toLowerCase() : description;
     }
 
     /**

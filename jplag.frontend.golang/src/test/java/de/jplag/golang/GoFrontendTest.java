@@ -143,7 +143,7 @@ class GoFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var annotatedTokens = tokens.stream().map(Token::getTokenType).collect(Collectors.toSet());
+        var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
         assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
         assertFalse(annotatedTokens.contains(SharedTokenType.SEPARATOR));
         var annotatedGoTokens = annotatedTokens.stream().filter(GoTokenType.class::isInstance).collect(Collectors.toSet());
