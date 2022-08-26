@@ -72,9 +72,8 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>endToEndTesting</artifactId>
+            <artifactId>endtoend-testing</artifactId>
         </dependency>
-
         <!-- CLI -->
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>
