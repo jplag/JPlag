@@ -1,4 +1,4 @@
-package de.jplag.end_to_end_testing;
+package de.jplag.endtoend;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,10 +23,10 @@ import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.LanguageLoader;
-import de.jplag.end_to_end_testing.helper.FileHelper;
-import de.jplag.end_to_end_testing.helper.JsonHelper;
-import de.jplag.end_to_end_testing.helper.TestSuiteHelper;
-import de.jplag.end_to_end_testing.model.*;
+import de.jplag.endtoend.helper.FileHelper;
+import de.jplag.endtoend.helper.JsonHelper;
+import de.jplag.endtoend.helper.TestSuiteHelper;
+import de.jplag.endtoend.model.*;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
@@ -144,9 +144,8 @@ public class EndToEndSuiteTest {
         String[] submissionPath = FileHelper.createNewTestCaseDirectory(testFiles);
 
         var language = LanguageLoader.getLanguage(languageIdentifier).orElseThrow();
-        JPlagOptions jplagOptions = new JPlagOptions(language, Arrays.asList(submissionPath), List.of())
+        JPlagOptions jplagOptions = new JPlagOptions(language, Arrays.asList(submissionPath), new ArrayList<>())
                 .withMinimumTokenMatch(options.minimumTokenMatch());
-
         JPlagResult jplagResult = new JPlag(jplagOptions).run();
 
         List<JPlagComparison> currentJPlagComparison = jplagResult.getAllComparisons();

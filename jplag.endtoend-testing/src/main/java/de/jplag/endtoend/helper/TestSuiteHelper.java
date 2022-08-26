@@ -1,4 +1,4 @@
-package de.jplag.end_to_end_testing.helper;
+package de.jplag.endtoend.helper;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
-import de.jplag.end_to_end_testing.constants.TestDirectoryConstants;
+import de.jplag.endtoend.constants.TestDirectoryConstants;
 
 public class TestSuiteHelper {
 
