@@ -1,22 +1,19 @@
 package de.jplag.text;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 public class ParserAdapter extends AbstractParser {
 
@@ -26,6 +23,8 @@ public class ParserAdapter extends AbstractParser {
 
     private TokenList tokens;
     private String currentFile;
+    private int currentLine;
+    private int currentLineIndex;
 
     public ParserAdapter() {
         Properties properties = new Properties();
@@ -47,64 +46,75 @@ public class ParserAdapter extends AbstractParser {
     }
 
     private boolean parseFile(File directory, String file) {
-        currentFile = file;
+        this.currentFile = file;
+        this.currentLine = 1; // lines start at 1
+        this.currentLineIndex = 0;
         Path filePath = directory.toPath().resolve(file);
-        ParsedDocument parsed = readDocument(filePath);
-        if (parsed == null) {
+        String content = readFile(filePath);
+        if (content == null) {
             return false;
         }
-        for (CoreLabel token : parsed.document().tokens()) {
+        int lastTokenEnd = 0;
+        CoreDocument coreDocument = pipeline.processToCoreDocument(content);
+        for (CoreLabel token : coreDocument.tokens()) {
+            advanceLineBreaks(content, lastTokenEnd, token.beginPosition());
+            lastTokenEnd = token.endPosition();
             if (isWord(token)) {
-                addToken(token, parsed.linebreaks());
+                addToken(token);
             }
         }
         return true;
+    }
+
+    /**
+     * Scan for line breaks and increase {@link #currentLine} and {@link #currentLineIndex} accordingly.
+     * @param content the file content
+     * @param lastTokenEnd the end position of the last token
+     * @param nextTokenBegin the begin position of the next token
+     */
+    private void advanceLineBreaks(String content, int lastTokenEnd, int nextTokenBegin) {
+        for (int i = lastTokenEnd; i < nextTokenBegin; i++) {
+            if (content.charAt(i) == '\n') { // LF
+                currentLine++;
+                currentLineIndex = i;
+            } else if (content.charAt(i) == '\r') { // CR
+                if (i + 1 < content.length() && content.charAt(i + 1) == '\n') { // CRLF
+                    i++; // skip following LF
+                }
+                currentLine++;
+                currentLineIndex = i;
+            }
+        }
     }
 
     private boolean isWord(CoreLabel token) {
-        if (true) {
-            return true;
-        }
+        // consider a token as a word if it contains any alphanumeric character
         String text = token.originalText();
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            if (!Character.isAlphabetic(c) || Character.isDigit(c)) {
-                return false;
+            if (Character.isAlphabetic(c) || Character.isDigit(c)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
-    private void addToken(CoreLabel label, List<Integer> linebreaks) {
+    private void addToken(CoreLabel label) {
         String text = label.originalText();
         int type = getTokenType(text);
-        // assuming we never hit a line break with the beginPosition,
-        // we can directly negate the value to get the line
-        int line = -Collections.binarySearch(linebreaks, label.beginPosition());
-        int column;
-        // line 1 has no start position in the linebreaks list
-        if (line == 1) {
-            column = label.beginPosition();
-        } else {
-            // while token lines start at 1, the list is 0-indexed.
-            // additionally, we need to skip line 1 here => - 2
-            column = label.beginPosition() - linebreaks.get(line - 2);
-        }
+        int column = label.beginPosition() - currentLineIndex;
         int length = label.endPosition() - label.beginPosition();
-        TokenPosition position = new TokenPosition(line, column, length);
+        TokenPosition position = new TokenPosition(currentLine, column, length);
         tokens.addToken(new TextToken(text, type, currentFile, position));
     }
 
-    private ParsedDocument readDocument(Path filePath) {
-        String content;
+    private String readFile(Path filePath) {
         try {
-            content = Files.readString(filePath);
+            return Files.readString(filePath);
         } catch (IOException e) {
             logger.error("Error reading from file {}", filePath, e);
             return null;
         }
-        List<Integer> linebreaks = createLinebreaksLookup(content);
-        return new ParsedDocument(pipeline.processToCoreDocument(content), linebreaks);
     }
 
     private int getTokenType(String text) {
@@ -116,20 +126,5 @@ public class ParserAdapter extends AbstractParser {
             return ++tokenTypeIndex;
         });
         return tokenTypes.get(text);
-    }
-
-    // TODO we can probably get that data from CoreNLP?
-    private List<Integer> createLinebreaksLookup(String content) {
-        List<Integer> linebreaks = new ArrayList<>();
-        for (int i = 0; i < content.length(); i++) {
-            if (content.charAt(i) == '\n') {
-                linebreaks.add(i);
-            }
-        }
-        return linebreaks;
-    }
-
-    record ParsedDocument(CoreDocument document, List<Integer> linebreaks) {
-
     }
 }
