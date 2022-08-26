@@ -144,7 +144,8 @@ public class EndToEndSuiteTest {
         String[] submissionPath = FileHelper.createNewTestCaseDirectory(testFiles);
 
         var language = LanguageLoader.getLanguage(languageIdentifier).orElseThrow();
-        JPlagOptions jplagOptions = new JPlagOptions(language, Arrays.asList(submissionPath), List.of()).withMinimumTokenMatch(options.minimumTokenMatch());
+        JPlagOptions jplagOptions = new JPlagOptions(language, Arrays.asList(submissionPath), List.of())
+                .withMinimumTokenMatch(options.minimumTokenMatch());
 
         JPlagResult jplagResult = new JPlag(jplagOptions).run();
 
