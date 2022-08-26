@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 import de.jplag.TokenType;
 
 /**
@@ -20,7 +19,7 @@ public class MetamodelToken extends Token {
 
     /**
      * Creates an Ecore metamodel token that corresponds to an EObject.
-     * @param type is the corresponding ID of the {@link TokenConstants}.
+     * @param type is the type of the token.
      * @param file is the name of the source model file.
      * @param eObject is the corresponding eObject in the model from which this token was extracted.
      */
@@ -31,7 +30,7 @@ public class MetamodelToken extends Token {
 
     /**
      * Creates an Ecore metamodel token.
-     * @param type is the corresponding ID of the {@link TokenConstants}.
+     * @param type is the type of the token.
      * @param file is the name of the source model file.
      */
     public MetamodelToken(TokenType type, String file) {
