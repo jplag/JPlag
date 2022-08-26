@@ -15,10 +15,13 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenConstants;
+import de.jplag.TokenType;
+import de.jplag.SharedTokenType;
 import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
+
+import static de.jplag.Token.NO_VALUE;
 
 public class Parser extends AbstractParser {
 
@@ -40,7 +43,7 @@ public class Parser extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.add(new Python3Token(TokenConstants.FILE_END, file, -1, -1, -1));
+            tokens.add(new Python3Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE));
         }
         return tokens;
     }
@@ -78,12 +81,12 @@ public class Parser extends AbstractParser {
         return true;
     }
 
-    public void add(int type, Token token) {
+    public void add(TokenType type, Token token) {
         tokens.add(new Python3Token(type, (currentFile == null ? "null" : currentFile), token.getLine(), token.getCharPositionInLine() + 1,
                 token.getText().length()));
     }
 
-    public void addEnd(int type, Token token) {
+    public void addEnd(TokenType type, Token token) {
         tokens.add(new Python3Token(type, (currentFile == null ? "null" : currentFile), token.getLine(),
                 tokens.get(tokens.size() - 1).getColumn() + 1, 0));
     }
