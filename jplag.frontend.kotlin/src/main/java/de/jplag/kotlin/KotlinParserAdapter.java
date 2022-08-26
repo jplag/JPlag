@@ -1,5 +1,7 @@
 package de.jplag.kotlin;
 
+import static de.jplag.Token.NO_VALUE;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,12 +15,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.Token;
 import de.jplag.SharedTokenType;
+import de.jplag.Token;
 import de.jplag.kotlin.grammar.KotlinLexer;
 import de.jplag.kotlin.grammar.KotlinParser;
-
-import static de.jplag.Token.NO_VALUE;
 
 public class KotlinParserAdapter extends AbstractParser {
     private String currentFile;

@@ -1,5 +1,7 @@
 package de.jplag.java;
 
+import static de.jplag.Token.NO_VALUE;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,8 +21,6 @@ import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
 import de.jplag.SharedTokenType;
-
-import static de.jplag.Token.NO_VALUE;
 
 public class JavacAdapter {
 

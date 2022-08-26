@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenType;
 import de.jplag.SharedTokenType;
+import de.jplag.TokenType;
 
 public class Parser extends AbstractParser {
     private String currentFile;

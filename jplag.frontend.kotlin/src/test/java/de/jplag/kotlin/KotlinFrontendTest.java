@@ -1,27 +1,27 @@
 package de.jplag.kotlin;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
-import de.jplag.SharedTokenType;
 
 class KotlinFrontendTest {
 
@@ -143,7 +143,8 @@ class KotlinFrontendTest {
         var annotatedKotlinTokens = annotatedTokens.stream().filter(KotlinTokenType.class::isInstance).collect(Collectors.toSet());
         var allKotlinTokens = KotlinTokenType.values();
         var missingKotlinTokens = Arrays.stream(allKotlinTokens).filter(token -> !annotatedKotlinTokens.contains(token)).toList();
-        assertTrue(missingKotlinTokens.isEmpty(), "The following kotlin tokens are missing:\n" + String.join("\n", missingKotlinTokens.stream().map(KotlinTokenType::getDescription).toList()));
+        assertTrue(missingKotlinTokens.isEmpty(), "The following kotlin tokens are missing:\n"
+                + String.join("\n", missingKotlinTokens.stream().map(KotlinTokenType::getDescription).toList()));
     }
 
 }

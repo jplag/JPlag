@@ -49,7 +49,7 @@ public enum JavaTokenType implements TokenType {
     J_ARRAY_INIT_BEGIN("ARRINIT{"), // check
     J_ARRAY_INIT_END("}ARRINIT"), // check
 
-    //new in 1.5
+    // new in 1.5
     J_ENUM_BEGIN("ENUM"), // check
     J_ENUM_CLASS_BEGIN("ENUM_CLA"), // ?? doesn't exist in JAVAC
     J_ENUM_END("}ENUM"), // check
@@ -64,20 +64,20 @@ public enum JavaTokenType implements TokenType {
     J_ANNO_C_BEGIN("ANNO_C{"), // ??
     J_ANNO_C_END("}ANNO_C"), // ??
 
-    //new in 1.7
+    // new in 1.7
     J_TRY_WITH_RESOURCE("TRY_RES"), // check
 
-    //new in 1.9
+    // new in 1.9
     J_REQUIRES("REQUIRES"), // check
     J_PROVIDES("PROVIDES"), // check
     J_EXPORTS("EXPORTS"), // check
     J_MODULE_BEGIN("MODULE{"), // check
     J_MODULE_END("}MODULE"), // check
 
-    //new in 13
+    // new in 13
     J_YIELD("YIELD"),
 
-    //new in 17
+    // new in 17
     J_DEFAULT("DEFAULT"),
     J_RECORD_BEGIN("RECORD{"),
     J_RECORD_END("}RECORD");

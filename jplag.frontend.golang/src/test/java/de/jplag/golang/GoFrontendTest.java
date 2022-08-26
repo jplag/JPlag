@@ -1,15 +1,15 @@
 package de.jplag.golang;
 
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
@@ -149,7 +149,8 @@ class GoFrontendTest {
         var annotatedGoTokens = annotatedTokens.stream().filter(GoTokenType.class::isInstance).collect(Collectors.toSet());
         var allGoTokens = GoTokenType.values();
         var missingGoTokens = Arrays.stream(allGoTokens).filter(token -> !annotatedGoTokens.contains(token)).toList();
-        assertTrue(missingGoTokens.isEmpty(), "The following go tokens are missing:\n" + String.join("\n", missingGoTokens.stream().map(GoTokenType::getDescription).toList()));
+        assertTrue(missingGoTokens.isEmpty(),
+                "The following go tokens are missing:\n" + String.join("\n", missingGoTokens.stream().map(GoTokenType::getDescription).toList()));
     }
 
 }

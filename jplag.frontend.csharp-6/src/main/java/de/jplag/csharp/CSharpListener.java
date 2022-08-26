@@ -1,5 +1,7 @@
 package de.jplag.csharp;
 
+import static de.jplag.csharp.CSharpTokenType.*;
+
 import org.antlr.v4.runtime.Token;
 
 import de.jplag.csharp.grammar.CSharpParser.Accessor_bodyContext;
@@ -55,8 +57,6 @@ import de.jplag.csharp.grammar.CSharpParser.UsingStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.Using_directivesContext;
 import de.jplag.csharp.grammar.CSharpParser.WhileStatementContext;
 import de.jplag.csharp.grammar.CSharpParserBaseListener;
-
-import static de.jplag.csharp.CSharpTokenType.*;
 
 /**
  * Listener class for visiting the C# ANTLR parse tree. Transforms selected ANTLR token into JPlag tokens.

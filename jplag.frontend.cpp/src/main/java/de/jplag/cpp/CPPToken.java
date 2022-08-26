@@ -1,9 +1,9 @@
 package de.jplag.cpp;
 
+import static de.jplag.Token.NO_VALUE;
+
 import de.jplag.Token;
 import de.jplag.TokenType;
-
-import static de.jplag.Token.NO_VALUE;
 
 public class CPPToken extends Token {
 

@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenType;
 import de.jplag.TokenPrinter;
+import de.jplag.TokenType;
 
 class MinimalCSharpFrontendTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
@@ -36,8 +36,8 @@ class MinimalCSharpFrontendTest {
 
     @Test
     void testParsingTestClass() {
-        List<TokenType> expectedToken = List.of(CLASS, CLASS_BEGIN, FIELD, CONSTRUCTOR, LOCAL_VARIABLE, METHOD, METHOD_BEGIN, IF, IF_BEGIN, INVOCATION,
-                IF_END, IF_BEGIN, INVOCATION, IF_END, METHOD_END, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, ACCESSOR_END, ACCESSOR_BEGIN,
+        List<TokenType> expectedToken = List.of(CLASS, CLASS_BEGIN, FIELD, CONSTRUCTOR, LOCAL_VARIABLE, METHOD, METHOD_BEGIN, IF, IF_BEGIN,
+                INVOCATION, IF_END, IF_BEGIN, INVOCATION, IF_END, METHOD_END, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, ACCESSOR_END, ACCESSOR_BEGIN,
                 ACCESSOR_END, ACCESSORS_END, FIELD, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, RETURN, ACCESSOR_END, ACCESSOR_BEGIN, ASSIGNMENT,
                 ACCESSOR_END, ACCESSORS_END, CLASS_END, SharedTokenType.FILE_END);
 

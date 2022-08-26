@@ -1,7 +1,7 @@
 package de.jplag.kotlin;
 
-import de.jplag.Token;
 import de.jplag.SharedTokenType;
+import de.jplag.Token;
 
 public class KotlinToken extends Token {
 

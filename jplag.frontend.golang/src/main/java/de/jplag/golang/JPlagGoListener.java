@@ -7,8 +7,8 @@ import java.util.*;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.jplag.TokenType;
 import de.jplag.SharedTokenType;
+import de.jplag.TokenType;
 import de.jplag.golang.grammar.GoParser;
 import de.jplag.golang.grammar.GoParserBaseListener;
 
@@ -345,9 +345,7 @@ public class JPlagGoListener extends GoParserBaseListener {
     @Override
     public void enterKeyedElement(GoParser.KeyedElementContext context) {
         Optional<GoTokenType> tokenType = getCurrentContext().getElement();
-        tokenType.ifPresent(type -> 
-            transformToken(type, context.getStart(), context.getStop())
-        );
+        tokenType.ifPresent(type -> transformToken(type, context.getStart(), context.getStop()));
         super.enterKeyedElement(context);
     }
 

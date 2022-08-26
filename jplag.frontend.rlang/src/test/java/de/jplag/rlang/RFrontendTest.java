@@ -1,17 +1,17 @@
 package de.jplag.rlang;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Collectors;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenType;
-import de.jplag.TokenConstants;
 import de.jplag.TokenPrinter;
 
 class RFrontendTest {
@@ -102,7 +100,8 @@ class RFrontendTest {
         var annotatedRTokens = annotatedTokens.stream().filter(RTokenType.class::isInstance).collect(Collectors.toSet());
         var allRTokens = RTokenType.values();
         var missingRTokens = Arrays.stream(allRTokens).filter(token -> !annotatedRTokens.contains(token)).toList();
-        assertTrue(missingRTokens.isEmpty(), "The following R tokens are missing:\n" + String.join("\n", missingRTokens.stream().map(RTokenType::getDescription).toList()));
+        assertTrue(missingRTokens.isEmpty(),
+                "The following R tokens are missing:\n" + String.join("\n", missingRTokens.stream().map(RTokenType::getDescription).toList()));
     }
 
     private static String getNoCodeLineExpression() {

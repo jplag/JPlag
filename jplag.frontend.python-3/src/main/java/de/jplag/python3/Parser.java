@@ -1,5 +1,7 @@
 package de.jplag.python3;
 
+import static de.jplag.Token.NO_VALUE;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,13 +17,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenType;
 import de.jplag.SharedTokenType;
+import de.jplag.TokenType;
 import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
-
-import static de.jplag.Token.NO_VALUE;
 
 public class Parser extends AbstractParser {
 

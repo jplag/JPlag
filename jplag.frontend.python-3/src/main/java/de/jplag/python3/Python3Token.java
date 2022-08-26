@@ -1,8 +1,5 @@
 package de.jplag.python3;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.jplag.Token;
 import de.jplag.TokenType;
 

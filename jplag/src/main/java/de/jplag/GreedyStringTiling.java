@@ -123,7 +123,8 @@ public class GreedyStringTiling {
                         continue;
                     }
 
-                    int subsequenceMatchLength = maximalMatchingSubsequenceLengthNotMarked(leftValues, leftStartIndex, leftMarkedIndexes, rightValues, rightStartIndex, rightMarkedIndexes, maximumMatchLength);
+                    int subsequenceMatchLength = maximalMatchingSubsequenceLengthNotMarked(leftValues, leftStartIndex, leftMarkedIndexes, rightValues,
+                            rightStartIndex, rightMarkedIndexes, maximumMatchLength);
                     if (subsequenceMatchLength >= maximumMatchLength) {
                         if (subsequenceMatchLength > maximumMatchLength) {
                             iterationMatches.clear();
@@ -148,10 +149,9 @@ public class GreedyStringTiling {
     }
 
     /**
-     * Computes the maximal matching subsequence between the two lists starting at their respective indexes.
-     * Values are matching if they are equal and not marked.
-     * Comparison is performed backwards for the minimum sequence length based on the assumption 
-     * that the further tokens are away, the more likely they differ.
+     * Computes the maximal matching subsequence between the two lists starting at their respective indexes. Values are
+     * matching if they are equal and not marked. Comparison is performed backwards for the minimum sequence length based on
+     * the assumption that the further tokens are away, the more likely they differ.
      * @param leftValues The list of left values.
      * @param leftStartIndex The start index in the left list.
      * @param leftMarkedIndexes The marked indexes of the left list.
@@ -161,17 +161,18 @@ public class GreedyStringTiling {
      * @param minimumSequenceLength The minimal sequence length for a matching subsequence. Must be not negative.
      * @return the length of the maximal matching subsequence.
      */
-    private int maximalMatchingSubsequenceLengthNotMarked(int[] leftValues, int leftStartIndex, Set<Integer> leftMarkedIndexes, int[] rightValues, int rightStartIndex, Set<Integer> rightMarkedIndexes, int minimumSequenceLength) {
+    private int maximalMatchingSubsequenceLengthNotMarked(int[] leftValues, int leftStartIndex, Set<Integer> leftMarkedIndexes, int[] rightValues,
+            int rightStartIndex, Set<Integer> rightMarkedIndexes, int minimumSequenceLength) {
         for (int offset = minimumSequenceLength - 1; offset >= 0; offset--) {
             int leftIndex = leftStartIndex + offset;
             int rightIndex = rightStartIndex + offset;
-            if (leftValues[leftIndex] != rightValues[rightIndex] || leftMarkedIndexes.contains(leftIndex) || rightMarkedIndexes.contains(rightIndex)) {
+            if (leftValues[leftIndex] != rightValues[rightIndex] || leftMarkedIndexes.contains(leftIndex)
+                    || rightMarkedIndexes.contains(rightIndex)) {
                 return 0;
             }
         }
         int offset = minimumSequenceLength;
-        while (leftValues[leftStartIndex + offset] == rightValues[rightStartIndex + offset]
-                && !leftMarkedIndexes.contains(leftStartIndex + offset)
+        while (leftValues[leftStartIndex + offset] == rightValues[rightStartIndex + offset] && !leftMarkedIndexes.contains(leftStartIndex + offset)
                 && !rightMarkedIndexes.contains(rightStartIndex + offset)) {
             offset++;
         }
@@ -190,16 +191,17 @@ public class GreedyStringTiling {
     private Set<Integer> initiallyMarkedTokenIndexes(Submission submission) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
         List<Token> tokens = submission.getTokenList();
-        return IntStream.range(0, tokens.size()).filter(i ->
-             tokens.get(i).getTokenType() == SharedTokenType.FILE_END || tokens.get(i).getTokenType() == SharedTokenType.SEPARATOR || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i)))
-        ).boxed().collect(Collectors.toSet());
+        return IntStream.range(0, tokens.size()).filter(i -> tokens.get(i).getTokenType() == SharedTokenType.FILE_END
+                || tokens.get(i).getTokenType() == SharedTokenType.SEPARATOR || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i))))
+                .boxed().collect(Collectors.toSet());
     }
 
     private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, Set<Integer> markedIndexes) {
         if (cachedHashLookupTables.containsKey(submission)) {
             return cachedHashLookupTables.get(submission);
         }
-        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(minimumMatchLength, hashedTokenListFromSubmission(submission), markedIndexes);
+        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(minimumMatchLength, hashedTokenListFromSubmission(submission),
+                markedIndexes);
         cachedHashLookupTables.put(submission, lookupTable);
         return lookupTable;
     }

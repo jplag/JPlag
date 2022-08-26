@@ -1,5 +1,7 @@
 package de.jplag.csharp;
 
+import static de.jplag.Token.NO_VALUE;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,13 +15,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenType;
-import de.jplag.SharedTokenType;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
-
-import static de.jplag.Token.NO_VALUE;
 
 /**
  * Parser adapter for the ANTLR 4 CSharp Parser and Lexer. It receives file to parse and passes them to the ANTLR

@@ -82,8 +82,8 @@ class SubsequenceHashLookupTable {
     /**
      * Creates hashes for all subsequences with windowSize. Code is optimized to perform in O(n) using a windowing approach.
      * Hashes are computed by \sum from (i=0 to windowSize) with values[offset+i] * 2^(hashLength-1-i)
-     * @param markedIndexes contains the indexes of marked values. Subsequences containing a marked value will receive the NO_HASH
-     * value.
+     * @param markedIndexes contains the indexes of marked values. Subsequences containing a marked value will receive the
+     * NO_HASH value.
      */
     private void computeSubsequenceHashes(Set<Integer> markedIndexes) {
         int hash = 0;

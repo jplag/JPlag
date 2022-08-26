@@ -68,7 +68,7 @@ public enum KotlinTokenType implements TokenType {
     FUNCTION_INVOCATION("INVOC"),
     CREATE_OBJECT("CONST"),
     ASSIGNMENT("ASSIGN"),
-    
+
     THROW("THROW"),
     RETURN("RETURN"),
     CONTINUE("CONTINUE"),
