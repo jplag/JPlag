@@ -12,15 +12,17 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>jplag</artifactId>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>java</artifactId>
+            <version>${revision}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>frontend-testutils</artifactId>
+            <artifactId>languages.testutils</artifactId>
             <version>${revision}</version>
             <type>test-jar</type>
             <scope>test</scope>
