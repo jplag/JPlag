@@ -1,21 +1,26 @@
 package de.jplag.rlang;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.Collectors;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.SharedTokenType;
 import de.jplag.Token;
+import de.jplag.TokenType;
 import de.jplag.TokenConstants;
 import de.jplag.TokenPrinter;
 
@@ -46,7 +51,7 @@ class RFrontendTest {
     void parseTestFiles() {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(testFileLocation, new String[] {fileName});
-            String output = TokenPrinter.printTokens(tokens, testFileLocation);
+            String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
@@ -58,7 +63,7 @@ class RFrontendTest {
     /**
      * Confirms that the code is covered to a basic extent, i.e. each line of code contains at least one token.
      * @param fileName a code sample file name
-     * @param tokens the list of tokens generated from the sample
+     * @param tokens the list of Tokens generated from the sample
      */
     private void testSourceCoverage(String fileName, List<Token> tokens) {
         File testFile = new File(testFileLocation, fileName);
@@ -87,21 +92,17 @@ class RFrontendTest {
 
     /**
      * Confirms that all Token types are 'reachable' with a complete code example.
-     * @param tokens list of tokens which is supposed to contain all types of tokens
+     * @param tokens TokenList which is supposed to contain all types of tokens
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).sorted().distinct().toArray();
-        // Exclude SEPARATOR_TOKEN, as it does not occur
-        var allTokens = IntStream.range(0, RTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
-
-        if (allTokens.length > foundTokens.length) {
-            var diffLine = IntStream.range(0, allTokens.length)
-                    .dropWhile(lineIndex -> lineIndex < foundTokens.length && allTokens[lineIndex] == foundTokens[lineIndex]).findFirst();
-            diffLine.ifPresent(lineIdx -> fail("Token type %s was not found in the complete code example '%s'."
-                    .formatted(new RToken(allTokens[lineIdx], fileName, NOT_SET, NOT_SET, NOT_SET).type2string(), fileName)));
-        }
-        assertArrayEquals(allTokens, foundTokens);
+        var annotatedTokens = tokens.stream().map(Token::getTokenType).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
+        assertFalse(annotatedTokens.contains(SharedTokenType.SEPARATOR));
+        var annotatedRTokens = annotatedTokens.stream().filter(RTokenType.class::isInstance).collect(Collectors.toSet());
+        var allRTokens = RTokenType.values();
+        var missingRTokens = Arrays.stream(allRTokens).filter(token -> !annotatedRTokens.contains(token)).toList();
+        assertTrue(missingRTokens.isEmpty(), "The following R tokens are missing:\n" + String.join("\n", missingRTokens.stream().map(RTokenType::getDescription).toList()));
     }
 
     private static String getNoCodeLineExpression() {
