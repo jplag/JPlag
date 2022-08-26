@@ -29,7 +29,7 @@ public class FileHelper {
      */
     public static String getEnclosedFileNamesFromCollection(Collection<File> files) {
 
-        return files.stream().map(File::getName).map(fileName -> fileName.substring(0, fileName.indexOf('.'))).collect(Collectors.joining());
+        return files.stream().map(File::getName).map(fileName -> fileName.substring(0, fileName.lastIndexOf('.'))).collect(Collectors.joining());
     }
 
     /**

@@ -66,13 +66,12 @@ public class TestSuiteHelper {
      */
     public static List<String[]> getTestCases(String[] fileNames, Path path) {
         ArrayList<String[]> testCases = new ArrayList<>();
-        int outerCounter = 1;
-        for (String fileName : fileNames) {
-            for (int counter = outerCounter; counter < fileNames.length; counter++) {
-                testCases.add(new String[] {Path.of(path.toAbsolutePath().toString(), fileName).toString(),
-                        Path.of(path.toAbsolutePath().toString(), fileNames[counter]).toString()});
+
+        for (int outerCounter = 0; outerCounter < fileNames.length; outerCounter++) {
+            for (int innerCounter = outerCounter + 1; innerCounter < fileNames.length; innerCounter++) {
+                testCases.add(new String[] {Path.of(path.toAbsolutePath().toString(), fileNames[outerCounter]).toString(),
+                        Path.of(path.toAbsolutePath().toString(), fileNames[innerCounter]).toString()});
             }
-            outerCounter++;
         }
         return testCases;
     }

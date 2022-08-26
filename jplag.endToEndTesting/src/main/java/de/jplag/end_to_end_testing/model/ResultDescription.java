@@ -13,11 +13,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record ResultDescription(@JsonIgnore String languageIdentifier, @JsonProperty("options") Options options,
         @JsonProperty("tests") Map<String, ExpectedResult> identifierToResultMap) {
 
-    @JsonIgnore
     /**
      * @param identifier for which the stored results are needed
      * @return stored results as ExpectedResult object for the passed id
      */
+    @JsonIgnore
     public ExpectedResult getExpectedResultByIdentifier(String identifier) {
         return identifierToResultMap.get(identifier);
     }
