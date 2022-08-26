@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenConstants;
+import de.jplag.TokenType;
+import de.jplag.SharedTokenType;
 
 public class Parser extends AbstractParser {
     private String currentFile;
@@ -27,12 +28,12 @@ public class Parser extends AbstractParser {
             logger.trace("Parsing file {}", file);
             if (!SchemeParser.parseFile(directory, file, null, this))
                 errors++;
-            tokens.add(new SchemeToken(TokenConstants.FILE_END, currentFile));
+            tokens.add(new SchemeToken(SharedTokenType.FILE_END, currentFile));
         }
         return tokens;
     }
 
-    public void add(int type, Token token) {
+    public void add(TokenType type, Token token) {
         int length = token.endColumn - token.beginColumn + 1;
         tokens.add(new SchemeToken(type, currentFile, token.beginLine, token.endLine, length));
     }
