@@ -14,6 +14,9 @@ import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.endtoend.constants.TestDirectoryConstants;
 
+/**
+ * Helper class to perform all necessary additional functions for the endToEnd tests.
+ */
 public class TestSuiteHelper {
 
     /**
