@@ -22,6 +22,7 @@ import org.junit.jupiter.api.TestFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
+import de.jplag.LanguageLoader;
 import de.jplag.end_to_end_testing.helper.FileHelper;
 import de.jplag.end_to_end_testing.helper.JsonHelper;
 import de.jplag.end_to_end_testing.helper.TestSuiteHelper;
@@ -108,7 +109,7 @@ public class EndToEndSuiteTest {
     /**
      * Superordinate test function to be able to continue to check all data to be tested in case of failed tests
      * @param directoryName name of the current tested directory
-     * @param options for the current test run
+     * @param option for the current test run
      * @param currentLanguageIdentifier current JPlag language option
      * @param testFiles files to be tested
      * @param currentResultDescription results stored for the test data
@@ -142,9 +143,8 @@ public class EndToEndSuiteTest {
             ResultDescription currentResultDescription) throws IOException, ExitException {
         String[] submissionPath = FileHelper.createNewTestCaseDirectory(testFiles);
 
-        JPlagOptions jplagOptions = new JPlagOptions(Arrays.asList(submissionPath), new ArrayList<>(), languageIdentifier);
-
-        jplagOptions.setMinimumTokenMatch(options.minimumTokenMatch());
+        var language = LanguageLoader.getLanguage(languageIdentifier).orElseThrow();
+        JPlagOptions jplagOptions = new JPlagOptions(language, Arrays.asList(submissionPath), List.of()).withMinimumTokenMatch(options.minimumTokenMatch());
 
         JPlagResult jplagResult = new JPlag(jplagOptions).run();
 
