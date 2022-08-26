@@ -15,7 +15,7 @@ import de.jplag.endtoend.model.ResultDescription;
 /**
  * Helper class for serialization and deserialization of the used json format into the correct record classes. The
  * serialization/deserialization is enabled using the Jackson library. The record classes used can be found at
- * de.jplag.endtoend.model.
+ * {@link de.jplag.endtoend.model}.
  */
 public class JsonHelper {
     /**
