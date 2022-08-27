@@ -16,7 +16,7 @@ public class Token {
     private TokenType type;
 
     /**
-     * Creates a token of type {@link SharedTokenType.FILE_END FILE_END} without information about line, column, and length.
+     * Creates a token of type {@link SharedTokenType#FILE_END FILE_END} without information about line, column, and length.
      * @param file is the name of the source code file.
      */
     public static Token fileEnd(String file) {
