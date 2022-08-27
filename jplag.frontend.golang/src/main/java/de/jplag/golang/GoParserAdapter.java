@@ -57,6 +57,6 @@ public class GoParserAdapter extends AbstractParser {
     }
 
     public void addToken(TokenType tokenType, int line, int column, int length) {
-        tokens.add(new GoToken(tokenType, currentFile, line, column, length));
+        tokens.add(new Token(tokenType, currentFile, line, column, length));
     }
 }

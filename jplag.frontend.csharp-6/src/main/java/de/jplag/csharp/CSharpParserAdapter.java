@@ -1,7 +1,5 @@
 package de.jplag.csharp;
 
-import static de.jplag.Token.NO_VALUE;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +13,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.csharp.grammar.CSharpLexer;
@@ -50,7 +47,7 @@ public class CSharpParserAdapter extends AbstractParser {
             if (!parseFile(directory, fileName)) {
                 errors++;
             }
-            tokens.add(new CSharpToken(SharedTokenType.FILE_END, fileName, NO_VALUE, NO_VALUE, NO_VALUE));
+            tokens.add(Token.fileEnd(fileName));
         }
         return tokens;
     }
@@ -82,6 +79,6 @@ public class CSharpParserAdapter extends AbstractParser {
     }
 
     /* package-private */ void addToken(TokenType type, int line, int column, int length) {
-        tokens.add(new CSharpToken(type, currentFile, line, column, length));
+        tokens.add(new Token(type, currentFile, line, column, length));
     }
 }

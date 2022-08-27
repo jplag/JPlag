@@ -1,7 +1,5 @@
 package de.jplag.java;
 
-import static de.jplag.Token.NO_VALUE;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,7 +18,7 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
-import de.jplag.SharedTokenType;
+import de.jplag.Token;
 
 public class JavacAdapter {
 
@@ -42,7 +40,7 @@ public class JavacAdapter {
                 final String filename = fileNameOf(directory, ast);
                 final LineMap map = ast.getLineMap();
                 ast.accept(new TokenGeneratingTreeScanner(filename, parser, map, positions, ast), null);
-                parser.add(SharedTokenType.FILE_END, filename, NO_VALUE, NO_VALUE, NO_VALUE);
+                parser.add(Token.fileEnd(filename));
             }
         } catch (IOException e) {
             parser.logger.error(e.getMessage(), e);

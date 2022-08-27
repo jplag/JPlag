@@ -1,7 +1,5 @@
 package de.jplag.rlang;
 
-import static de.jplag.Token.NO_VALUE;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +13,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.rlang.grammar.RFilter;
@@ -51,7 +48,7 @@ public class RParserAdapter extends AbstractParser {
             if (!parseFile(directory, fileName)) {
                 errors++;
             }
-            tokens.add(new RToken(SharedTokenType.FILE_END, fileName, NO_VALUE, NO_VALUE, NO_VALUE));
+            tokens.add(Token.fileEnd(fileName));
         }
         return tokens;
     }
@@ -95,7 +92,7 @@ public class RParserAdapter extends AbstractParser {
      * @param length the length of the Token
      */
     /* package-private */ void addToken(TokenType type, int line, int start, int length) {
-        tokens.add(new RToken(type, currentFile, line, start, length));
+        tokens.add(new Token(type, currentFile, line, start, length));
 
     }
 }

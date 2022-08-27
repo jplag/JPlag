@@ -7,7 +7,6 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.AbstractParser;
-import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.emf.Language;
 import de.jplag.emf.MetamodelToken;
@@ -64,7 +63,7 @@ public class EcoreParser extends AbstractParser {
                 visitor = createMetamodelVisitor();
                 visitor.visit(root);
             }
-            tokens.add(new MetamodelToken(SharedTokenType.FILE_END, currentFile));
+            tokens.add(Token.fileEnd(currentFile));
             treeView.writeToFile(Language.VIEW_FILE_SUFFIX);
         }
     }

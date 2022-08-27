@@ -5,7 +5,7 @@ package de.jplag;
  * What types of tokens there are depends on the specific language, meaning JPlag does not enforce a specific token set.
  * The language parsers decide what is a token and what is not.
  */
-public abstract class Token {
+public class Token {
     /** Indicates that the requested field has no value. */
     public static final int NO_VALUE = -1;
 
@@ -14,6 +14,14 @@ public abstract class Token {
     private int length;
     private String file;
     private TokenType type;
+
+    /**
+     * Creates a token of type {@link SharedTokenType.FILE_END FILE_END} without information about line, column, and length.
+     * @param file is the name of the source code file.
+     */
+    public static Token fileEnd(String file) {
+        return new Token(SharedTokenType.FILE_END, file, NO_VALUE);
+    }
 
     /**
      * Creates a token without information about the column or the length of the token in the line.
@@ -84,13 +92,5 @@ public abstract class Token {
      */
     public TokenType getType() {
         return type;
-    }
-
-    /**
-     * Sets the character index which denotes where the code sections represented by this token starts in the line.
-     * @param column is the index in characters to set.
-     */
-    public void setColumn(int column) {
-        this.column = column;
     }
 }

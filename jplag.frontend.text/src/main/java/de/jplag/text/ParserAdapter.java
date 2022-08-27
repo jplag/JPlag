@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import de.jplag.AbstractParser;
-import de.jplag.SharedTokenType;
 import de.jplag.Token;
 
 import edu.stanford.nlp.ling.CoreLabel;
@@ -49,7 +48,7 @@ public class ParserAdapter extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.add(new TextToken(SharedTokenType.FILE_END, file));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
@@ -106,7 +105,7 @@ public class ParserAdapter extends AbstractParser {
         String text = label.originalText();
         int column = label.beginPosition() - currentLineBreakIndex;
         int length = label.endPosition() - label.beginPosition();
-        tokens.add(new TextToken(text, new TextTokenType(text), currentFile, currentLine, column, length));
+        tokens.add(new Token(text, new TextTokenType(text), currentFile, currentLine, column, length));
     }
 
     private String readFile(Path filePath) {
