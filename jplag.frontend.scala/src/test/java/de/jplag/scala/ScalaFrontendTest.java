@@ -1,5 +1,7 @@
 package de.jplag.scala;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
@@ -7,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -16,8 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 import de.jplag.TokenPrinter;
 
 class ScalaFrontendTest {
@@ -59,7 +62,7 @@ class ScalaFrontendTest {
     void parseTestFiles() {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(testFileLocation, new String[] {fileName});
-            String output = TokenPrinter.printTokens(tokens, testFileLocation);
+            String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
             logger.info(output);
 
             if (fileName.equals(COMPLETE_TEST_FILE)) {
@@ -71,25 +74,9 @@ class ScalaFrontendTest {
     }
 
     /**
-     * Confirms that every type of ScalaToken has a Sting representation associated to it.
-     */
-    @Test
-    void testTokenToString() {
-        var missingTokens = IntStream.range(0, ScalaTokenConstants.numberOfTokens())
-                .mapToObj(type -> new ScalaToken(type, EMPTY_STRING, NOT_SET, NOT_SET, NOT_SET))
-                .filter(token -> token.type2string().contains("UNKNOWN")).toList();
-
-        if (!missingTokens.isEmpty()) {
-            var typeList = missingTokens.stream().map(Token::getType).map(Object::toString).collect(Collectors.joining(", "));
-            fail("Found token types with no string representation: %s".formatted(typeList));
-        }
-
-    }
-
-    /**
      * Confirms that the code is covered to a basic extent, i.e. each line of code contains at least one token.
      * @param fileName a code sample file name
-     * @param tokens the list of tokens generated from the sample
+     * @param tokens the TokenList generated from the sample
      */
     private void testSourceCoverage(String fileName, List<Token> tokens) {
         var testFile = new File(testFileLocation, fileName);
@@ -100,7 +87,7 @@ class ScalaFrontendTest {
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = tokens.stream().map(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().toList();
+            var tokenLines = tokens.stream().map(Token::getLine).distinct().toList();
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
@@ -156,25 +143,17 @@ class ScalaFrontendTest {
 
     /**
      * Confirms that all Token types are 'reachable' with a complete code example.
-     * @param tokens list of tokens which is supposed to contain all types of tokens
+     * @param tokens TokenList which is supposed to contain all types of tokens
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = tokens.stream().parallel().map(Token::getType).distinct().toList();
-        var allTokens = IntStream.range(0, ScalaTokenConstants.numberOfTokens()).boxed().toList();
-        allTokens = new ArrayList<>(allTokens);
-
-        // Only non-found tokens are left
-        allTokens.removeAll(foundTokens);
-        // Exclude SEPARATOR_TOKEN, as it does not occur
-        allTokens.remove((Integer) (TokenConstants.SEPARATOR_TOKEN));
-
-        if (!allTokens.isEmpty()) {
-            var notFoundTypes = allTokens.stream().map(ScalaTokenConstants::apply).toList();
-            fail("Some %d token types were not found in the complete code example '%s':\n%s".formatted(notFoundTypes.size(), fileName,
-                    notFoundTypes));
-        }
-
+        var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
+        assertFalse(annotatedTokens.contains(SharedTokenType.SEPARATOR));
+        var annotatedScalaTokens = annotatedTokens.stream().filter(ScalaTokenType.class::isInstance).collect(Collectors.toSet());
+        var allScalaTokens = ScalaTokenType.values();
+        var missingScalaTokens = Arrays.stream(allScalaTokens).filter(token -> !annotatedScalaTokens.contains(token)).toList();
+        assertTrue(missingScalaTokens.isEmpty(), "The following kotlin tokens are missing:\n"
+                + String.join("\n", missingScalaTokens.stream().map(ScalaTokenType::getDescription).toList()));
     }
-
 }

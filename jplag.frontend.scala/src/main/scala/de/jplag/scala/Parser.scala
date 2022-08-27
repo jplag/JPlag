@@ -1,6 +1,6 @@
 package de.jplag.scala
 
-import de.jplag.scala.ScalaTokenConstants._
+import de.jplag.scala.ScalaTokenType._
 import de.jplag.{AbstractParser, Token}
 
 import java.io.File
@@ -33,8 +33,8 @@ class Parser extends AbstractParser {
          * @param after    opt. token type to insert at the end of the tree
          * @param traverse custom method of traversing the tree
          */
-        private case class TR(before: Option[ScalaTokenConstants.Value] = None,
-                              after: Option[ScalaTokenConstants.Value] = None,
+        private case class TR(before: Option[ScalaTokenType] = None,
+                              after: Option[ScalaTokenType] = None,
                               traverse: Tree => Unit = _.children.foreach(traverser.apply)
                              )
 
@@ -44,7 +44,7 @@ class Parser extends AbstractParser {
          * @param tree  opt. tree
          * @param token token type to insert at the beginning of the tree
          */
-        private def maybeAddAndApply(tree: Option[Tree], token: ScalaTokenConstants.Value): Unit = tree match {
+        private def maybeAddAndApply(tree: Option[Tree], token: ScalaTokenType): Unit = tree match {
             case Some(expression) =>
                 add(token, expression, fromEnd = false)
                 apply(expression)
@@ -53,7 +53,7 @@ class Parser extends AbstractParser {
 
         private def processCases(cases: List[Case]): Unit = cases.foreach {
             case caseTree@Case(pattern, condition, body) =>
-                add(ScalaTokenConstants.CaseStatement, caseTree, fromEnd = false)
+                add(ScalaTokenType.CaseStatement, caseTree, fromEnd = false)
                 applyRecursively(Seq(pattern, condition))
 
                 encloseAndApply(body, TR(Some(CaseBegin), Some(CaseEnd)))
@@ -124,14 +124,14 @@ class Parser extends AbstractParser {
                             add(CatchEnd, end.endLine, end.endColumn, length)
                         }
 
-                        maybeAddAndApply(finallyExpression, ScalaTokenConstants.Finally)
+                        maybeAddAndApply(finallyExpression, ScalaTokenType.Finally)
                     })
                 case Term.TryWithHandler(expression, catchExpression, finallyExpression) => TR(Some(TryBegin),
                     traverse = _ => {
                         apply(expression)
                         encloseAndApply(catchExpression, TR(Some(CatchBegin), Some(CatchEnd)))
 
-                        maybeAddAndApply(finallyExpression, ScalaTokenConstants.Finally)
+                        maybeAddAndApply(finallyExpression, ScalaTokenType.Finally)
                     })
                 case Term.Apply(function, arguments) if !isStandardOperator(getMethodIdentifier(function)) && arguments.nonEmpty =>
                     // function calls with no arguments are not covered here; see README
@@ -151,7 +151,7 @@ class Parser extends AbstractParser {
                         }
                     })
                 case Term.NewAnonymous(_) => TR(Some(NewCreationBegin), Some(NewCreationEnd))
-                case Term.Return(_) => TR(Some(ScalaTokenConstants.Return))
+                case Term.Return(_) => TR(Some(ScalaTokenType.Return))
                 case Term.Match(expression, cases) => TR(Some(MatchBegin), Some(MatchEnd), traverse = _ => {
                     apply(expression)
                     processCases(cases)
@@ -183,7 +183,7 @@ class Parser extends AbstractParser {
                 })
 
                 case scala.meta.Pkg(_) => TR(Some(Package))
-                case scala.meta.Import(_) => TR(Some(ScalaTokenConstants.Import))
+                case scala.meta.Import(_) => TR(Some(ScalaTokenType.Import))
 
                 case Defn.Def(modifiers, name, typeParameters, parameterLists, _, body) =>
                     TR(traverse = _ => {
@@ -202,7 +202,7 @@ class Parser extends AbstractParser {
                     TR(Some(ClassBegin), Some(ClassEnd))
                 case Defn.Object(_) => TR(Some(ObjectBegin), Some(ObjectEnd))
                 case Defn.Trait(_) => TR(Some(TraitBegin), Some(TraitEnd))
-                case Defn.Type(_) => TR(Some(ScalaTokenConstants.Type))
+                case Defn.Type(_) => TR(Some(ScalaTokenType.Type))
                 case Defn.Var(modifiers, patterns, declaredType, optionalValue) => TR(traverse = _ => {
                     apply(modifiers)
                     for (pattern <- patterns) {
@@ -222,7 +222,7 @@ class Parser extends AbstractParser {
                 case Decl.Var(_) => TR(Some(VariableDefinition))
                 case Decl.Val(_) => TR(Some(VariableDefinition))
                 case Decl.Def(_) => TR(Some(MethodBegin), Some(MethodEnd))
-                case Decl.Type(_) => TR(Some(ScalaTokenConstants.Type))
+                case Decl.Type(_) => TR(Some(ScalaTokenType.Type))
 
                 case Ctor.Secondary(_) =>
                     TR(Some(ConstructorBegin), Some(ConstructorEnd))
@@ -243,7 +243,7 @@ class Parser extends AbstractParser {
                 case Term.Select(refObj, member) =>
                     TR(traverse = _ => {
                         apply(refObj)
-                        if (!isStandardOperator(member.value)) add(ScalaTokenConstants.Member, member, fromEnd = false)
+                        if (!isStandardOperator(member.value)) add(ScalaTokenType.Member, member, fromEnd = false)
                         apply(member)
                     })
                 case Term.ApplyType(_, typeArgs) => TR(traverse = _ => {
@@ -301,7 +301,7 @@ class Parser extends AbstractParser {
          * @param doApply   if true, the substructure of each element is traversed
          * @tparam T list may contain more lists or leaves
          */
-        private def assignRecursively[T](els: List[T], tokenType: ScalaTokenConstants.Value, doApply: Boolean = false): Unit = els.foreach {
+        private def assignRecursively[T](els: List[T], tokenType: ScalaTokenType, doApply: Boolean = false): Unit = els.foreach {
             case treeList: List[_] => assignRecursively(treeList, tokenType)
             case el: Tree =>
                 add(tokenType, el, fromEnd = false)
@@ -356,7 +356,7 @@ class Parser extends AbstractParser {
             val ast = input.parse[Source].get
             traverser(ast)
 
-            add(FileEnd, text.count(_ == '\n') - 1, 0, 0)
+            tokens += Token.fileEnd(currentFile)
         } catch {
             case exception: Throwable =>
                 exception.printStackTrace()
@@ -374,8 +374,8 @@ class Parser extends AbstractParser {
      * @param column    column of the occurrence in the file
      * @param length    length of the occurrence in the file
      */
-    private def add(tokenType: ScalaTokenConstants.Value, line: Int, column: Int, length: Int): Unit = {
-        tokens += new ScalaToken(tokenType.id, currentFile, line, column, length)
+    private def add(tokenType: ScalaTokenType, line: Int, column: Int, length: Int): Unit = {
+        tokens += new Token(tokenType, currentFile, line, column, length)
     }
 
 
@@ -386,10 +386,15 @@ class Parser extends AbstractParser {
      * @param node      the tree that marks the occurrence
      * @param fromEnd   if true, the token is added at the end of the tree (length 0).
      */
-    private def add(tokenType: ScalaTokenConstants.Value, node: Tree, fromEnd: Boolean): Unit = {
+    private def add(tokenType: ScalaTokenType, node: Tree, fromEnd: Boolean): Unit = {
         if (node.pos.text.nonEmpty) {
             // SELF type tokens with no text content mess up the sequence
-            tokens += new ScalaToken(tokenType, currentFile, node.pos, fromEnd)
+            if (fromEnd) {
+                tokens += new Token(tokenType, currentFile, node.pos.endLine + 1, node.pos.endColumn + 1, 0)
+            }
+            else {
+                tokens += new Token(tokenType, currentFile, node.pos.startLine + 1, node.pos.endColumn + 1, node.pos.text.length)
+            }
         }
     }
 
