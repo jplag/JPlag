@@ -1,12 +1,13 @@
 package de.jplag;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -14,7 +15,8 @@ import de.jplag.options.JPlagOptions;
 
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
- * to the classes {@link Token}, and {@link Match}.
+ * to the classes {@link Token}, and {@link Match}. Class implementation is thread-safe, i.e. submission can be compared
+ * in parallel.
  * @see <a href=
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
  * String Similarity via Greedy String Tiling and Running Karp−Rabin Matching </a>
@@ -22,14 +24,16 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
 
     private final int minimumMatchLength;
-    private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
+    private ConcurrentMap<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
-    private Map<TokenType, Integer> tokenTypeHashValues;
+
+    private final Map<Submission, int[]> cachedTokenValueLists = new IdentityHashMap<>();
+    private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
         this.minimumMatchLength = options.minimumTokenMatch();
-        this.tokenTypeHashValues = new HashMap<>();
-        this.tokenTypeHashValues.put(SharedTokenType.FILE_END, 0);
+        this.tokenTypeValues = new ConcurrentHashMap<>();
+        this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
     }
 
     /**
@@ -91,9 +95,9 @@ public class GreedyStringTiling {
         List<Token> leftTokens = leftSubmission.getTokenList();
         List<Token> rightTokens = rightSubmission.getTokenList();
 
-        int[] leftValues = hashedTokenListFromSubmission(leftSubmission);
-        int[] rightValues = hashedTokenListFromSubmission(rightSubmission);
-        
+        int[] leftValues = tokenValueListFromSubmission(leftSubmission);
+        int[] rightValues = tokenValueListFromSubmission(rightSubmission);
+
         // comparison uses <= because it is assumed that the last token is a pivot (FILE_END)
         if (leftTokens.size() <= minimumMatchLength || rightTokens.size() <= minimumMatchLength) {
             return new JPlagComparison(leftSubmission, rightSubmission, List.of());
@@ -159,7 +163,8 @@ public class GreedyStringTiling {
      * @param rightStartIndex The start index in the right list.
      * @param rightMarkedIndexes The marked indexes of the right list.
      * @param minimumSequenceLength The minimal sequence length for a matching subsequence. Must be not negative.
-     * @return the length of the maximal matching subsequence.
+     * @return the maximal matching subsequence length, or 0 if there is no subsequence of at least the minimum sequence
+     * length.
      */
     private int maximalMatchingSubsequenceLengthNotMarked(int[] leftValues, int leftStartIndex, Set<Integer> leftMarkedIndexes, int[] rightValues,
             int rightStartIndex, Set<Integer> rightMarkedIndexes, int minimumSequenceLength) {
@@ -201,7 +206,7 @@ public class GreedyStringTiling {
         if (cachedHashLookupTables.containsKey(submission)) {
             return cachedHashLookupTables.get(submission);
         }
-        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(minimumMatchLength, hashedTokenListFromSubmission(submission),
+        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(submission),
                 markedIndexes);
         cachedHashLookupTables.put(submission, lookupTable);
         return lookupTable;
@@ -211,18 +216,18 @@ public class GreedyStringTiling {
      * Converts the tokens of the submission to a list of values.
      * @param submission The submission from which to convert the tokens.
      */
-    private synchronized int[] hashedTokenListFromSubmission(Submission submission) {
+    private int[] tokenValueListFromSubmission(Submission submission) {
+        if (cachedTokenValueLists.containsKey(submission)) {
+            return cachedTokenValueLists.get(submission);
+        }
         List<Token> tokens = submission.getTokenList();
-        int[] hashedTokens = new int[tokens.size()];
+        int[] tokenValueList = new int[tokens.size()];
         for (int i = 0; i < tokens.size(); i++) {
             TokenType type = tokens.get(i).getType();
-            Integer hashValue = tokenTypeHashValues.get(type);
-            if (hashValue == null) {
-                hashValue = tokenTypeHashValues.size();
-                tokenTypeHashValues.put(type, hashValue);
-            }
-            hashedTokens[i] = hashValue;
+            tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
+            tokenValueList[i] = tokenTypeValues.get(type);
         }
-        return hashedTokens;
+        cachedTokenValueLists.put(submission, tokenValueList);
+        return tokenValueList;
     }
 }
