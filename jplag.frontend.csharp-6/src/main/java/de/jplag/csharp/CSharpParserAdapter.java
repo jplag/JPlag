@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
+import de.jplag.TokenConstants;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
@@ -46,7 +47,7 @@ public class CSharpParserAdapter extends AbstractParser {
             if (!parseFile(directory, fileName)) {
                 errors++;
             }
-            tokens.add(new CSharpToken(CSharpTokenConstants.FILE_END, fileName, -1, -1, -1));
+            tokens.add(new CSharpToken(TokenConstants.FILE_END, fileName, -1, -1, -1));
         }
         return tokens;
     }

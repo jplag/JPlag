@@ -54,7 +54,8 @@ public class GreedyStringTiling {
     }
 
     private JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission) {
-        Submission smallerSubmission, largerSubmission;
+        Submission smallerSubmission;
+        Submission largerSubmission;
         if (firstSubmission.getTokenList().size() > secondSubmission.getTokenList().size()) {
             smallerSubmission = secondSubmission;
             largerSubmission = firstSubmission;
