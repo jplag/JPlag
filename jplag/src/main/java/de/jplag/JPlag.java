@@ -44,8 +44,8 @@ public class JPlag {
      */
     public JPlag(JPlagOptions options) {
         this.options = options;
-        coreAlgorithm = new GreedyStringTiling(options);
         language = initializeLanguage();
+        coreAlgorithm = new GreedyStringTiling(options);
         comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
         excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
         options.setExcludedFiles(excludedFileNames); // store for report

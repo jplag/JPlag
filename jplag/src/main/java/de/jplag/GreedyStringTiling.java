@@ -22,12 +22,12 @@ import de.jplag.options.JPlagOptions;
  */
 public class GreedyStringTiling {
 
-    private final JPlagOptions options;
+    private final int minimumMatchLength;
     private Map<Submission, SubsequenceHashLookupTable> hashLookupTables = new HashMap<>();
     private Map<Submission, Set<Token>> baseCodeMarkings = new HashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
-        this.options = options;
+        this.minimumMatchLength = options.getMinimumTokenMatch();
     }
 
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
@@ -77,7 +77,6 @@ public class GreedyStringTiling {
         List<Token> rightTokens = rightSubmission.getTokenList();
 
         JPlagComparison comparison = new JPlagComparison(leftSubmission, rightSubmission);
-        int minimumMatchLength = options.getMinimumTokenMatch();
 
         // comparison uses <= because it is assumed that the last token is a pivot (FILE_END)
         if (leftTokens.size() <= minimumMatchLength || rightTokens.size() <= minimumMatchLength) {
@@ -183,8 +182,7 @@ public class GreedyStringTiling {
         if (hashLookupTables.containsKey(submission)) {
             return hashLookupTables.get(submission);
         }
-        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(options.getMinimumTokenMatch(), submission.getTokenList(),
-                markedTokens);
+        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(minimumMatchLength, submission.getTokenList(), markedTokens);
         hashLookupTables.put(submission, lookupTable);
         return lookupTable;
     }
