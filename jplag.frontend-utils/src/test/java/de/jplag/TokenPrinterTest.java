@@ -43,7 +43,7 @@ class TokenPrinterTest {
         tokens.add(new TestToken(STRING, TEST_FILE_NAME, 10, 5, 1));
 
         tokens.add(new TestToken(STRING, TEST_FILE_NAME, 12, 1, 1));
-        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 10, 5, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 12, 5, 1));
         tokens.add(new TestToken(STRING, TEST_FILE_NAME, 12, 10, 1));
 
         tokens.add(new TestToken(STRING, TEST_FILE_NAME, 14, 10, 1));
