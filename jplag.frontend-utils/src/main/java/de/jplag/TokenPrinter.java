@@ -132,7 +132,7 @@ public final class TokenPrinter {
             if (token.getLine() != Token.NO_VALUE) {
                 currentLine = token.getLine();
             }
-            int line = token.getType() == TokenConstants.FILE_END ? lines.size() : currentLine;
+            int line = token.getType() == SharedTokenType.FILE_END ? lines.size() : currentLine;
             List<Token> tokens = lineNumbersToTokens.containsKey(line) ? lineNumbersToTokens.get(line) : new ArrayList<>();
             tokens.add(token);
             lineNumbersToTokens.put(line, tokens);
