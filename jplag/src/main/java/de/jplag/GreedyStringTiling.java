@@ -15,8 +15,7 @@ import de.jplag.options.JPlagOptions;
 
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
- * to the classes {@link Token}, and {@link Match}. While this class was reworked, it still contains some quirks from
- * the initial version.
+ * to the classes {@link Token}, and {@link Match}.
  * @see <a href=
  * "https://www.researchgate.net/publication/262763983_String_Similarity_via_Greedy_String_Tiling_and_Running_Karp-Rabin_Matching">
  * String Similarity via Greedy String Tiling and Running Karp−Rabin Matching </a>
