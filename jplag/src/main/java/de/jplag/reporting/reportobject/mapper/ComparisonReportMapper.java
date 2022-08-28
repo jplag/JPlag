@@ -24,7 +24,7 @@ public class ComparisonReportMapper {
 
     private void writeComparisons(JPlagResult jPlagResult, String path, List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
-            var comparisonReport = new ComparisonReport(comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName(),
+            var comparisonReport = new ComparisonReport(comparison.firstSubmission().getName(), comparison.secondSubmission().getName(),
                     comparison.similarity(), convertMatchesToReportMatches(jPlagResult, comparison));
             String fileName = comparisonReport.firstSubmissionId().concat("-").concat(comparisonReport.secondSubmissionId()).concat(".json");
             FILE_WRITER.saveAsJSON(comparisonReport, path, fileName);
@@ -32,13 +32,13 @@ public class ComparisonReportMapper {
     }
 
     private List<Match> convertMatchesToReportMatches(JPlagResult result, JPlagComparison comparison) {
-        return comparison.getMatches().stream()
+        return comparison.matches().stream()
                 .map(match -> convertMatchToReportMatch(comparison, match, result.getOptions().getLanguage().supportsColumns())).toList();
     }
 
     private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match, boolean languageSupportsColumnsAndLines) {
-        List<Token> tokensFirst = comparison.getFirstSubmission().getTokenList();
-        List<Token> tokensSecond = comparison.getSecondSubmission().getTokenList();
+        List<Token> tokensFirst = comparison.firstSubmission().getTokenList();
+        List<Token> tokensSecond = comparison.secondSubmission().getTokenList();
         Token startTokenFirst = tokensFirst.get(match.startOfFirst());
         Token endTokenFirst = tokensFirst.get(match.startOfFirst() + match.length() - 1);
         Token startTokenSecond = tokensSecond.get(match.startOfSecond());

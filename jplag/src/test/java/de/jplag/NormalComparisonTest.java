@@ -23,7 +23,7 @@ class NormalComparisonTest extends TestBase {
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
-        assertEquals(1, result.getAllComparisons().get(0).getMatches().size());
+        assertEquals(1, result.getAllComparisons().get(0).matches().size());
         assertEquals(1, result.getSimilarityDistribution()[3]);
         assertEquals(62.07f, result.getAllComparisons().get(0).similarity(), 0.1f);
     }
@@ -38,7 +38,7 @@ class NormalComparisonTest extends TestBase {
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
-        assertEquals(2, result.getAllComparisons().get(0).getMatches().size());
+        assertEquals(2, result.getAllComparisons().get(0).matches().size());
         assertArrayEquals(expectedDistribution, result.getSimilarityDistribution());
         assertEquals(96.55f, result.getAllComparisons().get(0).similarity(), 0.1f);
     }
@@ -70,7 +70,7 @@ class NormalComparisonTest extends TestBase {
 
         // All comparisons with E shall have no matches
         result.getAllComparisons().stream()
-                .filter(comparison -> comparison.getSecondSubmission().getName().equals("E") || comparison.getFirstSubmission().getName().equals("E"))
+                .filter(comparison -> comparison.secondSubmission().getName().equals("E") || comparison.firstSubmission().getName().equals("E"))
                 .forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
@@ -85,7 +85,7 @@ class NormalComparisonTest extends TestBase {
         var biggestMatch = getSelectedComparison(result, "A", "D");
         assertEquals(96.4f, biggestMatch.get().maximalSimilarity(), 0.1f);
         assertEquals(65.3f, biggestMatch.get().minimalSimilarity(), 0.1f);
-        assertEquals(12, biggestMatch.get().getMatches().size());
+        assertEquals(12, biggestMatch.get().matches().size());
 
     }
 
@@ -95,9 +95,9 @@ class NormalComparisonTest extends TestBase {
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
-        return result.getAllComparisons().stream().filter(
-                comparison -> comparison.getFirstSubmission().getName().equals(nameA) && comparison.getSecondSubmission().getName().equals(nameB)
-                        || comparison.getFirstSubmission().getName().equals(nameB) && comparison.getSecondSubmission().getName().equals(nameA))
+        return result.getAllComparisons().stream()
+                .filter(comparison -> comparison.firstSubmission().getName().equals(nameA) && comparison.secondSubmission().getName().equals(nameB)
+                        || comparison.firstSubmission().getName().equals(nameB) && comparison.secondSubmission().getName().equals(nameA))
                 .findFirst();
     }
 

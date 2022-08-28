@@ -110,8 +110,8 @@ public class ReportObjectFactory {
     }
 
     private static Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
-        var submissions = comparisons.stream().map(JPlagComparison::getFirstSubmission).collect(Collectors.toSet());
-        Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::getSecondSubmission).collect(Collectors.toSet());
+        var submissions = comparisons.stream().map(JPlagComparison::firstSubmission).collect(Collectors.toSet());
+        Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::secondSubmission).collect(Collectors.toSet());
         submissions.addAll(secondSubmissions);
         return submissions;
     }
@@ -128,8 +128,8 @@ public class ReportObjectFactory {
     private static List<String> extractSubmissionNames(List<JPlagComparison> comparisons) {
         HashSet<String> names = new HashSet<>();
         comparisons.forEach(comparison -> {
-            names.add(comparison.getFirstSubmission().getName());
-            names.add(comparison.getSecondSubmission().getName());
+            names.add(comparison.firstSubmission().getName());
+            names.add(comparison.secondSubmission().getName());
         });
         return new ArrayList<>(names);
     }
@@ -140,8 +140,8 @@ public class ReportObjectFactory {
      */
     private static List<String> getComparisonNames(List<JPlagComparison> comparisons) {
         List<String> names = new ArrayList<>();
-        comparisons.forEach(
-                comparison -> names.add(String.join("-", comparison.getFirstSubmission().getName(), comparison.getSecondSubmission().getName())));
+        comparisons
+                .forEach(comparison -> names.add(String.join("-", comparison.firstSubmission().getName(), comparison.secondSubmission().getName())));
         return names;
     }
 

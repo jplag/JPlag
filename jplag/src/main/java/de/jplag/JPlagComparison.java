@@ -1,102 +1,20 @@
 package de.jplag;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
- * This method represents the whole result of a comparison between two submissions.
+ * This record represents the whole result of a comparison between two submissions.
+ * @param firstSubmission is the first of the two submissions.
+ * @param secondSubmission is the second of the two submissions.
+ * @param matches is the list of all matches between the two submissions.
  */
-public class JPlagComparison { // FIXME TS: contains a lot of code duplication
-
-    private static final int ROUNDING_FACTOR = 10;
-
-    private final Submission firstSubmission;
-    private final Submission secondSubmission;
-
-    private final List<Match> matches;
-
-    public JPlagComparison(Submission firstSubmission, Submission secondSubmission) {
-        this.firstSubmission = firstSubmission;
-        this.secondSubmission = secondSubmission;
-        matches = new ArrayList<>();
-    }
-
-    /**
-     * Add a match to the comparison (token indices and number of tokens), if it does not overlap with the existing matches.
-     */
-    final void addMatch(Match match) {
-        for (Match existingMatch : matches) {
-            if (existingMatch.overlaps(match)) {
-                return;
-            }
-        }
-        matches.add(match);
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof JPlagComparison otherComparison)) {
-            return false;
-        }
-        return firstSubmission.equals(otherComparison.getFirstSubmission()) && secondSubmission.equals(otherComparison.getSecondSubmission())
-                && matches.equals(otherComparison.matches);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstSubmission, secondSubmission, matches);
-    }
-
-    /**
-     * @return the base code matches of the first submission.
-     */
-    public JPlagComparison getFirstBaseCodeMatches() {
-        return firstSubmission.getBaseCodeComparison();
-    }
-
-    /**
-     * @return the first of the two submissions.
-     */
-    public Submission getFirstSubmission() {
-        return firstSubmission;
-    }
-
-    /**
-     * @return all matches between the two submissions.
-     */
-    public List<Match> getMatches() {
-        return matches;
-    }
+public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches) {
 
     /**
      * Get the total number of matched tokens for this comparison.
      */
     public final int getNumberOfMatchedTokens() {
-        int numberOfMatchedTokens = 0;
-
-        for (Match match : matches) {
-            numberOfMatchedTokens += match.length();
-        }
-
-        return numberOfMatchedTokens;
-    }
-
-    /**
-     * @return the base code matches of the second submissions.
-     */
-    public JPlagComparison getSecondBaseCodeMatches() {
-        return secondSubmission.getBaseCodeComparison();
-    }
-
-    /**
-     * @return the second of the two submissions.
-     */
-    public Submission getSecondSubmission() {
-        return secondSubmission;
+        return matches.stream().mapToInt(Match::length).sum();
     }
 
     /**
@@ -118,9 +36,9 @@ public class JPlagComparison { // FIXME TS: contains a lot of code duplication
      */
     public final float similarity() {
         boolean subtractBaseCode = firstSubmission.hasBaseCodeMatches() && secondSubmission.hasBaseCodeMatches();
-        float sa = firstSubmission.getSimilarityDivisor(subtractBaseCode);
-        float sb = secondSubmission.getSimilarityDivisor(subtractBaseCode);
-        return (200 * getNumberOfMatchedTokens()) / (sa + sb);
+        int divisorA = firstSubmission.getSimilarityDivisor(subtractBaseCode);
+        int divisorB = secondSubmission.getSimilarityDivisor(subtractBaseCode);
+        return 2 * similarity(divisorA + divisorB);
     }
 
     /**
@@ -129,7 +47,7 @@ public class JPlagComparison { // FIXME TS: contains a lot of code duplication
      */
     public final float similarityOfFirst() {
         int divisor = firstSubmission.getSimilarityDivisor(true);
-        return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
+        return similarity(divisor);
     }
 
     /**
@@ -138,28 +56,7 @@ public class JPlagComparison { // FIXME TS: contains a lot of code duplication
      */
     public final float similarityOfSecond() {
         int divisor = secondSubmission.getSimilarityDivisor(true);
-        return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
-    }
-
-    /**
-     * @return Similarity in percent rounded down to the nearest tenth.
-     */
-    public final float roundedSimilarity() {
-        return ((int) (similarity() * ROUNDING_FACTOR)) / (float) ROUNDING_FACTOR;
-    }
-
-    /**
-     * @return Similarity of the first submission to the basecode in percent rounded down to the nearest tenth.
-     */
-    public final float basecodeSimilarityOfFirst() {
-        return ((int) (firstBasecodeSimilarity() * ROUNDING_FACTOR)) / (float) ROUNDING_FACTOR;
-    }
-
-    /**
-     * @return Similarity of the second submission to the basecode in percent rounded down to the nearest tenth.
-     */
-    public final float basecodeSimilarityOfSecond() {
-        return ((int) (secondBasecodeSimilarity() * ROUNDING_FACTOR)) / (float) ROUNDING_FACTOR;
+        return similarity(divisor);
     }
 
     @Override
@@ -167,15 +64,7 @@ public class JPlagComparison { // FIXME TS: contains a lot of code duplication
         return firstSubmission.getName() + " <-> " + secondSubmission.getName();
     }
 
-    private float firstBasecodeSimilarity() {
-        float sa = firstSubmission.getSimilarityDivisor(false);
-        JPlagComparison firstBaseCodeMatches = firstSubmission.getBaseCodeComparison();
-        return firstBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sa;
-    }
-
-    private float secondBasecodeSimilarity() {
-        float sb = secondSubmission.getSimilarityDivisor(false);
-        JPlagComparison secondBaseCodeMatches = secondSubmission.getBaseCodeComparison();
-        return secondBaseCodeMatches.getNumberOfMatchedTokens() * 100 / sb;
+    private float similarity(int divisor) {
+        return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (float) divisor));
     }
 }

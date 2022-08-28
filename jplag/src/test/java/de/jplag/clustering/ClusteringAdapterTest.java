@@ -28,8 +28,8 @@ public class ClusteringAdapterTest {
         for (int i = 0; i < submissions.size(); i++) {
             for (int j = i + 1; j < submissions.size(); j++) {
                 JPlagComparison comparison = mock(JPlagComparison.class);
-                when(comparison.getFirstSubmission()).thenReturn(submissions.get(i));
-                when(comparison.getSecondSubmission()).thenReturn(submissions.get(j));
+                when(comparison.firstSubmission()).thenReturn(submissions.get(i));
+                when(comparison.secondSubmission()).thenReturn(submissions.get(j));
                 comparisons.add(comparison);
             }
         }

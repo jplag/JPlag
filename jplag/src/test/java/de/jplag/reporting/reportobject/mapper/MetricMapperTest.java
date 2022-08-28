@@ -87,8 +87,8 @@ public class MetricMapperTest {
             doReturn(comparisonDto.submission2.name).when(submission2).getName();
 
             JPlagComparison mockedComparison = mock(JPlagComparison.class);
-            doReturn(submission1).when(mockedComparison).getFirstSubmission();
-            doReturn(submission2).when(mockedComparison).getSecondSubmission();
+            doReturn(submission1).when(mockedComparison).firstSubmission();
+            doReturn(submission2).when(mockedComparison).secondSubmission();
             if (metricToMock.equals(MockMetric.AVG)) {
                 doReturn(comparisonDto.similarity).when(mockedComparison).similarity();
             } else if (metricToMock.equals(MockMetric.MAX)) {

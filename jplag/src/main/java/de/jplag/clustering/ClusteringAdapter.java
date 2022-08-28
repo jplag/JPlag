@@ -34,15 +34,15 @@ public class ClusteringAdapter {
     public ClusteringAdapter(Collection<JPlagComparison> comparisons, Function<JPlagComparison, Float> metric) {
         mapping = new IntegerMapping<>(comparisons.size());
         for (JPlagComparison comparison : comparisons) {
-            mapping.map(comparison.getFirstSubmission());
-            mapping.map(comparison.getSecondSubmission());
+            mapping.map(comparison.firstSubmission());
+            mapping.map(comparison.secondSubmission());
         }
         int size = mapping.size();
 
         similarityMatrix = new Array2DRowRealMatrix(size, size);
         for (JPlagComparison comparison : comparisons) {
-            int firstIndex = mapping.map(comparison.getFirstSubmission());
-            int secondIndex = mapping.map(comparison.getSecondSubmission());
+            int firstIndex = mapping.map(comparison.firstSubmission());
+            int secondIndex = mapping.map(comparison.secondSubmission());
             float similarity = metric.apply(comparison);
             similarityMatrix.setEntry(firstIndex, secondIndex, similarity);
             similarityMatrix.setEntry(secondIndex, firstIndex, similarity);

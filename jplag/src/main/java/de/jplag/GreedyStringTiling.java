@@ -44,8 +44,8 @@ public class GreedyStringTiling {
 
         List<Token> submissionTokenList = submission.getTokenList();
         Set<Token> baseCodeMarking = new HashSet<>();
-        for (Match match : comparison.getMatches()) {
-            int startIndex = comparison.getFirstSubmission() == submission ? match.startOfFirst() : match.startOfSecond();
+        for (Match match : comparison.matches()) {
+            int startIndex = comparison.firstSubmission() == submission ? match.startOfFirst() : match.startOfSecond();
             baseCodeMarking.addAll(submissionTokenList.subList(startIndex, startIndex + match.length()));
         }
         baseCodeMarkings.put(submission, baseCodeMarking);
@@ -72,15 +72,12 @@ public class GreedyStringTiling {
      * @return the comparison results.
      */
     private JPlagComparison compareInternal(Submission leftSubmission, Submission rightSubmission) {
-        // first and second refer to the list of tokens of the first and second submission:
         List<Token> leftTokens = leftSubmission.getTokenList();
         List<Token> rightTokens = rightSubmission.getTokenList();
 
-        JPlagComparison comparison = new JPlagComparison(leftSubmission, rightSubmission);
-
         // comparison uses <= because it is assumed that the last token is a pivot (FILE_END)
         if (leftTokens.size() <= minimumMatchLength || rightTokens.size() <= minimumMatchLength) {
-            return comparison;
+            return new JPlagComparison(leftSubmission, rightSubmission, List.of());
         }
 
         Set<Token> leftMarkedTokens = initiallyMarkedTokens(leftSubmission);
@@ -90,9 +87,10 @@ public class GreedyStringTiling {
         SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarkedTokens);
 
         int maximumMatchLength;
+        List<Match> globalMatches = new ArrayList<>();
         do {
             maximumMatchLength = minimumMatchLength;
-            List<Match> matches = new ArrayList<>();
+            List<Match> iterationMatches = new ArrayList<>();
             for (int leftStartIndex = 0; leftStartIndex < leftTokens.size() - maximumMatchLength; leftStartIndex++) {
                 int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(leftStartIndex);
                 if (leftMarkedTokens.contains(leftTokens.get(leftStartIndex)) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
@@ -120,14 +118,15 @@ public class GreedyStringTiling {
                     }
 
                     if (offset > maximumMatchLength) {
-                        matches.clear();
+                        iterationMatches.clear();
                         maximumMatchLength = offset;
                     }
-                    addMatchIfNotOverlapping(matches, leftStartIndex, rightStartIndex, offset);
+                    Match match = new Match(leftStartIndex, rightStartIndex, offset);
+                    addMatchIfNotOverlapping(iterationMatches, match);
                 }
             }
-            for (Match match : matches) {
-                comparison.addMatch(match);
+            for (Match match : iterationMatches) {
+                addMatchIfNotOverlapping(globalMatches, match);
                 int leftStartIndex = match.startOfFirst();
                 int rightStartIndex = match.startOfSecond();
                 for (int offset = 0; offset < match.length(); offset++) {
@@ -136,7 +135,7 @@ public class GreedyStringTiling {
                 }
             }
         } while (maximumMatchLength != minimumMatchLength);
-        return comparison;
+        return new JPlagComparison(leftSubmission, rightSubmission, globalMatches);
     }
 
     /**
@@ -161,8 +160,7 @@ public class GreedyStringTiling {
         return true;
     }
 
-    private void addMatchIfNotOverlapping(List<Match> matches, int startA, int startB, int length) {
-        Match match = new Match(startA, startB, length);
+    private void addMatchIfNotOverlapping(List<Match> matches, Match match) {
         for (int i = matches.size() - 1; i >= 0; i--) { // starting at the end is better(?)
             if (matches.get(i).overlaps(match)) {
                 return; // no overlaps allowed!
