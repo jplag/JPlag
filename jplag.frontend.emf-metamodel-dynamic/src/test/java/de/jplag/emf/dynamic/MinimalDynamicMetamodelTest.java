@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -43,8 +42,7 @@ class MinimalDynamicMetamodelTest {
     void testBookstoreMetamodels() {
         List<Token> result = frontend.parse(baseDirectory, TEST_SUBJECTS);
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
-        List<String> treeViewFiles = Arrays.stream(TEST_SUBJECTS).map(it -> it + Language.VIEW_FILE_SUFFIX).toList();
-        logger.debug(TokenPrinter.printTokens(result, baseDirectory, treeViewFiles, Optional.of(Language.VIEW_FILE_SUFFIX)));
+        logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(Language.VIEW_FILE_SUFFIX)));
         logger.info("parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList().toString());
         assertEquals(64, tokenTypes.size());
         assertEquals(7, new HashSet<>(tokenTypes.stream().filter(DynamicMetamodelTokenType.class::isInstance).toList()).size());

@@ -20,7 +20,7 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<de.jplag.Token> parse(File directory, String[] files) {
+    public List<Token> parse(File directory, String[] files) {
         tokens = new ArrayList<>();
         errors = 0;
         for (String file : files) {

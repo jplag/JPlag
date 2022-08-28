@@ -62,7 +62,7 @@ class ScalaFrontendTest {
     void parseTestFiles() {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(testFileLocation, new String[] {fileName});
-            String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
+            String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
             if (fileName.equals(COMPLETE_TEST_FILE)) {
