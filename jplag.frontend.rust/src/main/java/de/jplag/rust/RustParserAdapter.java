@@ -14,7 +14,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 import de.jplag.rust.grammar.RustLexer;
 import de.jplag.rust.grammar.RustParser;
 
@@ -37,7 +36,7 @@ public class RustParserAdapter extends AbstractParser {
             if (!parseFile(directory, fileName)) {
                 errors++;
             }
-            tokens.add(new RustToken(TokenConstants.FILE_END, fileName, NOT_SET, NOT_SET, NOT_SET));
+            tokens.add(Token.fileEnd(fileName));
         }
         return tokens;
     }
@@ -76,8 +75,8 @@ public class RustParserAdapter extends AbstractParser {
      * @param start the start column of the Token in the line
      * @param length the length of the Token
      */
-    /* package-private */ void addToken(int type, int line, int start, int length) {
-        tokens.add(new RustToken(type, currentFile, line, start, length));
+    /* package-private */ void addToken(RustTokenType type, int line, int start, int length) {
+        tokens.add(new Token(type, currentFile, line, start, length));
 
     }
 }
