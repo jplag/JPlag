@@ -3,12 +3,17 @@ package de.jplag.java;
 import java.io.File;
 import java.util.List;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.Token;
 
 /**
  * Language for Java 9 and newer.
  */
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
+    public static final String IDENTIFIER = "java";
+
     private final Parser parser;
 
     public Language() {
@@ -26,8 +31,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return "java";
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override

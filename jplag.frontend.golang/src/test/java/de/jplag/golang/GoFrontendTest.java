@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +58,7 @@ class GoFrontendTest {
     void parseTestFiles() {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(testFileLocation, new String[] {fileName});
-            String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
+            String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
@@ -87,7 +86,7 @@ class GoFrontendTest {
     /**
      * Confirms that the code is covered to a basic extent, i.e. each line of code contains at least one token.
      * @param fileName a code sample file name
-     * @param tokens the TokenList generated from the sample
+     * @param tokens the list of tokens generated from the sample
      */
     private void testSourceCoverage(String fileName, List<Token> tokens) {
         File testFile = new File(testFileLocation, fileName);
@@ -153,11 +152,11 @@ class GoFrontendTest {
 
     /**
      * Confirms that all Token types are 'reachable' with a complete code example.
-     * @param tokens TokenList which is supposed to contain all types of tokens
+     * @param tokens list of tokens which is supposed to contain all types of tokens
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.spliterator(), true).mapToInt(Token::getType).sorted().distinct().boxed().toList();
+        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).sorted().distinct().boxed().toList();
 
         // Exclude SEPARATOR_TOKEN, as it does not occur
         var missingTokenTypes = IntStream.range(0, GoTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).boxed()

@@ -3,6 +3,8 @@ package de.jplag.text;
 import java.io.File;
 import java.util.List;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.Token;
 
 /**
@@ -10,8 +12,10 @@ import de.jplag.Token;
  * individual words are interpreted as token types. Whitespace and special characters are ignored. This approach works,
  * but there are better approaches for text plagiarism out there (based on NLP techniques).
  */
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
+    public static final String IDENTIFIER = "text";
     private final ParserAdapter parserAdapter;
 
     public Language() {
@@ -29,8 +33,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return "text";
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override
@@ -46,10 +50,5 @@ public class Language implements de.jplag.Language {
     @Override
     public boolean hasErrors() {
         return parserAdapter.hasErrors();
-    }
-
-    @Override
-    public boolean isPreformatted() {
-        return false;
     }
 }

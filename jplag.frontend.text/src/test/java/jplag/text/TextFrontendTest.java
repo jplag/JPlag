@@ -5,11 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,11 +39,11 @@ class TextFrontendTest {
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
         List<Token> result = frontend.parse(baseDirectory, input);
-        logger.info(TokenPrinter.printTokens(result, baseDirectory, Arrays.asList(input)));
+        logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         // Compare parsed tokens:
         Map<Integer, Token> tokenTypes = new HashMap<>();
-        StreamSupport.stream(result.spliterator(), false).forEach(it -> tokenTypes.put(it.getType(), it));
+        result.forEach(it -> tokenTypes.put(it.getType(), it));
 
         assertEquals(293, result.size());
         assertEquals(156, tokenTypes.values().size());

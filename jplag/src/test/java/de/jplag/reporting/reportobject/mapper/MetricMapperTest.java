@@ -15,7 +15,7 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.TopComparison;
 
 public class MetricMapperTest {
-    private final MetricMapper metricMapper = new MetricMapper();
+    private final MetricMapper metricMapper = new MetricMapper(Submission::getName);
 
     @Test
     public void test_getAverageMetric() {

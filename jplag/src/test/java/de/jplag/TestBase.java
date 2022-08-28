@@ -3,11 +3,12 @@ package de.jplag;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 import de.jplag.exceptions.ExitException;
+import de.jplag.java.Language;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 import de.jplag.options.Verbosity;
 
 public abstract class TestBase {
@@ -20,11 +21,12 @@ public abstract class TestBase {
     }
 
     protected String getBasePath(String... subs) {
-        String path = BASE_PATH;
+        StringJoiner joiner = new StringJoiner(File.separator);
+        joiner.add(BASE_PATH);
         for (String sub : subs) {
-            path += File.separator + sub;
+            joiner.add(sub);
         }
-        return path;
+        return joiner.toString();
     }
 
     protected JPlagResult runJPlagWithExclusionFile(String testSampleName, String exclusionFileName) throws ExitException {
@@ -46,7 +48,7 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Consumer<JPlagOptions> customization) throws ExitException {
-        JPlagOptions options = new JPlagOptions(newPaths, oldPaths, LanguageOption.JAVA);
+        JPlagOptions options = new JPlagOptions(newPaths, oldPaths, Language.IDENTIFIER);
         options.setVerbosity(Verbosity.LONG);
         customization.accept(options);
         JPlag jplag = new JPlag(options);

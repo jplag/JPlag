@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +59,7 @@ class ScalaFrontendTest {
     void parseTestFiles() {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(testFileLocation, new String[] {fileName});
-            String output = TokenPrinter.printTokens(tokens, testFileLocation, List.of(fileName));
+            String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
             if (fileName.equals(COMPLETE_TEST_FILE)) {
@@ -90,7 +89,7 @@ class ScalaFrontendTest {
     /**
      * Confirms that the code is covered to a basic extent, i.e. each line of code contains at least one token.
      * @param fileName a code sample file name
-     * @param tokens the TokenList generated from the sample
+     * @param tokens the list of tokens generated from the sample
      */
     private void testSourceCoverage(String fileName, List<Token> tokens) {
         var testFile = new File(testFileLocation, fileName);
@@ -101,7 +100,7 @@ class ScalaFrontendTest {
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = tokens.stream().mapToInt(Token::getLine).distinct().boxed().toList();
+            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().boxed().toList();
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
@@ -157,11 +156,11 @@ class ScalaFrontendTest {
 
     /**
      * Confirms that all Token types are 'reachable' with a complete code example.
-     * @param tokens TokenList which is supposed to contain all types of tokens
+     * @param tokens list of tokens which is supposed to contain all types of tokens
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = StreamSupport.stream(tokens.spliterator(), true).mapToInt(Token::getType).distinct().boxed().toList();
+        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).distinct().boxed().toList();
         var allTokens = IntStream.range(0, ScalaTokenConstants.numberOfTokens()).boxed().toList();
         allTokens = new ArrayList<>(allTokens);
 

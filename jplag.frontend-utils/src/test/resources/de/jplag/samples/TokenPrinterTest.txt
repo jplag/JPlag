@@ -1,0 +1,26 @@
+|----| 				token shorter than label, no bar printed
+|-----| 			token exactly as long as label, no bar printed
+|------|			token at minimal length for bar to be printed
+|--------------|	token much longer than label, padding + bar
+
+		|			token starts after TAB indentation
+        |			token starts after SPACE indentation
+
+|        | 			multiple tokens fitting in one line
+|   |      			multiple tokens where the labels overlap
+
+|   |    | 			token in the middle is set to previous line -- saved by TokenList::addToken method
+
+|   |    | 			tokens in this line are in reverse order -- that's okay
+
+|					negative column index leads to redundant blank line
+
+	|      |		one line below: column index greater than line length -- beginning printed at last character of the line
+           #
+
+|              |	one line below: length of token exceeds line length -- ending bar printed at last character of the line
+               #
+
+|					negative length -- no effect
+
+					token with position after EOF is not printed

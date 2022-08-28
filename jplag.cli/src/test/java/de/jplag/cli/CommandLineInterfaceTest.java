@@ -26,7 +26,7 @@ public abstract class CommandLineInterfaceTest {
     protected JPlagOptions options;
 
     /**
-     * Creates a string for all arguments and their values that have been succesfully parsed.F
+     * Creates a string for all arguments and their values that have been succesfully parsed.
      */
     private String parsedKeys(String... arguments) {
         var keys = namespace.getAttrs().keySet().stream()

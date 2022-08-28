@@ -61,11 +61,6 @@ public abstract class Token {
         return file;
     }
 
-    // this is made to distinguish the character front end. Maybe other front ends can use it too?
-    public int getIndex() {
-        return NO_VALUE;
-    }
-
     /**
      * Gives the length if the code sections represented by this token.
      * @return the length in characters.

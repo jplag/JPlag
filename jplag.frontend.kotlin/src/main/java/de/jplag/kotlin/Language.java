@@ -3,15 +3,18 @@ package de.jplag.kotlin;
 import java.io.File;
 import java.util.List;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.Token;
 
 /**
  * This represents the Kotlin language as a language supported by JPlag.
  */
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
     private static final String NAME = "Kotlin Parser";
-    private static final String SHORT_NAME = "Kotlin";
+    public static final String IDENTIFIER = "kotlin";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".kt"};
     private final KotlinParserAdapter parserAdapter;
@@ -31,8 +34,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override
