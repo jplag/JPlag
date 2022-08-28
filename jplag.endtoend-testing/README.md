@@ -1,3 +1,4 @@
+
 # JPlag - End To End Testing
 With the help of the end-to-end module, changes to the detection of JPlag are to be tested.
 With the help of elaborated plagiarisms, which have been worked out from suggestions in the literature on the topic of "plagiarism detection and avoidance", a wide range of detectable change can be covered. The selected plagiarisms are the decisive factor here as to whether a change in recognition can be perceived. 
@@ -67,7 +68,7 @@ In order to be able to distinguish in which domain of the recognition changes ha
 The comparative values were discussed and tested. The following results of the JPlag scan are used for the comparison:
 1. minimal similarity as `float`
 2. maximum similarity as `float`
-3. matched token numbe as `int`
+3. matched token number as `int`
 
 The comparative values were disscussed and elaborated in the issue [End to end testing - "comparative values"](https://github.com/jplag/JPlag/issues/548 "End to end testing - \"comparative values\""). 
 
@@ -172,3 +173,62 @@ It is important to note that the resource folder name must be exactly the same a
  - Scala with "scala"
 
 Once the tests have been run for the first time, the information for the tests is stored in the folder `..\target\testing-directory-submission\LANGUAGE`.  This data can be copied to the path `[...]\resources\results\LANGUAGE`. Each subdirectory gets its own result json file as `[...]\resources\results\JAVA\sortAlgo.json`. Once the test data has been copied, the endToEnd tests can be successfully tested. As soon as a change in the detection takes place, the results will differ from the stored results and the tests will fail if the results have changed.
+
+### Extending The Comparison Value
+
+As already described, the current comparisons in the end to end test treat the values of `minimal similarity`, `maximum similarity` and `matched token number`.
+As soon as there is a need to extend these comparison values, this section describes how this can be achieved.
+Beforehand, however, this should be discussed in a new issue about this need.
+
+- For new comparison values these properties must be extended in the `ExpectedResult` record at the package `de.jplag.endtoend.model`. Here it is sufficient to add the values in the record and to enter the json name as `@JsonProperty("json_name")`.
+
+``` java
+public record ExpectedResult(
+		@JsonProperty("minimal_similarity") float resultSimilarityMinimum,
+        @JsonProperty("maximum_similarity") float resultSimilarityMaximum, 
+		@JsonProperty("matched_token_number") int resultMatchedTokenNumber) {
+}
+```
+
+- In order to be able to include the new value in the tests, they must be added to the `EndToEndSuiteTest` as a comparison operation at the package `de.jplag.endtoend`. The `runJPlagTestSuite()` function provided for this purpose must be extended to include the new comparison value. To do this, create the comparison as shown in the code example below.
+
+``` java
+[...]
+            if (Float.compare(result.resultSimilarityMaximum(), jPlagComparison.maximalSimilarity()) != 0) {
+                addToValidationErrors("maximalSimilarity", String.valueOf(result.resultSimilarityMaximum()),
+                        String.valueOf(jPlagComparison.maximalSimilarity()));
+            }
+[...]
+```
+
+- Once the tests run the first time they will fail due to the missing values in the old json result file used for the test cases. The old results must then be replaced with the new ones. 
+For this purpose, the last section of the chapter [Copying Plagiarism To The Resources](#copying-plagiarism-to-the-resources) can be used as help. 
+
+###  Extending JPlar Test Run Options
+The endToEnd tests support the possible scan options of the JPlag api. Currently `minimumTokenMatch` is used in the endToEnd tests. These values are also stored in the json as configuration to keep the test cases at the options apart. Likewise also changes of the logic in the different options are to be determined to be able.
+
+- To extend new options to the endToEnd tests they have to be added to the record object `Options` in the package `de.jplag.endtoend.model`.  Here it is sufficient to add the values in the record and to enter the json name as `@JsonProperty("json_name")`.
+
+``` java
+public record Options(
+@JsonProperty("minimum_token_match") Integer minimumTokenMatch) {
+}
+```
+
+- After the new value has been added to the record, the creation of the object must now also be adjusted in the `EndToEndSuiteTest` .  The 'setRunOptions' function is provided for this purpose. The options can be added in any order and combination. It should be noted that each test case is run with these options. 
+
+``` java
+    private void setRunOptions() {
+        options = new ArrayList<>();
+        options.add(new Options(1));
+        options.add(new Options(15));
+    }
+```
+
+- If you want to create individual test cases by testing the options only on a specific set of dates, a new test case must be created for this purpose. For the new test cases, the options in the transfer parameters can be adjusted and specified. This can then be tested with the function `runTests`. 
+ ```java 
+ runTests(directoryName, option, currentLanguageIdentifier, testCase, currentResultDescription);
+```
+
+- Once the tests run the first time they will fail due to the missing values in the old json result file used for the test cases. The old results must then be replaced with the new ones. 
+For this purpose, the last section of the chapter [Copying Plagiarism To The Resources](#copying-plagiarism-to-the-resources) can be used as help. 
