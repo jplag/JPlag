@@ -1,7 +1,5 @@
 package de.jplag.emf;
 
-import static de.jplag.emf.MetamodelTokenType.*;
-
 import java.util.Optional;
 
 import org.eclipse.emf.ecore.EObject;

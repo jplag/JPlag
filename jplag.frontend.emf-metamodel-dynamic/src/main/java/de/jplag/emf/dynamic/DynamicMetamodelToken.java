@@ -1,7 +1,5 @@
 package de.jplag.emf.dynamic;
 
-import static de.jplag.Token.NO_VALUE;
-
 import java.util.Optional;
 
 import org.eclipse.emf.ecore.EObject;

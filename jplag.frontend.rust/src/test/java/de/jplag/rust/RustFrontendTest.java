@@ -35,8 +35,6 @@ class RustFrontendTest {
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
      */
     private static final String COMPLETE_TEST_FILE = "complete.rs";
-    public static final int NOT_SET = -1;
-    private static final String EMPTY_STRING = "";
     private static final String RUST_SHEBANG = "#!.*$";
     private static final double EPSILON = 1E-6;
     public static final double BASELINE_COVERAGE = 0.75;

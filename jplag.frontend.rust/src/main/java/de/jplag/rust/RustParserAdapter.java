@@ -19,7 +19,6 @@ import de.jplag.rust.grammar.RustParser;
 
 public class RustParserAdapter extends AbstractParser {
 
-    private static final int NOT_SET = -1;
     private String currentFile;
     private List<Token> tokens;
 

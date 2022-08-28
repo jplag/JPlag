@@ -44,8 +44,6 @@ class ScalaFrontendTest {
      * Regular expression that describes lines containing the end of a multiline comment and no more code after that.
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
-    private static final String EMPTY_STRING = "";
-    private static final int NOT_SET = -1;
     private static final double EPSILON = 1E-6;
 
     private final Logger logger = LoggerFactory.getLogger("Scala frontend test");

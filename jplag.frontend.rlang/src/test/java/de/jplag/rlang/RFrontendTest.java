@@ -33,7 +33,6 @@ class RFrontendTest {
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
      */
     private static final String COMPLETE_TEST_FILE = "Complete.R";
-    public static final int NOT_SET = -1;
 
     private final Logger logger = LoggerFactory.getLogger("R frontend test");
     private final String[] testFiles = new String[] {"Game.R", COMPLETE_TEST_FILE};
