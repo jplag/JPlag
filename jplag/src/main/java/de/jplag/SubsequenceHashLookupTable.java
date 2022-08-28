@@ -26,7 +26,8 @@ public class SubsequenceHashLookupTable {
      * Generates a new subsequence hash lookup table. Performance is optimized to compute hashes in O(n).
      * @param windowSize the size of the subsequences.
      * @param tokens the tokens to hash over.
-     * @param markedTokens the set of marked tokens.
+     * @param markedTokens the set of marked tokens. Subsequences containing a marked token obtain the {@link NO_HASH}
+     * value.
      */
     public SubsequenceHashLookupTable(int windowSize, List<Token> tokens, Set<Token> markedTokens) {
         windowSize = Math.max(1, windowSize);
