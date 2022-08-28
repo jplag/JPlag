@@ -31,15 +31,7 @@ public class Token {
      * {@link TokenConstants#FILE_END FILE_END} it is automatically set to {@link #NO_VALUE}.
      */
     public Token(TokenType type, String file, int line) {
-        this.type = type;
-        this.file = file;
-        if (type == SharedTokenType.FILE_END) {
-            this.line = NO_VALUE;
-        } else {
-            this.line = line > 0 ? line : 1;
-        }
-        this.column = NO_VALUE;
-        this.length = NO_VALUE;
+        this(type, file, line, NO_VALUE, NO_VALUE);
     }
 
     /**
@@ -51,7 +43,13 @@ public class Token {
      * @param length is the length of the token in the source code.
      */
     public Token(TokenType type, String file, int line, int column, int length) {
-        this(type, file, line);
+        this.type = type;
+        this.file = file;
+        if (type == SharedTokenType.FILE_END) {
+            this.line = NO_VALUE;
+        } else {
+            this.line = line > 0 ? line : 1;
+        }
         this.column = column;
         this.length = length;
     }
