@@ -158,7 +158,6 @@ public final class CLI {
         var comparisonMode = ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace));
         if (comparisonMode.isEmpty()) {
             logger.warn("Unknown comparison mode, using default mode!");
-        } else {
             comparisonMode = Optional.of(JPlagOptions.DEFAULT_COMPARISON_MODE);
         }
 
