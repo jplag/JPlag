@@ -18,7 +18,7 @@ const routes: Array<RouteRecordRaw> = [
     component: OverviewView,
   },
   {
-    path: "/comparison",
+    path: "/comparison/:firstId/:secondId",
     name: "ComparisonView",
     component: ComparisonView,
     props: true,
