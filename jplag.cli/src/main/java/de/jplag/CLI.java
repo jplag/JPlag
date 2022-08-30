@@ -155,22 +155,11 @@ public final class CLI {
         addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
 
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
-        JPlagOptions options = new JPlagOptions(language, submissionDirectories, oldSubmissionDirectories) //
-                .withBaseCodeSubmissionName(BASE_CODE.getFrom(namespace)) //
-                .withVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace))) //
-                .withDebugParser(DEBUG.getFrom(namespace)) //
-                .withSubdirectoryName(SUBDIRECTORY.getFrom(namespace)) //
-                .withFileSuffixes(Arrays.stream(fileSuffixes).toList()) //
-                .withExclusionFileName(EXCLUDE_FILE.getFrom(namespace)) //
-                .withMinimumTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace)) //
-                .withSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace)) //
-                .withMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
-
         var comparisonMode = ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace));
         if (comparisonMode.isEmpty()) {
             logger.warn("Unknown comparison mode, using default mode!");
         } else {
-            options = options.withComparisonMode(comparisonMode.get());
+            comparisonMode = Optional.of(JPlagOptions.DEFAULT_COMPARISON_MODE);
         }
 
         ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
@@ -205,9 +194,23 @@ public final class CLI {
             clusteringBuilder.preprocessorPercentile(threshold);
         });
 
-        options = options.withClusteringOptions(clusteringBuilder.build());
-
-        return options;
+        return new JPlagOptions( //
+                language, //
+                comparisonMode.orElseThrow(), //
+                DEBUG.getFrom(namespace), //
+                Arrays.stream(fileSuffixes).toList(), //
+                SIMILARITY_THRESHOLD.getFrom(namespace), //
+                SHOWN_COMPARISONS.getFrom(namespace), //
+                JPlagOptions.DEFAULT_SIMILARITY_METRIC, //
+                MIN_TOKEN_MATCH.getFrom(namespace), //
+                EXCLUDE_FILE.getFrom(namespace), //
+                submissionDirectories, //
+                oldSubmissionDirectories, //
+                BASE_CODE.getFrom(namespace), //
+                SUBDIRECTORY.getFrom(namespace), //
+                Verbosity.fromOption(VERBOSITY.getFrom(namespace)), //
+                clusteringBuilder.build() //
+        );
     }
 
     private String generateDescription() {
