@@ -162,7 +162,7 @@ public final class CLI {
         }
 
         ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
-        Optional.ofNullable((Boolean) CLUSTER_DISABLE.getFrom(namespace)).ifPresent(enabled -> clusteringBuilder.enabled(!enabled));
+        Optional.ofNullable((Boolean) CLUSTER_DISABLE.getFrom(namespace)).ifPresent(disabled -> clusteringBuilder.enabled(!disabled));
         Optional.ofNullable((ClusteringAlgorithm) CLUSTER_ALGORITHM.getFrom(namespace)).ifPresent(clusteringBuilder::algorithm);
         Optional.ofNullable((SimilarityMetric) CLUSTER_METRIC.getFrom(namespace)).ifPresent(clusteringBuilder::similarityMetric);
         Optional.ofNullable((Float) CLUSTER_SPECTRAL_BANDWIDTH.getFrom(namespace)).ifPresent(clusteringBuilder::spectralKernelBandwidth);
