@@ -155,11 +155,11 @@ public final class CLI {
         addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
 
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
-        var comparisonMode = ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace));
-        if (comparisonMode.isEmpty()) {
+        var comparisonModeOptional = ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace));
+        if (comparisonModeOptional.isEmpty()) {
             logger.warn("Unknown comparison mode, using default mode!");
-            comparisonMode = Optional.of(JPlagOptions.DEFAULT_COMPARISON_MODE);
         }
+        var comparisonMode = comparisonModeOptional.orElse(JPlagOptions.DEFAULT_COMPARISON_MODE);
 
         ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
         Optional.ofNullable((Boolean) CLUSTER_DISABLE.getFrom(namespace)).ifPresent(disabled -> clusteringBuilder.enabled(!disabled));
@@ -195,7 +195,7 @@ public final class CLI {
 
         return new JPlagOptions( //
                 language, //
-                comparisonMode.orElseThrow(), //
+                comparisonMode, //
                 DEBUG.getFrom(namespace), //
                 Arrays.stream(fileSuffixes).toList(), //
                 SIMILARITY_THRESHOLD.getFrom(namespace), //

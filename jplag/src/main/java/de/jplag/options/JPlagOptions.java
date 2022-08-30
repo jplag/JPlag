@@ -84,14 +84,14 @@ public record JPlagOptions(Language language, ComparisonMode comparisonMode, boo
         this.language = language;
         this.comparisonMode = comparisonMode;
         this.debugParser = debugParser;
-        this.fileSuffixes = fileSuffixes == null ? null : fileSuffixes.stream().toList();
-        this.similarityThreshold = fixSimilarityThreshold(similarityThreshold);
-        this.maximumNumberOfComparisons = fixMaximumNumberOfComparisons(maximumNumberOfComparisons);
+        this.fileSuffixes = fileSuffixes == null ? null : Collections.unmodifiableList(fileSuffixes);
+        this.similarityThreshold = normalizeSimilarityThreshold(similarityThreshold);
+        this.maximumNumberOfComparisons = normalizeMaximumNumberOfComparisons(maximumNumberOfComparisons);
         this.similarityMetric = similarityMetric;
-        this.minimumTokenMatch = minimumTokenMatch;
+        this.minimumTokenMatch = normalizeMinimumTokenMatch(minimumTokenMatch);
         this.exclusionFileName = exclusionFileName;
-        this.submissionDirectories = submissionDirectories == null ? null : submissionDirectories.stream().toList();
-        this.oldSubmissionDirectories = oldSubmissionDirectories == null ? null : oldSubmissionDirectories.stream().toList();
+        this.submissionDirectories = submissionDirectories == null ? null : Collections.unmodifiableList(submissionDirectories);
+        this.oldSubmissionDirectories = oldSubmissionDirectories == null ? null : Collections.unmodifiableList(oldSubmissionDirectories);
         this.baseCodeSubmissionName = baseCodeSubmissionName;
         this.subdirectoryName = subdirectoryName;
         this.verbosity = verbosity;
@@ -123,14 +123,14 @@ public record JPlagOptions(Language language, ComparisonMode comparisonMode, boo
     }
 
     public JPlagOptions withSimilarityThreshold(float similarityThreshold) {
-        return new JPlagOptions(language, comparisonMode, debugParser, fileSuffixes, fixSimilarityThreshold(similarityThreshold),
+        return new JPlagOptions(language, comparisonMode, debugParser, fileSuffixes, normalizeSimilarityThreshold(similarityThreshold),
                 maximumNumberOfComparisons, similarityMetric, minimumTokenMatch, exclusionFileName, submissionDirectories, oldSubmissionDirectories,
                 baseCodeSubmissionName, subdirectoryName, verbosity, clusteringOptions);
     }
 
     public JPlagOptions withMaximumNumberOfComparisons(Integer maximumNumberOfComparisons) {
         return new JPlagOptions(language, comparisonMode, debugParser, fileSuffixes, similarityThreshold,
-                fixMaximumNumberOfComparisons(maximumNumberOfComparisons), similarityMetric, minimumTokenMatch, exclusionFileName,
+                normalizeMaximumNumberOfComparisons(maximumNumberOfComparisons), similarityMetric, minimumTokenMatch, exclusionFileName,
                 submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionName, subdirectoryName, verbosity, clusteringOptions);
     }
 
@@ -202,7 +202,7 @@ public record JPlagOptions(Language language, ComparisonMode comparisonMode, boo
         var language = language();
         if (fileSuffixes == null && language != null)
             return Arrays.stream(language.suffixes()).toList();
-        return fileSuffixes == null ? null : fileSuffixes.stream().toList();
+        return fileSuffixes == null ? null : Collections.unmodifiableList(fileSuffixes);
     }
 
     /**
@@ -224,18 +224,17 @@ public record JPlagOptions(Language language, ComparisonMode comparisonMode, boo
 
     @Override
     public Integer minimumTokenMatch() {
-        Integer fixedMinimumTokenMatch = (minimumTokenMatch != null && minimumTokenMatch < 1) ? Integer.valueOf(1) : minimumTokenMatch;
         var language = language();
-        if (fixedMinimumTokenMatch == null && language != null)
+        if (minimumTokenMatch == null && language != null)
             return language.minimumTokenMatch();
-        return fixedMinimumTokenMatch;
+        return minimumTokenMatch;
     }
 
     private Set<String> readExclusionFile(final String exclusionFileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
             final var excludedFileNames = reader.lines().collect(Collectors.toSet());
             if (verbosity() == LONG) {
-                logger.info("Excluded files:\n" + String.join("\n", excludedFileNames);
+                logger.info("Excluded files:\n" + String.join("\n", excludedFileNames));
             }
             return excludedFileNames;
         } catch (IOException e) {
@@ -244,7 +243,7 @@ public record JPlagOptions(Language language, ComparisonMode comparisonMode, boo
         }
     }
 
-    private static float fixSimilarityThreshold(float similarityThreshold) {
+    private static float normalizeSimilarityThreshold(float similarityThreshold) {
         if (similarityThreshold > 100) {
             logger.warn("Maximum threshold of 100 used instead of {}", similarityThreshold);
             return 100;
@@ -256,7 +255,11 @@ public record JPlagOptions(Language language, ComparisonMode comparisonMode, boo
         }
     }
 
-    private Integer fixMaximumNumberOfComparisons(Integer maximumNumberOfComparisons) {
+    private Integer normalizeMaximumNumberOfComparisons(Integer maximumNumberOfComparisons) {
         return maximumNumberOfComparisons == null ? null : Math.max(maximumNumberOfComparisons, SHOW_ALL_COMPARISONS);
+    }
+
+    private Integer normalizeMinimumTokenMatch(Integer minimumTokenMatch) {
+        return (minimumTokenMatch != null && minimumTokenMatch < 1) ? Integer.valueOf(1) : minimumTokenMatch;
     }
 }
