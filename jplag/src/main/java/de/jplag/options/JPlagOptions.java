@@ -235,10 +235,7 @@ public record JPlagOptions(Language language, ComparisonMode comparisonMode, boo
         try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
             final var excludedFileNames = reader.lines().collect(Collectors.toSet());
             if (verbosity() == LONG) {
-                logger.info("Excluded files:");
-                for (var excludedFilename : excludedFileNames) {
-                    logger.info(excludedFilename);
-                }
+                logger.info("Excluded files:\n" + String.join("\n", excludedFileNames);
             }
             return excludedFileNames;
         } catch (IOException e) {
