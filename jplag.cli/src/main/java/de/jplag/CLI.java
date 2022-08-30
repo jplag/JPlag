@@ -193,23 +193,10 @@ public final class CLI {
             clusteringBuilder.preprocessorPercentile(threshold);
         });
 
-        return new JPlagOptions( //
-                language, //
-                comparisonMode, //
-                DEBUG.getFrom(namespace), //
-                Arrays.stream(fileSuffixes).toList(), //
-                SIMILARITY_THRESHOLD.getFrom(namespace), //
-                SHOWN_COMPARISONS.getFrom(namespace), //
-                JPlagOptions.DEFAULT_SIMILARITY_METRIC, //
-                MIN_TOKEN_MATCH.getFrom(namespace), //
-                EXCLUDE_FILE.getFrom(namespace), //
-                submissionDirectories, //
-                oldSubmissionDirectories, //
-                BASE_CODE.getFrom(namespace), //
-                SUBDIRECTORY.getFrom(namespace), //
-                Verbosity.fromOption(VERBOSITY.getFrom(namespace)), //
-                clusteringBuilder.build() //
-        );
+        return new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories,
+                BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
+                JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
+                clusteringBuilder.build(), comparisonMode, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
     }
 
     private String generateDescription() {
