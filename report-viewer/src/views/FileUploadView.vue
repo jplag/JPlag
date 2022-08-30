@@ -25,6 +25,7 @@ import router from "@/router";
 import store from "@/store/store";
 import { getFileExtension } from "@/utils/Utils";
 import path from "path";
+import slash from "slash";
 
 export default defineComponent({
   name: "FileUploadView",
@@ -66,22 +67,24 @@ export default defineComponent({
      */
     const handleZipFile = (file: File) => {
       jszip.loadAsync(file).then(async (zip) => {
-        for (const fileName of Object.keys(zip.files)) {
+        for (const originalFileName of Object.keys(zip.files)) {
+          const unixFileName = slash(originalFileName);
           if (
-            /((.+\/)*)submissions\/(.+)\/(.+)/.test(fileName) &&
-            !/^__MACOSX\//.test(fileName)
+            /((.+\/)*)submissions\/(.+)\/(.+)/.test(unixFileName) &&
+            !/^__MACOSX\//.test(unixFileName)
           ) {
-            const filePath = path.parse(fileName);
+            const filePath = path.parse(unixFileName);
+
             const submissionFileName = extractSubmissionFileName(filePath);
-            await zip.files[fileName].async("string").then((data) => {
+            await zip.files[originalFileName].async("string").then((data) => {
               store.commit("saveSubmissionFile", {
                 name: submissionFileName,
                 file: { fileName: filePath.base, data: data },
               });
             });
           } else {
-            await zip.files[fileName].async("string").then((data) => {
-              store.commit("saveFile", { fileName: fileName, data: data });
+            await zip.files[originalFileName].async("string").then((data) => {
+              store.commit("saveFile", { fileName: unixFileName, data: data });
             });
           }
         }
