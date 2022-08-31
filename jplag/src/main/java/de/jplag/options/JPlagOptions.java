@@ -46,7 +46,7 @@ import de.jplag.strategy.ComparisonMode;
  */
 public record JPlagOptions(Language language, Integer minimumTokenMatch, List<String> submissionDirectories, List<String> oldSubmissionDirectories,
         String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
-        SimilarityMetric similarityMetric, float similarityThreshold, Integer maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
+        SimilarityMetric similarityMetric, float similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
         ComparisonMode comparisonMode, Verbosity verbosity, boolean debugParser) {
 
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
@@ -66,7 +66,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
 
     public JPlagOptions(Language language, Integer minimumTokenMatch, List<String> submissionDirectories, List<String> oldSubmissionDirectories,
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
-            SimilarityMetric similarityMetric, float similarityThreshold, Integer maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
+            SimilarityMetric similarityMetric, float similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             ComparisonMode comparisonMode, Verbosity verbosity, boolean debugParser) {
         this.language = language;
         this.comparisonMode = comparisonMode;
@@ -111,14 +111,14 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
 
     public JPlagOptions withSimilarityThreshold(float similarityThreshold) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionName,
-                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, normalizeSimilarityThreshold(similarityThreshold),
-                maximumNumberOfComparisons, clusteringOptions, comparisonMode, verbosity, debugParser);
+                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
+                clusteringOptions, comparisonMode, verbosity, debugParser);
     }
 
-    public JPlagOptions withMaximumNumberOfComparisons(Integer maximumNumberOfComparisons) {
+    public JPlagOptions withMaximumNumberOfComparisons(int maximumNumberOfComparisons) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionName,
-                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold,
-                normalizeMaximumNumberOfComparisons(maximumNumberOfComparisons), clusteringOptions, comparisonMode, verbosity, debugParser);
+                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
+                clusteringOptions, comparisonMode, verbosity, debugParser);
     }
 
     public JPlagOptions withSimilarityMetric(SimilarityMetric similarityMetric) {
@@ -152,10 +152,9 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
     }
 
     public JPlagOptions withBaseCodeSubmissionName(String baseCodeSubmissionName) {
-        return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories,
-                (baseCodeSubmissionName == null || baseCodeSubmissionName.isBlank()) ? null : baseCodeSubmissionName, subdirectoryName, fileSuffixes,
-                exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, comparisonMode, verbosity,
-                debugParser);
+        return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionName,
+                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
+                clusteringOptions, comparisonMode, verbosity, debugParser);
     }
 
     public JPlagOptions withSubdirectoryName(String subdirectoryName) {
@@ -243,7 +242,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
     }
 
     private Integer normalizeMaximumNumberOfComparisons(Integer maximumNumberOfComparisons) {
-        return maximumNumberOfComparisons == null ? null : Math.max(maximumNumberOfComparisons, SHOW_ALL_COMPARISONS);
+        return Math.max(maximumNumberOfComparisons, SHOW_ALL_COMPARISONS);
     }
 
     private Integer normalizeMinimumTokenMatch(Integer minimumTokenMatch) {
