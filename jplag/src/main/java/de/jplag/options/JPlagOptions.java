@@ -79,7 +79,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
         this.exclusionFileName = exclusionFileName;
         this.submissionDirectories = submissionDirectories == null ? null : Collections.unmodifiableList(submissionDirectories);
         this.oldSubmissionDirectories = oldSubmissionDirectories == null ? null : Collections.unmodifiableList(oldSubmissionDirectories);
-        this.baseCodeSubmissionName = baseCodeSubmissionName;
+        this.baseCodeSubmissionName = (baseCodeSubmissionName == null || baseCodeSubmissionName.isBlank()) ? null : baseCodeSubmissionName;
         this.subdirectoryName = subdirectoryName;
         this.verbosity = verbosity;
         this.clusteringOptions = clusteringOptions;
