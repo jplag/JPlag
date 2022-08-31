@@ -37,7 +37,7 @@ public class SubmissionNameToIdMapper {
     }
 
     private static List<JPlagComparison> getComparisons(JPlagResult result) {
-        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
+        int numberOfComparisons = result.getOptions().maximumNumberOfComparisons();
         return result.getComparisons(numberOfComparisons);
     }
 }

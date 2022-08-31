@@ -1,15 +1,5 @@
 package de.jplag;
 
-import static de.jplag.options.Verbosity.LONG;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +23,6 @@ public class JPlag {
     private final Language language;
     private final ComparisonStrategy comparisonStrategy;
     private final GreedyStringTiling coreAlgorithm; // Contains the comparison logic.
-    private final Set<String> excludedFileNames;
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
@@ -42,30 +31,8 @@ public class JPlag {
     public JPlag(JPlagOptions options) {
         this.options = options;
         coreAlgorithm = new GreedyStringTiling(options);
-        language = initializeLanguage(this.options);
-        comparisonStrategy = initializeComparisonStrategy(options.getComparisonMode());
-        excludedFileNames = Optional.ofNullable(this.options.getExclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
-        options.setExcludedFiles(excludedFileNames); // store for report
-    }
-
-    /**
-     * If an exclusion file is given, it is read in and all strings are saved in the set "excluded".
-     * @param exclusionFileName the file name or path
-     */
-    private Set<String> readExclusionFile(final String exclusionFileName) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
-            final var excludedFileNames = reader.lines().collect(Collectors.toSet());
-            if (options.getVerbosity() == LONG) {
-                logger.info("Excluded files:");
-                for (var excludedFilename : excludedFileNames) {
-                    logger.info(excludedFilename);
-                }
-            }
-            return excludedFileNames;
-        } catch (IOException e) {
-            logger.error("Could not read exclusion file: " + e.getMessage(), e);
-            return Collections.emptySet();
-        }
+        language = this.options.language();
+        comparisonStrategy = initializeComparisonStrategy(options.comparisonMode());
     }
 
     /**
@@ -75,11 +42,11 @@ public class JPlag {
      */
     public JPlagResult run() throws ExitException {
         // Parse and validate submissions.
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options, excludedFileNames);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
         if (submissionSet.hasBaseCode()) {
-            coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.getMinimumTokenMatch(), true);
+            coreAlgorithm.createHashes(submissionSet.getBaseCode().getTokenList(), options.minimumTokenMatch(), true);
         }
 
         int submissionCount = submissionSet.numberOfSubmissions();
@@ -92,7 +59,7 @@ public class JPlag {
         if (logger.isInfoEnabled())
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
 
-        result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.getClusteringOptions()));
+        result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 
         return result;
     }
@@ -102,22 +69,5 @@ public class JPlag {
             case NORMAL -> new NormalComparisonStrategy(options, coreAlgorithm);
             case PARALLEL -> new ParallelComparisonStrategy(options, coreAlgorithm);
         };
-    }
-
-    private static Language initializeLanguage(JPlagOptions options) {
-        String languageIdentifier = options.getLanguageIdentifier();
-        Language currentLanguage = options.getLanguage();
-
-        if (currentLanguage != null && (languageIdentifier == null || languageIdentifier.equals(currentLanguage.getIdentifier()))) {
-            // Ensure that we do not rely on the ServiceLoader API. We can also load an arbitrary language via Options
-            options.setLanguageDefaults(currentLanguage);
-            return currentLanguage;
-        }
-
-        Language language = LanguageLoader.getLanguage(languageIdentifier).orElseThrow();
-        options.setLanguage(language);
-        options.setLanguageDefaults(language);
-        logger.info("Loaded language {}", language.getName());
-        return language;
     }
 }

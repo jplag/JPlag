@@ -39,12 +39,11 @@ public class SubmissionSetBuilder {
      * Creates a builder for submission sets.
      * @param language is the language of the submissions.
      * @param options are the configured options.
-     * @param excludedFileNames a list of file names to be excluded
      */
-    public SubmissionSetBuilder(Language language, JPlagOptions options, Set<String> excludedFileNames) {
+    public SubmissionSetBuilder(Language language, JPlagOptions options) {
         this.language = language;
         this.options = options;
-        this.excludedFileNames = excludedFileNames;
+        this.excludedFileNames = options.excludedFiles();
     }
 
     /**
@@ -53,8 +52,8 @@ public class SubmissionSetBuilder {
      * @throws ExitException if the directory cannot be read.
      */
     public SubmissionSet buildSubmissionSet() throws ExitException {
-        Set<File> submissionDirectories = verifyRootDirectories(options.getSubmissionDirectories(), true);
-        Set<File> oldSubmissionDirectories = verifyRootDirectories(options.getOldSubmissionDirectories(), false);
+        Set<File> submissionDirectories = verifyRootDirectories(options.submissionDirectories(), true);
+        Set<File> oldSubmissionDirectories = verifyRootDirectories(options.oldSubmissionDirectories(), false);
         checkForNonOverlappingRootDirectories(submissionDirectories, oldSubmissionDirectories);
 
         // For backward compatibility, don't prefix submission names with their root directory
@@ -134,7 +133,7 @@ public class SubmissionSetBuilder {
             return Optional.empty();
         }
 
-        String baseCodeName = options.getBaseCodeSubmissionName().orElseThrow();
+        String baseCodeName = Optional.ofNullable(options.baseCodeSubmissionName()).orElseThrow();
         Submission baseCode = loadBaseCodeAsPath(baseCodeName);
         if (baseCode == null) {
             int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
@@ -275,17 +274,17 @@ public class SubmissionSetBuilder {
      */
     private Submission processSubmission(String submissionName, File submissionFile, boolean isNew) throws ExitException {
 
-        if (submissionFile.isDirectory() && options.getSubdirectoryName() != null) {
+        if (submissionFile.isDirectory() && options.subdirectoryName() != null) {
             // Use subdirectory instead
-            submissionFile = new File(submissionFile, options.getSubdirectoryName());
+            submissionFile = new File(submissionFile, options.subdirectoryName());
 
             if (!submissionFile.exists()) {
                 throw new SubmissionException(
-                        String.format("Submission %s does not contain the given subdirectory '%s'", submissionName, options.getSubdirectoryName()));
+                        String.format("Submission %s does not contain the given subdirectory '%s'", submissionName, options.subdirectoryName()));
             }
 
             if (!submissionFile.isDirectory()) {
-                throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.getSubdirectoryName()));
+                throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.subdirectoryName()));
             }
         }
 
@@ -322,13 +321,13 @@ public class SubmissionSetBuilder {
      * @return true if the file suffix matches the language.
      */
     private boolean hasValidSuffix(File file) {
-        String[] validSuffixes = options.getFileSuffixes();
+        List<String> validSuffixes = options.fileSuffixes();
 
         // This is the case if either the language frontends or the CLI did not set the valid suffixes array in options
-        if (validSuffixes == null || validSuffixes.length == 0) {
+        if (validSuffixes == null || validSuffixes.isEmpty()) {
             return true;
         }
-        return Arrays.stream(validSuffixes).anyMatch(suffix -> file.getName().endsWith(suffix));
+        return validSuffixes.stream().anyMatch(suffix -> file.getName().endsWith(suffix));
     }
 
     /**
