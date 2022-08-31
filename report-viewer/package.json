@@ -17,7 +17,7 @@
     "jszip": "^3.10.0",
     "node-polyfill-webpack-plugin": "^2.0.0",
     "slash": "^4.0.0",
-    "vue": "^3.2.37",
+    "vue": "^3.2.38",
     "vue-chart-3": "^3.1.8",
     "vue-draggable-next": "^2.1.1",
     "vue-router": "^4.1.4",
