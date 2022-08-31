@@ -36,7 +36,7 @@ class StoredMatchesTest extends CommandLineInterfaceTest {
     void testLowerBound() {
         String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, Integer.toString(-2));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(-1, options.maximumNumberOfComparisons());
+        assertEquals(JPlagOptions.SHOW_ALL_COMPARISONS, options.maximumNumberOfComparisons());
     }
 
     @Test
