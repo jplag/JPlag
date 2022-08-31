@@ -52,7 +52,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
     public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 30;
-    public static final int SHOW_ALL_COMPARISONS = -1;
+    public static final int SHOW_ALL_COMPARISONS = 0;
     public static final SimilarityMetric DEFAULT_SIMILARITY_METRIC = SimilarityMetric.AVG;
     public static final Charset CHARSET = StandardCharsets.UTF_8;
 
