@@ -176,7 +176,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
     }
 
     public boolean hasBaseCode() {
-        return baseCodeSubmissionName != null && !baseCodeSubmissionName.isBlank();
+        return baseCodeSubmissionName != null;
     }
 
     public Set<String> excludedFiles() {
