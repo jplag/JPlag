@@ -26,7 +26,7 @@ class StoredMatchesTest extends CommandLineInterfaceTest {
 
     @Test
     void testAll() {
-        int expectedValue = -1;
+        int expectedValue = JPlagOptions.SHOW_ALL_COMPARISONS;
         String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, Integer.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(expectedValue, options.maximumNumberOfComparisons());
