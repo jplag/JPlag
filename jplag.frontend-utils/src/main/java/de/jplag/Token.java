@@ -20,25 +20,15 @@ public class Token {
      * @param file is the name of the source code file.
      */
     public static Token fileEnd(String file) {
-        return new Token(SharedTokenType.FILE_END, file, NO_VALUE);
-    }
-
-    /**
-     * Creates a token without information about the column or the length of the token in the line.
-     * @param type is the token type.
-     * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1. For
-     * {@link TokenConstants#FILE_END FILE_END} it is automatically set to {@link #NO_VALUE}.
-     */
-    public Token(TokenType type, String file, int line) {
-        this(type, file, line, NO_VALUE, NO_VALUE);
+        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE);
     }
 
     /**
      * Creates a token with column and length information.
      * @param type is the token type.
      * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
+     * @param line line is the line index in the source code where the token resides. Cannot be smaller than 1. For
+     * {@link SharedTokenType#FILE_END FILE_END} it is automatically set to {@link #NO_VALUE}.
      * @param column is the column index, meaning where the token starts in the line.
      * @param length is the length of the token in the source code.
      */
@@ -47,11 +37,13 @@ public class Token {
         this.file = file;
         if (type == SharedTokenType.FILE_END) {
             this.line = NO_VALUE;
+            this.column = NO_VALUE;
+            this.length = NO_VALUE;
         } else {
             this.line = line > 0 ? line : 1;
+            this.column = column;
+            this.length = length;
         }
-        this.column = column;
-        this.length = length;
     }
 
     /**

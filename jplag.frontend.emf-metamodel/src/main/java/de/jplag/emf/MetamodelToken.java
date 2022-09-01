@@ -22,8 +22,7 @@ public class MetamodelToken extends Token {
      * @param eObject is the corresponding eObject in the model from which this token was extracted.
      */
     public MetamodelToken(MetamodelTokenType type, String file, EObject eObject) {
-        super(type, file, -1);
-        this.eObject = Optional.of(eObject);
+        this(type, file, NO_VALUE, NO_VALUE, NO_VALUE, Optional.of(eObject));
     }
 
     /**
@@ -32,8 +31,7 @@ public class MetamodelToken extends Token {
      * @param file is the name of the source model file.
      */
     public MetamodelToken(TokenType type, String file) {
-        super(type, file, -1);
-        this.eObject = Optional.empty();
+        this(type, file, NO_VALUE, NO_VALUE, NO_VALUE, Optional.empty());
     }
 
     /**
