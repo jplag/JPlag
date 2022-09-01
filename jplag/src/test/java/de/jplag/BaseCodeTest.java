@@ -16,24 +16,24 @@ public class BaseCodeTest extends TestBase {
 
     @Test
     void testBasecodeUserSubmissionComparison() throws ExitException {
-        JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base"));
+        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionName("base"));
         verifyResults(result);
     }
 
     @Test
     void testTinyBasecode() {
-        assertThrows(BasecodeException.class, () -> runJPlag("TinyBasecode", it -> it.setBaseCodeSubmissionName("base")));
+        assertThrows(BasecodeException.class, () -> runJPlag("TinyBasecode", it -> it.withBaseCodeSubmissionName("base")));
     }
 
     @Test
     void testEmptySubmission() throws ExitException {
-        JPlagResult result = runJPlag("emptysubmission", it -> it.setBaseCodeSubmissionName("base"));
+        JPlagResult result = runJPlag("emptysubmission", it -> it.withBaseCodeSubmissionName("base"));
         verifyResults(result);
     }
 
     @Test
     void testAutoTrimFileSeparators() throws ExitException {
-        JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName(File.separator + "base" + File.separator));
+        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionName(File.separator + "base" + File.separator));
         verifyResults(result);
     }
 
@@ -47,22 +47,22 @@ public class BaseCodeTest extends TestBase {
 
     @Test
     void testBasecodePathComparison() throws ExitException {
-        JPlagResult result = runJPlag("basecode", it -> it.setBaseCodeSubmissionName(getBasePath("basecode-base")));
+        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionName(getBasePath("basecode-base")));
         assertEquals(3, result.getNumberOfSubmissions()); // "basecode/base" is now a user submission.
     }
 
     @Test
     void testInvalidRoot() {
-        assertThrows(RootDirectoryException.class, () -> runJPlag("basecode", it -> it.setSubmissionDirectories(List.of("WrongRoot"))));
+        assertThrows(RootDirectoryException.class, () -> runJPlag("basecode", it -> it.withSubmissionDirectories(List.of("WrongRoot"))));
     }
 
     @Test
     void testInvalidBasecode() {
-        assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> it.setBaseCodeSubmissionName("WrongBasecode")));
+        assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> it.withBaseCodeSubmissionName("WrongBasecode")));
     }
 
     @Test
     void testBasecodeUserSubmissionWithDots() {
-        assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> it.setBaseCodeSubmissionName("base.ext")));
+        assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> it.withBaseCodeSubmissionName("base.ext")));
     }
 }

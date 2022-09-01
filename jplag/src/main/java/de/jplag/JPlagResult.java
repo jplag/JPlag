@@ -61,7 +61,7 @@ public class JPlagResult {
      * @return a list of comparisons sorted descending by percentage.
      */
     public List<JPlagComparison> getComparisons(int numberOfComparisons) {
-        if (numberOfComparisons == -1) {
+        if (numberOfComparisons == JPlagOptions.SHOW_ALL_COMPARISONS) {
             return comparisons;
         }
         return comparisons.subList(0, Math.min(numberOfComparisons, comparisons.size()));
@@ -124,7 +124,7 @@ public class JPlagResult {
     @Override
     public String toString() {
         return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getAllComparisons().size(),
-                getDuration(), getOptions().getLanguage().getName(), submissions.numberOfSubmissions());
+                getDuration(), getOptions().language().getName(), submissions.numberOfSubmissions());
     }
 
     /**

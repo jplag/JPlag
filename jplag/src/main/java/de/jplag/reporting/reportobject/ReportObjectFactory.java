@@ -78,13 +78,13 @@ public class ReportObjectFactory {
     }
 
     private void copySubmissionFilesToReport(String path, JPlagResult result) {
-        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().getMaximumNumberOfComparisons());
+        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
         Set<Submission> submissions = getSubmissions(comparisons);
         File submissionsPath = createSubmissionsDirectory(path);
         if (submissionsPath == null) {
             return;
         }
-        Language language = result.getOptions().getLanguage();
+        Language language = result.getOptions().language();
         for (Submission submission : submissions) {
             File directory = createSubmissionDirectory(path, submissionsPath, submission);
             if (directory == null) {
@@ -127,21 +127,21 @@ public class ReportObjectFactory {
     private void writeOverview(JPlagResult result, String path) {
 
         List<String> folders = new ArrayList<>();
-        folders.addAll(result.getOptions().getSubmissionDirectories());
-        folders.addAll(result.getOptions().getOldSubmissionDirectories());
+        folders.addAll(result.getOptions().submissionDirectories());
+        folders.addAll(result.getOptions().oldSubmissionDirectories());
 
-        String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().getBaseCodeSubmissionName().orElse("") : "";
+        String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionName() : "";
         ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
 
         OverviewReport overviewReport = new OverviewReport(folders, // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
-                result.getOptions().getLanguage().getName(), // language
-                List.of(result.getOptions().getFileSuffixes()), // fileExtensions
+                result.getOptions().language().getName(), // language
+                result.getOptions().fileSuffixes(), // fileExtensions
                 submissionNameToIdMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)), // submissionIds
                 submissionNameToNameToComparisonFileName, // result.getOptions().getMinimumTokenMatch(),
                 List.of(), // failedSubmissionNames
-                result.getOptions().getExcludedFiles(), // excludedFiles
-                result.getOptions().getMinimumTokenMatch(), // matchSensitivity
+                result.getOptions().excludedFiles(), // excludedFiles
+                result.getOptions().minimumTokenMatch(), // matchSensitivity
                 getDate(),// dateOfExecution
                 result.getDuration(), // executionTime
                 getMetrics(result),// metrics

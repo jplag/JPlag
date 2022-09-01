@@ -1,8 +1,7 @@
 package de.jplag.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,13 +14,13 @@ class BaseCodeOptionTest extends CommandLineInterfaceTest {
     @Test
     void testDefaultValue() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(Optional.empty(), options.getBaseCodeSubmissionName());
+        assertNull(options.baseCodeSubmissionName());
     }
 
     @Test
     void testCustomName() {
         String argument = buildArgument(CommandLineArgument.BASE_CODE, NAME);
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(NAME, options.getBaseCodeSubmissionName().get());
+        assertEquals(NAME, options.baseCodeSubmissionName());
     }
 }

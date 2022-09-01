@@ -22,7 +22,7 @@ public class ParallelComparisonTest extends TestBase {
      */
     @Test
     public void testSimpleDuplicate() throws ExitException {
-        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.setComparisonMode(PARALLEL));
+        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.withComparisonMode(PARALLEL));
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
@@ -36,7 +36,7 @@ public class ParallelComparisonTest extends TestBase {
      */
     @Test
     public void testNoDuplicate() throws ExitException {
-        JPlagResult result = runJPlag("NoDuplicate", it -> it.setComparisonMode(PARALLEL));
+        JPlagResult result = runJPlag("NoDuplicate", it -> it.withComparisonMode(PARALLEL));
 
         assertEquals(3, result.getNumberOfSubmissions());
         assertEquals(3, result.getAllComparisons().size());
@@ -51,7 +51,7 @@ public class ParallelComparisonTest extends TestBase {
      */
     @Test
     public void testPartialPlagiarism() throws ExitException {
-        JPlagResult result = runJPlag("PartialPlagiarism", it -> it.setComparisonMode(PARALLEL));
+        JPlagResult result = runJPlag("PartialPlagiarism", it -> it.withComparisonMode(PARALLEL));
 
         assertEquals(5, result.getNumberOfSubmissions());
         assertEquals(10, result.getAllComparisons().size());

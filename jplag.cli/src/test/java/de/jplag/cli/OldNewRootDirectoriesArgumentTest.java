@@ -4,52 +4,52 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public class OldNewRootDirectoriesArgumentTest extends CommandLineInterfaceTest {
+class OldNewRootDirectoriesArgumentTest extends CommandLineInterfaceTest {
     @Test
-    public void testNoRootDirectories() {
+    void testNoRootDirectories() {
         buildOptionsFromCLI();
 
-        assertEquals(0, options.getSubmissionDirectories().size());
-        assertEquals(0, options.getOldSubmissionDirectories().size());
+        assertEquals(0, options.submissionDirectories().size());
+        assertEquals(0, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    public void testTwoRootDirectoryArguments() {
+    void testTwoRootDirectoryArguments() {
         buildOptionsFromCLI("root1", "root2");
 
-        assertEquals(2, options.getSubmissionDirectories().size());
-        assertEquals(0, options.getOldSubmissionDirectories().size());
+        assertEquals(2, options.submissionDirectories().size());
+        assertEquals(0, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    public void testNewOption() {
+    void testNewOption() {
         buildOptionsFromCLI("-new", "root1", "root2");
 
-        assertEquals(2, options.getSubmissionDirectories().size());
-        assertEquals(0, options.getOldSubmissionDirectories().size());
+        assertEquals(2, options.submissionDirectories().size());
+        assertEquals(0, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    public void testDoubleNewOption() {
+    void testDoubleNewOption() {
         buildOptionsFromCLI("-new", "root1", "-new", "root2");
 
-        assertEquals(2, options.getSubmissionDirectories().size());
-        assertEquals(0, options.getOldSubmissionDirectories().size());
+        assertEquals(2, options.submissionDirectories().size());
+        assertEquals(0, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    public void testOldOption() {
+    void testOldOption() {
         buildOptionsFromCLI("-old", "root1");
 
-        assertEquals(0, options.getSubmissionDirectories().size());
-        assertEquals(1, options.getOldSubmissionDirectories().size());
+        assertEquals(0, options.submissionDirectories().size());
+        assertEquals(1, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    public void testNewAndOldOption() {
+    void testNewAndOldOption() {
         buildOptionsFromCLI("-new", "root1", "-old", "root2");
 
-        assertEquals(1, options.getSubmissionDirectories().size());
-        assertEquals(1, options.getOldSubmissionDirectories().size());
+        assertEquals(1, options.submissionDirectories().size());
+        assertEquals(1, options.oldSubmissionDirectories().size());
     }
 }

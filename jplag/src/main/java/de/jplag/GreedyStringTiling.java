@@ -27,7 +27,7 @@ public class GreedyStringTiling {
     private Map<Submission, Set<Token>> baseCodeMarkings = new HashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
-        this.minimumMatchLength = options.getMinimumTokenMatch();
+        this.minimumMatchLength = options.minimumTokenMatch();
     }
 
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
