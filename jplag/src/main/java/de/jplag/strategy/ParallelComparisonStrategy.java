@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.Lock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,21 +12,16 @@ import de.jplag.*;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Strategy for the parallel comparison of submissions. Uses all available cores and compares in a non-blocking manner.
+ * Strategy for the parallel comparison of submissions. Uses all available cores.
  * @author Timur Saglam
  */
 public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     private static final Logger logger = LoggerFactory.getLogger("JPlag");
 
     private static final int TIMEOUT_IN_SECONDS = 5;
-    private final ConcurrentMap<String, Lock> submissionLocks;
-    private ExecutorService threadPool;
-    private final List<JPlagComparison> comparisons;
 
     public ParallelComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
         super(options, greedyStringTiling);
-        submissionLocks = new ConcurrentHashMap<>();
-        comparisons = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override
@@ -38,20 +32,19 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         if (withBaseCode) {
             compareSubmissionsToBaseCode(submissionSet);
         }
-        threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        comparisons.clear();
-        submissionLocks.clear();
+        ExecutorService threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
         // Parallel compare:
         List<Submission> submissions = submissionSet.getSubmissions();
         List<SubmissionTuple> tuples = buildComparisonTuples(submissions);
-        Collections.shuffle(tuples); // Reduces how often submission pairs must be re-submitted
+        Collections.shuffle(tuples); // Reduce how often cache collisions occur
+        List<JPlagComparison> comparisons = Collections.synchronizedList(new ArrayList<>());
         for (SubmissionTuple tuple : tuples) {
-            threadPool.execute(compareTuple(tuple));
+            threadPool.execute(compareTuple(tuple, comparisons));
         }
 
         // Clean up and return result:
-        shutdownThreadPool();
+        shutdownThreadPool(threadPool);
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
         return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
     }
@@ -59,9 +52,10 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     /**
      * Creates a runnable which compares a submission tuple.
      * @param tuple contains the submissions to compare.
+     * @param comparisons is the list to append the result to.
      * @return the runnable for parallel use.
      */
-    private Runnable compareTuple(SubmissionTuple tuple) {
+    private Runnable compareTuple(SubmissionTuple tuple, List<JPlagComparison> comparisons) {
         return new Runnable() {
             @Override
             public void run() {
@@ -73,7 +67,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     /**
      * Shuts down the thread pool and awaits termination
      */
-    private void shutdownThreadPool() {
+    private void shutdownThreadPool(ExecutorService threadPool) {
         threadPool.shutdown();
         try {
             if (!threadPool.awaitTermination(TIMEOUT_IN_SECONDS, TimeUnit.SECONDS)) {
