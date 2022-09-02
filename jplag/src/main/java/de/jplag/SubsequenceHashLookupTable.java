@@ -11,8 +11,12 @@ import java.util.Set;
  * optimized to work in O(n).
  */
 public class SubsequenceHashLookupTable {
+    /**
+     * Value combination is chosen such that the maximum possible hash value does not exceed Int.max. Computation formula
+     * for maximum hash value is \sum from (i=0 to MAX_HASH_LENGTH - 1) with (TOKEN_HASH_MODULO - 1) * 2^i
+     */
     private static final int MAX_HASH_LENGTH = 25;
-    private static final int TOKEN_HASH_MODULO = 63;
+    private static final int TOKEN_HASH_MODULO = 64;
 
     /** Indicator that the subsequence should not be considered for comparison matching */
     public static final int NO_HASH = -1;
@@ -77,7 +81,7 @@ public class SubsequenceHashLookupTable {
 
     /**
      * Creates hashes for all subsequences with windowSize. Code is optimized to perform in O(n) using a windowing approach.
-     * Hashes are computed by \sum from (i=0 to windowSize) with hash(tokens[offset+i]) * pow(2, hashLength-1-i)
+     * Hashes are computed by \sum from (i=0 to windowSize) with hash(tokens[offset+i]) * 2^(hashLength-1-i)
      * @param markedTokens contains the marked tokens. Subsequences containing a marked token will receive the NO_HASH
      * value.
      */
