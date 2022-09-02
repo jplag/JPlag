@@ -25,6 +25,9 @@ public class ParserAdapter extends AbstractParser {
     private TokenList tokens;
     private String currentFile;
     private int currentLine;
+    /**
+     * The position of the current line break in the content string
+     */
     private int currentLineIndex;
 
     public ParserAdapter() {
@@ -105,8 +108,7 @@ public class ParserAdapter extends AbstractParser {
         int type = getTokenType(text);
         int column = label.beginPosition() - currentLineIndex;
         int length = label.endPosition() - label.beginPosition();
-        TokenPosition position = new TokenPosition(currentLine, column, length);
-        tokens.addToken(new TextToken(text, type, currentFile, position));
+        tokens.addToken(new TextToken(text, type, currentFile, currentLine, column, length));
     }
 
     private String readFile(Path filePath) {
