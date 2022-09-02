@@ -20,7 +20,7 @@ public class ParserAdapter extends AbstractParser {
 
     private final Map<String, Integer> tokenTypes = new HashMap<>();
     private final StanfordCoreNLP pipeline;
-    private int tokenTypeIndex = 1; // 0 is FILE_END token, SEPARATOR is not used as there are no methods.
+    private int tokenTypeIndex = 2; // 0 is FILE_END token, 1 is SEPARATOR_TOKEN, so start at 2.
 
     private TokenList tokens;
     private String currentFile;
