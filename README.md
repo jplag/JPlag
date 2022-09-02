@@ -81,7 +81,6 @@ named arguments:
   -n N             The maximum number of comparisons that will be shown in the  generated report, if set to -1 all comparisons will be shown
                         (default: 30)
   -r R             Name of the directory in which the comparison results will be stored (default: result)
-  -c               {normal,parallel} Comparison mode used to compare the programs (default: normal)
 ```
 
 ### Java API

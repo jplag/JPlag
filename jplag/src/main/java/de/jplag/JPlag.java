@@ -7,6 +7,7 @@ import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
