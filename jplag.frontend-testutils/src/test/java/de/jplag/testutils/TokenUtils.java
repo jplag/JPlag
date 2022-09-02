@@ -12,7 +12,7 @@ public final class TokenUtils {
 
     /**
      * Returns the type of all tokens that belong to a certain file.
-     * @param tokenList is the list of {@link Token}s.
+     * @param tokenList is the list of {@link Token Tokens}.
      * @param name is the name of the target file.
      * @return the immutable list of token types.
      */
@@ -22,7 +22,7 @@ public final class TokenUtils {
 
     /**
      * Returns the tokens that belong to a certain file.
-     * @param tokenList is the list of {@link Token}s.
+     * @param tokenList is the list of {@link Token Tokens}.
      * @param name is the name of the target file.
      * @return the immutable list of tokens.
      */

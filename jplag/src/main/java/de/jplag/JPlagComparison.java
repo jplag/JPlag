@@ -1,14 +1,26 @@
 package de.jplag;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * This record represents the whole result of a comparison between two submissions.
  * @param firstSubmission is the first of the two submissions.
  * @param secondSubmission is the second of the two submissions.
- * @param matches is the list of all matches between the two submissions.
+ * @param matches is the unmodifiable list of all matches between the two submissions.
  */
 public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches) {
+    /**
+     * Initializes a new comparison.
+     * @param firstSubmission is the first of the two submissions.
+     * @param secondSubmission is the second of the two submissions.
+     * @param matches is the list of all matches between the two submissions.
+     */
+    public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches) {
+        this.firstSubmission = firstSubmission;
+        this.secondSubmission = secondSubmission;
+        this.matches = Collections.unmodifiableList(matches);
+    }
 
     /**
      * Get the total number of matched tokens for this comparison.

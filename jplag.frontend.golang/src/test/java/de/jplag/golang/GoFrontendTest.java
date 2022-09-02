@@ -102,7 +102,7 @@ class GoFrontendTest {
         // All lines that contain code
         var codeLines = getCodeLines(lines);
         // All lines that contain a token
-        var tokenLines = tokens.stream().mapToInt(Token::getLine).distinct().boxed().toList();
+        var tokenLines = tokens.stream().map(Token::getLine).distinct().toList();
 
         if (codeLines.size() > tokenLines.size()) {
             List<Integer> missedLinesIndices = new ArrayList<>(codeLines);

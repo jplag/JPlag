@@ -4,8 +4,8 @@ import static de.jplag.TokenConstants.FILE_END;
 import static de.jplag.TokenConstants.SEPARATOR_TOKEN;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +23,8 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
 
     private final int minimumMatchLength;
-    private Map<Submission, SubsequenceHashLookupTable> hashLookupTables = new HashMap<>();
-    private Map<Submission, Set<Token>> baseCodeMarkings = new HashMap<>();
+    private Map<Submission, SubsequenceHashLookupTable> hashLookupTables = new IdentityHashMap<>();
+    private Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
         this.minimumMatchLength = options.minimumTokenMatch();
