@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.CleanupMode;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -56,28 +55,20 @@ class TextFrontendTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "\n",
-        "\r",
-        "\r\n",
-    })
+    @ValueSource(strings = {"\n", "\r", "\r\n",})
     void testLineBreakInputs(String input, @TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("input.txt");
         Files.writeString(file, input);
-        TokenList result = frontend.parse(tempDir.toFile(), new String[]{"input.txt"});
+        TokenList result = frontend.parse(tempDir.toFile(), new String[] {"input.txt"});
         assertEquals(1, result.size());
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "\ntoken",
-        "\rtoken",
-        "\r\ntoken",
-    })
+    @ValueSource(strings = {"\ntoken", "\rtoken", "\r\ntoken",})
     void testTokenAfterLineBreak(String input, @TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("input.txt");
         Files.writeString(file, input);
-        TokenList result = frontend.parse(tempDir.toFile(), new String[]{"input.txt"});
+        TokenList result = frontend.parse(tempDir.toFile(), new String[] {"input.txt"});
         assertEquals(2, result.getToken(0).getLine());
     }
 

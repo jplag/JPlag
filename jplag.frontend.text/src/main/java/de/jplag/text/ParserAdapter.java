@@ -1,12 +1,5 @@
 package de.jplag.text;
 
-import de.jplag.AbstractParser;
-import de.jplag.TokenConstants;
-import de.jplag.TokenList;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.pipeline.CoreDocument;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,6 +7,14 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import de.jplag.AbstractParser;
+import de.jplag.TokenConstants;
+import de.jplag.TokenList;
+
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.pipeline.CoreDocument;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 public class ParserAdapter extends AbstractParser {
 
