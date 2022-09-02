@@ -156,7 +156,7 @@ class GoFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).sorted().distinct().boxed().toList();
+        var foundTokens = tokens.stream().parallel().map(Token::getType).sorted().distinct().toList();
 
         // Exclude SEPARATOR_TOKEN, as it does not occur
         var missingTokenTypes = IntStream.range(0, GoTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).boxed()

@@ -100,7 +100,7 @@ class ScalaFrontendTest {
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().boxed().toList();
+            var tokenLines = tokens.stream().map(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().toList();
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
