@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,6 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     private final ConcurrentMap<String, Lock> submissionLocks;
     private ExecutorService threadPool;
     private final List<JPlagComparison> comparisons;
-    private int successfulComparisons;
 
     public ParallelComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
         super(options, greedyStringTiling);
@@ -43,24 +41,13 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         comparisons.clear();
         submissionLocks.clear();
-        successfulComparisons = 0;
 
         // Parallel compare:
         List<Submission> submissions = submissionSet.getSubmissions();
         List<SubmissionTuple> tuples = buildComparisonTuples(submissions);
         Collections.shuffle(tuples); // Reduces how often submission pairs must be re-submitted
         for (SubmissionTuple tuple : tuples) {
-            threadPool.execute(compareTuple(tuple, withBaseCode));
-        }
-
-        // Ensure termination:
-        while (successfulComparisons < tuples.size()) {
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                logger.error(e.getMessage(), e);
-                Thread.currentThread().interrupt();
-            }
+            threadPool.execute(compareTuple(tuple));
         }
 
         // Clean up and return result:
@@ -70,46 +57,17 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     /**
-     * Creates a runnable which compares a submission tuple. If the submissions are locked, the runnable is re-submitted.
+     * Creates a runnable which compares a submission tuple.
      * @param tuple contains the submissions to compare.
-     * @param withBaseCode specifies if base code is used.
      * @return the runnable for parallel use.
      */
-    private Runnable compareTuple(SubmissionTuple tuple, boolean withBaseCode) {
+    private Runnable compareTuple(SubmissionTuple tuple) {
         return new Runnable() {
             @Override
             public void run() {
-                Lock leftLock = getOrCreateLock(tuple.left().getName());
-                Lock rightLock = getOrCreateLock(tuple.right().getName());
-                boolean hasLeft = leftLock.tryLock();
-                boolean hasRight = hasLeft && rightLock.tryLock();
-                try {
-                    if (hasLeft && hasRight) { // both locks acquired!
-                        compareSubmissions(tuple.left(), tuple.right(), withBaseCode).ifPresent(comparisons::add);
-                        synchronized (this) {
-                            successfulComparisons++;
-                        }
-                    } else {
-                        threadPool.execute(this); // re-submit runnable, as at least one submission is locked.
-                    }
-                } finally {
-                    if (hasRight) {
-                        rightLock.unlock();
-                    }
-                    if (hasLeft) {
-                        leftLock.unlock();
-                    }
-                }
+                compareSubmissions(tuple.left(), tuple.right()).ifPresent(comparisons::add);
             }
         };
-    }
-
-    /**
-     * @return a lock for a given key. If it does not exist, it is created in a thread-safe manner.
-     */
-    private Lock getOrCreateLock(String key) {
-        submissionLocks.putIfAbsent(key, new ReentrantLock()); // atomic operation
-        return submissionLocks.get(key);
     }
 
     /**
