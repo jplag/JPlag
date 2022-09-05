@@ -149,8 +149,8 @@ class GoFrontendTest {
         var annotatedGoTokens = annotatedTokens.stream().filter(GoTokenType.class::isInstance).collect(Collectors.toSet());
         var allGoTokens = GoTokenType.values();
         var missingGoTokens = Arrays.stream(allGoTokens).filter(token -> !annotatedGoTokens.contains(token)).toList();
-        assertTrue(missingGoTokens.isEmpty(),
-                "The following go tokens are missing:\n" + String.join("\n", missingGoTokens.stream().map(GoTokenType::getDescription).toList()));
+        assertTrue(missingGoTokens.isEmpty(), "The following go tokens are missing in the code example '%s':\n".formatted(fileName)
+                + String.join("\n", missingGoTokens.stream().map(GoTokenType::getDescription).toList()));
     }
 
 }

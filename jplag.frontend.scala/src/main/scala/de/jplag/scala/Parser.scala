@@ -71,7 +71,7 @@ class Parser extends AbstractParser {
         private def handleDefinitionPattern(pattern: Pat, optionalValue: Option[Term]): Unit = {
             pattern match {
                 // variable tuple
-                case tuple@Pat.Tuple(patternArgs) =>
+                case Pat.Tuple(patternArgs) =>
                     optionalValue match {
                         // not initialized
                         case None => for (elem <- patternArgs) handleDefinitionPattern(elem, None)
@@ -194,7 +194,7 @@ class Parser extends AbstractParser {
 
                         encloseAndApply(body, TR(Some(METHOD_BEGIN), Some(METHOD_END)))
                     })
-                case Defn.Macro(modifiers, macroName, typeParameters, parameterLists, declaredType, body) => TR(Some(MACRO), traverse = _ => {
+                case Defn.Macro(modifiers, _, typeParameters, parameterLists, _, body) => TR(Some(MACRO), traverse = _ => {
                     applyRecursively(Seq(modifiers, typeParameters, parameterLists))
                     encloseAndApply(body, TR(Some(MACRO_BEGIN), Some(MACRO_END)))
                 })
@@ -227,7 +227,7 @@ class Parser extends AbstractParser {
                 case Ctor.Secondary(_) =>
                     TR(Some(CONSTRUCTOR_BEGIN), Some(CONSTRUCTOR_END))
 
-                case Init(typeName, name, argumentLists) if argumentLists.nonEmpty => TR(traverse = _ => {
+                case Init(_, _, argumentLists) if argumentLists.nonEmpty => TR(traverse = _ => {
                     assignRecursively(argumentLists, ARGUMENT, doApply = true)
                 })
                 case Enumerator.Guard(_) => TR(Some(GUARD))

@@ -5,5 +5,5 @@ package de.jplag;
  * @see SharedTokenType
  */
 public interface TokenType {
-    public String getDescription();
+    String getDescription();
 }

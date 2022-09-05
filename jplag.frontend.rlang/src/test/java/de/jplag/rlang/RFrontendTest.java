@@ -99,8 +99,8 @@ class RFrontendTest {
         var annotatedRTokens = annotatedTokens.stream().filter(RTokenType.class::isInstance).collect(Collectors.toSet());
         var allRTokens = RTokenType.values();
         var missingRTokens = Arrays.stream(allRTokens).filter(token -> !annotatedRTokens.contains(token)).toList();
-        assertTrue(missingRTokens.isEmpty(),
-                "The following R tokens are missing:\n" + String.join("\n", missingRTokens.stream().map(RTokenType::getDescription).toList()));
+        assertTrue(missingRTokens.isEmpty(), "The following R tokens are missing in the code example '%s':\n".formatted(fileName)
+                + String.join("\n", missingRTokens.stream().map(RTokenType::getDescription).toList()));
     }
 
     private static String getNoCodeLineExpression() {

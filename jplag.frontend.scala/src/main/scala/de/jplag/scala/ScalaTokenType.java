@@ -78,7 +78,7 @@ public enum ScalaTokenType implements TokenType {
         return description;
     }
 
-    private ScalaTokenType(String description) {
+    ScalaTokenType(String description) {
         this.description = description;
     }
 }

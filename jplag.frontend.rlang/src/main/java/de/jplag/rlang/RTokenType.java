@@ -39,7 +39,7 @@ public enum RTokenType implements TokenType {
         return this.description;
     }
 
-    private RTokenType(String description) {
+    RTokenType(String description) {
         this.description = description;
     }
 }

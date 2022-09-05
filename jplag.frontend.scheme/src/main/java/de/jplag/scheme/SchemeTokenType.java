@@ -51,7 +51,7 @@ public enum SchemeTokenType implements TokenType {
         return this.description;
     }
 
-    private SchemeTokenType(String description) {
+    SchemeTokenType(String description) {
         this.description = description;
     }
 }

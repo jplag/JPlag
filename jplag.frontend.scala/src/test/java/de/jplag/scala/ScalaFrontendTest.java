@@ -118,7 +118,7 @@ class ScalaFrontendTest {
             boolean insideComment = false;
         };
 
-        var codeLines = IntStream.rangeClosed(1, lines.size()).sequential().filter(idx -> {
+        return IntStream.rangeClosed(1, lines.size()).sequential().filter(idx -> {
             String line = lines.get(idx - 1);
             if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT)) {
                 return false;
@@ -134,9 +134,6 @@ class ScalaFrontendTest {
             }
             return true;
         }).boxed().toList();
-
-        return codeLines;
-
     }
 
     /**
@@ -151,7 +148,7 @@ class ScalaFrontendTest {
         var annotatedScalaTokens = annotatedTokens.stream().filter(ScalaTokenType.class::isInstance).collect(Collectors.toSet());
         var allScalaTokens = ScalaTokenType.values();
         var missingScalaTokens = Arrays.stream(allScalaTokens).filter(token -> !annotatedScalaTokens.contains(token)).toList();
-        assertTrue(missingScalaTokens.isEmpty(), "The following kotlin tokens are missing:\n"
+        assertTrue(missingScalaTokens.isEmpty(), "The following scala tokens are missing in the code example '%s':\n".formatted(fileName)
                 + String.join("\n", missingScalaTokens.stream().map(ScalaTokenType::getDescription).toList()));
     }
 }

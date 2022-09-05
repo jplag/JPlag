@@ -20,7 +20,7 @@ public enum SharedTokenType implements TokenType {
         return description;
     }
 
-    private SharedTokenType(String description) {
+    SharedTokenType(String description) {
         this.description = description;
     }
 }

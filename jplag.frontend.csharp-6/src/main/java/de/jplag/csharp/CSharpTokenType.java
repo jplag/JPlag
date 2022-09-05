@@ -75,7 +75,7 @@ public enum CSharpTokenType implements TokenType {
         return this.description;
     }
 
-    private CSharpTokenType(String description) {
+    CSharpTokenType(String description) {
         this.description = description;
     }
 }

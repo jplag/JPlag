@@ -88,7 +88,7 @@ public enum JavaTokenType implements TokenType {
         return this.description;
     }
 
-    private JavaTokenType(String description) {
+    JavaTokenType(String description) {
         this.description = description;
     }
 }

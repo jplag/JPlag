@@ -105,7 +105,7 @@ class TokenPrinterTest {
             return description;
         }
 
-        private TestTokenType(String description) {
+        TestTokenType(String description) {
             this.description = description;
         }
     }

@@ -71,7 +71,7 @@ public enum CPPTokenType implements TokenType {
         return this.description;
     }
 
-    private CPPTokenType(String description) {
+    CPPTokenType(String description) {
         this.description = description;
     }
 }

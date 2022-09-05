@@ -29,7 +29,7 @@ public enum MetamodelTokenType implements TokenType {
         return description;
     }
 
-    private MetamodelTokenType(String description) {
+    MetamodelTokenType(String description) {
         this.description = description;
     }
 }

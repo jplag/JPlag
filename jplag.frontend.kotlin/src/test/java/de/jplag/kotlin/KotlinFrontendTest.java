@@ -143,7 +143,7 @@ class KotlinFrontendTest {
         var annotatedKotlinTokens = annotatedTokens.stream().filter(KotlinTokenType.class::isInstance).collect(Collectors.toSet());
         var allKotlinTokens = KotlinTokenType.values();
         var missingKotlinTokens = Arrays.stream(allKotlinTokens).filter(token -> !annotatedKotlinTokens.contains(token)).toList();
-        assertTrue(missingKotlinTokens.isEmpty(), "The following kotlin tokens are missing:\n"
+        assertTrue(missingKotlinTokens.isEmpty(), "The following kotlin tokens are missing in the code example '%s':\n".formatted(fileName)
                 + String.join("\n", missingKotlinTokens.stream().map(KotlinTokenType::getDescription).toList()));
     }
 

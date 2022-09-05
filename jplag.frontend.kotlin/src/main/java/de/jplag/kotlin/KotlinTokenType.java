@@ -80,7 +80,7 @@ public enum KotlinTokenType implements TokenType {
         return description;
     }
 
-    private KotlinTokenType(String description) {
+    KotlinTokenType(String description) {
         this.description = description;
     }
 }

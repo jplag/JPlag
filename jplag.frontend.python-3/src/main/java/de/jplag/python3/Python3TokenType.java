@@ -40,7 +40,7 @@ public enum Python3TokenType implements TokenType {
         return this.description;
     }
 
-    private Python3TokenType(String description) {
+    Python3TokenType(String description) {
         this.description = description;
     }
 }

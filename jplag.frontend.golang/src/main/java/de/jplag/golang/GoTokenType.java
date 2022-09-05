@@ -96,7 +96,7 @@ public enum GoTokenType implements TokenType {
         return this.description;
     }
 
-    private GoTokenType(String description) {
+    GoTokenType(String description) {
         this.description = description;
     }
 }

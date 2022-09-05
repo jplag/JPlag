@@ -118,7 +118,7 @@ public enum RustTokenType implements TokenType {
         return description;
     }
 
-    private RustTokenType(String description) {
+    RustTokenType(String description) {
         this.description = description;
     }
 
