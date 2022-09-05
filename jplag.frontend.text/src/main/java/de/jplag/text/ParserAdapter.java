@@ -18,6 +18,10 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
 public class ParserAdapter extends AbstractParser {
 
+    private static final char LF = '\n';
+    private static final char CR = '\r';
+    private static final String ANNOTATORS_KEY = "annotators";
+    private static final String ANNOTATORS_VALUE = "tokenize";
     private final Map<String, Integer> tokenTypes = new HashMap<>();
     private final StanfordCoreNLP pipeline;
     private int tokenTypeIndex = 2; // 0 is FILE_END token, 1 is SEPARATOR_TOKEN, so start at 2.
@@ -28,11 +32,11 @@ public class ParserAdapter extends AbstractParser {
     /**
      * The position of the current line break in the content string
      */
-    private int currentLineIndex;
+    private int currentLineBreakIndex;
 
     public ParserAdapter() {
         Properties properties = new Properties();
-        properties.put("annotators", "tokenize");
+        properties.put(ANNOTATORS_KEY, ANNOTATORS_VALUE);
         this.pipeline = new StanfordCoreNLP(properties);
     }
 
@@ -52,7 +56,7 @@ public class ParserAdapter extends AbstractParser {
     private boolean parseFile(File directory, String file) {
         this.currentFile = file;
         this.currentLine = 1; // lines start at 1
-        this.currentLineIndex = 0;
+        this.currentLineBreakIndex = 0;
         Path filePath = directory.toPath().resolve(file);
         String content = readFile(filePath);
         if (content == null) {
@@ -71,22 +75,22 @@ public class ParserAdapter extends AbstractParser {
     }
 
     /**
-     * Scan for line breaks and increase {@link #currentLine} and {@link #currentLineIndex} accordingly.
+     * Scan for line breaks and increase {@link #currentLine} and {@link #currentLineBreakIndex} accordingly.
      * @param content the file content
      * @param lastTokenEnd the end position of the last token
      * @param nextTokenBegin the begin position of the next token
      */
     private void advanceLineBreaks(String content, int lastTokenEnd, int nextTokenBegin) {
         for (int i = lastTokenEnd; i < nextTokenBegin; i++) {
-            if (content.charAt(i) == '\n') { // LF
+            if (content.charAt(i) == LF) {
                 currentLine++;
-                currentLineIndex = i;
-            } else if (content.charAt(i) == '\r') { // CR
-                if (i + 1 < content.length() && content.charAt(i + 1) == '\n') { // CRLF
+                currentLineBreakIndex = i;
+            } else if (content.charAt(i) == CR) {
+                if (i + 1 < content.length() && content.charAt(i + 1) == LF) { // CRLF
                     i++; // skip following LF
                 }
                 currentLine++;
-                currentLineIndex = i;
+                currentLineBreakIndex = i;
             }
         }
     }
@@ -94,19 +98,13 @@ public class ParserAdapter extends AbstractParser {
     private boolean isWord(CoreLabel token) {
         // consider a token as a word if it contains any alphanumeric character
         String text = token.originalText();
-        for (int i = 0; i < text.length(); i++) {
-            char c = text.charAt(i);
-            if (Character.isAlphabetic(c) || Character.isDigit(c)) {
-                return true;
-            }
-        }
-        return false;
+        return text.chars().anyMatch(it -> Character.isAlphabetic(it) || Character.isDigit(it));
     }
 
     private void addToken(CoreLabel label) {
         String text = label.originalText();
         int type = getTokenType(text);
-        int column = label.beginPosition() - currentLineIndex;
+        int column = label.beginPosition() - currentLineBreakIndex;
         int length = label.endPosition() - label.beginPosition();
         tokens.addToken(new TextToken(text, type, currentFile, currentLine, column, length));
     }
