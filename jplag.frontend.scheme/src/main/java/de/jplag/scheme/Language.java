@@ -2,9 +2,14 @@ package de.jplag.scheme;
 
 import java.io.File;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.TokenList;
 
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
+
+    public static final String IDENTIFIER = "scheme";
     private final de.jplag.scheme.Parser parser;
 
     public Language() {
@@ -22,8 +27,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return "scheme";
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override

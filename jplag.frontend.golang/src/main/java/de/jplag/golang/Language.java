@@ -2,12 +2,15 @@ package de.jplag.golang;
 
 import java.io.File;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.TokenList;
 
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
     private static final String NAME = "Go Parser";
-    private static final String SHORT_NAME = "Go";
+    public static final String IDENTIFIER = "go";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".go"};
     private final GoParserAdapter parserAdapter;
@@ -27,8 +30,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override

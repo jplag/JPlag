@@ -22,7 +22,7 @@ class InvalidSubmissionTest extends TestBase {
     @Test
     void testInvalidSubmissionsWithDebug() throws ExitException {
         try {
-            runJPlag(SAMPLE_NAME, it -> it.setDebugParser(true));
+            runJPlag(SAMPLE_NAME, it -> it.withDebugParser(true));
             fail("No submission exception was thrown!");
         } catch (SubmissionException e) {
             System.out.println(e.getMessage());
@@ -30,7 +30,8 @@ class InvalidSubmissionTest extends TestBase {
             File errorFolder = new File(Path.of(BASE_PATH, SAMPLE_NAME, "errors", "java").toString());
             assertTrue(errorFolder.exists());
             String[] errorSubmissions = errorFolder.list();
-            Arrays.sort(errorSubmissions); // File systems don't promise alphabetical order.
+            if (errorSubmissions != null)
+                Arrays.sort(errorSubmissions); // File systems don't promise alphabetical order.
             deleteDirectory(errorFolder.getParentFile());
             assertArrayEquals(new String[] {"A", "B"}, errorSubmissions);
         }

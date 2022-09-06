@@ -28,7 +28,7 @@ public class DirectoryManager {
      * @return The created directory
      */
     public static File createDirectory(String path, String name) throws IOException {
-        File directory = new File(path.concat("/").concat(name));
+        File directory = new File(path.concat(File.separator).concat(name));
         if (!directory.exists() && !directory.mkdirs()) {
             throw new IOException("Failed to create dir.");
         }

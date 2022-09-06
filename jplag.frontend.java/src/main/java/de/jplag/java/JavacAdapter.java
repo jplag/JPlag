@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.List;
 
 import javax.tools.*;
 import javax.tools.JavaCompiler.CompilationTask;
@@ -24,17 +25,25 @@ public class JavacAdapter {
     private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 
     public int parseFiles(File directory, Iterable<File> pathedFiles, final Parser parser) {
-        final StandardJavaFileManager fileManager = javac.getStandardFileManager(null, null, StandardCharsets.UTF_8);
         var listener = new DiagnosticCollector<>();
-        var javaFiles = fileManager.getJavaFileObjectsFromFiles(pathedFiles);
-        final CompilationTask task = javac.getTask(null, fileManager, listener, null, null, javaFiles);
-        final Trees trees = Trees.instance(task);
-        final SourcePositions positions = trees.getSourcePositions();
-        for (final CompilationUnitTree ast : executeCompilationTask(task)) {
-            final String filename = fileNameOf(directory, ast);
-            final LineMap map = ast.getLineMap();
-            ast.accept(new TokenGeneratingTreeScanner(filename, parser, map, positions, ast), null);
-            parser.add(TokenConstants.FILE_END, filename, 1, -1, -1);
+
+        try (final StandardJavaFileManager fileManager = javac.getStandardFileManager(listener, null, StandardCharsets.UTF_8)) {
+            var javaFiles = fileManager.getJavaFileObjectsFromFiles(pathedFiles);
+
+            // We need to disable annotation processing
+            // See
+            // https://stackoverflow.com/questions/72737445/system-java-compiler-behaves-different-depending-on-dependencies-defined-in-mave
+            final CompilationTask task = javac.getTask(null, fileManager, listener, List.of("-proc:none"), null, javaFiles);
+            final Trees trees = Trees.instance(task);
+            final SourcePositions positions = trees.getSourcePositions();
+            for (final CompilationUnitTree ast : executeCompilationTask(task)) {
+                final String filename = fileNameOf(directory, ast);
+                final LineMap map = ast.getLineMap();
+                ast.accept(new TokenGeneratingTreeScanner(filename, parser, map, positions, ast), null);
+                parser.add(TokenConstants.FILE_END, filename, 1, -1, -1);
+            }
+        } catch (IOException e) {
+            parser.logger.error(e.getMessage(), e);
         }
         return processErrors(parser.logger, listener);
     }

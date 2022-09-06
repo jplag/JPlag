@@ -14,7 +14,7 @@ class ComparisonModeTest extends CommandLineInterfaceTest {
     @Test
     void testDefaultMode() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(JPlagOptions.DEFAULT_COMPARISON_MODE, options.getComparisonMode());
+        assertEquals(JPlagOptions.DEFAULT_COMPARISON_MODE, options.comparisonMode());
     }
 
     @Test
@@ -29,7 +29,7 @@ class ComparisonModeTest extends CommandLineInterfaceTest {
         ComparisonMode mode = ComparisonMode.NORMAL;
         String argument = buildArgument(CommandLineArgument.COMPARISON_MODE, mode.getName());
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(mode, options.getComparisonMode());
+        assertEquals(mode, options.comparisonMode());
     }
 
     @Test
@@ -37,7 +37,7 @@ class ComparisonModeTest extends CommandLineInterfaceTest {
         ComparisonMode mode = ComparisonMode.PARALLEL;
         String argument = buildArgument(CommandLineArgument.COMPARISON_MODE, mode.getName());
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(mode, options.getComparisonMode());
+        assertEquals(mode, options.comparisonMode());
     }
 
 }

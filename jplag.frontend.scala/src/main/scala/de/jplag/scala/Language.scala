@@ -4,6 +4,8 @@ import de.jplag.TokenList
 
 import java.io.File
 
+import org.kohsuke.MetaInfServices
+
 class Language extends de.jplag.Language {
   private val parser = new Parser
   private final val fileExtensions = Array(".scala", ".sc")
@@ -12,7 +14,7 @@ class Language extends de.jplag.Language {
 
   override def getName = "Scala parser"
 
-  override def getShortName = "scala"
+  override def getIdentifier = "scala"
 
   override def minimumTokenMatch = 8
 
