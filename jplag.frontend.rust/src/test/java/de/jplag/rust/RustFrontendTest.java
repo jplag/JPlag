@@ -1,6 +1,6 @@
 package de.jplag.rust;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +37,7 @@ class RustFrontendTest {
     private static final String EMPTY_STRING = "";
     private static final String RUST_SHEBANG = "#!.*$";
     private static final double EPSILON = 1E-6;
+    public static final double BASELINE_COVERAGE = 0.75;
 
     private final Logger logger = LoggerFactory.getLogger("Rust frontend test");
     private final String[] testFiles = new String[] {"deno_core_runtime.rs", COMPLETE_TEST_FILE};
@@ -86,15 +87,15 @@ class RustFrontendTest {
             } else {
                 logger.info("Coverage: %.1f%%.".formatted(coverage * 100));
                 logger.info("Missing lines {}", codeLines);
-                if (coverage - 0.9 <= EPSILON) {
-                    // TODO use fail() instead when frontend is ready
+                if (coverage - BASELINE_COVERAGE <= EPSILON) {
                     logger.error("Source coverage is unsatisfactory");
+                    assertTrue(false);
                 }
             }
 
         } catch (IOException exception) {
             logger.info("Error while reading test file %s".formatted(fileName), exception);
-            fail();
+            assertTrue(false);
         }
     }
 
@@ -139,8 +140,9 @@ class RustFrontendTest {
 
         if (!allTokens.isEmpty()) {
             var notFoundTypes = allTokens.stream().map(type -> new RustToken(type, EMPTY_STRING, NOT_SET, NOT_SET, NOT_SET).type2string()).toList();
-            fail("Some %d token types were not found in the complete code example '%s':\n%s".formatted(notFoundTypes.size(), fileName,
+            logger.error("Some %d token types were not found in the complete code example '%s':\n%s".formatted(notFoundTypes.size(), fileName,
                     notFoundTypes));
+            assertTrue(false);
         }
     }
 
