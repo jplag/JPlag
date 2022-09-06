@@ -50,8 +50,8 @@ class TextFrontendTest {
         Map<Integer, Token> tokenTypes = new HashMap<>();
         result.allTokens().forEach(it -> tokenTypes.put(it.getType(), it));
 
-        assertEquals(293, result.size());
-        assertEquals(156, tokenTypes.values().size());
+        assertEquals(283, result.size());
+        assertEquals(158, tokenTypes.values().size());
     }
 
     @ParameterizedTest
