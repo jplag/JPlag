@@ -1,7 +1,7 @@
 package de.jplag;
 
 /**
- * This class represents a token in a source code. It can represents keywords, identifies, syntactical structures etc.
+ * This class represents a token in a source code. It can represent keywords, identifiers, syntactical structures etc.
  * What types of tokens there are depends on the specific language, meaning JPlag does not enforce a specific token set.
  * The language parsers decide what is a token and what is not.
  */
@@ -20,7 +20,8 @@ public abstract class Token {
      * Creates a token without information about the column or the length of the token in the line.
      * @param type is the token type.
      * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
+     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1. For
+     * {@link TokenConstants#FILE_END FILE_END} it is automatically set to {@link #NO_VALUE}.
      */
     public Token(int type, String file, int line) {
         this.type = type;
