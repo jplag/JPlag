@@ -87,10 +87,7 @@ class RustFrontendTest {
             } else {
                 logger.info("Coverage: %.1f%%.".formatted(coverage * 100));
                 logger.info("Missing lines {}", codeLines);
-                if (coverage - BASELINE_COVERAGE <= EPSILON) {
-                    logger.error("Source coverage is unsatisfactory");
-                    assertTrue(false);
-                }
+                assertTrue(coverage - BASELINE_COVERAGE >= EPSILON, "Source coverage is unsatisfactory");
             }
 
         } catch (IOException exception) {
