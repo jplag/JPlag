@@ -1,23 +1,44 @@
 package de.jplag.text;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-
-import antlr.Token;
+import java.util.Properties;
 
 import de.jplag.AbstractParser;
 import de.jplag.TokenConstants;
 import de.jplag.TokenList;
 
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.pipeline.CoreDocument;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+
 public class ParserAdapter extends AbstractParser {
 
+    private static final char LF = '\n';
+    private static final char CR = '\r';
+    private static final String ANNOTATORS_KEY = "annotators";
+    private static final String ANNOTATORS_VALUE = "tokenize";
     private final Map<String, Integer> tokenTypes = new HashMap<>();
-    private int tokenTypeIndex = 1; // 0 is FILE_END token, SEPARATOR is not used as there are no methods.
+    private final StanfordCoreNLP pipeline;
+    private int tokenTypeIndex = 2; // 0 is FILE_END token, 1 is SEPARATOR_TOKEN, so start at 2.
 
     private TokenList tokens;
     private String currentFile;
+    private int currentLine;
+    /**
+     * The position of the current line break in the content string
+     */
+    private int currentLineBreakIndex;
+
+    public ParserAdapter() {
+        Properties properties = new Properties();
+        properties.put(ANNOTATORS_KEY, ANNOTATORS_VALUE);
+        this.pipeline = new StanfordCoreNLP(properties);
+    }
 
     public TokenList parse(File directory, String[] files) {
         tokens = new TokenList();
@@ -32,42 +53,69 @@ public class ParserAdapter extends AbstractParser {
         return tokens;
     }
 
+    private boolean parseFile(File directory, String file) {
+        this.currentFile = file;
+        this.currentLine = 1; // lines start at 1
+        this.currentLineBreakIndex = 0;
+        Path filePath = directory.toPath().resolve(file);
+        String content = readFile(filePath);
+        if (content == null) {
+            return false;
+        }
+        int lastTokenEnd = 0;
+        CoreDocument coreDocument = pipeline.processToCoreDocument(content);
+        for (CoreLabel token : coreDocument.tokens()) {
+            advanceLineBreaks(content, lastTokenEnd, token.beginPosition());
+            lastTokenEnd = token.endPosition();
+            if (isWord(token)) {
+                addToken(token);
+            }
+        }
+        return true;
+    }
+
     /**
-     * Converts a ANTLR token into a JPlag token and adds it to the token list.
-     * @param token is the ANTLR token to convert.
+     * Scan for line breaks and increase {@link #currentLine} and {@link #currentLineBreakIndex} accordingly.
+     * @param content the file content
+     * @param lastTokenEnd the end position of the last token
+     * @param nextTokenBegin the begin position of the next token
      */
-    public void add(Token token) {
-        if (token instanceof AntlrParserToken parserToken) {
-            String text = token.getText();
-            int type = getTokenType(text);
-            tokens.addToken(new TextToken(text, type, currentFile, parserToken));
-        } else {
-            throw new IllegalArgumentException("Illegal token implementation: " + token);
+    private void advanceLineBreaks(String content, int lastTokenEnd, int nextTokenBegin) {
+        for (int i = lastTokenEnd; i < nextTokenBegin; i++) {
+            if (content.charAt(i) == LF) {
+                currentLine++;
+                currentLineBreakIndex = i;
+            } else if (content.charAt(i) == CR) {
+                if (i + 1 < content.length() && content.charAt(i + 1) == LF) { // CRLF
+                    i++; // skip following LF
+                }
+                currentLine++;
+                currentLineBreakIndex = i;
+            }
         }
     }
 
-    private boolean parseFile(File directory, String file) {
-        InputState inputState = null;
-        try (FileInputStream inputStream = new FileInputStream(new File(directory, file))) {
-            currentFile = file;
-            // Create a scanner that reads from the input stream passed to us
-            inputState = new InputState(inputStream);
-            TextLexer lexer = new TextLexer(inputState);
-            lexer.setFilename(file);
-            lexer.setTokenObjectClass("de.jplag.text.AntlrParserToken");
+    private boolean isWord(CoreLabel token) {
+        // consider a token as a word if it contains any alphanumeric character
+        String text = token.originalText();
+        return text.chars().anyMatch(it -> Character.isAlphabetic(it) || Character.isDigit(it));
+    }
 
-            // Create a parser that reads from the scanner
-            TextParser parser = new TextParser(lexer);
-            parser.setFilename(file);
-            parser.setParserAdapter(this);
+    private void addToken(CoreLabel label) {
+        String text = label.originalText();
+        int type = getTokenType(text);
+        int column = label.beginPosition() - currentLineBreakIndex;
+        int length = label.endPosition() - label.beginPosition();
+        tokens.addToken(new TextToken(text, type, currentFile, currentLine, column, length));
+    }
 
-            // start parsing at the compilationUnit rule
-            parser.file();
-        } catch (Exception e) {
-            logger.error("Parsing Error in " + file + " (line " + (inputState != null ? "" + inputState.getLine() : "") + "):" + e.getMessage(), e);
-            return false;
+    private String readFile(Path filePath) {
+        try {
+            return Files.readString(filePath);
+        } catch (IOException e) {
+            logger.error("Error reading from file {}", filePath, e);
+            return null;
         }
-        return true;
     }
 
     private int getTokenType(String text) {
@@ -79,6 +127,5 @@ public class ParserAdapter extends AbstractParser {
             return ++tokenTypeIndex;
         });
         return tokenTypes.get(text);
-
     }
 }

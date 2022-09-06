@@ -112,6 +112,13 @@
                 <version>0.9.0</version>
             </dependency>
 
+            <!-- CoreNLP -->
+            <dependency>
+                <groupId>edu.stanford.nlp</groupId>
+                <artifactId>stanford-corenlp</artifactId>
+                <version>4.5.0</version>
+            </dependency>
+
             <!-- LOGGER -->
             <dependency>
                 <groupId>org.slf4j</groupId>
