@@ -140,7 +140,7 @@ public class Submission implements Comparable<Submission> {
      * @param subtractBaseCode If true subtract basecode matches if possible.
      * @return Similarity divisor for the submission.
      */
-    public int getSimilarityDivisor(boolean subtractBaseCode) {
+    int getSimilarityDivisor(boolean subtractBaseCode) {
         int divisor = getNumberOfTokens() - getFiles().size();
         if (subtractBaseCode && baseCodeComparison != null) {
             divisor -= baseCodeComparison.getNumberOfMatchedTokens();

@@ -23,24 +23,23 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
 
     private final int minimumMatchLength;
-    private Map<Submission, SubsequenceHashLookupTable> hashLookupTables = new IdentityHashMap<>();
+    private Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
     private Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
         this.minimumMatchLength = options.minimumTokenMatch();
     }
 
-    public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
-        return swapAndCompare(firstSubmission, secondSubmission);
-    }
-
-    public final JPlagComparison compareWithBaseCode(Submission submission, Submission baseCodeSubmission) {
-        JPlagComparison comparison = swapAndCompare(submission, baseCodeSubmission);
-        // Remove the hashLookupTable as the isBaseCode tagging for the tokens changed which will affect the computed hashes.
-        // This is a performance optimization to not suggest subsequences with baseCode for the matching.
-        // Removing this optimization would not change the result as the baseCode matches are additionally checked by validating
-        // that no match has a marked token (which baseCode-containing tokens are).
-        hashLookupTables.remove(submission);
+    /**
+     * Compares the given submission with the base code submission. Marks the identified base code sections in the
+     * submission such that further comparisons do not generate matches for these parts. Must be called before generating a
+     * comparison with a regular submission for the given submission.
+     * @param submission is the submission to generate base-code markings for.
+     * @param baseCodeSubmission is the base code submission.
+     * @return the comparison of the submission with the base code submission.
+     */
+    public final JPlagComparison generateBaseCodeMarking(Submission submission, Submission baseCodeSubmission) {
+        JPlagComparison comparison = compare(submission, baseCodeSubmission);
 
         List<Token> submissionTokenList = submission.getTokenList();
         Set<Token> baseCodeMarking = new HashSet<>();
@@ -50,10 +49,24 @@ public class GreedyStringTiling {
         }
         baseCodeMarkings.put(submission, baseCodeMarking);
 
+        // Remove the lookup table for the current submission to trigger a regeneration as hashes will change due to the new
+        // baseCodeMarking.
+        // This is a performance optimization to not suggest subsequences with baseCode for the matching.
+        // Removing this optimization would not change the result as the baseCode matches are additionally checked by validating
+        // that no match has a marked token (which baseCode-containing tokens are).
+        cachedHashLookupTables.remove(submission);
+
         return comparison;
     }
 
-    private JPlagComparison swapAndCompare(Submission firstSubmission, Submission secondSubmission) {
+    /**
+     * Compares the two submissions and generates matches between them. To exclude base code from the result, call
+     * {@link #generateBaseCodeMarking} with each submission beforehand.
+     * @param firstSubmission is one of the two submissions.
+     * @param secondSubmission is the other of the two submissions.
+     * @return the comparison between the two submissions.
+     */
+    public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
         Submission smallerSubmission;
         Submission largerSubmission;
         if (firstSubmission.getTokenList().size() > secondSubmission.getTokenList().size()) {
@@ -147,7 +160,7 @@ public class GreedyStringTiling {
      * @param leftMarkedTokens The marked tokens of the left token list.
      * @param rightTokens The subsequence of right tokens.
      * @param rightMarkedTokens The marked tokens of the right token list.
-     * @return
+     * @return true if the subsequences are matching and not marked, otherwise false.
      */
     private boolean subsequencesAreMatchingAndNotMarked(List<Token> leftTokens, Set<Token> leftMarkedTokens, List<Token> rightTokens,
             Set<Token> rightMarkedTokens) {
@@ -178,11 +191,11 @@ public class GreedyStringTiling {
     }
 
     private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, Set<Token> markedTokens) {
-        if (hashLookupTables.containsKey(submission)) {
-            return hashLookupTables.get(submission);
+        if (cachedHashLookupTables.containsKey(submission)) {
+            return cachedHashLookupTables.get(submission);
         }
         SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(minimumMatchLength, submission.getTokenList(), markedTokens);
-        hashLookupTables.put(submission, lookupTable);
+        cachedHashLookupTables.put(submission, lookupTable);
         return lookupTable;
     }
 }
