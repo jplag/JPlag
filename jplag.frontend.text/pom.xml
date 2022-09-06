@@ -10,33 +10,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>antlr</groupId>
-            <artifactId>antlr</artifactId>
-        </dependency>
-        <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>frontend-utils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>edu.stanford.nlp</groupId>
+            <artifactId>stanford-corenlp</artifactId>
+        </dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>antlr-maven-plugin</artifactId>
-                <configuration>
-                    <!-- Comma separated list of grammar files or pattern grammar files 
-						By default, grammar file(s) is in ${basedir}/src/main/antlr -->
-                    <!-- <grammars>*.g</grammars> -->
-                    <grammars>text.g</grammars>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

@@ -12,8 +12,8 @@ public class TextToken extends Token {
         this.text = NO_TEXT;
     }
 
-    public TextToken(String text, int type, String file, AntlrParserToken parserToken) {
-        super(type, file, parserToken.getLine(), parserToken.getColumn(), parserToken.getLength());
+    public TextToken(String text, int type, String file, int line, int column, int length) {
+        super(type, file, line, column, length);
         this.text = text.toLowerCase();
     }
 
