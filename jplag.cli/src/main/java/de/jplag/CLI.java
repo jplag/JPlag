@@ -157,6 +157,15 @@ public final class CLI {
         }
         var comparisonMode = comparisonModeOptional.orElse(JPlagOptions.DEFAULT_COMPARISON_MODE);
 
+        ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
+
+        return new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories,
+                BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
+                JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
+                clusteringOptions, comparisonMode, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
+    }
+
+    private static ClusteringOptions getClusteringOptions(Namespace namespace) {
         ClusteringOptions clusteringOptions = new ClusteringOptions();
         if (CLUSTER_DISABLE.isSet(namespace)) {
             boolean disabled = CLUSTER_DISABLE.getFrom(namespace);
@@ -205,15 +214,10 @@ public final class CLI {
                     .withPreprocessorPercentile(CLUSTER_PREPROCESSING_PERCENTILE.getFrom(namespace));
         }
         if (CLUSTER_PREPROCESSING_THRESHOLD.isSet(namespace)) {
-
             clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.THRESHOLD)
                     .withPreprocessorPercentile(CLUSTER_PREPROCESSING_THRESHOLD.getFrom(namespace));
         }
-
-        return new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories,
-                BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
-                JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
-                clusteringOptions, comparisonMode, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
+        return clusteringOptions;
     }
 
     private String generateDescription() {
