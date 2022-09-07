@@ -4,24 +4,24 @@ import java.util.function.Function;
 
 import de.jplag.JPlagComparison;
 
-public enum SimilarityMetric implements Function<JPlagComparison, Float> {
+public enum SimilarityMetric implements Function<JPlagComparison, Double> {
     AVG(JPlagComparison::similarity),
     MIN(JPlagComparison::minimalSimilarity),
     MAX(JPlagComparison::maximalSimilarity),
-    INTERSECTION(it -> (float) it.getNumberOfMatchedTokens());
+    INTERSECTION(it -> (double) it.getNumberOfMatchedTokens());
 
-    private final Function<JPlagComparison, Float> similarityFunction;
+    private final Function<JPlagComparison, Double> similarityFunction;
 
-    SimilarityMetric(Function<JPlagComparison, Float> determinePercentage) {
+    SimilarityMetric(Function<JPlagComparison, Double> determinePercentage) {
         this.similarityFunction = determinePercentage;
     }
 
-    public boolean isAboveThreshold(JPlagComparison comparison, float similarityThreshold) {
+    public boolean isAboveThreshold(JPlagComparison comparison, double similarityThreshold) {
         return similarityFunction.apply(comparison) >= similarityThreshold;
     }
 
     @Override
-    public Float apply(JPlagComparison comparison) {
+    public Double apply(JPlagComparison comparison) {
         return similarityFunction.apply(comparison);
     }
 }

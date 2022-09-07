@@ -19,7 +19,7 @@ import de.jplag.options.JPlagOptions;
  */
 public abstract class CommandLineInterfaceTest {
     protected static final String CURRENT_DIRECTORY = ".";
-    protected static final float DELTA = 0.0001f;
+    protected static final double DELTA = 0.0001f;
 
     protected CLI cli;
     protected Namespace namespace;

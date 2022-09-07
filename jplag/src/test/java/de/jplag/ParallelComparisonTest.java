@@ -78,8 +78,8 @@ public class ParallelComparisonTest extends TestBase {
     }
 
     // TODO SH: Methods like this should be moved to the API and also should accept wildcards
-    private float getSelectedPercent(JPlagResult result, String nameA, String nameB) {
-        return getSelectedComparison(result, nameA, nameB).map(JPlagComparison::similarity).orElse(-1f);
+    private double getSelectedPercent(JPlagResult result, String nameA, String nameB) {
+        return getSelectedComparison(result, nameA, nameB).map(JPlagComparison::similarity).orElse(-1.0);
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {

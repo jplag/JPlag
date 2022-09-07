@@ -61,7 +61,7 @@ public class MetricMapperTest {
         return new CreateSubmission(name);
     }
 
-    private Comparison comparison(CreateSubmission submission1, CreateSubmission submission2, float similarity) {
+    private Comparison comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity) {
         return new Comparison(submission1, submission2, similarity);
     }
 
@@ -106,7 +106,7 @@ public class MetricMapperTest {
         AVG
     }
 
-    private record Comparison(CreateSubmission submission1, CreateSubmission submission2, float similarity) {
+    private record Comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity) {
     }
 
     private record CreateSubmission(String name) {

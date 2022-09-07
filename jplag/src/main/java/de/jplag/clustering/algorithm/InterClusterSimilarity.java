@@ -6,14 +6,14 @@ import java.util.function.BinaryOperator;
 import org.apache.commons.math3.linear.RealMatrix;
 
 public enum InterClusterSimilarity {
-    MIN(Float.MAX_VALUE, Math::min),
-    MAX(Float.MIN_VALUE, Math::max),
-    AVERAGE(0, Float::sum);
+    MIN(Double.MAX_VALUE, Math::min),
+    MAX(Double.MIN_VALUE, Math::max),
+    AVERAGE(0, Double::sum);
 
-    private final float neutralElement;
-    private final BinaryOperator<Float> accumulator;
+    private final double neutralElement;
+    private final BinaryOperator<Double> accumulator;
 
-    InterClusterSimilarity(float neutralElement, BinaryOperator<Float> accumulator) {
+    InterClusterSimilarity(double neutralElement, BinaryOperator<Double> accumulator) {
         this.neutralElement = neutralElement;
         this.accumulator = accumulator;
     }
@@ -25,12 +25,12 @@ public enum InterClusterSimilarity {
      * @param similarityMatrix matrix containing similarities
      * @return similarity between the two clusters
      */
-    public float clusterSimilarity(List<Integer> leftCluster, List<Integer> rightCluster, RealMatrix similarityMatrix) {
-        float similarity = this.neutralElement;
+    public double clusterSimilarity(List<Integer> leftCluster, List<Integer> rightCluster, RealMatrix similarityMatrix) {
+        double similarity = this.neutralElement;
 
         for (int leftSubmission : leftCluster) {
             for (int rightSubmission : rightCluster) {
-                float submissionSimilarity = (float) similarityMatrix.getEntry(leftSubmission, rightSubmission);
+                double submissionSimilarity = (double) similarityMatrix.getEntry(leftSubmission, rightSubmission);
                 similarity = this.accumulator.apply(similarity, submissionSimilarity);
             }
         }

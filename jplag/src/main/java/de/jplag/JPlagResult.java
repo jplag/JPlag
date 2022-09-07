@@ -31,7 +31,7 @@ public class JPlagResult {
         this.durationInMillis = durationInMillis;
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
-        comparisons.sort((first, second) -> Float.compare(second.similarity(), first.similarity())); // Sort by percentage (descending).
+        comparisons.sort((first, second) -> Double.compare(second.similarity(), first.similarity())); // Sort by percentage (descending).
     }
 
     /**
@@ -134,11 +134,11 @@ public class JPlagResult {
         return calculateDistributionFor(comparisons, JPlagComparison::similarity);
     }
 
-    private int[] calculateDistributionFor(List<JPlagComparison> comparisons, Function<JPlagComparison, Float> similarityExtractor) {
+    private int[] calculateDistributionFor(List<JPlagComparison> comparisons, Function<JPlagComparison, Double> similarityExtractor) {
         int[] similarityDistribution = new int[SIMILARITY_DISTRIBUTION_SIZE];
         int similarityDistributionBucketSize = 100 / SIMILARITY_DISTRIBUTION_SIZE;
         for (JPlagComparison comparison : comparisons) {
-            float similarity = similarityExtractor.apply(comparison); // extract similarity in percent: 0f <= similarity <= 100f
+            double similarity = similarityExtractor.apply(comparison); // extract similarity in percent: 0f <= similarity <= 100f
             int index = (int) (similarity / similarityDistributionBucketSize); // divide similarity by bucket size to find index of correct bucket.
             index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1);// index is out of bounds when similarity is 100%. decrease by one to count
                                                                       // towards the highest value bucket

@@ -12,18 +12,18 @@ public class ClusteringOptions {
     public static final ClusteringOptions DEFAULTS = new Builder().build();
 
     private final SimilarityMetric similarityMetric;
-    private final float spectralKernelBandwidth;
-    private final float spectralGaussianProcessVariance;
+    private final double spectralKernelBandwidth;
+    private final double spectralGaussianProcessVariance;
     private final int spectralMinRuns;
     private final int spectralMaxRuns;
     private final int spectralMaxKMeansIterationPerRun;
-    private final float agglomerativeThreshold;
+    private final double agglomerativeThreshold;
     private final Preprocessing preprocessor;
     private final boolean enabled;
     private final ClusteringAlgorithm algorithm;
     private final InterClusterSimilarity agglomerativeInterClusterSimilarity;
-    private final float preprocessorThreshold;
-    private final float preprocessorPercentile;
+    private final double preprocessorThreshold;
+    private final double preprocessorPercentile;
 
     /**
      * @return The similarity metric is used for clustering
@@ -37,7 +37,7 @@ public class ClusteringOptions {
      * clusters in spectral clustering. Affects the runtime and results of the spectral clustering.
      * @return kernel bandwidth for spectral clustering
      */
-    public float getSpectralKernelBandwidth() {
+    public double getSpectralKernelBandwidth() {
         return spectralKernelBandwidth;
     }
 
@@ -47,7 +47,7 @@ public class ClusteringOptions {
      * and one. Affects the results of the spectral clustering.
      * @return assumed variance of noise in Gaussian Process during spectral clustering.
      */
-    public float getSpectralGaussianProcessVariance() {
+    public double getSpectralGaussianProcessVariance() {
         return spectralGaussianProcessVariance;
     }
 
@@ -81,7 +81,7 @@ public class ClusteringOptions {
      * Agglomerative clustering will merge clusters that have a similarity higher than this threshold.
      * @return merging threshold for agglomerative clustering
      */
-    public float getAgglomerativeThreshold() {
+    public double getAgglomerativeThreshold() {
         return agglomerativeThreshold;
     }
 
@@ -119,48 +119,48 @@ public class ClusteringOptions {
     /**
      * @return up to which similarity the threshold-preprocessor zeroes out the similarities
      */
-    public float getPreprocessorThreshold() {
+    public double getPreprocessorThreshold() {
         return preprocessorThreshold;
     }
 
     /**
      * @return up to which percentile of similarities the percentile-preprocessor zeroes out the similarities
      */
-    public float getPreprocessorPercentile() {
+    public double getPreprocessorPercentile() {
         return preprocessorPercentile;
     }
 
     public static class Builder {
 
         private SimilarityMetric similarityMetric;
-        private float spectralKernelBandwidth;
-        private float spectralGaussianProcessVariance;
+        private double spectralKernelBandwidth;
+        private double spectralGaussianProcessVariance;
         private int spectralMinRuns;
         private int spectralMaxRuns;
         private int spectralMaxKMeansIterationPerRun;
-        private float agglomerativeThreshold;
+        private double agglomerativeThreshold;
         private Preprocessing preprocessor;
         private boolean enabled;
         private ClusteringAlgorithm algorithm;
         private InterClusterSimilarity agglomerativeInterClusterSimilarity;
-        private float preprocessorThreshold;
-        private float preprocessorPercentile;
+        private double preprocessorThreshold;
+        private double preprocessorPercentile;
 
         public Builder() {
             // Setting the defaults here
             similarityMetric(SimilarityMetric.MAX);
-            spectralKernelBandwidth(20.f);
-            spectralGaussianProcessVariance(0.05f * 0.05f);
+            spectralKernelBandwidth(20.0);
+            spectralGaussianProcessVariance(0.05 * 0.05);
             spectralMinRuns(5);
             spectralMaxRuns(50);
             spectralMaxKMeansIterationPerRun(200);
-            agglomerativeThreshold(0.2f);
+            agglomerativeThreshold(0.2);
             preprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
             enabled(true);
             algorithm(ClusteringAlgorithm.SPECTRAL);
             agglomerativeInterClusterSimilarity(InterClusterSimilarity.AVERAGE);
-            preprocessorThreshold(0.2f);
-            preprocessorPercentile(0.5f);
+            preprocessorThreshold(0.2);
+            preprocessorPercentile(0.5);
         }
 
         public Builder similarityMetric(SimilarityMetric similarityMetric) {
@@ -168,12 +168,12 @@ public class ClusteringOptions {
             return Builder.this;
         }
 
-        public Builder spectralKernelBandwidth(float spectralKernelBandwidth) {
+        public Builder spectralKernelBandwidth(double spectralKernelBandwidth) {
             this.spectralKernelBandwidth = spectralKernelBandwidth;
             return Builder.this;
         }
 
-        public Builder spectralGaussianProcessVariance(float spectralGPVariance) {
+        public Builder spectralGaussianProcessVariance(double spectralGPVariance) {
             this.spectralGaussianProcessVariance = spectralGPVariance;
             return Builder.this;
         }
@@ -193,7 +193,7 @@ public class ClusteringOptions {
             return Builder.this;
         }
 
-        public Builder agglomerativeThreshold(float agglomerativeThreshold) {
+        public Builder agglomerativeThreshold(double agglomerativeThreshold) {
             this.agglomerativeThreshold = agglomerativeThreshold;
             return Builder.this;
         }
@@ -218,12 +218,12 @@ public class ClusteringOptions {
             return Builder.this;
         }
 
-        public Builder preprocessorThreshold(float preprocessorThreshold) {
+        public Builder preprocessorThreshold(double preprocessorThreshold) {
             this.preprocessorThreshold = preprocessorThreshold;
             return Builder.this;
         }
 
-        public Builder preprocessorPercentile(float preprocessorPercentile) {
+        public Builder preprocessorPercentile(double preprocessorPercentile) {
             this.preprocessorPercentile = preprocessorPercentile;
             return Builder.this;
         }

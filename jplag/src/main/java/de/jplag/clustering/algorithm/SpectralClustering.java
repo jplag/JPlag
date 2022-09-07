@@ -95,8 +95,7 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
             clusters = Math.min(maxClusters, clusters);
             Collection<Collection<Integer>> clustering = cluster(clusters, dimension, eigenValueIds, eigenDecomposition);
             ClusteringResult<Integer> modularityRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), similarityMatrix);
-            return new BayesianOptimization.OptimizationResult<>(modularityRes.getWorth((a, b) -> (float) similarityMatrix.getEntry(a, b)),
-                    clustering);
+            return new BayesianOptimization.OptimizationResult<>(modularityRes.getWorth((a, b) -> similarityMatrix.getEntry(a, b)), clustering);
         });
 
         return bayesianOptimizationResult.getValue();

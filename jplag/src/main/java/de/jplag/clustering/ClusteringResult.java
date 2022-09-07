@@ -14,9 +14,9 @@ import org.apache.commons.math3.linear.RealMatrix;
 public class ClusteringResult<T> {
 
     private final List<Cluster<T>> clusters;
-    private final float communityStrength;
+    private final double communityStrength;
 
-    public ClusteringResult(Collection<Cluster<T>> clusters, float communityStrength) {
+    public ClusteringResult(Collection<Cluster<T>> clusters, double communityStrength) {
         this.clusters = List.copyOf(clusters);
         this.communityStrength = communityStrength;
         for (Cluster<T> cluster : clusters) {
@@ -36,7 +36,7 @@ public class ClusteringResult<T> {
      * 10.1103/PhysRevE.69.026113 It's called modularity in that paper.
      * @return community strength
      */
-    public float getCommunityStrength() {
+    public double getCommunityStrength() {
         return communityStrength;
     }
 
@@ -45,8 +45,8 @@ public class ClusteringResult<T> {
      * @param similarity TODO DF: JAVADOC
      * @return worth
      */
-    public float getWorth(BiFunction<T, T, Float> similarity) {
-        return (float) getClusters().stream().mapToDouble(c -> c.getWorth(similarity)).map(worth -> Double.isFinite(worth) ? worth : 0).average()
+    public double getWorth(BiFunction<T, T, Double> similarity) {
+        return (double) getClusters().stream().mapToDouble(c -> c.getWorth(similarity)).map(worth -> Double.isFinite(worth) ? worth : 0).average()
                 .getAsDouble();
     }
 
@@ -65,7 +65,7 @@ public class ClusteringResult<T> {
             clusterIdx++;
         }
         List<Cluster<Integer>> clusters = new ArrayList<>(clustering.size());
-        float communityStrength = 0;
+        double communityStrength = 0;
         if (!clustering.isEmpty()) {
             RealMatrix percentagesOfSimilaritySums = new Array2DRowRealMatrix(clustering.size(), clustering.size());
             percentagesOfSimilaritySums = percentagesOfSimilaritySums.scalarMultiply(0);
@@ -86,15 +86,15 @@ public class ClusteringResult<T> {
             for (int i = 0; i < clustering.size(); i++) {
                 double outWeightSum = percentagesOfSimilaritySums.getRowVector(i).getL1Norm();
                 double clusterCommunityStrength = percentagesOfSimilaritySums.getEntry(i, i) - outWeightSum * outWeightSum;
-                float averageSimilarity = calculateAverageSimilarityFor(clustering.get(i), similarity);
-                clusters.add(new Cluster<>(clustering.get(i), (float) clusterCommunityStrength, averageSimilarity));
+                double averageSimilarity = calculateAverageSimilarityFor(clustering.get(i), similarity);
+                clusters.add(new Cluster<>(clustering.get(i), (double) clusterCommunityStrength, averageSimilarity));
                 communityStrength += clusterCommunityStrength;
             }
         }
         return new ClusteringResult<>(clusters, communityStrength);
     }
 
-    private static float calculateAverageSimilarityFor(Collection<Integer> cluster, RealMatrix similarityMatrix) {
+    private static double calculateAverageSimilarityFor(Collection<Integer> cluster, RealMatrix similarityMatrix) {
         var sumOfSimilarities = 0f;
         List<Integer> indices = List.copyOf(cluster);
         for (int i = 1; i < cluster.size(); i++) {
@@ -105,7 +105,7 @@ public class ClusteringResult<T> {
             }
         }
         int nMinusOne = cluster.size() - 1;
-        float numberOfComparisons = (nMinusOne * (nMinusOne + 1))
+        double numberOfComparisons = (nMinusOne * (nMinusOne + 1))
                 / 2f; /*
                        * Use Gauss sum to calculate number of comparisons in cluster: Given cluster of size n we need Gauss sum of n-1
                        * comparisons: compare first element of cluster to all other except itself: n-1 comparisons. compare second element to

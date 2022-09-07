@@ -30,7 +30,7 @@ public class ClusteringAdapter {
      * @param comparisons that should be included in the process of clustering
      * @param metric function that assigns a similarity to each comparison
      */
-    public ClusteringAdapter(Collection<JPlagComparison> comparisons, Function<JPlagComparison, Float> metric) {
+    public ClusteringAdapter(Collection<JPlagComparison> comparisons, Function<JPlagComparison, Double> metric) {
         mapping = new IntegerMapping<>(comparisons.size());
         for (JPlagComparison comparison : comparisons) {
             mapping.map(comparison.getFirstSubmission());
@@ -42,7 +42,7 @@ public class ClusteringAdapter {
         for (JPlagComparison comparison : comparisons) {
             int firstIndex = mapping.map(comparison.getFirstSubmission());
             int secondIndex = mapping.map(comparison.getSecondSubmission());
-            float similarity = metric.apply(comparison);
+            double similarity = metric.apply(comparison);
             similarityMatrix.setEntry(firstIndex, secondIndex, similarity);
             similarityMatrix.setEntry(secondIndex, firstIndex, similarity);
         }
