@@ -159,7 +159,8 @@ public final class CLI {
 
         ClusteringOptions clusteringOptions = new ClusteringOptions();
         if (CLUSTER_DISABLE.isSet(namespace)) {
-            clusteringOptions = clusteringOptions.withEnabled(CLUSTER_DISABLE.getFrom(namespace));
+            boolean disabled = CLUSTER_DISABLE.getFrom(namespace);
+            clusteringOptions = clusteringOptions.withEnabled(!disabled);
         }
         if (CLUSTER_ALGORITHM.isSet(namespace)) {
             clusteringOptions = clusteringOptions.withAlgorithm(CLUSTER_ALGORITHM.getFrom(namespace));
@@ -190,16 +191,21 @@ public final class CLI {
                     .withAgglomerativeInterClusterSimilarity(CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace));
         }
         if (CLUSTER_PREPROCESSING_NONE.isSet(namespace)) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
+            if (CLUSTER_PREPROCESSING_NONE.getFrom(namespace)) {
+                clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
+            }
         }
         if (CLUSTER_PREPROCESSING_CDF.isSet(namespace)) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
+            if (CLUSTER_PREPROCESSING_CDF.getFrom(namespace)) {
+                clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
+            }
         }
         if (CLUSTER_PREPROCESSING_PERCENTILE.isSet(namespace)) {
             clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.PERCENTILE)
                     .withPreprocessorPercentile(CLUSTER_PREPROCESSING_PERCENTILE.getFrom(namespace));
         }
         if (CLUSTER_PREPROCESSING_THRESHOLD.isSet(namespace)) {
+
             clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.THRESHOLD)
                     .withPreprocessorPercentile(CLUSTER_PREPROCESSING_THRESHOLD.getFrom(namespace));
         }
