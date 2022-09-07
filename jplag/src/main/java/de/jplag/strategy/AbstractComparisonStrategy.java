@@ -49,7 +49,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
         JPlagComparison comparison = greedyStringTiling.compare(first, second);
         logger.info("Comparing {}-{}: {}", first.getName(), second.getName(), comparison.similarity());
 
-        if (options.getSimilarityMetric().isAboveThreshold(comparison, options.getSimilarityThreshold())) {
+        if (options.similarityMetric().isAboveThreshold(comparison, options.similarityThreshold())) {
             return Optional.of(comparison);
         }
         return Optional.empty();

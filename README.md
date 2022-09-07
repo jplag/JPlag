@@ -29,7 +29,7 @@ In the following, a list of all supported languages with their supported languag
 | [Scheme](http://www.scheme-reports.org)                          |       ? | scheme                | unknown | JavaCC |
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/)           |  2.25.0 | emf-metamodel         | alpha | EMF |
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/) (dynamic) |  2.25.0 | emf-metamodel-dynamic | alpha | EMF |
-| Text (naive)                                                     |       - | text                  | legacy | ANTLR |
+| Text (naive)                                                     |       - | text                  | legacy | CoreNLP |
 
 ## Download and Installation
 

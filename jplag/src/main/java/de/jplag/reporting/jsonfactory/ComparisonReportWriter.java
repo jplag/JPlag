@@ -35,7 +35,7 @@ public class ComparisonReportWriter {
      * yield the same result.
      */
     public Map<String, Map<String, String>> writeComparisonReports(JPlagResult jPlagResult, String path) {
-        int numberOfComparisons = jPlagResult.getOptions().getMaximumNumberOfComparisons();
+        int numberOfComparisons = jPlagResult.getOptions().maximumNumberOfComparisons();
         List<JPlagComparison> comparisons = jPlagResult.getComparisons(numberOfComparisons);
         writeComparisons(path, comparisons);
         return submissionIdToComparisonFileName;

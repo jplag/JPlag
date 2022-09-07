@@ -2,12 +2,16 @@ package de.jplag.special;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.*;
+import de.jplag.JPlagResult;
+import de.jplag.LanguageLoader;
+import de.jplag.Submission;
+import de.jplag.TestBase;
+import de.jplag.TokenPrinter;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
@@ -31,42 +35,36 @@ class TokenPrinterTest extends TestBase {
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printCPPFiles() {
-        printSubmissions(options -> {
-            options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_CPP).orElseThrow());
-            options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
-        });
+        printSubmissions(
+                options -> options.withLanguageOption(LanguageLoader.getLanguage(LANGUAGE_CPP).orElseThrow()).withMinimumTokenMatch(MIN_TOKEN_MATCH));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printJavaFiles() {
-        printSubmissions(options -> {
-            options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
-        });
+        printSubmissions(options -> options.withMinimumTokenMatch(MIN_TOKEN_MATCH));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printRLangFiles() {
-        printSubmissions(options -> {
-            options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_R).orElseThrow());
-            options.setMinimumTokenMatch(MIN_TOKEN_MATCH); // for printing also allow small files
-        });
+        printSubmissions(
+                options -> options.withLanguageOption(LanguageLoader.getLanguage(LANGUAGE_R).orElseThrow()).withMinimumTokenMatch(MIN_TOKEN_MATCH));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printGoFiles() {
-        printSubmissions(options -> options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_GO).orElseThrow()));
+        printSubmissions(options -> options.withLanguageOption(LanguageLoader.getLanguage(LANGUAGE_GO).orElseThrow()));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printKotlinFiles() {
-        printSubmissions(options -> options.setLanguage(LanguageLoader.getLanguage(LANGUAGE_KOTLIN).orElseThrow()));
+        printSubmissions(options -> options.withLanguageOption(LanguageLoader.getLanguage(LANGUAGE_KOTLIN).orElseThrow()));
     }
 
-    private void printSubmissions(Consumer<JPlagOptions> optionsCustomization) {
+    private void printSubmissions(Function<JPlagOptions, JPlagOptions> optionsCustomization) {
         try {
             JPlagResult result = runJPlag(PRINTER_FOLDER, optionsCustomization);
             for (Submission submission : result.getSubmissions().getSubmissions()) {
