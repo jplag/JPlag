@@ -71,7 +71,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
         this.language = language;
         this.comparisonMode = comparisonMode;
         this.debugParser = debugParser;
-        this.fileSuffixes = fileSuffixes == null ? null : Collections.unmodifiableList(fileSuffixes);
+        this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
         this.similarityThreshold = normalizeSimilarityThreshold(similarityThreshold);
         this.maximumNumberOfComparisons = normalizeMaximumNumberOfComparisons(maximumNumberOfComparisons);
         this.similarityMetric = similarityMetric;
