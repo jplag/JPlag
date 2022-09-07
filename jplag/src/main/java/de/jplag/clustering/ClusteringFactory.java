@@ -24,18 +24,18 @@ public class ClusteringFactory {
     private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
 
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
-        if (!options.isEnabled()) {
+        if (!options.enabled()) {
             logger.warn(CLUSTERING_DISABLED);
             return Collections.emptyList();
         } else {
-            logger.info(CLUSTERING_PARAMETERS, options.getAlgorithm(), options.getPreprocessor());
+            logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor());
         }
 
         // init algorithm
-        GenericClusteringAlgorithm clusteringAlgorithm = options.getAlgorithm().create(options);
+        GenericClusteringAlgorithm clusteringAlgorithm = options.algorithm().create(options);
 
         // init preprocessor
-        Optional<ClusteringPreprocessor> preprocessor = options.getPreprocessor().constructPreprocessor(options);
+        Optional<ClusteringPreprocessor> preprocessor = options.preprocessor().constructPreprocessor(options);
 
         if (preprocessor.isPresent()) {
             // Package preprocessor into a clustering algorithm
@@ -43,7 +43,7 @@ public class ClusteringFactory {
         }
 
         // init adapter
-        ClusteringAdapter adapter = new ClusteringAdapter(comparisons, options.getSimilarityMetric());
+        ClusteringAdapter adapter = new ClusteringAdapter(comparisons, options.similarityMetric());
 
         // run clustering
         ClusteringResult<Submission> result = adapter.doClustering(clusteringAlgorithm);
