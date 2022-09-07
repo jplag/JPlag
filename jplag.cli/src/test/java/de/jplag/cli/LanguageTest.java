@@ -3,6 +3,8 @@ package de.jplag.cli;
 import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -37,6 +39,7 @@ class LanguageTest extends CommandLineInterfaceTest {
             String argument = buildArgument(CommandLineArgument.LANGUAGE, language.getIdentifier());
             buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
             assertEquals(language.getIdentifier(), options.language().getIdentifier());
+            assertEquals(Arrays.asList(language.suffixes()), options.fileSuffixes());
         }
     }
 
