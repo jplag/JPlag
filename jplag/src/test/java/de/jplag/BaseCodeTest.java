@@ -42,7 +42,7 @@ public class BaseCodeTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).getMatches().size());
         assertEquals(1, result.getSimilarityDistribution()[1]);
-        assertEquals(85f, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(85, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     @Test

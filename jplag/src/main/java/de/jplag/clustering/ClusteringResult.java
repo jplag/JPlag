@@ -101,7 +101,7 @@ public class ClusteringResult<T> {
     }
 
     private static double calculateAverageSimilarityFor(Collection<Integer> cluster, RealMatrix similarityMatrix) {
-        var sumOfSimilarities = 0f;
+        double sumOfSimilarities = 0;
         List<Integer> indices = List.copyOf(cluster);
         for (int i = 1; i < cluster.size(); i++) {
             int indexOfSubmission1 = indices.get(i);
@@ -111,16 +111,16 @@ public class ClusteringResult<T> {
             }
         }
         int nMinusOne = cluster.size() - 1;
-        double numberOfComparisons = (nMinusOne * (nMinusOne + 1))
-                / 2f; /*
-                       * Use Gauss sum to calculate number of comparisons in cluster: Given cluster of size n we need Gauss sum of n-1
-                       * comparisons: compare first element of cluster to all other except itself: n-1 comparisons. compare second element to
-                       * all other except itself and first element (as these two were already compared when we processed the first element),
-                       * n-2 comparisons. compare third element to all other but itself and all previously compared: n-3 comparisons and so
-                       * on. when we reach the second to last element we have n-(n-1)=1 comparisons left. when we reach the last element it
-                       * has already been compared to all other. adding up all comparisons we get: (n-1) + (n-2) + (n-3) + ... + (n-(n-1)) =
-                       * Gauss sum of (n-1)
-                       */
+        double numberOfComparisons = (nMinusOne * (nMinusOne + 1)) / 2.0;
+        /*
+         * Use Gauss sum to calculate number of comparisons in cluster: Given cluster of size n we need Gauss sum of n-1
+         * comparisons: compare first element of cluster to all other except itself: n-1 comparisons. compare second element to
+         * all other except itself and first element (as these two were already compared when we processed the first element),
+         * n-2 comparisons. compare third element to all other but itself and all previously compared: n-3 comparisons and so
+         * on. when we reach the second to last element we have n-(n-1)=1 comparisons left. when we reach the last element it
+         * has already been compared to all other. adding up all comparisons we get: (n-1) + (n-2) + (n-3) + ... + (n-(n-1)) =
+         * Gauss sum of (n-1)
+         */
         return sumOfSimilarities / numberOfComparisons;
     }
 

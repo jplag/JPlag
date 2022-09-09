@@ -16,8 +16,8 @@ class ClusteringResultTest {
         RealMatrix similarity = new Array2DRowRealMatrix(4, 4);
 
         // These are similar
-        setEntries(similarity, 0, 1, 1f);
-        setEntries(similarity, 2, 3, 1f);
+        setEntries(similarity, 0, 1, 1.0);
+        setEntries(similarity, 2, 3, 1.0);
 
         // Others are dissimilar
 
@@ -95,14 +95,14 @@ class ClusteringResultTest {
         RealMatrix similarity = new Array2DRowRealMatrix(4, 4);
 
         // These are similar
-        setEntries(similarity, 0, 1, 1f);
-        setEntries(similarity, 2, 3, 1f);
+        setEntries(similarity, 0, 1, 1.0);
+        setEntries(similarity, 2, 3, 1.0);
 
         // Others are dissimilar
 
         ClusteringResult<Integer> result = ClusteringResult.fromIntegerCollections(List.of(List.of(0, 1), List.of(2, 3)), similarity);
         var cluster = result.getClusters().stream().findFirst().orElseThrow();
-        assertEquals(1f, cluster.getAverageSimilarity(), 0.00001);
+        assertEquals(1.0, cluster.getAverageSimilarity(), 0.00001);
     }
 
     private static void setEntries(RealMatrix matrix, int i, int j, double similarity) {

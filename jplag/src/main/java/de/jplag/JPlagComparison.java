@@ -130,7 +130,7 @@ public class JPlagComparison { // FIXME TS: contains a lot of code duplication
      */
     public final double similarityOfFirst() {
         int divisor = firstSubmission.getSimilarityDivisor(true);
-        return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (double) divisor));
+        return (divisor == 0 ? 0 : (getNumberOfMatchedTokens() * 100 / (double) divisor));
     }
 
     /**
@@ -139,7 +139,7 @@ public class JPlagComparison { // FIXME TS: contains a lot of code duplication
      */
     public final double similarityOfSecond() {
         int divisor = secondSubmission.getSimilarityDivisor(true);
-        return (divisor == 0 ? 0f : (getNumberOfMatchedTokens() * 100 / (double) divisor));
+        return (divisor == 0 ? 0 : (getNumberOfMatchedTokens() * 100 / (double) divisor));
     }
 
     /**

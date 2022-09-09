@@ -41,7 +41,7 @@ public class ParallelComparisonTest extends TestBase {
         assertEquals(3, result.getNumberOfSubmissions());
         assertEquals(3, result.getAllComparisons().size());
 
-        result.getAllComparisons().forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
+        result.getAllComparisons().forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
     }
 
     /**
@@ -59,7 +59,7 @@ public class ParallelComparisonTest extends TestBase {
         // All comparisons with E shall have no matches
         result.getAllComparisons().stream()
                 .filter(comparison -> comparison.getSecondSubmission().getName().equals("E") || comparison.getFirstSubmission().getName().equals("E"))
-                .forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
+                .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
         assertEquals(24.6, getSelectedPercent(result, "A", "B"), DELTA);
