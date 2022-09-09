@@ -58,14 +58,14 @@ public class VolumeTest extends TestBase {
             var key = result.getFirstSubmission().getName() + result.getSecondSubmission().getName();
 
             assertTrue(csv.containsKey(key));
-            assertEquals(csv.getOrDefault(key, -1f), result.similarity(), DELTA);
+            assertEquals(csv.getOrDefault(key, -1.0), result.similarity(), DELTA);
         });
 
     }
 
-    private Map<String, Float> readCSVResults(String filePathAndName) throws IOException {
+    private Map<String, Double> readCSVResults(String filePathAndName) throws IOException {
         List<String> lines = Files.readAllLines(Path.of(filePathAndName), JPlagOptions.CHARSET);
-        var results = new HashMap<String, Float>();
+        var results = new HashMap<String, Double>();
 
         lines.forEach(line -> {
             var entries = line.split(";");
@@ -74,7 +74,7 @@ public class VolumeTest extends TestBase {
                 throw new IllegalArgumentException(String.format("Illegal line: '%s'", line));
             }
 
-            results.put(entries[1] + entries[2], Float.parseFloat((entries[3])));
+            results.put(entries[1] + entries[2], Double.parseDouble((entries[3])));
         });
 
         return results;

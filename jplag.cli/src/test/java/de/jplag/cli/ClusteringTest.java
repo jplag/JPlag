@@ -26,7 +26,7 @@ class ClusteringTest extends CommandLineInterfaceTest {
 
     @Test
     void parsePercentilePreProcessor() {
-        String argument = buildArgument(CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE, Float.toString(0.5f));
+        String argument = buildArgument(CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE, Double.toString(0.5));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(Preprocessing.PERCENTILE, options.clusteringOptions().preprocessor());
         assertEquals(0.5, options.clusteringOptions().preprocessorPercentile(), EPSILON);

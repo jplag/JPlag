@@ -41,7 +41,7 @@ public class ClusteringAdapterTest {
             return List.of(IntStream.range(0, arg.getRowDimension()).boxed().collect(Collectors.toList()));
         });
 
-        ClusteringAdapter clustering = new ClusteringAdapter(comparisons, x -> 0.f);
+        ClusteringAdapter clustering = new ClusteringAdapter(comparisons, x -> 0.0);
         ClusteringResult<Submission> clusteringResult = clustering.doClustering(algorithm);
 
         Collection<Collection<Submission>> expectedResult = List.of(submissions);

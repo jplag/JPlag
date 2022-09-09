@@ -3,7 +3,7 @@ package de.jplag.clustering;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -30,7 +30,7 @@ public class ClusteringAdapter {
      * @param comparisons that should be included in the process of clustering
      * @param metric function that assigns a similarity to each comparison
      */
-    public ClusteringAdapter(Collection<JPlagComparison> comparisons, Function<JPlagComparison, Float> metric) {
+    public ClusteringAdapter(Collection<JPlagComparison> comparisons, ToDoubleFunction<JPlagComparison> metric) {
         mapping = new IntegerMapping<>(comparisons.size());
         for (JPlagComparison comparison : comparisons) {
             mapping.map(comparison.getFirstSubmission());
@@ -42,7 +42,7 @@ public class ClusteringAdapter {
         for (JPlagComparison comparison : comparisons) {
             int firstIndex = mapping.map(comparison.getFirstSubmission());
             int secondIndex = mapping.map(comparison.getSecondSubmission());
-            float similarity = metric.apply(comparison);
+            double similarity = metric.applyAsDouble(comparison);
             similarityMatrix.setEntry(firstIndex, secondIndex, similarity);
             similarityMatrix.setEntry(secondIndex, firstIndex, similarity);
         }

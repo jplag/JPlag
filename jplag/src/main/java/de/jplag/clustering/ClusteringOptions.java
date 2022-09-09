@@ -34,15 +34,15 @@ import de.jplag.options.SimilarityMetric;
  * @param preprocessorPercentile up to which percentile of similarities the percentile-preprocessor zeroes out the
  * similarities
  */
-public record ClusteringOptions(SimilarityMetric similarityMetric, float spectralKernelBandwidth, float spectralGaussianProcessVariance,
-        int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, float agglomerativeThreshold, Preprocessing preprocessor,
-        boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, float preprocessorThreshold,
-        float preprocessorPercentile) {
+public record ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
+        int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,
+        boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold,
+        double preprocessorPercentile) {
 
-    public ClusteringOptions(SimilarityMetric similarityMetric, float spectralKernelBandwidth, float spectralGaussianProcessVariance,
-            int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, float agglomerativeThreshold, Preprocessing preprocessor,
-            boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, float preprocessorThreshold,
-            float preprocessorPercentile) {
+    public ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
+            int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,
+            boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold,
+            double preprocessorPercentile) {
         this.similarityMetric = Objects.requireNonNull(similarityMetric);
         this.spectralKernelBandwidth = spectralKernelBandwidth;
         this.spectralGaussianProcessVariance = spectralGaussianProcessVariance;
@@ -59,8 +59,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, float spectra
     }
 
     public ClusteringOptions() {
-        this(SimilarityMetric.MAX, 20.f, 0.05f * 0.05f, 5, 50, 200, 0.2f, Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, true,
-                ClusteringAlgorithm.SPECTRAL, InterClusterSimilarity.AVERAGE, 0.2f, 0.5f);
+        this(SimilarityMetric.MAX, 20.f, 0.05 * 0.05, 5, 50, 200, 0.2, Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, true,
+                ClusteringAlgorithm.SPECTRAL, InterClusterSimilarity.AVERAGE, 0.2, 0.5);
     }
 
     public ClusteringOptions withSimilarityMetric(SimilarityMetric similarityMetric) {
@@ -69,13 +69,13 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, float spectra
                 preprocessorThreshold, preprocessorPercentile);
     }
 
-    public ClusteringOptions withSpectralKernelBandwidth(float spectralKernelBandwidth) {
+    public ClusteringOptions withSpectralKernelBandwidth(double spectralKernelBandwidth) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
                 spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
                 preprocessorThreshold, preprocessorPercentile);
     }
 
-    public ClusteringOptions withSpectralGaussianProcessVariance(float spectralGaussianProcessVariance) {
+    public ClusteringOptions withSpectralGaussianProcessVariance(double spectralGaussianProcessVariance) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
                 spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
                 preprocessorThreshold, preprocessorPercentile);
@@ -99,7 +99,7 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, float spectra
                 preprocessorThreshold, preprocessorPercentile);
     }
 
-    public ClusteringOptions withAgglomerativeThreshold(float agglomerativeThreshold) {
+    public ClusteringOptions withAgglomerativeThreshold(double agglomerativeThreshold) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
                 spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
                 preprocessorThreshold, preprocessorPercentile);
@@ -129,13 +129,13 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, float spectra
                 preprocessorThreshold, preprocessorPercentile);
     }
 
-    public ClusteringOptions withPreprocessorThreshold(float preprocessorThreshold) {
+    public ClusteringOptions withPreprocessorThreshold(double preprocessorThreshold) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
                 spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
                 preprocessorThreshold, preprocessorPercentile);
     }
 
-    public ClusteringOptions withPreprocessorPercentile(float preprocessorPercentile) {
+    public ClusteringOptions withPreprocessorPercentile(double preprocessorPercentile) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
                 spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
                 preprocessorThreshold, preprocessorPercentile);

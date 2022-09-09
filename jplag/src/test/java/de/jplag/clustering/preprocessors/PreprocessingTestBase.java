@@ -3,7 +3,11 @@ package de.jplag.clustering.preprocessors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.Collectors;
@@ -26,13 +30,13 @@ public class PreprocessingTestBase {
         }
         // These are similar
         setEntries(similarity, 0, 1, 0.5);
-        setEntries(similarity, 2, 3, 0.5f);
+        setEntries(similarity, 2, 3, 0.5);
 
         // Others are dissimilar
-        setEntries(similarity, 0, 2, 0.1f);
-        setEntries(similarity, 0, 3, 0.1f);
-        setEntries(similarity, 1, 2, 0.1f);
-        setEntries(similarity, 1, 3, 0.1f);
+        setEntries(similarity, 0, 2, 0.1);
+        setEntries(similarity, 0, 3, 0.1);
+        setEntries(similarity, 1, 2, 0.1);
+        setEntries(similarity, 1, 3, 0.1);
 
         // last row is empty
 
