@@ -6,6 +6,7 @@ import static de.jplag.reporting.reportobject.mapper.SubmissionNameToIdMapper.bu
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,6 +49,7 @@ public class ReportObjectFactory {
     public void createAndSaveReport(JPlagResult result, String path) {
 
         try {
+            logger.info("Starting to write report files to: {}", Path.of(path).getParent());
             createDirectory(path);
             buildSubmissionToIdMap(result);
 
@@ -56,6 +58,7 @@ public class ReportObjectFactory {
             writeComparisons(result, path);
             writeOverview(result, path);
 
+            logger.info("Zipping report files...");
             zipAndDelete(path);
         } catch (IOException e) {
             logger.error("Could not create directory " + path + " for report viewer generation", e);

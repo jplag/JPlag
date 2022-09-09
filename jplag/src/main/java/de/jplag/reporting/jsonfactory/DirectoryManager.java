@@ -88,6 +88,8 @@ public class DirectoryManager {
             deleteDirectory(zipName);
             return false;
         }
+        logger.info("Zipped written to {}");
+        logger.info("You can display the results with the report viewer at https://jplag.github.io/JPlag/");
         return true;
     }
 }
