@@ -32,17 +32,17 @@ public enum ClusteringData {
         setEntries(similarity, 1, 3, 0.1f);
 
         return similarity;
-    }, new int[][] {{0, 1}, {2, 3}}, new ClusteringOptions.Builder().agglomerativeThreshold(0.4f));
+    }, new int[][] {{0, 1}, {2, 3}}, new ClusteringOptions().withAgglomerativeThreshold(0.4f));
 
     private final RealMatrix similarity;
     private final Set<Set<Integer>> expected;
     private final ClusteringOptions options;
 
-    ClusteringData(Supplier<RealMatrix> similarity, int[][] expected, ClusteringOptions.Builder options) {
+    ClusteringData(Supplier<RealMatrix> similarity, int[][] expected, ClusteringOptions options) {
         this.similarity = similarity.get();
         this.expected = makeSets(
                 Arrays.stream(expected).map(intArray -> Arrays.stream(intArray).boxed().collect(Collectors.toList())).collect(Collectors.toList()));
-        this.options = options.build();
+        this.options = options;
     }
 
     public ClusteringOptions getOptions() {

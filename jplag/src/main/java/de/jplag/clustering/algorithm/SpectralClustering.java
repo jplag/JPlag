@@ -85,9 +85,9 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         int maxClusters = (int) Math.ceil(dimension / 2.0);
 
         // Find number of clusters using bayesian optimization
-        RealVector lengthScale = new ArrayRealVector(1, options.getSpectralKernelBandwidth());
+        RealVector lengthScale = new ArrayRealVector(1, options.spectralKernelBandwidth());
         BayesianOptimization bo = new BayesianOptimization(new ArrayRealVector(1, minClusters), new ArrayRealVector(1, maxClusters),
-                options.getSpectralMinRuns(), options.getSpectralMaxRuns(), options.getSpectralGaussianProcessVariance(), lengthScale);
+                options.spectralMinRuns(), options.spectralMaxRuns(), options.spectralGaussianProcessVariance(), lengthScale);
         // bo.debug = true;
         BayesianOptimization.OptimizationResult<Collection<Collection<Integer>>> bayesianOptimizationResult = bo.maximize(r -> {
             int clusters = (int) Math.round(r.getEntry(0));
@@ -116,7 +116,7 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         List<ClusterableEigenVector> normRows = IntStream.range(0, dimension).filter(i -> concatenatedEigenVectors.getRowVector(i).getNorm() > 0)
                 .mapToObj(row -> new ClusterableEigenVector(row, concatenatedEigenVectors.getRowVector(row).unitVector())).toList();
 
-        Clusterer<ClusterableEigenVector> clusterer = new KMeansPlusPlusClusterer<>(numberOfClusters, options.getSpectralMaxKMeansIterationPerRun());
+        Clusterer<ClusterableEigenVector> clusterer = new KMeansPlusPlusClusterer<>(numberOfClusters, options.spectralMaxKMeansIterationPerRun());
         List<? extends Cluster<ClusterableEigenVector>> clusters = clusterer.cluster(normRows);
         return clusters.stream().map(cluster -> cluster.getPoints().stream().map(eigenVector -> eigenVector.id).collect(Collectors.toList()))
                 .collect(Collectors.toList());
