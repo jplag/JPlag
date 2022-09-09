@@ -26,7 +26,9 @@ import de.jplag.LanguageLoader;
 import de.jplag.endtoend.helper.FileHelper;
 import de.jplag.endtoend.helper.JsonHelper;
 import de.jplag.endtoend.helper.TestSuiteHelper;
-import de.jplag.endtoend.model.*;
+import de.jplag.endtoend.model.ExpectedResult;
+import de.jplag.endtoend.model.Options;
+import de.jplag.endtoend.model.ResultDescription;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
@@ -36,7 +38,7 @@ import de.jplag.options.JPlagOptions;
  * original class. The results are compared with the results from previous tests and changes are detected.
  */
 public class EndToEndSuiteTest {
-    private static final double EPSILON = 1E-5;
+    private static final double EPSILON = 1E-8;
     // Language -> directory names and Paths
     private Map<String, Map<String, Path>> languageToTestCaseMapper;
 
