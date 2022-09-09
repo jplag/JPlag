@@ -10,7 +10,7 @@ import java.util.Set;
  * A class to generate and store hashes over a fixed length subsequence of a given list of tokens. Hash generation is
  * optimized to work in O(n).
  */
-public class SubsequenceHashLookupTable {
+class SubsequenceHashLookupTable {
     /**
      * Value combination is chosen such that the maximum possible hash value does not exceed Int.max. Computation formula
      * for maximum hash value is \sum from (i=0 to MAX_HASH_LENGTH - 1) with (TOKEN_HASH_MODULO - 1) * 2^i
@@ -21,8 +21,8 @@ public class SubsequenceHashLookupTable {
     /** Indicator that the subsequence should not be considered for comparison matching */
     public static final int NO_HASH = -1;
 
-    private int windowSize;
-    private List<Token> tokens;
+    private final int windowSize;
+    private final List<Token> tokens;
     private int[] subsequenceHashes;
     private Map<Integer, List<Integer>> startIndexToSubsequenceHashesMap;
 
@@ -30,10 +30,10 @@ public class SubsequenceHashLookupTable {
      * Generates a new subsequence hash lookup table. Performance is optimized to compute hashes in O(n).
      * @param windowSize the size of the subsequences.
      * @param tokens the tokens to hash over.
-     * @param markedTokens the set of marked tokens. Subsequences containing a marked token obtain the {@link NO_HASH}
+     * @param markedTokens the set of marked tokens. Subsequences containing a marked token obtain the {@link #NO_HASH}
      * value.
      */
-    public SubsequenceHashLookupTable(int windowSize, List<Token> tokens, Set<Token> markedTokens) {
+    SubsequenceHashLookupTable(int windowSize, List<Token> tokens, Set<Token> markedTokens) {
         windowSize = Math.max(1, windowSize);
         windowSize = Math.min(MAX_HASH_LENGTH, windowSize);
         this.windowSize = windowSize;
@@ -49,12 +49,12 @@ public class SubsequenceHashLookupTable {
     }
 
     /** Returns the size of the subsequences used for hashing */
-    public int getWindowSize() {
+    int getWindowSize() {
         return windowSize;
     }
 
     /** Returns the list of tokens for which the hashes were computed */
-    public List<Token> getTokens() {
+    List<Token> getTokens() {
         return tokens;
     }
 
@@ -63,7 +63,7 @@ public class SubsequenceHashLookupTable {
      * @param startIndex the start index.
      * @return the hash of the requested subsequence.
      */
-    public int subsequenceHashForStartIndex(int startIndex) {
+    int subsequenceHashForStartIndex(int startIndex) {
         return subsequenceHashes[startIndex];
     }
 
@@ -72,7 +72,7 @@ public class SubsequenceHashLookupTable {
      * @param subsequenceHash the hash value to obtain possibly matching subsequence start indexes for.
      * @return a list with possible matching start indexes.
      */
-    public List<Integer> startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(int subsequenceHash) {
+    List<Integer> startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(int subsequenceHash) {
         if (startIndexToSubsequenceHashesMap.containsKey(subsequenceHash)) {
             return startIndexToSubsequenceHashesMap.get(subsequenceHash);
         }

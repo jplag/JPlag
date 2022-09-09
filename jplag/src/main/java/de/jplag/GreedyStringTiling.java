@@ -23,8 +23,8 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
 
     private final int minimumMatchLength;
-    private Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
-    private Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
+    private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
+    private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
         this.minimumMatchLength = options.minimumTokenMatch();
