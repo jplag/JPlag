@@ -30,9 +30,8 @@ public class PercentilePreprocessorTest extends PreprocessingTestBase {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
         withAllValues(preprocessor, original, result, (originalValue, preprocessed) -> {
-            // Values are only 0.1 and 0.5; percentile 0.5 should only preserve values of
-            // 0.5.
-            if (originalValue > 0.1) {
+            // Median is 0.1 => Values >= 0.1 should preserved.
+            if (originalValue >= 0.1) {
                 assertEquals(Optional.of(originalValue), preprocessed);
             } else {
                 assertEquals(0.0, preprocessed.orElse(0.0), EPSILON);
