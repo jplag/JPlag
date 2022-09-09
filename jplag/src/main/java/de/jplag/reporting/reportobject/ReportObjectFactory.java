@@ -60,10 +60,7 @@ public class ReportObjectFactory {
 
             copySubmissionFilesToReport(path, result);
 
-            long start = System.currentTimeMillis();
             writeComparisons(result, path);
-            long end = System.currentTimeMillis();
-            logger.warn("TIME: {}", end - start);
             writeOverview(result, path);
 
             logger.info("Zipping report files...");
