@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 
 public class PercentilePreprocessorTest extends PreprocessingTestBase {
 
-    private static final double EPSILON = 0.0000001;
-
     PercentileThresholdProcessor preprocessor;
 
     @BeforeEach
