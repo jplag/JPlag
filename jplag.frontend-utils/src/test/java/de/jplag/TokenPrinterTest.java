@@ -85,7 +85,8 @@ class TokenPrinterTest {
                         continue;
                     }
                     Token currentToken = tokens.get(tokenIndex);
-                    assertTrue(lineToken.equalsIgnoreCase(currentToken.getType().getDescription()), "expected: %s, actual: %s".formatted(lineToken, currentToken));
+                    assertTrue(lineToken.equalsIgnoreCase(currentToken.getType().getDescription()),
+                            "expected: %s, actual: %s".formatted(lineToken, currentToken));
                     if (currentToken.getLine() != Token.NO_VALUE) {
                         assertEquals(lineIndex, currentToken.getLine(), "invalid line for token " + currentToken);
                     }
