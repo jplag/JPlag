@@ -1,6 +1,12 @@
 package de.jplag.clustering;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.DoubleStream;
 
@@ -46,7 +52,7 @@ public class ClusteringResult<T> {
      * @return worth
      */
     public double getWorth(BiFunction<T, T, Double> similarity) {
-        return (double) getClusters().stream().mapToDouble(c -> c.getWorth(similarity)).map(worth -> Double.isFinite(worth) ? worth : 0).average()
+        return getClusters().stream().mapToDouble(c -> c.getWorth(similarity)).map(worth -> Double.isFinite(worth) ? worth : 0).average()
                 .getAsDouble();
     }
 
@@ -87,7 +93,7 @@ public class ClusteringResult<T> {
                 double outWeightSum = percentagesOfSimilaritySums.getRowVector(i).getL1Norm();
                 double clusterCommunityStrength = percentagesOfSimilaritySums.getEntry(i, i) - outWeightSum * outWeightSum;
                 double averageSimilarity = calculateAverageSimilarityFor(clustering.get(i), similarity);
-                clusters.add(new Cluster<>(clustering.get(i), (double) clusterCommunityStrength, averageSimilarity));
+                clusters.add(new Cluster<>(clustering.get(i), clusterCommunityStrength, averageSimilarity));
                 communityStrength += clusterCommunityStrength;
             }
         }

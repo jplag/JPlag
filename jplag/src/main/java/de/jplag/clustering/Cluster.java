@@ -76,7 +76,7 @@ public class Cluster<T> {
      */
     public double getNormalizedCommunityStrengthPerConnection() {
         List<Cluster<T>> goodClusters = clusteringResult.getClusters().stream().filter(cluster -> cluster.getCommunityStrength() > 0).toList();
-        double posCommunityStrengthSum = (double) goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
+        double posCommunityStrengthSum = goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
 
         int size = clusteringResult.getClusters().size();
         if (size < 2)

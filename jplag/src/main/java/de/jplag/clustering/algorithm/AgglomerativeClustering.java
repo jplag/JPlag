@@ -49,7 +49,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
             Cluster leftCluster = initialClusters.get(leftIndex);
             for (int rightIndex = leftIndex + 1; rightIndex < initialClusters.size(); rightIndex++) {
                 Cluster rightCluster = initialClusters.get(rightIndex);
-                initialSimilarities.add(new ClusterConnection(leftCluster, rightCluster, (double) similarityMatrix.getEntry(leftIndex, rightIndex)));
+                initialSimilarities.add(new ClusterConnection(leftCluster, rightCluster, similarityMatrix.getEntry(leftIndex, rightIndex)));
             }
         }
 

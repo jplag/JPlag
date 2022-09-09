@@ -30,7 +30,7 @@ public enum InterClusterSimilarity {
 
         for (int leftSubmission : leftCluster) {
             for (int rightSubmission : rightCluster) {
-                double submissionSimilarity = (double) similarityMatrix.getEntry(leftSubmission, rightSubmission);
+                double submissionSimilarity = similarityMatrix.getEntry(leftSubmission, rightSubmission);
                 similarity = this.accumulator.apply(similarity, submissionSimilarity);
             }
         }

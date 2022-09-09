@@ -1,7 +1,7 @@
 package de.jplag;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.ToDoubleFunction;
 
 import de.jplag.clustering.ClusteringResult;
 import de.jplag.options.JPlagOptions;
@@ -134,11 +134,11 @@ public class JPlagResult {
         return calculateDistributionFor(comparisons, JPlagComparison::similarity);
     }
 
-    private int[] calculateDistributionFor(List<JPlagComparison> comparisons, Function<JPlagComparison, Double> similarityExtractor) {
+    private int[] calculateDistributionFor(List<JPlagComparison> comparisons, ToDoubleFunction<JPlagComparison> similarityExtractor) {
         int[] similarityDistribution = new int[SIMILARITY_DISTRIBUTION_SIZE];
         int similarityDistributionBucketSize = 100 / SIMILARITY_DISTRIBUTION_SIZE;
         for (JPlagComparison comparison : comparisons) {
-            double similarity = similarityExtractor.apply(comparison); // extract similarity in percent: 0f <= similarity <= 100f
+            double similarity = similarityExtractor.applyAsDouble(comparison); // extract similarity in percent: 0f <= similarity <= 100f
             int index = (int) (similarity / similarityDistributionBucketSize); // divide similarity by bucket size to find index of correct bucket.
             index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1);// index is out of bounds when similarity is 100%. decrease by one to count
                                                                       // towards the highest value bucket
