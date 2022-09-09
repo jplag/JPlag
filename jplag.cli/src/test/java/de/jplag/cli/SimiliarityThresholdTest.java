@@ -18,29 +18,29 @@ class SimiliarityThresholdTest extends CommandLineInterfaceTest {
 
     @Test
     void testInvalidThreshold() throws Exception {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, "Not a float...");
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, "Not a Double...");
         int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
-        assertEquals(1, statusCode);
+        assertEquals(1.0, statusCode);
     }
 
     @Test
     void testLowerBound() {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Float.toString(-1f));
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(-1.0));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(0f, options.similarityThreshold(), DELTA);
+        assertEquals(0.0, options.similarityThreshold(), DELTA);
     }
 
     @Test
     void testUpperBound() {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Float.toString(101f));
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(101.0));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(100f, options.similarityThreshold(), DELTA);
+        assertEquals(100.0, options.similarityThreshold(), DELTA);
     }
 
     @Test
     void testValidThreshold() {
-        float expectedValue = 50f;
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Float.toString(expectedValue));
+        double expectedValue = 50.0;
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(expectedValue, options.similarityThreshold(), DELTA);
     }

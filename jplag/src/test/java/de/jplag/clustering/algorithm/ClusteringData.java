@@ -23,26 +23,26 @@ public enum ClusteringData {
         }
         // These are similar
         setEntries(similarity, 0, 1, 0.5);
-        setEntries(similarity, 2, 3, 0.5f);
+        setEntries(similarity, 2, 3, 0.5);
 
         // Others are dissimilar
-        setEntries(similarity, 0, 2, 0.1f);
-        setEntries(similarity, 0, 3, 0.1f);
-        setEntries(similarity, 1, 2, 0.1f);
-        setEntries(similarity, 1, 3, 0.1f);
+        setEntries(similarity, 0, 2, 0.1);
+        setEntries(similarity, 0, 3, 0.1);
+        setEntries(similarity, 1, 2, 0.1);
+        setEntries(similarity, 1, 3, 0.1);
 
         return similarity;
-    }, new int[][] {{0, 1}, {2, 3}}, new ClusteringOptions.Builder().agglomerativeThreshold(0.4f));
+    }, new int[][] {{0, 1}, {2, 3}}, new ClusteringOptions().withAgglomerativeThreshold(0.4));
 
     private final RealMatrix similarity;
     private final Set<Set<Integer>> expected;
     private final ClusteringOptions options;
 
-    ClusteringData(Supplier<RealMatrix> similarity, int[][] expected, ClusteringOptions.Builder options) {
+    ClusteringData(Supplier<RealMatrix> similarity, int[][] expected, ClusteringOptions options) {
         this.similarity = similarity.get();
         this.expected = makeSets(
                 Arrays.stream(expected).map(intArray -> Arrays.stream(intArray).boxed().collect(Collectors.toList())).collect(Collectors.toList()));
-        this.options = options.build();
+        this.options = options;
     }
 
     public ClusteringOptions getOptions() {

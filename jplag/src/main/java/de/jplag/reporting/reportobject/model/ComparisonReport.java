@@ -12,6 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param matches the list of matches found in the comparison of the two submissions
  */
 public record ComparisonReport(@JsonProperty("id1") String firstSubmissionId, @JsonProperty("id2") String secondSubmissionId,
-        @JsonProperty("similarity") float matchPercentage, @JsonProperty("matches") List<Match> matches) {
+        @JsonProperty("similarity") double matchPercentage, @JsonProperty("matches") List<Match> matches) {
 
 }

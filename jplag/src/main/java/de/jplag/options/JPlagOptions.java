@@ -8,7 +8,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -46,11 +50,11 @@ import de.jplag.strategy.ComparisonMode;
  */
 public record JPlagOptions(Language language, Integer minimumTokenMatch, List<String> submissionDirectories, List<String> oldSubmissionDirectories,
         String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
-        SimilarityMetric similarityMetric, float similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
+        SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
         ComparisonMode comparisonMode, Verbosity verbosity, boolean debugParser) {
 
     public static final ComparisonMode DEFAULT_COMPARISON_MODE = NORMAL;
-    public static final float DEFAULT_SIMILARITY_THRESHOLD = 0;
+    public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 30;
     public static final int SHOW_ALL_COMPARISONS = 0;
     public static final SimilarityMetric DEFAULT_SIMILARITY_METRIC = SimilarityMetric.AVG;
@@ -60,13 +64,12 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
 
     public JPlagOptions(Language language, List<String> submissionDirectories, List<String> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
-                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions.Builder().build(), DEFAULT_COMPARISON_MODE, null,
-                false);
+                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), DEFAULT_COMPARISON_MODE, null, false);
     }
 
     public JPlagOptions(Language language, Integer minimumTokenMatch, List<String> submissionDirectories, List<String> oldSubmissionDirectories,
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
-            SimilarityMetric similarityMetric, float similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
+            SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             ComparisonMode comparisonMode, Verbosity verbosity, boolean debugParser) {
         this.language = language;
         this.comparisonMode = comparisonMode;
@@ -109,7 +112,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
                 clusteringOptions, comparisonMode, verbosity, debugParser);
     }
 
-    public JPlagOptions withSimilarityThreshold(float similarityThreshold) {
+    public JPlagOptions withSimilarityThreshold(double similarityThreshold) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionName,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
                 clusteringOptions, comparisonMode, verbosity, debugParser);
@@ -186,7 +189,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
     @Override
     public List<String> fileSuffixes() {
         var language = language();
-        if (fileSuffixes == null && language != null)
+        if ((fileSuffixes == null || fileSuffixes.isEmpty()) && language != null)
             return Arrays.stream(language.suffixes()).toList();
         return fileSuffixes == null ? null : Collections.unmodifiableList(fileSuffixes);
     }
@@ -229,7 +232,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
         }
     }
 
-    private static float normalizeSimilarityThreshold(float similarityThreshold) {
+    private static double normalizeSimilarityThreshold(double similarityThreshold) {
         if (similarityThreshold > 100) {
             logger.warn("Maximum threshold of 100 used instead of {}", similarityThreshold);
             return 100;

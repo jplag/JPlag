@@ -25,7 +25,7 @@ class NormalComparisonTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
         assertEquals(1, result.getSimilarityDistribution()[3]);
-        assertEquals(62.07f, result.getAllComparisons().get(0).similarity(), 0.1f);
+        assertEquals(62.07, result.getAllComparisons().get(0).similarity(), 0.1);
     }
 
     /**
@@ -40,7 +40,7 @@ class NormalComparisonTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(2, result.getAllComparisons().get(0).matches().size());
         assertArrayEquals(expectedDistribution, result.getSimilarityDistribution());
-        assertEquals(96.55f, result.getAllComparisons().get(0).similarity(), 0.1f);
+        assertEquals(96.55, result.getAllComparisons().get(0).similarity(), 0.1);
     }
 
     /**
@@ -53,7 +53,7 @@ class NormalComparisonTest extends TestBase {
         assertEquals(3, result.getNumberOfSubmissions());
         assertEquals(3, result.getAllComparisons().size());
 
-        result.getAllComparisons().forEach(comparison -> assertEquals(0f, comparison.similarity(), 0.1f));
+        result.getAllComparisons().forEach(comparison -> assertEquals(0, comparison.similarity(), 0.1));
     }
 
     /**
@@ -71,27 +71,27 @@ class NormalComparisonTest extends TestBase {
         // All comparisons with E shall have no matches
         result.getAllComparisons().stream()
                 .filter(comparison -> comparison.secondSubmission().getName().equals("E") || comparison.firstSubmission().getName().equals("E"))
-                .forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
+                .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
-        assertEquals(24.6f, getSelectedPercent(result, "A", "B"), 0.1f);
-        assertEquals(99.7f, getSelectedPercent(result, "A", "C"), 0.1f);
-        assertEquals(77.9f, getSelectedPercent(result, "A", "D"), 0.1f);
-        assertEquals(24.6f, getSelectedPercent(result, "B", "C"), 0.1f);
-        assertEquals(28.3f, getSelectedPercent(result, "B", "D"), 0.1f);
-        assertEquals(77.9f, getSelectedPercent(result, "C", "D"), 0.1f);
+        assertEquals(24.6, getSelectedPercent(result, "A", "B"), 0.1);
+        assertEquals(99.7, getSelectedPercent(result, "A", "C"), 0.1);
+        assertEquals(77.9, getSelectedPercent(result, "A", "D"), 0.1);
+        assertEquals(24.6, getSelectedPercent(result, "B", "C"), 0.1);
+        assertEquals(28.3, getSelectedPercent(result, "B", "D"), 0.1);
+        assertEquals(77.9, getSelectedPercent(result, "C", "D"), 0.1);
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
-        assertEquals(96.4f, biggestMatch.get().maximalSimilarity(), 0.1f);
-        assertEquals(65.3f, biggestMatch.get().minimalSimilarity(), 0.1f);
+        assertEquals(96.4, biggestMatch.get().maximalSimilarity(), 0.1);
+        assertEquals(65.3, biggestMatch.get().minimalSimilarity(), 0.1);
         assertEquals(12, biggestMatch.get().matches().size());
 
     }
 
     // TODO SH: Methods like this should be moved to the API and also should accept wildcards
-    private float getSelectedPercent(JPlagResult result, String nameA, String nameB) {
-        return getSelectedComparison(result, nameA, nameB).map(JPlagComparison::similarity).orElse(-1f);
+    private double getSelectedPercent(JPlagResult result, String nameA, String nameB) {
+        return getSelectedComparison(result, nameA, nameB).map(JPlagComparison::similarity).orElse(-1.0);
     }
 
     private Optional<JPlagComparison> getSelectedComparison(JPlagResult result, String nameA, String nameB) {
