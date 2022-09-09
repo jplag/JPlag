@@ -1,15 +1,20 @@
 package de.jplag.reporting.reportobject;
 
-import static de.jplag.reporting.jsonfactory.DirectoryManager.*;
+import static de.jplag.reporting.jsonfactory.DirectoryManager.createDirectory;
+import static de.jplag.reporting.jsonfactory.DirectoryManager.deleteDirectory;
+import static de.jplag.reporting.jsonfactory.DirectoryManager.zipDirectory;
 import static de.jplag.reporting.reportobject.mapper.SubmissionNameToIdMapper.buildSubmissionNameToIdMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,13 +54,16 @@ public class ReportObjectFactory {
     public void createAndSaveReport(JPlagResult result, String path) {
 
         try {
-            logger.info("Starting to write report files to: {}", Path.of(path).getParent());
+            logger.info("Start writing report files...");
             createDirectory(path);
             buildSubmissionToIdMap(result);
 
             copySubmissionFilesToReport(path, result);
 
+            long start = System.currentTimeMillis();
             writeComparisons(result, path);
+            long end = System.currentTimeMillis();
+            logger.warn("TIME: {}", end - start);
             writeOverview(result, path);
 
             logger.info("Zipping report files...");
