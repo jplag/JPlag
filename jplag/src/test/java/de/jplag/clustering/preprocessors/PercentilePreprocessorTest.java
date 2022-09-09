@@ -1,6 +1,7 @@
 package de.jplag.clustering.preprocessors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class PercentilePreprocessorTest extends PreprocessingTestBase {
             if (originalValue >= 0.1) {
                 assertEquals(Optional.of(originalValue), preprocessed);
             } else {
-                assertEquals(0.0, preprocessed.orElse(0.0), EPSILON);
+                assertTrue(preprocessed.isEmpty());
             }
         });
     }
