@@ -98,8 +98,8 @@ JPlagResult result = jplag.run();
 List<JPlagComparison> comparisons = result.getComparisons();
 
 // Optional
-File outputDir = new File("/path/to/output");
-Report report = new Report(outputDir);
+ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
+reportObjectFactory.createAndSaveReport(result, "/path/to/output");
 
 report.writeResult(result);
 ```

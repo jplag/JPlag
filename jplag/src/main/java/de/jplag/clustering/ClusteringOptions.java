@@ -1,253 +1,143 @@
 
 package de.jplag.clustering;
 
+import java.util.Objects;
+
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.options.SimilarityMetric;
 
 /**
  * Collection of all possible parameters that describe how a clustering should be performed.
+ * @param similarityMetric The similarity metric is used for clustering
+ * @param spectralKernelBandwidth The kernel bandwidth for the matern kernel used in the gaussian process for the
+ * automatic search for the number of clusters in spectral clustering. Affects the runtime and results of the spectral
+ * clustering.
+ * @param spectralGaussianProcessVariance This is the assumed level of noise in the evaluation results of a spectral
+ * clustering. Acts as normalization parameter for the Gaussian Process. The default setting works well with similarity
+ * scores in the range between zero and one. Affects the results of the spectral clustering.
+ * @param spectralMinRuns The minimal number of times the kMeans algorithm is run for the spectral clustering. These
+ * runs will use predefined numbers of clusters and will not use the bayesian optimization to determine the number of
+ * clusters.
+ * @param spectralMaxRuns The maximal number of times the kMeans algorithm is run during the bayesian optimization for
+ * spectral clustering. The bayesian optimization may be stopped before, when no more maxima of the acquisition-function
+ * are found.
+ * @param spectralMaxKMeansIterationPerRun Maximum number of iterations of the kMeans clustering per run during spectral
+ * clustering.
+ * @param agglomerativeThreshold Agglomerative clustering will merge clusters that have a similarity higher than this
+ * threshold.
+ * @param preprocessor Preprocessing for the similarity values before clustering. Preprocessing is mandatory for
+ * spectral clustering and optional for agglomerative clustering.
+ * @param enabled whether clustering should be performed
+ * @param algorithm the clustering algorithm to use
+ * @param agglomerativeInterClusterSimilarity Similarity measure between clusters in agglomerative clustering
+ * @param preprocessorThreshold up to which similarity the threshold-preprocessor zeroes out the similarities
+ * @param preprocessorPercentile up to which percentile of similarities the percentile-preprocessor zeroes out the
+ * similarities
  */
-public class ClusteringOptions {
+public record ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
+        int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,
+        boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold,
+        double preprocessorPercentile) {
 
-    public static final ClusteringOptions DEFAULTS = new Builder().build();
-
-    private final SimilarityMetric similarityMetric;
-    private final double spectralKernelBandwidth;
-    private final double spectralGaussianProcessVariance;
-    private final int spectralMinRuns;
-    private final int spectralMaxRuns;
-    private final int spectralMaxKMeansIterationPerRun;
-    private final double agglomerativeThreshold;
-    private final Preprocessing preprocessor;
-    private final boolean enabled;
-    private final ClusteringAlgorithm algorithm;
-    private final InterClusterSimilarity agglomerativeInterClusterSimilarity;
-    private final double preprocessorThreshold;
-    private final double preprocessorPercentile;
-
-    /**
-     * @return The similarity metric is used for clustering
-     */
-    public SimilarityMetric getSimilarityMetric() {
-        return similarityMetric;
+    public ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
+            int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,
+            boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold,
+            double preprocessorPercentile) {
+        this.similarityMetric = Objects.requireNonNull(similarityMetric);
+        this.spectralKernelBandwidth = spectralKernelBandwidth;
+        this.spectralGaussianProcessVariance = spectralGaussianProcessVariance;
+        this.spectralMinRuns = spectralMinRuns;
+        this.spectralMaxRuns = spectralMaxRuns;
+        this.spectralMaxKMeansIterationPerRun = spectralMaxKMeansIterationPerRun;
+        this.agglomerativeThreshold = agglomerativeThreshold;
+        this.preprocessor = Objects.requireNonNull(preprocessor);
+        this.enabled = enabled;
+        this.algorithm = Objects.requireNonNull(algorithm);
+        this.agglomerativeInterClusterSimilarity = Objects.requireNonNull(agglomerativeInterClusterSimilarity);
+        this.preprocessorThreshold = preprocessorThreshold;
+        this.preprocessorPercentile = preprocessorPercentile;
     }
 
-    /**
-     * The kernel bandwidth for the matern kernel used in the gaussian process for the automatic search for the number of
-     * clusters in spectral clustering. Affects the runtime and results of the spectral clustering.
-     * @return kernel bandwidth for spectral clustering
-     */
-    public double getSpectralKernelBandwidth() {
-        return spectralKernelBandwidth;
+    public ClusteringOptions() {
+        this(SimilarityMetric.MAX, 20.f, 0.05f * 0.05f, 5, 50, 200, 0.2f, Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, true,
+                ClusteringAlgorithm.SPECTRAL, InterClusterSimilarity.AVERAGE, 0.2f, 0.5f);
     }
 
-    /**
-     * This is the assumed level of noise in the evaluation results of a spectral clustering. Acts as normalization
-     * parameter for the Gaussian Process. The default setting works well with similarity scores in the range between zero
-     * and one. Affects the results of the spectral clustering.
-     * @return assumed variance of noise in Gaussian Process during spectral clustering.
-     */
-    public double getSpectralGaussianProcessVariance() {
-        return spectralGaussianProcessVariance;
+    public ClusteringOptions withSimilarityMetric(SimilarityMetric similarityMetric) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * The minimal number of times the kMeans algorithm is run for the spectral clustering. These runs will use predefined
-     * numbers of clusters and will not use the bayesian optimization to determine the number of clusters.
-     * @return minimal kMeans runs during spectral clustering
-     */
-    public int getSpectralMinRuns() {
-        return spectralMinRuns;
+    public ClusteringOptions withSpectralKernelBandwidth(double spectralKernelBandwidth) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * The maximal number of times the kMeans algorithm is run during the bayesian optimization for spectral clustering. The
-     * bayesian optimization may be stopped before, when no more maxima of the acquisition-function are found.
-     * @return maximal kMeans runs during spectral clustering
-     */
-    public int getSpectralMaxRuns() {
-        return spectralMaxRuns;
+    public ClusteringOptions withSpectralGaussianProcessVariance(double spectralGaussianProcessVariance) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * Maximum number of iterations of the kMeans clustering per run during spectral clustering.
-     * @return maximal kMeans iterations
-     */
-    public int getSpectralMaxKMeansIterationPerRun() {
-        return spectralMaxKMeansIterationPerRun;
+    public ClusteringOptions withSpectralMinRuns(int spectralMinRuns) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * Agglomerative clustering will merge clusters that have a similarity higher than this threshold.
-     * @return merging threshold for agglomerative clustering
-     */
-    public double getAgglomerativeThreshold() {
-        return agglomerativeThreshold;
+    public ClusteringOptions withSpectralMaxRuns(int spectralMaxRuns) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * Preprocessing for the similarity values before clustering. Preprocessing is mandatory for spectral clustering and
-     * optional for agglomerative clustering.
-     * @return preprocessor
-     */
-    public Preprocessing getPreprocessor() {
-        return preprocessor;
+    public ClusteringOptions withSpectralMaxKMeansIterationPerRun(int spectralMaxKMeansIterationPerRun) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * @return whether clustering should be performed
-     */
-    public boolean isEnabled() {
-        return enabled;
+    public ClusteringOptions withAgglomerativeThreshold(double agglomerativeThreshold) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * @return the clustering algorithm to use
-     */
-    public ClusteringAlgorithm getAlgorithm() {
-        return algorithm;
+    public ClusteringOptions withPreprocessor(Preprocessing preprocessor) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * Similarity measure between clusters in agglomerative clustering.
-     * @return similarity measure
-     */
-    public InterClusterSimilarity getAgglomerativeInterClusterSimilarity() {
-        return agglomerativeInterClusterSimilarity;
+    public ClusteringOptions withEnabled(boolean enabled) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * @return up to which similarity the threshold-preprocessor zeroes out the similarities
-     */
-    public double getPreprocessorThreshold() {
-        return preprocessorThreshold;
+    public ClusteringOptions withAlgorithm(ClusteringAlgorithm algorithm) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    /**
-     * @return up to which percentile of similarities the percentile-preprocessor zeroes out the similarities
-     */
-    public double getPreprocessorPercentile() {
-        return preprocessorPercentile;
+    public ClusteringOptions withAgglomerativeInterClusterSimilarity(InterClusterSimilarity agglomerativeInterClusterSimilarity) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    public static class Builder {
-
-        private SimilarityMetric similarityMetric;
-        private double spectralKernelBandwidth;
-        private double spectralGaussianProcessVariance;
-        private int spectralMinRuns;
-        private int spectralMaxRuns;
-        private int spectralMaxKMeansIterationPerRun;
-        private double agglomerativeThreshold;
-        private Preprocessing preprocessor;
-        private boolean enabled;
-        private ClusteringAlgorithm algorithm;
-        private InterClusterSimilarity agglomerativeInterClusterSimilarity;
-        private double preprocessorThreshold;
-        private double preprocessorPercentile;
-
-        public Builder() {
-            // Setting the defaults here
-            similarityMetric(SimilarityMetric.MAX);
-            spectralKernelBandwidth(20.0);
-            spectralGaussianProcessVariance(0.05 * 0.05);
-            spectralMinRuns(5);
-            spectralMaxRuns(50);
-            spectralMaxKMeansIterationPerRun(200);
-            agglomerativeThreshold(0.2);
-            preprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
-            enabled(true);
-            algorithm(ClusteringAlgorithm.SPECTRAL);
-            agglomerativeInterClusterSimilarity(InterClusterSimilarity.AVERAGE);
-            preprocessorThreshold(0.2);
-            preprocessorPercentile(0.5);
-        }
-
-        public Builder similarityMetric(SimilarityMetric similarityMetric) {
-            this.similarityMetric = similarityMetric;
-            return Builder.this;
-        }
-
-        public Builder spectralKernelBandwidth(double spectralKernelBandwidth) {
-            this.spectralKernelBandwidth = spectralKernelBandwidth;
-            return Builder.this;
-        }
-
-        public Builder spectralGaussianProcessVariance(double spectralGPVariance) {
-            this.spectralGaussianProcessVariance = spectralGPVariance;
-            return Builder.this;
-        }
-
-        public Builder spectralMinRuns(int spectralMinRuns) {
-            this.spectralMinRuns = spectralMinRuns;
-            return Builder.this;
-        }
-
-        public Builder spectralMaxRuns(int spectralMaxRuns) {
-            this.spectralMaxRuns = spectralMaxRuns;
-            return Builder.this;
-        }
-
-        public Builder spectralMaxKMeansIterationPerRun(int spectralMaxKMeansIterationPerRun) {
-            this.spectralMaxKMeansIterationPerRun = spectralMaxKMeansIterationPerRun;
-            return Builder.this;
-        }
-
-        public Builder agglomerativeThreshold(double agglomerativeThreshold) {
-            this.agglomerativeThreshold = agglomerativeThreshold;
-            return Builder.this;
-        }
-
-        public Builder preprocessor(Preprocessing preprocessor) {
-            this.preprocessor = preprocessor;
-            return Builder.this;
-        }
-
-        public Builder enabled(boolean enabled) {
-            this.enabled = enabled;
-            return Builder.this;
-        }
-
-        public Builder algorithm(ClusteringAlgorithm algorithm) {
-            this.algorithm = algorithm;
-            return Builder.this;
-        }
-
-        public Builder agglomerativeInterClusterSimilarity(InterClusterSimilarity agglomerativeInterClusterSimilarity) {
-            this.agglomerativeInterClusterSimilarity = agglomerativeInterClusterSimilarity;
-            return Builder.this;
-        }
-
-        public Builder preprocessorThreshold(double preprocessorThreshold) {
-            this.preprocessorThreshold = preprocessorThreshold;
-            return Builder.this;
-        }
-
-        public Builder preprocessorPercentile(double preprocessorPercentile) {
-            this.preprocessorPercentile = preprocessorPercentile;
-            return Builder.this;
-        }
-
-        public ClusteringOptions build() {
-
-            return new ClusteringOptions(this);
-        }
+    public ClusteringOptions withPreprocessorThreshold(double preprocessorThreshold) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
 
-    private ClusteringOptions(Builder builder) {
-        this.similarityMetric = builder.similarityMetric;
-        this.spectralKernelBandwidth = builder.spectralKernelBandwidth;
-        this.spectralGaussianProcessVariance = builder.spectralGaussianProcessVariance;
-        this.spectralMinRuns = builder.spectralMinRuns;
-        this.spectralMaxRuns = builder.spectralMaxRuns;
-        this.spectralMaxKMeansIterationPerRun = builder.spectralMaxKMeansIterationPerRun;
-        this.agglomerativeThreshold = builder.agglomerativeThreshold;
-        this.preprocessor = builder.preprocessor;
-        this.enabled = builder.enabled;
-        this.algorithm = builder.algorithm;
-        this.agglomerativeInterClusterSimilarity = builder.agglomerativeInterClusterSimilarity;
-        this.preprocessorThreshold = builder.preprocessorThreshold;
-        this.preprocessorPercentile = builder.preprocessorPercentile;
+    public ClusteringOptions withPreprocessorPercentile(double preprocessorPercentile) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
+                preprocessorThreshold, preprocessorPercentile);
     }
-
 }

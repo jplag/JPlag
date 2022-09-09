@@ -36,9 +36,10 @@ public final class LanguageLoader {
                 languages.remove(languageIdentifier);
                 continue;
             }
-            logger.info("Loading Language Frontend '{}'", language.getName());
+            logger.debug("Loading Language Frontend '{}'", language.getName());
             languages.put(languageIdentifier, language);
         }
+        logger.info("Available languages: '{}'", languages.values().stream().map(Language::getName).toList());
 
         cachedLanguageInstances = Collections.unmodifiableMap(languages);
         return cachedLanguageInstances;
