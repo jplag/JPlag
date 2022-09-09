@@ -32,7 +32,7 @@ public interface Language {
      * Parses a set files in a directory.
      * @param directory is the directory where the files are located.
      * @param files are the names of the files to parse.
-     * @return the unmodifiable list of parsed JPlag tokens.
+     * @return the list of parsed JPlag tokens.
      */
     List<Token> parse(File directory, String[] files);
 
