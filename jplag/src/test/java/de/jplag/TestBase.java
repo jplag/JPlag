@@ -14,7 +14,7 @@ import de.jplag.options.Verbosity;
 public abstract class TestBase {
 
     protected static final String BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "samples").toString();
-    protected static final double DELTA = 0.1f;
+    protected static final double DELTA = 0.1;
 
     protected String getBasePath() {
         return BASE_PATH;

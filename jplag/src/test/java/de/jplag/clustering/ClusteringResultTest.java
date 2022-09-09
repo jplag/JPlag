@@ -36,14 +36,14 @@ class ClusteringResultTest {
         // cluster
 
         // These are similar
-        setEntries(similarity, 0, 1, 0.1f);
-        setEntries(similarity, 2, 3, 0.1f);
+        setEntries(similarity, 0, 1, 0.1);
+        setEntries(similarity, 2, 3, 0.1);
 
         // Others are dissimilar
-        setEntries(similarity, 0, 2, 0.05f);
-        setEntries(similarity, 0, 3, 0.05f);
-        setEntries(similarity, 1, 2, 0.05f);
-        setEntries(similarity, 1, 3, 0.05f);
+        setEntries(similarity, 0, 2, 0.05);
+        setEntries(similarity, 0, 3, 0.05);
+        setEntries(similarity, 1, 2, 0.05);
+        setEntries(similarity, 1, 3, 0.05);
 
         ClusteringResult<Integer> result = ClusteringResult.fromIntegerCollections(List.of(List.of(0, 1), List.of(2, 3)), similarity);
 

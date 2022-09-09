@@ -1,6 +1,8 @@
 package de.jplag.reporting.reportobject.mapper;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +23,14 @@ public class MetricMapperTest {
     public void test_getAverageMetric() {
         // given
         JPlagResult jPlagResult = createJPlagResult(MockMetric.AVG, distribution(2, 3, 5, 7, 11, 13, 17, 19, 23, 29),
-                comparison(submission("1"), submission("2"), .7f), comparison(submission("3"), submission("4"), .3f));
+                comparison(submission("1"), submission("2"), .7), comparison(submission("3"), submission("4"), .3));
         // when
         var result = metricMapper.getAverageMetric(jPlagResult);
 
         // then
         Assertions.assertEquals("AVG", result.name());
         Assertions.assertIterableEquals(List.of(2, 3, 5, 7, 11, 13, 17, 19, 23, 29), result.distribution());
-        Assertions.assertEquals(List.of(new TopComparison("1", "2", .7f), new TopComparison("3", "4", .3f)), result.topComparisons());
+        Assertions.assertEquals(List.of(new TopComparison("1", "2", .7), new TopComparison("3", "4", .3)), result.topComparisons());
         Assertions.assertEquals(
                 "Average of both program coverages. This is the default similarity which"
                         + " works in most cases: Matches with a high average similarity indicate that the programs work " + "in a very similar way.",
@@ -39,14 +41,14 @@ public class MetricMapperTest {
     public void test_getMaxMetric() {
         // given
         JPlagResult jPlagResult = createJPlagResult(MockMetric.MAX, distribution(2, 3, 5, 7, 11, 13, 17, 19, 23, 29),
-                comparison(submission("00"), submission("01"), .7f), comparison(submission("10"), submission("11"), .3f));
+                comparison(submission("00"), submission("01"), .7), comparison(submission("10"), submission("11"), .3));
         // when
         var result = metricMapper.getMaxMetric(jPlagResult);
 
         // then
         Assertions.assertEquals("MAX", result.name());
         Assertions.assertIterableEquals(List.of(2, 3, 5, 7, 11, 13, 17, 19, 23, 29), result.distribution());
-        Assertions.assertEquals(List.of(new TopComparison("00", "01", .7f), new TopComparison("10", "11", .3f)), result.topComparisons());
+        Assertions.assertEquals(List.of(new TopComparison("00", "01", .7), new TopComparison("10", "11", .3)), result.topComparisons());
         Assertions.assertEquals(
                 "Maximum of both program coverages. This ranking is especially useful if the programs are very "
                         + "different in size. This can happen when dead code was inserted to disguise the origin of the plagiarized program.",

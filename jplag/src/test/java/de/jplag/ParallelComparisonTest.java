@@ -28,7 +28,7 @@ public class ParallelComparisonTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).getMatches().size());
         assertEquals(1, result.getSimilarityDistribution()[3]);
-        assertEquals(62.07f, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(62.07, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     /**
@@ -62,17 +62,17 @@ public class ParallelComparisonTest extends TestBase {
                 .forEach(comparison -> assertEquals(0f, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
-        assertEquals(24.6f, getSelectedPercent(result, "A", "B"), DELTA);
-        assertEquals(99.7f, getSelectedPercent(result, "A", "C"), DELTA);
-        assertEquals(77.9f, getSelectedPercent(result, "A", "D"), DELTA);
-        assertEquals(24.6f, getSelectedPercent(result, "B", "C"), DELTA);
-        assertEquals(28.3f, getSelectedPercent(result, "B", "D"), DELTA);
-        assertEquals(77.9f, getSelectedPercent(result, "C", "D"), DELTA);
+        assertEquals(24.6, getSelectedPercent(result, "A", "B"), DELTA);
+        assertEquals(99.7, getSelectedPercent(result, "A", "C"), DELTA);
+        assertEquals(77.9, getSelectedPercent(result, "A", "D"), DELTA);
+        assertEquals(24.6, getSelectedPercent(result, "B", "C"), DELTA);
+        assertEquals(28.3, getSelectedPercent(result, "B", "D"), DELTA);
+        assertEquals(77.9, getSelectedPercent(result, "C", "D"), DELTA);
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
-        assertEquals(96.4f, biggestMatch.get().maximalSimilarity(), DELTA);
-        assertEquals(65.3f, biggestMatch.get().minimalSimilarity(), DELTA);
+        assertEquals(96.4, biggestMatch.get().maximalSimilarity(), DELTA);
+        assertEquals(65.3, biggestMatch.get().minimalSimilarity(), DELTA);
         assertEquals(12, biggestMatch.get().getMatches().size());
 
     }

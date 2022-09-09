@@ -15,7 +15,7 @@ public class PercentilePreprocessorTest extends PreprocessingTestBase {
 
     @BeforeEach
     public void init() {
-        preprocessor = new PercentileThresholdProcessor(0.5f);
+        preprocessor = new PercentileThresholdProcessor(0.5);
     }
 
     @Test
