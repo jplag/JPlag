@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 
 class RustFrontendTest {
@@ -52,7 +51,7 @@ class RustFrontendTest {
     @Test
     void parseTestFiles() {
         for (String fileName : testFiles) {
-            TokenList tokens = language.parse(testFileLocation, new String[] {fileName});
+            List<Token> tokens = language.parse(testFileLocation, new String[] {fileName});
             String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
@@ -65,9 +64,9 @@ class RustFrontendTest {
     /**
      * Confirms that the code is covered to a basic extent, i.e. each line of code contains at least one token.
      * @param fileName a code sample file name
-     * @param tokens the TokenList generated from the sample
+     * @param tokens the list of tokens generated from the sample
      */
-    private void testSourceCoverage(String fileName, TokenList tokens) {
+    private void testSourceCoverage(String fileName, List<Token> tokens) {
         File testFile = new File(testFileLocation, fileName);
 
         try {
@@ -76,7 +75,7 @@ class RustFrontendTest {
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = IntStream.range(0, tokens.size()).mapToObj(tokens::getToken).mapToInt(Token::getLine).distinct().boxed().toList();
+            var tokenLines = tokens.stream().map(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().toList();
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
@@ -122,11 +121,11 @@ class RustFrontendTest {
 
     /**
      * Confirms that all Token types are 'reachable' with a complete code example.
-     * @param tokens TokenList which is supposed to contain all types of tokens
+     * @param tokens list of tokens which is supposed to contain all types of tokens
      * @param fileName The file name of the complete code example
      */
-    private void testTokenCoverage(TokenList tokens, String fileName) {
-        var foundTokens = tokens.allTokens().stream().mapToInt(Token::getType).distinct().boxed().toList();
+    private void testTokenCoverage(List<Token> tokens, String fileName) {
+        var foundTokens = tokens.stream().map(Token::getType).distinct().toList();
         var allTokens = IntStream.range(0, RustTokenConstants.NUMBER_DIFF_TOKENS).boxed().toList();
         allTokens = new ArrayList<>(allTokens);
 

@@ -1,8 +1,9 @@
 package de.jplag.rust;
 
 import java.io.File;
+import java.util.List;
 
-import de.jplag.TokenList;
+import de.jplag.Token;
 
 public class Language implements de.jplag.Language {
 
@@ -38,7 +39,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public TokenList parse(File directory, String[] files) {
+    public List<Token> parse(File directory, String[] files) {
         return parserAdapter.parse(directory, files);
     }
 

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.TokenList;
+import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.testutils.FileUtil;
 import de.jplag.testutils.TokenUtils;
@@ -37,10 +38,10 @@ class MinimalDynamicMetamodelTest {
 
     @Test
     void testBookstoreMetamodels() {
-        TokenList result = frontend.parse(baseDirectory, TEST_SUBJECTS);
+        List<Token> result = frontend.parse(baseDirectory, TEST_SUBJECTS);
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(Language.VIEW_FILE_SUFFIX)));
         logger.info(("Dynamic token set: " + DynamicMetamodelTokenConstants.getTokenStrings()));
-        logger.info("parsed tokens: " + result.allTokens().toString());
+        logger.info("parsed tokens: " + result.toString());
         assertEquals(7, DynamicMetamodelTokenConstants.getTokenStrings().size());
         assertEquals(64, result.size());
 

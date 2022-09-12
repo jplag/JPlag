@@ -2,9 +2,12 @@ package de.jplag;
 
 import static de.jplag.TokenConstants.FILE_END;
 import static de.jplag.simple.TestTokenConstants.STRING;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -25,55 +28,55 @@ class TokenPrinterTest {
     void printMockDirectoriesAsSubmissions() {
 
         // See TokenPrinterTest.txt for the intended behaviour
-        TokenList tokens = new TokenList();
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 1, 1, "STRING".length()));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 2, 1, "STRING".length() + 1));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 3, 1, "STRING".length() + 2));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 4, 1, "STRING".length() + 10));
+        List<Token> tokens = new ArrayList<>();
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 1, 1, "STRING".length()));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 2, 1, "STRING".length() + 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 3, 1, "STRING".length() + 2));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 4, 1, "STRING".length() + 10));
 
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 6, 3, 1));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 7, 9, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 6, 3, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 7, 9, 1));
 
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 9, 1, 1));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 9, 10, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 9, 1, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 9, 10, 1));
 
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 10, 1, 1));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 10, 5, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 10, 1, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 10, 5, 1));
 
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 12, 1, 1));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 10, 5, 1));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 12, 10, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 12, 1, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 12, 5, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 12, 10, 1));
 
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 14, 10, 1));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 14, 5, 1));
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 14, 1, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 14, 10, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 14, 5, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 14, 1, 1));
 
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 16, -5, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 16, -5, 1));
 
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 19, 100, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 19, 100, 1));
 
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 22, 1, 100));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 22, 1, 100));
 
-        tokens.addToken(new TestToken(FILE_END, TEST_FILE_NAME, 24, 1, -1));
+        tokens.add(new TestToken(FILE_END, TEST_FILE_NAME, Token.NO_VALUE, Token.NO_VALUE, Token.NO_VALUE));
 
-        tokens.addToken(new TestToken(STRING, TEST_FILE_NAME, 100, 1, 1));
+        tokens.add(new TestToken(STRING, TEST_FILE_NAME, 100, 1, 1));
 
         String output = TokenPrinter.printTokens(tokens, TEST_FILE_LOCATION.toFile());
-        logger.debug(output); // no additional newline required
+        logger.info(output); // no additional newline required
 
         testOutputCorrectness(TEST_FILE_NAME, tokens, output);
     }
 
-    private static void testOutputCorrectness(String fileName, TokenList tokens, String output) {
-        int lineIndex = 0;
+    private static void testOutputCorrectness(String fileName, List<Token> tokens, String output) {
+        int lineIndex = -1;
         int tokenIndex = 0;
-        boolean seenFileName = false;
         for (String line : output.lines().toList()) {
             if (line.isEmpty()) {
                 continue;
-            } else if (lineIndex == 0 && line.equals(fileName)) {
-                seenFileName = true;
-            } else if (line.startsWith("" + (lineIndex + 1))) {
+            } else if (lineIndex == -1) {
+                assertEquals(fileName, line);
+                lineIndex = 0;
+            } else if (line.startsWith(String.valueOf(lineIndex + 1))) {
                 lineIndex++;
             } else {
                 line = line.trim();
@@ -82,17 +85,15 @@ class TokenPrinterTest {
                     if (lineToken.isEmpty()) {
                         continue;
                     }
-                    Token currentToken = tokens.getToken(tokenIndex);
-                    if (lineToken.equalsIgnoreCase(currentToken.toString()) && currentToken.getLine() == lineIndex) {
-                        tokenIndex++;
-                    } else {
-                        fail("Expected token %s, but found %s".formatted(currentToken, lineToken));
+                    Token currentToken = tokens.get(tokenIndex);
+                    assertTrue(lineToken.equalsIgnoreCase(currentToken.toString()), "expected: %s, actual: %s".formatted(lineToken, currentToken));
+                    if (currentToken.getLine() != Token.NO_VALUE) {
+                        assertEquals(lineIndex, currentToken.getLine(), "invalid line for token " + currentToken);
                     }
+                    tokenIndex++;
                 }
             }
         }
-        if (!seenFileName) {
-            fail("Expected file name");
-        }
+        assertEquals(tokens.size() - 1, tokenIndex, "incorrect number of tokens printed");
     }
 }

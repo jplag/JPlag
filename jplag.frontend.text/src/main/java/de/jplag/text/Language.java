@@ -1,10 +1,11 @@
 package de.jplag.text;
 
 import java.io.File;
+import java.util.List;
 
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.TokenList;
+import de.jplag.Token;
 
 /**
  * Language class for parsing (natural language) text. This language module employs a primitive approach where
@@ -42,7 +43,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public TokenList parse(File dir, String[] files) {
+    public List<Token> parse(File dir, String[] files) {
         return parserAdapter.parse(dir, files);
     }
 

@@ -160,8 +160,8 @@ public class ReportObjectFactory {
     }
 
     private Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
-        Set<Submission> submissions = comparisons.stream().map(JPlagComparison::getFirstSubmission).collect(Collectors.toSet());
-        Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::getSecondSubmission).collect(Collectors.toSet());
+        Set<Submission> submissions = comparisons.stream().map(JPlagComparison::firstSubmission).collect(Collectors.toSet());
+        Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::secondSubmission).collect(Collectors.toSet());
         submissions.addAll(secondSubmissions);
         return submissions;
     }

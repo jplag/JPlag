@@ -2,10 +2,11 @@ package de.jplag.csharp;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.TokenList;
+import de.jplag.Token;
 
 /**
  * C# language with full support of C# 6 features and below.
@@ -45,7 +46,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public TokenList parse(File dir, String[] files) {
+    public List<Token> parse(File dir, String[] files) {
         return parser.parse(dir, Arrays.asList(files));
     }
 

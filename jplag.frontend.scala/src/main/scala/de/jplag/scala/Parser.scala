@@ -1,16 +1,18 @@
 package de.jplag.scala
 
 import de.jplag.scala.ScalaTokenConstants._
-import de.jplag.{AbstractParser, TokenList}
+import de.jplag.{AbstractParser, Token}
 
 import java.io.File
+
+import scala.collection.mutable.ListBuffer 
 import scala.meta._
 
 
 class Parser extends AbstractParser {
     private var currentFile: String = _
 
-    private var tokens: TokenList = _
+    private var tokens: ListBuffer[Token] = _
 
     private val traverser: Traverser = new Traverser {
 
@@ -328,8 +330,8 @@ class Parser extends AbstractParser {
         }
     }
 
-    def parse(directory: File, files: Array[String]): TokenList = {
-        tokens = new TokenList
+    def parse(directory: File, files: Array[String]): List[Token] = {
+        tokens = ListBuffer()
         errors = 0
 
         for (file <- files) {
@@ -340,7 +342,7 @@ class Parser extends AbstractParser {
             System.gc()
         }
 
-        tokens
+        tokens.toList
     }
 
     private def parseFile(directory: File, fileName: String): Boolean = {
@@ -373,7 +375,7 @@ class Parser extends AbstractParser {
      * @param length    length of the occurrence in the file
      */
     private def add(tokenType: ScalaTokenConstants.Value, line: Int, column: Int, length: Int): Unit = {
-        tokens.addToken(new ScalaToken(tokenType.id, currentFile, line, column, length))
+        tokens += new ScalaToken(tokenType.id, currentFile, line, column, length)
     }
 
 
@@ -387,7 +389,7 @@ class Parser extends AbstractParser {
     private def add(tokenType: ScalaTokenConstants.Value, node: Tree, fromEnd: Boolean): Unit = {
         if (node.pos.text.nonEmpty) {
             // SELF type tokens with no text content mess up the sequence
-            tokens.addToken(new ScalaToken(tokenType, currentFile, node.pos, fromEnd))
+            tokens += new ScalaToken(tokenType, currentFile, node.pos, fromEnd)
         }
     }
 

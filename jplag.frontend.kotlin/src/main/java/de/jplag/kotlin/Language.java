@@ -1,10 +1,11 @@
 package de.jplag.kotlin;
 
 import java.io.File;
+import java.util.List;
 
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.TokenList;
+import de.jplag.Token;
 
 /**
  * This represents the Kotlin language as a language supported by JPlag.
@@ -43,7 +44,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public TokenList parse(File directory, String[] files) {
+    public List<Token> parse(File directory, String[] files) {
         return parserAdapter.parse(directory, files);
     }
 

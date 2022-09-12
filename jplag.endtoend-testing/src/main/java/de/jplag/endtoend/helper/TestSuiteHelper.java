@@ -56,7 +56,7 @@ public class TestSuiteHelper {
      */
     public static String getTestIdentifier(JPlagComparison jPlagComparison) {
 
-        return List.of(jPlagComparison.getFirstSubmission(), jPlagComparison.getSecondSubmission()).stream().map(Submission::getFiles)
+        return List.of(jPlagComparison.firstSubmission(), jPlagComparison.secondSubmission()).stream().map(Submission::getFiles)
                 .map(FileHelper::getEnclosedFileNamesFromCollection).sorted().collect(Collectors.joining("-"));
 
     }

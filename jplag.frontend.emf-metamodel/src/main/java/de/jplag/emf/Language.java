@@ -2,11 +2,12 @@ package de.jplag.emf;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.emf.ecore.EcorePackage;
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.TokenList;
+import de.jplag.Token;
 import de.jplag.emf.parser.EcoreParser;
 
 /**
@@ -53,7 +54,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public TokenList parse(File dir, String[] files) {
+    public List<Token> parse(File dir, String[] files) {
         return parser.parse(dir, Arrays.asList(files));
     }
 

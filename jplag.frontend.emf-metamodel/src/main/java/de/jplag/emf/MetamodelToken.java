@@ -37,6 +37,20 @@ public class MetamodelToken extends Token implements MetamodelTokenConstants {
     }
 
     /**
+     * Creates a token with column and length information.
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
+     * @param column is the column index, meaning where the token starts in the line.
+     * @param length is the length of the token in the source code.
+     * @param eObject is the corresponding eObject in the model from which this token was extracted
+     */
+    public MetamodelToken(int type, String file, int line, int column, int length, Optional<EObject> eObject) {
+        super(type, file, line, column, length);
+        this.eObject = eObject;
+    }
+
+    /**
      * @return the optional corresponding EObject of the token.
      */
     public Optional<EObject> getEObject() {
