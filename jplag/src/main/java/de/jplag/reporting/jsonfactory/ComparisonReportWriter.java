@@ -67,7 +67,7 @@ public class ComparisonReportWriter {
         submissionIdToComparisonFileName.get(id1).put(id2, comparisonFileName);
     }
 
-    private String generateComparisonName(String firstSubmissionId, String secondSubmissionId) {
+    private synchronized String generateComparisonName(String firstSubmissionId, String secondSubmissionId) {
         String name = concatenate(firstSubmissionId, secondSubmissionId);
         String finalName = name;
         long timesNameAlreadyExists = submissionIdToComparisonFileName.values().stream().filter(map -> map.containsValue(finalName)).count();
