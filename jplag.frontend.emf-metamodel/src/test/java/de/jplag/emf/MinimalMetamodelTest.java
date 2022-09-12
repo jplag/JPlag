@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +43,10 @@ class MinimalMetamodelTest {
         List<Token> result = frontend.parse(baseDirectory, TEST_SUBJECTS);
 
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(Language.VIEW_FILE_SUFFIX)));
-        logger.info("Parsed token types: " + result.stream().map(Token::getType).map(TokenType::getDescription).toList().toString());
-        assertEquals(43, result.size());
+        List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
+        logger.info("Parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList().toString());
+        assertEquals(43, tokenTypes.size());
+        assertEquals(10, new HashSet<>(tokenTypes).size());
 
         var bookstoreTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[0]);
         var bookstoreRenamedTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[2]);
