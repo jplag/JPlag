@@ -1,11 +1,14 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+import de.jplag.Submission;
+import de.jplag.Token;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
 
@@ -17,7 +20,7 @@ public class ComparisonReportWriter {
 
     private final FileWriter fileWriter;
     private final Function<Submission, String> submissionToIdFunction;
-    private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new HashMap<>();
+    private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
 
     public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter fileWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
@@ -42,7 +45,7 @@ public class ComparisonReportWriter {
     }
 
     private void writeComparisons(String path, List<JPlagComparison> comparisons) {
-        for (JPlagComparison comparison : comparisons) {
+        comparisons.parallelStream().forEach(comparison -> {
             String firstSubmissionId = submissionToIdFunction.apply(comparison.firstSubmission());
             String secondSubmissionId = submissionToIdFunction.apply(comparison.secondSubmission());
             String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
@@ -50,7 +53,7 @@ public class ComparisonReportWriter {
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
                     convertMatchesToReportMatches(comparison));
             fileWriter.saveAsJSON(comparisonReport, path, fileName);
-        }
+        });
     }
 
     private void addToLookUp(String firstSubmissionId, String secondSubmissionId, String fileName) {
@@ -59,7 +62,7 @@ public class ComparisonReportWriter {
     }
 
     private void writeToMap(String id1, String id2, String comparisonFileName) {
-        submissionIdToComparisonFileName.putIfAbsent(id1, new HashMap<>());
+        submissionIdToComparisonFileName.putIfAbsent(id1, new ConcurrentHashMap<>());
         submissionIdToComparisonFileName.get(id1).put(id2, comparisonFileName);
     }
 
