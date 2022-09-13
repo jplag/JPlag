@@ -135,6 +135,12 @@
                 <artifactId>metainf-services</artifactId>
                 <version>1.9</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.13.4</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -396,8 +402,8 @@
                 <module>core</module>
                 <module>endtoend-testing</module>
                 <module>languages</module>
-                <module>languages-api</module>
-                <module>languages-testutils</module>
+                <module>language-api</module>
+                <module>language-testutils</module>
             </modules>
         </profile>
         <profile>
@@ -408,8 +414,8 @@
             <modules>
                 <module>core</module>
                 <module>languages</module>
-                <module>languages-api</module>
-                <module>languages-testutils</module>
+                <module>language-api</module>
+                <module>language-testutils</module>
             </modules>
             <build>
                 <plugins>
