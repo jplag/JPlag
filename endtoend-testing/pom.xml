@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>languages.testutils</artifactId>
+            <artifactId>languages-testutils</artifactId>
             <version>${revision}</version>
             <type>test-jar</type>
             <scope>test</scope>

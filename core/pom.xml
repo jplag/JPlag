@@ -23,7 +23,7 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>languages.api</artifactId>
+            <artifactId>languages-api</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>

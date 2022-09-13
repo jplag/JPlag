@@ -396,8 +396,8 @@
                 <module>core</module>
                 <module>endtoend-testing</module>
                 <module>languages</module>
-                <module>languages.api</module>
-                <module>languages.testutils</module>
+                <module>languages-api</module>
+                <module>languages-testutils</module>
             </modules>
         </profile>
         <profile>
@@ -408,8 +408,8 @@
             <modules>
                 <module>core</module>
                 <module>languages</module>
-                <module>languages.api</module>
-                <module>languages.testutils</module>
+                <module>languages-api</module>
+                <module>languages-testutils</module>
             </modules>
             <build>
                 <plugins>
