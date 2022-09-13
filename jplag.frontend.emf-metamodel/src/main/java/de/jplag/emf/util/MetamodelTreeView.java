@@ -55,7 +55,7 @@ public class MetamodelTreeView {
                 viewBuilder.append(System.lineSeparator());
             }
 
-            String tokenText = token.toString();
+            String tokenText = token.getType().getDescription();
             if (eObject instanceof ENamedElement element) {
                 tokenText = element.getName() + " : " + tokenText;
             }

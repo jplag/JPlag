@@ -2,6 +2,9 @@ package de.jplag.emf;
 
 import de.jplag.TokenType;
 
+/**
+ * Ecore meta-metamodel token type. Defines which tokens can be extracted from a metamodel.
+ */
 public enum MetamodelTokenType implements TokenType {
     PACKAGE("EPackage"),
     ANNOTATION("EAnnotation"),
