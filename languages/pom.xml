@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>cpp</module>
-        <module>csharp-6</module>
+        <module>csharp</module>
         <module>emf-metamodel</module>
         <module>emf-metamodel-dynamic</module>
         <module>golang</module>

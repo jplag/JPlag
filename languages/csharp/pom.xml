@@ -6,7 +6,7 @@
         <artifactId>languages</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>csharp-6</artifactId>
+    <artifactId>csharp</artifactId>
 
     <dependencies>
         <dependency>
