@@ -19,7 +19,8 @@ result
 hs_err_pid*
 
 # intelliJ
-.idea/
+.idea/*
+!.idea/codeStyles
 *.iml
 .flattened-pom.xml
 
