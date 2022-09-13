@@ -15,9 +15,9 @@ public enum Preprocessing {
     /** {@link CumulativeDistributionFunctionPreprocessor} */
     CUMULATIVE_DISTRIBUTION_FUNCTION(options -> new CumulativeDistributionFunctionPreprocessor()),
     /** {@link ThresholdPreprocessor} */
-    THRESHOLD(options -> new ThresholdPreprocessor(options.getPreprocessorThreshold())),
+    THRESHOLD(options -> new ThresholdPreprocessor(options.preprocessorThreshold())),
     /** {@link PercentileThresholdProcessor} */
-    PERCENTILE(options -> new PercentileThresholdProcessor(options.getPreprocessorPercentile()));
+    PERCENTILE(options -> new PercentileThresholdProcessor(options.preprocessorPercentile()));
 
     private final Function<ClusteringOptions, ClusteringPreprocessor> constructor;
 

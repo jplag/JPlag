@@ -26,7 +26,9 @@ import de.jplag.LanguageLoader;
 import de.jplag.endtoend.helper.FileHelper;
 import de.jplag.endtoend.helper.JsonHelper;
 import de.jplag.endtoend.helper.TestSuiteHelper;
-import de.jplag.endtoend.model.*;
+import de.jplag.endtoend.model.ExpectedResult;
+import de.jplag.endtoend.model.Options;
+import de.jplag.endtoend.model.ResultDescription;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
@@ -36,8 +38,9 @@ import de.jplag.options.JPlagOptions;
  * original class. The results are compared with the results from previous tests and changes are detected.
  */
 public class EndToEndSuiteTest {
+    private static final double EPSILON = 1E-8;
     // Language -> directory names and Paths
-    private Map<String, Map<String, Path>> LanguageToTestCaseMapper;
+    private Map<String, Map<String, Path>> languageToTestCaseMapper;
 
     private List<Options> options;
 
@@ -47,7 +50,7 @@ public class EndToEndSuiteTest {
 
     public EndToEndSuiteTest() throws IOException {
         // Loading the test resources
-        LanguageToTestCaseMapper = TestSuiteHelper.getAllLanguageResources();
+        languageToTestCaseMapper = TestSuiteHelper.getAllLanguageResources();
         // creating the temporary lists for the test run
         validationErrors = new ArrayList<>();
         temporaryResultList = new HashMap<>();
@@ -82,7 +85,7 @@ public class EndToEndSuiteTest {
      */
     @TestFactory
     Collection<DynamicTest> dynamicOverAllTest() throws IOException {
-        for (Entry<String, Map<String, Path>> languageMap : LanguageToTestCaseMapper.entrySet()) {
+        for (Entry<String, Map<String, Path>> languageMap : languageToTestCaseMapper.entrySet()) {
             String currentLanguageIdentifier = languageMap.getKey();
             for (Entry<String, Path> languagePaths : languageMap.getValue().entrySet()) {
                 String[] fileNames = FileHelper.loadAllTestFileNames(languagePaths.getValue());
@@ -154,26 +157,30 @@ public class EndToEndSuiteTest {
             String identifier = TestSuiteHelper.getTestIdentifier(jPlagComparison);
             addToTemporaryResultMap(directoryName, options, jPlagComparison, languageIdentifier);
 
-            assertNotNull(currentResultDescription, "No stored result could be found for the current LanguageOption! " + options.toString());
+            assertNotNull(currentResultDescription, "No stored result could be found for the current LanguageOption! " + options);
 
             ExpectedResult result = currentResultDescription.getExpectedResultByIdentifier(TestSuiteHelper.getTestIdentifier(jPlagComparison));
             assertNotNull(result, "No stored result could be found for the identifier! " + identifier);
 
-            if (Float.compare(result.resultSimilarityMinimum(), jPlagComparison.minimalSimilarity()) != 0) {
+            if (areDoublesDifferent(result.resultSimilarityMinimum(), jPlagComparison.minimalSimilarity())) {
                 addToValidationErrors("minimalSimilarity", String.valueOf(result.resultSimilarityMinimum()),
                         String.valueOf(jPlagComparison.minimalSimilarity()));
             }
-            if (Float.compare(result.resultSimilarityMaximum(), jPlagComparison.maximalSimilarity()) != 0) {
+            if (areDoublesDifferent(result.resultSimilarityMaximum(), jPlagComparison.maximalSimilarity())) {
                 addToValidationErrors("maximalSimilarity", String.valueOf(result.resultSimilarityMaximum()),
                         String.valueOf(jPlagComparison.maximalSimilarity()));
             }
-            if (Integer.compare(result.resultMatchedTokenNumber(), jPlagComparison.getNumberOfMatchedTokens()) != 0) {
+            if (result.resultMatchedTokenNumber() != jPlagComparison.getNumberOfMatchedTokens()) {
                 addToValidationErrors("numberOfMatchedTokens", String.valueOf(result.resultMatchedTokenNumber()),
                         String.valueOf(jPlagComparison.getNumberOfMatchedTokens()));
             }
 
             assertTrue(validationErrors.isEmpty(), createValidationErrorOutout());
         }
+    }
+
+    private boolean areDoublesDifferent(double d1, double d2) {
+        return Math.abs(d1 - d2) >= EPSILON;
     }
 
     /**

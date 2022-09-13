@@ -4,13 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import de.jplag.AbstractParser;
+import de.jplag.Token;
 import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
@@ -26,7 +28,7 @@ public class ParserAdapter extends AbstractParser {
     private final StanfordCoreNLP pipeline;
     private int tokenTypeIndex = 2; // 0 is FILE_END token, 1 is SEPARATOR_TOKEN, so start at 2.
 
-    private TokenList tokens;
+    private List<Token> tokens;
     private String currentFile;
     private int currentLine;
     /**
@@ -40,15 +42,15 @@ public class ParserAdapter extends AbstractParser {
         this.pipeline = new StanfordCoreNLP(properties);
     }
 
-    public TokenList parse(File directory, String[] files) {
-        tokens = new TokenList();
+    public List<Token> parse(File directory, String[] files) {
+        tokens = new ArrayList<>();
         errors = 0;
         for (String file : files) {
             logger.trace("Parsing file {}", file);
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.addToken(new TextToken(TokenConstants.FILE_END, file));
+            tokens.add(new TextToken(TokenConstants.FILE_END, file));
         }
         return tokens;
     }
@@ -106,7 +108,7 @@ public class ParserAdapter extends AbstractParser {
         int type = getTokenType(text);
         int column = label.beginPosition() - currentLineBreakIndex;
         int length = label.endPosition() - label.beginPosition();
-        tokens.addToken(new TextToken(text, type, currentFile, currentLine, column, length));
+        tokens.add(new TextToken(text, type, currentFile, currentLine, column, length));
     }
 
     private String readFile(Path filePath) {

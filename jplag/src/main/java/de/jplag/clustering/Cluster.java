@@ -11,17 +11,17 @@ import java.util.function.BiFunction;
  */
 public class Cluster<T> {
 
-    private final float communityStrength;
+    private final double communityStrength;
     private final Collection<T> members;
     private ClusteringResult<T> clusteringResult = null;
-    private final float averageSimilarity;
+    private final double averageSimilarity;
 
     /**
      * @param members Members of the cluster.
      * @param communityStrength A metric of how strongly the members of this cluster are connected.
      * @param averageSimilarity The average similarity between all tuple comparisons of the members in this cluster.
      */
-    public Cluster(Collection<T> members, float communityStrength, float averageSimilarity) {
+    public Cluster(Collection<T> members, double communityStrength, double averageSimilarity) {
         this.members = new ArrayList<>(members);
         this.communityStrength = communityStrength;
         this.averageSimilarity = averageSimilarity;
@@ -37,7 +37,7 @@ public class Cluster<T> {
     /**
      * @return average similarity between all tuple comparisons of the members in this cluster.
      */
-    public float getAverageSimilarity() {
+    public double getAverageSimilarity() {
         return averageSimilarity;
     }
 
@@ -45,7 +45,7 @@ public class Cluster<T> {
      * See {@link ClusteringResult#getCommunityStrength}
      * @return community strength of the cluster
      */
-    public float getCommunityStrength() {
+    public double getCommunityStrength() {
         return communityStrength;
     }
 
@@ -61,7 +61,7 @@ public class Cluster<T> {
     /**
      * @return How much each member of this cluster contributes to the {@link ClusteringResult#getCommunityStrength}.
      */
-    public float getCommunityStrengthPerConnection() {
+    public double getCommunityStrengthPerConnection() {
         int size = members.size();
         if (size < 2)
             return 0;
@@ -74,9 +74,9 @@ public class Cluster<T> {
      * non-clusters. This method may only be called on clusters that are part of a ClusteringResult.
      * @return normalized community strength per connection
      */
-    public float getNormalizedCommunityStrengthPerConnection() {
+    public double getNormalizedCommunityStrengthPerConnection() {
         List<Cluster<T>> goodClusters = clusteringResult.getClusters().stream().filter(cluster -> cluster.getCommunityStrength() > 0).toList();
-        float posCommunityStrengthSum = (float) goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
+        double posCommunityStrengthSum = goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
 
         int size = clusteringResult.getClusters().size();
         if (size < 2)
@@ -87,7 +87,7 @@ public class Cluster<T> {
     /**
      * How much this cluster is worth during optimization.
      */
-    public double getWorth(BiFunction<T, T, Float> similarity) {
+    public double getWorth(BiFunction<T, T, Double> similarity) {
         double communityStrength = getCommunityStrength();
         if (members.size() > 1) {
             communityStrength /= connections();
@@ -101,12 +101,12 @@ public class Cluster<T> {
      * @param similarity function that supplies the similarity of two cluster members.
      * @return average similarity
      */
-    private float averageSimilarity(BiFunction<T, T, Float> similarity) {
+    private double averageSimilarity(BiFunction<T, T, Double> similarity) {
         List<T> members = new ArrayList<>(this.members);
         if (members.size() < 2) {
             return 1;
         }
-        float similaritySum = 0;
+        double similaritySum = 0;
         for (int i = 0; i < members.size(); i++) {
             for (int j = i + 1; j < members.size(); j++) {
                 similaritySum += similarity.apply(members.get(i), members.get(j));

@@ -1,6 +1,11 @@
 package de.jplag.clustering.algorithm;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.linear.RealMatrix;
@@ -44,7 +49,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
             Cluster leftCluster = initialClusters.get(leftIndex);
             for (int rightIndex = leftIndex + 1; rightIndex < initialClusters.size(); rightIndex++) {
                 Cluster rightCluster = initialClusters.get(rightIndex);
-                initialSimilarities.add(new ClusterConnection(leftCluster, rightCluster, (float) similarityMatrix.getEntry(leftIndex, rightIndex)));
+                initialSimilarities.add(new ClusterConnection(leftCluster, rightCluster, similarityMatrix.getEntry(leftIndex, rightIndex)));
             }
         }
 
@@ -57,7 +62,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
                 // One cluster already part of another cluster
                 continue;
             }
-            if (nearest.similarity < options.getAgglomerativeThreshold()) {
+            if (nearest.similarity < options.agglomerativeThreshold()) {
                 break;
             }
             clusters.remove(nearest.left);
@@ -65,7 +70,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
             nearest.left.submissions().addAll(nearest.right.submissions());
             Cluster combined = new Cluster(nearest.left.submissions());
             for (Cluster otherCluster : clusters) {
-                float similarity = options.getAgglomerativeInterClusterSimilarity().clusterSimilarity(combined.submissions, otherCluster.submissions,
+                double similarity = options.agglomerativeInterClusterSimilarity().clusterSimilarity(combined.submissions, otherCluster.submissions,
                         similarityMatrix);
                 similarities.add(new ClusterConnection(combined, otherCluster, similarity));
             }
@@ -75,7 +80,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
         return clusters.stream().map(Cluster::submissions).collect(Collectors.toList());
     }
 
-    private record ClusterConnection(Cluster left, Cluster right, float similarity) implements Comparable<ClusterConnection> {
+    private record ClusterConnection(Cluster left, Cluster right, double similarity) implements Comparable<ClusterConnection> {
         @Override
         public int compareTo(ClusterConnection other) {
             return (int) Math.signum(other.similarity - similarity);

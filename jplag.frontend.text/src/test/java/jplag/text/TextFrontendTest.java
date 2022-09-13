@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
-import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 import de.jplag.text.Language;
 
@@ -43,12 +43,12 @@ class TextFrontendTest {
     void testParsingJavaDoc() {
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
-        TokenList result = frontend.parse(baseDirectory, input);
+        List<Token> result = frontend.parse(baseDirectory, input);
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         // Compare parsed tokens:
         Map<Integer, Token> tokenTypes = new HashMap<>();
-        result.allTokens().forEach(it -> tokenTypes.put(it.getType(), it));
+        result.forEach(it -> tokenTypes.put(it.getType(), it));
 
         assertEquals(283, result.size());
         assertEquals(158, tokenTypes.values().size());
@@ -59,7 +59,7 @@ class TextFrontendTest {
     void testLineBreakInputs(String input, @TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("input.txt");
         Files.writeString(file, input);
-        TokenList result = frontend.parse(tempDir.toFile(), new String[] {"input.txt"});
+        List<Token> result = frontend.parse(tempDir.toFile(), new String[] {"input.txt"});
         assertEquals(1, result.size());
     }
 
@@ -68,8 +68,8 @@ class TextFrontendTest {
     void testTokenAfterLineBreak(String input, @TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("input.txt");
         Files.writeString(file, input);
-        TokenList result = frontend.parse(tempDir.toFile(), new String[] {"input.txt"});
-        assertEquals(2, result.getToken(0).getLine());
+        List<Token> result = frontend.parse(tempDir.toFile(), new String[] {"input.txt"});
+        assertEquals(2, result.get(0).getLine());
     }
 
 }

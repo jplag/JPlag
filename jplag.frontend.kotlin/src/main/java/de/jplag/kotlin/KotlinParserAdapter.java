@@ -3,6 +3,8 @@ package de.jplag.kotlin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -11,8 +13,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.Token;
 import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 import de.jplag.kotlin.grammar.KotlinLexer;
 import de.jplag.kotlin.grammar.KotlinParser;
 
@@ -20,7 +22,7 @@ public class KotlinParserAdapter extends AbstractParser {
 
     public static final int NOT_SET = -1;
     private String currentFile;
-    private TokenList tokens;
+    private List<Token> tokens;
 
     /**
      * Creates the KotlinParserAdapter
@@ -30,18 +32,18 @@ public class KotlinParserAdapter extends AbstractParser {
     }
 
     /**
-     * Parsers a list of files into a single {@link TokenList}.
+     * Parsers a list of files into a single list of {@link Token}s.
      * @param directory the directory of the files.
      * @param fileNames the file names of the files.
-     * @return a {@link TokenList} containing all tokens of all files.
+     * @return a list containing all tokens of all files.
      */
-    public TokenList parse(File directory, String[] fileNames) {
-        tokens = new TokenList();
+    public List<Token> parse(File directory, String[] fileNames) {
+        tokens = new ArrayList<>();
         for (String file : fileNames) {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.addToken(new KotlinToken(TokenConstants.FILE_END, file, NOT_SET, NOT_SET, NOT_SET));
+            tokens.add(new KotlinToken(TokenConstants.FILE_END, file, NOT_SET, NOT_SET, NOT_SET));
         }
         return tokens;
     }
@@ -71,13 +73,13 @@ public class KotlinParserAdapter extends AbstractParser {
     }
 
     /**
-     * Adds a new {@link de.jplag.Token} to the current {@link TokenList}.
-     * @param tokenType the type of the new {@link de.jplag.Token}
+     * Adds a new {@link Token} to the current token list.
+     * @param tokenType the type of the new {@link Token}
      * @param line the line of the Token in the current file
      * @param column the start column of the Token in the line
      * @param length the length of the Token
      */
     /* package-private */ void addToken(int tokenType, int line, int column, int length) {
-        tokens.addToken(new KotlinToken(tokenType, currentFile, line, column, length));
+        tokens.add(new KotlinToken(tokenType, currentFile, line, column, length));
     }
 }

@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -46,22 +48,22 @@ public final class TokenPrinter {
 
     /**
      * Creates a string representation of a set of files line by line and adds the tokens under the lines.
-     * @param tokens is the set of tokens parsed from the files.
+     * @param tokens is the list of tokens parsed from the files.
      * @param rootDirectory is the common rootDirectory of the files.
      * @return the string representation.
      */
-    public static String printTokens(TokenList tokens, File rootDirectory) {
+    public static String printTokens(List<Token> tokens, File rootDirectory) {
         return printTokens(tokens, rootDirectory, Optional.empty());
     }
 
     /**
      * Creates a string representation of a collection of files line by line and adds the tokens under the lines.
-     * @param tokenList is the set of tokens parsed from the files.
+     * @param tokenList is the list of tokens parsed from the files.
      * @param rootDirectory is the common directory of the files.
      * @param suffix is the optional view file suffix.
      * @return the string representation.
      */
-    public static String printTokens(TokenList tokenList, File rootDirectory, Optional<String> suffix) {
+    public static String printTokens(List<Token> tokenList, File rootDirectory, Optional<String> suffix) {
         PrinterOutputBuilder builder = new PrinterOutputBuilder();
         Map<String, List<Token>> fileToTokens = groupTokensByFile(tokenList);
 
@@ -124,7 +126,17 @@ public final class TokenPrinter {
         // Sort tokens by file and line -> tokens can be processed without any further checks
         List<String> lines = linesFromFile(file);
 
-        Map<Integer, List<Token>> lineNumbersToTokens = fileTokens.stream().collect(Collectors.groupingBy(Token::getLine));
+        int currentLine = Token.NO_VALUE;
+        Map<Integer, List<Token>> lineNumbersToTokens = new HashMap<>(fileTokens.size());
+        for (Token token : fileTokens) {
+            if (token.getLine() != Token.NO_VALUE) {
+                currentLine = token.getLine();
+            }
+            int line = token.getType() == TokenConstants.FILE_END ? lines.size() : currentLine;
+            List<Token> tokens = lineNumbersToTokens.containsKey(line) ? lineNumbersToTokens.get(line) : new ArrayList<>();
+            tokens.add(token);
+            lineNumbersToTokens.put(line, tokens);
+        }
 
         // create LineData for each line -- 1-based line index
         Stream<Integer> lineNumbers = PRINT_EMPTY_LINES ? IntStream.range(1, lines.size() + 1).boxed() : lineNumbersToTokens.keySet().stream();
@@ -132,8 +144,8 @@ public final class TokenPrinter {
                 .toList();
     }
 
-    private static Map<String, List<Token>> groupTokensByFile(TokenList tokenList) {
-        return tokenList.allTokens().stream().collect(Collectors.groupingBy(Token::getFile));
+    private static Map<String, List<Token>> groupTokensByFile(List<Token> tokens) {
+        return tokens.stream().collect(Collectors.groupingBy(Token::getFile));
     }
 
     /**

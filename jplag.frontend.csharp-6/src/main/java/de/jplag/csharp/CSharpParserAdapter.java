@@ -3,6 +3,7 @@ package de.jplag.csharp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.antlr.v4.runtime.CharStreams;
@@ -12,7 +13,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenList;
+import de.jplag.Token;
+import de.jplag.TokenConstants;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
 
@@ -22,7 +24,7 @@ import de.jplag.csharp.grammar.CSharpParser;
  * @author Timur Saglam
  */
 public class CSharpParserAdapter extends AbstractParser {
-    private TokenList tokens;
+    private List<Token> tokens;
     private String currentFile;
 
     /**
@@ -38,14 +40,14 @@ public class CSharpParserAdapter extends AbstractParser {
      * @param fileNames is the list of file names.
      * @return the list of parsed tokens.
      */
-    public TokenList parse(File directory, List<String> fileNames) {
-        tokens = new TokenList();
+    public List<Token> parse(File directory, List<String> fileNames) {
+        tokens = new ArrayList<>();
         errors = 0;
         for (String fileName : fileNames) {
             if (!parseFile(directory, fileName)) {
                 errors++;
             }
-            tokens.addToken(new CSharpToken(CSharpTokenConstants.FILE_END, fileName, -1, -1, -1));
+            tokens.add(new CSharpToken(TokenConstants.FILE_END, fileName, -1, -1, -1));
         }
         return tokens;
     }
@@ -77,6 +79,6 @@ public class CSharpParserAdapter extends AbstractParser {
     }
 
     /* package-private */ void addToken(int type, int line, int column, int length) {
-        tokens.addToken(new CSharpToken(type, currentFile, line, column, length));
+        tokens.add(new CSharpToken(type, currentFile, line, column, length));
     }
 }

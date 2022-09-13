@@ -1,6 +1,8 @@
 package de.jplag.reporting.reportobject;
 
-import static de.jplag.reporting.jsonfactory.DirectoryManager.*;
+import static de.jplag.reporting.jsonfactory.DirectoryManager.createDirectory;
+import static de.jplag.reporting.jsonfactory.DirectoryManager.deleteDirectory;
+import static de.jplag.reporting.jsonfactory.DirectoryManager.zipDirectory;
 import static de.jplag.reporting.reportobject.mapper.SubmissionNameToIdMapper.buildSubmissionNameToIdMap;
 
 import java.io.File;
@@ -8,7 +10,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,6 +54,7 @@ public class ReportObjectFactory {
     public void createAndSaveReport(JPlagResult result, String path) {
 
         try {
+            logger.info("Start writing report files...");
             createDirectory(path);
             buildSubmissionToIdMap(result);
 
@@ -56,6 +63,7 @@ public class ReportObjectFactory {
             writeComparisons(result, path);
             writeOverview(result, path);
 
+            logger.info("Zipping report files...");
             zipAndDelete(path);
         } catch (IOException e) {
             logger.error("Could not create directory " + path + " for report viewer generation", e);
@@ -152,8 +160,8 @@ public class ReportObjectFactory {
     }
 
     private Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
-        Set<Submission> submissions = comparisons.stream().map(JPlagComparison::getFirstSubmission).collect(Collectors.toSet());
-        Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::getSecondSubmission).collect(Collectors.toSet());
+        Set<Submission> submissions = comparisons.stream().map(JPlagComparison::firstSubmission).collect(Collectors.toSet());
+        Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::secondSubmission).collect(Collectors.toSet());
         submissions.addAll(secondSubmissions);
         return submissions;
     }

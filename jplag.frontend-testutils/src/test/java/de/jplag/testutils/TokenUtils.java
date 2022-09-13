@@ -3,7 +3,6 @@ package de.jplag.testutils;
 import java.util.List;
 
 import de.jplag.Token;
-import de.jplag.TokenList;
 
 public final class TokenUtils {
 
@@ -12,25 +11,23 @@ public final class TokenUtils {
     }
 
     /**
-     * Returns the type of all tokens in a {@link TokenList} that belong to a file.
-     * @param tokenList is the {@link TokenList}.
+     * Returns the type of all tokens that belong to a certain file.
+     * @param tokenList is the list of {@link Token Tokens}.
      * @param name is the name of the target file.
      * @return the immutable list of token types.
      */
-    public static List<Integer> tokenTypesByFile(TokenList tokenList, String name) {
-        var tokens = tokensByFile(tokenList, name);
-        return tokens.stream().map(Token::getType).toList();
+    public static List<Integer> tokenTypesByFile(List<Token> tokens, String name) {
+        return tokensByFile(tokens, name).stream().map(Token::getType).toList();
     }
 
     /**
-     * Returns the tokens in a {@link TokenList} that belong to a file.
-     * @param tokenList is the {@link TokenList}.
+     * Returns the tokens that belong to a certain file.
+     * @param tokenList is the list of {@link Token Tokens}.
      * @param name is the name of the target file.
      * @return the immutable list of tokens.
      */
-    public static List<Token> tokensByFile(TokenList tokenList, String name) {
-        var tokens = tokenList.allTokens().stream();
-        return tokens.filter(it -> it.getFile().startsWith(name)).toList();
+    public static List<Token> tokensByFile(List<Token> tokens, String name) {
+        return tokens.stream().filter(it -> it.getFile().startsWith(name)).toList();
     }
 
 }

@@ -1,11 +1,15 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+import de.jplag.Submission;
+import de.jplag.Token;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
 
@@ -17,7 +21,8 @@ public class ComparisonReportWriter {
 
     private final FileWriter fileWriter;
     private final Function<Submission, String> submissionToIdFunction;
-    private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new HashMap<>();
+    private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
+    private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
 
     public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter fileWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
@@ -42,15 +47,15 @@ public class ComparisonReportWriter {
     }
 
     private void writeComparisons(String path, List<JPlagComparison> comparisons) {
-        for (JPlagComparison comparison : comparisons) {
-            String firstSubmissionId = submissionToIdFunction.apply(comparison.getFirstSubmission());
-            String secondSubmissionId = submissionToIdFunction.apply(comparison.getSecondSubmission());
+        comparisons.parallelStream().forEach(comparison -> {
+            String firstSubmissionId = submissionToIdFunction.apply(comparison.firstSubmission());
+            String secondSubmissionId = submissionToIdFunction.apply(comparison.secondSubmission());
             String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
                     convertMatchesToReportMatches(comparison));
             fileWriter.saveAsJSON(comparisonReport, path, fileName);
-        }
+        });
     }
 
     private void addToLookUp(String firstSubmissionId, String secondSubmissionId, String fileName) {
@@ -59,19 +64,17 @@ public class ComparisonReportWriter {
     }
 
     private void writeToMap(String id1, String id2, String comparisonFileName) {
-        submissionIdToComparisonFileName.putIfAbsent(id1, new HashMap<>());
+        submissionIdToComparisonFileName.putIfAbsent(id1, new ConcurrentHashMap<>());
         submissionIdToComparisonFileName.get(id1).put(id2, comparisonFileName);
     }
 
     private String generateComparisonName(String firstSubmissionId, String secondSubmissionId) {
         String name = concatenate(firstSubmissionId, secondSubmissionId);
-        String finalName = name;
-        long timesNameAlreadyExists = submissionIdToComparisonFileName.values().stream().filter(map -> map.containsValue(finalName)).count();
-        if (timesNameAlreadyExists > 0) {
-            name = concatenate(firstSubmissionId, secondSubmissionId, timesNameAlreadyExists + 1);
+        AtomicInteger collisionCounter = fileNameCollisions.putIfAbsent(name, new AtomicInteger(1));
+        if (collisionCounter != null) {
+            name = concatenate(firstSubmissionId, secondSubmissionId, collisionCounter.incrementAndGet());
         }
         return name;
-
     }
 
     private String concatenate(String firstSubmissionId, String secondSubmissionId, long index) {
@@ -83,16 +86,16 @@ public class ComparisonReportWriter {
     }
 
     private List<Match> convertMatchesToReportMatches(JPlagComparison comparison) {
-        return comparison.getMatches().stream().map(match -> convertMatchToReportMatch(comparison, match)).toList();
+        return comparison.matches().stream().map(match -> convertMatchToReportMatch(comparison, match)).toList();
     }
 
     private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
-        TokenList tokensFirst = comparison.getFirstSubmission().getTokenList();
-        TokenList tokensSecond = comparison.getSecondSubmission().getTokenList();
-        Token startOfFirst = tokensFirst.getToken(match.startOfFirst());
-        Token endOfFirst = tokensFirst.getToken(match.startOfFirst() + match.length() - 1);
-        Token startOfSecond = tokensSecond.getToken(match.startOfSecond());
-        Token endOfSecond = tokensSecond.getToken(match.startOfSecond() + match.length() - 1);
+        List<Token> tokensFirst = comparison.firstSubmission().getTokenList();
+        List<Token> tokensSecond = comparison.secondSubmission().getTokenList();
+        Token startOfFirst = tokensFirst.get(match.startOfFirst());
+        Token endOfFirst = tokensFirst.get(match.startOfFirst() + match.length() - 1);
+        Token startOfSecond = tokensSecond.get(match.startOfSecond());
+        Token endOfSecond = tokensSecond.get(match.startOfSecond() + match.length() - 1);
 
         return new Match(startOfFirst.getFile(), startOfSecond.getFile(), startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(),
                 endOfSecond.getLine(), match.length());

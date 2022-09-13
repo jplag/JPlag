@@ -28,7 +28,7 @@ public class NewJavaFeaturesTest extends TestBase {
         // Check similarity and number of matches:
         var comparison = result.getAllComparisons().get(0);
         assertEquals(EXPECTED_SIMILARITY, comparison.similarity(), DELTA);
-        assertEquals(EXPECTED_MATCHES, comparison.getMatches().size());
+        assertEquals(EXPECTED_MATCHES, comparison.matches().size());
     }
 
 }
