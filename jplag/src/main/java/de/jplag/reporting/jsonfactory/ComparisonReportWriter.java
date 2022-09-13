@@ -3,6 +3,7 @@ package de.jplag.reporting.jsonfactory;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import de.jplag.JPlagComparison;
@@ -21,6 +22,7 @@ public class ComparisonReportWriter {
     private final FileWriter fileWriter;
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
+    private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
 
     public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter fileWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
@@ -68,13 +70,11 @@ public class ComparisonReportWriter {
 
     private String generateComparisonName(String firstSubmissionId, String secondSubmissionId) {
         String name = concatenate(firstSubmissionId, secondSubmissionId);
-        String finalName = name;
-        long timesNameAlreadyExists = submissionIdToComparisonFileName.values().stream().filter(map -> map.containsValue(finalName)).count();
-        if (timesNameAlreadyExists > 0) {
-            name = concatenate(firstSubmissionId, secondSubmissionId, timesNameAlreadyExists + 1);
+        AtomicInteger collisionCounter = fileNameCollisions.putIfAbsent(name, new AtomicInteger(1));
+        if (collisionCounter != null) {
+            name = concatenate(firstSubmissionId, secondSubmissionId, collisionCounter.incrementAndGet());
         }
         return name;
-
     }
 
     private String concatenate(String firstSubmissionId, String secondSubmissionId, long index) {
