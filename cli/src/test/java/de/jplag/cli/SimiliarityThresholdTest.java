@@ -8,40 +8,40 @@ import org.junit.jupiter.api.Test;
 import de.jplag.CommandLineArgument;
 import de.jplag.options.JPlagOptions;
 
-public class SimiliarityThresholdTest extends CommandLineInterfaceTest {
+class SimiliarityThresholdTest extends CommandLineInterfaceTest {
 
     @Test
-    public void testDefaultThreshold() {
+    void testDefaultThreshold() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD, options.getSimilarityThreshold(), DELTA);
+        assertEquals(JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD, options.similarityThreshold(), DELTA);
     }
 
     @Test
-    public void testInvalidThreshold() throws Exception {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, "Not a float...");
+    void testInvalidThreshold() throws Exception {
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, "Not a Double...");
         int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
-        assertEquals(1, statusCode);
+        assertEquals(1.0, statusCode);
     }
 
     @Test
-    public void testLowerBound() {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Float.toString(-1f));
+    void testLowerBound() {
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(-1.0));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(0f, options.getSimilarityThreshold(), DELTA);
+        assertEquals(0.0, options.similarityThreshold(), DELTA);
     }
 
     @Test
-    public void testUpperBound() {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Float.toString(101f));
+    void testUpperBound() {
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(101.0));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(100f, options.getSimilarityThreshold(), DELTA);
+        assertEquals(100.0, options.similarityThreshold(), DELTA);
     }
 
     @Test
-    public void testValidThreshold() {
-        float expectedValue = 50f;
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Float.toString(expectedValue));
+    void testValidThreshold() {
+        double expectedValue = 50.0;
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(expectedValue, options.getSimilarityThreshold(), DELTA);
+        assertEquals(expectedValue, options.similarityThreshold(), DELTA);
     }
 }

@@ -1,11 +1,39 @@
 package de.jplag;
 
-import static de.jplag.CommandLineArgument.*;
+import static de.jplag.CommandLineArgument.BASE_CODE;
+import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY;
+import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_THRESHOLD;
+import static de.jplag.CommandLineArgument.CLUSTER_ALGORITHM;
+import static de.jplag.CommandLineArgument.CLUSTER_DISABLE;
+import static de.jplag.CommandLineArgument.CLUSTER_METRIC;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_CDF;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_NONE;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE;
+import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_THRESHOLD;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_BANDWIDTH;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_KMEANS_ITERATIONS;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MAX_RUNS;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MIN_RUNS;
+import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_NOISE;
+import static de.jplag.CommandLineArgument.COMPARISON_MODE;
+import static de.jplag.CommandLineArgument.DEBUG;
+import static de.jplag.CommandLineArgument.EXCLUDE_FILE;
+import static de.jplag.CommandLineArgument.LANGUAGE;
+import static de.jplag.CommandLineArgument.MIN_TOKEN_MATCH;
+import static de.jplag.CommandLineArgument.NEW_DIRECTORY;
+import static de.jplag.CommandLineArgument.OLD_DIRECTORY;
+import static de.jplag.CommandLineArgument.RESULT_FOLDER;
+import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
+import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
+import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
+import static de.jplag.CommandLineArgument.SUBDIRECTORY;
+import static de.jplag.CommandLineArgument.SUFFIXES;
+import static de.jplag.CommandLineArgument.VERBOSITY;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -17,14 +45,11 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
-import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.SimilarityMetric;
 import de.jplag.options.Verbosity;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 import de.jplag.strategy.ComparisonMode;
@@ -125,53 +150,74 @@ public final class CLI {
         addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectories);
         addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
 
-        JPlagOptions options = new JPlagOptions(submissionDirectories, oldSubmissionDirectories, LANGUAGE.getFrom(namespace));
-        options.setBaseCodeSubmissionName(BASE_CODE.getFrom(namespace));
-        options.setVerbosity(Verbosity.fromOption(VERBOSITY.getFrom(namespace)));
-        options.setDebugParser(DEBUG.getFrom(namespace));
-        options.setSubdirectoryName(SUBDIRECTORY.getFrom(namespace));
-        options.setFileSuffixes(fileSuffixes);
-        options.setExclusionFileName(EXCLUDE_FILE.getFrom(namespace));
-        options.setMinimumTokenMatch(MIN_TOKEN_MATCH.getFrom(namespace));
-        options.setSimilarityThreshold(SIMILARITY_THRESHOLD.getFrom(namespace));
-        options.setMaximumNumberOfComparisons(SHOWN_COMPARISONS.getFrom(namespace));
-        ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace)).ifPresentOrElse(options::setComparisonMode,
-                () -> logger.warn("Unknown comparison mode, using default mode!"));
+        var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
+        var comparisonModeOptional = ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace));
+        if (comparisonModeOptional.isEmpty()) {
+            logger.warn("Unknown comparison mode, using default mode!");
+        }
+        var comparisonMode = comparisonModeOptional.orElse(JPlagOptions.DEFAULT_COMPARISON_MODE);
 
-        ClusteringOptions.Builder clusteringBuilder = new ClusteringOptions.Builder();
-        Optional.ofNullable(!(Boolean) CLUSTER_DISABLE.getFrom(namespace)).ifPresent(clusteringBuilder::enabled);
-        Optional.ofNullable((ClusteringAlgorithm) CLUSTER_ALGORITHM.getFrom(namespace)).ifPresent(clusteringBuilder::algorithm);
-        Optional.ofNullable((SimilarityMetric) CLUSTER_METRIC.getFrom(namespace)).ifPresent(clusteringBuilder::similarityMetric);
-        Optional.ofNullable((Float) CLUSTER_SPECTRAL_BANDWIDTH.getFrom(namespace)).ifPresent(clusteringBuilder::spectralKernelBandwidth);
-        Optional.ofNullable((Float) CLUSTER_SPECTRAL_NOISE.getFrom(namespace)).ifPresent(clusteringBuilder::spectralGaussianProcessVariance);
-        Optional.ofNullable((Integer) CLUSTER_SPECTRAL_MIN_RUNS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMinRuns);
-        Optional.ofNullable((Integer) CLUSTER_SPECTRAL_MAX_RUNS.getFrom(namespace)).ifPresent(clusteringBuilder::spectralMaxRuns);
-        Optional.ofNullable((Integer) CLUSTER_SPECTRAL_KMEANS_ITERATIONS.getFrom(namespace))
-                .ifPresent(clusteringBuilder::spectralMaxKMeansIterationPerRun);
-        Optional.ofNullable((Float) CLUSTER_AGGLOMERATIVE_THRESHOLD.getFrom(namespace)).ifPresent(clusteringBuilder::agglomerativeThreshold);
-        Optional.ofNullable((InterClusterSimilarity) CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace))
-                .ifPresent(clusteringBuilder::agglomerativeInterClusterSimilarity);
-        Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_NONE.getFrom(namespace)).ifPresent(none -> {
-            if (none) {
-                clusteringBuilder.preprocessor(Preprocessing.NONE);
-            }
-        });
-        Optional.ofNullable((Boolean) CLUSTER_PREPROCESSING_CDF.getFrom(namespace)).ifPresent(cdf -> {
-            if (cdf) {
-                clusteringBuilder.preprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
-            }
-        });
-        Optional.ofNullable((Float) CLUSTER_PREPROCESSING_PERCENTILE.getFrom(namespace)).ifPresent(percentile -> {
-            clusteringBuilder.preprocessor(Preprocessing.PERCENTILE);
-            clusteringBuilder.preprocessorPercentile(percentile);
-        });
-        Optional.ofNullable((Float) CLUSTER_PREPROCESSING_THRESHOLD.getFrom(namespace)).ifPresent(threshold -> {
-            clusteringBuilder.preprocessor(Preprocessing.THRESHOLD);
-            clusteringBuilder.preprocessorPercentile(threshold);
-        });
-        options.setClusteringOptions(clusteringBuilder.build());
+        ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
 
-        return options;
+        return new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories,
+                BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
+                JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
+                clusteringOptions, comparisonMode, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
+    }
+
+    private static ClusteringOptions getClusteringOptions(Namespace namespace) {
+        ClusteringOptions clusteringOptions = new ClusteringOptions();
+        if (CLUSTER_DISABLE.isSet(namespace)) {
+            boolean disabled = CLUSTER_DISABLE.getFrom(namespace);
+            clusteringOptions = clusteringOptions.withEnabled(!disabled);
+        }
+        if (CLUSTER_ALGORITHM.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withAlgorithm(CLUSTER_ALGORITHM.getFrom(namespace));
+        }
+        if (CLUSTER_METRIC.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withSimilarityMetric(CLUSTER_METRIC.getFrom(namespace));
+        }
+        if (CLUSTER_SPECTRAL_BANDWIDTH.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withSpectralKernelBandwidth(CLUSTER_SPECTRAL_BANDWIDTH.getFrom(namespace));
+        }
+        if (CLUSTER_SPECTRAL_NOISE.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withSpectralGaussianProcessVariance(CLUSTER_SPECTRAL_NOISE.getFrom(namespace));
+        }
+        if (CLUSTER_SPECTRAL_MIN_RUNS.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withSpectralMinRuns(CLUSTER_SPECTRAL_MIN_RUNS.getFrom(namespace));
+        }
+        if (CLUSTER_SPECTRAL_MAX_RUNS.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withSpectralMaxRuns(CLUSTER_SPECTRAL_MAX_RUNS.getFrom(namespace));
+        }
+        if (CLUSTER_SPECTRAL_KMEANS_ITERATIONS.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withSpectralMaxKMeansIterationPerRun(CLUSTER_SPECTRAL_KMEANS_ITERATIONS.getFrom(namespace));
+        }
+        if (CLUSTER_AGGLOMERATIVE_THRESHOLD.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withAgglomerativeThreshold(CLUSTER_AGGLOMERATIVE_THRESHOLD.getFrom(namespace));
+        }
+        if (CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.isSet(namespace)) {
+            clusteringOptions = clusteringOptions
+                    .withAgglomerativeInterClusterSimilarity(CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace));
+        }
+        if (CLUSTER_PREPROCESSING_NONE.isSet(namespace)) {
+            if (CLUSTER_PREPROCESSING_NONE.getFrom(namespace)) {
+                clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
+            }
+        }
+        if (CLUSTER_PREPROCESSING_CDF.isSet(namespace)) {
+            if (CLUSTER_PREPROCESSING_CDF.getFrom(namespace)) {
+                clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
+            }
+        }
+        if (CLUSTER_PREPROCESSING_PERCENTILE.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.PERCENTILE)
+                    .withPreprocessorPercentile(CLUSTER_PREPROCESSING_PERCENTILE.getFrom(namespace));
+        }
+        if (CLUSTER_PREPROCESSING_THRESHOLD.isSet(namespace)) {
+            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.THRESHOLD)
+                    .withPreprocessorPercentile(CLUSTER_PREPROCESSING_THRESHOLD.getFrom(namespace));
+        }
+        return clusteringOptions;
     }
 
     private String generateDescription() {

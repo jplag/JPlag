@@ -28,8 +28,8 @@ public class ClusteringAdapterTest {
         for (int i = 0; i < submissions.size(); i++) {
             for (int j = i + 1; j < submissions.size(); j++) {
                 JPlagComparison comparison = mock(JPlagComparison.class);
-                when(comparison.getFirstSubmission()).thenReturn(submissions.get(i));
-                when(comparison.getSecondSubmission()).thenReturn(submissions.get(j));
+                when(comparison.firstSubmission()).thenReturn(submissions.get(i));
+                when(comparison.secondSubmission()).thenReturn(submissions.get(j));
                 comparisons.add(comparison);
             }
         }
@@ -41,7 +41,7 @@ public class ClusteringAdapterTest {
             return List.of(IntStream.range(0, arg.getRowDimension()).boxed().collect(Collectors.toList()));
         });
 
-        ClusteringAdapter clustering = new ClusteringAdapter(comparisons, x -> 0.f);
+        ClusteringAdapter clustering = new ClusteringAdapter(comparisons, x -> 0.0);
         ClusteringResult<Submission> clusteringResult = clustering.doClustering(algorithm);
 
         Collection<Collection<Submission>> expectedResult = List.of(submissions);

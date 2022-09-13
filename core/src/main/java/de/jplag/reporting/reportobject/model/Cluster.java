@@ -4,6 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record Cluster(@JsonProperty("average_similarity") float averageSimilarity, @JsonProperty("strength") float strength,
+public record Cluster(@JsonProperty("average_similarity") double averageSimilarity, @JsonProperty("strength") double strength,
         @JsonProperty("members") List<String> members) {
 }

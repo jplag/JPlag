@@ -36,9 +36,8 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     protected void compareSubmissionsToBaseCode(SubmissionSet submissionSet) {
         Submission baseCodeSubmission = submissionSet.getBaseCode();
         for (Submission currentSubmission : submissionSet.getSubmissions()) {
-            JPlagComparison baseCodeComparison = greedyStringTiling.compareWithBaseCode(currentSubmission, baseCodeSubmission);
+            JPlagComparison baseCodeComparison = greedyStringTiling.generateBaseCodeMarking(currentSubmission, baseCodeSubmission);
             currentSubmission.setBaseCodeComparison(baseCodeComparison);
-            baseCodeSubmission.resetBaseCode();
         }
     }
 
@@ -49,7 +48,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
         JPlagComparison comparison = greedyStringTiling.compare(first, second);
         logger.info("Comparing {}-{}: {}", first.getName(), second.getName(), comparison.similarity());
 
-        if (options.getSimilarityMetric().isAboveThreshold(comparison, options.getSimilarityThreshold())) {
+        if (options.similarityMetric().isAboveThreshold(comparison, options.similarityThreshold())) {
             return Optional.of(comparison);
         }
         return Optional.empty();

@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 import de.jplag.TokenPrinter;
 
 class MinimalCSharpFrontendTest {
@@ -44,12 +43,12 @@ class MinimalCSharpFrontendTest {
 
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
-        TokenList result = frontend.parse(baseDirectory, input);
+        List<Token> result = frontend.parse(baseDirectory, input);
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         // Compare parsed tokens:
         assertEquals(expectedToken.size(), result.size());
-        List<Integer> actualToken = result.allTokens().stream().map(Token::getType).collect(toList());
+        List<Integer> actualToken = result.stream().map(Token::getType).collect(toList());
         assertEquals(expectedToken, actualToken);
     }
 

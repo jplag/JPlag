@@ -22,7 +22,7 @@ class InvalidSubmissionTest extends TestBase {
     @Test
     void testInvalidSubmissionsWithDebug() throws ExitException {
         try {
-            runJPlag(SAMPLE_NAME, it -> it.setDebugParser(true));
+            runJPlag(SAMPLE_NAME, it -> it.withDebugParser(true));
             fail("No submission exception was thrown!");
         } catch (SubmissionException e) {
             System.out.println(e.getMessage());

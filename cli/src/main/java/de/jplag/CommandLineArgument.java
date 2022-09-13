@@ -48,42 +48,40 @@ public enum CommandLineArgument {
     SUFFIXES(new Builder("-p", String.class).argumentGroup(ADVANCED_GROUP)),
     EXCLUDE_FILE(new Builder("-x", String.class).argumentGroup(ADVANCED_GROUP)),
     MIN_TOKEN_MATCH("-t", Integer.class),
-    SIMILARITY_THRESHOLD(new Builder("-m", Float.class).defaultsTo(DEFAULT_SIMILARITY_THRESHOLD).argumentGroup(ADVANCED_GROUP)),
+    SIMILARITY_THRESHOLD(new Builder("-m", Double.class).defaultsTo(DEFAULT_SIMILARITY_THRESHOLD).argumentGroup(ADVANCED_GROUP)),
     SHOWN_COMPARISONS(new Builder("-n", Integer.class).defaultsTo(DEFAULT_SHOWN_COMPARISONS)),
     RESULT_FOLDER(new Builder("-r", String.class).defaultsTo("result")),
     COMPARISON_MODE(new Builder("-c", String.class).defaultsTo(DEFAULT_COMPARISON_MODE.getName()).choices(ComparisonMode.allNames())),
     CLUSTER_DISABLE(new Builder("--cluster-skip", Boolean.class).argumentGroup(CLUSTERING_GROUP_NAME).action(Arguments.storeTrue())),
     CLUSTER_ALGORITHM(
             new Builder("--cluster-alg", ClusteringAlgorithm.class).argumentGroup(CLUSTERING_GROUP_NAME)
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getAlgorithm())),
+                    .defaultsTo(new ClusteringOptions().algorithm())),
     CLUSTER_METRIC(
             new Builder("--cluster-metric", SimilarityMetric.class).argumentGroup(CLUSTERING_GROUP_NAME)
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSimilarityMetric())),
+                    .defaultsTo(new ClusteringOptions().similarityMetric())),
     CLUSTER_SPECTRAL_BANDWIDTH(
-            new Builder("--cluster-spectral-bandwidth", Float.class).metaVar("bandwidth")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralKernelBandwidth()).hidden()),
+            new Builder("--cluster-spectral-bandwidth", Double.class).metaVar("bandwidth")
+                    .defaultsTo(new ClusteringOptions().spectralKernelBandwidth()).hidden()),
     CLUSTER_SPECTRAL_NOISE(
-            new Builder("--cluster-spectral-noise", Float.class).metaVar("noise")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralGaussianProcessVariance()).hidden()),
+            new Builder("--cluster-spectral-noise", Double.class).metaVar("noise")
+                    .defaultsTo(new ClusteringOptions().spectralGaussianProcessVariance()).hidden()),
     CLUSTER_SPECTRAL_MIN_RUNS(
-            new Builder("--cluster-spectral-min-runs", Integer.class).metaVar("min").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMinRuns())
-                    .hidden()),
+            new Builder("--cluster-spectral-min-runs", Integer.class).metaVar("min").defaultsTo(new ClusteringOptions().spectralMinRuns()).hidden()),
     CLUSTER_SPECTRAL_MAX_RUNS(
-            new Builder("--cluster-spectral-max-runs", Integer.class).metaVar("max").defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxRuns())
-                    .hidden()),
+            new Builder("--cluster-spectral-max-runs", Integer.class).metaVar("max").defaultsTo(new ClusteringOptions().spectralMaxRuns()).hidden()),
     CLUSTER_SPECTRAL_KMEANS_ITERATIONS(
             new Builder("--cluster-spectral-kmeans-interations", Integer.class).metaVar("iterations")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getSpectralMaxKMeansIterationPerRun()).hidden()),
+                    .defaultsTo(new ClusteringOptions().spectralMaxKMeansIterationPerRun()).hidden()),
     CLUSTER_AGGLOMERATIVE_THRESHOLD(
-            new Builder("--cluster-agglomerative-threshold", Float.class).metaVar("threshold")
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeThreshold()).hidden()),
+            new Builder("--cluster-agglomerative-threshold", Double.class).metaVar("threshold")
+                    .defaultsTo(new ClusteringOptions().agglomerativeThreshold()).hidden()),
     CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY(
             new Builder("--cluster-agglomerative-inter-cluster-similarity", InterClusterSimilarity.class)
-                    .defaultsTo(ClusteringOptions.DEFAULTS.getAgglomerativeInterClusterSimilarity()).hidden()),
+                    .defaultsTo(new ClusteringOptions().agglomerativeInterClusterSimilarity()).hidden()),
     CLUSTER_PREPROCESSING_NONE(new Builder("--cluster-pp-none", Boolean.class).action(Arguments.storeTrue()).hidden()),
     CLUSTER_PREPROCESSING_CDF(new Builder("--cluster-pp-cdf", Boolean.class).action(Arguments.storeTrue()).hidden()),
-    CLUSTER_PREPROCESSING_PERCENTILE(new Builder("--cluster-pp-percentile", Float.class).metaVar("percentile").hidden()),
-    CLUSTER_PREPROCESSING_THRESHOLD(new Builder("--cluster-pp-threshold", Float.class).metaVar("threshold").hidden());
+    CLUSTER_PREPROCESSING_PERCENTILE(new Builder("--cluster-pp-percentile", Double.class).metaVar("percentile").hidden()),
+    CLUSTER_PREPROCESSING_THRESHOLD(new Builder("--cluster-pp-threshold", Double.class).metaVar("threshold").hidden());
 
     /**
      * The identifier of the default {@link Language}.
@@ -145,6 +143,15 @@ public enum CommandLineArgument {
      */
     public <T> T getFrom(Namespace namespace) {
         return namespace.get(flagWithoutDash());
+    }
+
+    /**
+     * Returns whether the value of this argument is set to a value not equal to {@code null}.
+     * @param namespace stores a value for the argument
+     * @return the indicator
+     */
+    public boolean isSet(Namespace namespace) {
+        return namespace.get(flagWithoutDash()) != null;
     }
 
     /**

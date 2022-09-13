@@ -1,8 +1,9 @@
 package de.jplag.scala
 
-import de.jplag.TokenList
+import de.jplag.Token
 
 import java.io.File
+import scala.collection.JavaConverters._
 
 import org.kohsuke.MetaInfServices
 
@@ -18,7 +19,7 @@ class Language extends de.jplag.Language {
 
   override def minimumTokenMatch = 8
 
-  override def parse(dir: File, files: Array[String]): TokenList = this.parser.parse(dir, files)
+  override def parse(dir: File, files: Array[String]): java.util.List[Token] = this.parser.parse(dir, files).asJava
 
   override def hasErrors: Boolean = this.parser.hasErrors
 

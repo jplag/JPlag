@@ -26,8 +26,8 @@ public class SubmissionNameToIdMapper {
     public static Map<String, String> buildSubmissionNameToIdMap(JPlagResult result) {
         HashMap<String, String> idToName = new HashMap<>();
         getComparisons(result).forEach(comparison -> {
-            idToName.put(comparison.getFirstSubmission().getName(), sanitizeNameOf(comparison.getFirstSubmission()));
-            idToName.put(comparison.getSecondSubmission().getName(), sanitizeNameOf(comparison.getSecondSubmission()));
+            idToName.put(comparison.firstSubmission().getName(), sanitizeNameOf(comparison.firstSubmission()));
+            idToName.put(comparison.secondSubmission().getName(), sanitizeNameOf(comparison.secondSubmission()));
         });
         return idToName;
     }
@@ -37,7 +37,7 @@ public class SubmissionNameToIdMapper {
     }
 
     private static List<JPlagComparison> getComparisons(JPlagResult result) {
-        int numberOfComparisons = result.getOptions().getMaximumNumberOfComparisons();
+        int numberOfComparisons = result.getOptions().maximumNumberOfComparisons();
         return result.getComparisons(numberOfComparisons);
     }
 }

@@ -3,6 +3,8 @@ package de.jplag.rlang;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -11,7 +13,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenList;
+import de.jplag.Token;
 import de.jplag.rlang.grammar.RFilter;
 import de.jplag.rlang.grammar.RLexer;
 import de.jplag.rlang.grammar.RParser;
@@ -23,7 +25,7 @@ import de.jplag.rlang.grammar.RParser;
 public class RParserAdapter extends AbstractParser implements RTokenConstants {
 
     private String currentFile;
-    private TokenList tokens;
+    private List<Token> tokens;
 
     /**
      * Creates the RParserAdapter
@@ -33,19 +35,19 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
     }
 
     /**
-     * Parsers a list of files into a single {@link TokenList}.
+     * Parsers a list of files into a single token list of {@link Token}s.
      * @param directory the directory of the files.
      * @param fileNames the file names of the files.
-     * @return a {@link TokenList} containing all tokens of all files.
+     * @return a list containing all tokens of all files.
      */
-    public TokenList parse(File directory, String[] fileNames) {
-        tokens = new TokenList();
+    public List<Token> parse(File directory, String[] fileNames) {
+        tokens = new ArrayList<>();
         errors = 0;
         for (String fileName : fileNames) {
             if (!parseFile(directory, fileName)) {
                 errors++;
             }
-            tokens.addToken(new RToken(FILE_END, fileName, -1, -1, -1));
+            tokens.add(new RToken(FILE_END, fileName, -1, -1, -1));
         }
         return tokens;
     }
@@ -82,14 +84,14 @@ public class RParserAdapter extends AbstractParser implements RTokenConstants {
     }
 
     /**
-     * Adds a new {@link de.jplag.Token} to the current {@link TokenList}.
-     * @param type the type of the new {@link de.jplag.Token}
+     * Adds a new {@link Token} to the current token list.
+     * @param type the type of the new {@link Token}
      * @param line the line of the Token in the current file
      * @param start the start column of the Token in the line
      * @param length the length of the Token
      */
     /* package-private */ void addToken(int type, int line, int start, int length) {
-        tokens.addToken(new RToken(type, currentFile, line, start, length));
+        tokens.add(new RToken(type, currentFile, line, start, length));
 
     }
 }
