@@ -1,9 +1,9 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import de.jplag.JPlagComparison;
@@ -23,7 +23,7 @@ public class ComparisonReportWriter {
     private final FileWriter fileWriter;
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
-    private final Map<String, Integer> fileNameCollisions = new HashMap<>();
+    private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
 
     public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter fileWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
@@ -69,14 +69,11 @@ public class ComparisonReportWriter {
         submissionIdToComparisonFileName.get(id1).put(id2, comparisonFileName);
     }
 
-    private synchronized String generateComparisonName(String firstSubmissionId, String secondSubmissionId) {
+    private String generateComparisonName(String firstSubmissionId, String secondSubmissionId) {
         String name = concatenate(firstSubmissionId, secondSubmissionId);
-        if (fileNameCollisions.containsKey(name)) {
-            int count = fileNameCollisions.get(name) + 1;
-            fileNameCollisions.put(name, count);
-            name = concatenate(firstSubmissionId, secondSubmissionId, count);
-        } else {
-            fileNameCollisions.put(name, 1);
+        AtomicInteger collisionCounter = fileNameCollisions.putIfAbsent(name, new AtomicInteger(1));
+        if (collisionCounter != null) {
+            name = concatenate(firstSubmissionId, secondSubmissionId, collisionCounter.incrementAndGet());
         }
         return name;
     }
