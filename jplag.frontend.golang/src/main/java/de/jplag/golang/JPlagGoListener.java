@@ -7,7 +7,6 @@ import java.util.*;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.jplag.SharedTokenType;
 import de.jplag.TokenType;
 import de.jplag.golang.grammar.GoParser;
 import de.jplag.golang.grammar.GoParserBaseListener;
@@ -474,11 +473,6 @@ public class JPlagGoListener extends GoParserBaseListener {
             }
             case "{" -> transformToken(getCurrentContext().getBegin(), token);
             case "}" -> transformToken(getCurrentContext().getEnd(), token);
-            case "<EOF>" -> {
-                if (node.getParent() instanceof GoParser.SourceFileContext) {
-                    transformToken(SharedTokenType.FILE_END, token);
-                }
-            }
             default -> {
                 // do nothing.
             }

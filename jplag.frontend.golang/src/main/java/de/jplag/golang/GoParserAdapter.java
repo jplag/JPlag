@@ -28,6 +28,7 @@ public class GoParserAdapter extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }

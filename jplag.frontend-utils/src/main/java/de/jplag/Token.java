@@ -1,11 +1,15 @@
 package de.jplag;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This class represents a token in a source code. It can represent keywords, identifiers, syntactical structures etc.
  * What types of tokens there are depends on the specific language, meaning JPlag does not enforce a specific token set.
  * The language parsers decide what is a token and what is not.
  */
 public class Token {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     /** Indicates that the requested field has no value. */
     public static final int NO_VALUE = -1;
 
@@ -27,23 +31,22 @@ public class Token {
      * Creates a token with column and length information.
      * @param type is the token type.
      * @param file is the name of the source code file.
-     * @param line line is the line index in the source code where the token resides. Cannot be smaller than 1. For
-     * {@link SharedTokenType#FILE_END FILE_END} it is automatically set to {@link #NO_VALUE}.
-     * @param column is the column index, meaning where the token starts in the line.
+     * @param line is the line index in the source code where the token resides. Index is 1-based.
+     * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
      * @param length is the length of the token in the source code.
      */
     public Token(TokenType type, String file, int line, int column, int length) {
+        if (line == 0) {
+            logger.warn("Creating a token with line index 0 while index is 1-based");
+        }
+        if (column == 0) {
+            logger.warn("Creating a token with column index 0 while index is 1-based");
+        }
         this.type = type;
         this.file = file;
-        if (type == SharedTokenType.FILE_END) {
-            this.line = NO_VALUE;
-            this.column = NO_VALUE;
-            this.length = NO_VALUE;
-        } else {
-            this.line = line > 0 ? line : 1;
-            this.column = column;
-            this.length = length;
-        }
+        this.line = line;
+        this.column = column;
+        this.length = length;
     }
 
     /**
