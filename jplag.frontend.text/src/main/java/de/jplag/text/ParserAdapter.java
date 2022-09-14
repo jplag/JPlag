@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import de.jplag.AbstractParser;
@@ -23,7 +21,6 @@ public class ParserAdapter extends AbstractParser {
     private static final char CR = '\r';
     private static final String ANNOTATORS_KEY = "annotators";
     private static final String ANNOTATORS_VALUE = "tokenize";
-    private final Map<String, Integer> tokenTypes = new HashMap<>();
     private final StanfordCoreNLP pipeline;
 
     private List<Token> tokens;
