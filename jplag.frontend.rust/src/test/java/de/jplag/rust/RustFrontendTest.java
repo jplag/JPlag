@@ -1,6 +1,5 @@
 package de.jplag.rust;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -128,7 +127,6 @@ class RustFrontendTest {
     private void testTokenCoverage(List<Token> tokens, String fileName) {
         var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
         assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
-        assertFalse(annotatedTokens.contains(SharedTokenType.SEPARATOR));
         var annotatedRustTokens = annotatedTokens.stream().filter(RustTokenType.class::isInstance).collect(Collectors.toSet());
         var allRustTokens = RustTokenType.values();
         var missingRustTokens = Arrays.stream(allRustTokens).filter(token -> !annotatedRustTokens.contains(token)).toList();

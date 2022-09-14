@@ -7,5 +7,16 @@ package de.jplag;
  * @see SharedTokenType
  */
 public interface TokenType {
+    /**
+     * Returns the user-readable description of this token type.
+     */
     String getDescription();
+
+    /**
+     * Indicates that no matches containing this token type shall be generated. Defaults to <code>false</code>.
+     * @return <code>true</code> if token type is excluded from matching, otherwise <code>false</code>.
+     */
+    default Boolean isExcludedFromMatching() {
+        return false;
+    }
 }

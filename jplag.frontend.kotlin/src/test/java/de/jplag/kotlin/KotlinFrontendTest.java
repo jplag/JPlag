@@ -1,7 +1,6 @@
 package de.jplag.kotlin;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -139,7 +138,6 @@ class KotlinFrontendTest {
     private void testTokenCoverage(List<Token> tokens, String fileName) {
         var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
         assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
-        assertFalse(annotatedTokens.contains(SharedTokenType.SEPARATOR));
         var annotatedKotlinTokens = annotatedTokens.stream().filter(KotlinTokenType.class::isInstance).collect(Collectors.toSet());
         var allKotlinTokens = KotlinTokenType.values();
         var missingKotlinTokens = Arrays.stream(allKotlinTokens).filter(token -> !annotatedKotlinTokens.contains(token)).toList();

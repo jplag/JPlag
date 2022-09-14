@@ -1,6 +1,5 @@
 package de.jplag.scala;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -144,7 +143,6 @@ class ScalaFrontendTest {
     private void testTokenCoverage(List<Token> tokens, String fileName) {
         var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
         assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
-        assertFalse(annotatedTokens.contains(SharedTokenType.SEPARATOR));
         var annotatedScalaTokens = annotatedTokens.stream().filter(ScalaTokenType.class::isInstance).collect(Collectors.toSet());
         var allScalaTokens = ScalaTokenType.values();
         var missingScalaTokens = Arrays.stream(allScalaTokens).filter(token -> !annotatedScalaTokens.contains(token)).toList();

@@ -7,12 +7,7 @@ public enum SharedTokenType implements TokenType {
     /**
      * Marks the end of the file. Every parsed file must have this token type as its last element.
      */
-    FILE_END("EOF"),
-
-    /**
-     * Indicates a separation in the token list. Match subsequences cannot extend beyond tokens with this type.
-     */
-    SEPARATOR("---------");
+    FILE_END("EOF");
 
     private final String description;
 
@@ -22,5 +17,10 @@ public enum SharedTokenType implements TokenType {
 
     SharedTokenType(String description) {
         this.description = description;
+    }
+
+    @Override
+    public Boolean isExcludedFromMatching() {
+        return true;
     }
 }

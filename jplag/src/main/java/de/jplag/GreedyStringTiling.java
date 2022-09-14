@@ -196,9 +196,8 @@ public class GreedyStringTiling {
     private Set<Integer> initiallyMarkedTokenIndexes(Submission submission) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
         List<Token> tokens = submission.getTokenList();
-        return IntStream
-                .range(0, tokens.size()).filter(i -> tokens.get(i).getType() == SharedTokenType.FILE_END
-                        || tokens.get(i).getType() == SharedTokenType.SEPARATOR || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i))))
+        return IntStream.range(0, tokens.size())
+                .filter(i -> tokens.get(i).getType().isExcludedFromMatching() || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i))))
                 .boxed().collect(Collectors.toSet());
     }
 

@@ -1,6 +1,5 @@
 package de.jplag.golang;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -145,7 +144,6 @@ class GoFrontendTest {
     private void testTokenCoverage(List<Token> tokens, String fileName) {
         var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
         assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
-        assertFalse(annotatedTokens.contains(SharedTokenType.SEPARATOR));
         var annotatedGoTokens = annotatedTokens.stream().filter(GoTokenType.class::isInstance).collect(Collectors.toSet());
         var allGoTokens = GoTokenType.values();
         var missingGoTokens = Arrays.stream(allGoTokens).filter(token -> !annotatedGoTokens.contains(token)).toList();
