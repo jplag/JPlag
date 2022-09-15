@@ -1,4 +1,4 @@
-public class SortAlgo2 {
+public class SortAlgo4 {
 	private int firstCounter;
 	private int arrayLenght;
 	private int swapVarI;
