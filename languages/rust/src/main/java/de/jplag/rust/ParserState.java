@@ -3,6 +3,7 @@ package de.jplag.rust;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Optional;
 
 /**
  * A ParserState is a representation for the state of a parser, consisting of a stack of Contexts.
@@ -56,25 +57,20 @@ public class ParserState<C extends ParserState.Context> {
 
     /**
      * A Context is a grammatical situation, e.g. a class body, or a while statement. Each Context should have a startType
-     * and an endType, designating the start and the end of the context as a TokenConstant.
+     * and an endType, designating the start and the end of the context as a token type.
      */
     protected interface Context {
 
         /**
-         * Used as start or end type to indicate that no token shall be added for this context.
-         */
-        int NONE = -1;
-
-        /**
-         * Returns the TokenConstant that marks the start of the Context.
+         * Returns the token type that marks the start of the Context.
          * @return the start type
          */
-        int getStartType();
+        Optional<RustTokenType> getStartType();
 
         /**
-         * The TokenConstant that marks the end of the Context.
+         * Returns the token type that marks the end of the Context.
          * @return the end type
          */
-        int getEndType();
+        Optional<RustTokenType> getEndType();
     }
 }

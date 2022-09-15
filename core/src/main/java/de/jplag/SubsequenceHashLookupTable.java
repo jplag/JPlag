@@ -7,45 +7,45 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A class to generate and store hashes over a fixed length subsequence of a given list of tokens. Hash generation is
+ * A class to generate and store hashes over a fixed length subsequence of a given list of values. Hash generation is
  * optimized to work in O(n).
  */
 class SubsequenceHashLookupTable {
     /**
      * Value combination is chosen such that the maximum possible hash value does not exceed Int.max. Computation formula
-     * for maximum hash value is \sum from (i=0 to MAX_HASH_LENGTH - 1) with (TOKEN_HASH_MODULO - 1) * 2^i
+     * for maximum hash value is \sum from (i=0 to MAX_HASH_LENGTH - 1) with (HASH_MODULO - 1) * 2^i
      */
     private static final int MAX_HASH_LENGTH = 25;
-    private static final int TOKEN_HASH_MODULO = 64;
+    private static final int HASH_MODULO = 64;
 
     /** Indicator that the subsequence should not be considered for comparison matching */
     public static final int NO_HASH = -1;
 
     private final int windowSize;
-    private final List<Token> tokens;
+    private final int[] values;
     private int[] subsequenceHashes;
     private Map<Integer, List<Integer>> startIndexToSubsequenceHashesMap;
 
     /**
      * Generates a new subsequence hash lookup table. Performance is optimized to compute hashes in O(n).
      * @param windowSize the size of the subsequences.
-     * @param tokens the tokens to hash over.
-     * @param markedTokens the set of marked tokens. Subsequences containing a marked token obtain the {@link #NO_HASH}
+     * @param values the values to hash over.
+     * @param markedIndexes the indexes of marked values. Subsequences containing a marked value obtain the {@link #NO_HASH}
      * value.
      */
-    SubsequenceHashLookupTable(int windowSize, List<Token> tokens, Set<Token> markedTokens) {
+    SubsequenceHashLookupTable(int windowSize, int[] values, Set<Integer> markedIndexes) {
         windowSize = Math.max(1, windowSize);
         windowSize = Math.min(MAX_HASH_LENGTH, windowSize);
         this.windowSize = windowSize;
-        this.tokens = tokens;
+        this.values = values;
 
-        if (tokens.size() < windowSize) {
+        if (values.length < windowSize) {
             return;
         }
 
-        subsequenceHashes = new int[tokens.size() - windowSize];
+        subsequenceHashes = new int[values.length - windowSize];
         startIndexToSubsequenceHashesMap = new HashMap<>(subsequenceHashes.length);
-        computeSubsequenceHashes(markedTokens);
+        computeSubsequenceHashes(markedIndexes);
     }
 
     /** Returns the size of the subsequences used for hashing */
@@ -53,9 +53,9 @@ class SubsequenceHashLookupTable {
         return windowSize;
     }
 
-    /** Returns the list of tokens for which the hashes were computed */
-    List<Token> getTokens() {
-        return tokens;
+    /** Returns the list of values for which the hashes were computed */
+    int[] getValues() {
+        return values;
     }
 
     /**
@@ -81,16 +81,16 @@ class SubsequenceHashLookupTable {
 
     /**
      * Creates hashes for all subsequences with windowSize. Code is optimized to perform in O(n) using a windowing approach.
-     * Hashes are computed by \sum from (i=0 to windowSize) with hash(tokens[offset+i]) * 2^(hashLength-1-i)
-     * @param markedTokens contains the marked tokens. Subsequences containing a marked token will receive the NO_HASH
-     * value.
+     * Hashes are computed by \sum from (i=0 to windowSize) with hash(values[offset+i]) * 2^(hashLength-1-i)
+     * @param markedIndexes contains the indexes of marked values. Subsequences containing a marked value will receive the
+     * {@link #NO_HASH} value.
      */
-    private void computeSubsequenceHashes(Set<Token> markedTokens) {
+    private void computeSubsequenceHashes(Set<Integer> markedIndexes) {
         int hash = 0;
         int hashedLength = 0;
         int factor = (windowSize != 1 ? (2 << (windowSize - 2)) : 1);
 
-        for (int windowEndIndex = 0; windowEndIndex < tokens.size(); windowEndIndex++) {
+        for (int windowEndIndex = 0; windowEndIndex < values.length; windowEndIndex++) {
             int windowStartIndex = windowEndIndex - windowSize;
             if (windowStartIndex >= 0) {
                 if (hashedLength >= windowSize) {
@@ -99,10 +99,10 @@ class SubsequenceHashLookupTable {
                 } else {
                     subsequenceHashes[windowStartIndex] = NO_HASH;
                 }
-                hash -= factor * (hashValueForToken(tokens.get(windowStartIndex)));
+                hash -= factor * hashValueForValue(values[windowStartIndex]);
             }
-            hash = (2 * hash) + (hashValueForToken(tokens.get(windowEndIndex)));
-            if (markedTokens.contains(tokens.get(windowEndIndex))) {
+            hash = (2 * hash) + hashValueForValue(values[windowEndIndex]);
+            if (markedIndexes.contains(windowEndIndex)) {
                 hashedLength = 0;
             } else {
                 hashedLength++;
@@ -110,8 +110,8 @@ class SubsequenceHashLookupTable {
         }
     }
 
-    private int hashValueForToken(Token token) {
-        return token.type % TOKEN_HASH_MODULO;
+    private int hashValueForValue(int value) {
+        return value % HASH_MODULO;
     }
 
     private void addToStartIndexesToHashesMap(int startIndex, int subsequenceHash) {

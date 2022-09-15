@@ -1,5 +1,7 @@
 package de.jplag.rlang;
 
+import static de.jplag.rlang.RTokenType.*;
+
 import org.antlr.v4.runtime.Token;
 
 import de.jplag.rlang.grammar.*;
@@ -10,7 +12,7 @@ import de.jplag.rlang.grammar.*;
  * <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag fork</a>.
  * @author Robin Maisch
  */
-public class JplagRListener extends RCombinedBaseListener implements RTokenConstants {
+public class JplagRListener extends RCombinedBaseListener {
 
     private final RParserAdapter parserAdapter;
 
@@ -27,11 +29,11 @@ public class JplagRListener extends RCombinedBaseListener implements RTokenConst
      * @param targetType the type of the JPlag token to be created.
      * @param token the ANTLR token.
      */
-    private void transformToken(int targetType, Token token) {
+    private void transformToken(RTokenType targetType, Token token) {
         parserAdapter.addToken(targetType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
-    private void transformToken(int targetType, Token start, Token end) {
+    private void transformToken(RTokenType targetType, Token start, Token end) {
         parserAdapter.addToken(targetType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 

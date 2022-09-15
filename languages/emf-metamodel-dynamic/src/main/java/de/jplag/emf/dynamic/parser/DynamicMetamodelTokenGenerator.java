@@ -2,7 +2,7 @@ package de.jplag.emf.dynamic.parser;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.jplag.emf.dynamic.DynamicMetamodelTokenConstants;
+import de.jplag.emf.dynamic.DynamicMetamodelTokenType;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 
 /**
@@ -23,7 +23,7 @@ public class DynamicMetamodelTokenGenerator extends AbstractMetamodelVisitor {
 
     @Override
     protected void visitEObject(EObject eObject) {
-        int tokenType = DynamicMetamodelTokenConstants.getTokenType(eObject.eClass());
+        var tokenType = new DynamicMetamodelTokenType(eObject);
         parser.addToken(tokenType, eObject);
     }
 }

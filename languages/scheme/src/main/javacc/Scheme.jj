@@ -52,11 +52,13 @@ options
 PARSER_BEGIN(SchemeParser)
 package de.jplag.scheme;
 
+import static de.jplag.scheme.SchemeTokenType.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class SchemeParser implements SchemeTokenConstants {
+public class SchemeParser {
     /* used for context in the template production rule */
     private static int templateParam;
     private Parser parser2;

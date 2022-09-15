@@ -1,11 +1,13 @@
 package de.jplag.python3;
 
+import static de.jplag.python3.Python3TokenType.*;
+
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.jplag.python3.grammar.Python3BaseListener;
 import de.jplag.python3.grammar.Python3Parser;
 
-public class JplagPython3Listener extends Python3BaseListener implements Python3TokenConstants {
+public class JplagPython3Listener extends Python3BaseListener {
 
     private final Parser parser;
 

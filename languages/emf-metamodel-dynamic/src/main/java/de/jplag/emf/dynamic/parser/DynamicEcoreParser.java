@@ -4,6 +4,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.dynamic.DynamicMetamodelToken;
+import de.jplag.emf.dynamic.DynamicMetamodelTokenType;
 import de.jplag.emf.parser.EcoreParser;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 
@@ -20,8 +21,7 @@ public class DynamicEcoreParser extends EcoreParser {
         return new DynamicMetamodelTokenGenerator(this);
     }
 
-    @Override
-    public void addToken(int type, EObject source) {
+    public void addToken(DynamicMetamodelTokenType type, EObject source) {
         MetamodelToken token = new DynamicMetamodelToken(type, currentFile, source);
         MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedTokenAndAdd(token, visitor.getCurrentTreeDepth(), NO_PREFIX);
         tokens.add(metadataEnrichedToken);

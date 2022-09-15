@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenConstants;
+import de.jplag.Token;
+import de.jplag.TokenType;
 
 public class Parser extends AbstractParser {
     private String currentFile;
 
-    private List<de.jplag.Token> tokens;
+    private List<Token> tokens;
 
     /**
      * Creates the parser.
@@ -19,22 +20,23 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<de.jplag.Token> parse(File directory, String[] files) {
+    public List<Token> parse(File directory, String[] files) {
         tokens = new ArrayList<>();
         errors = 0;
         for (String file : files) {
             currentFile = file;
             logger.trace("Parsing file {}", file);
-            if (!SchemeParser.parseFile(directory, file, null, this))
+            if (!SchemeParser.parseFile(directory, file, null, this)) {
                 errors++;
-            tokens.add(new SchemeToken(TokenConstants.FILE_END, currentFile));
+            }
+            tokens.add(Token.fileEnd(currentFile));
         }
         return tokens;
     }
 
-    public void add(int type, Token token) {
+    public void add(TokenType type, de.jplag.scheme.Token token) {
         int length = token.endColumn - token.beginColumn + 1;
-        tokens.add(new SchemeToken(type, currentFile, token.beginLine, token.endLine, length));
+        tokens.add(new Token(type, currentFile, token.beginLine, token.endLine, length));
     }
 
 }

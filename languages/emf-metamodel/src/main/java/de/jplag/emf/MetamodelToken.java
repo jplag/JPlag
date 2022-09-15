@@ -5,35 +5,33 @@ import java.util.Optional;
 import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.Token;
-import de.jplag.TokenConstants;
+import de.jplag.TokenType;
 
 /**
  * EMF metamodel token.
  * @author Timur Saglam
  */
-public class MetamodelToken extends Token implements MetamodelTokenConstants {
+public class MetamodelToken extends Token {
 
     private final Optional<EObject> eObject;
 
     /**
      * Creates an Ecore metamodel token that corresponds to an EObject.
-     * @param type is the corresponding ID of the {@link TokenConstants}.
+     * @param type is the type of the token.
      * @param file is the name of the source model file.
      * @param eObject is the corresponding eObject in the model from which this token was extracted.
      */
-    public MetamodelToken(int type, String file, EObject eObject) {
-        super(type, file, -1);
-        this.eObject = Optional.of(eObject);
+    public MetamodelToken(MetamodelTokenType type, String file, EObject eObject) {
+        this(type, file, NO_VALUE, NO_VALUE, NO_VALUE, Optional.of(eObject));
     }
 
     /**
      * Creates an Ecore metamodel token.
-     * @param type is the corresponding ID of the {@link TokenConstants}.
+     * @param type is the type of the token.
      * @param file is the name of the source model file.
      */
-    public MetamodelToken(int type, String file) {
-        super(type, file, -1);
-        this.eObject = Optional.empty();
+    public MetamodelToken(TokenType type, String file) {
+        this(type, file, NO_VALUE, NO_VALUE, NO_VALUE, Optional.empty());
     }
 
     /**
@@ -45,7 +43,7 @@ public class MetamodelToken extends Token implements MetamodelTokenConstants {
      * @param length is the length of the token in the source code.
      * @param eObject is the corresponding eObject in the model from which this token was extracted
      */
-    public MetamodelToken(int type, String file, int line, int column, int length, Optional<EObject> eObject) {
+    public MetamodelToken(TokenType type, String file, int line, int column, int length, Optional<EObject> eObject) {
         super(type, file, line, column, length);
         this.eObject = eObject;
     }
@@ -55,30 +53,5 @@ public class MetamodelToken extends Token implements MetamodelTokenConstants {
      */
     public Optional<EObject> getEObject() {
         return eObject;
-    }
-
-    @Override
-    protected String type2string() {
-        return switch (type) {
-            case PACKAGE -> "EPackage";
-            case ANNOTATION -> "EAnnotation";
-            case CLASS -> "EClass";
-            case DATATYPE -> "EDatatype";
-            case ENUM -> "EEnum";
-            case ENUM_LITERAL -> "EEnumLiteral";
-            case OPERATION -> "EOperation";
-            case REFERENCE -> "EReference";
-            case ATTRIBUTE -> "EAttribute";
-            case PARAMETER -> "EParameter";
-            case INTERFACE -> "EClass (Interface)";
-            case SUPER_TYPE -> "ESuperType";
-            case ID_ATTRIBUTE -> "EAttribute (ID)";
-            case CONTAINMENT -> "EReference (Containment)";
-            case ABSTRACT_CLASS -> "EClass (Abstract)";
-            case RETURN_TYPE -> "EClassifier (Return Type)";
-            case THROWS_DECLARATION -> "EClassifier (Exception)";
-            case FILE_END -> "(EOF)";
-            default -> "<UNKNOWN" + type + ">";
-        };
     }
 }

@@ -1,6 +1,6 @@
 package de.jplag.golang;
 
-import static de.jplag.golang.GoTokenTestUtils.getDummyToken;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
@@ -19,8 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 import de.jplag.TokenPrinter;
 
 class GoFrontendTest {
@@ -69,21 +70,6 @@ class GoFrontendTest {
     }
 
     /**
-     * Confirms that every type of GoToken has a Sting representation associated to it.
-     */
-    @Test
-    void testTokenToString() {
-        var missingTokens = IntStream.range(0, GoTokenConstants.NUM_DIFF_TOKENS).mapToObj(GoTokenTestUtils::getDummyToken)
-                .filter(token -> token.type2string().contains("UNKNOWN")).toList();
-
-        if (!missingTokens.isEmpty()) {
-            var typeList = missingTokens.stream().map(Token::getType).map(Object::toString).collect(Collectors.joining(", "));
-            fail("Found token types with no string representation: %s".formatted(typeList));
-        }
-
-    }
-
-    /**
      * Confirms that the code is covered to a basic extent, i.e. each line of code contains at least one token.
      * @param fileName a code sample file name
      * @param tokens the list of tokens generated from the sample
@@ -102,7 +88,7 @@ class GoFrontendTest {
         // All lines that contain code
         var codeLines = getCodeLines(lines);
         // All lines that contain a token
-        var tokenLines = tokens.stream().map(Token::getLine).distinct().toList();
+        var tokenLines = tokens.stream().mapToInt(Token::getLine).distinct().boxed().toList();
 
         if (codeLines.size() > tokenLines.size()) {
             List<Integer> missedLinesIndices = new ArrayList<>(codeLines);
@@ -156,18 +142,13 @@ class GoFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = tokens.stream().parallel().map(Token::getType).sorted().distinct().toList();
-
-        // Exclude SEPARATOR_TOKEN, as it does not occur
-        var missingTokenTypes = IntStream.range(0, GoTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).boxed()
-                .collect(Collectors.toList());
-        missingTokenTypes.removeAll(foundTokens);
-
-        if (!missingTokenTypes.isEmpty()) {
-            String missingTypesList = missingTokenTypes.stream().map(type -> getDummyToken(type).type2string()).collect(Collectors.joining(", "));
-            fail("Some Token types were not found in the complete code example '%s': %s.".formatted(fileName, missingTypesList));
-        }
-
+        var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
+        var annotatedGoTokens = annotatedTokens.stream().filter(GoTokenType.class::isInstance).collect(Collectors.toSet());
+        var allGoTokens = GoTokenType.values();
+        var missingGoTokens = Arrays.stream(allGoTokens).filter(token -> !annotatedGoTokens.contains(token)).toList();
+        assertTrue(missingGoTokens.isEmpty(), "The following go tokens are missing in the code example '%s':\n".formatted(fileName)
+                + String.join("\n", missingGoTokens.stream().map(GoTokenType::getDescription).toList()));
     }
 
 }

@@ -25,7 +25,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     /**
      * Get the total number of matched tokens for this comparison.
      */
-    public final int getNumberOfMatchedTokens() {
+    public int getNumberOfMatchedTokens() {
         return matches.stream().mapToInt(Match::length).sum();
     }
 

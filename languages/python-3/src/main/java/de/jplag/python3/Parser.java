@@ -10,19 +10,19 @@ import java.util.List;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenConstants;
+import de.jplag.Token;
+import de.jplag.TokenType;
 import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
 
 public class Parser extends AbstractParser {
 
-    private List<de.jplag.Token> tokens;
+    private List<Token> tokens;
     private String currentFile;
 
     /**
@@ -32,7 +32,7 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<de.jplag.Token> parse(File directory, String[] files) {
+    public List<Token> parse(File directory, String[] files) {
         tokens = new ArrayList<>();
         errors = 0;
         for (String file : files) {
@@ -40,7 +40,7 @@ public class Parser extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.add(new Python3Token(TokenConstants.FILE_END, file, -1, -1, -1));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
@@ -78,13 +78,12 @@ public class Parser extends AbstractParser {
         return true;
     }
 
-    public void add(int type, Token token) {
-        tokens.add(new Python3Token(type, (currentFile == null ? "null" : currentFile), token.getLine(), token.getCharPositionInLine() + 1,
+    public void add(TokenType type, org.antlr.v4.runtime.Token token) {
+        tokens.add(new Token(type, (currentFile == null ? "null" : currentFile), token.getLine(), token.getCharPositionInLine() + 1,
                 token.getText().length()));
     }
 
-    public void addEnd(int type, Token token) {
-        tokens.add(new Python3Token(type, (currentFile == null ? "null" : currentFile), token.getLine(),
-                tokens.get(tokens.size() - 1).getColumn() + 1, 0));
+    public void addEnd(TokenType type, org.antlr.v4.runtime.Token token) {
+        tokens.add(new Token(type, (currentFile == null ? "null" : currentFile), token.getLine(), tokens.get(tokens.size() - 1).getColumn() + 1, 0));
     }
 }

@@ -20,7 +20,7 @@ so the upgrade needs to wait. It would seem that once this frontend is equipped 
 The choice of tokens is intended to be similar to the Java or C# frontends. Specifically, among others, it includes a
 range of nesting structures (class and method declarations, control flow expressions) as well as variable declaration,
 object creation, assignment, and control flow altering keywords. <br>
-Blocks are distinguished by their context, i.e. there are separate `TokenConstants` for `if` blocks, `for` blocks, class
+Blocks are distinguished by their context, i.e. there are separate `TokenTypes` for `if` blocks, `for` blocks, class
 bodies, method bodies, array constructors, and the like.
 
 More syntactic elements of Scala may turn out to be helpful to include in the future, especially those that are newly

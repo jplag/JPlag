@@ -7,9 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
+import de.jplag.TokenType;
 import de.jplag.text.Language;
 
 class TextFrontendTest {
@@ -46,12 +46,9 @@ class TextFrontendTest {
         List<Token> result = frontend.parse(baseDirectory, input);
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
-        // Compare parsed tokens:
-        Map<Integer, Token> tokenTypes = new HashMap<>();
-        result.forEach(it -> tokenTypes.put(it.getType(), it));
-
-        assertEquals(283, result.size());
-        assertEquals(158, tokenTypes.values().size());
+        List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
+        assertEquals(283, tokenTypes.size());
+        assertEquals(158, new HashSet<>(tokenTypes).size());
     }
 
     @ParameterizedTest

@@ -18,7 +18,7 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
-import de.jplag.TokenConstants;
+import de.jplag.Token;
 
 public class JavacAdapter {
 
@@ -40,7 +40,7 @@ public class JavacAdapter {
                 final String filename = fileNameOf(directory, ast);
                 final LineMap map = ast.getLineMap();
                 ast.accept(new TokenGeneratingTreeScanner(filename, parser, map, positions, ast), null);
-                parser.add(TokenConstants.FILE_END, filename, 1, -1, -1);
+                parser.add(Token.fileEnd(filename));
             }
         } catch (IOException e) {
             parser.logger.error(e.getMessage(), e);

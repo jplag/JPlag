@@ -132,7 +132,7 @@ public final class TokenPrinter {
             if (token.getLine() != Token.NO_VALUE) {
                 currentLine = token.getLine();
             }
-            int line = token.getType() == TokenConstants.FILE_END ? lines.size() : currentLine;
+            int line = token.getType() == SharedTokenType.FILE_END ? lines.size() : currentLine;
             List<Token> tokens = lineNumbersToTokens.containsKey(line) ? lineNumbersToTokens.get(line) : new ArrayList<>();
             tokens.add(token);
             lineNumbersToTokens.put(line, tokens);
@@ -152,7 +152,8 @@ public final class TokenPrinter {
      * Determines the string representation of the token.
      */
     private static String getStringRepresentation(Token token) {
-        return token.getLength() <= 1 && INDICATE_TINY_TOKEN ? token.toString().toLowerCase() : token.toString();
+        String description = token.getType().getDescription();
+        return token.getLength() <= 1 && INDICATE_TINY_TOKEN ? description.toLowerCase() : description;
     }
 
     /**
