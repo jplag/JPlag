@@ -28,19 +28,19 @@ class MinimalMetamodelTest {
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "models");
     private static final String[] TEST_SUBJECTS = {"bookStore.ecore", "bookStoreExtended.ecore", "bookStoreRenamed.ecore"};
 
-    private de.jplag.Language frontend;
+    private de.jplag.Language language;
     private File baseDirectory;
 
     @BeforeEach
     public void setUp() {
-        frontend = new Language();
+        language = new Language();
         baseDirectory = BASE_PATH.toFile();
         FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }
 
     @Test
     void testBookstoreMetamodels() {
-        List<Token> result = frontend.parse(baseDirectory, TEST_SUBJECTS);
+        List<Token> result = language.parse(baseDirectory, TEST_SUBJECTS);
 
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(Language.VIEW_FILE_SUFFIX)));
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();

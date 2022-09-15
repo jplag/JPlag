@@ -23,18 +23,18 @@ import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
 import de.jplag.text.Language;
 
-class TextFrontendTest {
+class TextLanguageTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources");
     private static final String TEST_SUBJECT = "FutureJavaDoc.txt";
 
-    private de.jplag.Language frontend;
+    private de.jplag.Language language;
     private File baseDirectory;
 
     @BeforeEach
     public void setUp() {
-        frontend = new Language();
+        language = new Language();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }
@@ -43,7 +43,7 @@ class TextFrontendTest {
     void testParsingJavaDoc() {
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
-        List<Token> result = frontend.parse(baseDirectory, input);
+        List<Token> result = language.parse(baseDirectory, input);
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
@@ -56,7 +56,7 @@ class TextFrontendTest {
     void testLineBreakInputs(String input, @TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("input.txt");
         Files.writeString(file, input);
-        List<Token> result = frontend.parse(tempDir.toFile(), new String[] {"input.txt"});
+        List<Token> result = language.parse(tempDir.toFile(), new String[] {"input.txt"});
         assertEquals(1, result.size());
     }
 
@@ -65,7 +65,7 @@ class TextFrontendTest {
     void testTokenAfterLineBreak(String input, @TempDir Path tempDir) throws IOException {
         Path file = tempDir.resolve("input.txt");
         Files.writeString(file, input);
-        List<Token> result = frontend.parse(tempDir.toFile(), new String[] {"input.txt"});
+        List<Token> result = language.parse(tempDir.toFile(), new String[] {"input.txt"});
         assertEquals(2, result.get(0).getLine());
     }
 

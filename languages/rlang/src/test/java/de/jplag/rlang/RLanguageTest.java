@@ -22,7 +22,7 @@ import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 
-class RFrontendTest {
+class RLanguageTest {
 
     /**
      * Regular expression for lines that contain no code.
@@ -34,7 +34,7 @@ class RFrontendTest {
      */
     private static final String COMPLETE_TEST_FILE = "Complete.R";
 
-    private final Logger logger = LoggerFactory.getLogger("R frontend test");
+    private final Logger logger = LoggerFactory.getLogger("R language test");
     private final String[] testFiles = new String[] {"Game.R", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rlang").toFile();
     private Language language;

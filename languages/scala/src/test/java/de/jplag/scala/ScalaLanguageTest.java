@@ -1,4 +1,4 @@
-package de.jplag.golang;
+package de.jplag.scala;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -10,8 +10,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -24,11 +22,12 @@ import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 
-class GoFrontendTest {
+class ScalaLanguageTest {
+
     /**
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
      */
-    private static final String COMPLETE_TEST_FILE = "Complete.go";
+    private static final String COMPLETE_TEST_FILE = "Complete.scala";
 
     /**
      * Regular expression that describes lines consisting only of whitespace and optionally a line comment.
@@ -44,10 +43,11 @@ class GoFrontendTest {
      * Regular expression that describes lines containing the end of a multiline comment and no more code after that.
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
+    private static final double EPSILON = 1E-6;
 
-    private final Logger logger = LoggerFactory.getLogger("GoLang frontend test");
-    private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
-    private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "golang").toFile();
+    private final Logger logger = LoggerFactory.getLogger("Scala language test");
+    private final String[] testFiles = new String[] {"Parser.scala", COMPLETE_TEST_FILE};
+    private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "scala").toFile();
     private Language language;
 
     @BeforeEach
@@ -62,10 +62,11 @@ class GoFrontendTest {
             String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
-            testSourceCoverage(fileName, tokens);
             if (fileName.equals(COMPLETE_TEST_FILE)) {
                 testTokenCoverage(tokens, fileName);
             }
+            testSourceCoverage(fileName, tokens);
+
         }
     }
 
@@ -75,33 +76,34 @@ class GoFrontendTest {
      * @param tokens the list of tokens generated from the sample
      */
     private void testSourceCoverage(String fileName, List<Token> tokens) {
-        File testFile = new File(testFileLocation, fileName);
+        var testFile = new File(testFileLocation, fileName);
 
-        List<String> lines = null;
         try {
-            lines = Files.readAllLines(testFile.toPath());
+            var lines = Files.readAllLines(testFile.toPath());
+
+            // All lines that contain code
+            var codeLines = new ArrayList<>(getCodeLines(lines));
+            // All lines that contain token
+            var tokenLines = tokens.stream().map(Token::getLine).distinct().toList();
+
+            // Keep only lines that have no tokens
+            codeLines.removeAll(tokenLines);
+
+            var coverage = 1.d - (codeLines.size() * 1.d / (codeLines.size() + tokenLines.size()));
+            if (coverage == 1) {
+                logger.info("All lines covered.");
+            } else {
+                logger.info("Coverage: %.1f%%.".formatted(coverage * 100));
+                logger.info("Missing lines {}", codeLines);
+                if (coverage - 0.9 <= EPSILON) {
+                    fail("Source coverage is unsatisfactory");
+                }
+            }
+
         } catch (IOException exception) {
             logger.info("Error while reading test file %s".formatted(fileName), exception);
             fail();
         }
-
-        // All lines that contain code
-        var codeLines = getCodeLines(lines);
-        // All lines that contain a token
-        var tokenLines = tokens.stream().mapToInt(Token::getLine).distinct().boxed().toList();
-
-        if (codeLines.size() > tokenLines.size()) {
-            List<Integer> missedLinesIndices = new ArrayList<>(codeLines);
-            missedLinesIndices.removeAll(tokenLines);
-            var missedLines = missedLinesIndices.stream().map(Object::toString).collect(Collectors.joining(", "));
-            if (!missedLines.isBlank()) {
-                fail("Found lines in file '%s' that are not represented in the token list. \n\tMissed lines: %s".formatted(fileName, missedLines));
-            }
-        }
-        OptionalInt differingLine = IntStream.range(0, codeLines.size())
-                .dropWhile(index -> Objects.equals(codeLines.get(index), tokenLines.get(index))).findAny();
-        differingLine.ifPresent(
-                i -> fail("Not all lines of code in '%s' are represented in tokens, starting with line %d.".formatted(fileName, codeLines.get(i))));
     }
 
     /**
@@ -115,7 +117,7 @@ class GoFrontendTest {
             boolean insideComment = false;
         };
 
-        var codeLines = IntStream.rangeClosed(1, lines.size()).sequential().filter(idx -> {
+        return IntStream.rangeClosed(1, lines.size()).sequential().filter(idx -> {
             String line = lines.get(idx - 1);
             if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT)) {
                 return false;
@@ -130,10 +132,7 @@ class GoFrontendTest {
                 return false;
             }
             return true;
-        });
-
-        return codeLines.boxed().toList();
-
+        }).boxed().toList();
     }
 
     /**
@@ -144,11 +143,10 @@ class GoFrontendTest {
     private void testTokenCoverage(List<Token> tokens, String fileName) {
         var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
         assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
-        var annotatedGoTokens = annotatedTokens.stream().filter(GoTokenType.class::isInstance).collect(Collectors.toSet());
-        var allGoTokens = GoTokenType.values();
-        var missingGoTokens = Arrays.stream(allGoTokens).filter(token -> !annotatedGoTokens.contains(token)).toList();
-        assertTrue(missingGoTokens.isEmpty(), "The following go tokens are missing in the code example '%s':\n".formatted(fileName)
-                + String.join("\n", missingGoTokens.stream().map(GoTokenType::getDescription).toList()));
+        var annotatedScalaTokens = annotatedTokens.stream().filter(ScalaTokenType.class::isInstance).collect(Collectors.toSet());
+        var allScalaTokens = ScalaTokenType.values();
+        var missingScalaTokens = Arrays.stream(allScalaTokens).filter(token -> !annotatedScalaTokens.contains(token)).toList();
+        assertTrue(missingScalaTokens.isEmpty(), "The following scala tokens are missing in the code example '%s':\n".formatted(fileName)
+                + String.join("\n", missingScalaTokens.stream().map(ScalaTokenType::getDescription).toList()));
     }
-
 }
