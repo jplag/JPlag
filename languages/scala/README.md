@@ -1,8 +1,8 @@
-# JPlag Scala language frontend
+# JPlag Scala language module
 
-The JPlag Scala frontend allows the use of JPlag with submissions in Scala. <br>
+The JPlag Scala module allows the use of JPlag with submissions in Scala. <br>
 It is based on the [Scalameta library](https://scalameta.org/) parser, and is adapted from
-the [CodeGra-de Scala frontend](https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.scala) for JPlag, both
+the [CodeGra-de Scala module](https://github.com/CodeGra-de/jplag/tree/master/jplag.module.scala) for JPlag, both
 licensed under BSD-3.
 
 ### Scala specification compatibility
@@ -11,13 +11,13 @@ The dependencies only allow compatibility up to Scala 2.13.8 (January 2022), so 
 are not supported yet.
 
 As of now, Scalameta is not available for Scala 3 yet (see the [GitHub issue](https://github.com/scalameta/scalameta/issues/2485)), 
-so the upgrade needs to wait. It would seem that once this frontend is equipped with Scalameta for Scala 3, it will be able to handle both Scala 2 and 3 equally as [the syntax is backwards compatible](https://scala-lang.org/2019/12/18/road-to-scala-3.html#:~:text=Scala%203%20is%20backwards%20compatible%20with%20Scala%202) for the most part.
+so the upgrade needs to wait. It would seem that once this module is equipped with Scalameta for Scala 3, it will be able to handle both Scala 2 and 3 equally as [the syntax is backwards compatible](https://scala-lang.org/2019/12/18/road-to-scala-3.html#:~:text=Scala%203%20is%20backwards%20compatible%20with%20Scala%202) for the most part.
 
 ### Token Extraction
 
 #### General
 
-The choice of tokens is intended to be similar to the Java or C# frontends. Specifically, among others, it includes a
+The choice of tokens is intended to be similar to the Java or C# modules. Specifically, among others, it includes a
 range of nesting structures (class and method declarations, control flow expressions) as well as variable declaration,
 object creation, assignment, and control flow altering keywords. <br>
 Blocks are distinguished by their context, i.e. there are separate `TokenTypes` for `if` blocks, `for` blocks, class
@@ -49,7 +49,7 @@ myObject.member3(arg1, arg2) // must be method call
 Operators are implemented as regular method calls. Additionally, custom operators on objects/classes can be defined,
 possibly overloading existing ones like `+`, `&=` etc.
 
-In other frontends, operations are not assigned tokens but "regular" method calls are. This calls for the task to try to
+In other modules, operations are not assigned tokens but "regular" method calls are. This calls for the task to try to
 distinguish operations from what we understand as "regular" method calls. This is not entirely possible with only
 parsing information, so we decided to go about this problem as follows:
 
@@ -74,7 +74,7 @@ def power(base: Int, exponent: Int): Int = {
     else base * power(base, exponent - 1)               // and this one?
 }
 ```
-That raises the question whether to try and mark these more implicit return values, so that the output of this frontend
+That raises the question whether to try and mark these more implicit return values, so that the output of this module
 would be consistent with others.
 
 To determine all possible return values, semantic information about control structures is necessary which may be tedious
@@ -86,7 +86,7 @@ For the moment, implicit block values are neglected.
 
 ### Usage
 
-To use the Scala frontend, add the `-l scala` flag in the CLI, or use a `JPlagOption` object set
+To use the Scala module, add the `-l scala` flag in the CLI, or use a `JPlagOption` object set
 to `LanguageOption.SCALA` in the Java API as described in the usage information in
 the [readme of the main project](https://github.com/jplag/JPlag#usage)
 and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).

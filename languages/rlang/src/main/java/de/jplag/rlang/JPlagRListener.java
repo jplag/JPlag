@@ -8,11 +8,11 @@ import de.jplag.rlang.grammar.*;
 
 /**
  * Listener class for visiting the R ANTLR parse tree. Transforms the visited ANTLR token into JPlag tokens. Based on an
- * R frontend for JPlag v2.15 by Olmo Kramer, see their
+ * R module for JPlag v2.15 by Olmo Kramer, see their
  * <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag fork</a>.
  * @author Robin Maisch
  */
-public class JplagRListener extends RCombinedBaseListener {
+public class JPlagRListener extends RCombinedBaseListener {
 
     private final RParserAdapter parserAdapter;
 
@@ -20,7 +20,7 @@ public class JplagRListener extends RCombinedBaseListener {
      * Creates the listener.
      * @param parserAdapter the JPlag parser adapter which receives the transformed tokens.
      */
-    public JplagRListener(RParserAdapter parserAdapter) {
+    public JPlagRListener(RParserAdapter parserAdapter) {
         this.parserAdapter = parserAdapter;
     }
 

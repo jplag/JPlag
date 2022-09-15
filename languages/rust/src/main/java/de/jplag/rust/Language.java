@@ -8,7 +8,7 @@ import de.jplag.Token;
 public class Language implements de.jplag.Language {
 
     protected static final String[] FILE_EXTENSIONS = {".rs"};
-    public static final String NAME = "Rust frontend";
+    public static final String NAME = "Rust Language Module";
     public static final String IDENTIFIER = "rust";
     public static final int MINIMUM_TOKEN_MATCH = 8;
 

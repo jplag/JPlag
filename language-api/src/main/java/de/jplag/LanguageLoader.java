@@ -36,7 +36,7 @@ public final class LanguageLoader {
                 languages.remove(languageIdentifier);
                 continue;
             }
-            logger.debug("Loading Language Frontend '{}'", language.getName());
+            logger.debug("Loading Language Module '{}'", language.getName());
             languages.put(languageIdentifier, language);
         }
         logger.info("Available languages: '{}'", languages.values().stream().map(Language::getName).toList());

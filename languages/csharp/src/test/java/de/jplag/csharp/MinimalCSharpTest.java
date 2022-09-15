@@ -18,18 +18,18 @@ import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
 
-class MinimalCSharpFrontendTest {
+class MinimalCSharpTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "csharp");
     private static final String TEST_SUBJECT = "TestClass.cs";
 
-    private de.jplag.Language frontend;
+    private de.jplag.Language language;
     private File baseDirectory;
 
     @BeforeEach
     public void setUp() {
-        frontend = new Language();
+        language = new Language();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }
@@ -43,7 +43,7 @@ class MinimalCSharpFrontendTest {
 
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
-        List<Token> result = frontend.parse(baseDirectory, input);
+        List<Token> result = language.parse(baseDirectory, input);
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         // Compare parsed tokens:

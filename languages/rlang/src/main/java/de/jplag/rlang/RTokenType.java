@@ -3,7 +3,7 @@ package de.jplag.rlang;
 import de.jplag.TokenType;
 
 /**
- * Tokens in R that are deemed important when comparing submissions for plagiarisms. Based on an R frontend for JPlag
+ * Tokens in R that are deemed important when comparing submissions for plagiarisms. Based on an R module for JPlag
  * v2.15 by Olmo Kramer, see their <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag
  * fork</a>.
  */
