@@ -222,9 +222,9 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
     }
 
     private static double normalizeSimilarityThreshold(double similarityThreshold) {
-        if (similarityThreshold > 100) {
-            logger.warn("Maximum threshold of 100 used instead of {}", similarityThreshold);
-            return 100;
+        if (similarityThreshold > 1) {
+            logger.warn("Maximum threshold of 1 used instead of {}", similarityThreshold);
+            return 1;
         } else if (similarityThreshold < 0) {
             logger.warn("Minimum threshold of 0 used instead of {}", similarityThreshold);
             return 0;

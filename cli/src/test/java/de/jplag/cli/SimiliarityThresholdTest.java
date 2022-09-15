@@ -25,21 +25,21 @@ class SimiliarityThresholdTest extends CommandLineInterfaceTest {
 
     @Test
     void testLowerBound() {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(-1.0));
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(-0.01));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(0.0, options.similarityThreshold(), DELTA);
     }
 
     @Test
     void testUpperBound() {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(101.0));
+        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(1.01));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(100.0, options.similarityThreshold(), DELTA);
+        assertEquals(1.0, options.similarityThreshold(), DELTA);
     }
 
     @Test
     void testValidThreshold() {
-        double expectedValue = 50.0;
+        double expectedValue = 0.5;
         String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(expectedValue, options.similarityThreshold(), DELTA);
