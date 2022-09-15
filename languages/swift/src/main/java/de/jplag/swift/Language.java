@@ -1,8 +1,9 @@
 package de.jplag.swift;
 
 import java.io.File;
+import java.util.List;
 
-import de.jplag.TokenList;
+import de.jplag.Token;
 
 /**
  * This represents the Swift language as a language supported by JPlag.
@@ -10,7 +11,7 @@ import de.jplag.TokenList;
 public class Language implements de.jplag.Language {
 
     private static final String NAME = "Swift Parser";
-    private static final String SHORT_NAME = "Swift";
+    private static final String IDENTIFIER = "Swift";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".swift"};
     private final SwiftParserAdapter parserAdapter;
@@ -30,8 +31,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public String getShortName() {
-        return SHORT_NAME;
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public TokenList parse(File directory, String[] files) {
+    public List<Token> parse(File directory, String[] files) {
         return parserAdapter.parse(directory, files);
     }
 

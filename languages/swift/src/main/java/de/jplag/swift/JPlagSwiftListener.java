@@ -1,6 +1,6 @@
 package de.jplag.swift;
 
-import static de.jplag.swift.SwiftTokenConstants.*;
+import static de.jplag.swift.SwiftTokenType.*;
 
 import org.antlr.v4.runtime.Token;
 
@@ -19,7 +19,7 @@ public class JPlagSwiftListener extends Swift5ParserBaseListener {
      * @param tokenType the custom token type that occurred.
      * @param token the corresponding grammar's token
      */
-    private void transformToken(int tokenType, Token token) {
+    private void transformToken(SwiftTokenType tokenType, Token token) {
         parserAdapter.addToken(tokenType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
@@ -30,7 +30,7 @@ public class JPlagSwiftListener extends Swift5ParserBaseListener {
      * @param start the first Token of the context
      * @param end the last Token of the context
      */
-    private void transformToken(int tokenType, Token start, Token end) {
+    private void transformToken(SwiftTokenType tokenType, Token start, Token end) {
         parserAdapter.addToken(tokenType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 

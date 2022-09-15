@@ -3,6 +3,8 @@ package de.jplag.swift;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -12,8 +14,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
-import de.jplag.TokenList;
 import de.jplag.swift.grammar.Swift5Lexer;
 import de.jplag.swift.grammar.Swift5Parser;
 
@@ -21,7 +21,7 @@ public class SwiftParserAdapter extends AbstractParser {
 
     public static final int NOT_SET = -1;
     private String currentFile;
-    private TokenList tokens;
+    private List<Token> tokens;
 
     /**
      * Creates the SwiftParserAdapter
@@ -36,13 +36,13 @@ public class SwiftParserAdapter extends AbstractParser {
      * @param fileNames the file names of the files.
      * @return a list containing all tokens of all files.
      */
-    public TokenList parse(File directory, String[] fileNames) {
-        tokens = new TokenList();
+    public List<Token> parse(File directory, String[] fileNames) {
+        tokens = new ArrayList<>();
         for (String file : fileNames) {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.addToken(new SwiftToken(TokenConstants.FILE_END, file, NOT_SET, NOT_SET, NOT_SET));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
@@ -78,7 +78,7 @@ public class SwiftParserAdapter extends AbstractParser {
      * @param column the start column of the Token in the line
      * @param length the length of the Token
      */
-    /* package-private */ void addToken(int tokenType, int line, int column, int length) {
-        tokens.addToken(new SwiftToken(tokenType, currentFile, line, column, length));
+    /* package-private */ void addToken(SwiftTokenType tokenType, int line, int column, int length) {
+        tokens.add(new Token(tokenType, currentFile, line, column, length));
     }
 }
