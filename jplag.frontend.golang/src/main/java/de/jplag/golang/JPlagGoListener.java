@@ -1,18 +1,18 @@
 package de.jplag.golang;
 
-import static de.jplag.golang.GoTokenConstants.*;
+import static de.jplag.golang.GoTokenType.*;
 
 import java.util.*;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import de.jplag.TokenType;
 import de.jplag.golang.grammar.GoParser;
 import de.jplag.golang.grammar.GoParserBaseListener;
 
 public class JPlagGoListener extends GoParserBaseListener {
 
-    public static final int NONE = -1;
     private final GoParserAdapter parserAdapter;
     private final Deque<GoBlockContext> blockContexts;
 
@@ -26,7 +26,7 @@ public class JPlagGoListener extends GoParserBaseListener {
      * @param tokenType the custom token type that occurred.
      * @param token the corresponding grammar's token
      */
-    private void transformToken(int tokenType, Token token) {
+    private void transformToken(TokenType tokenType, Token token) {
         parserAdapter.addToken(tokenType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
@@ -37,7 +37,7 @@ public class JPlagGoListener extends GoParserBaseListener {
      * @param start the first Token of the context
      * @param end the last Token of the context
      */
-    private void transformToken(int tokenType, Token start, Token end) {
+    private void transformToken(GoTokenType tokenType, Token start, Token end) {
         parserAdapter.addToken(tokenType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 
@@ -343,9 +343,8 @@ public class JPlagGoListener extends GoParserBaseListener {
 
     @Override
     public void enterKeyedElement(GoParser.KeyedElementContext context) {
-        int tokenType = getCurrentContext().getElement();
-        transformToken(tokenType, context.getStart(), context.getStop());
-
+        Optional<GoTokenType> tokenType = getCurrentContext().getElement();
+        tokenType.ifPresent(type -> transformToken(type, context.getStart(), context.getStop()));
         super.enterKeyedElement(context);
     }
 
@@ -474,11 +473,6 @@ public class JPlagGoListener extends GoParserBaseListener {
             }
             case "{" -> transformToken(getCurrentContext().getBegin(), token);
             case "}" -> transformToken(getCurrentContext().getEnd(), token);
-            case "<EOF>" -> {
-                if (node.getParent() instanceof GoParser.SourceFileContext) {
-                    transformToken(FILE_END, token);
-                }
-            }
             default -> {
                 // do nothing.
             }
@@ -494,41 +488,41 @@ public class JPlagGoListener extends GoParserBaseListener {
      * required to be able to assign the correct token types for each block.
      */
     private enum GoBlockContext {
-        ARRAY_BODY(ARRAY_BODY_BEGIN, ARRAY_BODY_END, ARRAY_ELEMENT),
-        STRUCT_BODY(STRUCT_BODY_BEGIN, STRUCT_BODY_END, MEMBER_DECLARATION),
-        MAP_BODY(MAP_BODY_BEGIN, MAP_BODY_END, MAP_ELEMENT),
-        SLICE_BODY(SLICE_BODY_BEGIN, SLICE_BODY_END, SLICE_ELEMENT),
-        NAMED_TYPE_BODY(NAMED_TYPE_BODY_BEGIN, NAMED_TYPE_BODY_END, NAMED_TYPE_ELEMENT),
-        FUNCTION_BODY(FUNCTION_BODY_BEGIN, FUNCTION_BODY_END, NONE),
+        ARRAY_BODY(ARRAY_BODY_BEGIN, ARRAY_BODY_END, Optional.of(ARRAY_ELEMENT)),
+        STRUCT_BODY(STRUCT_BODY_BEGIN, STRUCT_BODY_END, Optional.of(MEMBER_DECLARATION)),
+        MAP_BODY(MAP_BODY_BEGIN, MAP_BODY_END, Optional.of(MAP_ELEMENT)),
+        SLICE_BODY(SLICE_BODY_BEGIN, SLICE_BODY_END, Optional.of(SLICE_ELEMENT)),
+        NAMED_TYPE_BODY(NAMED_TYPE_BODY_BEGIN, NAMED_TYPE_BODY_END, Optional.of(NAMED_TYPE_ELEMENT)),
+        FUNCTION_BODY(FUNCTION_BODY_BEGIN, FUNCTION_BODY_END, Optional.empty()),
 
-        IF_BLOCK(IF_BLOCK_BEGIN, IF_BLOCK_END, NONE),
-        ELSE_BLOCK(ELSE_BLOCK_BEGIN, ELSE_BLOCK_END, NONE),
-        FOR_BLOCK(FOR_BLOCK_BEGIN, FOR_BLOCK_END, NONE),
-        SWITCH_BLOCK(SWITCH_BLOCK_BEGIN, SWITCH_BLOCK_END, NONE),
-        SELECT_CONTEXT(SELECT_BLOCK_BEGIN, SELECT_BLOCK_END, NONE),
-        STATEMENT_BLOCK(STATEMENT_BLOCK_BEGIN, STATEMENT_BLOCK_END, NONE),
-        CASE_BLOCK(CASE_BLOCK_BEGIN, CASE_BLOCK_END, NONE),
-        INTERFACE_BODY(INTERFACE_BLOCK_BEGIN, INTERFACE_BLOCK_END, NONE);
+        IF_BLOCK(IF_BLOCK_BEGIN, IF_BLOCK_END, Optional.empty()),
+        ELSE_BLOCK(ELSE_BLOCK_BEGIN, ELSE_BLOCK_END, Optional.empty()),
+        FOR_BLOCK(FOR_BLOCK_BEGIN, FOR_BLOCK_END, Optional.empty()),
+        SWITCH_BLOCK(SWITCH_BLOCK_BEGIN, SWITCH_BLOCK_END, Optional.empty()),
+        SELECT_CONTEXT(SELECT_BLOCK_BEGIN, SELECT_BLOCK_END, Optional.empty()),
+        STATEMENT_BLOCK(STATEMENT_BLOCK_BEGIN, STATEMENT_BLOCK_END, Optional.empty()),
+        CASE_BLOCK(CASE_BLOCK_BEGIN, CASE_BLOCK_END, Optional.empty()),
+        INTERFACE_BODY(INTERFACE_BLOCK_BEGIN, INTERFACE_BLOCK_END, Optional.empty());
 
-        private final int beginTokenType;
-        private final int endTokenType;
-        private final int elementTokenType;
+        private final GoTokenType beginTokenType;
+        private final GoTokenType endTokenType;
+        private final Optional<GoTokenType> elementTokenType;
 
-        GoBlockContext(int beginTokenType, int endTokenType, int elementTokenType) {
+        GoBlockContext(GoTokenType beginTokenType, GoTokenType endTokenType, Optional<GoTokenType> elementTokenType) {
             this.beginTokenType = beginTokenType;
             this.endTokenType = endTokenType;
             this.elementTokenType = elementTokenType;
         }
 
-        int getBegin() {
+        GoTokenType getBegin() {
             return this.beginTokenType;
         }
 
-        int getEnd() {
+        GoTokenType getEnd() {
             return this.endTokenType;
         }
 
-        public int getElement() {
+        public Optional<GoTokenType> getElement() {
             return this.elementTokenType;
         }
     }

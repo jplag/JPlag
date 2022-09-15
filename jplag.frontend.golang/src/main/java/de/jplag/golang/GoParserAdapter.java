@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
+import de.jplag.TokenType;
 import de.jplag.golang.grammar.GoLexer;
 import de.jplag.golang.grammar.GoParser;
 
@@ -27,6 +28,7 @@ public class GoParserAdapter extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
@@ -55,7 +57,7 @@ public class GoParserAdapter extends AbstractParser {
         return true;
     }
 
-    public void addToken(int tokenType, int line, int column, int length) {
-        tokens.add(new GoToken(tokenType, currentFile, line, column, length));
+    public void addToken(TokenType tokenType, int line, int column, int length) {
+        tokens.add(new Token(tokenType, currentFile, line, column, length));
     }
 }

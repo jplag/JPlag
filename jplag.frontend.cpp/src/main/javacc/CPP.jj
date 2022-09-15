@@ -19,7 +19,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class CPPScanner implements CPPTokenConstants {
+import static de.jplag.cpp.CPPTokenType.*;
+
+public class CPPScanner {
     private Scanner delegatingScanner;
 
     public static boolean scanFile(File dir, String fileName, Scanner delegatingScanner) {
@@ -362,7 +364,7 @@ void token(): {}
 | "unsigned"     { delegatingScanner.add(C_UNSIGNED,token); }
 | "virtual"      { delegatingScanner.add(C_VIRTUAL,token); }
 | "void"         { delegatingScanner.add(C_VOID,token); }
-| "volatile"     { delegatingScanner.add(C_VOLANTILE,token); }
+| "volatile"     { delegatingScanner.add(C_VOLATILE,token); }
 | "while"        { delegatingScanner.add(C_WHILE,token); }
 | "operator"     { delegatingScanner.add(C_OPERATOR,token); }
 | "true"

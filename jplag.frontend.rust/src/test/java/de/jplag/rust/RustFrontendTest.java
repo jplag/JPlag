@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 import de.jplag.TokenPrinter;
 
 class RustFrontendTest {
@@ -32,8 +34,6 @@ class RustFrontendTest {
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
      */
     private static final String COMPLETE_TEST_FILE = "complete.rs";
-    public static final int NOT_SET = -1;
-    private static final String EMPTY_STRING = "";
     private static final String RUST_SHEBANG = "#!.*$";
     private static final double EPSILON = 1E-6;
     public static final double BASELINE_COVERAGE = 0.75;
@@ -75,7 +75,7 @@ class RustFrontendTest {
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = tokens.stream().map(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().toList();
+            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().boxed().toList();
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
@@ -125,21 +125,13 @@ class RustFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = tokens.stream().map(Token::getType).distinct().toList();
-        var allTokens = IntStream.range(0, RustTokenConstants.NUMBER_DIFF_TOKENS).boxed().toList();
-        allTokens = new ArrayList<>(allTokens);
-
-        // Only non-found tokens are left
-        allTokens.removeAll(foundTokens);
-        // Exclude SEPARATOR_TOKEN, as it does not occur
-        allTokens.remove((Integer) (TokenConstants.SEPARATOR_TOKEN));
-
-        if (!allTokens.isEmpty()) {
-            var notFoundTypes = allTokens.stream().map(type -> new RustToken(type, EMPTY_STRING, NOT_SET, NOT_SET, NOT_SET).type2string()).toList();
-            logger.error("Some %d token types were not found in the complete code example '%s':\n%s".formatted(notFoundTypes.size(), fileName,
-                    notFoundTypes));
-            assertTrue(false);
-        }
+        var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
+        var annotatedRustTokens = annotatedTokens.stream().filter(RustTokenType.class::isInstance).collect(Collectors.toSet());
+        var allRustTokens = RustTokenType.values();
+        var missingRustTokens = Arrays.stream(allRustTokens).filter(token -> !annotatedRustTokens.contains(token)).toList();
+        assertTrue(missingRustTokens.isEmpty(), "The following rust tokens are missing in the code example '%s':\n".formatted(fileName)
+                + String.join("\n", missingRustTokens.stream().map(RustTokenType::getDescription).toList()));
     }
 
 }

@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.jplag.AbstractParser;
-import de.jplag.TokenConstants;
+import de.jplag.Token;
 
 public class Scanner extends AbstractParser {
     private String currentFile;
 
-    private List<de.jplag.Token> tokens;
+    private List<Token> tokens;
 
     /**
      * Creates the parser.
@@ -19,7 +19,7 @@ public class Scanner extends AbstractParser {
         super();
     }
 
-    public List<de.jplag.Token> scan(File directory, String[] files) {
+    public List<Token> scan(File directory, String[] files) {
         tokens = new ArrayList<>();
         errors = 0;
         for (String currentFile : files) {
@@ -28,13 +28,13 @@ public class Scanner extends AbstractParser {
             if (!CPPScanner.scanFile(directory, currentFile, this)) {
                 errors++;
             }
-            tokens.add(new CPPToken(TokenConstants.FILE_END, currentFile));
+            tokens.add(Token.fileEnd(currentFile));
         }
         return tokens;
     }
 
-    public void add(int type, Token token) {
+    public void add(CPPTokenType type, de.jplag.cpp.Token token) {
         int length = token.endColumn - token.beginColumn + 1;
-        tokens.add(new CPPToken(type, currentFile, token.beginLine, token.beginColumn, length));
+        tokens.add(new Token(type, currentFile, token.beginLine, token.beginColumn, length));
     }
 }

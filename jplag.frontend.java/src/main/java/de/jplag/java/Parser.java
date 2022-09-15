@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
+import de.jplag.TokenType;
 
 public class Parser extends AbstractParser {
     private List<Token> tokens;
@@ -26,8 +27,12 @@ public class Parser extends AbstractParser {
         return tokens;
     }
 
-    public void add(int type, String filename, long line, long column, long length) {
-        tokens.add(new JavaToken(type, filename, (int) line, (int) column, (int) length));
+    public void add(TokenType type, String filename, long line, long column, long length) {
+        add(new Token(type, filename, (int) line, (int) column, (int) length));
+    }
+
+    public void add(Token token) {
+        tokens.add(token);
     }
 
     public void increaseErrors() {

@@ -1,11 +1,12 @@
 package de.jplag.emf;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
+import de.jplag.TokenType;
 import de.jplag.testutils.FileUtil;
 import de.jplag.testutils.TokenUtils;
 
@@ -41,12 +43,10 @@ class MinimalMetamodelTest {
         List<Token> result = frontend.parse(baseDirectory, TEST_SUBJECTS);
 
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(Language.VIEW_FILE_SUFFIX)));
-        Field[] fields = MetamodelTokenConstants.class.getFields();
-        var constants = Arrays.stream(fields).map(Field::getName).filter(it -> !it.equals("NUM_DIFF_TOKENS")).toList();
-        logger.info(("Handcrafted token set: " + constants));
-        logger.info("Parsed tokens: " + result.toString());
-        assertEquals(21, constants.size());
-        assertEquals(43, result.size());
+        List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
+        logger.info("Parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList().toString());
+        assertEquals(43, tokenTypes.size());
+        assertEquals(10, new HashSet<>(tokenTypes).size());
 
         var bookstoreTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[0]);
         var bookstoreRenamedTokens = TokenUtils.tokenTypesByFile(result, TEST_SUBJECTS[2]);

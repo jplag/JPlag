@@ -5,14 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
@@ -24,9 +21,7 @@ public class ParserAdapter extends AbstractParser {
     private static final char CR = '\r';
     private static final String ANNOTATORS_KEY = "annotators";
     private static final String ANNOTATORS_VALUE = "tokenize";
-    private final Map<String, Integer> tokenTypes = new HashMap<>();
     private final StanfordCoreNLP pipeline;
-    private int tokenTypeIndex = 2; // 0 is FILE_END token, 1 is SEPARATOR_TOKEN, so start at 2.
 
     private List<Token> tokens;
     private String currentFile;
@@ -50,7 +45,7 @@ public class ParserAdapter extends AbstractParser {
             if (!parseFile(directory, file)) {
                 errors++;
             }
-            tokens.add(new TextToken(TokenConstants.FILE_END, file));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
@@ -105,10 +100,9 @@ public class ParserAdapter extends AbstractParser {
 
     private void addToken(CoreLabel label) {
         String text = label.originalText();
-        int type = getTokenType(text);
         int column = label.beginPosition() - currentLineBreakIndex;
         int length = label.endPosition() - label.beginPosition();
-        tokens.add(new TextToken(text, type, currentFile, currentLine, column, length));
+        tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, length));
     }
 
     private String readFile(Path filePath) {
@@ -118,16 +112,5 @@ public class ParserAdapter extends AbstractParser {
             logger.error("Error reading from file {}", filePath, e);
             return null;
         }
-    }
-
-    private int getTokenType(String text) {
-        text = text.toLowerCase();
-        tokenTypes.computeIfAbsent(text, it -> {
-            if (tokenTypeIndex == Integer.MAX_VALUE) {
-                throw new IllegalStateException("Too many token types, should not happen!");
-            }
-            return ++tokenTypeIndex;
-        });
-        return tokenTypes.get(text);
     }
 }

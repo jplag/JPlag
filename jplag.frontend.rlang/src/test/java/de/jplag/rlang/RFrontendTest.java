@@ -1,13 +1,15 @@
 package de.jplag.rlang;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenConstants;
 import de.jplag.TokenPrinter;
 
 class RFrontendTest {
@@ -30,7 +32,6 @@ class RFrontendTest {
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
      */
     private static final String COMPLETE_TEST_FILE = "Complete.R";
-    public static final int NOT_SET = -1;
 
     private final Logger logger = LoggerFactory.getLogger("R frontend test");
     private final String[] testFiles = new String[] {"Game.R", COMPLETE_TEST_FILE};
@@ -91,17 +92,13 @@ class RFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var foundTokens = tokens.stream().parallel().mapToInt(Token::getType).sorted().distinct().toArray();
-        // Exclude SEPARATOR_TOKEN, as it does not occur
-        var allTokens = IntStream.range(0, RTokenConstants.NUM_DIFF_TOKENS).filter(i -> i != TokenConstants.SEPARATOR_TOKEN).toArray();
-
-        if (allTokens.length > foundTokens.length) {
-            var diffLine = IntStream.range(0, allTokens.length)
-                    .dropWhile(lineIndex -> lineIndex < foundTokens.length && allTokens[lineIndex] == foundTokens[lineIndex]).findFirst();
-            diffLine.ifPresent(lineIdx -> fail("Token type %s was not found in the complete code example '%s'."
-                    .formatted(new RToken(allTokens[lineIdx], fileName, NOT_SET, NOT_SET, NOT_SET).type2string(), fileName)));
-        }
-        assertArrayEquals(allTokens, foundTokens);
+        var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
+        var annotatedRTokens = annotatedTokens.stream().filter(RTokenType.class::isInstance).collect(Collectors.toSet());
+        var allRTokens = RTokenType.values();
+        var missingRTokens = Arrays.stream(allRTokens).filter(token -> !annotatedRTokens.contains(token)).toList();
+        assertTrue(missingRTokens.isEmpty(), "The following R tokens are missing in the code example '%s':\n".formatted(fileName)
+                + String.join("\n", missingRTokens.stream().map(RTokenType::getDescription).toList()));
     }
 
     private static String getNoCodeLineExpression() {

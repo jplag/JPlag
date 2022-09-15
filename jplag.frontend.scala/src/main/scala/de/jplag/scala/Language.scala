@@ -3,9 +3,9 @@ package de.jplag.scala
 import de.jplag.Token
 
 import java.io.File
-import scala.collection.JavaConverters._
-
 import org.kohsuke.MetaInfServices
+
+import scala.jdk.CollectionConverters.SeqHasAsJava
 
 class Language extends de.jplag.Language {
   private val parser = new Parser

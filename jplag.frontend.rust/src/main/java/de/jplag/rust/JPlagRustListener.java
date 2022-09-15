@@ -1,9 +1,9 @@
 package de.jplag.rust;
 
-import static de.jplag.rust.ParserState.Context.NONE;
-import static de.jplag.rust.RustTokenConstants.*;
+import static de.jplag.rust.RustTokenType.*;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
@@ -24,11 +24,15 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
         state.enter(RustContext.FILE);
     }
 
-    private void transformToken(int targetType, Token token) {
+    private void transformToken(Optional<RustTokenType> targetType, Token token) {
+        targetType.ifPresent(type -> transformToken(type, token));
+    }
+
+    private void transformToken(RustTokenType targetType, Token token) {
         parserAdapter.addToken(targetType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
-    private void transformToken(int targetType, Token start, Token end) {
+    private void transformToken(RustTokenType targetType, Token start, Token end) {
         parserAdapter.addToken(targetType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 
@@ -97,7 +101,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterStructExpression(RustParser.StructExpressionContext context) {
-        transformToken(RustTokenConstants.STRUCT_INITIALISATION, context.getStart());
+        transformToken(STRUCT_INITIALISATION, context.getStart());
         state.enter(RustContext.STRUCT_INITIALISATION);
         super.enterStructExpression(context);
     }
@@ -353,7 +357,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterStaticItem(RustParser.StaticItemContext context) {
-        int tokenType = context.getParent() instanceof RustParser.ExternalItemContext ? STATIC_ITEM : VARIABLE_DECLARATION;
+        RustTokenType tokenType = context.getParent() instanceof RustParser.ExternalItemContext ? STATIC_ITEM : VARIABLE_DECLARATION;
         transformToken(tokenType, context.getStart());
         super.enterStaticItem(context);
     }
@@ -661,10 +665,8 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
                 }
             }
             case "{" -> {
-                int startType = stateContext.getStartType();
-                if (startType != NONE) {
-                    transformToken(startType, token);
-                }
+                Optional<RustTokenType> startType = stateContext.getStartType();
+                startType.ifPresent(type -> transformToken(type, token));
                 switch (stateContext) {
                     case MACRO_RULE_BODY, MACRO_INVOCATION_BODY, MACRO_INNER -> state.enter(RustContext.MACRO_INNER);
                     default -> {
@@ -674,10 +676,8 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
 
             }
             case "}" -> {
-                int endType = stateContext.getEndType();
-                if (endType != NONE) {
-                    transformToken(endType, token);
-                }
+                Optional<RustTokenType> endType = stateContext.getEndType();
+                endType.ifPresent(type -> transformToken(type, token));
 
                 if (stateContext == RustContext.MACRO_INNER) {
                     // maybe this is the end of a macro invocation/definition
@@ -809,7 +809,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
         /**
          * This is used to make sure that the stack is not empty -> getCurrent() != null
          **/
-        FILE(NONE, NONE),
+        FILE(),
 
         /**
          * These contexts are used to assign the correct tokens to '{' and '}' terminals.
@@ -838,54 +838,59 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
         /**
          * This is to avoid the empty type `()` being parsed as an empty tuple etc.
          **/
-        TYPE(NONE, NONE),
+        TYPE(),
 
         /**
          * These are to identify expressions as elements of tuples.
          */
-        TUPLE_STRUCT_PATTERN(NONE, NONE),
-        TUPLE_PATTERN(NONE, NONE),
+        TUPLE_STRUCT_PATTERN(),
+        TUPLE_PATTERN(),
 
         /**
          * This is used so that cascades of tuples like '((((1),2),(3)))' generate only as many tokens as necessary.
          */
-        REDUNDANT_TUPLE(NONE, NONE),
+        REDUNDANT_TUPLE(),
 
         /**
          * This is used to be able to correctly assign MACRO_INVOCATION_BODY_END to a '}' symbol.
          */
-        MACRO_INNER(NONE, NONE),
+        MACRO_INNER(),
 
         /**
          * In this context, leaves are USE_ITEMS.
          */
-        USE_TREE(NONE, NONE),
+        USE_TREE(),
 
         /**
          * In this context, '(' should be assigned an APPLY token.
          */
-        CALL(NONE, NONE),
+        CALL(),
 
         /**
          * This context should behave like a function call: No tokens for parentheses.
          */
-        STRUCT_INITIALISATION(NONE, NONE);
+        STRUCT_INITIALISATION();
 
-        private final int startType;
-        private final int endType;
+        private final Optional<RustTokenType> startType;
+        private final Optional<RustTokenType> endType;
 
-        RustContext(int startType, int endType) {
-            this.startType = startType;
-            this.endType = endType;
+        RustContext() {
+            this.startType = Optional.empty();
+            this.endType = Optional.empty();
+        }
+
+        RustContext(RustTokenType startType, RustTokenType endType) {
+            this.startType = Optional.of(startType);
+            this.endType = Optional.of(endType);
         }
 
         @Override
-        public int getStartType() {
+        public Optional<RustTokenType> getStartType() {
             return startType;
         }
 
         @Override
-        public int getEndType() {
+        public Optional<RustTokenType> getEndType() {
             return endType;
         }
     }
