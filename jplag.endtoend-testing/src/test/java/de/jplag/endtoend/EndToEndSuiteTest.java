@@ -63,8 +63,8 @@ public class EndToEndSuiteTest {
      */
     private void setRunOptions() {
         options = new ArrayList<>();
-        options.add(new Options(1));
-        options.add(new Options(15));
+        options.add(new Options(9));
+        options.add(new Options(3));
     }
 
     /**
