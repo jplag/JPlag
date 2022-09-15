@@ -3,7 +3,10 @@ package de.jplag.rust.grammar;
 import java.util.Arrays;
 import java.util.List;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.IntStream;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Token;
 
 public abstract class RustLexerBase extends Lexer {
     private Token currentToken;

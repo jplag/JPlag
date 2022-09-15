@@ -7,8 +7,12 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-import javax.tools.*;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
+import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
 
 import org.slf4j.Logger;
 
