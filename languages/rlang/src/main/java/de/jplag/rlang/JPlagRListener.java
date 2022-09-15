@@ -1,10 +1,33 @@
 package de.jplag.rlang;
 
-import static de.jplag.rlang.RTokenType.*;
+import static de.jplag.rlang.RTokenType.ASSIGN;
+import static de.jplag.rlang.RTokenType.ASSIGN_FUNC;
+import static de.jplag.rlang.RTokenType.ASSIGN_LIST;
+import static de.jplag.rlang.RTokenType.BEGIN_FUNCTION;
+import static de.jplag.rlang.RTokenType.BOOL;
+import static de.jplag.rlang.RTokenType.BREAK;
+import static de.jplag.rlang.RTokenType.COMPOUND_BEGIN;
+import static de.jplag.rlang.RTokenType.COMPOUND_END;
+import static de.jplag.rlang.RTokenType.END_FUNCTION;
+import static de.jplag.rlang.RTokenType.FOR_BEGIN;
+import static de.jplag.rlang.RTokenType.FOR_END;
+import static de.jplag.rlang.RTokenType.FUNCTION_CALL;
+import static de.jplag.rlang.RTokenType.HELP;
+import static de.jplag.rlang.RTokenType.IF_BEGIN;
+import static de.jplag.rlang.RTokenType.IF_END;
+import static de.jplag.rlang.RTokenType.INDEX;
+import static de.jplag.rlang.RTokenType.NEXT;
+import static de.jplag.rlang.RTokenType.NUMBER;
+import static de.jplag.rlang.RTokenType.PACKAGE;
+import static de.jplag.rlang.RTokenType.REPEAT_BEGIN;
+import static de.jplag.rlang.RTokenType.REPEAT_END;
+import static de.jplag.rlang.RTokenType.STRING;
+import static de.jplag.rlang.RTokenType.WHILE_BEGIN;
+import static de.jplag.rlang.RTokenType.WHILE_END;
 
 import org.antlr.v4.runtime.Token;
 
-import de.jplag.rlang.grammar.*;
+import de.jplag.rlang.grammar.RParser;
 
 /**
  * Listener class for visiting the R ANTLR parse tree. Transforms the visited ANTLR token into JPlag tokens. Based on an

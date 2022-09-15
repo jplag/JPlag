@@ -1,6 +1,25 @@
 package de.jplag.csharp;
 
-import static de.jplag.csharp.CSharpTokenType.*;
+import static de.jplag.csharp.CSharpTokenType.ACCESSORS_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.ACCESSORS_END;
+import static de.jplag.csharp.CSharpTokenType.ACCESSOR_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.ACCESSOR_END;
+import static de.jplag.csharp.CSharpTokenType.ASSIGNMENT;
+import static de.jplag.csharp.CSharpTokenType.CLASS;
+import static de.jplag.csharp.CSharpTokenType.CLASS_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.CLASS_END;
+import static de.jplag.csharp.CSharpTokenType.CONSTRUCTOR;
+import static de.jplag.csharp.CSharpTokenType.FIELD;
+import static de.jplag.csharp.CSharpTokenType.IF;
+import static de.jplag.csharp.CSharpTokenType.IF_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.IF_END;
+import static de.jplag.csharp.CSharpTokenType.INVOCATION;
+import static de.jplag.csharp.CSharpTokenType.LOCAL_VARIABLE;
+import static de.jplag.csharp.CSharpTokenType.METHOD;
+import static de.jplag.csharp.CSharpTokenType.METHOD_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.METHOD_END;
+import static de.jplag.csharp.CSharpTokenType.PROPERTY;
+import static de.jplag.csharp.CSharpTokenType.RETURN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
