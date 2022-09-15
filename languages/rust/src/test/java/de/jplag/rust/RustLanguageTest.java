@@ -21,7 +21,7 @@ import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 
-class RustFrontendTest {
+class RustLanguageTest {
 
     /**
      * Regular expression for empty lines and single line comments.
@@ -38,7 +38,7 @@ class RustFrontendTest {
     private static final double EPSILON = 1E-6;
     public static final double BASELINE_COVERAGE = 0.75;
 
-    private final Logger logger = LoggerFactory.getLogger("Rust frontend test");
+    private final Logger logger = LoggerFactory.getLogger("Rust language test");
     private final String[] testFiles = new String[] {"deno_core_runtime.rs", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rust").toFile();
     private Language language;

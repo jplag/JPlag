@@ -323,7 +323,7 @@ public class SubmissionSetBuilder {
     private boolean hasValidSuffix(File file) {
         List<String> validSuffixes = options.fileSuffixes();
 
-        // This is the case if either the language frontends or the CLI did not set the valid suffixes array in options
+        // This is the case if either the language modules or the CLI did not set the valid suffixes array in options
         if (validSuffixes == null || validSuffixes.isEmpty()) {
             return true;
         }

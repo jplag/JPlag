@@ -1,6 +1,6 @@
-# JPlag Rust language frontend
+# JPlag Rust language module
 
-The JPlag Rust frontend allows the use of JPlag with submissions in Scala. <br>
+The JPlag Rust module allows the use of JPlag with submissions in Scala. <br>
 It is based on the [Rust ANTLR4 grammar](https://github.com/antlr/grammars-v4/tree/master/rust), licensed under MIT.
 
 ### Rust specification compatibility
@@ -11,7 +11,7 @@ According to the grammar's documentation, it was updated to Rust 1.60.0 (April 2
 
 #### General
 
-The choice of tokens is intended to be similar to the Java or C# frontends. Specifically, among others, it includes a
+The choice of tokens is intended to be similar to the Java or C# modules. Specifically, among others, it includes a
 range of nesting structures (class and method declarations, control flow expressions) as well as variable declaration,
 object creation, assignment, and control flow altering keywords. <br>
 Blocks are distinguished by their context, i.e. there are separate `TokenConstants` for `if` blocks, `for` blocks, class
@@ -22,7 +22,7 @@ introduced.
 
 #### Problem in Rust (1): Grammar formulation
 
-In contrast to other grammars used in frontends, the underlying Rust ANTLR4 grammar uses very general syntactic categories 
+In contrast to other grammars used in modules, the underlying Rust ANTLR4 grammar uses very general syntactic categories 
 that do not provide very much _semantic_ information. For example, the ifExpression rule features a `blockExpression` as
 its body instead of a separate `ifBody` rule. This makes it hard to differentiate different uses of those `blockExpression`s.
 
@@ -46,7 +46,7 @@ or _etcetera_ pattern `..` is used to skip a number of elements, so that the ele
 the assigned object.
 
 These `let` pattern assignments can be replaced with a sequence of more basic assignments. This is a possible
-problem of this frontend.
+problem of this module.
 
 #### Problem in Rust (3): `return` is optional
 
@@ -66,7 +66,7 @@ fn power(base: i32, exponent: i32) -> i32 {
 }
 ```
 
-That raises the question whether to try and mark these more implicit return values, so that the output of this frontend
+That raises the question whether to try and mark these more implicit return values, so that the output of this module
 would be consistent with others.
 
 To determine all possible return values, semantic information about control structures is necessary which may be tedious
@@ -87,7 +87,7 @@ Currently, macro rule definition bodies and macro macro invocation arguments/bod
 
 ### Usage
 
-To use the Rust frontend, add the `-l rust` flag in the CLI, or use a `JPlagOption` object set
+To use the Rust module, add the `-l rust` flag in the CLI, or use a `JPlagOption` object set
 to `LanguageOption.RUST` in the Java API as described in the usage information in
 the [readme of the main project](https://github.com/jplag/JPlag#usage)
 and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
