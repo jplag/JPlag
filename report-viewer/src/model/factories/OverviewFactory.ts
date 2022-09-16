@@ -27,7 +27,7 @@ export class OverviewFactory {
           const comparison: ComparisonListElement = {
             firstSubmissionId: jsonComparison.first_submission as string,
             secondSubmissionId: jsonComparison.second_submission as string,
-            matchPercentage: jsonComparison.match_percentage as number,
+            similarity: jsonComparison.similarity as number,
           };
           comparisons.push(comparison);
         }

@@ -12,8 +12,8 @@ public enum SimilarityMetric implements ToDoubleFunction<JPlagComparison> {
 
     private final ToDoubleFunction<JPlagComparison> similarityFunction;
 
-    SimilarityMetric(ToDoubleFunction<JPlagComparison> determinePercentage) {
-        this.similarityFunction = determinePercentage;
+    SimilarityMetric(ToDoubleFunction<JPlagComparison> similarityFunction) {
+        this.similarityFunction = similarityFunction;
     }
 
     public boolean isAboveThreshold(JPlagComparison comparison, double similarityThreshold) {

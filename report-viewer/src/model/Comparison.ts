@@ -8,16 +8,16 @@ import { MatchInSingleFile } from "./MatchInSingleFile";
 export class Comparison {
   private readonly _firstSubmissionId: string;
   private readonly _secondSubmissionId: string;
-  private readonly _match_percentage: number;
+  private readonly _similarity: number;
 
   constructor(
     firstSubmissionId: string,
     secondSubmissionId: string,
-    match_percentage: number
+    similarity: number
   ) {
     this._firstSubmissionId = firstSubmissionId;
     this._secondSubmissionId = secondSubmissionId;
-    this._match_percentage = match_percentage;
+    this._similarity = similarity;
     this._filesOfFirstSubmission = new Map();
     this._filesOfSecondSubmission = new Map();
     this._colors = [];
@@ -94,7 +94,7 @@ export class Comparison {
     return this._secondSubmissionId;
   }
 
-  get match_percentage(): number {
-    return this._match_percentage;
+  get similarity(): number {
+    return this._similarity;
   }
 }

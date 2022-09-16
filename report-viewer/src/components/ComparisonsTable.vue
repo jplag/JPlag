@@ -15,7 +15,7 @@
       :key="
         comparison.firstSubmissionId +
         comparison.secondSubmissionId +
-        comparison.matchPercentage
+        comparison.similarity
       "
       class="selectable"
     >
@@ -81,7 +81,7 @@
           )
         "
       >
-        {{ formattedMatchPercentage(comparison.matchPercentage) }}
+        {{ formattedMatchPercentage(comparison.similarity) }}
       </td>
       <td>
         <img
@@ -144,7 +144,7 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
-    let formattedMatchPercentage = (num: number) => num.toFixed(2);
+    let formattedMatchPercentage = (num: number) => (num * 100).toFixed(2);
     const dialog: Ref<Array<boolean>> = ref([]);
     props.topComparisons.forEach(() => dialog.value.push(false));
     const displayName = (submissionId: string) =>
@@ -154,7 +154,7 @@ export default defineComponent({
       dialog.value[index] = true;
     };
 
-    const navigateToComparisonView = (firstId: string, secondId: string) => {
+    const navigateToComparisonView = (firstId : string, secondId: string) => {
       if (!store.state.single) {
         router.push({
           name: "ComparisonView",
@@ -185,7 +185,7 @@ export default defineComponent({
         ) {
           matches.push({
             matchedWith: comparison.secondSubmissionId,
-            percentage: comparison.matchPercentage,
+            percentage: comparison.similarity,
           });
         } else if (
           comparison.secondSubmissionId.includes(id) &&
@@ -193,7 +193,7 @@ export default defineComponent({
         ) {
           matches.push({
             matchedWith: comparison.firstSubmissionId,
-            percentage: comparison.matchPercentage,
+            percentage: comparison.similarity,
           });
         }
       });

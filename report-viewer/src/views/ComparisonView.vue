@@ -31,7 +31,7 @@
         :value="store.getters.submissionDisplayName(secondId)"
         label="Submission 2"
       />
-      <TextInformation :value="comparison.match_percentage" label="Match %" />
+      <TextInformation :value="(comparison.similarity * 100).toFixed(2)" label="Match %" />
       <MatchTable
         :id1="firstId"
         :id2="secondId"
