@@ -116,7 +116,7 @@ public class ParallelComparisonTest extends TestBase {
     }
 
     @Test
-    public void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
+    void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
         String basecodePath = getBasePath("basecode", "base");
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 2 + 2 submissions.
         JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionName(basecodePath));
@@ -124,14 +124,14 @@ public class ParallelComparisonTest extends TestBase {
     }
 
     @Test
-    public void testMultiRootDirBasecodeName() {
+    void testMultiRootDirBasecodeName() {
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate"));
         String basecodePath = "base"; // Should *not* find basecode/base
         assertThrows(BasecodeException.class, () -> runJPlag(paths, it -> it.withBaseCodeSubmissionName(basecodePath)));
     }
 
     @Test
-    public void testDisjunctNewAndOldRootDirectories() throws ExitException {
+    void testDisjunctNewAndOldRootDirectories() throws ExitException {
         List<String> newDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
         List<String> oldDirectories = List.of(getBasePath("basecode")); // 3 submissions
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it);

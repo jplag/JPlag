@@ -2,10 +2,6 @@ package de.jplag.strategy;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.jplag.*;
 import de.jplag.options.JPlagOptions;
@@ -15,10 +11,6 @@ import de.jplag.options.JPlagOptions;
  * @author Timur Saglam
  */
 public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
-    private static final Logger logger = LoggerFactory.getLogger("JPlag");
-
-    private static final int TIMEOUT_IN_SECONDS = 5;
-
     public ParallelComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
         super(options, greedyStringTiling);
     }
