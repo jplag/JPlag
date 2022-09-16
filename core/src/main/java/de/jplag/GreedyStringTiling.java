@@ -216,7 +216,9 @@ public class GreedyStringTiling {
             int[] tokenValueList = new int[tokens.size()];
             for (int i = 0; i < tokens.size(); i++) {
                 TokenType type = tokens.get(i).getType();
-                tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
+                synchronized (tokenTypeValues) {
+                    tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
+                }
                 tokenValueList[i] = tokenTypeValues.get(type);
             }
             return tokenValueList;
