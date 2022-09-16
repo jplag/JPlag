@@ -202,13 +202,8 @@ public class GreedyStringTiling {
     }
 
     private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, Set<Integer> markedIndexes) {
-        if (cachedHashLookupTables.containsKey(submission)) {
-            return cachedHashLookupTables.get(submission);
-        }
-        SubsequenceHashLookupTable lookupTable = new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(submission),
-                markedIndexes);
-        cachedHashLookupTables.put(submission, lookupTable);
-        return lookupTable;
+        return cachedHashLookupTables.computeIfAbsent(submission,
+                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), markedIndexes)));
     }
 
     /**
@@ -216,17 +211,15 @@ public class GreedyStringTiling {
      * @param submission The submission from which to convert the tokens.
      */
     private int[] tokenValueListFromSubmission(Submission submission) {
-        if (cachedTokenValueLists.containsKey(submission)) {
-            return cachedTokenValueLists.get(submission);
-        }
-        List<Token> tokens = submission.getTokenList();
-        int[] tokenValueList = new int[tokens.size()];
-        for (int i = 0; i < tokens.size(); i++) {
-            TokenType type = tokens.get(i).getType();
-            tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
-            tokenValueList[i] = tokenTypeValues.get(type);
-        }
-        cachedTokenValueLists.put(submission, tokenValueList);
-        return tokenValueList;
+        return cachedTokenValueLists.computeIfAbsent(submission, (key -> {
+            List<Token> tokens = key.getTokenList();
+            int[] tokenValueList = new int[tokens.size()];
+            for (int i = 0; i < tokens.size(); i++) {
+                TokenType type = tokens.get(i).getType();
+                tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
+                tokenValueList[i] = tokenTypeValues.get(type);
+            }
+            return tokenValueList;
+        }));
     }
 }
