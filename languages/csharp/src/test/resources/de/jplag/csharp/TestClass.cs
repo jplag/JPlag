@@ -1,5 +1,5 @@
 /**
- * Class for testing the C# language frontend.
+ * Class for testing the C# language module.
  */
 public class MyClass
 {

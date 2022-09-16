@@ -263,7 +263,7 @@ public final class TokenPrinter {
         /**
          * Appends whitespace padding to the given StringBuilder in order to reach the targetPosition. Note that <b>the indices
          * are 1-based</b>, whereas the positions in currentLine are 0-based. The convention that lines start at position 1
-         * comes from the frontends, specifically the Java frontend.
+         * comes from the modules, specifically the Java module.
          * @param currentLine The current line in the code file, indicating where it containes tab characters
          * @param targetPosition The (1-based) index of the next character within the currentLine that should be labeled
          * @param breakLine If true, a lineSeparator will be added if the currentPosition is past targetPosition.

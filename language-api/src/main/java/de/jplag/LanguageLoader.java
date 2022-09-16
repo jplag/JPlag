@@ -1,6 +1,12 @@
 package de.jplag;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +42,7 @@ public final class LanguageLoader {
                 languages.remove(languageIdentifier);
                 continue;
             }
-            logger.debug("Loading Language Frontend '{}'", language.getName());
+            logger.debug("Loading Language Module '{}'", language.getName());
             languages.put(languageIdentifier, language);
         }
         logger.info("Available languages: '{}'", languages.values().stream().map(Language::getName).toList());

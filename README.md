@@ -105,7 +105,7 @@ report.writeResult(result);
 
 ## Contributing
 We're happy to incorporate all improvements to JPlag into this codebase. Feel free to fork the project and send pull requests.
-Please consider our [guidelines for contributions](https://github.com/jplag/JPlag/wiki/2.-Contributing-to-JPlag).
+Please consider our [guidelines for contributions](https://github.com/jplag/JPlag/wiki/3.-Contributing-to-JPlag).
 
 ## Contact
 If you encounter bugs or other issues, please report them [here](https://github.com/jplag/jplag/issues).

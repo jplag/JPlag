@@ -1,6 +1,24 @@
 package de.jplag.emf.parser;
 
-import static de.jplag.emf.MetamodelTokenType.*;
+import static de.jplag.emf.MetamodelTokenType.ABSTRACT_CLASS;
+import static de.jplag.emf.MetamodelTokenType.ANNOTATION;
+import static de.jplag.emf.MetamodelTokenType.ATTRIBUTE;
+import static de.jplag.emf.MetamodelTokenType.BOUND;
+import static de.jplag.emf.MetamodelTokenType.CLASS;
+import static de.jplag.emf.MetamodelTokenType.CONTAINMENT;
+import static de.jplag.emf.MetamodelTokenType.DATATYPE;
+import static de.jplag.emf.MetamodelTokenType.ENUM;
+import static de.jplag.emf.MetamodelTokenType.ENUM_LITERAL;
+import static de.jplag.emf.MetamodelTokenType.ID_ATTRIBUTE;
+import static de.jplag.emf.MetamodelTokenType.INTERFACE;
+import static de.jplag.emf.MetamodelTokenType.OPERATION;
+import static de.jplag.emf.MetamodelTokenType.PACKAGE;
+import static de.jplag.emf.MetamodelTokenType.PARAMETER;
+import static de.jplag.emf.MetamodelTokenType.REFERENCE;
+import static de.jplag.emf.MetamodelTokenType.RETURN_TYPE;
+import static de.jplag.emf.MetamodelTokenType.SUPER_TYPE;
+import static de.jplag.emf.MetamodelTokenType.THROWS_DECLARATION;
+import static de.jplag.emf.MetamodelTokenType.TYPE_PARAMETER;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;

@@ -22,7 +22,7 @@ import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 
-class KotlinFrontendTest {
+class KotlinLanguageTest {
 
     /**
      * Test source file that is supposed to produce a complete set of tokens, i.e. all types of tokens.
@@ -44,7 +44,7 @@ class KotlinFrontendTest {
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
 
-    private final Logger logger = LoggerFactory.getLogger("Kotlin frontend test");
+    private final Logger logger = LoggerFactory.getLogger("Kotlin language test");
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE, "Game.kt"};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "kotlin").toFile();
     private Language language;

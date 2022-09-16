@@ -1,6 +1,25 @@
 package de.jplag.csharp;
 
-import static de.jplag.csharp.CSharpTokenType.*;
+import static de.jplag.csharp.CSharpTokenType.ACCESSORS_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.ACCESSORS_END;
+import static de.jplag.csharp.CSharpTokenType.ACCESSOR_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.ACCESSOR_END;
+import static de.jplag.csharp.CSharpTokenType.ASSIGNMENT;
+import static de.jplag.csharp.CSharpTokenType.CLASS;
+import static de.jplag.csharp.CSharpTokenType.CLASS_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.CLASS_END;
+import static de.jplag.csharp.CSharpTokenType.CONSTRUCTOR;
+import static de.jplag.csharp.CSharpTokenType.FIELD;
+import static de.jplag.csharp.CSharpTokenType.IF;
+import static de.jplag.csharp.CSharpTokenType.IF_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.IF_END;
+import static de.jplag.csharp.CSharpTokenType.INVOCATION;
+import static de.jplag.csharp.CSharpTokenType.LOCAL_VARIABLE;
+import static de.jplag.csharp.CSharpTokenType.METHOD;
+import static de.jplag.csharp.CSharpTokenType.METHOD_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.METHOD_END;
+import static de.jplag.csharp.CSharpTokenType.PROPERTY;
+import static de.jplag.csharp.CSharpTokenType.RETURN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,18 +37,18 @@ import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
 
-class MinimalCSharpFrontendTest {
+class MinimalCSharpTest {
     private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "csharp");
     private static final String TEST_SUBJECT = "TestClass.cs";
 
-    private de.jplag.Language frontend;
+    private de.jplag.Language language;
     private File baseDirectory;
 
     @BeforeEach
     public void setUp() {
-        frontend = new Language();
+        language = new Language();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }
@@ -43,7 +62,7 @@ class MinimalCSharpFrontendTest {
 
         // Parse test input
         String[] input = new String[] {TEST_SUBJECT};
-        List<Token> result = frontend.parse(baseDirectory, input);
+        List<Token> result = language.parse(baseDirectory, input);
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         // Compare parsed tokens:

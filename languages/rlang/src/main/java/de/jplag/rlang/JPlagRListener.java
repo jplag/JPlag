@@ -1,18 +1,41 @@
 package de.jplag.rlang;
 
-import static de.jplag.rlang.RTokenType.*;
+import static de.jplag.rlang.RTokenType.ASSIGN;
+import static de.jplag.rlang.RTokenType.ASSIGN_FUNC;
+import static de.jplag.rlang.RTokenType.ASSIGN_LIST;
+import static de.jplag.rlang.RTokenType.BEGIN_FUNCTION;
+import static de.jplag.rlang.RTokenType.BOOL;
+import static de.jplag.rlang.RTokenType.BREAK;
+import static de.jplag.rlang.RTokenType.COMPOUND_BEGIN;
+import static de.jplag.rlang.RTokenType.COMPOUND_END;
+import static de.jplag.rlang.RTokenType.END_FUNCTION;
+import static de.jplag.rlang.RTokenType.FOR_BEGIN;
+import static de.jplag.rlang.RTokenType.FOR_END;
+import static de.jplag.rlang.RTokenType.FUNCTION_CALL;
+import static de.jplag.rlang.RTokenType.HELP;
+import static de.jplag.rlang.RTokenType.IF_BEGIN;
+import static de.jplag.rlang.RTokenType.IF_END;
+import static de.jplag.rlang.RTokenType.INDEX;
+import static de.jplag.rlang.RTokenType.NEXT;
+import static de.jplag.rlang.RTokenType.NUMBER;
+import static de.jplag.rlang.RTokenType.PACKAGE;
+import static de.jplag.rlang.RTokenType.REPEAT_BEGIN;
+import static de.jplag.rlang.RTokenType.REPEAT_END;
+import static de.jplag.rlang.RTokenType.STRING;
+import static de.jplag.rlang.RTokenType.WHILE_BEGIN;
+import static de.jplag.rlang.RTokenType.WHILE_END;
 
 import org.antlr.v4.runtime.Token;
 
-import de.jplag.rlang.grammar.*;
+import de.jplag.rlang.grammar.RParser;
 
 /**
  * Listener class for visiting the R ANTLR parse tree. Transforms the visited ANTLR token into JPlag tokens. Based on an
- * R frontend for JPlag v2.15 by Olmo Kramer, see their
+ * R module for JPlag v2.15 by Olmo Kramer, see their
  * <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag fork</a>.
  * @author Robin Maisch
  */
-public class JplagRListener extends RCombinedBaseListener {
+public class JPlagRListener extends RCombinedBaseListener {
 
     private final RParserAdapter parserAdapter;
 
@@ -20,7 +43,7 @@ public class JplagRListener extends RCombinedBaseListener {
      * Creates the listener.
      * @param parserAdapter the JPlag parser adapter which receives the transformed tokens.
      */
-    public JplagRListener(RParserAdapter parserAdapter) {
+    public JPlagRListener(RParserAdapter parserAdapter) {
         this.parserAdapter = parserAdapter;
     }
 

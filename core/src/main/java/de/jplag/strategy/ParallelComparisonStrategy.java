@@ -3,7 +3,10 @@ package de.jplag.strategy;
 import java.util.List;
 import java.util.Optional;
 
-import de.jplag.*;
+import de.jplag.GreedyStringTiling;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+import de.jplag.SubmissionSet;
 import de.jplag.options.JPlagOptions;
 
 /**

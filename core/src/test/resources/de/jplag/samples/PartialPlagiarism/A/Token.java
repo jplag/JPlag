@@ -29,8 +29,8 @@ public abstract class Token implements TokenConstants, Serializable {
 	protected void setColumn(int line) {}
 	protected void setLength(int line) {}
 	
-	// this is made to distinguish the character front end.
-	// maybe other front ends can use it too?
+	// this is made to distinguish the character module.
+	// maybe other modules can use it too?
 	protected int getIndex() { return -1; }
 	
 	public static String type2string(int type) {
