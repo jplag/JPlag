@@ -114,13 +114,13 @@ public class SubmissionSet {
      */
     private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException {
         long startTime = System.currentTimeMillis();
-        logger.info("----- Parsing basecode submission: " + baseCode.getName());
+        logger.trace("----- Parsing basecode submission: " + baseCode.getName());
         if (!baseCode.parse(options.debugParser())) {
             throw new BasecodeException("Could not successfully parse basecode submission!");
         } else if (baseCode.getNumberOfTokens() < options.minimumTokenMatch()) {
             throw new BasecodeException("Basecode submission contains fewer tokens than minimum match length allows!");
         }
-        logger.info("Basecode submission parsed!");
+        logger.trace("Basecode submission parsed!");
         long duration = System.currentTimeMillis() - startTime;
         logger.trace("Time for parsing Basecode: " + TimeUtil.formatDuration(duration));
 

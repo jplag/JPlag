@@ -2,6 +2,7 @@ package de.jplag;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,6 +36,8 @@ public class SubmissionSetBuilder {
     private final JPlagOptions options;
     private final Set<String> excludedFileNames; // Set of file names to be excluded in comparison.
 
+    private Map<File, Submission> foundSubmissions;
+
     /**
      * Creates a builder for submission sets.
      * @param language is the language of the submissions.
@@ -44,6 +47,7 @@ public class SubmissionSetBuilder {
         this.language = language;
         this.options = options;
         this.excludedFileNames = options.excludedFiles();
+        foundSubmissions = new HashMap<>();
     }
 
     /**
@@ -62,15 +66,14 @@ public class SubmissionSetBuilder {
         boolean multipleRoots = (numberOfRootDirectories > 1);
 
         // Collect valid looking entries from the root directories.
-        Map<File, Submission> foundSubmissions = new HashMap<>();
         for (File directory : submissionDirectories) {
-            processRootDirectoryEntries(directory, multipleRoots, foundSubmissions, true);
+            processRootDirectoryEntries(directory, multipleRoots, true);
         }
         for (File oldDirectory : oldSubmissionDirectories) {
-            processRootDirectoryEntries(oldDirectory, multipleRoots, foundSubmissions, false);
+            processRootDirectoryEntries(oldDirectory, multipleRoots, false);
         }
 
-        Optional<Submission> baseCodeSubmission = loadBaseCode(submissionDirectories, oldSubmissionDirectories, foundSubmissions);
+        Optional<Submission> baseCodeSubmission = loadBaseCode(submissionDirectories, oldSubmissionDirectories);
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
@@ -127,8 +130,7 @@ public class SubmissionSetBuilder {
         }
     }
 
-    private Optional<Submission> loadBaseCode(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
-            Map<File, Submission> foundSubmissions) throws ExitException {
+    private Optional<Submission> loadBaseCode(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) throws ExitException {
         if (!options.hasBaseCode()) {
             return Optional.empty();
         }
@@ -146,7 +148,7 @@ public class SubmissionSetBuilder {
             File rootDirectory = submissionDirectories.iterator().next();
 
             // Single root-directory, try the legacy way of specifying basecode.
-            baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
+            baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory);
         }
 
         if (baseCode != null) {
@@ -191,7 +193,7 @@ public class SubmissionSetBuilder {
      * @return the base code submission if a fitting subdirectory was found, else {@code null}.
      * @throws ExitException when the option value is a sub-directory with errors.
      */
-    private Submission loadBaseCodeViaName(String baseCodeName, File rootDirectory, Map<File, Submission> foundSubmissions) throws ExitException {
+    private Submission loadBaseCodeViaName(String baseCodeName, File rootDirectory) throws ExitException {
         // Is the option value a single name after trimming spurious separators?
         String name = baseCodeName;
         while (name.startsWith(File.separator)) {
@@ -211,7 +213,8 @@ public class SubmissionSetBuilder {
         }
 
         // Grab the basecode submission from the regular submissions.
-        File basecodePath = new File(rootDirectory, baseCodeName);
+        File basecodePath = options.subdirectoryName() == null ? new File(rootDirectory, baseCodeName)
+                : new File(rootDirectory, Path.of(baseCodeName, options.subdirectoryName()).toString());
 
         Submission baseCode = foundSubmissions
                 .get(makeCanonical(basecodePath, it -> new BasecodeException("Cannot compute canonical file path: " + basecodePath, it)));
@@ -298,8 +301,7 @@ public class SubmissionSetBuilder {
      * @param foundSubmissions Submissions found so far, is updated in-place.
      * @param isNew states whether submissions found in the root directory must be checked for plagiarism.
      */
-    private void processRootDirectoryEntries(File rootDirectory, boolean multipleRoots, Map<File, Submission> foundSubmissions, boolean isNew)
-            throws ExitException {
+    private void processRootDirectoryEntries(File rootDirectory, boolean multipleRoots, boolean isNew) throws ExitException {
         for (String fileName : listSubmissionFiles(rootDirectory)) {
             File submissionFile = new File(rootDirectory, fileName);
 
