@@ -14,13 +14,13 @@ class BaseCodeOptionTest extends CommandLineInterfaceTest {
     @Test
     void testDefaultValue() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertNull(options.baseCodeSubmissionName());
+        assertNull(options.baseCodeSubmissionPath());
     }
 
     @Test
     void testCustomName() {
         String argument = buildArgument(CommandLineArgument.BASE_CODE, NAME);
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(NAME, options.baseCodeSubmissionName());
+        assertEquals(NAME, options.baseCodeSubmissionPath());
     }
 }

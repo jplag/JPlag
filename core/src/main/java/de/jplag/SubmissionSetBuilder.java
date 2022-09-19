@@ -135,7 +135,7 @@ public class SubmissionSetBuilder {
             return Optional.empty();
         }
 
-        String baseCodeName = Optional.ofNullable(options.baseCodeSubmissionName()).orElseThrow();
+        String baseCodeName = Optional.ofNullable(options.baseCodeSubmissionPath()).orElseThrow();
         Submission baseCode = loadBaseCodeAsPath(baseCodeName);
         if (baseCode == null) {
             int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();

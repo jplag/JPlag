@@ -89,8 +89,8 @@ named arguments:
 The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects:
 
 ```java
-JPlagOptions options = new JPlagOptions(List.of("/path/to/rootDir"), List.of(), LanguageOption.JAVA);
-options.setBaseCodeSubmissionName("template");
+Language language = LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow();
+JPlagOptions options = new JPlagOptions(language, List.of("/path/to/rootDir"), List.of()).withBaseCodeSubmissionPath("template");
 
 JPlag jplag = new JPlag(options);
 JPlagResult result = jplag.run();
