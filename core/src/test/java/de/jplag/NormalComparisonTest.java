@@ -25,7 +25,7 @@ class NormalComparisonTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
         assertEquals(1, result.getSimilarityDistribution()[3]);
-        assertEquals(62.07, result.getAllComparisons().get(0).similarity(), 0.1);
+        assertEquals(62.07, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     /**
@@ -40,7 +40,7 @@ class NormalComparisonTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(2, result.getAllComparisons().get(0).matches().size());
         assertArrayEquals(expectedDistribution, result.getSimilarityDistribution());
-        assertEquals(96.55, result.getAllComparisons().get(0).similarity(), 0.1);
+        assertEquals(96.55, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     /**
@@ -53,7 +53,7 @@ class NormalComparisonTest extends TestBase {
         assertEquals(3, result.getNumberOfSubmissions());
         assertEquals(3, result.getAllComparisons().size());
 
-        result.getAllComparisons().forEach(comparison -> assertEquals(0, comparison.similarity(), 0.1));
+        result.getAllComparisons().forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
     }
 
     /**
@@ -74,17 +74,17 @@ class NormalComparisonTest extends TestBase {
                 .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
-        assertEquals(24.6, getSelectedPercent(result, "A", "B"), 0.1);
-        assertEquals(99.7, getSelectedPercent(result, "A", "C"), 0.1);
-        assertEquals(77.9, getSelectedPercent(result, "A", "D"), 0.1);
-        assertEquals(24.6, getSelectedPercent(result, "B", "C"), 0.1);
-        assertEquals(28.3, getSelectedPercent(result, "B", "D"), 0.1);
-        assertEquals(77.9, getSelectedPercent(result, "C", "D"), 0.1);
+        assertEquals(24.6, getSelectedPercent(result, "A", "B"), DELTA);
+        assertEquals(99.7, getSelectedPercent(result, "A", "C"), DELTA);
+        assertEquals(77.9, getSelectedPercent(result, "A", "D"), DELTA);
+        assertEquals(24.6, getSelectedPercent(result, "B", "C"), DELTA);
+        assertEquals(28.3, getSelectedPercent(result, "B", "D"), DELTA);
+        assertEquals(77.9, getSelectedPercent(result, "C", "D"), DELTA);
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
-        assertEquals(96.4, biggestMatch.get().maximalSimilarity(), 0.1);
-        assertEquals(65.3, biggestMatch.get().minimalSimilarity(), 0.1);
+        assertEquals(96.4, biggestMatch.get().maximalSimilarity(), DELTA);
+        assertEquals(65.3, biggestMatch.get().minimalSimilarity(), DELTA);
         assertEquals(12, biggestMatch.get().matches().size());
 
     }
