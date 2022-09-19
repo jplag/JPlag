@@ -141,7 +141,7 @@ public class ReportObjectFactory {
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionName() : "";
         ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
 
-        OverviewReport overviewReport = new OverviewReport(folders.stream().map(File::getName).toList(), // submissionFolderPath
+        OverviewReport overviewReport = new OverviewReport(folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
                 result.getOptions().language().getName(), // language
                 result.getOptions().fileSuffixes(), // fileExtensions
