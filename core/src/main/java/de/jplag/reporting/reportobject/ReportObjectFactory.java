@@ -134,14 +134,14 @@ public class ReportObjectFactory {
 
     private void writeOverview(JPlagResult result, String path) {
 
-        List<String> folders = new ArrayList<>();
+        List<File> folders = new ArrayList<>();
         folders.addAll(result.getOptions().submissionDirectories());
         folders.addAll(result.getOptions().oldSubmissionDirectories());
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionName() : "";
         ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
 
-        OverviewReport overviewReport = new OverviewReport(folders, // submissionFolderPath
+        OverviewReport overviewReport = new OverviewReport(folders.stream().map(File::getName).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
                 result.getOptions().language().getName(), // language
                 result.getOptions().fileSuffixes(), // fileExtensions

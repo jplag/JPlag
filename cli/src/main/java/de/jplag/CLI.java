@@ -29,11 +29,13 @@ import static de.jplag.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.CommandLineArgument.SUFFIXES;
 import static de.jplag.CommandLineArgument.VERBOSITY;
 
+import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -142,11 +144,13 @@ public final class CLI {
         }
 
         // Collect the root directories.
-        List<String> submissionDirectories = new ArrayList<>();
-        List<String> oldSubmissionDirectories = new ArrayList<>();
-        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), submissionDirectories);
-        addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectories);
-        addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
+        List<String> submissionDirectoryPaths = new ArrayList<>();
+        List<String> oldSubmissionDirectoryPaths = new ArrayList<>();
+        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), submissionDirectoryPaths);
+        addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectoryPaths);
+        addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectoryPaths);
+        var submissionDirectories = submissionDirectoryPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
+        var oldSubmissionDirectories = oldSubmissionDirectoryPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
 
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);

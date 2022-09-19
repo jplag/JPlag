@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.java.Language;
@@ -48,7 +49,9 @@ public abstract class TestBase {
 
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization)
             throws ExitException {
-        JPlagOptions options = new JPlagOptions(LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow(), newPaths, oldPaths);
+        var newFiles = newPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
+        var oldFiles = oldPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
+        JPlagOptions options = new JPlagOptions(LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow(), newFiles, oldFiles);
         options = customization.apply(options);
         options = options.withVerbosity(Verbosity.LONG);
         JPlag jplag = new JPlag(options);

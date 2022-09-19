@@ -81,26 +81,25 @@ public class SubmissionSetBuilder {
     /**
      * Verify that the given root directories exist and have no duplicate entries.
      */
-    private Set<File> verifyRootDirectories(List<String> rootDirectoryNames, boolean areNewDirectories) throws ExitException {
+    private Set<File> verifyRootDirectories(Set<File> rootDirectoryNames, boolean areNewDirectories) throws ExitException {
         if (areNewDirectories && rootDirectoryNames.isEmpty()) {
             throw new RootDirectoryException("No root directories specified with submissions to check for plagiarism!");
         }
 
         Set<File> canonicalRootDirectories = new HashSet<>(rootDirectoryNames.size());
-        for (String rootDirectoryName : rootDirectoryNames) {
-            File rootDirectory = new File(rootDirectoryName);
-
+        for (final File rootDirectory : rootDirectoryNames) {
             if (!rootDirectory.exists()) {
-                throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectoryName));
+                throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectory));
             }
             if (!rootDirectory.isDirectory()) {
-                throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectoryName));
+                throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectory));
             }
 
-            rootDirectory = makeCanonical(rootDirectory, it -> new RootDirectoryException("Cannot read root directory: " + rootDirectoryName, it));
-            if (!canonicalRootDirectories.add(rootDirectory)) {
+            File canonicalRootDirectory = makeCanonical(rootDirectory,
+                    it -> new RootDirectoryException("Cannot read root directory: " + rootDirectory, it));
+            if (!canonicalRootDirectories.add(canonicalRootDirectory)) {
                 // Root directory was already added, report a warning.
-                logger.warn("Root directory \"{}\" was specified more than once, duplicates will be ignored.", rootDirectoryName);
+                logger.warn("Root directory \"{}\" was specified more than once, duplicates will be ignored.", canonicalRootDirectory);
             }
         }
         return canonicalRootDirectories;

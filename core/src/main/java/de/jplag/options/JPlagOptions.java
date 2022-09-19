@@ -3,6 +3,7 @@ package de.jplag.options;
 import static de.jplag.options.Verbosity.LONG;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -45,7 +46,7 @@ import de.jplag.clustering.ClusteringOptions;
  * @param verbosity Level of output verbosity.
  * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
  */
-public record JPlagOptions(Language language, Integer minimumTokenMatch, List<String> submissionDirectories, List<String> oldSubmissionDirectories,
+public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
         String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
         SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
         Verbosity verbosity, boolean debugParser) {
@@ -58,12 +59,12 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
 
     private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
-    public JPlagOptions(Language language, List<String> submissionDirectories, List<String> oldSubmissionDirectories) {
+    public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
                 DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), null, false);
     }
 
-    public JPlagOptions(Language language, Integer minimumTokenMatch, List<String> submissionDirectories, List<String> oldSubmissionDirectories,
+    public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             Verbosity verbosity, boolean debugParser) {
@@ -75,8 +76,8 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
         this.similarityMetric = similarityMetric;
         this.minimumTokenMatch = normalizeMinimumTokenMatch(minimumTokenMatch);
         this.exclusionFileName = exclusionFileName;
-        this.submissionDirectories = submissionDirectories == null ? null : Collections.unmodifiableList(submissionDirectories);
-        this.oldSubmissionDirectories = oldSubmissionDirectories == null ? null : Collections.unmodifiableList(oldSubmissionDirectories);
+        this.submissionDirectories = submissionDirectories == null ? null : Collections.unmodifiableSet(submissionDirectories);
+        this.oldSubmissionDirectories = oldSubmissionDirectories == null ? null : Collections.unmodifiableSet(oldSubmissionDirectories);
         this.baseCodeSubmissionName = (baseCodeSubmissionName == null || baseCodeSubmissionName.isBlank()) ? null : baseCodeSubmissionName;
         this.subdirectoryName = subdirectoryName;
         this.verbosity = verbosity;
@@ -131,13 +132,13 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
                 clusteringOptions, verbosity, debugParser);
     }
 
-    public JPlagOptions withSubmissionDirectories(List<String> submissionDirectories) {
+    public JPlagOptions withSubmissionDirectories(Set<File> submissionDirectories) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionName,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
                 clusteringOptions, verbosity, debugParser);
     }
 
-    public JPlagOptions withOldSubmissionDirectories(List<String> oldSubmissionDirectories) {
+    public JPlagOptions withOldSubmissionDirectories(Set<File> oldSubmissionDirectories) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionName,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
                 clusteringOptions, verbosity, debugParser);
