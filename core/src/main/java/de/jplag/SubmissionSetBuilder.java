@@ -17,6 +17,7 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
@@ -133,6 +134,14 @@ public class SubmissionSetBuilder {
         }
 
         File baseCodeSubmissionDirectory = options.baseCodeSubmissionDirectory();
+        if (!baseCodeSubmissionDirectory.exists()) {
+            throw new BasecodeException("Basecode directory \"{}\" does not exist".formatted(baseCodeSubmissionDirectory));
+        }
+        String errorMessage = isExcludedEntry(baseCodeSubmissionDirectory);
+        if (errorMessage != null) {
+            throw new BasecodeException(errorMessage); // Stating an excluded path as basecode isn't very useful.
+        }
+
         Submission baseCodeSubmission = processSubmission(baseCodeSubmissionDirectory.getName(), baseCodeSubmissionDirectory, false);
 
         if (baseCodeSubmission != null) {
