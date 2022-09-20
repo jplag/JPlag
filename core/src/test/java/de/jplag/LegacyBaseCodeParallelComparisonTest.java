@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
 
-public class LegacyBaseCodeNormalComparisonTest extends NormalComparisonTest {
+public class LegacyBaseCodeParallelComparisonTest extends ParallelComparisonTest {
     @Test
     void testMultiRootDirSeparateBasecode() throws ExitException {
         String basecodePath = getBasePath("basecode-base");
