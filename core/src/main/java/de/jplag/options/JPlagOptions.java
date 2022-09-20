@@ -61,7 +61,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
     private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
-        this(language, null, submissionDirectories, oldSubmissionDirectories, (File) null, null, null, null, DEFAULT_SIMILARITY_METRIC,
+        this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
                 DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), null, false);
     }
 
@@ -231,7 +231,8 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
      * @param language Language to use when parsing the submissions.
      * @param minimumTokenMatch Tunes the comparison sensitivity by adjusting the minimum token required to be counted as
      * matching section. A smaller {@code <n>} increases the sensitivity but might lead to more false-positives.
-     * @param submissionDirectories Directories with new submissions. These must be checked for plagiarism.
+     * @param submissionDirectory Directory with new submissions. These must be checked for plagiarism. To check more than
+     * one submission directory, use the default initializer.
      * @param oldSubmissionDirectories Directories with old submissions to check against.
      * @param baseCodeSubmissionName Path name of the directory containing the base code.
      * @param subdirectoryName Example: If the subdirectoryName is 'src', only the code inside submissionDir/src of each
@@ -252,12 +253,12 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
      * @deprecated Use the default initializer with @{{@link #baseCodeSubmissionDirectory} instead.
      */
     @Deprecated
-    public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
+    public JPlagOptions(Language language, Integer minimumTokenMatch, File submissionDirectory, Set<File> oldSubmissionDirectories,
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             Verbosity verbosity, boolean debugParser) throws BasecodeException {
-        this(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories,
-                convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectories), subdirectoryName, fileSuffixes, exclusionFileName,
+        this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
+                convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
                 similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, verbosity, debugParser);
     }
 
@@ -269,8 +270,17 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
      */
     @Deprecated
     public JPlagOptions withBaseCodeSubmissionName(String baseCodeSubmissionName) {
+        File baseCodeDirectory = new File(baseCodeSubmissionName);
+        if (baseCodeDirectory.exists()) {
+            return this.withBaseCodeSubmissionDirectory(baseCodeDirectory);
+        }
+
+        if (submissionDirectories.size() != 1) {
+            throw new IllegalArgumentException("Partial path based base code requires exactly one submission directory");
+        }
+        File submissionDirectory = submissionDirectories.iterator().next();
         try {
-            return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionName,
+            return new JPlagOptions(language, minimumTokenMatch, submissionDirectory, oldSubmissionDirectories, baseCodeSubmissionName,
                     subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
                     clusteringOptions, verbosity, debugParser);
         } catch (BasecodeException e) {
@@ -279,7 +289,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
     }
 
     @Deprecated
-    private static File convertLegacyBaseCodeToFile(String baseCodeSubmissionName, Set<File> submissionDirectories) throws BasecodeException {
+    private static File convertLegacyBaseCodeToFile(String baseCodeSubmissionName, File submissionDirectory) throws BasecodeException {
         if (baseCodeSubmissionName == null) {
             return null;
         }
@@ -287,10 +297,6 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
         if (baseCodeAsAbsolutePath.exists()) {
             return baseCodeAsAbsolutePath;
         } else {
-            if (submissionDirectories.size() != 1) {
-                throw new BasecodeException(
-                        "Legacy use of the base code option is only supported for one root directory! Please migrate to the path-based API.");
-            }
             String normalizedName = baseCodeSubmissionName;
             while (normalizedName.startsWith(File.separator)) {
                 normalizedName = normalizedName.substring(1);
@@ -306,7 +312,6 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
                 throw new BasecodeException(
                         "The basecode directory name \"" + normalizedName + "\" cannot contain dots! Please migrate to the path-based API.");
             }
-            File submissionDirectory = submissionDirectories.iterator().next();
             return new File(submissionDirectory, baseCodeSubmissionName);
         }
     }

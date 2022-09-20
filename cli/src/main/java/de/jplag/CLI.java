@@ -156,11 +156,19 @@ public final class CLI {
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
 
-        return new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories,
-                (String) BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(),
-                EXCLUDE_FILE.getFrom(namespace), JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace),
-                SHOWN_COMPARISONS.getFrom(namespace), clusteringOptions, Verbosity.fromOption(VERBOSITY.getFrom(namespace)),
-                DEBUG.getFrom(namespace));
+        JPlagOptions options = new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, null,
+                SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
+                JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
+                clusteringOptions, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
+
+        String baseCodePath = BASE_CODE.getFrom(namespace);
+        File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
+        if (baseCodeDirectory == null || baseCodeDirectory.exists()) {
+            return options.withBaseCodeSubmissionDirectory(baseCodeDirectory);
+        } else {
+            logger.warn("Using legacy partial base code API. Please migrate to new full path base code API.");
+            return options.withBaseCodeSubmissionName(baseCodePath);
+        }
     }
 
     private static ClusteringOptions getClusteringOptions(Namespace namespace) {
