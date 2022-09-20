@@ -72,7 +72,7 @@ named arguments:
   -bc BC           Path of the directory containing the base code (common framework used in all submissions)
   -v               {quiet,long} Verbosity of the logging (default: quiet)
   -d               Debug parser. Non-parsable files will be stored (default: false)
-  -S S             Look in directories <root-dir>/*/<dir> for programs
+  -s S             Look in directories <root-dir>/*/<dir> for programs
   -p P             comma-separated list of all filename suffixes that are included
   -x X             All files named in this file will be ignored in the comparison (line-separated list)
   -t T             Tunes the comparison sensitivity by adjusting the minimum token  required  to be counted as a matching section. A smaller
