@@ -9,7 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
 
-public class LegacyBaseCodeParallelComparisonTest extends ParallelComparisonTest {
+/**
+ * Tests for the legacy behaviour of the String-based base code initializer.
+ */
+@Deprecated(since = "4.0.0", forRemoval = true)
+class LegacyBaseCodeParallelComparisonTest extends ParallelComparisonTest {
     @Test
     void testMultiRootDirSeparateBasecode() throws ExitException {
         String basecodePath = getBasePath("basecode-base");
@@ -19,7 +23,7 @@ public class LegacyBaseCodeParallelComparisonTest extends ParallelComparisonTest
     }
 
     @Test
-    public void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
+    void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
         String basecodePath = getBasePath("basecode", "base");
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 2 + 2 submissions.
         JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionName(basecodePath));
@@ -27,7 +31,7 @@ public class LegacyBaseCodeParallelComparisonTest extends ParallelComparisonTest
     }
 
     @Test
-    public void testMultiRootDirBasecodeName() {
+    void testMultiRootDirBasecodeName() {
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate"));
         String basecodePath = "base"; // Should *not* find basecode/base
         assertThrows(IllegalArgumentException.class, () -> runJPlag(paths, it -> it.withBaseCodeSubmissionName(basecodePath)));

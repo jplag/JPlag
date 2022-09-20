@@ -13,8 +13,8 @@ import de.jplag.exceptions.ExitException;
 /**
  * Tests for the legacy behaviour of the String-based base code initializer.
  */
-@Deprecated
-public class LegacyBaseCodeTest extends BaseCodeTest {
+@Deprecated(since = "4.0.0", forRemoval = true)
+class LegacyBaseCodeTest extends BaseCodeTest {
     @Test
     void testBasecodeUserSubmissionComparison() throws ExitException {
         JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionName("base"));

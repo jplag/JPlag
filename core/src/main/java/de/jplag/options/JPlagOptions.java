@@ -252,7 +252,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
      * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
      * @deprecated Use the default initializer with @{{@link #baseCodeSubmissionDirectory} instead.
      */
-    @Deprecated
+    @Deprecated(since = "4.0.0", forRemoval = true)
     public JPlagOptions(Language language, Integer minimumTokenMatch, File submissionDirectory, Set<File> oldSubmissionDirectories,
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
@@ -268,7 +268,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
      * @return a new options instance with the provided base code submission name
      * @deprecated Use @{{@link #withBaseCodeSubmissionDirectory} instead.
      */
-    @Deprecated
+    @Deprecated(since = "4.0.0", forRemoval = true)
     public JPlagOptions withBaseCodeSubmissionName(String baseCodeSubmissionName) {
         File baseCodeDirectory = new File(baseCodeSubmissionName);
         if (baseCodeDirectory.exists()) {
@@ -288,7 +288,11 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
         }
     }
 
-    @Deprecated
+    /**
+     * Converts a legacy base code submission name to a directory path.
+     * @deprecated Use the default initializer with @{{@link #baseCodeSubmissionDirectory} instead.
+     */
+    @Deprecated(since = "4.0.0", forRemoval = true)
     private static File convertLegacyBaseCodeToFile(String baseCodeSubmissionName, File submissionDirectory) throws BasecodeException {
         if (baseCodeSubmissionName == null) {
             return null;

@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
-import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
@@ -137,7 +136,7 @@ public final class CLI {
      * @param namespace encapsulates the parsed arguments in a {@link Namespace} format.
      * @return the newly built options.F
      */
-    public JPlagOptions buildOptionsFromArguments(Namespace namespace) throws BasecodeException {
+    public JPlagOptions buildOptionsFromArguments(Namespace namespace) {
         String fileSuffixString = SUFFIXES.getFrom(namespace);
         String[] fileSuffixes = new String[] {};
         if (fileSuffixString != null) {
@@ -150,8 +149,8 @@ public final class CLI {
         addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), submissionDirectoryPaths);
         addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectoryPaths);
         addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectoryPaths);
-        var submissionDirectories = submissionDirectoryPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
-        var oldSubmissionDirectories = oldSubmissionDirectoryPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
+        var submissionDirectories = submissionDirectoryPaths.stream().map(File::new).collect(Collectors.toSet());
+        var oldSubmissionDirectories = oldSubmissionDirectoryPaths.stream().map(File::new).collect(Collectors.toSet());
 
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);

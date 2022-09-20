@@ -70,10 +70,8 @@ public class SubmissionSetBuilder {
             processRootDirectoryEntries(oldDirectory, multipleRoots, foundSubmissions, false);
         }
 
-        Optional<Submission> baseCodeSubmission = loadBaseCode(submissionDirectories, oldSubmissionDirectories);
-        baseCodeSubmission.ifPresent(baseSubmission -> {
-            foundSubmissions.remove(baseSubmission.getRoot());
-        });
+        Optional<Submission> baseCodeSubmission = loadBaseCode();
+        baseCodeSubmission.ifPresent(baseSubmission -> foundSubmissions.remove(baseSubmission.getRoot()));
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
@@ -128,14 +126,14 @@ public class SubmissionSetBuilder {
         }
     }
 
-    private Optional<Submission> loadBaseCode(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) throws ExitException {
+    private Optional<Submission> loadBaseCode() throws ExitException {
         if (!options.hasBaseCode()) {
             return Optional.empty();
         }
 
         File baseCodeSubmissionDirectory = options.baseCodeSubmissionDirectory();
         if (!baseCodeSubmissionDirectory.exists()) {
-            throw new BasecodeException("Basecode directory \"{}\" does not exist".formatted(baseCodeSubmissionDirectory));
+            throw new BasecodeException("Basecode directory \"%s\" does not exist".formatted(baseCodeSubmissionDirectory));
         }
         String errorMessage = isExcludedEntry(baseCodeSubmissionDirectory);
         if (errorMessage != null) {
@@ -143,10 +141,7 @@ public class SubmissionSetBuilder {
         }
 
         Submission baseCodeSubmission = processSubmission(baseCodeSubmissionDirectory.getName(), baseCodeSubmissionDirectory, false);
-
-        if (baseCodeSubmission != null) {
-            logger.info("Basecode directory \"{}\" will be used.", baseCodeSubmission.getName());
-        }
+        logger.info("Basecode directory \"{}\" will be used.", baseCodeSubmission.getName());
         return Optional.ofNullable(baseCodeSubmission);
     }
 
