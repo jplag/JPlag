@@ -73,7 +73,7 @@ public class BaseCodeTest extends TestBase {
     void testSubdirectoryGlobalBasecode() throws ExitException {
         String basecode = getBasePath("SubdirectoryBase");
         JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> it.withSubdirectoryName("src").withBaseCodeSubmissionName(basecode));
-        verifySimpleDuplicate(result, 3, 3);
+        verifySimpleSubdirectoryDuplicate(result, 3, 3);
     }
 
     /**
@@ -82,14 +82,21 @@ public class BaseCodeTest extends TestBase {
     @Test
     void testSubdirectoryLocalBasecode() throws ExitException {
         JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> it.withSubdirectoryName("src").withBaseCodeSubmissionName("Base"));
-        verifySimpleDuplicate(result, 2, 1);
+        verifySimpleSubdirectoryDuplicate(result, 2, 1);
     }
 
-    private void verifySimpleDuplicate(JPlagResult result, int submissions, int comparisons) {
+    private void verifySimpleSubdirectoryDuplicate(JPlagResult result, int submissions, int comparisons) {
+        result.getSubmissions().getSubmissions().forEach(this::hasSubdirectoryRoot);
+        hasSubdirectoryRoot(result.getSubmissions().getBaseCode());
+
         assertEquals(submissions, result.getNumberOfSubmissions());
         assertEquals(comparisons, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
         assertEquals(1, result.getSimilarityDistribution()[3]);
         assertEquals(62.07, result.getAllComparisons().get(0).similarity(), DELTA);
+    }
+
+    private void hasSubdirectoryRoot(Submission submission) {
+        assertEquals("src", submission.getRoot().getName());
     }
 }
