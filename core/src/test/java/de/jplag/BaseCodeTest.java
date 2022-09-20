@@ -65,4 +65,31 @@ public class BaseCodeTest extends TestBase {
     void testBasecodeUserSubmissionWithDots() {
         assertThrows(IllegalArgumentException.class, () -> runJPlag("basecode", it -> it.withBaseCodeSubmissionName("base.ext")));
     }
+
+    /**
+     * The simple duplicate contains obvious plagiarism.
+     */
+    @Test
+    void testSubdirectoryGlobalBasecode() throws ExitException {
+        String basecode = getBasePath("SubdirectoryBase");
+        JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> it.withSubdirectoryName("src").withBaseCodeSubmissionName(basecode));
+        verifySimpleDuplicate(result, 3, 3);
+    }
+
+    /**
+     * The simple duplicate contains obvious plagiarism.
+     */
+    @Test
+    void testSubdirectoryLocalBasecode() throws ExitException {
+        JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> it.withSubdirectoryName("src").withBaseCodeSubmissionName("Base"));
+        verifySimpleDuplicate(result, 2, 1);
+    }
+
+    private void verifySimpleDuplicate(JPlagResult result, int submissions, int comparisons) {
+        assertEquals(submissions, result.getNumberOfSubmissions());
+        assertEquals(comparisons, result.getAllComparisons().size());
+        assertEquals(1, result.getAllComparisons().get(0).matches().size());
+        assertEquals(1, result.getSimilarityDistribution()[3]);
+        assertEquals(62.07, result.getAllComparisons().get(0).similarity(), DELTA);
+    }
 }
