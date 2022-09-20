@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
+import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
@@ -136,7 +137,7 @@ public final class CLI {
      * @param namespace encapsulates the parsed arguments in a {@link Namespace} format.
      * @return the newly built options.F
      */
-    public JPlagOptions buildOptionsFromArguments(Namespace namespace) {
+    public JPlagOptions buildOptionsFromArguments(Namespace namespace) throws BasecodeException {
         String fileSuffixString = SUFFIXES.getFrom(namespace);
         String[] fileSuffixes = new String[] {};
         if (fileSuffixString != null) {
@@ -156,9 +157,10 @@ public final class CLI {
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
 
         return new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories,
-                BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
-                JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
-                clusteringOptions, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
+                (String) BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(),
+                EXCLUDE_FILE.getFrom(namespace), JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace),
+                SHOWN_COMPARISONS.getFrom(namespace), clusteringOptions, Verbosity.fromOption(VERBOSITY.getFrom(namespace)),
+                DEBUG.getFrom(namespace));
     }
 
     private static ClusteringOptions getClusteringOptions(Namespace namespace) {

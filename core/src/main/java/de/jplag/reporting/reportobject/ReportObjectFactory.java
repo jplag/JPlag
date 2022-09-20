@@ -138,7 +138,7 @@ public class ReportObjectFactory {
         folders.addAll(result.getOptions().submissionDirectories());
         folders.addAll(result.getOptions().oldSubmissionDirectories());
 
-        String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionName() : "";
+        String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionDirectory().getName() : "";
         ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
 
         OverviewReport overviewReport = new OverviewReport(folders.stream().map(File::getPath).toList(), // submissionFolderPath

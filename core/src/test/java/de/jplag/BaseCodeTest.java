@@ -63,6 +63,6 @@ public class BaseCodeTest extends TestBase {
 
     @Test
     void testBasecodeUserSubmissionWithDots() {
-        assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> it.withBaseCodeSubmissionName("base.ext")));
+        assertThrows(IllegalArgumentException.class, () -> runJPlag("basecode", it -> it.withBaseCodeSubmissionName("base.ext")));
     }
 }

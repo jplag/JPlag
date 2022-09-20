@@ -17,7 +17,6 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
@@ -70,11 +69,13 @@ public class SubmissionSetBuilder {
             processRootDirectoryEntries(oldDirectory, multipleRoots, foundSubmissions, false);
         }
 
-        Optional<Submission> baseCodeSubmission = loadBaseCode(submissionDirectories, oldSubmissionDirectories, foundSubmissions);
+        Optional<Submission> baseCodeSubmission = loadBaseCode(submissionDirectories, oldSubmissionDirectories);
+        baseCodeSubmission.ifPresent(baseSubmission -> {
+            foundSubmissions.remove(baseSubmission.getRoot());
+        });
 
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
-
         return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options);
     }
 
@@ -126,102 +127,18 @@ public class SubmissionSetBuilder {
         }
     }
 
-    private Optional<Submission> loadBaseCode(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
-            Map<File, Submission> foundSubmissions) throws ExitException {
+    private Optional<Submission> loadBaseCode(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) throws ExitException {
         if (!options.hasBaseCode()) {
             return Optional.empty();
         }
 
-        String baseCodeName = Optional.ofNullable(options.baseCodeSubmissionName()).orElseThrow();
-        Submission baseCode = loadBaseCodeAsPath(baseCodeName);
-        if (baseCode == null) {
-            int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
-            if (numberOfRootDirectories > 1) {
-                throw new BasecodeException("The base code submission needs to be specified by path instead of by name!");
-            }
+        File baseCodeSubmissionDirectory = options.baseCodeSubmissionDirectory();
+        Submission baseCodeSubmission = processSubmission(baseCodeSubmissionDirectory.getName(), baseCodeSubmissionDirectory, false);
 
-            // There is one root directory, and the submissionDirectories variable has been checked to be non-empty.
-            // That set thus contains the one and only root directory.
-            File rootDirectory = submissionDirectories.iterator().next();
-
-            // Single root-directory, try the legacy way of specifying basecode.
-            baseCode = loadBaseCodeViaName(baseCodeName, rootDirectory, foundSubmissions);
+        if (baseCodeSubmission != null) {
+            logger.info("Basecode directory \"{}\" will be used.", baseCodeSubmission.getName());
         }
-
-        if (baseCode != null) {
-            logger.info("Basecode directory \"{}\" will be used.", baseCode.getName());
-
-            // Basecode may also be registered as a user submission. If so, remove the latter.
-            Submission removed = foundSubmissions.remove(baseCode.getRoot());
-            if (removed != null) {
-                logger.info("Submission \"{}\" is the specified basecode, it will be skipped during comparison.", removed.getName());
-            }
-        }
-        return Optional.ofNullable(baseCode);
-    }
-
-    /**
-     * Try to load the basecode under the assumption of being a path.
-     * @return Base code submission if the option value can be interpreted as global path, else {@code null}.
-     * @throws ExitException when the option value is a path with errors.
-     */
-    private Submission loadBaseCodeAsPath(String baseCodeName) throws ExitException {
-        File basecodeSubmission = new File(baseCodeName);
-        if (!basecodeSubmission.exists()) {
-            return null;
-        }
-
-        String errorMessage = isExcludedEntry(basecodeSubmission);
-        if (errorMessage != null) {
-            throw new BasecodeException(errorMessage); // Stating an excluded path as basecode isn't very useful.
-        }
-
-        try {
-            // Use an unlikely short name for the base code. If all is well, this name should not appear
-            // in the output since basecode matches are removed from it
-            return processSubmission(basecodeSubmission.getName(), basecodeSubmission, false);
-        } catch (SubmissionException exception) {
-            throw new BasecodeException(exception.getMessage(), exception); // Change thrown exception to basecode exception.
-        }
-    }
-
-    /**
-     * Try to load the basecode by looking up the basecode name in the root directory.
-     * @return the base code submission if a fitting subdirectory was found, else {@code null}.
-     * @throws ExitException when the option value is a sub-directory with errors.
-     */
-    private Submission loadBaseCodeViaName(String baseCodeName, File rootDirectory, Map<File, Submission> foundSubmissions) throws ExitException {
-        // Is the option value a single name after trimming spurious separators?
-        String name = baseCodeName;
-        while (name.startsWith(File.separator)) {
-            name = name.substring(1);
-        }
-        while (name.endsWith(File.separator)) {
-            name = name.substring(0, name.length() - 1);
-        }
-
-        // If it is not a name of a single sub-directory, bail out.
-        if (name.isEmpty() || name.contains(File.separator)) {
-            return null;
-        }
-
-        if (name.contains(".")) {
-            throw new BasecodeException("The basecode directory name \"" + name + "\" cannot contain dots!");
-        }
-
-        // Grab the basecode submission from the regular submissions.
-        File basecodePath = new File(rootDirectory, baseCodeName);
-
-        Submission baseCode = foundSubmissions
-                .get(makeCanonical(basecodePath, it -> new BasecodeException("Cannot compute canonical file path: " + basecodePath, it)));
-        if (baseCode == null) {
-            // No base code found at all, report an error.
-            throw new BasecodeException(String.format("Basecode path \"%s\" relative to the working directory could not be found.", baseCodeName));
-        } else {
-            // Found a base code as a submission, warn about legacy usage.
-            logger.warn("Legacy use of the base code option found, please specify the basecode by path instead of by name!");
-        }
-        return baseCode;
+        return Optional.ofNullable(baseCodeSubmission);
     }
 
     /**
