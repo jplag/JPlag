@@ -7,9 +7,7 @@ import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.strategy.ComparisonMode;
 import de.jplag.strategy.ComparisonStrategy;
-import de.jplag.strategy.NormalComparisonStrategy;
 import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
@@ -22,7 +20,6 @@ public class JPlag {
 
     private final Language language;
     private final ComparisonStrategy comparisonStrategy;
-    private final GreedyStringTiling coreAlgorithm; // Contains the comparison logic.
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
@@ -30,9 +27,9 @@ public class JPlag {
      */
     public JPlag(JPlagOptions options) {
         this.options = options;
-        coreAlgorithm = new GreedyStringTiling(options);
         language = this.options.language();
-        comparisonStrategy = initializeComparisonStrategy(options.comparisonMode());
+        GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
+        comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
     }
 
     /**
@@ -58,12 +55,5 @@ public class JPlag {
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 
         return result;
-    }
-
-    private ComparisonStrategy initializeComparisonStrategy(final ComparisonMode comparisonMode) {
-        return switch (comparisonMode) {
-            case NORMAL -> new NormalComparisonStrategy(options, coreAlgorithm);
-            case PARALLEL -> new ParallelComparisonStrategy(options, coreAlgorithm);
-        };
     }
 }

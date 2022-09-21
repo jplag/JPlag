@@ -15,7 +15,6 @@ import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_KMEANS_ITERATIONS;
 import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MAX_RUNS;
 import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MIN_RUNS;
 import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_NOISE;
-import static de.jplag.CommandLineArgument.COMPARISON_MODE;
 import static de.jplag.CommandLineArgument.DEBUG;
 import static de.jplag.CommandLineArgument.EXCLUDE_FILE;
 import static de.jplag.CommandLineArgument.LANGUAGE;
@@ -52,7 +51,6 @@ import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.Verbosity;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
-import de.jplag.strategy.ComparisonMode;
 
 /**
  * Command line interface class, allows using via command line.
@@ -151,18 +149,12 @@ public final class CLI {
         addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
 
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
-        var comparisonModeOptional = ComparisonMode.fromName(COMPARISON_MODE.getFrom(namespace));
-        if (comparisonModeOptional.isEmpty()) {
-            logger.warn("Unknown comparison mode, using default mode!");
-        }
-        var comparisonMode = comparisonModeOptional.orElse(JPlagOptions.DEFAULT_COMPARISON_MODE);
-
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
 
         return new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories,
                 BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
-                clusteringOptions, comparisonMode, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
+                clusteringOptions, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
     }
 
     private static ClusteringOptions getClusteringOptions(Namespace namespace) {

@@ -26,12 +26,12 @@ public class JPlagResult {
     private final int SIMILARITY_DISTRIBUTION_SIZE = 10;
 
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
-        this.comparisons = comparisons;
+        // sort comparisons by percentage (descending)
+        this.comparisons = comparisons.stream().sorted((first, second) -> Double.compare(second.similarity(), first.similarity())).toList();
         this.submissions = submissions;
         this.durationInMillis = durationInMillis;
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
-        comparisons.sort((first, second) -> Double.compare(second.similarity(), first.similarity())); // Sort by percentage (descending).
     }
 
     /**

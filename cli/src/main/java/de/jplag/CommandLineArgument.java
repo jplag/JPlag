@@ -2,7 +2,6 @@ package de.jplag;
 
 import static de.jplag.CLI.ADVANCED_GROUP;
 import static de.jplag.CLI.CLUSTERING_GROUP_NAME;
-import static de.jplag.options.JPlagOptions.DEFAULT_COMPARISON_MODE;
 import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
 import static net.sourceforge.argparse4j.impl.Arguments.append;
@@ -25,7 +24,6 @@ import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.options.SimilarityMetric;
-import de.jplag.strategy.ComparisonMode;
 
 /**
  * Command line arguments for the JPlag CLI. Each argument is defined through an enumeral.
@@ -51,7 +49,6 @@ public enum CommandLineArgument {
     SIMILARITY_THRESHOLD(new Builder("-m", Double.class).defaultsTo(DEFAULT_SIMILARITY_THRESHOLD).argumentGroup(ADVANCED_GROUP)),
     SHOWN_COMPARISONS(new Builder("-n", Integer.class).defaultsTo(DEFAULT_SHOWN_COMPARISONS)),
     RESULT_FOLDER(new Builder("-r", String.class).defaultsTo("result")),
-    COMPARISON_MODE(new Builder("-c", String.class).defaultsTo(DEFAULT_COMPARISON_MODE.getName()).choices(ComparisonMode.allNames())),
     CLUSTER_DISABLE(new Builder("--cluster-skip", Boolean.class).argumentGroup(CLUSTERING_GROUP_NAME).action(Arguments.storeTrue())),
     CLUSTER_ALGORITHM(
             new Builder("--cluster-alg", ClusteringAlgorithm.class).argumentGroup(CLUSTERING_GROUP_NAME)
