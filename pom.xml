@@ -74,9 +74,9 @@
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.25.0</spotless.version>
-        <slf4j.version>2.0.0</slf4j.version>
-        <junit.version>5.9.0</junit.version>
+        <spotless.version>2.27.0</spotless.version>
+        <slf4j.version>2.0.2</slf4j.version>
+        <junit.version>5.9.1</junit.version>
 
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.11.1</antlr4.version>
@@ -202,7 +202,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.3.0</version>
                     <configuration>
                         <archive>
                             <manifest>
