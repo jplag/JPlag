@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,7 +52,7 @@ class RustLanguageTest {
     @Test
     void parseTestFiles() {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(testFileLocation, new String[] {fileName});
+            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)));
             String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 

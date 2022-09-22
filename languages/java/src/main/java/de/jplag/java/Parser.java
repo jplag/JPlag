@@ -2,8 +2,8 @@ package de.jplag.java;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
@@ -19,11 +19,10 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<Token> parse(File directory, String[] files) {
+    public List<Token> parse(Set<File> files) {
         tokens = new ArrayList<>();
         errors = 0;
-        var pathedFiles = Arrays.stream(files).map(it -> new File(directory, it)).toList();
-        errors += new JavacAdapter().parseFiles(directory, pathedFiles, this);
+        errors += new JavacAdapter().parseFiles(files, this);
         return tokens;
     }
 

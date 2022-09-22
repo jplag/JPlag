@@ -3,6 +3,7 @@ package de.jplag.scheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
@@ -20,13 +21,13 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<Token> parse(File directory, String[] files) {
+    public List<Token> parse(Set<File> files) {
         tokens = new ArrayList<>();
         errors = 0;
-        for (String file : files) {
-            currentFile = file;
-            logger.trace("Parsing file {}", file);
-            if (!SchemeParser.parseFile(directory, file, null, this)) {
+        for (File file : files) {
+            currentFile = file.getName();
+            logger.trace("Parsing file {}", file.getName());
+            if (!SchemeParser.parseFile(file, null, this)) {
                 errors++;
             }
             tokens.add(Token.fileEnd(currentFile));

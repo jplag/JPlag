@@ -3,6 +3,7 @@ package de.jplag.cpp;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
@@ -19,13 +20,13 @@ public class Scanner extends AbstractParser {
         super();
     }
 
-    public List<Token> scan(File directory, String[] files) {
+    public List<Token> scan(Set<File> files) {
         tokens = new ArrayList<>();
         errors = 0;
-        for (String currentFile : files) {
-            this.currentFile = currentFile;
+        for (File file : files) {
+            this.currentFile = file.getName();
             logger.trace("Scanning file {}", currentFile);
-            if (!CPPScanner.scanFile(directory, currentFile, this)) {
+            if (!CPPScanner.scanFile(file, this)) {
                 errors++;
             }
             tokens.add(Token.fileEnd(currentFile));

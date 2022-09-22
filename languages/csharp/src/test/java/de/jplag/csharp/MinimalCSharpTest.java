@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,8 +62,7 @@ class MinimalCSharpTest {
                 ACCESSOR_END, ACCESSORS_END, CLASS_END, SharedTokenType.FILE_END);
 
         // Parse test input
-        String[] input = new String[] {TEST_SUBJECT};
-        List<Token> result = language.parse(baseDirectory, input);
+        List<Token> result = language.parse(Set.of(new File(baseDirectory, TEST_SUBJECT)));
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         // Compare parsed tokens:

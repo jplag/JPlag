@@ -3,10 +3,10 @@ package de.jplag.text;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import de.jplag.AbstractParser;
 import de.jplag.Token;
@@ -37,25 +37,24 @@ public class ParserAdapter extends AbstractParser {
         this.pipeline = new StanfordCoreNLP(properties);
     }
 
-    public List<Token> parse(File directory, String[] files) {
+    public List<Token> parse(Set<File> files) {
         tokens = new ArrayList<>();
         errors = 0;
-        for (String file : files) {
+        for (File file : files) {
             logger.trace("Parsing file {}", file);
-            if (!parseFile(directory, file)) {
+            if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file));
+            tokens.add(Token.fileEnd(file.getName()));
         }
         return tokens;
     }
 
-    private boolean parseFile(File directory, String file) {
-        this.currentFile = file;
+    private boolean parseFile(File file) {
+        this.currentFile = file.getName();
         this.currentLine = 1; // lines start at 1
         this.currentLineBreakIndex = 0;
-        Path filePath = directory.toPath().resolve(file);
-        String content = readFile(filePath);
+        String content = readFile(file);
         if (content == null) {
             return false;
         }
@@ -105,11 +104,11 @@ public class ParserAdapter extends AbstractParser {
         tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, length));
     }
 
-    private String readFile(Path filePath) {
+    private String readFile(File file) {
         try {
-            return Files.readString(filePath);
+            return Files.readString(file.toPath());
         } catch (IOException e) {
-            logger.error("Error reading from file {}", filePath, e);
+            logger.error("Error reading from file {}", file.getName(), e);
             return null;
         }
     }

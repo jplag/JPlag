@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +42,7 @@ class MinimalMetamodelTest {
 
     @Test
     void testBookstoreMetamodels() {
-        List<Token> result = language.parse(baseDirectory, TEST_SUBJECTS);
+        List<Token> result = language.parse(Arrays.stream(TEST_SUBJECTS).map(path -> new File(BASE_PATH.toFile(), path)).collect(Collectors.toSet()));
 
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(Language.VIEW_FILE_SUFFIX)));
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();

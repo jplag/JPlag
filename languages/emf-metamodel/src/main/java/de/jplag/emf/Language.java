@@ -1,8 +1,8 @@
 package de.jplag.emf;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EcorePackage;
 import org.kohsuke.MetaInfServices;
@@ -54,8 +54,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public List<Token> parse(File dir, String[] files) {
-        return parser.parse(dir, Arrays.asList(files));
+    public List<Token> parse(Set<File> files) {
+        return parser.parse(files);
     }
 
     @Override

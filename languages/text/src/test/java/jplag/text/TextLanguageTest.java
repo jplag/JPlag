@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,8 +43,7 @@ class TextLanguageTest {
     @Test
     void testParsingJavaDoc() {
         // Parse test input
-        String[] input = new String[] {TEST_SUBJECT};
-        List<Token> result = language.parse(baseDirectory, input);
+        List<Token> result = language.parse(Set.of(new File(BASE_PATH.toFile(), TEST_SUBJECT)));
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
@@ -54,18 +54,18 @@ class TextLanguageTest {
     @ParameterizedTest
     @ValueSource(strings = {"\n", "\r", "\r\n",})
     void testLineBreakInputs(String input, @TempDir Path tempDir) throws IOException {
-        Path file = tempDir.resolve("input.txt");
-        Files.writeString(file, input);
-        List<Token> result = language.parse(tempDir.toFile(), new String[] {"input.txt"});
+        Path filePath = tempDir.resolve("input.txt");
+        Files.writeString(filePath, input);
+        List<Token> result = language.parse(Set.of(filePath.toFile()));
         assertEquals(1, result.size());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"\ntoken", "\rtoken", "\r\ntoken",})
     void testTokenAfterLineBreak(String input, @TempDir Path tempDir) throws IOException {
-        Path file = tempDir.resolve("input.txt");
-        Files.writeString(file, input);
-        List<Token> result = language.parse(tempDir.toFile(), new String[] {"input.txt"});
+        Path filePath = tempDir.resolve("input.txt");
+        Files.writeString(filePath, input);
+        List<Token> result = language.parse(Set.of(filePath.toFile()));
         assertEquals(2, result.get(0).getLine());
     }
 

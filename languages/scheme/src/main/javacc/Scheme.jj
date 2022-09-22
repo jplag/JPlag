@@ -63,10 +63,9 @@ public class SchemeParser {
     private static int templateParam;
     private Parser parser2;
 
-    public static boolean parseFile(File dir, String fileName, SchemeParser parser, Parser parserX) {
-        File file = null;
+    public static boolean parseFile(File file, SchemeParser parser, Parser parserX) {
         try {
-            FileInputStream in = new FileInputStream(file = new File(dir, fileName));
+            FileInputStream in = new FileInputStream(file);
             if (parser == null) {
                 parser = new SchemeParser(in, "UTF-8");
             } else {
@@ -74,16 +73,16 @@ public class SchemeParser {
             }
             parser.parser2 = parserX;
         } catch (FileNotFoundException e) {
-            System.out.println("Scheme Parser R4RS:  File " + fileName + " not found.");
+            System.out.println("Scheme Parser R4RS:  File " + file.getName() + " not found.");
             return false;
         }
         try {
             parser.Program();
         } catch (ParseException e) {
-            parserX.logger.error("Parsing Error in '" + fileName + "': " + e.getMessage());
+            parserX.logger.error("Parsing Error in '" + file.getName() + "': " + e.getMessage());
             return false;
         } catch (TokenMgrException e) {
-            parserX.logger.error("Scanning Error in '" + fileName + "': " + e.getMessage());
+            parserX.logger.error("Scanning Error in '" + file.getName() + "': " + e.getMessage());
             return false;
         }
         return true;

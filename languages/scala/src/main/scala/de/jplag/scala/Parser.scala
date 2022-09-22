@@ -330,13 +330,12 @@ class Parser extends AbstractParser {
         }
     }
 
-    def parse(directory: File, files: Array[String]): List[Token] = {
+    def parse(files: Set[File]): List[Token] = {
         tokens = ListBuffer()
         errors = 0
 
         for (file <- files) {
-            currentFile = file
-            if (!parseFile(directory, file)) {
+            if (!parseFile(file)) {
                 errors += 1
             }
             System.gc()
@@ -345,11 +344,10 @@ class Parser extends AbstractParser {
         tokens.toList
     }
 
-    private def parseFile(directory: File, fileName: String): Boolean = {
-        currentFile = fileName
+    private def parseFile(file: File): Boolean = {
+        currentFile = file.getName
 
         try {
-            val file = new File(directory, fileName)
             val bytes = java.nio.file.Files.readAllBytes(file.toPath)
             val text = new String(bytes, "UTF-8")
             val input = Input.VirtualFile(file.getPath, text)

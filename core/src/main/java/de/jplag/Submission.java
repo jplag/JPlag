@@ -3,9 +3,9 @@ package de.jplag;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -232,23 +232,6 @@ public class Submission implements Comparable<Submission> {
         return subdirectory;
     }
 
-    /**
-     * Map all files of this submission to their path relative to the submission directory.
-     * <p>
-     * This method is required to stay compatible with `language.parse(...)` as it requires the given file paths to be
-     * relative to the submission directory.
-     * <p>
-     * In a future update, `language.parse(...)` should probably just take a list of files.
-     * @param baseFile - File to base all relative file paths on.
-     * @param files - List of files to map.
-     * @return an array of file paths relative to the submission directory.
-     */
-    private String[] getRelativeFilePaths(File baseFile, Collection<File> files) {
-        Path baseFilePath = baseFile.toPath();
-
-        return files.stream().map(File::toPath).map(baseFilePath::relativize).map(Path::toString).toArray(String[]::new);
-    }
-
     /* package-private */ void markAsErroneous() {
         hasErrors = true;
     }
@@ -265,9 +248,7 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
-        String[] relativeFilePaths = getRelativeFilePaths(submissionRootFile, files);
-
-        tokenList = language.parse(submissionRootFile, relativeFilePaths);
+        tokenList = language.parse(new HashSet<>(files));
         if (!language.hasErrors()) {
             if (tokenList.size() < 3) {
                 logger.error("Submission \"{}\" is too short!", name);

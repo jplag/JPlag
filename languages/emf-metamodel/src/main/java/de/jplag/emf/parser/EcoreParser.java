@@ -3,6 +3,7 @@ package de.jplag.emf.parser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -33,29 +34,27 @@ public class EcoreParser extends AbstractParser {
     }
 
     /**
-     * Parses all tokens form a list of files.
-     * @param directory is the base directory.
-     * @param fileNames is the list of file names.
+     * Parses all tokens from a set of files.
+     * @param files is the set of files.
      * @return the list of parsed tokens.
      */
-    public List<Token> parse(File directory, List<String> fileNames) {
+    public List<Token> parse(Set<File> files) {
         errors = 0;
         tokens = new ArrayList<>();
-        for (String fileName : fileNames) {
-            currentFile = fileName;
-            String filePath = fileName.isEmpty() ? directory.toString() : directory.toString() + File.separator + fileName;
-            parseModelFile(filePath);
+        for (File file : files) {
+            currentFile = file.getName();
+            parseModelFile(file);
         }
         return tokens;
     }
 
     /**
      * Loads a metamodel from a file and parses it.
-     * @param filePath is the path to the metamodel file.
+     * @param file is the metamodel file.
      */
-    protected void parseModelFile(String filePath) {
-        treeView = new MetamodelTreeView(filePath);
-        List<EObject> model = EMFUtil.loadModel(filePath);
+    protected void parseModelFile(File file) {
+        treeView = new MetamodelTreeView(file);
+        List<EObject> model = EMFUtil.loadModel(file);
         if (model == null) {
             errors++;
         } else {

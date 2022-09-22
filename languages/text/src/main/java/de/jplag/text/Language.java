@@ -2,6 +2,7 @@ package de.jplag.text;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
@@ -43,8 +44,8 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public List<Token> parse(File dir, String[] files) {
-        return parserAdapter.parse(dir, files);
+    public List<Token> parse(Set<File> files) {
+        return parserAdapter.parse(files);
     }
 
     @Override

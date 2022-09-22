@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -32,26 +33,26 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<Token> parse(File directory, String[] files) {
+    public List<Token> parse(Set<File> files) {
         tokens = new ArrayList<>();
         errors = 0;
-        for (String file : files) {
-            logger.trace("Parsing file {}", file);
-            if (!parseFile(directory, file)) {
+        for (File file : files) {
+            logger.trace("Parsing file {}", file.getName());
+            if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file));
+            tokens.add(Token.fileEnd(file.getName()));
         }
         return tokens;
     }
 
-    private boolean parseFile(File directory, String file) {
+    private boolean parseFile(File file) {
         BufferedInputStream inputStream;
 
         CharStream input;
         try {
-            inputStream = new BufferedInputStream(new FileInputStream(new File(directory, file)));
-            currentFile = file;
+            inputStream = new BufferedInputStream(new FileInputStream(file));
+            currentFile = file.getName();
             input = CharStreams.fromStream(inputStream);
 
             // create a lexer that feeds off of input CharStream

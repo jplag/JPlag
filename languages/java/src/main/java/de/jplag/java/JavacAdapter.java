@@ -3,9 +3,9 @@ package de.jplag.java;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -28,11 +28,11 @@ public class JavacAdapter {
 
     private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 
-    public int parseFiles(File directory, Iterable<File> pathedFiles, final Parser parser) {
+    public int parseFiles(Set<File> files, final Parser parser) {
         var listener = new DiagnosticCollector<>();
 
         try (final StandardJavaFileManager fileManager = javac.getStandardFileManager(listener, null, StandardCharsets.UTF_8)) {
-            var javaFiles = fileManager.getJavaFileObjectsFromFiles(pathedFiles);
+            var javaFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
             // We need to disable annotation processing, see
             // https://stackoverflow.com/questions/72737445/system-java-compiler-behaves-different-depending-on-dependencies-defined-in-mave
@@ -40,7 +40,7 @@ public class JavacAdapter {
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = trees.getSourcePositions();
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
-                final String filename = fileNameOf(directory, ast);
+                final String filename = relativeFileName(ast, files);
                 final LineMap map = ast.getLineMap();
                 ast.accept(new TokenGeneratingTreeScanner(filename, parser, map, positions, ast), null);
                 parser.add(Token.fileEnd(filename));
@@ -61,12 +61,18 @@ public class JavacAdapter {
         return abstractSyntaxTrees;
     }
 
-    private String fileNameOf(File directory, final CompilationUnitTree ast) {
-        if (directory == null)
-            return ast.getSourceFile().getName();
-        else {
-            return Paths.get(directory.toURI()).relativize(Paths.get(ast.getSourceFile().toUri())).toString();
-        }
+    private String relativeFileName(final CompilationUnitTree ast, Set<File> files) {
+        String fullFilePath = ast.getSourceFile().toUri().toString();
+        var matchingFile = files.stream().filter(file -> {
+            try {
+                if (file.getCanonicalPath().contains(fullFilePath)) {
+                    return true;
+                }
+            } catch (IOException e) {
+            }
+            return false;
+        }).map(File::getName).findFirst();
+        return matchingFile.orElse(ast.getSourceFile().getName());
     }
 
     private int processErrors(Logger logger, DiagnosticCollector<Object> listener) {

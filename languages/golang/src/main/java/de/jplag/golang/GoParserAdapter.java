@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -22,21 +23,20 @@ public class GoParserAdapter extends AbstractParser {
     private String currentFile;
     private List<Token> tokens;
 
-    public List<Token> parse(File directory, String[] fileNames) {
+    public List<Token> parse(Set<File> files) {
         tokens = new ArrayList<>();
-        for (String file : fileNames) {
-            if (!parseFile(directory, file)) {
+        for (File file : files) {
+            if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file));
+            tokens.add(Token.fileEnd(file.getName()));
         }
         return tokens;
     }
 
-    private boolean parseFile(File directory, String fileName) {
-        File file = new File(directory, fileName);
+    private boolean parseFile(File file) {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            currentFile = fileName;
+            currentFile = file.getName();
 
             GoLexer lexer = new GoLexer(CharStreams.fromStream(inputStream));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -51,7 +51,7 @@ public class GoParserAdapter extends AbstractParser {
                 treeWalker.walk(listener, parseTree);
             }
         } catch (IOException exception) {
-            logger.error("Parsing Error in '%s':".formatted(fileName), exception);
+            logger.error("Parsing Error in '%s':".formatted(file.getName()), exception);
             return false;
         }
         return true;

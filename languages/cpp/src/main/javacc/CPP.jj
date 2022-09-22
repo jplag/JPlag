@@ -24,22 +24,22 @@ import static de.jplag.cpp.CPPTokenType.*;
 public class CPPScanner {
     private Scanner delegatingScanner;
 
-    public static boolean scanFile(File dir, String fileName, Scanner delegatingScanner) {
+    public static boolean scanFile(File file, Scanner delegatingScanner) {
         CPPScanner scanner;
-        try(InputStream input = new NewlineStream(new FileInputStream(new File(dir, fileName)))) {
+        try(InputStream input = new NewlineStream(new FileInputStream(file))) {
             scanner = new CPPScanner(input, "UTF-8");
             scanner.delegatingScanner = delegatingScanner;
         } catch (IOException e) {
-            System.out.println("C/C++ Scanner: File " + fileName + " not found.");
+            System.out.println("C/C++ Scanner: File " + file.getName() + " not found.");
             return false;
         }
         try {
             scanner.scan();
         } catch (ParseException e) {
-            delegatingScanner.logger.error("Parsing Error in '" + fileName + "': " + e.getMessage());
+            delegatingScanner.logger.error("Parsing Error in '" + file.getName() + "': " + e.getMessage());
             return false;
         } catch (TokenMgrException e) {
-            delegatingScanner.logger.error("Scanning Error in '" + fileName + "': " + e.getMessage());
+            delegatingScanner.logger.error("Scanning Error in '" + file.getName() + "': " + e.getMessage());
             return false;
         }
         return true;
