@@ -58,7 +58,7 @@ export default defineComponent({
      * Matche of submission.
      */
     matches: {
-     type: Map<string,MatchInSingleFile>,
+     type: Map<string,MatchInSingleFile[]>,
       required: true,
     },
   },

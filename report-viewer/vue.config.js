@@ -11,5 +11,6 @@ module.exports = defineConfig({
         chunks: "all",
       },
     },
+    devtool: 'source-map'
   },
 });
