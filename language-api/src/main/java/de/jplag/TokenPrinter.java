@@ -70,7 +70,7 @@ public final class TokenPrinter {
         fileToTokens.forEach((File file, List<Token> fileTokens) -> {
             builder.append(rootDirectory.toPath().relativize(file.toPath()).toString());
 
-            List<LineData> lineDatas = getLineData(fileTokens, rootDirectory, suffix);
+            List<LineData> lineDatas = getLineData(fileTokens, suffix);
             lineDatas.forEach(lineData -> {
                 builder.setLine(lineData.lineNumber());
 
@@ -113,7 +113,7 @@ public final class TokenPrinter {
         return builder.toString();
     }
 
-    private static List<LineData> getLineData(List<Token> fileTokens, File root, Optional<String> suffix) {
+    private static List<LineData> getLineData(List<Token> fileTokens, Optional<String> suffix) {
         // We expect that all fileTokens share the same Token.file!
         File file = fileTokens.get(0).getFile();
         if (suffix.isPresent()) {

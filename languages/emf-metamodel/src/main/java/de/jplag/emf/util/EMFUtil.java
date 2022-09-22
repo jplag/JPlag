@@ -66,7 +66,7 @@ public final class EMFUtil {
             final Resource resource = resourceSet.getResource(URI.createFileURI(file.getAbsolutePath()), true);
             return resource.getContents();
         } catch (WrappedException exception) {
-            logger.error("Could not load " + file.getName() + ": " + exception.getCause().getMessage());
+            logger.error("Could not load {}: {}", file, exception.getCause().getMessage());
         }
         return null;
     }

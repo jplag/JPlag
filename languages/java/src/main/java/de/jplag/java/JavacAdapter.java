@@ -40,7 +40,6 @@ public class JavacAdapter {
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = trees.getSourcePositions();
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
-                final String filename = ast.getSourceFile().getName();
                 File file = new File(ast.getSourceFile().toUri());
                 final LineMap map = ast.getLineMap();
                 ast.accept(new TokenGeneratingTreeScanner(file, parser, map, positions, ast), null);
