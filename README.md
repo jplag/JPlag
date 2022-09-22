@@ -77,7 +77,7 @@ named arguments:
   -x X             All files named in this file will be ignored in the comparison (line-separated list)
   -t T             Tunes the comparison sensitivity by adjusting the minimum token  required  to be counted as a matching section. A smaller
                         <n> increases the sensitivity but might lead to more false-positives
-  -m M             Comparison similarity threshold [0-1]: All comparisons above this threshold will be saved (default: 0.0)
+  -m M             Comparison similarity threshold [0.0-1.0]: All comparisons above this threshold will be saved (default: 0.0)
   -n N             The maximum number of comparisons that will be shown in the  generated report, if set to -1 all comparisons will be shown
                         (default: 30)
   -r R             Name of the directory in which the comparison results will be stored (default: result)
