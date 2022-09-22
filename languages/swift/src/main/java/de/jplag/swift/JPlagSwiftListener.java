@@ -150,7 +150,6 @@ public class JPlagSwiftListener extends Swift5ParserBaseListener {
 
     @Override
     public void enterConstant_declaration(Constant_declarationContext context) {
-        // TODO: differentiate between property and local variable
         transformToken(PROPERTY_DECLARATION, context.getStart(), context.getStop());
         super.enterConstant_declaration(context);
     }
@@ -187,8 +186,7 @@ public class JPlagSwiftListener extends Swift5ParserBaseListener {
 
     @Override
     public void enterGetter_setter_block(Getter_setter_blockContext context) {
-        // if (implicit getter) var example: Int { /* */ }
-        if (context.getChildCount() == 1 && context.getChild(0) instanceof Code_blockContext) {
+        if (isComputedReadOnlyVariableGetterContext(context)) {
             transformToken(PROPERTY_ACCESSOR_BEGIN, context.getStart());
         }
         super.enterGetter_setter_block(context);
@@ -196,11 +194,20 @@ public class JPlagSwiftListener extends Swift5ParserBaseListener {
 
     @Override
     public void exitGetter_setter_block(Getter_setter_blockContext context) {
-        // if (implicit getter) var example: Int { /* */ }
-        if (context.getChildCount() == 1 && context.getChild(0) instanceof Code_blockContext) {
+        if (isComputedReadOnlyVariableGetterContext(context)) {
             transformToken(PROPERTY_ACCESSOR_END, context.getStop());
         }
         super.exitGetter_setter_block(context);
+    }
+
+    /**
+     * Indicates whether the given context encodes a computed read-only variable getter. An example of this is
+     * <code>var example: Int { return 1 }</code>.
+     * @param context
+     * @return
+     */
+    private boolean isComputedReadOnlyVariableGetterContext(Getter_setter_blockContext context) {
+        return context.getChildCount() == 1 && context.getChild(0) instanceof Code_blockContext;
     }
 
     @Override
