@@ -15,6 +15,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.python3.grammar.Python3Lexer;
@@ -33,20 +34,17 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<Token> parse(Set<File> files) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        errors = 0;
         for (File file : files) {
             logger.trace("Parsing file {}", file.getName());
-            if (!parseFile(file)) {
-                errors++;
-            }
+            parseFile(file);
             tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
-    private boolean parseFile(File file) {
+    private void parseFile(File file) throws ParsingException {
         BufferedInputStream inputStream;
 
         CharStream input;
@@ -73,10 +71,8 @@ public class Parser extends AbstractParser {
 
         } catch (IOException e) {
             logger.error("Parsing Error in '" + file + "': " + e.getMessage(), e);
-            return false;
+            throw new ParsingException(file, e.getMessage(), e);
         }
-
-        return true;
     }
 
     public void add(TokenType type, org.antlr.v4.runtime.Token token) {

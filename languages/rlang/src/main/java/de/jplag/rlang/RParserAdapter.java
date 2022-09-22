@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.rlang.grammar.RFilter;
@@ -41,19 +42,16 @@ public class RParserAdapter extends AbstractParser {
      * @param files the set of files.
      * @return a list containing all tokens of all files.
      */
-    public List<Token> parse(Set<File> files) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        errors = 0;
         for (File file : files) {
-            if (!parseFile(file)) {
-                errors++;
-            }
+            parseFile(file);
             tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
-    private boolean parseFile(File file) {
+    private void parseFile(File file) throws ParsingException {
         try (FileInputStream inputStream = new FileInputStream(file)) {
             currentFile = file;
 
@@ -78,9 +76,8 @@ public class RParserAdapter extends AbstractParser {
             }
         } catch (IOException exception) {
             logger.error("Parsing Error in '" + file.getName() + "': " + File.separator + exception.getMessage(), exception);
-            return false;
+            throw new ParsingException(file, exception.getMessage(), exception);
         }
-        return true;
     }
 
     /**

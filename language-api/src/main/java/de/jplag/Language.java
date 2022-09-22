@@ -33,13 +33,9 @@ public interface Language {
      * Parses a set of files.
      * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
+     * @throws ParsingException if an error during parsing the files occurred.
      */
-    List<Token> parse(Set<File> files);
-
-    /**
-     * Whether errors were found during the last {@link #parse}.
-     */
-    boolean hasErrors();
+    List<Token> parse(Set<File> files) throws ParsingException;
 
     /**
      * Determines whether a fixed-width font should be used to display that language.

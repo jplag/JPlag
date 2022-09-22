@@ -19,6 +19,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
@@ -41,7 +42,7 @@ class TextLanguageTest {
     }
 
     @Test
-    void testParsingJavaDoc() {
+    void testParsingJavaDoc() throws ParsingException {
         // Parse test input
         List<Token> result = language.parse(Set.of(new File(BASE_PATH.toFile(), TEST_SUBJECT)));
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
@@ -53,7 +54,7 @@ class TextLanguageTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"\n", "\r", "\r\n",})
-    void testLineBreakInputs(String input, @TempDir Path tempDir) throws IOException {
+    void testLineBreakInputs(String input, @TempDir Path tempDir) throws IOException, ParsingException {
         Path filePath = tempDir.resolve("input.txt");
         Files.writeString(filePath, input);
         List<Token> result = language.parse(Set.of(filePath.toFile()));
@@ -62,7 +63,7 @@ class TextLanguageTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"\ntoken", "\rtoken", "\r\ntoken",})
-    void testTokenAfterLineBreak(String input, @TempDir Path tempDir) throws IOException {
+    void testTokenAfterLineBreak(String input, @TempDir Path tempDir) throws IOException, ParsingException {
         Path filePath = tempDir.resolve("input.txt");
         Files.writeString(filePath, input);
         List<Token> result = language.parse(Set.of(filePath.toFile()));

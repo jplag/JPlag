@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
@@ -56,7 +57,7 @@ class KotlinLanguageTest {
     }
 
     @Test
-    void parseTestFiles() {
+    void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)));
             String output = TokenPrinter.printTokens(tokens, testFileLocation);

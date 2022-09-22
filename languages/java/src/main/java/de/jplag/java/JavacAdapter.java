@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
+import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
@@ -22,13 +24,14 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
+import de.jplag.ParsingException;
 import de.jplag.Token;
 
 public class JavacAdapter {
 
     private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
 
-    public int parseFiles(Set<File> files, final Parser parser) {
+    public void parseFiles(Set<File> files, final Parser parser) throws ParsingException {
         var listener = new DiagnosticCollector<>();
 
         try (final StandardJavaFileManager fileManager = javac.getStandardFileManager(listener, null, StandardCharsets.UTF_8)) {
@@ -42,13 +45,18 @@ public class JavacAdapter {
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
                 File file = new File(ast.getSourceFile().toUri());
                 final LineMap map = ast.getLineMap();
-                ast.accept(new TokenGeneratingTreeScanner(file, parser, map, positions, ast), null);
+                var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
+                ast.accept(scanner, null);
+                if (scanner.getParsingException() != null) {
+                    throw scanner.getParsingException();
+                }
                 parser.add(Token.fileEnd(file));
             }
         } catch (IOException exception) {
             parser.logger.error(exception.getMessage(), exception);
+            throw new ParsingException(null, exception.getMessage(), exception);
         }
-        return processErrors(parser.logger, listener);
+        processErrors(parser.logger, listener);
     }
 
     private Iterable<? extends CompilationUnitTree> executeCompilationTask(final CompilationTask task, Logger logger) {
@@ -61,15 +69,18 @@ public class JavacAdapter {
         return abstractSyntaxTrees;
     }
 
-    private int processErrors(Logger logger, DiagnosticCollector<Object> listener) {
-        int errors = 0;
+    private void processErrors(Logger logger, DiagnosticCollector<Object> listener) throws ParsingException {
         for (Diagnostic<?> diagnosticItem : listener.getDiagnostics()) {
             if (diagnosticItem.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
+                File file = null;
+                if (diagnosticItem.getSource() instanceof JavaFileObject) {
+                    JavaFileObject fileObject = (JavaFileObject) diagnosticItem.getSource();
+                    file = new File(fileObject.toUri());
+                }
                 logger.error("{}", diagnosticItem);
-                errors++;
+                throw new ParsingException(file, diagnosticItem.getMessage(Locale.getDefault()));
             }
         }
-        return errors;
     }
 
 }

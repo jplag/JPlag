@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 
@@ -21,15 +22,12 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<Token> parse(Set<File> files) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        errors = 0;
         for (File file : files) {
             currentFile = file;
             logger.trace("Parsing file {}", file.getName());
-            if (!SchemeParser.parseFile(file, null, this)) {
-                errors++;
-            }
+            SchemeParser.parseFile(file, null, this);
             tokens.add(Token.fileEnd(currentFile));
         }
         return tokens;

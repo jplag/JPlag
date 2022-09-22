@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.ParsingException;
 import de.jplag.Token;
 
 @MetaInfServices(de.jplag.Language.class)
@@ -39,12 +40,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         return this.scanner.scan(files);
-    }
-
-    @Override
-    public boolean hasErrors() {
-        return this.scanner.hasErrors();
     }
 }

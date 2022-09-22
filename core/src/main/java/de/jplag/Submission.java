@@ -248,22 +248,24 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
-        tokenList = language.parse(new HashSet<>(files));
-        if (!language.hasErrors()) {
-            if (tokenList.size() < 3) {
-                logger.error("Submission \"{}\" is too short!", name);
-                tokenList = null;
-                hasErrors = true; // invalidate submission
-                return false;
+        try {
+            tokenList = language.parse(new HashSet<>(files));
+        } catch (ParsingException e) {
+            logger.warn("Failed to parse submission {} with error {}", this, e);
+            tokenList = null;
+            hasErrors = true;
+            if (debugParser) {
+                copySubmission();
             }
-            return true;
+            return false;
         }
 
-        tokenList = null;
-        hasErrors = true; // invalidate submission
-        if (debugParser) {
-            copySubmission();
+        if (tokenList.size() < 3) {
+            logger.error("Submission \"{}\" is too short!", name);
+            tokenList = null;
+            hasErrors = true; // invalidate submission
+            return false;
         }
-        return false;
+        return true;
     }
 }

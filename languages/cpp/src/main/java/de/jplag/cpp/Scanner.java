@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 
 public class Scanner extends AbstractParser {
@@ -20,15 +21,12 @@ public class Scanner extends AbstractParser {
         super();
     }
 
-    public List<Token> scan(Set<File> files) {
+    public List<Token> scan(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        errors = 0;
         for (File file : files) {
             this.currentFile = file;
             logger.trace("Scanning file {}", currentFile);
-            if (!CPPScanner.scanFile(file, this)) {
-                errors++;
-            }
+            CPPScanner.scanFile(file, this);
             tokens.add(Token.fileEnd(currentFile));
         }
         return tokens;

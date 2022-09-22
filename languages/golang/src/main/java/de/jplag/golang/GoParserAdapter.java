@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.golang.grammar.GoLexer;
@@ -23,18 +24,16 @@ public class GoParserAdapter extends AbstractParser {
     private File currentFile;
     private List<Token> tokens;
 
-    public List<Token> parse(Set<File> files) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {
-            if (!parseFile(file)) {
-                errors++;
-            }
+            parseFile(file);
             tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
-    private boolean parseFile(File file) {
+    private void parseFile(File file) throws ParsingException {
         try (FileInputStream inputStream = new FileInputStream(file)) {
             currentFile = file;
 
@@ -52,9 +51,8 @@ public class GoParserAdapter extends AbstractParser {
             }
         } catch (IOException exception) {
             logger.error("Parsing Error in '%s':".formatted(file.getName()), exception);
-            return false;
+            throw new ParsingException(file, exception.getMessage(), exception);
         }
-        return true;
     }
 
     public void addToken(TokenType tokenType, int line, int column, int length) {

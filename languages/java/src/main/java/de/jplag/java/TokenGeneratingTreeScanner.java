@@ -44,6 +44,8 @@ import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
+import de.jplag.ParsingException;
+
 final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     private final File file;
     private final Parser parser;
@@ -51,12 +53,18 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     private final SourcePositions positions;
     private final CompilationUnitTree ast;
 
+    private ParsingException parsingException;
+
     public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
         this.file = file;
         this.parser = parser;
         this.map = map;
         this.positions = positions;
         this.ast = ast;
+    }
+
+    public ParsingException getParsingException() {
+        return parsingException;
     }
 
     /**
@@ -393,7 +401,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
 
     @Override
     public Object visitErroneous(ErroneousTree node, Object p) {
-        parser.increaseErrors();
+        parsingException = new ParsingException(file, "error while visiting %s".formatted(node));
         return super.visitErroneous(node, p);
     }
 

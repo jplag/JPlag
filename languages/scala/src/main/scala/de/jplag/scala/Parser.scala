@@ -1,11 +1,10 @@
 package de.jplag.scala
 
 import de.jplag.scala.ScalaTokenType._
-import de.jplag.{AbstractParser, Token}
+import de.jplag.{AbstractParser, ParsingException, Token}
 
 import java.io.File
-
-import scala.collection.mutable.ListBuffer 
+import scala.collection.mutable.ListBuffer
 import scala.meta._
 
 
@@ -332,19 +331,15 @@ class Parser extends AbstractParser {
 
     def parse(files: Set[File]): List[Token] = {
         tokens = ListBuffer()
-        errors = 0
-
         for (file <- files) {
-            if (!parseFile(file)) {
-                errors += 1
-            }
+            parseFile(file)
             System.gc()
         }
 
         tokens.toList
     }
 
-    private def parseFile(file: File): Boolean = {
+    private def parseFile(file: File) = {
         currentFile = file
 
         try {
@@ -358,10 +353,8 @@ class Parser extends AbstractParser {
         } catch {
             case exception: Throwable =>
                 exception.printStackTrace()
-                return false
+                throw new ParsingException(file, exception.getMessage, exception)
         }
-
-        true
     }
 
     /**

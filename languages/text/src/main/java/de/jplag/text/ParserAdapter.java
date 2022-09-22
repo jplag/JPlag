@@ -9,6 +9,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 
 import edu.stanford.nlp.ling.CoreLabel;
@@ -37,27 +38,21 @@ public class ParserAdapter extends AbstractParser {
         this.pipeline = new StanfordCoreNLP(properties);
     }
 
-    public List<Token> parse(Set<File> files) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        errors = 0;
         for (File file : files) {
             logger.trace("Parsing file {}", file);
-            if (!parseFile(file)) {
-                errors++;
-            }
+            parseFile(file);
             tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
-    private boolean parseFile(File file) {
+    private void parseFile(File file) throws ParsingException {
         this.currentFile = file;
         this.currentLine = 1; // lines start at 1
         this.currentLineBreakIndex = 0;
         String content = readFile(file);
-        if (content == null) {
-            return false;
-        }
         int lastTokenEnd = 0;
         CoreDocument coreDocument = pipeline.processToCoreDocument(content);
         for (CoreLabel token : coreDocument.tokens()) {
@@ -67,7 +62,6 @@ public class ParserAdapter extends AbstractParser {
                 addToken(token);
             }
         }
-        return true;
     }
 
     /**
@@ -104,12 +98,12 @@ public class ParserAdapter extends AbstractParser {
         tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, length));
     }
 
-    private String readFile(File file) {
+    private String readFile(File file) throws ParsingException {
         try {
             return Files.readString(file.toPath());
         } catch (IOException e) {
             logger.error("Error reading from file {}", file.getName(), e);
-            return null;
+            throw new ParsingException(file, e.getMessage(), e);
         }
     }
 }
