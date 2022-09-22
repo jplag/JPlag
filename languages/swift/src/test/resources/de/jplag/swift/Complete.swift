@@ -7,7 +7,7 @@ public class MyClass {
     
     private let x: Int
     //TODO: this will not be parsed correctly when removing the assignment
-    public var name: String = 0 {
+    public var name: String = "" {
         willSet {
             precondition(!name.isEmpty, "name must not be empty")
         }
@@ -100,6 +100,20 @@ enum MyEnum: String {
     
     func throwAny() throws {
         throw NSError(domain: "error", code: -1)
+    }
+
+    func catch() throws {
+        let _ = try? throwAny()
+        do {
+            try throwAny()
+        }
+        catch let error {
+            print("catched")
+        }
+        let _ = try! throwAny()
+        do {
+            try throwAny()
+        }
     }
 }
 

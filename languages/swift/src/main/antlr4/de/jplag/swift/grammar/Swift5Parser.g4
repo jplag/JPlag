@@ -128,7 +128,8 @@ throw_statement: THROW expression;
 defer_statement: DEFER code_block;
 
 // Do Statement
-do_statement: DO code_block catch_clauses?;
+do_statement: DO do_block catch_clauses?;
+do_block: code_block;
 catch_clauses: catch_clause+;
 catch_clause: CATCH catch_pattern_list? code_block;
 catch_pattern_list:

@@ -370,6 +370,30 @@ public class JPlagSwiftListener extends Swift5ParserBaseListener {
     }
 
     @Override
+    public void enterDo_block(Do_blockContext context) {
+        transformToken(DO_TRY_BODY_BEGIN, context.getStart());
+        super.enterDo_block(context);
+    }
+
+    @Override
+    public void exitDo_block(Do_blockContext context) {
+        transformToken(DO_TRY_BODY_END, context.getStop());
+        super.exitDo_block(context);
+    }
+
+    @Override
+    public void enterCatch_clause(Catch_clauseContext context) {
+        transformToken(CATCH_BODY_BEGIN, context.getStart());
+        super.enterCatch_clause(context);
+    }
+
+    @Override
+    public void exitCatch_clause(Catch_clauseContext context) {
+        transformToken(CATCH_BODY_END, context.getStop());
+        super.exitCatch_clause(context);
+    }
+
+    @Override
     public void enterThrow_statement(Throw_statementContext context) {
         transformToken(THROW, context.getStart(), context.getStop());
         super.enterThrow_statement(context);

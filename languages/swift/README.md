@@ -21,4 +21,5 @@ To use the Swift frontend, add the `-l swift` flag in the CLI, or use a `JPlagOp
 <br>
 
 #### Footnotes
-<section id="footnote-1"><sup>1 </sup>The grammar files are taken from grammar-v4, with the most recent modification in <a href="https://github.com/antlr/grammars-v4/tree/2f6c19cc742c60541227b19c45ac2acc844d9b1a/swift/swift5">commit 2f6c19c</a> from May 2021.</section>
+<section id="footnote-1"><sup>1 </sup>The grammar files are taken from grammar-v4, with the most recent modification in <a href="https://github.com/antlr/grammars-v4/tree/2f6c19cc742c60541227b19c45ac2acc844d9b1a/swift/swift5">commit 2f6c19c</a> from May 2021.
+They received some minor modifications to support identifying the end of do-blocks.</section>
