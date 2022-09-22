@@ -161,6 +161,8 @@ public class SwiftSupport {
     }
 
     public static boolean isOpNext(TokenStream tokens) {
+        int start = tokens.index();
+        Token lt = tokens.get(start);
         int stop = getLastOpTokenIndex(tokens);
         return stop != -1;
         // System.out.printf("isOpNext: i=%d t='%s'", start, lt.getText());
@@ -171,12 +173,12 @@ public class SwiftSupport {
      * Find stop token index of next operator; return -1 if not operator.
      */
     public static int getLastOpTokenIndex(TokenStream tokens) {
+        SwiftSupport.fillUp(tokens);
         int currentTokenIndex = tokens.index(); // current on-channel lookahead token index
         Token currentToken = tokens.get(currentTokenIndex);
 
         // System.out.println("getLastOpTokenIndex: "+currentToken.getText());
 
-        tokens.getText(); // Ensures that tokens can be read
         // operator → dot-operator-head­ dot-operator-characters
         if (currentToken.getType() == Swift5Parser.DOT && tokens.get(currentTokenIndex + 1).getType() == Swift5Parser.DOT) {
             // System.out.println("DOT");
@@ -220,6 +222,7 @@ public class SwiftSupport {
      * example, the + operator in a+b and a + b is treated as a binary operator."
      */
     public static boolean isBinaryOp(TokenStream tokens) {
+        SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
         if (stop == -1)
             return false;
@@ -250,6 +253,7 @@ public class SwiftSupport {
      * operator in a ++b is treated as a prefix unary operator."
      */
     public static boolean isPrefixOp(TokenStream tokens) {
+        SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
         if (stop == -1)
             return false;
@@ -273,6 +277,7 @@ public class SwiftSupport {
      * ++ .b)."
      */
     public static boolean isPostfixOp(TokenStream tokens) {
+        SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
         if (stop == -1)
             return false;
@@ -288,6 +293,7 @@ public class SwiftSupport {
     }
 
     public static boolean isOperator(TokenStream tokens, String op) {
+        SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
         if (stop == -1)
             return false;
@@ -312,6 +318,7 @@ public class SwiftSupport {
     }
 
     public static boolean isSeparatedStatement(TokenStream tokens, int indexOfPreviousStatement) {
+        SwiftSupport.fillUp(tokens);
         // System.out.println("------");
         // System.out.println("indexOfPreviousStatement: " + indexOfPreviousStatement);
 
@@ -340,6 +347,14 @@ public class SwiftSupport {
             // return text.contains("\n") || text.contains(";");
         } else {
             return true;
+        }
+    }
+
+    public static void fillUp(TokenStream tokens) {
+        for (int jj = 1;; ++jj) {
+            int t = tokens.LA(jj);
+            if (t == -1)
+                break;
         }
     }
 }

@@ -3,8 +3,9 @@ package de.jplag.swift;
 import java.io.File;
 import java.util.List;
 
-import de.jplag.Token;
 import org.kohsuke.MetaInfServices;
+
+import de.jplag.Token;
 
 /**
  * This represents the Swift language as a language supported by JPlag.

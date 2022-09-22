@@ -6,19 +6,25 @@ public class MyClass {
     public static let classConstant = 0.0
     
     private let x: Int
-    //TODO: this will not be parsed correctly when removing the assignment
+
     public var name: String = "" {
         willSet {
             precondition(!name.isEmpty, "name must not be empty")
         }
         didSet {
             nameLength = name.count
-        } 
+        }
     } //NO TOKEN
-    
+
+    public var optionalName: String? {
+        didSet {
+            nameLength = name.count
+        }
+    } //NO TOKEN
+
     private var nameLength = 0
     private let a = "A"
-    
+
     public init(name: String) {
         self.name = name
         self.x = 0
@@ -32,17 +38,17 @@ public class MyClass {
             }
             sum += i
         }
-        
+
         var i = x
         while i < max {
             sum -= i
         }
-        
+
         i = x
         repeat {
             sum *= i
         } while i < max
-                
+
         switch max {
         case 0:
             sum = 0
@@ -53,7 +59,7 @@ public class MyClass {
         default:
             sum /= 2
         }
-                
+
         sum += (x..<max).reduce(0, +)
         return sum
     }
@@ -73,7 +79,7 @@ private struct MyStruct {
         get { nameComponents }
         set { fullName = newValue.joined(separator: " ") }
     } //NO TOKEN
-    
+
     func hasMultipleComponents() -> Bool {
         defer {
             print("later")
@@ -91,24 +97,23 @@ private struct MyStruct {
 enum MyEnum: String {
     case one = "ONE"
 
-    //TODO: currently incorrectly parsed
-    // var value: Int {
-    //     switch self {
-    //         case .one: return 1
-    //     }
-    // }
-    
+    var value: Int {
+        switch self {
+        case .one: return 1
+        }
+    }
+
     func throwAny() throws {
         throw NSError(domain: "error", code: -1)
     }
 
-    func catch() throws {
+    func catchSome() throws {
         let _ = try? throwAny()
         do {
             try throwAny()
         }
         catch let error {
-            print("catched")
+            print(error)
         }
         let _ = try! throwAny()
         do {

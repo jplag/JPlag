@@ -186,6 +186,24 @@ public class JPlagSwiftListener extends Swift5ParserBaseListener {
     }
 
     @Override
+    public void enterGetter_setter_block(Getter_setter_blockContext context) {
+        // if (implicit getter) var example: Int { /* */ }
+        if (context.getChildCount() == 1 && context.getChild(0) instanceof Code_blockContext) {
+            transformToken(PROPERTY_ACCESSOR_BEGIN, context.getStart());
+        }
+        super.enterGetter_setter_block(context);
+    }
+
+    @Override
+    public void exitGetter_setter_block(Getter_setter_blockContext context) {
+        // if (implicit getter) var example: Int { /* */ }
+        if (context.getChildCount() == 1 && context.getChild(0) instanceof Code_blockContext) {
+            transformToken(PROPERTY_ACCESSOR_END, context.getStop());
+        }
+        super.exitGetter_setter_block(context);
+    }
+
+    @Override
     public void exitWillSet_clause(WillSet_clauseContext context) {
         transformToken(PROPERTY_ACCESSOR_END, context.getStop());
         super.exitWillSet_clause(context);
