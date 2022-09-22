@@ -26,7 +26,7 @@ public class JPlagResult {
     private final int SIMILARITY_DISTRIBUTION_SIZE = 10;
 
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
-        // sort comparisons by percentage (descending)
+        // sort by similarity (descending)
         this.comparisons = comparisons.stream().sorted((first, second) -> Double.compare(second.similarity(), first.similarity())).toList();
         this.submissions = submissions;
         this.durationInMillis = durationInMillis;
@@ -36,7 +36,7 @@ public class JPlagResult {
 
     /**
      * Drops elements from the comparison list to free memory. Note, that this affects the similarity distribution and is
-     * only meant to be used if you don't need the information about comparisons with lower match percentage anymore.
+     * only meant to be used if you don't need the information about comparisons with lower match similarity anymore.
      * @param limit the number of comparisons to keep in the list
      */
     public void dropComparisons(int limit) {
@@ -48,17 +48,17 @@ public class JPlagResult {
     }
 
     /**
-     * @return a list of all comparisons sorted by percentage (descending)
+     * @return a list of all comparisons sorted by similarity (descending)
      */
     public List<JPlagComparison> getAllComparisons() {
         return comparisons;
     }
 
     /**
-     * Returns the first n comparisons (sorted by percentage, descending), limited by the specified parameter.
+     * Returns the first n comparisons (sorted by similarity, descending), limited by the specified parameter.
      * @param numberOfComparisons specifies the number of requested comparisons. If set to -1, all comparisons will be
      * returned.
-     * @return a list of comparisons sorted descending by percentage.
+     * @return a list of comparisons sorted descending by similarity.
      */
     public List<JPlagComparison> getComparisons(int numberOfComparisons) {
         if (numberOfComparisons == JPlagOptions.SHOW_ALL_COMPARISONS) {
@@ -136,11 +136,10 @@ public class JPlagResult {
 
     private int[] calculateDistributionFor(List<JPlagComparison> comparisons, ToDoubleFunction<JPlagComparison> similarityExtractor) {
         int[] similarityDistribution = new int[SIMILARITY_DISTRIBUTION_SIZE];
-        int similarityDistributionBucketSize = 100 / SIMILARITY_DISTRIBUTION_SIZE;
         for (JPlagComparison comparison : comparisons) {
-            double similarity = similarityExtractor.applyAsDouble(comparison); // extract similarity in percent: 0f <= similarity <= 100f
-            int index = (int) (similarity / similarityDistributionBucketSize); // divide similarity by bucket size to find index of correct bucket.
-            index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1);// index is out of bounds when similarity is 100%. decrease by one to count
+            double similarity = similarityExtractor.applyAsDouble(comparison); // extract similarity: 0.0 <= similarity <= 1.0
+            int index = (int) (similarity * SIMILARITY_DISTRIBUTION_SIZE); // divide similarity by bucket size to find index of correct bucket.
+            index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1);// index is out of bounds when similarity is 1.0. decrease by one to count
                                                                       // towards the highest value bucket
             similarityDistribution[SIMILARITY_DISTRIBUTION_SIZE - 1 - index]++; // count comparison towards its determined bucket. bucket order is
             // reversed, so that the highest value bucket has the lowest index

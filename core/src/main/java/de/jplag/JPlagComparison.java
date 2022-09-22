@@ -30,21 +30,21 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * @return Maximum similarity in percent of both submissions.
+     * @return Maximum similarity in interval [0, 1]. O means no similarity, 1 means maximum similarity.
      */
     public final double maximalSimilarity() {
         return Math.max(similarityOfFirst(), similarityOfSecond());
     }
 
     /**
-     * @return Minimum similarity in percent of both submissions.
+     * @return Minimum similarity in interval [0, 1]. O means no similarity, 1 means maximum similarity.
      */
     public final double minimalSimilarity() {
         return Math.min(similarityOfFirst(), similarityOfSecond());
     }
 
     /**
-     * @return Similarity in percent (what percentage of tokens across both submissions are matched).
+     * @return Average similarity in interval [0, 1]. O means no similarity, 1 means maximum similarity.
      */
     public final double similarity() {
         boolean subtractBaseCode = firstSubmission.hasBaseCodeMatches() && secondSubmission.hasBaseCodeMatches();
@@ -54,8 +54,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * @return Similarity in percent for the first submission (what percent of the first submission is similar to the
-     * second).
+     * @return Similarity of the first submission in interval [0, 1]. O means no similarity, 1 means maximum similarity.
      */
     public final double similarityOfFirst() {
         int divisor = firstSubmission.getSimilarityDivisor(true);
@@ -63,8 +62,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * @return Similarity in percent for the second submission (what percent of the second submission is similar to the
-     * first).
+     * @return Similarity of the second submission in interval [0, 1]. O means no similarity, 1 means maximum similarity.
      */
     public final double similarityOfSecond() {
         int divisor = secondSubmission.getSimilarityDivisor(true);
@@ -77,6 +75,6 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     private double similarity(int divisor) {
-        return (divisor == 0 ? 0.0 : (getNumberOfMatchedTokens() * 100 / (double) divisor));
+        return (divisor == 0 ? 0.0 : (getNumberOfMatchedTokens() / (double) divisor));
     }
 }

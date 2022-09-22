@@ -4,308 +4,308 @@
   },
   "tests" : {
     "SortAlgo-SortAlgo5" : {
-      "minimal_similarity" : 25.0,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.25,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo-SortAlgo6" : {
-      "minimal_similarity" : 43.28358208955224,
-      "maximum_similarity" : 51.785714285714285,
+      "minimal_similarity" : 0.43283582089552236,
+      "maximum_similarity" : 0.5178571428571429,
       "matched_token_number" : 29
     },
     "SortAlgo-SortAlgo7" : {
-      "minimal_similarity" : 49.31506849315068,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.4931506849315068,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo3_5-SortAlgo3_6" : {
-      "minimal_similarity" : 16.0,
-      "maximum_similarity" : 17.391304347826086,
+      "minimal_similarity" : 0.16,
+      "maximum_similarity" : 0.17391304347826086,
       "matched_token_number" : 12
     },
     "SortAlgo6-SortAlgo7" : {
-      "minimal_similarity" : 35.61643835616438,
-      "maximum_similarity" : 38.80597014925373,
+      "minimal_similarity" : 0.3561643835616438,
+      "maximum_similarity" : 0.3880597014925373,
       "matched_token_number" : 26
     },
     "SortAlgo1_3-SortAlgo7" : {
-      "minimal_similarity" : 36.0,
-      "maximum_similarity" : 36.986301369863014,
+      "minimal_similarity" : 0.36,
+      "maximum_similarity" : 0.3698630136986301,
       "matched_token_number" : 27
     },
     "SortAlgo1_3-SortAlgo6" : {
-      "minimal_similarity" : 32.0,
-      "maximum_similarity" : 35.82089552238806,
+      "minimal_similarity" : 0.32,
+      "maximum_similarity" : 0.3582089552238806,
       "matched_token_number" : 24
     },
     "SortAlgo-SortAlgo1" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1_3-SortAlgo3" : {
-      "minimal_similarity" : 72.0,
-      "maximum_similarity" : 78.26086956521739,
+      "minimal_similarity" : 0.72,
+      "maximum_similarity" : 0.782608695652174,
       "matched_token_number" : 54
     },
     "SortAlgo-SortAlgo2" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1_3-SortAlgo2" : {
-      "minimal_similarity" : 53.333333333333336,
-      "maximum_similarity" : 71.42857142857143,
+      "minimal_similarity" : 0.5333333333333333,
+      "maximum_similarity" : 0.7142857142857143,
       "matched_token_number" : 40
     },
     "SortAlgo-SortAlgo3" : {
-      "minimal_similarity" : 57.971014492753625,
-      "maximum_similarity" : 71.42857142857143,
+      "minimal_similarity" : 0.5797101449275363,
+      "maximum_similarity" : 0.7142857142857143,
       "matched_token_number" : 40
     },
     "SortAlgo1_3-SortAlgo5" : {
-      "minimal_similarity" : 12.0,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.12,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo-SortAlgo4" : {
-      "minimal_similarity" : 71.1864406779661,
-      "maximum_similarity" : 75.0,
+      "minimal_similarity" : 0.711864406779661,
+      "maximum_similarity" : 0.75,
       "matched_token_number" : 42
     },
     "SortAlgo1_3-SortAlgo4" : {
-      "minimal_similarity" : 37.333333333333336,
-      "maximum_similarity" : 47.45762711864407,
+      "minimal_similarity" : 0.37333333333333335,
+      "maximum_similarity" : 0.4745762711864407,
       "matched_token_number" : 28
     },
     "SortAlgo2-SortAlgo2_5" : {
-      "minimal_similarity" : 25.0,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.25,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo1_2-SortAlgo2" : {
-      "minimal_similarity" : 73.6842105263158,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.7368421052631579,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
-    "SortAlgo1_2-SortAlgo3" : {
-      "minimal_similarity" : 52.63157894736842,
-      "maximum_similarity" : 57.971014492753625,
-      "matched_token_number" : 40
-    },
     "SortAlgo5-SortAlgo6" : {
-      "minimal_similarity" : 13.432835820895523,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.13432835820895522,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
-    "SortAlgo1_2-SortAlgo4" : {
-      "minimal_similarity" : 63.1578947368421,
-      "maximum_similarity" : 81.35593220338983,
-      "matched_token_number" : 48
+    "SortAlgo1_2-SortAlgo3" : {
+      "minimal_similarity" : 0.5263157894736842,
+      "maximum_similarity" : 0.5797101449275363,
+      "matched_token_number" : 40
     },
     "SortAlgo5-SortAlgo7" : {
-      "minimal_similarity" : 17.80821917808219,
-      "maximum_similarity" : 23.214285714285715,
+      "minimal_similarity" : 0.1780821917808219,
+      "maximum_similarity" : 0.23214285714285715,
       "matched_token_number" : 13
     },
+    "SortAlgo1_2-SortAlgo4" : {
+      "minimal_similarity" : 0.631578947368421,
+      "maximum_similarity" : 0.8135593220338984,
+      "matched_token_number" : 48
+    },
     "SortAlgo1_2-SortAlgo5" : {
-      "minimal_similarity" : 18.42105263157895,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.18421052631578946,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo1_2-SortAlgo6" : {
-      "minimal_similarity" : 50.0,
-      "maximum_similarity" : 56.71641791044776,
+      "minimal_similarity" : 0.5,
+      "maximum_similarity" : 0.5671641791044776,
       "matched_token_number" : 38
     },
     "SortAlgo1_2-SortAlgo7" : {
-      "minimal_similarity" : 47.36842105263158,
-      "maximum_similarity" : 49.31506849315068,
+      "minimal_similarity" : 0.47368421052631576,
+      "maximum_similarity" : 0.4931506849315068,
       "matched_token_number" : 36
     },
     "SortAlgo1-SortAlgo2_5" : {
-      "minimal_similarity" : 25.0,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.25,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo1_3-SortAlgo3_6" : {
-      "minimal_similarity" : 32.0,
-      "maximum_similarity" : 32.0,
+      "minimal_similarity" : 0.32,
+      "maximum_similarity" : 0.32,
       "matched_token_number" : 24
     },
     "SortAlgo4-SortAlgo5" : {
-      "minimal_similarity" : 23.728813559322035,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.23728813559322035,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo4-SortAlgo6" : {
-      "minimal_similarity" : 44.776119402985074,
-      "maximum_similarity" : 50.847457627118644,
+      "minimal_similarity" : 0.44776119402985076,
+      "maximum_similarity" : 0.5084745762711864,
       "matched_token_number" : 30
     },
-    "SortAlgo1_4-SortAlgo3_5" : {
-      "minimal_similarity" : 13.043478260869565,
-      "maximum_similarity" : 15.254237288135593,
-      "matched_token_number" : 9
-    },
     "SortAlgo4-SortAlgo7" : {
-      "minimal_similarity" : 17.80821917808219,
-      "maximum_similarity" : 22.033898305084747,
+      "minimal_similarity" : 0.1780821917808219,
+      "maximum_similarity" : 0.22033898305084745,
       "matched_token_number" : 13
     },
-    "SortAlgo1_4-SortAlgo3_6" : {
-      "minimal_similarity" : 32.0,
-      "maximum_similarity" : 40.67796610169491,
-      "matched_token_number" : 24
-    },
-    "SortAlgo1_5-SortAlgo3_6" : {
-      "minimal_similarity" : 12.0,
-      "maximum_similarity" : 16.071428571428573,
+    "SortAlgo1_4-SortAlgo3_5" : {
+      "minimal_similarity" : 0.13043478260869565,
+      "maximum_similarity" : 0.15254237288135594,
       "matched_token_number" : 9
     },
+    "SortAlgo1_5-SortAlgo3_6" : {
+      "minimal_similarity" : 0.12,
+      "maximum_similarity" : 0.16071428571428573,
+      "matched_token_number" : 9
+    },
+    "SortAlgo1_4-SortAlgo3_6" : {
+      "minimal_similarity" : 0.32,
+      "maximum_similarity" : 0.4067796610169492,
+      "matched_token_number" : 24
+    },
     "SortAlgo1_5-SortAlgo3_5" : {
-      "minimal_similarity" : 59.42028985507246,
-      "maximum_similarity" : 73.21428571428571,
+      "minimal_similarity" : 0.5942028985507246,
+      "maximum_similarity" : 0.7321428571428571,
       "matched_token_number" : 41
     },
     "SortAlgo1_6-SortAlgo3_5" : {
-      "minimal_similarity" : 13.043478260869565,
-      "maximum_similarity" : 15.0,
+      "minimal_similarity" : 0.13043478260869565,
+      "maximum_similarity" : 0.15,
       "matched_token_number" : 9
     },
     "SortAlgo-SortAlgo4d3" : {
-      "minimal_similarity" : 70.96774193548387,
-      "maximum_similarity" : 78.57142857142857,
+      "minimal_similarity" : 0.7096774193548387,
+      "maximum_similarity" : 0.7857142857142857,
       "matched_token_number" : 44
     },
     "SortAlgo1_6-SortAlgo3_6" : {
-      "minimal_similarity" : 57.333333333333336,
-      "maximum_similarity" : 71.66666666666667,
+      "minimal_similarity" : 0.5733333333333334,
+      "maximum_similarity" : 0.7166666666666667,
       "matched_token_number" : 43
     },
     "SortAlgo-SortAlgo4d2" : {
-      "minimal_similarity" : 68.75,
-      "maximum_similarity" : 78.57142857142857,
+      "minimal_similarity" : 0.6875,
+      "maximum_similarity" : 0.7857142857142857,
       "matched_token_number" : 44
     },
     "SortAlgo-SortAlgo4d1" : {
-      "minimal_similarity" : 69.84126984126983,
-      "maximum_similarity" : 78.57142857142857,
+      "minimal_similarity" : 0.6984126984126984,
+      "maximum_similarity" : 0.7857142857142857,
       "matched_token_number" : 44
     },
     "SortAlgo1_4-SortAlgo3" : {
-      "minimal_similarity" : 49.27536231884058,
-      "maximum_similarity" : 57.6271186440678,
+      "minimal_similarity" : 0.4927536231884058,
+      "maximum_similarity" : 0.576271186440678,
       "matched_token_number" : 34
     },
     "SortAlgo3-SortAlgo3_5" : {
-      "minimal_similarity" : 17.391304347826086,
-      "maximum_similarity" : 17.391304347826086,
+      "minimal_similarity" : 0.17391304347826086,
+      "maximum_similarity" : 0.17391304347826086,
       "matched_token_number" : 12
     },
     "SortAlgo1_4-SortAlgo4" : {
-      "minimal_similarity" : 94.91525423728814,
-      "maximum_similarity" : 94.91525423728814,
+      "minimal_similarity" : 0.9491525423728814,
+      "maximum_similarity" : 0.9491525423728814,
       "matched_token_number" : 56
     },
     "SortAlgo1_4-SortAlgo2" : {
-      "minimal_similarity" : 69.49152542372882,
-      "maximum_similarity" : 73.21428571428571,
+      "minimal_similarity" : 0.6949152542372882,
+      "maximum_similarity" : 0.7321428571428571,
       "matched_token_number" : 41
     },
     "SortAlgo3-SortAlgo3_6" : {
-      "minimal_similarity" : 69.33333333333333,
-      "maximum_similarity" : 75.3623188405797,
+      "minimal_similarity" : 0.6933333333333334,
+      "maximum_similarity" : 0.7536231884057971,
       "matched_token_number" : 52
     },
     "SortAlgo1_4-SortAlgo7" : {
-      "minimal_similarity" : 32.87671232876713,
-      "maximum_similarity" : 40.67796610169491,
+      "minimal_similarity" : 0.3287671232876712,
+      "maximum_similarity" : 0.4067796610169492,
       "matched_token_number" : 24
     },
     "SortAlgo1_4-SortAlgo5" : {
-      "minimal_similarity" : 22.033898305084747,
-      "maximum_similarity" : 23.214285714285715,
+      "minimal_similarity" : 0.22033898305084745,
+      "maximum_similarity" : 0.23214285714285715,
       "matched_token_number" : 13
     },
     "SortAlgo2-SortAlgo3_5" : {
-      "minimal_similarity" : 13.043478260869565,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.13043478260869565,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo1_4-SortAlgo6" : {
-      "minimal_similarity" : 53.73134328358209,
-      "maximum_similarity" : 61.016949152542374,
+      "minimal_similarity" : 0.5373134328358209,
+      "maximum_similarity" : 0.6101694915254238,
       "matched_token_number" : 36
     },
     "SortAlgo2-SortAlgo3_6" : {
-      "minimal_similarity" : 32.0,
-      "maximum_similarity" : 42.857142857142854,
+      "minimal_similarity" : 0.32,
+      "maximum_similarity" : 0.42857142857142855,
       "matched_token_number" : 24
     },
     "SortAlgo1-SortAlgo3_6" : {
-      "minimal_similarity" : 32.0,
-      "maximum_similarity" : 42.857142857142854,
+      "minimal_similarity" : 0.32,
+      "maximum_similarity" : 0.42857142857142855,
       "matched_token_number" : 24
     },
     "SortAlgo1-SortAlgo3_5" : {
-      "minimal_similarity" : 13.043478260869565,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.13043478260869565,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo-SortAlgo1_2" : {
-      "minimal_similarity" : 73.6842105263158,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.7368421052631579,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1_3-SortAlgo3_5" : {
-      "minimal_similarity" : 24.0,
-      "maximum_similarity" : 26.08695652173913,
+      "minimal_similarity" : 0.24,
+      "maximum_similarity" : 0.2608695652173913,
       "matched_token_number" : 18
     },
     "SortAlgo1_2-SortAlgo3_5" : {
-      "minimal_similarity" : 11.842105263157896,
-      "maximum_similarity" : 13.043478260869565,
+      "minimal_similarity" : 0.11842105263157894,
+      "maximum_similarity" : 0.13043478260869565,
       "matched_token_number" : 9
     },
     "SortAlgo1_2-SortAlgo3_6" : {
-      "minimal_similarity" : 31.57894736842105,
-      "maximum_similarity" : 32.0,
+      "minimal_similarity" : 0.3157894736842105,
+      "maximum_similarity" : 0.32,
       "matched_token_number" : 24
     },
     "SortAlgo-SortAlgo1_6" : {
-      "minimal_similarity" : 56.666666666666664,
-      "maximum_similarity" : 60.714285714285715,
+      "minimal_similarity" : 0.5666666666666667,
+      "maximum_similarity" : 0.6071428571428571,
       "matched_token_number" : 34
     },
     "SortAlgo-SortAlgo1_5" : {
-      "minimal_similarity" : 25.0,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.25,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo-SortAlgo1_4" : {
-      "minimal_similarity" : 69.49152542372882,
-      "maximum_similarity" : 73.21428571428571,
+      "minimal_similarity" : 0.6949152542372882,
+      "maximum_similarity" : 0.7321428571428571,
       "matched_token_number" : 41
     },
     "SortAlgo-SortAlgo1_3" : {
-      "minimal_similarity" : 53.333333333333336,
-      "maximum_similarity" : 71.42857142857143,
+      "minimal_similarity" : 0.5333333333333333,
+      "maximum_similarity" : 0.7142857142857143,
       "matched_token_number" : 40
     },
-    "SortAlgo1_6-SortAlgo4d1" : {
-      "minimal_similarity" : 36.507936507936506,
-      "maximum_similarity" : 38.333333333333336,
-      "matched_token_number" : 23
-    },
     "SortAlgo4d2-SortAlgo7" : {
-      "minimal_similarity" : 35.61643835616438,
-      "maximum_similarity" : 40.625,
+      "minimal_similarity" : 0.3561643835616438,
+      "maximum_similarity" : 0.40625,
       "matched_token_number" : 26
     },
+    "SortAlgo1_6-SortAlgo4d1" : {
+      "minimal_similarity" : 0.36507936507936506,
+      "maximum_similarity" : 0.38333333333333336,
+      "matched_token_number" : 23
+    },
     "SortAlgo1_6-SortAlgo4d2" : {
-      "minimal_similarity" : 35.9375,
-      "maximum_similarity" : 38.333333333333336,
+      "minimal_similarity" : 0.359375,
+      "maximum_similarity" : 0.38333333333333336,
       "matched_token_number" : 23
     },
     "SortAlgo4d2-SortAlgo5" : {
@@ -314,68 +314,63 @@
       "matched_token_number" : 0
     },
     "SortAlgo4d2-SortAlgo6" : {
-      "minimal_similarity" : 34.32835820895522,
-      "maximum_similarity" : 35.9375,
+      "minimal_similarity" : 0.34328358208955223,
+      "maximum_similarity" : 0.359375,
       "matched_token_number" : 23
     },
     "SortAlgo1_6-SortAlgo4d3" : {
-      "minimal_similarity" : 37.096774193548384,
-      "maximum_similarity" : 38.333333333333336,
+      "minimal_similarity" : 0.3709677419354839,
+      "maximum_similarity" : 0.38333333333333336,
       "matched_token_number" : 23
     },
     "SortAlgo1_5-SortAlgo2_5" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
-    "SortAlgo1_2-SortAlgo4d1" : {
-      "minimal_similarity" : 57.89473684210526,
-      "maximum_similarity" : 69.84126984126983,
-      "matched_token_number" : 44
-    },
     "SortAlgo1_3-SortAlgo4d3" : {
-      "minimal_similarity" : 53.333333333333336,
-      "maximum_similarity" : 64.51612903225806,
+      "minimal_similarity" : 0.5333333333333333,
+      "maximum_similarity" : 0.6451612903225806,
       "matched_token_number" : 40
     },
+    "SortAlgo1_2-SortAlgo4d1" : {
+      "minimal_similarity" : 0.5789473684210527,
+      "maximum_similarity" : 0.6984126984126984,
+      "matched_token_number" : 44
+    },
     "SortAlgo2-SortAlgo3" : {
-      "minimal_similarity" : 57.971014492753625,
-      "maximum_similarity" : 71.42857142857143,
+      "minimal_similarity" : 0.5797101449275363,
+      "maximum_similarity" : 0.7142857142857143,
+      "matched_token_number" : 40
+    },
+    "SortAlgo1_3-SortAlgo4d2" : {
+      "minimal_similarity" : 0.5333333333333333,
+      "maximum_similarity" : 0.625,
       "matched_token_number" : 40
     },
     "SortAlgo1_2-SortAlgo4d2" : {
-      "minimal_similarity" : 57.89473684210526,
-      "maximum_similarity" : 68.75,
+      "minimal_similarity" : 0.5789473684210527,
+      "maximum_similarity" : 0.6875,
       "matched_token_number" : 44
     },
-    "SortAlgo1_3-SortAlgo4d2" : {
-      "minimal_similarity" : 53.333333333333336,
-      "maximum_similarity" : 62.5,
-      "matched_token_number" : 40
-    },
     "SortAlgo2-SortAlgo4" : {
-      "minimal_similarity" : 71.1864406779661,
-      "maximum_similarity" : 75.0,
+      "minimal_similarity" : 0.711864406779661,
+      "maximum_similarity" : 0.75,
       "matched_token_number" : 42
     },
     "SortAlgo1_6-SortAlgo2_5" : {
-      "minimal_similarity" : 23.333333333333332,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.23333333333333334,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
-    },
-    "SortAlgo1_4-SortAlgo4d1" : {
-      "minimal_similarity" : 52.38095238095238,
-      "maximum_similarity" : 55.932203389830505,
-      "matched_token_number" : 33
     },
     "SortAlgo1_5-SortAlgo4d3" : {
       "minimal_similarity" : 0.0,
       "maximum_similarity" : 0.0,
       "matched_token_number" : 0
     },
-    "SortAlgo1_4-SortAlgo4d2" : {
-      "minimal_similarity" : 51.5625,
-      "maximum_similarity" : 55.932203389830505,
+    "SortAlgo1_4-SortAlgo4d1" : {
+      "minimal_similarity" : 0.5238095238095238,
+      "maximum_similarity" : 0.559322033898305,
       "matched_token_number" : 33
     },
     "SortAlgo1_5-SortAlgo4d2" : {
@@ -383,9 +378,9 @@
       "maximum_similarity" : 0.0,
       "matched_token_number" : 0
     },
-    "SortAlgo1_4-SortAlgo4d3" : {
-      "minimal_similarity" : 53.225806451612904,
-      "maximum_similarity" : 55.932203389830505,
+    "SortAlgo1_4-SortAlgo4d2" : {
+      "minimal_similarity" : 0.515625,
+      "maximum_similarity" : 0.559322033898305,
       "matched_token_number" : 33
     },
     "SortAlgo1_5-SortAlgo4d1" : {
@@ -393,84 +388,89 @@
       "maximum_similarity" : 0.0,
       "matched_token_number" : 0
     },
+    "SortAlgo1_4-SortAlgo4d3" : {
+      "minimal_similarity" : 0.532258064516129,
+      "maximum_similarity" : 0.559322033898305,
+      "matched_token_number" : 33
+    },
     "SortAlgo4d2-SortAlgo4d3" : {
-      "minimal_similarity" : 93.75,
-      "maximum_similarity" : 96.7741935483871,
+      "minimal_similarity" : 0.9375,
+      "maximum_similarity" : 0.967741935483871,
       "matched_token_number" : 60
     },
     "SortAlgo2-SortAlgo7" : {
-      "minimal_similarity" : 49.31506849315068,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.4931506849315068,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
-    "SortAlgo1_2-SortAlgo4d3" : {
-      "minimal_similarity" : 57.89473684210526,
-      "maximum_similarity" : 70.96774193548387,
-      "matched_token_number" : 44
-    },
     "SortAlgo1_3-SortAlgo4d1" : {
-      "minimal_similarity" : 53.333333333333336,
-      "maximum_similarity" : 63.492063492063494,
+      "minimal_similarity" : 0.5333333333333333,
+      "maximum_similarity" : 0.6349206349206349,
       "matched_token_number" : 40
     },
-    "SortAlgo2-SortAlgo5" : {
-      "minimal_similarity" : 25.0,
-      "maximum_similarity" : 25.0,
-      "matched_token_number" : 14
+    "SortAlgo1_2-SortAlgo4d3" : {
+      "minimal_similarity" : 0.5789473684210527,
+      "maximum_similarity" : 0.7096774193548387,
+      "matched_token_number" : 44
     },
     "SortAlgo4d1-SortAlgo4d2" : {
-      "minimal_similarity" : 98.4375,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.984375,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 63
     },
+    "SortAlgo2-SortAlgo5" : {
+      "minimal_similarity" : 0.25,
+      "maximum_similarity" : 0.25,
+      "matched_token_number" : 14
+    },
     "SortAlgo2-SortAlgo6" : {
-      "minimal_similarity" : 43.28358208955224,
-      "maximum_similarity" : 51.785714285714285,
+      "minimal_similarity" : 0.43283582089552236,
+      "maximum_similarity" : 0.5178571428571429,
       "matched_token_number" : 29
     },
     "SortAlgo4d1-SortAlgo4d3" : {
-      "minimal_similarity" : 95.23809523809524,
-      "maximum_similarity" : 96.7741935483871,
+      "minimal_similarity" : 0.9523809523809523,
+      "maximum_similarity" : 0.967741935483871,
       "matched_token_number" : 60
     },
     "SortAlgo1_6-SortAlgo7" : {
-      "minimal_similarity" : 41.0958904109589,
-      "maximum_similarity" : 50.0,
+      "minimal_similarity" : 0.410958904109589,
+      "maximum_similarity" : 0.5,
       "matched_token_number" : 30
     },
-    "SortAlgo2_5-SortAlgo3_5" : {
-      "minimal_similarity" : 59.42028985507246,
-      "maximum_similarity" : 73.21428571428571,
-      "matched_token_number" : 41
-    },
     "SortAlgo3_6-SortAlgo6" : {
-      "minimal_similarity" : 73.33333333333333,
-      "maximum_similarity" : 82.08955223880596,
+      "minimal_similarity" : 0.7333333333333333,
+      "maximum_similarity" : 0.8208955223880597,
       "matched_token_number" : 55
     },
+    "SortAlgo2_5-SortAlgo3_5" : {
+      "minimal_similarity" : 0.5942028985507246,
+      "maximum_similarity" : 0.7321428571428571,
+      "matched_token_number" : 41
+    },
     "SortAlgo2_5-SortAlgo3_6" : {
-      "minimal_similarity" : 12.0,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.12,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo3_6-SortAlgo5" : {
-      "minimal_similarity" : 12.0,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.12,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo3_6-SortAlgo7" : {
-      "minimal_similarity" : 21.333333333333332,
-      "maximum_similarity" : 21.91780821917808,
+      "minimal_similarity" : 0.21333333333333335,
+      "maximum_similarity" : 0.2191780821917808,
       "matched_token_number" : 16
     },
     "SortAlgo4d3-SortAlgo6" : {
-      "minimal_similarity" : 34.32835820895522,
-      "maximum_similarity" : 37.096774193548384,
+      "minimal_similarity" : 0.34328358208955223,
+      "maximum_similarity" : 0.3709677419354839,
       "matched_token_number" : 23
     },
     "SortAlgo4d3-SortAlgo7" : {
-      "minimal_similarity" : 35.61643835616438,
-      "maximum_similarity" : 41.935483870967744,
+      "minimal_similarity" : 0.3561643835616438,
+      "maximum_similarity" : 0.41935483870967744,
       "matched_token_number" : 26
     },
     "SortAlgo4d3-SortAlgo5" : {
@@ -479,229 +479,229 @@
       "matched_token_number" : 0
     },
     "SortAlgo1_4-SortAlgo2_5" : {
-      "minimal_similarity" : 22.033898305084747,
-      "maximum_similarity" : 23.214285714285715,
+      "minimal_similarity" : 0.22033898305084745,
+      "maximum_similarity" : 0.23214285714285715,
       "matched_token_number" : 13
     },
     "SortAlgo1-SortAlgo4" : {
-      "minimal_similarity" : 71.1864406779661,
-      "maximum_similarity" : 75.0,
+      "minimal_similarity" : 0.711864406779661,
+      "maximum_similarity" : 0.75,
       "matched_token_number" : 42
     },
     "SortAlgo1-SortAlgo5" : {
-      "minimal_similarity" : 25.0,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.25,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo1-SortAlgo2" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo3_6-SortAlgo4" : {
-      "minimal_similarity" : 24.0,
-      "maximum_similarity" : 30.508474576271187,
+      "minimal_similarity" : 0.24,
+      "maximum_similarity" : 0.3050847457627119,
       "matched_token_number" : 18
     },
     "SortAlgo1-SortAlgo3" : {
-      "minimal_similarity" : 57.971014492753625,
-      "maximum_similarity" : 71.42857142857143,
+      "minimal_similarity" : 0.5797101449275363,
+      "maximum_similarity" : 0.7142857142857143,
       "matched_token_number" : 40
     },
     "SortAlgo1_3-SortAlgo2_5" : {
-      "minimal_similarity" : 12.0,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.12,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo1_6-SortAlgo2" : {
-      "minimal_similarity" : 56.666666666666664,
-      "maximum_similarity" : 60.714285714285715,
+      "minimal_similarity" : 0.5666666666666667,
+      "maximum_similarity" : 0.6071428571428571,
       "matched_token_number" : 34
     },
     "SortAlgo1-SortAlgo6" : {
-      "minimal_similarity" : 43.28358208955224,
-      "maximum_similarity" : 51.785714285714285,
+      "minimal_similarity" : 0.43283582089552236,
+      "maximum_similarity" : 0.5178571428571429,
       "matched_token_number" : 29
     },
     "SortAlgo1-SortAlgo7" : {
-      "minimal_similarity" : 49.31506849315068,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.4931506849315068,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo1_2-SortAlgo2_5" : {
-      "minimal_similarity" : 18.42105263157895,
-      "maximum_similarity" : 25.0,
-      "matched_token_number" : 14
-    },
-    "SortAlgo-SortAlgo2_5" : {
-      "minimal_similarity" : 25.0,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.18421052631578946,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo1_6-SortAlgo6" : {
-      "minimal_similarity" : 82.08955223880596,
-      "maximum_similarity" : 91.66666666666667,
+      "minimal_similarity" : 0.8208955223880597,
+      "maximum_similarity" : 0.9166666666666666,
       "matched_token_number" : 55
     },
+    "SortAlgo-SortAlgo2_5" : {
+      "minimal_similarity" : 0.25,
+      "maximum_similarity" : 0.25,
+      "matched_token_number" : 14
+    },
     "SortAlgo1_6-SortAlgo5" : {
-      "minimal_similarity" : 23.333333333333332,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.23333333333333334,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo1_6-SortAlgo4" : {
-      "minimal_similarity" : 68.33333333333333,
-      "maximum_similarity" : 69.49152542372882,
+      "minimal_similarity" : 0.6833333333333333,
+      "maximum_similarity" : 0.6949152542372882,
       "matched_token_number" : 41
     },
     "SortAlgo1_6-SortAlgo3" : {
-      "minimal_similarity" : 34.78260869565217,
-      "maximum_similarity" : 40.0,
+      "minimal_similarity" : 0.34782608695652173,
+      "maximum_similarity" : 0.4,
       "matched_token_number" : 24
     },
     "SortAlgo1_5-SortAlgo6" : {
-      "minimal_similarity" : 13.432835820895523,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.13432835820895522,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo1_5-SortAlgo7" : {
-      "minimal_similarity" : 17.80821917808219,
-      "maximum_similarity" : 23.214285714285715,
+      "minimal_similarity" : 0.1780821917808219,
+      "maximum_similarity" : 0.23214285714285715,
       "matched_token_number" : 13
     },
     "SortAlgo2_5-SortAlgo7" : {
-      "minimal_similarity" : 17.80821917808219,
-      "maximum_similarity" : 23.214285714285715,
+      "minimal_similarity" : 0.1780821917808219,
+      "maximum_similarity" : 0.23214285714285715,
       "matched_token_number" : 13
     },
-    "SortAlgo1-SortAlgo4d3" : {
-      "minimal_similarity" : 70.96774193548387,
-      "maximum_similarity" : 78.57142857142857,
-      "matched_token_number" : 44
-    },
     "SortAlgo1_5-SortAlgo4" : {
-      "minimal_similarity" : 23.728813559322035,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.23728813559322035,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
-    "SortAlgo1-SortAlgo4d2" : {
-      "minimal_similarity" : 68.75,
-      "maximum_similarity" : 78.57142857142857,
+    "SortAlgo1-SortAlgo4d3" : {
+      "minimal_similarity" : 0.7096774193548387,
+      "maximum_similarity" : 0.7857142857142857,
       "matched_token_number" : 44
     },
     "SortAlgo1_5-SortAlgo5" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
-    "SortAlgo1-SortAlgo4d1" : {
-      "minimal_similarity" : 69.84126984126983,
-      "maximum_similarity" : 78.57142857142857,
+    "SortAlgo1-SortAlgo4d2" : {
+      "minimal_similarity" : 0.6875,
+      "maximum_similarity" : 0.7857142857142857,
       "matched_token_number" : 44
     },
     "SortAlgo1_5-SortAlgo2" : {
-      "minimal_similarity" : 25.0,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.25,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo3_5-SortAlgo6" : {
-      "minimal_similarity" : 17.391304347826086,
-      "maximum_similarity" : 17.91044776119403,
+      "minimal_similarity" : 0.17391304347826086,
+      "maximum_similarity" : 0.1791044776119403,
       "matched_token_number" : 12
     },
+    "SortAlgo1-SortAlgo4d1" : {
+      "minimal_similarity" : 0.6984126984126984,
+      "maximum_similarity" : 0.7857142857142857,
+      "matched_token_number" : 44
+    },
     "SortAlgo1_5-SortAlgo3" : {
-      "minimal_similarity" : 13.043478260869565,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.13043478260869565,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo3_5-SortAlgo7" : {
-      "minimal_similarity" : 12.32876712328767,
-      "maximum_similarity" : 13.043478260869565,
+      "minimal_similarity" : 0.1232876712328767,
+      "maximum_similarity" : 0.13043478260869565,
       "matched_token_number" : 9
     },
     "SortAlgo3-SortAlgo4d1" : {
-      "minimal_similarity" : 56.52173913043478,
-      "maximum_similarity" : 61.904761904761905,
+      "minimal_similarity" : 0.5652173913043478,
+      "maximum_similarity" : 0.6190476190476191,
       "matched_token_number" : 39
     },
     "SortAlgo3-SortAlgo4d3" : {
-      "minimal_similarity" : 56.52173913043478,
-      "maximum_similarity" : 62.903225806451616,
+      "minimal_similarity" : 0.5652173913043478,
+      "maximum_similarity" : 0.6290322580645161,
       "matched_token_number" : 39
     },
     "SortAlgo3-SortAlgo4d2" : {
-      "minimal_similarity" : 56.52173913043478,
-      "maximum_similarity" : 60.9375,
+      "minimal_similarity" : 0.5652173913043478,
+      "maximum_similarity" : 0.609375,
       "matched_token_number" : 39
     },
     "SortAlgo2-SortAlgo4d3" : {
-      "minimal_similarity" : 70.96774193548387,
-      "maximum_similarity" : 78.57142857142857,
+      "minimal_similarity" : 0.7096774193548387,
+      "maximum_similarity" : 0.7857142857142857,
       "matched_token_number" : 44
     },
     "SortAlgo2-SortAlgo4d1" : {
-      "minimal_similarity" : 69.84126984126983,
-      "maximum_similarity" : 78.57142857142857,
+      "minimal_similarity" : 0.6984126984126984,
+      "maximum_similarity" : 0.7857142857142857,
       "matched_token_number" : 44
     },
     "SortAlgo1_5-SortAlgo1_6" : {
-      "minimal_similarity" : 23.333333333333332,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.23333333333333334,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo2-SortAlgo4d2" : {
-      "minimal_similarity" : 68.75,
-      "maximum_similarity" : 78.57142857142857,
+      "minimal_similarity" : 0.6875,
+      "maximum_similarity" : 0.7857142857142857,
       "matched_token_number" : 44
     },
-    "SortAlgo3_6-SortAlgo4d2" : {
-      "minimal_similarity" : 30.666666666666668,
-      "maximum_similarity" : 35.9375,
-      "matched_token_number" : 23
-    },
     "SortAlgo4d1-SortAlgo7" : {
-      "minimal_similarity" : 35.61643835616438,
-      "maximum_similarity" : 41.26984126984127,
+      "minimal_similarity" : 0.3561643835616438,
+      "maximum_similarity" : 0.4126984126984127,
       "matched_token_number" : 26
     },
-    "SortAlgo3_6-SortAlgo4d1" : {
-      "minimal_similarity" : 30.666666666666668,
-      "maximum_similarity" : 36.507936507936506,
+    "SortAlgo3_6-SortAlgo4d2" : {
+      "minimal_similarity" : 0.30666666666666664,
+      "maximum_similarity" : 0.359375,
       "matched_token_number" : 23
     },
     "SortAlgo4d1-SortAlgo6" : {
-      "minimal_similarity" : 34.32835820895522,
-      "maximum_similarity" : 36.507936507936506,
+      "minimal_similarity" : 0.34328358208955223,
+      "maximum_similarity" : 0.36507936507936506,
+      "matched_token_number" : 23
+    },
+    "SortAlgo3_6-SortAlgo4d1" : {
+      "minimal_similarity" : 0.30666666666666664,
+      "maximum_similarity" : 0.36507936507936506,
       "matched_token_number" : 23
     },
     "SortAlgo4-SortAlgo4d1" : {
-      "minimal_similarity" : 44.44444444444444,
-      "maximum_similarity" : 47.45762711864407,
+      "minimal_similarity" : 0.4444444444444444,
+      "maximum_similarity" : 0.4745762711864407,
+      "matched_token_number" : 28
+    },
+    "SortAlgo4-SortAlgo4d2" : {
+      "minimal_similarity" : 0.4375,
+      "maximum_similarity" : 0.4745762711864407,
       "matched_token_number" : 28
     },
     "SortAlgo3_6-SortAlgo4d3" : {
-      "minimal_similarity" : 30.666666666666668,
-      "maximum_similarity" : 37.096774193548384,
+      "minimal_similarity" : 0.30666666666666664,
+      "maximum_similarity" : 0.3709677419354839,
       "matched_token_number" : 23
     },
-    "SortAlgo4-SortAlgo4d2" : {
-      "minimal_similarity" : 43.75,
-      "maximum_similarity" : 47.45762711864407,
-      "matched_token_number" : 28
-    },
     "SortAlgo4-SortAlgo4d3" : {
-      "minimal_similarity" : 45.16129032258065,
-      "maximum_similarity" : 47.45762711864407,
+      "minimal_similarity" : 0.45161290322580644,
+      "maximum_similarity" : 0.4745762711864407,
       "matched_token_number" : 28
-    },
-    "SortAlgo3_5-SortAlgo4" : {
-      "minimal_similarity" : 13.043478260869565,
-      "maximum_similarity" : 15.254237288135593,
-      "matched_token_number" : 9
     },
     "SortAlgo3_5-SortAlgo4d2" : {
       "minimal_similarity" : 0.0,
       "maximum_similarity" : 0.0,
       "matched_token_number" : 0
+    },
+    "SortAlgo3_5-SortAlgo4" : {
+      "minimal_similarity" : 0.13043478260869565,
+      "maximum_similarity" : 0.15254237288135594,
+      "matched_token_number" : 9
     },
     "SortAlgo4d1-SortAlgo5" : {
       "minimal_similarity" : 0.0,
@@ -714,108 +714,108 @@
       "matched_token_number" : 0
     },
     "SortAlgo3_5-SortAlgo5" : {
-      "minimal_similarity" : 59.42028985507246,
-      "maximum_similarity" : 73.21428571428571,
+      "minimal_similarity" : 0.5942028985507246,
+      "maximum_similarity" : 0.7321428571428571,
       "matched_token_number" : 41
     },
     "SortAlgo2_5-SortAlgo4" : {
-      "minimal_similarity" : 23.728813559322035,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.23728813559322035,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
-    },
-    "SortAlgo2_5-SortAlgo3" : {
-      "minimal_similarity" : 13.043478260869565,
-      "maximum_similarity" : 16.071428571428573,
-      "matched_token_number" : 9
     },
     "SortAlgo3_5-SortAlgo4d1" : {
       "minimal_similarity" : 0.0,
       "maximum_similarity" : 0.0,
       "matched_token_number" : 0
     },
+    "SortAlgo2_5-SortAlgo3" : {
+      "minimal_similarity" : 0.13043478260869565,
+      "maximum_similarity" : 0.16071428571428573,
+      "matched_token_number" : 9
+    },
     "SortAlgo2_5-SortAlgo6" : {
-      "minimal_similarity" : 13.432835820895523,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.13432835820895522,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo2_5-SortAlgo5" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1-SortAlgo1_3" : {
-      "minimal_similarity" : 53.333333333333336,
-      "maximum_similarity" : 71.42857142857143,
+      "minimal_similarity" : 0.5333333333333333,
+      "maximum_similarity" : 0.7142857142857143,
       "matched_token_number" : 40
     },
     "SortAlgo1-SortAlgo1_2" : {
-      "minimal_similarity" : 73.6842105263158,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.7368421052631579,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1-SortAlgo1_6" : {
-      "minimal_similarity" : 56.666666666666664,
-      "maximum_similarity" : 60.714285714285715,
+      "minimal_similarity" : 0.5666666666666667,
+      "maximum_similarity" : 0.6071428571428571,
       "matched_token_number" : 34
     },
     "SortAlgo1-SortAlgo1_5" : {
-      "minimal_similarity" : 25.0,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.25,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
     "SortAlgo1-SortAlgo1_4" : {
-      "minimal_similarity" : 69.49152542372882,
-      "maximum_similarity" : 73.21428571428571,
+      "minimal_similarity" : 0.6949152542372882,
+      "maximum_similarity" : 0.7321428571428571,
       "matched_token_number" : 41
+    },
+    "SortAlgo3-SortAlgo7" : {
+      "minimal_similarity" : 0.3698630136986301,
+      "maximum_similarity" : 0.391304347826087,
+      "matched_token_number" : 27
     },
     "SortAlgo2_5-SortAlgo4d1" : {
       "minimal_similarity" : 0.0,
       "maximum_similarity" : 0.0,
       "matched_token_number" : 0
     },
-    "SortAlgo3-SortAlgo7" : {
-      "minimal_similarity" : 36.986301369863014,
-      "maximum_similarity" : 39.130434782608695,
-      "matched_token_number" : 27
+    "SortAlgo3-SortAlgo6" : {
+      "minimal_similarity" : 0.5217391304347826,
+      "maximum_similarity" : 0.5373134328358209,
+      "matched_token_number" : 36
     },
     "SortAlgo2_5-SortAlgo4d2" : {
       "minimal_similarity" : 0.0,
       "maximum_similarity" : 0.0,
       "matched_token_number" : 0
     },
-    "SortAlgo3-SortAlgo6" : {
-      "minimal_similarity" : 52.17391304347826,
-      "maximum_similarity" : 53.73134328358209,
-      "matched_token_number" : 36
-    },
     "SortAlgo1_4-SortAlgo1_5" : {
-      "minimal_similarity" : 22.033898305084747,
-      "maximum_similarity" : 23.214285714285715,
+      "minimal_similarity" : 0.22033898305084745,
+      "maximum_similarity" : 0.23214285714285715,
       "matched_token_number" : 13
     },
     "SortAlgo3-SortAlgo5" : {
-      "minimal_similarity" : 13.043478260869565,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.13043478260869565,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo1_4-SortAlgo1_6" : {
-      "minimal_similarity" : 66.66666666666667,
-      "maximum_similarity" : 67.79661016949153,
+      "minimal_similarity" : 0.6666666666666666,
+      "maximum_similarity" : 0.6779661016949152,
       "matched_token_number" : 40
     },
     "SortAlgo3-SortAlgo4" : {
-      "minimal_similarity" : 40.57971014492754,
-      "maximum_similarity" : 47.45762711864407,
+      "minimal_similarity" : 0.4057971014492754,
+      "maximum_similarity" : 0.4745762711864407,
       "matched_token_number" : 28
     },
     "SortAlgo1_3-SortAlgo1_5" : {
-      "minimal_similarity" : 12.0,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.12,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo1_3-SortAlgo1_4" : {
-      "minimal_similarity" : 45.333333333333336,
-      "maximum_similarity" : 57.6271186440678,
+      "minimal_similarity" : 0.4533333333333333,
+      "maximum_similarity" : 0.576271186440678,
       "matched_token_number" : 34
     },
     "SortAlgo2_5-SortAlgo4d3" : {
@@ -824,38 +824,38 @@
       "matched_token_number" : 0
     },
     "SortAlgo1_3-SortAlgo1_6" : {
-      "minimal_similarity" : 32.0,
-      "maximum_similarity" : 40.0,
-      "matched_token_number" : 24
-    },
-    "SortAlgo-SortAlgo3_6" : {
-      "minimal_similarity" : 32.0,
-      "maximum_similarity" : 42.857142857142854,
+      "minimal_similarity" : 0.32,
+      "maximum_similarity" : 0.4,
       "matched_token_number" : 24
     },
     "SortAlgo1_2-SortAlgo1_5" : {
-      "minimal_similarity" : 18.42105263157895,
-      "maximum_similarity" : 25.0,
+      "minimal_similarity" : 0.18421052631578946,
+      "maximum_similarity" : 0.25,
       "matched_token_number" : 14
     },
+    "SortAlgo-SortAlgo3_6" : {
+      "minimal_similarity" : 0.32,
+      "maximum_similarity" : 0.42857142857142855,
+      "matched_token_number" : 24
+    },
     "SortAlgo-SortAlgo3_5" : {
-      "minimal_similarity" : 13.043478260869565,
-      "maximum_similarity" : 16.071428571428573,
+      "minimal_similarity" : 0.13043478260869565,
+      "maximum_similarity" : 0.16071428571428573,
       "matched_token_number" : 9
     },
     "SortAlgo1_2-SortAlgo1_6" : {
-      "minimal_similarity" : 56.578947368421055,
-      "maximum_similarity" : 71.66666666666667,
+      "minimal_similarity" : 0.5657894736842105,
+      "maximum_similarity" : 0.7166666666666667,
       "matched_token_number" : 43
     },
     "SortAlgo1_2-SortAlgo1_3" : {
-      "minimal_similarity" : 52.63157894736842,
-      "maximum_similarity" : 53.333333333333336,
+      "minimal_similarity" : 0.5263157894736842,
+      "maximum_similarity" : 0.5333333333333333,
       "matched_token_number" : 40
     },
     "SortAlgo1_2-SortAlgo1_4" : {
-      "minimal_similarity" : 56.578947368421055,
-      "maximum_similarity" : 72.88135593220339,
+      "minimal_similarity" : 0.5657894736842105,
+      "maximum_similarity" : 0.7288135593220338,
       "matched_token_number" : 43
     }
   }
@@ -865,858 +865,858 @@
   },
   "tests" : {
     "SortAlgo-SortAlgo5" : {
-      "minimal_similarity" : 69.64285714285714,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.6964285714285714,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
     "SortAlgo-SortAlgo6" : {
-      "minimal_similarity" : 80.59701492537313,
-      "maximum_similarity" : 96.42857142857143,
+      "minimal_similarity" : 0.8059701492537313,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo-SortAlgo7" : {
-      "minimal_similarity" : 69.86301369863014,
-      "maximum_similarity" : 91.07142857142857,
+      "minimal_similarity" : 0.6986301369863014,
+      "maximum_similarity" : 0.9107142857142857,
       "matched_token_number" : 51
     },
     "SortAlgo3_5-SortAlgo3_6" : {
-      "minimal_similarity" : 58.666666666666664,
-      "maximum_similarity" : 63.768115942028984,
+      "minimal_similarity" : 0.5866666666666667,
+      "maximum_similarity" : 0.6376811594202898,
       "matched_token_number" : 44
     },
     "SortAlgo6-SortAlgo7" : {
-      "minimal_similarity" : 67.12328767123287,
-      "maximum_similarity" : 73.13432835820896,
+      "minimal_similarity" : 0.6712328767123288,
+      "maximum_similarity" : 0.7313432835820896,
       "matched_token_number" : 49
     },
     "SortAlgo1_3-SortAlgo7" : {
-      "minimal_similarity" : 66.66666666666667,
-      "maximum_similarity" : 68.4931506849315,
+      "minimal_similarity" : 0.6666666666666666,
+      "maximum_similarity" : 0.684931506849315,
       "matched_token_number" : 50
     },
     "SortAlgo1_3-SortAlgo6" : {
-      "minimal_similarity" : 80.0,
-      "maximum_similarity" : 89.55223880597015,
+      "minimal_similarity" : 0.8,
+      "maximum_similarity" : 0.8955223880597015,
       "matched_token_number" : 60
     },
     "SortAlgo-SortAlgo1" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1_3-SortAlgo3" : {
-      "minimal_similarity" : 86.66666666666667,
-      "maximum_similarity" : 94.20289855072464,
+      "minimal_similarity" : 0.8666666666666667,
+      "maximum_similarity" : 0.9420289855072463,
       "matched_token_number" : 65
     },
     "SortAlgo-SortAlgo2" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1_3-SortAlgo2" : {
-      "minimal_similarity" : 69.33333333333333,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.6933333333333334,
+      "maximum_similarity" : 0.9285714285714286,
       "matched_token_number" : 52
     },
     "SortAlgo-SortAlgo3" : {
-      "minimal_similarity" : 75.3623188405797,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.7536231884057971,
+      "maximum_similarity" : 0.9285714285714286,
       "matched_token_number" : 52
     },
     "SortAlgo1_3-SortAlgo5" : {
-      "minimal_similarity" : 48.0,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.48,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo-SortAlgo4" : {
-      "minimal_similarity" : 83.05084745762711,
-      "maximum_similarity" : 87.5,
+      "minimal_similarity" : 0.8305084745762712,
+      "maximum_similarity" : 0.875,
       "matched_token_number" : 49
     },
     "SortAlgo1_3-SortAlgo4" : {
-      "minimal_similarity" : 64.0,
-      "maximum_similarity" : 81.35593220338983,
+      "minimal_similarity" : 0.64,
+      "maximum_similarity" : 0.8135593220338984,
       "matched_token_number" : 48
     },
     "SortAlgo2-SortAlgo2_5" : {
-      "minimal_similarity" : 69.64285714285714,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.6964285714285714,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
     "SortAlgo1_2-SortAlgo2" : {
-      "minimal_similarity" : 73.6842105263158,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.7368421052631579,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
-    },
-    "SortAlgo1_2-SortAlgo3" : {
-      "minimal_similarity" : 68.42105263157895,
-      "maximum_similarity" : 75.3623188405797,
-      "matched_token_number" : 52
     },
     "SortAlgo5-SortAlgo6" : {
-      "minimal_similarity" : 52.23880597014925,
-      "maximum_similarity" : 62.5,
+      "minimal_similarity" : 0.5223880597014925,
+      "maximum_similarity" : 0.625,
       "matched_token_number" : 35
     },
-    "SortAlgo1_2-SortAlgo4" : {
-      "minimal_similarity" : 73.6842105263158,
-      "maximum_similarity" : 94.91525423728814,
-      "matched_token_number" : 56
+    "SortAlgo1_2-SortAlgo3" : {
+      "minimal_similarity" : 0.6842105263157895,
+      "maximum_similarity" : 0.7536231884057971,
+      "matched_token_number" : 52
     },
     "SortAlgo5-SortAlgo7" : {
-      "minimal_similarity" : 45.205479452054796,
-      "maximum_similarity" : 58.92857142857143,
+      "minimal_similarity" : 0.4520547945205479,
+      "maximum_similarity" : 0.5892857142857143,
       "matched_token_number" : 33
     },
+    "SortAlgo1_2-SortAlgo4" : {
+      "minimal_similarity" : 0.7368421052631579,
+      "maximum_similarity" : 0.9491525423728814,
+      "matched_token_number" : 56
+    },
     "SortAlgo1_2-SortAlgo5" : {
-      "minimal_similarity" : 51.31578947368421,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.5131578947368421,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
     "SortAlgo1_2-SortAlgo6" : {
-      "minimal_similarity" : 73.6842105263158,
-      "maximum_similarity" : 83.58208955223881,
+      "minimal_similarity" : 0.7368421052631579,
+      "maximum_similarity" : 0.835820895522388,
       "matched_token_number" : 56
     },
     "SortAlgo1_2-SortAlgo7" : {
-      "minimal_similarity" : 72.36842105263158,
-      "maximum_similarity" : 75.34246575342466,
+      "minimal_similarity" : 0.7236842105263158,
+      "maximum_similarity" : 0.7534246575342466,
       "matched_token_number" : 55
     },
     "SortAlgo1-SortAlgo2_5" : {
-      "minimal_similarity" : 69.64285714285714,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.6964285714285714,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
     "SortAlgo1_3-SortAlgo3_6" : {
-      "minimal_similarity" : 82.66666666666667,
-      "maximum_similarity" : 82.66666666666667,
+      "minimal_similarity" : 0.8266666666666667,
+      "maximum_similarity" : 0.8266666666666667,
       "matched_token_number" : 62
     },
     "SortAlgo4-SortAlgo5" : {
-      "minimal_similarity" : 59.32203389830509,
-      "maximum_similarity" : 62.5,
+      "minimal_similarity" : 0.5932203389830508,
+      "maximum_similarity" : 0.625,
       "matched_token_number" : 35
     },
     "SortAlgo4-SortAlgo6" : {
-      "minimal_similarity" : 68.65671641791045,
-      "maximum_similarity" : 77.96610169491525,
+      "minimal_similarity" : 0.6865671641791045,
+      "maximum_similarity" : 0.7796610169491526,
       "matched_token_number" : 46
     },
-    "SortAlgo1_4-SortAlgo3_5" : {
-      "minimal_similarity" : 44.927536231884055,
-      "maximum_similarity" : 52.54237288135593,
-      "matched_token_number" : 31
-    },
     "SortAlgo4-SortAlgo7" : {
-      "minimal_similarity" : 58.9041095890411,
-      "maximum_similarity" : 72.88135593220339,
+      "minimal_similarity" : 0.589041095890411,
+      "maximum_similarity" : 0.7288135593220338,
       "matched_token_number" : 43
     },
-    "SortAlgo1_4-SortAlgo3_6" : {
-      "minimal_similarity" : 58.666666666666664,
-      "maximum_similarity" : 74.57627118644068,
-      "matched_token_number" : 44
+    "SortAlgo1_4-SortAlgo3_5" : {
+      "minimal_similarity" : 0.4492753623188406,
+      "maximum_similarity" : 0.5254237288135594,
+      "matched_token_number" : 31
     },
     "SortAlgo1_5-SortAlgo3_6" : {
-      "minimal_similarity" : 45.333333333333336,
-      "maximum_similarity" : 60.714285714285715,
+      "minimal_similarity" : 0.4533333333333333,
+      "maximum_similarity" : 0.6071428571428571,
       "matched_token_number" : 34
     },
+    "SortAlgo1_4-SortAlgo3_6" : {
+      "minimal_similarity" : 0.5866666666666667,
+      "maximum_similarity" : 0.7457627118644068,
+      "matched_token_number" : 44
+    },
     "SortAlgo1_5-SortAlgo3_5" : {
-      "minimal_similarity" : 75.3623188405797,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.7536231884057971,
+      "maximum_similarity" : 0.9285714285714286,
       "matched_token_number" : 52
     },
     "SortAlgo1_6-SortAlgo3_5" : {
-      "minimal_similarity" : 49.27536231884058,
-      "maximum_similarity" : 56.666666666666664,
+      "minimal_similarity" : 0.4927536231884058,
+      "maximum_similarity" : 0.5666666666666667,
       "matched_token_number" : 34
     },
     "SortAlgo-SortAlgo4d3" : {
-      "minimal_similarity" : 87.09677419354838,
-      "maximum_similarity" : 96.42857142857143,
+      "minimal_similarity" : 0.8709677419354839,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo1_6-SortAlgo3_6" : {
-      "minimal_similarity" : 74.66666666666667,
-      "maximum_similarity" : 93.33333333333333,
+      "minimal_similarity" : 0.7466666666666667,
+      "maximum_similarity" : 0.9333333333333333,
       "matched_token_number" : 56
     },
     "SortAlgo-SortAlgo4d2" : {
-      "minimal_similarity" : 84.375,
-      "maximum_similarity" : 96.42857142857143,
+      "minimal_similarity" : 0.84375,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo-SortAlgo4d1" : {
-      "minimal_similarity" : 85.71428571428571,
-      "maximum_similarity" : 96.42857142857143,
+      "minimal_similarity" : 0.8571428571428571,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo1_4-SortAlgo3" : {
-      "minimal_similarity" : 68.1159420289855,
-      "maximum_similarity" : 79.66101694915254,
+      "minimal_similarity" : 0.6811594202898551,
+      "maximum_similarity" : 0.7966101694915254,
       "matched_token_number" : 47
     },
     "SortAlgo3-SortAlgo3_5" : {
-      "minimal_similarity" : 71.01449275362319,
-      "maximum_similarity" : 71.01449275362319,
+      "minimal_similarity" : 0.7101449275362319,
+      "maximum_similarity" : 0.7101449275362319,
       "matched_token_number" : 49
     },
     "SortAlgo1_4-SortAlgo4" : {
-      "minimal_similarity" : 94.91525423728814,
-      "maximum_similarity" : 94.91525423728814,
+      "minimal_similarity" : 0.9491525423728814,
+      "maximum_similarity" : 0.9491525423728814,
       "matched_token_number" : 56
     },
     "SortAlgo1_4-SortAlgo2" : {
-      "minimal_similarity" : 83.05084745762711,
-      "maximum_similarity" : 87.5,
+      "minimal_similarity" : 0.8305084745762712,
+      "maximum_similarity" : 0.875,
       "matched_token_number" : 49
     },
     "SortAlgo3-SortAlgo3_6" : {
-      "minimal_similarity" : 89.33333333333333,
-      "maximum_similarity" : 97.10144927536231,
+      "minimal_similarity" : 0.8933333333333333,
+      "maximum_similarity" : 0.9710144927536232,
       "matched_token_number" : 67
     },
     "SortAlgo1_4-SortAlgo7" : {
-      "minimal_similarity" : 60.273972602739725,
-      "maximum_similarity" : 74.57627118644068,
+      "minimal_similarity" : 0.6027397260273972,
+      "maximum_similarity" : 0.7457627118644068,
       "matched_token_number" : 44
     },
     "SortAlgo1_4-SortAlgo5" : {
-      "minimal_similarity" : 50.847457627118644,
-      "maximum_similarity" : 53.57142857142857,
+      "minimal_similarity" : 0.5084745762711864,
+      "maximum_similarity" : 0.5357142857142857,
       "matched_token_number" : 30
     },
     "SortAlgo2-SortAlgo3_5" : {
-      "minimal_similarity" : 52.17391304347826,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.5217391304347826,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo1_4-SortAlgo6" : {
-      "minimal_similarity" : 70.14925373134328,
-      "maximum_similarity" : 79.66101694915254,
+      "minimal_similarity" : 0.7014925373134329,
+      "maximum_similarity" : 0.7966101694915254,
       "matched_token_number" : 47
     },
     "SortAlgo2-SortAlgo3_6" : {
-      "minimal_similarity" : 69.33333333333333,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.6933333333333334,
+      "maximum_similarity" : 0.9285714285714286,
       "matched_token_number" : 52
     },
     "SortAlgo1-SortAlgo3_6" : {
-      "minimal_similarity" : 69.33333333333333,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.6933333333333334,
+      "maximum_similarity" : 0.9285714285714286,
       "matched_token_number" : 52
     },
     "SortAlgo1-SortAlgo3_5" : {
-      "minimal_similarity" : 52.17391304347826,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.5217391304347826,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo-SortAlgo1_2" : {
-      "minimal_similarity" : 73.6842105263158,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.7368421052631579,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1_3-SortAlgo3_5" : {
-      "minimal_similarity" : 60.0,
-      "maximum_similarity" : 65.21739130434783,
+      "minimal_similarity" : 0.6,
+      "maximum_similarity" : 0.6521739130434783,
       "matched_token_number" : 45
     },
     "SortAlgo1_2-SortAlgo3_5" : {
-      "minimal_similarity" : 47.36842105263158,
-      "maximum_similarity" : 52.17391304347826,
+      "minimal_similarity" : 0.47368421052631576,
+      "maximum_similarity" : 0.5217391304347826,
       "matched_token_number" : 36
     },
     "SortAlgo1_2-SortAlgo3_6" : {
-      "minimal_similarity" : 68.42105263157895,
-      "maximum_similarity" : 69.33333333333333,
+      "minimal_similarity" : 0.6842105263157895,
+      "maximum_similarity" : 0.6933333333333334,
       "matched_token_number" : 52
     },
     "SortAlgo-SortAlgo1_6" : {
-      "minimal_similarity" : 93.33333333333333,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.9333333333333333,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo-SortAlgo1_5" : {
-      "minimal_similarity" : 69.64285714285714,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.6964285714285714,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
     "SortAlgo-SortAlgo1_4" : {
-      "minimal_similarity" : 83.05084745762711,
-      "maximum_similarity" : 87.5,
+      "minimal_similarity" : 0.8305084745762712,
+      "maximum_similarity" : 0.875,
       "matched_token_number" : 49
     },
     "SortAlgo-SortAlgo1_3" : {
-      "minimal_similarity" : 69.33333333333333,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.6933333333333334,
+      "maximum_similarity" : 0.9285714285714286,
       "matched_token_number" : 52
     },
-    "SortAlgo1_6-SortAlgo4d1" : {
-      "minimal_similarity" : 84.12698412698413,
-      "maximum_similarity" : 88.33333333333333,
-      "matched_token_number" : 53
-    },
     "SortAlgo4d2-SortAlgo7" : {
-      "minimal_similarity" : 65.75342465753425,
-      "maximum_similarity" : 75.0,
+      "minimal_similarity" : 0.6575342465753424,
+      "maximum_similarity" : 0.75,
       "matched_token_number" : 48
     },
+    "SortAlgo1_6-SortAlgo4d1" : {
+      "minimal_similarity" : 0.8412698412698413,
+      "maximum_similarity" : 0.8833333333333333,
+      "matched_token_number" : 53
+    },
     "SortAlgo1_6-SortAlgo4d2" : {
-      "minimal_similarity" : 82.8125,
-      "maximum_similarity" : 88.33333333333333,
+      "minimal_similarity" : 0.828125,
+      "maximum_similarity" : 0.8833333333333333,
       "matched_token_number" : 53
     },
     "SortAlgo4d2-SortAlgo5" : {
-      "minimal_similarity" : 57.8125,
-      "maximum_similarity" : 66.07142857142857,
+      "minimal_similarity" : 0.578125,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
     "SortAlgo4d2-SortAlgo6" : {
-      "minimal_similarity" : 80.59701492537313,
-      "maximum_similarity" : 84.375,
+      "minimal_similarity" : 0.8059701492537313,
+      "maximum_similarity" : 0.84375,
       "matched_token_number" : 54
     },
     "SortAlgo1_6-SortAlgo4d3" : {
-      "minimal_similarity" : 85.48387096774194,
-      "maximum_similarity" : 88.33333333333333,
+      "minimal_similarity" : 0.8548387096774194,
+      "maximum_similarity" : 0.8833333333333333,
       "matched_token_number" : 53
     },
     "SortAlgo1_5-SortAlgo2_5" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
-    "SortAlgo1_2-SortAlgo4d1" : {
-      "minimal_similarity" : 71.05263157894737,
-      "maximum_similarity" : 85.71428571428571,
-      "matched_token_number" : 54
-    },
     "SortAlgo1_3-SortAlgo4d3" : {
-      "minimal_similarity" : 78.66666666666667,
-      "maximum_similarity" : 95.16129032258064,
+      "minimal_similarity" : 0.7866666666666666,
+      "maximum_similarity" : 0.9516129032258065,
       "matched_token_number" : 59
     },
-    "SortAlgo2-SortAlgo3" : {
-      "minimal_similarity" : 75.3623188405797,
-      "maximum_similarity" : 92.85714285714286,
-      "matched_token_number" : 52
-    },
-    "SortAlgo1_2-SortAlgo4d2" : {
-      "minimal_similarity" : 71.05263157894737,
-      "maximum_similarity" : 84.375,
+    "SortAlgo1_2-SortAlgo4d1" : {
+      "minimal_similarity" : 0.7105263157894737,
+      "maximum_similarity" : 0.8571428571428571,
       "matched_token_number" : 54
     },
+    "SortAlgo2-SortAlgo3" : {
+      "minimal_similarity" : 0.7536231884057971,
+      "maximum_similarity" : 0.9285714285714286,
+      "matched_token_number" : 52
+    },
     "SortAlgo1_3-SortAlgo4d2" : {
-      "minimal_similarity" : 76.0,
-      "maximum_similarity" : 89.0625,
+      "minimal_similarity" : 0.76,
+      "maximum_similarity" : 0.890625,
       "matched_token_number" : 57
     },
+    "SortAlgo1_2-SortAlgo4d2" : {
+      "minimal_similarity" : 0.7105263157894737,
+      "maximum_similarity" : 0.84375,
+      "matched_token_number" : 54
+    },
     "SortAlgo2-SortAlgo4" : {
-      "minimal_similarity" : 83.05084745762711,
-      "maximum_similarity" : 87.5,
+      "minimal_similarity" : 0.8305084745762712,
+      "maximum_similarity" : 0.875,
       "matched_token_number" : 49
     },
     "SortAlgo1_6-SortAlgo2_5" : {
-      "minimal_similarity" : 61.666666666666664,
-      "maximum_similarity" : 66.07142857142857,
+      "minimal_similarity" : 0.6166666666666667,
+      "maximum_similarity" : 0.6607142857142857,
+      "matched_token_number" : 37
+    },
+    "SortAlgo1_5-SortAlgo4d3" : {
+      "minimal_similarity" : 0.5967741935483871,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
     "SortAlgo1_4-SortAlgo4d1" : {
-      "minimal_similarity" : 77.77777777777777,
-      "maximum_similarity" : 83.05084745762711,
-      "matched_token_number" : 49
-    },
-    "SortAlgo1_5-SortAlgo4d3" : {
-      "minimal_similarity" : 59.67741935483871,
-      "maximum_similarity" : 66.07142857142857,
-      "matched_token_number" : 37
-    },
-    "SortAlgo1_4-SortAlgo4d2" : {
-      "minimal_similarity" : 76.5625,
-      "maximum_similarity" : 83.05084745762711,
+      "minimal_similarity" : 0.7777777777777778,
+      "maximum_similarity" : 0.8305084745762712,
       "matched_token_number" : 49
     },
     "SortAlgo1_5-SortAlgo4d2" : {
-      "minimal_similarity" : 57.8125,
-      "maximum_similarity" : 66.07142857142857,
+      "minimal_similarity" : 0.578125,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
-    "SortAlgo1_4-SortAlgo4d3" : {
-      "minimal_similarity" : 79.03225806451613,
-      "maximum_similarity" : 83.05084745762711,
+    "SortAlgo1_4-SortAlgo4d2" : {
+      "minimal_similarity" : 0.765625,
+      "maximum_similarity" : 0.8305084745762712,
       "matched_token_number" : 49
     },
     "SortAlgo1_5-SortAlgo4d1" : {
-      "minimal_similarity" : 58.73015873015873,
-      "maximum_similarity" : 66.07142857142857,
+      "minimal_similarity" : 0.5873015873015873,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
+    "SortAlgo1_4-SortAlgo4d3" : {
+      "minimal_similarity" : 0.7903225806451613,
+      "maximum_similarity" : 0.8305084745762712,
+      "matched_token_number" : 49
+    },
     "SortAlgo4d2-SortAlgo4d3" : {
-      "minimal_similarity" : 93.75,
-      "maximum_similarity" : 96.7741935483871,
+      "minimal_similarity" : 0.9375,
+      "maximum_similarity" : 0.967741935483871,
       "matched_token_number" : 60
     },
     "SortAlgo2-SortAlgo7" : {
-      "minimal_similarity" : 69.86301369863014,
-      "maximum_similarity" : 91.07142857142857,
+      "minimal_similarity" : 0.6986301369863014,
+      "maximum_similarity" : 0.9107142857142857,
       "matched_token_number" : 51
     },
-    "SortAlgo1_2-SortAlgo4d3" : {
-      "minimal_similarity" : 71.05263157894737,
-      "maximum_similarity" : 87.09677419354838,
-      "matched_token_number" : 54
-    },
     "SortAlgo1_3-SortAlgo4d1" : {
-      "minimal_similarity" : 76.0,
-      "maximum_similarity" : 90.47619047619048,
+      "minimal_similarity" : 0.76,
+      "maximum_similarity" : 0.9047619047619048,
       "matched_token_number" : 57
     },
-    "SortAlgo2-SortAlgo5" : {
-      "minimal_similarity" : 69.64285714285714,
-      "maximum_similarity" : 69.64285714285714,
-      "matched_token_number" : 39
+    "SortAlgo1_2-SortAlgo4d3" : {
+      "minimal_similarity" : 0.7105263157894737,
+      "maximum_similarity" : 0.8709677419354839,
+      "matched_token_number" : 54
     },
     "SortAlgo4d1-SortAlgo4d2" : {
-      "minimal_similarity" : 98.4375,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.984375,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 63
     },
+    "SortAlgo2-SortAlgo5" : {
+      "minimal_similarity" : 0.6964285714285714,
+      "maximum_similarity" : 0.6964285714285714,
+      "matched_token_number" : 39
+    },
     "SortAlgo2-SortAlgo6" : {
-      "minimal_similarity" : 80.59701492537313,
-      "maximum_similarity" : 96.42857142857143,
+      "minimal_similarity" : 0.8059701492537313,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo4d1-SortAlgo4d3" : {
-      "minimal_similarity" : 95.23809523809524,
-      "maximum_similarity" : 96.7741935483871,
+      "minimal_similarity" : 0.9523809523809523,
+      "maximum_similarity" : 0.967741935483871,
       "matched_token_number" : 60
     },
     "SortAlgo1_6-SortAlgo7" : {
-      "minimal_similarity" : 68.4931506849315,
-      "maximum_similarity" : 83.33333333333333,
+      "minimal_similarity" : 0.684931506849315,
+      "maximum_similarity" : 0.8333333333333334,
       "matched_token_number" : 50
     },
-    "SortAlgo2_5-SortAlgo3_5" : {
-      "minimal_similarity" : 75.3623188405797,
-      "maximum_similarity" : 92.85714285714286,
-      "matched_token_number" : 52
-    },
     "SortAlgo3_6-SortAlgo6" : {
-      "minimal_similarity" : 86.66666666666667,
-      "maximum_similarity" : 97.01492537313433,
+      "minimal_similarity" : 0.8666666666666667,
+      "maximum_similarity" : 0.9701492537313433,
       "matched_token_number" : 65
     },
+    "SortAlgo2_5-SortAlgo3_5" : {
+      "minimal_similarity" : 0.7536231884057971,
+      "maximum_similarity" : 0.9285714285714286,
+      "matched_token_number" : 52
+    },
     "SortAlgo2_5-SortAlgo3_6" : {
-      "minimal_similarity" : 45.333333333333336,
-      "maximum_similarity" : 60.714285714285715,
+      "minimal_similarity" : 0.4533333333333333,
+      "maximum_similarity" : 0.6071428571428571,
       "matched_token_number" : 34
     },
     "SortAlgo3_6-SortAlgo5" : {
-      "minimal_similarity" : 45.333333333333336,
-      "maximum_similarity" : 60.714285714285715,
+      "minimal_similarity" : 0.4533333333333333,
+      "maximum_similarity" : 0.6071428571428571,
       "matched_token_number" : 34
     },
     "SortAlgo3_6-SortAlgo7" : {
-      "minimal_similarity" : 62.666666666666664,
-      "maximum_similarity" : 64.38356164383562,
+      "minimal_similarity" : 0.6266666666666667,
+      "maximum_similarity" : 0.6438356164383562,
       "matched_token_number" : 47
     },
     "SortAlgo4d3-SortAlgo6" : {
-      "minimal_similarity" : 80.59701492537313,
-      "maximum_similarity" : 87.09677419354838,
+      "minimal_similarity" : 0.8059701492537313,
+      "maximum_similarity" : 0.8709677419354839,
       "matched_token_number" : 54
     },
     "SortAlgo4d3-SortAlgo7" : {
-      "minimal_similarity" : 65.75342465753425,
-      "maximum_similarity" : 77.41935483870968,
+      "minimal_similarity" : 0.6575342465753424,
+      "maximum_similarity" : 0.7741935483870968,
       "matched_token_number" : 48
     },
     "SortAlgo4d3-SortAlgo5" : {
-      "minimal_similarity" : 59.67741935483871,
-      "maximum_similarity" : 66.07142857142857,
+      "minimal_similarity" : 0.5967741935483871,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
     "SortAlgo1_4-SortAlgo2_5" : {
-      "minimal_similarity" : 50.847457627118644,
-      "maximum_similarity" : 53.57142857142857,
+      "minimal_similarity" : 0.5084745762711864,
+      "maximum_similarity" : 0.5357142857142857,
       "matched_token_number" : 30
     },
     "SortAlgo1-SortAlgo4" : {
-      "minimal_similarity" : 83.05084745762711,
-      "maximum_similarity" : 87.5,
+      "minimal_similarity" : 0.8305084745762712,
+      "maximum_similarity" : 0.875,
       "matched_token_number" : 49
     },
     "SortAlgo1-SortAlgo5" : {
-      "minimal_similarity" : 69.64285714285714,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.6964285714285714,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
     "SortAlgo1-SortAlgo2" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo3_6-SortAlgo4" : {
-      "minimal_similarity" : 61.333333333333336,
-      "maximum_similarity" : 77.96610169491525,
+      "minimal_similarity" : 0.6133333333333333,
+      "maximum_similarity" : 0.7796610169491526,
       "matched_token_number" : 46
     },
     "SortAlgo1-SortAlgo3" : {
-      "minimal_similarity" : 75.3623188405797,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.7536231884057971,
+      "maximum_similarity" : 0.9285714285714286,
       "matched_token_number" : 52
     },
     "SortAlgo1_3-SortAlgo2_5" : {
-      "minimal_similarity" : 48.0,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.48,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo1_6-SortAlgo2" : {
-      "minimal_similarity" : 93.33333333333333,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.9333333333333333,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1-SortAlgo6" : {
-      "minimal_similarity" : 80.59701492537313,
-      "maximum_similarity" : 96.42857142857143,
+      "minimal_similarity" : 0.8059701492537313,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo1-SortAlgo7" : {
-      "minimal_similarity" : 69.86301369863014,
-      "maximum_similarity" : 91.07142857142857,
+      "minimal_similarity" : 0.6986301369863014,
+      "maximum_similarity" : 0.9107142857142857,
       "matched_token_number" : 51
     },
     "SortAlgo1_2-SortAlgo2_5" : {
-      "minimal_similarity" : 51.31578947368421,
-      "maximum_similarity" : 69.64285714285714,
-      "matched_token_number" : 39
-    },
-    "SortAlgo-SortAlgo2_5" : {
-      "minimal_similarity" : 69.64285714285714,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.5131578947368421,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
     "SortAlgo1_6-SortAlgo6" : {
-      "minimal_similarity" : 86.56716417910448,
-      "maximum_similarity" : 96.66666666666667,
+      "minimal_similarity" : 0.8656716417910447,
+      "maximum_similarity" : 0.9666666666666667,
       "matched_token_number" : 58
     },
+    "SortAlgo-SortAlgo2_5" : {
+      "minimal_similarity" : 0.6964285714285714,
+      "maximum_similarity" : 0.6964285714285714,
+      "matched_token_number" : 39
+    },
     "SortAlgo1_6-SortAlgo5" : {
-      "minimal_similarity" : 61.666666666666664,
-      "maximum_similarity" : 66.07142857142857,
+      "minimal_similarity" : 0.6166666666666667,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
     "SortAlgo1_6-SortAlgo4" : {
-      "minimal_similarity" : 80.0,
-      "maximum_similarity" : 81.35593220338983,
+      "minimal_similarity" : 0.8,
+      "maximum_similarity" : 0.8135593220338984,
       "matched_token_number" : 48
     },
     "SortAlgo1_6-SortAlgo3" : {
-      "minimal_similarity" : 75.3623188405797,
-      "maximum_similarity" : 86.66666666666667,
+      "minimal_similarity" : 0.7536231884057971,
+      "maximum_similarity" : 0.8666666666666667,
       "matched_token_number" : 52
     },
     "SortAlgo1_5-SortAlgo6" : {
-      "minimal_similarity" : 52.23880597014925,
-      "maximum_similarity" : 62.5,
+      "minimal_similarity" : 0.5223880597014925,
+      "maximum_similarity" : 0.625,
       "matched_token_number" : 35
     },
     "SortAlgo1_5-SortAlgo7" : {
-      "minimal_similarity" : 45.205479452054796,
-      "maximum_similarity" : 58.92857142857143,
+      "minimal_similarity" : 0.4520547945205479,
+      "maximum_similarity" : 0.5892857142857143,
       "matched_token_number" : 33
     },
     "SortAlgo2_5-SortAlgo7" : {
-      "minimal_similarity" : 45.205479452054796,
-      "maximum_similarity" : 58.92857142857143,
+      "minimal_similarity" : 0.4520547945205479,
+      "maximum_similarity" : 0.5892857142857143,
       "matched_token_number" : 33
     },
-    "SortAlgo1-SortAlgo4d3" : {
-      "minimal_similarity" : 87.09677419354838,
-      "maximum_similarity" : 96.42857142857143,
-      "matched_token_number" : 54
-    },
     "SortAlgo1_5-SortAlgo4" : {
-      "minimal_similarity" : 59.32203389830509,
-      "maximum_similarity" : 62.5,
+      "minimal_similarity" : 0.5932203389830508,
+      "maximum_similarity" : 0.625,
       "matched_token_number" : 35
     },
-    "SortAlgo1-SortAlgo4d2" : {
-      "minimal_similarity" : 84.375,
-      "maximum_similarity" : 96.42857142857143,
+    "SortAlgo1-SortAlgo4d3" : {
+      "minimal_similarity" : 0.8709677419354839,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo1_5-SortAlgo5" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
-    "SortAlgo1-SortAlgo4d1" : {
-      "minimal_similarity" : 85.71428571428571,
-      "maximum_similarity" : 96.42857142857143,
+    "SortAlgo1-SortAlgo4d2" : {
+      "minimal_similarity" : 0.84375,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo1_5-SortAlgo2" : {
-      "minimal_similarity" : 69.64285714285714,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.6964285714285714,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
     "SortAlgo3_5-SortAlgo6" : {
-      "minimal_similarity" : 57.971014492753625,
-      "maximum_similarity" : 59.701492537313435,
+      "minimal_similarity" : 0.5797101449275363,
+      "maximum_similarity" : 0.5970149253731343,
       "matched_token_number" : 40
     },
+    "SortAlgo1-SortAlgo4d1" : {
+      "minimal_similarity" : 0.8571428571428571,
+      "maximum_similarity" : 0.9642857142857143,
+      "matched_token_number" : 54
+    },
     "SortAlgo1_5-SortAlgo3" : {
-      "minimal_similarity" : 52.17391304347826,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.5217391304347826,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo3_5-SortAlgo7" : {
-      "minimal_similarity" : 46.57534246575342,
-      "maximum_similarity" : 49.27536231884058,
+      "minimal_similarity" : 0.4657534246575342,
+      "maximum_similarity" : 0.4927536231884058,
       "matched_token_number" : 34
     },
     "SortAlgo3-SortAlgo4d1" : {
-      "minimal_similarity" : 81.15942028985508,
-      "maximum_similarity" : 88.88888888888889,
+      "minimal_similarity" : 0.8115942028985508,
+      "maximum_similarity" : 0.8888888888888888,
       "matched_token_number" : 56
     },
     "SortAlgo3-SortAlgo4d3" : {
-      "minimal_similarity" : 81.15942028985508,
-      "maximum_similarity" : 90.3225806451613,
+      "minimal_similarity" : 0.8115942028985508,
+      "maximum_similarity" : 0.9032258064516129,
       "matched_token_number" : 56
     },
     "SortAlgo3-SortAlgo4d2" : {
-      "minimal_similarity" : 81.15942028985508,
-      "maximum_similarity" : 87.5,
+      "minimal_similarity" : 0.8115942028985508,
+      "maximum_similarity" : 0.875,
       "matched_token_number" : 56
     },
     "SortAlgo2-SortAlgo4d3" : {
-      "minimal_similarity" : 87.09677419354838,
-      "maximum_similarity" : 96.42857142857143,
+      "minimal_similarity" : 0.8709677419354839,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo2-SortAlgo4d1" : {
-      "minimal_similarity" : 85.71428571428571,
-      "maximum_similarity" : 96.42857142857143,
+      "minimal_similarity" : 0.8571428571428571,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
     "SortAlgo1_5-SortAlgo1_6" : {
-      "minimal_similarity" : 61.666666666666664,
-      "maximum_similarity" : 66.07142857142857,
+      "minimal_similarity" : 0.6166666666666667,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
     "SortAlgo2-SortAlgo4d2" : {
-      "minimal_similarity" : 84.375,
-      "maximum_similarity" : 96.42857142857143,
+      "minimal_similarity" : 0.84375,
+      "maximum_similarity" : 0.9642857142857143,
       "matched_token_number" : 54
     },
-    "SortAlgo3_6-SortAlgo4d2" : {
-      "minimal_similarity" : 73.33333333333333,
-      "maximum_similarity" : 85.9375,
-      "matched_token_number" : 55
-    },
     "SortAlgo4d1-SortAlgo7" : {
-      "minimal_similarity" : 65.75342465753425,
-      "maximum_similarity" : 76.19047619047619,
+      "minimal_similarity" : 0.6575342465753424,
+      "maximum_similarity" : 0.7619047619047619,
       "matched_token_number" : 48
     },
-    "SortAlgo3_6-SortAlgo4d1" : {
-      "minimal_similarity" : 73.33333333333333,
-      "maximum_similarity" : 87.3015873015873,
+    "SortAlgo3_6-SortAlgo4d2" : {
+      "minimal_similarity" : 0.7333333333333333,
+      "maximum_similarity" : 0.859375,
       "matched_token_number" : 55
     },
     "SortAlgo4d1-SortAlgo6" : {
-      "minimal_similarity" : 80.59701492537313,
-      "maximum_similarity" : 85.71428571428571,
+      "minimal_similarity" : 0.8059701492537313,
+      "maximum_similarity" : 0.8571428571428571,
       "matched_token_number" : 54
     },
+    "SortAlgo3_6-SortAlgo4d1" : {
+      "minimal_similarity" : 0.7333333333333333,
+      "maximum_similarity" : 0.873015873015873,
+      "matched_token_number" : 55
+    },
     "SortAlgo4-SortAlgo4d1" : {
-      "minimal_similarity" : 77.77777777777777,
-      "maximum_similarity" : 83.05084745762711,
+      "minimal_similarity" : 0.7777777777777778,
+      "maximum_similarity" : 0.8305084745762712,
+      "matched_token_number" : 49
+    },
+    "SortAlgo4-SortAlgo4d2" : {
+      "minimal_similarity" : 0.765625,
+      "maximum_similarity" : 0.8305084745762712,
       "matched_token_number" : 49
     },
     "SortAlgo3_6-SortAlgo4d3" : {
-      "minimal_similarity" : 73.33333333333333,
-      "maximum_similarity" : 88.70967741935483,
+      "minimal_similarity" : 0.7333333333333333,
+      "maximum_similarity" : 0.8870967741935484,
       "matched_token_number" : 55
     },
-    "SortAlgo4-SortAlgo4d2" : {
-      "minimal_similarity" : 76.5625,
-      "maximum_similarity" : 83.05084745762711,
-      "matched_token_number" : 49
-    },
     "SortAlgo4-SortAlgo4d3" : {
-      "minimal_similarity" : 79.03225806451613,
-      "maximum_similarity" : 83.05084745762711,
+      "minimal_similarity" : 0.7903225806451613,
+      "maximum_similarity" : 0.8305084745762712,
       "matched_token_number" : 49
-    },
-    "SortAlgo3_5-SortAlgo4" : {
-      "minimal_similarity" : 42.028985507246375,
-      "maximum_similarity" : 49.152542372881356,
-      "matched_token_number" : 29
     },
     "SortAlgo3_5-SortAlgo4d2" : {
-      "minimal_similarity" : 55.072463768115945,
-      "maximum_similarity" : 59.375,
+      "minimal_similarity" : 0.5507246376811594,
+      "maximum_similarity" : 0.59375,
       "matched_token_number" : 38
     },
+    "SortAlgo3_5-SortAlgo4" : {
+      "minimal_similarity" : 0.42028985507246375,
+      "maximum_similarity" : 0.4915254237288136,
+      "matched_token_number" : 29
+    },
     "SortAlgo4d1-SortAlgo5" : {
-      "minimal_similarity" : 58.73015873015873,
-      "maximum_similarity" : 66.07142857142857,
+      "minimal_similarity" : 0.5873015873015873,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
     "SortAlgo3_5-SortAlgo4d3" : {
-      "minimal_similarity" : 55.072463768115945,
-      "maximum_similarity" : 61.29032258064516,
+      "minimal_similarity" : 0.5507246376811594,
+      "maximum_similarity" : 0.6129032258064516,
       "matched_token_number" : 38
     },
     "SortAlgo3_5-SortAlgo5" : {
-      "minimal_similarity" : 75.3623188405797,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.7536231884057971,
+      "maximum_similarity" : 0.9285714285714286,
       "matched_token_number" : 52
     },
     "SortAlgo2_5-SortAlgo4" : {
-      "minimal_similarity" : 59.32203389830509,
-      "maximum_similarity" : 62.5,
+      "minimal_similarity" : 0.5932203389830508,
+      "maximum_similarity" : 0.625,
       "matched_token_number" : 35
     },
-    "SortAlgo2_5-SortAlgo3" : {
-      "minimal_similarity" : 52.17391304347826,
-      "maximum_similarity" : 64.28571428571429,
-      "matched_token_number" : 36
-    },
     "SortAlgo3_5-SortAlgo4d1" : {
-      "minimal_similarity" : 55.072463768115945,
-      "maximum_similarity" : 60.317460317460316,
+      "minimal_similarity" : 0.5507246376811594,
+      "maximum_similarity" : 0.6031746031746031,
       "matched_token_number" : 38
     },
+    "SortAlgo2_5-SortAlgo3" : {
+      "minimal_similarity" : 0.5217391304347826,
+      "maximum_similarity" : 0.6428571428571429,
+      "matched_token_number" : 36
+    },
     "SortAlgo2_5-SortAlgo6" : {
-      "minimal_similarity" : 52.23880597014925,
-      "maximum_similarity" : 62.5,
+      "minimal_similarity" : 0.5223880597014925,
+      "maximum_similarity" : 0.625,
       "matched_token_number" : 35
     },
     "SortAlgo2_5-SortAlgo5" : {
-      "minimal_similarity" : 100.0,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 1.0,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1-SortAlgo1_3" : {
-      "minimal_similarity" : 69.33333333333333,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.6933333333333334,
+      "maximum_similarity" : 0.9285714285714286,
       "matched_token_number" : 52
     },
     "SortAlgo1-SortAlgo1_2" : {
-      "minimal_similarity" : 73.6842105263158,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.7368421052631579,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1-SortAlgo1_6" : {
-      "minimal_similarity" : 93.33333333333333,
-      "maximum_similarity" : 100.0,
+      "minimal_similarity" : 0.9333333333333333,
+      "maximum_similarity" : 1.0,
       "matched_token_number" : 56
     },
     "SortAlgo1-SortAlgo1_5" : {
-      "minimal_similarity" : 69.64285714285714,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.6964285714285714,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
     "SortAlgo1-SortAlgo1_4" : {
-      "minimal_similarity" : 83.05084745762711,
-      "maximum_similarity" : 87.5,
+      "minimal_similarity" : 0.8305084745762712,
+      "maximum_similarity" : 0.875,
       "matched_token_number" : 49
     },
-    "SortAlgo2_5-SortAlgo4d1" : {
-      "minimal_similarity" : 58.73015873015873,
-      "maximum_similarity" : 66.07142857142857,
-      "matched_token_number" : 37
-    },
     "SortAlgo3-SortAlgo7" : {
-      "minimal_similarity" : 64.38356164383562,
-      "maximum_similarity" : 68.1159420289855,
+      "minimal_similarity" : 0.6438356164383562,
+      "maximum_similarity" : 0.6811594202898551,
       "matched_token_number" : 47
     },
-    "SortAlgo2_5-SortAlgo4d2" : {
-      "minimal_similarity" : 57.8125,
-      "maximum_similarity" : 66.07142857142857,
+    "SortAlgo2_5-SortAlgo4d1" : {
+      "minimal_similarity" : 0.5873015873015873,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
     "SortAlgo3-SortAlgo6" : {
-      "minimal_similarity" : 88.40579710144928,
-      "maximum_similarity" : 91.04477611940298,
+      "minimal_similarity" : 0.8840579710144928,
+      "maximum_similarity" : 0.9104477611940298,
       "matched_token_number" : 61
     },
+    "SortAlgo2_5-SortAlgo4d2" : {
+      "minimal_similarity" : 0.578125,
+      "maximum_similarity" : 0.6607142857142857,
+      "matched_token_number" : 37
+    },
     "SortAlgo1_4-SortAlgo1_5" : {
-      "minimal_similarity" : 50.847457627118644,
-      "maximum_similarity" : 53.57142857142857,
+      "minimal_similarity" : 0.5084745762711864,
+      "maximum_similarity" : 0.5357142857142857,
       "matched_token_number" : 30
     },
     "SortAlgo3-SortAlgo5" : {
-      "minimal_similarity" : 52.17391304347826,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.5217391304347826,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo1_4-SortAlgo1_6" : {
-      "minimal_similarity" : 83.33333333333333,
-      "maximum_similarity" : 84.7457627118644,
+      "minimal_similarity" : 0.8333333333333334,
+      "maximum_similarity" : 0.847457627118644,
       "matched_token_number" : 50
     },
     "SortAlgo3-SortAlgo4" : {
-      "minimal_similarity" : 69.56521739130434,
-      "maximum_similarity" : 81.35593220338983,
+      "minimal_similarity" : 0.6956521739130435,
+      "maximum_similarity" : 0.8135593220338984,
       "matched_token_number" : 48
     },
     "SortAlgo1_3-SortAlgo1_5" : {
-      "minimal_similarity" : 48.0,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.48,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo1_3-SortAlgo1_4" : {
-      "minimal_similarity" : 62.666666666666664,
-      "maximum_similarity" : 79.66101694915254,
+      "minimal_similarity" : 0.6266666666666667,
+      "maximum_similarity" : 0.7966101694915254,
       "matched_token_number" : 47
     },
     "SortAlgo2_5-SortAlgo4d3" : {
-      "minimal_similarity" : 59.67741935483871,
-      "maximum_similarity" : 66.07142857142857,
+      "minimal_similarity" : 0.5967741935483871,
+      "maximum_similarity" : 0.6607142857142857,
       "matched_token_number" : 37
     },
     "SortAlgo1_3-SortAlgo1_6" : {
-      "minimal_similarity" : 69.33333333333333,
-      "maximum_similarity" : 86.66666666666667,
-      "matched_token_number" : 52
-    },
-    "SortAlgo-SortAlgo3_6" : {
-      "minimal_similarity" : 69.33333333333333,
-      "maximum_similarity" : 92.85714285714286,
+      "minimal_similarity" : 0.6933333333333334,
+      "maximum_similarity" : 0.8666666666666667,
       "matched_token_number" : 52
     },
     "SortAlgo1_2-SortAlgo1_5" : {
-      "minimal_similarity" : 51.31578947368421,
-      "maximum_similarity" : 69.64285714285714,
+      "minimal_similarity" : 0.5131578947368421,
+      "maximum_similarity" : 0.6964285714285714,
       "matched_token_number" : 39
     },
+    "SortAlgo-SortAlgo3_6" : {
+      "minimal_similarity" : 0.6933333333333334,
+      "maximum_similarity" : 0.9285714285714286,
+      "matched_token_number" : 52
+    },
     "SortAlgo-SortAlgo3_5" : {
-      "minimal_similarity" : 52.17391304347826,
-      "maximum_similarity" : 64.28571428571429,
+      "minimal_similarity" : 0.5217391304347826,
+      "maximum_similarity" : 0.6428571428571429,
       "matched_token_number" : 36
     },
     "SortAlgo1_2-SortAlgo1_6" : {
-      "minimal_similarity" : 76.3157894736842,
-      "maximum_similarity" : 96.66666666666667,
+      "minimal_similarity" : 0.7631578947368421,
+      "maximum_similarity" : 0.9666666666666667,
       "matched_token_number" : 58
     },
     "SortAlgo1_2-SortAlgo1_3" : {
-      "minimal_similarity" : 68.42105263157895,
-      "maximum_similarity" : 69.33333333333333,
+      "minimal_similarity" : 0.6842105263157895,
+      "maximum_similarity" : 0.6933333333333334,
       "matched_token_number" : 52
     },
     "SortAlgo1_2-SortAlgo1_4" : {
-      "minimal_similarity" : 68.42105263157895,
-      "maximum_similarity" : 88.13559322033899,
+      "minimal_similarity" : 0.6842105263157895,
+      "maximum_similarity" : 0.8813559322033898,
       "matched_token_number" : 52
     }
   }

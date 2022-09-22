@@ -25,7 +25,7 @@ public class ParallelComparisonTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
         assertEquals(1, result.getSimilarityDistribution()[3]);
-        assertEquals(62.07, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     /**
@@ -40,7 +40,7 @@ public class ParallelComparisonTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(2, result.getAllComparisons().get(0).matches().size());
         assertArrayEquals(expectedDistribution, result.getSimilarityDistribution());
-        assertEquals(96.55, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.9655, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     /**
@@ -74,17 +74,17 @@ public class ParallelComparisonTest extends TestBase {
                 .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
-        assertEquals(24.6, getSelectedPercent(result, "A", "B"), DELTA);
-        assertEquals(99.7, getSelectedPercent(result, "A", "C"), DELTA);
-        assertEquals(77.9, getSelectedPercent(result, "A", "D"), DELTA);
-        assertEquals(24.6, getSelectedPercent(result, "B", "C"), DELTA);
-        assertEquals(28.3, getSelectedPercent(result, "B", "D"), DELTA);
-        assertEquals(77.9, getSelectedPercent(result, "C", "D"), DELTA);
+        assertEquals(0.246, getSelectedPercent(result, "A", "B"), DELTA);
+        assertEquals(0.997, getSelectedPercent(result, "A", "C"), DELTA);
+        assertEquals(0.779, getSelectedPercent(result, "A", "D"), DELTA);
+        assertEquals(0.246, getSelectedPercent(result, "B", "C"), DELTA);
+        assertEquals(0.283, getSelectedPercent(result, "B", "D"), DELTA);
+        assertEquals(0.779, getSelectedPercent(result, "C", "D"), DELTA);
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
-        assertEquals(96.4, biggestMatch.get().maximalSimilarity(), DELTA);
-        assertEquals(65.3, biggestMatch.get().minimalSimilarity(), DELTA);
+        assertEquals(0.964, biggestMatch.get().maximalSimilarity(), DELTA);
+        assertEquals(0.653, biggestMatch.get().minimalSimilarity(), DELTA);
         assertEquals(12, biggestMatch.get().matches().size());
     }
 

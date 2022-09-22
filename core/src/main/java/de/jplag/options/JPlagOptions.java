@@ -36,7 +36,7 @@ import de.jplag.clustering.ClusteringOptions;
  * @param similarityMetric The similarity metric determines how the minimum similarity threshold required for a
  * comparison (of two submissions) is calculated. This affects which comparisons are stored and thus make it into the
  * result object.
- * @param similarityThreshold Percentage value (must be between 0 and 100). Comparisons (of submissions pairs) with a
+ * @param similarityThreshold Similarity value (must be between 0 and 1). Comparisons (of submissions pairs) with a
  * similarity below this threshold will be ignored. The default value of 0 allows all matches to be stored. This affects
  * which comparisons are stored and thus make it into the result object. See also {@link #similarityMetric()}.
  * @param maximumNumberOfComparisons The maximum number of comparisons that will be shown in the generated report. If
@@ -222,9 +222,9 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, List<St
     }
 
     private static double normalizeSimilarityThreshold(double similarityThreshold) {
-        if (similarityThreshold > 100) {
-            logger.warn("Maximum threshold of 100 used instead of {}", similarityThreshold);
-            return 100;
+        if (similarityThreshold > 1) {
+            logger.warn("Maximum threshold of 1 used instead of {}", similarityThreshold);
+            return 1;
         } else if (similarityThreshold < 0) {
             logger.warn("Minimum threshold of 0 used instead of {}", similarityThreshold);
             return 0;

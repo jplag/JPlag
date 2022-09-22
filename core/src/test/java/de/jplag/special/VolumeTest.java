@@ -36,7 +36,7 @@ public class VolumeTest extends TestBase {
 
     /**
      * This test requires a folder "data" with submissions and a file named "matches_avg.csv" inside the volume folder.
-     * Accepts a derivation of 0.1% in the matching percentage
+     * Accepts a derivation of {@link #DELTA} in the matching similarity
      */
     @Test
     @Disabled
