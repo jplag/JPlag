@@ -27,6 +27,7 @@ In the following, a list of all supported languages with their supported languag
 | [Rust](https://www.rust-lang.org/)                               |  1.60.0 | rust                  | beta | ANTLR 4 |
 | [Scala](https://www.scala-lang.org)                              |  2.13.8 | scala                 | beta | Scalameta |
 | [Scheme](http://www.scheme-reports.org)                          |       ? | scheme                | unknown | JavaCC |
+| [Swift](https://www.swift.org)                                   |     5.4 | swift                 | beta | ANTLR 4 |
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/)           |  2.25.0 | emf-metamodel         | alpha | EMF |
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/) (dynamic) |  2.25.0 | emf-metamodel-dynamic | alpha | EMF |
 | Text (naive)                                                     |       - | text                  | legacy | CoreNLP |
@@ -68,7 +69,7 @@ Usage: JPlag [ options ] [ <root-dir> ... ] [ -new <new-dir> ... ] [ -old <old-d
 
 named arguments:
   -h, --help       show this help message and exit
-  -l               {java,python3,cpp,csharp,golang,kotlin,rlang,rust,scala,text,scheme,emf-metamodel,emf-metamodel-dynamic} Select the language to parse the submissions (default: java)
+  -l               {java,python3,cpp,csharp,golang,kotlin,rlang,rust,scala,text,scheme,swift,emf-metamodel,emf-metamodel-dynamic} Select the language to parse the submissions (default: java)
   -bc BC           Path of the directory containing the base code (common framework used in all submissions)
   -v               {quiet,long} Verbosity of the logging (default: quiet)
   -d               Debug parser. Non-parsable files will be stored (default: false)
