@@ -10,7 +10,7 @@ import scala.meta._
 
 
 class Parser extends AbstractParser {
-    private var currentFile: String = _
+    private var currentFile: File = _
 
     private var tokens: ListBuffer[Token] = _
 
@@ -345,7 +345,7 @@ class Parser extends AbstractParser {
     }
 
     private def parseFile(file: File): Boolean = {
-        currentFile = file.getName
+        currentFile = file
 
         try {
             val bytes = java.nio.file.Files.readAllBytes(file.toPath)

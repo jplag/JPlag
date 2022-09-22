@@ -10,7 +10,7 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 
 public class Parser extends AbstractParser {
-    private String currentFile;
+    private File currentFile;
 
     private List<Token> tokens;
 
@@ -25,7 +25,7 @@ public class Parser extends AbstractParser {
         tokens = new ArrayList<>();
         errors = 0;
         for (File file : files) {
-            currentFile = file.getName();
+            currentFile = file;
             logger.trace("Parsing file {}", file.getName());
             if (!SchemeParser.parseFile(file, null, this)) {
                 errors++;

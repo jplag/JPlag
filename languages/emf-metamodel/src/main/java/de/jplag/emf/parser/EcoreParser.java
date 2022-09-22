@@ -22,7 +22,7 @@ import de.jplag.emf.util.MetamodelTreeView;
  */
 public class EcoreParser extends AbstractParser {
     protected List<Token> tokens;
-    protected String currentFile;
+    protected File currentFile;
     protected MetamodelTreeView treeView;
     protected AbstractMetamodelVisitor visitor;
 
@@ -42,7 +42,7 @@ public class EcoreParser extends AbstractParser {
         errors = 0;
         tokens = new ArrayList<>();
         for (File file : files) {
-            currentFile = file.getName();
+            currentFile = file;
             parseModelFile(file);
         }
         return tokens;

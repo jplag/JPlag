@@ -26,8 +26,8 @@ public class Parser extends AbstractParser {
         return tokens;
     }
 
-    public void add(TokenType type, String filename, long line, long column, long length) {
-        add(new Token(type, filename, (int) line, (int) column, (int) length));
+    public void add(TokenType type, File file, long line, long column, long length) {
+        add(new Token(type, file, (int) line, (int) column, (int) length));
     }
 
     public void add(Token token) {

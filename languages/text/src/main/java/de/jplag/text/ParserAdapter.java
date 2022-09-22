@@ -24,7 +24,7 @@ public class ParserAdapter extends AbstractParser {
     private final StanfordCoreNLP pipeline;
 
     private List<Token> tokens;
-    private String currentFile;
+    private File currentFile;
     private int currentLine;
     /**
      * The position of the current line break in the content string
@@ -45,13 +45,13 @@ public class ParserAdapter extends AbstractParser {
             if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file.getName()));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
     private boolean parseFile(File file) {
-        this.currentFile = file.getName();
+        this.currentFile = file;
         this.currentLine = 1; // lines start at 1
         this.currentLineBreakIndex = 0;
         String content = readFile(file);

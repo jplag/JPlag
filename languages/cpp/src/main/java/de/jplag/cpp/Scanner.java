@@ -9,7 +9,7 @@ import de.jplag.AbstractParser;
 import de.jplag.Token;
 
 public class Scanner extends AbstractParser {
-    private String currentFile;
+    private File currentFile;
 
     private List<Token> tokens;
 
@@ -24,7 +24,7 @@ public class Scanner extends AbstractParser {
         tokens = new ArrayList<>();
         errors = 0;
         for (File file : files) {
-            this.currentFile = file.getName();
+            this.currentFile = file;
             logger.trace("Scanning file {}", currentFile);
             if (!CPPScanner.scanFile(file, this)) {
                 errors++;

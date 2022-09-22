@@ -26,7 +26,7 @@ import de.jplag.rlang.grammar.RParser;
  */
 public class RParserAdapter extends AbstractParser {
 
-    private String currentFile;
+    private File currentFile;
     private List<Token> tokens;
 
     /**
@@ -48,14 +48,14 @@ public class RParserAdapter extends AbstractParser {
             if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file.getName()));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
     private boolean parseFile(File file) {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            currentFile = file.getName();
+            currentFile = file;
 
             // create a lexer, a parser and a buffer between them.
             RLexer lexer = new RLexer(CharStreams.fromStream(inputStream));

@@ -19,7 +19,7 @@ import de.jplag.kotlin.grammar.KotlinLexer;
 import de.jplag.kotlin.grammar.KotlinParser;
 
 public class KotlinParserAdapter extends AbstractParser {
-    private String currentFile;
+    private File currentFile;
     private List<Token> tokens;
 
     /**
@@ -40,14 +40,14 @@ public class KotlinParserAdapter extends AbstractParser {
             if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file.getName()));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
     private boolean parseFile(File file) {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            currentFile = file.getName();
+            currentFile = file;
 
             KotlinLexer lexer = new KotlinLexer(CharStreams.fromStream(inputStream));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);

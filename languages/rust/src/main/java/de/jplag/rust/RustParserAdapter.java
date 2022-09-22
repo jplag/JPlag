@@ -20,7 +20,7 @@ import de.jplag.rust.grammar.RustParser;
 
 public class RustParserAdapter extends AbstractParser {
 
-    private String currentFile;
+    private File currentFile;
     private List<Token> tokens;
 
     /**
@@ -35,14 +35,14 @@ public class RustParserAdapter extends AbstractParser {
             if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file.getName()));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
     private boolean parseFile(File file) {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            currentFile = file.getName();
+            currentFile = file;
 
             // create a lexer, a parser and a buffer between them.
             RustLexer lexer = new RustLexer(CharStreams.fromStream(inputStream));

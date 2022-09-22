@@ -24,7 +24,7 @@ import de.jplag.python3.grammar.Python3Parser.File_inputContext;
 public class Parser extends AbstractParser {
 
     private List<Token> tokens;
-    private String currentFile;
+    private File currentFile;
 
     /**
      * Creates the parser.
@@ -41,7 +41,7 @@ public class Parser extends AbstractParser {
             if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file.getName()));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
@@ -52,7 +52,7 @@ public class Parser extends AbstractParser {
         CharStream input;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(file));
-            currentFile = file.getName();
+            currentFile = file;
             input = CharStreams.fromStream(inputStream);
 
             // create a lexer that feeds off of input CharStream
@@ -80,11 +80,10 @@ public class Parser extends AbstractParser {
     }
 
     public void add(TokenType type, org.antlr.v4.runtime.Token token) {
-        tokens.add(new Token(type, (currentFile == null ? "null" : currentFile), token.getLine(), token.getCharPositionInLine() + 1,
-                token.getText().length()));
+        tokens.add(new Token(type, currentFile, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length()));
     }
 
     public void addEnd(TokenType type, org.antlr.v4.runtime.Token token) {
-        tokens.add(new Token(type, (currentFile == null ? "null" : currentFile), token.getLine(), tokens.get(tokens.size() - 1).getColumn() + 1, 0));
+        tokens.add(new Token(type, currentFile, token.getLine(), tokens.get(tokens.size() - 1).getColumn() + 1, 0));
     }
 }

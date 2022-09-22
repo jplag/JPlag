@@ -40,10 +40,11 @@ public class JavacAdapter {
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = trees.getSourcePositions();
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
-                final String filename = relativeFileName(ast, files);
+                final String filename = ast.getSourceFile().getName();
+                File file = new File(ast.getSourceFile().toUri());
                 final LineMap map = ast.getLineMap();
-                ast.accept(new TokenGeneratingTreeScanner(filename, parser, map, positions, ast), null);
-                parser.add(Token.fileEnd(filename));
+                ast.accept(new TokenGeneratingTreeScanner(file, parser, map, positions, ast), null);
+                parser.add(Token.fileEnd(file));
             }
         } catch (IOException exception) {
             parser.logger.error(exception.getMessage(), exception);
@@ -59,20 +60,6 @@ public class JavacAdapter {
             logger.error(exception.getMessage(), exception);
         }
         return abstractSyntaxTrees;
-    }
-
-    private String relativeFileName(final CompilationUnitTree ast, Set<File> files) {
-        String fullFilePath = ast.getSourceFile().toUri().toString();
-        var matchingFile = files.stream().filter(file -> {
-            try {
-                if (file.getCanonicalPath().contains(fullFilePath)) {
-                    return true;
-                }
-            } catch (IOException e) {
-            }
-            return false;
-        }).map(File::getName).findFirst();
-        return matchingFile.orElse(ast.getSourceFile().getName());
     }
 
     private int processErrors(Logger logger, DiagnosticCollector<Object> listener) {

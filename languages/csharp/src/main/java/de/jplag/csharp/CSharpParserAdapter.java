@@ -26,7 +26,7 @@ import de.jplag.csharp.grammar.CSharpParser;
  */
 public class CSharpParserAdapter extends AbstractParser {
     private List<Token> tokens;
-    private String currentFile;
+    private File currentFile;
 
     /**
      * Creates the parser adapter.
@@ -47,14 +47,14 @@ public class CSharpParserAdapter extends AbstractParser {
             if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file.getName()));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
     private boolean parseFile(File file) {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            currentFile = file.getName();
+            currentFile = file;
 
             // create a lexer, a parser and a buffer between them.
             CSharpLexer lexer = new CSharpLexer(CharStreams.fromStream(inputStream));

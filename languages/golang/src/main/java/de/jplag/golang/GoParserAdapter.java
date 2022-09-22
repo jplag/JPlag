@@ -20,7 +20,7 @@ import de.jplag.golang.grammar.GoLexer;
 import de.jplag.golang.grammar.GoParser;
 
 public class GoParserAdapter extends AbstractParser {
-    private String currentFile;
+    private File currentFile;
     private List<Token> tokens;
 
     public List<Token> parse(Set<File> files) {
@@ -29,14 +29,14 @@ public class GoParserAdapter extends AbstractParser {
             if (!parseFile(file)) {
                 errors++;
             }
-            tokens.add(Token.fileEnd(file.getName()));
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
     private boolean parseFile(File file) {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            currentFile = file.getName();
+            currentFile = file;
 
             GoLexer lexer = new GoLexer(CharStreams.fromStream(inputStream));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
