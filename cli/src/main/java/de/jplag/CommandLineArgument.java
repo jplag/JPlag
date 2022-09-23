@@ -42,7 +42,7 @@ public enum CommandLineArgument {
                                                                                                                            // integrating a
     // real logging library
     DEBUG(new Builder("-d", Boolean.class).argumentGroup(ADVANCED_GROUP)),
-    SUBDIRECTORY(new Builder("-S", String.class).argumentGroup(ADVANCED_GROUP)),
+    SUBDIRECTORY(new Builder("-s", String.class).argumentGroup(ADVANCED_GROUP)),
     SUFFIXES(new Builder("-p", String.class).argumentGroup(ADVANCED_GROUP)),
     EXCLUDE_FILE(new Builder("-x", String.class).argumentGroup(ADVANCED_GROUP)),
     MIN_TOKEN_MATCH("-t", Integer.class),

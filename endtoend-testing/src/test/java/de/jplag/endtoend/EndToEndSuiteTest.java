@@ -3,6 +3,7 @@ package de.jplag.endtoend;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -13,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DynamicTest;
@@ -147,8 +150,8 @@ public class EndToEndSuiteTest {
         String[] submissionPath = FileHelper.createNewTestCaseDirectory(testFiles);
 
         var language = LanguageLoader.getLanguage(languageIdentifier).orElseThrow();
-        JPlagOptions jplagOptions = new JPlagOptions(language, Arrays.asList(submissionPath), new ArrayList<>())
-                .withMinimumTokenMatch(options.minimumTokenMatch());
+        JPlagOptions jplagOptions = new JPlagOptions(language, Arrays.stream(submissionPath).map(path -> new File(path)).collect(Collectors.toSet()),
+                Set.of()).withMinimumTokenMatch(options.minimumTokenMatch());
         JPlagResult jplagResult = new JPlag(jplagOptions).run();
 
         List<JPlagComparison> currentJPlagComparison = jplagResult.getAllComparisons();
