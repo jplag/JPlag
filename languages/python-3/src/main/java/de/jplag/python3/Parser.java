@@ -1,6 +1,5 @@
 package de.jplag.python3;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -45,16 +43,11 @@ public class Parser extends AbstractParser {
     }
 
     private void parseFile(File file) throws ParsingException {
-        BufferedInputStream inputStream;
-
-        CharStream input;
-        try {
-            inputStream = new BufferedInputStream(new FileInputStream(file));
+        try (FileInputStream fileInputStream = new FileInputStream((file))) {
             currentFile = file;
-            input = CharStreams.fromStream(inputStream);
 
             // create a lexer that feeds off of input CharStream
-            Python3Lexer lexer = new Python3Lexer(input);
+            Python3Lexer lexer = new Python3Lexer(CharStreams.fromStream(fileInputStream));
 
             // create a buffer of tokens pulled from the lexer
             CommonTokenStream tokens = new CommonTokenStream(lexer);
