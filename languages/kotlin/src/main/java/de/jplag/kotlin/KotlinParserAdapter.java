@@ -61,7 +61,6 @@ public class KotlinParserAdapter extends AbstractParser {
                 treeWalker.walk(listener, parseTree);
             }
         } catch (IOException exception) {
-            logger.error("Parsing Error in '{}': {}{}", file.getName(), File.separator, exception);
             throw new ParsingException(file, exception.getMessage(), exception);
         }
     }

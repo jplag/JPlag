@@ -69,7 +69,6 @@ public class CSharpParserAdapter extends AbstractParser {
                 treeWalker.walk(new CSharpListener(this), parseTree);
             }
         } catch (IOException exception) {
-            logger.error("Parsing Error in '" + file.getName() + "':" + File.separator + exception, exception);
             throw new ParsingException(file, exception.getMessage(), exception);
         }
     }

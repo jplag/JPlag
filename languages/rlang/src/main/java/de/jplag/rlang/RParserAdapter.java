@@ -75,7 +75,6 @@ public class RParserAdapter extends AbstractParser {
                 treeWalker.walk(new JPlagRListener(this), parseTree);
             }
         } catch (IOException exception) {
-            logger.error("Parsing Error in '" + file.getName() + "': " + File.separator + exception.getMessage(), exception);
             throw new ParsingException(file, exception.getMessage(), exception);
         }
     }

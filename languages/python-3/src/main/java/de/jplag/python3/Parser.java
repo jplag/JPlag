@@ -70,7 +70,6 @@ public class Parser extends AbstractParser {
             }
 
         } catch (IOException e) {
-            logger.error("Parsing Error in '" + file + "': " + e.getMessage(), e);
             throw new ParsingException(file, e.getMessage(), e);
         }
     }

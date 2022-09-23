@@ -102,7 +102,6 @@ public class ParserAdapter extends AbstractParser {
         try {
             return Files.readString(file.toPath());
         } catch (IOException e) {
-            logger.error("Error reading from file {}", file.getName(), e);
             throw new ParsingException(file, e.getMessage(), e);
         }
     }

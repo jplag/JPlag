@@ -50,7 +50,6 @@ public class GoParserAdapter extends AbstractParser {
                 treeWalker.walk(listener, parseTree);
             }
         } catch (IOException exception) {
-            logger.error("Parsing Error in '%s':".formatted(file.getName()), exception);
             throw new ParsingException(file, exception.getMessage(), exception);
         }
     }

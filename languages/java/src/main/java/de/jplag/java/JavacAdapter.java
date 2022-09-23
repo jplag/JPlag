@@ -53,7 +53,6 @@ public class JavacAdapter {
                 parser.add(Token.fileEnd(file));
             }
         } catch (IOException exception) {
-            parser.logger.error(exception.getMessage(), exception);
             throw new ParsingException(null, exception.getMessage(), exception);
         }
         processErrors(parser.logger, listener);
