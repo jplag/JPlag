@@ -1,6 +1,8 @@
 package de.jplag.java;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
@@ -53,7 +55,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     private final SourcePositions positions;
     private final CompilationUnitTree ast;
 
-    private ParsingException parsingException;
+    private List<ParsingException> parsingExceptions = new ArrayList<>();
 
     public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
         this.file = file;
@@ -63,8 +65,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         this.ast = ast;
     }
 
-    public ParsingException getParsingException() {
-        return parsingException;
+    public List<ParsingException> getParsingExceptions() {
+        return parsingExceptions;
     }
 
     /**
@@ -401,7 +403,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
 
     @Override
     public Object visitErroneous(ErroneousTree node, Object p) {
-        parsingException = new ParsingException(file, "error while visiting %s".formatted(node));
+        parsingExceptions.add(new ParsingException(file, "error while visiting %s".formatted(node)));
         return super.visitErroneous(node, p);
     }
 
