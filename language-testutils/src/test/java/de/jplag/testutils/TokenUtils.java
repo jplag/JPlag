@@ -1,5 +1,6 @@
 package de.jplag.testutils;
 
+import java.io.File;
 import java.util.List;
 
 import de.jplag.Token;
@@ -14,21 +15,21 @@ public final class TokenUtils {
     /**
      * Returns the type of all tokens that belong to a certain file.
      * @param tokens is the list of {@link Token Tokens}.
-     * @param name is the name of the target file.
+     * @param file is the target file.
      * @return the immutable list of token types.
      */
-    public static List<TokenType> tokenTypesByFile(List<Token> tokens, String name) {
-        return tokensByFile(tokens, name).stream().map(Token::getType).toList();
+    public static List<TokenType> tokenTypesByFile(List<Token> tokens, File file) {
+        return tokensByFile(tokens, file).stream().map(Token::getType).toList();
     }
 
     /**
      * Returns the tokens that belong to a certain file.
      * @param tokens is the list of {@link Token Tokens}.
-     * @param name is the name of the target file.
+     * @param file is the target file.
      * @return the immutable list of tokens.
      */
-    public static List<Token> tokensByFile(List<Token> tokens, String name) {
-        return tokens.stream().filter(it -> it.getFile().startsWith(name)).toList();
+    public static List<Token> tokensByFile(List<Token> tokens, File file) {
+        return tokens.stream().filter(it -> it.getFile().equals(file)).toList();
     }
 
 }

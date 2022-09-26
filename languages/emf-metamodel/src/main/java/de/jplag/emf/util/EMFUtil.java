@@ -57,17 +57,16 @@ public final class EMFUtil {
 
     /**
      * Loads a model or metamodel from a absolute file path.
-     * @param filePath is the absolute path to the (meta)model.
+     * @param file is file to the (meta)model.
      * @return the content of the loaded (meta)model resource or null if it could not be loaded.
      */
-    public static List<EObject> loadModel(String filePath) {
+    public static List<EObject> loadModel(File file) {
         final ResourceSet resourceSet = new ResourceSetImpl();
         try {
-            final Resource resource = resourceSet.getResource(URI.createFileURI(filePath), true);
+            final Resource resource = resourceSet.getResource(URI.createFileURI(file.getAbsolutePath()), true);
             return resource.getContents();
         } catch (WrappedException exception) {
-            String name = new File(filePath).getName();
-            logger.error("Could not load " + name + ": " + exception.getCause().getMessage());
+            logger.error("Could not load {}: {}", file, exception.getCause().getMessage());
         }
         return null;
     }

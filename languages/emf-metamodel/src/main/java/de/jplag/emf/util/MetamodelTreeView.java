@@ -19,7 +19,7 @@ import de.jplag.emf.MetamodelToken;
  * @author Timur Saglam
  */
 public class MetamodelTreeView {
-    private final String filePath;
+    private final File file;
     private int lineIndex;
     private int columnIndex;
     private final StringBuilder viewBuilder;
@@ -28,10 +28,10 @@ public class MetamodelTreeView {
 
     /**
      * Creates a tree view for a metamodel.
-     * @param filePath is the path to the file where the metamodel is persisted.
+     * @param file is the file where the metamodel is persisted.
      */
-    public MetamodelTreeView(String filePath) {
-        this.filePath = filePath;
+    public MetamodelTreeView(File file) {
+        this.file = file;
         logger = LoggerFactory.getLogger(this.getClass());
         viewBuilder = new StringBuilder();
     }
@@ -85,7 +85,7 @@ public class MetamodelTreeView {
      * @param suffix is the suffix of the file to be written.
      */
     public void writeToFile(String suffix) {
-        File treeViewFile = new File(filePath + suffix);
+        File treeViewFile = new File(file, suffix);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(treeViewFile));) {
             if (!treeViewFile.createNewFile()) {
                 logger.warn("Overwriting tree view file: {}", treeViewFile);

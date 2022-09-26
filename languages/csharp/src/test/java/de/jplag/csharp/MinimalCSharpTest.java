@@ -26,12 +26,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
@@ -54,15 +56,14 @@ class MinimalCSharpTest {
     }
 
     @Test
-    void testParsingTestClass() {
+    void testParsingTestClass() throws ParsingException {
         List<TokenType> expectedToken = List.of(CLASS, CLASS_BEGIN, FIELD, CONSTRUCTOR, LOCAL_VARIABLE, METHOD, METHOD_BEGIN, IF, IF_BEGIN,
                 INVOCATION, IF_END, IF_BEGIN, INVOCATION, IF_END, METHOD_END, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, ACCESSOR_END, ACCESSOR_BEGIN,
                 ACCESSOR_END, ACCESSORS_END, FIELD, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, RETURN, ACCESSOR_END, ACCESSOR_BEGIN, ASSIGNMENT,
                 ACCESSOR_END, ACCESSORS_END, CLASS_END, SharedTokenType.FILE_END);
 
         // Parse test input
-        String[] input = new String[] {TEST_SUBJECT};
-        List<Token> result = language.parse(baseDirectory, input);
+        List<Token> result = language.parse(Set.of(new File(baseDirectory, TEST_SUBJECT)));
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         // Compare parsed tokens:

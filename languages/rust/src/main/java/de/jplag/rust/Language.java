@@ -2,7 +2,9 @@ package de.jplag.rust;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
+import de.jplag.ParsingException;
 import de.jplag.Token;
 
 public class Language implements de.jplag.Language {
@@ -39,13 +41,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public List<Token> parse(File directory, String[] files) {
-        return parserAdapter.parse(directory, files);
+    public List<Token> parse(Set<File> files) throws ParsingException {
+        return parserAdapter.parse(files);
     }
-
-    @Override
-    public boolean hasErrors() {
-        return parserAdapter.hasErrors();
-    }
-
 }

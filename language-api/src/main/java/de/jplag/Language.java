@@ -2,6 +2,7 @@ package de.jplag;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Common interface for all languages. Each language-front end must provide a concrete language implementation.
@@ -29,17 +30,12 @@ public interface Language {
     int minimumTokenMatch();
 
     /**
-     * Parses a set files in a directory.
-     * @param directory is the directory where the files are located.
-     * @param files are the names of the files to parse.
+     * Parses a set of files.
+     * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
+     * @throws ParsingException if an error during parsing the files occurred.
      */
-    List<Token> parse(File directory, String[] files);
-
-    /**
-     * Whether errors were found during the last {@link #parse}.
-     */
-    boolean hasErrors();
+    List<Token> parse(Set<File> files) throws ParsingException;
 
     /**
      * Determines whether a fixed-width font should be used to display that language.
@@ -62,5 +58,4 @@ public interface Language {
     default String viewFileSuffix() {
         return "";
     }
-
 }

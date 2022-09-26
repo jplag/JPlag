@@ -1,9 +1,9 @@
 package de.jplag;
 
-import static de.jplag.SharedTokenType.FILE_END;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,37 +28,38 @@ class TokenPrinterTest {
 
         // See TokenPrinterTest.txt for the intended behaviour
         List<Token> tokens = new ArrayList<>();
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 1, 1, "STRING".length()));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 2, 1, "STRING".length() + 1));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 3, 1, "STRING".length() + 2));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 4, 1, "STRING".length() + 10));
+        File testFile = new File(TEST_FILE_LOCATION.toFile(), TEST_FILE_NAME);
+        tokens.add(new Token(TestTokenType.STRING, testFile, 1, 1, "STRING".length()));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 2, 1, "STRING".length() + 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 3, 1, "STRING".length() + 2));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 4, 1, "STRING".length() + 10));
 
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 6, 3, 1));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 7, 9, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 6, 3, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 7, 9, 1));
 
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 9, 1, 1));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 9, 10, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 9, 1, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 9, 10, 1));
 
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 10, 1, 1));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 10, 5, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 10, 1, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 10, 5, 1));
 
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 12, 1, 1));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 12, 5, 1));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 12, 10, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 12, 1, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 12, 5, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 12, 10, 1));
 
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 14, 10, 1));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 14, 5, 1));
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 14, 1, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 14, 10, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 14, 5, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 14, 1, 1));
 
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 16, -5, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 16, -5, 1));
 
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 19, 100, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 19, 100, 1));
 
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 22, 1, 100));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 22, 1, 100));
 
-        tokens.add(new Token(FILE_END, TEST_FILE_NAME, Token.NO_VALUE, Token.NO_VALUE, Token.NO_VALUE));
+        tokens.add(Token.fileEnd(testFile));
 
-        tokens.add(new Token(TestTokenType.STRING, TEST_FILE_NAME, 100, 1, 1));
+        tokens.add(new Token(TestTokenType.STRING, testFile, 100, 1, 1));
 
         String output = TokenPrinter.printTokens(tokens, TEST_FILE_LOCATION.toFile());
         logger.info(output); // no additional newline required

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -13,6 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.csharp.grammar.CSharpLexer;
@@ -25,7 +27,7 @@ import de.jplag.csharp.grammar.CSharpParser;
  */
 public class CSharpParserAdapter extends AbstractParser {
     private List<Token> tokens;
-    private String currentFile;
+    private File currentFile;
 
     /**
      * Creates the parser adapter.
@@ -35,27 +37,22 @@ public class CSharpParserAdapter extends AbstractParser {
     }
 
     /**
-     * Parses all tokens form a list of files.
-     * @param directory is the base directory.
-     * @param fileNames is the list of file names.
+     * Parses all tokens from a set of files.
+     * @param files is the set of files.
      * @return the list of parsed tokens.
      */
-    public List<Token> parse(File directory, List<String> fileNames) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        errors = 0;
-        for (String fileName : fileNames) {
-            if (!parseFile(directory, fileName)) {
-                errors++;
-            }
-            tokens.add(Token.fileEnd(fileName));
+        for (File file : files) {
+            parseFile(file);
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
-    private boolean parseFile(File directory, String fileName) {
-        File file = new File(directory, fileName);
+    private void parseFile(File file) throws ParsingException {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            currentFile = fileName;
+            currentFile = file;
 
             // create a lexer, a parser and a buffer between them.
             CSharpLexer lexer = new CSharpLexer(CharStreams.fromStream(inputStream));
@@ -72,10 +69,8 @@ public class CSharpParserAdapter extends AbstractParser {
                 treeWalker.walk(new CSharpListener(this), parseTree);
             }
         } catch (IOException exception) {
-            logger.error("Parsing Error in '" + fileName + "':" + File.separator + exception, exception);
-            return false;
+            throw new ParsingException(file, exception.getMessage(), exception);
         }
-        return true;
     }
 
     /* package-private */ void addToken(TokenType type, int line, int column, int length) {
