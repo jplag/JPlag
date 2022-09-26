@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -13,6 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.swift.grammar.Swift5Lexer;
 import de.jplag.swift.grammar.Swift5Parser;
@@ -20,7 +22,7 @@ import de.jplag.swift.grammar.Swift5Parser;
 public class SwiftParserAdapter extends AbstractParser {
 
     public static final int NOT_SET = -1;
-    private String currentFile;
+    private File currentFile;
     private List<Token> tokens;
 
     /**
@@ -31,26 +33,22 @@ public class SwiftParserAdapter extends AbstractParser {
     }
 
     /**
-     * Parsers a list of files into a single list of {@link Token}s.
-     * @param directory the directory of the files.
-     * @param fileNames the file names of the files.
+     * Parsers a set of files into a single list of {@link Token}s.
+     * @param files the set of files.
      * @return a list containing all tokens of all files.
      */
-    public List<Token> parse(File directory, String[] fileNames) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        for (String file : fileNames) {
-            if (!parseFile(directory, file)) {
-                errors++;
-            }
+        for (File file : files) {
+            parse(file);
             tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
-    private boolean parseFile(File directory, String fileName) {
-        File file = new File(directory, fileName);
+    private void parse(File file) throws ParsingException {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            currentFile = fileName;
+            currentFile = file;
 
             Swift5Lexer lexer = new Swift5Lexer(CharStreams.fromStream(inputStream));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -65,10 +63,8 @@ public class SwiftParserAdapter extends AbstractParser {
                 treeWalker.walk(listener, parseTree);
             }
         } catch (IOException exception) {
-            logger.error("Parsing Error in '%s': %s%s".formatted(fileName, File.separator, exception));
-            return false;
+            throw new ParsingException(file, exception.getMessage(), exception);
         }
-        return true;
     }
 
     /**
