@@ -3,13 +3,15 @@ package de.jplag.scheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 
 public class Parser extends AbstractParser {
-    private String currentFile;
+    private File currentFile;
 
     private List<Token> tokens;
 
@@ -20,15 +22,12 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<Token> parse(File directory, String[] files) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        errors = 0;
-        for (String file : files) {
+        for (File file : files) {
             currentFile = file;
-            logger.trace("Parsing file {}", file);
-            if (!SchemeParser.parseFile(directory, file, null, this)) {
-                errors++;
-            }
+            logger.trace("Parsing file {}", file.getName());
+            SchemeParser.parseFile(file, null, this);
             tokens.add(Token.fileEnd(currentFile));
         }
         return tokens;

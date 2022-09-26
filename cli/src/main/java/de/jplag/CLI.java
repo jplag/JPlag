@@ -29,11 +29,13 @@ import static de.jplag.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.CommandLineArgument.SUFFIXES;
 import static de.jplag.CommandLineArgument.VERBOSITY;
 
+import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -142,19 +144,30 @@ public final class CLI {
         }
 
         // Collect the root directories.
-        List<String> submissionDirectories = new ArrayList<>();
-        List<String> oldSubmissionDirectories = new ArrayList<>();
-        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), submissionDirectories);
-        addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectories);
-        addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
+        List<String> submissionDirectoryPaths = new ArrayList<>();
+        List<String> oldSubmissionDirectoryPaths = new ArrayList<>();
+        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), submissionDirectoryPaths);
+        addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectoryPaths);
+        addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectoryPaths);
+        var submissionDirectories = submissionDirectoryPaths.stream().map(File::new).collect(Collectors.toSet());
+        var oldSubmissionDirectories = oldSubmissionDirectoryPaths.stream().map(File::new).collect(Collectors.toSet());
 
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
 
-        return new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories,
-                BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
+        JPlagOptions options = new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, null,
+                SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
                 clusteringOptions, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
+
+        String baseCodePath = BASE_CODE.getFrom(namespace);
+        File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
+        if (baseCodeDirectory == null || baseCodeDirectory.exists()) {
+            return options.withBaseCodeSubmissionDirectory(baseCodeDirectory);
+        } else {
+            logger.warn("Using legacy partial base code API. Please migrate to new full path base code API.");
+            return options.withBaseCodeSubmissionName(baseCodePath);
+        }
     }
 
     private static ClusteringOptions getClusteringOptions(Namespace namespace) {

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -13,37 +14,33 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.rust.grammar.RustLexer;
 import de.jplag.rust.grammar.RustParser;
 
 public class RustParserAdapter extends AbstractParser {
 
-    private String currentFile;
+    private File currentFile;
     private List<Token> tokens;
 
     /**
-     * Parsers a list of files into a single list of {@link Token}s.
-     * @param directory the directory of the files.
-     * @param fileNames the file names of the files.
+     * Parsers a set of files into a single list of {@link Token}s.
+     * @param files the set of files.
      * @return a list containing all tokens of all files.
      */
-    public List<Token> parse(File directory, String[] fileNames) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        errors = 0;
-        for (String fileName : fileNames) {
-            if (!parseFile(directory, fileName)) {
-                errors++;
-            }
-            tokens.add(Token.fileEnd(fileName));
+        for (File file : files) {
+            parseFile(file);
+            tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
-    private boolean parseFile(File directory, String fileName) {
-        File file = new File(directory, fileName);
+    private void parseFile(File file) throws ParsingException {
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            currentFile = fileName;
+            currentFile = file;
 
             // create a lexer, a parser and a buffer between them.
             RustLexer lexer = new RustLexer(CharStreams.fromStream(inputStream));
@@ -61,10 +58,8 @@ public class RustParserAdapter extends AbstractParser {
                 treeWalker.walk(new JPlagRustListener(this), parseTree);
             }
         } catch (IOException exception) {
-            logger.error("Parsing Error in '" + fileName + "':" + File.separator, exception);
-            return false;
+            throw new ParsingException(file, exception.getMessage(), exception);
         }
-        return true;
     }
 
     /**

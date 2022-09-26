@@ -73,7 +73,7 @@ named arguments:
   -bc BC           Path of the directory containing the base code (common framework used in all submissions)
   -v               {quiet,long} Verbosity of the logging (default: quiet)
   -d               Debug parser. Non-parsable files will be stored (default: false)
-  -S S             Look in directories <root-dir>/*/<dir> for programs
+  -s S             Look in directories <root-dir>/*/<dir> for programs
   -p P             comma-separated list of all filename suffixes that are included
   -x X             All files named in this file will be ignored in the comparison (line-separated list)
   -t T             Tunes the comparison sensitivity by adjusting the minimum token  required  to be counted as a matching section. A smaller
@@ -89,8 +89,8 @@ named arguments:
 The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects:
 
 ```java
-JPlagOptions options = new JPlagOptions(List.of("/path/to/rootDir"), List.of(), LanguageOption.JAVA);
-options.setBaseCodeSubmissionName("template");
+Language language = LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow();
+JPlagOptions options = new JPlagOptions(language, List.of("/path/to/rootDir"), List.of()).withBaseCodeSubmissionPath("template");
 
 JPlag jplag = new JPlag(options);
 JPlagResult result = jplag.run();

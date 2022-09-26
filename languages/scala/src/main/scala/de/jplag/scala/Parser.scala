@@ -1,16 +1,15 @@
 package de.jplag.scala
 
 import de.jplag.scala.ScalaTokenType._
-import de.jplag.{AbstractParser, Token}
+import de.jplag.{AbstractParser, ParsingException, Token}
 
 import java.io.File
-
-import scala.collection.mutable.ListBuffer 
+import scala.collection.mutable.ListBuffer
 import scala.meta._
 
 
 class Parser extends AbstractParser {
-    private var currentFile: String = _
+    private var currentFile: File = _
 
     private var tokens: ListBuffer[Token] = _
 
@@ -330,26 +329,20 @@ class Parser extends AbstractParser {
         }
     }
 
-    def parse(directory: File, files: Array[String]): List[Token] = {
+    def parse(files: Set[File]): List[Token] = {
         tokens = ListBuffer()
-        errors = 0
-
         for (file <- files) {
-            currentFile = file
-            if (!parseFile(directory, file)) {
-                errors += 1
-            }
+            parseFile(file)
             System.gc()
         }
 
         tokens.toList
     }
 
-    private def parseFile(directory: File, fileName: String): Boolean = {
-        currentFile = fileName
+    private def parseFile(file: File) = {
+        currentFile = file
 
         try {
-            val file = new File(directory, fileName)
             val bytes = java.nio.file.Files.readAllBytes(file.toPath)
             val text = new String(bytes, "UTF-8")
             val input = Input.VirtualFile(file.getPath, text)
@@ -360,10 +353,8 @@ class Parser extends AbstractParser {
         } catch {
             case exception: Throwable =>
                 exception.printStackTrace()
-                return false
+                throw new ParsingException(file, exception.getMessage, exception)
         }
-
-        true
     }
 
     /**

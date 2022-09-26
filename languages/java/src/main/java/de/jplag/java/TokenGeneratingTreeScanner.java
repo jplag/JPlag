@@ -1,5 +1,9 @@
 package de.jplag.java;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
 import com.sun.source.tree.AssignmentTree;
@@ -42,19 +46,27 @@ import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
+import de.jplag.ParsingException;
+
 final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
-    private final String filename;
+    private final File file;
     private final Parser parser;
     private final LineMap map;
     private final SourcePositions positions;
     private final CompilationUnitTree ast;
 
-    public TokenGeneratingTreeScanner(String filename, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
-        this.filename = filename;
+    private List<ParsingException> parsingExceptions = new ArrayList<>();
+
+    public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
+        this.file = file;
         this.parser = parser;
         this.map = map;
         this.positions = positions;
         this.ast = ast;
+    }
+
+    public List<ParsingException> getParsingExceptions() {
+        return parsingExceptions;
     }
 
     /**
@@ -64,7 +76,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
      * @param length is the length of the token.
      */
     private void addToken(JavaTokenType tokenType, long position, int length) {
-        parser.add(tokenType, filename, map.getLineNumber(position), map.getColumnNumber(position), length);
+        parser.add(tokenType, file, map.getLineNumber(position), map.getColumnNumber(position), length);
     }
 
     /**
@@ -74,7 +86,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
      * @param end is the end position of the token for the calculation of the length.
      */
     private void addToken(JavaTokenType tokenType, long start, long end) {
-        parser.add(tokenType, filename, map.getLineNumber(start), map.getColumnNumber(start), (end - start));
+        parser.add(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start));
     }
 
     @Override
@@ -391,7 +403,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
 
     @Override
     public Object visitErroneous(ErroneousTree node, Object p) {
-        parser.increaseErrors();
+        parsingExceptions.add(new ParsingException(file, "error while visiting %s".formatted(node)));
         return super.visitErroneous(node, p);
     }
 
