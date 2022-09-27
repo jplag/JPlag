@@ -27,7 +27,6 @@ import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
 import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
 import static de.jplag.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.CommandLineArgument.SUFFIXES;
-import static de.jplag.CommandLineArgument.VERBOSITY;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -51,7 +50,6 @@ import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.Verbosity;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 /**
@@ -158,7 +156,7 @@ public final class CLI {
         JPlagOptions options = new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, null,
                 SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
-                clusteringOptions, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
+                clusteringOptions, DEBUG.getFrom(namespace));
 
         String baseCodePath = BASE_CODE.getFrom(namespace);
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
@@ -205,12 +203,12 @@ public final class CLI {
                     .withAgglomerativeInterClusterSimilarity(CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace));
         }
         if (CLUSTER_PREPROCESSING_NONE.isSet(namespace)) {
-            if (CLUSTER_PREPROCESSING_NONE.getFrom(namespace)) {
+            if (CLUSTER_PREPROCESSING_NONE.<Boolean>getFrom(namespace)) {
                 clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
             }
         }
         if (CLUSTER_PREPROCESSING_CDF.isSet(namespace)) {
-            if (CLUSTER_PREPROCESSING_CDF.getFrom(namespace)) {
+            if (CLUSTER_PREPROCESSING_CDF.<Boolean>getFrom(namespace)) {
                 clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
             }
         }

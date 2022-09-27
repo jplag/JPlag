@@ -70,7 +70,6 @@ named arguments:
   -h, --help       show this help message and exit
   -l               {java,python3,cpp,csharp,golang,kotlin,rlang,rust,scala,text,scheme,emf-metamodel,emf-metamodel-dynamic} Select the language to parse the submissions (default: java)
   -bc BC           Path of the directory containing the base code (common framework used in all submissions)
-  -v               {quiet,long} Verbosity of the logging (default: quiet)
   -d               Debug parser. Non-parsable files will be stored (default: false)
   -s S             Look in directories <root-dir>/*/<dir> for programs
   -p P             comma-separated list of all filename suffixes that are included
