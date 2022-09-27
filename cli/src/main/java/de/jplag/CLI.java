@@ -58,7 +58,7 @@ import de.jplag.reporting.reportobject.ReportObjectFactory;
  */
 public final class CLI {
 
-    private static final Logger logger = LoggerFactory.getLogger(CLI.class);
+    private static final Logger logger = LoggerFactory.getLogger("JPlag");
 
     private static final Random RANDOM = new SecureRandom();
 
@@ -83,9 +83,9 @@ public final class CLI {
             CLI cli = new CLI();
             Namespace arguments = cli.parseArguments(args);
             JPlagOptions options = cli.buildOptionsFromArguments(arguments);
-            JPlag program = new JPlag(options);
-            logger.info("JPlag initialized");
-            JPlagResult result = program.run();
+            JPlag jplag = new JPlag(options);
+            logger.debug("JPlag initialized");
+            JPlagResult result = jplag.run();
             ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
             reportObjectFactory.createAndSaveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
 
@@ -202,15 +202,11 @@ public final class CLI {
             clusteringOptions = clusteringOptions
                     .withAgglomerativeInterClusterSimilarity(CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace));
         }
-        if (CLUSTER_PREPROCESSING_NONE.isSet(namespace)) {
-            if (CLUSTER_PREPROCESSING_NONE.<Boolean>getFrom(namespace)) {
-                clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
-            }
+        if (CLUSTER_PREPROCESSING_NONE.isSet(namespace) && Boolean.TRUE.equals(CLUSTER_PREPROCESSING_NONE.getFrom(namespace))) {
+            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
         }
-        if (CLUSTER_PREPROCESSING_CDF.isSet(namespace)) {
-            if (CLUSTER_PREPROCESSING_CDF.<Boolean>getFrom(namespace)) {
-                clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
-            }
+        if (CLUSTER_PREPROCESSING_CDF.isSet(namespace) && Boolean.TRUE.equals(CLUSTER_PREPROCESSING_CDF.getFrom(namespace))) {
+            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
         }
         if (CLUSTER_PREPROCESSING_PERCENTILE.isSet(namespace)) {
             clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.PERCENTILE)

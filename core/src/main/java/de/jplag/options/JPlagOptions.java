@@ -186,7 +186,9 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
     private Set<String> readExclusionFile(final String exclusionFileName) {
         try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
             final var excludedFileNames = reader.lines().collect(Collectors.toSet());
-            logger.debug("Excluded files:\n{}", String.join("\n", excludedFileNames));
+            if (logger.isDebugEnabled()) {
+                logger.debug("Excluded files:{}{}", System.lineSeparator(), String.join(System.lineSeparator(), excludedFileNames));
+            }
             return excludedFileNames;
         } catch (IOException e) {
             logger.error("Could not read exclusion file: " + e.getMessage(), e);
