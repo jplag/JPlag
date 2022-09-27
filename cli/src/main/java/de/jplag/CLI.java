@@ -88,9 +88,8 @@ public final class CLI {
             JPlagResult result = jplag.run();
             ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
             reportObjectFactory.createAndSaveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
-
         } catch (ExitException exception) {
-            logger.error(exception.getMessage(), exception);
+            logger.error(exception.getMessage()); // do not pass exception here to keep log clean
             finalizeLogger();
             System.exit(1);
         }
