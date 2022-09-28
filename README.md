@@ -59,28 +59,42 @@ JPlag can either be used via the CLI or directly via its Java API. For more info
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
 
 ```
-JPlag - Detecting Software Plagiarism
-
-Usage: JPlag [ options ] [ <root-dir> ... ] [ -new <new-dir> ... ] [ -old <old-dir> ... ]
- <root-dir>        Root-directory with submissions to check for plagiarism
- <new-dir>         Root-directory with submissions to check for plagiarism
- <old-dir>         Root-directory with prior submissions to compare against
+positional arguments:
+  rootDir                Root-directory with submissions to check for plagiarism
 
 named arguments:
-  -h, --help       show this help message and exit
-  -l               {java,python3,cpp,csharp,golang,kotlin,rlang,rust,scala,text,scheme,emf-metamodel,emf-metamodel-dynamic} Select the language to parse the submissions (default: java)
-  -bc BC           Path of the directory containing the base code (common framework used in all submissions)
-  -v               {quiet,long} Verbosity of the logging (default: quiet)
-  -d               Debug parser. Non-parsable files will be stored (default: false)
-  -s S             Look in directories <root-dir>/*/<dir> for programs
-  -p P             comma-separated list of all filename suffixes that are included
-  -x X             All files named in this file will be ignored in the comparison (line-separated list)
-  -t T             Tunes the comparison sensitivity by adjusting the minimum token  required  to be counted as a matching section. A smaller
-                        <n> increases the sensitivity but might lead to more false-positives
-  -m M             Comparison similarity threshold [0.0-1.0]: All comparisons above this threshold will be saved (default: 0.0)
-  -n N             The maximum number of comparisons that will be shown in the  generated report, if set to -1 all comparisons will be shown
-                        (default: 30)
-  -r R             Name of the directory in which the comparison results will be stored (default: result)
+  -h, --help             show this help message and exit
+  -new NEW [NEW ...]     Root-directory with submissions to check for plagiarism (same as the root directory)
+  -old OLD [OLD ...]     Root-directory with prior submissions to compare against
+  -l {cpp,csharp,emf-metamodel,emf-metamodel-dynamic,go,java,kotlin,python3,rlang,scala,scheme,text}
+                         Select the language to parse the submissions (default: java)
+  -bc BC                 Path of  the  directory  containing  the  base  code  (common  framework  used  in  all
+                         submissions)
+  -t T                   Tunes the comparison sensitivity by adjusting the  minimum token required to be counted
+                         as a matching section. A smaller <n>  increases  the sensitivity but might lead to more
+                         false-positives
+  -n N                   The maximum number of comparisons that will  be  shown  in the generated report, if set
+                         to -1 all comparisons will be shown (default: 30)
+  -r R                   Name of the directory in which the comparison results will be stored (default: result)
+
+Advanced:
+  -d                     Debug parser. Non-parsable files will be stored (default: false)
+  -s S                   Look in directories <root-dir>/*/<dir> for programs
+  -p P                   comma-separated list of all filename suffixes that are included
+  -x X                   All files named in this file will be ignored in the comparison (line-separated list)
+  -m M                   Comparison similarity threshold [0.0-1.0]:  All  comparisons  above this threshold will
+                         be saved (default: 0.0)
+
+Clustering:
+  --cluster-skip         Skips the clustering (default: false)
+  --cluster-alg {AGGLOMERATIVE,SPECTRAL}
+                         Which clustering algorithm to use. Agglomerative  merges similar submissions bottom up.
+                         Spectral clustering is  combined  with  Bayesian  Optimization  to  execute the k-Means
+                         clustering  algorithm  multiple   times,   hopefully   finding   a   "good"  clustering
+                         automatically. (default: spectral)
+  --cluster-metric {AVG,MIN,MAX,INTERSECTION}
+                         The metric used for clustering. AVG  is  intersection  over  union, MAX can expose some
+                         attempts of obfuscation. (default: MAX)
 ```
 
 ### Java API
