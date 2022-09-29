@@ -70,8 +70,7 @@ public final class LanguageLoader {
      * @see Language#getIdentifier()
      */
     public static Set<String> getAllAvailableLanguageIdentifiers() {
-        var identifiers = getAllAvailableLanguages().values().stream().filter(it -> !it.isHidden()).map(Language::getIdentifier).toList();
-        return new TreeSet<>(identifiers);
+        return new TreeSet<>(getAllAvailableLanguages().keySet());
     }
 
     /**

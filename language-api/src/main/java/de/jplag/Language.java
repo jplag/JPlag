@@ -58,12 +58,4 @@ public interface Language {
     default String viewFileSuffix() {
         return "";
     }
-
-    /**
-     * Specifies if the language is hidden in the CLI interface.
-     * @return true if it is hidden.
-     */
-    default boolean isHidden() {
-        return false;
-    }
 }

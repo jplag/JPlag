@@ -34,9 +34,4 @@ public class Language extends de.jplag.emf.Language {
     public int minimumTokenMatch() {
         return DEFAULT_MIN_TOKEN_MATCH;
     }
-
-    @Override
-    public boolean isHidden() {
-        return true; // currently hidden, as the other EMF language module should be used.
-    }
 }
