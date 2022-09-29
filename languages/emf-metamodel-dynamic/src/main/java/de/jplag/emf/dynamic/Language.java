@@ -12,7 +12,7 @@ import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
 @MetaInfServices(de.jplag.Language.class)
 public class Language extends de.jplag.emf.Language {
     private static final String NAME = "EMF metamodels (dynamically created token set)";
-    public static final String IDENTIFIER = "emf-metamodel-dynamic";
+    public static final String IDENTIFIER = "emf-dynamic";
 
     private static final int DEFAULT_MIN_TOKEN_MATCH = 10;
 
@@ -33,5 +33,10 @@ public class Language extends de.jplag.emf.Language {
     @Override
     public int minimumTokenMatch() {
         return DEFAULT_MIN_TOKEN_MATCH;
+    }
+
+    @Override
+    public boolean isHidden() {
+        return true; // currently hidden, as the other EMF language module should be used.
     }
 }
