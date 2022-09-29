@@ -5,7 +5,7 @@ target/
 
 *.class
 
-result
+
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -30,4 +30,5 @@ hs_err_pid*
 .antlr/
 
 # default result file name, should never be commited
+result/
 result.zip

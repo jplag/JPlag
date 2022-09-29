@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.jplag.reporting.reportobject.model.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,9 @@ public class ReportObjectFactory {
     private static final ToDiskWriter fileWriter = new ToDiskWriter();
     public static final String OVERVIEW_FILE_NAME = "overview.json";
     public static final String SUBMISSIONS_FOLDER = "submissions";
+
+    // FIXME: This shall be moved to a better visible and upgradable position
+    public static final Version REPORT_VIEWER_VERSION = new Version(4, 0, 0);
     private Map<String, String> submissionNameToIdMap;
     private Function<Submission, String> submissionToIdFunction;
     private Map<String, Map<String, String>> submissionNameToNameToComparisonFileName;
@@ -141,7 +145,7 @@ public class ReportObjectFactory {
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionDirectory().getName() : "";
         ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
 
-        OverviewReport overviewReport = new OverviewReport(folders.stream().map(File::getPath).toList(), // submissionFolderPath
+        OverviewReport overviewReport = new OverviewReport(REPORT_VIEWER_VERSION, folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
                 result.getOptions().language().getName(), // language
                 result.getOptions().fileSuffixes(), // fileExtensions

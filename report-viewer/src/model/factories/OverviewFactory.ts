@@ -3,10 +3,23 @@ import { Metric } from "../Metric";
 import { ComparisonListElement } from "../ComparisonListElement";
 import { Cluster } from "@/model/Cluster";
 import store from "@/store/store";
+import { Version } from "../Version";
 
 export class OverviewFactory {
 
+  // FIXME: Find a better more visible position to store this
+  static reportViewerVersion: Version = {major: 4, minor: 0, patch: 0};
+
   static getOverview(json: Record<string, unknown>): Overview {
+    const jsonVersion = json.version as Record<string, number>;
+    const version: Version = {
+      major: jsonVersion.major,
+      minor: jsonVersion.minor,
+      patch: jsonVersion.patch
+    }
+
+    OverviewFactory.compareVersions(version, this.reportViewerVersion);
+
     const submissionFolder = json.submission_folder_path as Array<string>;
     const baseCodeFolder = "";
     const language = json.language as string;
@@ -66,6 +79,14 @@ export class OverviewFactory {
       clusters,
       new Map()
     );
+  }
+
+  static compareVersions(jsonVersion: Version, reportViewerVersion: Version) {
+    if(jsonVersion.major !== reportViewerVersion.major ||
+       jsonVersion.minor !== reportViewerVersion.minor ||
+       jsonVersion.patch !== reportViewerVersion.patch) {
+        console.warn("The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful.")
+       }
   }
 
   private static  saveSubmissionsToComparisonNameMap(json: Record<string, unknown>){
