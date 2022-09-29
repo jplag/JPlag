@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record OverviewReport(
 
+        @JsonProperty("jplag_version") Version version,
+
         @JsonProperty("submission_folder_path") List<String> submissionFolderPath,
 
         @JsonProperty("base_code_folder_path") String baseCodeFolderPath,
