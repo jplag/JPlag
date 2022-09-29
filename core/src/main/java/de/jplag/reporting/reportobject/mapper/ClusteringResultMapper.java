@@ -1,10 +1,12 @@
 package de.jplag.reporting.reportobject.mapper;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
+import de.jplag.clustering.ClusteringResult;
 import de.jplag.reporting.reportobject.model.Cluster;
 
 /**
@@ -19,11 +21,7 @@ public class ClusteringResultMapper {
 
     public List<Cluster> map(JPlagResult result) {
         var clusteringResult = result.getClusteringResult();
-
-        // Clustering disabled for the report viewer. Shall be fixed in a future version.
-        return List.of();
-        // return
-        // clusteringResult.stream().map(ClusteringResult::getClusters).flatMap(Collection::stream).map(this::convertCluster).toList();
+        return clusteringResult.stream().map(ClusteringResult::getClusters).flatMap(Collection::stream).map(this::convertCluster).toList();
     }
 
     private Cluster convertCluster(de.jplag.clustering.Cluster<Submission> from) {

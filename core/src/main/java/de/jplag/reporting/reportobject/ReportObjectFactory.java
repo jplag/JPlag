@@ -27,7 +27,6 @@ import de.jplag.Language;
 import de.jplag.Submission;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.jsonfactory.ToDiskWriter;
-import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
@@ -143,7 +142,6 @@ public class ReportObjectFactory {
         folders.addAll(result.getOptions().oldSubmissionDirectories());
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionDirectory().getName() : "";
-        ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
 
         OverviewReport overviewReport = new OverviewReport(REPORT_VIEWER_VERSION, folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
@@ -157,7 +155,7 @@ public class ReportObjectFactory {
                 getDate(),// dateOfExecution
                 result.getDuration(), // executionTime
                 getMetrics(result),// metrics
-                clusteringResultMapper.map(result)); // clusters
+                List.of()); // clusters (deactivated for now)
 
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 
