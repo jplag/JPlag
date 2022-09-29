@@ -85,7 +85,7 @@ public class MetamodelTreeView {
      * @param suffix is the suffix of the file to be written.
      */
     public void writeToFile(String suffix) {
-        File treeViewFile = new File(file, suffix);
+        File treeViewFile = new File(file + suffix);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(treeViewFile));) {
             if (!treeViewFile.createNewFile()) {
                 logger.warn("Overwriting tree view file: {}", treeViewFile);
