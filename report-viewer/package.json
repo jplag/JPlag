@@ -12,13 +12,13 @@
     "@highlightjs/vue-plugin": "^2.1.0",
     "chart.js": "^3.9.1",
     "chartjs-plugin-datalabels": "^2.1.0",
-    "core-js": "^3.25.1",
+    "core-js": "^3.25.2",
     "gitart-vue-dialog": "^2.4.0",
     "highlight.js": "^11.6.0",
     "jszip": "^3.10.0",
     "node-polyfill-webpack-plugin": "^2.0.0",
     "slash": "^4.0.0",
-    "vue": "^3.2.39",
+    "vue": "^3.2.40",
     "vue-chart-3": "^3.1.8",
     "vue-draggable-next": "^2.1.1",
     "vue-router": "^4.1.5",
@@ -26,8 +26,8 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.37.0",
-    "@typescript-eslint/parser": "^5.37.0",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.0",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-plugin-router": "~5.0.8",
@@ -41,7 +41,7 @@
     "eslint-plugin-vue": "^8.7.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
-    "typescript": "~4.8.3"
+    "typescript": "~4.8.4"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"

@@ -5,16 +5,16 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.java.Language;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.Verbosity;
 
 public abstract class TestBase {
 
     protected static final String BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "samples").toString();
-    protected static final double DELTA = 0.1;
+    protected static final double DELTA = 0.001;
 
     protected String getBasePath() {
         return BASE_PATH;
@@ -48,9 +48,10 @@ public abstract class TestBase {
 
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization)
             throws ExitException {
-        JPlagOptions options = new JPlagOptions(LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow(), newPaths, oldPaths);
+        var newFiles = newPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
+        var oldFiles = oldPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
+        JPlagOptions options = new JPlagOptions(LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow(), newFiles, oldFiles);
         options = customization.apply(options);
-        options = options.withVerbosity(Verbosity.LONG);
         JPlag jplag = new JPlag(options);
         return jplag.run();
     }

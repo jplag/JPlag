@@ -5,7 +5,8 @@ import de.jplag.Token
 import java.io.File
 import org.kohsuke.MetaInfServices
 
-import scala.jdk.CollectionConverters.SeqHasAsJava
+import java.util
+import scala.jdk.CollectionConverters.{SeqHasAsJava, SetHasAsScala}
 
 class Language extends de.jplag.Language {
   private val parser = new Parser
@@ -19,8 +20,5 @@ class Language extends de.jplag.Language {
 
   override def minimumTokenMatch = 8
 
-  override def parse(dir: File, files: Array[String]): java.util.List[Token] = this.parser.parse(dir, files).asJava
-
-  override def hasErrors: Boolean = this.parser.hasErrors
-
+  override def parse(files: util.Set[File]): java.util.List[Token] = this.parser.parse(files.asScala.toSet).asJava
 }

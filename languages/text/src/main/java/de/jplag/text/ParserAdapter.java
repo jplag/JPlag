@@ -3,12 +3,13 @@ package de.jplag.text;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import de.jplag.AbstractParser;
+import de.jplag.ParsingException;
 import de.jplag.Token;
 
 import edu.stanford.nlp.ling.CoreLabel;
@@ -24,7 +25,7 @@ public class ParserAdapter extends AbstractParser {
     private final StanfordCoreNLP pipeline;
 
     private List<Token> tokens;
-    private String currentFile;
+    private File currentFile;
     private int currentLine;
     /**
      * The position of the current line break in the content string
@@ -37,28 +38,21 @@ public class ParserAdapter extends AbstractParser {
         this.pipeline = new StanfordCoreNLP(properties);
     }
 
-    public List<Token> parse(File directory, String[] files) {
+    public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
-        errors = 0;
-        for (String file : files) {
+        for (File file : files) {
             logger.trace("Parsing file {}", file);
-            if (!parseFile(directory, file)) {
-                errors++;
-            }
+            parseFile(file);
             tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
-    private boolean parseFile(File directory, String file) {
+    private void parseFile(File file) throws ParsingException {
         this.currentFile = file;
         this.currentLine = 1; // lines start at 1
         this.currentLineBreakIndex = 0;
-        Path filePath = directory.toPath().resolve(file);
-        String content = readFile(filePath);
-        if (content == null) {
-            return false;
-        }
+        String content = readFile(file);
         int lastTokenEnd = 0;
         CoreDocument coreDocument = pipeline.processToCoreDocument(content);
         for (CoreLabel token : coreDocument.tokens()) {
@@ -68,7 +62,6 @@ public class ParserAdapter extends AbstractParser {
                 addToken(token);
             }
         }
-        return true;
     }
 
     /**
@@ -105,12 +98,11 @@ public class ParserAdapter extends AbstractParser {
         tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, length));
     }
 
-    private String readFile(Path filePath) {
+    private String readFile(File file) throws ParsingException {
         try {
-            return Files.readString(filePath);
+            return Files.readString(file.toPath());
         } catch (IOException e) {
-            logger.error("Error reading from file {}", filePath, e);
-            return null;
+            throw new ParsingException(file, e.getMessage(), e);
         }
     }
 }

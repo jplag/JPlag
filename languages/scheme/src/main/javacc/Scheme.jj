@@ -58,15 +58,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import de.jplag.ParsingException;
+
 public class SchemeParser {
     /* used for context in the template production rule */
     private static int templateParam;
     private Parser parser2;
 
-    public static boolean parseFile(File dir, String fileName, SchemeParser parser, Parser parserX) {
-        File file = null;
+    public static void parseFile(File file, SchemeParser parser, Parser parserX) throws ParsingException {
         try {
-            FileInputStream in = new FileInputStream(file = new File(dir, fileName));
+            FileInputStream in = new FileInputStream(file);
             if (parser == null) {
                 parser = new SchemeParser(in, "UTF-8");
             } else {
@@ -74,19 +75,18 @@ public class SchemeParser {
             }
             parser.parser2 = parserX;
         } catch (FileNotFoundException e) {
-            System.out.println("Scheme Parser R4RS:  File " + fileName + " not found.");
-            return false;
+            System.out.println("Scheme Parser R4RS:  File " + file.getName() + " not found.");
+            throw new ParsingException(file, e.getMessage(), e);
         }
         try {
             parser.Program();
         } catch (ParseException e) {
-            parserX.logger.error("Parsing Error in '" + fileName + "': " + e.getMessage());
-            return false;
+            parserX.logger.error("Parsing Error in '" + file.getName() + "': " + e.getMessage());
+            throw new ParsingException(file, e.getMessage(), e);
         } catch (TokenMgrException e) {
-            parserX.logger.error("Scanning Error in '" + fileName + "': " + e.getMessage());
-            return false;
+            parserX.logger.error("Scanning Error in '" + file.getName() + "': " + e.getMessage());
+            throw new ParsingException(file, e.getMessage(), e);
         }
-        return true;
     }
 }
 PARSER_END(SchemeParser)

@@ -65,12 +65,12 @@ public final class TokenPrinter {
      */
     public static String printTokens(List<Token> tokenList, File rootDirectory, Optional<String> suffix) {
         PrinterOutputBuilder builder = new PrinterOutputBuilder();
-        Map<String, List<Token>> fileToTokens = groupTokensByFile(tokenList);
+        Map<File, List<Token>> fileToTokens = groupTokensByFile(tokenList);
 
-        fileToTokens.forEach((String fileName, List<Token> fileTokens) -> {
-            builder.append(fileName);
+        fileToTokens.forEach((File file, List<Token> fileTokens) -> {
+            builder.append(rootDirectory.toPath().relativize(file.toPath()).toString());
 
-            List<LineData> lineDatas = getLineData(fileTokens, rootDirectory, suffix);
+            List<LineData> lineDatas = getLineData(fileTokens, suffix);
             lineDatas.forEach(lineData -> {
                 builder.setLine(lineData.lineNumber());
 
@@ -113,12 +113,9 @@ public final class TokenPrinter {
         return builder.toString();
     }
 
-    private static List<LineData> getLineData(List<Token> fileTokens, File root, Optional<String> suffix) {
+    private static List<LineData> getLineData(List<Token> fileTokens, Optional<String> suffix) {
         // We expect that all fileTokens share the same Token.file!
-
-        String fileName = fileTokens.get(0).getFile();
-        // handle 'files as submissions' mode
-        File file = fileName.isEmpty() ? root : new File(root, fileName);
+        File file = fileTokens.get(0).getFile();
         if (suffix.isPresent()) {
             file = new File(file.getPath() + suffix.get());
         }
@@ -144,7 +141,7 @@ public final class TokenPrinter {
                 .toList();
     }
 
-    private static Map<String, List<Token>> groupTokensByFile(List<Token> tokens) {
+    private static Map<File, List<Token>> groupTokensByFile(List<Token> tokens) {
         return tokens.stream().collect(Collectors.groupingBy(Token::getFile));
     }
 

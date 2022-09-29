@@ -1,5 +1,6 @@
 package de.jplag.reporting.jsonfactory;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -97,8 +98,13 @@ public class ComparisonReportWriter {
         Token startOfSecond = tokensSecond.get(match.startOfSecond());
         Token endOfSecond = tokensSecond.get(match.startOfSecond() + match.length() - 1);
 
-        return new Match(startOfFirst.getFile(), startOfSecond.getFile(), startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(),
-                endOfSecond.getLine(), match.length());
+        return new Match(relativizedFilePath(startOfFirst.getFile(), comparison.firstSubmission()),
+                relativizedFilePath(startOfSecond.getFile(), comparison.secondSubmission()), startOfFirst.getLine(), endOfFirst.getLine(),
+                startOfSecond.getLine(), endOfSecond.getLine(), match.length());
+    }
+
+    private String relativizedFilePath(File file, Submission submission) {
+        return submission.getRoot().toPath().relativize(file.toPath()).toString();
     }
 
 }

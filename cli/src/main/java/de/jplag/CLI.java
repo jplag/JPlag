@@ -27,13 +27,14 @@ import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
 import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
 import static de.jplag.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.CommandLineArgument.SUFFIXES;
-import static de.jplag.CommandLineArgument.VERBOSITY;
 
+import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -49,7 +50,6 @@ import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.Verbosity;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 /**
@@ -58,7 +58,7 @@ import de.jplag.reporting.reportobject.ReportObjectFactory;
  */
 public final class CLI {
 
-    private static final Logger logger = LoggerFactory.getLogger(CLI.class);
+    private static final Logger logger = LoggerFactory.getLogger("JPlag");
 
     private static final Random RANDOM = new SecureRandom();
 
@@ -83,14 +83,13 @@ public final class CLI {
             CLI cli = new CLI();
             Namespace arguments = cli.parseArguments(args);
             JPlagOptions options = cli.buildOptionsFromArguments(arguments);
-            JPlag program = new JPlag(options);
-            logger.info("JPlag initialized");
-            JPlagResult result = program.run();
+            JPlag jplag = new JPlag(options);
+            logger.debug("JPlag initialized");
+            JPlagResult result = jplag.run();
             ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
             reportObjectFactory.createAndSaveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
-
         } catch (ExitException exception) {
-            logger.error(exception.getMessage(), exception);
+            logger.error(exception.getMessage()); // do not pass exception here to keep log clean
             finalizeLogger();
             System.exit(1);
         }
@@ -142,19 +141,30 @@ public final class CLI {
         }
 
         // Collect the root directories.
-        List<String> submissionDirectories = new ArrayList<>();
-        List<String> oldSubmissionDirectories = new ArrayList<>();
-        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), submissionDirectories);
-        addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectories);
-        addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectories);
+        List<String> submissionDirectoryPaths = new ArrayList<>();
+        List<String> oldSubmissionDirectoryPaths = new ArrayList<>();
+        addAllMultiValueArgument(ROOT_DIRECTORY.getListFrom(namespace), submissionDirectoryPaths);
+        addAllMultiValueArgument(NEW_DIRECTORY.getListFrom(namespace), submissionDirectoryPaths);
+        addAllMultiValueArgument(OLD_DIRECTORY.getListFrom(namespace), oldSubmissionDirectoryPaths);
+        var submissionDirectories = submissionDirectoryPaths.stream().map(File::new).collect(Collectors.toSet());
+        var oldSubmissionDirectories = oldSubmissionDirectoryPaths.stream().map(File::new).collect(Collectors.toSet());
 
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
 
-        return new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories,
-                BASE_CODE.getFrom(namespace), SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
+        JPlagOptions options = new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, null,
+                SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
-                clusteringOptions, Verbosity.fromOption(VERBOSITY.getFrom(namespace)), DEBUG.getFrom(namespace));
+                clusteringOptions, DEBUG.getFrom(namespace));
+
+        String baseCodePath = BASE_CODE.getFrom(namespace);
+        File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
+        if (baseCodeDirectory == null || baseCodeDirectory.exists()) {
+            return options.withBaseCodeSubmissionDirectory(baseCodeDirectory);
+        } else {
+            logger.warn("Using legacy partial base code API. Please migrate to new full path base code API.");
+            return options.withBaseCodeSubmissionName(baseCodePath);
+        }
     }
 
     private static ClusteringOptions getClusteringOptions(Namespace namespace) {
@@ -191,15 +201,11 @@ public final class CLI {
             clusteringOptions = clusteringOptions
                     .withAgglomerativeInterClusterSimilarity(CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY.getFrom(namespace));
         }
-        if (CLUSTER_PREPROCESSING_NONE.isSet(namespace)) {
-            if (CLUSTER_PREPROCESSING_NONE.getFrom(namespace)) {
-                clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
-            }
+        if (CLUSTER_PREPROCESSING_NONE.isSet(namespace) && Boolean.TRUE.equals(CLUSTER_PREPROCESSING_NONE.getFrom(namespace))) {
+            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
         }
-        if (CLUSTER_PREPROCESSING_CDF.isSet(namespace)) {
-            if (CLUSTER_PREPROCESSING_CDF.getFrom(namespace)) {
-                clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
-            }
+        if (CLUSTER_PREPROCESSING_CDF.isSet(namespace) && Boolean.TRUE.equals(CLUSTER_PREPROCESSING_CDF.getFrom(namespace))) {
+            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
         }
         if (CLUSTER_PREPROCESSING_PERCENTILE.isSet(namespace)) {
             clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.PERCENTILE)

@@ -37,12 +37,10 @@ public enum CommandLineArgument {
             new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.IDENTIFIER)
                     .choices(LanguageLoader.getAllAvailableLanguageIdentifiers())),
     BASE_CODE("-bc", String.class),
-    VERBOSITY(new Builder("-v", String.class).defaultsTo("quiet").choices("quiet", "long").argumentGroup(ADVANCED_GROUP)), // TODO SH: Replace
-                                                                                                                           // verbosity when
-                                                                                                                           // integrating a
+
     // real logging library
     DEBUG(new Builder("-d", Boolean.class).argumentGroup(ADVANCED_GROUP)),
-    SUBDIRECTORY(new Builder("-S", String.class).argumentGroup(ADVANCED_GROUP)),
+    SUBDIRECTORY(new Builder("-s", String.class).argumentGroup(ADVANCED_GROUP)),
     SUFFIXES(new Builder("-p", String.class).argumentGroup(ADVANCED_GROUP)),
     EXCLUDE_FILE(new Builder("-x", String.class).argumentGroup(ADVANCED_GROUP)),
     MIN_TOKEN_MATCH("-t", Integer.class),

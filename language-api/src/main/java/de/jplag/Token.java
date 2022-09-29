@@ -1,5 +1,7 @@
 package de.jplag;
 
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,14 +18,14 @@ public class Token {
     private int line;
     private int column;
     private int length;
-    private String file;
+    private File file;
     private TokenType type;
 
     /**
      * Creates a token of type {@link SharedTokenType#FILE_END FILE_END} without information about line, column, and length.
      * @param file is the name of the source code file.
      */
-    public static Token fileEnd(String file) {
+    public static Token fileEnd(File file) {
         return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE);
     }
 
@@ -35,7 +37,7 @@ public class Token {
      * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
      * @param length is the length of the token in the source code.
      */
-    public Token(TokenType type, String file, int line, int column, int length) {
+    public Token(TokenType type, File file, int line, int column, int length) {
         if (line == 0) {
             logger.warn("Creating a token with line index 0 while index is 1-based");
         }
@@ -60,7 +62,7 @@ public class Token {
     /**
      * @return the name of the file where the source code that the token represents is located in.
      */
-    public String getFile() {
+    public File getFile() {
         return file;
     }
 

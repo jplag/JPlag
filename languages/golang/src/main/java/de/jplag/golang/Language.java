@@ -2,9 +2,11 @@ package de.jplag.golang;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.ParsingException;
 import de.jplag.Token;
 
 @MetaInfServices(de.jplag.Language.class)
@@ -41,13 +43,7 @@ public class Language implements de.jplag.Language {
     }
 
     @Override
-    public List<Token> parse(File directory, String[] files) {
-        return parserAdapter.parse(directory, files);
+    public List<Token> parse(Set<File> files) throws ParsingException {
+        return parserAdapter.parse(files);
     }
-
-    @Override
-    public boolean hasErrors() {
-        return parserAdapter.hasErrors();
-    }
-
 }
