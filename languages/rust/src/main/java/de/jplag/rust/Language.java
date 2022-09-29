@@ -4,9 +4,15 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * This represents the Rust language as a language supported by JPlag.
+ */
+@MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
     protected static final String[] FILE_EXTENSIONS = {".rs"};

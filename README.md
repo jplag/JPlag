@@ -66,7 +66,7 @@ named arguments:
   -h, --help             show this help message and exit
   -new NEW [NEW ...]     Root-directory with submissions to check for plagiarism (same as the root directory)
   -old OLD [OLD ...]     Root-directory with prior submissions to compare against
-  -l {cpp,csharp,emf,go,java,kotlin,python3,rlang,scala,scheme,swift,text}
+  -l {cpp,csharp,emf,go,java,kotlin,python3,rlang,rust,scala,scheme,swift,text}
                          Select the language to parse the submissions (default: java)
   -bc BC                 Path of  the  directory  containing  the  base  code  (common  framework  used  in  all
                          submissions)
