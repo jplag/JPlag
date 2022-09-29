@@ -220,7 +220,7 @@ public final class CLI {
 
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
-        return String.format("JPlag - %s%n%s", CREDITS, randomDescription);
+        return String.format("JPlag - %s%n%n%s", randomDescription, CREDITS);
     }
 
     private void addAllMultiValueArgument(List<List<String>> argumentValues, List<String> destinationRootDirectories) {
