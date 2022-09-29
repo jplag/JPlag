@@ -28,3 +28,6 @@ hs_err_pid*
 
 # ANTLR
 .antlr/
+
+# default result file name, should never be commited
+result.zip
