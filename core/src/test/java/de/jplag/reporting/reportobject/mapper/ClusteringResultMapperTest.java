@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.JPlagResult;
@@ -18,6 +19,7 @@ public class ClusteringResultMapperTest {
     private final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(Submission::getName);
 
     @Test
+    @Disabled("Skipped for now because cluster serialization is deactivated.")
     public void test() {
         // given
         JPlagResult resultMock = mock(JPlagResult.class);
