@@ -50,7 +50,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
         boolean debugParser) {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
-    public static final int DEFAULT_SHOWN_COMPARISONS = 30;
+    public static final int DEFAULT_SHOWN_COMPARISONS = 100;
     public static final int SHOW_ALL_COMPARISONS = 0;
     public static final SimilarityMetric DEFAULT_SIMILARITY_METRIC = SimilarityMetric.AVG;
     public static final Charset CHARSET = StandardCharsets.UTF_8;
