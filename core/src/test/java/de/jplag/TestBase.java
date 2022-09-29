@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import de.jplag.exceptions.ExitException;
 import de.jplag.java.Language;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.Verbosity;
 
 public abstract class TestBase {
 
@@ -53,7 +52,6 @@ public abstract class TestBase {
         var oldFiles = oldPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
         JPlagOptions options = new JPlagOptions(LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow(), newFiles, oldFiles);
         options = customization.apply(options);
-        options = options.withVerbosity(Verbosity.LONG);
         JPlag jplag = new JPlag(options);
         return jplag.run();
     }

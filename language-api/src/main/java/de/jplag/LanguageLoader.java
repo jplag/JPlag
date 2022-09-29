@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author Dominik Fuchss
  */
 public final class LanguageLoader {
-    private static final Logger logger = LoggerFactory.getLogger(LanguageLoader.class);
+    private static final Logger logger = LoggerFactory.getLogger("JPlag");
 
     private static Map<String, Language> cachedLanguageInstances = null;
 
