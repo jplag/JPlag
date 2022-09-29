@@ -27,7 +27,7 @@ In the following, a list of all supported languages with their supported languag
 | [Rust](https://www.rust-lang.org/)                               |  1.60.0 | rust                  | beta | ANTLR 4 |
 | [Scala](https://www.scala-lang.org)                              |  2.13.8 | scala                 | beta | Scalameta |
 | [Scheme](http://www.scheme-reports.org)                          |       ? | scheme                | unknown | JavaCC |
-| [EMF Metamodel](https://www.eclipse.org/modeling/emf/)           |  2.25.0 | emf-metamodel         | alpha | EMF |
+| [EMF Metamodel](https://www.eclipse.org/modeling/emf/)           |  2.25.0 | emf                   | alpha | EMF |
 | Text (naive)                                                     |       - | text                  | legacy | CoreNLP |
 
 ## Download and Installation
@@ -65,7 +65,7 @@ named arguments:
   -h, --help             show this help message and exit
   -new NEW [NEW ...]     Root-directory with submissions to check for plagiarism (same as the root directory)
   -old OLD [OLD ...]     Root-directory with prior submissions to compare against
-  -l {cpp,csharp,emf-metamodel,emf-metamodel-dynamic,go,java,kotlin,python3,rlang,scala,scheme,text}
+  -l {cpp,csharp,emf,go,java,kotlin,python3,rlang,scala,scheme,text}
                          Select the language to parse the submissions (default: java)
   -bc BC                 Path of  the  directory  containing  the  base  code  (common  framework  used  in  all
                          submissions)
