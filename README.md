@@ -74,7 +74,7 @@ named arguments:
                          as a matching section. A smaller <n>  increases  the sensitivity but might lead to more
                          false-positives
   -n N                   The maximum number of comparisons that will  be  shown  in the generated report, if set
-                         to -1 all comparisons will be shown (default: 30)
+                         to -1 all comparisons will be shown (default: 100)
   -r R                   Name of the directory in which the comparison results will be stored (default: result)
 
 Advanced:
