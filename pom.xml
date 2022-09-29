@@ -12,7 +12,7 @@
     <url>http://jplag.de</url>
     <organization>
         <name>Karlsruhe Institute of Technology (KIT), KASTEL – Institute of Information Security and Dependability</name>
-        <url>http://www.ipd.kit.edu</url>
+        <url>https://sdq.kastel.kit.edu</url>
     </organization>
     <licenses>
         <license>
@@ -45,7 +45,7 @@
     <scm>
         <connection>scm:git:git://github.com/jplag/JPlag.git</connection>
         <developerConnection>scm:git:ssh://github.com:jplag/JPlag.git</developerConnection>
-        <url>http://github.com/jplag/JPlag/tree/master</url>
+        <url>https://github.com/jplag/JPlag/tree/master</url>
     </scm>
 
     <issueManagement>
@@ -85,7 +85,7 @@
         <emf.ecore.xmi.version>2.17.0</emf.ecore.xmi.version>
 
         <!-- The Revision of JPlag -->
-        <revision>4.0.0-SNAPSHOT</revision>
+        <revision>4.0.0</revision>
     </properties>
 
     <dependencyManagement>
