@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.jplag.reporting.reportobject.model.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +31,7 @@ import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
+import de.jplag.reporting.reportobject.model.Version;
 
 /**
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes and writing it
@@ -44,7 +44,7 @@ public class ReportObjectFactory {
     public static final String OVERVIEW_FILE_NAME = "overview.json";
     public static final String SUBMISSIONS_FOLDER = "submissions";
 
-    // FIXME: This shall be moved to a better visible and upgradable position
+    // This shall be moved to a better visible and upgradable position. Shall be fixed in a future version.
     public static final Version REPORT_VIEWER_VERSION = new Version(4, 0, 0);
     private Map<String, String> submissionNameToIdMap;
     private Function<Submission, String> submissionToIdFunction;
