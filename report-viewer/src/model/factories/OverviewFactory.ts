@@ -7,18 +7,18 @@ import { Version } from "../Version";
 
 export class OverviewFactory {
 
-  // FIXME: Find a better more visible position to store this
+  // TODO: Find a better more visible position to store this
   static reportViewerVersion: Version = {major: 4, minor: 0, patch: 0};
 
   static getOverview(json: Record<string, unknown>): Overview {
-    const jsonVersion = json.version as Record<string, number>;
-    const version: Version = {
-      major: jsonVersion.major,
-      minor: jsonVersion.minor,
-      patch: jsonVersion.patch
+    const versionField = json.jplag_version as Record<string, number>;
+    const jplagVersion: Version = {
+      major: versionField.major,
+      minor: versionField.minor,
+      patch: versionField.patch
     }
 
-    OverviewFactory.compareVersions(version, this.reportViewerVersion);
+    OverviewFactory.compareVersions(jplagVersion, this.reportViewerVersion);
 
     const submissionFolder = json.submission_folder_path as Array<string>;
     const baseCodeFolder = "";
