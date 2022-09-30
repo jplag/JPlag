@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-import de.jplag.CommandLineArgument;
-
 class BaseCodeOptionTest extends CommandLineInterfaceTest {
 
     private static final String NAME = "BaseCodeName";

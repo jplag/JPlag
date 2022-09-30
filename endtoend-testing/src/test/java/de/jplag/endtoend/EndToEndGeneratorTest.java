@@ -20,7 +20,7 @@ import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
-import de.jplag.LanguageLoader;
+import de.jplag.cli.LanguageLoader;
 import de.jplag.endtoend.constants.TestDirectoryConstants;
 import de.jplag.endtoend.helper.FileHelper;
 import de.jplag.endtoend.helper.TestSuiteHelper;

@@ -1,7 +1,7 @@
-package de.jplag;
+package de.jplag.cli;
 
-import static de.jplag.CLI.ADVANCED_GROUP;
-import static de.jplag.CLI.CLUSTERING_GROUP_NAME;
+import static de.jplag.cli.CLI.ADVANCED_GROUP;
+import static de.jplag.cli.CLI.CLUSTERING_GROUP_NAME;
 import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
 import static net.sourceforge.argparse4j.impl.Arguments.append;
@@ -20,6 +20,9 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.FeatureControl;
 import net.sourceforge.argparse4j.inf.Namespace;
 
+import de.jplag.Language;
+import de.jplag.Messages;
+import de.jplag.NumberOfArgumentValues;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
