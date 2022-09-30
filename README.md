@@ -102,19 +102,17 @@ Clustering:
 The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects:
 
 ```java
-Language language = LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow();
-JPlagOptions options = new JPlagOptions(language, List.of("/path/to/rootDir"), List.of()).withBaseCodeSubmissionPath("template");
+Language language = new de.jplag.java.Language();
+Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));
+File baseCode = new File("/path/to/baseCode");
+JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
 
 JPlag jplag = new JPlag(options);
-JPlagResult result = jplag.run();
-
-List<JPlagComparison> comparisons = result.getComparisons();
+JPlagResult result = jplag.run(); // Exception handling required here
 
 // Optional
 ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
 reportObjectFactory.createAndSaveReport(result, "/path/to/output");
-
-report.writeResult(result);
 ```
 
 ## Contributing
