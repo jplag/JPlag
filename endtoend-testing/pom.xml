@@ -16,7 +16,7 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>java</artifactId>
+            <artifactId>cli</artifactId>
             <version>${revision}</version>
             <scope>test</scope>
         </dependency>

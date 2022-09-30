@@ -103,7 +103,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.jplag.CLI</mainClass>
+                            <mainClass>de.jplag.cli.CLI</mainClass>
                             <packageName>jplag</packageName>
                         </manifest>
                     </archive>
@@ -117,7 +117,7 @@
                     </descriptors>
                     <archive>
                         <manifest>
-                            <mainClass>de.jplag.CLI</mainClass>
+                            <mainClass>de.jplag.cli.CLI</mainClass>
                             <packageName>jplag</packageName>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>

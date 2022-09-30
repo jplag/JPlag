@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.JPlagResult;
-import de.jplag.LanguageLoader;
 import de.jplag.Submission;
 import de.jplag.TestBase;
 import de.jplag.TokenPrinter;
@@ -35,8 +34,7 @@ class TokenPrinterTest extends TestBase {
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printCPPFiles() {
-        printSubmissions(
-                options -> options.withLanguageOption(LanguageLoader.getLanguage(LANGUAGE_CPP).orElseThrow()).withMinimumTokenMatch(MIN_TOKEN_MATCH));
+        printSubmissions(options -> options.withLanguageOption(new de.jplag.cpp.Language()).withMinimumTokenMatch(MIN_TOKEN_MATCH));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
@@ -48,20 +46,19 @@ class TokenPrinterTest extends TestBase {
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printRLangFiles() {
-        printSubmissions(
-                options -> options.withLanguageOption(LanguageLoader.getLanguage(LANGUAGE_R).orElseThrow()).withMinimumTokenMatch(MIN_TOKEN_MATCH));
+        printSubmissions(options -> options.withLanguageOption(new de.jplag.rlang.Language()).withMinimumTokenMatch(MIN_TOKEN_MATCH));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printGoFiles() {
-        printSubmissions(options -> options.withLanguageOption(LanguageLoader.getLanguage(LANGUAGE_GO).orElseThrow()));
+        printSubmissions(options -> options.withLanguageOption(new de.jplag.golang.Language()));
     }
 
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printKotlinFiles() {
-        printSubmissions(options -> options.withLanguageOption(LanguageLoader.getLanguage(LANGUAGE_KOTLIN).orElseThrow()));
+        printSubmissions(options -> options.withLanguageOption(new de.jplag.kotlin.Language()));
     }
 
     private void printSubmissions(Function<JPlagOptions, JPlagOptions> optionsCustomization) {

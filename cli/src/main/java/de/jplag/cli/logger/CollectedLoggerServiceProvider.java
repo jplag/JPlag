@@ -1,4 +1,4 @@
-package de.jplag.logger;
+package de.jplag.cli.logger;
 
 import org.kohsuke.MetaInfServices;
 import org.slf4j.ILoggerFactory;
