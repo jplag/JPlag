@@ -45,7 +45,7 @@
     <scm>
         <connection>scm:git:git://github.com/jplag/JPlag.git</connection>
         <developerConnection>scm:git:ssh://github.com:jplag/JPlag.git</developerConnection>
-        <url>https://github.com/jplag/JPlag/tree/master</url>
+        <url>https://github.com/jplag/JPlag</url>
     </scm>
 
     <issueManagement>

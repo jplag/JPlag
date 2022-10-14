@@ -1,9 +1,10 @@
-name: SonarCloud Scan (master branch)
+name: SonarCloud Scan (main and develop branch)
 
 on:
   push:
     branches:
-      - master
+      - main
+      - develop
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
