@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
+import de.jplag.Language;
 import de.jplag.Submission;
 import de.jplag.endtoend.constants.TestDirectoryConstants;
 
@@ -55,10 +56,14 @@ public class TestSuiteHelper {
      * @return unique identifier for test case recognition
      */
     public static String getTestIdentifier(JPlagComparison jPlagComparison) {
+        return List.of(jPlagComparison.firstSubmission(), jPlagComparison.secondSubmission()).stream().map(Submission::getRoot)
+                .map(FileHelper::getFileNameWithoutFileExtension).sorted().collect(Collectors.joining("-"));
 
-        return List.of(jPlagComparison.firstSubmission(), jPlagComparison.secondSubmission()).stream().map(Submission::getFiles)
-                .map(FileHelper::getEnclosedFileNamesFromCollection).sorted().collect(Collectors.joining("-"));
+    }
 
+    public static File getSubmissionDirectory(Language language, File resultJSON) {
+        return TestDirectoryConstants.BASE_PATH_TO_LANGUAGE_RESOURCES.resolve(language.getIdentifier())
+                .resolve(FileHelper.getFileNameWithoutFileExtension(resultJSON)).toFile();
     }
 
     /**

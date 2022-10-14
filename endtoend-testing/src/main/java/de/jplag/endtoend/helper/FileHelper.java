@@ -6,10 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import de.jplag.endtoend.constants.TestDirectoryConstants;
 
@@ -22,14 +20,10 @@ public class FileHelper {
         // private constructor to prevent instantiation
     }
 
-    /**
-     * Merges all contained filenames together without extension
-     * @param files whose names are to be merged
-     * @return merged filenames
-     */
-    public static String getEnclosedFileNamesFromCollection(Collection<File> files) {
-
-        return files.stream().map(File::getName).map(fileName -> fileName.substring(0, fileName.lastIndexOf('.'))).collect(Collectors.joining());
+    public static String getFileNameWithoutFileExtension(File file) {
+        String name = file.getName();
+        int index = name.lastIndexOf('.');
+        return index == -1 ? name : name.substring(0, index);
     }
 
     /**
