@@ -2,14 +2,6 @@ package de.jplag.endtoend.helper;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import de.jplag.endtoend.constants.TestDirectoryConstants;
 
 /**
  * Helper class to perform all necessary operations or functions on files or folders.
@@ -20,76 +12,15 @@ public class FileHelper {
         // private constructor to prevent instantiation
     }
 
+    /**
+     * Returns the name of the passed file, trimming its file extension.
+     * @param file is the file to obtain the name from
+     * @return returns the name of the file without file extension
+     */
     public static String getFileNameWithoutFileExtension(File file) {
         String name = file.getName();
         int index = name.lastIndexOf('.');
         return index == -1 ? name : name.substring(0, index);
-    }
-
-    /**
-     * Load all possible languages in resource path
-     * @param directoryNames folder names for which the language options should be listed.
-     * @return list of all LanguageOptions included in the resource path
-     */
-    public static List<String> getLanguageOptionsFromPath(String[] directoryNames) {
-        return Arrays.stream(directoryNames).map(language -> language).filter(Objects::nonNull).toList();
-    }
-
-    /**
-     * @param directorieRoot path from which all folders should be loaded
-     * @return all folders found in the specified path
-     */
-    public static String[] getAllDirectoriesInPath(Path directorieRoot) {
-        return directorieRoot.toFile().list((dir, name) -> new File(dir, name).isDirectory());
-    }
-
-    /**
-     * Copies the passed filenames to a temporary path to use them in the tests
-     * @param classNames for which the test case is to be created
-     * @return paths created to the test submissions
-     * @throws IOException Exception can be thrown in cases that involve reading, copying or locating files.
-     */
-    public static String[] createNewTestCaseDirectory(String[] classNames) throws IOException {
-        // Copy the resources data to the temporary path
-        String[] returnSubmissionPath = new String[classNames.length];
-        for (int counter = 0; counter < classNames.length; counter++) {
-            Path originalPath = Path.of(classNames[counter]);
-            returnSubmissionPath[counter] = Path
-                    .of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(), "submission" + (counter + 1)).toAbsolutePath()
-                    .toString();
-            Path copyPath = Path.of(TestDirectoryConstants.TEMPORARY_SUBMISSION_DIRECTORY_NAME.toString(), "submission" + (counter + 1),
-                    originalPath.getFileName().toString());
-
-            File directory = new File(copyPath.toString());
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-            Files.copy(originalPath, copyPath, StandardCopyOption.REPLACE_EXISTING);
-        }
-        return returnSubmissionPath;
-    }
-
-    /**
-     * Delete directory with including files
-     * @param folder Path to a folder or file to be deleted. This happens recursively to the path
-     * @throws IOException if an I/O error occurs
-     */
-    public static void deleteCopiedFiles(File folder) throws IOException {
-        if (!folder.exists()) {
-            return;
-        }
-        File[] files = folder.listFiles();
-        if (files == null) { // some JVMs return null for empty dirs
-            return;
-        }
-        for (File file : files) {
-            if (file.isDirectory()) {
-                deleteCopiedFiles(file);
-            } else {
-                Files.delete(file.toPath());
-            }
-        }
-        Files.delete(folder.toPath());
     }
 
     /**
@@ -112,19 +43,6 @@ public class FileHelper {
         if (!file.exists() && !file.createNewFile()) {
             throw new IOException(createNewIOExceptionStringForFileOrFOlderCreation(file));
         }
-    }
-
-    /**
-     * @param resourcenPaths list of paths that lead to test resources
-     * @return all filenames contained in the paths
-     */
-    public static String[] loadAllTestFileNames(Path resourcenPaths) {
-        var files = resourcenPaths.toFile().listFiles();
-        String[] fileNames = new String[files.length];
-        for (int i = 0; i < files.length; i++) {
-            fileNames[i] = files[i].getName();
-        }
-        return fileNames;
     }
 
     /**
