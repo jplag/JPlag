@@ -23,7 +23,7 @@
     "vue-draggable-next": "^2.1.1",
     "vue-router": "^4.1.5",
     "vue3-highlightjs": "^1.0.5",
-    "vuex": "^4.0.2"
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.40.0",
