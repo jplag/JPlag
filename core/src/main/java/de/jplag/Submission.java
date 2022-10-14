@@ -210,19 +210,19 @@ public class Submission implements Comparable<Submission> {
      * This method is used to copy files that can not be parsed to a special folder.
      */
     private void copySubmission() {
-        File submissionDirectory = createSubdirectory(ERROR_FOLDER, language.getIdentifier(), name);
-        logger.info("Copying erroneous submission to " + submissionDirectory.getAbsolutePath());
+        File errorDirectory = createErrorDirectory(language.getIdentifier(), name);
+        logger.info("Copying erroneous submission to {}", errorDirectory.getAbsolutePath());
         for (File file : files) {
             try {
-                Files.copy(file.toPath(), new File(submissionDirectory, file.getName()).toPath());
+                Files.copy(file.toPath(), new File(errorDirectory, file.getName()).toPath());
             } catch (IOException exception) {
                 logger.error("Error copying file: " + exception.getMessage(), exception);
             }
         }
     }
 
-    private static File createSubdirectory(String... subdirectoryNames) {
-        File subdirectory = Path.of("", subdirectoryNames).toFile();
+    private static File createErrorDirectory(String... subdirectoryNames) {
+        File subdirectory = Path.of(ERROR_FOLDER, subdirectoryNames).toFile();
         if (!subdirectory.exists()) {
             subdirectory.mkdirs();
         }
