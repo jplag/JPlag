@@ -1,5 +1,6 @@
 package de.jplag.endtoend.helper;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -41,6 +42,17 @@ public class JsonHelper {
         } else {
             return Collections.<ResultDescription>emptyList();
         }
+    }
+
+    public static ResultDescription[] getResultDescriptionFromFile(File resultFile) {
+        if (resultFile.exists()) {
+            try {
+                return new ObjectMapper().readValue(resultFile, ResultDescription[].class);
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return null;
     }
 
     /**
