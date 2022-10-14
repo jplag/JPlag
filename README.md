@@ -6,7 +6,7 @@
 [![CI Build](https://github.com/jplag/jplag/actions/workflows/maven.yml/badge.svg)](https://github.com/jplag/jplag/actions/workflows/maven.yml)
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag)
-[![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/master/LICENSE)
+[![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/main/LICENSE)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jplag/JPlag)](https://github.com/jplag/JPlag/pulse)
 
 JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development. JPlag currently supports various programming languages, EMF metamodels, and natural language text.
@@ -101,20 +101,24 @@ Clustering:
 
 The new API makes it easy to integrate JPlag's plagiarism detection into external Java projects:
 
+<!-- To assure that the code example is always correct, it must be kept in sync
+with [`ReadmeCodeExampleTest#testReadmeCodeExample`](core/src/test/java/de/jplag/special/ReadmeCodeExampleTest.java). -->
 ```java
-Language language = LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow();
-JPlagOptions options = new JPlagOptions(language, List.of("/path/to/rootDir"), List.of()).withBaseCodeSubmissionPath("template");
+Language language = new de.jplag.java.Language();
+Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));
+File baseCode = new File("/path/to/baseCode");
+JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
 
 JPlag jplag = new JPlag(options);
-JPlagResult result = jplag.run();
-
-List<JPlagComparison> comparisons = result.getComparisons();
-
-// Optional
-ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-reportObjectFactory.createAndSaveReport(result, "/path/to/output");
-
-report.writeResult(result);
+try {
+    JPlagResult result = jplag.run();
+     
+    // Optional
+    ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
+    reportObjectFactory.createAndSaveReport(result, "/path/to/output");
+} catch (ExitException e) {
+    // error handling here
+}
 ```
 
 ## Contributing

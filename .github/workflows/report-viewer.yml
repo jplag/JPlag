@@ -4,7 +4,7 @@ on:
  workflow_dispatch: # Use this to dispatch from the Actions Tab
  push:
     branches:
-      - master
+      - main
       
 jobs:
   build-and-deploy:
