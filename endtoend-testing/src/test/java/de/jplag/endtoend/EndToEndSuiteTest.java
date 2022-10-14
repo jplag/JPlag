@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +18,8 @@ import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
@@ -26,7 +27,6 @@ import de.jplag.Language;
 import de.jplag.LanguageLoader;
 import de.jplag.endtoend.constants.TestDirectoryConstants;
 import de.jplag.endtoend.helper.FileHelper;
-import de.jplag.endtoend.helper.JsonHelper;
 import de.jplag.endtoend.helper.TestSuiteHelper;
 import de.jplag.endtoend.model.ExpectedResult;
 import de.jplag.endtoend.model.ResultDescription;
@@ -49,25 +49,15 @@ public class EndToEndSuiteTest {
     @TestFactory
     Collection<DynamicContainer> dynamicOverAllTest() throws IOException, ExitException {
         File resultsDirectory = TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile();
-        File[] languageDirectories = resultsDirectory.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory();
-            }
-        });
+        File[] languageDirectories = resultsDirectory.listFiles(File::isDirectory);
         List<DynamicContainer> allTests = new LinkedList<>();
         for (File languageDirectory : languageDirectories) {
             Language language = LanguageLoader.getLanguage(languageDirectory.getName()).orElseThrow();
-            File[] resultJsons = languageDirectory.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File pathname) {
-                    return !pathname.isDirectory() && pathname.getName().endsWith(".json");
-                }
-            });
+            File[] resultJsons = languageDirectory.listFiles(file -> !file.isDirectory() && file.getName().endsWith(".json"));
             List<DynamicContainer> languageTests = new LinkedList<>();
             for (File resultJson : resultJsons) {
                 List<DynamicContainer> testContainers = new LinkedList<>();
-                ResultDescription[] results = JsonHelper.getResultDescriptionFromFile(resultJson);
+                ResultDescription[] results = new ObjectMapper().readValue(resultJson, ResultDescription[].class);
                 for (var result : results) {
                     var testCases = generateTestsForResultDescription(resultJson, result, language);
                     testContainers.add(DynamicContainer.dynamicContainer("MTM: " + result.options().minimumTokenMatch(), testCases));

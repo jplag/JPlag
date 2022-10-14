@@ -175,7 +175,8 @@ public void BubbleSortWithoutRecursion(Integer arr[]) {
 The plagiarisms created in [Creating The Plagiarism](#creating-the-plagiarism) need now to be copied to the corresponding resources folder. For each test suite, the resources must be placed in `JPlag/jplag.endToEndTesting/src/test/resources/languageTestFiles/<languageIdentifier>/<testSuiteIdentifier>`. For example, for the existing test suite `sortAlgo` of language `java`, the path is `JPlag/jplag.endToEndTesting/src/test/resources/languageTestFiles/java/sortAlgo`.
 It is important to note that the language identifier must match `Language#getIdentifier` to correctly load the language during testing.
 
-Once the tests have been run for the first time, the information for the tests is stored in the folder `../target/testing-directory-submission/LANGUAGE`.  This data can be copied to the path `[...]/resources/results/LANGUAGE`. Each subdirectory gets its result JSON file as `[...]/resources/results/LANGUAGE/TEST_SUITE_NAME.json`. Once the test data has been copied, the end-to-end tests can be successfully tested. As soon as a change in the detection takes place, the results will differ from the stored results and the tests will fail if the results have changed.
+To automatically generate expected results, the test in `EndToEndGeneratorTest` can be executed to generate a JSON result description file. This file has to be copied to `JPlag/jplag.endToEndTesting/src/test/resources/results/<languageIdentifier>/<testSuiteIdentifier>.json`.
+Once the test data has been copied, the end-to-end tests can be successfully tested. As soon as a change in the detection takes place, the results will differ from the stored results and the tests will fail if the results have changed.
 
 ### Extending The Comparison Value
 
