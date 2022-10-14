@@ -29,7 +29,7 @@ class InvalidSubmissionTest extends TestBase {
         } catch (SubmissionException e) {
             System.out.println(e.getMessage());
         } finally {
-            File errorFolder = new File(Path.of(BASE_PATH, SAMPLE_NAME, "errors", "java").toString());
+            File errorFolder = new File(Path.of("errors", "java").toString());
             assertTrue(errorFolder.exists());
             String[] errorSubmissions = errorFolder.list();
             if (errorSubmissions != null)
