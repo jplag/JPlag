@@ -1,36 +1,34 @@
 package de.jplag.endtoend;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
+import de.jplag.Language;
 import de.jplag.LanguageLoader;
+import de.jplag.endtoend.constants.TestDirectoryConstants;
 import de.jplag.endtoend.helper.FileHelper;
-import de.jplag.endtoend.helper.JsonHelper;
 import de.jplag.endtoend.helper.TestSuiteHelper;
 import de.jplag.endtoend.model.ExpectedResult;
-import de.jplag.endtoend.model.Options;
 import de.jplag.endtoend.model.ResultDescription;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -40,146 +38,88 @@ import de.jplag.options.JPlagOptions;
  * plagiarism in the Java language and to be able to roughly categorize them. The plagiarism is compared with the
  * original class. The results are compared with the results from previous tests and changes are detected.
  */
-public class EndToEndSuiteTest {
+class EndToEndSuiteTest {
     private static final double EPSILON = 1E-8;
-    // Language -> directory names and Paths
-    private Map<String, Map<String, Path>> languageToTestCaseMapper;
-
-    private List<Options> options;
-
-    private static Map<String, List<ResultDescription>> temporaryResultList;
-    private static List<String> validationErrors;
-    private static String languageIdentifier;
-
-    public EndToEndSuiteTest() throws IOException {
-        // Loading the test resources
-        languageToTestCaseMapper = TestSuiteHelper.getAllLanguageResources();
-        // creating the temporary lists for the test run
-        validationErrors = new ArrayList<>();
-        temporaryResultList = new HashMap<>();
-        // creating options object for the testSuite
-        setRunOptions();
-    }
-
-    /**
-     * creating the required options object for the endToEnd tests
-     */
-    private void setRunOptions() {
-        options = new ArrayList<>();
-        options.add(new Options(9));
-        options.add(new Options(3));
-    }
-
-    /**
-     * Creates the result json files based on the current test results after the test run.
-     * @throws IOException is thrown for all problems that may occur while parsing the json file. This includes both reading
-     */
-    @AfterAll
-    public static void tearDown() throws IOException {
-        for (var resultDescriptionItem : temporaryResultList.entrySet()) {
-            JsonHelper.writeJsonModelsToJsonFile(resultDescriptionItem.getValue(), resultDescriptionItem.getKey(), languageIdentifier);
-        }
-    }
 
     /**
      * Creates the test cases over all language options for which data is available and the current test options.
      * @return dynamic test cases across all test data and languages
-     * @throws IOException is thrown for all problems that may occur while parsing the json file. This includes both reading
+     * @throws IOException is thrown for all problems that may occur while parsing the json file.
      */
     @TestFactory
-    Collection<DynamicTest> dynamicOverAllTest() throws IOException {
-        for (Entry<String, Map<String, Path>> languageMap : languageToTestCaseMapper.entrySet()) {
-            String currentLanguageIdentifier = languageMap.getKey();
-            for (Entry<String, Path> languagePaths : languageMap.getValue().entrySet()) {
-                String[] fileNames = FileHelper.loadAllTestFileNames(languagePaths.getValue());
-                var testCases = TestSuiteHelper.getTestCases(fileNames, languagePaths.getValue());
-                var testCollection = new ArrayList<DynamicTest>();
-                String directoryName = languagePaths.getValue().getFileName().toString();
-                List<ResultDescription> tempResult = JsonHelper.getJsonModelListFromPath(directoryName, currentLanguageIdentifier);
-                languageIdentifier = currentLanguageIdentifier;
-                for (Options option : options) {
-                    for (var testCase : testCases) {
-                        Optional<ResultDescription> currentResultDescription = tempResult.stream().filter(x -> x.options().equals(option))
-                                .findFirst();
-                        testCollection.add(DynamicTest.dynamicTest(getTestCaseDisplayName(option, languageIdentifier, testCase), () -> {
-                            runTests(directoryName, option, currentLanguageIdentifier, testCase, currentResultDescription);
-                        }));
-                    }
+    Collection<DynamicContainer> dynamicOverAllTest() throws IOException, ExitException {
+        File resultsDirectory = TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile();
+        File[] languageDirectories = resultsDirectory.listFiles(File::isDirectory);
+        List<DynamicContainer> allTests = new LinkedList<>();
+        for (File languageDirectory : languageDirectories) {
+            Language language = LanguageLoader.getLanguage(languageDirectory.getName()).orElseThrow();
+            File[] resultJsons = languageDirectory.listFiles(file -> !file.isDirectory() && file.getName().endsWith(".json"));
+            List<DynamicContainer> languageTests = new LinkedList<>();
+            for (File resultJson : resultJsons) {
+                List<DynamicContainer> testContainers = new LinkedList<>();
+                ResultDescription[] results = new ObjectMapper().readValue(resultJson, ResultDescription[].class);
+                for (var result : results) {
+                    var testCases = generateTestsForResultDescription(resultJson, result, language);
+                    testContainers.add(DynamicContainer.dynamicContainer("MTM: " + result.options().minimumTokenMatch(), testCases));
                 }
-                return testCollection;
+                languageTests.add(DynamicContainer.dynamicContainer(FileHelper.getFileNameWithoutFileExtension(resultJson), testContainers));
             }
+            allTests.add(DynamicContainer.dynamicContainer(language.getIdentifier(), languageTests));
         }
-        return null;
+        return allTests;
     }
 
     /**
-     * Superordinate test function to be able to continue to check all data to be tested in case of failed tests
-     * @param directoryName name of the current tested directory
-     * @param option for the current test run
-     * @param currentLanguageIdentifier current JPlag language option
-     * @param testFiles files to be tested
-     * @param currentResultDescription results stored for the test data
-     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
-     * exceptions produced by failed orinterrupted I/O operations
-     * @throws ExitException Exceptions for problems during the execution of JPlag that lead to an preemptive exit.
+     * Generates test cases for each test described in the provided result object.
+     * @param resultJson is the file of the result json
+     * @param result is one test suite configuration of the deserialized {@code resultJson}
+     * @param language is the language to run JPlag with
+     * @return a collection of test cases, each validating one {@link JPlagResult} against its {@link ExpectedResult}
+     * counterpart
      */
-    private void runTests(String directoryName, Options option, String currentLanguageIdentifier, String[] testFiles,
-            Optional<ResultDescription> currentResultDescription) throws IOException, ExitException {
-        try {
-            ResultDescription currentResult = currentResultDescription.orElse(null);
-            runJPlagTestSuite(directoryName, option, currentLanguageIdentifier, testFiles, currentResult);
-        } finally {
-            validationErrors.clear();
-            TestSuiteHelper.clear();
-        }
-    }
-
-    /**
-     * EndToEnd test for the passed objects
-     * @param directoryName name of the current tested directory
-     * @param options for the current test run
-     * @param languageIdentifier current JPlag language option
-     * @param testFiles files to be tested
-     * @param currentResultDescription results stored for the test data
-     * @throws IOException Signals that an I/O exception of some sort has occurred. Thisclass is the general class of
-     * exceptions produced by failed orinterrupted I/O operations
-     * @throws ExitException Exceptions for problems during the execution of JPlag that lead to an preemptive exit.
-     */
-    private void runJPlagTestSuite(String directoryName, Options options, String languageIdentifier, String[] testFiles,
-            ResultDescription currentResultDescription) throws IOException, ExitException {
-        String[] submissionPath = FileHelper.createNewTestCaseDirectory(testFiles);
-
-        var language = LanguageLoader.getLanguage(languageIdentifier).orElseThrow();
-        JPlagOptions jplagOptions = new JPlagOptions(language, Arrays.stream(submissionPath).map(path -> new File(path)).collect(Collectors.toSet()),
-                Set.of()).withMinimumTokenMatch(options.minimumTokenMatch());
+    private Collection<DynamicTest> generateTestsForResultDescription(File resultJson, ResultDescription result, Language language)
+            throws ExitException {
+        File submissionDirectory = TestSuiteHelper.getSubmissionDirectory(language, resultJson);
+        JPlagOptions jplagOptions = new JPlagOptions(language, Set.of(submissionDirectory), Set.of())
+                .withMinimumTokenMatch(result.options().minimumTokenMatch());
         JPlagResult jplagResult = new JPlag(jplagOptions).run();
+        Map<String, JPlagComparison> jPlagComparisons = jplagResult.getAllComparisons().stream()
+                .collect(Collectors.toMap(it -> TestSuiteHelper.getTestIdentifier(it), it -> it));
+        assertEquals(result.identifierToResultMap().size(), jPlagComparisons.size(), "different number of results and expected results");
 
-        List<JPlagComparison> currentJPlagComparison = jplagResult.getAllComparisons();
+        return result.identifierToResultMap().keySet().stream().map(identifier -> {
+            JPlagComparison comparison = jPlagComparisons.get(identifier);
+            ExpectedResult expectedResult = result.identifierToResultMap().get(identifier);
+            return generateTest(identifier, expectedResult, comparison);
+        }).toList();
+    }
 
-        for (JPlagComparison jPlagComparison : currentJPlagComparison) {
-            String identifier = TestSuiteHelper.getTestIdentifier(jPlagComparison);
-            addToTemporaryResultMap(directoryName, options, jPlagComparison, languageIdentifier);
+    /**
+     * Generates a test case validating the passed result by comparing it to the expected result values.
+     * @param name is the name of the test case.
+     * @param expectedResult contains all expected result values.
+     * @param result is the comparison object generated from running JPlag.
+     */
+    private DynamicTest generateTest(String name, ExpectedResult expectedResult, JPlagComparison result) {
+        return DynamicTest.dynamicTest(name, () -> {
+            assertNotNull(result, "No comparison result could be found");
 
-            assertNotNull(currentResultDescription, "No stored result could be found for the current LanguageOption! " + options);
-
-            ExpectedResult result = currentResultDescription.getExpectedResultByIdentifier(TestSuiteHelper.getTestIdentifier(jPlagComparison));
-            assertNotNull(result, "No stored result could be found for the identifier! " + identifier);
-
-            if (areDoublesDifferent(result.resultSimilarityMinimum(), jPlagComparison.minimalSimilarity())) {
-                addToValidationErrors("minimalSimilarity", String.valueOf(result.resultSimilarityMinimum()),
-                        String.valueOf(jPlagComparison.minimalSimilarity()));
+            List<String> validationErrors = new ArrayList<>();
+            if (areDoublesDifferent(expectedResult.resultSimilarityMinimum(), result.minimalSimilarity())) {
+                validationErrors.add(formattedValidationError("minimal similarity", String.valueOf(expectedResult.resultSimilarityMinimum()),
+                        String.valueOf(result.minimalSimilarity())));
             }
-            if (areDoublesDifferent(result.resultSimilarityMaximum(), jPlagComparison.maximalSimilarity())) {
-                addToValidationErrors("maximalSimilarity", String.valueOf(result.resultSimilarityMaximum()),
-                        String.valueOf(jPlagComparison.maximalSimilarity()));
+            if (areDoublesDifferent(expectedResult.resultSimilarityMaximum(), result.maximalSimilarity())) {
+                validationErrors.add(formattedValidationError("maximal similarity", String.valueOf(expectedResult.resultSimilarityMaximum()),
+                        String.valueOf(result.maximalSimilarity())));
             }
-            if (result.resultMatchedTokenNumber() != jPlagComparison.getNumberOfMatchedTokens()) {
-                addToValidationErrors("numberOfMatchedTokens", String.valueOf(result.resultMatchedTokenNumber()),
-                        String.valueOf(jPlagComparison.getNumberOfMatchedTokens()));
+            if (expectedResult.resultMatchedTokenNumber() != result.getNumberOfMatchedTokens()) {
+                validationErrors.add(formattedValidationError("number of matched tokens", String.valueOf(expectedResult.resultMatchedTokenNumber()),
+                        String.valueOf(result.getNumberOfMatchedTokens())));
             }
 
-            assertTrue(validationErrors.isEmpty(), createValidationErrorOutout());
-        }
+            assertTrue(validationErrors.isEmpty(), createValidationErrorOutput(validationErrors));
+        });
     }
 
     private boolean areDoublesDifferent(double d1, double d2) {
@@ -187,82 +127,21 @@ public class EndToEndSuiteTest {
     }
 
     /**
-     * Creates the display message for failed tests
+     * Creates the display message for a result value validation error.
      * @param valueName Name of the failed test object
-     * @param currentValue current test values
-     * @param expectedValue expected test values
+     * @param actualValue actual test value
+     * @param expectedValue expected test value
      */
-    private void addToValidationErrors(String valueName, String currentValue, String expectedValue) {
-        validationErrors.add(valueName + " was " + currentValue + " but expected " + expectedValue);
+    private String formattedValidationError(String valueName, String actualValue, String expectedValue) {
+        return valueName + " was " + actualValue + " but expected " + expectedValue;
     }
 
     /**
-     * Creates the display info from the current failed test results
+     * Creates the display info from the passed failed test results
      * @return formatted text for the failed comparative values of the current test
      */
-    private String createValidationErrorOutout() {
-        StringJoiner joiner = new StringJoiner(System.lineSeparator());
-        joiner.add(""); // empty line at start
-        joiner.add("There were <" + validationErrors.size() + "> validation error(s):");
-
-        validationErrors.stream().forEach(errorLine -> joiner.add(errorLine));
-        joiner.add(""); // line break at the end
-
-        return joiner.toString();
-    }
-
-    /**
-     * Add or create the current test results in a temporary list to be able to save them later.
-     * @param directoryName name of the current tested directory
-     * @param options for the current test run
-     * @param jPlagComparison current test results
-     * @param languageIdentifier current JPlag language option
-     */
-    private void addToTemporaryResultMap(String directoryName, Options options, JPlagComparison jPlagComparison, String languageIdentifier) {
-        var element = temporaryResultList.get(directoryName);
-
-        if (element != null) {
-            for (var item : element) {
-                if (item.options().equals(options)) {
-                    item.putIdentifierToResultMap(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(
-                            jPlagComparison.minimalSimilarity(), jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
-                    return;
-                }
-            }
-            Map<String, ExpectedResult> temporaryHashMap = new HashMap<>();
-            temporaryHashMap.put(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
-                    jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
-            element.add(new ResultDescription(languageIdentifier, options, temporaryHashMap));
-        } else {
-            var temporaryNewResultList = new ArrayList<ResultDescription>();
-            Map<String, ExpectedResult> temporaryHashMap = new HashMap<>();
-            temporaryHashMap.put(TestSuiteHelper.getTestIdentifier(jPlagComparison), new ExpectedResult(jPlagComparison.minimalSimilarity(),
-                    jPlagComparison.maximalSimilarity(), jPlagComparison.getNumberOfMatchedTokens()));
-
-            temporaryNewResultList.add(new ResultDescription(languageIdentifier, options, temporaryHashMap));
-
-            temporaryResultList.put(directoryName, temporaryNewResultList);
-        }
-    }
-
-    /**
-     * Creates the name of the test for better assignment and readability Pattern: Language: (option values)
-     * filename1-filename2
-     * @param option under which the current test run
-     * @param languageIdentifier current language used in the test
-     * @param testFiles test data for assigning by filename
-     * @return display name for the individual tests
-     */
-    private String getTestCaseDisplayName(Options option, String languageIdentifier, String[] testFiles) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("(" + String.valueOf(option.minimumTokenMatch()) + ")");
-        for (int counter = 0; counter < testFiles.length; counter++) {
-            String fileName = Path.of(testFiles[counter]).toFile().getName();
-            stringBuilder.append(fileName.substring(0, fileName.lastIndexOf('.')));
-            if (counter + 1 < testFiles.length) {
-                stringBuilder.append("-");
-            }
-        }
-        return languageIdentifier + ": " + stringBuilder.toString();
+    private String createValidationErrorOutput(List<String> validationErrors) {
+        return "There were " + validationErrors.size() + " validation error(s):" + System.lineSeparator()
+                + String.join(System.lineSeparator(), validationErrors);
     }
 }
