@@ -38,7 +38,7 @@ import de.jplag.options.JPlagOptions;
  * plagiarism in the Java language and to be able to roughly categorize them. The plagiarism is compared with the
  * original class. The results are compared with the results from previous tests and changes are detected.
  */
-public class EndToEndSuiteTest {
+class EndToEndSuiteTest {
     private static final double EPSILON = 1E-8;
 
     /**
