@@ -16,7 +16,7 @@ public interface SourceAnalysis {
      * @param file The file the token was scanned in
      * @return True, if the token should not be added to a TokenList, false if it should
      */
-    boolean isTokenIgnored(de.jplag.cpp.Token token, String file);
+    boolean isTokenIgnored(de.jplag.cpp.Token token, File file);
 
     /**
      * Executes the source analysis on the files of a submission.

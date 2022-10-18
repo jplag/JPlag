@@ -15,9 +15,10 @@ public class GCCSourceAnalysis implements SourceAnalysis {
     public static final String COMPILE_COMMAND = "gcc -Wall -fsyntax-only %s";
     private Map<String, List<Integer>> linesToDelete = new HashMap<>();
 
-    public boolean isTokenIgnored(de.jplag.cpp.Token token, String file) {
-        if (linesToDelete.containsKey(file)) {
-            var ignoredLineNumbers = linesToDelete.get(file);
+    public boolean isTokenIgnored(de.jplag.cpp.Token token, File file) {
+        String fileName = file.getName();
+        if (linesToDelete.containsKey(fileName)) {
+            var ignoredLineNumbers = linesToDelete.get(fileName);
             return ignoredLineNumbers.contains(token.beginLine);
         }
         return false;
