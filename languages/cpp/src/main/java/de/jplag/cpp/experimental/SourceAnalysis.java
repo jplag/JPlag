@@ -1,6 +1,5 @@
 package de.jplag.cpp.experimental;
 
-
 import java.io.File;
 import java.util.Set;
 
@@ -10,9 +9,9 @@ import java.util.Set;
 public interface SourceAnalysis {
 
     /**
-     * Tells the caller if a token is located in a line containing an unused variable.
-     * This usually indicates that the token belongs to a declaration of an unused variable.
-     * An edge case is multiple variable declarations in a single line, e.g. 'int a, b;' where a is used an b is unused.
+     * Tells the caller if a token is located in a line containing an unused variable. This usually indicates that the token
+     * belongs to a declaration of an unused variable. An edge case is multiple variable declarations in a single line, e.g.
+     * 'int a, b;' where a is used an b is unused.
      * @param token The token that will be checked
      * @param file The file the token was scanned in
      * @return True, if the token should not be added to a TokenList, false if it should

@@ -7,13 +7,13 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 /**
- * Uses GCC to find unused variables and saves their location. The scanner can then check if a token belongs to an unused variable
+ * Uses GCC to find unused variables and saves their location. The scanner can then check if a token belongs to an
+ * unused variable
  */
 public class GCCSourceAnalysis implements SourceAnalysis {
 
     public static final String COMPILE_COMMAND = "gcc -Wall -fsyntax-only %s";
     private Map<String, List<Integer>> linesToDelete = new HashMap<>();
-
 
     public boolean isTokenIgnored(de.jplag.cpp.Token token, String file) {
         if (linesToDelete.containsKey(file)) {
@@ -23,10 +23,8 @@ public class GCCSourceAnalysis implements SourceAnalysis {
         return false;
     }
 
-
     public void findUnusedVariableLines(Set<File> files) {
         linesToDelete = new HashMap<>();
-
 
         for (File file : files) {
             try {
