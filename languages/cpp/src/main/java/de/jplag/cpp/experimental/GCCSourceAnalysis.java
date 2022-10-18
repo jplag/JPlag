@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Uses GCC to find unused variables and saves their location. The scanner can then check if a token belongs to an
  * unused variable
@@ -14,6 +17,12 @@ public class GCCSourceAnalysis implements SourceAnalysis {
 
     public static final String COMPILE_COMMAND = "gcc -Wall -fsyntax-only %s";
     private Map<String, List<Integer>> linesToDelete = new HashMap<>();
+
+    private final Logger logger;
+
+    public GCCSourceAnalysis(Logger logger) {
+        this.logger = LoggerFactory.getLogger(this.getClass());
+    }
 
     public boolean isTokenIgnored(de.jplag.cpp.Token token, File file) {
         String fileName = file.getName();
@@ -41,7 +50,8 @@ public class GCCSourceAnalysis implements SourceAnalysis {
                     processOutputLine(line);
                 }
             } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+                // error during compilation, skip this submission
+                logger.warn("Failed to compile file {}", file.getAbsolutePath());
             }
         }
     }
