@@ -27,7 +27,7 @@ public final class CollectedLogger extends MarkerIgnoringBase {
     private static final int LOG_LEVEL_WARN = LocationAwareLogger.WARN_INT;
     private static final int LOG_LEVEL_ERROR = LocationAwareLogger.ERROR_INT;
 
-    private final int currentLogLevel = LOG_LEVEL_INFO;
+    private static final int CURRENT_LOG_LEVEL = LOG_LEVEL_INFO;
 
     /**
      * The short name of this simple log instance
@@ -117,7 +117,7 @@ public final class CollectedLogger extends MarkerIgnoringBase {
     }
 
     private boolean isLevelEnabled(int logLevel) {
-        return logLevel >= currentLogLevel;
+        return logLevel >= CURRENT_LOG_LEVEL;
     }
 
     private String renderLevel(int level) {

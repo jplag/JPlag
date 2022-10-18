@@ -129,7 +129,7 @@ public enum CommandLineArgument {
      * @return the flag name of the command line argument without leading dashes and inner dashes replaced with underscores.
      */
     public String flagWithoutDash() {
-        return flag.replaceAll("^-+", "").replaceAll("-", "_");
+        return flag.replaceAll("^-+", "").replace("-", "_");
     }
 
     /**
