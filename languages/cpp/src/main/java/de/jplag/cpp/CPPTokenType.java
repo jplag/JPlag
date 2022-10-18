@@ -5,7 +5,6 @@ import de.jplag.TokenType;
 public enum CPPTokenType implements TokenType {
     C_BLOCK_BEGIN("BLOCK{"),
     C_BLOCK_END("}BLOCK"),
-    C_SCOPE("SCOPE"),
     C_QUESTIONMARK("COND"),
     C_ELLIPSIS("..."),
     C_ASSIGN("ASSIGN"),
