@@ -33,7 +33,7 @@ public class GCCSourceAnalysis implements SourceAnalysis {
         return false;
     }
 
-    public void findUnusedVariableLines(Set<File> files) {
+    public void findUnusedVariableLines(Set<File> files) throws InterruptedException {
         linesToDelete = new HashMap<>();
 
         for (File file : files) {
@@ -49,7 +49,7 @@ public class GCCSourceAnalysis implements SourceAnalysis {
                 while ((line = stdError.readLine()) != null) {
                     processOutputLine(line);
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 // error during compilation, skip this submission
                 logger.warn("Failed to compile file {}", file.getAbsolutePath());
             }
