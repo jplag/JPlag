@@ -22,5 +22,5 @@ public interface SourceAnalysis {
      * Executes the source analysis on the files of a submission.
      * @param files Set of the files contained in the submission
      */
-    void findUnusedVariableLines(Set<File> files);
+    void findUnusedVariableLines(Set<File> files) throws InterruptedException;
 }
