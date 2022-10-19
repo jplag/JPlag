@@ -20,7 +20,7 @@ public class GCCSourceAnalysis implements SourceAnalysis {
 
     private final Logger logger;
 
-    public GCCSourceAnalysis(Logger logger) {
+    public GCCSourceAnalysis() {
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
