@@ -14,7 +14,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Set maven settings.xml
-        uses: whelk-io/maven-settings-xml-action@v20
+        uses: whelk-io/maven-settings-xml-action@v21
         with:
           servers: '[{ "id": "ossrh", "username": "jplag", "password": "${{ secrets.OSSRH_TOKEN }}" }]'
       - name: Import GPG key
