@@ -70,10 +70,6 @@ public class GCCSourceAnalysis implements SourceAnalysis {
 
         int lineNumber = Integer.parseInt(lineSplit[1]);
 
-        if (linesToDelete.containsKey(fileName)) {
-            linesToDelete.get(fileName).add(lineNumber);
-        } else {
-            linesToDelete.put(fileName, new ArrayList<>(lineNumber));
-        }
+        linesToDelete.computeIfAbsent(fileName, key -> new ArrayList<>()).add(lineNumber);
     }
 }
