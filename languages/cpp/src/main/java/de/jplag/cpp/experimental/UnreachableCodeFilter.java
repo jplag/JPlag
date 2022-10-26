@@ -6,6 +6,7 @@ import static de.jplag.cpp.CPPTokenType.*;
 import java.util.List;
 import java.util.ListIterator;
 
+import de.jplag.Token;
 import de.jplag.TokenType;
 
 /**
@@ -20,10 +21,10 @@ public final class UnreachableCodeFilter {
      * Applies the filtering on the provided token list.
      * @param tokenList The list that will be filtered. The contents of this parameter will be modified.
      */
-    public static void applyTo(List<de.jplag.Token> tokenList) {
+    public static void applyTo(List<Token> tokenList) {
         TokenFilterState stateMachine = TokenFilterState.STATE_DEFAULT;
 
-        ListIterator<de.jplag.Token> iterator = tokenList.listIterator();
+        ListIterator<Token> iterator = tokenList.listIterator();
         while (iterator.hasNext()) {
             var token = iterator.next();
 
