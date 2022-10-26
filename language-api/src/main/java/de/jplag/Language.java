@@ -58,4 +58,21 @@ public interface Language {
     default String viewFileSuffix() {
         return "";
     }
+
+    /**
+     * Specifies if the submission order is relevant for this language.
+     * @return defaults to false.
+     */
+    default boolean expectsSubmissionOrder() {
+        return false;
+    }
+
+    /**
+     * Re-orders the provided submission according the requirements of the language.
+     * @param submissions is the list of submissions.
+     * @return the re-ordered list.
+     */
+    default List<File> customizeSubmissionOrder(List<File> submissions) {
+        return submissions;
+    }
 }

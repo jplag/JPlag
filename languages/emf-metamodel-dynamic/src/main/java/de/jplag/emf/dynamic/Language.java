@@ -3,6 +3,7 @@ package de.jplag.emf.dynamic;
 import org.kohsuke.MetaInfServices;
 
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
+import de.jplag.emf.parser.EcoreParser;
 
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF). This language is based on a dynamically
@@ -16,8 +17,18 @@ public class Language extends de.jplag.emf.Language {
 
     private static final int DEFAULT_MIN_TOKEN_MATCH = 10;
 
+    /**
+     * Creates an EMF language instance with a dynamic token parser.
+     */
     public Language() {
         super(new DynamicEcoreParser());
+    }
+
+    /**
+     * Creates an EMF language instance with a custom token parser.
+     */
+    public Language(EcoreParser parser) {
+        super(parser);
     }
 
     @Override
