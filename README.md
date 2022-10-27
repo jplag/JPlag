@@ -53,7 +53,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 5. You will find the generated JARs in the subdirectory `jplag.cli/target`.
 
 ## Usage
-JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag). If you are using the CLI, you can display you results via [jplag.github.io](https://jplag.github.io/JPlag/). No data will be uploaded!
 
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
