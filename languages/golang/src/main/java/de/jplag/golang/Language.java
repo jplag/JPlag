@@ -13,7 +13,7 @@ import de.jplag.Token;
 public class Language implements de.jplag.Language {
 
     private static final String NAME = "Go Parser";
-    public static final String IDENTIFIER = "go";
+    private static final String IDENTIFIER = "go";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".go"};
     private final GoParserAdapter parserAdapter;

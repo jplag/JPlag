@@ -16,9 +16,9 @@ import de.jplag.Token;
 public class Language implements de.jplag.Language {
 
     protected static final String[] FILE_EXTENSIONS = {".rs"};
-    public static final String NAME = "Rust Language Module";
-    public static final String IDENTIFIER = "rust";
-    public static final int MINIMUM_TOKEN_MATCH = 8;
+    private static final String NAME = "Rust Language Module";
+    private static final String IDENTIFIER = "rust";
+    private static final int MINIMUM_TOKEN_MATCH = 8;
 
     private final RustParserAdapter parserAdapter;
 

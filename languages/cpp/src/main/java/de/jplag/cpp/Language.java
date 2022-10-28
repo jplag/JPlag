@@ -11,7 +11,7 @@ import de.jplag.Token;
 
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
-    public static final String IDENTIFIER = "cpp";
+    private static final String IDENTIFIER = "cpp";
 
     private final Scanner scanner; // cpp code is scanned not parsed
 
