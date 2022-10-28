@@ -37,7 +37,7 @@ public enum CommandLineArgument {
     NEW_DIRECTORY(new Builder("-new", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     OLD_DIRECTORY(new Builder("-old", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     LANGUAGE(
-            new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.IDENTIFIER)
+            new Builder("-l", String.class).defaultsTo(new de.jplag.java.Language().getIdentifier())
                     .choices(LanguageLoader.getAllAvailableLanguageIdentifiers())),
     BASE_CODE("-bc", String.class),
 
@@ -85,7 +85,7 @@ public enum CommandLineArgument {
      * The identifier of the default {@link Language}.
      * @see Language#getIdentifier()
      */
-    public static final String DEFAULT_LANGUAGE_IDENTIFIER = de.jplag.java.Language.IDENTIFIER;
+    public static final String DEFAULT_LANGUAGE_IDENTIFIER = new de.jplag.java.Language().getIdentifier();
 
     private final String flag;
     private final NumberOfArgumentValues numberOfValues;

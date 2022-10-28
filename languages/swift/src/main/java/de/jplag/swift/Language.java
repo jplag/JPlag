@@ -15,7 +15,7 @@ import de.jplag.Token;
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
-    public static final String IDENTIFIER = "swift";
+    private static final String IDENTIFIER = "swift";
 
     private static final String NAME = "Swift Parser";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
