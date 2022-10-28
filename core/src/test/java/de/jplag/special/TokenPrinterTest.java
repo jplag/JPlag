@@ -25,12 +25,6 @@ class TokenPrinterTest extends TestBase {
     private static final int MIN_TOKEN_MATCH = 5;
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
 
-    private static final String LANGUAGE_CPP = de.jplag.cpp.Language.IDENTIFIER;
-    private static final String LANGUAGE_R = de.jplag.rlang.Language.IDENTIFIER;
-    private static final String LANGUAGE_KOTLIN = de.jplag.kotlin.Language.IDENTIFIER;
-
-    private static final String LANGUAGE_GO = de.jplag.golang.Language.IDENTIFIER;
-
     @Disabled("Not a meaningful test, used for designing the token set")
     @Test
     void printCPPFiles() {
