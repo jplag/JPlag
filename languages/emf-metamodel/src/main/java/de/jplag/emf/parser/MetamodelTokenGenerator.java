@@ -1,18 +1,24 @@
 package de.jplag.emf.parser;
 
 import static de.jplag.emf.MetamodelTokenType.ABSTRACT_CLASS;
+import static de.jplag.emf.MetamodelTokenType.ABSTRACT_CLASS_END;
 import static de.jplag.emf.MetamodelTokenType.ANNOTATION;
 import static de.jplag.emf.MetamodelTokenType.ATTRIBUTE;
 import static de.jplag.emf.MetamodelTokenType.BOUND;
 import static de.jplag.emf.MetamodelTokenType.CLASS;
+import static de.jplag.emf.MetamodelTokenType.CLASS_END;
 import static de.jplag.emf.MetamodelTokenType.CONTAINMENT;
 import static de.jplag.emf.MetamodelTokenType.DATATYPE;
 import static de.jplag.emf.MetamodelTokenType.ENUM;
+import static de.jplag.emf.MetamodelTokenType.ENUM_END;
 import static de.jplag.emf.MetamodelTokenType.ENUM_LITERAL;
 import static de.jplag.emf.MetamodelTokenType.ID_ATTRIBUTE;
 import static de.jplag.emf.MetamodelTokenType.INTERFACE;
+import static de.jplag.emf.MetamodelTokenType.INTERFACE_END;
 import static de.jplag.emf.MetamodelTokenType.OPERATION;
+import static de.jplag.emf.MetamodelTokenType.OPERATION_END;
 import static de.jplag.emf.MetamodelTokenType.PACKAGE;
+import static de.jplag.emf.MetamodelTokenType.PACKAGE_END;
 import static de.jplag.emf.MetamodelTokenType.PARAMETER;
 import static de.jplag.emf.MetamodelTokenType.REFERENCE;
 import static de.jplag.emf.MetamodelTokenType.RETURN_TYPE;
@@ -125,6 +131,32 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
     protected void visitETypeParameter(ETypeParameter eTypeParameter) {
         parser.addToken(TYPE_PARAMETER, eTypeParameter);
         eTypeParameter.getEBounds().forEach(it -> parser.addToken(BOUND, it));
+    }
+    
+    @Override
+    protected void leaveEClass(EClass eClass) {
+        if (eClass.isInterface()) {
+            parser.addToken(INTERFACE_END, eClass);
+        } else if (eClass.isAbstract()) {
+            parser.addToken(ABSTRACT_CLASS_END, eClass);
+        } else {
+            parser.addToken(CLASS_END, eClass);
+        }
+    }
+    
+    @Override
+    protected void leaveEPackage(EPackage ePackage) {
+        parser.addToken(PACKAGE_END, ePackage);
+    }
+    
+    @Override
+    protected void leaveEEnum(EEnum eEnum) {
+        parser.addToken(ENUM_END, eEnum);
+    }
+    
+    @Override
+    protected void leaveEOperation(EOperation eOperation) {
+        parser.addToken(OPERATION_END, eOperation);
     }
 
 }
