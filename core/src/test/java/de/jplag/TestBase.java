@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import de.jplag.exceptions.ExitException;
-import de.jplag.java.Language;
 import de.jplag.options.JPlagOptions;
 
 public abstract class TestBase {
@@ -50,7 +49,7 @@ public abstract class TestBase {
             throws ExitException {
         var newFiles = newPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
         var oldFiles = oldPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
-        JPlagOptions options = new JPlagOptions(LanguageLoader.getLanguage(Language.IDENTIFIER).orElseThrow(), newFiles, oldFiles);
+        JPlagOptions options = new JPlagOptions(new de.jplag.java.Language(), newFiles, oldFiles);
         options = customization.apply(options);
         JPlag jplag = new JPlag(options);
         return jplag.run();

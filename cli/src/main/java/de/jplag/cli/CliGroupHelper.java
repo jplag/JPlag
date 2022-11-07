@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.cli;
 
 import java.util.HashMap;
 import java.util.Map;

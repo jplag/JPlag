@@ -1,14 +1,12 @@
 package de.jplag.cli;
 
-import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
+import static de.jplag.cli.CommandLineArgument.ROOT_DIRECTORY;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Arrays;
 
 import net.sourceforge.argparse4j.inf.Namespace;
 
-import de.jplag.CLI;
-import de.jplag.CommandLineArgument;
 import de.jplag.options.JPlagOptions;
 
 /**

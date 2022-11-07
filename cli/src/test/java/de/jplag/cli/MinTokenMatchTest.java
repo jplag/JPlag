@@ -6,8 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import de.jplag.CommandLineArgument;
-
 class MinTokenMatchTest extends CommandLineInterfaceTest {
 
     @Test
