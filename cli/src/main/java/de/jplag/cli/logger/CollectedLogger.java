@@ -122,7 +122,7 @@ public final class CollectedLogger extends MarkerIgnoringBase {
     }
 
     private boolean isLevelEnabled(int logLevel) {
-        return isJPlagLog() ? logLevel >= CURRENT_LOG_LEVEL : logLevel >= LOG_LEVEL_FOR_EXTERNAL_LIBRARIES;
+        return logLevel >= (isJPlagLog() ? CURRENT_LOG_LEVEL : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES);
     }
 
     private boolean isJPlagLog() {
