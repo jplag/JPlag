@@ -47,7 +47,7 @@ class GoLanguageTest {
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
 
-    private final Logger logger = LoggerFactory.getLogger("GoLang language test");
+    private final Logger logger = LoggerFactory.getLogger(GoLanguageTest.class);
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "golang").toFile();
     private Language language;
