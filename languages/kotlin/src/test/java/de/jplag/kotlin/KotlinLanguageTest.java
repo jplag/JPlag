@@ -46,7 +46,7 @@ class KotlinLanguageTest {
      */
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
 
-    private final Logger logger = LoggerFactory.getLogger("Kotlin language test");
+    private final Logger logger = LoggerFactory.getLogger(KotlinLanguageTest.class);
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE, "Game.kt"};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "kotlin").toFile();
     private Language language;

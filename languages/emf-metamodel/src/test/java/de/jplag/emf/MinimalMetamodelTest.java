@@ -25,7 +25,7 @@ import de.jplag.testutils.FileUtil;
 import de.jplag.testutils.TokenUtils;
 
 class MinimalMetamodelTest {
-    private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
+    private final Logger logger = LoggerFactory.getLogger(MinimalMetamodelTest.class);
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "models");
     private static final String[] TEST_SUBJECTS = {"bookStore.ecore", "bookStoreExtended.ecore", "bookStoreRenamed.ecore"};

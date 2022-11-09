@@ -46,7 +46,7 @@ class ScalaLanguageTest {
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
     private static final double EPSILON = 1E-6;
 
-    private final Logger logger = LoggerFactory.getLogger("Scala language test");
+    private final Logger logger = LoggerFactory.getLogger(ScalaLanguageTest.class);
     private final String[] testFiles = new String[] {"Parser.scala", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "scala").toFile();
     private Language language;

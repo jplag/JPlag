@@ -18,7 +18,7 @@ import de.jplag.Language;
  * @author Dominik Fuchss
  */
 public final class LanguageLoader {
-    private static final Logger logger = LoggerFactory.getLogger("JPlag");
+    private static final Logger logger = LoggerFactory.getLogger(LanguageLoader.class);
 
     private static Map<String, Language> cachedLanguageInstances = null;
 

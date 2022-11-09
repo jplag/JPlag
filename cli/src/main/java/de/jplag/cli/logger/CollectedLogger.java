@@ -27,6 +27,11 @@ public final class CollectedLogger extends MarkerIgnoringBase {
     private static final int LOG_LEVEL_WARN = LocationAwareLogger.WARN_INT;
     private static final int LOG_LEVEL_ERROR = LocationAwareLogger.ERROR_INT;
 
+    /**
+     * The default log level that shall be used for external libraries (like Stanford Core NLP)
+     */
+    private static final int LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = LOG_LEVEL_ERROR;
+
     private static final int CURRENT_LOG_LEVEL = LOG_LEVEL_INFO;
 
     /**
@@ -117,7 +122,11 @@ public final class CollectedLogger extends MarkerIgnoringBase {
     }
 
     private boolean isLevelEnabled(int logLevel) {
-        return logLevel >= CURRENT_LOG_LEVEL;
+        return logLevel >= (isJPlagLog() ? CURRENT_LOG_LEVEL : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES);
+    }
+
+    private boolean isJPlagLog() {
+        return this.name.startsWith("de.jplag.");
     }
 
     private String renderLevel(int level) {

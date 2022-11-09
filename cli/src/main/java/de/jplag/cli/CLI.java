@@ -60,7 +60,7 @@ import de.jplag.reporting.reportobject.ReportObjectFactory;
  */
 public final class CLI {
 
-    private static final Logger logger = LoggerFactory.getLogger("JPlag");
+    private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
     private static final Random RANDOM = new SecureRandom();
 
