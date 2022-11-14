@@ -22,6 +22,25 @@ public class DirectoryManager {
     private static final Logger logger = LoggerFactory.getLogger(DirectoryManager.class);
 
     /**
+     * Creates a full path directory.
+     * @param path The path under which the new directory or file ought to be created
+     * @param name The name of the new directory. According to this name we can get sub-folder's structure after this
+     * directory.
+     * @param file The file, which has the path of sub-folders
+     * @return The created directory which has the whole structure as file
+     */
+    public static File createDirectory(String path, String name, File file) throws IOException {
+        String fileName = file.getPath();
+        int firstDirectoryIndex = fileName.indexOf(name);
+        fileName = fileName.substring(firstDirectoryIndex).replaceFirst(name, "");
+        File directory = new File(path.concat(File.separator).concat(name).concat(fileName));
+        if (!directory.exists() && !directory.mkdirs()) {
+            throw new IOException("Failed to create dir.");
+        }
+        return directory;
+    }
+
+    /**
      * Creates a directory.
      * @param path The path under which the new directory ought to be created
      * @param name The name of the new directory
