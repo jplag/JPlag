@@ -102,13 +102,23 @@ public class ReportObjectFactory {
                 continue;
             }
             for (File file : submission.getFiles()) {
+                File fullPath = createSubmissionDirectory(path, submissionsPath, submission, file);
                 File fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
                 try {
-                    Files.copy(fileToCopy.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(fileToCopy.toPath(), fullPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     logger.error("Could not save submission file " + fileToCopy, e);
                 }
             }
+        }
+    }
+
+    private File createSubmissionDirectory(String path, File submissionsPath, Submission submission, File file) {
+        try {
+            return createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission), file);
+        } catch (IOException e) {
+            logger.error("Could not create directory " + path + " for report viewer generation", e);
+            return null;
         }
     }
 

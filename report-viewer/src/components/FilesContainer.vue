@@ -7,13 +7,13 @@
     <VueDraggableNext>
       <CodePanel
         v-for="(file, index) in files.keys()"
-        :key="file.concat(index.toString())"
+        :key="file"
         :collapse="files.get(file)?.collapsed"
         :file-index="index"
         :lines="!files.get(file)?.lines ? [] : files.get(file)?.lines"
         :matches="!matches.get(file) ? [] : matches.get(file)"
         :panel-id="containerId"
-        :title="file"
+        :title="file.length>40?'..'+file.substring(file.length-40,file.length):file"
         @toggle-collapse="$emit('toggle-collapse', file)"
         @line-selected="lineSelected"
       />
