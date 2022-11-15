@@ -107,7 +107,7 @@ public class ReportObjectFactory {
                 try {
                     if (fullPath != null) {
                         Files.copy(fileToCopy.toPath(), fullPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    }else {
+                    } else {
                         throw new NullPointerException("Could not create file with full path");
                     }
                 } catch (IOException e) {
