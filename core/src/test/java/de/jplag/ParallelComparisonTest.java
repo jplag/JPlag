@@ -23,7 +23,7 @@ class ParallelComparisonTest extends TestBase {
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
-        assertEquals(1, result.getSimilarityDistribution()[3]);
+        assertEquals(1, result.getSimilarityDistribution()[6]);
         assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
@@ -32,7 +32,7 @@ class ParallelComparisonTest extends TestBase {
      */
     @Test
     void testWithMinTokenMatch() throws ExitException {
-        var expectedDistribution = new int[] {1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        var expectedDistribution = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
         JPlagResult result = runJPlag("SimpleDuplicate", it -> it.withMinimumTokenMatch(5));
 
         assertEquals(2, result.getNumberOfSubmissions());

@@ -1,10 +1,11 @@
 package de.jplag.reporting.reportobject.mapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
@@ -25,12 +26,12 @@ public class MetricMapper {
     }
 
     public Metric getAverageMetric(JPlagResult result) {
-        return new Metric(SimilarityMetric.AVG.name(), intArrayToList(result.getSimilarityDistribution()), getTopComparisons(getComparisons(result)),
-                Messages.getString("SimilarityMetric.Avg.Description"));
+        return new Metric(SimilarityMetric.AVG.name(), convertDistribution(result.getSimilarityDistribution()),
+                getTopComparisons(getComparisons(result)), Messages.getString("SimilarityMetric.Avg.Description"));
     }
 
     public Metric getMaxMetric(JPlagResult result) {
-        return new Metric(SimilarityMetric.MAX.name(), intArrayToList(result.getMaxSimilarityDistribution()),
+        return new Metric(SimilarityMetric.MAX.name(), convertDistribution(result.getMaxSimilarityDistribution()),
                 getMaxSimilarityTopComparisons(getComparisons(result)), Messages.getString("SimilarityMetric.Max.Description"));
     }
 
@@ -39,8 +40,10 @@ public class MetricMapper {
         return result.getComparisons(maxNumberOfComparisons);
     }
 
-    private List<Integer> intArrayToList(int[] array) {
-        return Arrays.stream(array).boxed().collect(Collectors.toList());
+    private List<Integer> convertDistribution(int[] array) {
+        List<Integer> list = new ArrayList<>(Arrays.stream(array).boxed().toList());
+        Collections.reverse(list);
+        return list;
     }
 
     private List<TopComparison> getTopComparisons(List<JPlagComparison> comparisons, Function<JPlagComparison, Double> similarityExtractor) {
