@@ -105,11 +105,13 @@ public class ReportObjectFactory {
                 File fullPath = createSubmissionDirectory(path, submissionsPath, submission, file);
                 File fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
                 try {
-                    Files.copy(fileToCopy.toPath(), fullPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    if (fullPath != null) {
+                        Files.copy(fileToCopy.toPath(), fullPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    }else {
+                        throw new NullPointerException("Could not create file with full path");
+                    }
                 } catch (IOException e) {
                     logger.error("Could not save submission file " + fileToCopy, e);
-                } catch (NullPointerException e) {
-                    logger.error("Could not create full path for files under submissions directory", e);
                 }
             }
         }
