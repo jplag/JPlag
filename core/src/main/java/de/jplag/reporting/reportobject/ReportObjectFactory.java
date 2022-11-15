@@ -108,6 +108,8 @@ public class ReportObjectFactory {
                     Files.copy(fileToCopy.toPath(), fullPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     logger.error("Could not save submission file " + fileToCopy, e);
+                } catch (NullPointerException e) {
+                    logger.error("Could not create full path for files under submissions directory", e);
                 }
             }
         }
