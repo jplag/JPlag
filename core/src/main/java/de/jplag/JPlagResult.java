@@ -141,8 +141,7 @@ public class JPlagResult {
             int index = (int) (similarity * SIMILARITY_DISTRIBUTION_SIZE); // divide similarity by bucket size to find index of correct bucket.
             index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1);// index is out of bounds when similarity is 1.0. decrease by one to count
                                                                       // towards the highest value bucket
-            similarityDistribution[SIMILARITY_DISTRIBUTION_SIZE - 1 - index]++; // count comparison towards its determined bucket. bucket order is
-            // reversed, so that the highest value bucket has the lowest index
+            similarityDistribution[index]++; // count comparison towards its determined bucket.
         }
         return similarityDistribution;
     }
