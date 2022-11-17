@@ -21,7 +21,7 @@ public class Language implements de.jplag.Language {
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
 
     private static final String NAME = "EMF metamodel";
-    public static final String IDENTIFIER = "emf";
+    private static final String IDENTIFIER = "emf";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 6;
 
     protected final EcoreParser parser;

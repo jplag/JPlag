@@ -14,7 +14,7 @@ import de.jplag.Token;
  */
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
-    public static final String IDENTIFIER = "java";
+    private static final String IDENTIFIER = "java";
 
     private final Parser parser;
 

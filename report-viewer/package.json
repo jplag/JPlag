@@ -12,22 +12,22 @@
     "@highlightjs/vue-plugin": "^2.1.0",
     "chart.js": "^3.9.1",
     "chartjs-plugin-datalabels": "^2.1.0",
-    "core-js": "^3.25.5",
-    "gitart-vue-dialog": "^2.4.0",
+    "core-js": "^3.26.1",
+    "gitart-vue-dialog": "^2.4.1",
     "highlight.js": "^11.6.0",
     "jszip": "^3.10.0",
     "node-polyfill-webpack-plugin": "^2.0.0",
     "slash": "^5.0.0",
-    "vue": "^3.2.40",
+    "vue": "^3.2.45",
     "vue-chart-3": "^3.1.8",
     "vue-draggable-next": "^2.1.1",
-    "vue-router": "^4.1.5",
+    "vue-router": "^4.1.6",
     "vue3-highlightjs": "^1.0.5",
     "vuex": "^4.0.2"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.40.0",
-    "@typescript-eslint/parser": "^5.40.0",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.43.0",
     "@vue/cli-plugin-babel": "~5.0.8",
     "@vue/cli-plugin-eslint": "~5.0.8",
     "@vue/cli-plugin-router": "~5.0.8",
@@ -36,12 +36,12 @@
     "@vue/compiler-sfc": "^3.2.39",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^10.0.0",
-    "eslint": "^8.25.0",
+    "eslint": "^8.27.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^8.7.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
-    "typescript": "~4.8.4"
+    "typescript": "~4.9.3"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"

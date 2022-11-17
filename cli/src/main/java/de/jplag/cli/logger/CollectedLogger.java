@@ -1,4 +1,4 @@
-package de.jplag.logger;
+package de.jplag.cli.logger;
 
 import java.io.PrintStream;
 import java.io.Serial;
@@ -27,7 +27,12 @@ public final class CollectedLogger extends MarkerIgnoringBase {
     private static final int LOG_LEVEL_WARN = LocationAwareLogger.WARN_INT;
     private static final int LOG_LEVEL_ERROR = LocationAwareLogger.ERROR_INT;
 
-    private final int currentLogLevel = LOG_LEVEL_INFO;
+    /**
+     * The default log level that shall be used for external libraries (like Stanford Core NLP)
+     */
+    private static final int LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = LOG_LEVEL_ERROR;
+
+    private static final int CURRENT_LOG_LEVEL = LOG_LEVEL_INFO;
 
     /**
      * The short name of this simple log instance
@@ -117,7 +122,11 @@ public final class CollectedLogger extends MarkerIgnoringBase {
     }
 
     private boolean isLevelEnabled(int logLevel) {
-        return logLevel >= currentLogLevel;
+        return logLevel >= (isJPlagLog() ? CURRENT_LOG_LEVEL : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES);
+    }
+
+    private boolean isJPlagLog() {
+        return this.name.startsWith("de.jplag.");
     }
 
     private String renderLevel(int level) {

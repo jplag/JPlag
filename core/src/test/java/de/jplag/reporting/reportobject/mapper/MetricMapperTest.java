@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -17,19 +18,20 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.TopComparison;
 
 public class MetricMapperTest {
+    private static final List<Integer> EXPECTED_DISTRIBUTION = List.of(29, 23, 19, 17, 13, 11, 7, 5, 3, 2);
     private final MetricMapper metricMapper = new MetricMapper(Submission::getName);
 
     @Test
     public void test_getAverageMetric() {
         // given
-        JPlagResult jPlagResult = createJPlagResult(MockMetric.AVG, distribution(2, 3, 5, 7, 11, 13, 17, 19, 23, 29),
+        JPlagResult jPlagResult = createJPlagResult(MockMetric.AVG, distribution(EXPECTED_DISTRIBUTION),
                 comparison(submission("1"), submission("2"), .7), comparison(submission("3"), submission("4"), .3));
         // when
         var result = metricMapper.getAverageMetric(jPlagResult);
 
         // then
         Assertions.assertEquals("AVG", result.name());
-        Assertions.assertIterableEquals(List.of(2, 3, 5, 7, 11, 13, 17, 19, 23, 29), result.distribution());
+        Assertions.assertIterableEquals(EXPECTED_DISTRIBUTION, result.distribution());
         Assertions.assertEquals(List.of(new TopComparison("1", "2", .7), new TopComparison("3", "4", .3)), result.topComparisons());
         Assertions.assertEquals(
                 "Average of both program coverages. This is the default similarity which"
@@ -40,14 +42,14 @@ public class MetricMapperTest {
     @Test
     public void test_getMaxMetric() {
         // given
-        JPlagResult jPlagResult = createJPlagResult(MockMetric.MAX, distribution(2, 3, 5, 7, 11, 13, 17, 19, 23, 29),
+        JPlagResult jPlagResult = createJPlagResult(MockMetric.MAX, distribution(EXPECTED_DISTRIBUTION),
                 comparison(submission("00"), submission("01"), .7), comparison(submission("10"), submission("11"), .3));
         // when
         var result = metricMapper.getMaxMetric(jPlagResult);
 
         // then
         Assertions.assertEquals("MAX", result.name());
-        Assertions.assertIterableEquals(List.of(2, 3, 5, 7, 11, 13, 17, 19, 23, 29), result.distribution());
+        Assertions.assertIterableEquals(EXPECTED_DISTRIBUTION, result.distribution());
         Assertions.assertEquals(List.of(new TopComparison("00", "01", .7), new TopComparison("10", "11", .3)), result.topComparisons());
         Assertions.assertEquals(
                 "Maximum of both program coverages. This ranking is especially useful if the programs are very "
@@ -55,8 +57,10 @@ public class MetricMapperTest {
                 result.description());
     }
 
-    private int[] distribution(int... numbers) {
-        return numbers;
+    private int[] distribution(List<Integer> expectedDistribution) {
+        var reversedDistribution = new ArrayList<>(expectedDistribution);
+        Collections.reverse(reversedDistribution);
+        return reversedDistribution.stream().mapToInt(Integer::intValue).toArray();
     }
 
     private CreateSubmission submission(String name) {

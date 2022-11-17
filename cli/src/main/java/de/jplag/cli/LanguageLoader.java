@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.cli;
 
 import java.util.Collections;
 import java.util.Map;
@@ -11,12 +11,14 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.Language;
+
 /**
  * This class contains methods to load {@link Language Languages}.
  * @author Dominik Fuchss
  */
 public final class LanguageLoader {
-    private static final Logger logger = LoggerFactory.getLogger("JPlag");
+    private static final Logger logger = LoggerFactory.getLogger(LanguageLoader.class);
 
     private static Map<String, Language> cachedLanguageInstances = null;
 

@@ -85,35 +85,34 @@ The internal structure consists of several `Option` records, each of which conta
 Thus the results can be kept apart from the other configurations. 
 The test results for the specified options are also specified in the object. This consists of the `ExpectedResult` record which contains the results of the detection.
 
-Here the herachie is as follows:
+Here the hierarchy is as follows:
 
 ```JSON
 [{
-      "options":{
-         "minimum_token_match":"int"
-      },
-      "tests":{
-         "languageIdentifier":{
-            "minimal_similarity":"float",
-            "maximum_similarity":"float",
-            "matched_token_number":"int"
-         },
-         "/..."
-      }
-   },
-   "options":{
-      "minimum_token_match":"int"
-   },
-   "tests":{
-      "languageIdentifier":{
-         "minimal_similarity":"float",
-         "maximum_similarity":"float",
-         "matched_token_number":"int"
-      },
-      {
-         "/..."
-      }
-   }
+  "options":{
+    "minimum_token_match":"int"
+  },
+  "tests":{
+    "languageIdentifier":{
+      "minimal_similarity":"float",
+      "maximum_similarity":"float",
+      "matched_token_number":"int"
+    },
+  "/..."
+  }
+},
+{ 
+  "options":{
+    "minimum_token_match":"int"
+  },
+  "tests":{
+    "languageIdentifier":{
+      "minimal_similarity":"float",
+      "maximum_similarity":"float",
+      "matched_token_number":"int"
+    },
+    "/..."
+  }
 }]
 ```
 
@@ -173,14 +172,11 @@ public void BubbleSortWithoutRecursion(Integer arr[]) {
 ```
 ### Copying Plagiarism To The Resources
 
-The plagiarisms created in [Creating The Plagiarism](#creating-the-plagiarism) must now be copied to the corresponding resources folder. It is important not to mix the languages of the plagiarisms or to copy the data into bottle resource paths.
+The plagiarisms created in [Creating The Plagiarism](#creating-the-plagiarism) need now to be copied to the corresponding resources folder. For each test suite, the resources must be placed in `JPlag/jplag.endToEndTesting/src/test/resources/languageTestFiles/<languageIdentifier>/<testSuiteIdentifier>`. For example, for the existing test suite `sortAlgo` of language `java`, the path is `JPlag/jplag.endToEndTesting/src/test/resources/languageTestFiles/java/sortAlgo`.
+It is important to note that the language identifier must match `Language#getIdentifier` to correctly load the language during testing.
 
-- At the path `JPlag/jplag.endToEndTesting/src/test/resources/languageTestFiles` a new folder for the language should be created if it does not already exist. For example `[...]/resources/languageTestFiles/JAVA`. If you have plagiarized several different code samples, you can also create additional subfolders under the newly created folder for example `[...]/resources/languageTestFiles/JAVA/sortAlgo`.
-
-It is important to note that the resource folder name must be the same as the language identifier name in JPlag/Language. 
-Otherwise, the language option cannot be parsed correctly to the enum-type which you can found in every language module under `Language.java` `IDENTIFIER`
-
-Once the tests have been run for the first time, the information for the tests is stored in the folder `../target/testing-directory-submission/LANGUAGE`.  This data can be copied to the path `[...]/resources/results/LANGUAGE`. Each subdirectory gets its result JSON file as `[...]/resources/results/LANGUAGE/TEST_SUITE_NAME.json`. Once the test data has been copied, the end-to-end tests can be successfully tested. As soon as a change in the detection takes place, the results will differ from the stored results and the tests will fail if the results have changed.
+To automatically generate expected results, the test in `EndToEndGeneratorTest` can be executed to generate a JSON result description file. This file has to be copied to `JPlag/jplag.endToEndTesting/src/test/resources/results/<languageIdentifier>/<testSuiteIdentifier>.json`.
+Once the test data has been copied, the end-to-end tests can be successfully tested. As soon as a change in the detection takes place, the results will differ from the stored results and the tests will fail if the results have changed.
 
 ### Extending The Comparison Value
 
@@ -202,8 +198,8 @@ public record ExpectedResult(
 
 ```JAVA
 //...
-            if (Float.compare(result.resultSimilarityMaximum(), jPlagComparison.maximalSimilarity()) != 0) {
-                addToValidationErrors("maximalSimilarity", String.valueOf(result.resultSimilarityMaximum()),
+            if (areDoublesDifferent(result.resultSimilarityMaximum(), jPlagComparison.maximalSimilarity())) {
+                addToValidationErrors("maximal similarity", String.valueOf(result.resultSimilarityMaximum()),
                         String.valueOf(jPlagComparison.maximalSimilarity()));
             }
 //...

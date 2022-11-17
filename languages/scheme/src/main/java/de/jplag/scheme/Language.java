@@ -12,7 +12,7 @@ import de.jplag.Token;
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
 
-    public static final String IDENTIFIER = "scheme";
+    private static final String IDENTIFIER = "scheme";
     private final de.jplag.scheme.Parser parser;
 
     public Language() {

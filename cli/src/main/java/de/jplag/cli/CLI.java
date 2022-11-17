@@ -1,32 +1,32 @@
-package de.jplag;
+package de.jplag.cli;
 
-import static de.jplag.CommandLineArgument.BASE_CODE;
-import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY;
-import static de.jplag.CommandLineArgument.CLUSTER_AGGLOMERATIVE_THRESHOLD;
-import static de.jplag.CommandLineArgument.CLUSTER_ALGORITHM;
-import static de.jplag.CommandLineArgument.CLUSTER_DISABLE;
-import static de.jplag.CommandLineArgument.CLUSTER_METRIC;
-import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_CDF;
-import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_NONE;
-import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE;
-import static de.jplag.CommandLineArgument.CLUSTER_PREPROCESSING_THRESHOLD;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_BANDWIDTH;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_KMEANS_ITERATIONS;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MAX_RUNS;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_MIN_RUNS;
-import static de.jplag.CommandLineArgument.CLUSTER_SPECTRAL_NOISE;
-import static de.jplag.CommandLineArgument.DEBUG;
-import static de.jplag.CommandLineArgument.EXCLUDE_FILE;
-import static de.jplag.CommandLineArgument.LANGUAGE;
-import static de.jplag.CommandLineArgument.MIN_TOKEN_MATCH;
-import static de.jplag.CommandLineArgument.NEW_DIRECTORY;
-import static de.jplag.CommandLineArgument.OLD_DIRECTORY;
-import static de.jplag.CommandLineArgument.RESULT_FOLDER;
-import static de.jplag.CommandLineArgument.ROOT_DIRECTORY;
-import static de.jplag.CommandLineArgument.SHOWN_COMPARISONS;
-import static de.jplag.CommandLineArgument.SIMILARITY_THRESHOLD;
-import static de.jplag.CommandLineArgument.SUBDIRECTORY;
-import static de.jplag.CommandLineArgument.SUFFIXES;
+import static de.jplag.cli.CommandLineArgument.BASE_CODE;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_AGGLOMERATIVE_THRESHOLD;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_ALGORITHM;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_DISABLE;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_METRIC;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_PREPROCESSING_CDF;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_PREPROCESSING_NONE;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_PREPROCESSING_THRESHOLD;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_SPECTRAL_BANDWIDTH;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_SPECTRAL_KMEANS_ITERATIONS;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_SPECTRAL_MAX_RUNS;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_SPECTRAL_MIN_RUNS;
+import static de.jplag.cli.CommandLineArgument.CLUSTER_SPECTRAL_NOISE;
+import static de.jplag.cli.CommandLineArgument.DEBUG;
+import static de.jplag.cli.CommandLineArgument.EXCLUDE_FILE;
+import static de.jplag.cli.CommandLineArgument.LANGUAGE;
+import static de.jplag.cli.CommandLineArgument.MIN_TOKEN_MATCH;
+import static de.jplag.cli.CommandLineArgument.NEW_DIRECTORY;
+import static de.jplag.cli.CommandLineArgument.OLD_DIRECTORY;
+import static de.jplag.cli.CommandLineArgument.RESULT_FOLDER;
+import static de.jplag.cli.CommandLineArgument.ROOT_DIRECTORY;
+import static de.jplag.cli.CommandLineArgument.SHOWN_COMPARISONS;
+import static de.jplag.cli.CommandLineArgument.SIMILARITY_THRESHOLD;
+import static de.jplag.cli.CommandLineArgument.SUBDIRECTORY;
+import static de.jplag.cli.CommandLineArgument.SUFFIXES;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -45,10 +45,12 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.JPlag;
+import de.jplag.JPlagResult;
+import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
-import de.jplag.logger.CollectedLoggerFactory;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
@@ -58,7 +60,7 @@ import de.jplag.reporting.reportobject.ReportObjectFactory;
  */
 public final class CLI {
 
-    private static final Logger logger = LoggerFactory.getLogger("JPlag");
+    private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
     private static final Random RANDOM = new SecureRandom();
 

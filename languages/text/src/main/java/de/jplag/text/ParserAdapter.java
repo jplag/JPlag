@@ -15,7 +15,6 @@ import de.jplag.Token;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.util.logging.RedwoodConfiguration;
 
 public class ParserAdapter extends AbstractParser {
 
@@ -34,7 +33,6 @@ public class ParserAdapter extends AbstractParser {
     private int currentLineBreakIndex;
 
     public ParserAdapter() {
-        RedwoodConfiguration.errorLevel().apply();
         Properties properties = new Properties();
         properties.put(ANNOTATORS_KEY, ANNOTATORS_VALUE);
         this.pipeline = new StanfordCoreNLP(properties);

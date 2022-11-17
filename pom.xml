@@ -70,7 +70,7 @@
         <sonar.organization>jplag</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!--suppress UnresolvedMavenProperty -->
-        <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/jplag.cli/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -85,7 +85,7 @@
         <emf.ecore.xmi.version>2.17.0</emf.ecore.xmi.version>
 
         <!-- The Revision of JPlag -->
-        <revision>4.0.1-SNAPSHOT</revision>
+        <revision>4.1.0</revision>
     </properties>
 
     <dependencyManagement>
@@ -139,7 +139,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.13.4.1</version>
+                <version>2.14.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -166,7 +166,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>4.8.0</version>
+            <version>4.9.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -284,6 +284,10 @@
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <pomElements>
+                        <dependencyManagement>expand</dependencyManagement>
+                        <dependencies>expand</dependencies>
+                    </pomElements>
                 </configuration>
                 <executions>
                     <execution>
@@ -400,6 +404,7 @@
             <modules>
                 <module>cli</module>
                 <module>core</module>
+                <module>coverage-report</module>
                 <module>endtoend-testing</module>
                 <module>languages</module>
                 <module>language-api</module>

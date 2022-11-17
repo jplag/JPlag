@@ -40,7 +40,7 @@ import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
 
 class MinimalCSharpTest {
-    private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
+    private final Logger logger = LoggerFactory.getLogger(MinimalCSharpTest.class);
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "csharp");
     private static final String TEST_SUBJECT = "TestClass.cs";
