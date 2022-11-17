@@ -22,6 +22,30 @@ public class DirectoryManager {
     private static final Logger logger = LoggerFactory.getLogger(DirectoryManager.class);
 
     /**
+     * Creates a full path directory.
+     * @param path The path under which the new directory or file ought to be created
+     * @param name The name of the new directory. According to this name we can get sub-folder's structure after this
+     * directory.
+     * @param file The file, which has the path of sub-folders
+     * @return The created directory which has the whole structure as file
+     */
+    public static File createDirectory(String path, String name, File file) throws IOException {
+        File directory;
+        String fileName = file.getPath();
+        int lastDirectoryIndex = findLastDirectory(fileName, name);
+        fileName = fileName.substring(lastDirectoryIndex).replaceFirst(name, "");
+        if ("".equals(fileName)) {
+            directory = new File(path.concat(File.separator).concat(name).concat(File.separator).concat(name));
+        } else {
+            directory = new File(path.concat(File.separator).concat(name).concat(fileName));
+        }
+        if (!directory.exists() && !directory.mkdirs()) {
+            throw new IOException("Failed to create dir.");
+        }
+        return directory;
+    }
+
+    /**
      * Creates a directory.
      * @param path The path under which the new directory ought to be created
      * @param name The name of the new directory
@@ -91,5 +115,27 @@ public class DirectoryManager {
         logger.info("Successfully zipped report files: {}", zipName);
         logger.info("Display the results with the report viewer at https://jplag.github.io/JPlag/");
         return true;
+    }
+
+    /**
+     * Processes file path.
+     * @param filePath The path of the file that needs to be compared
+     * @param name The name of the new directory. According to this name we can get sub-folder's structure after this
+     * directory.
+     * @return The index of the new directory in filePath
+     */
+    public static int findLastDirectory(String filePath, String name) {
+        String filePathCopy = filePath;
+        int index;
+        while (true) {
+            index = filePathCopy.lastIndexOf(name);
+            if (index == -1)
+                return filePathCopy.length();
+            String tempPath = filePathCopy.substring(0, index + name.length());
+            if (Files.isDirectory(Path.of(tempPath))) {
+                return index;
+            }
+            filePathCopy = filePathCopy.substring(0, index);
+        }
     }
 }
