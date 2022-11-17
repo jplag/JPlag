@@ -1,9 +1,9 @@
 package de.jplag.reporting.reportobject;
 
-import de.jplag.reporting.reportobject.model.Version;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import de.jplag.reporting.reportobject.model.Version;
 
 class ReportObjectFactoryTest {
     @Test
