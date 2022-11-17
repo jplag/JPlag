@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 class ReportObjectFactoryTest {
     @Test
-    void testVersion() {
+    void testVersionLoading() {
         Assertions.assertNotNull(ReportObjectFactory.REPORT_VIEWER_VERSION);
         Assertions.assertNotEquals(Version.DEVELOPMENT, ReportObjectFactory.REPORT_VIEWER_VERSION);
     }
