@@ -1,5 +1,7 @@
 package de.jplag;
 
+import java.util.ResourceBundle;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,6 +9,7 @@ import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.reporting.reportobject.model.Version;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.ParallelComparisonStrategy;
 
@@ -15,6 +18,15 @@ import de.jplag.strategy.ParallelComparisonStrategy;
  */
 public class JPlag {
     private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
+
+    public static final Version JPLAG_VERSION = loadVersion();
+
+    private static Version loadVersion() {
+        ResourceBundle versionProperties = ResourceBundle.getBundle("de.jplag.version");
+        String versionString = versionProperties.getString("version");
+        Version currentVersion = Version.parseVersion(versionString);
+        return currentVersion == null ? Version.DEVELOPMENT : currentVersion;
+    }
 
     private final JPlagOptions options;
 
