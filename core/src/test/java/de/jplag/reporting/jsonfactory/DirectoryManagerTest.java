@@ -7,55 +7,76 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class DirectoryManagerTest {
+    String separator = File.separator;
 
     @Test
-    public void TestCreateDirectoryWithBasecode() throws IOException {
-        String path = "src\\test\\resources\\de\\jplag\\samples\\output\\submissions";
+    public void testCreateDirectoryWithBasecode() throws IOException {
+        String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "output" + separator + "submissions";
         String name = "A";
-        File file = new File("src\\test\\resources\\de\\jplag\\samples\\basecode\\A\\TerrainType.java");
+        File file = new File("src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "basecode" + separator + "A" + separator + "TerrainType.java");
         File directory = DirectoryManager.createDirectory(path, name, file);
         Assertions.assertNotNull(directory);
-        Assertions.assertEquals(directory, new File("src\\test\\resources\\de\\jplag\\samples\\output\\submissions\\A\\TerrainType.java"));
+        Assertions.assertEquals(new File("src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator
+                + "samples" + separator + "output" + separator + "submissions" + separator + "A" + separator + "TerrainType.java"), directory);
     }
 
     @Test
-    public void TestCreateDirectoryWithFilesAsSubmissions() throws IOException {
-        String path = "src\\test\\resources\\de\\jplag\\samples\\output\\submissions";
+    public void testCreateDirectoryWithFilesAssubmissions() throws IOException {
+        String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "output" + separator + "submissions";
         String name = "Submission1.java";
-        File file = new File("src\\test\\resources\\de\\jplag\\samples\\FilesAsSubmissions\\Submission1.java");
+        File file = new File("src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "FilesAssubmissions" + separator + "Submission1.java");
         File directory = DirectoryManager.createDirectory(path, name, file);
         Assertions.assertNotNull(directory);
-        Assertions.assertEquals(directory,
-                new File("src\\test\\resources\\de\\jplag\\samples\\output\\submissions\\Submission1.java\\Submission1.java"));
+        Assertions.assertEquals(
+                new File("src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                        + separator + "output" + separator + "submissions" + separator + "Submission1.java" + separator + "Submission1.java"),
+                directory);
     }
 
     @Test
-    public void TestCreateDirectoryWithOtherSeparator() throws IOException {
-        String path = "src/test/resources/de/jplag/samples/output/submissions";
+    public void testCreateDirectoryWithOtherSeparator() throws IOException {
+        String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "output" + separator + "submissions";
         String name = "Submission1.java";
-        File file = new File("src/test/resources/de/jplag/samples/FilesAsSubmissions/Submission1.java");
+        File file = new File("src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "FilesAssubmissions" + separator + "Submission1.java");
         File directory = DirectoryManager.createDirectory(path, name, file);
         Assertions.assertNotNull(directory);
-        Assertions.assertEquals(directory, new File("src/test/resources/de/jplag/samples/output/submissions/Submission1.java/Submission1.java"));
+        Assertions.assertEquals(
+                new File("src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                        + separator + "output" + separator + "submissions" + separator + "Submission1.java" + separator + "Submission1.java"),
+                directory);
     }
 
     @Test
-    public void TestCreateDirectoryAndFilenameContainsSubfoldername() throws IOException {
-        String path = "src\\test\\resources\\de\\jplag\\samples\\output\\submissions";
+    public void testCreateDirectoryAndFilenameContainsSubfoldername() throws IOException {
+        String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "output" + separator + "submissions";
         String name = "A";
-        File file = new File("src\\test\\resources\\de\\jplag\\samples\\basecode\\A\\ABCDEA.java");
+        File file = new File("src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "basecode" + separator + "A" + separator + "ABCDEA.java");
         File directory = DirectoryManager.createDirectory(path, name, file);
         Assertions.assertNotNull(directory);
-        Assertions.assertEquals(directory, new File("src\\test\\resources\\de\\jplag\\samples\\output\\submissions\\A\\ABCDEA.java"));
+        Assertions.assertEquals(new File("src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator
+                + "samples" + separator + "output" + separator + "submissions" + separator + "A" + separator + "ABCDEA.java"), directory);
     }
 
     @Test
-    public void TestCreateDirectoryWithMultipleFolders() throws IOException {
-        String path = "src\\test\\resources\\de\\jplag\\samples\\output\\submissions";
+    public void testCreateDirectoryWithMultipleFolders() throws IOException {
+        String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "output" + separator + "submissions";
         String name = "A";
-        File file = new File("src\\test\\resources\\de\\jplag\\samples\\basecode\\A\\B\\A\\ABCDEA.java");
+        File file = new File("src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
+                + separator + "basecode" + separator + "A" + separator + "B" + separator + "A" + separator + "ABCDEA.java");
         File directory = DirectoryManager.createDirectory(path, name, file);
         Assertions.assertNotNull(directory);
-        Assertions.assertEquals(directory, new File("src\\test\\resources\\de\\jplag\\samples\\output\\submissions\\A\\B\\A\\ABCDEA.java"));
+        Assertions.assertEquals(new File(
+                "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples" + separator
+                        + "output" + separator + "submissions" + separator + "A" + separator + "B" + separator + "A" + separator + "ABCDEA.java"),
+                directory);
     }
 }
