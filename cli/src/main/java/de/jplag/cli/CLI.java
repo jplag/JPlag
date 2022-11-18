@@ -82,6 +82,7 @@ public final class CLI {
      */
     public static void main(String[] args) {
         try {
+            logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
             CLI cli = new CLI();
             Namespace arguments = cli.parseArguments(args);
             JPlagOptions options = cli.buildOptionsFromArguments(arguments);

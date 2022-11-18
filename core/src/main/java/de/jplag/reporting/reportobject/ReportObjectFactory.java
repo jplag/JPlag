@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
@@ -42,9 +43,8 @@ public class ReportObjectFactory {
     private static final ToDiskWriter fileWriter = new ToDiskWriter();
     public static final String OVERVIEW_FILE_NAME = "overview.json";
     public static final String SUBMISSIONS_FOLDER = "submissions";
+    public static final Version REPORT_VIEWER_VERSION = JPlag.JPLAG_VERSION;
 
-    // TODO: This shall be moved to a better visible and upgradable position. Shall be fixed in a future version.
-    public static final Version REPORT_VIEWER_VERSION = new Version(4, 0, 0);
     private Map<String, String> submissionNameToIdMap;
     private Function<Submission, String> submissionToIdFunction;
     private Map<String, Map<String, String>> submissionNameToNameToComparisonFileName;
