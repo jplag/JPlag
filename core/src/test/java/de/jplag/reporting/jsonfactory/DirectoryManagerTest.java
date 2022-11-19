@@ -6,11 +6,11 @@ import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class DirectoryManagerTest {
+class DirectoryManagerTest {
     String separator = File.separator;
 
     @Test
-    public void testCreateDirectoryWithBasecode() throws IOException {
+    void testCreateDirectoryWithBasecode() throws IOException {
         String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
                 + separator + "output" + separator + "submissions";
         String name = "A";
@@ -23,7 +23,7 @@ public class DirectoryManagerTest {
     }
 
     @Test
-    public void testCreateDirectoryWithFilesAssubmissions() throws IOException {
+    void testCreateDirectoryWithFilesAssubmissions() throws IOException {
         String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
                 + separator + "output" + separator + "submissions";
         String name = "Submission1.java";
@@ -38,7 +38,7 @@ public class DirectoryManagerTest {
     }
 
     @Test
-    public void testCreateDirectoryWithOtherSeparator() throws IOException {
+    void testCreateDirectoryWithOtherSeparator() throws IOException {
         String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
                 + separator + "output" + separator + "submissions";
         String name = "Submission1.java";
@@ -53,7 +53,7 @@ public class DirectoryManagerTest {
     }
 
     @Test
-    public void testCreateDirectoryAndFilenameContainsSubfoldername() throws IOException {
+    void testCreateDirectoryAndFilenameContainsSubfoldername() throws IOException {
         String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
                 + separator + "output" + separator + "submissions";
         String name = "A";
@@ -66,7 +66,7 @@ public class DirectoryManagerTest {
     }
 
     @Test
-    public void testCreateDirectoryWithMultipleFolders() throws IOException {
+    void testCreateDirectoryWithMultipleFolders() throws IOException {
         String path = "src" + separator + "test" + separator + "resources" + separator + "de" + separator + "jplag" + separator + "samples"
                 + separator + "output" + separator + "submissions";
         String name = "A";

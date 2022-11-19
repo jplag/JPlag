@@ -23,6 +23,7 @@ class ReportObjectFactoryTest extends TestBase {
         String path = "JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\output\\submissions";
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
         reportObjectFactory.createAndSaveReport(result, path);
+        Assertions.assertNotNull(result);
     }
 
 }
