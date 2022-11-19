@@ -30,7 +30,7 @@ public class DirectoryManager {
      * @param submissionRoot The file, which has the root path of submission
      * @return The created directory which has the whole structure as file
      */
-    public static File createDirectory(String path, String name, File file,File submissionRoot) throws IOException {
+    public static File createDirectory(String path, String name, File file, File submissionRoot) throws IOException {
         File directory;
         String fileName = file.getPath();
         String submissionRootPath = submissionRoot.getPath();
@@ -126,7 +126,7 @@ public class DirectoryManager {
      * @param submissionRootPath The path of the root directory
      * @return The start index of the root directory
      */
-    public static int findRootDirIndex(String name,String submissionRootPath) {
+    public static int findRootDirIndex(String name, String submissionRootPath) {
         int submissionRootPathLength = submissionRootPath.length();
         int rootDirIndex = submissionRootPathLength - name.length();
         return rootDirIndex;

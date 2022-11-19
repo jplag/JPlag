@@ -145,7 +145,7 @@ public class ReportObjectFactory {
         }
     }
 
-    private File getFileToCopy(Language language, File file){
+    private File getFileToCopy(Language language, File file) {
         File fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
         return fileToCopy;
     }
