@@ -61,10 +61,16 @@ export default defineComponent({
       );
       return folders[submissionFolderIndex + 1];
     };
-    const extractFileNameWithFullPath = (filePath: path.ParsedPath) => {
-      const pathWithoutSubmissions = filePath.dir.split("submissions");
-      const subfolderPathAfterSubmissions = pathWithoutSubmissions[1].substring(1);
-      const fullPath=(subfolderPathAfterSubmissions + '/' + filePath.base).replaceAll('/','\\');
+    const extractFileNameWithFullPath = (filePath: path.ParsedPath, originalFileName: string) => {
+      let fullPath="";
+      const unixPathWithoutSubmissions = filePath.dir.split("submissions");
+      const originalPathWithoutSubmissions = originalFileName.split("submissions");
+      const unixSubfolderPathAfterSubmissions = unixPathWithoutSubmissions[1].substring(1);
+      if(originalPathWithoutSubmissions[1].charAt(0)==='\\'){
+         fullPath=(unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
+      }else {
+         fullPath=(unixSubfolderPathAfterSubmissions + path.sep + filePath.base);
+      }
       return fullPath;
     };
     /**
@@ -82,7 +88,7 @@ export default defineComponent({
             const filePath = path.parse(unixFileName);
 
             const submissionFileName = extractSubmissionFileName(filePath);
-            const fullPathFileName = extractFileNameWithFullPath(filePath);
+            const fullPathFileName = extractFileNameWithFullPath(filePath,originalFileName);
             await zip.files[originalFileName].async("string").then((data) => {
               store.commit("saveSubmissionFile", {
                 name: submissionFileName,
