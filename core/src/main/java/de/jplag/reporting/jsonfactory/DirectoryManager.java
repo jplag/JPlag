@@ -128,7 +128,6 @@ public class DirectoryManager {
      */
     public static int findRootDirIndex(String name, String submissionRootPath) {
         int submissionRootPathLength = submissionRootPath.length();
-        int rootDirIndex = submissionRootPathLength - name.length();
-        return rootDirIndex;
+        return submissionRootPathLength - name.length();
     }
 }

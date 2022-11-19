@@ -146,8 +146,7 @@ public class ReportObjectFactory {
     }
 
     private File getFileToCopy(Language language, File file) {
-        File fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
-        return fileToCopy;
+        return language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
     }
 
     private void writeComparisons(JPlagResult result, String path) {
