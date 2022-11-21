@@ -27,17 +27,20 @@ public class DirectoryManager {
      * @param name The name of the new directory. According to this name we can get sub-folder's structure after this
      * directory.
      * @param file The file, which has the path of sub-folders
+     * @param submissionRoot The file, which has the root path of submission
      * @return The created directory which has the whole structure as file
      */
-    public static File createDirectory(String path, String name, File file) throws IOException {
+    public static File createDirectory(String path, String name, File file, File submissionRoot) throws IOException {
         File directory;
         String fileName = file.getPath();
-        int lastDirectoryIndex = findLastDirectory(fileName, name);
+        String submissionRootPath = submissionRoot.getPath();
+        int lastDirectoryIndex = findRootDirIndex(name, submissionRootPath);
         fileName = fileName.substring(lastDirectoryIndex).replaceFirst(name, "");
+        String outputRootDirectory = path.concat(File.separator).concat(name);
         if ("".equals(fileName)) {
-            directory = new File(path.concat(File.separator).concat(name).concat(File.separator).concat(name));
+            directory = new File(outputRootDirectory.concat(File.separator).concat(name));
         } else {
-            directory = new File(path.concat(File.separator).concat(name).concat(fileName));
+            directory = new File(outputRootDirectory.concat(fileName));
         }
         if (!directory.exists() && !directory.mkdirs()) {
             throw new IOException("Failed to create dir.");
@@ -118,24 +121,13 @@ public class DirectoryManager {
     }
 
     /**
-     * Processes file path.
-     * @param filePath The path of the file that needs to be compared
-     * @param name The name of the new directory. According to this name we can get sub-folder's structure after this
-     * directory.
-     * @return The index of the new directory in filePath
+     * finds the start index of root directory according to this name
+     * @param name The name of the root directory. According to this name we can find the index of this directory.
+     * @param submissionRootPath The path of the root directory
+     * @return The start index of the root directory
      */
-    public static int findLastDirectory(String filePath, String name) {
-        String filePathCopy = filePath;
-        int index;
-        while (true) {
-            index = filePathCopy.lastIndexOf(name);
-            if (index == -1)
-                return filePathCopy.length();
-            String tempPath = filePathCopy.substring(0, index + name.length());
-            if (Files.isDirectory(Path.of(tempPath))) {
-                return index;
-            }
-            filePathCopy = filePathCopy.substring(0, index);
-        }
+    public static int findRootDirIndex(String name, String submissionRootPath) {
+        int submissionRootPathLength = submissionRootPath.length();
+        return submissionRootPathLength - name.length();
     }
 }
