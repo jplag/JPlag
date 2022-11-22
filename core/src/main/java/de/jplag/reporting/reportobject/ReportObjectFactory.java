@@ -28,7 +28,9 @@ import de.jplag.Language;
 import de.jplag.Submission;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.jsonfactory.ToDiskWriter;
+import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
+import de.jplag.reporting.reportobject.model.Cluster;
 import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
 import de.jplag.reporting.reportobject.model.Version;
@@ -161,7 +163,8 @@ public class ReportObjectFactory {
         folders.addAll(result.getOptions().oldSubmissionDirectories());
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionDirectory().getName() : "";
-
+        ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
+        List<Cluster> map = clusteringResultMapper.map(result);
         OverviewReport overviewReport = new OverviewReport(REPORT_VIEWER_VERSION, folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
                 result.getOptions().language().getName(), // language
@@ -174,7 +177,7 @@ public class ReportObjectFactory {
                 getDate(),// dateOfExecution
                 result.getDuration(), // executionTime
                 getMetrics(result),// metrics
-                List.of()); // clusters (deactivated for now)
+                clusteringResultMapper.map(result)); // clusters (deactivated for now)
 
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 
