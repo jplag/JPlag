@@ -150,7 +150,7 @@ export default defineComponent({
      * Initializing the the upper arrays.
      */
     props.matches.forEach((m) => {
-      for (let i = m.start; i <= m.end; i++) {
+      for (let i = m.start; i < m.end; i++) {
         //assign match color to line
         coloringArray.value[i] = m.color;
         //assign link object to line.
