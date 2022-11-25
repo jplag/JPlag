@@ -12,6 +12,11 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.reporting.reportobject.model.Version;
 
 class ReportObjectFactoryTest extends TestBase {
+    final String basecode = "basecode";
+    final String basecodeBase = "basecode-base";
+    final String output = "output";
+    final String submissions = "submissions";
+
     @Test
     void testVersionLoading() {
         Assertions.assertNotNull(ReportObjectFactory.REPORT_VIEWER_VERSION);
@@ -20,8 +25,8 @@ class ReportObjectFactoryTest extends TestBase {
 
     @Test
     void testCreateAndSaveReportWithBasecode() throws ExitException {
-        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionDirectory(new File(BASE_PATH, "basecode-base")));
-        String path = Path.of(BASE_PATH, "output", "submissions").toString();
+        JPlagResult result = runJPlag(basecode, it -> it.withBaseCodeSubmissionDirectory(new File(BASE_PATH, basecodeBase)));
+        String path = Path.of(BASE_PATH, output, submissions).toString();
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
         reportObjectFactory.createAndSaveReport(result, path);
         Assertions.assertNotNull(result);
