@@ -1,15 +1,10 @@
 package de.jplag.emf.util;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Optional;
 
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.emf.MetamodelToken;
@@ -18,22 +13,19 @@ import de.jplag.emf.MetamodelToken;
  * Simplistic tree view representation of an EMF metamodel.
  * @author Timur Saglam
  */
-public class MetamodelTreeView {
-    private final File file;
+public class MetamodelTreeView extends AbstractTreeView {
+
     private int lineIndex;
     private int columnIndex;
-    private final StringBuilder viewBuilder;
+
     private static final String INDENTATION = "  ";
-    public final Logger logger;
 
     /**
      * Creates a tree view for a metamodel.
      * @param file is the file where the metamodel is persisted.
      */
     public MetamodelTreeView(File file) {
-        this.file = file;
-        logger = LoggerFactory.getLogger(this.getClass());
-        viewBuilder = new StringBuilder();
+        super(file);
     }
 
     /**
@@ -78,22 +70,6 @@ public class MetamodelTreeView {
             columnIndex += tokenText.length();
         }
         return new MetamodelToken(token.getType(), token.getFile(), line, column, length, token.getEObject());
-    }
-
-    /**
-     * Writes the tree view into a file.
-     * @param suffix is the suffix of the file to be written.
-     */
-    public void writeToFile(String suffix) {
-        File treeViewFile = new File(file + suffix);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(treeViewFile));) {
-            if (!treeViewFile.createNewFile()) {
-                logger.warn("Overwriting tree view file: {}", treeViewFile);
-            }
-            writer.append(viewBuilder.toString());
-        } catch (IOException exception) {
-            logger.error("Could not write tree view file!", exception);
-        }
     }
 
 }

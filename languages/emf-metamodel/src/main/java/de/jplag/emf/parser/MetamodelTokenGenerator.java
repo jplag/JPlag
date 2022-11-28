@@ -132,7 +132,7 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
         parser.addToken(TYPE_PARAMETER, eTypeParameter);
         eTypeParameter.getEBounds().forEach(it -> parser.addToken(BOUND, it));
     }
-    
+
     @Override
     protected void leaveEClass(EClass eClass) {
         if (eClass.isInterface()) {
@@ -143,17 +143,17 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
             parser.addToken(CLASS_END, eClass);
         }
     }
-    
+
     @Override
     protected void leaveEPackage(EPackage ePackage) {
         parser.addToken(PACKAGE_END, ePackage);
     }
-    
+
     @Override
     protected void leaveEEnum(EEnum eEnum) {
         parser.addToken(ENUM_END, eEnum);
     }
-    
+
     @Override
     protected void leaveEOperation(EOperation eOperation) {
         parser.addToken(OPERATION_END, eOperation);

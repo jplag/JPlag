@@ -14,8 +14,6 @@ import de.jplag.emf.util.AbstractMetamodelVisitor;
  */
 public class DynamicEcoreParser extends EcoreParser {
 
-    private static final String NO_PREFIX = "";
-
     @Override
     protected AbstractMetamodelVisitor createMetamodelVisitor() {
         return new DynamicMetamodelTokenGenerator(this);
@@ -23,7 +21,7 @@ public class DynamicEcoreParser extends EcoreParser {
 
     public void addToken(DynamicMetamodelTokenType type, EObject source) {
         MetamodelToken token = new DynamicMetamodelToken(type, currentFile, source);
-        MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedTokenAndAdd(token, visitor.getCurrentTreeDepth(), NO_PREFIX);
+        MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedTokenAndAdd(token);
         tokens.add(metadataEnrichedToken);
     }
 }

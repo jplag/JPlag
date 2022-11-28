@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
@@ -15,7 +16,7 @@ import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.MetamodelTokenType;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 import de.jplag.emf.util.EMFUtil;
-import de.jplag.emf.util.MetamodelTreeView;
+import de.jplag.emf.util.EmfaticTreeView;
 
 /**
  * Parser for EMF metamodels.
@@ -24,7 +25,7 @@ import de.jplag.emf.util.MetamodelTreeView;
 public class EcoreParser extends AbstractParser {
     protected List<Token> tokens;
     protected File currentFile;
-    protected MetamodelTreeView treeView;
+    protected EmfaticTreeView treeView;
     protected AbstractMetamodelVisitor visitor;
 
     /**
@@ -53,12 +54,12 @@ public class EcoreParser extends AbstractParser {
      */
     protected void parseModelFile(File file) throws ParsingException {
         currentFile = file;
-        treeView = new MetamodelTreeView(file);
-        List<EObject> model = EMFUtil.loadModel(file);
+        Resource model = EMFUtil.loadModelResource(file);
         if (model == null) {
             throw new ParsingException(file, "failed to load model");
         } else {
-            for (EObject root : model) {
+            treeView = new EmfaticTreeView(file, model);
+            for (EObject root : model.getContents()) {
                 visitor = createMetamodelVisitor();
                 visitor.visit(root);
             }
@@ -77,7 +78,7 @@ public class EcoreParser extends AbstractParser {
 
     public void addToken(MetamodelTokenType type, EObject source, String prefix) {
         MetamodelToken token = new MetamodelToken(type, currentFile, source);
-        MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedTokenAndAdd(token, visitor.getCurrentTreeDepth(), prefix);
+        MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedTokenAndAdd(token);
         tokens.add(metadataEnrichedToken);
     }
 
