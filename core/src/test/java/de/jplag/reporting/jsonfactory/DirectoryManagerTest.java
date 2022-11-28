@@ -10,42 +10,52 @@ import org.junit.jupiter.api.Test;
 import de.jplag.TestBase;
 
 class DirectoryManagerTest extends TestBase {
-    final String rootDirA = "A";
-    final String fileNameSubmission1AsRootDir = "Submission1.java";
-    final String emptySubDir = "";
-    final String multiSubDirBA = Path.of("B", "A").toString();
-    final String fileNameTerrainType = "TerrainType.java";
-    final String fileNameSubmission1 = "Submission1.java";
-    final String path = Path.of(BASE_PATH, "output", "submissions").toString();
-    final String basecode = "basecode";
-    final String FilesAsSubmissions = "FilesAsSubmissions";
-    final String basecodeWithSameNameOfSubdirectoryAndRootdirectory = "basecode-sameNameOfSubdirectoryAndRootdirectory";
+    private static final String OUTPUT_PATH = Path.of(BASE_PATH, "output", "submissions").toString();
 
-    String[] submissionDirectory = {basecode, FilesAsSubmissions, basecodeWithSameNameOfSubdirectoryAndRootdirectory};
-    String[] names = {rootDirA, fileNameSubmission1AsRootDir, rootDirA};
-    String[] subDirs = {emptySubDir, emptySubDir, multiSubDirBA};
-    String[] fileNames = {fileNameTerrainType, fileNameSubmission1, fileNameTerrainType};
-    File[] files = {new File(Path.of(BASE_PATH, submissionDirectory[0], names[0], subDirs[0], fileNames[0]).toString()),
-            new File(Path.of(BASE_PATH, submissionDirectory[1], subDirs[1], fileNames[1]).toString()),
-            new File(Path.of(BASE_PATH, submissionDirectory[2], names[2], subDirs[2], fileNames[2]).toString())};
-    File[] submissionRoots = new File[files.length];
-    File[] expectedFiles = new File[files.length];
+    // info of basecode-sample(in abbreviation BC)
+    private static final String SAMPLE_NAME_BC = "basecode";
+    private static final String ROOT_DIRECTORY_BC = "A";
+    private static final String FILE_NAME_BC = "TerrainType.java";
+    private static final File FILE_BC = new File(Path.of(BASE_PATH, SAMPLE_NAME_BC, ROOT_DIRECTORY_BC, FILE_NAME_BC).toString());
+    private static final File SUBMISSION_ROOT_BC = new File(Path.of(BASE_PATH, SAMPLE_NAME_BC, ROOT_DIRECTORY_BC).toString());
+
+    // info of FilesAsSubmissions-sample(in abbreviation FAS)
+    private static final String SAMPLE_NAME_FAS = "FilesAsSubmissions";
+    private static final String ROOT_DIRECTORY_FAS = "Submission1.java";
+    private static final String FILE_NAME_FAS = "Submission1.java";
+    private static final File FILE_FAS = new File(Path.of(BASE_PATH, SAMPLE_NAME_FAS, FILE_NAME_FAS).toString());
+    private static final File SUBMISSION_ROOT_FAS = new File(Path.of(BASE_PATH, SAMPLE_NAME_FAS, ROOT_DIRECTORY_FAS).toString());
+
+    // info of basecode-sameNameOfSubdirectoryAndRootdirectory-sample(in abbreviation BC-SOSAR)
+    private static final String SAMPLE_NAME_BC_SOSAR = "basecode-sameNameOfSubdirectoryAndRootdirectory";
+    private static final String ROOT_DIRECTORY_BC_SOSAR = "A";
+    private static final String SUB_DIRECTORY_BC_SOSAR = Path.of("B", "A").toString();
+    private static final String FILE_NAME_BC_SOSAR = "TerrainType.java";
+    private static final File FILE_BC_SOSAR = new File(
+            Path.of(BASE_PATH, SAMPLE_NAME_BC_SOSAR, ROOT_DIRECTORY_BC_SOSAR, SUB_DIRECTORY_BC_SOSAR, FILE_NAME_BC_SOSAR).toString());
+    private static final File SUBMISSION_ROOT_BC_SOSAR = new File(Path.of(BASE_PATH, SAMPLE_NAME_BC_SOSAR, ROOT_DIRECTORY_BC_SOSAR).toString());
 
     @Test
-    void testCreateDirectoryWithTestCases() throws IOException {
-        for (int index = 0; index < files.length; index++) {
-            expectedFiles[index] = new File(Path.of(path, names[index], subDirs[index], fileNames[index]).toString());
-            submissionRoots[index] = new File(Path.of(BASE_PATH, submissionDirectory[index], names[index]).toString());
-        }
-        testCreateDirectory(names, files, expectedFiles, submissionRoots);
+    void testCreateDirectoryBC() throws IOException {
+        File expectedFile = new File(Path.of(OUTPUT_PATH, ROOT_DIRECTORY_BC, FILE_NAME_BC).toString());
+        test(expectedFile, OUTPUT_PATH, ROOT_DIRECTORY_BC, FILE_BC, SUBMISSION_ROOT_BC);
     }
 
-    void testCreateDirectory(String[] names, File[] files, File[] expectedFiles, File[] submissionRoots) throws IOException {
-        int length = files.length;
-        for (int testCaseIndex = 0; testCaseIndex < length; testCaseIndex++) {
-            File directory = DirectoryManager.createDirectory(path, names[testCaseIndex], files[testCaseIndex], submissionRoots[testCaseIndex]);
-            Assertions.assertNotNull(directory);
-            Assertions.assertEquals(expectedFiles[testCaseIndex].getPath(), directory.getPath());
-        }
+    @Test
+    void testCreateDirectoryFAS() throws IOException {
+        File expectedFile = new File(Path.of(OUTPUT_PATH, ROOT_DIRECTORY_FAS, FILE_NAME_FAS).toString());
+        test(expectedFile, OUTPUT_PATH, ROOT_DIRECTORY_FAS, FILE_FAS, SUBMISSION_ROOT_FAS);
+    }
+
+    @Test
+    void testCreateDirectoryBC_SOSAR() throws IOException {
+        File expectedFile = new File(Path.of(OUTPUT_PATH, ROOT_DIRECTORY_BC_SOSAR, SUB_DIRECTORY_BC_SOSAR, FILE_NAME_BC_SOSAR).toString());
+        test(expectedFile, OUTPUT_PATH, ROOT_DIRECTORY_BC_SOSAR, FILE_BC_SOSAR, SUBMISSION_ROOT_BC_SOSAR);
+    }
+
+    void test(File expectedFile, String output, String rootDirectory, File file, File submissionRoot) throws IOException {
+        File directory = DirectoryManager.createDirectory(output, rootDirectory, file, submissionRoot);
+        Assertions.assertNotNull(directory);
+        Assertions.assertEquals(expectedFile.getPath(), directory.getPath());
     }
 }
