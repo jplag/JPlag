@@ -48,8 +48,8 @@ class MinimalMetamodelTest {
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(Language.VIEW_FILE_SUFFIX)));
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
         logger.info("Parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList().toString());
-        assertEquals(43, tokenTypes.size());
-        assertEquals(10, new HashSet<>(tokenTypes).size());
+        assertEquals(57, tokenTypes.size());
+        assertEquals(13, new HashSet<>(tokenTypes).size());
 
         var bookstoreTokens = TokenUtils.tokenTypesByFile(result, testFiles.get(0));
         var bookstoreRenamedTokens = TokenUtils.tokenTypesByFile(result, testFiles.get(2));
