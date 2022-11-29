@@ -13,7 +13,7 @@ import de.jplag.emf.MetamodelToken;
  * Simplistic tree view representation of an EMF metamodel.
  * @author Timur Saglam
  */
-public class MetamodelTreeView extends AbstractTreeView {
+public class MetamodelTreeView extends AbstractModelView {
 
     private int lineIndex;
     private int columnIndex;

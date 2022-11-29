@@ -25,10 +25,9 @@ import de.jplag.emf.MetamodelTokenType;
  * Simplistic tree view representation of an EMF metamodel.
  * @author Timur Saglam
  */
-public final class EmfaticTreeView extends AbstractTreeView {
+public final class EmfaticModelView extends AbstractModelView {
     private static final String TYPE_KEYWORD = "(package |class |datatype |enum )";
     private static final String FEATURE_KEYWORD = "(.*attr .*|op .*|.*ref .*|.*val .*).*";
-    private static final String KEYWORDLESS = "(, | extends | \\()"; // TODO TS include these tokens
     private static final String ANYTHING = ".*";
     private static final String TYPE_SUFFIX = "( extends| \\{)";
     private static final char CLOSING_CHAR = '}';
@@ -41,7 +40,7 @@ public final class EmfaticTreeView extends AbstractTreeView {
      * Creates a tree view for a metamodel.
      * @param file is the file where the metamodel is persisted.
      */
-    public EmfaticTreeView(File file, Resource modelResource) {
+    public EmfaticModelView(File file, Resource modelResource) {
         super(file);
         elementToLine = new HashMap<>();
         lines = generateEmfaticCode(viewBuilder, modelResource);

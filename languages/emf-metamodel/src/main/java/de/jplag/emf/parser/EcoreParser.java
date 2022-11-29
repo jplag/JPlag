@@ -16,7 +16,7 @@ import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.MetamodelTokenType;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 import de.jplag.emf.util.EMFUtil;
-import de.jplag.emf.util.EmfaticTreeView;
+import de.jplag.emf.util.EmfaticModelView;
 
 /**
  * Parser for EMF metamodels.
@@ -25,7 +25,7 @@ import de.jplag.emf.util.EmfaticTreeView;
 public class EcoreParser extends AbstractParser {
     protected List<Token> tokens;
     protected File currentFile;
-    protected EmfaticTreeView treeView;
+    protected EmfaticModelView treeView;
     protected AbstractMetamodelVisitor visitor;
 
     /**
@@ -58,7 +58,7 @@ public class EcoreParser extends AbstractParser {
         if (model == null) {
             throw new ParsingException(file, "failed to load model");
         } else {
-            treeView = new EmfaticTreeView(file, model);
+            treeView = new EmfaticModelView(file, model);
             for (EObject root : model.getContents()) {
                 visitor = createMetamodelVisitor();
                 visitor.visit(root);

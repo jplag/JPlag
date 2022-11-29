@@ -8,13 +8,13 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractTreeView {
+public class AbstractModelView {
 
     protected final File file;
     protected final Logger logger;
     protected final StringBuilder viewBuilder;
 
-    public AbstractTreeView(File file) {
+    public AbstractModelView(File file) {
         this.file = file;
         logger = LoggerFactory.getLogger(this.getClass());
         viewBuilder = new StringBuilder();
