@@ -78,7 +78,7 @@ public class EcoreParser extends AbstractParser {
 
     public void addToken(MetamodelTokenType type, EObject source, String prefix) {
         MetamodelToken token = new MetamodelToken(type, currentFile, source);
-        MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedTokenAndAdd(token);
+        MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedToken(token);
         tokens.add(metadataEnrichedToken);
     }
 

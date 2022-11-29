@@ -31,10 +31,12 @@ public final class EmfaticModelView extends AbstractModelView {
     private static final String ANYTHING = ".*";
     private static final String TYPE_SUFFIX = "( extends| \\{)";
     private static final char CLOSING_CHAR = '}';
-    private List<String> lines;
-    private List<String> hashedLines;
+
+    private final List<String> lines;
+    private final List<String> hashedLines;
+    private final Map<ENamedElement, Integer> elementToLine;
+
     private Copier copier;
-    private Map<ENamedElement, Integer> elementToLine;
 
     /**
      * Creates a tree view for a metamodel.
@@ -49,6 +51,32 @@ public final class EmfaticModelView extends AbstractModelView {
         Resource copiedResource = copyModel(modelResource);
         replaceElementNamesWithHashes(copiedResource);
         hashedLines = generateEmfaticCode(new StringBuilder(), copiedResource);
+    }
+
+    public MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token) {
+        int length = Token.NO_VALUE;
+        int line = Token.NO_VALUE;
+        int column = Token.NO_VALUE;
+
+        Optional<EObject> optionalEObject = token.getEObject();
+        if (optionalEObject.isPresent()) {
+            EObject eObject = optionalEObject.get();
+            if (eObject instanceof ENamedElement element) {
+                line = lineIndexOf(element);
+                if (line != Token.NO_VALUE) {
+                    if (token.getType()instanceof MetamodelTokenType type && type.isEndToken()) {
+                        line = findEndIndex(element, line);
+                    }
+                    column = indentationOf(lines.get(line));
+                    length = lines.get(line).length() - column;
+
+                    // post processing, viewer requires 1-based indexing:
+                    line++;
+                    column += column == Token.NO_VALUE ? 0 : 1;
+                }
+            }
+        }
+        return new MetamodelToken(token.getType(), token.getFile(), line, column, length, token.getEObject());
     }
 
     private final void replaceElementNamesWithHashes(Resource copiedResource) {
@@ -76,32 +104,6 @@ public final class EmfaticModelView extends AbstractModelView {
         copier.copyReferences();
         copy.getContents().addAll(result);
         return copy;
-    }
-
-    public MetamodelToken convertToMetadataEnrichedTokenAndAdd(MetamodelToken token) {
-        int length = Token.NO_VALUE;
-        int line = Token.NO_VALUE;
-        int column = Token.NO_VALUE;
-
-        Optional<EObject> optionalEObject = token.getEObject();
-        if (optionalEObject.isPresent()) {
-            EObject eObject = optionalEObject.get();
-            if (eObject instanceof ENamedElement element) {
-                line = lineIndexOf(element);
-                if (line != Token.NO_VALUE) {
-                    if (token.getType()instanceof MetamodelTokenType type && type.isEndToken()) {
-                        line = findEndIndex(element, line);
-                    }
-                    column = indentationOf(lines.get(line));
-                    length = lines.get(line).length() - column;
-
-                    // post processing, viewer requires 1-based indexing:
-                    line++;
-                    column += column == Token.NO_VALUE ? 0 : 1;
-                }
-            }
-        }
-        return new MetamodelToken(token.getType(), token.getFile(), line, column, length, token.getEObject());
     }
 
     /**
@@ -154,15 +156,20 @@ public final class EmfaticModelView extends AbstractModelView {
     /**
      * Checks if a line (with leading whitespace removed) contains an element based on its hash.
      */
-    private boolean isDeclaration(ENamedElement element, String hash, String trimmedLine) {
-        if (element instanceof ETypedElement && trimmedLine.matches(FEATURE_KEYWORD + hash + ANYTHING)) {
-            return true;
-        } else if (element instanceof EEnumLiteral && trimmedLine.matches(hash + ANYTHING)) {
-            return true;
-        } else if (trimmedLine.matches(TYPE_KEYWORD + hash + TYPE_SUFFIX + ANYTHING)) {
-            return true;
-        }
-        return false;
+    private boolean isDeclaration(ENamedElement element, String hash, String line) {
+        return isStructuralFeature(element, hash, line) || isEnumLiteral(element, hash, line) || isType(hash, line);
+    }
+
+    private boolean isType(String hash, String line) {
+        return line.matches(TYPE_KEYWORD + hash + TYPE_SUFFIX + ANYTHING);
+    }
+
+    private boolean isEnumLiteral(ENamedElement element, String hash, String line) {
+        return element instanceof EEnumLiteral && line.matches(hash + ANYTHING);
+    }
+
+    private boolean isStructuralFeature(ENamedElement element, String hash, String line) {
+        return element instanceof ETypedElement && line.matches(FEATURE_KEYWORD + hash + ANYTHING);
     }
 
 }
