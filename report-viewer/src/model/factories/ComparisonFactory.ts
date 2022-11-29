@@ -21,12 +21,7 @@ export class ComparisonFactory {
     );
 
     const matches = json.matches as Array<Record<string, unknown>>;
-    
-    // TODO: Quick fix for issue #658, requires deeper insights to be resolved completely
-    matches.forEach((match: Record<string, unknown>) => {
-      match["file1"] = this.removePathFromFileName(match["file1"] as string ?? "");
-      match["file2"] = this.removePathFromFileName(match["file2"] as string ?? "");
-    })
+
 
     const colors = this.generateColorsForMatches(matches.length);
     const coloredMatches = matches.map((match, index) =>
@@ -108,9 +103,6 @@ export class ComparisonFactory {
     return acc;
   }
 
-  private static removePathFromFileName(filePath: string): string {
-    return  filePath.substring(filePath.lastIndexOf("\\") + 1).substring(filePath.lastIndexOf("/") + 1);
-  }
 
   private static generateColorsForMatches(num: number): Array<string> {
     const colors = [];

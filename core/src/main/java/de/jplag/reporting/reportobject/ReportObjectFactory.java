@@ -98,17 +98,32 @@ public class ReportObjectFactory {
         Language language = result.getOptions().language();
         for (Submission submission : submissions) {
             File directory = createSubmissionDirectory(path, submissionsPath, submission);
+            File submissionRoot = submission.getRoot();
             if (directory == null) {
                 continue;
             }
             for (File file : submission.getFiles()) {
-                File fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
+                File fullPath = createSubmissionDirectory(path, submissionsPath, submission, file, submissionRoot);
+                File fileToCopy = getFileToCopy(language, file);
                 try {
-                    Files.copy(fileToCopy.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    if (fullPath != null) {
+                        Files.copy(fileToCopy.toPath(), fullPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } else {
+                        throw new NullPointerException("Could not create file with full path");
+                    }
                 } catch (IOException e) {
                     logger.error("Could not save submission file " + fileToCopy, e);
                 }
             }
+        }
+    }
+
+    private File createSubmissionDirectory(String path, File submissionsPath, Submission submission, File file, File submissionRoot) {
+        try {
+            return createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission), file, submissionRoot);
+        } catch (IOException e) {
+            logger.error("Could not create directory " + path + " for report viewer generation", e);
+            return null;
         }
     }
 
@@ -128,6 +143,10 @@ public class ReportObjectFactory {
             logger.error("Could not create directory " + path + " for report viewer generation", e);
             return null;
         }
+    }
+
+    private File getFileToCopy(Language language, File file) {
+        return language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
     }
 
     private void writeComparisons(JPlagResult result, String path) {

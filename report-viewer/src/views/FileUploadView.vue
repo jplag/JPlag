@@ -61,6 +61,18 @@ export default defineComponent({
       );
       return folders[submissionFolderIndex + 1];
     };
+    const extractFileNameWithFullPath = (filePath: path.ParsedPath, originalFileName: string) => {
+      let fullPath="";
+      const unixPathWithoutSubmissions = filePath.dir.split("submissions");
+      const originalPathWithoutSubmissions = originalFileName.split("submissions");
+      const unixSubfolderPathAfterSubmissions = unixPathWithoutSubmissions[1].substring(1);
+      if(originalPathWithoutSubmissions[1].charAt(0)==='\\'){
+        fullPath=(unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
+      }else {
+        fullPath=(unixSubfolderPathAfterSubmissions + path.sep + filePath.base);
+      }
+      return fullPath;
+  };
     /**
      * Handles zip file on drop. It extracts the zip and saves each file in the store.
      * @param file
@@ -76,10 +88,11 @@ export default defineComponent({
             const filePath = path.parse(unixFileName);
 
             const submissionFileName = extractSubmissionFileName(filePath);
+            const fullPathFileName = extractFileNameWithFullPath(filePath, originalFileName);
             await zip.files[originalFileName].async("string").then((data) => {
               store.commit("saveSubmissionFile", {
                 name: submissionFileName,
-                file: { fileName: filePath.base, data: data },
+                file: { fileName: fullPathFileName, data: data },
               });
             });
           } else {
