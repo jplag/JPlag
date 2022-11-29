@@ -1,41 +1,68 @@
 package de.jplag.reporting.jsonfactory;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.TestBase;
 
+/**
+ * Test for the directory manager that persists the results for the report viewer.
+ */
 class DirectoryManagerTest extends TestBase {
-    String path = Path.of(BASE_PATH, "output", "submissions").toString();
-    String[] submissionDirectory = {"basecode", "FilesAsSubmissions", "basecode-sameNameOfSubdirectoryAndRootdirectory"};
-    String[] names = {"A", "Submission1.java", "A"};
-    String[] subDirs = {"", "", Path.of("B", "A").toString()};
-    String[] fileNames = {"TerrainType.java", "Submission1.java", "TerrainType.java"};
-    File[] files = {new File(Path.of(BASE_PATH, submissionDirectory[0], names[0], subDirs[0], fileNames[0]).toString()),
-            new File(Path.of(BASE_PATH, submissionDirectory[1], subDirs[1], fileNames[1]).toString()),
-            new File(Path.of(BASE_PATH, submissionDirectory[2], names[2], subDirs[2], fileNames[2]).toString())};
-    File[] submissionRoots = new File[files.length];
-    File[] expectedFiles = new File[files.length];
+    private static final Path OUTPUT_PATH = Path.of(BASE_PATH, "output", "submissions");
+
+    private static final String SUBMISSION_1 = "A";
+    private static final String FILE_PATH_1 = "TerrainType.java";
+    private static final String ROOT_1 = "basecode";
+
+    private static final String SUBMISSION_2 = "Submission1.java";
+    private static final String ROOT_2 = "FilesAsSubmissions";
+
+    private static final String SUBMISSION_3 = "A";
+    private static final Path FILE_PATH_3 = Path.of("B", "A", "TerrainType.java");
+    private static final String ROOT_3 = "basecode-sameNameOfSubdirectoryAndRootdirectory";
 
     @Test
-    void testCreateDirectoryWithTestCases() throws IOException {
-        for (int index = 0; index < files.length; index++) {
-            expectedFiles[index] = new File(Path.of(path, names[index], subDirs[index], fileNames[index]).toString());
-            submissionRoots[index] = new File(Path.of(BASE_PATH, submissionDirectory[index], names[index]).toString());
-        }
-        testCreateDirectory(names, files, expectedFiles, submissionRoots);
+    @DisplayName("test normal submission with file in folder")
+    void testCreateDirectoryBasecode() throws IOException {
+        testDirectoryManager(ROOT_1, SUBMISSION_1, FILE_PATH_1);
     }
 
-    void testCreateDirectory(String[] names, File[] files, File[] expectedFiles, File[] submissionRoots) throws IOException {
-        int length = files.length;
-        for (int testCaseIndex = 0; testCaseIndex < length; testCaseIndex++) {
-            File directory = DirectoryManager.createDirectory(path, names[testCaseIndex], files[testCaseIndex], submissionRoots[testCaseIndex]);
+    @Test
+    @DisplayName("test single file as submission")
+    void testCreateDirectoryFileAsSubmission() throws IOException {
+        testDirectoryManager(ROOT_2, SUBMISSION_2, "");
+    }
+
+    @Test
+    @DisplayName("test same name of subdirectory and root directory")
+    void testCreateDirectorySharedName() throws IOException {
+        testDirectoryManager(ROOT_3, SUBMISSION_3, FILE_PATH_3.toString());
+    }
+
+    /**
+     * Test the directory manager for a given scenario.
+     * @param rootName is the name of the root folder.
+     * @param submissionName is the name of the submission.
+     * @param filePath is the path to the file relative to the submission. Empty for single file submissions.
+     */
+    private static void testDirectoryManager(String rootName, String submissionName, String filePath) {
+        File submissionPath = Path.of(BASE_PATH, rootName, submissionName).toFile();
+        File fullFilePath = new File(submissionPath, filePath);
+        File expectation = new File(OUTPUT_PATH.toFile(), Path.of(submissionName, filePath.isEmpty() ? submissionName : filePath).toString());
+        try {
+            File directory = DirectoryManager.createDirectory(OUTPUT_PATH.toString(), submissionName, fullFilePath, submissionPath);
             Assertions.assertNotNull(directory);
-            Assertions.assertEquals(expectedFiles[testCaseIndex].getPath(), directory.getPath());
+            Assertions.assertEquals(expectation.getPath(), directory.getPath());
+        } catch (IOException e) {
+            fail("Directory manager threw an exception:", e);
         }
     }
 }

@@ -36,11 +36,11 @@ public class DirectoryManager {
         String submissionRootPath = submissionRoot.getPath();
         int lastDirectoryIndex = findRootDirIndex(name, submissionRootPath);
         fileName = fileName.substring(lastDirectoryIndex).replaceFirst(name, "");
-        String outputRootDirectory = path.concat(File.separator).concat(name);
+        String outputRootDirectory = Path.of(path, name).toString();
         if ("".equals(fileName)) {
-            directory = new File(outputRootDirectory.concat(File.separator).concat(name));
+            directory = new File(Path.of(outputRootDirectory, name).toString());
         } else {
-            directory = new File(outputRootDirectory.concat(fileName));
+            directory = new File(outputRootDirectory + fileName);
         }
         if (!directory.exists() && !directory.mkdirs()) {
             throw new IOException("Failed to create dir.");
