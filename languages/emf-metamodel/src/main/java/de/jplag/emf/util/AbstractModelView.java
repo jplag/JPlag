@@ -8,6 +8,10 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Textual representation of a model for the depiction of matches in submissions.
+ * @author Timur Saglam
+ */
 public class AbstractModelView {
 
     protected final File file;

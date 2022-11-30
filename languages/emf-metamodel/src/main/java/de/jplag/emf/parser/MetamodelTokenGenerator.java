@@ -79,7 +79,7 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
         } else {
             parser.addToken(CLASS, eClass);
         }
-        eClass.getESuperTypes().forEach(it -> parser.addToken(SUPER_TYPE, eClass, " extends "));
+        eClass.getESuperTypes().forEach(it -> parser.addToken(SUPER_TYPE, eClass));
     }
 
     @Override

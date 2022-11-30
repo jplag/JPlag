@@ -65,7 +65,7 @@ public final class EmfaticModelView extends AbstractModelView {
                 line = lineIndexOf(element);
                 if (line != Token.NO_VALUE) {
                     if (token.getType()instanceof MetamodelTokenType type && type.isEndToken()) {
-                        line = findEndIndex(element, line);
+                        line = findEndIndex(line);
                     }
                     column = indentationOf(lines.get(line));
                     length = lines.get(line).length() - column;
@@ -86,7 +86,7 @@ public final class EmfaticModelView extends AbstractModelView {
                 eNamedElement.setName(Integer.toString(eNamedElement.hashCode()));
             }
         };
-        copiedResource.getContents().forEach(it -> renamer.visit(it));
+        copiedResource.getContents().forEach(renamer::visit);
     }
 
     private final List<String> generateEmfaticCode(StringBuilder builder, Resource modelResource) {
@@ -107,9 +107,9 @@ public final class EmfaticModelView extends AbstractModelView {
     }
 
     /**
-     * Locates the end index for a element with a already known declaration index.
+     * Locates the end index (closing character) for an element with a already known declaration index.
      */
-    private int findEndIndex(ENamedElement element, int declarationIndex) {
+    private int findEndIndex(int declarationIndex) {
         String beginLine = lines.get(declarationIndex);
         int indentation = indentationOf(beginLine);
         if (declarationIndex > 1) {
@@ -135,7 +135,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * Returns the line index of the declaration of an element in the Emfatic code.
      */
     private int lineIndexOf(ENamedElement element) {
-        return elementToLine.computeIfAbsent(element, it -> locateLineIndexOf(it));
+        return elementToLine.computeIfAbsent(element, this::locateLineIndexOf);
     }
 
     /**

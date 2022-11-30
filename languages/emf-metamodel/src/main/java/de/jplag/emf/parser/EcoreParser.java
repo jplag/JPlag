@@ -76,13 +76,13 @@ public class EcoreParser extends AbstractParser {
         return new MetamodelTokenGenerator(this);
     }
 
-    public void addToken(MetamodelTokenType type, EObject source, String prefix) {
+    /**
+     * Adds an token to the parser.
+     * @param type is the token type.
+     * @param source is the corresponding {@link EObject} for which the token is added.
+     */
+    void addToken(MetamodelTokenType type, EObject source) {
         MetamodelToken token = new MetamodelToken(type, currentFile, source);
-        MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedToken(token);
-        tokens.add(metadataEnrichedToken);
-    }
-
-    public void addToken(MetamodelTokenType type, EObject source) {
-        addToken(type, source, "");
+        tokens.add(treeView.convertToMetadataEnrichedToken(token));
     }
 }
