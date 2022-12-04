@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
@@ -38,7 +39,13 @@ public class JPlag {
      * @param options determines the parameterization.
      */
     public JPlag(JPlagOptions options) {
-        this.options = options;
+        PreventSameRootName preventSameRootName = null;
+        try {
+            preventSameRootName = new PreventSameRootName(options);
+        } catch (RootDirectoryException e) {
+            e.printStackTrace();
+        }
+        this.options = preventSameRootName.getOptions();
         language = this.options.language();
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);

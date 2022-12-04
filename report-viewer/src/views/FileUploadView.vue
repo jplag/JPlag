@@ -6,6 +6,7 @@
     <img alt="JPlag" src="@/assets/logo-nobg.png" />
     <h1>JPlag Report Viewer</h1>
     <h2>Select an overview or comparison file or a zip to display.</h2>
+    <h3>(No files get uploaded anywhere)</h3>
     <div class="drop-container">
       <p>Drop a .json or .zip on this page</p>
     </div>
