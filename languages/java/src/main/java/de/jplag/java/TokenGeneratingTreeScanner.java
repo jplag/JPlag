@@ -3,6 +3,8 @@ package de.jplag.java;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 
 import de.jplag.ParsingException;
 
@@ -47,6 +49,8 @@ import com.sun.source.tree.WhileLoopTree;
 import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
+
+import de.jplag.ParsingException;
 
 final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     private final File file;
@@ -333,6 +337,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ASSIGN, start, 1);
         return super.visitAssignment(node, p);
+    }
+
+    @Override
+    public Object visitCompoundAssignment(CompoundAssignmentTree node, Object p) {
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenType.J_ASSIGN, start, 1);
+        return super.visitCompoundAssignment(node, p);
+    }
+
+    @Override
+    public Object visitUnary(UnaryTree node, Object p) {
+        if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
+                .contains(node.getKind())) {
+            long start = positions.getStartPosition(ast, node);
+            addToken(JavaTokenType.J_ASSIGN, start, 1);
+        }
+        return super.visitUnary(node, p);
     }
 
     @Override
