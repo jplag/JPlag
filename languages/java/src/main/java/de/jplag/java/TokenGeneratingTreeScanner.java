@@ -3,46 +3,9 @@ package de.jplag.java;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import com.sun.source.tree.AnnotationTree;
-import com.sun.source.tree.AssertTree;
-import com.sun.source.tree.AssignmentTree;
-import com.sun.source.tree.BlockTree;
-import com.sun.source.tree.BreakTree;
-import com.sun.source.tree.CaseTree;
-import com.sun.source.tree.CatchTree;
-import com.sun.source.tree.ClassTree;
-import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.tree.ConditionalExpressionTree;
-import com.sun.source.tree.ContinueTree;
-import com.sun.source.tree.DefaultCaseLabelTree;
-import com.sun.source.tree.DoWhileLoopTree;
-import com.sun.source.tree.EnhancedForLoopTree;
-import com.sun.source.tree.ErroneousTree;
-import com.sun.source.tree.ExportsTree;
-import com.sun.source.tree.ForLoopTree;
-import com.sun.source.tree.IfTree;
-import com.sun.source.tree.ImportTree;
-import com.sun.source.tree.LineMap;
-import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.ModuleTree;
-import com.sun.source.tree.NewArrayTree;
-import com.sun.source.tree.NewClassTree;
-import com.sun.source.tree.PackageTree;
-import com.sun.source.tree.ProvidesTree;
-import com.sun.source.tree.RequiresTree;
-import com.sun.source.tree.ReturnTree;
-import com.sun.source.tree.SwitchExpressionTree;
-import com.sun.source.tree.SwitchTree;
-import com.sun.source.tree.SynchronizedTree;
-import com.sun.source.tree.ThrowTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.TryTree;
-import com.sun.source.tree.TypeParameterTree;
-import com.sun.source.tree.VariableTree;
-import com.sun.source.tree.WhileLoopTree;
-import com.sun.source.tree.YieldTree;
+import com.sun.source.tree.*;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
@@ -333,6 +296,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ASSIGN, start, 1);
         return super.visitAssignment(node, p);
+    }
+
+    @Override
+    public Object visitCompoundAssignment(CompoundAssignmentTree node, Object p) {
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenType.J_ASSIGN, start, 1);
+        return super.visitCompoundAssignment(node, p);
+    }
+
+    @Override
+    public Object visitUnary(UnaryTree node, Object p) {
+        if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
+                .contains(node.getKind())) {
+            long start = positions.getStartPosition(ast, node);
+            addToken(JavaTokenType.J_ASSIGN, start, 1);
+        }
+        return super.visitUnary(node, p);
     }
 
     @Override
