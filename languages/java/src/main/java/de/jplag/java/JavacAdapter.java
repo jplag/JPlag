@@ -18,14 +18,14 @@ import javax.tools.ToolProvider;
 
 import org.slf4j.Logger;
 
+import de.jplag.ParsingException;
+import de.jplag.Token;
+
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
-
-import de.jplag.ParsingException;
-import de.jplag.Token;
 
 public class JavacAdapter {
 
