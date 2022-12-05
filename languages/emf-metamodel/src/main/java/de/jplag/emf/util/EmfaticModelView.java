@@ -64,7 +64,7 @@ public final class EmfaticModelView extends AbstractModelView {
             if (eObject instanceof ENamedElement element) {
                 line = lineIndexOf(element);
                 if (line != Token.NO_VALUE) {
-                    if (token.getType() instanceof MetamodelTokenType type && type.isEndToken()) {
+                    if (token.getType()instanceof MetamodelTokenType type && type.isEndToken()) {
                         line = findEndIndex(line);
                     }
                     column = indentationOf(lines.get(line));
@@ -76,7 +76,6 @@ public final class EmfaticModelView extends AbstractModelView {
                 }
             }
         }
-        System.out.println(token.getType() + "\t" + line + "\t" + column);
         return new MetamodelToken(token.getType(), token.getFile(), line, column, length, token.getEObject());
     }
 
