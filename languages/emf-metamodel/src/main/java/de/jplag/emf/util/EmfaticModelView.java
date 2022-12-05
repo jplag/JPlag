@@ -37,6 +37,7 @@ public final class EmfaticModelView extends AbstractModelView {
     private final Map<ENamedElement, Integer> elementToLine;
 
     private Copier copier;
+    private int lastLineIndex;
 
     /**
      * Creates a tree view for a metamodel.
@@ -54,28 +55,14 @@ public final class EmfaticModelView extends AbstractModelView {
     }
 
     public MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token) {
-        int length = Token.NO_VALUE;
-        int line = Token.NO_VALUE;
-        int column = Token.NO_VALUE;
+        int line = calculateLineIndexOf(token);
+        int column = indentationOf(lines.get(line));
+        int length = lines.get(line).length() - column;
 
-        Optional<EObject> optionalEObject = token.getEObject();
-        if (optionalEObject.isPresent()) {
-            EObject eObject = optionalEObject.get();
-            if (eObject instanceof ENamedElement element) {
-                line = lineIndexOf(element);
-                if (line != Token.NO_VALUE) {
-                    if (token.getType()instanceof MetamodelTokenType type && type.isEndToken()) {
-                        line = findEndIndex(line);
-                    }
-                    column = indentationOf(lines.get(line));
-                    length = lines.get(line).length() - column;
+        // post processing, viewer requires 1-based indexing:
+        line++;
+        column += column == Token.NO_VALUE ? 0 : 1;
 
-                    // post processing, viewer requires 1-based indexing:
-                    line++;
-                    column += column == Token.NO_VALUE ? 0 : 1;
-                }
-            }
-        }
         return new MetamodelToken(token.getType(), token.getFile(), line, column, length, token.getEObject());
     }
 
@@ -107,9 +94,31 @@ public final class EmfaticModelView extends AbstractModelView {
     }
 
     /**
+     * Calculates the line index of a metamodel token from the emfatic code. If it cannot be found, the last index is used.
+     */
+    private int calculateLineIndexOf(MetamodelToken token) {
+        int line = Token.NO_VALUE;
+        Optional<EObject> optionalEObject = token.getEObject();
+        if (optionalEObject.isPresent()) {
+            EObject eObject = optionalEObject.get();
+            if (eObject instanceof ENamedElement element) {
+                line = lineIndexOf(element);
+                if (line != Token.NO_VALUE && isEndToken(token)) {
+                    line = findEndIndexOf(line);
+                }
+            }
+        }
+        if (line == Token.NO_VALUE) {
+            return lastLineIndex;
+        }
+        lastLineIndex = line;
+        return line;
+    }
+
+    /**
      * Locates the end index (closing character) for an element with a already known declaration index.
      */
-    private int findEndIndex(int declarationIndex) {
+    private int findEndIndexOf(int declarationIndex) {
         String beginLine = lines.get(declarationIndex);
         int indentation = indentationOf(beginLine);
         if (declarationIndex > 1) {
@@ -125,6 +134,13 @@ public final class EmfaticModelView extends AbstractModelView {
     }
 
     /**
+     * Checks if a token is representing a end of a block, e.g. a closing bracket.
+     */
+    private boolean isEndToken(Token token) {
+        return token.getType() instanceof MetamodelTokenType type && type.isEndToken();
+    }
+
+    /**
      * Calculates the indentation of a line, meaning the number of tabs and spaces.
      */
     private int indentationOf(String beginLine) {
@@ -135,13 +151,13 @@ public final class EmfaticModelView extends AbstractModelView {
      * Returns the line index of the declaration of an element in the Emfatic code.
      */
     private int lineIndexOf(ENamedElement element) {
-        return elementToLine.computeIfAbsent(element, this::locateLineIndexOf);
+        return elementToLine.computeIfAbsent(element, this::findLineIndexOf);
     }
 
     /**
      * Searches for the declaration of an element in the Emfatic code.
      */
-    private int locateLineIndexOf(ENamedElement element) {
+    private int findLineIndexOf(ENamedElement element) {
         String hash = Integer.toString(copier.get(element).hashCode());
         for (int index = 0; index < hashedLines.size(); index++) {
             String line = hashedLines.get(index);
