@@ -1,5 +1,8 @@
 package de.jplag.reporting.reportobject;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.nio.file.Path;
 
@@ -12,6 +15,7 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.reporting.reportobject.model.Version;
 
 class ReportObjectFactoryTest extends TestBase {
+    private static final String FILE_SUFFIX = ".zip";
     private static final String BASECODE = "basecode";
     private static final String BASECODE_BASE = "basecode-base";
     private static final String OUTPUT = "output";
@@ -26,10 +30,13 @@ class ReportObjectFactoryTest extends TestBase {
     @Test
     void testCreateAndSaveReportWithBasecode() throws ExitException {
         JPlagResult result = runJPlag(BASECODE, it -> it.withBaseCodeSubmissionDirectory(new File(BASE_PATH, BASECODE_BASE)));
-        String path = Path.of(BASE_PATH, OUTPUT, SUBMISSIONS).toString();
+        Path path = Path.of(BASE_PATH, OUTPUT, SUBMISSIONS);
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-        reportObjectFactory.createAndSaveReport(result, path);
-        Assertions.assertNotNull(result);
+        reportObjectFactory.createAndSaveReport(result, path.toString());
+        assertNotNull(result);
+        File expectedFile = new File(path.toString() + FILE_SUFFIX);
+        assertTrue(expectedFile.exists());
+        expectedFile.delete();
     }
 
 }
