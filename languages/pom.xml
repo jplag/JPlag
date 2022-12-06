@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>cpp</module>
+        <module>cpp2</module>
         <module>csharp</module>
         <module>emf-metamodel</module>
         <module>emf-metamodel-dynamic</module>
