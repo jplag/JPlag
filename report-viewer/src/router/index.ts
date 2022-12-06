@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+import "./public-path"
+import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import OverviewView from "@/views/OverviewView.vue";
 import ComparisonView from "@/views/ComparisonView.vue";
 import FileUploadView from "@/views/FileUploadView.vue";
@@ -26,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-  history: createWebHistory("/JPlag"),
+  history: createWebHistory(__webpack_public_path__),
   routes,
 });
 

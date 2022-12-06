@@ -18,8 +18,6 @@ import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
@@ -32,6 +30,8 @@ import de.jplag.endtoend.model.ExpectedResult;
 import de.jplag.endtoend.model.ResultDescription;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Main test class for end-to-end testing in all language. The test cases aim to detect changes in the detection of
