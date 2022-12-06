@@ -51,7 +51,7 @@ import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
-final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
+final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final File file;
     private final Parser parser;
     private final LineMap map;
@@ -93,17 +93,17 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     }
 
     @Override
-    public Object visitBlock(BlockTree node, Object p) {
+    public Void visitBlock(BlockTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_INIT_BEGIN, start, 1);
-        Object result = super.visitBlock(node, p);
+        super.visitBlock(node, unused);
         addToken(JavaTokenType.J_INIT_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitClass(ClassTree node, Object p) {
+    public Void visitClass(ClassTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
 
@@ -118,7 +118,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         } else if (node.getKind() == Tree.Kind.CLASS) {
             addToken(JavaTokenType.J_CLASS_BEGIN, start, 5);
         }
-        Object result = super.visitClass(node, p);
+        super.visitClass(node, unused);
         if (node.getKind() == Tree.Kind.ENUM) {
             addToken(JavaTokenType.J_ENUM_END, end, 1);
         } else if (node.getKind() == Tree.Kind.INTERFACE) {
@@ -130,112 +130,115 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         } else if (node.getKind() == Tree.Kind.CLASS) {
             addToken(JavaTokenType.J_CLASS_END, end, 1);
         }
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitImport(ImportTree node, Object p) {
+    public Void visitImport(ImportTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_IMPORT, start, 6);
-        return super.visitImport(node, p);
+        super.visitImport(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitPackage(PackageTree node, Object p) {
+    public Void visitPackage(PackageTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_PACKAGE, start, 7);
-        return super.visitPackage(node, p);
+        super.visitPackage(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitMethod(MethodTree node, Object p) {
+    public Void visitMethod(MethodTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_METHOD_BEGIN, start, node.getName().length());
-        Object result = super.visitMethod(node, p);
+        super.visitMethod(node, unused);
         addToken(JavaTokenType.J_METHOD_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitSynchronized(SynchronizedTree node, Object p) {
+    public Void visitSynchronized(SynchronizedTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_SYNC_BEGIN, start, 12);
-        Object result = super.visitSynchronized(node, p);
+        super.visitSynchronized(node, unused);
         addToken(JavaTokenType.J_SYNC_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitDoWhileLoop(DoWhileLoopTree node, Object p) {
+    public Void visitDoWhileLoop(DoWhileLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_DO_BEGIN, start, 2);
-        Object result = super.visitDoWhileLoop(node, p);
+        super.visitDoWhileLoop(node, unused);
         addToken(JavaTokenType.J_DO_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitWhileLoop(WhileLoopTree node, Object p) {
+    public Void visitWhileLoop(WhileLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_WHILE_BEGIN, start, 5);
-        Object result = super.visitWhileLoop(node, p);
+        super.visitWhileLoop(node, unused);
         addToken(JavaTokenType.J_WHILE_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitForLoop(ForLoopTree node, Object p) {
+    public Void visitForLoop(ForLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_FOR_BEGIN, start, 3);
-        Object result = super.visitForLoop(node, p);
+        super.visitForLoop(node, unused);
         addToken(JavaTokenType.J_FOR_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitEnhancedForLoop(EnhancedForLoopTree node, Object p) {
+    public Void visitEnhancedForLoop(EnhancedForLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_FOR_BEGIN, start, 3);
-        Object result = super.visitEnhancedForLoop(node, p);
+        super.visitEnhancedForLoop(node, unused);
         addToken(JavaTokenType.J_FOR_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitSwitch(SwitchTree node, Object p) {
+    public Void visitSwitch(SwitchTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6);
-        Object result = super.visitSwitch(node, p);
+        super.visitSwitch(node, unused);
         addToken(JavaTokenType.J_SWITCH_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitSwitchExpression(SwitchExpressionTree node, Object parameterValue) {
+    public Void visitSwitchExpression(SwitchExpressionTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6);
-        Object result = super.visitSwitchExpression(node, parameterValue);
+        super.visitSwitchExpression(node, unused);
         addToken(JavaTokenType.J_SWITCH_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitCase(CaseTree node, Object p) {
+    public Void visitCase(CaseTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_CASE, start, 4);
-        return super.visitCase(node, p);
+        super.visitCase(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitTry(TryTree node, Object p) {
+    public Void visitTry(TryTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         if (node.getResources().isEmpty())
             addToken(JavaTokenType.J_TRY_BEGIN, start, 3);
@@ -243,83 +246,90 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
             addToken(JavaTokenType.J_TRY_WITH_RESOURCE, start, 3);
         if (node.getFinallyBlock() != null)
             addToken(JavaTokenType.J_FINALLY, start, 3);
-        return super.visitTry(node, p);
+        super.visitTry(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitCatch(CatchTree node, Object p) {
+    public Void visitCatch(CatchTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_CATCH_BEGIN, start, 5);
-        Object result = super.visitCatch(node, p);
+        super.visitCatch(node, unused);
         addToken(JavaTokenType.J_CATCH_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitIf(IfTree node, Object p) {
+    public Void visitIf(IfTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_IF_BEGIN, start, 2);
-        node.getCondition().accept(this, p);
-        node.getThenStatement().accept(this, p);
+        node.getCondition().accept(this, unused);
+        node.getThenStatement().accept(this, unused);
         if (node.getElseStatement() != null) {
             start = positions.getStartPosition(ast, node.getElseStatement());
             addToken(JavaTokenType.J_ELSE, start, 4);
-            node.getElseStatement().accept(this, p);
+            node.getElseStatement().accept(this, unused);
         }
         addToken(JavaTokenType.J_IF_END, end, 1);
         return null;
     }
 
     @Override
-    public Object visitBreak(BreakTree node, Object p) {
+    public Void visitBreak(BreakTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_BREAK, start, 5);
-        return super.visitBreak(node, p);
+        super.visitBreak(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitContinue(ContinueTree node, Object p) {
+    public Void visitContinue(ContinueTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_CONTINUE, start, 8);
-        return super.visitContinue(node, p);
+        super.visitContinue(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitReturn(ReturnTree node, Object p) {
+    public Void visitReturn(ReturnTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_RETURN, start, 6);
-        return super.visitReturn(node, p);
+        super.visitReturn(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitThrow(ThrowTree node, Object p) {
+    public Void visitThrow(ThrowTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_THROW, start, 5);
-        return super.visitThrow(node, p);
+        super.visitThrow(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitNewClass(NewClassTree node, Object p) {
+    public Void visitNewClass(NewClassTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         if (node.getTypeArguments().size() > 0) {
             addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length());
         }
         addToken(JavaTokenType.J_NEWCLASS, start, 3);
-        return super.visitNewClass(node, p);
+        super.visitNewClass(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitTypeParameter(TypeParameterTree node, Object p) {
+    public Void visitTypeParameter(TypeParameterTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         // This is odd, but also done like this in Java17
         addToken(JavaTokenType.J_GENERIC, start, 1);
-        return super.visitTypeParameter(node, p);
+        super.visitTypeParameter(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitNewArray(NewArrayTree node, Object arg1) {
+    public Void visitNewArray(NewArrayTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_NEWARRAY, start, 3);
@@ -328,118 +338,133 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
             addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1);
             addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1);
         }
-        return super.visitNewArray(node, arg1);
+        super.visitNewArray(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitAssignment(AssignmentTree node, Object p) {
+    public Void visitAssignment(AssignmentTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ASSIGN, start, 1);
-        return super.visitAssignment(node, p);
+        super.visitAssignment(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitCompoundAssignment(CompoundAssignmentTree node, Object p) {
+    public Void visitCompoundAssignment(CompoundAssignmentTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ASSIGN, start, 1);
-        return super.visitCompoundAssignment(node, p);
+        super.visitCompoundAssignment(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitUnary(UnaryTree node, Object p) {
+    public Void visitUnary(UnaryTree node, Void unused) {
         if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
             addToken(JavaTokenType.J_ASSIGN, start, 1);
         }
-        return super.visitUnary(node, p);
+        super.visitUnary(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitAssert(AssertTree node, Object p) {
+    public Void visitAssert(AssertTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ASSERT, start, 6);
-        return super.visitAssert(node, p);
+        super.visitAssert(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitVariable(VariableTree node, Object p) {
+    public Void visitVariable(VariableTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length());
-        return super.visitVariable(node, p);
+        super.visitVariable(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitConditionalExpression(ConditionalExpressionTree node, Object p) {
+    public Void visitConditionalExpression(ConditionalExpressionTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_COND, start, 1);
-        return super.visitConditionalExpression(node, p);
+        super.visitConditionalExpression(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitMethodInvocation(MethodInvocationTree node, Object p) {
+    public Void visitMethodInvocation(MethodInvocationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start);
-        return super.visitMethodInvocation(node, p);
+        super.visitMethodInvocation(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitAnnotation(AnnotationTree node, Object p) {
+    public Void visitAnnotation(AnnotationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ANNO, start, 1);
-        return super.visitAnnotation(node, p);
+        super.visitAnnotation(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitModule(ModuleTree node, Object p) {
+    public Void visitModule(ModuleTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_MODULE_BEGIN, start, 6);
-        Object result = super.visitModule(node, p);
+        super.visitModule(node, unused);
         addToken(JavaTokenType.J_MODULE_END, end, 1);
-        return result;
+        return null;
     }
 
     @Override
-    public Object visitRequires(RequiresTree node, Object p) {
+    public Void visitRequires(RequiresTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_REQUIRES, start, 8);
-        return super.visitRequires(node, p);
+        super.visitRequires(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitProvides(ProvidesTree node, Object p) {
+    public Void visitProvides(ProvidesTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_PROVIDES, start, 8);
-        return super.visitProvides(node, p);
+        super.visitProvides(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitExports(ExportsTree node, Object p) {
+    public Void visitExports(ExportsTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_EXPORTS, start, 7);
-        return super.visitExports(node, p);
+        super.visitExports(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitErroneous(ErroneousTree node, Object p) {
+    public Void visitErroneous(ErroneousTree node, Void unused) {
         parsingExceptions.add(new ParsingException(file, "error while visiting %s".formatted(node)));
-        return super.visitErroneous(node, p);
+        super.visitErroneous(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitYield(YieldTree node, Object p) {
+    public Void visitYield(YieldTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
         addToken(JavaTokenType.J_YIELD, start, end);
-        return super.visitYield(node, p);
+        super.visitYield(node, unused);
+        return null;
     }
 
     @Override
-    public Object visitDefaultCaseLabel(DefaultCaseLabelTree node, Object p) {
+    public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
         addToken(JavaTokenType.J_DEFAULT, start, end);
-        return super.visitDefaultCaseLabel(node, p);
+        super.visitDefaultCaseLabel(node, unused);
+        return null;
     }
 }
