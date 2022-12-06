@@ -38,18 +38,4 @@ class InvalidSubmissionTest extends TestBase {
             assertArrayEquals(new String[] {"A", "B"}, errorSubmissions);
         }
     }
-
-    private static void deleteDirectory(File path) {
-        if (path.exists()) {
-            for (File file : path.listFiles()) {
-                if (file.isDirectory()) {
-                    deleteDirectory(file);
-                } else {
-                    file.delete();
-                }
-            }
-        }
-        path.delete();
-    }
-
 }
