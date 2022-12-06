@@ -32,11 +32,11 @@ public final class EmfaticModelView extends AbstractModelView {
     private static final String TYPE_SUFFIX = "(;| extends| \\{)";
     private static final char CLOSING_CHAR = '}';
 
-    private final List<String> lines;
-    private final List<String> hashedLines;
+    private final List<String> lines; // Emfatic view code
+    private final List<String> hashedLines; // code for tracing lookup
     private final Map<ENamedElement, Integer> elementToLine;
 
-    private Copier copier;
+    private Copier modelCopier;
     private int lastLineIndex;
 
     /**
@@ -60,15 +60,16 @@ public final class EmfaticModelView extends AbstractModelView {
      * @return the enriched token, with the tracing information corresponding to this view.
      */
     public MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token) {
-        int line = calculateLineIndexOf(token);
-        int column = indentationOf(lines.get(line));
-        int length = lines.get(line).length() - column;
+        int lineIndex = calculateLineIndexOf(token);
+        String line = lines.get(lineIndex);
+        int columnIndex = indentationOf(line);
+        int length = line.length() - columnIndex;
 
         // post processing, viewer requires 1-based indexing:
-        line++;
-        column += column == Token.NO_VALUE ? 0 : 1;
+        lineIndex++;
+        columnIndex += columnIndex == Token.NO_VALUE ? 0 : 1;
 
-        return new MetamodelToken(token.getType(), token.getFile(), line, column, length, token.getEObject());
+        return new MetamodelToken(token.getType(), token.getFile(), lineIndex, columnIndex, length, token.getEObject());
     }
 
     private final void replaceElementNamesWithHashes(Resource copiedResource) {
@@ -91,9 +92,9 @@ public final class EmfaticModelView extends AbstractModelView {
     private final Resource copyModel(Resource model) {
         ResourceSet resourceSet = new ResourceSetImpl();
         Resource copy = resourceSet.createResource(model.getURI());
-        copier = new Copier();
-        Collection<EObject> result = copier.copyAll(model.getContents());
-        copier.copyReferences();
+        modelCopier = new Copier();
+        Collection<EObject> result = modelCopier.copyAll(model.getContents());
+        modelCopier.copyReferences();
         copy.getContents().addAll(result);
         return copy;
     }
@@ -124,12 +125,10 @@ public final class EmfaticModelView extends AbstractModelView {
      * Locates the end index (closing character) for an element with a already known declaration index.
      */
     private int findEndIndexOf(int declarationIndex) {
-        String beginLine = lines.get(declarationIndex);
-        int indentation = indentationOf(beginLine);
-        if (declarationIndex > 1) {
+        int indentation = indentationOf(lines.get(declarationIndex));
+        if (declarationIndex > 1) { // exception for top level package
             for (int i = declarationIndex + 1; i < lines.size(); i++) {
                 String nextLine = lines.get(i);
-
                 if (nextLine.length() > indentation && CLOSING_CHAR == nextLine.charAt(indentation)) {
                     return i;
                 }
@@ -142,7 +141,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * Checks if a token is representing a end of a block, e.g. a closing bracket.
      */
     private boolean isEndToken(Token token) {
-        return token.getType() instanceof MetamodelTokenType type && type.isEndToken();
+        return token.getType()instanceof MetamodelTokenType type && type.isEndToken();
     }
 
     /**
@@ -163,7 +162,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * Searches for the declaration of an element in the Emfatic code.
      */
     private int findLineIndexOf(ENamedElement element) {
-        String hash = Integer.toString(copier.get(element).hashCode());
+        String hash = Integer.toString(modelCopier.get(element).hashCode());
         for (int index = 0; index < hashedLines.size(); index++) {
             String line = hashedLines.get(index);
             String trimmedLine = line.substring(indentationOf(line));
