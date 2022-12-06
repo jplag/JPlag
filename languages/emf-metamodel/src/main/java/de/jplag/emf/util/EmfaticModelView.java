@@ -54,6 +54,11 @@ public final class EmfaticModelView extends AbstractModelView {
         hashedLines = generateEmfaticCode(new StringBuilder(), copiedResource);
     }
 
+    /**
+     * Creates a token with tracing information based on an existing one without.
+     * @param token is the existing token without tracing information.
+     * @return the enriched token, with the tracing information corresponding to this view.
+     */
     public MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token) {
         int line = calculateLineIndexOf(token);
         int column = indentationOf(lines.get(line));
@@ -130,14 +135,14 @@ public final class EmfaticModelView extends AbstractModelView {
                 }
             }
         }
-        return lines.size() - 1;
+        return lastLineIndex;
     }
 
     /**
      * Checks if a token is representing a end of a block, e.g. a closing bracket.
      */
     private boolean isEndToken(Token token) {
-        return token.getType()instanceof MetamodelTokenType type && type.isEndToken();
+        return token.getType() instanceof MetamodelTokenType type && type.isEndToken();
     }
 
     /**
