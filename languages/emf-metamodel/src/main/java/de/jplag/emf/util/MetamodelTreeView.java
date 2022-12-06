@@ -22,7 +22,7 @@ public class MetamodelTreeView extends AbstractModelView {
 
     /**
      * Creates a tree view for a metamodel.
-     * @param file is the file where the metamodel is persisted.
+     * @param file is the path to the metamodel.
      */
     public MetamodelTreeView(File file) {
         super(file);

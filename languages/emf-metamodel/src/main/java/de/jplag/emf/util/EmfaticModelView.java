@@ -22,7 +22,7 @@ import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.MetamodelTokenType;
 
 /**
- * Simplistic tree view representation of an EMF metamodel.
+ * Textual view of an EMF metamodel based on Emfatic.
  * @author Timur Saglam
  */
 public final class EmfaticModelView extends AbstractModelView {
@@ -40,8 +40,8 @@ public final class EmfaticModelView extends AbstractModelView {
     private int lastLineIndex;
 
     /**
-     * Creates a tree view for a metamodel.
-     * @param file is the file where the metamodel is persisted.
+     * Creates an Emfatic view for a metamodel.
+     * @param file is the path to the metamodel.
      */
     public EmfaticModelView(File file, Resource modelResource) {
         super(file);
