@@ -4,14 +4,16 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.Experimental;
 import org.kohsuke.MetaInfServices;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+@Experimental
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
-    private static final String IDENTIFIER = "cpp";
+    private static final String IDENTIFIER = "cpp2";
 
     private final Parser parser; // cpp code is scanned not parsed
 

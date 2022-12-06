@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import de.jplag.Experimental;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,10 @@ public final class LanguageLoader {
         Map<String, Language> languages = new TreeMap<>();
 
         for (Language language : ServiceLoader.load(Language.class)) {
+            if (language.getClass().isAnnotationPresent(Experimental.class) && !Boolean.getBoolean("jplag.experimental")) {
+                logger.info("Ignoring experimental language {}", language.getIdentifier());
+                continue;
+            }
             String languageIdentifier = language.getIdentifier();
             if (languages.containsKey(languageIdentifier)) {
                 logger.error("Multiple implementations for a language '{}' are present in the classpath! Skipping ..", languageIdentifier);
