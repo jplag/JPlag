@@ -2,10 +2,16 @@ package de.jplag.java;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import de.jplag.ParsingException;
+import de.jplag.Token;
+import de.jplag.TokenType;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
@@ -58,6 +64,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final SourcePositions positions;
     private final CompilationUnitTree ast;
 
+    private int variableCount;
+    private Map<String, String> memberVariables; // map member variable's name to id
+    private Map<String, Stack<String>> localVariables; // map local variable's name to id
+    private Stack<Set<String>> scopeVariables; // stack of local variable names in scope
+
     private List<ParsingException> parsingExceptions = new ArrayList<>();
 
     public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
@@ -66,10 +77,18 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this.map = map;
         this.positions = positions;
         this.ast = ast;
+        this.variableCount = 0;
+        this.memberVariables = new HashMap<>();
+        this.localVariables = new HashMap<>();
+        this.scopeVariables = new Stack<>();
     }
 
     public List<ParsingException> getParsingExceptions() {
         return parsingExceptions;
+    }
+
+    public void addToken(TokenType type, File file, long line, long column, long length) {
+        parser.add(new Token(type, file, (int) line, (int) column, (int) length));
     }
 
     /**
@@ -79,7 +98,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param length is the length of the token.
      */
     private void addToken(JavaTokenType tokenType, long position, int length) {
-        parser.add(tokenType, file, map.getLineNumber(position), map.getColumnNumber(position), length);
+        addToken(tokenType, file, map.getLineNumber(position), map.getColumnNumber(position), length);
     }
 
     /**
@@ -89,21 +108,65 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param end is the end position of the token for the calculation of the length.
      */
     private void addToken(JavaTokenType tokenType, long start, long end) {
-        parser.add(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start));
+        addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start));
+    }
+
+    private String variableId() {
+        return Integer.toString(variableCount++);
+    }
+
+    private String getVariableId(String variableName) {
+        Stack<String> variableIdStack = localVariables.getOrDefault(variableName, null);
+        if (variableIdStack != null)
+            return variableIdStack.peek();
+        return memberVariables.getOrDefault(variableName, null);
+    }
+
+    public void enterLocalScope() {
+        scopeVariables.add(new HashSet<>());
+    }
+
+    public void exitLocalScope() {
+        for (String variableName : scopeVariables.pop()) {
+            Stack<String> variableIdStack = localVariables.get(variableName);
+            variableIdStack.pop();
+            if (variableIdStack.isEmpty())
+                localVariables.remove(variableName);
+        }
     }
 
     @Override
     public Void visitBlock(BlockTree node, Void unused) {
+        // classes are an obvious exception since members are treated differently
+        Set<Tree.Kind> classKinds = Set.of(Tree.Kind.ENUM, Tree.Kind.INTERFACE, Tree.Kind.RECORD, Tree.Kind.ANNOTATION_TYPE, Tree.Kind.CLASS);
+        boolean isClass = classKinds.contains(node.getKind());
+        // for loops are also an exception since a scope can be induced without a block visit (without brackets)
+        boolean isForLoop = Set.of(Tree.Kind.FOR_LOOP, Tree.Kind.ENHANCED_FOR_LOOP).contains(node.getKind());
+        // methods and catches are also an exception since variables can be declared before the block begins
+        if (!(isClass || isForLoop || Set.of(Tree.Kind.METHOD, Tree.Kind.CATCH).contains(node.getKind()))) {
+            enterLocalScope();
+        }
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_INIT_BEGIN, start, 1);
         super.visitBlock(node, unused);
         addToken(JavaTokenType.J_INIT_END, end, 1);
+        if (!(isClass || isForLoop)) {
+            exitLocalScope();
+        }
         return null;
     }
 
     @Override
     public Void visitClass(ClassTree node, Void unused) {
+        for (var member : node.getMembers()) {
+            if (member.getKind() == Tree.Kind.VARIABLE) {
+                String variableName = ((VariableTree) member).getName().toString();
+                String variableId = variableId();
+                System.out.println("new member variable " + variableName + " with id " + variableId);
+                memberVariables.put(variableName, variableId);
+            }
+        }
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
 
@@ -119,17 +182,18 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             addToken(JavaTokenType.J_CLASS_BEGIN, start, 5);
         }
         super.visitClass(node, unused);
-        if (node.getKind() == Tree.Kind.ENUM) {
-            addToken(JavaTokenType.J_ENUM_END, end, 1);
-        } else if (node.getKind() == Tree.Kind.INTERFACE) {
-            addToken(JavaTokenType.J_INTERFACE_END, end, 1);
-        } else if (node.getKind() == Tree.Kind.RECORD) {
-            addToken(JavaTokenType.J_RECORD_END, end, 1);
-        } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
-            addToken(JavaTokenType.J_ANNO_T_END, end, 1);
-        } else if (node.getKind() == Tree.Kind.CLASS) {
-            addToken(JavaTokenType.J_CLASS_END, end, 1);
+        JavaTokenType tokenType = switch (node.getKind()) {
+            case ENUM -> JavaTokenType.J_ENUM_END;
+            case INTERFACE -> JavaTokenType.J_INTERFACE_END;
+            case RECORD -> JavaTokenType.J_RECORD_END;
+            case ANNOTATION_TYPE -> JavaTokenType.J_ANNO_T_END;
+            case CLASS -> JavaTokenType.J_CLASS_END;
+            default -> null;
+        };
+        if (tokenType != null) {
+            addToken(tokenType, end, 1);
         }
+        memberVariables.clear();
         return null;
     }
 
@@ -151,6 +215,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitMethod(MethodTree node, Void unused) {
+        enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_METHOD_BEGIN, start, node.getName().length());
@@ -191,21 +256,25 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitForLoop(ForLoopTree node, Void unused) {
+        enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_FOR_BEGIN, start, 3);
         super.visitForLoop(node, unused);
         addToken(JavaTokenType.J_FOR_END, end, 1);
+        exitLocalScope();
         return null;
     }
 
     @Override
     public Void visitEnhancedForLoop(EnhancedForLoopTree node, Void unused) {
+        enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_FOR_BEGIN, start, 3);
         super.visitEnhancedForLoop(node, unused);
         addToken(JavaTokenType.J_FOR_END, end, 1);
+        exitLocalScope();
         return null;
     }
 
@@ -252,6 +321,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitCatch(CatchTree node, Void unused) {
+        enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_CATCH_BEGIN, start, 5);
@@ -379,6 +449,15 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitVariable(VariableTree node, Void unused) {
+        if (!scopeVariables.isEmpty()) { // local scope
+            String variableName = node.getName().toString();
+            String variableId = variableId();
+            System.out.println("new local variable " + variableName + " with id " + variableId);
+            if (!localVariables.containsKey(variableName))
+                localVariables.put(variableName, new Stack<>());
+            localVariables.get(variableName).push(variableId);
+            scopeVariables.peek().add(variableName);
+        }
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length());
         super.visitVariable(node, unused);
