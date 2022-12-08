@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.jplag.ParsingException;
+
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
 import com.sun.source.tree.AssignmentTree;
@@ -45,8 +47,6 @@ import com.sun.source.tree.WhileLoopTree;
 import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
-
-import de.jplag.ParsingException;
 
 final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     private final File file;
