@@ -6,7 +6,7 @@ import java.io.File;
 
 import org.junit.jupiter.api.Test;
 
-public class ParsingExceptionTest {
+class ParsingExceptionTest {
 
     @Test
     void testParsingExceptionAcceptsNullReason() {
