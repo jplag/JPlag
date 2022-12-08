@@ -42,7 +42,7 @@ public class ReportObjectFactory {
 
     private static final ToDiskWriter fileWriter = new ToDiskWriter();
     public static final String OVERVIEW_FILE_NAME = "overview.json";
-    public static final String SUBMISSIONS_FOLDER = "submissions";
+    public static final String SUBMISSIONS_FOLDER = "files";
     public static final Version REPORT_VIEWER_VERSION = JPlag.JPLAG_VERSION;
 
     private Map<String, String> submissionNameToIdMap;

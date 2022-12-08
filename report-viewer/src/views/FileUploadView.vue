@@ -58,14 +58,14 @@ export default defineComponent({
     const extractSubmissionFileName = (filePath: path.ParsedPath) => {
       const folders = filePath.dir.split("/");
       const submissionFolderIndex = folders.findIndex(
-        (folder) => folder === "submissions"
+        (folder) => folder === "files"
       );
       return folders[submissionFolderIndex + 1];
     };
     const extractFileNameWithFullPath = (filePath: path.ParsedPath, originalFileName: string) => {
       let fullPath="";
-      const unixPathWithoutSubmissions = filePath.dir.split("submissions");
-      const originalPathWithoutSubmissions = originalFileName.split("submissions");
+      const unixPathWithoutSubmissions = filePath.dir.split("files");
+      const originalPathWithoutSubmissions = originalFileName.split("files");
       const unixSubfolderPathAfterSubmissions = unixPathWithoutSubmissions[1].substring(1);
       if(originalPathWithoutSubmissions[1].charAt(0)==='\\'){
         fullPath=(unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
@@ -83,7 +83,7 @@ export default defineComponent({
         for (const originalFileName of Object.keys(zip.files)) {
           const unixFileName = slash(originalFileName);
           if (
-            /((.+\/)*)submissions\/(.+)\/(.+)/.test(unixFileName) &&
+            /((.+\/)*)files\/(.+)\/(.+)/.test(unixFileName) &&
             !/^__MACOSX\//.test(unixFileName)
           ) {
             const filePath = path.parse(unixFileName);
