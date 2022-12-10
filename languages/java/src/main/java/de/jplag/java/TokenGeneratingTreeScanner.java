@@ -30,10 +30,13 @@ import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.ErroneousTree;
 import com.sun.source.tree.ExportsTree;
+import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.ForLoopTree;
+import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.IfTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.LineMap;
+import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.ModuleTree;
@@ -68,6 +71,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private Map<String, String> memberVariables; // map member variable's name to id
     private Map<String, Stack<String>> localVariables; // map local variable's name to id
     private Stack<Set<String>> scopeVariables; // stack of local variable names in scope
+    private boolean ignoreNextIdentifier;
 
     private List<ParsingException> parsingExceptions = new ArrayList<>();
 
@@ -81,6 +85,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this.memberVariables = new HashMap<>();
         this.localVariables = new HashMap<>();
         this.scopeVariables = new Stack<>();
+        this.ignoreNextIdentifier = false;
     }
 
     public List<ParsingException> getParsingExceptions() {
@@ -115,11 +120,34 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         return Integer.toString(variableCount++);
     }
 
+    private String getMemberVariableId(String variableName) {
+        return memberVariables.getOrDefault(variableName, null);
+    }
+
     private String getVariableId(String variableName) {
         Stack<String> variableIdStack = localVariables.getOrDefault(variableName, null);
-        if (variableIdStack != null)
+        if (variableIdStack != null) {
             return variableIdStack.peek();
-        return memberVariables.getOrDefault(variableName, null);
+        }
+        return getMemberVariableId(variableName);
+    }
+
+    private boolean isOwnMemberSelect(MemberSelectTree memberSelect) {
+        return memberSelect.getExpression().toString().equals("this");
+    }
+
+    private void registerVariableWrite(String variableId) {
+        if (variableId != null && !ignoreNextIdentifier) {
+            System.out.println("write variable with id " + variableId);
+        }
+        ignoreNextIdentifier = true;  // next identifier (this one) has already been accounted for
+    }
+
+    private void registerVariableRead(String variableId) {
+        if (variableId != null && !ignoreNextIdentifier) {
+            System.out.println("read variable with id " + variableId);
+        }
+        ignoreNextIdentifier = false; // next identifier is this one so...
     }
 
     public void enterLocalScope() {
@@ -335,12 +363,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_IF_BEGIN, start, 2);
-        node.getCondition().accept(this, unused);
-        node.getThenStatement().accept(this, unused);
+        scan(node.getCondition(), unused);
+        scan(node.getThenStatement(), unused);
         if (node.getElseStatement() != null) {
             start = positions.getStartPosition(ast, node.getElseStatement());
             addToken(JavaTokenType.J_ELSE, start, 4);
-            node.getElseStatement().accept(this, unused);
+            scan(node.getElseStatement(), unused);
         }
         addToken(JavaTokenType.J_IF_END, end, 1);
         return null;
@@ -453,8 +481,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             String variableName = node.getName().toString();
             String variableId = variableId();
             System.out.println("new local variable " + variableName + " with id " + variableId);
-            if (!localVariables.containsKey(variableName))
+            if (!localVariables.containsKey(variableName)) {
                 localVariables.put(variableName, new Stack<>());
+            }
             localVariables.get(variableName).push(variableId);
             scopeVariables.peek().add(variableName);
         }
@@ -476,7 +505,16 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitMethodInvocation(MethodInvocationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start);
-        super.visitMethodInvocation(node, unused);
+        // from super method, would need to be changed if return value were to be used
+        scan(node.getTypeArguments(), unused);
+        ExpressionTree methodSelect = node.getMethodSelect();
+        if (methodSelect.getKind() == Tree.Kind.IDENTIFIER
+                || (methodSelect.getKind() == Tree.Kind.MEMBER_SELECT && isOwnMemberSelect((MemberSelectTree) methodSelect))) {
+            // todo is the next identifier always a method identifier?
+            ignoreNextIdentifier = true; // to differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
+        }
+        scan(node.getMethodSelect(), unused);
+        scan(node.getArguments(), unused);
         return null;
     }
 
@@ -544,6 +582,22 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         long end = positions.getEndPosition(ast, node);
         addToken(JavaTokenType.J_DEFAULT, start, end);
         super.visitDefaultCaseLabel(node, unused);
+        return null;
+    }
+
+    @Override
+    public Void visitMemberSelect(MemberSelectTree node, Void unused) {
+        if (isOwnMemberSelect(node)) {
+            registerVariableRead(getMemberVariableId(node.getIdentifier().toString()));  // getIdentifier returns a Name, not an identifier :))
+        }
+        super.visitMemberSelect(node, unused);
+        return null;
+    }
+
+    @Override
+    public Void visitIdentifier(IdentifierTree node, Void unused) {
+        registerVariableRead(getVariableId(node.getName().toString()));
+        super.visitIdentifier(node, unused);
         return null;
     }
 }
