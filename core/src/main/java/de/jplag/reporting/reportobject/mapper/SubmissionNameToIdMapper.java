@@ -34,9 +34,4 @@ public class SubmissionNameToIdMapper {
     private static String sanitizeNameOf(Submission comparison) {
         return comparison.getName().replace(File.separator, FILE_SEPARATOR_REPLACEMENT);
     }
-
-    private static List<JPlagComparison> getComparisons(JPlagResult result) {
-        int numberOfComparisons = result.getOptions().maximumNumberOfComparisons();
-        return result.getComparisons(numberOfComparisons);
-    }
 }
