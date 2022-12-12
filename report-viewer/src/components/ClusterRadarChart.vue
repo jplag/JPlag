@@ -64,7 +64,7 @@ export default defineComponent({
       let data = new Array<number>();
       props.cluster.members
         .get(member)
-        ?.forEach((m) => data.push(roundToTwoDecimals(m.percentage)));
+        ?.forEach((m) => data.push(roundToTwoDecimals(m.percentage * 100)));
       return data;
     };
     const roundToTwoDecimals = (num: number): number =>

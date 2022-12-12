@@ -24,13 +24,13 @@
         <td>
           <div class="td-content">
             <p>{{ match.firstFile }}</p>
-            <p>({{ match.startInFirst + 1 }} - {{ match.endInFirst + 1 }})</p>
+            <p>({{ match.startInFirst }} - {{ match.endInFirst }})</p>
           </div>
         </td>
         <td>
           <div class="td-content">
             <p>{{ match.secondFile }}</p>
-            <p>({{ match.startInSecond + 1 }} - {{ match.endInSecond + 1 }})</p>
+            <p>({{ match.startInSecond }} - {{ match.endInSecond }})</p>
           </div>
         </td>
         <td>{{ match.tokens }}</td>

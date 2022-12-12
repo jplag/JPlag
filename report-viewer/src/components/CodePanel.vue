@@ -152,16 +152,16 @@ export default defineComponent({
     props.matches.forEach((m) => {
       for (let i = m.start; i <= m.end; i++) {
         //assign match color to line
-        coloringArray.value[i] = m.color;
+        coloringArray.value[i-1] = m.color;
         //assign link object to line.
-        linksArray.value[i] = {
+        linksArray.value[i-1] = {
           panel: m.linked_panel,
           file: m.linked_file,
           line: m.linked_line,
         };
       }
-      isFirst.value[m.start] = true;
-      isLast.value[m.end] = true;
+      isFirst.value[m.start-1] = true;
+      isLast.value[m.end-1] = true;
     });
     //assign default values for all line which are not contained in matches
     for (let i = 0; i < props.lines.length; i++) {
