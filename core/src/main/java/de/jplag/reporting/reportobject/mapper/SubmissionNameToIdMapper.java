@@ -23,9 +23,7 @@ public class SubmissionNameToIdMapper {
      */
     public static Map<String, String> buildSubmissionNameToIdMap(JPlagResult result) {
         HashMap<String, String> idToName = new HashMap<>();
-        result.getSubmissions().getSubmissions().forEach(submission -> {
-            idToName.put(submission.getName(), sanitizeNameOf(submission));
-        });
+        result.getSubmissions().getSubmissions().forEach(submission -> idToName.put(submission.getName(), sanitizeNameOf(submission)));
         return idToName;
     }
 
