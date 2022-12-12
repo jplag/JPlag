@@ -87,4 +87,28 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(12, biggestMatch.get().matches().size());
     }
 
+    /**
+     * This test case uses single files as submissions, which is a valid scenario.
+     */
+    @Test
+    void testSingleFileSubmisssions() throws ExitException {
+        JPlagResult result = runJPlagWithDefaultOptions("SimpleSingleFile");
+
+        assertEquals(2, result.getNumberOfSubmissions());
+        assertEquals(1, result.getAllComparisons().size());
+        assertEquals(1, result.getSimilarityDistribution()[6]);
+        assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
+
+        var matches = result.getAllComparisons().get(0).matches();
+        var expectedMatches = runJPlagWithDefaultOptions("SimpleDuplicate").getAllComparisons().get(0).matches();
+        assertEquals(expectedMatches.size(), matches.size());
+
+        for (int i = 0; i < matches.size(); i++) {
+            assertEquals(expectedMatches.get(i).startOfFirst(), matches.get(i).startOfFirst());
+            assertEquals(expectedMatches.get(i).startOfSecond(), matches.get(i).startOfSecond());
+            assertEquals(expectedMatches.get(i).length(), matches.get(i).length());
+        }
+
+    }
+
 }
