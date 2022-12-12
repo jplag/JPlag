@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,15 +13,12 @@ import de.jplag.exceptions.ExitException;
 
 class ParallelComparisonTest extends TestBase {
 
-    private static final String SIMPLE = "SimpleDuplicate";
-    private static final String PARTIAL = "PartialPlagiarism";
-
     /**
      * The simple duplicate contains obvious plagiarism.
      */
     @Test
     void testSimpleDuplicate() throws ExitException {
-        JPlagResult result = runJPlagWithDefaultOptions(SIMPLE);
+        JPlagResult result = runJPlagWithDefaultOptions("SimpleDuplicate");
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
@@ -37,7 +33,7 @@ class ParallelComparisonTest extends TestBase {
     @Test
     void testWithMinTokenMatch() throws ExitException {
         var expectedDistribution = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-        JPlagResult result = runJPlag(SIMPLE, it -> it.withMinimumTokenMatch(5));
+        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.withMinimumTokenMatch(5));
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
@@ -66,7 +62,7 @@ class ParallelComparisonTest extends TestBase {
      */
     @Test
     void testPartialPlagiarism() throws ExitException {
-        JPlagResult result = runJPlagWithDefaultOptions(PARTIAL);
+        JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
 
         assertEquals(5, result.getNumberOfSubmissions());
         assertEquals(10, result.getAllComparisons().size());
@@ -91,24 +87,6 @@ class ParallelComparisonTest extends TestBase {
         assertEquals(12, biggestMatch.get().matches().size());
     }
 
-    /**
-     * This test case uses one submission from the partial plagiarism test and uses it as root folder. Thus testing single
-     * files as submissions, which is a valid scenario.
-     */
-    @Test
-    void testSingleFileSubmisssions() throws ExitException {
-        Path directoryContainingFiles = Path.of(PARTIAL, "A"); // no folders in here
-        JPlagResult result = runJPlagWithDefaultOptions(directoryContainingFiles.toString());
-
-        assertEquals(7, result.getNumberOfSubmissions());
-        assertEquals(21, result.getAllComparisons().size());
-
-        // result.getSubmissions().getSubmissions().forEach(it -> assertTrue(it.getName().endsWith(".java")));
-        // ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-        // reportObjectFactory.createAndSaveReport(result, "target/Test-Result");
-
-    }
-
     // TODO SH: Methods like this should be moved to the API and also should accept wildcards
     private double getSelectedPercent(JPlagResult result, String nameA, String nameB) {
         return getSelectedComparison(result, nameA, nameB).map(JPlagComparison::similarity).orElse(-1.0);
@@ -123,7 +101,7 @@ class ParallelComparisonTest extends TestBase {
 
     @Test
     void testMultiRootDirNoBasecode() throws ExitException {
-        List<String> paths = List.of(getBasePath("basecode"), getBasePath(SIMPLE)); // 3 + 2 submissions.
+        List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 3 + 2 submissions.
         JPlagResult result = runJPlag(paths, it -> it);
         assertEquals(5, result.getNumberOfSubmissions());
     }
@@ -131,7 +109,7 @@ class ParallelComparisonTest extends TestBase {
     @Test
     void testMultiRootDirSeparateBasecode() throws ExitException {
         String basecodePath = getBasePath("basecode-base");
-        List<String> paths = List.of(getBasePath("basecode"), getBasePath(SIMPLE)); // 3 + 2 submissions.
+        List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 3 + 2 submissions.
         JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
         assertEquals(5, result.getNumberOfSubmissions());
     }
@@ -139,14 +117,14 @@ class ParallelComparisonTest extends TestBase {
     @Test
     void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
         String basecodePath = getBasePath("basecode", "base");
-        List<String> paths = List.of(getBasePath("basecode"), getBasePath(SIMPLE)); // 2 + 2 submissions.
+        List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 2 + 2 submissions.
         JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
         assertEquals(4, result.getNumberOfSubmissions());
     }
 
     @Test
     void testDisjunctNewAndOldRootDirectories() throws ExitException {
-        List<String> newDirectories = List.of(getBasePath(SIMPLE)); // 2 submissions
+        List<String> newDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
         List<String> oldDirectories = List.of(getBasePath("basecode")); // 3 submissions
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it);
         int numberOfExpectedComparison = 1 + 3 * 2;
@@ -155,8 +133,8 @@ class ParallelComparisonTest extends TestBase {
 
     @Test
     void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
-        List<String> newDirectories = List.of(getBasePath(SIMPLE)); // 2 submissions
-        List<String> oldDirectories = List.of(getBasePath(SIMPLE));
+        List<String> newDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
+        List<String> oldDirectories = List.of(getBasePath("SimpleDuplicate"));
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it);
         int numberOfExpectedComparison = 1;
         assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
@@ -165,7 +143,7 @@ class ParallelComparisonTest extends TestBase {
     @Test
     void testBasecodeInOldDirectory() throws ExitException {
         String basecodePath = getBasePath("basecode", "base");
-        List<String> newDirectories = List.of(getBasePath(SIMPLE)); // 2 submissions
+        List<String> newDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
         List<String> oldDirectories = List.of(getBasePath("basecode")); // 3 - 1 submissions
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
         int numberOfExpectedComparison = 1 + 2 * 2;
