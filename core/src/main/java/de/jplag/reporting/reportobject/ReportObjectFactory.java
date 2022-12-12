@@ -175,7 +175,7 @@ public class ReportObjectFactory {
                 getDate(),// dateOfExecution
                 result.getDuration(), // executionTime
                 getMetrics(result),// metrics
-                clusteringResultMapper.map(result)); // clusters (activated for now)
+                clusteringResultMapper.map(result)); // clusters
 
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 
