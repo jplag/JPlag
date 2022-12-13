@@ -11,63 +11,71 @@ import de.jplag.exceptions.ExitException;
 
 /**
  * Test class for the multi-root feature and the old-new feature.
- * @author Timur Saglam
  */
 class RootFolderTest extends TestBase {
 
     private static final String BASECODE_SUBMISSION = "base";
     private static final String GLOBAL_BASECODE = "basecode-base";
-    private static final String BASE_SAMPLE = "basecode";
-    private static final String SIMPLE_SAMPLE = "SimpleDuplicate";
+
+    // root folder names:
+    private static final String ROOT_1 = "basecode";
+    private static final String ROOT_2 = "SimpleDuplicate";
+
+    // number of submissions per root folder:
+    private static final int ROOT_COUNT_1 = 3;
+    private static final int ROOT_COUNT_2 = 2;
 
     @Test
     void testMultiRootDirNoBasecode() throws ExitException {
-        List<String> paths = List.of(getBasePath(BASE_SAMPLE), getBasePath(SIMPLE_SAMPLE)); // 3 + 2 submissions.
+        List<String> paths = List.of(getBasePath(ROOT_1), getBasePath(ROOT_2));
         JPlagResult result = runJPlag(paths, it -> it);
-        assertEquals(5, result.getNumberOfSubmissions());
+        assertEquals(ROOT_COUNT_1 + ROOT_COUNT_2, result.getNumberOfSubmissions());
     }
 
     @Test
     void testMultiRootDirSeparateBasecode() throws ExitException {
-        String basecodePath = getBasePath(GLOBAL_BASECODE);
-        List<String> paths = List.of(getBasePath(BASE_SAMPLE), getBasePath(SIMPLE_SAMPLE)); // 3 + 2 submissions.
+        String basecodePath = getBasePath(GLOBAL_BASECODE); // base code is not in root folder
+        List<String> paths = List.of(getBasePath(ROOT_1), getBasePath(ROOT_2));
         JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
-        assertEquals(5, result.getNumberOfSubmissions());
+        assertEquals(ROOT_COUNT_1 + ROOT_COUNT_2, result.getNumberOfSubmissions());
     }
 
     @Test
     void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
-        String basecodePath = getBasePath(BASE_SAMPLE, BASECODE_SUBMISSION);
-        List<String> paths = List.of(getBasePath(BASE_SAMPLE), getBasePath(SIMPLE_SAMPLE)); // 2 + 2 submissions.
+        String basecodePath = getBasePath(ROOT_1, BASECODE_SUBMISSION); // basecode is in root 1
+        List<String> paths = List.of(getBasePath(ROOT_1), getBasePath(ROOT_2));
         JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
-        assertEquals(4, result.getNumberOfSubmissions());
+        // One submissions is removed as it is the basecode one:
+        assertEquals(ROOT_COUNT_1 + ROOT_COUNT_2 - 1, result.getNumberOfSubmissions()); // -1 for basecode
     }
 
     @Test
     void testDisjunctNewAndOldRootDirectories() throws ExitException {
-        List<String> newDirectories = List.of(getBasePath(SIMPLE_SAMPLE)); // 2 submissions
-        List<String> oldDirectories = List.of(getBasePath(BASE_SAMPLE)); // 3 submissions
+        List<String> newDirectories = List.of(getBasePath(ROOT_2));
+        List<String> oldDirectories = List.of(getBasePath(ROOT_1));
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it);
-        int numberOfExpectedComparison = 1 + 3 * 2;
+        assertEquals(ROOT_COUNT_1 + ROOT_COUNT_2, result.getNumberOfSubmissions());
+        int numberOfExpectedComparison = 1 + ROOT_COUNT_1 * ROOT_COUNT_2;
         assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
     }
 
     @Test
     void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
-        List<String> newDirectories = List.of(getBasePath(SIMPLE_SAMPLE)); // 2 submissions
-        List<String> oldDirectories = List.of(getBasePath(SIMPLE_SAMPLE));
+        List<String> newDirectories = List.of(getBasePath(ROOT_2));
+        List<String> oldDirectories = List.of(getBasePath(ROOT_2));
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it);
+        assertEquals(ROOT_COUNT_2, result.getNumberOfSubmissions());
         int numberOfExpectedComparison = 1;
         assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
     }
 
     @Test
     void testBasecodeInOldDirectory() throws ExitException {
-        String basecodePath = getBasePath(BASE_SAMPLE, BASECODE_SUBMISSION);
-        List<String> newDirectories = List.of(getBasePath(SIMPLE_SAMPLE)); // 2 submissions
-        List<String> oldDirectories = List.of(getBasePath(BASE_SAMPLE)); // 3 - 1 submissions
+        String basecodePath = getBasePath(ROOT_1, BASECODE_SUBMISSION); // basecode is in root 1
+        List<String> newDirectories = List.of(getBasePath(ROOT_2));
+        List<String> oldDirectories = List.of(getBasePath(ROOT_1));
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
-        int numberOfExpectedComparison = 1 + 2 * 2;
+        int numberOfExpectedComparison = 1 + ROOT_COUNT_2 * (ROOT_COUNT_1 - 1); // -1 for basecode
         assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
     }
 }
