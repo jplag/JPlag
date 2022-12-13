@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
+/**
+ * Shared base class for all core test cases. Provides functionality regarding executing JPlag and checking the results.
+ */
 public abstract class TestBase {
 
     /**

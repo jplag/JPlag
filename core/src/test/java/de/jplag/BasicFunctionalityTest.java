@@ -3,6 +3,7 @@ package de.jplag;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
@@ -13,10 +14,8 @@ import de.jplag.exceptions.ExitException;
  */
 class BasicFunctionalityTest extends TestBase {
 
-    /**
-     * The simple duplicate contains obvious plagiarism.
-     */
     @Test
+    @DisplayName("test submissions that contain obvious plagiarism")
     void testSimpleDuplicate() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("SimpleDuplicate");
 
@@ -27,10 +26,8 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
-    /**
-     * The simple duplicate with a custom min token match.
-     */
     @Test
+    @DisplayName("test submissions with a custom minimum token match")
     void testWithMinTokenMatch() throws ExitException {
         var expectedDistribution = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
         JPlagResult result = runJPlag("SimpleDuplicate", it -> it.withMinimumTokenMatch(5));
@@ -42,10 +39,8 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(0.9655, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
-    /**
-     * The classes in no duplicate have nearly nothing in common.
-     */
     @Test
+    @DisplayName("test submissions that are not similar")
     void testNoDuplicate() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("NoDuplicate");
 
@@ -61,6 +56,7 @@ class BasicFunctionalityTest extends TestBase {
      * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java errorConsumer
      */
     @Test
+    @DisplayName("test multiple submissions with varying degree of plagiarism")
     void testPartialPlagiarism() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
 
@@ -87,10 +83,8 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(12, biggestMatch.get().matches().size());
     }
 
-    /**
-     * This test case uses single files as submissions, which is a valid scenario.
-     */
     @Test
+    @DisplayName("test single-files as submissions (no folders)")
     void testSingleFileSubmisssions() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("SimpleSingleFile");
 

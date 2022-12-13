@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
@@ -26,6 +27,7 @@ class RootFolderTest extends TestBase {
     private static final int ROOT_COUNT_2 = 2;
 
     @Test
+    @DisplayName("test multiple root directories without basecode")
     void testMultiRootDirNoBasecode() throws ExitException {
         List<String> paths = List.of(getBasePath(ROOT_1), getBasePath(ROOT_2));
         JPlagResult result = runJPlag(paths, it -> it);
@@ -33,6 +35,7 @@ class RootFolderTest extends TestBase {
     }
 
     @Test
+    @DisplayName("test multiple root directories with external basecode submission")
     void testMultiRootDirSeparateBasecode() throws ExitException {
         String basecodePath = getBasePath(GLOBAL_BASECODE); // base code is not in root folder
         List<String> paths = List.of(getBasePath(ROOT_1), getBasePath(ROOT_2));
@@ -41,7 +44,8 @@ class RootFolderTest extends TestBase {
     }
 
     @Test
-    void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
+    @DisplayName("test multiple root directories with basecode in one root directory")
+    void testMultiRootDirBasecodeInRootDir() throws ExitException {
         String basecodePath = getBasePath(ROOT_1, BASECODE_SUBMISSION); // basecode is in root 1
         List<String> paths = List.of(getBasePath(ROOT_1), getBasePath(ROOT_2));
         JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
@@ -50,6 +54,7 @@ class RootFolderTest extends TestBase {
     }
 
     @Test
+    @DisplayName("test multiple root directories, one marked with as old")
     void testDisjunctNewAndOldRootDirectories() throws ExitException {
         List<String> newDirectories = List.of(getBasePath(ROOT_2));
         List<String> oldDirectories = List.of(getBasePath(ROOT_1));
@@ -60,6 +65,7 @@ class RootFolderTest extends TestBase {
     }
 
     @Test
+    @DisplayName("test multiple overlapping root directories, one marked with as old")
     void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
         List<String> newDirectories = List.of(getBasePath(ROOT_2));
         List<String> oldDirectories = List.of(getBasePath(ROOT_2));
@@ -70,6 +76,7 @@ class RootFolderTest extends TestBase {
     }
 
     @Test
+    @DisplayName("test multiple root directories with basecode in the old root directory")
     void testBasecodeInOldDirectory() throws ExitException {
         String basecodePath = getBasePath(ROOT_1, BASECODE_SUBMISSION); // basecode is in root 1
         List<String> newDirectories = List.of(getBasePath(ROOT_2));
