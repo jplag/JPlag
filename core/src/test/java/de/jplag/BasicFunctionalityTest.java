@@ -100,6 +100,7 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
 
         var matches = result.getAllComparisons().get(0).matches();
+        // Run JPlag for same files but in submission folders:
         var expectedMatches = runJPlagWithDefaultOptions("SimpleDuplicate").getAllComparisons().get(0).matches();
         assertEquals(expectedMatches.size(), matches.size());
 
