@@ -9,6 +9,8 @@
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/main/LICENSE)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jplag/JPlag)](https://github.com/jplag/JPlag/pulse)
 [![Report Viewer](https://img.shields.io/badge/report%20viewer-online-b80025)](https://jplag.github.io/JPlag/)
+[![Java Version](https://img.shields.io/badge/java-SE%2017-yellowgreen)](#download-and-installation)
+
 
 JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development. JPlag currently supports various programming languages, EMF metamodels, and natural language text.
 
@@ -33,6 +35,7 @@ In the following, a list of all supported languages with their supported languag
 | Text (naive)                                           |       - | text              |                              legacy                              |  CoreNLP  |
 
 ## Download and Installation
+You need Java SE 17 to run or build JPlag.
 
 ### Downloading a release
 * Download a [released version](https://github.com/jplag/jplag/releases).

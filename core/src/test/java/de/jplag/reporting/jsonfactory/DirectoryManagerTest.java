@@ -63,6 +63,8 @@ class DirectoryManagerTest extends TestBase {
             Assertions.assertEquals(expectation.getPath(), directory.getPath());
         } catch (IOException e) {
             fail("Directory manager threw an exception:", e);
+        } finally {
+            deleteDirectory(expectation);
         }
     }
 }

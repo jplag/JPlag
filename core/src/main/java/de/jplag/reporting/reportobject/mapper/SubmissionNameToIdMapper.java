@@ -2,10 +2,8 @@ package de.jplag.reporting.reportobject.mapper;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 
@@ -25,19 +23,11 @@ public class SubmissionNameToIdMapper {
      */
     public static Map<String, String> buildSubmissionNameToIdMap(JPlagResult result) {
         HashMap<String, String> idToName = new HashMap<>();
-        getComparisons(result).forEach(comparison -> {
-            idToName.put(comparison.firstSubmission().getName(), sanitizeNameOf(comparison.firstSubmission()));
-            idToName.put(comparison.secondSubmission().getName(), sanitizeNameOf(comparison.secondSubmission()));
-        });
+        result.getSubmissions().getSubmissions().forEach(submission -> idToName.put(submission.getName(), sanitizeNameOf(submission)));
         return idToName;
     }
 
     private static String sanitizeNameOf(Submission comparison) {
         return comparison.getName().replace(File.separator, FILE_SEPARATOR_REPLACEMENT);
-    }
-
-    private static List<JPlagComparison> getComparisons(JPlagResult result) {
-        int numberOfComparisons = result.getOptions().maximumNumberOfComparisons();
-        return result.getComparisons(numberOfComparisons);
     }
 }
