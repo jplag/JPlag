@@ -21,6 +21,9 @@
           />
         </button>
       </div>
+      <div>
+        <button class="animated-back-button" title="Back button" @click="back">back</button>
+      </div>
       <TextInformation
         :anonymous="isAnonymous(firstId)"
         :value="store.getters.submissionDisplayName(firstId)"
@@ -202,6 +205,10 @@ export default defineComponent({
       hideLeftPanel.value = !hideLeftPanel.value;
     };
 
+    const back = () => {
+      router.back();
+    };
+
     return {
       comparison,
       filesOfFirst,
@@ -216,6 +223,7 @@ export default defineComponent({
       showMatch,
       togglePanel,
       isAnonymous,
+      back,
     };
   },
 });
@@ -297,5 +305,38 @@ h1 {
 
 #show-button:hover img {
   display: block;
+}
+
+.animated-back-button{
+  float: right;
+  height: 100%;
+  position: relative;
+
+  font-size: 1.4rem;
+  background: var(--primary-color-dark);
+  background-size: 46px 26px;
+  border: 1px solid #555;
+  color: black;
+  transition: all ease 0.3s;
+}
+
+.animated-back-button::after{
+  position: absolute;
+  top: 50%;
+  right: 0.6em;
+  transform: translateY(-50%);
+  content: "«";
+  font-size: 1.2em;
+  transition: all ease 0.3s;
+  opacity: 0;
+}
+
+.animated-back-button:hover{
+  padding: 20px 60px 20px 20px;
+}
+
+.animated-back-button:hover::after{
+  right: 1.2em;
+  opacity: 1;
 }
 </style>
