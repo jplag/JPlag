@@ -26,10 +26,10 @@ import de.jplag.emf.MetamodelTokenType;
  * @author Timur Saglam
  */
 public final class EmfaticModelView extends AbstractModelView {
-    private static final String TYPE_KEYWORD = "(package |class |datatype |enum )";
-    private static final String FEATURE_KEYWORD = "(.*attr .*|op .*|.*ref .*|.*val .*).*";
-    private static final String ANYTHING = ".*";
-    private static final String TYPE_SUFFIX = "(;| extends| \\{)";
+    private static final String TYPE_KEYWORD_REGEX = "(package |class |datatype |enum )";
+    private static final String FEATURE_KEYWORD_REGEX = "(.*attr .*|op .*|.*ref .*|.*val .*).*";
+    private static final String ANYTHING_REGEX = ".*";
+    private static final String TYPE_SUFFIX_REGEX = "(;| extends| \\{)";
     private static final char CLOSING_CHAR = '}';
 
     private final List<String> lines; // Emfatic view code
@@ -181,15 +181,15 @@ public final class EmfaticModelView extends AbstractModelView {
     }
 
     private boolean isType(String hash, String line) {
-        return line.matches(TYPE_KEYWORD + hash + TYPE_SUFFIX + ANYTHING);
+        return line.matches(TYPE_KEYWORD_REGEX + hash + TYPE_SUFFIX_REGEX + ANYTHING_REGEX);
     }
 
     private boolean isEnumLiteral(ENamedElement element, String hash, String line) {
-        return element instanceof EEnumLiteral && line.matches(hash + ANYTHING);
+        return element instanceof EEnumLiteral && line.matches(hash + ANYTHING_REGEX);
     }
 
     private boolean isStructuralFeature(ENamedElement element, String hash, String line) {
-        return element instanceof ETypedElement && line.matches(FEATURE_KEYWORD + hash + ANYTHING);
+        return element instanceof ETypedElement && line.matches(FEATURE_KEYWORD_REGEX + hash + ANYTHING_REGEX);
     }
 
 }

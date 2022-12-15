@@ -35,7 +35,7 @@ public enum MetamodelTokenType implements TokenType {
     private static final String END_TOKEN_SUFFIX = " (End)";
 
     private final String description;
-    private final boolean endToken;
+    private final boolean isEndToken;
 
     public String getDescription() {
         return description;
@@ -47,7 +47,7 @@ public enum MetamodelTokenType implements TokenType {
      */
     MetamodelTokenType(String description) {
         this.description = description;
-        endToken = false;
+        isEndToken = false;
     }
 
     /**
@@ -56,13 +56,13 @@ public enum MetamodelTokenType implements TokenType {
      */
     MetamodelTokenType(MetamodelTokenType beginType) {
         description = beginType.getDescription() + END_TOKEN_SUFFIX;
-        endToken = true;
+        isEndToken = true;
     }
 
     /**
      * @return true if the token is a end token type, meaning a token that indicates the end of a containment.
      */
     public boolean isEndToken() {
-        return endToken;
+        return isEndToken;
     }
 }

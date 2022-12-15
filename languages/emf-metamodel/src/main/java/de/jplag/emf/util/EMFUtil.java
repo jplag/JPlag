@@ -61,7 +61,7 @@ public final class EMFUtil {
     public static Resource loadModelResource(File file) {
         final ResourceSet resourceSet = new ResourceSetImpl();
         try {
-            return resourceSet.getResource(URI.createFileURI(file.getAbsolutePath()), true);
+            return resourceSet.getResource(URI.createFileURI(file.getAbsolutePath()), false);
         } catch (WrappedException exception) {
             logger.error("Could not load {}: {}", file, exception.getCause().getMessage());
         }
