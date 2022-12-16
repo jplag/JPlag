@@ -55,23 +55,38 @@ export default defineComponent({
         },
       });
     };
+
+    const extractRootName = (filePath: path.ParsedPath) => {
+      const folders = filePath.dir.split("/");
+      return folders[0];
+    };
     const extractSubmissionFileName = (filePath: path.ParsedPath) => {
       const folders = filePath.dir.split("/");
-      const submissionFolderIndex = folders.findIndex(
-        (folder) => folder === "files"
-      );
+      const rootName = folders[0];
+      let submissionFolderIndex = -1;
+      if(rootName === "files") {
+        submissionFolderIndex = folders.findIndex(
+            (folder) => folder === "files"
+        );
+      }else {
+        submissionFolderIndex = folders.findIndex(
+            (folder) => folder === "submissions"
+        );
+      }
       return folders[submissionFolderIndex + 1];
     };
     const extractFileNameWithFullPath = (filePath: path.ParsedPath, originalFileName: string) => {
-      let fullPath="";
-      const unixPathWithoutSubmissions = filePath.dir.split("files");
-      const originalPathWithoutSubmissions = originalFileName.split("files");
-      const unixSubfolderPathAfterSubmissions = unixPathWithoutSubmissions[1].substring(1);
-      if(originalPathWithoutSubmissions[1].charAt(0)==='\\'){
-         fullPath=(unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
-      }else {
-         fullPath=(unixSubfolderPathAfterSubmissions + path.sep + filePath.base);
-      }
+      let fullPath = "";
+      const rootName = extractRootName(filePath);
+      const filesOrSubmissionsIndex_filePath = filePath.dir.indexOf(rootName ==="files" ? "files" : "submissions");
+      const filesOrSubmissionsIndex_originalFileName = originalFileName.indexOf(rootName === "files" ? "files" : "submissions");
+      const unixSubfolderPathAfterSubmissions = filePath.dir.substring(filesOrSubmissionsIndex_filePath + (rootName === "files" ? "files".length : "submissions".length) + 1);
+      const originalPathWithoutSubmissions = originalFileName.substring(filesOrSubmissionsIndex_originalFileName + (rootName === "files" ? "files".length : "submissions".length));
+      if(originalPathWithoutSubmissions.charAt(0)==='\\'){
+           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
+        }else {
+           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base);
+        }
       return fullPath;
     };
     /**
@@ -83,7 +98,7 @@ export default defineComponent({
         for (const originalFileName of Object.keys(zip.files)) {
           const unixFileName = slash(originalFileName);
           if (
-            /((.+\/)*)files\/(.+)\/(.+)/.test(unixFileName) &&
+            /((.+\/)*)(files|submissions)\/(.+)\/(.+)/.test(unixFileName) &&
             !/^__MACOSX\//.test(unixFileName)
           ) {
             const filePath = path.parse(unixFileName);
