@@ -1,7 +1,6 @@
 package de.jplag.emf.util;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,8 +11,6 @@ import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.emfatic.core.generator.emfatic.Writer;
 
@@ -22,22 +19,26 @@ import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.MetamodelTokenType;
 
 /**
- * Textual view of an EMF metamodel based on Emfatic.
+ * Textual view of an EMF metamodel based on Emfatic. Emfatic code is generated for the metamodel and the model elements
+ * are then traced to line in the code. The tracing is done via hashes as model element names and keyword detection via
+ * regex matching. The tracing is requires, as Emfatic does not provide it itself.
  * @author Timur Saglam
  */
 public final class EmfaticModelView extends AbstractModelView {
+    // The following regular expressions match keywords of the Emfatic syntax:
     private static final String TYPE_KEYWORD_REGEX = "(package |class |datatype |enum )";
     private static final String FEATURE_KEYWORD_REGEX = "(.*attr .*|op .*|.*ref .*|.*val .*).*";
-    private static final String ANYTHING_REGEX = ".*";
     private static final String TYPE_SUFFIX_REGEX = "(;| extends| \\{)";
     private static final char CLOSING_CHAR = '}';
+    private static final String ANYTHING_REGEX = ".*";
 
+    // Internal state of the view:
     private final List<String> lines; // Emfatic view code
-    private final List<String> hashedLines; // code for tracing lookup
-    private final Map<ENamedElement, Integer> elementToLine;
+    private final List<String> hashedLines; // code for model element tracing lookup
+    private final Map<ENamedElement, Integer> elementToLine; // maps model elements to Emfatic code line numbers
 
-    private Copier modelCopier;
-    private int lastLineIndex;
+    private Copier modelCopier; // Allows to trace between original and copied elements
+    private int lastLineIndex; // last line given to a token
 
     /**
      * Creates an Emfatic view for a metamodel.
@@ -49,7 +50,8 @@ public final class EmfaticModelView extends AbstractModelView {
         lines = generateEmfaticCode(viewBuilder, modelResource);
 
         // preparation for model to code tracing
-        Resource copiedResource = copyModel(modelResource);
+        modelCopier = new Copier();
+        Resource copiedResource = EMFUtil.copyModel(modelResource, modelCopier);
         replaceElementNamesWithHashes(copiedResource);
         hashedLines = generateEmfaticCode(new StringBuilder(), copiedResource);
     }
@@ -72,6 +74,10 @@ public final class EmfaticModelView extends AbstractModelView {
         return new MetamodelToken(token.getType(), token.getFile(), lineIndex, columnIndex, length, token.getEObject());
     }
 
+    /**
+     * Iterates over a model, replacing the names of all named elements by their hashcode. This allows identifying model
+     * elements in subsequently generated Emfatic code while avoiding name collisions.
+     */
     private final void replaceElementNamesWithHashes(Resource copiedResource) {
         AbstractMetamodelVisitor renamer = new AbstractMetamodelVisitor(false) {
             @Override
@@ -82,21 +88,14 @@ public final class EmfaticModelView extends AbstractModelView {
         copiedResource.getContents().forEach(renamer::visit);
     }
 
+    /**
+     * Generates Emfatic code from a model resource and splits it into lines with a string builder.
+     */
     private final List<String> generateEmfaticCode(StringBuilder builder, Resource modelResource) {
         Writer writer = new Writer();
         String code = writer.write(modelResource, null, null);
         builder.append(code);
         return builder.toString().lines().toList();
-    }
-
-    private final Resource copyModel(Resource model) {
-        ResourceSet resourceSet = new ResourceSetImpl();
-        Resource copy = resourceSet.createResource(model.getURI());
-        modelCopier = new Copier();
-        Collection<EObject> result = modelCopier.copyAll(model.getContents());
-        modelCopier.copyReferences();
-        copy.getContents().addAll(result);
-        return copy;
     }
 
     /**
@@ -174,7 +173,7 @@ public final class EmfaticModelView extends AbstractModelView {
     }
 
     /**
-     * Checks if a line (with leading whitespace removed) contains an element based on its hash.
+     * Checks if a line (with leading whitespace removed) contains an element based on the elements hash.
      */
     private boolean isDeclaration(ENamedElement element, String hash, String line) {
         return isStructuralFeature(element, hash, line) || isEnumLiteral(element, hash, line) || isType(hash, line);
