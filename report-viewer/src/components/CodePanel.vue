@@ -7,7 +7,7 @@
     class="code-panel-container"
   >
     <div class="file-title">
-      <p style="width: 90%">{{ title }}</p>
+      <p style="width: 90%" @click="$emit('toggleCollapse')">{{ title }}</p>
       <button
         class="collapse-button"
         style="width: 10%"
