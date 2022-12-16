@@ -82,10 +82,15 @@ export class OverviewFactory {
   }
 
   static compareVersions(jsonVersion: Version, reportViewerVersion: Version) {
-    if(jsonVersion.major !== reportViewerVersion.major ||
+    if(jsonVersion.major === 0 && jsonVersion.minor === 0 && jsonVersion.patch === 0){
+      window.alert("You are using develop version(0.0.0).");
+    }
+    else if(jsonVersion.major !== reportViewerVersion.major ||
        jsonVersion.minor !== reportViewerVersion.minor ||
        jsonVersion.patch !== reportViewerVersion.patch) {
-        console.warn("The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful.")
+        console.warn("The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful.");
+        window.alert("The result's version(" + jsonVersion.major + "," + jsonVersion.minor + "," + jsonVersion.patch + ") tag does not fit the report viewer's version(" + reportViewerVersion.major + "," + reportViewerVersion.minor + "," + reportViewerVersion.patch + ")." +
+            "Trying to read it anyhow but be careful.")
        }
   }
 
