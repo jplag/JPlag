@@ -8,6 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
@@ -20,6 +23,7 @@ import de.jplag.reporting.reportobject.model.Match;
  * a function that associates a submission to its id.
  */
 public class ComparisonReportWriter {
+    private static final Logger logger = LoggerFactory.getLogger(ComparisonReportWriter.class);
 
     private final FileWriter fileWriter;
     private final Function<Submission, String> submissionToIdFunction;
@@ -43,6 +47,10 @@ public class ComparisonReportWriter {
      */
     public Map<String, Map<String, String>> writeComparisonReports(JPlagResult jPlagResult, String path) {
         int numberOfComparisons = jPlagResult.getOptions().maximumNumberOfComparisons();
+        if (jPlagResult.getAllComparisons().size() > numberOfComparisons) {
+            logger.warn("Total Comparisons: " + jPlagResult.getAllComparisons().size() + ". Shown Comparisons: " + numberOfComparisons
+                    + ". Missing Comparisons:" + (jPlagResult.getAllComparisons().size() - numberOfComparisons) + ".");
+        }
         List<JPlagComparison> comparisons = jPlagResult.getComparisons(numberOfComparisons);
         writeComparisons(path, comparisons);
         return submissionIdToComparisonFileName;
