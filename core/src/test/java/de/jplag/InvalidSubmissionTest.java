@@ -8,6 +8,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
@@ -22,6 +23,7 @@ class InvalidSubmissionTest extends TestBase {
      * invalid submissions being stored.
      */
     @Test
+    @DisplayName("test filtering and copying of invalid submissions with debug mode")
     void testInvalidSubmissionsWithDebug() throws ExitException {
         try {
             runJPlag(SAMPLE_NAME, it -> it.withDebugParser(true));
@@ -38,18 +40,4 @@ class InvalidSubmissionTest extends TestBase {
             assertArrayEquals(new String[] {"A", "B"}, errorSubmissions);
         }
     }
-
-    private static void deleteDirectory(File path) {
-        if (path.exists()) {
-            for (File file : path.listFiles()) {
-                if (file.isDirectory()) {
-                    deleteDirectory(file);
-                } else {
-                    file.delete();
-                }
-            }
-        }
-        path.delete();
-    }
-
 }

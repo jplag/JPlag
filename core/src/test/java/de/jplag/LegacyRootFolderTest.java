@@ -13,7 +13,7 @@ import de.jplag.exceptions.ExitException;
  * Tests for the legacy behaviour of the String-based base code initializer.
  */
 @Deprecated(since = "4.0.0", forRemoval = true)
-class LegacyBaseCodeParallelComparisonTest extends ParallelComparisonTest {
+class LegacyRootFolderTest extends TestBase {
     @Test
     void testMultiRootDirSeparateBasecode() throws ExitException {
         String basecodePath = getBasePath("basecode-base");
