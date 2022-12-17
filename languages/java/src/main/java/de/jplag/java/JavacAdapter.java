@@ -19,7 +19,7 @@ import javax.tools.ToolProvider;
 import org.slf4j.Logger;
 
 import de.jplag.ParsingException;
-import de.jplag.Token;
+import de.jplag.semantics.SemanticToken;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
@@ -49,7 +49,7 @@ public class JavacAdapter {
                 var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
                 ast.accept(scanner, null);
                 parsingExceptions.addAll(scanner.getParsingExceptions());
-                parser.add(Token.fileEnd(file));
+                parser.add(SemanticToken.fileEnd(file));
             }
         } catch (IOException exception) {
             throw new ParsingException(null, exception.getMessage(), exception);

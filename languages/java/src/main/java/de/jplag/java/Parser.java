@@ -7,10 +7,10 @@ import java.util.Set;
 
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
-import de.jplag.Token;
+import de.jplag.semantics.SemanticToken;
 
 public class Parser extends AbstractParser {
-    private List<Token> tokens;
+    private List<SemanticToken> tokens;
 
     /**
      * Creates the parser.
@@ -19,13 +19,13 @@ public class Parser extends AbstractParser {
         super();
     }
 
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<SemanticToken> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         new JavacAdapter().parseFiles(files, this);
         return tokens;
     }
 
-    public void add(Token token) {
+    public void add(SemanticToken token) {
         tokens.add(token);
     }
 }

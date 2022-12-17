@@ -44,6 +44,6 @@ public class Language implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files) throws ParsingException {
-        return this.parser.parse(files);
+        return this.parser.parse(files).stream().map(Token.class::cast).toList(); // todo
     }
 }
