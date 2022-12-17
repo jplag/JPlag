@@ -60,6 +60,8 @@ import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
+import javax.lang.model.element.Name;
+
 final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final File file;
     private final Parser parser;
@@ -67,13 +69,21 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final SourcePositions positions;
     private final CompilationUnitTree ast;
 
-    private int variableCount;
-    private Map<String, String> memberVariables; // map member variable's name to id
-    private Map<String, Stack<String>> localVariables; // map local variable's name to id
-    private Stack<Set<String>> scopeVariables; // stack of local variable names in scope
-    private boolean ignoreNextIdentifier;
-
     private List<ParsingException> parsingExceptions = new ArrayList<>();
+
+    private int variableCount;
+    private Map<Name, String> memberVariables; // map member variable name to id
+    private Map<Name, Stack<String>> localVariables; // map local variable name to id
+    private Map<String, Name> variableNames; // map variable id to name for debugging purposes, inverse of two maps above
+    private Stack<Set<Name>> scopeVariables; // stack of local variable names in scope
+    private NextOperation nextOperation;
+    
+    enum NextOperation {
+        NONE,
+        READ,
+        WRITE,
+        READ_WRITE
+    }
 
     public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
         this.file = file;
@@ -84,8 +94,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this.variableCount = 0;
         this.memberVariables = new HashMap<>();
         this.localVariables = new HashMap<>();
+        this.variableNames = new HashMap<>();
         this.scopeVariables = new Stack<>();
-        this.ignoreNextIdentifier = false;
+        this.nextOperation = NextOperation.READ; // the default
     }
 
     public List<ParsingException> getParsingExceptions() {
@@ -120,11 +131,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         return Integer.toString(variableCount++);
     }
 
-    private String getMemberVariableId(String variableName) {
+    private String getMemberVariableId(Name variableName) {
         return memberVariables.getOrDefault(variableName, null);
     }
 
-    private String getVariableId(String variableName) {
+    private String getVariableId(Name variableName) {
         Stack<String> variableIdStack = localVariables.getOrDefault(variableName, null);
         if (variableIdStack != null) {
             return variableIdStack.peek();
@@ -132,22 +143,29 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         return getMemberVariableId(variableName);
     }
 
+    private boolean isVariable(ExpressionTree expressionTree) {
+        return expressionTree.getKind() == Tree.Kind.IDENTIFIER
+                || (expressionTree.getKind() == Tree.Kind.MEMBER_SELECT && isOwnMemberSelect((MemberSelectTree) expressionTree));
+    }
+
     private boolean isOwnMemberSelect(MemberSelectTree memberSelect) {
         return memberSelect.getExpression().toString().equals("this");
     }
 
-    private void registerVariableWrite(String variableId) {
-        if (variableId != null && !ignoreNextIdentifier) {
-            System.out.println("write variable with id " + variableId);
-        }
-        ignoreNextIdentifier = true;  // next identifier (this one) has already been accounted for
+    private String formatVariable(String variableId) {
+        return variableNames.get(variableId) + " [" + variableId + "]";
     }
 
-    private void registerVariableRead(String variableId) {
-        if (variableId != null && !ignoreNextIdentifier) {
-            System.out.println("read variable with id " + variableId);
+    private void registerVariable(String variableId) {
+        if (variableId != null) {
+            if (Set.of(NextOperation.WRITE, NextOperation.READ_WRITE).contains(nextOperation)) {
+                System.out.println("write " + formatVariable(variableId));
+            }
+            if (Set.of(NextOperation.READ, NextOperation.READ_WRITE).contains(nextOperation)) {
+                System.out.println("read " + formatVariable(variableId));
+            }
         }
-        ignoreNextIdentifier = false; // next identifier is this one so...
+        nextOperation = NextOperation.READ;
     }
 
     public void enterLocalScope() {
@@ -155,7 +173,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     }
 
     public void exitLocalScope() {
-        for (String variableName : scopeVariables.pop()) {
+        for (Name variableName : scopeVariables.pop()) {
             Stack<String> variableIdStack = localVariables.get(variableName);
             variableIdStack.pop();
             if (variableIdStack.isEmpty())
@@ -189,10 +207,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitClass(ClassTree node, Void unused) {
         for (var member : node.getMembers()) {
             if (member.getKind() == Tree.Kind.VARIABLE) {
-                String variableName = ((VariableTree) member).getName().toString();
+                Name variableName = ((VariableTree) member).getName();
                 String variableId = variableId();
-                System.out.println("new member variable " + variableName + " with id " + variableId);
+                // System.out.println("new member " + formatVariable(variableId));
                 memberVariables.put(variableName, variableId);
+                variableNames.put(variableId, variableName);
             }
         }
         long start = positions.getStartPosition(ast, node);
@@ -444,6 +463,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitAssignment(AssignmentTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ASSIGN, start, 1);
+        nextOperation = NextOperation.WRITE;
         super.visitAssignment(node, unused);
         return null;
     }
@@ -452,6 +472,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitCompoundAssignment(CompoundAssignmentTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ASSIGN, start, 1);
+        nextOperation = NextOperation.READ_WRITE;
         super.visitCompoundAssignment(node, unused);
         return null;
     }
@@ -462,6 +483,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
             addToken(JavaTokenType.J_ASSIGN, start, 1);
+            nextOperation = NextOperation.READ_WRITE;
         }
         super.visitUnary(node, unused);
         return null;
@@ -477,15 +499,18 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitVariable(VariableTree node, Void unused) {
+        nextOperation = NextOperation.WRITE;
         if (!scopeVariables.isEmpty()) { // local scope
-            String variableName = node.getName().toString();
+            Name variableName = node.getName();
             String variableId = variableId();
-            System.out.println("new local variable " + variableName + " with id " + variableId);
-            if (!localVariables.containsKey(variableName)) {
-                localVariables.put(variableName, new Stack<>());
-            }
+            // System.out.println("new local " + formatVariable(variableId));
+            localVariables.putIfAbsent(variableName, new Stack<>());
             localVariables.get(variableName).push(variableId);
+            variableNames.put(variableId, variableName);
             scopeVariables.peek().add(variableName);
+            registerVariable(variableId); // somewhat special case, identifier isn't visited
+        } else {
+            registerVariable(getMemberVariableId(node.getName()));
         }
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length());
@@ -507,11 +532,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start);
         // from super method, would need to be changed if return value were to be used
         scan(node.getTypeArguments(), unused);
-        ExpressionTree methodSelect = node.getMethodSelect();
-        if (methodSelect.getKind() == Tree.Kind.IDENTIFIER
-                || (methodSelect.getKind() == Tree.Kind.MEMBER_SELECT && isOwnMemberSelect((MemberSelectTree) methodSelect))) {
-            // todo is the next identifier always a method identifier?
-            ignoreNextIdentifier = true; // to differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
+        // to differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
+        if (isVariable(node.getMethodSelect())) {
+            nextOperation = NextOperation.NONE;
         }
         scan(node.getMethodSelect(), unused);
         scan(node.getArguments(), unused);
@@ -588,7 +611,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitMemberSelect(MemberSelectTree node, Void unused) {
         if (isOwnMemberSelect(node)) {
-            registerVariableRead(getMemberVariableId(node.getIdentifier().toString()));  // getIdentifier returns a Name, not an identifier :))
+            registerVariable(getMemberVariableId(node.getIdentifier()));
         }
         super.visitMemberSelect(node, unused);
         return null;
@@ -596,7 +619,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitIdentifier(IdentifierTree node, Void unused) {
-        registerVariableRead(getVariableId(node.getName().toString()));
+        registerVariable(getVariableId(node.getName()));
         super.visitIdentifier(node, unused);
         return null;
     }
