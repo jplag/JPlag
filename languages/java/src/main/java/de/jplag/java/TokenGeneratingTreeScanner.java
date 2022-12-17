@@ -75,9 +75,18 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private Map<Name, String> memberVariables; // map member variable name to id
     private Map<Name, Stack<String>> localVariables; // map local variable name to id
     private Map<String, Name> variableNames; // map variable id to name for debugging purposes, inverse of two maps above
+    private Map<String, Boolean> variableIsMutable; // map variable id to whether it is immutable
     private Stack<Set<Name>> scopeVariables; // stack of local variable names in scope
     private NextOperation nextOperation;
-    
+    private boolean mutableWrite;
+
+    private static final Set<String> IMMUTABLES = Set.of(
+        // from https://medium.com/@bpnorlander/java-understanding-primitive-types-and-wrapper-objects-a6798fb2afe9
+        "byte", "short", "int", "long", "float", "double", "boolean", "char",
+        "Byte", "Short", "Integer", "Long", "Float", "Double", "Boolean", "Character",
+        "String"
+    );
+
     enum NextOperation {
         NONE,
         READ,
@@ -95,8 +104,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this.memberVariables = new HashMap<>();
         this.localVariables = new HashMap<>();
         this.variableNames = new HashMap<>();
+        this.variableIsMutable = new HashMap<>();
         this.scopeVariables = new Stack<>();
         this.nextOperation = NextOperation.READ; // the default
+        this.mutableWrite = false;
     }
 
     public List<ParsingException> getParsingExceptions() {
@@ -156,9 +167,14 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         return variableNames.get(variableId) + " [" + variableId + "]";
     }
 
+    private boolean isMutable(Tree classTree) {
+        return classTree != null && !IMMUTABLES.contains(classTree);
+    }
+
     private void registerVariable(String variableId) {
         if (variableId != null) {
-            if (Set.of(NextOperation.WRITE, NextOperation.READ_WRITE).contains(nextOperation)) {
+            if (Set.of(NextOperation.WRITE, NextOperation.READ_WRITE).contains(nextOperation)
+                || mutableWrite && variableIsMutable.get(variableId)) {
                 System.out.println("write " + formatVariable(variableId));
             }
             if (Set.of(NextOperation.READ, NextOperation.READ_WRITE).contains(nextOperation)) {
@@ -207,11 +223,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitClass(ClassTree node, Void unused) {
         for (var member : node.getMembers()) {
             if (member.getKind() == Tree.Kind.VARIABLE) {
-                Name variableName = ((VariableTree) member).getName();
+                VariableTree variable = (VariableTree) member;
+                Name variableName = variable.getName();
                 String variableId = variableId();
                 // System.out.println("new member " + formatVariable(variableId));
                 memberVariables.put(variableName, variableId);
                 variableNames.put(variableId, variableName);
+                variableIsMutable.put(variableId, isMutable(variable.getType()));
             }
         }
         long start = positions.getStartPosition(ast, node);
@@ -508,6 +526,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             localVariables.get(variableName).push(variableId);
             variableNames.put(variableId, variableName);
             scopeVariables.peek().add(variableName);
+            variableIsMutable.put(variableId, isMutable(node.getType()));
             registerVariable(variableId); // somewhat special case, identifier isn't visited
         } else {
             registerVariable(getMemberVariableId(node.getName()));
@@ -532,12 +551,14 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start);
         // from super method, would need to be changed if return value were to be used
         scan(node.getTypeArguments(), unused);
-        // to differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
+        // to differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore), different namespace for variables and methods
         if (isVariable(node.getMethodSelect())) {
             nextOperation = NextOperation.NONE;
         }
+        mutableWrite = true;  // when mentioned here, mutable variables can be written to
         scan(node.getMethodSelect(), unused);
         scan(node.getArguments(), unused);
+        mutableWrite = false;
         return null;
     }
 
