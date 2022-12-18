@@ -11,19 +11,19 @@ public class TokenSemanticsBuilder {
     private boolean control;
     private boolean loopBegin;
     private boolean loopEnd;
-    private Set<String> writes;
-    private Set<String> reads;
+    private Set<Variable> reads;
+    private Set<Variable> writes;
 
     public TokenSemanticsBuilder() {
-        this.writes = new HashSet<>();
         this.reads = new HashSet<>();
+        this.writes = new HashSet<>();
     }
 
     public TokenSemantics build() {
         if (loopBegin && loopEnd) {
             throw new IllegalStateException("Token can't mark both the beginning and end of a loop");
         }
-        return new TokenSemantics(critical, control, loopBegin, loopEnd, writes, reads);
+        return new TokenSemantics(critical, control, loopBegin, loopEnd, reads, writes);
     }
 
     public TokenSemanticsBuilder critical() {

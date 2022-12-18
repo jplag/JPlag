@@ -22,10 +22,25 @@ public class Parser extends AbstractParser {
     public List<SemanticToken> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         new JavacAdapter().parseFiles(files, this);
+        // print();
         return tokens;
     }
 
     public void add(SemanticToken token) {
         tokens.add(token);
+    }
+
+    public void print() {
+        long currentLine = 0;
+        for (SemanticToken t : tokens) {
+            if (t.getLine() != currentLine) {
+                currentLine = t.getLine();
+                System.out.println();
+                System.out.println(t.getLine());
+            }
+            System.out.print(t.getType().getDescription());
+            System.out.print(" | ");
+            System.out.println(t.semantics());
+        }
     }
 }

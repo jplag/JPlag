@@ -17,6 +17,7 @@ import de.jplag.TokenType;
 import de.jplag.semantics.SemanticToken;
 import de.jplag.semantics.TokenSemantics;
 import de.jplag.semantics.TokenSemanticsBuilder;
+import de.jplag.semantics.Variable;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
@@ -74,15 +75,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     private List<ParsingException> parsingExceptions = new ArrayList<>();
 
-    private int variableCount;
-    private Map<Name, String> memberVariableIds; // map member variable name to id
-    private Map<Name, Stack<String>> localVariableIdMap; // map local variable name to id
-    private Set<String> localVariables;
-    private Map<String, Name> variableNameMap; // map variable id to name for debugging purposes, inverse of two maps above
-    private Map<String, Boolean> variableIsMutable; // map variable id to whether it is immutable
-    private Stack<Set<Name>> scopeVariables; // stack of local variable names in scope
-    private NextOperation nextOperation;
+    private Map<Name, Variable> memberVariables; // map member variable name to variable
+    private Map<Name, Stack<Variable>> localVariables; // map local variable name to variable
+    private Stack<Set<Name>> localVariablesByScope; // stack of local variable names in scope
+    private Map<Variable, Boolean> isMutable; // map variable to whether it is mutable
     private boolean mutableWrite;
+    private NextOperation nextOperation;
 
     private static final Set<String> IMMUTABLES = Set.of(
             // from https://medium.com/@bpnorlander/java-understanding-primitive-types-and-wrapper-objects-a6798fb2afe9
@@ -102,15 +100,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         this.map = map;
         this.positions = positions;
         this.ast = ast;
-        this.variableCount = 0;
-        this.memberVariableIds = new HashMap<>();
-        this.localVariableIdMap = new HashMap<>();
-        this.variableNameMap = new HashMap<>();
-        this.localVariables = new HashSet<>();
-        this.variableIsMutable = new HashMap<>();
-        this.scopeVariables = new Stack<>();
-        this.nextOperation = NextOperation.READ; // the default
+        this.memberVariables = new HashMap<>();
+        this.localVariables = new HashMap<>();
+        this.localVariablesByScope = new Stack<>();
+        this.isMutable = new HashMap<>();
         this.mutableWrite = false;
+        this.nextOperation = NextOperation.READ; // the default
     }
 
     public List<ParsingException> getParsingExceptions() {
@@ -141,20 +136,16 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start), semantics);
     }
 
-    private String variableId() {
-        return Integer.toString(variableCount++);
+    private Variable getMemberVariable(Name variableName) {
+        return memberVariables.getOrDefault(variableName, null);
     }
 
-    private String getMemberVariableId(Name variableName) {
-        return memberVariableIds.getOrDefault(variableName, null);
-    }
-
-    private String getVariableId(Name variableName) {
-        Stack<String> variableIdStack = localVariableIdMap.getOrDefault(variableName, null);
+    private Variable getVariable(Name variableName) {
+        Stack<Variable> variableIdStack = localVariables.getOrDefault(variableName, null);
         if (variableIdStack != null) {
             return variableIdStack.peek();
         }
-        return getMemberVariableId(variableName);
+        return getMemberVariable(variableName);
     }
 
     private boolean isVariable(ExpressionTree expressionTree) {
@@ -163,45 +154,44 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     }
 
     private boolean isNotExistingLocalVariable(ExpressionTree expressionTree) {
-        return !(expressionTree.getKind() == Tree.Kind.IDENTIFIER && localVariables.contains(((IdentifierTree) expressionTree).getName().toString()));
+        if (expressionTree.getKind() != Tree.Kind.IDENTIFIER) {
+            return true;
+        }
+        Name variableName = ((IdentifierTree) expressionTree).getName();
+        return !localVariables.containsKey(variableName);
     }
 
     private boolean isOwnMemberSelect(MemberSelectTree memberSelect) {
         return memberSelect.getExpression().toString().equals("this");
     }
 
-    private String formatVariable(String variableId) {
-        return variableNameMap.get(variableId) + " [" + variableId + "]";
-    }
-
     private boolean isMutable(Tree classTree) {
-        return classTree != null && !IMMUTABLES.contains(classTree);
+        return classTree != null && !IMMUTABLES.contains(classTree.toString());
     }
 
-    private void registerVariable(String variableId, TokenSemantics semantics) {
-        if (variableId != null) {
-            if (Set.of(NextOperation.WRITE, NextOperation.READ_WRITE).contains(nextOperation) || mutableWrite && variableIsMutable.get(variableId)) {
-                // System.out.println("write " + formatVariable(variableId));
-                semantics.addWrite(variableId);
-            }
+    private void registerVariable(Variable variable, TokenSemantics semantics) {
+        if (variable != null) {
             if (Set.of(NextOperation.READ, NextOperation.READ_WRITE).contains(nextOperation)) {
-                // System.out.println("read " + formatVariable(variableId));
-                semantics.addRead(variableId); // todo change order it's read/write not write/read
+                semantics.addRead(variable);
+            }
+            if (Set.of(NextOperation.WRITE, NextOperation.READ_WRITE).contains(nextOperation) || (mutableWrite && isMutable.get(variable))) {
+                semantics.addWrite(variable);
             }
         }
         nextOperation = NextOperation.READ;
     }
 
     public void enterLocalScope() {
-        scopeVariables.add(new HashSet<>());
+        localVariablesByScope.add(new HashSet<>());
     }
 
     public void exitLocalScope() {
-        for (Name variableName : scopeVariables.pop()) {
-            Stack<String> variableIdStack = localVariableIdMap.get(variableName);
-            variableIdStack.pop();
-            if (variableIdStack.isEmpty())
-                localVariableIdMap.remove(variableName);
+        for (Name variableName : localVariablesByScope.pop()) {
+            Stack<Variable> variableStack = localVariables.get(variableName);
+            variableStack.pop();
+            if (variableStack.isEmpty()) {
+                localVariables.remove(variableName);
+            }
         }
     }
 
@@ -233,13 +223,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitClass(ClassTree node, TokenSemantics semantics) {
         for (var member : node.getMembers()) {
             if (member.getKind() == Tree.Kind.VARIABLE) {
-                VariableTree variable = (VariableTree) member;
-                Name variableName = variable.getName();
-                String variableId = variableId();
-                // System.out.println("new member " + formatVariable(variableId));
-                memberVariableIds.put(variableName, variableId);
-                variableNameMap.put(variableId, variableName);
-                variableIsMutable.put(variableId, isMutable(variable.getType()));
+                VariableTree variableTree = (VariableTree) member;
+                Variable variable = new Variable(variableTree.getName());
+                memberVariables.put(variable.name(), variable);
+                isMutable.put(variable, isMutable(variableTree.getType()));
             }
         }
 
@@ -271,7 +258,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
             semantics = new TokenSemanticsBuilder().control().critical().build();
             addToken(tokenType, end, 1, semantics);
         }
-        memberVariableIds.clear();
+        memberVariables.clear();
         return null;
     }
 
@@ -601,24 +588,20 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitVariable(VariableTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = conditionalCriticalSemantics(node.getNameExpression(), (n) -> scopeVariables.isEmpty()); // member variable defs are critical
+        // member variable defs are critical
+        semantics = conditionalCriticalSemantics(node.getNameExpression(), n -> localVariablesByScope.isEmpty());
 
-        if (!scopeVariables.isEmpty()) { // local scope
-            Name variableName = node.getName();
-            String variableId = variableId();
-            // System.out.println("new local " + formatVariable(variableId));
-            localVariableIdMap.putIfAbsent(variableName, new Stack<>());
-            localVariableIdMap.get(variableName).push(variableId);
-            variableNameMap.put(variableId, variableName);
-            localVariables.add(variableId);
-            scopeVariables.peek().add(variableName);
-            variableIsMutable.put(variableId, isMutable(node.getType()));
-            registerVariable(variableId, semantics); // somewhat special case, identifier isn't visited
-        } // no else, don't want to register member variable defs since the location doesn't matter (also they're going to be up
-          // top 99% of the time)
+        if (!localVariablesByScope.isEmpty()) { // local scope
+            Variable variable = new Variable(node.getName());
+            localVariables.putIfAbsent(variable.name(), new Stack<>());
+            localVariables.get(variable.name()).push(variable);
+            localVariablesByScope.peek().add(variable.name());
+            isMutable.put(variable, isMutable(node.getType()));
+            semantics.addWrite(variable); // somewhat special case, identifier isn't visited
+        } // no else, don't want to register member variable defs since the location doesn't matter
+          // (also they're going to be up top 99% of the time)
 
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length(), semantics);
-        nextOperation = NextOperation.WRITE;
         super.visitVariable(node, semantics);
         return null;
     }
@@ -728,7 +711,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitMemberSelect(MemberSelectTree node, TokenSemantics semantics) {
         if (isOwnMemberSelect(node)) {
-            registerVariable(getMemberVariableId(node.getIdentifier()), semantics);
+            registerVariable(getMemberVariable(node.getIdentifier()), semantics);
         }
         super.visitMemberSelect(node, semantics);
         return null;
@@ -736,7 +719,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     @Override
     public Void visitIdentifier(IdentifierTree node, TokenSemantics semantics) {
-        registerVariable(getVariableId(node.getName()), semantics);
+        registerVariable(getVariable(node.getName()), semantics);
         super.visitIdentifier(node, semantics);
         return null;
     }
