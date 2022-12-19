@@ -241,8 +241,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
             addToken(JavaTokenType.J_TRY_BEGIN, start, 3);
         else
             addToken(JavaTokenType.J_TRY_WITH_RESOURCE, start, 3);
+        scan(node.getResources(), p);
+        scan(node.getBlock(), p);
+        scan(node.getCatches(), p);
         if (node.getFinallyBlock() != null)
             addToken(JavaTokenType.J_FINALLY, start, 3);
+        scan(node.getFinallyBlock(), p);
         return super.visitTry(node, p);
     }
 
@@ -261,13 +265,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_IF_BEGIN, start, 2);
-        node.getCondition().accept(this, p);
-        node.getThenStatement().accept(this, p);
+        scan(node.getCondition(), p);
+        scan(node.getThenStatement(), p);
         if (node.getElseStatement() != null) {
             start = positions.getStartPosition(ast, node.getElseStatement());
             addToken(JavaTokenType.J_ELSE, start, 4);
-            node.getElseStatement().accept(this, p);
         }
+        scan(node.getElseStatement(), p);
         addToken(JavaTokenType.J_IF_END, end, 1);
         return null;
     }
@@ -319,16 +323,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     }
 
     @Override
-    public Object visitNewArray(NewArrayTree node, Object arg1) {
+    public Object visitNewArray(NewArrayTree node, Object p) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_NEWARRAY, start, 3);
-        if (node.getInitializers() != null && !node.getInitializers().isEmpty()) {
+        scan(node.getType(), p);
+        scan(node.getDimensions(), p);
+        boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
+        if (hasInit) {
             start = positions.getStartPosition(ast, node.getInitializers().get(0));
             addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1);
+        }
+        scan(node.getInitializers(), p);
+        // super method has annotation processing but we have it disabled anyways
+        if (hasInit) {
             addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1);
         }
-        return super.visitNewArray(node, arg1);
+        return super.visitNewArray(node, p);
     }
 
     @Override
