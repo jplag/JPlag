@@ -32,15 +32,14 @@ public class DirectoryManager {
      */
     public static File createDirectory(String path, String name, File file, File submissionRoot) throws IOException {
         File directory;
-        String fileName = file.getPath();
+        String fileFullPath = file.getPath();
         String submissionRootPath = submissionRoot.getPath();
-        int lastDirectoryIndex = findRootDirIndex(name, submissionRootPath);
-        fileName = fileName.substring(lastDirectoryIndex).replaceFirst(name, "");
+        String filePathWithoutRootName = fileFullPath.substring(submissionRootPath.length());
         String outputRootDirectory = Path.of(path, name).toString();
-        if ("".equals(fileName)) {
+        if ("".equals(filePathWithoutRootName)) {
             directory = new File(Path.of(outputRootDirectory, name).toString());
         } else {
-            directory = new File(outputRootDirectory + fileName);
+            directory = new File(outputRootDirectory + filePathWithoutRootName);
         }
         if (!directory.exists() && !directory.mkdirs()) {
             throw new IOException("Failed to create dir.");
@@ -118,16 +117,5 @@ public class DirectoryManager {
         logger.info("Successfully zipped report files: {}", zipName);
         logger.info("Display the results with the report viewer at https://jplag.github.io/JPlag/");
         return true;
-    }
-
-    /**
-     * finds the start index of root directory according to this name
-     * @param name The name of the root directory. According to this name we can find the index of this directory.
-     * @param submissionRootPath The path of the root directory
-     * @return The start index of the root directory
-     */
-    public static int findRootDirIndex(String name, String submissionRootPath) {
-        int submissionRootPathLength = submissionRootPath.length();
-        return submissionRootPathLength - name.length();
     }
 }
