@@ -27,7 +27,7 @@
     </div>
     <div :class="{ hidden: !collapse }">
       <div v-if="!isEmpty(lines)" class="code-container">
-        <LineOfCode
+        <LineOfCode class="unmover"
           v-for="(line, index) in lines"
           :id="String(panelId).concat(title).concat(index)"
           :key="index"
