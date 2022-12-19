@@ -42,7 +42,8 @@ public final class EmfaticModelView extends AbstractModelView {
 
     /**
      * Creates an Emfatic view for a metamodel.
-     * @param file is the path to the metamodel.
+     * @param file is the path for the view file to be created.
+     * @param modelResource is the resource containing the metamodel.
      */
     public EmfaticModelView(File file, Resource modelResource) {
         super(file);
@@ -164,7 +165,7 @@ public final class EmfaticModelView extends AbstractModelView {
         String hash = Integer.toString(modelCopier.get(element).hashCode());
         for (int index = 0; index < hashedLines.size(); index++) {
             String line = hashedLines.get(index);
-            String trimmedLine = line.substring(indentationOf(line));
+            String trimmedLine = line.stripLeading();
             if (line.contains(hash) && isDeclaration(element, hash, trimmedLine)) {
                 return index;
             }
