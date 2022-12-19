@@ -6,7 +6,7 @@
     :id="panelId.toString().concat(title).concat(fileIndex.toString())"
     class="code-panel-container"
   >
-    <div class="file-title">
+    <div class="file-title mover">
       <p style="width: 90%">{{ title }}</p>
       <button
         class="collapse-button"
@@ -27,7 +27,7 @@
     </div>
     <div :class="{ hidden: !collapse }">
       <div v-if="!isEmpty(lines)" class="code-container">
-        <LineOfCode class="unmover"
+        <LineOfCode
           v-for="(line, index) in lines"
           :id="String(panelId).concat(title).concat(index)"
           :key="index"
