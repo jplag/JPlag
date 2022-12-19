@@ -16,6 +16,7 @@
         :title="convertSubmissionIdToName(file, submissionId).length > 40?
         '..' + convertSubmissionIdToName(file, submissionId).substring(file.length - 40, file.length):
         convertSubmissionIdToName(file, submissionId)"
+        :filePath="file"
         @toggle-collapse="$emit('toggle-collapse', file)"
         @line-selected="lineSelected"
       />
