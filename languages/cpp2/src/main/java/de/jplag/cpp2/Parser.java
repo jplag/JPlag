@@ -41,10 +41,9 @@ public class Parser extends AbstractParser {
                 CPP14Parser parser = new CPP14Parser(tokens);
                 CPP14Parser.TranslationUnitContext translationUnit = parser.translationUnit();
 
-                ParseTreeWalker ptw = new ParseTreeWalker();
-                ptw.walk(new CPPTokenListener(this), translationUnit);
+                ParseTreeWalker.DEFAULT.walk(new CPPTokenListener(this), translationUnit);
             } catch (IOException e) {
-                throw new ParsingException(file, e);
+                throw new ParsingException(file, "", e);
             }
             tokens.add(Token.fileEnd(currentFile));
         }
