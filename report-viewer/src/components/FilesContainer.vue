@@ -7,7 +7,7 @@
     <VueDraggableNext handle=".mover" filter=".unmover">
       <CodePanel
         v-for="(file, index) in files.keys()"
-        :key="file"
+        :key="file.concat(index.toString())"
         :collapse="files.get(file)?.collapsed"
         :file-index="index"
         :lines="!files.get(file)?.lines ? [] : files.get(file)?.lines"
