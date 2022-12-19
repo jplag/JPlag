@@ -13,9 +13,7 @@
         :lines="!files.get(file)?.lines ? [] : files.get(file)?.lines"
         :matches="!matches.get(file) ? [] : matches.get(file)"
         :panel-id="containerId"
-        :title="convertSubmissionIdToName(file, submissionId).length > 40?
-        '..' + convertSubmissionIdToName(file, submissionId).substring(file.length - 40, file.length):
-        convertSubmissionIdToName(file, submissionId)"
+        :title="convertSubmissionIdToName(file, submissionId)"
         @toggle-collapse="$emit('toggle-collapse', file)"
         @line-selected="lineSelected"
       />
@@ -99,13 +97,15 @@ export default defineComponent({
       emit("lineSelected", e, index, file, line);
     };
     /**
-     * converts the submissionId to the name in the path of file.
+     * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.
      * @param match
      * @param submissionId
      * @return new path of file
      */
     const convertSubmissionIdToName=(file: string, submissionId: string):string => {
-      return file.replace(submissionId, store.getters.submissionDisplayName(submissionId));
+      const filePath = file.replace(submissionId, store.getters.submissionDisplayName(submissionId));
+      const filePathLength = filePath.length;
+      return filePathLength > 40 ? ".." + filePath.substring(filePathLength - 40, filePathLength) : filePath;
     };
     return {
       lineSelected,
