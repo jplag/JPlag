@@ -10,6 +10,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.eclipse.emfatic</groupId>
+            <artifactId>org.eclipse.emfatic.core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.ecore</artifactId>
             <version>${emf.version}</version>

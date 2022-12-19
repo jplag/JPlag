@@ -108,6 +108,19 @@ public abstract class AbstractMetamodelVisitor {
             visit(child);
         }
         currentTreeDepth--;
+
+        if (eObject instanceof EPackage ePackage) {
+            leaveEPackage(ePackage);
+        }
+        if (eObject instanceof EClass eClass) {
+            leaveEClass(eClass);
+        }
+        if (eObject instanceof EOperation eOperation) {
+            leaveEOperation(eOperation);
+        }
+        if (eObject instanceof EEnum eEnum) {
+            leaveEEnum(eEnum);
+        }
     }
 
     protected void visitENamedElement(ENamedElement eNamedElement) {
@@ -166,4 +179,15 @@ public abstract class AbstractMetamodelVisitor {
     protected void visitETypeParameter(ETypeParameter eTypeParameter) {
     }
 
+    protected void leaveEEnum(EEnum eEnum) {
+    }
+
+    protected void leaveEOperation(EOperation eOperation) {
+    }
+
+    protected void leaveEClass(EClass eClass) {
+    }
+
+    protected void leaveEPackage(EPackage ePackage) {
+    }
 }
