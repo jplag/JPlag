@@ -413,13 +413,14 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         } else {
             addToken(JavaTokenType.J_TRY_WITH_RESOURCE, start, 3, semantics);
         }
-        if (node.getFinallyBlock() != null) { // todo fix location (breaks tests)
-            semantics = new TokenSemanticsBuilder().control().build();
-            addToken(JavaTokenType.J_FINALLY, start, 3, semantics);
-        }
         scan(node.getResources(), semantics);
         scan(node.getBlock(), null);
         scan(node.getCatches(), null);
+        if (node.getFinallyBlock() != null) {
+            semantics = new TokenSemanticsBuilder().control().build();
+            start = positions.getStartPosition(ast, node.getFinallyBlock());
+            addToken(JavaTokenType.J_FINALLY, start, 3, semantics);
+        }
         scan(node.getFinallyBlock(), null);
         return null;
     }
@@ -521,13 +522,16 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         long end = positions.getEndPosition(ast, node) - 1;
         semantics = new TokenSemanticsBuilder().build();
         addToken(JavaTokenType.J_NEWARRAY, start, 3, semantics);
+        scan(node.getType(), semantics);
+        scan(node.getDimensions(), semantics);
         boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
         if (hasInit) {
             start = positions.getStartPosition(ast, node.getInitializers().get(0));
             semantics = new TokenSemanticsBuilder().build();
             addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1, semantics);
         }
-        super.visitNewArray(node, semantics); // doesn't break tests :)
+        scan(node.getInitializers(), semantics);
+        // super method has annotation processing but we have it disabled anyways
         if (hasInit) {
             semantics = new TokenSemanticsBuilder().build();
             addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1, semantics);
