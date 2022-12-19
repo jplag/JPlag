@@ -17,7 +17,7 @@ import de.jplag.emf.parser.EcoreParser;
  */
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
-    public static final String VIEW_FILE_SUFFIX = ".TreeView";
+    public static final String VIEW_FILE_SUFFIX = ".emfatic";
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
 
     private static final String NAME = "EMF metamodel";

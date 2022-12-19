@@ -4,35 +4,26 @@
     nsPrefix="bookStore">
   <eSubpackages name="store" nsURI="http:///com.ibm.dynamic.example.bookstore.ecore/store"
       nsPrefix="store">
-    <eClassifiers xsi:type="ecore:EClass" name="BookStore">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="owner" eType="#//person/Person"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Store">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owner" eType="#//store/Person"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="location" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="BookStore" eSuperTypes="#//store/Store">
       <eStructuralFeatures xsi:type="ecore:EReference" name="books" upperBound="-1"
           eType="#//store/Book" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Book">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="isbn" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
           iD="true"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="author" eType="#//person/Author"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="genre" eType="#//store/Genre"/>
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EEnum" name="Genre">
-      <eLiterals name="NOVEL"/>
-      <eLiterals name="COOKBOOK" value="1"/>
-      <eLiterals name="BIOGRAPHY" value="3"/>
-      <eLiterals name="TEXTBOOK" value="4"/>
-    </eClassifiers>
-  </eSubpackages>
-  <eSubpackages name="person" nsURI="http:///com.ibm.dynamic.example.bookstore.ecore/person"
-      nsPrefix="person">
-    <eClassifiers xsi:type="ecore:EClass" name="Author" eSuperTypes="#//person/Person">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isStageName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="author" eType="#//store/Person"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Person">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="firstName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isStageName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     </eClassifiers>
   </eSubpackages>
 </ecore:EPackage>
