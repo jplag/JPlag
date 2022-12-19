@@ -69,23 +69,23 @@ class BasicFunctionalityTest extends TestBase {
                 .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
-        assertEquals(0.242, getSelectedPercent(result, "A", "B"), DELTA);
+        assertEquals(0.212, getSelectedPercent(result, "A", "B"), DELTA);
         assertEquals(0.997, getSelectedPercent(result, "A", "C"), DELTA);
-        assertEquals(0.770, getSelectedPercent(result, "A", "D"), DELTA);
-        assertEquals(0.242, getSelectedPercent(result, "B", "C"), DELTA);
-        assertEquals(0.285, getSelectedPercent(result, "B", "D"), DELTA);
-        assertEquals(0.770, getSelectedPercent(result, "C", "D"), DELTA);
+        assertEquals(0.805, getSelectedPercent(result, "A", "D"), DELTA);
+        assertEquals(0.212, getSelectedPercent(result, "B", "C"), DELTA);
+        assertEquals(0.238, getSelectedPercent(result, "B", "D"), DELTA);
+        assertEquals(0.805, getSelectedPercent(result, "C", "D"), DELTA);
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
-        assertEquals(0.964, biggestMatch.get().maximalSimilarity(), DELTA);
-        assertEquals(0.641, biggestMatch.get().minimalSimilarity(), DELTA);
-        assertEquals(12, biggestMatch.get().matches().size());
+        assertEquals(0.970, biggestMatch.get().maximalSimilarity(), DELTA);
+        assertEquals(0.688, biggestMatch.get().minimalSimilarity(), DELTA);
+        assertEquals(16, biggestMatch.get().matches().size());
     }
 
     @Test
     @DisplayName("test single-files as submissions (no folders)")
-    void testSingleFileSubmisssions() throws ExitException {
+    void testSingleFileSubmissions() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("SimpleSingleFile");
 
         assertEquals(2, result.getNumberOfSubmissions());
