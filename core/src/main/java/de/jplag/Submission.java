@@ -13,6 +13,8 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.normalization.Normalizer;
+
 /**
  * Represents a single submission. A submission can contain multiple files.
  */
@@ -264,5 +266,9 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
         return true;
+    }
+
+    void normalize() {
+        tokenList = Normalizer.normalize(tokenList);
     }
 }
