@@ -6,6 +6,7 @@
     <img alt="JPlag" src="@/assets/logo-nobg.png" />
     <h1>JPlag Report Viewer</h1>
     <h2>Select an overview or comparison file or a zip to display.</h2>
+    <h3>(No files get uploaded anywhere)</h3>
     <div class="drop-container">
       <p>Drop a .json or .zip on this page</p>
     </div>
@@ -54,12 +55,39 @@ export default defineComponent({
         },
       });
     };
+
+    const extractRootName = (filePath: path.ParsedPath) => {
+      const folders = filePath.dir.split("/");
+      return folders[0];
+    };
     const extractSubmissionFileName = (filePath: path.ParsedPath) => {
       const folders = filePath.dir.split("/");
-      const submissionFolderIndex = folders.findIndex(
-        (folder) => folder === "submissions"
-      );
+      const rootName = folders[0];
+      let submissionFolderIndex = -1;
+      if(rootName === "files") {
+        submissionFolderIndex = folders.findIndex(
+            (folder) => folder === "files"
+        );
+      }else {
+        submissionFolderIndex = folders.findIndex(
+            (folder) => folder === "submissions"
+        );
+      }
       return folders[submissionFolderIndex + 1];
+    };
+    const extractFileNameWithFullPath = (filePath: path.ParsedPath, originalFileName: string) => {
+      let fullPath = "";
+      const rootName = extractRootName(filePath);
+      const filesOrSubmissionsIndex_filePath = filePath.dir.indexOf(rootName ==="files" ? "files" : "submissions");
+      const filesOrSubmissionsIndex_originalFileName = originalFileName.indexOf(rootName === "files" ? "files" : "submissions");
+      const unixSubfolderPathAfterSubmissions = filePath.dir.substring(filesOrSubmissionsIndex_filePath + (rootName === "files" ? "files".length : "submissions".length) + 1);
+      const originalPathWithoutSubmissions = originalFileName.substring(filesOrSubmissionsIndex_originalFileName + (rootName === "files" ? "files".length : "submissions".length));
+      if(originalPathWithoutSubmissions.charAt(0)==='\\'){
+           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
+        }else {
+           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base);
+        }
+      return fullPath;
     };
     /**
      * Handles zip file on drop. It extracts the zip and saves each file in the store.
@@ -70,16 +98,17 @@ export default defineComponent({
         for (const originalFileName of Object.keys(zip.files)) {
           const unixFileName = slash(originalFileName);
           if (
-            /((.+\/)*)submissions\/(.+)\/(.+)/.test(unixFileName) &&
+            /((.+\/)*)(files|submissions)\/(.+)\/(.+)/.test(unixFileName) &&
             !/^__MACOSX\//.test(unixFileName)
           ) {
             const filePath = path.parse(unixFileName);
 
             const submissionFileName = extractSubmissionFileName(filePath);
+            const fullPathFileName = extractFileNameWithFullPath(filePath,originalFileName);
             await zip.files[originalFileName].async("string").then((data) => {
               store.commit("saveSubmissionFile", {
                 name: submissionFileName,
-                file: { fileName: filePath.base, data: data },
+                file: { fileName: fullPathFileName, data: data },
               });
             });
           } else {

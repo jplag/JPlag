@@ -9,9 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.CommandLineArgument;
 import de.jplag.Language;
-import de.jplag.LanguageLoader;
 
 class LanguageTest extends CommandLineInterfaceTest {
 

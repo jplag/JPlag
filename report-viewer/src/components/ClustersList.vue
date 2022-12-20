@@ -10,7 +10,7 @@
     <p v-for="(cluster, index) in clusters" :key="index" @click="toggleDialog">
       {{ index + 1 }}. Members:
       <span id="members">{{ getMemberNames(cluster) }}</span> - Average
-      similarity: {{ cluster.averageSimilarity }}%
+      similarity: {{ cluster.averageSimilarity * 100 }}%
       <GDialog v-model="dialog" fullscreen>
         <div id="dialog-header">
           <button @click="toggleDialog">Close</button>

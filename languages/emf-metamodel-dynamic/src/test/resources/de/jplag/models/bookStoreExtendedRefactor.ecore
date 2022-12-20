@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ASCII"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="BookStorePackage" nsURI="http:///com.ibm.dynamic.example.bookstore.ecore"
+    nsPrefix="bookStore">
+  <eSubpackages name="store" nsURI="http:///com.ibm.dynamic.example.bookstore.ecore/store"
+      nsPrefix="store">
+    <eClassifiers xsi:type="ecore:EClass" name="Store">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owner" eType="#//store/Person"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="location" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="BookStore" eSuperTypes="#//store/Store">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="books" upperBound="-1"
+          eType="#//store/Book" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Book">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isbn" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+          iD="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="author" eType="#//store/Person"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Person">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="firstName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isStageName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>

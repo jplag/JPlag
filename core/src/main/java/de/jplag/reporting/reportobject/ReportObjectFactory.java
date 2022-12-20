@@ -21,12 +21,14 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.Submission;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.jsonfactory.ToDiskWriter;
+import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
@@ -41,10 +43,9 @@ public class ReportObjectFactory {
 
     private static final ToDiskWriter fileWriter = new ToDiskWriter();
     public static final String OVERVIEW_FILE_NAME = "overview.json";
-    public static final String SUBMISSIONS_FOLDER = "submissions";
+    public static final String SUBMISSIONS_FOLDER = "files";
+    public static final Version REPORT_VIEWER_VERSION = JPlag.JPLAG_VERSION;
 
-    // TODO: This shall be moved to a better visible and upgradable position. Shall be fixed in a future version.
-    public static final Version REPORT_VIEWER_VERSION = new Version(4, 0, 0);
     private Map<String, String> submissionNameToIdMap;
     private Function<Submission, String> submissionToIdFunction;
     private Map<String, Map<String, String>> submissionNameToNameToComparisonFileName;
@@ -98,17 +99,32 @@ public class ReportObjectFactory {
         Language language = result.getOptions().language();
         for (Submission submission : submissions) {
             File directory = createSubmissionDirectory(path, submissionsPath, submission);
+            File submissionRoot = submission.getRoot();
             if (directory == null) {
                 continue;
             }
             for (File file : submission.getFiles()) {
-                File fileToCopy = language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
+                File fullPath = createSubmissionDirectory(path, submissionsPath, submission, file, submissionRoot);
+                File fileToCopy = getFileToCopy(language, file);
                 try {
-                    Files.copy(fileToCopy.toPath(), (new File(directory, file.getName())).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    if (fullPath != null) {
+                        Files.copy(fileToCopy.toPath(), fullPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } else {
+                        throw new NullPointerException("Could not create file with full path");
+                    }
                 } catch (IOException e) {
                     logger.error("Could not save submission file " + fileToCopy, e);
                 }
             }
+        }
+    }
+
+    private File createSubmissionDirectory(String path, File submissionsPath, Submission submission, File file, File submissionRoot) {
+        try {
+            return createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission), file, submissionRoot);
+        } catch (IOException e) {
+            logger.error("Could not create directory " + path + " for report viewer generation", e);
+            return null;
         }
     }
 
@@ -130,6 +146,10 @@ public class ReportObjectFactory {
         }
     }
 
+    private File getFileToCopy(Language language, File file) {
+        return language.useViewFiles() ? new File(file.getPath() + language.viewFileSuffix()) : file;
+    }
+
     private void writeComparisons(JPlagResult result, String path) {
         ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction, fileWriter);
         submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result, path);
@@ -142,7 +162,7 @@ public class ReportObjectFactory {
         folders.addAll(result.getOptions().oldSubmissionDirectories());
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionDirectory().getName() : "";
-
+        ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
         OverviewReport overviewReport = new OverviewReport(REPORT_VIEWER_VERSION, folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
                 result.getOptions().language().getName(), // language
@@ -155,7 +175,7 @@ public class ReportObjectFactory {
                 getDate(),// dateOfExecution
                 result.getDuration(), // executionTime
                 getMetrics(result),// metrics
-                List.of()); // clusters (deactivated for now)
+                clusteringResultMapper.map(result)); // clusters
 
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 

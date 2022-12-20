@@ -26,7 +26,7 @@ import de.jplag.TokenType;
 import de.jplag.text.Language;
 
 class TextLanguageTest {
-    private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
+    private final Logger logger = LoggerFactory.getLogger(TextLanguageTest.class);
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources");
     private static final String TEST_SUBJECT = "FutureJavaDoc.txt";

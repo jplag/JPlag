@@ -23,14 +23,14 @@
       >
         <td>
           <div class="td-content">
-            <p>{{ match.firstFile }}</p>
-            <p>({{ match.startInFirst + 1 }} - {{ match.endInFirst + 1 }})</p>
+            <p>{{ convertSubmissionIdToName(match.firstFile, id1) }}</p>
+            <p>({{ match.startInFirst }} - {{ match.endInFirst }})</p>
           </div>
         </td>
         <td>
           <div class="td-content">
-            <p>{{ match.secondFile }}</p>
-            <p>({{ match.startInSecond + 1 }} - {{ match.endInSecond + 1 }})</p>
+            <p>{{ convertSubmissionIdToName(match.secondFile, id2) }}</p>
+            <p>({{ match.startInSecond }} - {{ match.endInSecond }})</p>
           </div>
         </td>
         <td>{{ match.tokens }}</td>
@@ -39,8 +39,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
+import store from "@/store/store";
 
 export default defineComponent({
   name: "MatchTable",
@@ -65,8 +66,17 @@ export default defineComponent({
       type: String,
     },
   },
-  setup() {
-    return {};
+  setup(props) {
+  /**
+   * converts the submissionId to the name in the path of match.
+   * @param match
+   * @param submissionId
+   * @return new path of match
+   */
+    const convertSubmissionIdToName=(match: string, submissionId: string):string=>{
+      return match.replace(submissionId, store.getters.submissionDisplayName(submissionId));
+    };
+    return {convertSubmissionIdToName};
   },
 });
 </script>

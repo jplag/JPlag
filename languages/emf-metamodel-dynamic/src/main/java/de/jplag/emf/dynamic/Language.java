@@ -13,7 +13,7 @@ import de.jplag.emf.parser.EcoreParser;
 @MetaInfServices(de.jplag.Language.class)
 public class Language extends de.jplag.emf.Language {
     private static final String NAME = "EMF metamodels (dynamically created token set)";
-    public static final String IDENTIFIER = "emf-dynamic";
+    private static final String IDENTIFIER = "emf-dynamic";
 
     private static final int DEFAULT_MIN_TOKEN_MATCH = 10;
 

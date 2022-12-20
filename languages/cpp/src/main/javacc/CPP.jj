@@ -282,7 +282,7 @@ void token(): {}
 | "]"
 | "("
 | ")"
-| "::"           { delegatingScanner.add(C_SCOPE,token); }
+| "::"
 | ":"
 | ";"
 | ","

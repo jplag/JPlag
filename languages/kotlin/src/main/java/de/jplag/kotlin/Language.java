@@ -16,7 +16,7 @@ import de.jplag.Token;
 public class Language implements de.jplag.Language {
 
     private static final String NAME = "Kotlin Parser";
-    public static final String IDENTIFIER = "kotlin";
+    private static final String IDENTIFIER = "kotlin";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".kt"};
     private final KotlinParserAdapter parserAdapter;

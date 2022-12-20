@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import de.jplag.CommandLineArgument;
 import de.jplag.options.JPlagOptions;
 
 class StoredMatchesTest extends CommandLineInterfaceTest {

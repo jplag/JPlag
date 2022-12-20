@@ -8,6 +8,9 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag)
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/main/LICENSE)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jplag/JPlag)](https://github.com/jplag/JPlag/pulse)
+[![Report Viewer](https://img.shields.io/badge/report%20viewer-online-b80025)](https://jplag.github.io/JPlag/)
+[![Java Version](https://img.shields.io/badge/java-SE%2017-yellowgreen)](#download-and-installation)
+
 
 JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development. JPlag currently supports various programming languages, EMF metamodels, and natural language text.
 
@@ -15,23 +18,24 @@ JPlag is a system that finds similarities among multiple sets of source code fil
 
 In the following, a list of all supported languages with their supported language version is provided. A language can be selected from the command line using the `-l <cli argument name>` argument.
 
-| Language                                                         | Version | CLI Argument Name     | [state](https://github.com/jplag/JPlag/wiki/3.-Language-Modules) | parser |
-|------------------------------------------------------------------|--------:|-----------------------| :---: | :---: |
-| [Java](https://www.java.com)                                     |      17 | java                  | mature | JavaC |
-| [C++](https://isocpp.org)                                        |      11 | cpp                   | legacy | JavaCC |
-| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)            |       8 | csharp                | beta | ANTLR 4 |
-| [Go](https://go.dev)                                             |    1.17 | golang                | beta | ANTLR 4 |
-| [Kotlin](https://kotlinlang.org)                                 |     1.3 | kotlin                | beta | ANTLR 4 |
-| [Python](https://www.python.org)                                 |     3.6 | python3               | legacy | ANTLR 4 |
-| [R](https://www.r-project.org/)                                  |   3.5.0 | rlang                 | beta | ANTLR 4 |
-| [Rust](https://www.rust-lang.org/)                               |  1.60.0 | rust                  | beta | ANTLR 4 |
-| [Scala](https://www.scala-lang.org)                              |  2.13.8 | scala                 | beta | Scalameta |
-| [Scheme](http://www.scheme-reports.org)                          |       ? | scheme                | unknown | JavaCC |
-| [Swift](https://www.swift.org)                                   |     5.4 | swift                 | beta | ANTLR 4 |
-| [EMF Metamodel](https://www.eclipse.org/modeling/emf/)           |  2.25.0 | emf                   | alpha | EMF |
-| Text (naive)                                                     |       - | text                  | legacy | CoreNLP |
+| Language                                               | Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/3.-Language-Modules) |  parser   |
+|--------------------------------------------------------|--------:|-------------------|:----------------------------------------------------------------:|:---------:|
+| [Java](https://www.java.com)                           |      17 | java              |                              mature                              |   JavaC   |
+| [C++](https://isocpp.org)                              |      11 | cpp               |                              legacy                              |  JavaCC   |
+| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |       8 | csharp            |                               beta                               |  ANTLR 4  |
+| [Go](https://go.dev)                                   |    1.17 | golang            |                               beta                               |  ANTLR 4  |
+| [Kotlin](https://kotlinlang.org)                       |     1.3 | kotlin            |                               beta                               |  ANTLR 4  |
+| [Python](https://www.python.org)                       |     3.6 | python3           |                              legacy                              |  ANTLR 4  |
+| [R](https://www.r-project.org/)                        |   3.5.0 | rlang             |                               beta                               |  ANTLR 4  |
+| [Rust](https://www.rust-lang.org/)                     |  1.60.0 | rust              |                               beta                               |  ANTLR 4  |
+| [Scala](https://www.scala-lang.org)                    |  2.13.8 | scala             |                               beta                               | Scalameta |
+| [Scheme](http://www.scheme-reports.org)                |       ? | scheme            |                             unknown                              |  JavaCC   |
+| [Swift](https://www.swift.org)                         |     5.4 | swift             |                               beta                               |  ANTLR 4  |
+| [EMF Metamodel](https://www.eclipse.org/modeling/emf/) |  2.25.0 | emf               |                              alpha                               |    EMF    |
+| Text (naive)                                           |       - | text              |                              legacy                              |  CoreNLP  |
 
 ## Download and Installation
+You need Java SE 17 to run or build JPlag.
 
 ### Downloading a release
 * Download a [released version](https://github.com/jplag/jplag/releases).
@@ -50,10 +54,10 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 1. Download or clone the code from this repository.
 2. Run `mvn clean package` from the root of the repository to compile and build all submodules.
    Run `mvn clean package assembly:single` instead if you need the full jar which includes all dependencies.
-5. You will find the generated JARs in the subdirectory `jplag.cli/target`.
+5. You will find the generated JARs in the subdirectory `cli/target`.
 
 ## Usage
-JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag). If you are using the CLI, you can display your results via [jplag.github.io](https://jplag.github.io/JPlag/). No data will leave your computer!
 
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*

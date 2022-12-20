@@ -3,17 +3,17 @@
 -->
 <template>
   <div class="files-container">
-    <h1>Files of {{ filesOwner }}</h1>
+    <h1>Files of {{ anonymous ? filesOwnerDefault : filesOwner }}</h1>
     <VueDraggableNext>
       <CodePanel
         v-for="(file, index) in files.keys()"
-        :key="file.concat(index.toString())"
+        :key="file"
         :collapse="files.get(file)?.collapsed"
         :file-index="index"
         :lines="!files.get(file)?.lines ? [] : files.get(file)?.lines"
         :matches="!matches.get(file) ? [] : matches.get(file)"
         :panel-id="containerId"
-        :title="file"
+        :title="convertSubmissionIdToName(file, submissionId)"
         @toggle-collapse="$emit('toggle-collapse', file)"
         @line-selected="lineSelected"
       />
@@ -27,6 +27,7 @@ import CodePanel from "../components/CodePanel.vue";
 import { VueDraggableNext } from "vue-draggable-next";
 import { SubmissionFile } from "@/model/SubmissionFile";
 import { MatchInSingleFile } from "@/model/MatchInSingleFile";
+import store from "@/store/store";
 
 export default defineComponent({
   name: "FilesContainer",
@@ -47,6 +48,13 @@ export default defineComponent({
       required: true,
     },
     /**
+     * Default value of the submission to which the files belong.
+     */
+    filesOwnerDefault:{
+      type: String,
+      required: true,
+    },
+    /**
      * Files of the submission.
      * type: Array<SubmissionFile>
      */
@@ -59,6 +67,20 @@ export default defineComponent({
      */
     matches: {
      type: Map<string,MatchInSingleFile[]>,
+      required: true,
+    },
+    /**
+     * Default value of the submission to which the files belong.
+     */
+    submissionId:{
+      type: String,
+      required: true,
+    },
+    /**
+     * The bool value of that whether id is hidden.
+     */
+    anonymous:{
+      type:Boolean,
       required: true,
     },
   },
@@ -74,8 +96,20 @@ export default defineComponent({
     const lineSelected = (e: unknown, index: number, file: string, line: number) => {
       emit("lineSelected", e, index, file, line);
     };
+    /**
+     * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.
+     * @param match
+     * @param submissionId
+     * @return new path of file
+     */
+    const convertSubmissionIdToName=(file: string, submissionId: string):string => {
+      const filePath = file.replace(submissionId, store.getters.submissionDisplayName(submissionId));
+      const filePathLength = filePath.length;
+      return filePathLength > 40 ? ".." + filePath.substring(filePathLength - 40, filePathLength) : filePath;
+    };
     return {
       lineSelected,
+      convertSubmissionIdToName,
     };
   },
 });

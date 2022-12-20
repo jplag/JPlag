@@ -1,7 +1,7 @@
-package de.jplag;
+package de.jplag.cli;
 
-import static de.jplag.CLI.ADVANCED_GROUP;
-import static de.jplag.CLI.CLUSTERING_GROUP_NAME;
+import static de.jplag.cli.CLI.ADVANCED_GROUP;
+import static de.jplag.cli.CLI.CLUSTERING_GROUP_NAME;
 import static de.jplag.options.JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 import static de.jplag.options.JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
 import static net.sourceforge.argparse4j.impl.Arguments.append;
@@ -12,6 +12,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import de.jplag.Language;
+import de.jplag.Messages;
+import de.jplag.NumberOfArgumentValues;
+import de.jplag.clustering.ClusteringAlgorithm;
+import de.jplag.clustering.ClusteringOptions;
+import de.jplag.clustering.algorithm.InterClusterSimilarity;
+import de.jplag.options.SimilarityMetric;
+
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.ArgumentAction;
@@ -19,11 +27,6 @@ import net.sourceforge.argparse4j.inf.ArgumentContainer;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.FeatureControl;
 import net.sourceforge.argparse4j.inf.Namespace;
-
-import de.jplag.clustering.ClusteringAlgorithm;
-import de.jplag.clustering.ClusteringOptions;
-import de.jplag.clustering.algorithm.InterClusterSimilarity;
-import de.jplag.options.SimilarityMetric;
 
 /**
  * Command line arguments for the JPlag CLI. Each argument is defined through an enumeral.
@@ -34,7 +37,7 @@ public enum CommandLineArgument {
     NEW_DIRECTORY(new Builder("-new", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     OLD_DIRECTORY(new Builder("-old", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     LANGUAGE(
-            new Builder("-l", String.class).defaultsTo(de.jplag.java.Language.IDENTIFIER)
+            new Builder("-l", String.class).defaultsTo(new de.jplag.java.Language().getIdentifier())
                     .choices(LanguageLoader.getAllAvailableLanguageIdentifiers())),
     BASE_CODE("-bc", String.class),
 
@@ -82,7 +85,7 @@ public enum CommandLineArgument {
      * The identifier of the default {@link Language}.
      * @see Language#getIdentifier()
      */
-    public static final String DEFAULT_LANGUAGE_IDENTIFIER = de.jplag.java.Language.IDENTIFIER;
+    public static final String DEFAULT_LANGUAGE_IDENTIFIER = new de.jplag.java.Language().getIdentifier();
 
     private final String flag;
     private final NumberOfArgumentValues numberOfValues;
@@ -126,7 +129,7 @@ public enum CommandLineArgument {
      * @return the flag name of the command line argument without leading dashes and inner dashes replaced with underscores.
      */
     public String flagWithoutDash() {
-        return flag.replaceAll("^-+", "").replaceAll("-", "_");
+        return flag.replaceAll("^-+", "").replace("-", "_");
     }
 
     /**

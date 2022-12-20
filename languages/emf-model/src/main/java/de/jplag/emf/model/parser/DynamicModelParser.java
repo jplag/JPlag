@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +45,11 @@ public class DynamicModelParser extends DynamicEcoreParser {
 
     private void parseMetamodelFile(File file) throws ParsingException {
         metapackages.clear();
-        List<EObject> model = EMFUtil.loadModel(file);
-        if (model == null) {
+        Resource modelResource = EMFUtil.loadModelResource(file);
+        if (modelResource == null) {
             throw new ParsingException(file, "Could not load metamodel file!");
         } else {
-            for (EObject object : model) {
+            for (EObject object : modelResource.getContents()) {
                 if (object instanceof EPackage ePackage) {
                     metapackages.add(ePackage);
                 } else {

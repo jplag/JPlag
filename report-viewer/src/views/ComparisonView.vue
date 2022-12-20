@@ -41,17 +41,23 @@
     </div>
     <FilesContainer
       :container-id="1"
+      :submission-id="firstId"
       :files="filesOfFirst"
       :matches="comparison.matchesInFirstSubmission"
-      files-owner="Submission 1"
+      :files-owner="store.getters.submissionDisplayName(firstId)"
+      :anonymous="store.state.anonymous.has(firstId)"
+      files-owner-default="submission 1"
       @toggle-collapse="toggleCollapseFirst"
       @line-selected="showMatchInSecond"
     />
     <FilesContainer
       :container-id="2"
+      :submission-id="secondId"
       :files="filesOfSecond"
       :matches="comparison.matchesInSecondSubmissions"
-      files-owner="Submission 2"
+      :files-owner="store.getters.submissionDisplayName(secondId)"
+      :anonymous="store.state.anonymous.has(secondId)"
+      files-owner-default="submission 2"
       @toggle-collapse="toggleCollapseSecond"
       @line-selected="showMatchInFirst"
     />
@@ -191,7 +197,7 @@ export default defineComponent({
 
     const isAnonymous = (id: string) => store.state.anonymous.has(id);
     //Left panel
-    const hideLeftPanel = ref(true);
+    const hideLeftPanel = ref(false);
     const togglePanel = () => {
       hideLeftPanel.value = !hideLeftPanel.value;
     };

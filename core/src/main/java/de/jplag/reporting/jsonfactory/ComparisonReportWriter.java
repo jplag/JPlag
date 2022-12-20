@@ -1,6 +1,7 @@
 package de.jplag.reporting.jsonfactory;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -104,7 +105,10 @@ public class ComparisonReportWriter {
     }
 
     private String relativizedFilePath(File file, Submission submission) {
-        return submission.getRoot().toPath().relativize(file.toPath()).toString();
+        if (file.toPath().equals(submission.getRoot().toPath())) {
+            return Path.of(submissionToIdFunction.apply(submission), submission.getName()).toString();
+        }
+        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString()).toString();
     }
 
 }
