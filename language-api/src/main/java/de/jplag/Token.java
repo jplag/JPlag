@@ -5,6 +5,9 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.semantics.TokenSemantics;
+import de.jplag.semantics.TokenSemanticsBuilder;
+
 /**
  * This class represents a token in a source code. It can represent keywords, identifiers, syntactical structures etc.
  * What types of tokens there are depends on the specific language, meaning JPlag does not enforce a specific token set.
@@ -20,14 +23,7 @@ public class Token {
     private int length;
     private File file;
     private TokenType type;
-
-    /**
-     * Creates a token of type {@link SharedTokenType#FILE_END FILE_END} without information about line, column, and length.
-     * @param file is the name of the source code file.
-     */
-    public static Token fileEnd(File file) {
-        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE);
-    }
+    private TokenSemantics semantics; // value null if no semantics
 
     /**
      * Creates a token with column and length information.
@@ -49,6 +45,39 @@ public class Token {
         this.line = line;
         this.column = column;
         this.length = length;
+        this.semantics = null;
+    }
+
+    /**
+     * Creates a token with column, length and semantic information.
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param line is the line index in the source code where the token resides. Index is 1-based.
+     * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
+     * @param length is the length of the token in the source code.
+     * @param semantics is a record containing semantic information about the token.
+     */
+    public Token(TokenType type, File file, int line, int column, int length, TokenSemantics semantics) {
+        this(type, file, line, column, length);
+        this.semantics = semantics;
+    }
+
+    /**
+     * Creates a token of type {@link SharedTokenType#FILE_END FILE_END} without information about line, column, and length.
+     * @param file is the name of the source code file.
+     */
+    public static Token fileEnd(File file) {
+        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE);
+    }
+
+    /**
+     * Creates a token of type {@link SharedTokenType#FILE_END FILE_END} without information about line, column, and length,
+     * but with semantic information.
+     * @param file is the name of the source code file.
+     */
+    public static Token semanticFileEnd(File file) {
+        TokenSemantics semantics = new TokenSemanticsBuilder().control().critical().build();
+        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, semantics);
     }
 
     /**
@@ -87,5 +116,12 @@ public class Token {
      */
     public TokenType getType() {
         return type;
+    }
+
+    /**
+     * @return the semantics of the token.
+     */
+    public TokenSemantics getSemantics() {
+        return semantics;
     }
 }

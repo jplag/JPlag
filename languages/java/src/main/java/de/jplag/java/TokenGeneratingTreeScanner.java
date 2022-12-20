@@ -13,8 +13,8 @@ import java.util.function.Function;
 import javax.lang.model.element.Name;
 
 import de.jplag.ParsingException;
+import de.jplag.Token;
 import de.jplag.TokenType;
-import de.jplag.semantics.SemanticToken;
 import de.jplag.semantics.TokenSemantics;
 import de.jplag.semantics.TokenSemanticsBuilder;
 import de.jplag.semantics.Variable;
@@ -84,8 +84,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     private static final Set<String> IMMUTABLES = Set.of(
             // from https://medium.com/@bpnorlander/java-understanding-primitive-types-and-wrapper-objects-a6798fb2afe9
-            "byte", "short", "int", "long", "float", "double", "boolean", "char", "Byte", "Short", "Integer", "Long", "Float", "Double", "Boolean",
-            "Character", "String");
+            "byte", "short", "int", "long", "float", "double", "boolean", "char", //
+            "Byte", "Short", "Integer", "Long", "Float", "Double", "Boolean", "Character", "String");
 
     enum NextOperation {
         NONE,
@@ -113,7 +113,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     }
 
     public void addToken(TokenType type, File file, long line, long column, long length, TokenSemantics semantics) {
-        parser.add(new SemanticToken(type, file, (int) line, (int) column, (int) length, semantics));
+        parser.add(new Token(type, file, (int) line, (int) column, (int) length, semantics));
     }
 
     /**
