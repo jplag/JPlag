@@ -124,4 +124,8 @@ public class Token {
     public TokenSemantics getSemantics() {
         return semantics;
     }
+
+    public String toString() {
+        return type.getDescription();
+    }
 }

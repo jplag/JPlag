@@ -309,10 +309,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitDoWhileLoop(DoWhileLoopTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().loopBegin().build();
+        semantics = new TokenSemanticsBuilder().control().loopBegin().build();
         addToken(JavaTokenType.J_DO_BEGIN, start, 2, semantics);
         scan(node.getStatement(), null);
-        semantics = new TokenSemanticsBuilder().loopEnd().build();
+        semantics = new TokenSemanticsBuilder().control().loopEnd().build();
         addToken(JavaTokenType.J_DO_END, end, 1, semantics);
         scan(node.getCondition(), semantics);
         return null;
@@ -322,11 +322,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitWhileLoop(WhileLoopTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().loopBegin().build();
+        semantics = new TokenSemanticsBuilder().control().loopBegin().build();
         addToken(JavaTokenType.J_WHILE_BEGIN, start, 5, semantics);
         scan(node.getCondition(), semantics);
         scan(node.getStatement(), null);
-        semantics = new TokenSemanticsBuilder().loopEnd().build();
+        semantics = new TokenSemanticsBuilder().control().loopEnd().build();
         addToken(JavaTokenType.J_WHILE_END, end, 1, semantics);
         return null;
     }
@@ -336,13 +336,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().loopBegin().build();
+        semantics = new TokenSemanticsBuilder().control().loopBegin().build();
         addToken(JavaTokenType.J_FOR_BEGIN, start, 3, semantics);
         scan(node.getInitializer(), semantics);
         scan(node.getCondition(), semantics);
         scan(node.getUpdate(), semantics);
         scan(node.getStatement(), null);
-        semantics = new TokenSemanticsBuilder().loopEnd().build();
+        semantics = new TokenSemanticsBuilder().control().loopEnd().build();
         addToken(JavaTokenType.J_FOR_END, end, 1, semantics);
         exitLocalScope();
         return null;
@@ -353,12 +353,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().loopBegin().build();
+        semantics = new TokenSemanticsBuilder().control().loopBegin().build();
         addToken(JavaTokenType.J_FOR_BEGIN, start, 3, semantics);
         scan(node.getVariable(), semantics);
         scan(node.getExpression(), semantics);
         scan(node.getStatement(), null);
-        semantics = new TokenSemanticsBuilder().loopEnd().build();
+        semantics = new TokenSemanticsBuilder().control().loopEnd().build();
         addToken(JavaTokenType.J_FOR_END, end, 1, semantics);
         exitLocalScope();
         return null;

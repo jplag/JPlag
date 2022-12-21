@@ -20,9 +20,6 @@ public class TokenSemanticsBuilder {
     }
 
     public TokenSemantics build() {
-        if (loopBegin && loopEnd) {
-            throw new IllegalStateException("Token can't mark both the beginning and end of a loop");
-        }
         return new TokenSemantics(critical, control, loopBegin, loopEnd, reads, writes);
     }
 
@@ -38,13 +35,11 @@ public class TokenSemanticsBuilder {
 
     public TokenSemanticsBuilder loopBegin() {
         this.loopBegin = true;
-        this.control = true;
         return this;
     }
 
     public TokenSemanticsBuilder loopEnd() {
         this.loopEnd = true;
-        this.control = true;
         return this;
     }
 }

@@ -38,6 +38,25 @@ public record TokenSemantics(boolean critical, boolean control, boolean loopBegi
         return Collections.unmodifiableSet(writes);
     }
 
+    public static TokenSemantics join(List<TokenSemantics> semanticsList) {
+        TokenSemanticsBuilder semanticsBuilder = new TokenSemanticsBuilder();
+        for (TokenSemantics semantics : semanticsList) {
+            if (semantics.critical)
+                semanticsBuilder.critical();
+            if (semantics.control)
+                semanticsBuilder.control();
+            if (semantics.loopBegin)
+                semanticsBuilder.loopBegin();
+            if (semantics.loopEnd)
+                semanticsBuilder.loopEnd();
+            for (Variable r : semantics.reads)
+                semantics.addRead(r);
+            for (Variable w : semantics.writes)
+                semantics.addWrite(w);
+        }
+        return semanticsBuilder.build();
+    }
+
     @Override
     public String toString() {
         List<String> properties = new LinkedList<>();
