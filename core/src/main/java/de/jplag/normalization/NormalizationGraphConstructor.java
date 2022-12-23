@@ -10,20 +10,22 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 
 import de.jplag.semantics.Variable;
 
-public class GraphConstructor {
+public class NormalizationGraphConstructor {
     private SimpleDirectedGraph<TokenGroup, Dependency> graph;
     private int loopCount;
     private Collection<TokenGroup> controlAffected;
     private TokenGroup lastControl;
+    private TokenGroup lastCritical;
     private Map<Variable, Collection<TokenGroup>> variableReads;
     private Map<Variable, Collection<TokenGroup>> variableWrites;
     private TokenGroup current;
 
-    public GraphConstructor(List<TokenGroup> tokenGroups) {
+    public NormalizationGraphConstructor(List<TokenGroup> tokenGroups) {
         graph = new SimpleDirectedGraph<>(Dependency.class);
         loopCount = 0;
         controlAffected = new LinkedList<>();
         lastControl = null;
+        lastCritical = null;
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         for (TokenGroup current : tokenGroups) {
@@ -31,8 +33,11 @@ public class GraphConstructor {
             this.current = current;
             processLoops();
             processControl();
+            processCritical();
             processReads();
             processWrites();
+            current.semantics().reads().forEach(r -> addVarToMap(r, variableReads));
+            current.semantics().writes().forEach(w -> addVarToMap(w, variableWrites));
         }
     }
 
@@ -41,33 +46,39 @@ public class GraphConstructor {
     }
 
     private void processLoops() {
-        if (current.semantics.loopBegin())
+        if (current.semantics().loopBegin())
             loopCount++;
-        if (current.semantics.loopEnd())
+        if (current.semantics().loopEnd())
             loopCount--;
     }
 
     private void processControl() {
-        if (current.semantics.control()) {
+        if (current.semantics().control()) {
             addCurrentEdges(controlAffected, DependencyType.CONTROL, null);
             controlAffected.clear();
             lastControl = current;
-        } else {
+        } else if (lastControl != null) {
             addCurrentEdge(lastControl, DependencyType.CONTROL, null);
         }
         controlAffected.add(current);
     }
 
+    private void processCritical() {
+        if (current.semantics().critical() && lastCritical != null) {
+            addCurrentEdge(lastCritical, DependencyType.CRITICAL, null);
+            lastCritical = current;
+        }
+    }
+
     private void processReads() {
-        for (Variable r : current.semantics.reads()) {
+        for (Variable r : current.semantics().reads()) {
             addCurrentEdgesVar(DependencyType.DATA, r, variableWrites);
-            addVarToMap(r, variableReads);
         }
     }
 
     private void processWrites() {
-        DependencyType writeToReadDependencyType = loopCount > 0 ? DependencyType.DATA : DependencyType.ORDER;
-        for (Variable w : current.semantics.writes()) {
+        DependencyType writeToReadDependencyType = loopCount > 0 ? DependencyType.DATA_THROUGH_LOOP : DependencyType.ORDER;
+        for (Variable w : current.semantics().writes()) {
             addCurrentEdgesVar(DependencyType.ORDER, w, variableWrites);
             addCurrentEdgesVar(writeToReadDependencyType, w, variableReads);
             addVarToMap(w, variableWrites);

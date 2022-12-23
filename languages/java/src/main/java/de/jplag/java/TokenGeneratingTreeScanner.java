@@ -153,12 +153,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
                 || (expressionTree.getKind() == Tree.Kind.MEMBER_SELECT && isOwnMemberSelect((MemberSelectTree) expressionTree));
     }
 
-    private boolean isNotExistingLocalVariable(ExpressionTree expressionTree) {
+    private boolean isNotExistingVariable(ExpressionTree expressionTree) {
         if (expressionTree.getKind() != Tree.Kind.IDENTIFIER) {
             return true;
         }
-        Name variableName = ((IdentifierTree) expressionTree).getName();
-        return !localVariables.containsKey(variableName);
+        Name name = ((IdentifierTree) expressionTree).getName();
+        return getVariable(name) == null;
     }
 
     private boolean isOwnMemberSelect(MemberSelectTree memberSelect) {
@@ -289,6 +289,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         addToken(JavaTokenType.J_METHOD_BEGIN, start, node.getName().length(), semantics);
         super.visitMethod(node, null);
         semantics = new TokenSemanticsBuilder().control().critical().build();
+        for (Variable mv : memberVariables.values()) {
+            semantics.addRead(mv);
+        }
         addToken(JavaTokenType.J_METHOD_END, end, 1, semantics);
         return null;
     }
@@ -550,7 +553,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitAssignment(AssignmentTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = conditionalCriticalSemantics(node.getVariable(), this::isNotExistingLocalVariable);
+        semantics = conditionalCriticalSemantics(node.getVariable(), this::isNotExistingVariable);
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
         nextOperation = NextOperation.WRITE;
         super.visitAssignment(node, semantics);
@@ -560,7 +563,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitCompoundAssignment(CompoundAssignmentTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = conditionalCriticalSemantics(node.getVariable(), this::isNotExistingLocalVariable);
+        semantics = conditionalCriticalSemantics(node.getVariable(), this::isNotExistingVariable);
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
         nextOperation = NextOperation.READ_WRITE;
         super.visitCompoundAssignment(node, semantics);
@@ -569,7 +572,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     @Override
     public Void visitUnary(UnaryTree node, TokenSemantics semantics) {
-        semantics = conditionalCriticalSemantics(node.getExpression(), this::isNotExistingLocalVariable);
+        semantics = conditionalCriticalSemantics(node.getExpression(), this::isNotExistingVariable);
         if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
