@@ -12,9 +12,4 @@ public record Variable(Name name, VariableId id) {
     public String toString() {
         return name + "[" + id + "]";
     }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
 }

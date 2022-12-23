@@ -623,6 +623,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitMethodInvocation(MethodInvocationTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         semantics = new TokenSemanticsBuilder().critical().control().build();
+        for (Variable mv : memberVariables.values()) {
+            semantics.addRead(mv);
+        }
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start, semantics);
         scan(node.getTypeArguments(), semantics);
         // to differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore), different namespace for variables and

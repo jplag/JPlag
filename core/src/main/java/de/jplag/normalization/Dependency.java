@@ -1,32 +1,20 @@
 package de.jplag.normalization;
 
-import java.util.Objects;
-
-import org.jgrapht.graph.DefaultEdge;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.jplag.semantics.Variable;
 
-public class Dependency extends DefaultEdge { // for optimization
-    private final DependencyType type;
-    private final Variable cause;
+// only purpose is debugging/explainability, edges could be anonymous otherwise
+// not a record because JGraphT wants unique edges and we don't...
+public class Dependency {
+    private Set<DependencyItem> items;
 
-    public Dependency(DependencyType type, Variable cause) {
-        this.type = type;
-        this.cause = cause;
+    public Dependency() {
+        items = new HashSet<>();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Dependency that = (Dependency) o;
-        return type == that.type && Objects.equals(cause, that.cause);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, cause, super.getSource(), super.getTarget());
+    public void addItem(DependencyType type, Variable cause) {
+        items.add(new DependencyItem(type, cause));
     }
 }

@@ -6,7 +6,7 @@ import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.DirectedMultigraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 
 import de.jplag.Token;
 
@@ -17,26 +17,12 @@ public class Normalizer {
 
     public static List<Token> normalize(List<Token> tokens) {
         List<TokenGroup> tokenGroups = TokenGroup.group(tokens);
-        List<TokenGroup> originalTokenGroups = new LinkedList<>(tokenGroups);
-        DirectedMultigraph<TokenGroup, Dependency> graph = constructGraph(tokenGroups);
+        SimpleDirectedGraph<TokenGroup, Dependency> graph = new GraphConstructor(tokenGroups).get();
         tokenGroups = linearizeGraph(graph);
-        assert tokenGroups.equals(originalTokenGroups);
         return TokenGroup.ungroup(tokenGroups);
     }
 
-    private static DirectedMultigraph<TokenGroup, Dependency> constructGraph(List<TokenGroup> tokenGroups) {
-        DirectedMultigraph<TokenGroup, Dependency> graph = new DirectedMultigraph<>(Dependency.class);
-        TokenGroup startGroup = tokenGroups.remove(0);
-        graph.addVertex(startGroup);
-        for (TokenGroup endGroup : tokenGroups) {
-            graph.addVertex(endGroup);
-            graph.addEdge(startGroup, endGroup, new Dependency(DependencyType.DATA, null));
-            startGroup = endGroup;
-        }
-        return graph;
-    }
-
-    private static List<TokenGroup> linearizeGraph(DirectedMultigraph<TokenGroup, Dependency> graph) {
+    private static List<TokenGroup> linearizeGraph(SimpleDirectedGraph<TokenGroup, Dependency> graph) {
         PriorityQueue<TokenGroup> roots = graph.vertexSet().stream() //
                 .filter(v -> !Graphs.vertexHasPredecessors(graph, v)) //
                 .collect(Collectors.toCollection(PriorityQueue::new));
@@ -47,7 +33,7 @@ public class Normalizer {
                 TokenGroup group = roots.poll();
                 tokenGroups.add(group);
                 for (TokenGroup successorGroup : Graphs.successorListOf(graph, group)) {
-                    graph.removeAllEdges(group, successorGroup);
+                    graph.removeEdge(group, successorGroup);
                     if (!Graphs.vertexHasPredecessors(graph, successorGroup)) {
                         newRoots.add(successorGroup);
                     }

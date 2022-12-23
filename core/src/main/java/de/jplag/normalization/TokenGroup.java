@@ -11,25 +11,26 @@ import de.jplag.semantics.TokenSemantics;
 public class TokenGroup implements Comparable<TokenGroup> {
 
     List<Token> tokens;
-    TokenSemantics joinedSemantics;
+    TokenSemantics semantics;
 
     public TokenGroup(List<Token> tokens) {
         this.tokens = Collections.unmodifiableList(tokens);
-        this.joinedSemantics = TokenSemantics.join(tokens.stream().map(Token::getSemantics).toList());
+        this.semantics = TokenSemantics.join(tokens.stream().map(Token::getSemantics).toList());
     }
 
     public static List<TokenGroup> group(List<Token> tokens) {
         List<TokenGroup> tokenGroups = new LinkedList<>();
         List<Token> groupTokens = new LinkedList<>();
-        int currentLine = 0;
+        int currentLine = tokens.get(0).getLine();
         for (Token t : tokens) {
-            groupTokens.add(t);
             if (t.getLine() != currentLine) {
                 currentLine = t.getLine();
                 tokenGroups.add(new TokenGroup(new LinkedList<>(groupTokens)));
                 groupTokens.clear();
             }
+            groupTokens.add(t);
         }
+        tokenGroups.add(new TokenGroup(new LinkedList<>(groupTokens)));
         return tokenGroups;
     }
 
