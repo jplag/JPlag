@@ -1,6 +1,7 @@
 package de.jplag.semantics;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +40,8 @@ public record TokenSemantics(boolean critical, boolean control, boolean loopBegi
     }
 
     public static TokenSemantics join(List<TokenSemantics> semanticsList) {
+        Set<Variable> reads = new HashSet<>();
+        Set<Variable> writes = new HashSet<>();
         TokenSemanticsBuilder semanticsBuilder = new TokenSemanticsBuilder();
         for (TokenSemantics semantics : semanticsList) {
             if (semantics.critical)
@@ -49,12 +52,15 @@ public record TokenSemantics(boolean critical, boolean control, boolean loopBegi
                 semanticsBuilder.loopBegin();
             if (semantics.loopEnd)
                 semanticsBuilder.loopEnd();
-            for (Variable r : semantics.reads)
-                semantics.addRead(r);
-            for (Variable w : semantics.writes)
-                semantics.addWrite(w);
+            reads.addAll(semantics.reads);
+            writes.addAll(semantics.writes);
         }
-        return semanticsBuilder.build();
+        TokenSemantics semantics = semanticsBuilder.build();
+        for (Variable r : reads)
+            semantics.addRead(r);
+        for (Variable w : writes)
+            semantics.addWrite(w);
+        return semantics;
     }
 
     @Override

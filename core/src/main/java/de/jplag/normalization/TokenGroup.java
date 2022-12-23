@@ -10,12 +10,36 @@ import de.jplag.semantics.TokenSemantics;
 
 public class TokenGroup implements Comparable<TokenGroup> {
 
-    List<Token> tokens;
-    TokenSemantics semantics;
+    private List<Token> tokens;
+    private int line;
+    private TokenSemantics semantics;
+    private boolean keep;
 
-    public TokenGroup(List<Token> tokens) {
+    public TokenGroup(List<Token> tokens, int line) {
         this.tokens = Collections.unmodifiableList(tokens);
+        this.line = line;
         this.semantics = TokenSemantics.join(tokens.stream().map(Token::getSemantics).toList());
+        this.keep = semantics.critical() || semantics.control();
+    }
+
+    public List<Token> tokens() {
+        return tokens;
+    }
+
+    public int line() {
+        return line;
+    }
+
+    public TokenSemantics semantics() {
+        return semantics;
+    }
+
+    public boolean keep() {
+        return keep;
+    }
+
+    public void markKeep() {
+        keep = true;
     }
 
     public static List<TokenGroup> group(List<Token> tokens) {
@@ -24,13 +48,13 @@ public class TokenGroup implements Comparable<TokenGroup> {
         int currentLine = tokens.get(0).getLine();
         for (Token t : tokens) {
             if (t.getLine() != currentLine) {
-                currentLine = t.getLine();
-                tokenGroups.add(new TokenGroup(new LinkedList<>(groupTokens)));
+                tokenGroups.add(new TokenGroup(new LinkedList<>(groupTokens), currentLine));
                 groupTokens.clear();
+                currentLine = t.getLine();
             }
             groupTokens.add(t);
         }
-        tokenGroups.add(new TokenGroup(new LinkedList<>(groupTokens)));
+        tokenGroups.add(new TokenGroup(new LinkedList<>(groupTokens), currentLine));
         return tokenGroups;
     }
 
@@ -59,6 +83,6 @@ public class TokenGroup implements Comparable<TokenGroup> {
 
     @Override
     public String toString() {
-        return String.join(" ", tokens.stream().map(Token::toString).toList());
+        return line + ": " + String.join(" ", tokens.stream().map(Token::toString).toList());
     }
 }
