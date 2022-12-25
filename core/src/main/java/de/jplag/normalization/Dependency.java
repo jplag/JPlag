@@ -6,25 +6,25 @@ import java.util.Set;
 import de.jplag.semantics.Variable;
 
 // not a record because JGraphT wants unique edges and we don't...
-public class Dependency {
+class Dependency {
     private Set<DependencyItem> items;
     private boolean isData;
     private boolean isDataThroughLoop;
 
-    public Dependency() {
+    Dependency() {
         items = new HashSet<>();
         isData = false;
     }
 
-    public boolean isData() {
+    boolean isData() {
         return isData;
     }
 
-    public boolean isDataThroughLoop() {
+    boolean isDataThroughLoop() {
         return isDataThroughLoop;
     }
 
-    public void addItem(DependencyType type, Variable cause) {
+    void addItem(DependencyType type, Variable cause) {
         if (type == DependencyType.DATA)
             isData = true;
         if (type == DependencyType.DATA_THROUGH_LOOP)

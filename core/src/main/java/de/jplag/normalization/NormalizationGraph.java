@@ -9,19 +9,21 @@ import java.util.stream.Collectors;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
+import de.jplag.Token;
+
 public class NormalizationGraph {
     private SimpleDirectedGraph<TokenGroup, Dependency> graph;
 
-    public NormalizationGraph(List<TokenGroup> tokenGroups) {
-        graph = new NormalizationGraphConstructor(tokenGroups).get();
+    public NormalizationGraph(List<Token> tokens) {
+        graph = new NormalizationGraphConstructor(tokens).get();
     }
 
-    public List<TokenGroup> linearize() {
+    public List<Token> linearize() {
         spreadKeep();
         PriorityQueue<TokenGroup> roots = graph.vertexSet().stream() //
                 .filter(v -> !Graphs.vertexHasPredecessors(graph, v)) //
                 .collect(Collectors.toCollection(PriorityQueue::new));
-        List<TokenGroup> tokenGroups = new LinkedList<>();
+        List<Token> tokens = new LinkedList<>();
         while (!roots.isEmpty()) {
             PriorityQueue<TokenGroup> newRoots = new PriorityQueue<>();
             do {
@@ -29,7 +31,7 @@ public class NormalizationGraph {
                 if (!group.keep()) {
                     System.out.println("removed " + group);
                 }
-                tokenGroups.add(group);
+                tokens.addAll(group.tokens());
                 for (TokenGroup successorGroup : Graphs.successorListOf(graph, group)) {
                     graph.removeEdge(group, successorGroup);
                     if (!Graphs.vertexHasPredecessors(graph, successorGroup)) {
@@ -39,8 +41,7 @@ public class NormalizationGraph {
             } while (!roots.isEmpty());
             roots = newRoots;
         }
-        assert tokenGroups.size() == graph.vertexSet().size();
-        return tokenGroups;
+        return tokens;
     }
 
     private void spreadKeep() {

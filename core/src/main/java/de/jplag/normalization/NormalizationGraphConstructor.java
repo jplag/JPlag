@@ -8,9 +8,10 @@ import java.util.Map;
 
 import org.jgrapht.graph.SimpleDirectedGraph;
 
+import de.jplag.Token;
 import de.jplag.semantics.Variable;
 
-public class NormalizationGraphConstructor {
+class NormalizationGraphConstructor {
     private SimpleDirectedGraph<TokenGroup, Dependency> graph;
     private int loopCount;
     private Collection<TokenGroup> controlAffected;
@@ -20,7 +21,7 @@ public class NormalizationGraphConstructor {
     private Map<Variable, Collection<TokenGroup>> variableWrites;
     private TokenGroup current;
 
-    public NormalizationGraphConstructor(List<TokenGroup> tokenGroups) {
+    NormalizationGraphConstructor(List<Token> tokens) {
         graph = new SimpleDirectedGraph<>(Dependency.class);
         loopCount = 0;
         controlAffected = new LinkedList<>();
@@ -28,20 +29,29 @@ public class NormalizationGraphConstructor {
         lastCritical = null;
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
-        for (TokenGroup current : tokenGroups) {
-            graph.addVertex(current);
-            this.current = current;
-            processLoops();
-            processControl();
-            processCritical();
-            processReads();
-            processWrites();
-            current.semantics().reads().forEach(r -> addVarToMap(r, variableReads));
-            current.semantics().writes().forEach(w -> addVarToMap(w, variableWrites));
+        List<Token> unitTokens = new LinkedList<>();
+        int currentLine = tokens.get(0).getLine();
+        for (Token token : tokens) {
+            if (token.getLine() != currentLine) { // if (tokenGroupEnd)
+                TokenGroup group = new TokenGroup(new LinkedList<>(unitTokens), currentLine);
+                graph.addVertex(group);
+                unitTokens.clear();
+                currentLine = token.getLine();
+                this.current = group;
+
+                processLoops();
+                processControl();
+                processCritical();
+                processReads();
+                processWrites();
+                current.semantics().reads().forEach(r -> addVarToMap(r, variableReads));
+                current.semantics().writes().forEach(w -> addVarToMap(w, variableWrites));
+            }
+            unitTokens.add(token);
         }
     }
 
-    public SimpleDirectedGraph<TokenGroup, Dependency> get() {
+    SimpleDirectedGraph<TokenGroup, Dependency> get() {
         return graph;
     }
 
