@@ -44,7 +44,7 @@ public enum CPPTokenType implements TokenType {
     C_QUESTIONMARK("COND"),
     C_ATTRIBUTE("ATTRIBUTE"),
     C_DEFAULT("DEFAULT"),
-    ;
+    C_APPLY("APPLY");
 
     private final String description;
 

@@ -88,7 +88,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
             parser.addEnter(CPPTokenType.C_SWITCH_BEGIN, ctx.getStart());
         } else if (ctx.If() != null) {
             parser.addEnter(CPPTokenType.C_IF_BEGIN, ctx.getStart());
-            // TODO this might be bad
+            // TODO this might be bad in terms of ordering
             if (ctx.Else() != null) {
                 parser.addEnter(CPPTokenType.C_ELSE, ctx.Else().getSymbol());
             }
@@ -149,7 +149,11 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void enterNewExpression(CPP14Parser.NewExpressionContext ctx) {
         // TODO NEWARRAY, ARRAYINIT
-        parser.addEnter(CPPTokenType.C_NEWCLASS, ctx.getStart());
+        if (ctx.newInitializer() == null) {
+            parser.addEnter(CPPTokenType.C_NEWARRAY, ctx.getStart());
+        } else {
+            parser.addEnter(CPPTokenType.C_NEWCLASS, ctx.getStart());
+        }
     }
 
     @Override
@@ -169,16 +173,33 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     @Override
     public void enterInitDeclarator(CPP14Parser.InitDeclaratorContext ctx) {
+        // TODO covers too much
+        // parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
+    }
+
+    @Override
+    public void enterMemberDeclarator(CPP14Parser.MemberDeclaratorContext ctx) {
+        // TODO start pos is variable name
+        parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
+    }
+
+    @Override
+    public void enterEnumeratorDefinition(CPP14Parser.EnumeratorDefinitionContext ctx) {
         parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
     }
 
     @Override
     public void enterConditionalExpression(CPP14Parser.ConditionalExpressionContext ctx) {
-        parser.addEnter(CPPTokenType.C_QUESTIONMARK, ctx.getStart());
+        if (ctx.Question() != null) {
+            parser.addEnter(CPPTokenType.C_QUESTIONMARK, ctx.getStart());
+        }
     }
 
     @Override
-    public void enterEveryRule(ParserRuleContext ctx) {
-        super.enterEveryRule(ctx);
+    public void enterPostfixExpression(CPP14Parser.PostfixExpressionContext ctx) {
+        // TODO this only covers foo->bar() and foo.bar()
+        if (ctx.LeftParen() != null) {
+            parser.addEnter(CPPTokenType.C_APPLY, ctx.getStart());
+        }
     }
 }
