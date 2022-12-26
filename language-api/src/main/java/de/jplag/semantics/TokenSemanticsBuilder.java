@@ -9,9 +9,8 @@ import java.util.Set;
 public class TokenSemanticsBuilder {
     private boolean critical;
     private boolean control;
-    private boolean blockBegin;
-    private boolean blockEnd;
-    private boolean blockIsLoop;
+    private boolean loopBegin;
+    private boolean loopEnd;
     private Set<Variable> reads;
     private Set<Variable> writes;
 
@@ -21,7 +20,7 @@ public class TokenSemanticsBuilder {
     }
 
     public TokenSemantics build() {
-        return new TokenSemantics(critical, control, blockBegin, blockEnd, blockIsLoop, reads, writes);
+        return new TokenSemantics(critical, control, loopBegin, loopEnd, reads, writes);
     }
 
     public TokenSemanticsBuilder critical() {
@@ -34,18 +33,13 @@ public class TokenSemanticsBuilder {
         return this;
     }
 
-    public TokenSemanticsBuilder blockBegin() {
-        this.blockBegin = true;
+    public TokenSemanticsBuilder loopBegin() {
+        this.loopBegin = true;
         return this;
     }
 
-    public TokenSemanticsBuilder blockEnd() {
-        this.blockEnd = true;
-        return this;
-    }
-
-    public TokenSemanticsBuilder blockIsLoop() {
-        this.blockIsLoop = true;
+    public TokenSemanticsBuilder loopEnd() {
+        this.loopEnd = true;
         return this;
     }
 }
