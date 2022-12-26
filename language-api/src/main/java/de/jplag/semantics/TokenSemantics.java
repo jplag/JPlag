@@ -10,12 +10,15 @@ import java.util.Set;
  * This record contains semantic information about the token.
  * @param critical Whether the token is critical, e.g. whether it (potentially) has any non-local effects.
  * @param control Whether the token controls the program flow.
- * @param loopBegin Whether the token marks the beginning of a loop.
- * @param loopEnd Whether the token marks the end of a loop
+ * @param blockBegin Whether the token marks the beginning of a block.
+ * @param blockEnd Whether the token marks the end of a block.
+ * @param blockIsLoop Whether the block is a loop (ignored if blockBegin is false).
  * @param reads A set of the variables which were (potentially) read from in this token.
  * @param writes A set of the variables which were (potentially) written to in this token.
  */
-public record TokenSemantics(boolean critical, boolean control, boolean loopBegin, boolean loopEnd, Set<Variable> reads, Set<Variable> writes) {
+public record TokenSemantics(boolean critical, boolean control,
+        boolean blockBegin, boolean blockEnd, boolean blockIsLoop,
+        Set<Variable> reads, Set<Variable> writes) {
 
     public void addRead(Variable read) {
         reads.add(read);
@@ -48,10 +51,12 @@ public record TokenSemantics(boolean critical, boolean control, boolean loopBegi
                 semanticsBuilder.critical();
             if (semantics.control)
                 semanticsBuilder.control();
-            if (semantics.loopBegin)
-                semanticsBuilder.loopBegin();
-            if (semantics.loopEnd)
-                semanticsBuilder.loopEnd();
+            if (semantics.blockBegin)
+                semanticsBuilder.blockBegin();
+            if (semantics.blockEnd)
+                semanticsBuilder.blockEnd();
+            if (semantics.blockIsLoop)
+                semanticsBuilder.blockIsLoop();
             reads.addAll(semantics.reads);
             writes.addAll(semantics.writes);
         }
@@ -70,10 +75,12 @@ public record TokenSemantics(boolean critical, boolean control, boolean loopBegi
             properties.add("critical");
         if (control)
             properties.add("control");
-        if (loopBegin)
-            properties.add("loop begin");
-        if (loopEnd)
-            properties.add("loop end");
+        if (blockBegin)
+            properties.add("block begin");
+        if (blockBegin)
+            properties.add("block end");
+        if (blockIsLoop)
+            properties.add("block is loop");
         if (!reads.isEmpty())
             properties.add("read " + String.join(" ", reads.stream().map(Variable::toString).toList()));
         if (!writes.isEmpty())
