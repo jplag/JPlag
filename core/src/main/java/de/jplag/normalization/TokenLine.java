@@ -7,16 +7,16 @@ import java.util.List;
 import de.jplag.Token;
 import de.jplag.semantics.TokenSemantics;
 
-class TokenGroup implements Comparable<TokenGroup> {
+class TokenLine implements Comparable<TokenLine> {
 
     private List<Token> tokens;
-    private int beginLine;
+    private int lineNumber;
     private TokenSemantics semantics;
     private boolean keep;
 
-    TokenGroup(List<Token> tokens, int beginLine) {
+    TokenLine(List<Token> tokens, int lineNumber) {
         this.tokens = Collections.unmodifiableList(tokens);
-        this.beginLine = beginLine;
+        this.lineNumber = lineNumber;
         this.semantics = TokenSemantics.join(tokens.stream().map(Token::getSemantics).toList());
         keep = semantics.critical() || semantics.control();
     }
@@ -42,7 +42,7 @@ class TokenGroup implements Comparable<TokenGroup> {
     }
 
     @Override
-    public int compareTo(TokenGroup other) {
+    public int compareTo(TokenLine other) {
         int sizeComp = Integer.compare(this.tokens.size(), other.tokens.size());
         if (sizeComp != 0)
             return -sizeComp; // bigger size should come first
@@ -58,6 +58,6 @@ class TokenGroup implements Comparable<TokenGroup> {
 
     @Override
     public String toString() {
-        return beginLine + ": " + String.join(" ", tokens.stream().map(Token::toString).toList());
+        return lineNumber + ": " + String.join(" ", tokens.stream().map(Token::toString).toList());
     }
 }

@@ -12,14 +12,14 @@ import de.jplag.Token;
 import de.jplag.semantics.Variable;
 
 class NormalizationGraphConstructor {
-    private SimpleDirectedGraph<TokenGroup, Dependency> graph;
+    private SimpleDirectedGraph<TokenLine, Dependency> graph;
     private int loopCount;
-    private Collection<TokenGroup> controlAffected;
-    private TokenGroup lastControl;
-    private TokenGroup lastCritical;
-    private Map<Variable, Collection<TokenGroup>> variableReads;
-    private Map<Variable, Collection<TokenGroup>> variableWrites;
-    private TokenGroup current;
+    private Collection<TokenLine> controlAffected;
+    private TokenLine lastControl;
+    private TokenLine lastCritical;
+    private Map<Variable, Collection<TokenLine>> variableReads;
+    private Map<Variable, Collection<TokenLine>> variableWrites;
+    private TokenLine current;
 
     NormalizationGraphConstructor(List<Token> tokens) {
         graph = new SimpleDirectedGraph<>(Dependency.class);
@@ -30,14 +30,14 @@ class NormalizationGraphConstructor {
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         List<Token> unitTokens = new LinkedList<>();
-        int currentLine = tokens.get(0).getLine();
+        int lineNumber = tokens.get(0).getLine();
         for (Token token : tokens) {
-            if (token.getLine() != currentLine) { // if (tokenGroupEnd)
-                TokenGroup group = new TokenGroup(new LinkedList<>(unitTokens), currentLine);
-                graph.addVertex(group);
+            if (token.getLine() != lineNumber) { // if (tokenGroupEnd)
+                TokenLine tokenLine = new TokenLine(new LinkedList<>(unitTokens), lineNumber);
+                graph.addVertex(tokenLine);
                 unitTokens.clear();
-                currentLine = token.getLine();
-                this.current = group;
+                lineNumber = token.getLine();
+                this.current = tokenLine;
 
                 processLoops();
                 processControl();
@@ -51,7 +51,7 @@ class NormalizationGraphConstructor {
         }
     }
 
-    SimpleDirectedGraph<TokenGroup, Dependency> get() {
+    SimpleDirectedGraph<TokenLine, Dependency> get() {
         return graph;
     }
 
@@ -95,15 +95,15 @@ class NormalizationGraphConstructor {
         }
     }
 
-    private void addCurrentEdgesVar(DependencyType type, Variable var, Map<Variable, Collection<TokenGroup>> varMap) {
+    private void addCurrentEdgesVar(DependencyType type, Variable var, Map<Variable, Collection<TokenLine>> varMap) {
         addCurrentEdges(varMap.getOrDefault(var, new LinkedList<>()), type, var);
     }
 
-    private void addCurrentEdges(Collection<TokenGroup> starts, DependencyType type, Variable cause) {
+    private void addCurrentEdges(Collection<TokenLine> starts, DependencyType type, Variable cause) {
         starts.forEach(s -> addCurrentEdge(s, type, cause));
     }
 
-    private void addCurrentEdge(TokenGroup start, DependencyType type, Variable cause) {
+    private void addCurrentEdge(TokenLine start, DependencyType type, Variable cause) {
         Dependency dependency = graph.getEdge(start, current);
         if (dependency == null) {
             dependency = new Dependency();
@@ -112,7 +112,7 @@ class NormalizationGraphConstructor {
         dependency.addItem(type, cause);
     }
 
-    private void addVarToMap(Variable var, Map<Variable, Collection<TokenGroup>> varMap) {
+    private void addVarToMap(Variable var, Map<Variable, Collection<TokenLine>> varMap) {
         varMap.putIfAbsent(var, new LinkedList<>());
         varMap.get(var).add(current);
     }

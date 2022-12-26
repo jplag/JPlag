@@ -197,15 +197,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     @Override
     public Void visitBlock(BlockTree node, TokenSemantics semantics) {
-        // classes are an obvious exception since members are treated differently
-        Set<Tree.Kind> classKinds = Set.of(Tree.Kind.ENUM, Tree.Kind.INTERFACE, Tree.Kind.RECORD, Tree.Kind.ANNOTATION_TYPE, Tree.Kind.CLASS);
-        boolean isClass = classKinds.contains(node.getKind());
-        // for loops are also an exception since a scope can be induced without a block visit (without brackets)
-        boolean isForLoop = Set.of(Tree.Kind.FOR_LOOP, Tree.Kind.ENHANCED_FOR_LOOP).contains(node.getKind());
-        // methods and catches are also an exception since variables can be declared before the block begins
-        if (!(isClass || isForLoop || Set.of(Tree.Kind.METHOD, Tree.Kind.CATCH).contains(node.getKind()))) {
-            enterLocalScope();
-        }
+        // kind of weird since in the case of for loops and catches, two scopes are introduced
+        // but I'm pretty sure that's how Java does it internally as well
+        enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         semantics = new TokenSemanticsBuilder().control().build();
@@ -213,9 +207,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         super.visitBlock(node, null);
         semantics = new TokenSemanticsBuilder().control().build();
         addToken(JavaTokenType.J_INIT_END, end, 1, semantics);
-        if (!(isClass || isForLoop)) {
-            exitLocalScope();
-        }
+        exitLocalScope();
         return null;
     }
 
@@ -244,7 +236,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         } else if (node.getKind() == Tree.Kind.CLASS) {
             addToken(JavaTokenType.J_CLASS_BEGIN, start, 5, semantics);
         }
-        super.visitClass(node, null);
+        scan(node.getModifiers(), semantics);
+        scan(node.getTypeParameters(), semantics);
+        scan(node.getExtendsClause(), semantics);
+        scan(node.getImplementsClause(), semantics);
+        scan(node.getPermitsClause(), semantics);
+        scan(node.getMembers(), null);
 
         JavaTokenType tokenType = switch (node.getKind()) {
             case ENUM -> JavaTokenType.J_ENUM_END;
@@ -287,12 +284,19 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         long end = positions.getEndPosition(ast, node) - 1;
         semantics = new TokenSemanticsBuilder().control().critical().build();
         addToken(JavaTokenType.J_METHOD_BEGIN, start, node.getName().length(), semantics);
-        super.visitMethod(node, null);
+        scan(node.getModifiers(), semantics);
+        scan(node.getReturnType(), semantics);
+        scan(node.getTypeParameters(), semantics);
+        scan(node.getParameters(), semantics);
+        scan(node.getReceiverParameter(), semantics);
+        scan(node.getThrows(), semantics);
+        scan(node.getBody(), null);
         semantics = new TokenSemanticsBuilder().control().critical().build();
         for (Variable mv : memberVariables.values()) {
             semantics.addRead(mv);
         }
         addToken(JavaTokenType.J_METHOD_END, end, 1, semantics);
+        exitLocalScope();
         return null;
     }
 
@@ -438,6 +442,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         super.visitCatch(node, null); // can leave this since catch parameter is variable declaration and thus always generates a token
         semantics = new TokenSemanticsBuilder().control().build();
         addToken(JavaTokenType.J_CATCH_END, end, 1, semantics);
+        exitLocalScope();
         return null;
     }
 
