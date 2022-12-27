@@ -163,7 +163,15 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     @Override
     public void enterAssignmentOperator(CPP14Parser.AssignmentOperatorContext ctx) {
+        // does not cover ++, --, this is done via UnaryExpressionContext and PostfixExpressionContext
         parser.addEnter(CPPTokenType.C_ASSIGN, ctx.getStart());
+    }
+
+    @Override
+    public void enterUnaryExpression(CPP14Parser.UnaryExpressionContext ctx) {
+        if (ctx.PlusPlus() != null || ctx.MinusMinus() != null) {
+            parser.addEnter(CPPTokenType.C_ASSIGN, ctx.getStart());
+        }
     }
 
     @Override
@@ -200,6 +208,13 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         // TODO this only covers foo->bar() and foo.bar()
         if (ctx.LeftParen() != null) {
             parser.addEnter(CPPTokenType.C_APPLY, ctx.getStart());
+        } else if (ctx.PlusPlus() != null || ctx.MinusMinus() != null) {
+            parser.addEnter(CPPTokenType.C_ASSIGN, ctx.getStart());
         }
+    }
+
+    @Override
+    public void enterEveryRule(ParserRuleContext ctx) {
+        super.enterEveryRule(ctx);
     }
 }
