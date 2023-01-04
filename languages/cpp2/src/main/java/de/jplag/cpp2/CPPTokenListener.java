@@ -88,7 +88,6 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
             parser.addEnter(CPPTokenType.C_SWITCH_BEGIN, ctx.getStart());
         } else if (ctx.If() != null) {
             parser.addEnter(CPPTokenType.C_IF_BEGIN, ctx.getStart());
-            // TODO this might be bad in terms of ordering
             if (ctx.Else() != null) {
                 parser.addEnter(CPPTokenType.C_ELSE, ctx.Else().getSymbol());
             }
@@ -164,7 +163,15 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void enterAssignmentOperator(CPP14Parser.AssignmentOperatorContext ctx) {
         // does not cover ++, --, this is done via UnaryExpressionContext and PostfixExpressionContext
+        // does not cover all =, this is done via BraceOrEqualInitializerContext
         parser.addEnter(CPPTokenType.C_ASSIGN, ctx.getStart());
+    }
+
+    @Override
+    public void enterBraceOrEqualInitializer(CPP14Parser.BraceOrEqualInitializerContext ctx) {
+        if (ctx.Assign() != null) {
+            parser.addEnter(CPPTokenType.C_ASSIGN, ctx.getStart());
+        }
     }
 
     @Override
@@ -177,12 +184,6 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void enterStaticAssertDeclaration(CPP14Parser.StaticAssertDeclarationContext ctx) {
         parser.addEnter(CPPTokenType.C_STATIC_ASSERT, ctx.getStart());
-    }
-
-    @Override
-    public void enterInitDeclarator(CPP14Parser.InitDeclaratorContext ctx) {
-        // TODO covers too much
-        // parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
     }
 
     @Override

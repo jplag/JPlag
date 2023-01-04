@@ -99,6 +99,7 @@ class LanguageTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
+            "i = 10",
             "i += 10",
             "i -= 10",
             "i += 10",
@@ -156,6 +157,24 @@ class LanguageTest {
                         continue;
                     }
                     return;
+                }
+                """);
+        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+    }
+    @Test
+    void testIfElse(@TempDir Path path) {
+        TokenResult result = extractFromString(path, """
+                void f(int a, int b) {
+                    int x = 0;
+                    int y = 1;
+                    if (a < b) {
+                        x = 5;
+                    } else if (a > b) {
+                        y = 10;
+                        x = y + b;
+                    } else {
+                        y = -20;
+                    }
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
