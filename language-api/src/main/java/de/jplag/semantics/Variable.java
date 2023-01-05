@@ -1,10 +1,8 @@
 package de.jplag.semantics;
 
-import javax.lang.model.element.Name;
+public record Variable(String name, VariableId id) {
 
-public record Variable(Name name, VariableId id) {
-
-    public Variable(Name name) {
+    public Variable(String name) {
         this(name, new VariableId());
     }
 
