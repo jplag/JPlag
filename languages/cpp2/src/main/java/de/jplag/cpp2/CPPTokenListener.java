@@ -4,6 +4,8 @@ import de.jplag.cpp2.grammar.CPP14Parser;
 import de.jplag.cpp2.grammar.CPP14ParserBaseListener;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.Set;
+
 public class CPPTokenListener extends CPP14ParserBaseListener {
 
     private final Parser parser;
@@ -187,14 +189,39 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     }
 
     @Override
-    public void enterMemberDeclarator(CPP14Parser.MemberDeclaratorContext ctx) {
-        // TODO start pos is variable name
+    public void enterEnumeratorDefinition(CPP14Parser.EnumeratorDefinitionContext ctx) {
         parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
     }
 
     @Override
-    public void enterEnumeratorDefinition(CPP14Parser.EnumeratorDefinitionContext ctx) {
-        parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
+    public void enterSimpleDeclaration(CPP14Parser.SimpleDeclarationContext ctx) {
+        super.enterSimpleDeclaration(ctx);
+    }
+
+    @Override
+    public void enterTypeSpecifier(CPP14Parser.TypeSpecifierContext ctx) {
+        super.enterTypeSpecifier(ctx);
+    }
+
+    @Override
+    public void enterSimpleTypeSpecifier(CPP14Parser.SimpleTypeSpecifierContext ctx) {
+        if (hasIndirectParent(ctx, CPP14Parser.MemberdeclarationContext.class, CPP14Parser.FunctionDefinitionContext.class)) {
+            parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
+        } else if (hasIndirectParent(ctx, CPP14Parser.SimpleDeclarationContext.class, CPP14Parser.TemplateArgumentContext.class, CPP14Parser.FunctionDefinitionContext.class)) {
+            // part of a SimpleDeclaration without being part of
+            //  - a TemplateArgument (vector<HERE> v)
+            //  - a FunctionDefinition (return type, parameters)
+            //  first.
+            CPP14Parser.SimpleDeclarationContext parent = getIndirectParent(ctx, CPP14Parser.SimpleDeclarationContext.class);
+            assert parent != null; // already checked by hasIndirectParent
+            if (parent.getText().contains("(")) { // TODO do not depend on text
+                // method calls like A::b()
+                parser.addEnter(CPPTokenType.C_APPLY, parent.getStart());
+            } else if (!hasIndirectParent(ctx, CPP14Parser.NewTypeIdContext.class)) {
+                // 'new <Type>' does not declare a new variable
+                parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
+            }
+        }
     }
 
     @Override
@@ -207,6 +234,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void enterPostfixExpression(CPP14Parser.PostfixExpressionContext ctx) {
         // TODO this only covers foo->bar() and foo.bar()
+        // Foo::bar() is handled in SimpleTypeSpecifierContext
         if (ctx.LeftParen() != null) {
             parser.addEnter(CPPTokenType.C_APPLY, ctx.getStart());
         } else if (ctx.PlusPlus() != null || ctx.MinusMinus() != null) {
@@ -217,5 +245,29 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void enterEveryRule(ParserRuleContext ctx) {
         super.enterEveryRule(ctx);
+    }
+
+    @SafeVarargs
+    private <T extends ParserRuleContext> T getIndirectParent(ParserRuleContext ctx, Class<T> parent, Class<? extends ParserRuleContext>... stops) {
+        ParserRuleContext currentCtx = ctx;
+        Set<Class<? extends ParserRuleContext>> forbidden = Set.of(stops);
+        do {
+            ParserRuleContext context = currentCtx.getParent();
+            if (context == null) {
+                return null;
+            }
+            if (context.getClass() == parent) {
+                return parent.cast(context);
+            }
+            if (forbidden.contains(context.getClass())) {
+                return null;
+            }
+            currentCtx = context;
+        } while (true);
+    }
+
+    @SafeVarargs
+    private boolean hasIndirectParent(ParserRuleContext ctx, Class<? extends ParserRuleContext> parent, Class<? extends ParserRuleContext>... stops) {
+        return getIndirectParent(ctx, parent, stops) != null;
     }
 }

@@ -131,10 +131,10 @@ class LanguageTest {
     void testFunctionCall(@TempDir Path path) {
         TokenResult result = extractFromString(path, """
                 void f() {
-                    funCall();
-                    a.funCall();
                     b->funCall();
                     C::funCall();
+                    funCall();
+                    a.funCall();
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
@@ -161,6 +161,7 @@ class LanguageTest {
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
     }
+
     @Test
     void testIfElse(@TempDir Path path) {
         TokenResult result = extractFromString(path, """
@@ -175,6 +176,47 @@ class LanguageTest {
                     } else {
                         y = -20;
                     }
+                }
+                """);
+        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+    }
+
+    @Test
+    void testSimple(@TempDir Path path) {
+        TokenResult result = extractFromString(path, """
+                double* b = new double[10];
+                """);
+        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+    }
+
+    @Test
+    void varDefs(@TempDir Path path) {
+        TokenResult result = extractFromString(path, """
+                #include <string>
+                #include <iostream>
+                #include <vector>
+                using namespace std;
+                                
+                class Hello {
+                                
+                    int test;
+                                
+                    public:
+                    void say() {
+                        vector<string> hellos {"World"};
+                        int i = 0;
+                        while (i < hellos.size()) {
+                            cout << "Hello " + hellos[i];
+                            i++;
+                        }
+                        test = 3;
+                    }
+                };
+                                
+                int main() {
+                    Hello hello;
+                    hello.say();
+                    return 0;
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
