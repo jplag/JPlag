@@ -23,9 +23,15 @@ public class TokenSemanticsBuilder {
         return new TokenSemantics(critical, control, loopBegin, loopEnd, reads, writes);
     }
 
-    public TokenSemanticsBuilder critical() {
-        this.critical = true;
+    public TokenSemanticsBuilder critical(boolean condition) {
+        if (condition) {
+            this.critical = true;
+        }
         return this;
+    }
+
+    public TokenSemanticsBuilder critical() {
+        return critical(true);
     }
 
     public TokenSemanticsBuilder control() {

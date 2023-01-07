@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 import javax.lang.model.element.Name;
 
@@ -487,18 +486,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         return null;
     }
 
-    private TokenSemantics conditionalCriticalSemantics(ExpressionTree expressionTree, Function<ExpressionTree, Boolean> conditional) {
-        TokenSemanticsBuilder semanticsBuilder = new TokenSemanticsBuilder();
-        if (conditional.apply(expressionTree)) {
-            semanticsBuilder.critical();
-        }
-        return semanticsBuilder.build();
-    }
-
     @Override
     public Void visitAssignment(AssignmentTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = conditionalCriticalSemantics(node.getVariable(), this::isNotExistingVariable);
+        boolean criticalCondition = isNotExistingVariable(node.getVariable());
+        semantics = new TokenSemanticsBuilder().critical(criticalCondition).build();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
         variableHelper.setNextOperation(VariableHelper.NextOperation.WRITE);
         super.visitAssignment(node, semantics);
@@ -508,7 +500,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitCompoundAssignment(CompoundAssignmentTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = conditionalCriticalSemantics(node.getVariable(), this::isNotExistingVariable);
+        boolean criticalCondition = isNotExistingVariable(node.getVariable());
+        semantics = new TokenSemanticsBuilder().critical(criticalCondition).build();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
         variableHelper.setNextOperation(VariableHelper.NextOperation.READ_WRITE);
         super.visitCompoundAssignment(node, semantics);
@@ -517,7 +510,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     @Override
     public Void visitUnary(UnaryTree node, TokenSemantics semantics) {
-        semantics = conditionalCriticalSemantics(node.getExpression(), this::isNotExistingVariable);
+        boolean criticalCondition = isNotExistingVariable(node.getExpression());
+        semantics = new TokenSemanticsBuilder().critical(criticalCondition).build();
         if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
@@ -542,7 +536,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         long start = positions.getStartPosition(ast, node);
         // member variable defs are critical
         boolean inLocalScope = variableHelper.inLocalScope();
-        semantics = conditionalCriticalSemantics(node.getNameExpression(), n -> !inLocalScope);
+        semantics = new TokenSemanticsBuilder().critical(!inLocalScope).build();
 
         if (inLocalScope) {
             String name = node.getName().toString();
