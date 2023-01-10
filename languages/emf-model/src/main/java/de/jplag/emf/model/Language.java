@@ -12,6 +12,7 @@ import de.jplag.emf.model.parser.DynamicModelParser;
  */
 public class Language extends de.jplag.emf.dynamic.Language {
     private static final String NAME = "EMF models (dynamically created token set)";
+    public static final String VIEW_FILE_SUFFIX = ".treeview";
 
     public Language() {
         super(new DynamicModelParser());
@@ -25,6 +26,11 @@ public class Language extends de.jplag.emf.dynamic.Language {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String viewFileSuffix() {
+        return VIEW_FILE_SUFFIX;
     }
 
     @Override
