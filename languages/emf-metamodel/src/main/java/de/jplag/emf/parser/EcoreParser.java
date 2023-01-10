@@ -15,17 +15,17 @@ import de.jplag.emf.Language;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.MetamodelTokenType;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
+import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
 import de.jplag.emf.util.EmfaticModelView;
 
 /**
  * Parser for EMF metamodels.
- * @author Timur Saglam
  */
 public class EcoreParser extends AbstractParser {
     protected List<Token> tokens;
     protected File currentFile;
-    protected EmfaticModelView treeView;
+    protected AbstractModelView treeView;
     protected AbstractMetamodelVisitor visitor;
 
     /**
@@ -58,7 +58,7 @@ public class EcoreParser extends AbstractParser {
         if (model == null) {
             throw new ParsingException(file, "failed to load model");
         } else {
-            treeView = new EmfaticModelView(file, model);
+            treeView = createView(file, model);
             for (EObject root : model.getContents()) {
                 visitor = createMetamodelVisitor();
                 visitor.visit(root);
@@ -66,6 +66,15 @@ public class EcoreParser extends AbstractParser {
             tokens.add(Token.fileEnd(currentFile));
             treeView.writeToFile(Language.VIEW_FILE_SUFFIX);
         }
+    }
+
+    /**
+     * Creates the model view. Can be overriden in subclasses for alternative views.
+     * @param file is the path for the view file to be created.
+     * @param modelResource is the resource containing the metamodel.
+     */
+    protected AbstractModelView createView(File file, Resource modelResource) {
+        return new EmfaticModelView(file, modelResource);
     }
 
     /**

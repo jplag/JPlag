@@ -12,11 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
+import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
+import de.jplag.emf.util.MetamodelTreeView;
 
 /**
  * Parser for EMF metamodels based on dynamically created tokens.
- * @author Timur Saglam
  */
 public class DynamicModelParser extends DynamicEcoreParser {
     private static final Logger logger = LoggerFactory.getLogger(DynamicModelParser.class.getSimpleName());
@@ -41,6 +42,11 @@ public class DynamicModelParser extends DynamicEcoreParser {
             }
             super.parseModelFile(file);
         }
+    }
+
+    @Override
+    protected AbstractModelView createView(File file, Resource modelResource) {
+        return new MetamodelTreeView(file, modelResource);
     }
 
     private void parseMetamodelFile(File file) throws ParsingException {
