@@ -19,7 +19,7 @@ public abstract class AbstractModelView {
     protected final Logger logger;
     protected final StringBuilder viewBuilder;
 
-    public AbstractModelView(File file) {
+    protected AbstractModelView(File file) {
         this.file = file;
         logger = LoggerFactory.getLogger(this.getClass());
         viewBuilder = new StringBuilder();

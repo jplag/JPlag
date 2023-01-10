@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
@@ -39,10 +40,11 @@ public class MetamodelTreeView extends AbstractModelView {
      */
     @Override
     public MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token) {
-        if (token.getEObject().isPresent()) {
-            EObject object = token.getEObject().get();
+        Optional<EObject> optionalEObject = token.getEObject();
+        if (optionalEObject.isPresent()) {
+            EObject object = optionalEObject.get();
             TokenTrace trace = objectToLine.get(object);
-            return new MetamodelToken(token.getType(), token.getFile(), trace, token.getEObject());
+            return new MetamodelToken(token.getType(), token.getFile(), trace, optionalEObject);
         }
         return new MetamodelToken(token.getType(), token.getFile());
     }

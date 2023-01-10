@@ -40,9 +40,7 @@ public class Language extends de.jplag.emf.dynamic.Language {
 
     @Override
     public List<File> customizeSubmissionOrder(List<File> submissions) {
-        submissions.sort((File first, File second) -> {
-            return Boolean.compare(second.getName().endsWith(FILE_ENDING), first.getName().endsWith(FILE_ENDING));
-        });
+        submissions.sort((File first, File second) -> Boolean.compare(second.getName().endsWith(FILE_ENDING), first.getName().endsWith(FILE_ENDING)));
         return submissions;
     }
 }
