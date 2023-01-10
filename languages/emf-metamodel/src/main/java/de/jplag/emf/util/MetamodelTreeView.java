@@ -36,7 +36,6 @@ public class MetamodelTreeView extends AbstractModelView {
      * Adds a token to the view, thus adding the index information to the token. Returns a new token enriched with the index
      * metadata.
      * @param token is the token to add.
-     * @param treeDepth is the current containment tree depth, required for the indentation.
      */
     @Override
     public MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token) {

@@ -69,9 +69,10 @@ public class EcoreParser extends AbstractParser {
     }
 
     /**
-     * Creates the model view. Can be overriden in subclasses for alternative views.
+     * Creates a model view. Can be overriden in subclasses for alternative views.
      * @param file is the path for the view file to be created.
      * @param modelResource is the resource containing the metamodel.
+     * @return the view implementation.
      */
     protected AbstractModelView createView(File file, Resource modelResource) {
         return new EmfaticModelView(file, modelResource);
