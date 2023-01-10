@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ import de.jplag.TokenPrinter;
 import de.jplag.testutils.FileUtil;
 
 class MinimalModelInstanceTest {
-    private final Logger logger = LoggerFactory.getLogger("JPlag-Test");
+    private final Logger logger = LoggerFactory.getLogger(MinimalModelInstanceTest.class);
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "books");
     private static final String[] TEST_SUBJECTS = {"bookStore.ecore", "bookStore.xml", "bookStore2.xml"};
@@ -40,6 +41,7 @@ class MinimalModelInstanceTest {
     }
 
     @Test
+    @DisplayName("Test tokens extracted from generated example instances")
     void testBookStoreInstances() {
         File baseFile = new File(BASE_PATH.toString());
         List<File> baseFiles = new ArrayList<>(Arrays.asList(baseFile.listFiles()));
@@ -48,7 +50,7 @@ class MinimalModelInstanceTest {
             List<Token> tokens = frontend.parse(sortedFiles);
             assertNotEquals(0, tokens.size());
             logger.debug(TokenPrinter.printTokens(tokens, baseDirectory, Optional.of(de.jplag.emf.Language.VIEW_FILE_SUFFIX)));
-            logger.info("Parsed tokens: " + tokens.toString());
+            logger.info("Parsed tokens: " + tokens);
             assertEquals(7, tokens.size());
         } catch (ParsingException e) {
             fail("Parsing failed: " + e.getMessage(), e);
