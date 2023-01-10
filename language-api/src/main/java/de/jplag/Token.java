@@ -52,6 +52,16 @@ public class Token {
     }
 
     /**
+     * Creates a token with column and length information.
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param trace is the tracing information of the token, meaning line, column, and length.
+     */
+    public Token(TokenType type, File file, TokenTrace trace) {
+        this(type, file, trace.line(), trace.column(), trace.length());
+    }
+
+    /**
      * Returns the character index which denotes where the code sections represented by this token starts in the line.
      * @return the character index in the line.
      */
