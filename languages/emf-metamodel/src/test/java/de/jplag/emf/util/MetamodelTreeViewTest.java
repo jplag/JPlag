@@ -5,16 +5,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.emf.ecore.resource.Resource;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import de.jplag.emf.AbstractEmfTest;
-import de.jplag.emf.Language;
+import de.jplag.testutils.FileUtil;
 
-class EmfaticModelViewTest extends AbstractEmfTest {
+class MetamodelTreeViewTest extends AbstractEmfTest {
 
-    private static final String EXPECTED_VIEW_FOLDER = "emfatic";
+    private static final String VIEW_FILE_SUFFIX = ".treeview";
+    private static final String EXPECTED_VIEW_FOLDER = "treeview";
 
     private static List<String> provideModelNames() {
         return Arrays.asList(TEST_SUBJECTS);
@@ -29,11 +31,17 @@ class EmfaticModelViewTest extends AbstractEmfTest {
         Resource modelResource = loadAndVerifyModel(modelFile);
 
         // Generate emfatic view:
-        EmfaticModelView view = new EmfaticModelView(modelFile, modelResource);
-        view.writeToFile(Language.VIEW_FILE_SUFFIX);
+        MetamodelTreeView view = new MetamodelTreeView(modelFile, modelResource);
+        view.writeToFile(VIEW_FILE_SUFFIX);
 
         // Compare expected vs. actual view file:
-        compareViewFiles(modelFile, Language.VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
-
+        compareViewFiles(modelFile, VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
     }
+
+    @AfterEach
+    @Override
+    protected void tearDown() {
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), VIEW_FILE_SUFFIX);
+    }
+
 }
