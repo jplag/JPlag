@@ -3,7 +3,7 @@
 -->
 <template>
   <div
-    :id="panelId.toString().concat(title).concat(fileIndex.toString())"
+    :id="panelId.toString().concat(filePath).concat(fileIndex.toString())"
     class="code-panel-container"
   >
     <div class="file-title mover">
@@ -29,7 +29,7 @@
       <div v-if="!isEmpty(lines)" class="code-container">
         <LineOfCode
           v-for="(line, index) in lines"
-          :id="String(panelId).concat(title).concat(index)"
+          :id="String(panelId).concat(filePath).concat(index+1)"
           :key="index"
           :color="coloringArray[index]"
           :is-first="isFirst[index]"
@@ -63,6 +63,12 @@ export default defineComponent({
   name: "CodePanel",
   components: { LineOfCode },
   props: {
+    /**
+     * Path of the displayed file.
+     */
+    filePath: {
+      type: String
+    },
     /**
      * Title of the displayed file.
      */
