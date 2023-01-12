@@ -30,12 +30,12 @@ class MinimalModelInstanceTest {
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "books");
     private static final String[] TEST_SUBJECTS = {"bookStore.ecore", "bookStore.xml", "bookStore2.xml"};
 
-    private Language frontend;
+    private Language language;
     private File baseDirectory;
 
     @BeforeEach
     public void setUp() {
-        frontend = new Language();
+        language = new Language();
         baseDirectory = BASE_PATH.toFile();
         FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }
@@ -45,9 +45,9 @@ class MinimalModelInstanceTest {
     void testBookStoreInstances() {
         File baseFile = new File(BASE_PATH.toString());
         List<File> baseFiles = new ArrayList<>(Arrays.asList(baseFile.listFiles()));
-        var sortedFiles = new TreeSet<>(frontend.customizeSubmissionOrder(baseFiles));
+        var sortedFiles = new TreeSet<>(language.customizeSubmissionOrder(baseFiles));
         try {
-            List<Token> tokens = frontend.parse(sortedFiles);
+            List<Token> tokens = language.parse(sortedFiles);
             assertNotEquals(0, tokens.size());
             logger.debug(TokenPrinter.printTokens(tokens, baseDirectory, Optional.of(de.jplag.emf.Language.VIEW_FILE_SUFFIX)));
             logger.info("Parsed tokens: " + tokens);

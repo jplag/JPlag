@@ -35,7 +35,7 @@ class MetamodelTreeViewTest extends AbstractEmfTest {
         view.writeToFile(VIEW_FILE_SUFFIX);
 
         // Compare expected vs. actual view file:
-        compareViewFiles(modelFile, VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
+        assertViewFilesMatch(modelFile, VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
     }
 
     @AfterEach

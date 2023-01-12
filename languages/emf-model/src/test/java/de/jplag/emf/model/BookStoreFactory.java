@@ -32,7 +32,7 @@ public class BookStoreFactory {
         BookStoreFactory.createMetamodelAndModelInstance(filePath);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     private static void createMetamodelAndModelInstance(String baseBath) {
         /*
          * Create metamodel:
@@ -92,7 +92,7 @@ public class BookStoreFactory {
 
         bookStoreObject.eSet(bookStoreOwner, "David Brown");
         bookStoreObject.eSet(bookStoreLocation, "Street#12, Top Town, NY");
-        ((List) bookStoreObject.eGet(bookStore_Books)).add(bookObject);
+        ((List<Object>) bookStoreObject.eGet(bookStore_Books)).add(bookObject);
 
         bookObject.eSet(bookName, "Harry Potter and the Deathly Hallows");
         bookObject.eSet(bookISBN, 157221);

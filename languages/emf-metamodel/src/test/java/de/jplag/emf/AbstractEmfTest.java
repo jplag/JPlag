@@ -63,7 +63,7 @@ public abstract class AbstractEmfTest {
      * @param viewFileSuffix is the suffix of the view file.
      * @param directoryOfExpectedViews is the name of the folder where the expected view files are located.
      */
-    protected void compareViewFiles(File modelFile, String viewFileSuffix, String directoryOfExpectedViews) {
+    protected void assertViewFilesMatch(File modelFile, String viewFileSuffix, String directoryOfExpectedViews) {
         File viewFile = new File(modelFile.getPath() + viewFileSuffix);
         assertTrue(viewFile.exists());
         File expectedViewFile = BASE_PATH.resolveSibling(Path.of(directoryOfExpectedViews, viewFile.getName())).toFile();

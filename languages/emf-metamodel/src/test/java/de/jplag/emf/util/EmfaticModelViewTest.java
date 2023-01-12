@@ -33,7 +33,6 @@ class EmfaticModelViewTest extends AbstractEmfTest {
         view.writeToFile(Language.VIEW_FILE_SUFFIX);
 
         // Compare expected vs. actual view file:
-        compareViewFiles(modelFile, Language.VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
-
+        assertViewFilesMatch(modelFile, Language.VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
     }
 }
