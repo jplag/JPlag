@@ -3,41 +3,43 @@
 -->
 <template>
   <div
-    :id="panelId.toString().concat(filePath).concat(fileIndex.toString())"
-    class="code-panel-container"
+      :id="panelId.toString().concat(filePath).concat(fileIndex.toString())"
+      class="code-panel-container"
   >
     <div class="file-title mover">
-      <p style="width: 90%">{{ title }}</p>
+      <p style="width: 90%">
+        <hand class="filer-header">{{ title }}</hand>
+      </p>
       <button
-        class="collapse-button"
-        style="width: 10%"
-        @click="$emit('toggleCollapse')"
+          class="collapse-button"
+          style="width: 10%"
+          @click="$emit('toggleCollapse')"
       >
         <img
-          v-if="collapse"
-          alt="hide info"
-          src="../assets/keyboard_double_arrow_up_black_18dp.svg"
+            v-if="collapse"
+            alt="hide info"
+            src="../assets/keyboard_double_arrow_up_black_18dp.svg"
         />
         <img
-          v-else
-          alt="additional info"
-          src="../assets/keyboard_double_arrow_down_black_18dp.svg"
+            v-else
+            alt="additional info"
+            src="../assets/keyboard_double_arrow_down_black_18dp.svg"
         />
       </button>
     </div>
     <div :class="{ hidden: !collapse }">
       <div v-if="!isEmpty(lines)" class="code-container">
         <LineOfCode
-          v-for="(line, index) in lines"
-          :id="String(panelId).concat(filePath).concat(index+1)"
-          :key="index"
-          :color="coloringArray[index]"
-          :is-first="isFirst[index]"
-          :is-last="isLast[index]"
-          :line-number="index + 1"
-          :text="line"
-          :visible="collapse"
-          @click="
+            v-for="(line, index) in lines"
+            :id="String(panelId).concat(filePath).concat(index+1)"
+            :key="index"
+            :color="coloringArray[index]"
+            :is-first="isFirst[index]"
+            :is-last="isLast[index]"
+            :line-number="index + 1"
+            :text="line"
+            :visible="collapse"
+            @click="
             $emit(
               'lineSelected',
               $event,
@@ -56,12 +58,12 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import {defineComponent, ref} from "vue";
 import LineOfCode from "./LineOfCode";
 
 export default defineComponent({
   name: "CodePanel",
-  components: { LineOfCode },
+  components: {LineOfCode},
   props: {
     /**
      * Path of the displayed file.
@@ -158,16 +160,16 @@ export default defineComponent({
     props.matches.forEach((m) => {
       for (let i = m.start; i <= m.end; i++) {
         //assign match color to line
-        coloringArray.value[i-1] = m.color;
+        coloringArray.value[i - 1] = m.color;
         //assign link object to line.
-        linksArray.value[i-1] = {
+        linksArray.value[i - 1] = {
           panel: m.linked_panel,
           file: m.linked_file,
           line: m.linked_line,
         };
       }
-      isFirst.value[m.start-1] = true;
-      isLast.value[m.end-1] = true;
+      isFirst.value[m.start - 1] = true;
+      isLast.value[m.end - 1] = true;
     });
     //assign default values for all line which are not contained in matches
     for (let i = 0; i < props.lines.length; i++) {
@@ -211,6 +213,10 @@ export default defineComponent({
   color: var(--on-primary-color);
   font-weight: bold;
   font-size: large;
+}
+
+.filer-header{
+  cursor: grab;
 }
 
 .code-container {
