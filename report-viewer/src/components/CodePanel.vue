@@ -3,43 +3,43 @@
 -->
 <template>
   <div
-      :id="panelId.toString().concat(filePath).concat(fileIndex.toString())"
-      class="code-panel-container"
+    :id="panelId.toString().concat(filePath).concat(fileIndex.toString())"
+    class="code-panel-container"
   >
     <div class="file-title mover">
       <p style="width: 90%">
         <hand class="filer-header">{{ title }}</hand>
       </p>
       <button
-          class="collapse-button"
-          style="width: 10%"
-          @click="$emit('toggleCollapse')"
+        class="collapse-button"
+        style="width: 10%"
+        @click="$emit('toggleCollapse')"
       >
         <img
-            v-if="collapse"
-            alt="hide info"
-            src="../assets/keyboard_double_arrow_up_black_18dp.svg"
+          v-if="collapse"
+          alt="hide info"
+          src="../assets/keyboard_double_arrow_up_black_18dp.svg"
         />
         <img
-            v-else
-            alt="additional info"
-            src="../assets/keyboard_double_arrow_down_black_18dp.svg"
+          v-else
+          alt="additional info"
+          src="../assets/keyboard_double_arrow_down_black_18dp.svg"
         />
       </button>
     </div>
     <div :class="{ hidden: !collapse }">
       <div v-if="!isEmpty(lines)" class="code-container">
         <LineOfCode
-            v-for="(line, index) in lines"
-            :id="String(panelId).concat(filePath).concat(index+1)"
-            :key="index"
-            :color="coloringArray[index]"
-            :is-first="isFirst[index]"
-            :is-last="isLast[index]"
-            :line-number="index + 1"
-            :text="line"
-            :visible="collapse"
-            @click="
+          v-for="(line, index) in lines"
+          :id="String(panelId).concat(filePath).concat(index+1)"
+          :key="index"
+          :color="coloringArray[index]"
+          :is-first="isFirst[index]"
+          :is-last="isLast[index]"
+          :line-number="index + 1"
+          :text="line"
+          :visible="collapse"
+          @click="
             $emit(
               'lineSelected',
               $event,
