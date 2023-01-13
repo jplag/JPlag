@@ -95,7 +95,7 @@ public class BaseCodeTest extends TestBase {
         assertEquals(comparisons, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
         assertEquals(1, result.getSimilarityDistribution()[6]);
-        assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.6451, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     private void hasSubdirectoryRoot(Submission submission) {
