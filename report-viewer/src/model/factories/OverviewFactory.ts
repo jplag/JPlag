@@ -8,7 +8,7 @@ import versionJson from "../../version.json";
 
 export class OverviewFactory {
 
-  static reportViewerVersion: Version = JSON.parse(JSON.stringify(versionJson["report_viewer_version"]));
+  static reportViewerVersion: Version = versionJson["report_viewer_version"] !== undefined ? JSON.parse(JSON.stringify(versionJson["report_viewer_version"])) : {major: -1, minor: -1, patch: -1};
 
   static getOverview(json: Record<string, unknown>): Overview {
     const versionField = json.jplag_version as Record<string, number>;
@@ -86,8 +86,11 @@ export class OverviewFactory {
       if (jsonVersion.major !== reportViewerVersion.major ||
           jsonVersion.minor !== reportViewerVersion.minor ||
           jsonVersion.patch !== reportViewerVersion.patch) {
+        if(reportViewerVersion.major === -1 && reportViewerVersion.minor === -1 && reportViewerVersion.patch === -1){
+          console.warn("The report viewer's version cannot be read from version.json file. Please configure it correctly.");
+        }
         if (jsonVersion.major === 0 && jsonVersion.minor === 0 && jsonVersion.patch === 0) {
-          alert("You are using develop version(0.0.0).");
+          alert("The development version(0.0.0) of JPlag is used.");
         } else {
           console.warn("The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful.");
           alert("The result's version(" + jsonVersion.major + "." + jsonVersion.minor + "." + jsonVersion.patch + ") tag does not fit the report viewer's version(" + reportViewerVersion.major + "." + reportViewerVersion.minor + "." + reportViewerVersion.patch + "). " +
