@@ -333,9 +333,10 @@ hr {
 
 .shownInfo_st{
   position: sticky;
-  top:99%;
+  top:50%;
+  left:25%;
   width: 200%;
-  transform: translate(-43%,-0%);
+  transform: translate(-37.5%,-50%);
 }
 
 #logo {
