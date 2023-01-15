@@ -106,11 +106,18 @@ export class ComparisonFactory {
 
   private static generateColorsForMatches(num: number): Array<string> {
     const colors = [];
-    const hueDelta = Math.trunc(360 / num);
-
-    for (let i = 0; i < num; i++) {
-      const hue = i * hueDelta;
-
+    const firstInterval = 60; // [20,80]
+    const secondInterval = 180; // [160,340]
+    const numberInFirstInterval = Math.round(0.25 * num); // number of colors from the first interval
+    const numberInSecondInterval = num - numberInFirstInterval; // number of colors from the second interval
+    const hueFirstDelta = Math.trunc(firstInterval / numberInFirstInterval);
+    const hueSecondDelta = Math.trunc(secondInterval / numberInSecondInterval);
+    for (let i = 0; i < numberInFirstInterval; i++) {
+      const hue = 20 + i * hueFirstDelta;
+      colors.push(`hsla(${hue}, 80%, 50%, 0.3)`);
+    }
+    for (let i = 0; i < numberInSecondInterval; i++) {
+      const hue = 160 + i * hueSecondDelta;
       colors.push(`hsla(${hue}, 80%, 50%, 0.3)`);
     }
     return colors;
