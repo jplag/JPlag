@@ -163,6 +163,9 @@ public class ReportObjectFactory {
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionDirectory().getName() : "";
         ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
+
+        int totalComparisons = result.getAllComparisons().size();
+        int numberOfComparisons= result.getOptions().maximumNumberOfComparisons();
         OverviewReport overviewReport = new OverviewReport(REPORT_VIEWER_VERSION, folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
                 result.getOptions().language().getName(), // language
@@ -175,7 +178,10 @@ public class ReportObjectFactory {
                 getDate(),// dateOfExecution
                 result.getDuration(), // executionTime
                 getMetrics(result),// metrics
-                clusteringResultMapper.map(result)); // clusters
+                clusteringResultMapper.map(result), // clusters
+                totalComparisons, // totalComparisons
+                totalComparisons > numberOfComparisons ? numberOfComparisons : totalComparisons, // shownComparisons
+                totalComparisons > numberOfComparisons ? (totalComparisons-numberOfComparisons) : 0); // missingComparisons
 
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 

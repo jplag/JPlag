@@ -31,6 +31,9 @@ export class OverviewFactory {
     const duration = json.execution_time as number as number;
     const metrics = [] as Array<Metric>;
     const clusters = [] as Array<Cluster>;
+    const totalComparisons= json.total_comparisons as number//json.total_comparisons as number;
+    const shownComparisons= json.shown_comparisons as number//json.shown_comparisons as number;
+    const missingComparisons= json.missing_comparisons as number//json.missing_comparisons as number;
     (json.metrics as Array<unknown>).forEach((jsonMetric) => {
       const metric = jsonMetric as Record<string, unknown>;
       const comparisons = [] as Array<ComparisonListElement>;
@@ -77,6 +80,9 @@ export class OverviewFactory {
       duration,
       metrics,
       clusters,
+      totalComparisons,
+      shownComparisons,
+      missingComparisons,
       new Map()
     );
   }
