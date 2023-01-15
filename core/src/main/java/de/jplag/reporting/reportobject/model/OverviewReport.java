@@ -39,5 +39,5 @@ public record OverviewReport(
 
         @JsonProperty("shown_comparisons") int shownComparisons,
 
-        @JsonProperty("missing_comparisons") int missingComparisons){
+        @JsonProperty("missing_comparisons") int missingComparisons) {
 }
