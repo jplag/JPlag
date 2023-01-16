@@ -182,9 +182,17 @@ class LanguageTest {
     }
 
     @Test
-    void testSimple(@TempDir Path path) {
+    void testDoubleArrayDeclaration(@TempDir Path path) {
         TokenResult result = extractFromString(path, """
                 double* b = new double[10];
+                """);
+        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+    }
+
+    @Test
+    void testDeclaratorList(@TempDir Path path) {
+        TokenResult result = extractFromString(path, """
+                int x, y = 1, z;
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
     }

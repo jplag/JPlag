@@ -194,23 +194,13 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     }
 
     @Override
-    public void enterSimpleDeclaration(CPP14Parser.SimpleDeclarationContext ctx) {
-        super.enterSimpleDeclaration(ctx);
-    }
-
-    @Override
-    public void enterTypeSpecifier(CPP14Parser.TypeSpecifierContext ctx) {
-        super.enterTypeSpecifier(ctx);
-    }
-
-    @Override
     public void enterSimpleTypeSpecifier(CPP14Parser.SimpleTypeSpecifierContext ctx) {
         if (hasIndirectParent(ctx, CPP14Parser.MemberdeclarationContext.class, CPP14Parser.FunctionDefinitionContext.class)) {
             parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
         } else if (hasIndirectParent(ctx, CPP14Parser.SimpleDeclarationContext.class, CPP14Parser.TemplateArgumentContext.class, CPP14Parser.FunctionDefinitionContext.class)) {
             // part of a SimpleDeclaration without being part of
             //  - a TemplateArgument (vector<HERE> v)
-            //  - a FunctionDefinition (return type, parameters)
+            //  - a FunctionDefinition (return type, parameters) (parameters are extracted in enterParameterDeclaration as VARDEF)
             //  first.
             CPP14Parser.SimpleDeclarationContext parent = getIndirectParent(ctx, CPP14Parser.SimpleDeclarationContext.class);
             assert parent != null; // already checked by hasIndirectParent
@@ -222,6 +212,11 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
                 parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
             }
         }
+    }
+
+    @Override
+    public void enterParameterDeclaration(CPP14Parser.ParameterDeclarationContext ctx) {
+        parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
     }
 
     @Override
