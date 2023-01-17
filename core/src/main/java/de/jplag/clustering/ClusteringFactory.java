@@ -70,7 +70,9 @@ public class ClusteringFactory {
 
     private static void logCluster(Cluster<Submission> cluster) {
         String members = membersToString(cluster.getMembers());
-        logger.info(CLUSTER_PATTERN, cluster.getAverageSimilarity(), cluster.getCommunityStrength(), cluster.getMembers().size(), members);
+        String similarity = String.format("%,.1f%%", cluster.getAverageSimilarity() * 100);
+        String strength = String.format("%,.5f", cluster.getCommunityStrength());
+        logger.info(CLUSTER_PATTERN, similarity, strength, cluster.getMembers().size(), members);
     }
 
     private static String membersToString(Collection<Submission> members) {
