@@ -17,10 +17,17 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
  * Runs the clustering according to an options object.
  */
 public class ClusteringFactory {
-    private static final String CLUSTER_PATTERN = " cluster strength: {}, avg similarity: {}%, members: {}";
+    private static final int MAX_LOGGED_MEMBERS = 5;
+    private static final String STRENGTH_FORMAT = "%,.5f";
+    private static final String SIMILARITY_FORMAT = "%,.1f%%";
+    private static final String CLOSING_BRACKET = "]";
+    private static final String DOTS = "...";
+
+    private static final String CLUSTER_PATTERN = "avg similarity: {}, strength: {}, {} members: {}";
     private static final String CLUSTERING_RESULT = "{} clusters were found:";
     private static final String CLUSTERING_PARAMETERS = "Calculating clusters via {} clustering with {} pre-processing...";
     private static final String CLUSTERING_DISABLED = "Cluster calculation disabled (as requested)!";
+
     private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
 
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
@@ -62,8 +69,22 @@ public class ClusteringFactory {
 
     private static void logClusters(ClusteringResult<Submission> result) {
         var clusters = new ArrayList<>(result.getClusters());
-        clusters.sort((first, second) -> Double.compare(second.getCommunityStrength(), first.getCommunityStrength()));
+        clusters.sort((first, second) -> Double.compare(second.getAverageSimilarity(), first.getAverageSimilarity()));
         logger.info(CLUSTERING_RESULT, clusters.size());
-        clusters.forEach(it -> logger.info(CLUSTER_PATTERN, it.getCommunityStrength(), it.getAverageSimilarity(), it.getMembers()));
+        clusters.forEach(ClusteringFactory::logCluster);
+    }
+
+    private static void logCluster(Cluster<Submission> cluster) {
+        String members = membersToString(cluster.getMembers());
+        String similarity = String.format(SIMILARITY_FORMAT, cluster.getAverageSimilarity() * 100);
+        String strength = String.format(STRENGTH_FORMAT, cluster.getCommunityStrength());
+        logger.info(CLUSTER_PATTERN, similarity, strength, cluster.getMembers().size(), members);
+    }
+
+    private static String membersToString(Collection<Submission> members) {
+        if (members.size() > MAX_LOGGED_MEMBERS) {
+            return List.copyOf(members).subList(0, MAX_LOGGED_MEMBERS).toString().replace(CLOSING_BRACKET, DOTS);
+        }
+        return members.toString();
     }
 }
