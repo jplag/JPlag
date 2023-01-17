@@ -17,6 +17,7 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
  * Runs the clustering according to an options object.
  */
 public class ClusteringFactory {
+    private static final int LOGGED_MEMBERS = 5;
     private static final String CLUSTER_PATTERN = "avg similarity: {}, strength: {}, {} members: {}";
     private static final String CLUSTERING_RESULT = "{} clusters were found:";
     private static final String CLUSTERING_PARAMETERS = "Calculating clusters via {} clustering with {} pre-processing...";
@@ -64,7 +65,18 @@ public class ClusteringFactory {
         var clusters = new ArrayList<>(result.getClusters());
         clusters.sort((first, second) -> Double.compare(second.getAverageSimilarity(), first.getAverageSimilarity()));
         logger.info(CLUSTERING_RESULT, clusters.size());
-        clusters.forEach(
-                it -> logger.info(CLUSTER_PATTERN, it.getAverageSimilarity(), it.getCommunityStrength(), it.getMembers().size(), it.getMembers()));
+        clusters.forEach(ClusteringFactory::logCluster);
+    }
+
+    private static void logCluster(Cluster<Submission> cluster) {
+        String members = membersToString(cluster.getMembers());
+        logger.info(CLUSTER_PATTERN, cluster.getAverageSimilarity(), cluster.getCommunityStrength(), cluster.getMembers().size(), members);
+    }
+
+    private static String membersToString(Collection<Submission> members) {
+        if (members.size() > LOGGED_MEMBERS) {
+            return List.copyOf(members).subList(0, LOGGED_MEMBERS).toString().replace("]", "...");
+        }
+        return members.toString();
     }
 }
