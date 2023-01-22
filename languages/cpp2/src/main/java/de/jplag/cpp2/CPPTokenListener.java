@@ -241,13 +241,30 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     @Override
     public void enterPostfixExpression(CPP14Parser.PostfixExpressionContext ctx) {
-        // TODO this only covers foo->bar() and foo.bar()
         // Foo::bar() is handled in SimpleTypeSpecifierContext
         if (ctx.LeftParen() != null) {
             parser.addEnter(CPPTokenType.C_APPLY, ctx.getStart());
         } else if (ctx.PlusPlus() != null || ctx.MinusMinus() != null) {
             parser.addEnter(CPPTokenType.C_ASSIGN, ctx.getStart());
         }
+    }
+
+    private <T extends ParserRuleContext> T getIndirectChild(ParserRuleContext ctx, Class<T> child) {
+        // simple iterative bfs
+        ArrayDeque<ParserRuleContext> queue = new ArrayDeque<>();
+        queue.add(ctx);
+        while (!queue.isEmpty()) {
+            ParserRuleContext context = queue.removeFirst();
+            for (ParseTree tree : context.children) {
+                if (tree.getClass() == child) {
+                    return child.cast(tree);
+                }
+                if (tree instanceof ParserRuleContext prc) {
+                    queue.addLast(prc);
+                }
+            }
+        }
+        return null;
     }
 
     @SafeVarargs
@@ -267,24 +284,6 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
             }
             currentCtx = context;
         } while (true);
-    }
-
-    private <T extends ParserRuleContext> T getIndirectChild(ParserRuleContext ctx, Class<T> child) {
-        // simple iterative bfs
-        ArrayDeque<ParserRuleContext> queue = new ArrayDeque<>();
-        queue.add(ctx);
-        while (!queue.isEmpty()) {
-            ParserRuleContext context = queue.removeFirst();
-            for (ParseTree tree : context.children) {
-                if (tree.getClass() == child) {
-                    return child.cast(tree);
-                }
-                if (tree instanceof ParserRuleContext prc) {
-                    queue.addLast(prc);
-                }
-            }
-        }
-        return null;
     }
 
     @SafeVarargs

@@ -1,8 +1,10 @@
 package de.jplag.cpp2;
 
 import de.jplag.ParsingException;
+import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
+import de.jplag.TokenType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -98,23 +100,8 @@ class LanguageTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "i = 10",
-            "i += 10",
-            "i -= 10",
-            "i += 10",
-            "i /= 10",
-            "i %= 10",
-            "i >>= 10",
-            "i <<= 10",
-            "i &= 10",
-            "i ^= 10",
-            "i |= 10",
-            "i++",
-            "i--",
-            "++i",
-            "--i",
-    })
+    @ValueSource(strings = {"i = 10", "i += 10", "i -= 10", "i += 10", "i /= 10", "i %= 10", "i >>= 10", "i <<= 10", "i &= 10", "i ^= 10", "i |= 10",
+            "i++", "i--", "++i", "--i",})
     void testAssign(String expr, @TempDir Path path) {
         String function = """
                 void f(int i) {
@@ -122,8 +109,7 @@ class LanguageTest {
                 }
                 """.formatted(expr);
         List<Token> all = extractFromString(path, function).tokens();
-        List<Token> assignTokens = all.stream()
-                .filter(token -> token.getType() == CPPTokenType.C_ASSIGN).toList();
+        List<Token> assignTokens = all.stream().filter(token -> token.getType() == CPPTokenType.C_ASSIGN).toList();
         assertEquals(1, assignTokens.size());
     }
 
@@ -198,6 +184,27 @@ class LanguageTest {
     }
 
     @Test
+    void testFunctionCallInAssignmentOutsideFunction(@TempDir Path path) {
+        TokenResult result = extractFromString(path, """
+                int x = square(2);
+                """);
+        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+        assertTokenTypes(result.tokens(), CPPTokenType.C_VARDEF, CPPTokenType.C_ASSIGN, CPPTokenType.C_APPLY);
+    }
+
+    @Test
+    void testFunctionCallInAssignmentInsideClassOutsideFunction(@TempDir Path path) {
+        TokenResult result = extractFromString(path, """
+                class A {
+                    int x = square(3);
+                };
+                """);
+        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+        assertTokenTypes(result.tokens(), CPPTokenType.C_CLASS_BEGIN, CPPTokenType.C_VARDEF, CPPTokenType.C_ASSIGN, CPPTokenType.C_APPLY,
+                CPPTokenType.C_CLASS_END);
+    }
+
+    @Test
     void varDefs(@TempDir Path path) {
         TokenResult result = extractFromString(path, """
                 #include <string>
@@ -230,6 +237,17 @@ class LanguageTest {
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
     }
 
+    static void assertTokenTypes(List<Token> tokens, TokenType... types) {
+        for (int i = 0; i < tokens.size(); i++) {
+            Token token = tokens.get(i);
+            if (token.getType() == SharedTokenType.FILE_END) {
+                assertEquals(i, types.length);
+                return;
+            }
+            assertEquals(types[i], token.getType(), "Unexpected token at index " + i);
+        }
+    }
+
     TokenResult extractFromString(@TempDir Path path, String content) {
         Path filePath = path.resolve("content.cpp");
         try {
@@ -246,5 +264,7 @@ class LanguageTest {
         }
         return new TokenResult(tokens, filePath.toFile());
     }
-    record TokenResult(List<Token> tokens, File file) {}
+
+    record TokenResult(List<Token> tokens, File file) {
+    }
 }
