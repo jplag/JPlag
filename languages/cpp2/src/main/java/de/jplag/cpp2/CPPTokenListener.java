@@ -3,7 +3,9 @@ package de.jplag.cpp2;
 import de.jplag.cpp2.grammar.CPP14Parser;
 import de.jplag.cpp2.grammar.CPP14ParserBaseListener;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.util.ArrayDeque;
 import java.util.Set;
 
 public class CPPTokenListener extends CPP14ParserBaseListener {
@@ -204,13 +206,24 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
             //  first.
             CPP14Parser.SimpleDeclarationContext parent = getIndirectParent(ctx, CPP14Parser.SimpleDeclarationContext.class);
             assert parent != null; // already checked by hasIndirectParent
-            if (parent.getText().contains("(")) { // TODO do not depend on text
-                // method calls like A::b()
-                parser.addEnter(CPPTokenType.C_APPLY, parent.getStart());
-            } else if (!hasIndirectParent(ctx, CPP14Parser.NewTypeIdContext.class)) {
+            CPP14Parser.NoPointerDeclaratorContext noPointerDecl = getIndirectChild(parent, CPP14Parser.NoPointerDeclaratorContext.class);
+            if ((noPointerDecl == null || noPointerDecl.parametersAndQualifiers() == null) && !hasIndirectParent(ctx, CPP14Parser.NewTypeIdContext.class)) {
                 // 'new <Type>' does not declare a new variable
                 parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
             }
+        }
+    }
+
+    @Override
+    public void enterSimpleDeclaration(CPP14Parser.SimpleDeclarationContext ctx) {
+        if (!hasIndirectParent(ctx, CPP14Parser.FunctionBodyContext.class)) {
+            // not in a context where a function call can appear, assume it's a function definition
+            return;
+        }
+        CPP14Parser.NoPointerDeclaratorContext noPointerDecl = getIndirectChild(ctx, CPP14Parser.NoPointerDeclaratorContext.class);
+        if (noPointerDecl != null && noPointerDecl.parametersAndQualifiers() != null) {
+            // method calls like A::b(), b()
+            parser.addEnter(CPPTokenType.C_APPLY, noPointerDecl.getStart());
         }
     }
 
@@ -237,11 +250,6 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         }
     }
 
-    @Override
-    public void enterEveryRule(ParserRuleContext ctx) {
-        super.enterEveryRule(ctx);
-    }
-
     @SafeVarargs
     private <T extends ParserRuleContext> T getIndirectParent(ParserRuleContext ctx, Class<T> parent, Class<? extends ParserRuleContext>... stops) {
         ParserRuleContext currentCtx = ctx;
@@ -259,6 +267,24 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
             }
             currentCtx = context;
         } while (true);
+    }
+
+    private <T extends ParserRuleContext> T getIndirectChild(ParserRuleContext ctx, Class<T> child) {
+        // simple iterative bfs
+        ArrayDeque<ParserRuleContext> queue = new ArrayDeque<>();
+        queue.add(ctx);
+        while (!queue.isEmpty()) {
+            ParserRuleContext context = queue.removeFirst();
+            for (ParseTree tree : context.children) {
+                if (tree.getClass() == child) {
+                    return child.cast(tree);
+                }
+                if (tree instanceof ParserRuleContext prc) {
+                    queue.addLast(prc);
+                }
+            }
+        }
+        return null;
     }
 
     @SafeVarargs
