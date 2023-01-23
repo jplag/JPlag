@@ -207,7 +207,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
             CPP14Parser.SimpleDeclarationContext parent = getIndirectParent(ctx, CPP14Parser.SimpleDeclarationContext.class);
             assert parent != null; // already checked by hasIndirectParent
             CPP14Parser.NoPointerDeclaratorContext noPointerDecl = getIndirectChild(parent, CPP14Parser.NoPointerDeclaratorContext.class);
-            if ((noPointerDecl == null || noPointerDecl.parametersAndQualifiers() == null) && !hasIndirectParent(ctx, CPP14Parser.NewTypeIdContext.class)) {
+            if ((!noPointerInFunctionCallContext(noPointerDecl)) && !hasIndirectParent(ctx, CPP14Parser.NewTypeIdContext.class)) {
                 // 'new <Type>' does not declare a new variable
                 parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
             }
@@ -221,10 +221,14 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
             return;
         }
         CPP14Parser.NoPointerDeclaratorContext noPointerDecl = getIndirectChild(ctx, CPP14Parser.NoPointerDeclaratorContext.class);
-        if (noPointerDecl != null && noPointerDecl.parametersAndQualifiers() != null) {
+        if (noPointerInFunctionCallContext(noPointerDecl)) {
             // method calls like A::b(), b()
             parser.addEnter(CPPTokenType.C_APPLY, noPointerDecl.getStart());
         }
+    }
+
+    private static boolean noPointerInFunctionCallContext(CPP14Parser.NoPointerDeclaratorContext ctx) {
+        return ctx != null && (ctx.parametersAndQualifiers() != null || ctx.LeftParen() != null);
     }
 
     @Override

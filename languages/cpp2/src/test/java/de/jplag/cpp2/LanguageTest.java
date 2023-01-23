@@ -124,6 +124,8 @@ class LanguageTest {
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+        assertTokenTypes(result.tokens(), CPPTokenType.C_FUNCTION_BEGIN, CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_APPLY, CPPTokenType.C_APPLY,
+                CPPTokenType.C_APPLY, CPPTokenType.C_APPLY, CPPTokenType.C_BLOCK_END, CPPTokenType.C_FUNCTION_END);
     }
 
     @Test
@@ -146,6 +148,25 @@ class LanguageTest {
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+        assertTokenTypes(result.tokens(), CPPTokenType.C_FUNCTION_BEGIN, CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_DO_BEGIN,
+                CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_GOTO, CPPTokenType.C_BLOCK_END, CPPTokenType.C_DO_END, CPPTokenType.C_WHILE_BEGIN,
+                CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_BREAK, CPPTokenType.C_BLOCK_END, CPPTokenType.C_WHILE_END, CPPTokenType.C_FOR_BEGIN,
+                CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_CONTINUE, CPPTokenType.C_BLOCK_END, CPPTokenType.C_FOR_END, CPPTokenType.C_RETURN,
+                CPPTokenType.C_BLOCK_END, CPPTokenType.C_FUNCTION_END);
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"this->myMethod(v)", "MyClass::myMethod(v)", "myMethod(v)", "m.myMethod(v)"})
+    void testFunctionCalls(String expression, @TempDir Path path) {
+        TokenResult result = extractFromString(path, """
+                void a(string v) {
+                  %s;
+                }
+                """.formatted(expression));
+        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+        assertTokenTypes(result.tokens(), CPPTokenType.C_FUNCTION_BEGIN, CPPTokenType.C_VARDEF, CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_APPLY,
+                CPPTokenType.C_BLOCK_END, CPPTokenType.C_FUNCTION_END);
     }
 
     @Test
