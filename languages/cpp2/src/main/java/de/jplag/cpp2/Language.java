@@ -6,11 +6,9 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.Experimental;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@Experimental
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
     private static final String IDENTIFIER = "cpp2";
