@@ -249,7 +249,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     @Override
     public void enterPostfixExpression(CPP14Parser.PostfixExpressionContext ctx) {
-        // Foo::bar() is handled in SimpleTypeSpecifierContext
+        // additional function calls are handled in SimpleDeclarationContext
         if (ctx.LeftParen() != null) {
             parser.addEnter(CPPTokenType.C_APPLY, ctx.getStart());
         } else if (ctx.PlusPlus() != null || ctx.MinusMinus() != null) {
