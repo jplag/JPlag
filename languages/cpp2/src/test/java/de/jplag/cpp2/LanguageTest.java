@@ -1,15 +1,6 @@
 package de.jplag.cpp2;
 
-import de.jplag.ParsingException;
-import de.jplag.SharedTokenType;
-import de.jplag.Token;
-import de.jplag.TokenPrinter;
-import de.jplag.TokenType;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.opentest4j.TestAbortedException;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +9,17 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.opentest4j.TestAbortedException;
+
+import de.jplag.ParsingException;
+import de.jplag.SharedTokenType;
+import de.jplag.Token;
+import de.jplag.TokenPrinter;
+import de.jplag.TokenType;
 
 class LanguageTest {
 
@@ -54,23 +55,23 @@ class LanguageTest {
                         this->myMethod("Oh no");
                       }
                     }
-                    
+
                     void a(string v) {
                       this->myMethod(v);
                     }
-                    
+
                     void b(string v) {
                       MyClass::myMethod(v);
                     }
-                    
+
                     void c(string v) {
                       myMethod(v);
                     }
-                    
+
                     void d(MyClass m, string v) {
                       m.myMethod(v);
                     }
-                    
+
                     void exceptional() {
                       try {
                         int age = 15;
@@ -135,12 +136,12 @@ class LanguageTest {
                     do {
                         goto a;
                     } while (true);
-                    
+
                     a:
                     while (true) {
                         break;
                     }
-                    
+
                     for (;;) {
                         continue;
                     }
@@ -232,11 +233,11 @@ class LanguageTest {
                 #include <iostream>
                 #include <vector>
                 using namespace std;
-                                
+
                 class Hello {
-                                
+
                     int test;
-                                
+
                     public:
                     void say() {
                         vector<string> hellos {"World"};
@@ -248,7 +249,7 @@ class LanguageTest {
                         test = 3;
                     }
                 };
-                                
+
                 int main() {
                     Hello hello;
                     hello.say();

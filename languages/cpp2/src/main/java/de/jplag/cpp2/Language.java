@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import de.jplag.Experimental;
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Experimental;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 

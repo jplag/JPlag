@@ -7,15 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ConsoleErrorListener;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.cpp2.grammar.CPP14Lexer;
 import de.jplag.cpp2.grammar.CPP14Parser;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class Parser extends AbstractParser {
     private File currentFile;

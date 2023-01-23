@@ -1,12 +1,13 @@
 package de.jplag.cpp2;
 
-import de.jplag.cpp2.grammar.CPP14Parser;
-import de.jplag.cpp2.grammar.CPP14ParserBaseListener;
+import java.util.ArrayDeque;
+import java.util.Set;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.util.ArrayDeque;
-import java.util.Set;
+import de.jplag.cpp2.grammar.CPP14Parser;
+import de.jplag.cpp2.grammar.CPP14ParserBaseListener;
 
 public class CPPTokenListener extends CPP14ParserBaseListener {
 
@@ -50,6 +51,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     public void enterEnumSpecifier(CPP14Parser.EnumSpecifierContext ctx) {
         parser.addEnter(CPPTokenType.C_ENUM_BEGIN, ctx.getStart());
     }
+
     @Override
     public void exitEnumSpecifier(CPP14Parser.EnumSpecifierContext ctx) {
         parser.addExit(CPPTokenType.C_ENUM_END, ctx.getStop());
@@ -59,6 +61,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     public void enterFunctionDefinition(CPP14Parser.FunctionDefinitionContext ctx) {
         parser.addEnter(CPPTokenType.C_FUNCTION_BEGIN, ctx.getStart());
     }
+
     @Override
     public void exitFunctionDefinition(CPP14Parser.FunctionDefinitionContext ctx) {
         parser.addExit(CPPTokenType.C_FUNCTION_END, ctx.getStop());
@@ -199,11 +202,12 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     public void enterSimpleTypeSpecifier(CPP14Parser.SimpleTypeSpecifierContext ctx) {
         if (hasIndirectParent(ctx, CPP14Parser.MemberdeclarationContext.class, CPP14Parser.FunctionDefinitionContext.class)) {
             parser.addEnter(CPPTokenType.C_VARDEF, ctx.getStart());
-        } else if (hasIndirectParent(ctx, CPP14Parser.SimpleDeclarationContext.class, CPP14Parser.TemplateArgumentContext.class, CPP14Parser.FunctionDefinitionContext.class)) {
+        } else if (hasIndirectParent(ctx, CPP14Parser.SimpleDeclarationContext.class, CPP14Parser.TemplateArgumentContext.class,
+                CPP14Parser.FunctionDefinitionContext.class)) {
             // part of a SimpleDeclaration without being part of
-            //  - a TemplateArgument (vector<HERE> v)
-            //  - a FunctionDefinition (return type, parameters) (parameters are extracted in enterParameterDeclaration as VARDEF)
-            //  first.
+            // - a TemplateArgument (vector<HERE> v)
+            // - a FunctionDefinition (return type, parameters) (parameters are extracted in enterParameterDeclaration as VARDEF)
+            // first.
             CPP14Parser.SimpleDeclarationContext parent = getIndirectParent(ctx, CPP14Parser.SimpleDeclarationContext.class);
             assert parent != null; // already checked by hasIndirectParent
             CPP14Parser.NoPointerDeclaratorContext noPointerDecl = getIndirectChild(parent, CPP14Parser.NoPointerDeclaratorContext.class);
