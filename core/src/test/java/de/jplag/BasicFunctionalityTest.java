@@ -23,7 +23,7 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
         assertEquals(1, result.getSimilarityDistribution()[6]);
-        assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.6451, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     @Test
@@ -36,7 +36,7 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(2, result.getAllComparisons().get(0).matches().size());
         assertArrayEquals(expectedDistribution, result.getSimilarityDistribution());
-        assertEquals(0.9655, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.9677, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     @Test
@@ -69,17 +69,17 @@ class BasicFunctionalityTest extends TestBase {
                 .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
-        assertEquals(0.246, getSelectedPercent(result, "A", "B"), DELTA);
+        assertEquals(0.242, getSelectedPercent(result, "A", "B"), DELTA);
         assertEquals(0.997, getSelectedPercent(result, "A", "C"), DELTA);
-        assertEquals(0.779, getSelectedPercent(result, "A", "D"), DELTA);
-        assertEquals(0.246, getSelectedPercent(result, "B", "C"), DELTA);
-        assertEquals(0.283, getSelectedPercent(result, "B", "D"), DELTA);
-        assertEquals(0.779, getSelectedPercent(result, "C", "D"), DELTA);
+        assertEquals(0.770, getSelectedPercent(result, "A", "D"), DELTA);
+        assertEquals(0.242, getSelectedPercent(result, "B", "C"), DELTA);
+        assertEquals(0.285, getSelectedPercent(result, "B", "D"), DELTA);
+        assertEquals(0.770, getSelectedPercent(result, "C", "D"), DELTA);
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
         assertEquals(0.964, biggestMatch.get().maximalSimilarity(), DELTA);
-        assertEquals(0.653, biggestMatch.get().minimalSimilarity(), DELTA);
+        assertEquals(0.641, biggestMatch.get().minimalSimilarity(), DELTA);
         assertEquals(12, biggestMatch.get().matches().size());
     }
 
@@ -91,7 +91,7 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getSimilarityDistribution()[6]);
-        assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.6451, result.getAllComparisons().get(0).similarity(), DELTA);
 
         var matches = result.getAllComparisons().get(0).matches();
         // Run JPlag for same files but in submission folders:

@@ -59,8 +59,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
     }
 
     public ClusteringOptions() {
-        this(SimilarityMetric.MAX, 20.f, 0.05 * 0.05, 5, 50, 200, 0.2, Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, true,
-                ClusteringAlgorithm.SPECTRAL, InterClusterSimilarity.AVERAGE, 0.2, 0.5);
+        this(SimilarityMetric.AVG, 20.f, 0.05 * 0.05, 5, 50, 200, 0.2, Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, true,
+                ClusteringAlgorithm.AGGLOMERATIVE, InterClusterSimilarity.AVERAGE, 0.2, 0.5);
     }
 
     public ClusteringOptions withSimilarityMetric(SimilarityMetric similarityMetric) {
