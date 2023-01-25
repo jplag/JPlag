@@ -4,7 +4,7 @@
 <template>
   <div class="files-container">
     <h1>Files of {{ anonymous ? filesOwnerDefault : filesOwner }}</h1>
-    <VueDraggableNext>
+    <VueDraggableNext handle=".mover" filter=".unmover">
       <CodePanel
         v-for="(file, index) in files.keys()"
         :key="file.concat(index.toString())"
