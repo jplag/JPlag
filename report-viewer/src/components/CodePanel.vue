@@ -8,7 +8,7 @@
   >
     <div class="file-title mover">
       <p style="width: 90%">
-        <hand class="filer-header">{{ title }}</hand>
+        <a class="filer-header">{{ title }}</a>
       </p>
       <button
         class="collapse-button"
