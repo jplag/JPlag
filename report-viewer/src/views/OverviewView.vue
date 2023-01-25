@@ -96,7 +96,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted, Ref, ref} from "vue";
+import {computed, defineComponent, onErrorCaptured, onMounted, Ref, ref} from "vue";
 import router from "@/router";
 import TextInformation from "../components/TextInformation.vue";
 import DistributionDiagram from "@/components/DistributionDiagram.vue";
@@ -126,10 +126,13 @@ export default defineComponent({
       );
       return index != undefined
         ? store.state.files[index]
-        : console.log("Could not find overview.json"); // TODO introduce error page to navigate to
+        : console.log("Could not find overview.json");
     });
 
     const getOverview = (): Overview => {
+      if(overviewFile.value===undefined){
+        return new Overview([],"","",[],0,"",0,[],[],0,0,0,new Map<string, Map<string, string>>());
+      }
       let temp!: Overview;
       //Gets the overview file based on the used mode (zip, local, single).
       if (store.state.local) {
@@ -222,6 +225,12 @@ export default defineComponent({
     };
     onMounted(() => {
       window.addEventListener('scroll', handleScroll,true)
+    });
+    onErrorCaptured(()=>{
+      router.push({
+        name: "OverviewErrorView",
+      });
+      return false;
     });
     return {
       scroll_show_absolute,

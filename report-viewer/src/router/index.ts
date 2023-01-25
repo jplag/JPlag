@@ -3,6 +3,7 @@ import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
 import OverviewView from "@/views/OverviewView.vue";
 import ComparisonView from "@/views/ComparisonView.vue";
 import FileUploadView from "@/views/FileUploadView.vue";
+import OverviewErrorView from "@/views/OverviewErrorView.vue";
 
 /**
  * Router containing the navigation destinations.
@@ -23,6 +24,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "ComparisonView",
     component: ComparisonView,
     props: true,
+  },
+  {
+    path: "/overview/error",
+    name: "OverviewErrorView",
+    component: OverviewErrorView,
   },
 ];
 
