@@ -29,26 +29,29 @@ class NormalizationGraphConstructor {
         lastCritical = null;
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
-        List<Token> unitTokens = new LinkedList<>();
-        int lineNumber = tokens.get(0).getLine();
+        TokenLineBuilder currentLine = new TokenLineBuilder(tokens.get(0).getLine());
         for (Token token : tokens) {
-            if (token.getLine() != lineNumber) { // if (tokenGroupEnd)
-                TokenLine tokenLine = new TokenLine(new LinkedList<>(unitTokens), lineNumber);
-                graph.addVertex(tokenLine);
-                unitTokens.clear();
-                lineNumber = token.getLine();
-                this.current = tokenLine;
-
-                processLoops();
-                processControl();
-                processCritical();
-                processReads();
-                processWrites();
-                current.semantics().reads().forEach(r -> addVarToMap(r, variableReads));
-                current.semantics().writes().forEach(w -> addVarToMap(w, variableWrites));
+            if (token.getLine() != currentLine.lineNumber()) {
+                addTokenLine(currentLine.build());
+                currentLine = new TokenLineBuilder(token.getLine());
             }
-            unitTokens.add(token);
+            currentLine.addToken(token);
         }
+        addTokenLine(currentLine.build());
+    }
+
+    private void addTokenLine(TokenLine tokenLine) {
+        graph.addVertex(tokenLine);
+        this.current = tokenLine;
+
+        processLoops();
+        processControl();
+        processCritical();
+        processReads();
+        processWrites();
+        current.semantics().reads().forEach(r -> addVarToMap(r, variableReads));
+        current.semantics().writes().forEach(w -> addVarToMap(w, variableWrites));
+
     }
 
     SimpleDirectedGraph<TokenLine, Dependency> get() {

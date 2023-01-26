@@ -28,10 +28,9 @@ public class NormalizationGraph {
             PriorityQueue<TokenLine> newRoots = new PriorityQueue<>();
             do {
                 TokenLine tokenLine = roots.poll();
-                if (!tokenLine.keep()) {
-                    System.out.println("removed " + tokenLine);
+                if (tokenLine.keep()) {
+                    tokens.addAll(tokenLine.tokens());
                 }
-                tokens.addAll(tokenLine.tokens());
                 for (TokenLine successorGroup : Graphs.successorListOf(graph, tokenLine)) {
                     graph.removeEdge(tokenLine, successorGroup);
                     if (!Graphs.vertexHasPredecessors(graph, successorGroup)) {

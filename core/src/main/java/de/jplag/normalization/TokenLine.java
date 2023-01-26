@@ -9,9 +9,9 @@ import de.jplag.semantics.TokenSemantics;
 
 class TokenLine implements Comparable<TokenLine> {
 
-    private List<Token> tokens;
-    private int lineNumber;
-    private TokenSemantics semantics;
+    private final List<Token> tokens;
+    private final int lineNumber;
+    private final TokenSemantics semantics;
     private boolean keep;
 
     TokenLine(List<Token> tokens, int lineNumber) {
