@@ -42,5 +42,7 @@ public class Parser extends AbstractParser {
             System.out.print(" | ");
             System.out.println(t.getSemantics());
         }
+        System.out.println();
+        System.out.println("=".repeat(100));
     }
 }

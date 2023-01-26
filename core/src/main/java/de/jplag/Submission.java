@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -269,6 +270,22 @@ public class Submission implements Comparable<Submission> {
     }
 
     void normalize() {
+        // System.out.println();
+        // System.out.println("original:   " + getOrder(tokenList));
         tokenList = new NormalizationGraph(tokenList).linearize();
+        // System.out.println("normalized: " + getOrder(tokenList));
+    }
+
+    private List<Integer> getOrder(List<Token> tokenList) {
+        List<Integer> order = new LinkedList<>();
+        int currentLineNumber = tokenList.get(0).getLine();
+        order.add(currentLineNumber);
+        for (Token token : tokenList) {
+            if (token.getLine() != currentLineNumber) {
+                currentLineNumber = token.getLine();
+                order.add(currentLineNumber);
+            }
+        }
+        return order;
     }
 }
