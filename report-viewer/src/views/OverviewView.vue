@@ -53,6 +53,14 @@
       <div id="logo-section">
         <img id="logo" alt="JPlag" src="@/assets/logo-nobg.png" />
       </div>
+      <div v-if="overview.missingComparisons!==0">
+        <div v-if="scroll_show_absolute" class="shownInfo_ab" >
+          <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{overview.shownComparisons}}, Missing comparisons: {{overview.missingComparisons}}</h3>
+        </div>
+        <div v-else class="shownInfo_st" >
+          <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{overview.shownComparisons}}, Missing comparisons: {{overview.missingComparisons}}</h3>
+        </div>
+      </div>
     </div>
 
     <div class="column-container" style="width: 35%">
@@ -74,14 +82,6 @@
         :distribution="distributions[selectedMetricIndex]"
         class="full-width"
       />
-      <div v-if="overview.missingComparisons!==0">
-        <div v-if="scroll_show_absolute" class="shownInfo_ab" >
-          <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{overview.shownComparisons}}, Missing comparisons: {{overview.missingComparisons}}</h3>
-        </div>
-        <div v-else class="shownInfo_st" >
-          <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{overview.shownComparisons}}, Missing comparisons: {{overview.missingComparisons}}</h3>
-        </div>
-      </div>
     </div>
     <div class="column-container" style="width: 35%">
       <p class="section-title">Top Comparisons:</p>
@@ -274,6 +274,7 @@ hr {
 
 .full-width {
   width: 100%;
+  height: 700px;
 }
 
 .section-title {
@@ -332,11 +333,11 @@ hr {
 }
 
 .shownInfo_st{
-  position: sticky;
-  top:50%;
-  left:25%;
+  position: relative;
+  height: 0;
+  padding-top:40%;
   width: 200%;
-  transform: translate(-37.5%,-50%);
+  transform: translate(13.3%,-50%);
 }
 
 #logo {
