@@ -49,8 +49,8 @@ public class ComparisonReportWriter {
         int numberOfMaximumComparisons = jPlagResult.getOptions().maximumNumberOfComparisons();
         int numberOfAllComparisons = jPlagResult.getAllComparisons().size();
         int missingComparisons = numberOfAllComparisons - numberOfMaximumComparisons;
-        logger.warn(String.format("Total Comparisons: %s. Shown Comparisons: %s. Missing Comparisons: %s.", numberOfAllComparisons,
-                numberOfMaximumComparisons, missingComparisons));
+        logger.warn("Total Comparisons: {}. Shown Comparisons: {}. Missing Comparisons: {}.", numberOfAllComparisons,
+                numberOfMaximumComparisons, missingComparisons);
         List<JPlagComparison> comparisons = jPlagResult.getComparisons(numberOfMaximumComparisons);
         writeComparisons(path, comparisons);
         return submissionIdToComparisonFileName;
