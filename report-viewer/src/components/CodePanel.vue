@@ -7,7 +7,7 @@
     class="code-panel-container"
   >
     <div class="file-title mover">
-      <p style="width: 90%">
+      <p style="width: 90%" @click="$emit('toggleCollapse')">
         <a class="filer-header">{{ title }}</a>
       </p>
       <button
