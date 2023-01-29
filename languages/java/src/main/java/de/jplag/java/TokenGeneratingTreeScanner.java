@@ -660,6 +660,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
             Variable variable = variableHelper.getMemberVariable(node.getIdentifier().toString());
             variableHelper.registerVariableOperation(variable, semantics);
         }
+        variableHelper.setNextOperation(VariableHelper.NextOperation.READ);
         super.visitMemberSelect(node, semantics);
         return null;
     }
