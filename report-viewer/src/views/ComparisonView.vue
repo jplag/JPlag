@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import {defineComponent, ref} from "vue";
 import { generateLineCodeLink } from "@/utils/Utils";
 import TextInformation from "@/components/TextInformation.vue";
 import MatchTable from "@/components/MatchTable.vue";
@@ -77,6 +77,7 @@ import FilesContainer from "@/components/FilesContainer.vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { Match } from "@/model/Match";
+import {Comparison} from "@/model/Comparison";
 
 export default defineComponent({
   name: "ComparisonView",
@@ -119,7 +120,16 @@ export default defineComponent({
           JSON.parse(comparisonFile)
         );
       } else {
-        console.log("Could not find comparison file."); // TODO introduce error page to navigate to
+        console.log("Could not find comparison file.");
+        router.push({
+          name: "ErrorView",
+          state: {
+            message: "Comparison file can't be found!",
+            to: "/",
+            routerInfo: "back to FileUpload page"
+          }
+        });
+        store.commit("clearStore");
       }
     } else if (store.state.single) {
       comparison = ComparisonFactory.getComparison(
@@ -127,7 +137,8 @@ export default defineComponent({
       );
     }
     if (!comparison) {
-      throw "Could not build comparison file";
+      comparison=new Comparison("","",0);
+      console.log("Could not build comparison file");
     }
     const filesOfFirst = ref(comparison.filesOfFirstSubmission);
     const filesOfSecond = ref(comparison.filesOfSecondSubmission);

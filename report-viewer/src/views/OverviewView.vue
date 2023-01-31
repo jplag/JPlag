@@ -228,8 +228,14 @@ export default defineComponent({
     });
     onErrorCaptured(()=>{
       router.push({
-        name: "OverviewErrorView",
+        name: "ErrorView",
+        state: {
+          message: "Overview.json can't be found!",
+          to: "/",
+          routerInfo: "back to FileUpload page"
+        }
       });
+      store.commit("clearStore");
       return false;
     });
     return {
