@@ -10,10 +10,11 @@ import javax.lang.model.element.Name;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
+import de.jplag.semantics.NextOperation;
 import de.jplag.semantics.TokenSemantics;
 import de.jplag.semantics.TokenSemanticsBuilder;
 import de.jplag.semantics.Variable;
-import de.jplag.semantics.VariableHelper;
+import de.jplag.semantics.VariableRegistry;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
@@ -71,7 +72,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     private List<ParsingException> parsingExceptions = new ArrayList<>();
 
-    private VariableHelper variableHelper;
+    private VariableRegistry variableRegistry;
 
     private static final Set<String> IMMUTABLES = Set.of(
             // from https://medium.com/@bpnorlander/java-understanding-primitive-types-and-wrapper-objects-a6798fb2afe9
@@ -84,7 +85,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         this.map = map;
         this.positions = positions;
         this.ast = ast;
-        this.variableHelper = new VariableHelper();
+        this.variableRegistry = new VariableRegistry();
     }
 
     public List<ParsingException> getParsingExceptions() {
@@ -125,7 +126,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
             return true;
         }
         Name name = ((IdentifierTree) expressionTree).getName();
-        return variableHelper.getVariable(name.toString()) == null;
+        return variableRegistry.getVariable(name.toString()) == null;
     }
 
     private boolean isOwnMemberSelect(MemberSelectTree memberSelect) {
@@ -140,7 +141,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitBlock(BlockTree node, TokenSemantics semantics) {
         // kind of weird since in the case of for loops and catches, two scopes are introduced
         // but I'm pretty sure that's how Java does it internally as well
-        variableHelper.enterLocalScope();
+        variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         semantics = new TokenSemanticsBuilder().control().build();
@@ -148,7 +149,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         super.visitBlock(node, null);
         semantics = new TokenSemanticsBuilder().control().build();
         addToken(JavaTokenType.J_INIT_END, end, 1, semantics);
-        variableHelper.exitLocalScope();
+        variableRegistry.exitLocalScope();
         return null;
     }
 
@@ -159,7 +160,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
                 VariableTree variableTree = (VariableTree) member;
                 String name = variableTree.getName().toString();
                 boolean mutable = isMutable(variableTree.getType());
-                variableHelper.registerMemberVariable(name, mutable);
+                variableRegistry.registerMemberVariable(name, mutable);
             }
         }
 
@@ -196,7 +197,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
             semantics = new TokenSemanticsBuilder().control().critical().build();
             addToken(tokenType, end, 1, semantics);
         }
-        variableHelper.clearMemberVariables();
+        variableRegistry.clearMemberVariables();
         return null;
     }
 
@@ -220,7 +221,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     @Override
     public Void visitMethod(MethodTree node, TokenSemantics semantics) {
-        variableHelper.enterLocalScope();
+        variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         semantics = new TokenSemanticsBuilder().control().critical().build();
@@ -233,9 +234,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         scan(node.getThrows(), semantics);
         scan(node.getBody(), null);
         semantics = new TokenSemanticsBuilder().control().critical().build();
-        variableHelper.addAllMemberVariablesAsReads(semantics);
+        variableRegistry.addAllMemberVariablesAsReads(semantics);
         addToken(JavaTokenType.J_METHOD_END, end, 1, semantics);
-        variableHelper.exitLocalScope();
+        variableRegistry.exitLocalScope();
         return null;
     }
 
@@ -279,7 +280,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     @Override
     public Void visitForLoop(ForLoopTree node, TokenSemantics semantics) {
-        variableHelper.enterLocalScope();
+        variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         semantics = new TokenSemanticsBuilder().control().loopBegin().build();
@@ -290,13 +291,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         scan(node.getStatement(), null);
         semantics = new TokenSemanticsBuilder().control().loopEnd().build();
         addToken(JavaTokenType.J_FOR_END, end, 1, semantics);
-        variableHelper.exitLocalScope();
+        variableRegistry.exitLocalScope();
         return null;
     }
 
     @Override
     public Void visitEnhancedForLoop(EnhancedForLoopTree node, TokenSemantics semantics) {
-        variableHelper.enterLocalScope();
+        variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         semantics = new TokenSemanticsBuilder().control().loopBegin().build();
@@ -306,7 +307,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         scan(node.getStatement(), null);
         semantics = new TokenSemanticsBuilder().control().loopEnd().build();
         addToken(JavaTokenType.J_FOR_END, end, 1, semantics);
-        variableHelper.exitLocalScope();
+        variableRegistry.exitLocalScope();
         return null;
     }
 
@@ -373,7 +374,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     @Override
     public Void visitCatch(CatchTree node, TokenSemantics semantics) {
-        variableHelper.enterLocalScope();
+        variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         semantics = new TokenSemanticsBuilder().control().build();
@@ -381,7 +382,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         super.visitCatch(node, null); // can leave this since catch parameter is variable declaration and thus always generates a token
         semantics = new TokenSemanticsBuilder().control().build();
         addToken(JavaTokenType.J_CATCH_END, end, 1, semantics);
-        variableHelper.exitLocalScope();
+        variableRegistry.exitLocalScope();
         return null;
     }
 
@@ -492,7 +493,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         boolean criticalCondition = isNotExistingVariable(node.getVariable());
         semantics = new TokenSemanticsBuilder().critical(criticalCondition).build();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
-        variableHelper.setNextOperation(VariableHelper.NextOperation.WRITE);
+        variableRegistry.setNextOperation(NextOperation.WRITE);
         super.visitAssignment(node, semantics);
         return null;
     }
@@ -503,7 +504,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         boolean criticalCondition = isNotExistingVariable(node.getVariable());
         semantics = new TokenSemanticsBuilder().critical(criticalCondition).build();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
-        variableHelper.setNextOperation(VariableHelper.NextOperation.READ_WRITE);
+        variableRegistry.setNextOperation(NextOperation.READ_WRITE);
         super.visitCompoundAssignment(node, semantics);
         return null;
     }
@@ -516,7 +517,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
             addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
-            variableHelper.setNextOperation(VariableHelper.NextOperation.READ_WRITE);
+            variableRegistry.setNextOperation(NextOperation.READ_WRITE);
         }
         super.visitUnary(node, semantics);
         return null;
@@ -535,13 +536,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitVariable(VariableTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         // member variable defs are critical
-        boolean inLocalScope = variableHelper.inLocalScope();
+        boolean inLocalScope = variableRegistry.inLocalScope();
         semantics = new TokenSemanticsBuilder().critical(!inLocalScope).build();
 
         if (inLocalScope) {
             String name = node.getName().toString();
             boolean mutable = isMutable(node.getType());
-            Variable variable = variableHelper.registerLocalVariable(name, mutable);
+            Variable variable = variableRegistry.registerLocalVariable(name, mutable);
             // manually add variable to semantics since identifier isn't visited
             semantics.addWrite(variable);
         } // no else since member variable defs are registered on class visit
@@ -564,18 +565,18 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitMethodInvocation(MethodInvocationTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         semantics = new TokenSemanticsBuilder().critical().control().build();
-        variableHelper.addAllMemberVariablesAsReads(semantics);
+        variableRegistry.addAllMemberVariablesAsReads(semantics);
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start, semantics);
         scan(node.getTypeArguments(), semantics);
         // to differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore), different namespace for variables and
         // methods
         if (isVariable(node.getMethodSelect())) {
-            variableHelper.setNextOperation(VariableHelper.NextOperation.NONE);
+            variableRegistry.setNextOperation(NextOperation.NONE);
         }
-        variableHelper.mutableWrite();  // when mentioned here, mutable variables can be written to
+        variableRegistry.mutableWrite();  // when mentioned here, mutable variables can be written to
         scan(node.getMethodSelect(), semantics);
         scan(node.getArguments(), semantics);
-        variableHelper.noMutableWrite();
+        variableRegistry.noMutableWrite();
         return null;
     }
 
@@ -657,18 +658,18 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitMemberSelect(MemberSelectTree node, TokenSemantics semantics) {
         if (isOwnMemberSelect(node)) {
-            Variable variable = variableHelper.getMemberVariable(node.getIdentifier().toString());
-            variableHelper.registerVariableOperation(variable, semantics);
+            Variable variable = variableRegistry.getMemberVariable(node.getIdentifier().toString());
+            variableRegistry.registerVariableOperation(variable, semantics);
         }
-        variableHelper.setNextOperation(VariableHelper.NextOperation.READ);
+        variableRegistry.setNextOperation(NextOperation.READ);
         super.visitMemberSelect(node, semantics);
         return null;
     }
 
     @Override
     public Void visitIdentifier(IdentifierTree node, TokenSemantics semantics) {
-        Variable variable = variableHelper.getVariable(node.getName().toString());
-        variableHelper.registerVariableOperation(variable, semantics);
+        Variable variable = variableRegistry.getVariable(node.getName().toString());
+        variableRegistry.registerVariableOperation(variable, semantics);
         super.visitIdentifier(node, semantics);
         return null;
     }

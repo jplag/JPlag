@@ -45,7 +45,6 @@ public class Token {
         this.line = line;
         this.column = column;
         this.length = length;
-        this.semantics = null;
     }
 
     /**

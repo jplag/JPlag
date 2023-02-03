@@ -7,9 +7,9 @@ import java.util.Set;
 import java.util.Stack;
 
 /**
- * Variable helper class to assist generating token semantics. For languages similar in structure to Java/C/etc
+ * Variable helper class to assist generating token semantics. For languages similar in structure to Java/C
  */
-public class VariableHelper {
+public class VariableRegistry {
     private Map<String, Variable> memberVariables; // map member variable name to variable
     private Map<String, Stack<Variable>> localVariables; // map local variable name to variable
     private Stack<Set<String>> localVariablesByScope; // stack of local variable names in scope
@@ -17,14 +17,7 @@ public class VariableHelper {
     private boolean mutableWrite;
     private NextOperation nextOperation;
 
-    public enum NextOperation {
-        NONE,
-        READ,
-        WRITE,
-        READ_WRITE
-    }
-
-    public VariableHelper() {
+    public VariableRegistry() {
         this.memberVariables = new HashMap<>();
         this.localVariables = new HashMap<>();
         this.localVariablesByScope = new Stack<>();
@@ -50,11 +43,11 @@ public class VariableHelper {
     }
 
     public Variable getMemberVariable(String variableName) {
-        return memberVariables.getOrDefault(variableName, null);
+        return memberVariables.get(variableName);
     }
 
     public Variable getVariable(String variableName) {
-        Stack<Variable> variableIdStack = localVariables.getOrDefault(variableName, null);
+        Stack<Variable> variableIdStack = localVariables.get(variableName);
         if (variableIdStack != null) {
             return variableIdStack.peek();
         }

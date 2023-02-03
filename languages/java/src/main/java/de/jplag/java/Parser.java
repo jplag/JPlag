@@ -32,15 +32,15 @@ public class Parser extends AbstractParser {
 
     public void printSemantics() {
         long currentLine = 0;
-        for (Token t : tokens) {
-            if (t.getLine() != currentLine) {
-                currentLine = t.getLine();
+        for (Token token : tokens) {
+            if (token.getLine() != currentLine) {
+                currentLine = token.getLine();
                 System.out.println();
-                System.out.println(t.getLine());
+                System.out.println(token.getLine());
             }
-            System.out.print(t.getType().getDescription());
+            System.out.print(token.getType().getDescription());
             System.out.print(" | ");
-            System.out.println(t.getSemantics());
+            System.out.println(token.getSemantics());
         }
         System.out.println();
         System.out.println("=".repeat(100));

@@ -5,7 +5,6 @@ import java.util.Set;
 
 import de.jplag.semantics.Variable;
 
-// not a record because JGraphT wants unique edges and we don't...
 class Dependency {
     private Set<DependencyItem> items;
     private boolean isData;

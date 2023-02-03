@@ -18,6 +18,7 @@ public class NormalizationGraph {
         graph = new NormalizationGraphConstructor(tokens).get();
     }
 
+    // todo java doc
     public List<Token> linearize() {
         spreadKeep();
         PriorityQueue<TokenLine> roots = graph.vertexSet().stream() //
@@ -48,7 +49,8 @@ public class NormalizationGraph {
         while (!visit.isEmpty()) {
             TokenLine current = visit.pop();
             for (TokenLine pred : Graphs.predecessorListOf(graph, current)) { // performance?
-                if (graph.getEdge(pred, current).isData() && !pred.keep()) {
+                Dependency dependency = graph.getEdge(pred, current);
+                if ((dependency.isData() || dependency.isDataThroughLoop()) && !pred.keep()) {
                     pred.markKeep();
                     visit.add(pred);
                 }
@@ -57,7 +59,8 @@ public class NormalizationGraph {
             // could instead insert data-through-loop edges the other way around, which arguably makes more sense semantically
             // and turn them around here, but too much code for me to bother right now
             for (TokenLine succ : Graphs.successorListOf(graph, current)) {
-                if (graph.getEdge(current, succ).isDataThroughLoop() && !succ.keep()) {
+                Dependency dependency = graph.getEdge(current, succ);
+                if (dependency.isDataThroughLoop() && !succ.keep()) {
                     succ.markKeep();
                     visit.add(succ);
                 }

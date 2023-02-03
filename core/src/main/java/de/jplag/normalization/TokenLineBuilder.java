@@ -19,8 +19,8 @@ class TokenLineBuilder {
         return lineNumber;
     }
 
-    void addToken(Token tok) {
-        tokens.add(tok);
+    void addToken(Token token) {
+        tokens.add(token);
     }
 
     TokenLine build() {

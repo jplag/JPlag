@@ -13,7 +13,7 @@ import de.jplag.semantics.Variable;
 
 class NormalizationGraphConstructor {
     private SimpleDirectedGraph<TokenLine, Dependency> graph;
-    private int loopCount;
+    private int loopDepth;
     private Collection<TokenLine> controlAffected;
     private TokenLine lastControl;
     private TokenLine lastCritical;
@@ -23,10 +23,8 @@ class NormalizationGraphConstructor {
 
     NormalizationGraphConstructor(List<Token> tokens) {
         graph = new SimpleDirectedGraph<>(Dependency.class);
-        loopCount = 0;
+        loopDepth = 0;
         controlAffected = new LinkedList<>();
-        lastControl = null;
-        lastCritical = null;
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         TokenLineBuilder currentLine = new TokenLineBuilder(tokens.get(0).getLine());
@@ -60,25 +58,27 @@ class NormalizationGraphConstructor {
 
     private void processLoops() {
         if (current.semantics().loopBegin())
-            loopCount++;
+            loopDepth++;
         if (current.semantics().loopEnd())
-            loopCount--;
+            loopDepth--;
     }
 
     private void processControl() {
         if (current.semantics().control()) {
-            addCurrentEdges(controlAffected, DependencyType.CONTROL, null);
+            addCurrentEdges(controlAffected, DependencyType.CONTROL, null); // edges to control lines
             controlAffected.clear();
             lastControl = current;
         } else if (lastControl != null) {
-            addCurrentEdge(lastControl, DependencyType.CONTROL, null);
+            addCurrentEdge(lastControl, DependencyType.CONTROL, null); // edge from control lines
         }
         controlAffected.add(current);
     }
 
     private void processCritical() {
-        if (current.semantics().critical() && lastCritical != null) {
-            addCurrentEdge(lastCritical, DependencyType.CRITICAL, null);
+        if (current.semantics().critical()) {
+            if (lastCritical != null) {
+                addCurrentEdge(lastCritical, DependencyType.CRITICAL, null);
+            }
             lastCritical = current;
         }
     }
@@ -90,7 +90,7 @@ class NormalizationGraphConstructor {
     }
 
     private void processWrites() {
-        DependencyType writeToReadDependencyType = loopCount > 0 ? DependencyType.DATA_THROUGH_LOOP : DependencyType.ORDER;
+        DependencyType writeToReadDependencyType = loopDepth > 0 ? DependencyType.DATA_THROUGH_LOOP : DependencyType.ORDER;
         for (Variable w : current.semantics().writes()) {
             addCurrentEdgesVar(DependencyType.ORDER, w, variableWrites);
             addCurrentEdgesVar(writeToReadDependencyType, w, variableReads);
@@ -106,6 +106,12 @@ class NormalizationGraphConstructor {
         starts.forEach(s -> addCurrentEdge(s, type, cause));
     }
 
+    /**
+     * Adds an ingoing edge to the current node.
+     * @param start the start of the edge
+     * @param type the type of the edge
+     * @param cause the variable that caused the edge, may be null
+     */
     private void addCurrentEdge(TokenLine start, DependencyType type, Variable cause) {
         Dependency dependency = graph.getEdge(start, current);
         if (dependency == null) {
