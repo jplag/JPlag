@@ -132,9 +132,21 @@ export default defineComponent({
         store.commit("clearStore");
       }
     } else if (store.state.single) {
-      comparison = ComparisonFactory.getComparison(
-        JSON.parse(store.state.fileString)
-      );
+      try {
+        comparison = ComparisonFactory.getComparison(
+            JSON.parse(store.state.fileString)
+        );
+      }catch (e){
+        router.push({
+          name: "ErrorView",
+          state: {
+            message: "Codes of matches can't be found! If you use single file mode, overview.json can only be accepted!",
+            to: "/",
+            routerInfo: "back to FileUpload page"
+          }
+        });
+        store.commit("clearStore");
+      }
     }
     if (!comparison) {
       comparison=new Comparison("","",0);

@@ -130,9 +130,6 @@ export default defineComponent({
     });
 
     const getOverview = (): Overview => {
-      if(overviewFile.value===undefined){
-        return new Overview([],"","",[],0,"",0,[],[],0,0,0,new Map<string, Map<string, string>>());
-      }
       let temp!: Overview;
       //Gets the overview file based on the used mode (zip, local, single).
       if (store.state.local) {
@@ -143,6 +140,9 @@ export default defineComponent({
           router.back();
         }
       } else if (store.state.zip) {
+        if(overviewFile.value===undefined){
+          return new Overview([],"","",[],0,"",0,[],[],0,0,0,new Map<string, Map<string, string>>());
+        }
         const overviewJson = JSON.parse(overviewFile.value);
         temp = OverviewFactory.getOverview(overviewJson);
       } else if (store.state.single) {
