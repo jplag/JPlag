@@ -48,8 +48,8 @@ public class CPPParserAdapter extends AbstractParser {
     /**
      * Add a token with the given type at the given position (column and line) with the given length.
      * @param type the type of the token.
-     * @param column the column where the token starts, or {@value #USE_PREVIOUS_COLUMN} if the column should be taken from the previously extracted
-     * token.
+     * @param column the column where the token starts, or {@value #USE_PREVIOUS_COLUMN} if the column should be taken from
+     * the previously extracted token.
      * @param line the line where the token starts.
      * @param length the length of the token.
      */

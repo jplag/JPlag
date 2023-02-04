@@ -11,9 +11,9 @@ import de.jplag.cpp2.grammar.CPP14Parser;
 import de.jplag.cpp2.grammar.CPP14ParserBaseListener;
 
 /**
- * Extracts tokens from the ANTLR parse tree. Token extraction is built to be similar to the Java language module. In some cases, the grammar is
- * ambiguous and requires surrounding context to extract the correct token. Those cases are covered by
- * {@link #enterSimpleTypeSpecifier(CPP14Parser.SimpleTypeSpecifierContext)} and
+ * Extracts tokens from the ANTLR parse tree. Token extraction is built to be similar to the Java language module. In
+ * some cases, the grammar is ambiguous and requires surrounding context to extract the correct token. Those cases are
+ * covered by {@link #enterSimpleTypeSpecifier(CPP14Parser.SimpleTypeSpecifierContext)} and
  * {@link #enterSimpleDeclaration(CPP14Parser.SimpleDeclarationContext)}.
  */
 public class CPPTokenListener extends CPP14ParserBaseListener {
