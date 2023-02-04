@@ -10,13 +10,13 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class CPPLanguage implements de.jplag.Language {
     private static final String IDENTIFIER = "cpp2";
 
-    private final Parser parser; // cpp code is scanned not parsed
+    private final CPPParserAdapter parser;
 
-    public Language() {
-        parser = new Parser();
+    public CPPLanguage() {
+        parser = new CPPParserAdapter();
     }
 
     @Override

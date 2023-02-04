@@ -95,7 +95,7 @@ class LanguageTest {
                   c
                 };
                 """);
-        Language language = new Language();
+        CPPLanguage language = new CPPLanguage();
         List<Token> tokens = language.parse(Set.of(resolve.toFile()));
         System.out.println(TokenPrinter.printTokens(tokens, resolve.toFile()));
     }
@@ -110,7 +110,7 @@ class LanguageTest {
                 }
                 """.formatted(expr);
         List<Token> all = extractFromString(path, function).tokens();
-        List<Token> assignTokens = all.stream().filter(token -> token.getType() == CPPTokenType.C_ASSIGN).toList();
+        List<Token> assignTokens = all.stream().filter(token -> token.getType() == CPPTokenType.ASSIGN).toList();
         assertEquals(1, assignTokens.size());
     }
 
@@ -125,8 +125,8 @@ class LanguageTest {
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-        assertTokenTypes(result.tokens(), CPPTokenType.C_FUNCTION_BEGIN, CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_APPLY, CPPTokenType.C_APPLY,
-                CPPTokenType.C_APPLY, CPPTokenType.C_APPLY, CPPTokenType.C_BLOCK_END, CPPTokenType.C_FUNCTION_END);
+        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.BLOCK_BEGIN, CPPTokenType.APPLY, CPPTokenType.APPLY,
+                CPPTokenType.APPLY, CPPTokenType.APPLY, CPPTokenType.BLOCK_END, CPPTokenType.FUNCTION_END);
     }
 
     @Test
@@ -149,11 +149,11 @@ class LanguageTest {
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-        assertTokenTypes(result.tokens(), CPPTokenType.C_FUNCTION_BEGIN, CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_DO_BEGIN,
-                CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_GOTO, CPPTokenType.C_BLOCK_END, CPPTokenType.C_DO_END, CPPTokenType.C_WHILE_BEGIN,
-                CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_BREAK, CPPTokenType.C_BLOCK_END, CPPTokenType.C_WHILE_END, CPPTokenType.C_FOR_BEGIN,
-                CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_CONTINUE, CPPTokenType.C_BLOCK_END, CPPTokenType.C_FOR_END, CPPTokenType.C_RETURN,
-                CPPTokenType.C_BLOCK_END, CPPTokenType.C_FUNCTION_END);
+        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.BLOCK_BEGIN, CPPTokenType.DO_BEGIN, CPPTokenType.BLOCK_BEGIN,
+                CPPTokenType.GOTO, CPPTokenType.BLOCK_END, CPPTokenType.DO_END, CPPTokenType.WHILE_BEGIN, CPPTokenType.BLOCK_BEGIN,
+                CPPTokenType.BREAK, CPPTokenType.BLOCK_END, CPPTokenType.WHILE_END, CPPTokenType.FOR_BEGIN, CPPTokenType.BLOCK_BEGIN,
+                CPPTokenType.CONTINUE, CPPTokenType.BLOCK_END, CPPTokenType.FOR_END, CPPTokenType.RETURN, CPPTokenType.BLOCK_END,
+                CPPTokenType.FUNCTION_END);
 
     }
 
@@ -166,8 +166,8 @@ class LanguageTest {
                 }
                 """.formatted(expression));
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-        assertTokenTypes(result.tokens(), CPPTokenType.C_FUNCTION_BEGIN, CPPTokenType.C_VARDEF, CPPTokenType.C_BLOCK_BEGIN, CPPTokenType.C_APPLY,
-                CPPTokenType.C_BLOCK_END, CPPTokenType.C_FUNCTION_END);
+        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.BLOCK_BEGIN, CPPTokenType.APPLY,
+                CPPTokenType.BLOCK_END, CPPTokenType.FUNCTION_END);
     }
 
     @Test
@@ -211,7 +211,7 @@ class LanguageTest {
                 int x = square(2);
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-        assertTokenTypes(result.tokens(), CPPTokenType.C_VARDEF, CPPTokenType.C_ASSIGN, CPPTokenType.C_APPLY);
+        assertTokenTypes(result.tokens(), CPPTokenType.VARDEF, CPPTokenType.ASSIGN, CPPTokenType.APPLY);
     }
 
     @Test
@@ -222,8 +222,8 @@ class LanguageTest {
                 };
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-        assertTokenTypes(result.tokens(), CPPTokenType.C_CLASS_BEGIN, CPPTokenType.C_VARDEF, CPPTokenType.C_ASSIGN, CPPTokenType.C_APPLY,
-                CPPTokenType.C_CLASS_END);
+        assertTokenTypes(result.tokens(), CPPTokenType.CLASS_BEGIN, CPPTokenType.VARDEF, CPPTokenType.ASSIGN, CPPTokenType.APPLY,
+                CPPTokenType.CLASS_END);
     }
 
     @Test
@@ -277,7 +277,7 @@ class LanguageTest {
         } catch (IOException e) {
             throw new TestAbortedException("Failed to write temp file", e);
         }
-        Language language = new Language();
+        CPPLanguage language = new CPPLanguage();
         List<Token> tokens;
         try {
             tokens = language.parse(Set.of(filePath.toFile()));
