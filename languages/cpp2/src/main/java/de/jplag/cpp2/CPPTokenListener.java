@@ -36,21 +36,29 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     @Override
     public void enterClassSpecifier(CPP14Parser.ClassSpecifierContext context) {
-        CPP14Parser.ClassKeyContext classKey = context.classHead().classKey();
-        if (classKey.Class() != null) {
-            addEnter(CPPTokenType.CLASS_BEGIN, context.getStart());
-        } else if (classKey.Struct() != null) {
-            addEnter(CPPTokenType.STRUCT_BEGIN, context.getStart());
+        if (context.classHead().Union() != null) {
+            addEnter(CPPTokenType.UNION_BEGIN, context.getStart());
+        } else {
+            CPP14Parser.ClassKeyContext classKey = context.classHead().classKey();
+            if (classKey.Class() != null) {
+                addEnter(CPPTokenType.CLASS_BEGIN, context.getStart());
+            } else if (classKey.Struct() != null) {
+                addEnter(CPPTokenType.STRUCT_BEGIN, context.getStart());
+            }
         }
     }
 
     @Override
     public void exitClassSpecifier(CPP14Parser.ClassSpecifierContext context) {
-        CPP14Parser.ClassKeyContext classKey = context.classHead().classKey();
-        if (classKey.Class() != null) {
-            addExit(CPPTokenType.CLASS_END, context.getStop());
-        } else if (classKey.Struct() != null) {
-            addExit(CPPTokenType.STRUCT_END, context.getStop());
+        if (context.classHead().Union() != null) {
+            addExit(CPPTokenType.UNION_END, context.getStop());
+        } else {
+            CPP14Parser.ClassKeyContext classKey = context.classHead().classKey();
+            if (classKey.Class() != null) {
+                addExit(CPPTokenType.CLASS_END, context.getStop());
+            } else if (classKey.Struct() != null) {
+                addExit(CPPTokenType.STRUCT_END, context.getStop());
+            }
         }
     }
 
@@ -176,10 +184,8 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     @Override
     public void enterAssignmentOperator(CPP14Parser.AssignmentOperatorContext context) {
-        /*
-         does not cover ++, --, this is done via UnaryExpressionContext and PostfixExpressionContext
-         does not cover all =, this is done via BraceOrEqualInitializerContext
-        */
+        // does not cover ++, --, this is done via UnaryExpressionContext and PostfixExpressionContext
+        // does not cover all =, this is done via BraceOrEqualInitializerContext
         addEnter(CPPTokenType.ASSIGN, context.getStart());
     }
 
@@ -208,7 +214,9 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     }
 
     /**
-     * @param context the parse tree
+     * Covers {@link CPPTokenType#VARDEF} extraction. The grammar is ambiguous here, so inspecting the surrounding tree
+     * elements is required to not extract {@link CPPTokenType#VARDEF} in places of type declarations, function calls and
+     * template arguments.
      */
     @Override
     public void enterSimpleTypeSpecifier(CPP14Parser.SimpleTypeSpecifierContext context) {
@@ -216,12 +224,10 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
             addEnter(CPPTokenType.VARDEF, context.getStart());
         } else if (hasAncestor(context, CPP14Parser.SimpleDeclarationContext.class, CPP14Parser.TemplateArgumentContext.class,
                 CPP14Parser.FunctionDefinitionContext.class)) {
-            /*
-             part of a SimpleDeclaration without being part of
-             - a TemplateArgument (vector<HERE> v)
-             - a FunctionDefinition (return type, parameters) (parameters are extracted in enterParameterDeclaration as VARDEF)
-             first.
-            */
+            // part of a SimpleDeclaration without being part of
+            // - a TemplateArgument (vector<HERE> v)
+            // - a FunctionDefinition (return type, parameters) (parameters are extracted in enterParameterDeclaration as VARDEF)
+            // first.
             CPP14Parser.SimpleDeclarationContext parent = getAncestor(context, CPP14Parser.SimpleDeclarationContext.class);
             assert parent != null; // already checked by hasAncestor
             CPP14Parser.NoPointerDeclaratorContext noPointerDecl = getDescendant(parent, CPP14Parser.NoPointerDeclaratorContext.class);

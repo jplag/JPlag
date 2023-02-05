@@ -9,6 +9,8 @@ public enum CPPTokenType implements TokenType {
     STRUCT_END("}STRUCT"),
     ENUM_BEGIN("ENUM{"),
     ENUM_END("}ENUM"),
+    UNION_BEGIN("UNION{"),
+    UNION_END("}UNION"),
     BLOCK_BEGIN("INIT{"),
     BLOCK_END("}INIT"),
     FUNCTION_BEGIN("FUNCTION{"),
