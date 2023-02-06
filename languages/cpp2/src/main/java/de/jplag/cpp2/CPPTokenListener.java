@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Set;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import de.jplag.TokenType;
@@ -169,7 +170,6 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     @Override
     public void enterNewExpression(CPP14Parser.NewExpressionContext context) {
-        // TODO NEWARRAY, ARRAYINIT
         if (context.newInitializer() == null) {
             addEnter(CPPTokenType.NEWARRAY, context.getStart());
         } else {
@@ -211,6 +211,16 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void enterEnumeratorDefinition(CPP14Parser.EnumeratorDefinitionContext context) {
         addEnter(CPPTokenType.VARDEF, context.getStart());
+    }
+
+    @Override
+    public void enterBracedInitList(CPP14Parser.BracedInitListContext context) {
+        addEnter(CPPTokenType.BRACED_INIT_BEGIN, context.getStart());
+    }
+
+    @Override
+    public void exitBracedInitList(CPP14Parser.BracedInitListContext context) {
+        addExit(CPPTokenType.BRACED_INIT_END, context.getStop());
     }
 
     /**
@@ -344,12 +354,16 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         return getAncestor(context, parent, stops) != null;
     }
 
-    private void addEnter(TokenType type, org.antlr.v4.runtime.Token token) {
-        int column = token.getCharPositionInLine() + 1;
-        parser.addToken(type, column, token.getLine(), token.getText().length());
+    private void addEnter(TokenType type, Token token) {
+        addTokenWithLength(type, token, token.getText().length());
     }
 
-    private void addExit(TokenType type, org.antlr.v4.runtime.Token token) {
-        this.parser.addToken(type, CPPParserAdapter.USE_PREVIOUS_COLUMN, token.getLine(), 1);
+    private void addExit(TokenType type, Token token) {
+        addTokenWithLength(type, token, 1);
+    }
+
+    private void addTokenWithLength(TokenType type, Token token, int length) {
+        int column = token.getCharPositionInLine() + 1;
+        this.parser.addToken(type, column, token.getLine(), length);
     }
 }
