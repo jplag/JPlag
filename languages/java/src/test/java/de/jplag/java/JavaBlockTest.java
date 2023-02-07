@@ -8,9 +8,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +23,8 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 
 class JavaBlockTest {
-    private static final String LOG_MESSAGE = "Tokens of {}: {}";
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "java");
+    private static final String LOG_MESSAGE = "Tokens of {}: {}";
 
     private final Logger logger = LoggerFactory.getLogger(JavaBlockTest.class);
 
@@ -34,10 +38,12 @@ class JavaBlockTest {
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }
 
-    @Test
-    void testParsingTestClass() throws ParsingException {
-        List<TokenType> tokenTypes1 = parseFile("IfWithBraces.java");
-        List<TokenType> tokenTypes2 = parseFile("IfWithoutBraces.java");
+    @ParameterizedTest
+    @MethodSource("provideClassPairs")
+    @DisplayName("Test pairs of classes with explicit vs. implicit blocks.")
+    void testJavaClassPair(String fileName1, String fileName2) throws ParsingException {
+        List<TokenType> tokenTypes1 = parseFile(fileName1);
+        List<TokenType> tokenTypes2 = parseFile(fileName2);
         assertEquals(tokenTypes1.size(), tokenTypes2.size());
         assertIterableEquals(tokenTypes1, tokenTypes2);
     }
@@ -47,6 +53,11 @@ class JavaBlockTest {
         List<TokenType> tokenTypes = parsedTokens.stream().map(Token::getType).toList();
         logger.info(LOG_MESSAGE, fileName, tokenTypes);
         return tokenTypes;
+    }
+
+    private static Stream<Arguments> provideClassPairs() {
+        return Stream.of(Arguments.of("IfWithBraces.java", "IfWithoutBraces.java"), // just if conditions
+                Arguments.of("Verbose.java", "Compact.java")); // complex case with different blocks
     }
 
 }
