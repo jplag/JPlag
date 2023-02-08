@@ -5,28 +5,35 @@
   <div class="container" @dragover.prevent @drop.prevent="uploadFile">
     <img alt="JPlag" src="@/assets/logo-nobg.png" />
     <h1>JPlag Report Viewer</h1>
-    <h2>Select an overview or comparison file or a zip to display.</h2>
-    <h3>(No files get uploaded anywhere)</h3>
-    <div class="drop-container">
-      <p>Drop a .json or .zip on this page</p>
+    <div v-if="!hasQueryFile">
+      <h2>Select an overview or comparison file or a zip to display.</h2>
+      <h3>(No files get uploaded anywhere)</h3>
+      <div class="drop-container">
+        <p>Drop a .json or .zip on this page</p>
+      </div>
+      <div v-if="hasLocalFile" class="local-files-container">
+        <p class="local-files-text">Detected local files!</p>
+        <button class="local-files-button" @click="continueWithLocal">
+          Continue with local files
+        </button>
+      </div>
     </div>
-    <div v-if="hasLocalFile" class="local-files-container">
-      <p class="local-files-text">Detected local files!</p>
-      <button class="local-files-button" @click="continueWithLocal">
-        Continue with local files
-      </button>
-    </div>
+    <p v-else>
+      Loading file…
+    </p>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { useRoute } from "vue-router";
 import jszip from "jszip";
 import router from "@/router";
 import store from "@/store/store";
-import { getFileExtension } from "@/utils/Utils";
 import path from "path";
 import slash from "slash";
+
+class LoadError extends Error {}
 
 export default defineComponent({
   name: "FileUploadView",
@@ -39,6 +46,22 @@ export default defineComponent({
     } catch (e) {
       console.log(e);
       hasLocalFile = false;
+    }
+
+    // Loads file passed in query param, if any.
+    const queryParams = useRoute().query;
+    let queryFileURL = null;
+    if (typeof queryParams.file === 'string' && queryParams.file !== '') {
+      try {
+        queryFileURL = new URL(queryParams.file);
+      } catch (e) {
+        if (e instanceof TypeError) {
+          console.warn(`Invalid URL '${queryParams.file}'`)
+          queryFileURL = null;
+        } else {
+          throw e;
+        }
+      }
     }
 
     const navigateToOverview = () => {
@@ -93,8 +116,8 @@ export default defineComponent({
      * Handles zip file on drop. It extracts the zip and saves each file in the store.
      * @param file
      */
-    const handleZipFile = (file: File) => {
-      jszip.loadAsync(file).then(async (zip) => {
+    const handleZipFile = (file: Blob) => {
+      return jszip.loadAsync(file).then(async (zip) => {
         for (const originalFileName of Object.keys(zip.files)) {
           const unixFileName = slash(originalFileName);
           if (
@@ -148,32 +171,56 @@ export default defineComponent({
           fileString: str,
         });
         navigateToComparisonView(json["id1"], json["id2"]);
+      } else {
+        throw new LoadError('Invalid JSON', json);
       }
     };
+    const handleFile = (file: Blob) => {
+      switch (file.type) {
+        case "application/zip":
+        case "application/zip-compressed":
+        case "application/x-zip-compressed":
+        case "application/x-zip":
+          return handleZipFile(file);
+        case "application/json":
+          return file.text().then(handleJsonFile);
+        default:
+          throw new LoadError(`Unknown MIME type '${file.type}'`);
+      }
+    }
     /**
      * Handles file drop.
      * @param e
      */
-    const uploadFile = (e: DragEvent) => {
+    const uploadFile = async (e: DragEvent) => {
       let dropped = e.dataTransfer?.files;
-      if (!dropped) return; // TODO add some kind of error message
-      let files = [...dropped];
-      if (files.length > 1 || files.length === 0) return;
-      let read = new FileReader();
-      read.onload = (e) => {
-        let extension = getFileExtension(files[0]);
-        if (extension === "zip") {
-          handleZipFile(files[0]);
-        } else if (extension === "json") {
-          let file = e.target?.result;
-          if (!file) return;
-          if (typeof file === "string") {
-            handleJsonFile(file);
-          }
+      try {
+        if (dropped?.length === 1) {
+          await handleFile(dropped[0]);
+        } else {
+          throw new LoadError('Not exactly one file');
         }
-      };
-      read.readAsText(files[0]);
+      } catch (e) {
+        if (e instanceof LoadError) {
+          console.warn(e);
+          alert(e.message);
+        } else {
+          throw e;
+        }
+      }
     };
+    const loadQueryFile = async (url: URL) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new LoadError('Response not OK');
+        }
+        await handleFile(await response.blob());
+      } catch (e) {
+        console.warn(e);
+        alert(e);
+      }
+    }
     /**
      * Handles click on Continue with local files.
      */
@@ -186,10 +233,16 @@ export default defineComponent({
       });
       navigateToOverview();
     };
+
+    if (queryFileURL !== null) {
+      loadQueryFile(queryFileURL);
+    }
+
     return {
       continueWithLocal,
       uploadFile,
       hasLocalFile,
+      hasQueryFile: queryFileURL !== null,
     };
   },
 });
