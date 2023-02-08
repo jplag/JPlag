@@ -38,6 +38,7 @@ class LoadError extends Error {}
 export default defineComponent({
   name: "FileUploadView",
   setup() {
+    store.commit("clearStore");
     let hasLocalFile;
     //Tries to detect local file. If no files detected, hides local mode from screen.
     try {

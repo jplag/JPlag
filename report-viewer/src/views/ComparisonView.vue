@@ -125,11 +125,10 @@ export default defineComponent({
           name: "ErrorView",
           state: {
             message: "Comparison file can't be found!",
-            to: "/",
-            routerInfo: "back to FileUpload page"
+            to: "/overview",
+            routerInfo: "back to overview page"
           }
         });
-        store.commit("clearStore");
       }
     } else if (store.state.single) {
       try {
