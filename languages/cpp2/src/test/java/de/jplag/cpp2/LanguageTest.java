@@ -125,8 +125,8 @@ class LanguageTest {
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.BLOCK_BEGIN, CPPTokenType.APPLY, CPPTokenType.APPLY,
-                CPPTokenType.APPLY, CPPTokenType.APPLY, CPPTokenType.BLOCK_END, CPPTokenType.FUNCTION_END);
+        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.APPLY, CPPTokenType.APPLY, CPPTokenType.APPLY, CPPTokenType.APPLY,
+                CPPTokenType.FUNCTION_END);
     }
 
     @Test
@@ -149,11 +149,9 @@ class LanguageTest {
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.BLOCK_BEGIN, CPPTokenType.DO_BEGIN, CPPTokenType.BLOCK_BEGIN,
-                CPPTokenType.GOTO, CPPTokenType.BLOCK_END, CPPTokenType.DO_END, CPPTokenType.WHILE_BEGIN, CPPTokenType.BLOCK_BEGIN,
-                CPPTokenType.BREAK, CPPTokenType.BLOCK_END, CPPTokenType.WHILE_END, CPPTokenType.FOR_BEGIN, CPPTokenType.BLOCK_BEGIN,
-                CPPTokenType.CONTINUE, CPPTokenType.BLOCK_END, CPPTokenType.FOR_END, CPPTokenType.RETURN, CPPTokenType.BLOCK_END,
-                CPPTokenType.FUNCTION_END);
+        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.DO_BEGIN, CPPTokenType.GOTO, CPPTokenType.DO_END,
+                CPPTokenType.WHILE_BEGIN, CPPTokenType.BREAK, CPPTokenType.WHILE_END, CPPTokenType.FOR_BEGIN, CPPTokenType.CONTINUE,
+                CPPTokenType.FOR_END, CPPTokenType.RETURN, CPPTokenType.FUNCTION_END);
 
     }
 
@@ -166,8 +164,7 @@ class LanguageTest {
                 }
                 """.formatted(expression));
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.BLOCK_BEGIN, CPPTokenType.APPLY,
-                CPPTokenType.BLOCK_END, CPPTokenType.FUNCTION_END);
+        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.APPLY, CPPTokenType.FUNCTION_END);
     }
 
     @Test
@@ -224,6 +221,32 @@ class LanguageTest {
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
         assertTokenTypes(result.tokens(), CPPTokenType.CLASS_BEGIN, CPPTokenType.VARDEF, CPPTokenType.ASSIGN, CPPTokenType.APPLY,
                 CPPTokenType.CLASS_END);
+    }
+
+    @Test
+    void testUnion(@TempDir Path path) {
+        TokenResult result = extractFromString(path, """
+                union S {
+                    std::int32_t n;
+                    std::uint16_t s[2];
+                    std::uint8_t c;
+                };
+                """);
+        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+        assertTokenTypes(result.tokens(), CPPTokenType.UNION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.VARDEF, CPPTokenType.VARDEF,
+                CPPTokenType.UNION_END);
+    }
+
+    @Test
+    void testArrayInit(@TempDir Path path) {
+        TokenResult result = extractFromString(path, """
+                class A {    };
+                class A {
+                };
+                int a[] = {1, 2, 3};
+                int b[] {1, 2, 3};
+                """);
+        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
     }
 
     @Test

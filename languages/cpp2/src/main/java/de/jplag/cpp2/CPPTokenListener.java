@@ -26,16 +26,6 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     }
 
     @Override
-    public void enterCompoundStatement(CPP14Parser.CompoundStatementContext context) {
-        addEnter(CPPTokenType.BLOCK_BEGIN, context.getStart());
-    }
-
-    @Override
-    public void exitCompoundStatement(CPP14Parser.CompoundStatementContext context) {
-        addExit(CPPTokenType.BLOCK_END, context.getStop());
-    }
-
-    @Override
     public void enterClassSpecifier(CPP14Parser.ClassSpecifierContext context) {
         if (context.classHead().Union() != null) {
             addEnter(CPPTokenType.UNION_BEGIN, context.getStart());
