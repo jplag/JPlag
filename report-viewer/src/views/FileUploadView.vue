@@ -178,6 +178,9 @@ export default defineComponent({
     const handleFile = (file: Blob) => {
       switch (file.type) {
         case "application/zip":
+        case "application/zip-compressed":
+        case "application/x-zip-compressed":
+        case "application/x-zip":
           return handleZipFile(file);
         case "application/json":
           return file.text().then(handleJsonFile);
