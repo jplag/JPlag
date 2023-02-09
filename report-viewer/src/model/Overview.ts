@@ -13,8 +13,6 @@ export class Overview {
   private readonly _metrics: Array<Metric>;
   private readonly _clusters: Array<Cluster>;
   private readonly _totalComparisons: number;
-  private readonly _shownComparisons: number;
-  private readonly _missingComparisons: number;
 
   constructor(
     submissionFolderPath: Array<string>,
@@ -27,8 +25,6 @@ export class Overview {
     metrics: Array<Metric>,
     clusters: Array<Cluster>,
     totalComparisons: number,
-    shownComparisons: number,
-    missingComparisons: number,
     submissionIdsToComparisonFileName: Map<string,Map<string,string>>
   ) {
     this._submissionFolderPath = submissionFolderPath;
@@ -42,8 +38,6 @@ export class Overview {
     this._clusters = clusters;
     this. _submissionIdsToComparisonFileName = submissionIdsToComparisonFileName;
     this._totalComparisons= totalComparisons;
-    this._shownComparisons= shownComparisons;
-    this._missingComparisons= missingComparisons;
   }
   get submissionIdsToComparisonFileName(): Map<string,Map<string,string>> {
     return this.submissionIdsToComparisonFileName;
@@ -88,13 +82,5 @@ export class Overview {
 
   get totalComparisons(): number {
     return this._totalComparisons;
-  }
-
-  get shownComparisons(): number {
-    return this._shownComparisons;
-  }
-
-  get missingComparisons(): number {
-    return this._missingComparisons;
   }
 }

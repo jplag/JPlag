@@ -3,99 +3,88 @@
 -->
 <template>
   <div class="container">
-    <div class="column-container" style="width: 65%;padding: 0%">
-      <div class="row-container">
-        <div class="column-container" style="width: 40%">
-          <h1>JPlag Report</h1>
-          <p class="section-title">Main Info:</p>
-          <div id="basicInfo">
-            <TextInformation
-              :has-additional-info="hasMoreSubmissionPaths"
-              :value="submissionPathValue"
-              additional-info-title=""
-              label="Directory path"
-            >
-              <p
-                v-for="path in overview.submissionFolderPath"
-                :key="path"
-                :title="path"
-              >
-                {{ path }}
-              </p>
-            </TextInformation>
-            <TextInformation
-              :has-additional-info="true"
-              :value="overview.language"
-              additional-info-title="File extensions:"
-              label="Language"
-            >
-              <p v-for="info in overview.fileExtensions" :key="info">{{ info }}</p>
-            </TextInformation>
-            <TextInformation
-              :value="overview.matchSensitivity"
-              label="Match Sensitivity"
-            />
-            <TextInformation
-              :has-additional-info="true"
-              :value="store.getters.getSubmissionIds.size"
-              additional-info-title="Submission IDs:"
-              label="Submissions"
-            >
-              <IDsList :ids="store.getters.getSubmissionIds" @id-sent="handleId" />
-            </TextInformation>
-            <TextInformation
-              :value="overview.dateOfExecution"
-              label="Date of execution"
-            />
-            <TextInformation
-              :value="overview.durationOfExecution"
-              label="Duration (in ms)"
-            />
-          </div>
-          <div id="logo-section">
-            <img id="logo" alt="JPlag" src="@/assets/logo-nobg.png" />
-          </div>
-        </div>
+    <div class="column-container" style="width: 30%">
+      <h1>JPlag Report</h1>
+      <p class="section-title">Main Info:</p>
+      <div id="basicInfo">
+        <TextInformation
+          :has-additional-info="hasMoreSubmissionPaths"
+          :value="submissionPathValue"
+          additional-info-title=""
+          label="Directory path"
+        >
+          <p
+            v-for="path in overview.submissionFolderPath"
+            :key="path"
+            :title="path"
+          >
+            {{ path }}
+          </p>
+        </TextInformation>
+        <TextInformation
+          :has-additional-info="true"
+          :value="overview.language"
+          additional-info-title="File extensions:"
+          label="Language"
+        >
+          <p v-for="info in overview.fileExtensions" :key="info">{{ info }}</p>
+        </TextInformation>
+        <TextInformation
+          :value="overview.matchSensitivity"
+          label="Match Sensitivity"
+        />
+        <TextInformation
+          :has-additional-info="true"
+          :value="store.getters.getSubmissionIds.size"
+          additional-info-title="Submission IDs:"
+          label="Submissions"
+        >
+          <IDsList :ids="store.getters.getSubmissionIds" @id-sent="handleId" />
+        </TextInformation>
+        <TextInformation
+          :value="overview.dateOfExecution"
+          label="Date of execution"
+        />
+        <TextInformation
+          :value="overview.durationOfExecution"
+          label="Duration (in ms)"
+        />
+      </div>
+      <div id="logo-section">
+        <img id="logo" alt="JPlag" src="@/assets/logo-nobg.png" />
+      </div>
+    </div>
 
-        <div class="column-container" style="width: 60%">
-          <div id="metrics">
-            <p class="section-title">Metric:</p>
-            <div id="metrics-list">
-              <MetricButton
-                v-for="(metric, index) in overview.metrics"
-                :id="metric.metricName"
-                :key="metric.metricName"
-                :is-selected="selectedMetric[index]"
-                :metric="metric"
-                @click="selectMetric(index)"
-              />
-            </div>
-          </div>
-          <p class="section-title">Distribution:</p>
-          <DistributionDiagram
-            :distribution="distributions[selectedMetricIndex]"
-            class="full-width"
+    <div class="column-container" style="width: 35%">
+      <div id="metrics">
+        <p class="section-title">Metric:</p>
+        <div id="metrics-list">
+          <MetricButton
+            v-for="(metric, index) in overview.metrics"
+            :id="metric.metricName"
+            :key="metric.metricName"
+            :is-selected="selectedMetric[index]"
+            :metric="metric"
+            @click="selectMetric(index)"
           />
         </div>
       </div>
-      <div class="row-container">
-        <div v-if="overview.missingComparisons!==0">
-          <div v-if="scroll_show_absolute" class="shownInfo_ab" >
-            <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{overview.shownComparisons}}, Missing comparisons: {{overview.missingComparisons}}</h3>
-          </div>
-          <div v-else class="shownInfo_st" >
-            <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{overview.shownComparisons}}, Missing comparisons: {{overview.missingComparisons}}</h3>
-          </div>
-        </div>
-      </div>
+      <p class="section-title">Distribution:</p>
+      <DistributionDiagram
+        :distribution="distributions[selectedMetricIndex]"
+        class="full-width"
+      />
     </div>
-    <div class="column-container" style="width: 35%;padding-right: 1%;padding-left: 0%">
+    <div class="column-container" style="width: 35%">
       <p class="section-title">Top Comparisons:</p>
       <div id="comparisonsList">
         <ComparisonsTable
           :clusters="overview.clusters"
           :top-comparisons="topComps[selectedMetricIndex]"
         />
+      </div>
+      <div v-if="missingComparisons!==0">
+        <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{shownComparisons}}, Missing comparisons: {{missingComparisons}}</h3>
       </div>
     </div>
   </div>
@@ -126,6 +115,9 @@ export default defineComponent({
   setup() {
     let scroll_show_absolute: Ref = ref(false);
     const store = useStore();
+    const shownComparisons = computed(()=>{
+      return Object.keys(store.state.files).length - 1;
+    });
     const overviewFile = computed(() => {
       const index = Object.keys(store.state.files).find((name) =>
         name.endsWith("overview.json")
@@ -155,7 +147,7 @@ export default defineComponent({
     };
 
     let overview = getOverview();
-
+    const missingComparisons = overview.totalComparisons - shownComparisons.value;
     /**
      * Handles the selection of an Id to anonymize.
      * If all submission ids are provided as parameter it hides or displays them based on their previous state.
@@ -234,6 +226,8 @@ export default defineComponent({
       topComps,
       hasMoreSubmissionPaths,
       submissionPathValue,
+      shownComparisons,
+      missingComparisons,
       handleId,
       selectMetric,
       handleScroll,
@@ -267,11 +261,7 @@ hr {
   overflow: auto;
   background: var(--background-color);
 }
-.row-container{
-  display: flex;
-  flex-direction: row;
-  padding: 1%;
-}
+
 .column-container {
   display: flex;
   flex-direction: column;
@@ -329,19 +319,6 @@ hr {
   align-items: center;
   padding: 5%;
   display: flex;
-}
-
-.shownInfo_ab{
-  position: absolute;
-  top:50%;
-  left:25%;
-  transform: translate(-36.5%,-50%);
-}
-
-.shownInfo_st{
-  margin-left: 20%;
-  height: 0;
-  width: 200%;
 }
 
 #logo {
