@@ -8,7 +8,7 @@ import versionJson from "../../version.json";
 
 export class OverviewFactory {
 
-  static reportViewerVersion: Version = versionJson["report_viewer_version"] !== undefined ? JSON.parse(JSON.stringify(versionJson["report_viewer_version"])) : {major: -1, minor: -1, patch: -1};
+  static reportViewerVersion: Version = versionJson["report_viewer_version"] !== undefined ? versionJson["report_viewer_version"] : {major: -1, minor: -1, patch: -1};
 
   static getOverview(json: Record<string, unknown>): Overview {
     const versionField = json.jplag_version as Record<string, number>;
