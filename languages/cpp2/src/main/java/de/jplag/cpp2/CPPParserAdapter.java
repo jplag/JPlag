@@ -38,7 +38,7 @@ public class CPPParserAdapter extends AbstractParser {
 
                 ParseTreeWalker.DEFAULT.walk(new CPPTokenListener(this), translationUnit);
             } catch (IOException e) {
-                throw new ParsingException(file, "", e);
+                throw new ParsingException(file, e);
             }
             tokens.add(Token.fileEnd(currentFile));
         }
