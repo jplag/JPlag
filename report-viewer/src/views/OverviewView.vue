@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onMounted, Ref, ref} from "vue";
+import { computed, defineComponent, Ref, ref } from "vue";
 import router from "@/router";
 import TextInformation from "../components/TextInformation.vue";
 import DistributionDiagram from "@/components/DistributionDiagram.vue";
@@ -113,11 +113,7 @@ export default defineComponent({
     TextInformation,
   },
   setup() {
-    let scroll_show_absolute: Ref = ref(false);
     const store = useStore();
-    const shownComparisons = computed(()=>{
-      return Object.keys(store.state.files).length - 1;
-    });
     const overviewFile = computed(() => {
       const index = Object.keys(store.state.files).find((name) =>
         name.endsWith("overview.json")
@@ -147,7 +143,8 @@ export default defineComponent({
     };
 
     let overview = getOverview();
-    const missingComparisons = overview.totalComparisons - shownComparisons.value;
+
+
     /**
      * Handles the selection of an Id to anonymize.
      * If all submission ids are provided as parameter it hides or displays them based on their previous state.
@@ -210,15 +207,12 @@ export default defineComponent({
       ? "Click arrow to see all paths"
       : overview.submissionFolderPath[0];
 
-    const handleScroll = (e:any) => {
-      let scrollTop = e.target.scrollTop;
-      scroll_show_absolute.value = scrollTop >= 600;
-    };
-    onMounted(() => {
-      window.addEventListener('scroll', handleScroll,true)
+    const shownComparisons = computed(()=>{
+      return overview.metrics[selectedMetricIndex.value].comparisons.length;
     });
+    const missingComparisons = overview.totalComparisons - shownComparisons.value;
+
     return {
-      scroll_show_absolute,
       overview,
       selectedMetricIndex,
       selectedMetric,
@@ -230,7 +224,6 @@ export default defineComponent({
       missingComparisons,
       handleId,
       selectMetric,
-      handleScroll,
       store,
     };
   },
