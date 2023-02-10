@@ -35,9 +35,5 @@ public record OverviewReport(
 
         @JsonProperty("clusters") List<Cluster> clusters,
 
-        @JsonProperty("total_comparisons") int totalComparisons,
-
-        @JsonProperty("shown_comparisons") int shownComparisons,
-
-        @JsonProperty("missing_comparisons") int missingComparisons) {
+        @JsonProperty("total_comparisons") int totalComparisons) {
 }

@@ -74,14 +74,6 @@
         :distribution="distributions[selectedMetricIndex]"
         class="full-width"
       />
-      <div v-if="overview.missingComparisons!==0">
-        <div v-if="scroll_show_absolute" class="shownInfo_ab" >
-          <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{overview.shownComparisons}}, Missing comparisons: {{overview.missingComparisons}}</h3>
-        </div>
-        <div v-else class="shownInfo_st" >
-          <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{overview.shownComparisons}}, Missing comparisons: {{overview.missingComparisons}}</h3>
-        </div>
-      </div>
     </div>
     <div class="column-container" style="width: 35%">
       <p class="section-title">Top Comparisons:</p>
@@ -91,12 +83,15 @@
           :top-comparisons="topComps[selectedMetricIndex]"
         />
       </div>
+      <div v-if="missingComparisons!==0">
+        <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{shownComparisons}}, Missing comparisons: {{missingComparisons}}</h3>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, onErrorCaptured, onMounted, Ref, ref} from "vue";
+import { computed, defineComponent, onErrorCaptured, Ref, ref } from "vue";
 import router from "@/router";
 import TextInformation from "../components/TextInformation.vue";
 import DistributionDiagram from "@/components/DistributionDiagram.vue";
@@ -118,7 +113,6 @@ export default defineComponent({
     TextInformation,
   },
   setup() {
-    let scroll_show_absolute: Ref = ref(false);
     const store = useStore();
     const overviewFile = computed(() => {
       const index = Object.keys(store.state.files).find((name) =>
@@ -141,7 +135,7 @@ export default defineComponent({
         }
       } else if (store.state.zip) {
         if(overviewFile.value===undefined){
-          return new Overview([],"","",[],0,"",0,[],[],0,0,0,new Map<string, Map<string, string>>());
+          return new Overview([],"","",[],0,"",0,[],[],0, new Map<string, Map<string, string>>());
         }
         const overviewJson = JSON.parse(overviewFile.value);
         temp = OverviewFactory.getOverview(overviewJson);
@@ -152,6 +146,7 @@ export default defineComponent({
     };
 
     let overview = getOverview();
+
 
     /**
      * Handles the selection of an Id to anonymize.
@@ -215,17 +210,11 @@ export default defineComponent({
       ? "Click arrow to see all paths"
       : overview.submissionFolderPath[0];
 
-    const handleScroll = (e:any) => {
-      let scrollTop = e.target.scrollTop;
-      if (scrollTop >= 420) {
-        scroll_show_absolute.value = true
-      } else {
-        scroll_show_absolute.value = false
-      }
-    };
-    onMounted(() => {
-      window.addEventListener('scroll', handleScroll,true)
+    const shownComparisons = computed(()=>{
+      return overview.metrics[selectedMetricIndex.value]?.comparisons.length;
     });
+    const missingComparisons = overview.totalComparisons - shownComparisons.value;
+
     onErrorCaptured(()=>{
       router.push({
         name: "ErrorView",
@@ -238,8 +227,8 @@ export default defineComponent({
       store.commit("clearStore");
       return false;
     });
+
     return {
-      scroll_show_absolute,
       overview,
       selectedMetricIndex,
       selectedMetric,
@@ -247,9 +236,10 @@ export default defineComponent({
       topComps,
       hasMoreSubmissionPaths,
       submissionPathValue,
+      shownComparisons,
+      missingComparisons,
       handleId,
       selectMetric,
-      handleScroll,
       store,
     };
   },
@@ -337,21 +327,6 @@ hr {
   align-items: center;
   padding: 5%;
   display: flex;
-}
-
-.shownInfo_ab{
-  position: absolute;
-  top:50%;
-  left:25%;
-  transform: translate(-36.5%,-50%);
-}
-
-.shownInfo_st{
-  position: sticky;
-  top:50%;
-  left:25%;
-  width: 200%;
-  transform: translate(-37.5%,-50%);
 }
 
 #logo {
