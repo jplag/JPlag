@@ -3,7 +3,6 @@ import { Match } from "../Match";
 import { SubmissionFile } from "../SubmissionFile";
 import { MatchInSingleFile } from "../MatchInSingleFile";
 import store from "@/store/store";
-import * as Console from "console";
 
 export class ComparisonFactory {
   static getComparison(json: Record<string, unknown>): Comparison {
