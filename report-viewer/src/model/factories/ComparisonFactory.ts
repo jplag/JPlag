@@ -3,6 +3,7 @@ import { Match } from "../Match";
 import { SubmissionFile } from "../SubmissionFile";
 import { MatchInSingleFile } from "../MatchInSingleFile";
 import store from "@/store/store";
+import * as Console from "console";
 
 export class ComparisonFactory {
   static getComparison(json: Record<string, unknown>): Comparison {
@@ -105,22 +106,21 @@ export class ComparisonFactory {
 
 
   private static generateColorsForMatches(num: number): Array<string> {
-    const colors = [];
-    const firstInterval = 60; // [20,80]
-    const secondInterval = 180; // [160,340]
-    const numberInFirstInterval = Math.round(0.25 * num); // number of colors from the first interval
-    const numberInSecondInterval = num - numberInFirstInterval; // number of colors from the second interval
-    const hueFirstDelta = Math.trunc(firstInterval / numberInFirstInterval);
-    const hueSecondDelta = Math.trunc(secondInterval / numberInSecondInterval);
-    for (let i = 0; i < numberInFirstInterval; i++) {
-      const hue = 20 + i * hueFirstDelta;
-      colors.push(`hsla(${hue}, 80%, 50%, 0.3)`);
-    }
-    for (let i = 0; i < numberInSecondInterval; i++) {
-      const hue = 160 + i * hueSecondDelta;
-      colors.push(`hsla(${hue}, 80%, 50%, 0.3)`);
-    }
+    const colors: Array<string> = [];
+    const numberOfColorsInFirstInterval = Math.round((80 - 20) / ((80 - 20) + (340 - 160)) * num); // number of colors from the first interval
+    const numberOfColorsInSecondInterval = num - numberOfColorsInFirstInterval; // number of colors from the second interval
+    ComparisonFactory.generateColorsForInterval(20, 80, numberOfColorsInFirstInterval, colors);
+    ComparisonFactory.generateColorsForInterval(160, 340, numberOfColorsInSecondInterval, colors);
     return colors;
+  }
+
+  static generateColorsForInterval(intervalStart: number, intervalEnd: number, numberOfColorsInInterval: number, colors: Array<string>){
+    const interval = intervalEnd - intervalStart;
+    const hueDelta = Math.trunc(interval / numberOfColorsInInterval);
+    for (let i = 0; i < numberOfColorsInInterval; i++) {
+      const hue = intervalStart + i * hueDelta;
+      colors.push(`hsla(${hue}, 80%, 50%, 0.3)`);
+    }
   }
 
   private static mapMatch(
