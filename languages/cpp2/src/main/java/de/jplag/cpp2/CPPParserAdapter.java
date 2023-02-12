@@ -19,7 +19,6 @@ import de.jplag.cpp2.grammar.CPP14Lexer;
 import de.jplag.cpp2.grammar.CPP14Parser;
 
 public class CPPParserAdapter extends AbstractParser {
-    static final int USE_PREVIOUS_COLUMN = -1;
     private File currentFile;
 
     private List<Token> tokens;
@@ -48,16 +47,11 @@ public class CPPParserAdapter extends AbstractParser {
     /**
      * Add a token with the given type at the given position (column and line) with the given length.
      * @param type the type of the token.
-     * @param column the column where the token starts, or {@value #USE_PREVIOUS_COLUMN} if the column should be taken from
-     * the previously extracted token.
+     * @param column the column where the token starts.
      * @param line the line where the token starts.
      * @param length the length of the token.
      */
     public void addToken(TokenType type, int column, int line, int length) {
-        if (column == USE_PREVIOUS_COLUMN) {
-            //
-            column = tokens.isEmpty() ? 0 : tokens.get(tokens.size() - 1).getColumn() + 1;
-        }
         tokens.add(new Token(type, currentFile, line, column, length));
     }
 
