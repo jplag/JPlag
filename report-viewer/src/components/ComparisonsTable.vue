@@ -2,7 +2,7 @@
   Table which display all of the comparisons with their participating ids and similarity percentage for the selected metric.
 -->
 <template>
-  <table>
+  <table class="table">
     <tr class="head-row">
       <th>No.</th>
       <th>Submission 1</th>
@@ -10,113 +10,225 @@
       <th>Submission 2</th>
       <th>Match %</th>
     </tr>
-    <tr
-      v-for="(comparison, index) in topComparisons"
-      :key="
-        comparison.firstSubmissionId +
-        comparison.secondSubmissionId +
-        comparison.similarity
-      "
-      class="selectable"
-    >
+  </table>
+
+  <RecycleScroller
+      style="height: 650px; overflow: auto;"
+      class="scroller"
+      :items="topComparisons"
+      :item-size="48"
+      key-field="id"
+      v-slot="{ item }"
+  >
+    <table class="table" style="width: 100%">
+      <tr v-if="item.id % 2 === 0" class="selectableEven">
       <td
         @click="
           navigateToComparisonView(
-            comparison.firstSubmissionId,
-            comparison.secondSubmissionId
+            item.firstSubmissionId,
+            item.secondSubmissionId
           )
         "
+        class="td1"
       >
-        {{ index + 1 }}.
+        {{ item.id }}.
       </td>
       <td
         @click="
           navigateToComparisonView(
-            comparison.firstSubmissionId,
-            comparison.secondSubmissionId
+            item.firstSubmissionId,
+            item.secondSubmissionId
           )
         "
         :class="{
-          'anonymous-style': isAnonymous(comparison.firstSubmissionId),
+          'anonymous-style': isAnonymous(item.firstSubmissionId),
         }"
+        class="td2"
       >
         {{
-          isAnonymous(comparison.firstSubmissionId)
+          isAnonymous(item.firstSubmissionId)
             ? "Hidden"
-            : displayName(comparison.firstSubmissionId)
+            : displayName(item.firstSubmissionId)
         }}
       </td>
       <td
         @click="
           navigateToComparisonView(
-            comparison.firstSubmissionId,
-            comparison.secondSubmissionId
+            item.firstSubmissionId,
+            item.secondSubmissionId
           )
         "
+        class="td3"
       >
         <img alt=">>" src="@/assets/double_arrow_black_18dp.svg" />
       </td>
       <td
         @click="
           navigateToComparisonView(
-            comparison.firstSubmissionId,
-            comparison.secondSubmissionId
+            item.firstSubmissionId,
+            item.secondSubmissionId
           )
         "
         :class="{
-          'anonymous-style': isAnonymous(comparison.secondSubmissionId),
+          'anonymous-style': isAnonymous(item.secondSubmissionId),
         }"
+        class="td4"
       >
         {{
-          isAnonymous(comparison.secondSubmissionId)
+          isAnonymous(item.secondSubmissionId)
             ? "Hidden"
-            : displayName(comparison.secondSubmissionId)
+            : displayName(item.secondSubmissionId)
         }}
       </td>
       <td
         @click="
           navigateToComparisonView(
-            comparison.firstSubmissionId,
-            comparison.secondSubmissionId
+            item.firstSubmissionId,
+            item.secondSubmissionId
           )
         "
+        class="td5"
       >
-        {{ formattedMatchPercentage(comparison.similarity) }}
+        {{ formattedMatchPercentage(item.similarity) }}
       </td>
-      <td>
+      <td style="width: 5%">
         <img
           v-if="
             isInCluster(
-              comparison.firstSubmissionId,
-              comparison.secondSubmissionId
+              item.firstSubmissionId,
+              item.secondSubmissionId
             )
           "
           alt=">>"
           src="@/assets/keyboard_double_arrow_down_black_18dp.svg"
-          @click="toggleDialog(index)"
+          @click="toggleDialog(item.id-1)"
         />
       </td>
       <GDialog
         v-if="
           isInCluster(
-            comparison.firstSubmissionId,
-            comparison.secondSubmissionId
+            item.firstSubmissionId,
+            item.secondSubmissionId
           )
         "
-        v-model="dialog[index]"
+        v-model="dialog[item.id-1]"
       >
         <ClustersList
           :clusters="
             getClustersFor(
-              comparison.firstSubmissionId,
-              comparison.secondSubmissionId
+              item.firstSubmissionId,
+              item.secondSubmissionId
             )
           "
-          :comparison="comparison"
+          :comparison="item"
         />
       </GDialog>
-    </tr>
-  </table>
+      </tr>
+      <tr v-else class="selectableOdd">
+        <td
+            @click="
+          navigateToComparisonView(
+            item.firstSubmissionId,
+            item.secondSubmissionId
+          )
+        "
+            class="td1"
+        >
+          {{ item.id }}.
+        </td>
+        <td
+            @click="
+          navigateToComparisonView(
+            item.firstSubmissionId,
+            item.secondSubmissionId
+          )
+        "
+            :class="{
+          'anonymous-style': isAnonymous(item.firstSubmissionId),
+        }"
+            class="td2"
+        >
+          {{
+            isAnonymous(item.firstSubmissionId)
+                ? "Hidden"
+                : displayName(item.firstSubmissionId)
+          }}
+        </td>
+        <td
+            @click="
+          navigateToComparisonView(
+            item.firstSubmissionId,
+            item.secondSubmissionId
+          )
+        "
+            class="td3"
+        >
+          <img alt=">>" src="@/assets/double_arrow_black_18dp.svg" />
+        </td>
+        <td
+            @click="
+          navigateToComparisonView(
+            item.firstSubmissionId,
+            item.secondSubmissionId
+          )
+        "
+            :class="{
+          'anonymous-style': isAnonymous(item.secondSubmissionId),
+        }"
+            class="td4"
+        >
+          {{
+            isAnonymous(item.secondSubmissionId)
+                ? "Hidden"
+                : displayName(item.secondSubmissionId)
+          }}
+        </td>
+        <td
+            @click="
+          navigateToComparisonView(
+            item.firstSubmissionId,
+            item.secondSubmissionId
+          )
+        "
+            class="td5"
+        >
+          {{ formattedMatchPercentage(item.similarity) }}
+        </td>
+        <td style="width: 5%">
+          <img
+              v-if="
+            isInCluster(
+              item.firstSubmissionId,
+              item.secondSubmissionId
+            )
+          "
+              alt=">>"
+              src="@/assets/keyboard_double_arrow_down_black_18dp.svg"
+              @click="toggleDialog(item.id-1)"
+          />
+        </td>
+        <GDialog
+            v-if="
+          isInCluster(
+            item.firstSubmissionId,
+            item.secondSubmissionId
+          )
+        "
+            v-model="dialog[item.id-1]"
+        >
+          <ClustersList
+              :clusters="
+            getClustersFor(
+              item.firstSubmissionId,
+              item.secondSubmissionId
+            )
+          "
+              :comparison="item"
+          />
+        </GDialog>
+      </tr>
+    </table>
+  </RecycleScroller>
 </template>
 
 <script lang="ts">
@@ -247,18 +359,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
-table {
+.table {
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: larger;
   text-align: center;
-}
-
-tr:nth-child(odd) {
-  background: var(--primary-color-light);
-}
-
-tr:nth-child(even) {
-  background: var(--secondary-color);
 }
 
 th {
@@ -268,10 +373,35 @@ th {
   color: var(--on-primary-color);
 }
 
-td {
+.td1 {
+  padding-right: 10%;
   padding-top: 3%;
   padding-bottom: 3%;
 }
+
+.td2 {
+  padding-right: 5%;
+   padding-top: 3%;
+   padding-bottom: 3%;
+ }
+
+.td3 {
+  padding-right: 5%;
+   padding-top: 3%;
+   padding-bottom: 3%;
+ }
+
+.td4 {
+  padding-right: 5%;
+   padding-top: 3%;
+   padding-bottom: 3%;
+ }
+
+.td5 {
+  padding-left: 6%;
+   padding-top: 3%;
+   padding-bottom: 3%;
+ }
 
 .anonymous-style {
   color: #777777;
@@ -282,8 +412,23 @@ td {
   background: var(--primary-color-light);
 }
 
-.selectable:hover {
-  background: var(--primary-color-dark);
+.selectableEven{
+  background: var(--primary-color-light);
+  cursor: pointer;
+}
+
+.selectableOdd{
+  background: var(--secondary-color);
+  cursor: pointer;
+}
+
+.selectableEven:hover {
+  background: var(--primary-color-dark) !important;
+  cursor: pointer;
+}
+
+.selectableOdd:hover {
+  background: var(--primary-color-dark) !important;
   cursor: pointer;
 }
 </style>
