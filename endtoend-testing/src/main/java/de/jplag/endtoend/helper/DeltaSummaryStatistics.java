@@ -55,7 +55,7 @@ public class DeltaSummaryStatistics {
     private class FormattedDoubleSummaryStatistics extends DoubleSummaryStatistics {
         @Override
         public String toString() {
-            return String.format("count=%d, average=%,.4f, min=%,.4f, max=%,.4f", getCount(), getAverage(), getMin(), getMax());
+            return String.format("count=%d, average=%.4f, min=%.4f, max=%.4f", getCount(), getAverage(), getMin(), getMax());
         }
     }
 
