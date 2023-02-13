@@ -120,11 +120,11 @@ export default defineComponent({
           JSON.parse(comparisonFile)
         );
       } else {
-        console.log("Could not find comparison file.");
+        console.log("Comparison file not found!");
         router.push({
           name: "ErrorView",
           state: {
-            message: "Comparison file can't be found!",
+            message: "Comparison file not found!",
             to: "/overview",
             routerInfo: "back to overview page"
           }
@@ -139,7 +139,7 @@ export default defineComponent({
         router.push({
           name: "ErrorView",
           state: {
-            message: "Codes of matches can't be found! If you use single file mode, overview.json can only be accepted!",
+            message: "Source code of matches not found. To only see the overview, please drop the overview.json directly.",
             to: "/",
             routerInfo: "back to FileUpload page"
           }
@@ -149,7 +149,7 @@ export default defineComponent({
     }
     if (!comparison) {
       comparison=new Comparison("","",0);
-      console.log("Could not build comparison file");
+      console.log("Unable to build comparison file.");
     }
     const filesOfFirst = ref(comparison.filesOfFirstSubmission);
     const filesOfSecond = ref(comparison.filesOfSecondSubmission);

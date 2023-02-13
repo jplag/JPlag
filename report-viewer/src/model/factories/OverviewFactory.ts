@@ -85,20 +85,23 @@ export class OverviewFactory {
 
   static compareVersions(jsonVersion: Version, reportViewerVersion: Version) {
     if(sessionStorage.getItem("versionAlert")===null) {
+
+      if (reportViewerVersion.major === 0 && reportViewerVersion.minor === 0 && reportViewerVersion.patch === 0) {
+        alert("The development version (0.0.0) of JPlag is used.");
+      }
+
       if (jsonVersion.major !== reportViewerVersion.major ||
           jsonVersion.minor !== reportViewerVersion.minor ||
           jsonVersion.patch !== reportViewerVersion.patch) {
         if(reportViewerVersion.major === -1 && reportViewerVersion.minor === -1 && reportViewerVersion.patch === -1){
           console.warn("The report viewer's version cannot be read from version.json file. Please configure it correctly.");
-        }
-        if (jsonVersion.major === 0 && jsonVersion.minor === 0 && jsonVersion.patch === 0) {
-          alert("The development version(0.0.0) of JPlag is used.");
         } else {
           console.warn("The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful.");
           alert("The result's version(" + jsonVersion.major + "." + jsonVersion.minor + "." + jsonVersion.patch + ") tag does not fit the report viewer's version(" + reportViewerVersion.major + "." + reportViewerVersion.minor + "." + reportViewerVersion.patch + "). " +
               "Trying to read it anyhow but be careful.")
         }
       }
+
       sessionStorage.setItem("versionAlert","true");
     }
   }

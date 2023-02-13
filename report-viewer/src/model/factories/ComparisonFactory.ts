@@ -113,7 +113,7 @@ export class ComparisonFactory {
     return colors;
   }
 
-  static generateColorsForInterval(intervalStart: number, intervalEnd: number, numberOfColorsInInterval: number, colors: Array<string>){
+  private static generateColorsForInterval(intervalStart: number, intervalEnd: number, numberOfColorsInInterval: number, colors: Array<string>){
     const interval = intervalEnd - intervalStart;
     const hueDelta = Math.trunc(interval / numberOfColorsInInterval);
     for (let i = 0; i < numberOfColorsInInterval; i++) {

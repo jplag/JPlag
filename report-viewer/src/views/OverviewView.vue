@@ -84,7 +84,7 @@
         />
       </div>
       <div v-if="missingComparisons!==0">
-        <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{shownComparisons}}, Missing comparisons: {{missingComparisons}}</h3>
+        <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{shownComparisons}}, Missing comparisons: {{missingComparisons}}. To see more, re-run JPlag with a higher maximum number argument.</h3>
       </div>
     </div>
   </div>

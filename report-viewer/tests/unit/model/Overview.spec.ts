@@ -3,12 +3,12 @@ import {Metric} from "@/model/Metric";
 import {Cluster} from "@/model/Cluster";
 test('overview', () => {
     const submissionFolderPath:Array<string> = ["C:\\Users\\23651\\Desktop\\JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\PartialPlagiarism"]
-    const baseCodeFolderPath: string = "";
-    const language: string = "Javac based AST plugin";
+    const baseCodeFolderPath = "";
+    const language = "Javac based AST plugin";
     const fileExtensions: Array<string> = [".java",".JAVA"];
-    const matchSensitivity: number = 9;
-    const dateOfExecution: string = "14/12/22";
-    const durationOfExecution: number = 40;
+    const matchSensitivity = 9;
+    const dateOfExecution = "14/12/22";
+    const durationOfExecution = 40;
     const metrics: Array<Metric> = [{
         "metricName": "AVG",
         "distribution": [1, 0, 2, 0, 0, 0, 0, 3, 0, 4],
@@ -127,7 +127,7 @@ test('overview', () => {
     const clusters: Array<Cluster> = [];
     const submissionIdsToComparisonFileName: Map<string,Map<string,string>> = new Map<string, Map<string, string>>();
     const overview: Overview = new Overview(submissionFolderPath,baseCodeFolderPath,language,fileExtensions,matchSensitivity,
-        dateOfExecution,durationOfExecution,metrics,clusters,submissionIdsToComparisonFileName);
+        dateOfExecution,durationOfExecution,metrics,clusters,10,submissionIdsToComparisonFileName);
     expect(overview.language).toMatch("Javac based AST plugin");
     expect(overview.matchSensitivity).toBe(9);
     expect(overview.dateOfExecution).toMatch("14/12/22");
