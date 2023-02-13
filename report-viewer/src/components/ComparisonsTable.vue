@@ -13,6 +13,7 @@
   </table>
 
   <DynamicScroller
+      v-if="topComparisons.length>0"
       class="scroller"
       :items="topComparisons"
       :min-item-size="48"
