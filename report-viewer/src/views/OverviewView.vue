@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, Ref, ref } from "vue";
+import { computed, defineComponent, onErrorCaptured, Ref, ref } from "vue";
 import router from "@/router";
 import TextInformation from "../components/TextInformation.vue";
 import DistributionDiagram from "@/components/DistributionDiagram.vue";
@@ -120,7 +120,7 @@ export default defineComponent({
       );
       return index != undefined
         ? store.state.files[index]
-        : console.log("Could not find overview.json"); // TODO introduce error page to navigate to
+        : console.log("Could not find overview.json");
     });
 
     const getOverview = (): Overview => {
@@ -134,6 +134,9 @@ export default defineComponent({
           router.back();
         }
       } else if (store.state.zip) {
+        if(overviewFile.value===undefined){
+          return new Overview([],"","",[],0,"",0,[],[],0, new Map<string, Map<string, string>>());
+        }
         const overviewJson = JSON.parse(overviewFile.value);
         temp = OverviewFactory.getOverview(overviewJson);
       } else if (store.state.single) {
@@ -208,9 +211,22 @@ export default defineComponent({
       : overview.submissionFolderPath[0];
 
     const shownComparisons = computed(()=>{
-      return overview.metrics[selectedMetricIndex.value].comparisons.length;
+      return overview.metrics[selectedMetricIndex.value]?.comparisons.length;
     });
     const missingComparisons = overview.totalComparisons - shownComparisons.value;
+
+    onErrorCaptured(()=>{
+      router.push({
+        name: "ErrorView",
+        state: {
+          message: "Overview.json can't be found!",
+          to: "/",
+          routerInfo: "back to FileUpload page"
+        }
+      });
+      store.commit("clearStore");
+      return false;
+    });
 
     return {
       overview,
