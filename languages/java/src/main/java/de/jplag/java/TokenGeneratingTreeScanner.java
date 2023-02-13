@@ -10,7 +10,6 @@ import de.jplag.ParsingException;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
 import com.sun.source.tree.AssignmentTree;
-import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.BreakTree;
 import com.sun.source.tree.CaseTree;
 import com.sun.source.tree.CatchTree;
@@ -90,16 +89,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
      */
     private void addToken(JavaTokenType tokenType, long start, long end) {
         parser.add(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start));
-    }
-
-    @Override
-    public Object visitBlock(BlockTree node, Object p) {
-        long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_INIT_BEGIN, start, 1);
-        Object result = super.visitBlock(node, p);
-        addToken(JavaTokenType.J_INIT_END, end, 1);
-        return result;
     }
 
     @Override

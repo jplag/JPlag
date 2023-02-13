@@ -5,7 +5,7 @@
   <div class="container" @dragover.prevent @drop.prevent="uploadFile">
     <img alt="JPlag" src="@/assets/logo-nobg.png" />
     <h1>JPlag Report Viewer</h1>
-    <div v-if="!hasQueryFile">
+    <div v-if="!hasQueryFile" class="container" style="height: auto">
       <h2>Select an overview or comparison file or a zip to display.</h2>
       <h3>(No files get uploaded anywhere)</h3>
       <div class="drop-container">
@@ -38,6 +38,7 @@ class LoadError extends Error {}
 export default defineComponent({
   name: "FileUploadView",
   setup() {
+    store.commit("clearStore");
     let hasLocalFile;
     //Tries to detect local file. If no files detected, hides local mode from screen.
     try {

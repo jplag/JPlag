@@ -21,6 +21,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/ComparisonView.vue'),
     props: true,
   },
+  {
+    path: "/error",
+    name: "ErrorView",
+    component: () => import('@/views/ErrorView.vue'),
+  },
 ];
 
 const router = createRouter({
