@@ -12,6 +12,7 @@ export class Overview {
   private readonly _durationOfExecution: number;
   private readonly _metrics: Array<Metric>;
   private readonly _clusters: Array<Cluster>;
+  private readonly _totalComparisons: number;
 
   constructor(
     submissionFolderPath: Array<string>,
@@ -23,6 +24,7 @@ export class Overview {
     durationOfExecution: number,
     metrics: Array<Metric>,
     clusters: Array<Cluster>,
+    totalComparisons: number,
     submissionIdsToComparisonFileName: Map<string,Map<string,string>>
   ) {
     this._submissionFolderPath = submissionFolderPath;
@@ -35,6 +37,7 @@ export class Overview {
     this._metrics = metrics;
     this._clusters = clusters;
     this. _submissionIdsToComparisonFileName = submissionIdsToComparisonFileName;
+    this._totalComparisons= totalComparisons;
   }
   get submissionIdsToComparisonFileName(): Map<string,Map<string,string>> {
     return this.submissionIdsToComparisonFileName;
@@ -75,5 +78,9 @@ export class Overview {
 
   get clusters(): Array<Cluster> {
     return this._clusters;
+  }
+
+  get totalComparisons(): number {
+    return this._totalComparisons;
   }
 }

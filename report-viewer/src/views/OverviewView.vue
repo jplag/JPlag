@@ -83,6 +83,9 @@
           :top-comparisons="topComps[selectedMetricIndex]"
         />
       </div>
+      <div v-if="missingComparisons!==0">
+        <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{shownComparisons}}, Missing comparisons: {{missingComparisons}}</h3>
+      </div>
     </div>
   </div>
 </template>
@@ -140,6 +143,7 @@ export default defineComponent({
     };
 
     let overview = getOverview();
+
 
     /**
      * Handles the selection of an Id to anonymize.
@@ -203,6 +207,11 @@ export default defineComponent({
       ? "Click arrow to see all paths"
       : overview.submissionFolderPath[0];
 
+    const shownComparisons = computed(()=>{
+      return overview.metrics[selectedMetricIndex.value].comparisons.length;
+    });
+    const missingComparisons = overview.totalComparisons - shownComparisons.value;
+
     return {
       overview,
       selectedMetricIndex,
@@ -211,6 +220,8 @@ export default defineComponent({
       topComps,
       hasMoreSubmissionPaths,
       submissionPathValue,
+      shownComparisons,
+      missingComparisons,
       handleId,
       selectMetric,
       store,
