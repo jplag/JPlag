@@ -2,7 +2,7 @@
   Table which display all of the comparisons with their participating ids and similarity percentage for the selected metric.
 -->
 <template>
-  <table class="table">
+  <table>
     <tr class="head-row">
       <th>No.</th>
       <th>Submission 1</th>
