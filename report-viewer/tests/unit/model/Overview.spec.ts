@@ -14,52 +14,61 @@ test('overview', () => {
         "distribution": [1, 0, 2, 0, 0, 0, 0, 3, 0, 4],
         "metricThreshold": 0,
         "comparisons": [
-            {
+            {   "id": 1,
                 "firstSubmissionId": "A",
                 "secondSubmissionId": "C",
                 "similarity": 0.9966329966329966
             },
             {
+                "id": 2,
                 "firstSubmissionId": "D",
                 "secondSubmissionId": "A",
                 "similarity": 0.7787255393878575
             },
             {
+                "id": 3,
                 "firstSubmissionId": "D",
                 "secondSubmissionId": "C",
                 "similarity": 0.7787255393878575
             },
             {
+                "id": 4,
                 "firstSubmissionId": "B",
                 "secondSubmissionId": "D",
                 "similarity": 0.2827868852459016
             },
             {
+                "id": 5,
                 "firstSubmissionId": "B",
                 "secondSubmissionId": "A",
                 "similarity": 0.2457689477557027
             },
             {
+                "id": 6,
                 "firstSubmissionId": "B",
                 "secondSubmissionId": "C",
                 "similarity": 0.2457689477557027
             },
             {
+                "id": 7,
                 "firstSubmissionId": "E",
                 "secondSubmissionId": "A",
                 "similarity": 0
             },
             {
+                "id": 8,
                 "firstSubmissionId": "E",
                 "secondSubmissionId": "D",
                 "similarity": 0
             },
             {
+                "id": 9,
                 "firstSubmissionId": "E",
                 "secondSubmissionId": "B",
                 "similarity": 0
             },
             {
+                "id": 10,
                 "firstSubmissionId": "E",
                 "secondSubmissionId": "C",
                 "similarity": 0
@@ -72,51 +81,61 @@ test('overview', () => {
         "metricThreshold": 0,
         "comparisons": [
             {
+                "id": 1,
                 "firstSubmissionId": "A",
                 "secondSubmissionId": "C",
                 "similarity": 0.9966329966329966
             },
             {
+                "id": 2,
                 "firstSubmissionId": "B",
                 "secondSubmissionId": "A",
                 "similarity": 0.9766081871345029
             },
             {
+                "id": 3,
                 "firstSubmissionId": "B",
                 "secondSubmissionId": "C",
                 "similarity": 0.9766081871345029
             },
             {
+                "id": 4,
                 "firstSubmissionId": "D",
                 "secondSubmissionId": "A",
                 "similarity": 0.9639751552795031
             },
             {
+                "id": 5,
                 "firstSubmissionId": "D",
                 "secondSubmissionId": "C",
                 "similarity": 0.9639751552795031
             },
             {
+                "id": 6,
                 "firstSubmissionId": "B",
                 "secondSubmissionId": "D",
                 "similarity": 0.8070175438596491
             },
             {
+                "id": 7,
                 "firstSubmissionId": "E",
                 "secondSubmissionId": "A",
                 "similarity": 0
             },
             {
+                "id": 8,
                 "firstSubmissionId": "E",
                 "secondSubmissionId": "D",
                 "similarity": 0
             },
             {
+                "id": 9,
                 "firstSubmissionId": "E",
                 "secondSubmissionId": "B",
                 "similarity": 0
             },
             {
+                "id": 10,
                 "firstSubmissionId": "E",
                 "secondSubmissionId": "C",
                 "similarity": 0
