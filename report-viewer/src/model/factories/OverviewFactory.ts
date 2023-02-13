@@ -4,11 +4,11 @@ import { ComparisonListElement } from "../ComparisonListElement";
 import { Cluster } from "@/model/Cluster";
 import store from "@/store/store";
 import { Version } from "../Version";
+import versionJson from "../../version.json";
 
 export class OverviewFactory {
 
-  // TODO: Find a better more visible position to store this
-  static reportViewerVersion: Version = {major: 4, minor: 0, patch: 0};
+  static reportViewerVersion: Version = versionJson["report_viewer_version"] !== undefined ? versionJson["report_viewer_version"] : {major: -1, minor: -1, patch: -1};
 
   static getOverview(json: Record<string, unknown>): Overview {
     const versionField = json.jplag_version as Record<string, number>;
@@ -84,11 +84,23 @@ export class OverviewFactory {
   }
 
   static compareVersions(jsonVersion: Version, reportViewerVersion: Version) {
-    if(jsonVersion.major !== reportViewerVersion.major ||
-       jsonVersion.minor !== reportViewerVersion.minor ||
-       jsonVersion.patch !== reportViewerVersion.patch) {
-        console.warn("The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful.")
-       }
+    if(sessionStorage.getItem("versionAlert")===null) {
+      if (jsonVersion.major !== reportViewerVersion.major ||
+          jsonVersion.minor !== reportViewerVersion.minor ||
+          jsonVersion.patch !== reportViewerVersion.patch) {
+        if(reportViewerVersion.major === -1 && reportViewerVersion.minor === -1 && reportViewerVersion.patch === -1){
+          console.warn("The report viewer's version cannot be read from version.json file. Please configure it correctly.");
+        }
+        if (jsonVersion.major === 0 && jsonVersion.minor === 0 && jsonVersion.patch === 0) {
+          alert("The development version(0.0.0) of JPlag is used.");
+        } else {
+          console.warn("The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful.");
+          alert("The result's version(" + jsonVersion.major + "." + jsonVersion.minor + "." + jsonVersion.patch + ") tag does not fit the report viewer's version(" + reportViewerVersion.major + "." + reportViewerVersion.minor + "." + reportViewerVersion.patch + "). " +
+              "Trying to read it anyhow but be careful.")
+        }
+      }
+      sessionStorage.setItem("versionAlert","true");
+    }
   }
 
   private static  saveSubmissionsToComparisonNameMap(json: Record<string, unknown>){
