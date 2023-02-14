@@ -5,7 +5,7 @@ With the help of elaborated plagiarism, which has been worked out from suggestio
 
 ## References
 These elaborations provide basic ideas on how a modification of the plagiarized source code can look or be adapted.
-These code adaptations refer to a wide range of changes, from
+These code adaptations refer to various changes, from
 adding/removing comments to architectural changes in the deliverables.
 
 The following elaborations were used to be able to create the plagiarisms with the broadest coverage:
@@ -47,13 +47,13 @@ More detailed information about the creation as well as about the subject of the
 ## JPlag - End-To-End TestSuite Structure
 The construction of an end-to-end test is done with the help of the JPlag API. 
 The tests are generated dynamically according to the existing test data and allow the creation of end-to-end tests for all supported languages of JPlag without making any changes to the code.
-The helper loads the existing test data from the designated directory and creates dynamic tests for the individual directories. It is possible to create different test classes for the different languages.
+The helper loads the existing test data from the designated directory and creates dynamic tests for the individual directories. It is possible to create different test classes for the other languages.
 
-To distinguish which domain of the recognition changes have occurred, fine granular test cases are used. These are composed of the changes already mentioned above. The plagiarism is compared with the original delivery; thus, it is possible to detect and test small sections of the recognition. 
+To distinguish which domain of the recognition changes have occurred, fine granular test cases are used. These are composed of the changes already mentioned above. The plagiarism is compared with the original delivery; thus, detecting and testing small sections of the recognition is possible. 
 
 The comparative values were discussed and tested. The following results of the JPlag scan are used for the comparison:
-1. minimal similarity as `float`
-2. maximum similarity as `float`
+1. minimal similarity as `double`
+2. maximum similarity as `double`
 3. matched token number as `int`
 
 The comparative values were discussed and elaborated in the issue [End-to-end testing - "comparative values"](https://github.com/jplag/JPlag/issues/548 "End-to-end testing - \"comparative values\""). 
@@ -65,12 +65,12 @@ This was done by storing the data in a *.json file which is read at the beginnin
 
 ### JSON Result Structure
 
-The structures of the Json file can be traced using the individual record classes, which can be found under `de.jplag.endtoend.model`.
+The structures of the JSON file can be traced using the individual record classes, which can be found under `de.jplag.endtoend.model`.
 The outer structure of the JSON file is recorded in the `ResultDescription` record. 
 The record contains a map of several options and the corresponding results. 
 The internal structure consists of several `Option` records, each containing information about the test run's current configuration. 
 Thus the results can be kept apart from the other configurations. 
-The test results for the specified options are also specified in the object. This consists of the `ExpectedResult` record, which contains the results of the detection.
+The test results for the specified options are also specified in the object. This consists of the `ExpectedResult` record, which contains the detection results.
 
 Here the hierarchy is as follows:
 
@@ -81,8 +81,8 @@ Here the hierarchy is as follows:
   },
   "tests":{
     "languageIdentifier":{
-      "minimal_similarity":"float",
-      "maximum_similarity":"float",
+      "minimal_similarity":"double",
+      "maximum_similarity":"double",
       "matched_token_number":"int"
     },
   "/..."
@@ -94,8 +94,8 @@ Here the hierarchy is as follows:
   },
   "tests":{
     "languageIdentifier":{
-      "minimal_similarity":"float",
-      "maximum_similarity":"float",
+      "minimal_similarity":"double",
+      "maximum_similarity":"double",
       "matched_token_number":"int"
     },
     "/..."
@@ -110,7 +110,7 @@ Here the hierarchy is as follows:
 This section explains how to create new end-to-end tests in the existing test suite. 
 ### Creating The Plagiarism
 Before you add a new language to the end-to-end tests, I would like to point out that the quality of the tests depends dreadfully on the plagiarism techniques you choose, which were explained in section [Steps Towards Plagiarism](#steps-towards-plagiarism).
-If you need more information about the creation of plans for this purpose, you can also read the elaborations that can be found under [References](#references).
+If you need more information about creating plans for this purpose, you can also read the elaborations that can be found under [References](#references).
 The more various changes you apply, the more accurate the end-to-end tests for the language will be.
 
 In the following, an example is shown, which is in the JavaEndToEnd tests and is used.
@@ -181,7 +181,7 @@ public record ExpectedResult(
 }
 ```
 
-- To be able to include the new value in the tests, they must be added to the `EndToEndSuiteTest` as a comparison operation at the package `de.jplag.endtoend`. The `runJPlagTestSuite()` function provided for this purpose must be extended to include the new comparison value. To do this, create the comparison as shown in the code example below.
+- To include the new value in the tests, they must be added to the `EndToEndSuiteTest` as a comparison operation at the package `de.jplag.endtoend`. The `runJPlagTestSuite()` function provided for this purpose must be extended to include the new comparison value. To do this, create the comparison as shown in the code example below.
 
 ```JAVA
 //...
@@ -193,12 +193,12 @@ public record ExpectedResult(
 ```
 
 - Once the tests run the first time, they will fail due to the missing values in the old JSON result file used for the test cases. The old results must then be replaced with new ones. 
-For this purpose, the last section of the chapter [Copying Plagiarism To The Resources](#copying-plagiarism-to-the-resources) can be used as help. 
+For this purpose, the last section of the chapter [Copying Plagiarism To The Resources](#copying-plagiarism-to-the-resources) can help. 
 
-###  Extending JPlar Test Run Options
+###  Extending JPlag Test Run Options
 The end-to-end tests support the possible scan options of the JPlag API. Currently, `minimumTokenMatch` is used in the end-to-end tests. These values are also stored in the JSON as configuration to keep the test cases at the options apart. Likewise, also changes in the logic of the different options are to be determined to be able.
 
-- To extend new options to the end-to-end tests, they have to be added to the record object `Options` in the package `de.jplag.endtoend.model`. Here it is sufficient to add the values in the record and to enter the JSON name as `@JsonProperty("json_name")`.
+- To extend new options to the end-to-end tests, they must be added to the record object `Options` in the package `de.jplag.endtoend.model`. Here it is sufficient to add the values in the record and to enter the JSON name as `@JsonProperty("json_name")`.
 
 ```JAVA
 public record Options(
@@ -216,7 +216,7 @@ public record Options(
     }
 ```
 
-- If you want to create individual test cases by testing the options only on a specific set of dates, a new test case must be created for this purpose. The transfer parameter options can be adjusted and specified for the new test cases. This can then be tested with the function `runTests`. 
+- If you want to create individual test cases by testing the options only on a specific dataset, a new test case must be created for this purpose. The transfer parameter options can be adjusted and specified for the new test cases. This can then be tested with the function `runTests`. 
  ```JAVA 
  runTests(directoryName, option, currentLanguageIdentifier, testCase, currentResultDescription);
 ```
