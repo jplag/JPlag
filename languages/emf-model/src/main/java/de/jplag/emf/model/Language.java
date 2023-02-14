@@ -3,6 +3,8 @@ package de.jplag.emf.model;
 import java.io.File;
 import java.util.List;
 
+import org.kohsuke.MetaInfServices;
+
 import de.jplag.emf.model.parser.DynamicModelParser;
 
 /**
@@ -10,8 +12,11 @@ import de.jplag.emf.model.parser.DynamicModelParser;
  * created token set.
  * @author Timur Saglam
  */
+@MetaInfServices(de.jplag.Language.class)
 public class Language extends de.jplag.emf.dynamic.Language {
     private static final String NAME = "EMF models (dynamically created token set)";
+    private static final String IDENTIFIER = "emf-model";
+
     public static final String VIEW_FILE_SUFFIX = ".treeview";
 
     public Language() {
@@ -26,6 +31,11 @@ public class Language extends de.jplag.emf.dynamic.Language {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return IDENTIFIER;
     }
 
     @Override
