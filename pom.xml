@@ -82,6 +82,7 @@
         <antlr4.version>4.11.1</antlr4.version>
         <emf.version>2.29.0</emf.version>
         <emf.ecore.version>2.27.0</emf.ecore.version>
+        <emfatic.version>1.0.0</emfatic.version>
         <emf.ecore.xmi.version>2.17.0</emf.ecore.xmi.version>
 
         <!-- The Revision of JPlag -->
