@@ -65,11 +65,11 @@ public abstract class AbstractEmfTest {
      */
     protected void assertViewFilesMatch(File modelFile, String viewFileSuffix, String directoryOfExpectedViews) {
         File viewFile = new File(modelFile.getPath() + viewFileSuffix);
-        assertTrue(viewFile.exists());
         File expectedViewFile = BASE_PATH.resolveSibling(Path.of(directoryOfExpectedViews, viewFile.getName())).toFile();
+        assertTrue(viewFile.exists());
         assertTrue(expectedViewFile.exists());
         try {
-            assertEquals(Files.readString(expectedViewFile.toPath()), Files.readString(viewFile.toPath()));
+            assertEquals(Files.readAllLines(expectedViewFile.toPath()), Files.readAllLines(viewFile.toPath()));
         } catch (IOException exception) {
             fail(exception);
         }
