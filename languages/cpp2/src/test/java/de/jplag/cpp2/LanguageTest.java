@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,83 +23,6 @@ import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
 
 class LanguageTest {
-
-    @Test
-    void parse(@TempDir Path tmp) throws IOException, ParsingException {
-        Path resolve = tmp.resolve("content.cpp");
-        Files.writeString(resolve, """
-                class MyClass {
-                  public:
-                    int myNum;
-                    string myString;
-                    void newExpressions() {
-                      double a[5];
-                      double* b = new double[10];
-                      MyClass* c = new MyClass();
-                      MyClass d;
-                    }
-                    void myMethod(string value) {
-                      int i = 5;
-                      i += 10;
-                      switch(i) {
-                        case 10:
-                          i--;
-                        case 9:
-                          i--;
-                          break;
-                        default:
-                          i = 8;
-                      }
-                      if (i * 10 > 80) {
-                        cout << "Hello World!" << endl;
-                      } else {
-                        this->myMethod("Oh no");
-                      }
-                    }
-
-                    void a(string v) {
-                      this->myMethod(v);
-                    }
-
-                    void b(string v) {
-                      MyClass::myMethod(v);
-                    }
-
-                    void c(string v) {
-                      myMethod(v);
-                    }
-
-                    void d(MyClass m, string v) {
-                      m.myMethod(v);
-                    }
-
-                    void exceptional() {
-                      try {
-                        int age = 15;
-                        if (age >= 18) {
-                          cout << "Access granted - you are old enough.";
-                        } else {
-                          throw (age);
-                        }
-                      }
-                      catch (int myNum) {
-                        cout << "Access denied - You must be at least 18 years old.\\n";
-                        cout << "Age is: " << myNum;
-                      }
-                    }
-                  private:
-                    const long myNum2 = 10;
-                };
-                enum MyEnum {
-                  a,
-                  b = 3,
-                  c
-                };
-                """);
-        CPPLanguage language = new CPPLanguage();
-        List<Token> tokens = language.parse(Set.of(resolve.toFile()));
-        System.out.println(TokenPrinter.printTokens(tokens, resolve.toFile()));
-    }
 
     @ParameterizedTest
     @ValueSource(strings = {"i = 10", "i += 10", "i -= 10", "i += 10", "i /= 10", "i %= 10", "i >>= 10", "i <<= 10", "i &= 10", "i ^= 10", "i |= 10",
@@ -167,12 +91,12 @@ class LanguageTest {
         assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.APPLY, CPPTokenType.FUNCTION_END);
     }
 
+    @Disabled("The order of the extracted tokens does not match their order in the source")
     @Test
     void testIfElse(@TempDir Path path) {
+        // test extraction of if/else constructs
         TokenResult result = extractFromString(path, """
-                void f(int a, int b) {
-                    int x = 0;
-                    int y = 1;
+                void a(int a, int b, int x, int y) {
                     if (a < b) {
                         x = 5;
                     } else if (a > b) {
@@ -184,26 +108,24 @@ class LanguageTest {
                 }
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+        assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.VARDEF, CPPTokenType.VARDEF,
+                CPPTokenType.VARDEF, CPPTokenType.IF_BEGIN, CPPTokenType.ASSIGN, CPPTokenType.ELSE, CPPTokenType.IF_BEGIN, CPPTokenType.ASSIGN,
+                CPPTokenType.ASSIGN, CPPTokenType.ELSE, CPPTokenType.ASSIGN, CPPTokenType.IF_END, CPPTokenType.IF_END, CPPTokenType.FUNCTION_END);
     }
 
     @Test
     void testDoubleArrayDeclaration(@TempDir Path path) {
+        // ensure NEWARRAY is extracted
         TokenResult result = extractFromString(path, """
                 double* b = new double[10];
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-    }
-
-    @Test
-    void testDeclaratorList(@TempDir Path path) {
-        TokenResult result = extractFromString(path, """
-                int x, y = 1, z;
-                """);
-        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+        assertTokenTypes(result.tokens(), CPPTokenType.VARDEF, CPPTokenType.ASSIGN, CPPTokenType.NEWARRAY);
     }
 
     @Test
     void testFunctionCallInAssignmentOutsideFunction(@TempDir Path path) {
+        // test function call extraction in an assignment context outside a function body at top-level
         TokenResult result = extractFromString(path, """
                 int x = square(2);
                 """);
@@ -213,6 +135,7 @@ class LanguageTest {
 
     @Test
     void testFunctionCallInAssignmentInsideClassOutsideFunction(@TempDir Path path) {
+        // test function call extraction in an assignment context outside a function body in a class
         TokenResult result = extractFromString(path, """
                 class A {
                     int x = square(3);
@@ -225,6 +148,7 @@ class LanguageTest {
 
     @Test
     void testUnion(@TempDir Path path) {
+        // ensure union is extracted
         TokenResult result = extractFromString(path, """
                 union S {
                     std::int32_t n;
@@ -239,47 +163,14 @@ class LanguageTest {
 
     @Test
     void testArrayInit(@TempDir Path path) {
+        // ensure { and } are extracted
         TokenResult result = extractFromString(path, """
-                class A {    };
-                class A {
-                };
                 int a[] = {1, 2, 3};
                 int b[] {1, 2, 3};
                 """);
         System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
-    }
-
-    @Test
-    void varDefs(@TempDir Path path) {
-        TokenResult result = extractFromString(path, """
-                #include <string>
-                #include <iostream>
-                #include <vector>
-                using namespace std;
-
-                class Hello {
-
-                    int test;
-
-                    public:
-                    void say() {
-                        vector<string> hellos {"World"};
-                        int i = 0;
-                        while (i < hellos.size()) {
-                            cout << "Hello " + hellos[i];
-                            i++;
-                        }
-                        test = 3;
-                    }
-                };
-
-                int main() {
-                    Hello hello;
-                    hello.say();
-                    return 0;
-                }
-                """);
-        System.out.println(TokenPrinter.printTokens(result.tokens(), result.file()));
+        assertTokenTypes(result.tokens(), CPPTokenType.VARDEF, CPPTokenType.ASSIGN, CPPTokenType.BRACED_INIT_BEGIN, CPPTokenType.BRACED_INIT_END,
+                CPPTokenType.VARDEF, CPPTokenType.BRACED_INIT_BEGIN, CPPTokenType.BRACED_INIT_END);
     }
 
     static void assertTokenTypes(List<Token> tokens, TokenType... types) {
