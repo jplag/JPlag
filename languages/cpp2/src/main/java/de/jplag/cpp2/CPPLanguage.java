@@ -6,11 +6,12 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
-public class CPPLanguage implements de.jplag.Language {
+@MetaInfServices(Language.class)
+public class CPPLanguage implements Language {
     private static final String IDENTIFIER = "cpp2";
 
     private final CPPParserAdapter parser;
