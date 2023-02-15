@@ -37,8 +37,9 @@ export class OverviewFactory {
       const comparisons = [] as Array<ComparisonListElement>;
 
       (metric.topComparisons as Array<Record<string, unknown>>).forEach(
-        (jsonComparison) => {
+        (jsonComparison,index) => {
           const comparison: ComparisonListElement = {
+            id: index + 1 as number,
             firstSubmissionId: jsonComparison.first_submission as string,
             secondSubmissionId: jsonComparison.second_submission as string,
             similarity: jsonComparison.similarity as number,

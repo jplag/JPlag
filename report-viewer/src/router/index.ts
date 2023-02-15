@@ -1,9 +1,5 @@
 import "./public-path"
 import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
-import OverviewView from "@/views/OverviewView.vue";
-import ComparisonView from "@/views/ComparisonView.vue";
-import FileUploadView from "@/views/FileUploadView.vue";
-import ErrorView from "@/views/ErrorView.vue";
 
 /**
  * Router containing the navigation destinations.
@@ -12,23 +8,23 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "FileUploadView",
-    component: FileUploadView,
+    component: () => import('@/views/FileUploadView.vue'),
   },
   {
     path: "/overview",
     name: "OverviewView",
-    component: OverviewView,
+    component: () => import('@/views/OverviewView.vue'),
   },
   {
     path: "/comparison/:firstId/:secondId",
     name: "ComparisonView",
-    component: ComparisonView,
+    component: () => import('@/views/ComparisonView.vue'),
     props: true,
   },
   {
     path: "/error",
     name: "ErrorView",
-    component: ErrorView,
+    component: () => import('@/views/ErrorView.vue'),
   },
 ];
 

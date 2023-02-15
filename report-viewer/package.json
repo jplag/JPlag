@@ -23,6 +23,7 @@
     "vue-chart-3": "^3.1.8",
     "vue-draggable-next": "^2.1.1",
     "vue-router": "^4.1.6",
+    "vue-virtual-scroller": "^2.0.0-beta.8",
     "vue3-highlightjs": "^1.0.5",
     "vuex": "^4.0.2"
   },
