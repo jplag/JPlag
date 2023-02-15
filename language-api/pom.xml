@@ -8,6 +8,8 @@
         <version>${revision}</version>
     </parent>
     <artifactId>language-api</artifactId>
+    <name>JPlag Language API</name>
+    <description>Language API for JPlag language modules</description>
     <dependencies>
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>

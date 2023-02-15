@@ -1,0 +1,30 @@
+@namespace(uri="http:///com.ibm.dynamic.example.bookstore.ecore", prefix="bookStore")
+package BookStorePackage;
+
+@namespace(uri="http:///com.ibm.dynamic.example.bookstore.ecore/store", prefix="store")
+package store {
+	class Store {
+		ref Person owner;
+		attr String name;
+		attr String location;
+	}
+
+	class BookStore extends Store {
+		val Book[*] books;
+	}
+
+	class Book {
+		attr String title;
+		id attr int isbn;
+		ref Person author;
+		attr String category;
+	}
+
+	class Person {
+		attr String firstName;
+		attr String lastName;
+		attr boolean isStageName;
+	}
+
+}
+

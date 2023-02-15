@@ -2,13 +2,13 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="BookStorePackage" nsURI="http:///com.ibm.dynamic.example.bookstore.ecore"
     nsPrefix="bookStore">
-  <eClassifiers xsi:type="ecore:EClass" name="StoreThatSellsBooks">
+  <eClassifiers xsi:type="ecore:EClass" name="Store">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nameOfOwner" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="city" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="soldItems" upperBound="-1"
-        eType="#//BookStoreItem" containment="true"/>
+        eType="#//Item" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BookStoreItem">
+  <eClassifiers xsi:type="ecore:EClass" name="Item">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="identifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
         iD="true"/>

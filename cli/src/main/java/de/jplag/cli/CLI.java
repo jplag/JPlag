@@ -36,11 +36,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import net.sourceforge.argparse4j.ArgumentParsers;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import net.sourceforge.argparse4j.inf.Namespace;
-
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +48,11 @@ import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
+
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Command line interface class, allows using via command line.
@@ -82,6 +82,7 @@ public final class CLI {
      */
     public static void main(String[] args) {
         try {
+            logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
             CLI cli = new CLI();
             Namespace arguments = cli.parseArguments(args);
             JPlagOptions options = cli.buildOptionsFromArguments(arguments);

@@ -21,12 +21,7 @@ export class ComparisonFactory {
     );
 
     const matches = json.matches as Array<Record<string, unknown>>;
-    
-    // TODO: Quick fix for issue #658, requires deeper insights to be resolved completely
-    matches.forEach((match: Record<string, unknown>) => {
-      match["file1"] = this.removePathFromFileName(match["file1"] as string ?? "");
-      match["file2"] = this.removePathFromFileName(match["file2"] as string ?? "");
-    })
+
 
     const colors = this.generateColorsForMatches(matches.length);
     const coloredMatches = matches.map((match, index) =>
@@ -108,20 +103,23 @@ export class ComparisonFactory {
     return acc;
   }
 
-  private static removePathFromFileName(filePath: string): string {
-    return  filePath.substring(filePath.lastIndexOf("\\") + 1).substring(filePath.lastIndexOf("/") + 1);
-  }
 
   private static generateColorsForMatches(num: number): Array<string> {
-    const colors = [];
-    const hueDelta = Math.trunc(360 / num);
+    const colors: Array<string> = [];
+    const numberOfColorsInFirstInterval = Math.round((80 - 20) / ((80 - 20) + (340 - 160)) * num); // number of colors from the first interval
+    const numberOfColorsInSecondInterval = num - numberOfColorsInFirstInterval; // number of colors from the second interval
+    ComparisonFactory.generateColorsForInterval(20, 80, numberOfColorsInFirstInterval, colors);
+    ComparisonFactory.generateColorsForInterval(160, 340, numberOfColorsInSecondInterval, colors);
+    return colors;
+  }
 
-    for (let i = 0; i < num; i++) {
-      const hue = i * hueDelta;
-
+  private static generateColorsForInterval(intervalStart: number, intervalEnd: number, numberOfColorsInInterval: number, colors: Array<string>){
+    const interval = intervalEnd - intervalStart;
+    const hueDelta = Math.trunc(interval / numberOfColorsInInterval);
+    for (let i = 0; i < numberOfColorsInInterval; i++) {
+      const hue = intervalStart + i * hueDelta;
       colors.push(`hsla(${hue}, 80%, 50%, 0.3)`);
     }
-    return colors;
   }
 
   private static mapMatch(

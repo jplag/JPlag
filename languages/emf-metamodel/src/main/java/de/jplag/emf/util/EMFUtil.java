@@ -2,7 +2,6 @@ package de.jplag.emf.util;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -13,6 +12,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,18 +57,41 @@ public final class EMFUtil {
 
     /**
      * Loads a model or metamodel from a absolute file path.
-     * @param file is file to the (meta)model.
-     * @return the content of the loaded (meta)model resource or null if it could not be loaded.
+     * @param file is file path to the (meta)model.
+     * @return the resource of the loaded (meta)model or null if it could not be loaded.
      */
-    public static List<EObject> loadModel(File file) {
+    public static Resource loadModelResource(File file) {
         final ResourceSet resourceSet = new ResourceSetImpl();
         try {
-            final Resource resource = resourceSet.getResource(URI.createFileURI(file.getAbsolutePath()), true);
-            return resource.getContents();
+            return resourceSet.getResource(URI.createFileURI(file.getAbsolutePath()), true);
         } catch (WrappedException exception) {
             logger.error("Could not load {}: {}", file, exception.getCause().getMessage());
         }
         return null;
+    }
+
+    /**
+     * Copies a (meta)model with a specific model copier, thus allowing to trace between original and copied elements.
+     * @param modelResource is the resource containing the model.
+     * @param modelCopier is the copier.
+     * @return the copy of the model resource.
+     */
+    public static Resource copyModel(Resource modelResource, Copier modelCopier) {
+        ResourceSet resourceSet = new ResourceSetImpl();
+        Resource copy = resourceSet.createResource(modelResource.getURI());
+        Collection<EObject> result = modelCopier.copyAll(modelResource.getContents());
+        modelCopier.copyReferences();
+        copy.getContents().addAll(result);
+        return copy;
+    }
+
+    /**
+     * Creates a copy of a (meta)model with the same URI.
+     * @param modelResource is the resource containing the model.
+     * @return the copy of the model resource.
+     */
+    public static Resource copyModel(Resource modelResource) {
+        return copyModel(modelResource, new Copier());
     }
 
 }

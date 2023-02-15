@@ -26,7 +26,7 @@
             <id>tsaglam</id>
             <name>Timur Sağlam</name>
             <email>saglam@kit.edu</email>
-            <url>https://sdq.ipd.kit.edu/people/timur-saglam/</url>
+            <url>https://dsis.kastel.kit.edu/staff_saglam.php</url>
             <organization>KASTEL</organization>
             <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
@@ -35,7 +35,7 @@
             <id>sebinside</id>
             <name>Sebastian Hahner</name>
             <email>hahner@kit.edu</email>
-            <url>https://sdq.ipd.kit.edu/people/sebastian-hahner/</url>
+            <url>https://dsis.kastel.kit.edu/staff_sebastian_hahner.php</url>
             <organization>KASTEL</organization>
             <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
@@ -74,18 +74,18 @@
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.27.2</spotless.version>
-        <slf4j.version>2.0.3</slf4j.version>
-        <junit.version>5.9.1</junit.version>
+        <spotless.version>2.33.0</spotless.version>
+        <slf4j.version>2.0.6</slf4j.version>
+        <junit.version>5.9.2</junit.version>
 
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.11.1</antlr4.version>
-        <emf.version>2.28.0</emf.version>
-        <emf.ecore.version>2.26.0</emf.ecore.version>
+        <emf.version>2.29.0</emf.version>
+        <emf.ecore.version>2.27.0</emf.ecore.version>
         <emf.ecore.xmi.version>2.17.0</emf.ecore.xmi.version>
 
         <!-- The Revision of JPlag -->
-        <revision>4.1.0</revision>
+        <revision>4.3.0</revision>
     </properties>
 
     <dependencyManagement>
@@ -116,7 +116,7 @@
             <dependency>
                 <groupId>edu.stanford.nlp</groupId>
                 <artifactId>stanford-corenlp</artifactId>
-                <version>4.5.1</version>
+                <version>4.5.2</version>
             </dependency>
 
             <!-- LOGGER -->
@@ -139,7 +139,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.14.0</version>
+                <version>2.14.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -166,7 +166,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>4.9.0</version>
+            <version>5.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -238,7 +238,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M7</version>
+                    <version>3.0.0-M9</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -272,7 +272,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>

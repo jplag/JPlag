@@ -3,16 +3,19 @@ package de.jplag.java;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import de.jplag.ParsingException;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
 import com.sun.source.tree.AssignmentTree;
-import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.BreakTree;
 import com.sun.source.tree.CaseTree;
 import com.sun.source.tree.CatchTree;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.CompoundAssignmentTree;
 import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.ContinueTree;
 import com.sun.source.tree.DefaultCaseLabelTree;
@@ -40,13 +43,12 @@ import com.sun.source.tree.ThrowTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.TryTree;
 import com.sun.source.tree.TypeParameterTree;
+import com.sun.source.tree.UnaryTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.tree.WhileLoopTree;
 import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
-
-import de.jplag.ParsingException;
 
 final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     private final File file;
@@ -87,16 +89,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
      */
     private void addToken(JavaTokenType tokenType, long start, long end) {
         parser.add(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start));
-    }
-
-    @Override
-    public Object visitBlock(BlockTree node, Object p) {
-        long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_INIT_BEGIN, start, 1);
-        Object result = super.visitBlock(node, p);
-        addToken(JavaTokenType.J_INIT_END, end, 1);
-        return result;
     }
 
     @Override
@@ -238,9 +230,15 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
             addToken(JavaTokenType.J_TRY_BEGIN, start, 3);
         else
             addToken(JavaTokenType.J_TRY_WITH_RESOURCE, start, 3);
-        if (node.getFinallyBlock() != null)
+        scan(node.getResources(), p);
+        scan(node.getBlock(), p);
+        scan(node.getCatches(), p);
+        if (node.getFinallyBlock() != null) {
+            start = positions.getStartPosition(ast, node.getFinallyBlock());
             addToken(JavaTokenType.J_FINALLY, start, 3);
-        return super.visitTry(node, p);
+        }
+        scan(node.getFinallyBlock(), p);
+        return null; // return value isn't used
     }
 
     @Override
@@ -258,13 +256,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_IF_BEGIN, start, 2);
-        node.getCondition().accept(this, p);
-        node.getThenStatement().accept(this, p);
+        scan(node.getCondition(), p);
+        scan(node.getThenStatement(), p);
         if (node.getElseStatement() != null) {
             start = positions.getStartPosition(ast, node.getElseStatement());
             addToken(JavaTokenType.J_ELSE, start, 4);
-            node.getElseStatement().accept(this, p);
         }
+        scan(node.getElseStatement(), p);
         addToken(JavaTokenType.J_IF_END, end, 1);
         return null;
     }
@@ -316,16 +314,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     }
 
     @Override
-    public Object visitNewArray(NewArrayTree node, Object arg1) {
+    public Object visitNewArray(NewArrayTree node, Object p) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_NEWARRAY, start, 3);
-        if (node.getInitializers() != null && !node.getInitializers().isEmpty()) {
+        scan(node.getType(), p);
+        scan(node.getDimensions(), p);
+        boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
+        if (hasInit) {
             start = positions.getStartPosition(ast, node.getInitializers().get(0));
             addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1);
+        }
+        scan(node.getInitializers(), p);
+        // super method has annotation processing but we have it disabled anyways
+        if (hasInit) {
             addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1);
         }
-        return super.visitNewArray(node, arg1);
+        return null; // return value isn't used
     }
 
     @Override
@@ -333,6 +338,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ASSIGN, start, 1);
         return super.visitAssignment(node, p);
+    }
+
+    @Override
+    public Object visitCompoundAssignment(CompoundAssignmentTree node, Object p) {
+        long start = positions.getStartPosition(ast, node);
+        addToken(JavaTokenType.J_ASSIGN, start, 1);
+        return super.visitCompoundAssignment(node, p);
+    }
+
+    @Override
+    public Object visitUnary(UnaryTree node, Object p) {
+        if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
+                .contains(node.getKind())) {
+            long start = positions.getStartPosition(ast, node);
+            addToken(JavaTokenType.J_ASSIGN, start, 1);
+        }
+        return super.visitUnary(node, p);
     }
 
     @Override

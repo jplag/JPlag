@@ -1,16 +1,21 @@
 package de.jplag.endtoend;
 
+import static de.jplag.options.SimilarityMetric.INTERSECTION;
+import static de.jplag.options.SimilarityMetric.MAX;
+import static de.jplag.options.SimilarityMetric.MIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.DoubleSummaryStatistics;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,25 +23,27 @@ import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.cli.LanguageLoader;
 import de.jplag.endtoend.constants.TestDirectoryConstants;
+import de.jplag.endtoend.helper.DeltaSummaryStatistics;
 import de.jplag.endtoend.helper.FileHelper;
 import de.jplag.endtoend.helper.TestSuiteHelper;
 import de.jplag.endtoend.model.ExpectedResult;
 import de.jplag.endtoend.model.ResultDescription;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.SimilarityMetric;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Main test class for end-to-end testing in all language. The test cases aim to detect changes in the detection of
- * plagiarism in the Java language and to be able to roughly categorize them. The plagiarism is compared with the
- * original class. The results are compared with the results from previous tests and changes are detected.
+ * Main test suite for end-to-end testing over all languages. The test suite aims to detect changes regarding the
+ * detection quality of JPlag. Artificial plagiarisms are compared with the original code. The results are compared with
+ * previous ones stored in the resource folder.
  */
 class EndToEndSuiteTest {
     private static final double EPSILON = 1E-8;
@@ -47,26 +54,39 @@ class EndToEndSuiteTest {
      * @throws IOException is thrown for all problems that may occur while parsing the json file.
      */
     @TestFactory
-    Collection<DynamicContainer> dynamicOverAllTest() throws IOException, ExitException {
-        File resultsDirectory = TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile();
-        File[] languageDirectories = resultsDirectory.listFiles(File::isDirectory);
-        List<DynamicContainer> allTests = new LinkedList<>();
+    Collection<DynamicContainer> endToEndTestFactory() throws ExitException {
+        File resultDirectory = TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile();
+        List<File> languageDirectories = Arrays.asList(resultDirectory.listFiles(File::isDirectory));
+        List<DynamicContainer> allTests = new ArrayList<>();
         for (File languageDirectory : languageDirectories) {
-            Language language = LanguageLoader.getLanguage(languageDirectory.getName()).orElseThrow();
-            File[] resultJsons = languageDirectory.listFiles(file -> !file.isDirectory() && file.getName().endsWith(".json"));
-            List<DynamicContainer> languageTests = new LinkedList<>();
-            for (File resultJson : resultJsons) {
-                List<DynamicContainer> testContainers = new LinkedList<>();
-                ResultDescription[] results = new ObjectMapper().readValue(resultJson, ResultDescription[].class);
-                for (var result : results) {
-                    var testCases = generateTestsForResultDescription(resultJson, result, language);
-                    testContainers.add(DynamicContainer.dynamicContainer("MTM: " + result.options().minimumTokenMatch(), testCases));
-                }
-                languageTests.add(DynamicContainer.dynamicContainer(FileHelper.getFileNameWithoutFileExtension(resultJson), testContainers));
-            }
-            allTests.add(DynamicContainer.dynamicContainer(language.getIdentifier(), languageTests));
+            allTests.add(generateTestForLanguage(languageDirectory));
         }
         return allTests;
+    }
+
+    private DynamicContainer generateTestForLanguage(File languageDirectory) throws ExitException {
+        Language language = LanguageLoader.getLanguage(languageDirectory.getName()).orElseThrow();
+        File[] resultJsons = languageDirectory.listFiles(file -> !file.isDirectory() && file.getName().endsWith(".json"));
+        List<DynamicContainer> languageTests = new LinkedList<>();
+        for (File resultJson : resultJsons) { // for each data set
+            languageTests.add(generateTestsForDataSet(language, resultJson));
+        }
+        return DynamicContainer.dynamicContainer(language.getIdentifier(), languageTests);
+    }
+
+    private DynamicContainer generateTestsForDataSet(Language language, File resultJson) throws ExitException {
+        List<DynamicContainer> testContainers = new LinkedList<>();
+        ResultDescription[] results;
+        try {
+            results = new ObjectMapper().readValue(resultJson, ResultDescription[].class);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Could not load expected values.", exception);
+        }
+        for (var result : results) { // for each configuration
+            var testCases = generateTestsForResultDescription(resultJson, result, language);
+            testContainers.add(DynamicContainer.dynamicContainer("MTM: " + result.options().minimumTokenMatch(), testCases));
+        }
+        return DynamicContainer.dynamicContainer(FileHelper.getFileNameWithoutFileExtension(resultJson), testContainers);
     }
 
     /**
@@ -83,15 +103,17 @@ class EndToEndSuiteTest {
         JPlagOptions jplagOptions = new JPlagOptions(language, Set.of(submissionDirectory), Set.of())
                 .withMinimumTokenMatch(result.options().minimumTokenMatch());
         JPlagResult jplagResult = new JPlag(jplagOptions).run();
-        Map<String, JPlagComparison> jPlagComparisons = jplagResult.getAllComparisons().stream()
-                .collect(Collectors.toMap(it -> TestSuiteHelper.getTestIdentifier(it), it -> it));
-        assertEquals(result.identifierToResultMap().size(), jPlagComparisons.size(), "different number of results and expected results");
+        var comparisons = jplagResult.getAllComparisons().stream().collect(Collectors.toMap(it -> TestSuiteHelper.getTestIdentifier(it), it -> it));
+        assertEquals(result.identifierToResultMap().size(), comparisons.size(), "different number of results and expected results");
 
-        return result.identifierToResultMap().keySet().stream().map(identifier -> {
-            JPlagComparison comparison = jPlagComparisons.get(identifier);
+        DeltaSummaryStatistics statistics = new DeltaSummaryStatistics();
+        var tests = new ArrayList<>(result.identifierToResultMap().keySet().stream().map(identifier -> {
+            JPlagComparison comparison = comparisons.get(identifier);
             ExpectedResult expectedResult = result.identifierToResultMap().get(identifier);
-            return generateTest(identifier, expectedResult, comparison);
-        }).toList();
+            return generateTest(identifier, expectedResult, comparison, statistics);
+        }).toList());
+        tests.addAll(evaluateDeviationOfSimilarity(statistics));
+        return tests;
     }
 
     /**
@@ -100,30 +122,23 @@ class EndToEndSuiteTest {
      * @param expectedResult contains all expected result values.
      * @param result is the comparison object generated from running JPlag.
      */
-    private DynamicTest generateTest(String name, ExpectedResult expectedResult, JPlagComparison result) {
+    private DynamicTest generateTest(String name, ExpectedResult expectedResult, JPlagComparison result, DeltaSummaryStatistics statistics) {
         return DynamicTest.dynamicTest(name, () -> {
             assertNotNull(result, "No comparison result could be found");
-
-            List<String> validationErrors = new ArrayList<>();
-            if (areDoublesDifferent(expectedResult.resultSimilarityMinimum(), result.minimalSimilarity())) {
-                validationErrors.add(formattedValidationError("minimal similarity", String.valueOf(expectedResult.resultSimilarityMinimum()),
-                        String.valueOf(result.minimalSimilarity())));
-            }
-            if (areDoublesDifferent(expectedResult.resultSimilarityMaximum(), result.maximalSimilarity())) {
-                validationErrors.add(formattedValidationError("maximal similarity", String.valueOf(expectedResult.resultSimilarityMaximum()),
-                        String.valueOf(result.maximalSimilarity())));
+            List<String> errors = new ArrayList<>();
+            for (SimilarityMetric metric : List.of(MIN, MAX)) {
+                double expected = expectedResult.getSimilarityForMetric(metric);
+                double actual = metric.applyAsDouble(result);
+                if (Math.abs(expected - actual) >= EPSILON) {
+                    errors.add(formattedValidationError(metric, expected, actual));
+                }
+                statistics.accept(actual, expected);
             }
             if (expectedResult.resultMatchedTokenNumber() != result.getNumberOfMatchedTokens()) {
-                validationErrors.add(formattedValidationError("number of matched tokens", String.valueOf(expectedResult.resultMatchedTokenNumber()),
-                        String.valueOf(result.getNumberOfMatchedTokens())));
+                errors.add(formattedValidationError(INTERSECTION, expectedResult.resultMatchedTokenNumber(), result.getNumberOfMatchedTokens()));
             }
-
-            assertTrue(validationErrors.isEmpty(), createValidationErrorOutput(validationErrors));
+            assertTrue(errors.isEmpty(), createValidationErrorOutput(name, errors));
         });
-    }
-
-    private boolean areDoublesDifferent(double d1, double d2) {
-        return Math.abs(d1 - d2) >= EPSILON;
     }
 
     /**
@@ -132,16 +147,29 @@ class EndToEndSuiteTest {
      * @param actualValue actual test value
      * @param expectedValue expected test value
      */
-    private String formattedValidationError(String valueName, String actualValue, String expectedValue) {
-        return valueName + " was " + actualValue + " but expected " + expectedValue;
+    private String formattedValidationError(SimilarityMetric metric, Number actualValue, Number expectedValue) {
+        return metric + " was " + String.valueOf(actualValue) + " but expected " + String.valueOf(expectedValue);
     }
 
     /**
      * Creates the display info from the passed failed test results
      * @return formatted text for the failed comparative values of the current test
      */
-    private String createValidationErrorOutput(List<String> validationErrors) {
-        return "There were " + validationErrors.size() + " validation error(s):" + System.lineSeparator()
+    private String createValidationErrorOutput(String name, List<String> validationErrors) {
+        return name + ": There were " + validationErrors.size() + " validation error(s):" + System.lineSeparator()
                 + String.join(System.lineSeparator(), validationErrors);
+    }
+
+    private List<DynamicTest> evaluateDeviationOfSimilarity(DeltaSummaryStatistics deltaStatistics) {
+        return List.of(deviationOfSimilarityTest("positive", deltaStatistics.getPositiveStatistics()),
+                deviationOfSimilarityTest("negative", deltaStatistics.getNegativeStatistics()));
+    }
+
+    private DynamicTest deviationOfSimilarityTest(String textualSign, DoubleSummaryStatistics statistics) {
+        return DynamicTest.dynamicTest("OVERVIEW: " + textualSign + " similarity deviation", () -> {
+            if (Math.abs(statistics.getAverage()) > EPSILON) {
+                fail(textualSign + " deviation over all AVG similarity values:" + System.lineSeparator() + statistics.toString());
+            }
+        });
     }
 }

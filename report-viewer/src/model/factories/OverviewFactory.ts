@@ -4,11 +4,11 @@ import { ComparisonListElement } from "../ComparisonListElement";
 import { Cluster } from "@/model/Cluster";
 import store from "@/store/store";
 import { Version } from "../Version";
+import versionJson from "../../version.json";
 
 export class OverviewFactory {
 
-  // TODO: Find a better more visible position to store this
-  static reportViewerVersion: Version = {major: 4, minor: 0, patch: 0};
+  static reportViewerVersion: Version = versionJson["report_viewer_version"] !== undefined ? versionJson["report_viewer_version"] : {major: -1, minor: -1, patch: -1};
 
   static getOverview(json: Record<string, unknown>): Overview {
     const versionField = json.jplag_version as Record<string, number>;
@@ -31,13 +31,15 @@ export class OverviewFactory {
     const duration = json.execution_time as number as number;
     const metrics = [] as Array<Metric>;
     const clusters = [] as Array<Cluster>;
+    const totalComparisons= json.total_comparisons as number;
     (json.metrics as Array<unknown>).forEach((jsonMetric) => {
       const metric = jsonMetric as Record<string, unknown>;
       const comparisons = [] as Array<ComparisonListElement>;
 
       (metric.topComparisons as Array<Record<string, unknown>>).forEach(
-        (jsonComparison) => {
+        (jsonComparison,index) => {
           const comparison: ComparisonListElement = {
+            id: index + 1 as number,
             firstSubmissionId: jsonComparison.first_submission as string,
             secondSubmissionId: jsonComparison.second_submission as string,
             similarity: jsonComparison.similarity as number,
@@ -77,16 +79,32 @@ export class OverviewFactory {
       duration,
       metrics,
       clusters,
+      totalComparisons,
       new Map()
     );
   }
 
   static compareVersions(jsonVersion: Version, reportViewerVersion: Version) {
-    if(jsonVersion.major !== reportViewerVersion.major ||
-       jsonVersion.minor !== reportViewerVersion.minor ||
-       jsonVersion.patch !== reportViewerVersion.patch) {
-        console.warn("The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful.")
-       }
+    if(sessionStorage.getItem("versionAlert")===null) {
+
+      if (reportViewerVersion.major === 0 && reportViewerVersion.minor === 0 && reportViewerVersion.patch === 0) {
+        alert("The development version (0.0.0) of JPlag is used.");
+      }
+
+      if (jsonVersion.major !== reportViewerVersion.major ||
+          jsonVersion.minor !== reportViewerVersion.minor ||
+          jsonVersion.patch !== reportViewerVersion.patch) {
+        if(reportViewerVersion.major === -1 && reportViewerVersion.minor === -1 && reportViewerVersion.patch === -1){
+          console.warn("The report viewer's version cannot be read from version.json file. Please configure it correctly.");
+        } else {
+          console.warn("The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful.");
+          alert("The result's version(" + jsonVersion.major + "." + jsonVersion.minor + "." + jsonVersion.patch + ") tag does not fit the report viewer's version(" + reportViewerVersion.major + "." + reportViewerVersion.minor + "." + reportViewerVersion.patch + "). " +
+              "Trying to read it anyhow but be careful.")
+        }
+      }
+
+      sessionStorage.setItem("versionAlert","true");
+    }
   }
 
   private static  saveSubmissionsToComparisonNameMap(json: Record<string, unknown>){

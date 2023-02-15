@@ -21,6 +21,9 @@
           />
         </button>
       </div>
+      <div>
+        <button class="animated-back-button" title="Back button" @click="back">back</button>
+      </div>
       <TextInformation
         :anonymous="isAnonymous(firstId)"
         :value="store.getters.submissionDisplayName(firstId)"
@@ -41,17 +44,23 @@
     </div>
     <FilesContainer
       :container-id="1"
+      :submission-id="firstId"
       :files="filesOfFirst"
       :matches="comparison.matchesInFirstSubmission"
-      files-owner="Submission 1"
+      :files-owner="store.getters.submissionDisplayName(firstId)"
+      :anonymous="store.state.anonymous.has(firstId)"
+      files-owner-default="submission 1"
       @toggle-collapse="toggleCollapseFirst"
       @line-selected="showMatchInSecond"
     />
     <FilesContainer
       :container-id="2"
+      :submission-id="secondId"
       :files="filesOfSecond"
       :matches="comparison.matchesInSecondSubmissions"
-      files-owner="Submission 2"
+      :files-owner="store.getters.submissionDisplayName(secondId)"
+      :anonymous="store.state.anonymous.has(secondId)"
+      files-owner-default="submission 2"
       @toggle-collapse="toggleCollapseSecond"
       @line-selected="showMatchInFirst"
     />
@@ -59,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import {defineComponent, ref} from "vue";
 import { generateLineCodeLink } from "@/utils/Utils";
 import TextInformation from "@/components/TextInformation.vue";
 import MatchTable from "@/components/MatchTable.vue";
@@ -68,6 +77,7 @@ import FilesContainer from "@/components/FilesContainer.vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { Match } from "@/model/Match";
+import {Comparison} from "@/model/Comparison";
 
 export default defineComponent({
   name: "ComparisonView",
@@ -110,15 +120,36 @@ export default defineComponent({
           JSON.parse(comparisonFile)
         );
       } else {
-        console.log("Could not find comparison file."); // TODO introduce error page to navigate to
+        console.log("Comparison file not found!");
+        router.push({
+          name: "ErrorView",
+          state: {
+            message: "Comparison file not found!",
+            to: "/overview",
+            routerInfo: "back to overview page"
+          }
+        });
       }
     } else if (store.state.single) {
-      comparison = ComparisonFactory.getComparison(
-        JSON.parse(store.state.fileString)
-      );
+      try {
+        comparison = ComparisonFactory.getComparison(
+            JSON.parse(store.state.fileString)
+        );
+      }catch (e){
+        router.push({
+          name: "ErrorView",
+          state: {
+            message: "Source code of matches not found. To only see the overview, please drop the overview.json directly.",
+            to: "/",
+            routerInfo: "back to FileUpload page"
+          }
+        });
+        store.commit("clearStore");
+      }
     }
     if (!comparison) {
-      throw "Could not build comparison file";
+      comparison=new Comparison("","",0);
+      console.log("Unable to build comparison file.");
     }
     const filesOfFirst = ref(comparison.filesOfFirstSubmission);
     const filesOfSecond = ref(comparison.filesOfSecondSubmission);
@@ -191,9 +222,13 @@ export default defineComponent({
 
     const isAnonymous = (id: string) => store.state.anonymous.has(id);
     //Left panel
-    const hideLeftPanel = ref(true);
+    const hideLeftPanel = ref(false);
     const togglePanel = () => {
       hideLeftPanel.value = !hideLeftPanel.value;
+    };
+
+    const back = () => {
+      router.back();
     };
 
     return {
@@ -210,6 +245,7 @@ export default defineComponent({
       showMatch,
       togglePanel,
       isAnonymous,
+      back,
     };
   },
 });
@@ -291,5 +327,38 @@ h1 {
 
 #show-button:hover img {
   display: block;
+}
+
+.animated-back-button{
+  float: right;
+  height: 100%;
+  position: relative;
+
+  font-size: 1.4rem;
+  background: var(--primary-color-dark);
+  background-size: 46px 26px;
+  border: 1px solid #555;
+  color: black;
+  transition: all ease 0.3s;
+}
+
+.animated-back-button::after{
+  position: absolute;
+  top: 50%;
+  right: 0.6em;
+  transform: translateY(-50%);
+  content: "«";
+  font-size: 1.2em;
+  transition: all ease 0.3s;
+  opacity: 0;
+}
+
+.animated-back-button:hover{
+  padding: 20px 60px 20px 20px;
+}
+
+.animated-back-button:hover::after{
+  right: 1.2em;
+  opacity: 1;
 }
 </style>
