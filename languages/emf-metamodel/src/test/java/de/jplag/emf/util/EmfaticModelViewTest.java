@@ -44,11 +44,11 @@ class EmfaticModelViewTest extends AbstractEmfTest {
 
         // Compare expected vs. actual view file:
         File viewFile = new File(modelFile.getPath() + Language.VIEW_FILE_SUFFIX);
-        assertTrue(viewFile.exists());
         File expectedViewFile = BASE_PATH.resolveSibling(Path.of(EXPECTED_VIEW_FOLDER, viewFile.getName())).toFile();
+        assertTrue(viewFile.exists());
         assertTrue(expectedViewFile.exists());
         try {
-            assertEquals(Files.readString(expectedViewFile.toPath()), Files.readString(viewFile.toPath()));
+            assertEquals(Files.readAllLines(expectedViewFile.toPath()), Files.readAllLines(viewFile.toPath()));
         } catch (IOException exception) {
             fail(exception);
         }
