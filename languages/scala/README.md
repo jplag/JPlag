@@ -86,7 +86,7 @@ For the moment, implicit block values are neglected.
 
 ### Usage
 
-To use the Scala module, add the `-l scala` flag in the CLI, or use a `JPlagOption` object set
-to `LanguageOption.SCALA` in the Java API as described in the usage information in
+To use the Scala module, add the `-l scala` flag in the CLI, or use a `JPlagOption` object
+with `new de.jplag.scala.Language()` as `language` in the Java API as described in the usage information in
 the [readme of the main project](https://github.com/jplag/JPlag#usage)
 and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).

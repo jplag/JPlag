@@ -113,6 +113,19 @@ const store = createStore<State>({
       },
   },
   mutations: {
+    clearStore(){
+      store.replaceState({
+        submissionIdsToComparisonFileName: new Map<string, Map<string, string>>(),
+        anonymous: new Set(),
+        files: {},
+        submissions: {},
+        local: false,
+        zip: false,
+        single: false,
+        fileString: "",
+        fileIdToDisplayName: new Map(),
+      });
+    },
     addAnonymous(state: State, id) {
       for (let i = 0; i < id.length; i++) {
         state.anonymous.add(id[i]);

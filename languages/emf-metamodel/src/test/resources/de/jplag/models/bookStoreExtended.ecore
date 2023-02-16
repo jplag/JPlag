@@ -5,11 +5,11 @@
   <eSubpackages name="store" nsURI="http:///com.ibm.dynamic.example.bookstore.ecore/store"
       nsPrefix="store">
     <eClassifiers xsi:type="ecore:EClass" name="BookStore">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owner" eType="#//person/Person"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="location" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="books" upperBound="-1"
           eType="#//store/Book" containment="true"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="owner" eType="#//person/Person"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Book">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

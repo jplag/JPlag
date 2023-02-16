@@ -43,8 +43,6 @@ public enum JavaTokenType implements TokenType {
     J_INTERFACE_END("}INTERF"), // check
     J_CONSTR_BEGIN("CONSTR{"), //
     J_CONSTR_END("}CONSTR"), //
-    J_INIT_BEGIN("INIT{"), // check
-    J_INIT_END("}INIT"), // check
     J_VOID("VOID"), //
     J_ARRAY_INIT_BEGIN("ARRINIT{"), // check
     J_ARRAY_INIT_END("}ARRINIT"), // check

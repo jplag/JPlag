@@ -5,31 +5,40 @@
   <div class="container" @dragover.prevent @drop.prevent="uploadFile">
     <img alt="JPlag" src="@/assets/logo-nobg.png" />
     <h1>JPlag Report Viewer</h1>
-    <h2>Select an overview or comparison file or a zip to display.</h2>
-    <div class="drop-container">
-      <p>Drop a .json or .zip on this page</p>
+    <div v-if="!hasQueryFile" class="container" style="height: auto">
+      <h2>Select an overview or comparison file or a zip to display.</h2>
+      <h3>(No files get uploaded anywhere)</h3>
+      <div class="drop-container">
+        <p>Drop a .json or .zip on this page</p>
+      </div>
+      <div v-if="hasLocalFile" class="local-files-container">
+        <p class="local-files-text">Detected local files!</p>
+        <button class="local-files-button" @click="continueWithLocal">
+          Continue with local files
+        </button>
+      </div>
     </div>
-    <div v-if="hasLocalFile" class="local-files-container">
-      <p class="local-files-text">Detected local files!</p>
-      <button class="local-files-button" @click="continueWithLocal">
-        Continue with local files
-      </button>
-    </div>
+    <p v-else>
+      Loading file…
+    </p>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { useRoute } from "vue-router";
 import jszip from "jszip";
 import router from "@/router";
 import store from "@/store/store";
-import { getFileExtension } from "@/utils/Utils";
 import path from "path";
 import slash from "slash";
+
+class LoadError extends Error {}
 
 export default defineComponent({
   name: "FileUploadView",
   setup() {
+    store.commit("clearStore");
     let hasLocalFile;
     //Tries to detect local file. If no files detected, hides local mode from screen.
     try {
@@ -38,6 +47,22 @@ export default defineComponent({
     } catch (e) {
       console.log(e);
       hasLocalFile = false;
+    }
+
+    // Loads file passed in query param, if any.
+    const queryParams = useRoute().query;
+    let queryFileURL = null;
+    if (typeof queryParams.file === 'string' && queryParams.file !== '') {
+      try {
+        queryFileURL = new URL(queryParams.file);
+      } catch (e) {
+        if (e instanceof TypeError) {
+          console.warn(`Invalid URL '${queryParams.file}'`)
+          queryFileURL = null;
+        } else {
+          throw e;
+        }
+      }
     }
 
     const navigateToOverview = () => {
@@ -54,35 +79,50 @@ export default defineComponent({
         },
       });
     };
+
+    const extractRootName = (filePath: path.ParsedPath) => {
+      const folders = filePath.dir.split("/");
+      return folders[0];
+    };
     const extractSubmissionFileName = (filePath: path.ParsedPath) => {
       const folders = filePath.dir.split("/");
-      const submissionFolderIndex = folders.findIndex(
-        (folder) => folder === "submissions"
-      );
+      const rootName = folders[0];
+      let submissionFolderIndex = -1;
+      if(rootName === "files") {
+        submissionFolderIndex = folders.findIndex(
+            (folder) => folder === "files"
+        );
+      }else {
+        submissionFolderIndex = folders.findIndex(
+            (folder) => folder === "submissions"
+        );
+      }
       return folders[submissionFolderIndex + 1];
     };
     const extractFileNameWithFullPath = (filePath: path.ParsedPath, originalFileName: string) => {
-      let fullPath="";
-      const unixPathWithoutSubmissions = filePath.dir.split("submissions");
-      const originalPathWithoutSubmissions = originalFileName.split("submissions");
-      const unixSubfolderPathAfterSubmissions = unixPathWithoutSubmissions[1].substring(1);
-      if(originalPathWithoutSubmissions[1].charAt(0)==='\\'){
-         fullPath=(unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
-      }else {
-         fullPath=(unixSubfolderPathAfterSubmissions + path.sep + filePath.base);
-      }
+      let fullPath = "";
+      const rootName = extractRootName(filePath);
+      const filesOrSubmissionsIndex_filePath = filePath.dir.indexOf(rootName ==="files" ? "files" : "submissions");
+      const filesOrSubmissionsIndex_originalFileName = originalFileName.indexOf(rootName === "files" ? "files" : "submissions");
+      const unixSubfolderPathAfterSubmissions = filePath.dir.substring(filesOrSubmissionsIndex_filePath + (rootName === "files" ? "files".length : "submissions".length) + 1);
+      const originalPathWithoutSubmissions = originalFileName.substring(filesOrSubmissionsIndex_originalFileName + (rootName === "files" ? "files".length : "submissions".length));
+      if(originalPathWithoutSubmissions.charAt(0)==='\\'){
+           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
+        }else {
+           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base);
+        }
       return fullPath;
     };
     /**
      * Handles zip file on drop. It extracts the zip and saves each file in the store.
      * @param file
      */
-    const handleZipFile = (file: File) => {
-      jszip.loadAsync(file).then(async (zip) => {
+    const handleZipFile = (file: Blob) => {
+      return jszip.loadAsync(file).then(async (zip) => {
         for (const originalFileName of Object.keys(zip.files)) {
           const unixFileName = slash(originalFileName);
           if (
-            /((.+\/)*)submissions\/(.+)\/(.+)/.test(unixFileName) &&
+            /((.+\/)*)(files|submissions)\/(.+)\/(.+)/.test(unixFileName) &&
             !/^__MACOSX\//.test(unixFileName)
           ) {
             const filePath = path.parse(unixFileName);
@@ -132,32 +172,56 @@ export default defineComponent({
           fileString: str,
         });
         navigateToComparisonView(json["id1"], json["id2"]);
+      } else {
+        throw new LoadError('Invalid JSON', json);
       }
     };
+    const handleFile = (file: Blob) => {
+      switch (file.type) {
+        case "application/zip":
+        case "application/zip-compressed":
+        case "application/x-zip-compressed":
+        case "application/x-zip":
+          return handleZipFile(file);
+        case "application/json":
+          return file.text().then(handleJsonFile);
+        default:
+          throw new LoadError(`Unknown MIME type '${file.type}'`);
+      }
+    }
     /**
      * Handles file drop.
      * @param e
      */
-    const uploadFile = (e: DragEvent) => {
+    const uploadFile = async (e: DragEvent) => {
       let dropped = e.dataTransfer?.files;
-      if (!dropped) return; // TODO add some kind of error message
-      let files = [...dropped];
-      if (files.length > 1 || files.length === 0) return;
-      let read = new FileReader();
-      read.onload = (e) => {
-        let extension = getFileExtension(files[0]);
-        if (extension === "zip") {
-          handleZipFile(files[0]);
-        } else if (extension === "json") {
-          let file = e.target?.result;
-          if (!file) return;
-          if (typeof file === "string") {
-            handleJsonFile(file);
-          }
+      try {
+        if (dropped?.length === 1) {
+          await handleFile(dropped[0]);
+        } else {
+          throw new LoadError('Not exactly one file');
         }
-      };
-      read.readAsText(files[0]);
+      } catch (e) {
+        if (e instanceof LoadError) {
+          console.warn(e);
+          alert(e.message);
+        } else {
+          throw e;
+        }
+      }
     };
+    const loadQueryFile = async (url: URL) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new LoadError('Response not OK');
+        }
+        await handleFile(await response.blob());
+      } catch (e) {
+        console.warn(e);
+        alert(e);
+      }
+    }
     /**
      * Handles click on Continue with local files.
      */
@@ -170,10 +234,16 @@ export default defineComponent({
       });
       navigateToOverview();
     };
+
+    if (queryFileURL !== null) {
+      loadQueryFile(queryFileURL);
+    }
+
     return {
       continueWithLocal,
       uploadFile,
       hasLocalFile,
+      hasQueryFile: queryFileURL !== null,
     };
   },
 });

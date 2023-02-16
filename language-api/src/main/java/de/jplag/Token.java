@@ -117,14 +117,15 @@ public class Token {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return type.toString();
+    }
+
     /**
      * @return the semantics of the token.
      */
     public TokenSemantics getSemantics() {
         return semantics;
-    }
-
-    public String toString() {
-        return type.getDescription();
     }
 }

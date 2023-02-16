@@ -142,13 +142,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         // kind of weird since in the case of for loops and catches, two scopes are introduced
         // but I'm pretty sure that's how Java does it internally as well
         variableRegistry.enterLocalScope();
-        long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().build();
-        addToken(JavaTokenType.J_INIT_BEGIN, start, 1, semantics);
         super.visitBlock(node, null);
-        semantics = new TokenSemanticsBuilder().control().build();
-        addToken(JavaTokenType.J_INIT_END, end, 1, semantics);
         variableRegistry.exitLocalScope();
         return null;
     }
