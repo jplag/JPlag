@@ -23,6 +23,7 @@ import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.ErroneousTree;
 import com.sun.source.tree.ExportsTree;
+import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.ForLoopTree;
 import com.sun.source.tree.IfTree;
 import com.sun.source.tree.ImportTree;
@@ -369,6 +370,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     public Object visitVariable(VariableTree node, Object p) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length());
+
+        ExpressionTree initializer = node.getInitializer();
+        // extract assign token if the variable was just declared and directly initialized:
+        if (initializer != null) {
+            start = positions.getEndPosition(ast, node.getType()) + 1; // after type
+            addToken(JavaTokenType.J_ASSIGN, start, node.getName().length());
+        }
         return super.visitVariable(node, p);
     }
 
