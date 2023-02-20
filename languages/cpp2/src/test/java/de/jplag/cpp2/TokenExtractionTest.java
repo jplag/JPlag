@@ -22,7 +22,11 @@ import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
 
-class LanguageTest {
+/**
+ * Tests asserting the extraction of nontrivial tokens. As the ANTLR grammar requires some workarounds to have the token
+ * extraction similar to the Java language module, these tests covers the extraction of such tokens.
+ */
+class TokenExtractionTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"i = 10", "i += 10", "i -= 10", "i += 10", "i /= 10", "i %= 10", "i >>= 10", "i <<= 10", "i &= 10", "i ^= 10", "i |= 10",

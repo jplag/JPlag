@@ -18,11 +18,19 @@ import de.jplag.TokenType;
 import de.jplag.cpp2.grammar.CPP14Lexer;
 import de.jplag.cpp2.grammar.CPP14Parser;
 
+/**
+ * The adapter between {@link AbstractParser} and the ANTLR based parser of this language module.
+ */
 public class CPPParserAdapter extends AbstractParser {
     private File currentFile;
 
     private List<Token> tokens;
 
+    /**
+     * {@return a list of tokens from a set of source files}
+     * @param files the source files
+     * @throws ParsingException if parsing fails.
+     */
     public List<Token> scan(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {

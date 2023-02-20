@@ -2,6 +2,9 @@ package de.jplag.cpp2;
 
 import de.jplag.TokenType;
 
+/**
+ * C++ token types extracted by this language module.
+ */
 public enum CPPTokenType implements TokenType {
     CLASS_BEGIN("CLASS{"),
     CLASS_END("}CLASS"),
@@ -48,6 +51,7 @@ public enum CPPTokenType implements TokenType {
 
     private final String description;
 
+    @Override
     public String getDescription() {
         return this.description;
     }

@@ -10,6 +10,9 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * The entry point for the ANTLR parser based C++ language module.
+ */
 @MetaInfServices(Language.class)
 public class CPPLanguage implements Language {
     private static final String IDENTIFIER = "cpp2";

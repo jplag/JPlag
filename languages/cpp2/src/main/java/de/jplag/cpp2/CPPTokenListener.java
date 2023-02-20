@@ -1,5 +1,47 @@
 package de.jplag.cpp2;
 
+import static de.jplag.cpp2.CPPTokenType.APPLY;
+import static de.jplag.cpp2.CPPTokenType.ASSIGN;
+import static de.jplag.cpp2.CPPTokenType.BRACED_INIT_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.BRACED_INIT_END;
+import static de.jplag.cpp2.CPPTokenType.BREAK;
+import static de.jplag.cpp2.CPPTokenType.CASE;
+import static de.jplag.cpp2.CPPTokenType.CATCH_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.CATCH_END;
+import static de.jplag.cpp2.CPPTokenType.CLASS_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.CLASS_END;
+import static de.jplag.cpp2.CPPTokenType.CONTINUE;
+import static de.jplag.cpp2.CPPTokenType.DEFAULT;
+import static de.jplag.cpp2.CPPTokenType.DO_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.DO_END;
+import static de.jplag.cpp2.CPPTokenType.ELSE;
+import static de.jplag.cpp2.CPPTokenType.ENUM_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.ENUM_END;
+import static de.jplag.cpp2.CPPTokenType.FOR_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.FOR_END;
+import static de.jplag.cpp2.CPPTokenType.FUNCTION_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.FUNCTION_END;
+import static de.jplag.cpp2.CPPTokenType.GENERIC;
+import static de.jplag.cpp2.CPPTokenType.GOTO;
+import static de.jplag.cpp2.CPPTokenType.IF_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.IF_END;
+import static de.jplag.cpp2.CPPTokenType.NEWARRAY;
+import static de.jplag.cpp2.CPPTokenType.NEWCLASS;
+import static de.jplag.cpp2.CPPTokenType.QUESTIONMARK;
+import static de.jplag.cpp2.CPPTokenType.RETURN;
+import static de.jplag.cpp2.CPPTokenType.STATIC_ASSERT;
+import static de.jplag.cpp2.CPPTokenType.STRUCT_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.STRUCT_END;
+import static de.jplag.cpp2.CPPTokenType.SWITCH_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.SWITCH_END;
+import static de.jplag.cpp2.CPPTokenType.THROW;
+import static de.jplag.cpp2.CPPTokenType.TRY;
+import static de.jplag.cpp2.CPPTokenType.UNION_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.UNION_END;
+import static de.jplag.cpp2.CPPTokenType.VARDEF;
+import static de.jplag.cpp2.CPPTokenType.WHILE_BEGIN;
+import static de.jplag.cpp2.CPPTokenType.WHILE_END;
+
 import java.util.ArrayDeque;
 import java.util.Set;
 
@@ -21,6 +63,10 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     private final CPPParserAdapter parser;
 
+    /**
+     * Constructs a new token listener that will extract tokens to the given {@link CPPParserAdapter}.
+     * @param parser the adapter to pass extracted tokens to.
+     */
     public CPPTokenListener(CPPParserAdapter parser) {
         this.parser = parser;
     }
@@ -28,13 +74,13 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void enterClassSpecifier(CPP14Parser.ClassSpecifierContext context) {
         if (context.classHead().Union() != null) {
-            addEnter(CPPTokenType.UNION_BEGIN, context.getStart());
+            addEnter(UNION_BEGIN, context.getStart());
         } else {
             CPP14Parser.ClassKeyContext classKey = context.classHead().classKey();
             if (classKey.Class() != null) {
-                addEnter(CPPTokenType.CLASS_BEGIN, context.getStart());
+                addEnter(CLASS_BEGIN, context.getStart());
             } else if (classKey.Struct() != null) {
-                addEnter(CPPTokenType.STRUCT_BEGIN, context.getStart());
+                addEnter(STRUCT_BEGIN, context.getStart());
             }
         }
     }
@@ -42,67 +88,67 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void exitClassSpecifier(CPP14Parser.ClassSpecifierContext context) {
         if (context.classHead().Union() != null) {
-            addExit(CPPTokenType.UNION_END, context.getStop());
+            addExit(UNION_END, context.getStop());
         } else {
             CPP14Parser.ClassKeyContext classKey = context.classHead().classKey();
             if (classKey.Class() != null) {
-                addExit(CPPTokenType.CLASS_END, context.getStop());
+                addExit(CLASS_END, context.getStop());
             } else if (classKey.Struct() != null) {
-                addExit(CPPTokenType.STRUCT_END, context.getStop());
+                addExit(STRUCT_END, context.getStop());
             }
         }
     }
 
     @Override
     public void enterEnumSpecifier(CPP14Parser.EnumSpecifierContext context) {
-        addEnter(CPPTokenType.ENUM_BEGIN, context.getStart());
+        addEnter(ENUM_BEGIN, context.getStart());
     }
 
     @Override
     public void exitEnumSpecifier(CPP14Parser.EnumSpecifierContext context) {
-        addExit(CPPTokenType.ENUM_END, context.getStop());
+        addExit(ENUM_END, context.getStop());
     }
 
     @Override
     public void enterFunctionDefinition(CPP14Parser.FunctionDefinitionContext context) {
-        addEnter(CPPTokenType.FUNCTION_BEGIN, context.getStart());
+        addEnter(FUNCTION_BEGIN, context.getStart());
     }
 
     @Override
     public void exitFunctionDefinition(CPP14Parser.FunctionDefinitionContext context) {
-        addExit(CPPTokenType.FUNCTION_END, context.getStop());
+        addExit(FUNCTION_END, context.getStop());
     }
 
     @Override
     public void enterIterationStatement(CPP14Parser.IterationStatementContext context) {
         if (context.Do() != null) {
-            addEnter(CPPTokenType.DO_BEGIN, context.getStart());
+            addEnter(DO_BEGIN, context.getStart());
         } else if (context.For() != null) {
-            addEnter(CPPTokenType.FOR_BEGIN, context.getStart());
+            addEnter(FOR_BEGIN, context.getStart());
         } else if (context.While() != null) {
-            addEnter(CPPTokenType.WHILE_BEGIN, context.getStart());
+            addEnter(WHILE_BEGIN, context.getStart());
         }
     }
 
     @Override
     public void exitIterationStatement(CPP14Parser.IterationStatementContext context) {
         if (context.Do() != null) {
-            addEnter(CPPTokenType.DO_END, context.getStop());
+            addEnter(DO_END, context.getStop());
         } else if (context.For() != null) {
-            addEnter(CPPTokenType.FOR_END, context.getStop());
+            addEnter(FOR_END, context.getStop());
         } else if (context.While() != null) {
-            addEnter(CPPTokenType.WHILE_END, context.getStop());
+            addEnter(WHILE_END, context.getStop());
         }
     }
 
     @Override
     public void enterSelectionStatement(CPP14Parser.SelectionStatementContext context) {
         if (context.Switch() != null) {
-            addEnter(CPPTokenType.SWITCH_BEGIN, context.getStart());
+            addEnter(SWITCH_BEGIN, context.getStart());
         } else if (context.If() != null) {
-            addEnter(CPPTokenType.IF_BEGIN, context.getStart());
+            addEnter(IF_BEGIN, context.getStart());
             if (context.Else() != null) {
-                addEnter(CPPTokenType.ELSE, context.Else().getSymbol());
+                addEnter(ELSE, context.Else().getSymbol());
             }
         }
     }
@@ -110,107 +156,107 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void exitSelectionStatement(CPP14Parser.SelectionStatementContext context) {
         if (context.Switch() != null) {
-            addEnter(CPPTokenType.SWITCH_END, context.getStop());
+            addEnter(SWITCH_END, context.getStop());
         } else if (context.If() != null) {
-            addEnter(CPPTokenType.IF_END, context.getStop());
+            addEnter(IF_END, context.getStop());
         }
     }
 
     @Override
     public void enterLabeledStatement(CPP14Parser.LabeledStatementContext context) {
         if (context.Case() != null) {
-            addEnter(CPPTokenType.CASE, context.getStart());
+            addEnter(CASE, context.getStart());
         } else if (context.Default() != null) {
-            addEnter(CPPTokenType.DEFAULT, context.getStart());
+            addEnter(DEFAULT, context.getStart());
         }
     }
 
     @Override
     public void enterTryBlock(CPP14Parser.TryBlockContext context) {
-        addEnter(CPPTokenType.TRY, context.getStart());
+        addEnter(TRY, context.getStart());
     }
 
     @Override
     public void enterHandler(CPP14Parser.HandlerContext context) {
-        addEnter(CPPTokenType.CATCH_BEGIN, context.getStart());
+        addEnter(CATCH_BEGIN, context.getStart());
     }
 
     @Override
     public void exitHandler(CPP14Parser.HandlerContext context) {
-        addEnter(CPPTokenType.CATCH_END, context.getStop());
+        addEnter(CATCH_END, context.getStop());
     }
 
     @Override
     public void enterJumpStatement(CPP14Parser.JumpStatementContext context) {
         if (context.Break() != null) {
-            addEnter(CPPTokenType.BREAK, context.getStart());
+            addEnter(BREAK, context.getStart());
         } else if (context.Continue() != null) {
-            addEnter(CPPTokenType.CONTINUE, context.getStart());
+            addEnter(CONTINUE, context.getStart());
         } else if (context.Goto() != null) {
-            addEnter(CPPTokenType.GOTO, context.getStart());
+            addEnter(GOTO, context.getStart());
         } else if (context.Return() != null) {
-            addEnter(CPPTokenType.RETURN, context.getStart());
+            addEnter(RETURN, context.getStart());
         }
     }
 
     @Override
     public void enterThrowExpression(CPP14Parser.ThrowExpressionContext context) {
-        addEnter(CPPTokenType.THROW, context.getStart());
+        addEnter(THROW, context.getStart());
     }
 
     @Override
     public void enterNewExpression(CPP14Parser.NewExpressionContext context) {
         if (context.newInitializer() == null) {
-            addEnter(CPPTokenType.NEWARRAY, context.getStart());
+            addEnter(NEWARRAY, context.getStart());
         } else {
-            addEnter(CPPTokenType.NEWCLASS, context.getStart());
+            addEnter(NEWCLASS, context.getStart());
         }
     }
 
     @Override
     public void enterTemplateDeclaration(CPP14Parser.TemplateDeclarationContext context) {
-        addEnter(CPPTokenType.GENERIC, context.getStart());
+        addEnter(GENERIC, context.getStart());
     }
 
     @Override
     public void enterAssignmentOperator(CPP14Parser.AssignmentOperatorContext context) {
         // does not cover ++, --, this is done via UnaryExpressionContext and PostfixExpressionContext
         // does not cover all =, this is done via BraceOrEqualInitializerContext
-        addEnter(CPPTokenType.ASSIGN, context.getStart());
+        addEnter(ASSIGN, context.getStart());
     }
 
     @Override
     public void enterBraceOrEqualInitializer(CPP14Parser.BraceOrEqualInitializerContext context) {
         if (context.Assign() != null) {
-            addEnter(CPPTokenType.ASSIGN, context.getStart());
+            addEnter(ASSIGN, context.getStart());
         }
     }
 
     @Override
     public void enterUnaryExpression(CPP14Parser.UnaryExpressionContext context) {
         if (context.PlusPlus() != null || context.MinusMinus() != null) {
-            addEnter(CPPTokenType.ASSIGN, context.getStart());
+            addEnter(ASSIGN, context.getStart());
         }
     }
 
     @Override
     public void enterStaticAssertDeclaration(CPP14Parser.StaticAssertDeclarationContext context) {
-        addEnter(CPPTokenType.STATIC_ASSERT, context.getStart());
+        addEnter(STATIC_ASSERT, context.getStart());
     }
 
     @Override
     public void enterEnumeratorDefinition(CPP14Parser.EnumeratorDefinitionContext context) {
-        addEnter(CPPTokenType.VARDEF, context.getStart());
+        addEnter(VARDEF, context.getStart());
     }
 
     @Override
     public void enterBracedInitList(CPP14Parser.BracedInitListContext context) {
-        addEnter(CPPTokenType.BRACED_INIT_BEGIN, context.getStart());
+        addEnter(BRACED_INIT_BEGIN, context.getStart());
     }
 
     @Override
     public void exitBracedInitList(CPP14Parser.BracedInitListContext context) {
-        addExit(CPPTokenType.BRACED_INIT_END, context.getStop());
+        addExit(BRACED_INIT_END, context.getStop());
     }
 
     /**
@@ -221,7 +267,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     @Override
     public void enterSimpleTypeSpecifier(CPP14Parser.SimpleTypeSpecifierContext context) {
         if (hasAncestor(context, CPP14Parser.MemberdeclarationContext.class, CPP14Parser.FunctionDefinitionContext.class)) {
-            addEnter(CPPTokenType.VARDEF, context.getStart());
+            addEnter(VARDEF, context.getStart());
         } else if (hasAncestor(context, CPP14Parser.SimpleDeclarationContext.class, CPP14Parser.TemplateArgumentContext.class,
                 CPP14Parser.FunctionDefinitionContext.class)) {
             // part of a SimpleDeclaration without being part of
@@ -233,7 +279,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
             CPP14Parser.NoPointerDeclaratorContext noPointerDecl = getDescendant(parent, CPP14Parser.NoPointerDeclaratorContext.class);
             if ((!noPointerInFunctionCallContext(noPointerDecl)) && !hasAncestor(context, CPP14Parser.NewTypeIdContext.class)) {
                 // 'new <Type>' does not declare a new variable
-                addEnter(CPPTokenType.VARDEF, context.getStart());
+                addEnter(VARDEF, context.getStart());
             }
         }
     }
@@ -247,7 +293,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         CPP14Parser.NoPointerDeclaratorContext noPointerDecl = getDescendant(context, CPP14Parser.NoPointerDeclaratorContext.class);
         if (noPointerInFunctionCallContext(noPointerDecl)) {
             // method calls like A::b(), b()
-            addEnter(CPPTokenType.APPLY, noPointerDecl.getStart());
+            addEnter(APPLY, noPointerDecl.getStart());
         }
     }
 
@@ -260,13 +306,13 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     @Override
     public void enterParameterDeclaration(CPP14Parser.ParameterDeclarationContext context) {
-        addEnter(CPPTokenType.VARDEF, context.getStart());
+        addEnter(VARDEF, context.getStart());
     }
 
     @Override
     public void enterConditionalExpression(CPP14Parser.ConditionalExpressionContext context) {
         if (context.Question() != null) {
-            addEnter(CPPTokenType.QUESTIONMARK, context.getStart());
+            addEnter(QUESTIONMARK, context.getStart());
         }
     }
 
@@ -274,9 +320,9 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     public void enterPostfixExpression(CPP14Parser.PostfixExpressionContext context) {
         // additional function calls are handled in SimpleDeclarationContext
         if (context.LeftParen() != null) {
-            addEnter(CPPTokenType.APPLY, context.getStart());
+            addEnter(APPLY, context.getStart());
         } else if (context.PlusPlus() != null || context.MinusMinus() != null) {
-            addEnter(CPPTokenType.ASSIGN, context.getStart());
+            addEnter(ASSIGN, context.getStart());
         }
     }
 
