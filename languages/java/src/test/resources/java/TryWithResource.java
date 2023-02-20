@@ -11,7 +11,7 @@ public class TryWithResource {
 
     public void load(String path) {
         Scanner other = null; // This is just here to keep the tokens similar.
-        try (Scanner scanner = new Scanner(new File(path))) {
+        try (Scanner scanner = other = new Scanner(new File(path))) { // same for = other =
             while (scanner.hasNext()) {
                 System.out.println(scanner.nextLine());
             }
