@@ -19,7 +19,7 @@ import de.jplag.TokenType;
 /**
  * Basic test class for testing the Java language module.
  */
-public class AbstractJavaLanguageTest {
+public abstract class AbstractJavaLanguageTest {
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "java");
     private static final String LOG_MESSAGE = "Tokens of {}: {}";
