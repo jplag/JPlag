@@ -118,6 +118,7 @@ export default defineComponent({
      * @param file
      */
     const handleZipFile = (file: Blob) => {
+      console.log("Start handling zip file and storing necessary data...")
       return jszip.loadAsync(file).then(async (zip) => {
         for (const originalFileName of Object.keys(zip.files)) {
           const unixFileName = slash(originalFileName);

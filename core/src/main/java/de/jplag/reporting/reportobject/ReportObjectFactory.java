@@ -90,6 +90,7 @@ public class ReportObjectFactory {
     }
 
     private void copySubmissionFilesToReport(String path, JPlagResult result) {
+        logger.info("Start copying submission files to the output directory...");
         List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
         Set<Submission> submissions = getSubmissions(comparisons);
         File submissionsPath = createSubmissionsDirectory(path);
@@ -151,6 +152,7 @@ public class ReportObjectFactory {
     }
 
     private void writeComparisons(JPlagResult result, String path) {
+        logger.info("Start writing comparisons...");
         ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction, fileWriter);
         submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result, path);
     }
@@ -169,7 +171,7 @@ public class ReportObjectFactory {
         int shownComparisons = totalComparisons > numberOfMaximumComparisons ? numberOfMaximumComparisons : totalComparisons;
         int missingComparisons = totalComparisons > numberOfMaximumComparisons ? (totalComparisons - numberOfMaximumComparisons) : 0;
         logger.info("Total Comparisons: {}. Shown Comparisons: {}. Missing Comparisons: {}.", totalComparisons, shownComparisons, missingComparisons);
-
+        logger.info("Start writing overview...");
         OverviewReport overviewReport = new OverviewReport(REPORT_VIEWER_VERSION, folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
                 result.getOptions().language().getName(), // language
