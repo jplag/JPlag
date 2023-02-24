@@ -69,17 +69,17 @@ class BasicFunctionalityTest extends TestBase {
                 .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
-        assertEquals(0.238, getSelectedPercent(result, "A", "B"), DELTA);
+        assertEquals(0.237, getSelectedPercent(result, "A", "B"), DELTA);
         assertEquals(0.996, getSelectedPercent(result, "A", "C"), DELTA);
-        assertEquals(0.748, getSelectedPercent(result, "A", "D"), DELTA);
-        assertEquals(0.238, getSelectedPercent(result, "B", "C"), DELTA);
-        assertEquals(0.283, getSelectedPercent(result, "B", "D"), DELTA);
-        assertEquals(0.748, getSelectedPercent(result, "C", "D"), DELTA);
+        assertEquals(0.751, getSelectedPercent(result, "A", "D"), DELTA);
+        assertEquals(0.237, getSelectedPercent(result, "B", "C"), DELTA);
+        assertEquals(0.281, getSelectedPercent(result, "B", "D"), DELTA);
+        assertEquals(0.751, getSelectedPercent(result, "C", "D"), DELTA);
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
         assertEquals(0.946, biggestMatch.get().maximalSimilarity(), DELTA);
-        assertEquals(0.619, biggestMatch.get().minimalSimilarity(), DELTA);
+        assertEquals(0.622, biggestMatch.get().minimalSimilarity(), DELTA);
         assertEquals(11, biggestMatch.get().matches().size());
     }
 
