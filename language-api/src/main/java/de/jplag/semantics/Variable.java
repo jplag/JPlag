@@ -1,13 +1,22 @@
 package de.jplag.semantics;
 
-public record Variable(String name, VariableId id) {
+public class Variable {
+    private final String name;
+    private final boolean isOwnMember;
+    private final boolean isMutable;
 
-    public Variable(String name) {
-        this(name, new VariableId());
+    Variable(String name, boolean isOwnMember, boolean isMutable) {
+        this.name = name;
+        this.isOwnMember = isOwnMember;
+        this.isMutable = isMutable;
+    }
+
+    boolean isMutable() {
+        return isMutable;
     }
 
     @Override
     public String toString() {
-        return name + "[" + id + "]";
+        return "%s[%s]".formatted(isOwnMember ? "this." : "" + name, isMutable ? "mut" : "non");
     }
 }

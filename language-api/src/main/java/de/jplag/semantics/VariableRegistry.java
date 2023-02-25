@@ -7,31 +7,25 @@ import java.util.Set;
 import java.util.Stack;
 
 /**
- * Variable helper class to assist generating token semantics. For languages similar in structure to Java/C
+ * Helper class to assist in generating token semantics. For languages similar in structure to Java/C
  */
 public class VariableRegistry {
     private Map<String, Variable> memberVariables; // map member variable name to variable
     private Map<String, Stack<Variable>> localVariables; // map local variable name to variable
     private Stack<Set<String>> localVariablesByScope; // stack of local variable names in scope
-    private Map<Variable, Boolean> isMutable; // map variable to whether it is mutable
-    private boolean mutableWrite;
     private NextOperation nextOperation;
+    private boolean mutableWrite;
 
     public VariableRegistry() {
         this.memberVariables = new HashMap<>();
         this.localVariables = new HashMap<>();
         this.localVariablesByScope = new Stack<>();
-        this.isMutable = new HashMap<>();
-        this.mutableWrite = false;
         this.nextOperation = NextOperation.READ; // the default
+        this.mutableWrite = false;
     }
 
-    public void mutableWrite() {
-        mutableWrite = true;
-    }
-
-    public void noMutableWrite() {
-        mutableWrite = false;
+    public void setMutableWrite(boolean mutableWrite) {
+        this.mutableWrite = mutableWrite;
     }
 
     public void setNextOperation(NextOperation nextOperation) {
@@ -42,11 +36,11 @@ public class VariableRegistry {
         return !localVariablesByScope.isEmpty();
     }
 
-    public Variable getMemberVariable(String variableName) {
+    private Variable getMemberVariable(String variableName) {
         return memberVariables.get(variableName);
     }
 
-    public Variable getVariable(String variableName) {
+    private Variable getVariable(String variableName) {
         Stack<Variable> variableIdStack = localVariables.get(variableName);
         if (variableIdStack != null) {
             return variableIdStack.peek();
@@ -54,25 +48,23 @@ public class VariableRegistry {
         return getMemberVariable(variableName);
     }
 
-    public Variable registerMemberVariable(String name, boolean mutable) {
-        Variable variable = new Variable(name);
-        memberVariables.put(variable.name(), variable);
-        this.isMutable.put(variable, mutable);
+    public Variable registerMemberVariable(String variableName, boolean mutable) {
+        Variable variable = new Variable(variableName, true, mutable);
+        memberVariables.put(variableName, variable);
         return variable;
     }
 
-    public Variable registerLocalVariable(String name, boolean mutable) {
-        Variable variable = new Variable(name);
-        localVariables.putIfAbsent(variable.name(), new Stack<>());
-        localVariables.get(variable.name()).push(variable);
-        localVariablesByScope.peek().add(variable.name());
-        this.isMutable.put(variable, mutable);
+    public Variable registerLocalVariable(String variableName, boolean mutable) {
+        Variable variable = new Variable(variableName, false, mutable);
+        localVariables.putIfAbsent(variableName, new Stack<>());
+        localVariables.get(variableName).push(variable);
+        localVariablesByScope.peek().add(variableName);
         return variable;
     }
 
     public void addAllMemberVariablesAsReads(TokenSemantics semantics) {
-        for (Variable mv : memberVariables.values()) {
-            semantics.addRead(mv);
+        for (Variable memberVar : memberVariables.values()) {
+            semantics.addRead(memberVar);
         }
     }
 
@@ -80,12 +72,13 @@ public class VariableRegistry {
         memberVariables.clear();
     }
 
-    public void registerVariableOperation(Variable variable, TokenSemantics semantics) {
+    public void registerVariableOperation(String variableName, boolean isOwnMember, TokenSemantics semantics) {
+        Variable variable = isOwnMember ? getMemberVariable(variableName) : getVariable(variableName);
         if (variable != null) {
-            if (Set.of(NextOperation.READ, NextOperation.READ_WRITE).contains(nextOperation)) {
+            if (nextOperation.isRead) {
                 semantics.addRead(variable);
             }
-            if (Set.of(NextOperation.WRITE, NextOperation.READ_WRITE).contains(nextOperation) || (mutableWrite && isMutable.get(variable))) {
+            if (nextOperation.isWrite || (nextOperation.isRead && mutableWrite && variable.isMutable())) {
                 semantics.addWrite(variable);
             }
         }

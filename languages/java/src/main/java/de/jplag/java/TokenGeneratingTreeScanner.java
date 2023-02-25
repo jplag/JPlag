@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.lang.model.element.Name;
-
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
@@ -33,7 +31,6 @@ import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.ErroneousTree;
 import com.sun.source.tree.ExportsTree;
-import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.ForLoopTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.IfTree;
@@ -76,7 +73,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     private static final Set<String> IMMUTABLES = Set.of(
             // from https://medium.com/@bpnorlander/java-understanding-primitive-types-and-wrapper-objects-a6798fb2afe9
-            "byte", "short", "int", "long", "float", "double", "boolean", "char", //
+            "byte", "short", "int", "long", "float", "double", "boolean", "char", // primitives
             "Byte", "Short", "Integer", "Long", "Float", "Double", "Boolean", "Character", "String");
 
     public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
@@ -116,25 +113,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start), semantics);
     }
 
-    private boolean isVariable(ExpressionTree expressionTree) {
-        return expressionTree.getKind() == Tree.Kind.IDENTIFIER
-                || (expressionTree.getKind() == Tree.Kind.MEMBER_SELECT && isOwnMemberSelect((MemberSelectTree) expressionTree));
-    }
-
-    private boolean isNotExistingVariable(ExpressionTree expressionTree) {
-        if (expressionTree.getKind() != Tree.Kind.IDENTIFIER) {
-            return true;
-        }
-        Name name = ((IdentifierTree) expressionTree).getName();
-        return variableRegistry.getVariable(name.toString()) == null;
-    }
-
     private boolean isOwnMemberSelect(MemberSelectTree memberSelect) {
-        return memberSelect.getExpression().toString().equals("this");
+        return memberSelect.toString().equals("this");
     }
 
     private boolean isMutable(Tree classTree) {
-        return classTree != null && !IMMUTABLES.contains(classTree.toString());
+        // classTree is null if `var` keyword is used
+        return classTree == null || !IMMUTABLES.contains(classTree.toString());
     }
 
     @Override
@@ -484,19 +469,19 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitAssignment(AssignmentTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        boolean criticalCondition = isNotExistingVariable(node.getVariable());
-        semantics = new TokenSemanticsBuilder().critical(criticalCondition).build();
+        // todo may need to be critical when non-registered (global) variables are involved, not sure how to check
+        semantics = new TokenSemanticsBuilder().build();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
         variableRegistry.setNextOperation(NextOperation.WRITE);
         super.visitAssignment(node, semantics);
+        // if (this.assignedVariableWasRegistered) makeSemanticsCritical(semantics)
         return null;
     }
 
     @Override
     public Void visitCompoundAssignment(CompoundAssignmentTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        boolean criticalCondition = isNotExistingVariable(node.getVariable());
-        semantics = new TokenSemanticsBuilder().critical(criticalCondition).build();
+        semantics = new TokenSemanticsBuilder().build();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
         variableRegistry.setNextOperation(NextOperation.READ_WRITE);
         super.visitCompoundAssignment(node, semantics);
@@ -505,8 +490,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     @Override
     public Void visitUnary(UnaryTree node, TokenSemantics semantics) {
-        boolean criticalCondition = isNotExistingVariable(node.getExpression());
-        semantics = new TokenSemanticsBuilder().critical(criticalCondition).build();
+        semantics = new TokenSemanticsBuilder().build();
         if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
@@ -537,8 +521,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
             String name = node.getName().toString();
             boolean mutable = isMutable(node.getType());
             Variable variable = variableRegistry.registerLocalVariable(name, mutable);
-            // manually add variable to semantics since identifier isn't visited
-            semantics.addWrite(variable);
+            semantics.addWrite(variable);  // manually add variable to semantics since identifier isn't visited
         } // no else since member variable defs are registered on class visit
 
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length(), semantics);
@@ -562,15 +545,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         variableRegistry.addAllMemberVariablesAsReads(semantics);
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start, semantics);
         scan(node.getTypeArguments(), semantics);
-        // to differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore), different namespace for variables and
-        // methods
-        if (isVariable(node.getMethodSelect())) {
-            variableRegistry.setNextOperation(NextOperation.NONE);
-        }
-        variableRegistry.mutableWrite();  // when mentioned here, mutable variables can be written to
-        scan(node.getMethodSelect(), semantics);
-        scan(node.getArguments(), semantics);
-        variableRegistry.noMutableWrite();
+        // differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
+        variableRegistry.setNextOperation(NextOperation.NONE);
+        variableRegistry.setMutableWrite(true);
+        scan(node.getMethodSelect(), semantics);  // foo.bar() is a write to foo
+        scan(node.getArguments(), semantics);  // foo(bar) is a write to bar
+        variableRegistry.setMutableWrite(false);
         return null;
     }
 
@@ -652,18 +632,15 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitMemberSelect(MemberSelectTree node, TokenSemantics semantics) {
         if (isOwnMemberSelect(node)) {
-            Variable variable = variableRegistry.getMemberVariable(node.getIdentifier().toString());
-            variableRegistry.registerVariableOperation(variable, semantics);
+            variableRegistry.registerVariableOperation(node.getIdentifier().toString(), true, semantics);
         }
-        variableRegistry.setNextOperation(NextOperation.READ);
         super.visitMemberSelect(node, semantics);
         return null;
     }
 
     @Override
     public Void visitIdentifier(IdentifierTree node, TokenSemantics semantics) {
-        Variable variable = variableRegistry.getVariable(node.getName().toString());
-        variableRegistry.registerVariableOperation(variable, semantics);
+        variableRegistry.registerVariableOperation(node.toString(), false, semantics);
         super.visitIdentifier(node, semantics);
         return null;
     }
