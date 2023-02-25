@@ -334,21 +334,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitTry(TryTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         semantics = new TokenSemanticsBuilder().control().build();
-        if (node.getResources().isEmpty()) {
-            addToken(JavaTokenType.J_TRY_BEGIN, start, 3, semantics);
-        } else {
-            addToken(JavaTokenType.J_TRY_WITH_RESOURCE, start, 3, semantics);
-        }
+        addToken(JavaTokenType.J_TRY_BEGIN, start, 3, semantics);
         scan(node.getResources(), semantics);
         scan(node.getBlock(), null);
+        long end = positions.getEndPosition(ast, node);
+        semantics = new TokenSemanticsBuilder().control().build();
+        addToken(JavaTokenType.J_TRY_END, end, 1, semantics);
         scan(node.getCatches(), null);
         if (node.getFinallyBlock() != null) {
-            semantics = new TokenSemanticsBuilder().control().build();
             start = positions.getStartPosition(ast, node.getFinallyBlock());
-            addToken(JavaTokenType.J_FINALLY, start, 3, semantics);
+            semantics = new TokenSemanticsBuilder().control().build();
+            addToken(JavaTokenType.J_FINALLY_BEGIN, start, 3, semantics);
+            scan(node.getFinallyBlock(), null);
+            end = positions.getEndPosition(ast, node.getFinallyBlock());
+            semantics = new TokenSemanticsBuilder().control().build();
+            addToken(JavaTokenType.J_FINALLY_END, end, 1, semantics);
         }
-        scan(node.getFinallyBlock(), null);
-        return null;
+        return null; // return value isn't used
     }
 
     @Override
@@ -436,7 +438,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitTypeParameter(TypeParameterTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        // This is odd, but also done like this in Java17
+        // This is odd, but also done like this in Java 1.7
         semantics = new TokenSemanticsBuilder().build();
         addToken(JavaTokenType.J_GENERIC, start, 1, semantics);
         super.visitTypeParameter(node, semantics);
