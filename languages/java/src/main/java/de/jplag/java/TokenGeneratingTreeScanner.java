@@ -548,7 +548,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start, semantics);
         scan(node.getTypeArguments(), semantics);
         // differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
-        variableRegistry.setNextOperation(NextOperation.NONE);
+        // look at cases foo.bar()++ and foo().bar++
+        variableRegistry.setIgnoreNextOperation(true);
         variableRegistry.setMutableWrite(true);
         scan(node.getMethodSelect(), semantics);  // foo.bar() is a write to foo
         scan(node.getArguments(), semantics);  // foo(bar) is a write to bar
@@ -636,6 +637,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         if (isOwnMemberSelect(node)) {
             variableRegistry.registerVariableOperation(node.getIdentifier().toString(), true, semantics);
         }
+        variableRegistry.setIgnoreNextOperation(false);  // don't ignore the foo in foo.bar()
         super.visitMemberSelect(node, semantics);
         return null;
     }

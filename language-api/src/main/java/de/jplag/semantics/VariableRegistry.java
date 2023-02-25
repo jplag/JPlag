@@ -14,6 +14,7 @@ public class VariableRegistry {
     private Map<String, Stack<Variable>> localVariables; // map local variable name to variable
     private Stack<Set<String>> localVariablesByScope; // stack of local variable names in scope
     private NextOperation nextOperation;
+    private boolean ignoreNextOperation;
     private boolean mutableWrite;
 
     public VariableRegistry() {
@@ -21,15 +22,20 @@ public class VariableRegistry {
         this.localVariables = new HashMap<>();
         this.localVariablesByScope = new Stack<>();
         this.nextOperation = NextOperation.READ; // the default
+        this.ignoreNextOperation = false;
         this.mutableWrite = false;
-    }
-
-    public void setMutableWrite(boolean mutableWrite) {
-        this.mutableWrite = mutableWrite;
     }
 
     public void setNextOperation(NextOperation nextOperation) {
         this.nextOperation = nextOperation;
+    }
+
+    public void setIgnoreNextOperation(boolean ignoreNextOperation) {
+        this.ignoreNextOperation = ignoreNextOperation;
+    }
+
+    public void setMutableWrite(boolean mutableWrite) {
+        this.mutableWrite = mutableWrite;
     }
 
     public boolean inLocalScope() {
@@ -73,16 +79,19 @@ public class VariableRegistry {
     }
 
     public void registerVariableOperation(String variableName, boolean isOwnMember, TokenSemantics semantics) {
-        Variable variable = isOwnMember ? getMemberVariable(variableName) : getVariable(variableName);
-        if (variable != null) {
-            if (nextOperation.isRead) {
-                semantics.addRead(variable);
+        if (!ignoreNextOperation) {
+            Variable variable = isOwnMember ? getMemberVariable(variableName) : getVariable(variableName);
+            if (variable != null) {
+                if (nextOperation.isRead) {
+                    semantics.addRead(variable);
+                }
+                if (nextOperation.isWrite || (nextOperation.isRead && mutableWrite && variable.isMutable())) {
+                    semantics.addWrite(variable);
+                }
             }
-            if (nextOperation.isWrite || (nextOperation.isRead && mutableWrite && variable.isMutable())) {
-                semantics.addWrite(variable);
-            }
+            nextOperation = NextOperation.READ;
         }
-        nextOperation = NextOperation.READ;
+        ignoreNextOperation = false;
     }
 
     public void enterLocalScope() {
