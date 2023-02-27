@@ -83,7 +83,7 @@
           :top-comparisons="topComps[selectedMetricIndex]"
         />
       </div>
-      <div v-if="missingComparisons!==0">
+      <div v-if="missingComparisons!==0 && !isNaN(missingComparisons)">
         <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{shownComparisons}}, Missing comparisons: {{missingComparisons}}. To see more, re-run JPlag with a higher maximum number argument.</h3>
       </div>
     </div>

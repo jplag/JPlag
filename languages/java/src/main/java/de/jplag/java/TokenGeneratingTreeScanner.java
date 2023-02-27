@@ -226,18 +226,19 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     @Override
     public Object visitTry(TryTree node, Object p) {
         long start = positions.getStartPosition(ast, node);
-        if (node.getResources().isEmpty())
-            addToken(JavaTokenType.J_TRY_BEGIN, start, 3);
-        else
-            addToken(JavaTokenType.J_TRY_WITH_RESOURCE, start, 3);
+        addToken(JavaTokenType.J_TRY_BEGIN, start, 3);
         scan(node.getResources(), p);
         scan(node.getBlock(), p);
+        long end = positions.getEndPosition(ast, node);
+        addToken(JavaTokenType.J_TRY_END, end, 1);
         scan(node.getCatches(), p);
         if (node.getFinallyBlock() != null) {
             start = positions.getStartPosition(ast, node.getFinallyBlock());
-            addToken(JavaTokenType.J_FINALLY, start, 3);
+            addToken(JavaTokenType.J_FINALLY_BEGIN, start, 3);
+            scan(node.getFinallyBlock(), p);
+            end = positions.getEndPosition(ast, node.getFinallyBlock());
+            addToken(JavaTokenType.J_FINALLY_END, end, 1);
         }
-        scan(node.getFinallyBlock(), p);
         return null; // return value isn't used
     }
 
@@ -308,7 +309,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     @Override
     public Object visitTypeParameter(TypeParameterTree node, Object p) {
         long start = positions.getStartPosition(ast, node);
-        // This is odd, but also done like this in Java17
+        // This is odd, but also done like this in Java 1.7
         addToken(JavaTokenType.J_GENERIC, start, 1);
         return super.visitTypeParameter(node, p);
     }
@@ -368,6 +369,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     public Object visitVariable(VariableTree node, Object p) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length());
+
         return super.visitVariable(node, p);
     }
 
