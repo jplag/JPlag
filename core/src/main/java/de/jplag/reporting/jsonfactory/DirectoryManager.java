@@ -66,7 +66,6 @@ public class DirectoryManager {
      * @param path The path of the new directory
      */
     public static void createDirectory(String path) throws IOException {
-        logger.info("Start creating the output directory...");
         createDirectory(path, "");
     }
 
