@@ -152,7 +152,6 @@ public class ReportObjectFactory {
     }
 
     private void writeComparisons(JPlagResult result, String path) {
-        logger.info("Start writing comparisons...");
         ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction, fileWriter);
         submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result, path);
     }
