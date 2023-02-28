@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="">
-<head>
-    <!--Redirect to entrance-->
-    <meta http-equiv="refresh" content="0;URL=./">
-</head>
+<script>
+    const UrlPath = window.location.pathname;
+    const branch = UrlPath.split('/')[1];
+    const url = "https://jplag.github.io/" + branch + "/";
+    location.replace(url);
+</script>
 </html>
