@@ -115,6 +115,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const overviewFile = computed(() => {
+      console.log("Start finding overview.json in state...")
       const index = Object.keys(store.state.files).find((name) =>
         name.endsWith("overview.json")
       );
@@ -124,6 +125,7 @@ export default defineComponent({
     });
 
     const getOverview = (): Overview => {
+      console.log("Generating overview...")
       let temp!: Overview;
       //Gets the overview file based on the used mode (zip, local, single).
       if (store.state.local) {
