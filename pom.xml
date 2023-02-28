@@ -375,7 +375,7 @@
                         </eclipse>
 
                         <importOrder>
-                            <file>${maven.multiModuleProjectDirectory}/spotless.importorder</file>
+                            <file>spotless.importorder</file>
                         </importOrder>
                         <removeUnusedImports></removeUnusedImports>
                     </java>
