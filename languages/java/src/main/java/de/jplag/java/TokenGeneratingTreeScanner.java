@@ -10,8 +10,6 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.semantics.NextOperation;
 import de.jplag.semantics.TokenSemantics;
-import de.jplag.semantics.TokenSemanticsBuilder;
-import de.jplag.semantics.Variable;
 import de.jplag.semantics.VariableRegistry;
 
 import com.sun.source.tree.AnnotationTree;
@@ -145,7 +143,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createControl();
         if (node.getKind() == Tree.Kind.ENUM) {
             addToken(JavaTokenType.J_ENUM_BEGIN, start, 4, semantics);
         } else if (node.getKind() == Tree.Kind.INTERFACE) {
@@ -173,7 +171,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
             default -> null;
         };
         if (tokenType != null) {
-            semantics = new TokenSemanticsBuilder().control().critical().build();
+            semantics = TokenSemantics.createControl();
             addToken(tokenType, end, 1, semantics);
         }
         variableRegistry.clearMemberVariables();
@@ -183,7 +181,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitImport(ImportTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createKeep();
         addToken(JavaTokenType.J_IMPORT, start, 6, semantics);
         super.visitImport(node, semantics);
         return null;
@@ -192,7 +190,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitPackage(PackageTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_PACKAGE, start, 7, semantics);
         super.visitPackage(node, semantics);
         return null;
@@ -203,7 +201,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_METHOD_BEGIN, start, node.getName().length(), semantics);
         scan(node.getModifiers(), semantics);
         scan(node.getReturnType(), semantics);
@@ -212,7 +210,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         scan(node.getReceiverParameter(), semantics);
         scan(node.getThrows(), semantics);
         scan(node.getBody(), null);
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createControl();
         variableRegistry.addAllMemberVariablesAsReads(semantics);
         addToken(JavaTokenType.J_METHOD_END, end, 1, semantics);
         variableRegistry.exitLocalScope();
@@ -223,10 +221,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitSynchronized(SynchronizedTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_SYNC_BEGIN, start, 12, semantics);
         super.visitSynchronized(node, semantics);
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_SYNC_END, end, 1, semantics);
         return null;
     }
@@ -235,10 +233,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitDoWhileLoop(DoWhileLoopTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().loopBegin().build();
+        semantics = TokenSemantics.createLoopBegin();
         addToken(JavaTokenType.J_DO_BEGIN, start, 2, semantics);
         scan(node.getStatement(), null);
-        semantics = new TokenSemanticsBuilder().control().loopEnd().build();
+        semantics = TokenSemantics.createLoopEnd();
         addToken(JavaTokenType.J_DO_END, end, 1, semantics);
         scan(node.getCondition(), semantics);
         return null;
@@ -248,11 +246,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitWhileLoop(WhileLoopTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().loopBegin().build();
+        semantics = TokenSemantics.createLoopBegin();
         addToken(JavaTokenType.J_WHILE_BEGIN, start, 5, semantics);
         scan(node.getCondition(), semantics);
         scan(node.getStatement(), null);
-        semantics = new TokenSemanticsBuilder().control().loopEnd().build();
+        semantics = TokenSemantics.createLoopEnd();
         addToken(JavaTokenType.J_WHILE_END, end, 1, semantics);
         return null;
     }
@@ -262,13 +260,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().loopBegin().build();
+        semantics = TokenSemantics.createLoopBegin();
         addToken(JavaTokenType.J_FOR_BEGIN, start, 3, semantics);
         scan(node.getInitializer(), semantics);
         scan(node.getCondition(), semantics);
         scan(node.getUpdate(), semantics);
         scan(node.getStatement(), null);
-        semantics = new TokenSemanticsBuilder().control().loopEnd().build();
+        semantics = TokenSemantics.createLoopEnd();
         addToken(JavaTokenType.J_FOR_END, end, 1, semantics);
         variableRegistry.exitLocalScope();
         return null;
@@ -279,12 +277,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().loopBegin().build();
+        semantics = TokenSemantics.createLoopBegin();
         addToken(JavaTokenType.J_FOR_BEGIN, start, 3, semantics);
         scan(node.getVariable(), semantics);
         scan(node.getExpression(), semantics);
         scan(node.getStatement(), null);
-        semantics = new TokenSemanticsBuilder().control().loopEnd().build();
+        semantics = TokenSemantics.createLoopEnd();
         addToken(JavaTokenType.J_FOR_END, end, 1, semantics);
         variableRegistry.exitLocalScope();
         return null;
@@ -294,11 +292,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitSwitch(SwitchTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6, semantics);
         scan(node.getExpression(), semantics);
         scan(node.getCases(), null);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_SWITCH_END, end, 1, semantics);
         return null;
     }
@@ -307,11 +305,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitSwitchExpression(SwitchExpressionTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6, semantics);
         scan(node.getExpression(), semantics);
         scan(node.getCases(), null);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_SWITCH_END, end, 1, semantics);
         return null;
     }
@@ -319,7 +317,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitCase(CaseTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_CASE, start, 4, semantics);
         scan(node.getExpressions(), semantics);
         if (node.getCaseKind() == CaseTree.CaseKind.RULE) {
@@ -333,21 +331,21 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitTry(TryTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_TRY_BEGIN, start, 3, semantics);
         scan(node.getResources(), semantics);
         scan(node.getBlock(), null);
         long end = positions.getEndPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_TRY_END, end, 1, semantics);
         scan(node.getCatches(), null);
         if (node.getFinallyBlock() != null) {
             start = positions.getStartPosition(ast, node.getFinallyBlock());
-            semantics = new TokenSemanticsBuilder().control().build();
+            semantics = TokenSemantics.createControl();
             addToken(JavaTokenType.J_FINALLY_BEGIN, start, 3, semantics);
             scan(node.getFinallyBlock(), null);
             end = positions.getEndPosition(ast, node.getFinallyBlock());
-            semantics = new TokenSemanticsBuilder().control().build();
+            semantics = TokenSemantics.createControl();
             addToken(JavaTokenType.J_FINALLY_END, end, 1, semantics);
         }
         return null; // return value isn't used
@@ -358,10 +356,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_CATCH_BEGIN, start, 5, semantics);
         super.visitCatch(node, null); // can leave this since catch parameter is variable declaration and thus always generates a token
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_CATCH_END, end, 1, semantics);
         variableRegistry.exitLocalScope();
         return null;
@@ -371,17 +369,17 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitIf(IfTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_IF_BEGIN, start, 2, semantics);
         scan(node.getCondition(), semantics);
         scan(node.getThenStatement(), null);
         if (node.getElseStatement() != null) {
             start = positions.getStartPosition(ast, node.getElseStatement());
-            semantics = new TokenSemanticsBuilder().control().build();
+            semantics = TokenSemantics.createControl();
             addToken(JavaTokenType.J_ELSE, start, 4, semantics);
         }
         scan(node.getElseStatement(), null);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_IF_END, end, 1, semantics);
         return null;
     }
@@ -389,7 +387,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitBreak(BreakTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_BREAK, start, 5, semantics);
         super.visitBreak(node, semantics);
         return null;
@@ -398,7 +396,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitContinue(ContinueTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_CONTINUE, start, 8, semantics);
         super.visitContinue(node, semantics);
         return null;
@@ -407,7 +405,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitReturn(ReturnTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_RETURN, start, 6, semantics);
         super.visitReturn(node, semantics);
         return null;
@@ -416,7 +414,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitThrow(ThrowTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_THROW, start, 5, semantics);
         super.visitThrow(node, semantics);
         return null;
@@ -426,10 +424,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitNewClass(NewClassTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         if (node.getTypeArguments().size() > 0) {
-            semantics = new TokenSemanticsBuilder().build();
+            semantics = new TokenSemantics();
             addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), semantics);
         }
-        semantics = new TokenSemanticsBuilder().build();
+        semantics = new TokenSemantics();
         addToken(JavaTokenType.J_NEWCLASS, start, 3, semantics);
         super.visitNewClass(node, semantics);
         return null;
@@ -439,7 +437,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitTypeParameter(TypeParameterTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         // This is odd, but also done like this in Java 1.7
-        semantics = new TokenSemanticsBuilder().build();
+        semantics = new TokenSemantics();
         addToken(JavaTokenType.J_GENERIC, start, 1, semantics);
         super.visitTypeParameter(node, semantics);
         return null;
@@ -449,20 +447,20 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitNewArray(NewArrayTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().build();
+        semantics = new TokenSemantics();
         addToken(JavaTokenType.J_NEWARRAY, start, 3, semantics);
         scan(node.getType(), semantics);
         scan(node.getDimensions(), semantics);
         boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
         if (hasInit) {
             start = positions.getStartPosition(ast, node.getInitializers().get(0));
-            semantics = new TokenSemanticsBuilder().build();
+            semantics = new TokenSemantics();
             addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1, semantics);
         }
         scan(node.getInitializers(), semantics);
         // super method has annotation processing but we have it disabled anyways
         if (hasInit) {
-            semantics = new TokenSemanticsBuilder().build();
+            semantics = new TokenSemantics();
             addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1, semantics);
         }
         return null;
@@ -471,8 +469,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitAssignment(AssignmentTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        // todo may need to be critical when non-registered (global) variables are involved, not sure how to check
-        semantics = new TokenSemanticsBuilder().build();
+        // todo may need to be keep when non-registered (global) variables are involved, not sure how to check
+        semantics = new TokenSemantics();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
         variableRegistry.setNextOperation(NextOperation.WRITE);
         super.visitAssignment(node, semantics);
@@ -483,7 +481,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitCompoundAssignment(CompoundAssignmentTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().build();
+        semantics = new TokenSemantics();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
         variableRegistry.setNextOperation(NextOperation.READ_WRITE);
         super.visitCompoundAssignment(node, semantics);
@@ -492,7 +490,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
 
     @Override
     public Void visitUnary(UnaryTree node, TokenSemantics semantics) {
-        semantics = new TokenSemanticsBuilder().build();
+        semantics = new TokenSemantics();
         if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
@@ -506,7 +504,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitAssert(AssertTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().critical().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_ASSERT, start, 6, semantics);
         super.visitAssert(node, semantics);
         return null;
@@ -515,17 +513,18 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitVariable(VariableTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        // member variable defs are critical
+        String name = node.getName().toString();
         boolean inLocalScope = variableRegistry.inLocalScope();
-        semantics = new TokenSemanticsBuilder().critical(!inLocalScope).build();
-
         if (inLocalScope) {
-            String name = node.getName().toString();
             boolean mutable = isMutable(node.getType());
-            Variable variable = variableRegistry.registerLocalVariable(name, mutable);
-            semantics.addWrite(variable);  // manually add variable to semantics since identifier isn't visited
-        } // no else since member variable defs are registered on class visit
-
+            variableRegistry.registerLocalVariable(name, mutable);
+            semantics = new TokenSemantics();
+        } else {
+            semantics = TokenSemantics.createKeep();
+        }
+        variableRegistry.setNextOperation(NextOperation.WRITE);
+        // manually add variable to semantics since identifier isn't visited
+        variableRegistry.registerVariableOperation(name, !inLocalScope, semantics);
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length(), semantics);
         super.visitVariable(node, semantics);
         return null;
@@ -534,7 +533,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitConditionalExpression(ConditionalExpressionTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().build();
+        semantics = new TokenSemantics();
         addToken(JavaTokenType.J_COND, start, 1, semantics);
         super.visitConditionalExpression(node, semantics);
         return null;
@@ -543,7 +542,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitMethodInvocation(MethodInvocationTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().critical().control().build();
+        semantics = TokenSemantics.createControl();
         variableRegistry.addAllMemberVariablesAsReads(semantics);
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start, semantics);
         scan(node.getTypeArguments(), semantics);
@@ -560,7 +559,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitAnnotation(AnnotationTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().build();
+        semantics = new TokenSemantics();
         addToken(JavaTokenType.J_ANNO, start, 1, semantics);
         super.visitAnnotation(node, semantics);
         return null;
@@ -570,10 +569,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitModule(ModuleTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new TokenSemanticsBuilder().critical().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_MODULE_BEGIN, start, 6, semantics);
         super.visitModule(node, null);
-        semantics = new TokenSemanticsBuilder().critical().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_MODULE_END, end, 1, semantics);
         return null;
     }
@@ -581,7 +580,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitRequires(RequiresTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().critical().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_REQUIRES, start, 8, semantics);
         super.visitRequires(node, semantics);
         return null;
@@ -590,7 +589,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitProvides(ProvidesTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().critical().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_PROVIDES, start, 8, semantics);
         super.visitProvides(node, semantics);
         return null;
@@ -599,7 +598,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     @Override
     public Void visitExports(ExportsTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().critical().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_EXPORTS, start, 7, semantics);
         super.visitExports(node, semantics);
         return null;
@@ -616,7 +615,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitYield(YieldTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_YIELD, start, end, semantics);
         super.visitYield(node, semantics);
         return null;
@@ -626,7 +625,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, TokenSemantics>
     public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, TokenSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
-        semantics = new TokenSemanticsBuilder().control().build();
+        semantics = TokenSemantics.createControl();
         addToken(JavaTokenType.J_DEFAULT, start, end, semantics);
         super.visitDefaultCaseLabel(node, semantics);
         return null;

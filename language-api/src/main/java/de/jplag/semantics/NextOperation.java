@@ -1,7 +1,6 @@
 package de.jplag.semantics;
 
 public enum NextOperation {
-    NONE(false, false),
     READ(true, false),
     WRITE(false, true),
     READ_WRITE(true, true);

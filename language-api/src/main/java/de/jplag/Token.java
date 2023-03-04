@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.semantics.TokenSemantics;
-import de.jplag.semantics.TokenSemanticsBuilder;
 
 /**
  * This class represents a token in a source code. It can represent keywords, identifiers, syntactical structures etc.
@@ -75,7 +74,7 @@ public class Token {
      * @param file is the name of the source code file.
      */
     public static Token semanticFileEnd(File file) {
-        TokenSemantics semantics = new TokenSemanticsBuilder().control().critical().build();
+        TokenSemantics semantics = TokenSemantics.createControl();
         return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, semantics);
     }
 

@@ -17,8 +17,8 @@ class TokenLine implements Comparable<TokenLine> {
     TokenLine(List<Token> tokens, int lineNumber) {
         this.tokens = Collections.unmodifiableList(tokens);
         this.lineNumber = lineNumber;
-        this.semantics = TokenSemantics.join(tokens.stream().map(Token::getSemantics).toList());
-        keep = semantics.critical() || semantics.control();
+        semantics = TokenSemantics.join(tokens.stream().map(Token::getSemantics).toList());
+        keep = semantics.keep();
     }
 
     public List<Token> tokens() {

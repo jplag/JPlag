@@ -9,14 +9,16 @@ import java.util.Map;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import de.jplag.Token;
+import de.jplag.semantics.BlockRelation;
+import de.jplag.semantics.Ordering;
 import de.jplag.semantics.Variable;
 
 class NormalizationGraphConstructor {
     private SimpleDirectedGraph<TokenLine, Dependency> graph;
     private int loopDepth;
-    private Collection<TokenLine> controlAffected;
-    private TokenLine lastControl;
-    private TokenLine lastCritical;
+    private Collection<TokenLine> fullOrderingIngoing;
+    private TokenLine lastFullOrdering;
+    private TokenLine lastPartialOrdering;
     private Map<Variable, Collection<TokenLine>> variableReads;
     private Map<Variable, Collection<TokenLine>> variableWrites;
     private TokenLine current;
@@ -24,7 +26,7 @@ class NormalizationGraphConstructor {
     NormalizationGraphConstructor(List<Token> tokens) {
         graph = new SimpleDirectedGraph<>(Dependency.class);
         loopDepth = 0;
-        controlAffected = new LinkedList<>();
+        fullOrderingIngoing = new LinkedList<>();
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         TokenLineBuilder currentLine = new TokenLineBuilder(tokens.get(0).getLine());
@@ -38,13 +40,16 @@ class NormalizationGraphConstructor {
         addTokenLine(currentLine.build());
     }
 
+    SimpleDirectedGraph<TokenLine, Dependency> get() {
+        return graph;
+    }
+
     private void addTokenLine(TokenLine tokenLine) {
         graph.addVertex(tokenLine);
         this.current = tokenLine;
-
         processLoops();
-        processControl();
-        processCritical();
+        processFullOrdering();
+        processPartialOrdering();
         processReads();
         processWrites();
         current.semantics().reads().forEach(r -> addVarToMap(r, variableReads));
@@ -52,34 +57,30 @@ class NormalizationGraphConstructor {
 
     }
 
-    SimpleDirectedGraph<TokenLine, Dependency> get() {
-        return graph;
-    }
-
     private void processLoops() {
-        if (current.semantics().loopBegin())
+        if (current.semantics().bidirectionalBlockRelation() == BlockRelation.BEGINS_BLOCK)
             loopDepth++;
-        if (current.semantics().loopEnd())
+        if (current.semantics().bidirectionalBlockRelation() == BlockRelation.ENDS_BLOCK)
             loopDepth--;
     }
 
-    private void processControl() {
-        if (current.semantics().control()) {
-            addCurrentEdges(controlAffected, DependencyType.CONTROL, null); // edges to control lines
-            controlAffected.clear();
-            lastControl = current;
-        } else if (lastControl != null) {
-            addCurrentEdge(lastControl, DependencyType.CONTROL, null); // edge from control lines
+    private void processFullOrdering() {
+        if (current.semantics().ordering() == Ordering.FULL) {
+            addCurrentEdges(fullOrderingIngoing, DependencyType.CONTROL, null); // ingoing edges
+            fullOrderingIngoing.clear();
+            lastFullOrdering = current;
+        } else if (lastFullOrdering != null) {
+            addCurrentEdge(lastFullOrdering, DependencyType.CONTROL, null); // outgoing edges
         }
-        controlAffected.add(current);
+        fullOrderingIngoing.add(current);
     }
 
-    private void processCritical() {
-        if (current.semantics().critical()) {
-            if (lastCritical != null) {
-                addCurrentEdge(lastCritical, DependencyType.CRITICAL, null);
+    private void processPartialOrdering() {
+        if (current.semantics().ordering() == Ordering.PARTIAL) {
+            if (lastPartialOrdering != null) {
+                addCurrentEdge(lastPartialOrdering, DependencyType.CRITICAL, null);
             }
-            lastCritical = current;
+            lastPartialOrdering = current;
         }
     }
 

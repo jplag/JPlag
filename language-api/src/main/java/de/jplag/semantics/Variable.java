@@ -1,5 +1,8 @@
 package de.jplag.semantics;
 
+/**
+ * Each variable has its unique identity, important for tracing in graph (NormalizationGraph::spreadKeep).
+ */
 public class Variable {
     private final String name;
     private final boolean isOwnMember;
@@ -17,6 +20,6 @@ public class Variable {
 
     @Override
     public String toString() {
-        return "%s[%s]".formatted(isOwnMember ? "this." : "" + name, isMutable ? "mut" : "non");
+        return (isOwnMember ? "this." : "") + name + (isMutable ? "*" : "");
     }
 }

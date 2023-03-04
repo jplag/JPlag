@@ -54,18 +54,16 @@ public class VariableRegistry {
         return getMemberVariable(variableName);
     }
 
-    public Variable registerMemberVariable(String variableName, boolean mutable) {
+    public void registerMemberVariable(String variableName, boolean mutable) {
         Variable variable = new Variable(variableName, true, mutable);
         memberVariables.put(variableName, variable);
-        return variable;
     }
 
-    public Variable registerLocalVariable(String variableName, boolean mutable) {
+    public void registerLocalVariable(String variableName, boolean mutable) {
         Variable variable = new Variable(variableName, false, mutable);
         localVariables.putIfAbsent(variableName, new Stack<>());
         localVariables.get(variableName).push(variable);
         localVariablesByScope.peek().add(variableName);
-        return variable;
     }
 
     public void addAllMemberVariablesAsReads(TokenSemantics semantics) {
