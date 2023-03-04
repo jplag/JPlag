@@ -66,7 +66,7 @@ public class VariableRegistry {
         localVariablesByScope.peek().add(variableName);
     }
 
-    public void addAllMemberVariablesAsReads(TokenSemantics semantics) {
+    public void addAllMemberVariablesAsReads(CodeSemantics semantics) {
         for (Variable memberVar : memberVariables.values()) {
             semantics.addRead(memberVar);
         }
@@ -76,7 +76,7 @@ public class VariableRegistry {
         memberVariables.clear();
     }
 
-    public void registerVariableOperation(String variableName, boolean isOwnMember, TokenSemantics semantics) {
+    public void registerVariableOperation(String variableName, boolean isOwnMember, CodeSemantics semantics) {
         if (!ignoreNextOperation) {
             Variable variable = isOwnMember ? getMemberVariable(variableName) : getVariable(variableName);
             if (variable != null) {

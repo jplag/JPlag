@@ -5,19 +5,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.jplag.Token;
-import de.jplag.semantics.TokenSemantics;
+import de.jplag.semantics.CodeSemantics;
 
 class TokenLine implements Comparable<TokenLine> {
 
     private final List<Token> tokens;
     private final int lineNumber;
-    private final TokenSemantics semantics;
+    private final CodeSemantics semantics;
     private boolean keep;
 
     TokenLine(List<Token> tokens, int lineNumber) {
         this.tokens = Collections.unmodifiableList(tokens);
         this.lineNumber = lineNumber;
-        semantics = TokenSemantics.join(tokens.stream().map(Token::getSemantics).toList());
+        semantics = CodeSemantics.join(tokens.stream().map(Token::getSemantics).toList());
         keep = semantics.keep();
     }
 
@@ -25,7 +25,7 @@ class TokenLine implements Comparable<TokenLine> {
         return tokens;
     }
 
-    public TokenSemantics semantics() {
+    public CodeSemantics semantics() {
         return semantics;
     }
 

@@ -5,7 +5,7 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.semantics.TokenSemantics;
+import de.jplag.semantics.CodeSemantics;
 
 /**
  * This class represents a token in a source code. It can represent keywords, identifiers, syntactical structures etc.
@@ -22,7 +22,7 @@ public class Token {
     private int length;
     private File file;
     private TokenType type;
-    private TokenSemantics semantics; // value null if no semantics
+    private CodeSemantics semantics; // value null if no semantics
 
     /**
      * Creates a token with column and length information.
@@ -55,7 +55,7 @@ public class Token {
      * @param length is the length of the token in the source code.
      * @param semantics is a record containing semantic information about the token.
      */
-    public Token(TokenType type, File file, int line, int column, int length, TokenSemantics semantics) {
+    public Token(TokenType type, File file, int line, int column, int length, CodeSemantics semantics) {
         this(type, file, line, column, length);
         this.semantics = semantics;
     }
@@ -74,7 +74,7 @@ public class Token {
      * @param file is the name of the source code file.
      */
     public static Token semanticFileEnd(File file) {
-        TokenSemantics semantics = TokenSemantics.createControl();
+        CodeSemantics semantics = CodeSemantics.createControl();
         return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, semantics);
     }
 
@@ -124,7 +124,7 @@ public class Token {
     /**
      * @return the semantics of the token.
      */
-    public TokenSemantics getSemantics() {
+    public CodeSemantics getSemantics() {
         return semantics;
     }
 }

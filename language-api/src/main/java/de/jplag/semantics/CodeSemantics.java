@@ -11,65 +11,64 @@ import java.util.Set;
  * @param keep Whether the code snippet must be kept or if it may be removed.
  * @param ordering In which way the ordering of the code snippet relative to other code snippets of the same type is
  * relevant. For the possible options see {@link Ordering}.
- * @param bidirectionalBlockRelation Which relation (if any) the code snippet has to bidirectional block, meaning a
- * block where any statement within it may be executed after any other. This will typically be a loop. For the possible
- * options see {@link BlockRelation}.
+ * @param bidirectionalBlockRelation Which relation the code snippet has to bidirectional block, meaning a block where
+ * any statement within it may be executed after any other. This will typically be a loop. For the possible options see
+ * {@link BlockRelation}.
  * @param reads A set of the variables which were (potentially) read from in the code snippet.
  * @param writes A set of the variables which were (potentially) written to in the code snippet.
  */
-public record TokenSemantics(boolean keep, Ordering ordering, BlockRelation bidirectionalBlockRelation, Set<Variable> reads, Set<Variable> writes) {
+public record CodeSemantics(boolean keep, Ordering ordering, BlockRelation bidirectionalBlockRelation, Set<Variable> reads, Set<Variable> writes) {
 
-    private TokenSemantics(boolean keep, Ordering ordering, BlockRelation bidirectionalBlockRelation) {
+    private CodeSemantics(boolean keep, Ordering ordering, BlockRelation bidirectionalBlockRelation) {
         this(keep, ordering, bidirectionalBlockRelation, new HashSet<>(), new HashSet<>());
     }
 
     /**
-     * Creates a new TokenSemantics instance with the following meaning: The token may be removed, and its order relative to
-     * other tokens may change. Example: An assignment to a local variable.
+     * Creates new semantics with the following meaning: The token may be removed, and its order relative to other tokens
+     * may change. Example: An assignment to a local variable.
      */
-    public TokenSemantics() {
+    public CodeSemantics() {
         this(false, Ordering.NONE, BlockRelation.NONE);
     }
 
     /**
-     * @return A new TokenSemantics instance with the following meaning: The token may not be removed, and its order
-     * relative to other tokens may change. Example: An attribute declaration.
+     * @return new semantics with the following meaning: The token may not be removed, and its order relative to other
+     * tokens may change. Example: An attribute declaration.
      */
-    public static TokenSemantics createKeep() {
-        return new TokenSemantics(true, Ordering.NONE, BlockRelation.NONE);
+    public static CodeSemantics createKeep() {
+        return new CodeSemantics(true, Ordering.NONE, BlockRelation.NONE);
     }
 
     /**
-     * @return A new TokenSemantics instance with the following meaning: The token may not be removed, and its order must
-     * stay invariant to other tokens of the same type. Example: A method call which is guaranteed to not result in an
-     * exception.
+     * @return new semantics with the following meaning: The token may not be removed, and its order must stay invariant to
+     * other tokens of the same type. Example: A method call which is guaranteed to not result in an exception.
      */
-    public static TokenSemantics createCritical() {
-        return new TokenSemantics(true, Ordering.PARTIAL, BlockRelation.NONE);
+    public static CodeSemantics createCritical() {
+        return new CodeSemantics(true, Ordering.PARTIAL, BlockRelation.NONE);
     }
 
     /**
-     * @return A new TokenSemantics instance with the following meaning: The token may not be removed, and its order must
-     * stay invariant to all other tokens. Example: A return statement.
+     * @return new semantics with the following meaning: The token may not be removed, and its order must stay invariant to
+     * all other tokens. Example: A return statement.
      */
-    public static TokenSemantics createControl() {
-        return new TokenSemantics(true, Ordering.FULL, BlockRelation.NONE);
+    public static CodeSemantics createControl() {
+        return new CodeSemantics(true, Ordering.FULL, BlockRelation.NONE);
     }
 
     /**
-     * @return A new TokenSemantics instance with the following meaning: The token may not be removed, and its order must
-     * stay invariant to all other tokens, which also begins a bidirectional block. Example: The beginning of a while loop.
+     * @return new semantics with the following meaning: The token may not be removed, and its order must stay invariant to
+     * all other tokens, which also begins a bidirectional block. Example: The beginning of a while loop.
      */
-    public static TokenSemantics createLoopBegin() {
-        return new TokenSemantics(true, Ordering.FULL, BlockRelation.BEGINS_BLOCK);
+    public static CodeSemantics createLoopBegin() {
+        return new CodeSemantics(true, Ordering.FULL, BlockRelation.BEGINS_BLOCK);
     }
 
     /**
-     * @return A new TokenSemantics instance with the following meaning: The token may not be removed, and its order must
-     * stay invariant to all other tokens, which also ends a bidirectional block. Example: The end of a while loop.
+     * @return new semantics with the following meaning: The token may not be removed, and its order must stay invariant to
+     * all other tokens, which also ends a bidirectional block. Example: The end of a while loop.
      */
-    public static TokenSemantics createLoopEnd() {
-        return new TokenSemantics(true, Ordering.FULL, BlockRelation.ENDS_BLOCK);
+    public static CodeSemantics createLoopEnd() {
+        return new CodeSemantics(true, Ordering.FULL, BlockRelation.ENDS_BLOCK);
     }
 
     /**
@@ -107,21 +106,21 @@ public record TokenSemantics(boolean keep, Ordering ordering, BlockRelation bidi
      * <ul>
      * <li>keep is the disjunction of all keeps</li>
      * <li>ordering is the strongest ordering out of all orderings</li>
-     * <li>bidirectionalBlockRelation is the one that is not NONE out of all bidirectionalBlockRelations if it exists.
-     * It's assumed that there is at most one. If there isn't one bidirectionalBlockRelation is NONE.</li>
+     * <li>bidirectionalBlockRelation is the one that is not NONE out of all bidirectionalBlockRelations if it exists. It's
+     * assumed that there is at most one. If there isn't one bidirectionalBlockRelation is NONE.</li>
      * <li>reads is the union of all reads</li>
      * <li>writes is the union of all writes</li>
      * </ul>
      * @param semanticsList A list of the semantics which should be joined.
      * @return New semantics which were created by joining the elements in the semanticsList.
      */
-    public static TokenSemantics join(List<TokenSemantics> semanticsList) {
+    public static CodeSemantics join(List<CodeSemantics> semanticsList) {
         boolean keep = false;
         Ordering ordering = Ordering.NONE;
         BlockRelation bidirectionalBlockRelation = BlockRelation.NONE;
         Set<Variable> reads = new HashSet<>();
         Set<Variable> writes = new HashSet<>();
-        for (TokenSemantics semantics : semanticsList) {
+        for (CodeSemantics semantics : semanticsList) {
             keep = keep || semantics.keep();
             if (semantics.ordering.isStrongerThan(ordering)) {
                 ordering = semantics.ordering;
@@ -133,7 +132,7 @@ public record TokenSemantics(boolean keep, Ordering ordering, BlockRelation bidi
             reads.addAll(semantics.reads);
             writes.addAll(semantics.writes);
         }
-        return new TokenSemantics(keep, ordering, bidirectionalBlockRelation, reads, writes);
+        return new CodeSemantics(keep, ordering, bidirectionalBlockRelation, reads, writes);
     }
 
     @Override
