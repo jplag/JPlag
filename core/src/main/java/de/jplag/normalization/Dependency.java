@@ -8,7 +8,7 @@ import de.jplag.semantics.Variable;
 class Dependency {
     private Set<DependencyItem> items;
     private boolean isData;
-    private boolean isDataThroughLoop;
+    private boolean isReverseData;
 
     Dependency() {
         items = new HashSet<>();
@@ -19,15 +19,15 @@ class Dependency {
         return isData;
     }
 
-    boolean isDataThroughLoop() {
-        return isDataThroughLoop;
+    boolean isReverseData() {
+        return isReverseData;
     }
 
     void addItem(DependencyType type, Variable cause) {
-        if (type == DependencyType.DATA)
+        if (type == DependencyType.VARIABLE_DATA)
             isData = true;
-        if (type == DependencyType.DATA_THROUGH_LOOP)
-            isDataThroughLoop = true;
+        if (type == DependencyType.VARIABLE_REVERSE_DATA)
+            isReverseData = true;
         items.add(new DependencyItem(type, cause));
     }
 }

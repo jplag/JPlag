@@ -1,9 +1,9 @@
 package de.jplag.normalization;
 
 enum DependencyType {
-    DATA,
-    DATA_THROUGH_LOOP,
-    ORDER,
-    CONTROL,
-    CRITICAL
+    VARIABLE_DATA,
+    VARIABLE_REVERSE_DATA,
+    VARIABLE_ORDER,
+    ORDERING_FULL,
+    ORDERING_PARTIAL
 }

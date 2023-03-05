@@ -48,19 +48,14 @@ public class NormalizationGraph {
         Deque<TokenLine> visit = new LinkedList<>(graph.vertexSet().stream().filter(TokenLine::keep).toList());
         while (!visit.isEmpty()) {
             TokenLine current = visit.pop();
-            for (TokenLine pred : Graphs.predecessorListOf(graph, current)) { // performance?
-                Dependency dependency = graph.getEdge(pred, current);
-                if ((dependency.isData() || dependency.isDataThroughLoop()) && !pred.keep()) {
+            for (TokenLine pred : Graphs.predecessorListOf(graph, current)) { // performance of iteration?
+                if (!pred.keep() && graph.getEdge(pred, current).isData()) {
                     pred.markKeep();
                     visit.add(pred);
                 }
             }
-            // not great performance-wise but I doubt it matters at this stage...
-            // could instead insert data-through-loop edges the other way around, which arguably makes more sense semantically
-            // and turn them around here, but too much code for me to bother right now
             for (TokenLine succ : Graphs.successorListOf(graph, current)) {
-                Dependency dependency = graph.getEdge(current, succ);
-                if (dependency.isDataThroughLoop() && !succ.keep()) {
+                if (!succ.keep() && graph.getEdge(current, succ).isReverseData()) {
                     succ.markKeep();
                     visit.add(succ);
                 }
