@@ -111,10 +111,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start), semantics);
     }
 
-    private boolean isOwnMemberSelect(MemberSelectTree memberSelect) {
-        return memberSelect.toString().equals("this");
-    }
-
     private boolean isMutable(Tree classTree) {
         // classTree is null if `var` keyword is used
         return classTree == null || !IMMUTABLES.contains(classTree.toString());
@@ -631,7 +627,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
 
     @Override
     public Void visitMemberSelect(MemberSelectTree node, CodeSemantics semantics) {
-        if (isOwnMemberSelect(node)) {
+        if (node.getExpression().toString().equals("this")) {
             variableRegistry.registerVariableOperation(node.getIdentifier().toString(), true, semantics);
         }
         variableRegistry.setIgnoreNextOperation(false);  // don't ignore the foo in foo.bar()
