@@ -46,17 +46,21 @@ public class NormalizationGraph {
     }
 
     private void spreadKeep() {
-        Set<TokenLine> originalKeep = graph.vertexSet().stream() //
-                .filter(tl -> tl.semantics().keep()).collect(Collectors.toSet());
-        Deque<TokenLine> visit = new LinkedList<>(originalKeep);
+        Deque<TokenLine> visit = new LinkedList<>(graph.vertexSet().stream()
+                .filter(tl -> tl.semantics().keep()).toList());
         while (!visit.isEmpty()) {
             TokenLine current = visit.pop();
-            if (originalKeep.contains(current) || !current.semantics().keep()) {
-                current.markKeep();
-                visit.addAll(Graphs.predecessorListOf(graph, current).stream() //
-                        .filter(pred -> graph.getEdge(pred, current).isData()).toList());
-                visit.addAll(Graphs.successorListOf(graph, current).stream() //
-                        .filter(succ -> graph.getEdge(current, succ).isReverseData()).toList());
+            for (TokenLine pred : Graphs.predecessorListOf(graph, current)) { // performance of iteration?
+                if (!pred.semantics().keep() && graph.getEdge(pred, current).isData()) {
+                    pred.markKeep();
+                    visit.add(pred);
+                }
+            }
+            for (TokenLine succ : Graphs.successorListOf(graph, current)) {
+                if (!succ.semantics().keep() && graph.getEdge(current, succ).isReverseData()) {
+                    succ.markKeep();
+                    visit.add(succ);
+                }
             }
         }
     }
