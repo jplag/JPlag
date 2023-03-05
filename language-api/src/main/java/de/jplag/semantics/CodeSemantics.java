@@ -13,7 +13,7 @@ public class CodeSemantics {
 
     private boolean keep;
     private Ordering ordering;
-    private final BlockRelation bidirectionalBlockRelation;
+    private final int bidirectionalBlockDepthChange;
     private Set<Variable> reads;
     private Set<Variable> writes;
 
@@ -22,22 +22,21 @@ public class CodeSemantics {
      * @param keep Whether the code snippet must be kept or if it may be removed.
      * @param ordering In which way the ordering of the code snippet relative to other code snippets of the same type is
      * relevant. For the possible options see {@link Ordering}.
-     * @param bidirectionalBlockRelation Which relation the code snippet has to bidirectional block, meaning a block where
-     * any statement within it may be executed after any other. This will typically be a loop. For the possible options see
-     * {@link BlockRelation}.
+     * @param bidirectionalBlockDepthChange How the code snippet affects the depth of bidirectional blocks, meaning blocks where
+     * any statement within it may be executed after any other. This will typically be a loop.
      * @param reads A set of the variables which were (potentially) read from in the code snippet.
      * @param writes A set of the variables which were (potentially) written to in the code snippet.
      */
-    private CodeSemantics(boolean keep, Ordering ordering, BlockRelation bidirectionalBlockRelation, Set<Variable> reads, Set<Variable> writes) {
+    private CodeSemantics(boolean keep, Ordering ordering, int bidirectionalBlockDepthChange, Set<Variable> reads, Set<Variable> writes) {
         this.keep = keep;
         this.ordering = ordering;
-        this.bidirectionalBlockRelation = bidirectionalBlockRelation;
+        this.bidirectionalBlockDepthChange = bidirectionalBlockDepthChange;
         this.reads = reads;
         this.writes = writes;
     }
 
-    private CodeSemantics(boolean keep, Ordering ordering, BlockRelation bidirectionalBlockRelation) {
-        this(keep, ordering, bidirectionalBlockRelation, new HashSet<>(), new HashSet<>());
+    private CodeSemantics(boolean keep, Ordering ordering, int bidirectionalBlockDepthChange) {
+        this(keep, ordering, bidirectionalBlockDepthChange, new HashSet<>(), new HashSet<>());
     }
 
     /**
@@ -45,7 +44,7 @@ public class CodeSemantics {
      * may change. Example: An assignment to a local variable.
      */
     public CodeSemantics() {
-        this(false, Ordering.NONE, BlockRelation.NONE);
+        this(false, Ordering.NONE, 0);
     }
 
     /**
@@ -53,7 +52,7 @@ public class CodeSemantics {
      * code snippets may change. Example: An attribute declaration.
      */
     public static CodeSemantics createKeep() {
-        return new CodeSemantics(true, Ordering.NONE, BlockRelation.NONE);
+        return new CodeSemantics(true, Ordering.NONE, 0);
     }
 
     /**
@@ -61,7 +60,7 @@ public class CodeSemantics {
      * other code snippets of the same type. Example: A method call which is guaranteed to not result in an exception.
      */
     public static CodeSemantics createCritical() {
-        return new CodeSemantics(true, Ordering.PARTIAL, BlockRelation.NONE);
+        return new CodeSemantics(true, Ordering.PARTIAL, 0);
     }
 
     /**
@@ -69,7 +68,7 @@ public class CodeSemantics {
      * all other code snippets. Example: A return statement.
      */
     public static CodeSemantics createControl() {
-        return new CodeSemantics(true, Ordering.FULL, BlockRelation.NONE);
+        return new CodeSemantics(true, Ordering.FULL, 0);
     }
 
     /**
@@ -77,7 +76,7 @@ public class CodeSemantics {
      * all other code snippets, which also begins a bidirectional block. Example: The beginning of a while loop.
      */
     public static CodeSemantics createLoopBegin() {
-        return new CodeSemantics(true, Ordering.FULL, BlockRelation.BEGINS_BLOCK);
+        return new CodeSemantics(true, Ordering.FULL, 1);
     }
 
     /**
@@ -85,7 +84,7 @@ public class CodeSemantics {
      * all other code snippets, which also ends a bidirectional block. Example: The end of a while loop.
      */
     public static CodeSemantics createLoopEnd() {
-        return new CodeSemantics(true, Ordering.FULL, BlockRelation.ENDS_BLOCK);
+        return new CodeSemantics(true, Ordering.FULL, -1);
     }
 
     /**
@@ -112,17 +111,10 @@ public class CodeSemantics {
     }
 
     /**
-     * @return whether this code snippet begins a bidirectional block.
+     * @return the change this code snippet causes in the depth of bidirectional loops.
      */
-    public boolean isBidirectionalBlockBegin() {
-        return bidirectionalBlockRelation == BlockRelation.BEGINS_BLOCK;
-    }
-
-    /**
-     * @return whether this code snippet ends a bidirectional block.
-     */
-    public boolean isBidirectionalBlockEnd() {
-        return bidirectionalBlockRelation == BlockRelation.ENDS_BLOCK;
+    public int bidirectionalBlockDepthChange() {
+        return bidirectionalBlockDepthChange;
     }
 
     /**
@@ -185,7 +177,7 @@ public class CodeSemantics {
     public static CodeSemantics join(List<CodeSemantics> semanticsList) {
         boolean keep = false;
         Ordering ordering = Ordering.NONE;
-        BlockRelation bidirectionalBlockRelation = BlockRelation.NONE;
+        int bidirectionalBlockDepthChange = 0;
         Set<Variable> reads = new HashSet<>();
         Set<Variable> writes = new HashSet<>();
         for (CodeSemantics semantics : semanticsList) {
@@ -193,14 +185,11 @@ public class CodeSemantics {
             if (semantics.ordering.isStrongerThan(ordering)) {
                 ordering = semantics.ordering;
             }
-            if (semantics.bidirectionalBlockRelation != BlockRelation.NONE) {
-                assert bidirectionalBlockRelation == BlockRelation.NONE;  // only one block begin/end per line
-                bidirectionalBlockRelation = semantics.bidirectionalBlockRelation;
-            }
+            bidirectionalBlockDepthChange += semantics.bidirectionalBlockDepthChange();
             reads.addAll(semantics.reads);
             writes.addAll(semantics.writes);
         }
-        return new CodeSemantics(keep, ordering, bidirectionalBlockRelation, reads, writes);
+        return new CodeSemantics(keep, ordering, bidirectionalBlockDepthChange, reads, writes);
     }
 
     @Override
@@ -210,10 +199,8 @@ public class CodeSemantics {
             properties.add("keep");
         if (ordering != Ordering.NONE)
             properties.add(ordering.name().toLowerCase() + " ordering");
-        if (bidirectionalBlockRelation != BlockRelation.NONE) {
-            String keyword = bidirectionalBlockRelation.name().toLowerCase().split("_")[0];
-            properties.add(keyword + " bidirectional block");
-        }
+        if (bidirectionalBlockDepthChange != 0)
+            properties.add("change bidirectional block depth by " + bidirectionalBlockDepthChange);
         if (!reads.isEmpty())
             properties.add("read " + String.join(" ", reads.stream().map(Variable::toString).toList()));
         if (!writes.isEmpty())

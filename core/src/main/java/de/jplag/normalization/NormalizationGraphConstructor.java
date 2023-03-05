@@ -45,21 +45,15 @@ class NormalizationGraphConstructor {
     private void addTokenLine(TokenLine tokenLine) {
         graph.addVertex(tokenLine);
         this.current = tokenLine;
-        processBidirectionalBlocks();
+        bidirectionalBlockDepth += tokenLine.semantics().bidirectionalBlockDepthChange();
         processFullOrdering();
         processPartialOrdering();
         processReads();
         processWrites();
-        current.semantics().reads().forEach(variable -> addVariableToMap(variableReads, variable));
-        current.semantics().writes().forEach(variable -> addVariableToMap(variableWrites, variable));
-
-    }
-
-    private void processBidirectionalBlocks() {
-        if (current.semantics().isBidirectionalBlockBegin())
-            bidirectionalBlockDepth++;
-        if (current.semantics().isBidirectionalBlockEnd())
-            bidirectionalBlockDepth--;
+        for (Variable variable: current.semantics().reads())
+            addVariableToMap(variableReads, variable);
+        for (Variable variable: current.semantics().writes())
+            addVariableToMap(variableWrites, variable);
     }
 
     private void processFullOrdering() {
