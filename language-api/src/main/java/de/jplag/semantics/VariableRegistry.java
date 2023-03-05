@@ -83,9 +83,12 @@ public class VariableRegistry {
                 if (nextOperation.isRead) {
                     semantics.addRead(variable);
                 }
-                if (nextOperation.isWrite || (nextOperation.isRead && mutableWrite && variable.isMutable())) {
+                if (nextOperation.isWrite || (mutableWrite && variable.isMutable())) {
                     semantics.addWrite(variable);
                 }
+            } else if (nextOperation.isWrite) {
+                semantics.markKeep();  // non-registered variable is written to -> keep!
+                semantics.markPartialOrdering();  // could have an effect on other such writes and method calls
             }
             nextOperation = NextOperation.READ;
         }

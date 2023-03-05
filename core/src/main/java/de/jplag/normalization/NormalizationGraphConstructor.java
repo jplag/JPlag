@@ -9,8 +9,6 @@ import java.util.Map;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import de.jplag.Token;
-import de.jplag.semantics.BlockRelation;
-import de.jplag.semantics.Ordering;
 import de.jplag.semantics.Variable;
 
 class NormalizationGraphConstructor {
@@ -58,14 +56,14 @@ class NormalizationGraphConstructor {
     }
 
     private void processBidirectionalBlocks() {
-        if (current.semantics().bidirectionalBlockRelation() == BlockRelation.BEGINS_BLOCK)
+        if (current.semantics().isBidirectionalBlockBegin())
             bidirectionalBlockDepth++;
-        if (current.semantics().bidirectionalBlockRelation() == BlockRelation.ENDS_BLOCK)
+        if (current.semantics().isBidirectionalBlockEnd())
             bidirectionalBlockDepth--;
     }
 
     private void processFullOrdering() {
-        if (current.semantics().ordering() == Ordering.FULL) {
+        if (current.semantics().isFullOrdering()) {
             addCurrentEdges(fullOrderingIngoing, DependencyType.ORDERING_FULL, null); // ingoing edges
             fullOrderingIngoing.clear();
             lastFullOrdering = current;
@@ -76,7 +74,7 @@ class NormalizationGraphConstructor {
     }
 
     private void processPartialOrdering() {
-        if (current.semantics().ordering() == Ordering.PARTIAL) {
+        if (current.semantics().isPartialOrdering()) {
             if (lastPartialOrdering != null) {
                 addCurrentEdge(lastPartialOrdering, DependencyType.ORDERING_PARTIAL, null);
             }

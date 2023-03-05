@@ -469,12 +469,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
     @Override
     public Void visitAssignment(AssignmentTree node, CodeSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
-        // todo may need to be keep when non-registered (global) variables are involved, not sure how to check
         semantics = new CodeSemantics();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
         variableRegistry.setNextOperation(NextOperation.WRITE);
         super.visitAssignment(node, semantics);
-        // if (this.assignedVariableWasRegistered) makeSemanticsCritical(semantics)
         return null;
     }
 

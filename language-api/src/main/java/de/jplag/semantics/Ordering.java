@@ -3,7 +3,7 @@ package de.jplag.semantics;
 /**
  * Enumerates how the order of an item in a sequence relative to other items may be relevant.
  */
-public enum Ordering {
+enum Ordering {
     /**
      * The order of the item relative to other items in the sequence is not relevant.
      */

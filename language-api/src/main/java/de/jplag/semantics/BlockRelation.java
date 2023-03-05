@@ -3,7 +3,7 @@ package de.jplag.semantics;
 /**
  * Enumerates the relationships a code snippet can have with a code block.
  */
-public enum BlockRelation {
+enum BlockRelation {
     /**
      * This code snippet begins the block.
      */

@@ -4,6 +4,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jgrapht.Graphs;
@@ -29,7 +30,7 @@ public class NormalizationGraph {
             PriorityQueue<TokenLine> newRoots = new PriorityQueue<>();
             do {
                 TokenLine tokenLine = roots.poll();
-                if (tokenLine.keep()) {
+                if (tokenLine.semantics().keep()) {
                     tokens.addAll(tokenLine.tokens());
                 }
                 for (TokenLine successorGroup : Graphs.successorListOf(graph, tokenLine)) {
@@ -45,20 +46,17 @@ public class NormalizationGraph {
     }
 
     private void spreadKeep() {
-        Deque<TokenLine> visit = new LinkedList<>(graph.vertexSet().stream().filter(TokenLine::keep).toList());
+        Set<TokenLine> originalKeep = graph.vertexSet().stream() //
+                .filter(tl -> tl.semantics().keep()).collect(Collectors.toSet());
+        Deque<TokenLine> visit = new LinkedList<>(originalKeep);
         while (!visit.isEmpty()) {
             TokenLine current = visit.pop();
-            for (TokenLine pred : Graphs.predecessorListOf(graph, current)) { // performance of iteration?
-                if (!pred.keep() && graph.getEdge(pred, current).isData()) {
-                    pred.markKeep();
-                    visit.add(pred);
-                }
-            }
-            for (TokenLine succ : Graphs.successorListOf(graph, current)) {
-                if (!succ.keep() && graph.getEdge(current, succ).isReverseData()) {
-                    succ.markKeep();
-                    visit.add(succ);
-                }
+            if (originalKeep.contains(current) || !current.semantics().keep()) {
+                current.markKeep();
+                visit.addAll(Graphs.predecessorListOf(graph, current).stream() //
+                        .filter(pred -> graph.getEdge(pred, current).isData()).toList());
+                visit.addAll(Graphs.successorListOf(graph, current).stream() //
+                        .filter(succ -> graph.getEdge(current, succ).isReverseData()).toList());
             }
         }
     }

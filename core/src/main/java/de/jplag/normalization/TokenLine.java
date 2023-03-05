@@ -12,13 +12,11 @@ class TokenLine implements Comparable<TokenLine> {
     private final List<Token> tokens;
     private final int lineNumber;
     private final CodeSemantics semantics;
-    private boolean keep;
 
     TokenLine(List<Token> tokens, int lineNumber) {
         this.tokens = Collections.unmodifiableList(tokens);
         this.lineNumber = lineNumber;
-        semantics = CodeSemantics.join(tokens.stream().map(Token::getSemantics).toList());
-        keep = semantics.keep();
+        this.semantics = CodeSemantics.join(tokens.stream().map(Token::getSemantics).toList());
     }
 
     public List<Token> tokens() {
@@ -29,12 +27,8 @@ class TokenLine implements Comparable<TokenLine> {
         return semantics;
     }
 
-    public boolean keep() {
-        return keep;
-    }
-
     public void markKeep() {
-        keep = true;
+        semantics.markKeep();
     }
 
     private int tokenOrdinal(Token token) {
