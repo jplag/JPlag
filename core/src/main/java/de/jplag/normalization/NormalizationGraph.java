@@ -4,7 +4,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jgrapht.Graphs;
@@ -46,7 +45,7 @@ public class NormalizationGraph {
     }
 
     private void spreadKeep() {
-        Deque<TokenLine> visit = new LinkedList<>(graph.vertexSet().stream()
+        Deque<TokenLine> visit = new LinkedList<>(graph.vertexSet().stream() //
                 .filter(tl -> tl.semantics().keep()).toList());
         while (!visit.isEmpty()) {
             TokenLine current = visit.pop();

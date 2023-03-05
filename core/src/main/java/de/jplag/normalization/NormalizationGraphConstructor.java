@@ -50,9 +50,9 @@ class NormalizationGraphConstructor {
         processPartialOrdering();
         processReads();
         processWrites();
-        for (Variable variable: current.semantics().reads())
+        for (Variable variable : current.semantics().reads())
             addVariableToMap(variableReads, variable);
-        for (Variable variable: current.semantics().writes())
+        for (Variable variable : current.semantics().writes())
             addVariableToMap(variableWrites, variable);
     }
 

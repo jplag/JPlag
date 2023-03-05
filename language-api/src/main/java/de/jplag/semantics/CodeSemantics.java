@@ -18,12 +18,13 @@ public class CodeSemantics {
     private Set<Variable> writes;
 
     /**
-     * Creates new semantics. reads and writes, which each contain the variables which were (potentially) read from/written to in this code snippet, are created empty.
+     * Creates new semantics. reads and writes, which each contain the variables which were (potentially) read from/written
+     * to in this code snippet, are created empty.
      * @param keep Whether the code snippet must be kept or if it may be removed.
      * @param ordering In which way the ordering of the code snippet relative to other code snippets of the same type is
      * relevant. For the possible options see {@link Ordering}.
-     * @param bidirectionalBlockDepthChange How the code snippet affects the depth of bidirectional blocks, meaning blocks where
-     * any statement within it may be executed after any other. This will typically be a loop.
+     * @param bidirectionalBlockDepthChange How the code snippet affects the depth of bidirectional blocks, meaning blocks
+     * where any statement within it may be executed after any other. This will typically be a loop.
      * @param reads A set of the variables which were (potentially) read from in the code snippet.
      * @param writes A set of the variables which were (potentially) written to in the code snippet.
      */
@@ -40,48 +41,50 @@ public class CodeSemantics {
     }
 
     /**
-     * Creates new semantics with the following meaning: The code snippet may be removed, and its order relative to other code snippets
-     * may change. Example: An assignment to a local variable.
+     * Creates new semantics with the following meaning: The code snippet may be removed, and its order relative to other
+     * code snippets may change. Example: An assignment to a local variable.
      */
     public CodeSemantics() {
         this(false, Ordering.NONE, 0);
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its order relative to other
-     * code snippets may change. Example: An attribute declaration.
+     * @return new semantics with the following meaning: The code snippet may not be removed, and its order relative to
+     * other code snippets may change. Example: An attribute declaration.
      */
     public static CodeSemantics createKeep() {
         return new CodeSemantics(true, Ordering.NONE, 0);
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its order must stay invariant to
-     * other code snippets of the same type. Example: A method call which is guaranteed to not result in an exception.
+     * @return new semantics with the following meaning: The code snippet may not be removed, and its order must stay
+     * invariant to other code snippets of the same type. Example: A method call which is guaranteed to not result in an
+     * exception.
      */
     public static CodeSemantics createCritical() {
         return new CodeSemantics(true, Ordering.PARTIAL, 0);
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its order must stay invariant to
-     * all other code snippets. Example: A return statement.
+     * @return new semantics with the following meaning: The code snippet may not be removed, and its order must stay
+     * invariant to all other code snippets. Example: A return statement.
      */
     public static CodeSemantics createControl() {
         return new CodeSemantics(true, Ordering.FULL, 0);
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its order must stay invariant to
-     * all other code snippets, which also begins a bidirectional block. Example: The beginning of a while loop.
+     * @return new semantics with the following meaning: The code snippet may not be removed, and its order must stay
+     * invariant to all other code snippets, which also begins a bidirectional block. Example: The beginning of a while
+     * loop.
      */
     public static CodeSemantics createLoopBegin() {
         return new CodeSemantics(true, Ordering.FULL, 1);
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its order must stay invariant to
-     * all other code snippets, which also ends a bidirectional block. Example: The end of a while loop.
+     * @return new semantics with the following meaning: The code snippet may not be removed, and its order must stay
+     * invariant to all other code snippets, which also ends a bidirectional block. Example: The end of a while loop.
      */
     public static CodeSemantics createLoopEnd() {
         return new CodeSemantics(true, Ordering.FULL, -1);
