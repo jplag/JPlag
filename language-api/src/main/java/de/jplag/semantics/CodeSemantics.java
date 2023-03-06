@@ -12,7 +12,7 @@ import java.util.Set;
 public class CodeSemantics {
 
     private boolean keep;
-    private Ordering ordering;
+    private final Ordering ordering;
     private final int bidirectionalBlockDepthChange;
     private Set<Variable> reads;
     private Set<Variable> writes;
@@ -102,15 +102,6 @@ public class CodeSemantics {
      */
     public void markKeep() {
         keep = true;
-    }
-
-    /**
-     * Mark this code snippet as having partial ordering.
-     */
-    void markPartialOrdering() {
-        if (Ordering.PARTIAL.isStrongerThan(ordering)) {
-            ordering = Ordering.PARTIAL;
-        }
     }
 
     /**

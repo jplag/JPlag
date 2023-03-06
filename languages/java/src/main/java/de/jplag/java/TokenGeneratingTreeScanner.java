@@ -128,6 +128,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
 
     @Override
     public Void visitClass(ClassTree node, CodeSemantics semantics) {
+        variableRegistry.enterClass();
         for (var member : node.getMembers()) {
             if (member.getKind() == Tree.Kind.VARIABLE) {
                 VariableTree variableTree = (VariableTree) member;
@@ -170,7 +171,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
             semantics = CodeSemantics.createControl();
             addToken(tokenType, end, 1, semantics);
         }
-        variableRegistry.clearMemberVariables();
+        variableRegistry.exitClass();
         return null;
     }
 
@@ -207,7 +208,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         scan(node.getThrows(), semantics);
         scan(node.getBody(), null);
         semantics = CodeSemantics.createControl();
-        variableRegistry.addAllMemberVariablesAsReads(semantics);
+        variableRegistry.addAllNonLocalVariablesAsReads(semantics);
         addToken(JavaTokenType.J_METHOD_END, end, 1, semantics);
         variableRegistry.exitLocalScope();
         return null;
@@ -537,7 +538,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
     public Void visitMethodInvocation(MethodInvocationTree node, CodeSemantics semantics) {
         long start = positions.getStartPosition(ast, node);
         semantics = CodeSemantics.createControl();
-        variableRegistry.addAllMemberVariablesAsReads(semantics);
+        variableRegistry.addAllNonLocalVariablesAsReads(semantics);
         addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start, semantics);
         scan(node.getTypeArguments(), semantics);
         // differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
