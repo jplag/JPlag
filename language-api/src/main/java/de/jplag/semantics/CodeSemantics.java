@@ -12,7 +12,7 @@ import java.util.Set;
 public class CodeSemantics {
 
     private boolean keep;
-    private final Ordering ordering;
+    private Ordering ordering;
     private final int bidirectionalBlockDepthChange;
     private Set<Variable> reads;
     private Set<Variable> writes;
@@ -123,6 +123,13 @@ public class CodeSemantics {
      */
     public boolean isFullOrdering() {
         return ordering == Ordering.FULL;
+    }
+
+    /**
+     * Mark this code snippet as having to be fully ordered with regards to all other code snippets.
+     */
+    public void markFullOrdering() {
+        ordering = Ordering.FULL;
     }
 
     /**

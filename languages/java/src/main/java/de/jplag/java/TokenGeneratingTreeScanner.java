@@ -10,6 +10,7 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.NextOperation;
+import de.jplag.semantics.Scope;
 import de.jplag.semantics.VariableRegistry;
 
 import com.sun.source.tree.AnnotationTree;
@@ -128,13 +129,14 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
 
     @Override
     public Void visitClass(ClassTree node, CodeSemantics semantics) {
+        variableRegistry.registerVariable(node.getSimpleName().toString(), Scope.FILE, true);
         variableRegistry.enterClass();
         for (var member : node.getMembers()) {
             if (member.getKind() == Tree.Kind.VARIABLE) {
                 VariableTree variableTree = (VariableTree) member;
                 String name = variableTree.getName().toString();
                 boolean mutable = isMutable(variableTree.getType());
-                variableRegistry.registerMemberVariable(name, mutable);
+                variableRegistry.registerVariable(name, Scope.CLASS, mutable);
             }
         }
 
@@ -512,7 +514,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         boolean inLocalScope = variableRegistry.inLocalScope();
         if (inLocalScope) {
             boolean mutable = isMutable(node.getType());
-            variableRegistry.registerLocalVariable(name, mutable);
+            variableRegistry.registerVariable(name, Scope.LOCAL, mutable);
             semantics = new CodeSemantics();
         } else {
             semantics = CodeSemantics.createKeep();

@@ -5,12 +5,12 @@ package de.jplag.semantics;
  */
 public class Variable {
     private final String name;
-    private final boolean isOwnMember;
+    private final Scope scope;
     private final boolean isMutable;
 
-    Variable(String name, boolean isOwnMember, boolean isMutable) {
+    Variable(String name, Scope scope, boolean isMutable) {
         this.name = name;
-        this.isOwnMember = isOwnMember;
+        this.scope = scope;
         this.isMutable = isMutable;
     }
 
@@ -20,6 +20,6 @@ public class Variable {
 
     @Override
     public String toString() {
-        return (isOwnMember ? "this." : "") + name + (isMutable ? "*" : "");
+        return name + (isMutable ? "*" : "") + " [scope: " + scope.name().toLowerCase() + "]";
     }
 }
