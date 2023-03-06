@@ -43,7 +43,11 @@ import static de.jplag.cpp2.CPPTokenType.WHILE_BEGIN;
 import static de.jplag.cpp2.CPPTokenType.WHILE_END;
 
 import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
@@ -53,7 +57,6 @@ import de.jplag.TokenType;
 import de.jplag.cpp2.grammar.CPP14Parser.AssignmentOperatorContext;
 import de.jplag.cpp2.grammar.CPP14Parser.BraceOrEqualInitializerContext;
 import de.jplag.cpp2.grammar.CPP14Parser.BracedInitListContext;
-import de.jplag.cpp2.grammar.CPP14Parser.ClassKeyContext;
 import de.jplag.cpp2.grammar.CPP14Parser.ClassSpecifierContext;
 import de.jplag.cpp2.grammar.CPP14Parser.ConditionalExpressionContext;
 import de.jplag.cpp2.grammar.CPP14Parser.EnumSpecifierContext;
@@ -99,32 +102,19 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         this.parser = parser;
     }
 
+    private static final List<Extraction<ClassSpecifierContext>> CLASS_SPECIFIER_TOKENS = List.of(
+            Extraction.of(context -> context.classHead().Union(), UNION_BEGIN, UNION_END),
+            Extraction.of(context -> context.classHead().classKey().Class(), CLASS_BEGIN, CLASS_END),
+            Extraction.of(context -> context.classHead().classKey().Struct(), STRUCT_BEGIN, STRUCT_END));
+
     @Override
     public void enterClassSpecifier(ClassSpecifierContext context) {
-        if (context.classHead().Union() != null) {
-            addEnter(UNION_BEGIN, context.getStart());
-        } else {
-            ClassKeyContext classKey = context.classHead().classKey();
-            if (classKey.Class() != null) {
-                addEnter(CLASS_BEGIN, context.getStart());
-            } else if (classKey.Struct() != null) {
-                addEnter(STRUCT_BEGIN, context.getStart());
-            }
-        }
+        extractFirstNonNullStartToken(context, context.getStart(), CLASS_SPECIFIER_TOKENS);
     }
 
     @Override
     public void exitClassSpecifier(ClassSpecifierContext context) {
-        if (context.classHead().Union() != null) {
-            addExit(UNION_END, context.getStop());
-        } else {
-            ClassKeyContext classKey = context.classHead().classKey();
-            if (classKey.Class() != null) {
-                addExit(CLASS_END, context.getStop());
-            } else if (classKey.Struct() != null) {
-                addExit(STRUCT_END, context.getStop());
-            }
-        }
+        extractFirstNonNullEndToken(context, context.getStop(), CLASS_SPECIFIER_TOKENS);
     }
 
     @Override
@@ -147,26 +137,18 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         addExit(FUNCTION_END, context.getStop());
     }
 
+    private static final List<Extraction<IterationStatementContext>> ITERATION_STATEMENT_TOKENS = List.of(
+            Extraction.of(IterationStatementContext::Do, DO_BEGIN, DO_END), Extraction.of(IterationStatementContext::For, FOR_BEGIN, FOR_END),
+            Extraction.of(IterationStatementContext::While, WHILE_BEGIN, WHILE_END));
+
     @Override
     public void enterIterationStatement(IterationStatementContext context) {
-        if (context.Do() != null) {
-            addEnter(DO_BEGIN, context.getStart());
-        } else if (context.For() != null) {
-            addEnter(FOR_BEGIN, context.getStart());
-        } else if (context.While() != null) {
-            addEnter(WHILE_BEGIN, context.getStart());
-        }
+        extractFirstNonNullStartToken(context, context.getStart(), ITERATION_STATEMENT_TOKENS);
     }
 
     @Override
     public void exitIterationStatement(IterationStatementContext context) {
-        if (context.Do() != null) {
-            addEnter(DO_END, context.getStop());
-        } else if (context.For() != null) {
-            addEnter(FOR_END, context.getStop());
-        } else if (context.While() != null) {
-            addEnter(WHILE_END, context.getStop());
-        }
+        extractFirstNonNullEndToken(context, context.getStop(), ITERATION_STATEMENT_TOKENS);
     }
 
     @Override
@@ -190,13 +172,12 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         }
     }
 
+    private static final List<Extraction<LabeledStatementContext>> LABELED_STATEMENT_TOKES = List
+            .of(Extraction.of(LabeledStatementContext::Case, CASE), Extraction.of(LabeledStatementContext::Default, DEFAULT));
+
     @Override
     public void enterLabeledStatement(LabeledStatementContext context) {
-        if (context.Case() != null) {
-            addEnter(CASE, context.getStart());
-        } else if (context.Default() != null) {
-            addEnter(DEFAULT, context.getStart());
-        }
+        extractFirstNonNullStartToken(context, context.start, LABELED_STATEMENT_TOKES);
     }
 
     @Override
@@ -214,17 +195,13 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         addEnter(CATCH_END, context.getStop());
     }
 
+    private static final List<Extraction<JumpStatementContext>> JUMP_STATEMENT_TOKENS = List.of(Extraction.of(JumpStatementContext::Break, BREAK),
+            Extraction.of(JumpStatementContext::Continue, CONTINUE), Extraction.of(JumpStatementContext::Goto, GOTO),
+            Extraction.of(JumpStatementContext::Return, RETURN));
+
     @Override
     public void enterJumpStatement(JumpStatementContext context) {
-        if (context.Break() != null) {
-            addEnter(BREAK, context.getStart());
-        } else if (context.Continue() != null) {
-            addEnter(CONTINUE, context.getStart());
-        } else if (context.Goto() != null) {
-            addEnter(GOTO, context.getStart());
-        } else if (context.Return() != null) {
-            addEnter(RETURN, context.getStart());
-        }
+        extractFirstNonNullStartToken(context, context.getStart(), JUMP_STATEMENT_TOKENS);
     }
 
     @Override
@@ -232,13 +209,12 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         addEnter(THROW, context.getStart());
     }
 
+    private static final List<Extraction<NewExpressionContext>> NEW_EXPRESSION_TOKENS = List
+            .of(Extraction.of(NewExpressionContext::newInitializer, NEWCLASS), Extraction.fallback(NEWARRAY));
+
     @Override
     public void enterNewExpression(NewExpressionContext context) {
-        if (context.newInitializer() == null) {
-            addEnter(NEWARRAY, context.getStart());
-        } else {
-            addEnter(NEWCLASS, context.getStart());
-        }
+        extractFirstNonNullStartToken(context, context.getStart(), NEW_EXPRESSION_TOKENS);
     }
 
     @Override
@@ -343,14 +319,14 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         }
     }
 
+    private static final List<Extraction<PostfixExpressionContext>> POSTFIX_EXPRESSION_TOKENS = List.of(
+            Extraction.of(PostfixExpressionContext::LeftParen, APPLY), Extraction.of(PostfixExpressionContext::PlusPlus, ASSIGN),
+            Extraction.of(PostfixExpressionContext::MinusMinus, ASSIGN));
+
     @Override
     public void enterPostfixExpression(PostfixExpressionContext context) {
         // additional function calls are handled in SimpleDeclarationContext
-        if (context.LeftParen() != null) {
-            addEnter(APPLY, context.getStart());
-        } else if (context.PlusPlus() != null || context.MinusMinus() != null) {
-            addEnter(ASSIGN, context.getStart());
-        }
+        extractFirstNonNullStartToken(context, context.getStart(), POSTFIX_EXPRESSION_TOKENS);
     }
 
     /**
@@ -417,6 +393,8 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         return getAncestor(context, parent, stops) != null;
     }
 
+    // extraction utilities
+
     private void addEnter(TokenType type, Token token) {
         addTokenWithLength(type, token, token.getText().length());
     }
@@ -428,5 +406,53 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
     private void addTokenWithLength(TokenType type, Token token, int length) {
         int column = token.getCharPositionInLine() + 1;
         this.parser.addToken(type, column, token.getLine(), length);
+    }
+
+    /**
+     * Describes an extraction rule. If the extraction test returns true, one of the given token types is extracted.
+     * @param extractionTest the test whether the rule matches.
+     * @param startToken the token extracted for this rule in {@code enter*} contexts
+     * @param endToken the token extracted for this rule in {@code exit*} contexts
+     * @param <T> the input type
+     */
+    private record Extraction<T> (Predicate<T> extractionTest, TokenType startToken, TokenType endToken) {
+
+        /**
+         * Creates an Extraction rule that matches if the value returned by the given function is non-null.
+         */
+        static <T> Extraction<T> of(Function<T, ?> contextToAnything, TokenType startToken) {
+            return of(contextToAnything, startToken, null);
+        }
+
+        static <T> Extraction<T> of(Function<T, ?> contextToAnything, TokenType startToken, TokenType endToken) {
+            // go from (T -> ?) to (T -> boolean)
+            Predicate<T> isNonNull = t -> contextToAnything.andThen(Objects::nonNull).apply(t);
+            return new Extraction<>(isNonNull, startToken, endToken);
+        }
+
+        static <T> Extraction<T> fallback(TokenType toExtract) {
+            return new Extraction<>(t -> true, toExtract, null);
+        }
+    }
+
+    private <T> void extractFirstNonNullEndToken(T context, Token token, List<Extraction<T>> extractions) {
+        extractFirstNonNull(context, token, extractions, false);
+    }
+
+    private <T> void extractFirstNonNullStartToken(T context, Token token, List<Extraction<T>> extractions) {
+        extractFirstNonNull(context, token, extractions, true);
+    }
+
+    private <T> void extractFirstNonNull(T context, Token token, List<Extraction<T>> extractions, boolean start) {
+        for (Extraction<? super T> extraction : extractions) {
+            if (extraction.extractionTest().test(context)) {
+                if (start) {
+                    addEnter(extraction.startToken(), token);
+                } else {
+                    addExit(extraction.endToken(), token);
+                }
+                return;
+            }
+        }
     }
 }
