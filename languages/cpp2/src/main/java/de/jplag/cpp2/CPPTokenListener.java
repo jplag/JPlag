@@ -180,20 +180,16 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
 
     @Override
     public void enterStatement(StatementContext context) {
-        if (context.getParent().getRuleIndex() == RULE_selectionStatement) {
-            if (this.trackedState.peekLast() == CPPTokenType.ELSE) {
-                addEnter(trackedState.removeLast(), this.lastElseToken);
-            }
+        if (context.getParent().getRuleIndex() == RULE_selectionStatement && this.trackedState.peekLast() == CPPTokenType.ELSE) {
+            addEnter(trackedState.removeLast(), this.lastElseToken);
         }
     }
 
     @Override
     public void exitStatement(StatementContext context) {
-        if (context.getParent().getRuleIndex() == RULE_selectionStatement) {
-            if (this.trackedState.peekLast() == CPPTokenType.IF_END) {
-                // drop if end token from state, but do not add it yet (see exitSelectionStatement)
-                trackedState.removeLast();
-            }
+        if (context.getParent().getRuleIndex() == RULE_selectionStatement && this.trackedState.peekLast() == CPPTokenType.IF_END) {
+            // drop if end token from state, but do not add it yet (see exitSelectionStatement)
+            trackedState.removeLast();
         }
     }
 
