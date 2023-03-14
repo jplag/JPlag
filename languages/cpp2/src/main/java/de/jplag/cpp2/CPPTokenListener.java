@@ -41,8 +41,10 @@ import static de.jplag.cpp2.CPPTokenType.UNION_END;
 import static de.jplag.cpp2.CPPTokenType.VARDEF;
 import static de.jplag.cpp2.CPPTokenType.WHILE_BEGIN;
 import static de.jplag.cpp2.CPPTokenType.WHILE_END;
+import static de.jplag.cpp2.grammar.CPP14Parser.RULE_selectionStatement;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -76,6 +78,7 @@ import de.jplag.cpp2.grammar.CPP14Parser.PostfixExpressionContext;
 import de.jplag.cpp2.grammar.CPP14Parser.SelectionStatementContext;
 import de.jplag.cpp2.grammar.CPP14Parser.SimpleDeclarationContext;
 import de.jplag.cpp2.grammar.CPP14Parser.SimpleTypeSpecifierContext;
+import de.jplag.cpp2.grammar.CPP14Parser.StatementContext;
 import de.jplag.cpp2.grammar.CPP14Parser.StaticAssertDeclarationContext;
 import de.jplag.cpp2.grammar.CPP14Parser.TemplateArgumentContext;
 import de.jplag.cpp2.grammar.CPP14Parser.TemplateDeclarationContext;
@@ -93,6 +96,8 @@ import de.jplag.cpp2.grammar.CPP14ParserBaseListener;
 public class CPPTokenListener extends CPP14ParserBaseListener {
 
     private final CPPParserAdapter parser;
+    private final Deque<TokenType> trackedState = new ArrayDeque<>();
+    private Token lastElseToken;
 
     /**
      * Constructs a new token listener that will extract tokens to the given {@link CPPParserAdapter}.
@@ -151,14 +156,43 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
         extractFirstNonNullEndToken(context, context.getStop(), ITERATION_STATEMENT_TOKENS);
     }
 
+    /**
+     * Extract tokens for {@code if} and {@code switch}. To extract {@link CPPTokenType#ELSE} after the tokens inside the if
+     * block but before the tokens in the else block, {@link #trackedState} works as a stack of the current state.
+     * {@link CPPTokenType#IF_END} is only extracted after the whole tree element (including else), to be consistent with
+     * the Java language module.
+     * @param context the selection statement.
+     */
     @Override
     public void enterSelectionStatement(SelectionStatementContext context) {
         if (context.Switch() != null) {
             addEnter(SWITCH_BEGIN, context.getStart());
+            this.trackedState.add(CPPTokenType.SWITCH_END);
         } else if (context.If() != null) {
             addEnter(IF_BEGIN, context.getStart());
             if (context.Else() != null) {
-                addEnter(ELSE, context.Else().getSymbol());
+                this.trackedState.add(ELSE);
+                this.lastElseToken = context.Else().getSymbol();
+            }
+            this.trackedState.add(CPPTokenType.IF_END);
+        }
+    }
+
+    @Override
+    public void enterStatement(StatementContext context) {
+        if (context.getParent().getRuleIndex() == RULE_selectionStatement) {
+            if (this.trackedState.peekLast() == CPPTokenType.ELSE) {
+                addEnter(trackedState.removeLast(), this.lastElseToken);
+            }
+        }
+    }
+
+    @Override
+    public void exitStatement(StatementContext context) {
+        if (context.getParent().getRuleIndex() == RULE_selectionStatement) {
+            if (this.trackedState.peekLast() == CPPTokenType.IF_END) {
+                // drop if end token from state, but do not add it yet (see exitSelectionStatement)
+                trackedState.removeLast();
             }
         }
     }

@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -95,7 +94,6 @@ class TokenExtractionTest {
         assertTokenTypes(result.tokens(), CPPTokenType.FUNCTION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.APPLY, CPPTokenType.FUNCTION_END);
     }
 
-    @Disabled("The order of the extracted tokens does not match their order in the source")
     @Test
     void testIfElse(@TempDir Path path) {
         // test extraction of if/else constructs
@@ -104,7 +102,9 @@ class TokenExtractionTest {
                     if (a < b) {
                         x = 5;
                     } else if (a > b) {
+                        {
                         y = 10;
+                        }
                         x = y + b;
                     } else {
                         y = -20;
