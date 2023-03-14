@@ -39,8 +39,8 @@ public class CPPParserAdapter extends AbstractParser {
             try {
                 CPP14Lexer lexer = new CPP14Lexer(CharStreams.fromStream(Files.newInputStream(file.toPath())));
                 // create a buffer of tokens pulled from the lexer
-                CommonTokenStream tokens = new CommonTokenStream(lexer);
-                CPP14Parser parser = new CPP14Parser(tokens);
+                CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+                CPP14Parser parser = new CPP14Parser(tokenStream);
                 CPP14Parser.TranslationUnitContext translationUnit = parser.translationUnit();
 
                 ParseTreeWalker.DEFAULT.walk(new CPPTokenListener(this), translationUnit);
