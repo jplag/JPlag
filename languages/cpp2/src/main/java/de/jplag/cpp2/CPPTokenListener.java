@@ -445,7 +445,7 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
      * @param endToken the token extracted for this rule in {@code exit*} contexts
      * @param <T> the input type
      */
-    private record Extraction<T> (Predicate<T> extractionTest, TokenType startToken, TokenType endToken) {
+    private record Extraction<T>(Predicate<T> extractionTest, TokenType startToken, TokenType endToken) {
 
         /**
          * Creates an Extraction rule that matches if the value returned by the given function is non-null.
