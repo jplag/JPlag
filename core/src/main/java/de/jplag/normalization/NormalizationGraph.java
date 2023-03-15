@@ -32,10 +32,10 @@ public class NormalizationGraph {
                 if (tokenLine.semantics().keep()) {
                     tokens.addAll(tokenLine.tokens());
                 }
-                for (TokenLine successorGroup : Graphs.successorListOf(graph, tokenLine)) {
-                    graph.removeEdge(tokenLine, successorGroup);
-                    if (!Graphs.vertexHasPredecessors(graph, successorGroup)) {
-                        newRoots.add(successorGroup);
+                for (TokenLine succ : Graphs.successorListOf(graph, tokenLine)) {
+                    graph.removeEdge(tokenLine, succ);
+                    if (!Graphs.vertexHasPredecessors(graph, succ)) {
+                        newRoots.add(succ);
                     }
                 }
             } while (!roots.isEmpty());
@@ -49,7 +49,7 @@ public class NormalizationGraph {
                 .filter(tl -> tl.semantics().keep()).toList());
         while (!visit.isEmpty()) {
             TokenLine current = visit.pop();
-            for (TokenLine pred : Graphs.predecessorListOf(graph, current)) { // performance of iteration?
+            for (TokenLine pred : Graphs.predecessorListOf(graph, current)) {  // performance of iteration?
                 if (!pred.semantics().keep() && graph.getEdge(pred, current).isData()) {
                     pred.markKeep();
                     visit.add(pred);
