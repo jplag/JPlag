@@ -106,7 +106,7 @@ public class ComparisonReportWriter {
 
     private String relativizedFilePath(File file, Submission submission) {
         if (file.toPath().equals(submission.getRoot().toPath())) {
-            return Path.of(submissionToIdFunction.apply(submission), submission.getName()).toString();
+            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission)).toString();
         }
         return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString()).toString();
     }
