@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import de.jplag.ParsingException;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
+import de.jplag.emf.model.Language;
 import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
 import de.jplag.emf.util.MetamodelTreeView;
@@ -39,6 +40,11 @@ public class DynamicModelParser extends DynamicEcoreParser {
             }
             super.parseModelFile(file);
         }
+    }
+
+    @Override
+    protected String getCorrespondingViewFileSuffix() {
+        return Language.VIEW_FILE_SUFFIX;
     }
 
     @Override
