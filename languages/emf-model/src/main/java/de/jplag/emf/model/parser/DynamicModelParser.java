@@ -39,7 +39,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
         // implicit assumption: Metamodel gets parsed first!
         if (file.getName().endsWith(de.jplag.emf.Language.FILE_ENDING)) {
             parseMetamodelFile(file);
-        } else if (file.getName().endsWith(Language.FILE_ENDING)) {
+        } else if (file.getName().endsWith(Language.VIEW_FILE_SUFFIX)) {
             logger.warn(VIEW_FILE_WARNING, file.getName());
         } else {
             if (metapackages.isEmpty()) {
