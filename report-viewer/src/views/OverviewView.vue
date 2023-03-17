@@ -83,12 +83,15 @@
           :top-comparisons="topComps[selectedMetricIndex]"
         />
       </div>
+      <div v-if="missingComparisons!==0 && !isNaN(missingComparisons)">
+        <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{shownComparisons}}, Missing comparisons: {{missingComparisons}}. To see more, re-run JPlag with a higher maximum number argument.</h3>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, Ref, ref } from "vue";
+import { computed, defineComponent, onErrorCaptured, Ref, ref } from "vue";
 import router from "@/router";
 import TextInformation from "../components/TextInformation.vue";
 import DistributionDiagram from "@/components/DistributionDiagram.vue";
@@ -112,15 +115,17 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const overviewFile = computed(() => {
+      console.log("Start finding overview.json in state...")
       const index = Object.keys(store.state.files).find((name) =>
         name.endsWith("overview.json")
       );
       return index != undefined
         ? store.state.files[index]
-        : console.log("Could not find overview.json"); // TODO introduce error page to navigate to
+        : console.log("Could not find overview.json");
     });
 
     const getOverview = (): Overview => {
+      console.log("Generating overview...")
       let temp!: Overview;
       //Gets the overview file based on the used mode (zip, local, single).
       if (store.state.local) {
@@ -131,6 +136,9 @@ export default defineComponent({
           router.back();
         }
       } else if (store.state.zip) {
+        if(overviewFile.value===undefined){
+          return new Overview([],"","",[],0,"",0,[],[],0, new Map<string, Map<string, string>>());
+        }
         const overviewJson = JSON.parse(overviewFile.value);
         temp = OverviewFactory.getOverview(overviewJson);
       } else if (store.state.single) {
@@ -140,6 +148,7 @@ export default defineComponent({
     };
 
     let overview = getOverview();
+
 
     /**
      * Handles the selection of an Id to anonymize.
@@ -203,6 +212,24 @@ export default defineComponent({
       ? "Click arrow to see all paths"
       : overview.submissionFolderPath[0];
 
+    const shownComparisons = computed(()=>{
+      return overview.metrics[selectedMetricIndex.value]?.comparisons.length;
+    });
+    const missingComparisons = overview.totalComparisons - shownComparisons.value;
+
+    onErrorCaptured(()=>{
+      router.push({
+        name: "ErrorView",
+        state: {
+          message: "Overview.json can't be found!",
+          to: "/",
+          routerInfo: "back to FileUpload page"
+        }
+      });
+      store.commit("clearStore");
+      return false;
+    });
+
     return {
       overview,
       selectedMetricIndex,
@@ -211,6 +238,8 @@ export default defineComponent({
       topComps,
       hasMoreSubmissionPaths,
       submissionPathValue,
+      shownComparisons,
+      missingComparisons,
       handleId,
       selectMetric,
       store,

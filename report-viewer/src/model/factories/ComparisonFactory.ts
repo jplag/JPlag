@@ -105,15 +105,21 @@ export class ComparisonFactory {
 
 
   private static generateColorsForMatches(num: number): Array<string> {
-    const colors = [];
-    const hueDelta = Math.trunc(360 / num);
+    const colors: Array<string> = [];
+    const numberOfColorsInFirstInterval = Math.round((80 - 20) / ((80 - 20) + (340 - 160)) * num); // number of colors from the first interval
+    const numberOfColorsInSecondInterval = num - numberOfColorsInFirstInterval; // number of colors from the second interval
+    ComparisonFactory.generateColorsForInterval(20, 80, numberOfColorsInFirstInterval, colors);
+    ComparisonFactory.generateColorsForInterval(160, 340, numberOfColorsInSecondInterval, colors);
+    return colors;
+  }
 
-    for (let i = 0; i < num; i++) {
-      const hue = i * hueDelta;
-
+  private static generateColorsForInterval(intervalStart: number, intervalEnd: number, numberOfColorsInInterval: number, colors: Array<string>){
+    const interval = intervalEnd - intervalStart;
+    const hueDelta = Math.trunc(interval / numberOfColorsInInterval);
+    for (let i = 0; i < numberOfColorsInInterval; i++) {
+      const hue = intervalStart + i * hueDelta;
       colors.push(`hsla(${hue}, 80%, 50%, 0.3)`);
     }
-    return colors;
   }
 
   private static mapMatch(

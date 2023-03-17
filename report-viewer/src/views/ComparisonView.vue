@@ -21,6 +21,9 @@
           />
         </button>
       </div>
+      <div>
+        <button class="animated-back-button" title="Back button" @click="back">back</button>
+      </div>
       <TextInformation
         :anonymous="isAnonymous(firstId)"
         :value="store.getters.submissionDisplayName(firstId)"
@@ -65,7 +68,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import {defineComponent, ref} from "vue";
 import { generateLineCodeLink } from "@/utils/Utils";
 import TextInformation from "@/components/TextInformation.vue";
 import MatchTable from "@/components/MatchTable.vue";
@@ -74,6 +77,7 @@ import FilesContainer from "@/components/FilesContainer.vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { Match } from "@/model/Match";
+import {Comparison} from "@/model/Comparison";
 
 export default defineComponent({
   name: "ComparisonView",
@@ -91,7 +95,7 @@ export default defineComponent({
   setup(props) {
     const store = useStore();
     const router = useRouter();
-
+    console.log("Generating comparison {%s} - {%s}...", props.firstId, props.secondId);
     let comparison;
     //getting the comparison file based on the used mode (zip, local, single)
     if (store.state.local) {
@@ -116,15 +120,36 @@ export default defineComponent({
           JSON.parse(comparisonFile)
         );
       } else {
-        console.log("Could not find comparison file."); // TODO introduce error page to navigate to
+        console.log("Comparison file not found!");
+        router.push({
+          name: "ErrorView",
+          state: {
+            message: "Comparison file not found!",
+            to: "/overview",
+            routerInfo: "back to overview page"
+          }
+        });
       }
     } else if (store.state.single) {
-      comparison = ComparisonFactory.getComparison(
-        JSON.parse(store.state.fileString)
-      );
+      try {
+        comparison = ComparisonFactory.getComparison(
+            JSON.parse(store.state.fileString)
+        );
+      }catch (e){
+        router.push({
+          name: "ErrorView",
+          state: {
+            message: "Source code of matches not found. To only see the overview, please drop the overview.json directly.",
+            to: "/",
+            routerInfo: "back to FileUpload page"
+          }
+        });
+        store.commit("clearStore");
+      }
     }
     if (!comparison) {
-      throw "Could not build comparison file";
+      comparison=new Comparison("","",0);
+      console.log("Unable to build comparison file.");
     }
     const filesOfFirst = ref(comparison.filesOfFirstSubmission);
     const filesOfSecond = ref(comparison.filesOfSecondSubmission);
@@ -202,6 +227,10 @@ export default defineComponent({
       hideLeftPanel.value = !hideLeftPanel.value;
     };
 
+    const back = () => {
+      router.back();
+    };
+
     return {
       comparison,
       filesOfFirst,
@@ -216,6 +245,7 @@ export default defineComponent({
       showMatch,
       togglePanel,
       isAnonymous,
+      back,
     };
   },
 });
@@ -297,5 +327,38 @@ h1 {
 
 #show-button:hover img {
   display: block;
+}
+
+.animated-back-button{
+  float: right;
+  height: 100%;
+  position: relative;
+
+  font-size: 1.4rem;
+  background: var(--primary-color-dark);
+  background-size: 46px 26px;
+  border: 1px solid #555;
+  color: black;
+  transition: all ease 0.3s;
+}
+
+.animated-back-button::after{
+  position: absolute;
+  top: 50%;
+  right: 0.6em;
+  transform: translateY(-50%);
+  content: "«";
+  font-size: 1.2em;
+  transition: all ease 0.3s;
+  opacity: 0;
+}
+
+.animated-back-button:hover{
+  padding: 20px 60px 20px 20px;
+}
+
+.animated-back-button:hover::after{
+  right: 1.2em;
+  opacity: 1;
 }
 </style>

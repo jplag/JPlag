@@ -25,34 +25,10 @@ class TokenPrinterTest extends TestBase {
     private static final int MIN_TOKEN_MATCH = 5;
     private static final String PRINTER_FOLDER = "PRINTER"; // in the folder 'jplag/src/test/resources/samples'
 
-    @Disabled("Not a meaningful test, used for designing the token set")
-    @Test
-    void printCPPFiles() {
-        printSubmissions(options -> options.withLanguageOption(new de.jplag.cpp.Language()).withMinimumTokenMatch(MIN_TOKEN_MATCH));
-    }
-
-    @Disabled("Not a meaningful test, used for designing the token set")
+    @Disabled("Not a meaningful test, used for designing the token set. Can be implemented for other languages.")
     @Test
     void printJavaFiles() {
         printSubmissions(options -> options.withMinimumTokenMatch(MIN_TOKEN_MATCH));
-    }
-
-    @Disabled("Not a meaningful test, used for designing the token set")
-    @Test
-    void printRLangFiles() {
-        printSubmissions(options -> options.withLanguageOption(new de.jplag.rlang.Language()).withMinimumTokenMatch(MIN_TOKEN_MATCH));
-    }
-
-    @Disabled("Not a meaningful test, used for designing the token set")
-    @Test
-    void printGoFiles() {
-        printSubmissions(options -> options.withLanguageOption(new de.jplag.golang.Language()));
-    }
-
-    @Disabled("Not a meaningful test, used for designing the token set")
-    @Test
-    void printKotlinFiles() {
-        printSubmissions(options -> options.withLanguageOption(new de.jplag.kotlin.Language()));
     }
 
     private void printSubmissions(Function<JPlagOptions, JPlagOptions> optionsCustomization) {

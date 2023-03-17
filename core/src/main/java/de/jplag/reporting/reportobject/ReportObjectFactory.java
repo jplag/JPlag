@@ -90,6 +90,7 @@ public class ReportObjectFactory {
     }
 
     private void copySubmissionFilesToReport(String path, JPlagResult result) {
+        logger.info("Start copying submission files to the output directory...");
         List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
         Set<Submission> submissions = getSubmissions(comparisons);
         File submissionsPath = createSubmissionsDirectory(path);
@@ -163,6 +164,13 @@ public class ReportObjectFactory {
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionDirectory().getName() : "";
         ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(submissionToIdFunction);
+
+        int totalComparisons = result.getAllComparisons().size();
+        int numberOfMaximumComparisons = result.getOptions().maximumNumberOfComparisons();
+        int shownComparisons = totalComparisons > numberOfMaximumComparisons ? numberOfMaximumComparisons : totalComparisons;
+        int missingComparisons = totalComparisons > numberOfMaximumComparisons ? (totalComparisons - numberOfMaximumComparisons) : 0;
+        logger.info("Total Comparisons: {}. Comparisons in Report: {}. Omitted Comparisons: {}.", totalComparisons, shownComparisons,
+                missingComparisons);
         OverviewReport overviewReport = new OverviewReport(REPORT_VIEWER_VERSION, folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
                 result.getOptions().language().getName(), // language
@@ -175,7 +183,8 @@ public class ReportObjectFactory {
                 getDate(),// dateOfExecution
                 result.getDuration(), // executionTime
                 getMetrics(result),// metrics
-                clusteringResultMapper.map(result)); // clusters
+                clusteringResultMapper.map(result), // clusters
+                totalComparisons); // totalComparisons
 
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 

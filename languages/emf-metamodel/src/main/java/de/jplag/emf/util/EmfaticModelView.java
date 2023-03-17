@@ -143,7 +143,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * Checks if a token is representing a end of a block, e.g. a closing bracket.
      */
     private boolean isEndToken(Token token) {
-        return token.getType()instanceof MetamodelTokenType type && type.isEndToken();
+        return token.getType() instanceof MetamodelTokenType type && type.isEndToken();
     }
 
     /**

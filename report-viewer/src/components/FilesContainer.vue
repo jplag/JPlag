@@ -4,16 +4,17 @@
 <template>
   <div class="files-container">
     <h1>Files of {{ anonymous ? filesOwnerDefault : filesOwner }}</h1>
-    <VueDraggableNext>
+    <VueDraggableNext handle=".mover" filter=".unmover">
       <CodePanel
         v-for="(file, index) in files.keys()"
-        :key="file"
+        :key="file.concat(index.toString())"
         :collapse="files.get(file)?.collapsed"
         :file-index="index"
         :lines="!files.get(file)?.lines ? [] : files.get(file)?.lines"
         :matches="!matches.get(file) ? [] : matches.get(file)"
         :panel-id="containerId"
         :title="convertSubmissionIdToName(file, submissionId)"
+        :filePath="file"
         @toggle-collapse="$emit('toggle-collapse', file)"
         @line-selected="lineSelected"
       />

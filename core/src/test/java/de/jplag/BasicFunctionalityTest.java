@@ -23,20 +23,20 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
         assertEquals(1, result.getSimilarityDistribution()[6]);
-        assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.666, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     @Test
     @DisplayName("test submissions with a custom minimum token match")
     void testWithMinTokenMatch() throws ExitException {
         var expectedDistribution = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.withMinimumTokenMatch(5));
+        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.withMinimumTokenMatch(4));
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(2, result.getAllComparisons().get(0).matches().size());
         assertArrayEquals(expectedDistribution, result.getSimilarityDistribution());
-        assertEquals(0.9655, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.9629, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     @Test
@@ -69,18 +69,18 @@ class BasicFunctionalityTest extends TestBase {
                 .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
-        assertEquals(0.246, getSelectedPercent(result, "A", "B"), DELTA);
-        assertEquals(0.997, getSelectedPercent(result, "A", "C"), DELTA);
-        assertEquals(0.779, getSelectedPercent(result, "A", "D"), DELTA);
-        assertEquals(0.246, getSelectedPercent(result, "B", "C"), DELTA);
-        assertEquals(0.283, getSelectedPercent(result, "B", "D"), DELTA);
-        assertEquals(0.779, getSelectedPercent(result, "C", "D"), DELTA);
+        assertEquals(0.237, getSelectedPercent(result, "A", "B"), DELTA);
+        assertEquals(0.996, getSelectedPercent(result, "A", "C"), DELTA);
+        assertEquals(0.751, getSelectedPercent(result, "A", "D"), DELTA);
+        assertEquals(0.237, getSelectedPercent(result, "B", "C"), DELTA);
+        assertEquals(0.281, getSelectedPercent(result, "B", "D"), DELTA);
+        assertEquals(0.751, getSelectedPercent(result, "C", "D"), DELTA);
 
         // More detailed assertions for the plagiarism in A-D
         var biggestMatch = getSelectedComparison(result, "A", "D");
-        assertEquals(0.964, biggestMatch.get().maximalSimilarity(), DELTA);
-        assertEquals(0.653, biggestMatch.get().minimalSimilarity(), DELTA);
-        assertEquals(12, biggestMatch.get().matches().size());
+        assertEquals(0.946, biggestMatch.get().maximalSimilarity(), DELTA);
+        assertEquals(0.622, biggestMatch.get().minimalSimilarity(), DELTA);
+        assertEquals(11, biggestMatch.get().matches().size());
     }
 
     @Test
@@ -91,7 +91,7 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getSimilarityDistribution()[6]);
-        assertEquals(0.6207, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.666, result.getAllComparisons().get(0).similarity(), DELTA);
 
         var matches = result.getAllComparisons().get(0).matches();
         // Run JPlag for same files but in submission folders:
