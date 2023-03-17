@@ -80,7 +80,7 @@ public class SubmissionSetBuilder {
         if (language.expectsSubmissionOrder()) {
             List<File> rootFiles = foundSubmissions.values().stream().map(it -> it.getRoot()).toList();
             rootFiles = language.customizeSubmissionOrder(rootFiles);
-            submissions = new ArrayList<>(rootFiles.stream().map(it -> foundSubmissions.get(it)).toList());
+            submissions = new ArrayList<>(rootFiles.stream().map(foundSubmissions::get).toList());
         }
         return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options);
     }

@@ -19,6 +19,11 @@ import de.jplag.emf.util.MetamodelTreeView;
  * Parser for EMF metamodels based on dynamically created tokens.
  */
 public class DynamicModelParser extends DynamicEcoreParser {
+    private static final String VIEW_FILE_WARNING = "Skipping view file {} as submission!";
+    private static final String METAPACKAGE_WARNING = "Loading model instance {} without any metamodel!";
+    private static final String METAPACKAGE_ERROR = "Error, not a metapackage: ";
+    private static final String METAMODEL_LOADING_ERROR = "Could not load metamodel file!";
+
     private static final List<EPackage> metapackages = new ArrayList<>();
     private static final String ALL_EXTENSIONS = "*";
 
@@ -34,9 +39,11 @@ public class DynamicModelParser extends DynamicEcoreParser {
         // implicit assumption: Metamodel gets parsed first!
         if (file.getName().endsWith(de.jplag.emf.Language.FILE_ENDING)) {
             parseMetamodelFile(file);
+        } else if (file.getName().endsWith(Language.FILE_ENDING)) {
+            logger.warn(VIEW_FILE_WARNING, file.getName());
         } else {
             if (metapackages.isEmpty()) {
-                logger.warn("Loading model instances without any metamodel!");
+                logger.warn(METAPACKAGE_WARNING, file.getName());
             }
             super.parseModelFile(file);
         }
@@ -56,13 +63,13 @@ public class DynamicModelParser extends DynamicEcoreParser {
         metapackages.clear();
         Resource modelResource = EMFUtil.loadModelResource(file);
         if (modelResource == null) {
-            throw new ParsingException(file, "Could not load metamodel file!");
+            throw new ParsingException(file, METAMODEL_LOADING_ERROR);
         } else {
             for (EObject object : modelResource.getContents()) {
                 if (object instanceof EPackage ePackage) {
                     metapackages.add(ePackage);
                 } else {
-                    logger.error("Error, not a metapackage: {}", object);
+                    logger.error(METAPACKAGE_ERROR, object);
                 }
             }
             EMFUtil.registerEPackageURIs(metapackages);
