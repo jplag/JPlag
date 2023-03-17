@@ -60,7 +60,7 @@ class MinimalModelInstanceTest {
 
     @AfterEach
     public void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), de.jplag.emf.Language.VIEW_FILE_SUFFIX);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), Language.VIEW_FILE_SUFFIX);
     }
 
 }
