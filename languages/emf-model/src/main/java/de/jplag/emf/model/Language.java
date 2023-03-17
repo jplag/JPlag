@@ -1,6 +1,7 @@
 package de.jplag.emf.model;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.List;
 
 import org.kohsuke.MetaInfServices;
@@ -49,8 +50,9 @@ public class Language extends de.jplag.emf.dynamic.Language {
     }
 
     @Override
-    public List<File> customizeSubmissionOrder(List<File> submissions) {
-        submissions.sort((File first, File second) -> Boolean.compare(second.getName().endsWith(FILE_ENDING), first.getName().endsWith(FILE_ENDING)));
-        return submissions;
+    public List<File> customizeSubmissionOrder(List<File> sub) {
+        Comparator<File> fileEndingComparator = (first, second) -> Boolean.compare(second.getName().endsWith(FILE_ENDING),
+                first.getName().endsWith(FILE_ENDING));
+        return sub.stream().sorted(fileEndingComparator).toList();
     }
 }
