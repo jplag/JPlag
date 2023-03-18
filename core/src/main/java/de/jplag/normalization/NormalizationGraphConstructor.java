@@ -16,9 +16,9 @@ import de.jplag.semantics.Variable;
 class NormalizationGraphConstructor {
     private SimpleDirectedGraph<TokenLine, Dependency> graph;
     private int bidirectionalBlockDepth;
-    private Collection<TokenLine> fullOrderingIngoing;
-    private TokenLine lastFullOrdering;
-    private TokenLine lastPartialOrdering;
+    private Collection<TokenLine> fullPositionalSignificanceIngoing;
+    private TokenLine lastFullPositionalSignificance;
+    private TokenLine lastPartialPositionalSignificance;
     private Map<Variable, Collection<TokenLine>> variableReads;
     private Map<Variable, Collection<TokenLine>> variableWrites;
     private Set<TokenLine> inCurrentBidirectionalBlock;
@@ -27,7 +27,7 @@ class NormalizationGraphConstructor {
     NormalizationGraphConstructor(List<Token> tokens) {
         graph = new SimpleDirectedGraph<>(Dependency.class);
         bidirectionalBlockDepth = 0;
-        fullOrderingIngoing = new LinkedList<>();
+        fullPositionalSignificanceIngoing = new LinkedList<>();
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         inCurrentBidirectionalBlock = new HashSet<>();
@@ -50,8 +50,8 @@ class NormalizationGraphConstructor {
         graph.addVertex(tokenLine);
         this.current = tokenLine;
         processBidirectionalBlock();
-        processFullOrdering();
-        processPartialOrdering();
+        processFullPositionalSignificance();
+        processPartialPositionalSignificance();
         processReads();
         processWrites();
         for (Variable variable : current.semantics().reads())
@@ -68,42 +68,42 @@ class NormalizationGraphConstructor {
             inCurrentBidirectionalBlock.clear();
     }
 
-    private void processFullOrdering() {
-        if (current.semantics().isFullOrdering()) {
-            for (TokenLine node: fullOrderingIngoing)
-                addCurrentEdge(node, DependencyType.ORDERING_FULL, null);
-            fullOrderingIngoing.clear();
-            lastFullOrdering = current;
-        } else if (lastFullOrdering != null) {
-            addCurrentEdge(lastFullOrdering, DependencyType.ORDERING_FULL, null);
+    private void processFullPositionalSignificance() {
+        if (current.semantics().hasFullPositionSignificance()) {
+            for (TokenLine node: fullPositionalSignificanceIngoing)
+                addIngoingEdgeToCurrent(node, DependencyType.POSITION_SIGNIFICANCE_FULL, null);
+            fullPositionalSignificanceIngoing.clear();
+            lastFullPositionalSignificance = current;
+        } else if (lastFullPositionalSignificance != null) {
+            addIngoingEdgeToCurrent(lastFullPositionalSignificance, DependencyType.POSITION_SIGNIFICANCE_FULL, null);
         }
-        fullOrderingIngoing.add(current);
+        fullPositionalSignificanceIngoing.add(current);
     }
 
-    private void processPartialOrdering() {
-        if (current.semantics().isPartialOrdering()) {
-            if (lastPartialOrdering != null) {
-                addCurrentEdge(lastPartialOrdering, DependencyType.ORDERING_PARTIAL, null);
+    private void processPartialPositionalSignificance() {
+        if (current.semantics().hasPartialPositionSignificance()) {
+            if (lastPartialPositionalSignificance != null) {
+                addIngoingEdgeToCurrent(lastPartialPositionalSignificance, DependencyType.POSITION_SIGNIFICANCE_PARTIAL, null);
             }
-            lastPartialOrdering = current;
+            lastPartialPositionalSignificance = current;
         }
     }
 
     private void processReads() {
         for (Variable variable : current.semantics().reads()) {
             for (TokenLine node : variableWrites.getOrDefault(variable, Set.of()))
-                addCurrentEdge(node, DependencyType.VARIABLE_DATA, variable);
+                addIngoingEdgeToCurrent(node, DependencyType.VARIABLE_DATA, variable);
         }
     }
 
     private void processWrites() {
         for (Variable variable : current.semantics().writes()) {
             for (TokenLine node : variableWrites.getOrDefault(variable, Set.of()))
-                addCurrentEdge(node, DependencyType.VARIABLE_ORDER, variable);
+                addIngoingEdgeToCurrent(node, DependencyType.VARIABLE_ORDER, variable);
             for (TokenLine node : variableReads.getOrDefault(variable, Set.of())) {
                 DependencyType dependencyType = inCurrentBidirectionalBlock.contains(node) ? //
                         DependencyType.VARIABLE_REVERSE_DATA : DependencyType.VARIABLE_ORDER;
-                addCurrentEdge(node, dependencyType, variable);
+                addIngoingEdgeToCurrent(node, dependencyType, variable);
             }
             addVariableToMap(variableWrites, variable);
         }
@@ -115,7 +115,7 @@ class NormalizationGraphConstructor {
      * @param type the type of the edge
      * @param cause the variable that caused the edge, may be null
      */
-    private void addCurrentEdge(TokenLine start, DependencyType type, Variable cause) {
+    private void addIngoingEdgeToCurrent(TokenLine start, DependencyType type, Variable cause) {
         Dependency dependency = graph.getEdge(start, current);
         if (dependency == null) {
             dependency = new Dependency();

@@ -110,7 +110,7 @@ public class VariableRegistry {
                 semantics.addWrite(variable);
         } else if (nextOperation.isWrite || mutableWrite) {
             semantics.markKeep();
-            semantics.markFullOrdering();  // since we don't track reads...
+            semantics.markFullPositionSignificance();  // since we don't track reads...
         }
         nextOperation = NextOperation.READ;
     }
