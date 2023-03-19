@@ -7,27 +7,27 @@ import de.jplag.semantics.Variable;
 
 class Dependency {
     private Set<DependencyItem> items;
-    private boolean isData;
-    private boolean isReverseData;
+    private boolean isVariableFlow;
+    private boolean isVariableReverseFlow;
 
     Dependency() {
         items = new HashSet<>();
-        isData = false;
+        isVariableFlow = false;
     }
 
-    boolean isData() {
-        return isData;
+    boolean isVariableFlow() {
+        return isVariableFlow;
     }
 
-    boolean isReverseData() {
-        return isReverseData;
+    boolean isVariableReverseFlow() {
+        return isVariableReverseFlow;
     }
 
     void addItem(DependencyType type, Variable cause) {
-        if (type == DependencyType.VARIABLE_DATA)
-            isData = true;
-        if (type == DependencyType.VARIABLE_REVERSE_DATA)
-            isReverseData = true;
+        if (type == DependencyType.VARIABLE_FLOW)
+            isVariableFlow = true;
+        if (type == DependencyType.VARIABLE_REVERSE_FLOW)
+            isVariableReverseFlow = true;
         items.add(new DependencyItem(type, cause));
     }
 }

@@ -50,13 +50,13 @@ public class NormalizationGraph {
         while (!visit.isEmpty()) {
             TokenLine current = visit.pop();
             for (TokenLine pred : Graphs.predecessorListOf(graph, current)) {  // performance of iteration?
-                if (!pred.semantics().keep() && graph.getEdge(pred, current).isData()) {
+                if (!pred.semantics().keep() && graph.getEdge(pred, current).isVariableFlow()) {
                     pred.markKeep();
                     visit.add(pred);
                 }
             }
             for (TokenLine succ : Graphs.successorListOf(graph, current)) {
-                if (!succ.semantics().keep() && graph.getEdge(current, succ).isReverseData()) {
+                if (!succ.semantics().keep() && graph.getEdge(current, succ).isVariableReverseFlow()) {
                     succ.markKeep();
                     visit.add(succ);
                 }

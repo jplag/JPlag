@@ -92,7 +92,7 @@ class NormalizationGraphConstructor {
     private void processReads() {
         for (Variable variable : current.semantics().reads()) {
             for (TokenLine node : variableWrites.getOrDefault(variable, Set.of()))
-                addIngoingEdgeToCurrent(node, DependencyType.VARIABLE_DATA, variable);
+                addIngoingEdgeToCurrent(node, DependencyType.VARIABLE_FLOW, variable);
         }
     }
 
@@ -102,7 +102,7 @@ class NormalizationGraphConstructor {
                 addIngoingEdgeToCurrent(node, DependencyType.VARIABLE_ORDER, variable);
             for (TokenLine node : variableReads.getOrDefault(variable, Set.of())) {
                 DependencyType dependencyType = inCurrentBidirectionalBlock.contains(node) ? //
-                        DependencyType.VARIABLE_REVERSE_DATA : DependencyType.VARIABLE_ORDER;
+                        DependencyType.VARIABLE_REVERSE_FLOW : DependencyType.VARIABLE_ORDER;
                 addIngoingEdgeToCurrent(node, dependencyType, variable);
             }
             addVariableToMap(variableWrites, variable);
