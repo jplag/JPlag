@@ -39,7 +39,7 @@
     "@vue/compiler-sfc": "^3.2.39",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^10.0.0",
-    "@vue/test-utils": "^2.3.1",
+    "@vue/test-utils": "^2.3.2",
     "@vue/vue3-jest": "^29.2.3",
     "eslint": "^8.35.0",
     "eslint-plugin-prettier": "^4.2.1",
