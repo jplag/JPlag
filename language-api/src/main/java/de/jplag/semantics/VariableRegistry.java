@@ -15,26 +15,37 @@ public class VariableRegistry {
     private Deque<Map<String, Variable>> memberVariables; // map member variable name to stack of variables
     private Map<String, Deque<Variable>> localVariables; // map local variable name to stack of variables
     private Deque<Set<String>> localVariablesByScope; // stack of local variable names in scope
-    private NextOperation nextOperation;
-    private boolean ignoreNextOperation;
+    private VariableAccessType nextVariableAccessType;
+    private boolean ignoreNextVariableAccess;
     private boolean mutableWrite;
 
+    /**
+     * Initialize a new variable registry.
+     */
     public VariableRegistry() {
         this.unscopedVariables = new HashMap<>();
         this.memberVariables = new LinkedList<>();
         this.localVariables = new HashMap<>();
         this.localVariablesByScope = new LinkedList<>();
-        this.nextOperation = NextOperation.READ; // the default
-        this.ignoreNextOperation = false;
+        this.nextVariableAccessType = VariableAccessType.READ; // the default
+        this.ignoreNextVariableAccess = false;
         this.mutableWrite = false;
     }
 
-    public void setNextOperation(NextOperation nextOperation) {
-        this.nextOperation = nextOperation;
+    /**
+     * Set the next variable acc. This only influences the very next call of registerVariableOperation.
+     * @param nextVariableAccessType the new value
+     */
+    public void setNextVariableAccessType(VariableAccessType nextVariableAccessType) {
+        this.nextVariableAccessType = nextVariableAccessType;
     }
 
-    public void setIgnoreNextOperation(boolean ignoreNextOperation) {
-        this.ignoreNextOperation = ignoreNextOperation;
+    /**
+     *
+     * @param ignoreNextVariableAccess
+     */
+    public void setIgnoreNextVariableAccess(boolean ignoreNextVariableAccess) {
+        this.ignoreNextVariableAccess = ignoreNextVariableAccess;
     }
 
     public void setMutableWrite(boolean mutableWrite) {
@@ -97,22 +108,22 @@ public class VariableRegistry {
         memberVariables.removeLast();
     }
 
-    public void registerVariableOperation(String variableName, boolean isOwnMember, CodeSemantics semantics) {
-        if (ignoreNextOperation) {
-            ignoreNextOperation = false;
+    public void registerVariableAccess(String variableName, boolean isOwnMember, CodeSemantics semantics) {
+        if (ignoreNextVariableAccess) {
+            ignoreNextVariableAccess = false;
             return;
         }
         Variable variable = isOwnMember ? getMemberVariable(variableName) : getVariable(variableName);
         if (variable != null) {
-            if (nextOperation.isRead)
+            if (nextVariableAccessType.isRead)
                 semantics.addRead(variable);
-            if (nextOperation.isWrite || (mutableWrite && variable.isMutable()))
+            if (nextVariableAccessType.isWrite || (mutableWrite && variable.isMutable()))
                 semantics.addWrite(variable);
-        } else if (nextOperation.isWrite || mutableWrite) {
+        } else if (nextVariableAccessType.isWrite || mutableWrite) {
             semantics.markKeep();
             semantics.markFullPositionSignificance();  // since we don't track reads...
         }
-        nextOperation = NextOperation.READ;
+        nextVariableAccessType = VariableAccessType.READ;
     }
 
     public void enterLocalScope() {

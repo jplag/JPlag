@@ -1,6 +1,6 @@
 package de.jplag.semantics;
 
-public enum NextOperation {
+public enum VariableAccessType {
     READ(true, false),
     WRITE(false, true),
     READ_WRITE(true, true);
@@ -8,7 +8,7 @@ public enum NextOperation {
     final boolean isRead;
     final boolean isWrite;
 
-    NextOperation(boolean isRead, boolean isWrite) {
+    VariableAccessType(boolean isRead, boolean isWrite) {
         this.isRead = isRead;
         this.isWrite = isWrite;
     }

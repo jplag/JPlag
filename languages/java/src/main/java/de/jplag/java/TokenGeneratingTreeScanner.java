@@ -9,7 +9,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
-import de.jplag.semantics.NextOperation;
+import de.jplag.semantics.VariableAccessType;
 import de.jplag.semantics.Scope;
 import de.jplag.semantics.VariableRegistry;
 
@@ -470,7 +470,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         long start = positions.getStartPosition(ast, node);
         semantics = new CodeSemantics();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
-        variableRegistry.setNextOperation(NextOperation.WRITE);
+        variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
         super.visitAssignment(node, semantics);
         return null;
     }
@@ -480,7 +480,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         long start = positions.getStartPosition(ast, node);
         semantics = new CodeSemantics();
         addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
-        variableRegistry.setNextOperation(NextOperation.READ_WRITE);
+        variableRegistry.setNextVariableAccessType(VariableAccessType.READ_WRITE);
         super.visitCompoundAssignment(node, semantics);
         return null;
     }
@@ -492,7 +492,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
             addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
-            variableRegistry.setNextOperation(NextOperation.READ_WRITE);
+            variableRegistry.setNextVariableAccessType(VariableAccessType.READ_WRITE);
         }
         super.visitUnary(node, semantics);
         return null;
@@ -519,9 +519,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         } else {
             semantics = CodeSemantics.createKeep();
         }
-        variableRegistry.setNextOperation(NextOperation.WRITE);
+        variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
         // manually add variable to semantics since identifier isn't visited
-        variableRegistry.registerVariableOperation(name, !inLocalScope, semantics);
+        variableRegistry.registerVariableAccess(name, !inLocalScope, semantics);
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length(), semantics);
         super.visitVariable(node, semantics);
         return null;
@@ -545,7 +545,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         scan(node.getTypeArguments(), semantics);
         // differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
         // look at cases foo.bar()++ and foo().bar++
-        variableRegistry.setIgnoreNextOperation(true);
+        variableRegistry.setIgnoreNextVariableAccess(true);
         variableRegistry.setMutableWrite(true);
         scan(node.getMethodSelect(), semantics);  // foo.bar() is a write to foo
         scan(node.getArguments(), semantics);  // foo(bar) is a write to bar
@@ -631,16 +631,16 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
     @Override
     public Void visitMemberSelect(MemberSelectTree node, CodeSemantics semantics) {
         if (node.getExpression().toString().equals("this")) {
-            variableRegistry.registerVariableOperation(node.getIdentifier().toString(), true, semantics);
+            variableRegistry.registerVariableAccess(node.getIdentifier().toString(), true, semantics);
         }
-        variableRegistry.setIgnoreNextOperation(false);  // don't ignore the foo in foo.bar()
+        variableRegistry.setIgnoreNextVariableAccess(false);  // don't ignore the foo in foo.bar()
         super.visitMemberSelect(node, semantics);
         return null;
     }
 
     @Override
     public Void visitIdentifier(IdentifierTree node, CodeSemantics semantics) {
-        variableRegistry.registerVariableOperation(node.toString(), false, semantics);
+        variableRegistry.registerVariableAccess(node.toString(), false, semantics);
         super.visitIdentifier(node, semantics);
         return null;
     }
