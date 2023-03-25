@@ -105,7 +105,6 @@ class NormalizationGraphConstructor {
                         EdgeType.VARIABLE_REVERSE_FLOW : EdgeType.VARIABLE_ORDER;
                 addIngoingEdgeToCurrent(node, edgeType, variable);
             }
-            addVariableToMap(variableWrites, variable);
         }
     }
 
