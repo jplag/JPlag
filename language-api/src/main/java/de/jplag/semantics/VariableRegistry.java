@@ -110,8 +110,7 @@ public class VariableRegistry {
 
     public void addAllNonLocalVariablesAsReads(CodeSemantics semantics) {
         Set<Variable> nonLocalVariables = new HashSet<>(fileVariables.values());
-        for (Map<String, Variable> specificClassVariables: classVariables)
-            nonLocalVariables.addAll(specificClassVariables.values());
+        nonLocalVariables.addAll(classVariables.getLast().values());
         for (Variable variable : nonLocalVariables)
             semantics.addRead(variable);
     }
@@ -119,7 +118,7 @@ public class VariableRegistry {
     private Variable getVariable(String variableName) {
         Deque<Variable> variableIdStack = localVariables.get(variableName);
         if (variableIdStack != null)
-            return variableIdStack.getLast();
+            return variableIdStack.getLast();  // stack is never empty
         Variable variable = getClassVariable(variableName);
         return variable != null ? variable : fileVariables.get(variableName);
         /* todo track global variables -> hard, how to differentiate SomeClass.staticAttr++ from String.join(...)
@@ -135,7 +134,7 @@ public class VariableRegistry {
     }
 
     private Variable getClassVariable(String variableName) {
-        Map<String, Variable> currentClassVariables = classVariables.peek();
-        return currentClassVariables != null ? classVariables.getLast().get(variableName) : null;
+        Map<String, Variable> currentClassVariables = classVariables.peekLast();
+        return currentClassVariables != null ? currentClassVariables.get(variableName) : null;
     }
 }

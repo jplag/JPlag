@@ -129,6 +129,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
 
     @Override
     public Void visitClass(ClassTree node, CodeSemantics semantics) {
+        // not super accurate
         variableRegistry.registerVariable(node.getSimpleName().toString(), Scope.FILE, true);
         variableRegistry.enterClass();
         for (var member : node.getMembers()) {

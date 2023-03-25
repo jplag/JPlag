@@ -12,7 +12,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import de.jplag.Token;
 
 public class NormalizationGraph {
-    private SimpleDirectedGraph<TokenLine, Dependency> graph;
+    private SimpleDirectedGraph<TokenLine, Edge> graph;
 
     public NormalizationGraph(List<Token> tokens) {
         graph = new NormalizationGraphConstructor(tokens).get();

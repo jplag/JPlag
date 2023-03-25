@@ -5,12 +5,12 @@ import java.util.Set;
 
 import de.jplag.semantics.Variable;
 
-class Dependency {
-    private Set<DependencyItem> items;
+class Edge {
+    private Set<EdgeItem> items;
     private boolean isVariableFlow;
     private boolean isVariableReverseFlow;
 
-    Dependency() {
+    Edge() {
         items = new HashSet<>();
         isVariableFlow = false;
     }
@@ -23,11 +23,11 @@ class Dependency {
         return isVariableReverseFlow;
     }
 
-    void addItem(DependencyType type, Variable cause) {
-        if (type == DependencyType.VARIABLE_FLOW)
+    void addItem(EdgeType type, Variable cause) {
+        if (type == EdgeType.VARIABLE_FLOW)
             isVariableFlow = true;
-        if (type == DependencyType.VARIABLE_REVERSE_FLOW)
+        if (type == EdgeType.VARIABLE_REVERSE_FLOW)
             isVariableReverseFlow = true;
-        items.add(new DependencyItem(type, cause));
+        items.add(new EdgeItem(type, cause));
     }
 }

@@ -1,6 +1,6 @@
 package de.jplag.normalization;
 
-enum DependencyType {
+enum EdgeType {
     VARIABLE_FLOW,
     VARIABLE_REVERSE_FLOW,
     VARIABLE_ORDER,

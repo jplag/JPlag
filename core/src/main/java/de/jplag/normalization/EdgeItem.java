@@ -2,5 +2,5 @@ package de.jplag.normalization;
 
 import de.jplag.semantics.Variable;
 
-record DependencyItem(DependencyType type, Variable cause) {
+record EdgeItem(EdgeType type, Variable cause) {
 }
