@@ -70,7 +70,7 @@ class NormalizationGraphConstructor {
 
     private void processFullPositionSignificance() {
         if (current.semantics().hasFullPositionSignificance()) {
-            for (Statement node: fullPositionSignificanceIngoing)
+            for (Statement node : fullPositionSignificanceIngoing)
                 addIngoingEdgeToCurrent(node, EdgeType.POSITION_SIGNIFICANCE_FULL, null);
             fullPositionSignificanceIngoing.clear();
             lastFullPositionSignificance = current;

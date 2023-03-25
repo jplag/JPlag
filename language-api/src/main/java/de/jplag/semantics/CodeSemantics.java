@@ -21,14 +21,15 @@ public class CodeSemantics {
      * Creates new semantics. reads and writes, which each contain the variables which were (potentially) read from/written
      * to in this code snippet, are created empty.
      * @param keep Whether the code snippet must be kept or if it may be removed.
-     * @param positionSignificance In which way the position of the code snippet relative to other code snippets of the same type is
-     * significant. For the possible options see {@link PositionSignificance}.
+     * @param positionSignificance In which way the position of the code snippet relative to other code snippets of the same
+     * type is significant. For the possible options see {@link PositionSignificance}.
      * @param bidirectionalBlockDepthChange How the code snippet affects the depth of bidirectional blocks, meaning blocks
      * where any statement within it may be executed after any other. This will typically be a loop.
      * @param reads A set of the variables which were (potentially) read from in the code snippet.
      * @param writes A set of the variables which were (potentially) written to in the code snippet.
      */
-    private CodeSemantics(boolean keep, PositionSignificance positionSignificance, int bidirectionalBlockDepthChange, Set<Variable> reads, Set<Variable> writes) {
+    private CodeSemantics(boolean keep, PositionSignificance positionSignificance, int bidirectionalBlockDepthChange, Set<Variable> reads,
+            Set<Variable> writes) {
         this.keep = keep;
         this.positionSignificance = positionSignificance;
         this.bidirectionalBlockDepthChange = bidirectionalBlockDepthChange;
@@ -167,8 +168,7 @@ public class CodeSemantics {
      * <ul>
      * <li>keep is the disjunction of all keeps</li>
      * <li>position significance is the most significant</li>
-     * <li>bidirectionalBlockRelation is the one that is not NONE out of all bidirectionalBlockRelations if it exists. It's
-     * assumed that there is at most one. If there isn't one bidirectionalBlockRelation is NONE.</li>
+     * <li>bidirectionalBlockDepthChange is the sum of all bidirectionalBlockDepthChanges</li>
      * <li>reads is the union of all reads</li>
      * <li>writes is the union of all writes</li>
      * </ul>

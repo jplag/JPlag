@@ -5,10 +5,10 @@ package de.jplag.semantics;
  */
 public class Variable {
     private final String name;
-    private final Scope scope;
+    private final VariableScope scope;
     private final boolean isMutable;
 
-    Variable(String name, Scope scope, boolean isMutable) {
+    Variable(String name, VariableScope scope, boolean isMutable) {
         this.name = name;
         this.scope = scope;
         this.isMutable = isMutable;

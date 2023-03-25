@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Helper class to assist in generating token semantics. For languages similar in structure to Java/C
+ * Registry of variables to assist in generating token semantics.
  */
 public class VariableRegistry {
     private Map<String, Variable> fileVariables;
@@ -32,42 +32,62 @@ public class VariableRegistry {
         this.mutableWrite = false;
     }
 
+    /**
+     * @return If we are currently in a local scope.
+     */
     public boolean inLocalScope() {
         return !localVariablesByScope.isEmpty();
     }
 
     /**
-     * Set the next variable acc. This only influences the very next call of registerVariableOperation.
-     * @param nextVariableAccessType the new value
+     * Set the type of the next variable access. This only influences the very next call of registerVariableOperation.
+     * @param nextVariableAccessType The type of the next variable access.
      */
     public void setNextVariableAccessType(VariableAccessType nextVariableAccessType) {
         this.nextVariableAccessType = nextVariableAccessType;
     }
 
     /**
-     *
-     * @param ignoreNextVariableAccess
+     * Set whether the next variable access is ignored. This only influences the very next call of
+     * registerVariableOperation.
+     * @param ignoreNextVariableAccess Whether the next variable access is ignored.
      */
     public void setIgnoreNextVariableAccess(boolean ignoreNextVariableAccess) {
         this.ignoreNextVariableAccess = ignoreNextVariableAccess;
     }
 
+    /**
+     * Set whether accesses to mutable variables are writes from this point on.
+     * @param mutableWrite Whether accesses to mutable variables are writes from this point on.
+     */
     public void setMutableWrite(boolean mutableWrite) {
         this.mutableWrite = mutableWrite;
     }
 
+    /**
+     * Enter a class.
+     */
     public void enterClass() {
         classVariables.addLast(new HashMap<>());
     }
 
+    /**
+     * Exit a class. This causes all variables bound to the current class to no longer be visible.
+     */
     public void exitClass() {
         classVariables.removeLast();
     }
 
+    /**
+     * Enter a local scope.
+     */
     public void enterLocalScope() {
         localVariablesByScope.addLast(new HashSet<>());
     }
 
+    /**
+     * Exit a local scope. This causes all variables bound to the current local scope to no longer be visible.
+     */
     public void exitLocalScope() {
         for (String variableName : localVariablesByScope.removeLast()) {
             Deque<Variable> variableStack = localVariables.get(variableName);
@@ -77,7 +97,13 @@ public class VariableRegistry {
         }
     }
 
-    public void registerVariable(String variableName, Scope scope, boolean mutable) {
+    /**
+     * Register a variable.
+     * @param variableName The variable's name.
+     * @param scope The variable's scope.
+     * @param mutable Whether the variable is mutable.
+     */
+    public void registerVariable(String variableName, VariableScope scope, boolean mutable) {
         Variable variable = new Variable(variableName, scope, mutable);
         switch (scope) {
             case FILE -> fileVariables.put(variableName, variable);
@@ -90,6 +116,14 @@ public class VariableRegistry {
         }
     }
 
+    /**
+     * Register a variable access, more precisely: Add a variable access to a CodeSemantics instance. The type of the access
+     * can be set with setNextVariableAccessType. By default, its type is read.
+     * @param variableName The variable's name.
+     * @param isClassVariable Whether the variable is a class variable. This is true if a variable is qualified with the
+     * "this" keyword in Java, for example.
+     * @param semantics The CodeSemantics instance the variable access is added to.
+     */
     public void registerVariableAccess(String variableName, boolean isClassVariable, CodeSemantics semantics) {
         if (ignoreNextVariableAccess) {
             ignoreNextVariableAccess = false;
@@ -108,6 +142,10 @@ public class VariableRegistry {
         nextVariableAccessType = VariableAccessType.READ;
     }
 
+    /**
+     * Add all non-local visible variables as reads to the CodeSemantics instance.
+     * @param semantics The CodeSemantics instance.
+     */
     public void addAllNonLocalVariablesAsReads(CodeSemantics semantics) {
         Set<Variable> nonLocalVariables = new HashSet<>(fileVariables.values());
         nonLocalVariables.addAll(classVariables.getLast().values());
@@ -121,15 +159,11 @@ public class VariableRegistry {
             return variableIdStack.getLast();  // stack is never empty
         Variable variable = getClassVariable(variableName);
         return variable != null ? variable : fileVariables.get(variableName);
-        /* todo track global variables -> hard, how to differentiate SomeClass.staticAttr++ from String.join(...)
-        // problem here: all String.joins (for example) are registered as writes to String
-        // get global variable, register if it doesn't exist
-        variable = globalVariables.get(variableName);
-        if (variable != null)
-            return variable;
-        variable = new Variable(variableName, false, true);
-        globalVariables.put(variableName, variable);
-        return variable;
+        /*
+         * todo track global variables -> hard, how to differentiate SomeClass.staticAttr++ from String.join(...) // problem
+         * here: all String.joins (for example) are registered as writes to String // get global variable, register if it
+         * doesn't exist variable = globalVariables.get(variableName); if (variable != null) return variable; variable = new
+         * Variable(variableName, false, true); globalVariables.put(variableName, variable); return variable;
          */
     }
 

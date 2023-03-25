@@ -10,8 +10,8 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableAccessType;
-import de.jplag.semantics.Scope;
 import de.jplag.semantics.VariableRegistry;
+import de.jplag.semantics.VariableScope;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
@@ -130,14 +130,14 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
     @Override
     public Void visitClass(ClassTree node, CodeSemantics semantics) {
         // not super accurate
-        variableRegistry.registerVariable(node.getSimpleName().toString(), Scope.FILE, true);
+        variableRegistry.registerVariable(node.getSimpleName().toString(), VariableScope.FILE, true);
         variableRegistry.enterClass();
         for (var member : node.getMembers()) {
             if (member.getKind() == Tree.Kind.VARIABLE) {
                 VariableTree variableTree = (VariableTree) member;
                 String name = variableTree.getName().toString();
                 boolean mutable = isMutable(variableTree.getType());
-                variableRegistry.registerVariable(name, Scope.CLASS, mutable);
+                variableRegistry.registerVariable(name, VariableScope.CLASS, mutable);
             }
         }
 
@@ -513,9 +513,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         long start = positions.getStartPosition(ast, node);
         String name = node.getName().toString();
         boolean inLocalScope = variableRegistry.inLocalScope();
+        // this presents a problem when classes are declared in local scopes, which can happen in ad-hoc implementations
         if (inLocalScope) {
             boolean mutable = isMutable(node.getType());
-            variableRegistry.registerVariable(name, Scope.LOCAL, mutable);
+            variableRegistry.registerVariable(name, VariableScope.LOCAL, mutable);
             semantics = new CodeSemantics();
         } else {
             semantics = CodeSemantics.createKeep();

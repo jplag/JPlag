@@ -19,15 +19,15 @@ class Statement implements Comparable<Statement> {
         this.semantics = CodeSemantics.join(tokens.stream().map(Token::getSemantics).toList());
     }
 
-    public List<Token> tokens() {
+    List<Token> tokens() {
         return tokens;
     }
 
-    public CodeSemantics semantics() {
+    CodeSemantics semantics() {
         return semantics;
     }
 
-    public void markKeep() {
+    void markKeep() {
         semantics.markKeep();
     }
 

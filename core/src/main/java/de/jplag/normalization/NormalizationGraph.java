@@ -14,11 +14,19 @@ import de.jplag.Token;
 public class NormalizationGraph {
     private SimpleDirectedGraph<Statement, Edge> graph;
 
+    /**
+     * Construct a new normalization graph from the tokens.
+     * @param tokens The tokens used to construct the normalization graph.
+     */
     public NormalizationGraph(List<Token> tokens) {
         graph = new NormalizationGraphConstructor(tokens).get();
     }
 
-    // todo java doc
+    /**
+     * Turns this normalization graph back into a list of tokens. Tokens representing dead code have been eliminated and
+     * tokens representing subsequent independent statements have been put in a fixed order.
+     * @return the normalized list of tokens.
+     */
     public List<Token> linearize() {
         spreadKeep();
         PriorityQueue<Statement> roots = graph.vertexSet().stream() //
@@ -44,6 +52,9 @@ public class NormalizationGraph {
         return tokens;
     }
 
+    /**
+     * Spread keep status to every node that does not represent dead code. Nodes without keep status are later eliminated.
+     */
     private void spreadKeep() {
         Deque<Statement> visit = new LinkedList<>(graph.vertexSet().stream() //
                 .filter(tl -> tl.semantics().keep()).toList());
