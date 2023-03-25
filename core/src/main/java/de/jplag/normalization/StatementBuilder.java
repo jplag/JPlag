@@ -5,12 +5,12 @@ import java.util.List;
 
 import de.jplag.Token;
 
-class TokenLineBuilder {
+class StatementBuilder {
 
     private List<Token> tokens;
     private final int lineNumber;
 
-    TokenLineBuilder(int lineNumber) {
+    StatementBuilder(int lineNumber) {
         this.lineNumber = lineNumber;
         this.tokens = new LinkedList<>();
     }
@@ -23,7 +23,7 @@ class TokenLineBuilder {
         tokens.add(token);
     }
 
-    TokenLine build() {
-        return new TokenLine(tokens, lineNumber);
+    Statement build() {
+        return new Statement(tokens, lineNumber);
     }
 }

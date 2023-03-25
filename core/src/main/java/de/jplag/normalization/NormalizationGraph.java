@@ -12,7 +12,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import de.jplag.Token;
 
 public class NormalizationGraph {
-    private SimpleDirectedGraph<TokenLine, Edge> graph;
+    private SimpleDirectedGraph<Statement, Edge> graph;
 
     public NormalizationGraph(List<Token> tokens) {
         graph = new NormalizationGraphConstructor(tokens).get();
@@ -21,19 +21,19 @@ public class NormalizationGraph {
     // todo java doc
     public List<Token> linearize() {
         spreadKeep();
-        PriorityQueue<TokenLine> roots = graph.vertexSet().stream() //
+        PriorityQueue<Statement> roots = graph.vertexSet().stream() //
                 .filter(v -> !Graphs.vertexHasPredecessors(graph, v)) //
                 .collect(Collectors.toCollection(PriorityQueue::new));
         List<Token> tokens = new LinkedList<>();
         while (!roots.isEmpty()) {
-            PriorityQueue<TokenLine> newRoots = new PriorityQueue<>();
+            PriorityQueue<Statement> newRoots = new PriorityQueue<>();
             do {
-                TokenLine tokenLine = roots.poll();
-                if (tokenLine.semantics().keep()) {
-                    tokens.addAll(tokenLine.tokens());
+                Statement statement = roots.poll();
+                if (statement.semantics().keep()) {
+                    tokens.addAll(statement.tokens());
                 }
-                for (TokenLine succ : Graphs.successorListOf(graph, tokenLine)) {
-                    graph.removeEdge(tokenLine, succ);
+                for (Statement succ : Graphs.successorListOf(graph, statement)) {
+                    graph.removeEdge(statement, succ);
                     if (!Graphs.vertexHasPredecessors(graph, succ)) {
                         newRoots.add(succ);
                     }
@@ -45,17 +45,17 @@ public class NormalizationGraph {
     }
 
     private void spreadKeep() {
-        Deque<TokenLine> visit = new LinkedList<>(graph.vertexSet().stream() //
+        Deque<Statement> visit = new LinkedList<>(graph.vertexSet().stream() //
                 .filter(tl -> tl.semantics().keep()).toList());
         while (!visit.isEmpty()) {
-            TokenLine current = visit.pop();
-            for (TokenLine pred : Graphs.predecessorListOf(graph, current)) {  // performance of iteration?
+            Statement current = visit.pop();
+            for (Statement pred : Graphs.predecessorListOf(graph, current)) {  // performance of iteration?
                 if (!pred.semantics().keep() && graph.getEdge(pred, current).isVariableFlow()) {
                     pred.markKeep();
                     visit.add(pred);
                 }
             }
-            for (TokenLine succ : Graphs.successorListOf(graph, current)) {
+            for (Statement succ : Graphs.successorListOf(graph, current)) {
                 if (!succ.semantics().keep() && graph.getEdge(current, succ).isVariableReverseFlow()) {
                     succ.markKeep();
                     visit.add(succ);

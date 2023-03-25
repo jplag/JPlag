@@ -7,13 +7,13 @@ import java.util.List;
 import de.jplag.Token;
 import de.jplag.semantics.CodeSemantics;
 
-class TokenLine implements Comparable<TokenLine> {
+class Statement implements Comparable<Statement> {
 
     private final List<Token> tokens;
     private final int lineNumber;
     private final CodeSemantics semantics;
 
-    TokenLine(List<Token> tokens, int lineNumber) {
+    Statement(List<Token> tokens, int lineNumber) {
         this.tokens = Collections.unmodifiableList(tokens);
         this.lineNumber = lineNumber;
         this.semantics = CodeSemantics.join(tokens.stream().map(Token::getSemantics).toList());
@@ -36,7 +36,7 @@ class TokenLine implements Comparable<TokenLine> {
     }
 
     @Override
-    public int compareTo(TokenLine other) {
+    public int compareTo(Statement other) {
         int sizeComp = Integer.compare(this.tokens.size(), other.tokens.size());
         if (sizeComp != 0)
             return -sizeComp; // bigger size should come first

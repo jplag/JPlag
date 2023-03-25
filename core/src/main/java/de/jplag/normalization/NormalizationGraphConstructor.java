@@ -14,15 +14,15 @@ import de.jplag.Token;
 import de.jplag.semantics.Variable;
 
 class NormalizationGraphConstructor {
-    private SimpleDirectedGraph<TokenLine, Edge> graph;
+    private SimpleDirectedGraph<Statement, Edge> graph;
     private int bidirectionalBlockDepth;
-    private Collection<TokenLine> fullPositionalSignificanceIngoing;
-    private TokenLine lastFullPositionalSignificance;
-    private TokenLine lastPartialPositionalSignificance;
-    private Map<Variable, Collection<TokenLine>> variableReads;
-    private Map<Variable, Collection<TokenLine>> variableWrites;
-    private Set<TokenLine> inCurrentBidirectionalBlock;
-    private TokenLine current;
+    private Collection<Statement> fullPositionalSignificanceIngoing;
+    private Statement lastFullPositionalSignificance;
+    private Statement lastPartialPositionalSignificance;
+    private Map<Variable, Collection<Statement>> variableReads;
+    private Map<Variable, Collection<Statement>> variableWrites;
+    private Set<Statement> inCurrentBidirectionalBlock;
+    private Statement current;
 
     NormalizationGraphConstructor(List<Token> tokens) {
         graph = new SimpleDirectedGraph<>(Edge.class);
@@ -31,24 +31,24 @@ class NormalizationGraphConstructor {
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         inCurrentBidirectionalBlock = new HashSet<>();
-        TokenLineBuilder currentLine = new TokenLineBuilder(tokens.get(0).getLine());
+        StatementBuilder current = new StatementBuilder(tokens.get(0).getLine());
         for (Token token : tokens) {
-            if (token.getLine() != currentLine.lineNumber()) {
-                addTokenLine(currentLine.build());
-                currentLine = new TokenLineBuilder(token.getLine());
+            if (token.getLine() != current.lineNumber()) {
+                addStatement(current.build());
+                current = new StatementBuilder(token.getLine());
             }
-            currentLine.addToken(token);
+            current.addToken(token);
         }
-        addTokenLine(currentLine.build());
+        addStatement(current.build());
     }
 
-    SimpleDirectedGraph<TokenLine, Edge> get() {
+    SimpleDirectedGraph<Statement, Edge> get() {
         return graph;
     }
 
-    private void addTokenLine(TokenLine tokenLine) {
-        graph.addVertex(tokenLine);
-        this.current = tokenLine;
+    private void addStatement(Statement statement) {
+        graph.addVertex(statement);
+        this.current = statement;
         processBidirectionalBlock();
         processFullPositionalSignificance();
         processPartialPositionalSignificance();
@@ -70,7 +70,7 @@ class NormalizationGraphConstructor {
 
     private void processFullPositionalSignificance() {
         if (current.semantics().hasFullPositionSignificance()) {
-            for (TokenLine node: fullPositionalSignificanceIngoing)
+            for (Statement node: fullPositionalSignificanceIngoing)
                 addIngoingEdgeToCurrent(node, EdgeType.POSITION_SIGNIFICANCE_FULL, null);
             fullPositionalSignificanceIngoing.clear();
             lastFullPositionalSignificance = current;
@@ -91,16 +91,16 @@ class NormalizationGraphConstructor {
 
     private void processReads() {
         for (Variable variable : current.semantics().reads()) {
-            for (TokenLine node : variableWrites.getOrDefault(variable, Set.of()))
+            for (Statement node : variableWrites.getOrDefault(variable, Set.of()))
                 addIngoingEdgeToCurrent(node, EdgeType.VARIABLE_FLOW, variable);
         }
     }
 
     private void processWrites() {
         for (Variable variable : current.semantics().writes()) {
-            for (TokenLine node : variableWrites.getOrDefault(variable, Set.of()))
+            for (Statement node : variableWrites.getOrDefault(variable, Set.of()))
                 addIngoingEdgeToCurrent(node, EdgeType.VARIABLE_ORDER, variable);
-            for (TokenLine node : variableReads.getOrDefault(variable, Set.of())) {
+            for (Statement node : variableReads.getOrDefault(variable, Set.of())) {
                 EdgeType edgeType = inCurrentBidirectionalBlock.contains(node) ? //
                         EdgeType.VARIABLE_REVERSE_FLOW : EdgeType.VARIABLE_ORDER;
                 addIngoingEdgeToCurrent(node, edgeType, variable);
@@ -115,7 +115,7 @@ class NormalizationGraphConstructor {
      * @param type the type of the edge
      * @param cause the variable that caused the edge, may be null
      */
-    private void addIngoingEdgeToCurrent(TokenLine start, EdgeType type, Variable cause) {
+    private void addIngoingEdgeToCurrent(Statement start, EdgeType type, Variable cause) {
         Edge edge = graph.getEdge(start, current);
         if (edge == null) {
             edge = new Edge();
@@ -124,7 +124,7 @@ class NormalizationGraphConstructor {
         edge.addItem(type, cause);
     }
 
-    private void addVariableToMap(Map<Variable, Collection<TokenLine>> variableMap, Variable variable) {
+    private void addVariableToMap(Map<Variable, Collection<Statement>> variableMap, Variable variable) {
         variableMap.putIfAbsent(variable, new LinkedList<>());
         variableMap.get(variable).add(current);
     }
