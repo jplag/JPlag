@@ -16,9 +16,9 @@ import de.jplag.semantics.Variable;
 class NormalizationGraphConstructor {
     private SimpleDirectedGraph<Statement, Edge> graph;
     private int bidirectionalBlockDepth;
-    private Collection<Statement> fullPositionalSignificanceIngoing;
-    private Statement lastFullPositionalSignificance;
-    private Statement lastPartialPositionalSignificance;
+    private Collection<Statement> fullPositionSignificanceIngoing;
+    private Statement lastFullPositionSignificance;
+    private Statement lastPartialPositionSignificance;
     private Map<Variable, Collection<Statement>> variableReads;
     private Map<Variable, Collection<Statement>> variableWrites;
     private Set<Statement> inCurrentBidirectionalBlock;
@@ -27,7 +27,7 @@ class NormalizationGraphConstructor {
     NormalizationGraphConstructor(List<Token> tokens) {
         graph = new SimpleDirectedGraph<>(Edge.class);
         bidirectionalBlockDepth = 0;
-        fullPositionalSignificanceIngoing = new LinkedList<>();
+        fullPositionSignificanceIngoing = new LinkedList<>();
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         inCurrentBidirectionalBlock = new HashSet<>();
@@ -50,8 +50,8 @@ class NormalizationGraphConstructor {
         graph.addVertex(statement);
         this.current = statement;
         processBidirectionalBlock();
-        processFullPositionalSignificance();
-        processPartialPositionalSignificance();
+        processFullPositionSignificance();
+        processPartialPositionSignificance();
         processReads();
         processWrites();
         for (Variable variable : current.semantics().reads())
@@ -68,24 +68,24 @@ class NormalizationGraphConstructor {
             inCurrentBidirectionalBlock.clear();
     }
 
-    private void processFullPositionalSignificance() {
+    private void processFullPositionSignificance() {
         if (current.semantics().hasFullPositionSignificance()) {
-            for (Statement node: fullPositionalSignificanceIngoing)
+            for (Statement node: fullPositionSignificanceIngoing)
                 addIngoingEdgeToCurrent(node, EdgeType.POSITION_SIGNIFICANCE_FULL, null);
-            fullPositionalSignificanceIngoing.clear();
-            lastFullPositionalSignificance = current;
-        } else if (lastFullPositionalSignificance != null) {
-            addIngoingEdgeToCurrent(lastFullPositionalSignificance, EdgeType.POSITION_SIGNIFICANCE_FULL, null);
+            fullPositionSignificanceIngoing.clear();
+            lastFullPositionSignificance = current;
+        } else if (lastFullPositionSignificance != null) {
+            addIngoingEdgeToCurrent(lastFullPositionSignificance, EdgeType.POSITION_SIGNIFICANCE_FULL, null);
         }
-        fullPositionalSignificanceIngoing.add(current);
+        fullPositionSignificanceIngoing.add(current);
     }
 
-    private void processPartialPositionalSignificance() {
+    private void processPartialPositionSignificance() {
         if (current.semantics().hasPartialPositionSignificance()) {
-            if (lastPartialPositionalSignificance != null) {
-                addIngoingEdgeToCurrent(lastPartialPositionalSignificance, EdgeType.POSITION_SIGNIFICANCE_PARTIAL, null);
+            if (lastPartialPositionSignificance != null) {
+                addIngoingEdgeToCurrent(lastPartialPositionSignificance, EdgeType.POSITION_SIGNIFICANCE_PARTIAL, null);
             }
-            lastPartialPositionalSignificance = current;
+            lastPartialPositionSignificance = current;
         }
     }
 
