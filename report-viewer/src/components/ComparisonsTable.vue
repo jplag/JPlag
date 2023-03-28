@@ -289,6 +289,7 @@ th {
 }
 
 td {
+  overflow-wrap: break-word;
   padding-top: 3%;
   padding-bottom: 3%;
 }
