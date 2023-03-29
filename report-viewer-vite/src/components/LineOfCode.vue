@@ -4,7 +4,7 @@
 <template>
   <div
     :class="{ 'first-line': isFirst, 'last-line': isLast, visible: visible }"
-    :style="{ background: color }"
+    :style="'background: color'"
     class="line-wrap"
   >
     <pre :id="text" ref="lineRef" :class="{ 'match-line': color !== '#ECECEC' }" class="java"
@@ -13,9 +13,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, onUpdated, ref } from 'vue'
-import hljs from 'highlight.js'
+//import hljs from 'highlight.js'
 
 export default defineComponent({
   name: 'LineOfCode',
@@ -55,7 +55,9 @@ export default defineComponent({
     //Trigger highlighting when code panel is collapsed.
     onUpdated(() => {
       if (props.visible && !highlighted) {
-        hljs.highlightElement(lineRef.value)
+        // FIXME: Reenable
+        //hljs.highlightElement(lineRef.value)
+        console.log(lineRef.value)
         highlighted = true
       }
     })

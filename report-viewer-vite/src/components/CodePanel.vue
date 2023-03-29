@@ -3,7 +3,7 @@
 -->
 <template>
   <div
-    :id="panelId.toString().concat(filePath).concat(fileIndex.toString())"
+    :id="panelId?.toString().concat(filePath || '').concat(fileIndex?.toString() || '-1')"
     class="code-panel-container"
   >
     <div class="file-title mover">
@@ -29,8 +29,8 @@
           v-for="(line, index) in lines"
           :id="
             String(panelId)
-              .concat(filePath)
-              .concat(index + 1)
+              .concat(filePath || '')
+              .concat((index + 1).toString())
           "
           :key="index"
           :color="coloringArray[index]"
@@ -57,9 +57,10 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
-import LineOfCode from './LineOfCode'
+<script lang="ts">
+import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
+import { defineComponent, ref, type Ref } from 'vue'
+import LineOfCode from '@/components/LineOfCode.vue'
 
 export default defineComponent({
   name: 'CodePanel',
@@ -88,7 +89,7 @@ export default defineComponent({
      * type: Array<string>
      */
     lines: {
-      type: Array,
+      type: Array<string>,
       required: true
     },
     /**
@@ -96,7 +97,7 @@ export default defineComponent({
      * type: Array<MatchInSingleFile>
      */
     matches: {
-      type: Array
+      type: Array<MatchInSingleFile>
     },
     /**
      * Id of the FilesContainer. Needed for lines link generation.
@@ -124,8 +125,8 @@ export default defineComponent({
      * }
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const coloringArray = ref({})
-    const isEmpty = (lines) => {
+    const coloringArray: Ref<Record<number, string>> = ref({})
+    const isEmpty = (lines: string[]) => {
       return lines.length === 0 || lines.every((line) => !line.trim())
     }
     /**
@@ -142,22 +143,22 @@ export default defineComponent({
      * Key is line number, value is id of linked line.
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const linksArray = ref({})
+    const linksArray: Ref<Record<number, { panel?: number; file?: string; line?: number }>> = ref({})
     /**
      * Indicates whether the line is last line of match. Key is line number, value is true or false.
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const isLast = ref({})
+    const isLast: Ref<Record<number,boolean>> = ref({})
     /**
      * Indicates whether the line is the first line of a match. Key is line number, value is true or false.
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const isFirst = ref({})
+    const isFirst: Ref<Record<number,boolean>> = ref({})
 
     /**
      * Initializing the the upper arrays.
      */
-    props.matches.forEach((m) => {
+    props.matches?.forEach((m) => {
       for (let i = m.start; i <= m.end; i++) {
         //assign match color to line
         coloringArray.value[i - 1] = m.color
@@ -175,7 +176,7 @@ export default defineComponent({
     for (let i = 0; i < props.lines.length; i++) {
       if (!coloringArray.value[i]) {
         coloringArray.value[i] = '#FFFFFF'
-        linksArray.value[i] = '-1'
+        linksArray.value[i] = {}
         isFirst.value[i] = false
         isLast.value[i] = false
       }

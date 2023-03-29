@@ -4,7 +4,7 @@
   </h5>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: 'ErrorRouter',
   props: {

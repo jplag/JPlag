@@ -30,7 +30,7 @@
   <hr />
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref } from 'vue'
 
 export default defineComponent({
@@ -41,6 +41,7 @@ export default defineComponent({
       required: true
     },
     value: {
+      type: String,
       required: true
     },
     hasAdditionalInfo: {

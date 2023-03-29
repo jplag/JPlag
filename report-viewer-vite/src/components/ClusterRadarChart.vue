@@ -19,11 +19,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, Ref, ref, watch } from 'vue'
+import type { PropType, Ref } from 'vue'
+import type { ChartData } from 'chart.js'
+import type { ClusterListElement } from '@/model/ClusterListElement'
+
+import { defineComponent, ref, watch } from 'vue'
 import { RadarChart } from 'vue-chart-3'
-import { Chart, ChartData, registerables } from 'chart.js'
+import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import { ClusterListElement } from '@/model/ClusterListElement'
 import { radarChartStyle, radarChartOptions } from '@/assets/radar-chart-configuration'
 
 Chart.register(...registerables)

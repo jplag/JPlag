@@ -7,10 +7,10 @@
       <p
         v-for="(id, index) in ids"
         :key="index"
-        :class="{ selected: !store.state.anonymous.has(id) && store.state.anonymous.size !== 0 }"
+        :class="{ selected: !store().anonymous.has(id) && store().anonymous.size !== 0 }"
         @click="emitIdsSent([id])"
       >
-        {{ store.getters.submissionDisplayName(id) }}
+        {{ store().submissionDisplayName(id) }}
       </p>
     </div>
     <button @click="emitIdsSent(ids)">Hide/Show all</button>
@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import store from '@/store/store'
+import store from '@/stores/store'
 
 export default defineComponent({
   emits: ['idSent'],

@@ -15,19 +15,21 @@
       </tr>
       <tr
         v-for="(match, index) in matches"
-        :key="String(index).concat(match.startInFirst).concat(match.startInSecond)"
+        :key="
+          String(index).concat(match.startInFirst.toString()).concat(match.startInSecond.toString())
+        "
         :style="{ background: match.color }"
         @click="$emit('matchSelected', $event, match)"
       >
         <td>
           <div class="td-content">
-            <p>{{ convertSubmissionIdToName(match.firstFile, id1) }}</p>
+            <p>{{ convertSubmissionIdToName(match.firstFile, id1 || '') }}</p>
             <p>({{ match.startInFirst }} - {{ match.endInFirst }})</p>
           </div>
         </td>
         <td>
           <div class="td-content">
-            <p>{{ convertSubmissionIdToName(match.secondFile, id2) }}</p>
+            <p>{{ convertSubmissionIdToName(match.secondFile, id2 || '') }}</p>
             <p>({{ match.startInSecond }} - {{ match.endInSecond }})</p>
           </div>
         </td>
@@ -39,7 +41,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import store from '@/store/store'
+import store from '@/stores/store'
+import type { Match } from '@/model/Match'
 
 export default defineComponent({
   name: 'MatchTable',
@@ -49,7 +52,7 @@ export default defineComponent({
      * type: Array<Match>
      */
     matches: {
-      type: Array
+      type: Array<Match>
     },
     /**
      * ID of first submission
@@ -64,7 +67,7 @@ export default defineComponent({
       type: String
     }
   },
-  setup(props) {
+  setup() {
     /**
      * converts the submissionId to the name in the path of match.
      * @param match
@@ -72,7 +75,8 @@ export default defineComponent({
      * @return new path of match
      */
     const convertSubmissionIdToName = (match: string, submissionId: string): string => {
-      return match.replace(submissionId, store.getters.submissionDisplayName(submissionId))
+      const displayName = store().submissionDisplayName(submissionId) || submissionId
+      return match.replace(submissionId, displayName)
     }
     return { convertSubmissionIdToName }
   }

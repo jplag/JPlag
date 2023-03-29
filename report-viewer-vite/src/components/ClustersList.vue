@@ -21,11 +21,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue'
+import type { PropType } from 'vue'
+import type { ClusterListElement } from '@/model/ClusterListElement'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+
+import { defineComponent, ref } from 'vue'
 import { GDialog } from 'gitart-vue-dialog'
 import ClusterRadarChart from '@/components/ClusterRadarChart.vue'
-import { ClusterListElement } from '@/model/ClusterListElement'
-import { ComparisonListElement } from '@/model/ComparisonListElement'
 export default defineComponent({
   name: 'ClustersList',
   components: { ClusterRadarChart, GDialog },

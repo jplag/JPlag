@@ -94,14 +94,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from 'vue'
+import type { Cluster } from '@/model/Cluster'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import type { ClusterListElement } from '@/model/ClusterListElement'
+import type { Ref } from 'vue'
+
+import { defineComponent, ref } from 'vue'
 import router from '@/router'
 import { GDialog } from 'gitart-vue-dialog'
 import ClustersList from '@/components/ClustersList.vue'
-import { useStore } from 'vuex'
-import { Cluster } from '@/model/Cluster'
-import { ComparisonListElement } from '@/model/ComparisonListElement'
-import { ClusterListElement } from '@/model/ClusterListElement'
+import store from '@/stores/store'
 
 export default defineComponent({
   name: 'ComparisonsTable',
@@ -117,18 +119,17 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const store = useStore()
     let formattedMatchPercentage = (num: number) => (num * 100).toFixed(2)
     const dialog: Ref<Array<boolean>> = ref([])
     props.topComparisons.forEach(() => dialog.value.push(false))
-    const displayName = (submissionId: string) => store.getters.submissionDisplayName(submissionId)
+    const displayName = (submissionId: string) => store().submissionDisplayName(submissionId)
 
     const toggleDialog = (index: number) => {
       dialog.value[index] = true
     }
 
     const navigateToComparisonView = (firstId: string, secondId: string) => {
-      if (!store.state.single) {
+      if (!store().single) {
         router.push({
           name: 'ComparisonView',
           params: { firstId, secondId }
@@ -141,7 +142,7 @@ export default defineComponent({
     }
 
     const isAnonymous = (id: string) => {
-      return store.state.anonymous.has(id)
+      return store().anonymous.has(id)
     }
 
     const getParticipatingMatchesForId = (id: string, others: Array<string>) => {

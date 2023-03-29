@@ -15,8 +15,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { Metric } from '@/model/Metric'
+import type { PropType } from 'vue'
+import type { Metric } from '@/model/Metric'
+
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'MetricButton',

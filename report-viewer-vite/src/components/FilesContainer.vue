@@ -10,7 +10,7 @@
         :key="file.concat(index.toString())"
         :collapse="files.get(file)?.collapsed"
         :file-index="index"
-        :lines="!files.get(file)?.lines ? [] : files.get(file)?.lines"
+        :lines="files.get(file)?.lines || []"
         :matches="!matches.get(file) ? [] : matches.get(file)"
         :panel-id="containerId"
         :title="convertSubmissionIdToName(file, submissionId)"
@@ -23,12 +23,13 @@
 </template>
 
 <script lang="ts">
+import type { SubmissionFile } from '@/model/SubmissionFile'
+import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
+
 import { defineComponent } from 'vue'
-import CodePanel from '../components/CodePanel.vue'
+import CodePanel from '@/components/CodePanel.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { SubmissionFile } from '@/model/SubmissionFile'
-import { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import store from '@/store/store'
+import store from '@/stores/store'
 
 export default defineComponent({
   name: 'FilesContainer',
@@ -104,7 +105,8 @@ export default defineComponent({
      * @return new path of file
      */
     const convertSubmissionIdToName = (file: string, submissionId: string): string => {
-      const filePath = file.replace(submissionId, store.getters.submissionDisplayName(submissionId))
+      const displayName = store().submissionDisplayName(submissionId) || submissionId
+      const filePath = file.replace(submissionId, displayName)
       const filePathLength = filePath.length
       return filePathLength > 40
         ? '..' + filePath.substring(filePathLength - 40, filePathLength)
