@@ -10,11 +10,7 @@
       <p style="width: 90%" @click="$emit('toggleCollapse')">
         <a class="filer-header">{{ title }}</a>
       </p>
-      <button
-        class="collapse-button"
-        style="width: 10%"
-        @click="$emit('toggleCollapse')"
-      >
+      <button class="collapse-button" style="width: 10%" @click="$emit('toggleCollapse')">
         <img
           v-if="collapse"
           alt="hide info"
@@ -31,7 +27,11 @@
       <div v-if="!isEmpty(lines)" class="code-container">
         <LineOfCode
           v-for="(line, index) in lines"
-          :id="String(panelId).concat(filePath).concat(index+1)"
+          :id="
+            String(panelId)
+              .concat(filePath)
+              .concat(index + 1)
+          "
           :key="index"
           :color="coloringArray[index]"
           :is-first="isFirst[index]"
@@ -58,12 +58,12 @@
 </template>
 
 <script>
-import {defineComponent, ref} from "vue";
-import LineOfCode from "./LineOfCode";
+import { defineComponent, ref } from 'vue'
+import LineOfCode from './LineOfCode'
 
 export default defineComponent({
-  name: "CodePanel",
-  components: {LineOfCode},
+  name: 'CodePanel',
+  components: { LineOfCode },
   props: {
     /**
      * Path of the displayed file.
@@ -75,13 +75,13 @@ export default defineComponent({
      * Title of the displayed file.
      */
     title: {
-      type: String,
+      type: String
     },
     /**
      * Index of file amongst other files in submission.
      */
     fileIndex: {
-      type: Number,
+      type: Number
     },
     /**
      * Code lines of the file.
@@ -89,27 +89,27 @@ export default defineComponent({
      */
     lines: {
       type: Array,
-      required: true,
+      required: true
     },
     /**
      * Matches in the file
      * type: Array<MatchInSingleFile>
      */
     matches: {
-      type: Array,
+      type: Array
     },
     /**
      * Id of the FilesContainer. Needed for lines link generation.
      */
     panelId: {
-      type: Number,
+      type: Number
     },
     /**
      * Indicates whether files is collapsed or not.
      */
     collapse: {
-      type: Boolean,
-    },
+      type: Boolean
+    }
   },
   setup(props) {
     /**
@@ -124,10 +124,10 @@ export default defineComponent({
      * }
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const coloringArray = ref({});
+    const coloringArray = ref({})
     const isEmpty = (lines) => {
-      return lines.length === 0 || lines.every((line) => !(line.trim()));
-    };
+      return lines.length === 0 || lines.every((line) => !line.trim())
+    }
     /**
      * An object containing an object from which an id is to of the line to which this is linked is constructed.
      * Id object contains panel, file name, first line number of linked matched.
@@ -142,17 +142,17 @@ export default defineComponent({
      * Key is line number, value is id of linked line.
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const linksArray = ref({});
+    const linksArray = ref({})
     /**
      * Indicates whether the line is last line of match. Key is line number, value is true or false.
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const isLast = ref({});
+    const isLast = ref({})
     /**
      * Indicates whether the line is the first line of a match. Key is line number, value is true or false.
      * @type {Ref<UnwrapRef<{}>>}
      */
-    const isFirst = ref({});
+    const isFirst = ref({})
 
     /**
      * Initializing the the upper arrays.
@@ -160,24 +160,24 @@ export default defineComponent({
     props.matches.forEach((m) => {
       for (let i = m.start; i <= m.end; i++) {
         //assign match color to line
-        coloringArray.value[i - 1] = m.color;
+        coloringArray.value[i - 1] = m.color
         //assign link object to line.
         linksArray.value[i - 1] = {
           panel: m.linked_panel,
           file: m.linked_file,
-          line: m.linked_line,
-        };
+          line: m.linked_line
+        }
       }
-      isFirst.value[m.start - 1] = true;
-      isLast.value[m.end - 1] = true;
-    });
+      isFirst.value[m.start - 1] = true
+      isLast.value[m.end - 1] = true
+    })
     //assign default values for all line which are not contained in matches
     for (let i = 0; i < props.lines.length; i++) {
       if (!coloringArray.value[i]) {
-        coloringArray.value[i] = "#FFFFFF";
-        linksArray.value[i] = "-1";
-        isFirst.value[i] = false;
-        isLast.value[i] = false;
+        coloringArray.value[i] = '#FFFFFF'
+        linksArray.value[i] = '-1'
+        isFirst.value[i] = false
+        isLast.value[i] = false
       }
     }
 
@@ -186,10 +186,10 @@ export default defineComponent({
       linksArray,
       isFirst,
       isLast,
-      isEmpty,
-    };
-  },
-});
+      isEmpty
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -215,7 +215,7 @@ export default defineComponent({
   font-size: large;
 }
 
-.filer-header{
+.filer-header {
   cursor: grab;
 }
 

@@ -18,176 +18,184 @@
         </button>
       </div>
     </div>
-    <p v-else>
-      Loading file…
-    </p>
+    <p v-else>Loading file…</p>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useRoute } from "vue-router";
-import jszip from "jszip";
-import router from "@/router";
-import store from "@/store/store";
-import path from "path";
-import slash from "slash";
+import { defineComponent } from 'vue'
+import { useRoute } from 'vue-router'
+import jszip from 'jszip'
+import router from '@/router'
+import store from '@/store/store'
+import path from 'path'
+import slash from 'slash'
 
 class LoadError extends Error {}
 
 export default defineComponent({
-  name: "FileUploadView",
+  name: 'FileUploadView',
   setup() {
-    store.commit("clearStore");
-    let hasLocalFile;
+    store.commit('clearStore')
+    let hasLocalFile
     //Tries to detect local file. If no files detected, hides local mode from screen.
     try {
-      require("../files/overview.json");
-      hasLocalFile = true;
+      require('../files/overview.json')
+      hasLocalFile = true
     } catch (e) {
-      console.log(e);
-      hasLocalFile = false;
+      console.log(e)
+      hasLocalFile = false
     }
 
     // Loads file passed in query param, if any.
-    const queryParams = useRoute().query;
-    let queryFileURL = null;
+    const queryParams = useRoute().query
+    let queryFileURL = null
     if (typeof queryParams.file === 'string' && queryParams.file !== '') {
       try {
-        queryFileURL = new URL(queryParams.file);
+        queryFileURL = new URL(queryParams.file)
       } catch (e) {
         if (e instanceof TypeError) {
           console.warn(`Invalid URL '${queryParams.file}'`)
-          queryFileURL = null;
+          queryFileURL = null
         } else {
-          throw e;
+          throw e
         }
       }
     }
 
     const navigateToOverview = () => {
       router.push({
-        name: "OverviewView",
-      });
-    };
+        name: 'OverviewView'
+      })
+    }
     const navigateToComparisonView = (firstId: string, secondId: string) => {
       router.push({
-        name: "ComparisonView",
+        name: 'ComparisonView',
         params: {
           firstId,
-          secondId,
-        },
-      });
-    };
+          secondId
+        }
+      })
+    }
 
     const extractRootName = (filePath: path.ParsedPath) => {
-      const folders = filePath.dir.split("/");
-      return folders[0];
-    };
+      const folders = filePath.dir.split('/')
+      return folders[0]
+    }
     const extractSubmissionFileName = (filePath: path.ParsedPath) => {
-      const folders = filePath.dir.split("/");
-      const rootName = folders[0];
-      let submissionFolderIndex = -1;
-      if(rootName === "files") {
-        submissionFolderIndex = folders.findIndex(
-            (folder) => folder === "files"
-        );
-      }else {
-        submissionFolderIndex = folders.findIndex(
-            (folder) => folder === "submissions"
-        );
+      const folders = filePath.dir.split('/')
+      const rootName = folders[0]
+      let submissionFolderIndex = -1
+      if (rootName === 'files') {
+        submissionFolderIndex = folders.findIndex((folder) => folder === 'files')
+      } else {
+        submissionFolderIndex = folders.findIndex((folder) => folder === 'submissions')
       }
-      return folders[submissionFolderIndex + 1];
-    };
+      return folders[submissionFolderIndex + 1]
+    }
     const extractFileNameWithFullPath = (filePath: path.ParsedPath, originalFileName: string) => {
-      let fullPath = "";
-      const rootName = extractRootName(filePath);
-      const filesOrSubmissionsIndex_filePath = filePath.dir.indexOf(rootName ==="files" ? "files" : "submissions");
-      const filesOrSubmissionsIndex_originalFileName = originalFileName.indexOf(rootName === "files" ? "files" : "submissions");
-      const unixSubfolderPathAfterSubmissions = filePath.dir.substring(filesOrSubmissionsIndex_filePath + (rootName === "files" ? "files".length : "submissions".length) + 1);
-      const originalPathWithoutSubmissions = originalFileName.substring(filesOrSubmissionsIndex_originalFileName + (rootName === "files" ? "files".length : "submissions".length));
-      if(originalPathWithoutSubmissions.charAt(0)==='\\'){
-           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
-        }else {
-           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base);
-        }
-      return fullPath;
-    };
+      let fullPath = ''
+      const rootName = extractRootName(filePath)
+      const filesOrSubmissionsIndex_filePath = filePath.dir.indexOf(
+        rootName === 'files' ? 'files' : 'submissions'
+      )
+      const filesOrSubmissionsIndex_originalFileName = originalFileName.indexOf(
+        rootName === 'files' ? 'files' : 'submissions'
+      )
+      const unixSubfolderPathAfterSubmissions = filePath.dir.substring(
+        filesOrSubmissionsIndex_filePath +
+          (rootName === 'files' ? 'files'.length : 'submissions'.length) +
+          1
+      )
+      const originalPathWithoutSubmissions = originalFileName.substring(
+        filesOrSubmissionsIndex_originalFileName +
+          (rootName === 'files' ? 'files'.length : 'submissions'.length)
+      )
+      if (originalPathWithoutSubmissions.charAt(0) === '\\') {
+        fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll(
+          '/',
+          '\\'
+        )
+      } else {
+        fullPath = unixSubfolderPathAfterSubmissions + path.sep + filePath.base
+      }
+      return fullPath
+    }
     /**
      * Handles zip file on drop. It extracts the zip and saves each file in the store.
      * @param file
      */
     const handleZipFile = (file: Blob) => {
-      console.log("Start handling zip file and storing necessary data...")
+      console.log('Start handling zip file and storing necessary data...')
       return jszip.loadAsync(file).then(async (zip) => {
         for (const originalFileName of Object.keys(zip.files)) {
-          const unixFileName = slash(originalFileName);
+          const unixFileName = slash(originalFileName)
           if (
             /((.+\/)*)(files|submissions)\/(.+)\/(.+)/.test(unixFileName) &&
             !/^__MACOSX\//.test(unixFileName)
           ) {
-            const filePath = path.parse(unixFileName);
+            const filePath = path.parse(unixFileName)
 
-            const submissionFileName = extractSubmissionFileName(filePath);
-            const fullPathFileName = extractFileNameWithFullPath(filePath,originalFileName);
-            await zip.files[originalFileName].async("string").then((data) => {
-              store.commit("saveSubmissionFile", {
+            const submissionFileName = extractSubmissionFileName(filePath)
+            const fullPathFileName = extractFileNameWithFullPath(filePath, originalFileName)
+            await zip.files[originalFileName].async('string').then((data) => {
+              store.commit('saveSubmissionFile', {
                 name: submissionFileName,
-                file: { fileName: fullPathFileName, data: data },
-              });
-            });
+                file: { fileName: fullPathFileName, data: data }
+              })
+            })
           } else {
-            await zip.files[originalFileName].async("string").then((data) => {
-              store.commit("saveFile", { fileName: unixFileName, data: data });
-            });
+            await zip.files[originalFileName].async('string').then((data) => {
+              store.commit('saveFile', { fileName: unixFileName, data: data })
+            })
           }
         }
-        store.commit("setLoadingType", {
+        store.commit('setLoadingType', {
           local: false,
           zip: true,
           single: false,
-          fileString: "",
-        });
-        navigateToOverview();
-      });
-    };
+          fileString: ''
+        })
+        navigateToOverview()
+      })
+    }
     /**
      * Handles a json file on drop. It read the file and passes the file string to next window.
      * @param str
      */
     const handleJsonFile = (str: string) => {
-      let json = JSON.parse(str);
-      if (json["submission_folder_path"]) {
-        store.commit("setLoadingType", {
+      let json = JSON.parse(str)
+      if (json['submission_folder_path']) {
+        store.commit('setLoadingType', {
           local: false,
           zip: false,
           single: true,
-          fileString: str,
-        });
-        navigateToOverview();
-      } else if (json["id1"] && json["id2"]) {
-        store.commit("setLoadingType", {
+          fileString: str
+        })
+        navigateToOverview()
+      } else if (json['id1'] && json['id2']) {
+        store.commit('setLoadingType', {
           local: false,
           zip: false,
           single: true,
-          fileString: str,
-        });
-        navigateToComparisonView(json["id1"], json["id2"]);
+          fileString: str
+        })
+        navigateToComparisonView(json['id1'], json['id2'])
       } else {
-        throw new LoadError('Invalid JSON', json);
+        throw new LoadError('Invalid JSON', json)
       }
-    };
+    }
     const handleFile = (file: Blob) => {
       switch (file.type) {
-        case "application/zip":
-        case "application/zip-compressed":
-        case "application/x-zip-compressed":
-        case "application/x-zip":
-          return handleZipFile(file);
-        case "application/json":
-          return file.text().then(handleJsonFile);
+        case 'application/zip':
+        case 'application/zip-compressed':
+        case 'application/x-zip-compressed':
+        case 'application/x-zip':
+          return handleZipFile(file)
+        case 'application/json':
+          return file.text().then(handleJsonFile)
         default:
-          throw new LoadError(`Unknown MIME type '${file.type}'`);
+          throw new LoadError(`Unknown MIME type '${file.type}'`)
       }
     }
     /**
@@ -195,59 +203,59 @@ export default defineComponent({
      * @param e
      */
     const uploadFile = async (e: DragEvent) => {
-      let dropped = e.dataTransfer?.files;
+      let dropped = e.dataTransfer?.files
       try {
         if (dropped?.length === 1) {
-          await handleFile(dropped[0]);
+          await handleFile(dropped[0])
         } else {
-          throw new LoadError('Not exactly one file');
+          throw new LoadError('Not exactly one file')
         }
       } catch (e) {
         if (e instanceof LoadError) {
-          console.warn(e);
-          alert(e.message);
+          console.warn(e)
+          alert(e.message)
         } else {
-          throw e;
+          throw e
         }
       }
-    };
+    }
     const loadQueryFile = async (url: URL) => {
       try {
-        const response = await fetch(url);
+        const response = await fetch(url)
         if (!response.ok) {
-          throw new LoadError('Response not OK');
+          throw new LoadError('Response not OK')
         }
-        await handleFile(await response.blob());
+        await handleFile(await response.blob())
       } catch (e) {
-        console.warn(e);
-        alert(e);
+        console.warn(e)
+        alert(e)
       }
     }
     /**
      * Handles click on Continue with local files.
      */
     const continueWithLocal = () => {
-      store.commit("setLoadingType", {
+      store.commit('setLoadingType', {
         local: true,
         zip: false,
         single: false,
-        fileString: "",
-      });
-      navigateToOverview();
-    };
+        fileString: ''
+      })
+      navigateToOverview()
+    }
 
     if (queryFileURL !== null) {
-      loadQueryFile(queryFileURL);
+      loadQueryFile(queryFileURL)
     }
 
     return {
       continueWithLocal,
       uploadFile,
       hasLocalFile,
-      hasQueryFile: queryFileURL !== null,
-    };
-  },
-});
+      hasQueryFile: queryFileURL !== null
+    }
+  }
+})
 </script>
 
 <style scoped>

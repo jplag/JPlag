@@ -13,122 +13,77 @@
   </table>
 
   <DynamicScroller
-      v-if="topComparisons.length>0"
-      class="scroller"
-      :items="topComparisons"
-      :min-item-size="48"
+    v-if="topComparisons.length > 0"
+    class="scroller"
+    :items="topComparisons"
+    :min-item-size="48"
   >
     <template v-slot="{ item, index, active }">
       <DynamicScrollerItem
-          :item="item"
-          :active="active"
-          :size-dependencies="[
-          item.firstSubmissionId,
-          item.secondSubmissionId,
-        ]"
-          :data-index="index"
+        :item="item"
+        :active="active"
+        :size-dependencies="[item.firstSubmissionId, item.secondSubmissionId]"
+        :data-index="index"
       >
         <table class="inside-table">
-          <tr :class="{'selectableEven': item.id % 2 === 0, 'selectableOdd': item.id % 2 !== 0}">
+          <tr :class="{ selectableEven: item.id % 2 === 0, selectableOdd: item.id % 2 !== 0 }">
             <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                class="td1"
+              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
+              class="td1"
             >
               {{ item.id }}.
             </td>
             <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                :class="{
-          'anonymous-style': isAnonymous(item.firstSubmissionId),
-        }"
-                class="td2"
+              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
+              :class="{
+                'anonymous-style': isAnonymous(item.firstSubmissionId)
+              }"
+              class="td2"
             >
               {{
-                isAnonymous(item.firstSubmissionId)
-                    ? "Hidden"
-                    : displayName(item.firstSubmissionId)
+                isAnonymous(item.firstSubmissionId) ? 'Hidden' : displayName(item.firstSubmissionId)
               }}
             </td>
             <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                class="td3"
+              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
+              class="td3"
             >
               <img alt=">>" src="@/assets/double_arrow_black_18dp.svg" />
             </td>
             <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                :class="{
-          'anonymous-style': isAnonymous(item.secondSubmissionId),
-        }"
-                class="td4"
+              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
+              :class="{
+                'anonymous-style': isAnonymous(item.secondSubmissionId)
+              }"
+              class="td4"
             >
               {{
                 isAnonymous(item.secondSubmissionId)
-                    ? "Hidden"
-                    : displayName(item.secondSubmissionId)
+                  ? 'Hidden'
+                  : displayName(item.secondSubmissionId)
               }}
             </td>
             <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                class="td5"
+              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
+              class="td5"
             >
               {{ formattedMatchPercentage(item.similarity) }}
             </td>
             <td class="td6">
               <img
-                  v-if="
-            isInCluster(
-              item.firstSubmissionId,
-              item.secondSubmissionId
-            )
-          "
-                  alt=">>"
-                  src="@/assets/keyboard_double_arrow_down_black_18dp.svg"
-                  @click="toggleDialog(item.id-1)"
+                v-if="isInCluster(item.firstSubmissionId, item.secondSubmissionId)"
+                alt=">>"
+                src="@/assets/keyboard_double_arrow_down_black_18dp.svg"
+                @click="toggleDialog(item.id - 1)"
               />
             </td>
             <GDialog
-                v-if="
-          isInCluster(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                v-model="dialog[item.id-1]"
+              v-if="isInCluster(item.firstSubmissionId, item.secondSubmissionId)"
+              v-model="dialog[item.id - 1]"
             >
               <ClustersList
-                  :clusters="
-            getClustersFor(
-              item.firstSubmissionId,
-              item.secondSubmissionId
-            )
-          "
-                  :comparison="item"
+                :clusters="getClustersFor(item.firstSubmissionId, item.secondSubmissionId)"
+                :comparison="item"
               />
             </GDialog>
           </tr>
@@ -139,64 +94,58 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from "vue";
-import router from "@/router";
-import { GDialog } from "gitart-vue-dialog";
-import ClustersList from "@/components/ClustersList.vue";
-import { useStore } from "vuex";
-import { Cluster } from "@/model/Cluster";
-import { ComparisonListElement } from "@/model/ComparisonListElement";
-import { ClusterListElement } from "@/model/ClusterListElement";
+import { defineComponent, Ref, ref } from 'vue'
+import router from '@/router'
+import { GDialog } from 'gitart-vue-dialog'
+import ClustersList from '@/components/ClustersList.vue'
+import { useStore } from 'vuex'
+import { Cluster } from '@/model/Cluster'
+import { ComparisonListElement } from '@/model/ComparisonListElement'
+import { ClusterListElement } from '@/model/ClusterListElement'
 
 export default defineComponent({
-  name: "ComparisonsTable",
+  name: 'ComparisonsTable',
   components: { ClustersList, GDialog },
   props: {
     topComparisons: {
       type: Array<ComparisonListElement>,
-      required: true,
+      required: true
     },
     clusters: {
       type: Array<Cluster>,
-      required: true,
-    },
+      required: true
+    }
   },
   setup(props) {
-    const store = useStore();
-    let formattedMatchPercentage = (num: number) => (num * 100).toFixed(2);
-    const dialog: Ref<Array<boolean>> = ref([]);
-    props.topComparisons.forEach(() => dialog.value.push(false));
-    const displayName = (submissionId: string) =>
-      store.getters.submissionDisplayName(submissionId);
+    const store = useStore()
+    let formattedMatchPercentage = (num: number) => (num * 100).toFixed(2)
+    const dialog: Ref<Array<boolean>> = ref([])
+    props.topComparisons.forEach(() => dialog.value.push(false))
+    const displayName = (submissionId: string) => store.getters.submissionDisplayName(submissionId)
 
     const toggleDialog = (index: number) => {
-      dialog.value[index] = true;
-    };
+      dialog.value[index] = true
+    }
 
-    const navigateToComparisonView = (firstId : string, secondId: string) => {
+    const navigateToComparisonView = (firstId: string, secondId: string) => {
       if (!store.state.single) {
         router.push({
-          name: "ComparisonView",
-          params: { firstId, secondId },
-        });
+          name: 'ComparisonView',
+          params: { firstId, secondId }
+        })
       }
-    };
+    }
 
     const isInCluster = (id1: string, id2: string) => {
-      return props.clusters.some(
-        (c: Cluster) => c.members.includes(id1) && c.members.includes(id2)
-      );
-    };
+      return props.clusters.some((c: Cluster) => c.members.includes(id1) && c.members.includes(id2))
+    }
 
     const isAnonymous = (id: string) => {
-      return store.state.anonymous.has(id);
-    };
+      return store.state.anonymous.has(id)
+    }
 
-    const getParticipatingMatchesForId = (
-      id: string,
-      others: Array<string>
-    ) => {
-      let matches: Array<{ matchedWith: string; percentage: number }> = [];
+    const getParticipatingMatchesForId = (id: string, others: Array<string>) => {
+      let matches: Array<{ matchedWith: string; percentage: number }> = []
       props.topComparisons.forEach((comparison) => {
         if (
           comparison.firstSubmissionId.includes(id) &&
@@ -204,50 +153,42 @@ export default defineComponent({
         ) {
           matches.push({
             matchedWith: comparison.secondSubmissionId,
-            percentage: comparison.similarity,
-          });
+            percentage: comparison.similarity
+          })
         } else if (
           comparison.secondSubmissionId.includes(id) &&
           others.includes(comparison.firstSubmissionId)
         ) {
           matches.push({
             matchedWith: comparison.firstSubmissionId,
-            percentage: comparison.similarity,
-          });
+            percentage: comparison.similarity
+          })
         }
-      });
-      return matches;
-    };
+      })
+      return matches
+    }
 
-    const clustersWithParticipatingMatches: Array<ClusterListElement> =
-      props.clusters.map((cluster) => {
-        let membersArray = new Map<
-          string,
-          Array<{ matchedWith: string; percentage: number }>
-        >();
+    const clustersWithParticipatingMatches: Array<ClusterListElement> = props.clusters.map(
+      (cluster) => {
+        let membersArray = new Map<string, Array<{ matchedWith: string; percentage: number }>>()
         cluster.members.forEach((member: string) => {
-          let others = cluster.members.filter((m) => !m.includes(member));
-          membersArray.set(
-            member,
-            getParticipatingMatchesForId(member, others)
-          );
-        });
+          let others = cluster.members.filter((m) => !m.includes(member))
+          membersArray.set(member, getParticipatingMatchesForId(member, others))
+        })
 
         return {
           averageSimilarity: cluster.averageSimilarity,
           strength: cluster.strength,
-          members: membersArray,
-        };
-      });
+          members: membersArray
+        }
+      }
+    )
 
-    const getClustersFor = (
-      id1: string,
-      id2: string
-    ): Array<ClusterListElement> => {
+    const getClustersFor = (id1: string, id2: string): Array<ClusterListElement> => {
       return clustersWithParticipatingMatches.filter(
         (c) => c.members.has(id1) && c.members.has(id2)
-      );
-    };
+      )
+    }
 
     return {
       clustersWithParticipatingMatches,
@@ -259,14 +200,14 @@ export default defineComponent({
       toggleDialog,
       formattedMatchPercentage,
       navigateToComparisonView,
-      isInCluster,
-    };
-  },
-});
+      isInCluster
+    }
+  }
+})
 </script>
 
 <style scoped>
-.scroller{
+.scroller {
   height: 650px;
 }
 
@@ -301,20 +242,20 @@ td {
 .td2 {
   width: 18%;
   padding-left: 5%;
- }
+}
 
 .td3 {
-   width: 3%;
- }
+  width: 3%;
+}
 
 .td4 {
-   width: 18%;
-   padding-right: 5%;
- }
+  width: 18%;
+  padding-right: 5%;
+}
 
 .td5 {
-   width: 8%;
- }
+  width: 8%;
+}
 
 .td6 {
   width: 2%;
@@ -329,12 +270,12 @@ td {
   background: var(--primary-color-light);
 }
 
-.selectableEven{
+.selectableEven {
   background: var(--primary-color-light);
   cursor: pointer;
 }
 
-.selectableOdd{
+.selectableOdd {
   background: var(--secondary-color);
   cursor: pointer;
 }

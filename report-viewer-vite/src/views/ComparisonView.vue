@@ -15,10 +15,7 @@
       <div class="title-section">
         <h1>JPlag Comparison</h1>
         <button id="hide-button" title="Hide sidebar" @click="togglePanel">
-          <img
-            alt="hide"
-            src="@/assets/keyboard_double_arrow_left_black_24dp.svg"
-          />
+          <img alt="hide" src="@/assets/keyboard_double_arrow_left_black_24dp.svg" />
         </button>
       </div>
       <div>
@@ -68,35 +65,35 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from "vue";
-import { generateLineCodeLink } from "@/utils/Utils";
-import TextInformation from "@/components/TextInformation.vue";
-import MatchTable from "@/components/MatchTable.vue";
-import { ComparisonFactory } from "@/model/factories/ComparisonFactory";
-import FilesContainer from "@/components/FilesContainer.vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
-import { Match } from "@/model/Match";
-import {Comparison} from "@/model/Comparison";
+import { defineComponent, ref } from 'vue'
+import { generateLineCodeLink } from '@/utils/Utils'
+import TextInformation from '@/components/TextInformation.vue'
+import MatchTable from '@/components/MatchTable.vue'
+import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
+import FilesContainer from '@/components/FilesContainer.vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { Match } from '@/model/Match'
+import { Comparison } from '@/model/Comparison'
 
 export default defineComponent({
-  name: "ComparisonView",
+  name: 'ComparisonView',
   components: { FilesContainer, MatchTable, TextInformation },
   props: {
     firstId: {
       type: String,
-      required: true,
+      required: true
     },
     secondId: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   setup(props) {
-    const store = useStore();
-    const router = useRouter();
-    console.log("Generating comparison {%s} - {%s}...", props.firstId, props.secondId);
-    let comparison;
+    const store = useStore()
+    const router = useRouter()
+    console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
+    let comparison
     //getting the comparison file based on the used mode (zip, local, single)
     if (store.state.local) {
       try {
@@ -106,74 +103,71 @@ export default defineComponent({
             props.firstId,
             props.secondId
           )}.json`)
-        );
+        )
       } catch (exception) {
-        router.back();
+        router.back()
       }
     } else if (store.state.zip) {
       let comparisonFile = store.getters.getComparisonFileForSubmissions(
         props.firstId,
         props.secondId
-      );
+      )
       if (comparisonFile) {
-        comparison = ComparisonFactory.getComparison(
-          JSON.parse(comparisonFile)
-        );
+        comparison = ComparisonFactory.getComparison(JSON.parse(comparisonFile))
       } else {
-        console.log("Comparison file not found!");
+        console.log('Comparison file not found!')
         router.push({
-          name: "ErrorView",
+          name: 'ErrorView',
           state: {
-            message: "Comparison file not found!",
-            to: "/overview",
-            routerInfo: "back to overview page"
+            message: 'Comparison file not found!',
+            to: '/overview',
+            routerInfo: 'back to overview page'
           }
-        });
+        })
       }
     } else if (store.state.single) {
       try {
-        comparison = ComparisonFactory.getComparison(
-            JSON.parse(store.state.fileString)
-        );
-      }catch (e){
+        comparison = ComparisonFactory.getComparison(JSON.parse(store.state.fileString))
+      } catch (e) {
         router.push({
-          name: "ErrorView",
+          name: 'ErrorView',
           state: {
-            message: "Source code of matches not found. To only see the overview, please drop the overview.json directly.",
-            to: "/",
-            routerInfo: "back to FileUpload page"
+            message:
+              'Source code of matches not found. To only see the overview, please drop the overview.json directly.',
+            to: '/',
+            routerInfo: 'back to FileUpload page'
           }
-        });
-        store.commit("clearStore");
+        })
+        store.commit('clearStore')
       }
     }
     if (!comparison) {
-      comparison=new Comparison("","",0);
-      console.log("Unable to build comparison file.");
+      comparison = new Comparison('', '', 0)
+      console.log('Unable to build comparison file.')
     }
-    const filesOfFirst = ref(comparison.filesOfFirstSubmission);
-    const filesOfSecond = ref(comparison.filesOfSecondSubmission);
+    const filesOfFirst = ref(comparison.filesOfFirstSubmission)
+    const filesOfSecond = ref(comparison.filesOfSecondSubmission)
 
     /**
      * Collapses a file in the first files container.
      * @param title
      */
     const toggleCollapseFirst = (title: string) => {
-      const file = filesOfFirst.value.get(title);
+      const file = filesOfFirst.value.get(title)
       if (file) {
-        file.collapsed = !file.collapsed;
+        file.collapsed = !file.collapsed
       }
-    };
+    }
     /**
      * Collapses a file in the second files container.
      * @param title
      */
     const toggleCollapseSecond = (title: string) => {
-      const file = filesOfSecond.value.get(title);
+      const file = filesOfSecond.value.get(title)
       if (file) {
-        file.collapsed = !file.collapsed;
+        file.collapsed = !file.collapsed
       }
-    };
+    }
     /**
      * Shows a match in the first files container
      * @param e
@@ -181,19 +175,12 @@ export default defineComponent({
      * @param file
      * @param line
      */
-    const showMatchInFirst = (
-      e: unknown,
-      panel: number,
-      file: string,
-      line: number
-    ) => {
+    const showMatchInFirst = (e: unknown, panel: number, file: string, line: number) => {
       if (!filesOfFirst.value.get(file)?.collapsed) {
-        toggleCollapseFirst(file);
+        toggleCollapseFirst(file)
       }
-      document
-        .getElementById(generateLineCodeLink(panel, file, line))
-        ?.scrollIntoView();
-    };
+      document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
+    }
     /**
      * Shows a match in the second files container.
      * @param e
@@ -201,35 +188,28 @@ export default defineComponent({
      * @param file
      * @param line
      */
-    const showMatchInSecond = (
-      e: unknown,
-      panel: number,
-      file: string,
-      line: number
-    ) => {
+    const showMatchInSecond = (e: unknown, panel: number, file: string, line: number) => {
       if (!filesOfSecond.value.get(file)?.collapsed) {
-        toggleCollapseSecond(file);
+        toggleCollapseSecond(file)
       }
-      document
-        .getElementById(generateLineCodeLink(panel, file, line))
-        ?.scrollIntoView();
-    };
+      document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
+    }
 
     const showMatch = (e: unknown, match: Match) => {
-      showMatchInFirst(e, 1, match.firstFile, match.startInFirst);
-      showMatchInSecond(e, 2, match.secondFile, match.startInSecond);
-    };
+      showMatchInFirst(e, 1, match.firstFile, match.startInFirst)
+      showMatchInSecond(e, 2, match.secondFile, match.startInSecond)
+    }
 
-    const isAnonymous = (id: string) => store.state.anonymous.has(id);
+    const isAnonymous = (id: string) => store.state.anonymous.has(id)
     //Left panel
-    const hideLeftPanel = ref(false);
+    const hideLeftPanel = ref(false)
     const togglePanel = () => {
-      hideLeftPanel.value = !hideLeftPanel.value;
-    };
+      hideLeftPanel.value = !hideLeftPanel.value
+    }
 
     const back = () => {
-      router.back();
-    };
+      router.back()
+    }
 
     return {
       comparison,
@@ -245,10 +225,10 @@ export default defineComponent({
       showMatch,
       togglePanel,
       isAnonymous,
-      back,
-    };
-  },
-});
+      back
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -329,7 +309,7 @@ h1 {
   display: block;
 }
 
-.animated-back-button{
+.animated-back-button {
   float: right;
   height: 100%;
   position: relative;
@@ -342,22 +322,22 @@ h1 {
   transition: all ease 0.3s;
 }
 
-.animated-back-button::after{
+.animated-back-button::after {
   position: absolute;
   top: 50%;
   right: 0.6em;
   transform: translateY(-50%);
-  content: "«";
+  content: '«';
   font-size: 1.2em;
   transition: all ease 0.3s;
   opacity: 0;
 }
 
-.animated-back-button:hover{
+.animated-back-button:hover {
   padding: 20px 60px 20px 20px;
 }
 
-.animated-back-button:hover::after{
+.animated-back-button:hover::after {
   right: 1.2em;
   opacity: 1;
 }

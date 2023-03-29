@@ -2,20 +2,23 @@
   Container which display a single line of code of a file.
 -->
 <template>
-  <div :class="{'first-line' : isFirst, 'last-line' : isLast, 'visible' : visible}" :style="{background : color}"
-       class="line-wrap">
-    <pre :id="text" ref="lineRef" :class="{ 'match-line' : color !== '#ECECEC' }" class="java">{{ lineNumber }} {{
-        text
-      }}</pre>
+  <div
+    :class="{ 'first-line': isFirst, 'last-line': isLast, visible: visible }"
+    :style="{ background: color }"
+    class="line-wrap"
+  >
+    <pre :id="text" ref="lineRef" :class="{ 'match-line': color !== '#ECECEC' }" class="java"
+      >{{ lineNumber }} {{ text }}</pre
+    >
   </div>
 </template>
 
 <script>
-import {defineComponent, onUpdated, ref} from "vue";
-import hljs from 'highlight.js';
+import { defineComponent, onUpdated, ref } from 'vue'
+import hljs from 'highlight.js'
 
 export default defineComponent({
-  name: "LineOfCode",
+  name: 'LineOfCode',
   props: {
     /**
      * Indicates whether the line is shown on screen. Used for highlighting on demand.
@@ -36,13 +39,13 @@ export default defineComponent({
       required: true
     },
     fileIndex: {
-      type: Number,
+      type: Number
     },
     isFirst: {
-      type: Boolean,
+      type: Boolean
     },
     isLast: {
-      type: Boolean,
+      type: Boolean
     }
   },
 
@@ -82,10 +85,10 @@ code.hljs {
 
 .hljs {
   background: transparent !important;
-  font-family: "JetBrains Mono NL", serif !important;
-  font-weight: bold;    font-size: x-small !important;
+  font-family: 'JetBrains Mono NL', serif !important;
+  font-weight: bold;
+  font-size: x-small !important;
 }
-
 
 .first-line {
   margin-top: 2%;
@@ -102,5 +105,4 @@ code.hljs {
 .line-wrap {
   width: 200%;
 }
-
 </style>

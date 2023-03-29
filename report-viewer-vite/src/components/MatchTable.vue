@@ -15,9 +15,7 @@
       </tr>
       <tr
         v-for="(match, index) in matches"
-        :key="
-          String(index).concat(match.startInFirst).concat(match.startInSecond)
-        "
+        :key="String(index).concat(match.startInFirst).concat(match.startInSecond)"
         :style="{ background: match.color }"
         @click="$emit('matchSelected', $event, match)"
       >
@@ -40,45 +38,45 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import store from "@/store/store";
+import { defineComponent } from 'vue'
+import store from '@/store/store'
 
 export default defineComponent({
-  name: "MatchTable",
+  name: 'MatchTable',
   props: {
     /**
      * Matches of the comparison.
      * type: Array<Match>
      */
     matches: {
-      type: Array,
+      type: Array
     },
     /**
      * ID of first submission
      */
     id1: {
-      type: String,
+      type: String
     },
     /**
      * ID of second submission
      */
     id2: {
-      type: String,
-    },
+      type: String
+    }
   },
   setup(props) {
-  /**
-   * converts the submissionId to the name in the path of match.
-   * @param match
-   * @param submissionId
-   * @return new path of match
-   */
-    const convertSubmissionIdToName=(match: string, submissionId: string):string=>{
-      return match.replace(submissionId, store.getters.submissionDisplayName(submissionId));
-    };
-    return {convertSubmissionIdToName};
-  },
-});
+    /**
+     * converts the submissionId to the name in the path of match.
+     * @param match
+     * @param submissionId
+     * @return new path of match
+     */
+    const convertSubmissionIdToName = (match: string, submissionId: string): string => {
+      return match.replace(submissionId, store.getters.submissionDisplayName(submissionId))
+    }
+    return { convertSubmissionIdToName }
+  }
+})
 </script>
 
 <style scoped>

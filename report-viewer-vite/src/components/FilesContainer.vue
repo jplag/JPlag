@@ -23,15 +23,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import CodePanel from "../components/CodePanel.vue";
-import { VueDraggableNext } from "vue-draggable-next";
-import { SubmissionFile } from "@/model/SubmissionFile";
-import { MatchInSingleFile } from "@/model/MatchInSingleFile";
-import store from "@/store/store";
+import { defineComponent } from 'vue'
+import CodePanel from '../components/CodePanel.vue'
+import { VueDraggableNext } from 'vue-draggable-next'
+import { SubmissionFile } from '@/model/SubmissionFile'
+import { MatchInSingleFile } from '@/model/MatchInSingleFile'
+import store from '@/store/store'
 
 export default defineComponent({
-  name: "FilesContainer",
+  name: 'FilesContainer',
   components: { CodePanel, VueDraggableNext },
   props: {
     /**
@@ -39,51 +39,51 @@ export default defineComponent({
      */
     containerId: {
       type: Number,
-      required: true,
+      required: true
     },
     /**
      * Id of the submission to thich the files belong.
      */
     filesOwner: {
       type: String,
-      required: true,
+      required: true
     },
     /**
      * Default value of the submission to which the files belong.
      */
-    filesOwnerDefault:{
+    filesOwnerDefault: {
       type: String,
-      required: true,
+      required: true
     },
     /**
      * Files of the submission.
      * type: Array<SubmissionFile>
      */
     files: {
-      type: Map<string,SubmissionFile>,
-      required: true,
+      type: Map<string, SubmissionFile>,
+      required: true
     },
     /**
      * Matche of submission.
      */
     matches: {
-     type: Map<string,MatchInSingleFile[]>,
-      required: true,
+      type: Map<string, MatchInSingleFile[]>,
+      required: true
     },
     /**
      * Default value of the submission to which the files belong.
      */
-    submissionId:{
+    submissionId: {
       type: String,
-      required: true,
+      required: true
     },
     /**
      * The bool value of that whether id is hidden.
      */
-    anonymous:{
-      type:Boolean,
-      required: true,
-    },
+    anonymous: {
+      type: Boolean,
+      required: true
+    }
   },
 
   setup(props, { emit }) {
@@ -95,25 +95,27 @@ export default defineComponent({
      * @param line
      */
     const lineSelected = (e: unknown, index: number, file: string, line: number) => {
-      emit("lineSelected", e, index, file, line);
-    };
+      emit('lineSelected', e, index, file, line)
+    }
     /**
      * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.
      * @param match
      * @param submissionId
      * @return new path of file
      */
-    const convertSubmissionIdToName=(file: string, submissionId: string):string => {
-      const filePath = file.replace(submissionId, store.getters.submissionDisplayName(submissionId));
-      const filePathLength = filePath.length;
-      return filePathLength > 40 ? ".." + filePath.substring(filePathLength - 40, filePathLength) : filePath;
-    };
+    const convertSubmissionIdToName = (file: string, submissionId: string): string => {
+      const filePath = file.replace(submissionId, store.getters.submissionDisplayName(submissionId))
+      const filePathLength = filePath.length
+      return filePathLength > 40
+        ? '..' + filePath.substring(filePathLength - 40, filePathLength)
+        : filePath
+    }
     return {
       lineSelected,
-      convertSubmissionIdToName,
-    };
-  },
-});
+      convertSubmissionIdToName
+    }
+  }
+})
 </script>
 
 <style scoped>
