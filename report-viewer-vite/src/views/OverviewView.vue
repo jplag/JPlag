@@ -25,17 +25,20 @@
         >
           <p v-for="info in overview.fileExtensions" :key="info">{{ info }}</p>
         </TextInformation>
-        <TextInformation :value="overview.matchSensitivity" label="Match Sensitivity" />
+        <TextInformation :value="overview.matchSensitivity.toString()" label="Match Sensitivity" />
         <TextInformation
           :has-additional-info="true"
-          :value="store.getters.getSubmissionIds.size"
+          :value="store().getSubmissionIds.length.toString()"
           additional-info-title="Submission IDs:"
           label="Submissions"
         >
-          <IDsList :ids="store.getters.getSubmissionIds" @id-sent="handleId" />
+          <IDsList :ids="store().getSubmissionIds" @id-sent="handleId" />
         </TextInformation>
         <TextInformation :value="overview.dateOfExecution" label="Date of execution" />
-        <TextInformation :value="overview.durationOfExecution" label="Duration (in ms)" />
+        <TextInformation
+          :value="overview.durationOfExecution.toString()"
+          label="Duration (in ms)"
+        />
       </div>
       <div id="logo-section">
         <img id="logo" alt="JPlag" src="@/assets/logo-nobg.png" />
@@ -79,7 +82,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onErrorCaptured, Ref, ref } from 'vue'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import type { Ref } from 'vue'
+
+import { computed, defineComponent, onErrorCaptured, ref } from 'vue'
 import router from '@/router'
 import TextInformation from '../components/TextInformation.vue'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
@@ -87,9 +93,8 @@ import MetricButton from '@/components/MetricButton.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import IDsList from '@/components/IDsList.vue'
-import { useStore } from 'vuex'
 import { Overview } from '@/model/Overview'
-import { ComparisonListElement } from '@/model/ComparisonListElement'
+import store from '@/stores/store'
 
 export default defineComponent({
   name: 'OverviewView',
@@ -101,27 +106,24 @@ export default defineComponent({
     TextInformation
   },
   setup() {
-    const store = useStore()
     const overviewFile = computed(() => {
       console.log('Start finding overview.json in state...')
-      const index = Object.keys(store.state.files).find((name) => name.endsWith('overview.json'))
-      return index != undefined
-        ? store.state.files[index]
-        : console.log('Could not find overview.json')
+      const index = Object.keys(store().files).find((name) => name.endsWith('overview.json'))
+      return index != undefined ? store().files[index] : console.log('Could not find overview.json')
     })
 
     const getOverview = (): Overview => {
       console.log('Generating overview...')
       let temp!: Overview
       //Gets the overview file based on the used mode (zip, local, single).
-      if (store.state.local) {
+      if (store().local) {
         try {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
           temp = OverviewFactory.getOverview(require('../files/overview.json'))
         } catch (e) {
           router.back()
         }
-      } else if (store.state.zip) {
+      } else if (store().zip) {
         if (overviewFile.value === undefined) {
           return new Overview(
             [],
@@ -139,8 +141,8 @@ export default defineComponent({
         }
         const overviewJson = JSON.parse(overviewFile.value)
         temp = OverviewFactory.getOverview(overviewJson)
-      } else if (store.state.single) {
-        temp = OverviewFactory.getOverview(JSON.parse(store.state.fileString))
+      } else if (store().single) {
+        temp = OverviewFactory.getOverview(JSON.parse(store().fileString))
       }
       return temp
     }
@@ -154,23 +156,20 @@ export default defineComponent({
      * @param ids
      */
     const handleId = (ids: Array<string>) => {
-      if (ids.length === store.getters.getSubmissionIds.length) {
-        if (store.state.anonymous.size > 0) {
-          store.commit('resetAnonymous')
+      if (ids.length === store().getSubmissionIds.length) {
+        if (store().anonymous.size > 0) {
+          store().resetAnonymous()
         } else {
-          store.commit('addAnonymous', ids)
+          store().addAnonymous(ids)
         }
       } else {
-        if (store.state.anonymous.has(ids[0])) {
-          store.commit('removeAnonymous', ids)
+        if (store().anonymous.has(ids[0])) {
+          store().removeAnonymous(ids)
         } else {
-          if (store.state.anonymous.size === 0) {
-            store.commit(
-              'addAnonymous',
-              store.getters.getSubmissionIds.filter((s: string) => s !== ids[0])
-            )
+          if (store().anonymous.size === 0) {
+            store().addAnonymous(store().getSubmissionIds.filter((s: string) => s !== ids[0]))
           } else {
-            store.commit('addAnonymous', ids)
+            store().addAnonymous(ids)
           }
         }
       }
@@ -223,7 +222,7 @@ export default defineComponent({
           routerInfo: 'back to FileUpload page'
         }
       })
-      store.commit('clearStore')
+      store().clearStore()
       return false
     })
 

@@ -101,8 +101,8 @@ code.hljs {
   box-shadow: #777777 0 3px 3px;
 }
 
-.match-line {
-}
+/*.match-line {
+}*/
 
 .line-wrap {
   width: 200%;

@@ -27,7 +27,7 @@ import { defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import jszip from 'jszip'
 import router from '@/router'
-import store from '@/store/store'
+import store from '@/stores/store'
 import path from 'path'
 import slash from 'slash'
 
@@ -36,10 +36,11 @@ class LoadError extends Error {}
 export default defineComponent({
   name: 'FileUploadView',
   setup() {
-    store.commit('clearStore')
+    store().clearStore()
     let hasLocalFile
     //Tries to detect local file. If no files detected, hides local mode from screen.
     try {
+      // eslint-disable-next-line no-undef
       require('../files/overview.json')
       hasLocalFile = true
     } catch (e) {
@@ -112,10 +113,10 @@ export default defineComponent({
           (rootName === 'files' ? 'files'.length : 'submissions'.length)
       )
       if (originalPathWithoutSubmissions.charAt(0) === '\\') {
-        fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll(
-          '/',
-          '\\'
-        )
+        fullPath = unixSubfolderPathAfterSubmissions + path.sep + filePath.base
+        while (fullPath.includes('/')) {
+          fullPath = fullPath.replace('/', '\\')
+        }
       } else {
         fullPath = unixSubfolderPathAfterSubmissions + path.sep + filePath.base
       }
@@ -139,18 +140,18 @@ export default defineComponent({
             const submissionFileName = extractSubmissionFileName(filePath)
             const fullPathFileName = extractFileNameWithFullPath(filePath, originalFileName)
             await zip.files[originalFileName].async('string').then((data) => {
-              store.commit('saveSubmissionFile', {
+              store().saveSubmissionFile({
                 name: submissionFileName,
                 file: { fileName: fullPathFileName, data: data }
               })
             })
           } else {
             await zip.files[originalFileName].async('string').then((data) => {
-              store.commit('saveFile', { fileName: unixFileName, data: data })
+              store().saveFile({ fileName: unixFileName, data: data })
             })
           }
         }
-        store.commit('setLoadingType', {
+        store().setLoadingType({
           local: false,
           zip: true,
           single: false,
@@ -166,7 +167,7 @@ export default defineComponent({
     const handleJsonFile = (str: string) => {
       let json = JSON.parse(str)
       if (json['submission_folder_path']) {
-        store.commit('setLoadingType', {
+        store().setLoadingType({
           local: false,
           zip: false,
           single: true,
@@ -174,7 +175,7 @@ export default defineComponent({
         })
         navigateToOverview()
       } else if (json['id1'] && json['id2']) {
-        store.commit('setLoadingType', {
+        store().setLoadingType({
           local: false,
           zip: false,
           single: true,
@@ -182,7 +183,7 @@ export default defineComponent({
         })
         navigateToComparisonView(json['id1'], json['id2'])
       } else {
-        throw new LoadError('Invalid JSON', json)
+        throw new LoadError(`Invalid JSON: ${json}`)
       }
     }
     const handleFile = (file: Blob) => {
@@ -235,7 +236,7 @@ export default defineComponent({
      * Handles click on Continue with local files.
      */
     const continueWithLocal = () => {
-      store.commit('setLoadingType', {
+      store().setLoadingType({
         local: true,
         zip: false,
         single: false,

@@ -23,12 +23,12 @@
       </div>
       <TextInformation
         :anonymous="isAnonymous(firstId)"
-        :value="store.getters.submissionDisplayName(firstId)"
+        :value="store().submissionDisplayName(firstId) || ''"
         label="Submission 1"
       />
       <TextInformation
-        :anonymous="store.state.anonymous.has(secondId)"
-        :value="store.getters.submissionDisplayName(secondId)"
+        :anonymous="store().anonymous.has(secondId)"
+        :value="store().submissionDisplayName(secondId) || ''"
         label="Submission 2"
       />
       <TextInformation :value="(comparison.similarity * 100).toFixed(2)" label="Match %" />
@@ -44,8 +44,8 @@
       :submission-id="firstId"
       :files="filesOfFirst"
       :matches="comparison.matchesInFirstSubmission"
-      :files-owner="store.getters.submissionDisplayName(firstId)"
-      :anonymous="store.state.anonymous.has(firstId)"
+      :files-owner="store().submissionDisplayName(firstId) || ''"
+      :anonymous="store().anonymous.has(firstId)"
       files-owner-default="submission 1"
       @toggle-collapse="toggleCollapseFirst"
       @line-selected="showMatchInSecond"
@@ -55,8 +55,8 @@
       :submission-id="secondId"
       :files="filesOfSecond"
       :matches="comparison.matchesInSecondSubmissions"
-      :files-owner="store.getters.submissionDisplayName(secondId)"
-      :anonymous="store.state.anonymous.has(secondId)"
+      :files-owner="store().submissionDisplayName(secondId) || ''"
+      :anonymous="store().anonymous.has(secondId) || false"
       files-owner-default="submission 2"
       @toggle-collapse="toggleCollapseSecond"
       @line-selected="showMatchInFirst"
@@ -65,16 +65,17 @@
 </template>
 
 <script lang="ts">
+import type { Match } from '@/model/Match'
+
 import { defineComponent, ref } from 'vue'
 import { generateLineCodeLink } from '@/utils/Utils'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchTable from '@/components/MatchTable.vue'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import { Match } from '@/model/Match'
 import { Comparison } from '@/model/Comparison'
+import store from '@/stores/store'
 
 export default defineComponent({
   name: 'ComparisonView',
@@ -90,28 +91,21 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const store = useStore()
     const router = useRouter()
     console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
     let comparison
     //getting the comparison file based on the used mode (zip, local, single)
-    if (store.state.local) {
+    if (store().local) {
       try {
         comparison = ComparisonFactory.getComparison(
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require(`../files/${store.getters.getComparisonFileName(
-            props.firstId,
-            props.secondId
-          )}.json`)
+          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+          require(`../files/${store().getComparisonFileName(props.firstId, props.secondId)}.json`)
         )
       } catch (exception) {
         router.back()
       }
-    } else if (store.state.zip) {
-      let comparisonFile = store.getters.getComparisonFileForSubmissions(
-        props.firstId,
-        props.secondId
-      )
+    } else if (store().zip) {
+      let comparisonFile = store().getComparisonFileForSubmissions(props.firstId, props.secondId)
       if (comparisonFile) {
         comparison = ComparisonFactory.getComparison(JSON.parse(comparisonFile))
       } else {
@@ -125,9 +119,9 @@ export default defineComponent({
           }
         })
       }
-    } else if (store.state.single) {
+    } else if (store().single) {
       try {
-        comparison = ComparisonFactory.getComparison(JSON.parse(store.state.fileString))
+        comparison = ComparisonFactory.getComparison(JSON.parse(store().fileString))
       } catch (e) {
         router.push({
           name: 'ErrorView',
@@ -138,7 +132,7 @@ export default defineComponent({
             routerInfo: 'back to FileUpload page'
           }
         })
-        store.commit('clearStore')
+        store().clearStore()
       }
     }
     if (!comparison) {
@@ -200,7 +194,7 @@ export default defineComponent({
       showMatchInSecond(e, 2, match.secondFile, match.startInSecond)
     }
 
-    const isAnonymous = (id: string) => store.state.anonymous.has(id)
+    const isAnonymous = (id: string) => store().anonymous.has(id)
     //Left panel
     const hideLeftPanel = ref(false)
     const togglePanel = () => {

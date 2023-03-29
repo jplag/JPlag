@@ -43,7 +43,7 @@ const store = defineStore('store', {
     clearStore() {
       this.$reset()
     },
-    addAnonymous(id: string) {
+    addAnonymous(id: string[]) {
       for (let i = 0; i < id.length; i++) {
         this.anonymous.add(id[i])
       }
@@ -51,7 +51,7 @@ const store = defineStore('store', {
     saveComparisonFileLookup(map: Map<string, Map<string, string>>) {
       this.submissionIdsToComparisonFileName = map
     },
-    removeAnonymous(id: string) {
+    removeAnonymous(id: string[]) {
       for (let i = 0; i < id.length; i++) {
         this.anonymous.delete(id[i])
       }
