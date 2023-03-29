@@ -14,8 +14,21 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "pinia": "^2.0.32",
     "vue": "^3.2.47",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "@highlightjs/vue-plugin": "^2.1.0",
+    "chart.js": "^3.9.1",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "core-js": "^3.29.1",
+    "gitart-vue-dialog": "^2.4.1",
+    "highlight.js": "^11.7.0",
+    "jszip": "^3.10.0",
+    "slash": "^5.0.0",
+    "vue-chart-3": "^3.1.8",
+    "vue-draggable-next": "^2.1.1",
+    "vue-virtual-scroller": "^2.0.0-beta.8",
+    "vue3-highlightjs": "^1.0.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.31.1",
