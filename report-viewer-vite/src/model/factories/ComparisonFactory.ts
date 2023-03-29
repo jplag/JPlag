@@ -1,13 +1,13 @@
 import { Comparison } from '../Comparison'
-import { Match } from '../Match'
-import { SubmissionFile } from '../SubmissionFile'
-import { MatchInSingleFile } from '../MatchInSingleFile'
-import store from '@/store/store'
+import type { Match } from '../Match'
+import type { SubmissionFile } from '../SubmissionFile'
+import type { MatchInSingleFile } from '../MatchInSingleFile'
+import store from '@/stores/store'
 
 export class ComparisonFactory {
   static getComparison(json: Record<string, unknown>): Comparison {
-    const filesOfFirstSubmission = store.getters.filesOfSubmission(json.id1)
-    const filesOfSecondSubmission = store.getters.filesOfSubmission(json.id2)
+    const filesOfFirstSubmission = store().filesOfSubmission(json.id1 as string)
+    const filesOfSecondSubmission = store().filesOfSubmission(json.id2 as string)
 
     const filesOfFirstConverted = this.convertToFilesByName(filesOfFirstSubmission)
     const filesOfSecondConverted = this.convertToFilesByName(filesOfSecondSubmission)

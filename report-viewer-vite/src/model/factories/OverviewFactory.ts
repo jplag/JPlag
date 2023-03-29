@@ -1,10 +1,10 @@
 import { Overview } from '../Overview'
-import { Metric } from '../Metric'
-import { ComparisonListElement } from '../ComparisonListElement'
-import { Cluster } from '@/model/Cluster'
-import store from '@/store/store'
-import { Version } from '../Version'
-import versionJson from '../../version.json'
+import type { Metric } from '../Metric'
+import type { ComparisonListElement } from '../ComparisonListElement'
+import type { Cluster } from '@/model/Cluster'
+import store from '@/stores/store'
+import type { Version } from '../Version'
+import versionJson from '@/version.json'
 
 export class OverviewFactory {
   static reportViewerVersion: Version =
@@ -57,7 +57,7 @@ export class OverviewFactory {
         description: metric.description as string
       })
     })
-    store.commit('saveSubmissionNames', map)
+    store().saveSubmissionNames(map)
     if (json.clusters) {
       ;(json.clusters as Array<unknown>).forEach((jsonCluster) => {
         const cluster = jsonCluster as Record<string, unknown>
@@ -147,6 +147,6 @@ export class OverviewFactory {
       comparisonMap.set(key as string, new Map(Object.entries(value as object)))
     }
 
-    store.commit('saveComparisonFileLookup', comparisonMap)
+    store().saveComparisonFileLookup(comparisonMap)
   }
 }

@@ -1,6 +1,6 @@
-import { Match } from './Match'
-import { SubmissionFile } from './SubmissionFile'
-import { MatchInSingleFile } from './MatchInSingleFile'
+import type { Match } from './Match'
+import type { SubmissionFile } from './SubmissionFile'
+import type { MatchInSingleFile } from './MatchInSingleFile'
 
 /**
  * Comparison model used by the ComparisonView

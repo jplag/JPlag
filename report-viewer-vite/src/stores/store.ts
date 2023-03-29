@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { State, SubmissionFile, File, LoadConfiguration } from './state'
 
-export const store = defineStore('store', {
+const store = defineStore('store', {
   state: (): State => ({
     submissionIdsToComparisonFileName: new Map<string, Map<string, string>>(),
     anonymous: new Set(),
@@ -82,3 +82,5 @@ export const store = defineStore('store', {
     }
   }
 })
+
+export default store

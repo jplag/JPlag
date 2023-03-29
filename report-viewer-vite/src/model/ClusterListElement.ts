@@ -4,4 +4,4 @@ type ClusterListElement = {
   members: ClusterListElementMember
 }
 type ClusterListElementMember = Map<string, Array<{ matchedWith: string; percentage: number }>>
-export { ClusterListElement, ClusterListElementMember }
+export type { ClusterListElement, ClusterListElementMember }

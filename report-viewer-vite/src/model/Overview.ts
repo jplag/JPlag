@@ -1,5 +1,5 @@
-import { Metric } from './Metric'
-import { Cluster } from '@/model/Cluster'
+import type { Metric } from './Metric'
+import type { Cluster } from '@/model/Cluster'
 
 export class Overview {
   private readonly _submissionFolderPath: Array<string>

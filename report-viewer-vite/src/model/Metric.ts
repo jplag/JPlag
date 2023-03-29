@@ -1,4 +1,4 @@
-import { ComparisonListElement } from './ComparisonListElement'
+import type { ComparisonListElement } from './ComparisonListElement'
 
 /**
  * Metric used in the Jplag Comparison
