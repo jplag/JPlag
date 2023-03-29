@@ -48,7 +48,7 @@
     "jest-environment-jsdom": "^29.5.0",
     "jest-transform-stub": "^2.0.0",
     "lint-staged": "^13.2.0",
-    "prettier": "^2.8.6",
+    "prettier": "^2.8.7",
     "ts-jest": "^29.0.5",
     "typescript": "~5.0.2"
   },
