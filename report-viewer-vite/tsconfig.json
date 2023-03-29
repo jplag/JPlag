@@ -1,4 +1,8 @@
 {
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "strict": true
+  },
   "files": [],
   "references": [
     {
