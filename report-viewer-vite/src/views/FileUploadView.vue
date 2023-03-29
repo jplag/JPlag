@@ -40,7 +40,6 @@ export default defineComponent({
     let hasLocalFile
     //Tries to detect local file. If no files detected, hides local mode from screen.
     try {
-      // eslint-disable-next-line no-undef
       require('../files/overview.json')
       hasLocalFile = true
     } catch (e) {

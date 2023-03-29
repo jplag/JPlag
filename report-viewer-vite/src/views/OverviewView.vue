@@ -118,7 +118,6 @@ export default defineComponent({
       //Gets the overview file based on the used mode (zip, local, single).
       if (store().local) {
         try {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
           temp = OverviewFactory.getOverview(require('../files/overview.json'))
         } catch (e) {
           router.back()

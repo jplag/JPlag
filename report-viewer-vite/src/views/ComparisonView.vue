@@ -98,7 +98,6 @@ export default defineComponent({
     if (store().local) {
       try {
         comparison = ComparisonFactory.getComparison(
-          // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
           require(`../files/${store().getComparisonFileName(props.firstId, props.secondId)}.json`)
         )
       } catch (exception) {
