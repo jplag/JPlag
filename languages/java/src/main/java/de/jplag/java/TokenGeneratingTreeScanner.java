@@ -255,16 +255,25 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Object, Object> {
     @Override
     public Object visitIf(IfTree node, Object p) {
         long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node) - 1;
+
         addToken(JavaTokenType.J_IF_BEGIN, start, 2);
         scan(node.getCondition(), p);
         scan(node.getThenStatement(), p);
+        long end = positions.getEndPosition(ast, node.getThenStatement()) - 1;
+        addToken(JavaTokenType.J_IF_END, end, 1);
+        boolean isElseOnly = false;
         if (node.getElseStatement() != null) {
-            start = positions.getStartPosition(ast, node.getElseStatement());
-            addToken(JavaTokenType.J_ELSE, start, 4);
+            isElseOnly = node.getElseStatement().getKind() != Tree.Kind.IF;
+            if (isElseOnly) {
+                start = positions.getStartPosition(ast, node.getElseStatement());
+                addToken(JavaTokenType.J_IF_BEGIN, start, 4);
+            }
         }
         scan(node.getElseStatement(), p);
-        addToken(JavaTokenType.J_IF_END, end, 1);
+        if (isElseOnly) {
+            end = positions.getEndPosition(ast, node) - 1;
+            addToken(JavaTokenType.J_IF_END, end, 1);
+        }
         return null;
     }
 
