@@ -1,5 +1,6 @@
 package de.jplag.normalization;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class NormalizationGraph {
         PriorityQueue<Statement> roots = graph.vertexSet().stream() //
                 .filter(v -> !Graphs.vertexHasPredecessors(graph, v)) //
                 .collect(Collectors.toCollection(PriorityQueue::new));
-        List<Token> tokens = new LinkedList<>();
+        List<Token> tokens = new ArrayList<>();
         while (!roots.isEmpty()) {
             PriorityQueue<Statement> newRoots = new PriorityQueue<>();
             do {
