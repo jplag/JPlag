@@ -2,6 +2,7 @@ package de.jplag.reporting.jsonfactory;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -92,12 +93,15 @@ public class ComparisonReportWriter {
     }
 
     private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
-        List<Token> tokensFirst = comparison.firstSubmission().getTokenList();
-        List<Token> tokensSecond = comparison.secondSubmission().getTokenList();
-        Token startOfFirst = tokensFirst.get(match.startOfFirst());
-        Token endOfFirst = tokensFirst.get(match.startOfFirst() + match.length() - 1);
-        Token startOfSecond = tokensSecond.get(match.startOfSecond());
-        Token endOfSecond = tokensSecond.get(match.startOfSecond() + match.length() - 1);
+        List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
+        List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
+
+        Comparator<? super Token> lineComparator = (first, second) -> first.getLine() - second.getLine();
+
+        Token startOfFirst = tokensFirst.stream().min(lineComparator).orElseThrow();
+        Token endOfFirst = tokensFirst.stream().max(lineComparator).orElseThrow();
+        Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
+        Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
         return new Match(relativizedFilePath(startOfFirst.getFile(), comparison.firstSubmission()),
                 relativizedFilePath(startOfSecond.getFile(), comparison.secondSubmission()), startOfFirst.getLine(), endOfFirst.getLine(),
@@ -106,7 +110,7 @@ public class ComparisonReportWriter {
 
     private String relativizedFilePath(File file, Submission submission) {
         if (file.toPath().equals(submission.getRoot().toPath())) {
-            return Path.of(submissionToIdFunction.apply(submission), submission.getName()).toString();
+            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission)).toString();
         }
         return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString()).toString();
     }

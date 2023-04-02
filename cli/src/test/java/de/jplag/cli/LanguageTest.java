@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.Language;
@@ -29,7 +28,7 @@ class LanguageTest extends CommandLineInterfaceTest {
     @Test
     void testLoading() {
         var languages = LanguageLoader.getAllAvailableLanguages();
-        Assertions.assertEquals(13, languages.size(), "Loaded Languages: " + languages.keySet());
+        assertEquals(14, languages.size(), "Loaded Languages: " + languages.keySet());
     }
 
     @Test
