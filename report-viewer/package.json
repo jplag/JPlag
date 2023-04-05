@@ -50,7 +50,7 @@
     "lint-staged": "^13.2.0",
     "prettier": "^2.8.7",
     "ts-jest": "^29.0.5",
-    "typescript": "~5.0.2"
+    "typescript": "~5.0.3"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
