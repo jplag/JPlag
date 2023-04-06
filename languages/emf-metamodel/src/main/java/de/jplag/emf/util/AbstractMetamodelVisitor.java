@@ -1,6 +1,7 @@
 package de.jplag.emf.util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
@@ -19,6 +20,8 @@ import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypeParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Visitor for the containment tree of an EMF Metamodel.
@@ -27,12 +30,15 @@ import org.eclipse.emf.ecore.ETypeParameter;
 public abstract class AbstractMetamodelVisitor {
 
     private final boolean sortContainmentsByType;
+    private Logger logger;
 
     protected AbstractMetamodelVisitor(boolean sortContainmentsByType) {
         this.sortContainmentsByType = sortContainmentsByType;
+        this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
     private int currentTreeDepth;
+    private EClassVectorGenerator generator;
 
     /**
      * Returns the current depth in the containment tree from the starting point.
@@ -48,6 +54,18 @@ public abstract class AbstractMetamodelVisitor {
      * @param eObject is the EObject to visit.
      */
     public final void visit(EObject eObject) {
+
+        if (sortContainmentsByType) {
+            // Set<EClass> allObjects = new HashSet<>();
+            // allObjects.add(eObject.eClass());
+            // eObject.eAllContents().forEachRemaining(it -> allObjects.add(it.eClass()));
+            List<EObject> allObjects = new ArrayList<>();
+            allObjects.add(eObject);
+            eObject.eAllContents().forEachRemaining(it -> allObjects.add(it));
+            generator = new EClassVectorGenerator(allObjects);
+            // EClassVectorGenerator.add(allObjects);
+        }
+
         visitEObject(eObject);
         if (eObject instanceof EPackage ePackage) {
             visitEPackage(ePackage);
@@ -100,7 +118,10 @@ public abstract class AbstractMetamodelVisitor {
 
         var children = new ArrayList<>(eObject.eContents());
         if (sortContainmentsByType) {
-            children.sort((first, second) -> first.eClass().getName().compareTo(second.eClass().getName()));
+            // children.sort((first, second) -> first.eClass().getName().compareTo(second.eClass().getName()));
+            children.sort(new EObjectComparator(generator, children));
+            logger.error("SORTED: " + eObject.eContents());
+            logger.error("TO    : " + children);
         }
 
         currentTreeDepth++;
