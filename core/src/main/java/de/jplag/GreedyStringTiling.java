@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import de.jplag.options.JPlagOptions;
 
@@ -103,11 +101,11 @@ public class GreedyStringTiling {
             return new JPlagComparison(leftSubmission, rightSubmission, List.of());
         }
 
-        Set<Integer> leftMarkedIndexes = initiallyMarkedTokenIndexes(leftSubmission);
-        Set<Integer> rightMarkedIndexes = initiallyMarkedTokenIndexes(rightSubmission);
+        boolean[] leftMarked = calculateInitiallyMarked(leftSubmission);
+        boolean[] rightMarked = calculateInitiallyMarked(rightSubmission);
 
-        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarkedIndexes);
-        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarkedIndexes);
+        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarked);
+        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarked);
 
         int maximumMatchLength;
         List<Match> globalMatches = new ArrayList<>();
@@ -116,19 +114,19 @@ public class GreedyStringTiling {
             List<Match> iterationMatches = new ArrayList<>();
             for (int leftStartIndex = 0; leftStartIndex < leftValues.length - maximumMatchLength; leftStartIndex++) {
                 int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(leftStartIndex);
-                if (leftMarkedIndexes.contains(leftStartIndex) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
+                if (leftMarked[leftStartIndex] || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
                     continue;
                 }
                 List<Integer> possiblyMatchingRightStartIndexes = rightLookupTable
                         .startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
                 for (Integer rightStartIndex : possiblyMatchingRightStartIndexes) {
                     // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
-                    if (rightMarkedIndexes.contains(rightStartIndex) || maximumMatchLength >= rightValues.length - rightStartIndex) {
+                    if (rightMarked[rightStartIndex] || maximumMatchLength >= rightValues.length - rightStartIndex) {
                         continue;
                     }
 
-                    int subsequenceMatchLength = maximalMatchingSubsequenceLengthNotMarked(leftValues, leftStartIndex, leftMarkedIndexes, rightValues,
-                            rightStartIndex, rightMarkedIndexes, maximumMatchLength);
+                    int subsequenceMatchLength = maximalMatchingSubsequenceLengthNotMarked(leftValues, leftStartIndex, leftMarked, rightValues,
+                            rightStartIndex, rightMarked, maximumMatchLength);
                     if (subsequenceMatchLength >= maximumMatchLength) {
                         if (subsequenceMatchLength > maximumMatchLength) {
                             iterationMatches.clear();
@@ -144,8 +142,8 @@ public class GreedyStringTiling {
                 int leftStartIndex = match.startOfFirst();
                 int rightStartIndex = match.startOfSecond();
                 for (int offset = 0; offset < match.length(); offset++) {
-                    leftMarkedIndexes.add(leftStartIndex + offset);
-                    rightMarkedIndexes.add(rightStartIndex + offset);
+                    leftMarked[leftStartIndex + offset] = true;
+                    rightMarked[rightStartIndex + offset] = true;
                 }
             }
         } while (maximumMatchLength != minimumMatchLength);
@@ -158,27 +156,26 @@ public class GreedyStringTiling {
      * the assumption that the further tokens are away, the more likely they differ.
      * @param leftValues The list of left values.
      * @param leftStartIndex The start index in the left list.
-     * @param leftMarkedIndexes The marked indexes of the left list.
+     * @param leftMarked Which left values are marked.
      * @param rightValues The list of right values.
      * @param rightStartIndex The start index in the right list.
-     * @param rightMarkedIndexes The marked indexes of the right list.
+     * @param rightMarked Which right values are marked.
      * @param minimumSequenceLength The minimal sequence length for a matching subsequence. Must be not negative.
      * @return the maximal matching subsequence length, or 0 if there is no subsequence of at least the minimum sequence
      * length.
      */
-    private int maximalMatchingSubsequenceLengthNotMarked(int[] leftValues, int leftStartIndex, Set<Integer> leftMarkedIndexes, int[] rightValues,
-            int rightStartIndex, Set<Integer> rightMarkedIndexes, int minimumSequenceLength) {
+    private int maximalMatchingSubsequenceLengthNotMarked(int[] leftValues, int leftStartIndex, boolean[] leftMarked, int[] rightValues,
+            int rightStartIndex, boolean[] rightMarked, int minimumSequenceLength) {
         for (int offset = minimumSequenceLength - 1; offset >= 0; offset--) {
             int leftIndex = leftStartIndex + offset;
             int rightIndex = rightStartIndex + offset;
-            if (leftValues[leftIndex] != rightValues[rightIndex] || leftMarkedIndexes.contains(leftIndex)
-                    || rightMarkedIndexes.contains(rightIndex)) {
+            if (leftValues[leftIndex] != rightValues[rightIndex] || leftMarked[leftIndex] || rightMarked[rightIndex]) {
                 return 0;
             }
         }
         int offset = minimumSequenceLength;
-        while (leftValues[leftStartIndex + offset] == rightValues[rightStartIndex + offset] && !leftMarkedIndexes.contains(leftStartIndex + offset)
-                && !rightMarkedIndexes.contains(rightStartIndex + offset)) {
+        while (leftValues[leftStartIndex + offset] == rightValues[rightStartIndex + offset] && !leftMarked[leftStartIndex + offset]
+                && !rightMarked[rightStartIndex + offset]) {
             offset++;
         }
         return offset;
@@ -193,17 +190,19 @@ public class GreedyStringTiling {
         matches.add(match);
     }
 
-    private Set<Integer> initiallyMarkedTokenIndexes(Submission submission) {
+    private boolean[] calculateInitiallyMarked(Submission submission) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
         List<Token> tokens = submission.getTokenList();
-        return IntStream.range(0, tokens.size())
-                .filter(i -> tokens.get(i).getType().isExcludedFromMatching() || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i))))
-                .boxed().collect(Collectors.toSet());
+        boolean[] result = new boolean[tokens.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = tokens.get(i).getType().isExcludedFromMatching() || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i)));
+        }
+        return result;
     }
 
-    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, Set<Integer> markedIndexes) {
+    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked) {
         return cachedHashLookupTables.computeIfAbsent(submission,
-                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), markedIndexes)));
+                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), marked)));
     }
 
     /**
