@@ -28,7 +28,6 @@ import { useRoute } from 'vue-router'
 import jszip from 'jszip'
 import router from '@/router'
 import store from '@/stores/store'
-import path from 'path'
 import slash from 'slash'
 
 class LoadError extends Error {}
@@ -78,12 +77,12 @@ export default defineComponent({
       })
     }
 
-    const extractRootName = (filePath: path.ParsedPath) => {
-      const folders = filePath.dir.split('/')
+    const extractRootName = (directoryPath: string) => {
+      const folders = directoryPath.split('/')
       return folders[0]
     }
-    const extractSubmissionFileName = (filePath: path.ParsedPath) => {
-      const folders = filePath.dir.split('/')
+    const extractSubmissionFileName = (directoryPath: string) => {
+      const folders = directoryPath.split('/')
       const rootName = folders[0]
       let submissionFolderIndex = -1
       if (rootName === 'files') {
@@ -93,16 +92,17 @@ export default defineComponent({
       }
       return folders[submissionFolderIndex + 1]
     }
-    const extractFileNameWithFullPath = (filePath: path.ParsedPath, originalFileName: string) => {
+
+    const extractFileNameWithFullPath = (directoryPath: string, fileBase: string, originalFileName: string) => {
       let fullPath = ''
-      const rootName = extractRootName(filePath)
-      const filesOrSubmissionsIndex_filePath = filePath.dir.indexOf(
+      const rootName = extractRootName(directoryPath)
+      const filesOrSubmissionsIndex_filePath = directoryPath.indexOf(
         rootName === 'files' ? 'files' : 'submissions'
       )
       const filesOrSubmissionsIndex_originalFileName = originalFileName.indexOf(
         rootName === 'files' ? 'files' : 'submissions'
       )
-      const unixSubfolderPathAfterSubmissions = filePath.dir.substring(
+      const unixSubfolderPathAfterSubmissions = directoryPath.substring(
         filesOrSubmissionsIndex_filePath +
           (rootName === 'files' ? 'files'.length : 'submissions'.length) +
           1
@@ -112,12 +112,12 @@ export default defineComponent({
           (rootName === 'files' ? 'files'.length : 'submissions'.length)
       )
       if (originalPathWithoutSubmissions.charAt(0) === '\\') {
-        fullPath = unixSubfolderPathAfterSubmissions + path.sep + filePath.base
+        fullPath = unixSubfolderPathAfterSubmissions + '\\' + fileBase
         while (fullPath.includes('/')) {
           fullPath = fullPath.replace('/', '\\')
         }
       } else {
-        fullPath = unixSubfolderPathAfterSubmissions + path.sep + filePath.base
+        fullPath = unixSubfolderPathAfterSubmissions + '/' + fileBase
       }
       return fullPath
     }
@@ -134,10 +134,11 @@ export default defineComponent({
             /((.+\/)*)(files|submissions)\/(.+)\/(.+)/.test(unixFileName) &&
             !/^__MACOSX\//.test(unixFileName)
           ) {
-            const filePath = path.parse(unixFileName)
+            const directoryPath = unixFileName.substring(0, unixFileName.lastIndexOf('/'))
+            const fileBase = unixFileName.substring(unixFileName.lastIndexOf('/') + 1)
 
-            const submissionFileName = extractSubmissionFileName(filePath)
-            const fullPathFileName = extractFileNameWithFullPath(filePath, originalFileName)
+            const submissionFileName = extractSubmissionFileName(directoryPath)
+            const fullPathFileName = extractFileNameWithFullPath(directoryPath, fileBase, originalFileName)
             await zip.files[originalFileName].async('string').then((data) => {
               store().saveSubmissionFile({
                 name: submissionFileName,
