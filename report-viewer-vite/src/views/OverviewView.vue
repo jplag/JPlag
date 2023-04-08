@@ -117,9 +117,13 @@ export default defineComponent({
       let temp!: Overview
       //Gets the overview file based on the used mode (zip, local, single).
       if (store().local) {
-        try {
-          temp = OverviewFactory.getOverview(require('../files/overview.json'))
-        } catch (e) {
+        const request = new XMLHttpRequest()
+        request.open('GET', '/src/files/overview.json', false)
+        request.send()
+
+        if (request.status == 200) {
+          temp = OverviewFactory.getOverview(JSON.parse(request.response))
+        } else {
           router.back()
         }
       } else if (store().zip) {

@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import jszip from 'jszip'
 import router from '@/router'
@@ -36,15 +36,11 @@ export default defineComponent({
   name: 'FileUploadView',
   setup() {
     store().clearStore()
-    let hasLocalFile
-    //Tries to detect local file. If no files detected, hides local mode from screen.
-    try {
-      require('../files/overview.json')
-      hasLocalFile = true
-    } catch (e) {
-      console.log(e)
-      hasLocalFile = false
-    }
+    const hasLocalFile = ref(false)
+    // Checks whether local files exist
+    fetch('/src/files/overview.json').then(
+      (response) => (hasLocalFile.value = response.status == 200)
+    )
 
     // Loads file passed in query param, if any.
     const queryParams = useRoute().query

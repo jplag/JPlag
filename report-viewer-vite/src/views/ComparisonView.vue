@@ -96,11 +96,18 @@ export default defineComponent({
     let comparison
     //getting the comparison file based on the used mode (zip, local, single)
     if (store().local) {
-      try {
-        comparison = ComparisonFactory.getComparison(
-          require(`../files/${store().getComparisonFileName(props.firstId, props.secondId)}.json`)
-        )
-      } catch (exception) {
+      const request = new XMLHttpRequest()
+      request.open('GET', `/src/files/${store().getComparisonFileName(props.firstId, props.secondId)}`, false)
+      console.log(request)
+      request.send()
+
+      if (request.status == 200) {
+        try {
+          comparison = ComparisonFactory.getComparison(JSON.parse(request.response))
+        } catch (e) {
+          router.back()
+        }
+      } else {
         router.back()
       }
     } else if (store().zip) {
