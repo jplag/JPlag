@@ -1,6 +1,7 @@
 package de.jplag.emf.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,7 +26,7 @@ public class EClassVectorGenerator {
         allClasses.addAll(TokenExtractionRules.elements2Tokens(allObjects));
     }
 
-    public List<Integer> generateEClassHistogram(Iterator<EObject> modelElements) {
+    public List<Double> generateEClassHistogram(Iterator<EObject> modelElements) {
         Map<MetamodelTokenType, Integer> occurences = new HashMap<>();
 
         while (modelElements.hasNext()) {
@@ -37,6 +38,24 @@ public class EClassVectorGenerator {
         for (MetamodelTokenType type : allClasses) {
             vector.add(occurences.getOrDefault(type, 0));
         }
-        return vector;
+        return normalize(vector);
+    }
+    
+    public static List<Double> normalize(List<Integer> vector) {
+        int magnitudeSquared = 0;
+        for (int i : vector) {
+            magnitudeSquared += i * i;
+        }
+        double magnitude = Math.sqrt(magnitudeSquared);
+        if (magnitude == 0) {
+            // Vector has zero magnitude
+            return Collections.nCopies(vector.size(), 0.0);
+        }
+        List<Double> normalizedVector = new ArrayList<>();
+        for (int i : vector) {
+            double normalizedValue = i / magnitude;
+            normalizedVector.add(normalizedValue);
+        }
+        return normalizedVector;
     }
 }

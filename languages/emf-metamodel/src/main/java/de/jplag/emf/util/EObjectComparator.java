@@ -35,33 +35,30 @@ public class EObjectComparator implements Comparator<EObject> {
     private List<EObject> calculatePath(MetamodelTokenType type) {
         List<EObject> elements = modelElementsToSort.stream()
                 .filter(it -> TokenExtractionRules.element2Token(it) != null && TokenExtractionRules.element2Token(it).equals(type)).toList();
-        Map<EObject, List<Integer>> subtreeHistograms = new HashMap<>();
-        elements.forEach(it -> subtreeHistograms.put(it, generator.generateEClassHistogram(it.eAllContents())));
+        Map<EObject, List<Double>> subtreeVectors = new HashMap<>();
+        elements.forEach(it -> subtreeVectors.put(it, generator.generateEClassHistogram(it.eAllContents())));
         double[][] distances = new double[elements.size()][elements.size()];
         for (int from = 0; from < distances.length; from++) {
             for (int to = 0; to < distances.length; to++) {
-                distances[from][to] = euclideanDistance(subtreeHistograms.get(elements.get(from)), subtreeHistograms.get(elements.get(to)));
+                distances[from][to] = euclideanDistance(subtreeVectors.get(elements.get(from)), subtreeVectors.get(elements.get(to)));
             }
         }
         logger.error("Distances for " + type);
         logger.error("    elements: " + elements.size());
         logger.error("    vectors: ");
-        elements.forEach(it -> logger.error("      " + iteratorSize(it.eAllContents()) + " in " + subtreeHistograms.get(it)));
+        elements.forEach(it -> logger.error("      " + iteratorSize(it.eAllContents()) + " in " + subtreeVectors.get(it)));
         for (double[] row : distances) {
             logger.error(Arrays.toString(row));
         }
-        Map<EObject, Double> euclideanDistancesToOrigin = new HashMap<>();
-        for (EObject element : elements) {
-            double sum = subtreeHistograms.get(element).stream().mapToInt(Integer::intValue).sum();
-            euclideanDistancesToOrigin.put(element, sum);
-            // var childVector = subtreeHistograms.get(element);
-            // List<Integer> origin = new ArrayList<>(Collections.nCopies(childVector.size(), 0));
-            // euclideanDistancesToOrigin.put(element, euclideanDistance(childVector, origin));
-        }
-        logger.error("Euclideans to origin: " + euclideanDistancesToOrigin.values());
-        var emax = euclideanDistancesToOrigin.entrySet().stream().max((first, second) -> Double.compare(first.getValue(), second.getValue()))
-                .orElseThrow().getKey();
-        logger.error("max: " + euclideanDistancesToOrigin.get(emax));
+//        Map<EObject, Double> euclideanDistancesToOrigin = new HashMap<>();
+//        for (EObject element : elements) {
+//            double sum = subtreeHistograms.get(element).stream().mapToDouble(Double::doubleValue).sum();
+//            euclideanDistancesToOrigin.put(element, sum);
+//        }
+ //       logger.error("Euclideans to origin: " + euclideanDistancesToOrigin.values());
+  //      var emax = euclideanDistancesToOrigin.entrySet().stream().max((first, second) -> Double.compare(first.getValue(), second.getValue()))
+  //              .orElseThrow().getKey();
+  //      logger.error("max: " + euclideanDistancesToOrigin.get(emax));
         var max = elements.stream().max((first, second) -> Integer.compare(iteratorSize(first.eAllContents()), iteratorSize(second.eAllContents())))
                 .orElseThrow();
         /**
@@ -115,13 +112,13 @@ public class EObjectComparator implements Comparator<EObject> {
         return path;
     }
 
-    public static double euclideanDistance(List<Integer> first, List<Integer> second) {
+    public static double euclideanDistance(List<Double> first, List<Double> second) {
         if (first.size() != second.size()) {
             throw new IllegalArgumentException("Lists must have the same size");
         }
-        int sum = 0;
+        double sum = 0;
         for (int i = 0; i < first.size(); i++) {
-            int diff = first.get(i) - second.get(i);
+            double diff = first.get(i) - second.get(i);
             sum += diff * diff;
         }
         return Math.sqrt(sum);
