@@ -24,6 +24,7 @@ public class EObjectComparator implements Comparator<EObject> {
     private Map<MetamodelTokenType, List<EObject>> paths;
 
     private Logger logger;
+    private Map<EObject, List<Double>> subtreeVectors;
 
     public EObjectComparator(EClassVectorGenerator generator, List<EObject> modelElementsToSort) {
         this.generator = generator;
@@ -35,7 +36,7 @@ public class EObjectComparator implements Comparator<EObject> {
     private List<EObject> calculatePath(MetamodelTokenType type) {
         List<EObject> elements = modelElementsToSort.stream()
                 .filter(it -> TokenExtractionRules.element2Token(it) != null && TokenExtractionRules.element2Token(it).equals(type)).toList();
-        Map<EObject, List<Double>> subtreeVectors = new HashMap<>();
+        subtreeVectors = new HashMap<>();
         elements.forEach(it -> subtreeVectors.put(it, generator.generateEClassHistogram(it.eAllContents())));
         double[][] distances = new double[elements.size()][elements.size()];
         for (int from = 0; from < distances.length; from++) {
@@ -50,15 +51,16 @@ public class EObjectComparator implements Comparator<EObject> {
         for (double[] row : distances) {
             logger.error(Arrays.toString(row));
         }
-//        Map<EObject, Double> euclideanDistancesToOrigin = new HashMap<>();
-//        for (EObject element : elements) {
-//            double sum = subtreeHistograms.get(element).stream().mapToDouble(Double::doubleValue).sum();
-//            euclideanDistancesToOrigin.put(element, sum);
-//        }
- //       logger.error("Euclideans to origin: " + euclideanDistancesToOrigin.values());
-  //      var emax = euclideanDistancesToOrigin.entrySet().stream().max((first, second) -> Double.compare(first.getValue(), second.getValue()))
-  //              .orElseThrow().getKey();
-  //      logger.error("max: " + euclideanDistancesToOrigin.get(emax));
+        // Map<EObject, Double> euclideanDistancesToOrigin = new HashMap<>();
+        // for (EObject element : elements) {
+        // double sum = subtreeVectors.get(element).stream().mapToDouble(Double::doubleValue).sum();
+        // euclideanDistancesToOrigin.put(element, sum);
+        // }
+        // logger.error("Euclideans to origin: " + euclideanDistancesToOrigin.values());
+        // var emax = euclideanDistancesToOrigin.entrySet().stream().max((first, second) -> Double.compare(first.getValue(),
+        // second.getValue()))
+        // .orElseThrow().getKey();
+        // logger.error("max: " + euclideanDistancesToOrigin.get(emax));
         var max = elements.stream().max((first, second) -> Integer.compare(iteratorSize(first.eAllContents()), iteratorSize(second.eAllContents())))
                 .orElseThrow();
         /**
@@ -144,13 +146,15 @@ public class EObjectComparator implements Comparator<EObject> {
 
         List<EObject> path = paths.computeIfAbsent(firstType, it -> calculatePath(it));
 
-        // List<MetamodelTokenType> fst = new ArrayList<>();
-        // first.eAllContents().forEachRemaining(it -> fst.add(TokenExtractionRules.element2Token(it)));
-        // List<MetamodelTokenType> scd = new ArrayList<>();
-        // second.eAllContents().forEachRemaining(it -> scd.add(TokenExtractionRules.element2Token(it)));
-        // return compareLexicographically(fst.stream().filter(it->it!=null).map(it->it.ordinal()).toList(),
-        // scd.stream().filter(it->it!=null).map(it->it.ordinal()).toList());
-        // return compareLexicographically(subtreeHistograms.get(first), subtreeHistograms.get(second));
+        // List<MetamodelTokenType> firstTokens = new ArrayList<>();
+        // first.eAllContents().forEachRemaining(it -> firstTokens.add(TokenExtractionRules.element2Token(it)));
+        // List<MetamodelTokenType> secondTokens = new ArrayList<>();
+        // second.eAllContents().forEachRemaining(it -> secondTokens.add(TokenExtractionRules.element2Token(it)));
+        // return compareLexicographically(firstTokens.stream().filter(it -> it != null).map(it -> it.ordinal()).toList(),
+        // secondTokens.stream().filter(it -> it != null).map(it -> it.ordinal()).toList());
+        // return compareLexicographically2(generator.generateEClassHistogram(first.eAllContents()),
+        // generator.generateEClassHistogram(first.eAllContents()));
+
         return path.indexOf(first) - path.indexOf(second);
     }
 

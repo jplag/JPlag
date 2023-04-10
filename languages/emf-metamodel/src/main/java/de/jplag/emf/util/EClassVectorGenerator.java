@@ -40,7 +40,7 @@ public class EClassVectorGenerator {
         }
         return normalize(vector);
     }
-    
+
     public static List<Double> normalize(List<Integer> vector) {
         int magnitudeSquared = 0;
         for (int i : vector) {
