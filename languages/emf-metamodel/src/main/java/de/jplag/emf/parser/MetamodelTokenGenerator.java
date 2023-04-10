@@ -16,13 +16,11 @@ import static de.jplag.emf.MetamodelTokenType.ID_ATTRIBUTE;
 import static de.jplag.emf.MetamodelTokenType.INTERFACE;
 import static de.jplag.emf.MetamodelTokenType.INTERFACE_END;
 import static de.jplag.emf.MetamodelTokenType.OPERATION;
-import static de.jplag.emf.MetamodelTokenType.OPERATION_END;
 import static de.jplag.emf.MetamodelTokenType.PACKAGE;
 import static de.jplag.emf.MetamodelTokenType.PACKAGE_END;
 import static de.jplag.emf.MetamodelTokenType.PARAMETER;
 import static de.jplag.emf.MetamodelTokenType.REFERENCE;
 import static de.jplag.emf.MetamodelTokenType.RETURN_TYPE;
-import static de.jplag.emf.MetamodelTokenType.SUPER_TYPE;
 import static de.jplag.emf.MetamodelTokenType.THROWS_DECLARATION;
 import static de.jplag.emf.MetamodelTokenType.TYPE_PARAMETER;
 
@@ -79,7 +77,8 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
         } else {
             parser.addToken(CLASS, eClass);
         }
-        eClass.getESuperTypes().forEach(it -> parser.addToken(SUPER_TYPE, eClass));
+        // ATTACK SURFACE BECOMES LARGER
+        // eClass.getESuperTypes().forEach(it -> parser.addToken(SUPER_TYPE, eClass));
     }
 
     @Override
@@ -120,6 +119,7 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
 
     @Override
     protected void visitEReference(EReference eReference) {
+        // TODO in future this might be relevant to remove:
         if (eReference.isContainment()) {
             parser.addToken(CONTAINMENT, eReference);
         } else {
@@ -156,7 +156,8 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
 
     @Override
     protected void leaveEOperation(EOperation eOperation) {
-        parser.addToken(OPERATION_END, eOperation);
+        // ATTACK SURFACE BECOMES LARGER, operations already have many tokens
+        // parser.addToken(OPERATION_END, eOperation);
     }
 
 }
