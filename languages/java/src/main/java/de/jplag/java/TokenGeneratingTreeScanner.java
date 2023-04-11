@@ -59,7 +59,7 @@ import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
-final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> {
+final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final File file;
     private final Parser parser;
     private final LineMap map;
@@ -90,6 +90,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
 
     public void addToken(TokenType type, File file, long line, long column, long length, CodeSemantics semantics) {
         parser.add(new Token(type, file, (int) line, (int) column, (int) length, semantics));
+        variableRegistry.updateSemantics(semantics);
     }
 
     /**
@@ -118,7 +119,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
     }
 
     @Override
-    public Void visitBlock(BlockTree node, CodeSemantics semantics) {
+    public Void visitBlock(BlockTree node, Void unused) {
         // kind of weird since in the case of for loops and catches, two scopes are introduced
         // but I'm pretty sure that's how Java does it internally as well
         variableRegistry.enterLocalScope();
@@ -128,7 +129,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
     }
 
     @Override
-    public Void visitClass(ClassTree node, CodeSemantics semantics) {
+    public Void visitClass(ClassTree node, Void unused) {
         // not super accurate
         variableRegistry.registerVariable(node.getSimpleName().toString(), VariableScope.FILE, true);
         variableRegistry.enterClass();
@@ -143,7 +144,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
 
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createControl();
+        CodeSemantics semantics = CodeSemantics.createControl();
         if (node.getKind() == Tree.Kind.ENUM) {
             addToken(JavaTokenType.J_ENUM_BEGIN, start, 4, semantics);
         } else if (node.getKind() == Tree.Kind.INTERFACE) {
@@ -155,12 +156,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         } else if (node.getKind() == Tree.Kind.CLASS) {
             addToken(JavaTokenType.J_CLASS_BEGIN, start, 5, semantics);
         }
-        scan(node.getModifiers(), semantics);
-        scan(node.getTypeParameters(), semantics);
-        scan(node.getExtendsClause(), semantics);
-        scan(node.getImplementsClause(), semantics);
-        scan(node.getPermitsClause(), semantics);
-        scan(node.getMembers(), null);
+        super.visitClass(node, null);
 
         JavaTokenType tokenType = switch (node.getKind()) {
             case ENUM -> JavaTokenType.J_ENUM_END;
@@ -179,341 +175,269 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
     }
 
     @Override
-    public Void visitImport(ImportTree node, CodeSemantics semantics) {
+    public Void visitImport(ImportTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createKeep();
-        addToken(JavaTokenType.J_IMPORT, start, 6, semantics);
-        super.visitImport(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_IMPORT, start, 6, CodeSemantics.createKeep());
+        return super.visitImport(node, null);
     }
 
     @Override
-    public Void visitPackage(PackageTree node, CodeSemantics semantics) {
+    public Void visitPackage(PackageTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_PACKAGE, start, 7, semantics);
-        super.visitPackage(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_PACKAGE, start, 7, CodeSemantics.createControl());
+        return super.visitPackage(node, null);
     }
 
     @Override
-    public Void visitMethod(MethodTree node, CodeSemantics semantics) {
+    public Void visitMethod(MethodTree node, Void unused) {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_METHOD_BEGIN, start, node.getName().length(), semantics);
-        scan(node.getModifiers(), semantics);
-        scan(node.getReturnType(), semantics);
-        scan(node.getTypeParameters(), semantics);
-        scan(node.getParameters(), semantics);
-        scan(node.getReceiverParameter(), semantics);
-        scan(node.getThrows(), semantics);
-        scan(node.getBody(), null);
-        semantics = CodeSemantics.createControl();
-        variableRegistry.addAllNonLocalVariablesAsReads(semantics);
-        addToken(JavaTokenType.J_METHOD_END, end, 1, semantics);
+        addToken(JavaTokenType.J_METHOD_BEGIN, start, node.getName().length(), CodeSemantics.createControl());
+        super.visitMethod(node, null);
+        addToken(JavaTokenType.J_METHOD_END, end, 1, CodeSemantics.createControl());
+        variableRegistry.addAllNonLocalVariablesAsReads();
         variableRegistry.exitLocalScope();
         return null;
     }
 
     @Override
-    public Void visitSynchronized(SynchronizedTree node, CodeSemantics semantics) {
+    public Void visitSynchronized(SynchronizedTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_SYNC_BEGIN, start, 12, semantics);
-        super.visitSynchronized(node, semantics);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_SYNC_END, end, 1, semantics);
+        addToken(JavaTokenType.J_SYNC_BEGIN, start, 12, CodeSemantics.createControl());
+        super.visitSynchronized(node, null);
+        addToken(JavaTokenType.J_SYNC_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
     @Override
-    public Void visitDoWhileLoop(DoWhileLoopTree node, CodeSemantics semantics) {
+    public Void visitDoWhileLoop(DoWhileLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createLoopBegin();
-        addToken(JavaTokenType.J_DO_BEGIN, start, 2, semantics);
+        addToken(JavaTokenType.J_DO_BEGIN, start, 2, CodeSemantics.createLoopBegin());
         scan(node.getStatement(), null);
-        semantics = CodeSemantics.createLoopEnd();
-        addToken(JavaTokenType.J_DO_END, end, 1, semantics);
-        scan(node.getCondition(), semantics);
+        addToken(JavaTokenType.J_DO_END, end, 1, CodeSemantics.createLoopEnd());
+        scan(node.getCondition(), null);
         return null;
     }
 
     @Override
-    public Void visitWhileLoop(WhileLoopTree node, CodeSemantics semantics) {
+    public Void visitWhileLoop(WhileLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createLoopBegin();
-        addToken(JavaTokenType.J_WHILE_BEGIN, start, 5, semantics);
-        scan(node.getCondition(), semantics);
-        scan(node.getStatement(), null);
-        semantics = CodeSemantics.createLoopEnd();
-        addToken(JavaTokenType.J_WHILE_END, end, 1, semantics);
+        addToken(JavaTokenType.J_WHILE_BEGIN, start, 5, CodeSemantics.createLoopBegin());
+        super.visitWhileLoop(node, null);
+        addToken(JavaTokenType.J_WHILE_END, end, 1, CodeSemantics.createLoopEnd());
         return null;
     }
 
     @Override
-    public Void visitForLoop(ForLoopTree node, CodeSemantics semantics) {
+    public Void visitForLoop(ForLoopTree node, Void unused) {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createLoopBegin();
-        addToken(JavaTokenType.J_FOR_BEGIN, start, 3, semantics);
-        scan(node.getInitializer(), semantics);
-        scan(node.getCondition(), semantics);
-        scan(node.getUpdate(), semantics);
-        scan(node.getStatement(), null);
-        semantics = CodeSemantics.createLoopEnd();
-        addToken(JavaTokenType.J_FOR_END, end, 1, semantics);
+        addToken(JavaTokenType.J_FOR_BEGIN, start, 3, CodeSemantics.createLoopBegin());
+        super.visitForLoop(node, null);
+        addToken(JavaTokenType.J_FOR_END, end, 1, CodeSemantics.createLoopEnd());
         variableRegistry.exitLocalScope();
         return null;
     }
 
     @Override
-    public Void visitEnhancedForLoop(EnhancedForLoopTree node, CodeSemantics semantics) {
+    public Void visitEnhancedForLoop(EnhancedForLoopTree node, Void unused) {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createLoopBegin();
-        addToken(JavaTokenType.J_FOR_BEGIN, start, 3, semantics);
-        scan(node.getVariable(), semantics);
-        scan(node.getExpression(), semantics);
-        scan(node.getStatement(), null);
-        semantics = CodeSemantics.createLoopEnd();
-        addToken(JavaTokenType.J_FOR_END, end, 1, semantics);
+        addToken(JavaTokenType.J_FOR_BEGIN, start, 3, CodeSemantics.createLoopBegin());
+        super.visitEnhancedForLoop(node, null);
+        addToken(JavaTokenType.J_FOR_END, end, 1, CodeSemantics.createLoopEnd());
         variableRegistry.exitLocalScope();
         return null;
     }
 
     @Override
-    public Void visitSwitch(SwitchTree node, CodeSemantics semantics) {
+    public Void visitSwitch(SwitchTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6, semantics);
-        scan(node.getExpression(), semantics);
-        scan(node.getCases(), null);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_SWITCH_END, end, 1, semantics);
+        addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6, CodeSemantics.createControl());
+        super.visitSwitch(node, null);
+        addToken(JavaTokenType.J_SWITCH_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
     @Override
-    public Void visitSwitchExpression(SwitchExpressionTree node, CodeSemantics semantics) {
+    public Void visitSwitchExpression(SwitchExpressionTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6, semantics);
-        scan(node.getExpression(), semantics);
-        scan(node.getCases(), null);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_SWITCH_END, end, 1, semantics);
+        addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6, CodeSemantics.createControl());
+        super.visitSwitchExpression(node, null);
+        addToken(JavaTokenType.J_SWITCH_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
     @Override
-    public Void visitCase(CaseTree node, CodeSemantics semantics) {
+    public Void visitCase(CaseTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_CASE, start, 4, semantics);
-        scan(node.getExpressions(), semantics);
-        if (node.getCaseKind() == CaseTree.CaseKind.RULE) {
-            scan(node.getBody(), semantics); // case -> result, in switch expression
-        } else {
-            scan(node.getStatements(), null); // in normal switch
-        }
-        return null;
+        addToken(JavaTokenType.J_CASE, start, 4, CodeSemantics.createControl());
+        return super.visitCase(node, null);
     }
 
     @Override
-    public Void visitTry(TryTree node, CodeSemantics semantics) {
+    public Void visitTry(TryTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_TRY_BEGIN, start, 3, semantics);
-        scan(node.getResources(), semantics);
+        addToken(JavaTokenType.J_TRY_BEGIN, start, 3, CodeSemantics.createControl());
+        scan(node.getResources(), null);
         scan(node.getBlock(), null);
         long end = positions.getEndPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_TRY_END, end, 1, semantics);
+        addToken(JavaTokenType.J_TRY_END, end, 1, CodeSemantics.createControl());
         scan(node.getCatches(), null);
         if (node.getFinallyBlock() != null) {
             start = positions.getStartPosition(ast, node.getFinallyBlock());
-            semantics = CodeSemantics.createControl();
-            addToken(JavaTokenType.J_FINALLY_BEGIN, start, 3, semantics);
+            addToken(JavaTokenType.J_FINALLY_BEGIN, start, 3, CodeSemantics.createControl());
             scan(node.getFinallyBlock(), null);
             end = positions.getEndPosition(ast, node.getFinallyBlock());
-            semantics = CodeSemantics.createControl();
-            addToken(JavaTokenType.J_FINALLY_END, end, 1, semantics);
+            addToken(JavaTokenType.J_FINALLY_END, end, 1, CodeSemantics.createControl());
         }
-        return null; // return value isn't used
+        return null;
     }
 
     @Override
-    public Void visitCatch(CatchTree node, CodeSemantics semantics) {
+    public Void visitCatch(CatchTree node, Void unused) {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_CATCH_BEGIN, start, 5, semantics);
-        super.visitCatch(node, null); // can leave this since catch parameter is variable declaration and thus always generates a token
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_CATCH_END, end, 1, semantics);
+        addToken(JavaTokenType.J_CATCH_BEGIN, start, 5, CodeSemantics.createControl());
+        super.visitCatch(node, null);
+        addToken(JavaTokenType.J_CATCH_END, end, 1, CodeSemantics.createControl());
         variableRegistry.exitLocalScope();
         return null;
     }
 
     @Override
-    public Void visitIf(IfTree node, CodeSemantics semantics) {
+    public Void visitIf(IfTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_IF_BEGIN, start, 2, semantics);
-        scan(node.getCondition(), semantics);
+        addToken(JavaTokenType.J_IF_BEGIN, start, 2, CodeSemantics.createControl());
+        scan(node.getCondition(), null);
         scan(node.getThenStatement(), null);
         if (node.getElseStatement() != null) {
             start = positions.getStartPosition(ast, node.getElseStatement());
-            semantics = CodeSemantics.createControl();
-            addToken(JavaTokenType.J_ELSE, start, 4, semantics);
+            addToken(JavaTokenType.J_ELSE, start, 4, CodeSemantics.createControl());
         }
         scan(node.getElseStatement(), null);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_IF_END, end, 1, semantics);
+        addToken(JavaTokenType.J_IF_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
     @Override
-    public Void visitBreak(BreakTree node, CodeSemantics semantics) {
+    public Void visitBreak(BreakTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_BREAK, start, 5, semantics);
-        super.visitBreak(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_BREAK, start, 5, CodeSemantics.createControl());
+        return super.visitBreak(node, null);
     }
 
     @Override
-    public Void visitContinue(ContinueTree node, CodeSemantics semantics) {
+    public Void visitContinue(ContinueTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_CONTINUE, start, 8, semantics);
-        super.visitContinue(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_CONTINUE, start, 8, CodeSemantics.createControl());
+        return super.visitContinue(node, null);
     }
 
     @Override
-    public Void visitReturn(ReturnTree node, CodeSemantics semantics) {
+    public Void visitReturn(ReturnTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_RETURN, start, 6, semantics);
-        super.visitReturn(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_RETURN, start, 6, CodeSemantics.createControl());
+        return super.visitReturn(node, null);
     }
 
     @Override
-    public Void visitThrow(ThrowTree node, CodeSemantics semantics) {
+    public Void visitThrow(ThrowTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_THROW, start, 5, semantics);
-        super.visitThrow(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_THROW, start, 5, CodeSemantics.createControl());
+        return super.visitThrow(node, null);
     }
 
     @Override
-    public Void visitNewClass(NewClassTree node, CodeSemantics semantics) {
+    public Void visitNewClass(NewClassTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         if (node.getTypeArguments().size() > 0) {
-            semantics = new CodeSemantics();
-            addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), semantics);
+            addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), new CodeSemantics());
         }
-        semantics = new CodeSemantics();
-        addToken(JavaTokenType.J_NEWCLASS, start, 3, semantics);
-        super.visitNewClass(node, semantics);
+        addToken(JavaTokenType.J_NEWCLASS, start, 3, new CodeSemantics());
+        super.visitNewClass(node, null);
         return null;
     }
 
     @Override
-    public Void visitTypeParameter(TypeParameterTree node, CodeSemantics semantics) {
+    public Void visitTypeParameter(TypeParameterTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         // This is odd, but also done like this in Java 1.7
-        semantics = new CodeSemantics();
-        addToken(JavaTokenType.J_GENERIC, start, 1, semantics);
-        super.visitTypeParameter(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_GENERIC, start, 1, new CodeSemantics());
+        return super.visitTypeParameter(node, null);
     }
 
     @Override
-    public Void visitNewArray(NewArrayTree node, CodeSemantics semantics) {
+    public Void visitNewArray(NewArrayTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = new CodeSemantics();
-        addToken(JavaTokenType.J_NEWARRAY, start, 3, semantics);
-        scan(node.getType(), semantics);
-        scan(node.getDimensions(), semantics);
+        addToken(JavaTokenType.J_NEWARRAY, start, 3, new CodeSemantics());
+        scan(node.getType(), null);
+        scan(node.getDimensions(), null);
         boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
         if (hasInit) {
             start = positions.getStartPosition(ast, node.getInitializers().get(0));
-            semantics = new CodeSemantics();
-            addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1, semantics);
+            addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1, new CodeSemantics());
         }
-        scan(node.getInitializers(), semantics);
+        scan(node.getInitializers(), null);
         // super method has annotation processing but we have it disabled anyways
         if (hasInit) {
-            semantics = new CodeSemantics();
-            addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1, semantics);
+            addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1, new CodeSemantics());
         }
         return null;
     }
 
     @Override
-    public Void visitAssignment(AssignmentTree node, CodeSemantics semantics) {
+    public Void visitAssignment(AssignmentTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new CodeSemantics();
-        addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
+        addToken(JavaTokenType.J_ASSIGN, start, 1, new CodeSemantics());
         variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
-        super.visitAssignment(node, semantics);
-        return null;
+        return super.visitAssignment(node, null);
     }
 
     @Override
-    public Void visitCompoundAssignment(CompoundAssignmentTree node, CodeSemantics semantics) {
+    public Void visitCompoundAssignment(CompoundAssignmentTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new CodeSemantics();
-        addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
+        addToken(JavaTokenType.J_ASSIGN, start, 1, new CodeSemantics());
         variableRegistry.setNextVariableAccessType(VariableAccessType.READ_WRITE);
-        super.visitCompoundAssignment(node, semantics);
-        return null;
+        return super.visitCompoundAssignment(node, null);
     }
 
     @Override
-    public Void visitUnary(UnaryTree node, CodeSemantics semantics) {
-        semantics = new CodeSemantics();
+    public Void visitUnary(UnaryTree node, Void unused) {
         if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
-            addToken(JavaTokenType.J_ASSIGN, start, 1, semantics);
+            addToken(JavaTokenType.J_ASSIGN, start, 1, new CodeSemantics());
             variableRegistry.setNextVariableAccessType(VariableAccessType.READ_WRITE);
         }
-        super.visitUnary(node, semantics);
-        return null;
+        return super.visitUnary(node, null);
     }
 
     @Override
-    public Void visitAssert(AssertTree node, CodeSemantics semantics) {
+    public Void visitAssert(AssertTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_ASSERT, start, 6, semantics);
-        super.visitAssert(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_ASSERT, start, 6, CodeSemantics.createControl());
+        return super.visitAssert(node, null);
     }
 
     @Override
-    public Void visitVariable(VariableTree node, CodeSemantics semantics) {
+    public Void visitVariable(VariableTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         String name = node.getName().toString();
         boolean inLocalScope = variableRegistry.inLocalScope();
         // this presents a problem when classes are declared in local scopes, which can happen in ad-hoc implementations
+        CodeSemantics semantics;
         if (inLocalScope) {
             boolean mutable = isMutable(node.getType());
             variableRegistry.registerVariable(name, VariableScope.LOCAL, mutable);
@@ -521,129 +445,108 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, CodeSemantics> 
         } else {
             semantics = CodeSemantics.createKeep();
         }
-        variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
-        // manually add variable to semantics since identifier isn't visited
-        variableRegistry.registerVariableAccess(name, !inLocalScope, semantics);
         addToken(JavaTokenType.J_VARDEF, start, node.toString().length(), semantics);
-        super.visitVariable(node, semantics);
-        return null;
+        // manually add variable to semantics since identifier isn't visited
+        variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
+        variableRegistry.registerVariableAccess(name, !inLocalScope);
+        return super.visitVariable(node, null);
     }
 
     @Override
-    public Void visitConditionalExpression(ConditionalExpressionTree node, CodeSemantics semantics) {
+    public Void visitConditionalExpression(ConditionalExpressionTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new CodeSemantics();
-        addToken(JavaTokenType.J_COND, start, 1, semantics);
-        super.visitConditionalExpression(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_COND, start, 1, new CodeSemantics());
+        return super.visitConditionalExpression(node, null);
     }
 
     @Override
-    public Void visitMethodInvocation(MethodInvocationTree node, CodeSemantics semantics) {
+    public Void visitMethodInvocation(MethodInvocationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        variableRegistry.addAllNonLocalVariablesAsReads(semantics);
-        addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start, semantics);
-        scan(node.getTypeArguments(), semantics);
+        addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start, CodeSemantics.createControl());
+        variableRegistry.addAllNonLocalVariablesAsReads();
+        scan(node.getTypeArguments(), null);
         // differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
         // look at cases foo.bar()++ and foo().bar++
         variableRegistry.setIgnoreNextVariableAccess(true);
         variableRegistry.setMutableWrite(true);
-        scan(node.getMethodSelect(), semantics);  // foo.bar() is a write to foo
-        scan(node.getArguments(), semantics);  // foo(bar) is a write to bar
+        scan(node.getMethodSelect(), null);  // foo.bar() is a write to foo
+        scan(node.getArguments(), null);  // foo(bar) is a write to bar
         variableRegistry.setMutableWrite(false);
         return null;
     }
 
     @Override
-    public Void visitAnnotation(AnnotationTree node, CodeSemantics semantics) {
+    public Void visitAnnotation(AnnotationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = new CodeSemantics();
-        addToken(JavaTokenType.J_ANNO, start, 1, semantics);
-        super.visitAnnotation(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_ANNO, start, 1, new CodeSemantics());
+        return super.visitAnnotation(node, null);
     }
 
     @Override
-    public Void visitModule(ModuleTree node, CodeSemantics semantics) {
+    public Void visitModule(ModuleTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_MODULE_BEGIN, start, 6, semantics);
+        addToken(JavaTokenType.J_MODULE_BEGIN, start, 6, CodeSemantics.createControl());
         super.visitModule(node, null);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_MODULE_END, end, 1, semantics);
+        addToken(JavaTokenType.J_MODULE_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
     @Override
-    public Void visitRequires(RequiresTree node, CodeSemantics semantics) {
+    public Void visitRequires(RequiresTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_REQUIRES, start, 8, semantics);
-        super.visitRequires(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_REQUIRES, start, 8, CodeSemantics.createControl());
+        return super.visitRequires(node, null);
     }
 
     @Override
-    public Void visitProvides(ProvidesTree node, CodeSemantics semantics) {
+    public Void visitProvides(ProvidesTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_PROVIDES, start, 8, semantics);
-        super.visitProvides(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_PROVIDES, start, 8, CodeSemantics.createControl());
+        return super.visitProvides(node, null);
     }
 
     @Override
-    public Void visitExports(ExportsTree node, CodeSemantics semantics) {
+    public Void visitExports(ExportsTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_EXPORTS, start, 7, semantics);
-        super.visitExports(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_EXPORTS, start, 7, CodeSemantics.createControl());
+        return super.visitExports(node, null);
     }
 
     @Override
-    public Void visitErroneous(ErroneousTree node, CodeSemantics semantics) {
+    public Void visitErroneous(ErroneousTree node, Void unused) {
         parsingExceptions.add(new ParsingException(file, "error while visiting %s".formatted(node)));
-        super.visitErroneous(node, semantics);
-        return null;
+        return super.visitErroneous(node, null);
     }
 
     @Override
-    public Void visitYield(YieldTree node, CodeSemantics semantics) {
+    public Void visitYield(YieldTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_YIELD, start, end, semantics);
-        super.visitYield(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_YIELD, start, end, CodeSemantics.createControl());
+        return super.visitYield(node, null);
     }
 
     @Override
-    public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, CodeSemantics semantics) {
+    public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
-        semantics = CodeSemantics.createControl();
-        addToken(JavaTokenType.J_DEFAULT, start, end, semantics);
-        super.visitDefaultCaseLabel(node, semantics);
-        return null;
+        addToken(JavaTokenType.J_DEFAULT, start, end, CodeSemantics.createControl());
+        return super.visitDefaultCaseLabel(node, null);
     }
 
     @Override
-    public Void visitMemberSelect(MemberSelectTree node, CodeSemantics semantics) {
+    public Void visitMemberSelect(MemberSelectTree node, Void unused) {
         if (node.getExpression().toString().equals("this")) {
-            variableRegistry.registerVariableAccess(node.getIdentifier().toString(), true, semantics);
+            variableRegistry.registerVariableAccess(node.getIdentifier().toString(), true);
         }
         variableRegistry.setIgnoreNextVariableAccess(false);  // don't ignore the foo in foo.bar()
-        super.visitMemberSelect(node, semantics);
-        return null;
+        return super.visitMemberSelect(node, null);
     }
 
     @Override
-    public Void visitIdentifier(IdentifierTree node, CodeSemantics semantics) {
-        variableRegistry.registerVariableAccess(node.toString(), false, semantics);
-        super.visitIdentifier(node, semantics);
-        return null;
+    public Void visitIdentifier(IdentifierTree node, Void unused) {
+        variableRegistry.registerVariableAccess(node.toString(), false);
+        return super.visitIdentifier(node, null);
     }
 }

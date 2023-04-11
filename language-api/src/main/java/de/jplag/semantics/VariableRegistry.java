@@ -11,7 +11,7 @@ import java.util.Set;
  * Registry of variables to assist in generating token semantics.
  */
 public class VariableRegistry {
-    // private CodeSemantics semantics;
+    private CodeSemantics semantics;
     private Map<String, Variable> fileVariables;
     private Deque<Map<String, Variable>> classVariables; // map class name to map of variable names to variables
     private Map<String, Deque<Variable>> localVariables; // map local variable name to stack of variables
@@ -99,6 +99,14 @@ public class VariableRegistry {
     }
 
     /**
+     * Update the current semantics.
+     * @param semantics are the new current semantics.
+     */
+    public void updateSemantics(CodeSemantics semantics) {
+        this.semantics = semantics;
+    }
+
+    /**
      * Register a variable.
      * @param variableName The variable's name.
      * @param scope The variable's scope.
@@ -118,14 +126,13 @@ public class VariableRegistry {
     }
 
     /**
-     * Register a variable access, more precisely: Add a variable access to a CodeSemantics instance. The type of the access
+     * Register a variable access, more precisely: Add a variable access to the current CodeSemantics instance. The type of the access
      * can be set with setNextVariableAccessType. By default, its type is read.
      * @param variableName The variable's name.
      * @param isClassVariable Whether the variable is a class variable. This is true if a variable is qualified with the
      * "this" keyword in Java, for example.
-     * @param semantics The CodeSemantics instance the variable access is added to.
      */
-    public void registerVariableAccess(String variableName, boolean isClassVariable, CodeSemantics semantics) {
+    public void registerVariableAccess(String variableName, boolean isClassVariable) {
         if (ignoreNextVariableAccess) {
             ignoreNextVariableAccess = false;
             return;
@@ -144,10 +151,9 @@ public class VariableRegistry {
     }
 
     /**
-     * Add all non-local visible variables as reads to the CodeSemantics instance.
-     * @param semantics The CodeSemantics instance.
+     * Add all non-local visible variables as reads to the current CodeSemantics instance.
      */
-    public void addAllNonLocalVariablesAsReads(CodeSemantics semantics) {
+    public void addAllNonLocalVariablesAsReads() {
         Set<Variable> nonLocalVariables = new HashSet<>(fileVariables.values());
         nonLocalVariables.addAll(classVariables.getFirst().values());
         for (Variable variable : nonLocalVariables)
