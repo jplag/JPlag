@@ -11,6 +11,7 @@ import java.util.Set;
  * Registry of variables to assist in generating token semantics.
  */
 public class VariableRegistry {
+    // private CodeSemantics semantics;
     private Map<String, Variable> fileVariables;
     private Deque<Map<String, Variable>> classVariables; // map class name to map of variable names to variables
     private Map<String, Deque<Variable>> localVariables; // map local variable name to stack of variables
@@ -68,30 +69,30 @@ public class VariableRegistry {
      * Enter a class.
      */
     public void enterClass() {
-        classVariables.addLast(new HashMap<>());
+        classVariables.push(new HashMap<>());
     }
 
     /**
      * Exit a class. This causes all variables bound to the current class to no longer be visible.
      */
     public void exitClass() {
-        classVariables.removeLast();
+        classVariables.pop();
     }
 
     /**
      * Enter a local scope.
      */
     public void enterLocalScope() {
-        localVariablesByScope.addLast(new HashSet<>());
+        localVariablesByScope.push(new HashSet<>());
     }
 
     /**
      * Exit a local scope. This causes all variables bound to the current local scope to no longer be visible.
      */
     public void exitLocalScope() {
-        for (String variableName : localVariablesByScope.removeLast()) {
+        for (String variableName : localVariablesByScope.pop()) {
             Deque<Variable> variableStack = localVariables.get(variableName);
-            variableStack.removeLast();
+            variableStack.pop();
             if (variableStack.isEmpty())
                 localVariables.remove(variableName);
         }
@@ -107,11 +108,11 @@ public class VariableRegistry {
         Variable variable = new Variable(variableName, scope, mutable);
         switch (scope) {
             case FILE -> fileVariables.put(variableName, variable);
-            case CLASS -> classVariables.getLast().put(variableName, variable);
+            case CLASS -> classVariables.getFirst().put(variableName, variable);
             case LOCAL -> {
                 localVariables.putIfAbsent(variableName, new LinkedList<>());
-                localVariables.get(variableName).addLast(variable);
-                localVariablesByScope.getLast().add(variableName);
+                localVariables.get(variableName).push(variable);
+                localVariablesByScope.getFirst().add(variableName);
             }
         }
     }
@@ -148,7 +149,7 @@ public class VariableRegistry {
      */
     public void addAllNonLocalVariablesAsReads(CodeSemantics semantics) {
         Set<Variable> nonLocalVariables = new HashSet<>(fileVariables.values());
-        nonLocalVariables.addAll(classVariables.getLast().values());
+        nonLocalVariables.addAll(classVariables.getFirst().values());
         for (Variable variable : nonLocalVariables)
             semantics.addRead(variable);
     }
@@ -156,7 +157,7 @@ public class VariableRegistry {
     private Variable getVariable(String variableName) {
         Deque<Variable> variableIdStack = localVariables.get(variableName);
         if (variableIdStack != null)
-            return variableIdStack.getLast();  // stack is never empty
+            return variableIdStack.getFirst();  // stack is never empty
         Variable variable = getClassVariable(variableName);
         return variable != null ? variable : fileVariables.get(variableName);
         /*
@@ -168,7 +169,7 @@ public class VariableRegistry {
     }
 
     private Variable getClassVariable(String variableName) {
-        Map<String, Variable> currentClassVariables = classVariables.peekLast();
+        Map<String, Variable> currentClassVariables = classVariables.peek();
         return currentClassVariables != null ? currentClassVariables.get(variableName) : null;
     }
 }
