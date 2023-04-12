@@ -81,6 +81,8 @@ public class SchemeParser {
         } catch (FileNotFoundException e) {
             System.out.println("Scheme Parser R4RS:  File " + file.getName() + " not found.");
             throw new ParsingException(file, e.getMessage(), e);
+        } catch (IOException e) {
+            throw new ParsingException(file, e.getMessage(), e);
         }
         try {
             parser.Program();
