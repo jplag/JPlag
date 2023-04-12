@@ -3,6 +3,8 @@ package de.jplag.util;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.ibm.icu.text.CharsetDetector;
@@ -70,6 +72,46 @@ public class FileUtils {
         }
     }
 
+    /**
+     * Detects the most probable charset over the whole set of files.
+     * @param files The files to check
+     * @return The most probable charset
+     */
+    public static Charset detectCharsetFromMultiple(Collection<File> files) {
+        Map<String, List<Integer>> charsetValues = new HashMap<>();
+
+        files.stream().map(it -> {
+            try (InputStream stream = new BufferedInputStream(new FileInputStream(it))) {
+                return detectAllCharsets(stream);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).forEach(matches -> {
+            Set<String> remaining = new HashSet<>(Set.of(CharsetDetector.getAllDetectableCharsets()));
+            for (CharsetMatch match : matches) {
+                charsetValues.putIfAbsent(match.getName(), new ArrayList<>());
+                charsetValues.get(match.getName()).add(match.getConfidence());
+                remaining.remove(match.getName());
+            }
+            remaining.forEach(it -> {
+                charsetValues.putIfAbsent(it, new ArrayList<>());
+                charsetValues.get(it).add(0);
+            });
+        });
+
+        AtomicReference<Charset> mostProbable = new AtomicReference<>(StandardCharsets.UTF_8);
+        AtomicReference<Double> mostProbableConfidence = new AtomicReference<>((double) 0);
+        charsetValues.forEach((charset, confidenceValues) -> {
+            double average = confidenceValues.stream().mapToInt(it -> it).average().orElse(0);
+            if (average > mostProbableConfidence.get()) {
+                mostProbable.set(Charset.forName(charset));
+                mostProbableConfidence.set(average);
+            }
+        });
+
+        return mostProbable.get();
+    }
+
     private static Charset detectCharset(InputStream stream) throws IOException {
         CharsetDetector charsetDetector = new CharsetDetector();
 
@@ -77,6 +119,14 @@ public class FileUtils {
 
         CharsetMatch match = charsetDetector.detect();
         return Charset.forName(match.getName());
+    }
+
+    private static CharsetMatch[] detectAllCharsets(InputStream stream) throws IOException {
+        CharsetDetector charsetDetector = new CharsetDetector();
+
+        charsetDetector.setText(stream);
+
+        return charsetDetector.detectAll();
     }
 
     /**

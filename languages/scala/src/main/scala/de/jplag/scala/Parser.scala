@@ -1,9 +1,11 @@
 package de.jplag.scala
 
 import de.jplag.scala.ScalaTokenType._
+import de.jplag.util.FileUtils
 import de.jplag.{AbstractParser, ParsingException, Token}
 
 import java.io.File
+import java.util.stream.Collectors
 import scala.collection.mutable.ListBuffer
 import scala.meta._
 
@@ -343,8 +345,7 @@ class Parser extends AbstractParser {
         currentFile = file
 
         try {
-            val bytes = java.nio.file.Files.readAllBytes(file.toPath)
-            val text = new String(bytes, "UTF-8")
+            val text = FileUtils.readFileContent(file)
             val input = Input.VirtualFile(file.getPath, text)
             val ast = input.parse[Source].get
             traverser(ast)
