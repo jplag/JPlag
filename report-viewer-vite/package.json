@@ -11,12 +11,10 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "prepare": "cd .. && husky install report_viewer_vite/.husky"
   },
   "dependencies": {
-    "pinia": "^2.0.32",
-    "vue": "^3.2.47",
-    "vue-router": "^4.1.6",
     "@highlightjs/vue-plugin": "^2.1.0",
     "chart.js": "^3.9.1",
     "chartjs-plugin-datalabels": "^2.2.0",
@@ -24,9 +22,12 @@
     "gitart-vue-dialog": "^2.4.1",
     "highlight.js": "^11.7.0",
     "jszip": "^3.10.0",
+    "pinia": "^2.0.32",
     "slash": "^5.0.0",
+    "vue": "^3.2.47",
     "vue-chart-3": "^3.1.8",
     "vue-draggable-next": "^2.1.1",
+    "vue-router": "^4.1.6",
     "vue-virtual-scroller": "^2.0.0-beta.8",
     "vue3-highlightjs": "^1.0.5"
   },
@@ -42,7 +43,9 @@
     "@vue/tsconfig": "^0.1.3",
     "eslint": "^8.34.0",
     "eslint-plugin-vue": "^9.9.0",
+    "husky": "^8.0.0",
     "jsdom": "^21.1.0",
+    "lint-staged": "^13.2.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.4",
     "typescript": "~4.8.4",

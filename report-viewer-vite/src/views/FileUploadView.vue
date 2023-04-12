@@ -89,7 +89,11 @@ export default defineComponent({
       return folders[submissionFolderIndex + 1]
     }
 
-    const extractFileNameWithFullPath = (directoryPath: string, fileBase: string, originalFileName: string) => {
+    const extractFileNameWithFullPath = (
+      directoryPath: string,
+      fileBase: string,
+      originalFileName: string
+    ) => {
       let fullPath = ''
       const rootName = extractRootName(directoryPath)
       const filesOrSubmissionsIndex_filePath = directoryPath.indexOf(
@@ -134,7 +138,11 @@ export default defineComponent({
             const fileBase = unixFileName.substring(unixFileName.lastIndexOf('/') + 1)
 
             const submissionFileName = extractSubmissionFileName(directoryPath)
-            const fullPathFileName = extractFileNameWithFullPath(directoryPath, fileBase, originalFileName)
+            const fullPathFileName = extractFileNameWithFullPath(
+              directoryPath,
+              fileBase,
+              originalFileName
+            )
             await zip.files[originalFileName].async('string').then((data) => {
               store().saveSubmissionFile({
                 name: submissionFileName,
