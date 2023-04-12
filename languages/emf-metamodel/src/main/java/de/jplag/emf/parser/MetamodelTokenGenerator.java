@@ -8,6 +8,7 @@ import static de.jplag.emf.MetamodelTokenType.BOUND;
 import static de.jplag.emf.MetamodelTokenType.CLASS;
 import static de.jplag.emf.MetamodelTokenType.CLASS_END;
 import static de.jplag.emf.MetamodelTokenType.CONTAINMENT;
+import static de.jplag.emf.MetamodelTokenType.CONTAINMENT_MULT;
 import static de.jplag.emf.MetamodelTokenType.DATATYPE;
 import static de.jplag.emf.MetamodelTokenType.ENUM;
 import static de.jplag.emf.MetamodelTokenType.ENUM_END;
@@ -20,6 +21,7 @@ import static de.jplag.emf.MetamodelTokenType.PACKAGE;
 import static de.jplag.emf.MetamodelTokenType.PACKAGE_END;
 import static de.jplag.emf.MetamodelTokenType.PARAMETER;
 import static de.jplag.emf.MetamodelTokenType.REFERENCE;
+import static de.jplag.emf.MetamodelTokenType.REFERENCE_MULT;
 import static de.jplag.emf.MetamodelTokenType.RETURN_TYPE;
 import static de.jplag.emf.MetamodelTokenType.THROWS_DECLARATION;
 import static de.jplag.emf.MetamodelTokenType.TYPE_PARAMETER;
@@ -121,9 +123,17 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
     protected void visitEReference(EReference eReference) {
         // TODO in future this might be relevant to remove:
         if (eReference.isContainment()) {
-            parser.addToken(CONTAINMENT, eReference);
+            if (eReference.getUpperBound() == 1) {
+                parser.addToken(CONTAINMENT, eReference);
+            } else {
+                parser.addToken(CONTAINMENT_MULT, eReference);
+            }
         } else {
-            parser.addToken(REFERENCE, eReference);
+            if (eReference.getUpperBound() == 1) {
+                parser.addToken(REFERENCE, eReference);
+            } else {
+                parser.addToken(REFERENCE_MULT, eReference);
+            }
         }
     }
 
