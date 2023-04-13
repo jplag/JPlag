@@ -1,9 +1,9 @@
 package de.jplag.normalization;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +27,7 @@ class NormalizationGraphConstructor {
     NormalizationGraphConstructor(List<Token> tokens) {
         graph = new SimpleDirectedGraph<>(Edge.class);
         bidirectionalBlockDepth = 0;
-        fullPositionSignificanceIngoing = new LinkedList<>();
+        fullPositionSignificanceIngoing = new ArrayList<>();
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         inCurrentBidirectionalBlock = new HashSet<>();
@@ -124,7 +124,7 @@ class NormalizationGraphConstructor {
     }
 
     private void addVariableToMap(Map<Variable, Collection<Statement>> variableMap, Variable variable) {
-        variableMap.putIfAbsent(variable, new LinkedList<>());
+        variableMap.putIfAbsent(variable, new ArrayList<>());
         variableMap.get(variable).add(current);
     }
 }

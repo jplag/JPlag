@@ -1,6 +1,6 @@
 package de.jplag.normalization;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.jplag.Token;
@@ -12,7 +12,7 @@ class StatementBuilder {
 
     StatementBuilder(int lineNumber) {
         this.lineNumber = lineNumber;
-        this.tokens = new LinkedList<>();
+        this.tokens = new ArrayList<>();
     }
 
     int lineNumber() {
