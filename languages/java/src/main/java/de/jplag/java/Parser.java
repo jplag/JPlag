@@ -22,27 +22,14 @@ public class Parser extends AbstractParser {
     public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         new JavacAdapter().parseFiles(files, this);
-        // printSemantics();
+        logger.debug("--- token semantics ---");
+        for (Token token: tokens) {
+            logger.debug("%d | %s | %s".formatted(token.getLine(), token.getType().getDescription(), token.getSemantics()));
+        }
         return tokens;
     }
 
     public void add(Token token) {
         tokens.add(token);
-    }
-
-    public void printSemantics() {
-        long currentLine = 0;
-        for (Token token : tokens) {
-            if (token.getLine() != currentLine) {
-                currentLine = token.getLine();
-                System.out.println();
-                System.out.println(token.getLine());
-            }
-            System.out.print(token.getType().getDescription());
-            System.out.print(" | ");
-            System.out.println(token.getSemantics());
-        }
-        System.out.println();
-        System.out.println("=".repeat(100));
     }
 }

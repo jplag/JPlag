@@ -1,7 +1,7 @@
 package de.jplag.normalization;
 
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.Queue;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -57,10 +57,10 @@ public class NormalizationGraph {
      * Spread keep status to every node that does not represent dead code. Nodes without keep status are later eliminated.
      */
     private void spreadKeep() {
-        Deque<Statement> visit = new LinkedList<>(graph.vertexSet().stream() //
+        Queue<Statement> visit = new LinkedList<>(graph.vertexSet().stream() //
                 .filter(tl -> tl.semantics().keep()).toList());
         while (!visit.isEmpty()) {
-            Statement current = visit.pop();
+            Statement current = visit.remove();
             for (Statement pred : Graphs.predecessorListOf(graph, current)) {  // performance of iteration?
                 if (!pred.semantics().keep() && graph.getEdge(pred, current).isVariableFlow()) {
                     pred.markKeep();
