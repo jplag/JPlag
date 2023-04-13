@@ -126,8 +126,8 @@ public class VariableRegistry {
     }
 
     /**
-     * Register a variable access, more precisely: Add a variable access to the current CodeSemantics instance. The type of the access
-     * can be set with setNextVariableAccessType. By default, its type is read.
+     * Register a variable access, more precisely: Add a variable access to the current CodeSemantics instance. The type of
+     * the access can be set with setNextVariableAccessType. By default, its type is read.
      * @param variableName The variable's name.
      * @param isClassVariable Whether the variable is a class variable. This is true if a variable is qualified with the
      * "this" keyword in Java, for example.
@@ -166,12 +166,6 @@ public class VariableRegistry {
             return variableIdStack.getFirst();  // stack is never empty
         Variable variable = getClassVariable(variableName);
         return variable != null ? variable : fileVariables.get(variableName);
-        /*
-         * todo track global variables -> hard, how to differentiate SomeClass.staticAttr++ from String.join(...) // problem
-         * here: all String.joins (for example) are registered as writes to String // get global variable, register if it
-         * doesn't exist variable = globalVariables.get(variableName); if (variable != null) return variable; variable = new
-         * Variable(variableName, false, true); globalVariables.put(variableName, variable); return variable;
-         */
     }
 
     private Variable getClassVariable(String variableName) {

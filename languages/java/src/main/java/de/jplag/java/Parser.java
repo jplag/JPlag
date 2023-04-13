@@ -23,8 +23,8 @@ public class Parser extends AbstractParser {
         tokens = new ArrayList<>();
         new JavacAdapter().parseFiles(files, this);
         logger.debug("--- token semantics ---");
-        for (Token token: tokens) {
-            logger.debug("%d | %s | %s".formatted(token.getLine(), token.getType().getDescription(), token.getSemantics()));
+        for (Token token : tokens) {
+            logger.debug("{} | {} | {}", token.getLine(), token.getType().getDescription(), token.getSemantics());
         }
         return tokens;
     }

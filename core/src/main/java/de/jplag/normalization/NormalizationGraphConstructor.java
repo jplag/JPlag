@@ -31,15 +31,15 @@ class NormalizationGraphConstructor {
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         inCurrentBidirectionalBlock = new HashSet<>();
-        StatementBuilder current = new StatementBuilder(tokens.get(0).getLine());
+        StatementBuilder builderForCurrent = new StatementBuilder(tokens.get(0).getLine());
         for (Token token : tokens) {
-            if (token.getLine() != current.lineNumber()) {
-                addStatement(current.build());
-                current = new StatementBuilder(token.getLine());
+            if (token.getLine() != builderForCurrent.lineNumber()) {
+                addStatement(builderForCurrent.build());
+                builderForCurrent = new StatementBuilder(token.getLine());
             }
-            current.addToken(token);
+            builderForCurrent.addToken(token);
         }
-        addStatement(current.build());
+        addStatement(builderForCurrent.build());
     }
 
     SimpleDirectedGraph<Statement, Edge> get() {

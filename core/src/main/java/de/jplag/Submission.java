@@ -87,11 +87,11 @@ public class Submission implements Comparable<Submission> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
+    public boolean equals(Object object) {
+        if (object == this) {
             return true;
         }
-        if (!(obj instanceof Submission otherSubmission)) {
+        if (!(object instanceof Submission otherSubmission)) {
             return false;
         }
         return otherSubmission.getName().equals(name);
@@ -275,11 +275,11 @@ public class Submission implements Comparable<Submission> {
         tokenList = new NormalizationGraph(tokenList).linearize();
         List<Integer> normalizedOrder = getOrder(tokenList);
 
-        logger.debug("original line order: " + originalOrder);
-        logger.debug("line order after normalization: " + normalizedOrder);
+        logger.debug("original line order: {}", originalOrder);
+        logger.debug("line order after normalization: {}", normalizedOrder);
         Set<Integer> normalizedSet = new HashSet<>(normalizedOrder);
         List<Integer> removed = originalOrder.stream().filter(l -> !normalizedSet.contains(l)).toList();
-        logger.debug("removed %d line(s): %s".formatted(removed.size(), removed));
+        logger.debug("removed {} line(s): {}", removed.size(), removed);
     }
 
     private List<Integer> getOrder(List<Token> tokenList) {
