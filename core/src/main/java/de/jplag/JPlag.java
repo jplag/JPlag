@@ -59,10 +59,6 @@ public class JPlag {
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
         }
 
-        // better solution long-term: pull this into SubmissionSet constructor, use language-specific option
-        // if (language.tokensHaveSemantics())
-        // submissionSet.normalizeSubmissions();
-
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         if (logger.isInfoEnabled())
