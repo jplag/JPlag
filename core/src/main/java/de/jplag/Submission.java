@@ -15,7 +15,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.normalization.NormalizationGraph;
+import de.jplag.normalization.TokenStringNormalizer;
 
 /**
  * Represents a single submission. A submission can contain multiple files.
@@ -272,7 +272,7 @@ public class Submission implements Comparable<Submission> {
 
     void normalize() {
         List<Integer> originalOrder = getOrder(tokenList);
-        tokenList = new NormalizationGraph(tokenList).linearize();
+        TokenStringNormalizer.normalize(tokenList);
         List<Integer> normalizedOrder = getOrder(tokenList);
 
         logger.debug("original line order: {}", originalOrder);
