@@ -36,7 +36,8 @@ export default defineComponent({
       required: true
     },
     color: {
-      required: true
+      required: true,
+      type: String
     },
     fileIndex: {
       type: Number
