@@ -4,10 +4,13 @@
 <template>
   <div class="container">
     <div class="column-list">
-      <p v-for="(id, index) in ids" :key="index"
-         :class="{'selected' : !store.state.anonymous.has(id) && store.state.anonymous.size !== 0 }"
-         @click="emitIdsSent([id])">
-        {{ store.getters.submissionDisplayName(id) }}
+      <p
+        v-for="(id, index) in ids"
+        :key="index"
+        :class="{ selected: !store().anonymous.has(id) && store().anonymous.size !== 0 }"
+        @click="emitIdsSent([id])"
+      >
+        {{ store().submissionDisplayName(id) }}
       </p>
     </div>
     <button @click="emitIdsSent(ids)">Hide/Show all</button>
@@ -15,21 +18,22 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-import store from "@/store/store"
+import { defineComponent } from 'vue'
+import store from '@/stores/store'
 
 export default defineComponent({
-  emits: ["idSent"],
-  name: "IDsList",
+  emits: ['idSent'],
+  name: 'IDsList',
   props: {
     ids: {
       type: Array<string>,
       required: true
     }
   },
-  setup(_, {emit}) {
+  setup(_, { emit }) {
     const emitIdsSent = (ids: string[]) => {
-      emit('idSent', ids);}
+      emit('idSent', ids)
+    }
     return {
       store,
       emitIdsSent

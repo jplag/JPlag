@@ -5,5 +5,5 @@
  * @param line Line number.
  */
 export function generateLineCodeLink(index: number, fileName: string, line: number): string {
-    return String(index).concat(fileName).concat(String(line))
+  return String(index).concat(fileName).concat(String(line))
 }
