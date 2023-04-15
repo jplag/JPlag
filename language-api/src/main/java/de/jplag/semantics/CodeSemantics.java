@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This class contains semantic information about a code snippet, in our case either a token or a statement.
+ * Contains semantic information about a code snippet, in our case either a token or a statement.
  */
 public class CodeSemantics {
 

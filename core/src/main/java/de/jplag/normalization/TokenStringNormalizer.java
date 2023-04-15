@@ -12,7 +12,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import de.jplag.Token;
 
 /**
- * The class that performs token string normalization.
+ * Performs token string normalization.
  */
 public class TokenStringNormalizer {
 
@@ -20,12 +20,12 @@ public class TokenStringNormalizer {
     }
 
     /**
-     * Normalizes the token string it receives inplace. Tokens representing dead code have been eliminated and tokens
+     * Normalizes the token string it receives in place. Tokens representing dead code have been eliminated and tokens
      * representing subsequent independent statements have been put in a fixed order. Works by first constructing a
      * Normalization Graph and then turning it back into a token string.
      */
     public static void normalize(List<Token> tokens) {
-        SimpleDirectedGraph<Statement, Edge> normalizationGraph = new NormalizationGraphConstructor(tokens).get();
+        SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph = new NormalizationGraphConstructor(tokens).get();
         tokens.clear();
         spreadKeep(normalizationGraph);
         PriorityQueue<Statement> roots = normalizationGraph.vertexSet().stream() //
@@ -52,7 +52,7 @@ public class TokenStringNormalizer {
     /**
      * Spread keep status to every node that does not represent dead code. Nodes without keep status are later eliminated.
      */
-    private static void spreadKeep(SimpleDirectedGraph<Statement, Edge> normalizationGraph) {
+    private static void spreadKeep(SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph) {
         Queue<Statement> visit = new LinkedList<>(normalizationGraph.vertexSet().stream() //
                 .filter(tl -> tl.semantics().keep()).toList());
         while (!visit.isEmpty()) {
