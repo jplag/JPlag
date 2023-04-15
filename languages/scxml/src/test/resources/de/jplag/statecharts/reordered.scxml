@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" datamodel="ecmascript" name="Statechart">
+	<datamodel>
+		<data expr="0" id="t" />
+	</datamodel>
+	<state id="main_region">
+		<initial>
+			<transition target="Start" type="internal">
+			</transition>
+		</initial>
+		<state id="Start">
+			<transition event="user.press_button"  target="Blinking">
+				<assign location="t" expr="0"/>
+			</transition>
+		</state>
+		<state id="Blinking">
+			<state id="Light">
+				<transition   target="Dark">
+				</transition>
+				<onentry>
+					<if cond="true">
+						<assign location="t" expr="t + 1"/>
+					</if>
+				</onentry>
+			</state>
+			<onentry>
+				<assign location="t" expr="0"/>
+			</onentry>
+			<history type = "shallow" id="Blinking.entry_0">
+				<transition   target="Light">
+				</transition>
+			</history>
+			<transition event="user.press_button"  target="Start">
+			</transition>
+			<state id="Dark">
+				<transition event="C"  target="Light">
+				</transition>
+				<onexit>
+					<cancel sendid="B" />
+				</onexit>
+				<transition  cond="t == 5" target="Start">
+				</transition>
+				<onentry>
+					<send event="A" delay="1s"/>
+				</onentry>
+			</state>
+		</state>
+	</state>
+</scxml>
