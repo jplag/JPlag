@@ -1,13 +1,13 @@
 package de.jplag.scxml.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import de.jplag.scxml.parser.model.State;
 import de.jplag.scxml.parser.model.Transition;
 import de.jplag.scxml.parser.model.executable_content.Action;
 import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class StateBuilder {
 

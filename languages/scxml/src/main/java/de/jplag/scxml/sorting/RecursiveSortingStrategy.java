@@ -1,17 +1,16 @@
 package de.jplag.scxml.sorting;
 
+import java.util.List;
+
 import de.jplag.scxml.parser.PeekAdapter;
 import de.jplag.scxml.parser.model.StatechartElement;
 import de.jplag.scxml.util.AbstractScxmlVisitor;
 
-import java.util.List;
-
 /**
- * This sorting strategy lexicographically sorts the list of statechart elements by
- * the token streams they were to produce without affecting the main token stream.
- * This implies that child elements of nested model objects have an effect on the
- * final token order. The tokens are sorted by the ordinals of their types
- * using {@link PeekAdapter#compareTokenTypeLists(List, List)}.
+ * This sorting strategy lexicographically sorts the list of statechart elements by the token streams they were to
+ * produce without affecting the main token stream. This implies that child elements of nested model objects have an
+ * effect on the final token order. The tokens are sorted by the ordinals of their types using
+ * {@link PeekAdapter#compareTokenTypeLists(List, List)}.
  */
 public class RecursiveSortingStrategy implements SortingStrategy {
 
@@ -19,7 +18,6 @@ public class RecursiveSortingStrategy implements SortingStrategy {
 
     /**
      * Constructs a new sorter based on the recursive strategy.
-     *
      * @param visitor the visitor used to peek tokens
      */
     public RecursiveSortingStrategy(AbstractScxmlVisitor visitor) {

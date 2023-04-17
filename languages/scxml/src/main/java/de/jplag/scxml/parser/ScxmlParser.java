@@ -1,20 +1,5 @@
 package de.jplag.scxml.parser;
 
-import de.jplag.ParsingException;
-import de.jplag.scxml.parser.model.State;
-import de.jplag.scxml.parser.model.Statechart;
-import de.jplag.scxml.parser.model.Transition;
-import de.jplag.scxml.parser.model.executable_content.Action;
-import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
-import de.jplag.scxml.parser.util.NodeUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,9 +7,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+import de.jplag.ParsingException;
+import de.jplag.scxml.parser.model.State;
+import de.jplag.scxml.parser.model.Statechart;
+import de.jplag.scxml.parser.model.Transition;
+import de.jplag.scxml.parser.model.executable_content.Action;
+import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
+import de.jplag.scxml.parser.util.NodeUtil;
+
 /**
- * An SCXML parser implementation based on a Simple API for XML (SAX) parser.
- * Constructs a Statechart object during the parse.
+ * An SCXML parser implementation based on a Simple API for XML (SAX) parser. Constructs a Statechart object during the
+ * parse.
  */
 public class ScxmlParser {
 
@@ -54,13 +56,10 @@ public class ScxmlParser {
     }
 
     /**
-     * Parses the given SCXML file using Javax and constructs a Statechart object.
-     * Two passes through the document are performed:
-     * In the first pass, all {@literal <initial>} elements within states are iterated over
-     * to resolve initial states. In the second pass, the whole document is visited.
-     * This is necessary because an initial state may occur in the document prior to
-     * the transitions pointing to it.
-     *
+     * Parses the given SCXML file using Javax and constructs a Statechart object. Two passes through the document are
+     * performed: In the first pass, all {@literal <initial>} elements within states are iterated over to resolve initial
+     * states. In the second pass, the whole document is visited. This is necessary because an initial state may occur in
+     * the document prior to the transitions pointing to it.
      * @param file the SCXML file to parse
      */
     public Statechart parse(File file) throws IOException, SAXException, ParsingException {
@@ -129,13 +128,9 @@ public class ScxmlParser {
     }
 
     private Transition visitTransition(Node node) throws IllegalArgumentException {
-        return new Transition(
-                NodeUtil.getAttribute(node, TARGET_ATTRIBUTE),
-                NodeUtil.getAttribute(node, EVENT_ATTRIBUTE),
-                NodeUtil.getAttribute(node, CONDITION_ATTRIBUTE),
-                visitExecutableContents(node),
+        return new Transition(NodeUtil.getAttribute(node, TARGET_ATTRIBUTE), NodeUtil.getAttribute(node, EVENT_ATTRIBUTE),
+                NodeUtil.getAttribute(node, CONDITION_ATTRIBUTE), visitExecutableContents(node),
                 // Set timed attribute to false initially, may be updated later in the State class
-                false
-        );
+                false);
     }
 }

@@ -1,19 +1,17 @@
 package de.jplag.scxml.parser.model.executable_content;
 
-import de.jplag.scxml.parser.util.NodeUtil;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public record If(String cond, List<ExecutableContent> contents, List<ElseIf> elseIfs,
-                 Else else_) implements ExecutableContent {
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-    private static final Set<String> ALLOWED_CONTENTS = Set.of(
-            "raise", "if", "foreach", "log", "assign", "script", "send", "cancel"
-    );
+import de.jplag.scxml.parser.util.NodeUtil;
+
+public record If(String cond, List<ExecutableContent> contents, List<ElseIf> elseIfs, Else else_) implements ExecutableContent {
+
+    private static final Set<String> ALLOWED_CONTENTS = Set.of("raise", "if", "foreach", "log", "assign", "script", "send", "cancel");
 
     private static final String IF_ELEMENT = "if";
     private static final String ELSEIF_ELEMENT = "elseif";
@@ -32,10 +30,10 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
     }
 
     /**
-     * Constructs an If statechart element from a given node
-     * with optional ElseIf or Else branches.
-     * The W3C SCXML specification defines a valid {@literal <if>} element as follows:
+     * Constructs an If statechart element from a given node with optional ElseIf or Else branches. The W3C SCXML
+     * specification defines a valid {@literal <if>} element as follows:
      * <p>
+     * 
      * <pre>
      * {@code
      * <if cond="cond1">
@@ -50,14 +48,11 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
      * }
      * </pre>
      * <p>
-     * This syntax requires more complicated parsing as the branches and
-     * executable contents within each branch are defined on the same level.
-     *
-     * @param node the node to create the If object from. Must
-     *             contain at least one {@literal <if>} element and optionally
-     *             {@literal <elseif>} or {@literal <else>} tags.
-     * @throws IllegalArgumentException when more than one {@literal <else>}
-     *                                  statement is present
+     * This syntax requires more complicated parsing as the branches and executable contents within each branch are defined
+     * on the same level.
+     * @param node the node to create the If object from. Must contain at least one {@literal <if>} element and optionally
+     * {@literal <elseif>} or {@literal <else>} tags.
+     * @throws IllegalArgumentException when more than one {@literal <else>} statement is present
      */
     public static If fromNode(Node node) throws IllegalArgumentException {
         NodeList childNodes = node.getChildNodes();

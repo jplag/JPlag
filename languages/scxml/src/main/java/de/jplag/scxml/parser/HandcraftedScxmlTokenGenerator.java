@@ -1,23 +1,20 @@
 package de.jplag.scxml.parser;
 
+import static de.jplag.scxml.ScxmlTokenType.*;
+
 import de.jplag.scxml.parser.model.State;
 import de.jplag.scxml.parser.model.Transition;
 import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
 
-import static de.jplag.scxml.ScxmlTokenType.*;
-
 /**
- * Visits a statechart and its contained elements to extract tokens
- * using a handcrafted strategy, i.e. a larger token set than for the
- * simple strategy (see {@link SimpleScxmlTokenGenerator}).
- * Additional tokens are extracted depending on the attributes of
- * the statechart elements.
+ * Visits a statechart and its contained elements to extract tokens using a handcrafted strategy, i.e. a larger token
+ * set than for the simple strategy (see {@link SimpleScxmlTokenGenerator}). Additional tokens are extracted depending
+ * on the attributes of the statechart elements.
  */
 public class HandcraftedScxmlTokenGenerator extends SimpleScxmlTokenGenerator {
 
     /**
      * Creates the visitor.
-     *
      * @param adapter is the parser adapter which receives the generated tokens.
      */
     public HandcraftedScxmlTokenGenerator(ScxmlParserAdapter adapter) {

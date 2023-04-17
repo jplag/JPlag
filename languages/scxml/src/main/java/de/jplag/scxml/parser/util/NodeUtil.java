@@ -1,11 +1,11 @@
 package de.jplag.scxml.parser.util;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Utility class providing methods for conveniently iterating over nodes in the DOM.
@@ -13,10 +13,9 @@ import java.util.Set;
 public final class NodeUtil {
 
     /**
-     * Iterates over all immediate child nodes of the given root node and returns
-     * a list of child nodes whose node names match any of the provided node names.
-     *
-     * @param root       the root node
+     * Iterates over all immediate child nodes of the given root node and returns a list of child nodes whose node names
+     * match any of the provided node names.
+     * @param root the root node
      * @param childNames a set of child node names to consider
      * @return a list of matching child nodes
      */
@@ -34,11 +33,10 @@ public final class NodeUtil {
     }
 
     /**
-     * Iterates over all immediate direct child nodes of the given root node and returns
-     * a list of child nodes whose node names match the provided node name.
-     *
-     * @param root       the root node
-     * @param childName  the child node name to consider
+     * Iterates over all immediate direct child nodes of the given root node and returns a list of child nodes whose node
+     * names match the provided node name.
+     * @param root the root node
+     * @param childName the child node name to consider
      * @return a list of matching child nodes
      */
     public static List<Node> getChildNodes(Node root, String childName) {
@@ -46,11 +44,9 @@ public final class NodeUtil {
     }
 
     /**
-     * Iterates over all immediate direct child nodes of the given root node and returns
-     * the first child node whose node name matches the provided node name.
-     * If there are no matching nodes, null is returned.
-     *
-     * @param root      the root node
+     * Iterates over all immediate direct child nodes of the given root node and returns the first child node whose node
+     * name matches the provided node name. If there are no matching nodes, null is returned.
+     * @param root the root node
      * @param childName the node name to consider
      * @return the first matching child node, or null if none are found
      */
@@ -60,10 +56,9 @@ public final class NodeUtil {
     }
 
     /**
-     * Recursively iterates over all child nodes of the given root node and returns
-     * a list of child nodes whose node names match the provided node name.
-     *
-     * @param root      the root node
+     * Recursively iterates over all child nodes of the given root node and returns a list of child nodes whose node names
+     * match the provided node name.
+     * @param root the root node
      * @param childName the node name to consider
      * @return a list of matching child nodes
      */
@@ -81,9 +76,8 @@ public final class NodeUtil {
     }
 
     /**
-     * @return the value of the attribute specified by name
-     * of the given node or null if the node does not contain
-     * an attribute with this name
+     * @return the value of the attribute specified by name of the given node or null if the node does not contain an
+     * attribute with this name
      */
     public static String getAttribute(Node node, String name) {
         Node attribute = node.getAttributes().getNamedItem(name);

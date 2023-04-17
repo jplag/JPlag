@@ -1,26 +1,25 @@
 package de.jplag.scxml.parser.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+
 import de.jplag.scxml.parser.model.executable_content.Action;
 import de.jplag.scxml.parser.model.executable_content.Cancel;
 import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
 import de.jplag.scxml.parser.model.executable_content.Send;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
-
-public record State(String id, List<Transition> transitions, List<State> substates, List<Action> actions,
-                    boolean initial, boolean parallel) implements StatechartElement {
+public record State(String id, List<Transition> transitions, List<State> substates, List<Action> actions, boolean initial, boolean parallel)
+        implements StatechartElement {
 
     /**
      * Constructs a new state.
-     *
-     * @param id          the ID of the state
+     * @param id the ID of the state
      * @param transitions a non-null list of outgoing transitions of this state
-     * @param substates   a non-null list of substates of this state
-     * @param actions     a non-null list of actions associated with this state
-     * @param initial     whether this state is an initial state
-     * @param parallel    whether this state is a parallel state
+     * @param substates a non-null list of substates of this state
+     * @param actions a non-null list of actions associated with this state
+     * @param initial whether this state is an initial state
+     * @param parallel whether this state is a parallel state
      */
     public State(String id, List<Transition> transitions, List<State> substates, List<Action> actions, boolean initial, boolean parallel) {
         this.id = id;
@@ -35,9 +34,7 @@ public record State(String id, List<Transition> transitions, List<State> substat
     }
 
     /**
-     * Constructs a state with an ID, setting all other variables
-     * to default values.
-     *
+     * Constructs a state with an ID, setting all other variables to default values.
      * @param id the ID of the state
      */
     public State(String id) {
@@ -52,8 +49,7 @@ public record State(String id, List<Transition> transitions, List<State> substat
     }
 
     /**
-     * @return whether this state is a simple state, meaning that is
-     * neither an initial state nor a parallel state
+     * @return whether this state is a simple state, meaning that is neither an initial state nor a parallel state
      */
     public boolean isSimple() {
         return !initial && !parallel;
@@ -94,10 +90,9 @@ public record State(String id, List<Transition> transitions, List<State> substat
     }
 
     /**
-     * Sets the timed attribute of each transition of this state that is timed.
-     * To model a timed transition, itemis Create adds onentry.send, onexit.cancel
-     * and transition elements with matching IDs.
-     * These elements will be removed if they are part of a timed transition.
+     * Sets the timed attribute of each transition of this state that is timed. To model a timed transition, itemis Create
+     * adds onentry.send, onexit.cancel and transition elements with matching IDs. These elements will be removed if they
+     * are part of a timed transition.
      **/
     private void updateTimedTransitions() {
         if (this.transitions().isEmpty() || this.actions().isEmpty()) {

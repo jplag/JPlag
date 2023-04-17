@@ -1,10 +1,10 @@
 package de.jplag.scxml;
 
+import java.io.File;
+
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.scxml.parser.model.StatechartElement;
-
-import java.io.File;
 
 /**
  * Represents a SCXML token.
@@ -15,9 +15,8 @@ public class ScxmlToken extends Token {
 
     /**
      * Creates an SCXML token that corresponds to a StatechartElement.
-     *
-     * @param type    the type of the token
-     * @param file    the source statechart file
+     * @param type the type of the token
+     * @param file the source statechart file
      * @param element the corresponding StatechartElement this token was extracted from
      */
     public ScxmlToken(TokenType type, File file, StatechartElement element) {
@@ -27,9 +26,8 @@ public class ScxmlToken extends Token {
 
     /**
      * Creates an SCXML token that corresponds to a StatechartElement including file information.
-     *
-     * @param type    the type of the token
-     * @param file    the source statechart file
+     * @param type the type of the token
+     * @param file the source statechart file
      * @param line the line index in the source code where the token resides, 1-based
      * @param column the column index, meaning where the token starts in the line, 1-based
      * @param length the length of the token in the view file

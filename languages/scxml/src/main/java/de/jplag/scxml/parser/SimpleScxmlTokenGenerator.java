@@ -1,5 +1,10 @@
 package de.jplag.scxml.parser;
 
+import static de.jplag.scxml.ScxmlTokenType.*;
+
+import java.util.List;
+import java.util.Map;
+
 import de.jplag.scxml.ScxmlTokenType;
 import de.jplag.scxml.parser.model.State;
 import de.jplag.scxml.parser.model.Statechart;
@@ -8,21 +13,14 @@ import de.jplag.scxml.parser.model.Transition;
 import de.jplag.scxml.parser.model.executable_content.*;
 import de.jplag.scxml.util.AbstractScxmlVisitor;
 
-import java.util.List;
-import java.util.Map;
-
-import static de.jplag.scxml.ScxmlTokenType.*;
-
 /**
- * Visits a statechart and its contained elements to extract tokens
- * using a simple strategy, i.e. a smaller token set than for the
- * handcrafted strategy (see {@link HandcraftedScxmlTokenGenerator}).
+ * Visits a statechart and its contained elements to extract tokens using a simple strategy, i.e. a smaller token set
+ * than for the handcrafted strategy (see {@link HandcraftedScxmlTokenGenerator}).
  */
 public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
 
     /**
      * Creates the visitor.
-     *
      * @param adapter the parser adapter which receives the generated tokens
      */
     public SimpleScxmlTokenGenerator(ScxmlParserAdapter adapter) {
@@ -137,10 +135,7 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
             return;
         }
 
-        Map<Class<? extends StatechartElement>, ScxmlTokenType> tokenTypeMap = Map.of(
-                Send.class, SEND,
-                Cancel.class, CANCEL
-        );
+        Map<Class<? extends StatechartElement>, ScxmlTokenType> tokenTypeMap = Map.of(Send.class, SEND, Cancel.class, CANCEL);
         ScxmlTokenType type = tokenTypeMap.get(content.getClass());
         System.out.println(content.getClass());
         adapter.addToken(type, content);

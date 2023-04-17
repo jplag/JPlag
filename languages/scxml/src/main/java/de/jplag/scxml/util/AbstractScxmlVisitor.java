@@ -1,5 +1,9 @@
 package de.jplag.scxml.util;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
 import de.jplag.scxml.parser.PeekAdapter;
 import de.jplag.scxml.parser.ScxmlParserAdapter;
 import de.jplag.scxml.parser.model.State;
@@ -9,10 +13,6 @@ import de.jplag.scxml.parser.model.Transition;
 import de.jplag.scxml.parser.model.executable_content.*;
 import de.jplag.scxml.sorting.RecursiveSortingStrategy;
 import de.jplag.scxml.sorting.SortingStrategy;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * Visitor for all StatechartElements in a Statechart object.
@@ -30,19 +30,15 @@ public abstract class AbstractScxmlVisitor {
 
     /**
      * Sets the current sorting strategy for this visitor.
-     *
-     * @param sorter the sorter to use for sorting nested
-     *               statechart elements before extracting tokens for them
+     * @param sorter the sorter to use for sorting nested statechart elements before extracting tokens for them
      */
     public void setSorter(SortingStrategy sorter) {
         this.sorter = sorter;
     }
 
     /**
-     * Visits a statechart element without effecting the main
-     * token stream by temporarily swapping out the current parser
+     * Visits a statechart element without effecting the main token stream by temporarily swapping out the current parser
      * adapter. Returns a list of collected token type ordinals.
-     *
      * @param element the statechart element to visit
      */
     public List<Integer> peekTokens(StatechartElement element) {
@@ -57,10 +53,8 @@ public abstract class AbstractScxmlVisitor {
     }
 
     /**
-     * Returns the current depth in the statechart. The depth is incremented
-     * whenever child elements of a nested statechart element are visited
-     * and decremented after all child elements have been visited.
-     *
+     * Returns the current depth in the statechart. The depth is incremented whenever child elements of a nested statechart
+     * element are visited and decremented after all child elements have been visited.
      * @return the current depth in the statechart
      */
     public int getCurrentStatechartDepth() {
@@ -68,20 +62,14 @@ public abstract class AbstractScxmlVisitor {
     }
 
     /**
-     * Visits the given statechart element while adding extracted tokens
-     * to the current parser adapter.
-     *
+     * Visits the given statechart element while adding extracted tokens to the current parser adapter.
      * @throws IllegalArgumentException when the statechart element is of a type that is not currently handled
      */
     public final void visit(StatechartElement element) throws IllegalArgumentException {
-        Map<Class<? extends StatechartElement>, Consumer<StatechartElement>> visitorMap = Map.of(
-                Statechart.class, e -> visitStatechart((Statechart) e),
-                State.class, e -> visitState((State) e),
-                If.class, e -> visitIf((If) e),
-                SimpleExecutableContent.class, e -> visitSimpleExecutableContent((SimpleExecutableContent) e),
-                ExecutableContent.class, e -> visitExecutableContent((ExecutableContent) e),
-                Transition.class, e -> visitTransition((Transition) e)
-        );
+        Map<Class<? extends StatechartElement>, Consumer<StatechartElement>> visitorMap = Map.of(Statechart.class,
+                e -> visitStatechart((Statechart) e), State.class, e -> visitState((State) e), If.class, e -> visitIf((If) e),
+                SimpleExecutableContent.class, e -> visitSimpleExecutableContent((SimpleExecutableContent) e), ExecutableContent.class,
+                e -> visitExecutableContent((ExecutableContent) e), Transition.class, e -> visitTransition((Transition) e));
         if (!visitorMap.containsKey(element.getClass())) {
             throw new IllegalArgumentException("AbstractScxmlVisitor.visit: unhandled class " + element.getClass());
         }

@@ -1,13 +1,14 @@
 package de.jplag.scxml;
 
-import de.jplag.ParsingException;
-import de.jplag.Token;
-import de.jplag.scxml.parser.ScxmlParserAdapter;
-import org.kohsuke.MetaInfServices;
-
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+
+import org.kohsuke.MetaInfServices;
+
+import de.jplag.ParsingException;
+import de.jplag.Token;
+import de.jplag.scxml.parser.ScxmlParserAdapter;
 
 /**
  * Language for statecharts in the State Chart XML (SCXML) format.
@@ -30,7 +31,7 @@ public class ScxmlLanguage implements de.jplag.Language {
 
     @Override
     public String[] suffixes() {
-        return new String[]{FILE_ENDING};
+        return new String[] {FILE_ENDING};
     }
 
     @Override

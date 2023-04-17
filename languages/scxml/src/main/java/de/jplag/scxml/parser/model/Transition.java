@@ -1,12 +1,11 @@
 package de.jplag.scxml.parser.model;
 
-import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
-
 import java.util.List;
 import java.util.Objects;
 
-public record Transition(String target, String event, String cond, List<ExecutableContent> contents,
-                         boolean timed) implements StatechartElement {
+import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
+
+public record Transition(String target, String event, String cond, List<ExecutableContent> contents, boolean timed) implements StatechartElement {
 
     public static Transition makeTimed(Transition transition) {
         return new Transition(transition.target, null, transition.cond, transition.contents, true);

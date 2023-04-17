@@ -1,5 +1,21 @@
 package de.jplag.scxml;
 
+import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.ASSIGNMENT;
+import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.SCRIPT;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
+
 import de.jplag.ParsingException;
 import de.jplag.scxml.parser.ScxmlParser;
 import de.jplag.scxml.parser.model.State;
@@ -7,20 +23,6 @@ import de.jplag.scxml.parser.model.Statechart;
 import de.jplag.scxml.parser.model.Transition;
 import de.jplag.scxml.parser.model.executable_content.*;
 import de.jplag.scxml.util.StateBuilder;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
-import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.ASSIGNMENT;
-import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.SCRIPT;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ScxmlParserTest {
 
@@ -73,7 +75,8 @@ class ScxmlParserTest {
         File testFile = new File(baseDirectory, TEST_SUBJECTS[1]);
         Statechart actual = new ScxmlParser().parse(testFile);
 
-        State start = new StateBuilder("Start").addTransitions(Transition.makeTimed(transition("Next", List.of(new SimpleExecutableContent(SCRIPT))))).build();
+        State start = new StateBuilder("Start").addTransitions(Transition.makeTimed(transition("Next", List.of(new SimpleExecutableContent(SCRIPT)))))
+                .build();
         Statechart expected = new Statechart("Statechart", List.of(start));
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -100,21 +103,13 @@ class ScxmlParserTest {
         State start = new StateBuilder("Start").setInitial()
                 .addTransitions(transition("Blinking", "user.press_button", List.of(new SimpleExecutableContent(ASSIGNMENT)))).build();
 
-        State light = new StateBuilder("Light")
-                .addTransitions(transition("Dark"))
-                .addOnEntry(new If("true", new SimpleExecutableContent(ASSIGNMENT))).build();
+        State light = new StateBuilder("Light").addTransitions(transition("Dark")).addOnEntry(new If("true", new SimpleExecutableContent(ASSIGNMENT)))
+                .build();
 
-        State dark = new StateBuilder("Dark")
-                .addTransitions(
-                        transition("Start", null, "t == 5"),
-                        transition("Light", "C")
-                )
-                .addOnEntry(new Send("A", "1s"))
-                .addOnExit(new Cancel("B")).build();
+        State dark = new StateBuilder("Dark").addTransitions(transition("Start", null, "t == 5"), transition("Light", "C"))
+                .addOnEntry(new Send("A", "1s")).addOnExit(new Cancel("B")).build();
 
-        State blinking = new StateBuilder("Blinking")
-                .addSubstates(light, dark)
-                .addTransitions(transition("Start", "user.press_button"))
+        State blinking = new StateBuilder("Blinking").addSubstates(light, dark).addTransitions(transition("Start", "user.press_button"))
                 .addOnEntry(new SimpleExecutableContent(ASSIGNMENT)).build();
 
         State mainRegion = new StateBuilder("main_region").addSubstates(start, blinking).build();
@@ -123,13 +118,3 @@ class ScxmlParserTest {
     }
 
 }
-
-
-
-
-
-
-
-
-
-

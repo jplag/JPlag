@@ -1,15 +1,14 @@
 package de.jplag.scxml.sorting;
 
+import java.util.List;
+
 import de.jplag.scxml.parser.model.StatechartElement;
 import de.jplag.scxml.util.AbstractScxmlVisitor;
 
-import java.util.List;
-
-
 /**
- * This sorting strategy sorts the list of StatechartElements by the ordinal
- * of the first token that was to be extracted without affecting the main token stream.
- * This implies that child elements of nested model objects do not change the token order.
+ * This sorting strategy sorts the list of StatechartElements by the ordinal of the first token that was to be extracted
+ * without affecting the main token stream. This implies that child elements of nested model objects do not change the
+ * token order.
  */
 public class SimpleSortingStrategy implements SortingStrategy {
 
@@ -17,7 +16,6 @@ public class SimpleSortingStrategy implements SortingStrategy {
 
     /**
      * Constructs a new sorter based on the simple strategy.
-     *
      * @param visitor the visitor used to peek tokens
      */
     public SimpleSortingStrategy(AbstractScxmlVisitor visitor) {

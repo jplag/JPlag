@@ -1,5 +1,15 @@
 package de.jplag.scxml.parser;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
@@ -10,18 +20,10 @@ import de.jplag.scxml.parser.model.Statechart;
 import de.jplag.scxml.parser.model.StatechartElement;
 import de.jplag.scxml.util.AbstractScxmlVisitor;
 import de.jplag.scxml.util.ScxmlView;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
- * Parser adapter for SCXML statecharts that uses a Statechart object
- * obtained from an instance of ScxmlParser to extract tokens.
+ * Parser adapter for SCXML statecharts that uses a Statechart object obtained from an instance of ScxmlParser to
+ * extract tokens.
  */
 public class ScxmlParserAdapter extends AbstractParser {
 
@@ -36,7 +38,6 @@ public class ScxmlParserAdapter extends AbstractParser {
 
     /**
      * Parses all tokens from a set of files.
-     *
      * @param files the set of files.
      * @return the list of parsed tokens.
      */
@@ -50,7 +51,6 @@ public class ScxmlParserAdapter extends AbstractParser {
 
     /**
      * Loads a statechart from a file, parses it and extracts tokens from it.
-     *
      * @param file is the statechart file.
      */
     protected void parseModelFile(File file) throws ParsingException {
@@ -70,11 +70,9 @@ public class ScxmlParserAdapter extends AbstractParser {
     }
 
     /**
-     * Creates a token from the given type plus the associated statechart element
-     * and adds it to the token stream.
-     * The token is enhanced with view information (see {@link ScxmlView}).
-     *
-     * @param type   the type of the token
+     * Creates a token from the given type plus the associated statechart element and adds it to the token stream. The token
+     * is enhanced with view information (see {@link ScxmlView}).
+     * @param type the type of the token
      * @param source the statechart element associated with the token
      */
     public void addToken(ScxmlTokenType type, StatechartElement source) {
@@ -84,10 +82,9 @@ public class ScxmlParserAdapter extends AbstractParser {
     }
 
     /**
-     * Creates a token from the given type without an associated statechart element.
-     * The token is enhanced with view information (see {@link ScxmlView}).
-     *
-     * @param type   the type of the token
+     * Creates a token from the given type without an associated statechart element. The token is enhanced with view
+     * information (see {@link ScxmlView}).
+     * @param type the type of the token
      */
     public void addEndToken(ScxmlTokenType type) {
         addToken(type, null);
