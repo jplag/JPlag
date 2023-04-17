@@ -137,7 +137,6 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
 
         Map<Class<? extends StatechartElement>, ScxmlTokenType> tokenTypeMap = Map.of(Send.class, SEND, Cancel.class, CANCEL);
         ScxmlTokenType type = tokenTypeMap.get(content.getClass());
-        System.out.println(content.getClass());
         adapter.addToken(type, content);
     }
 

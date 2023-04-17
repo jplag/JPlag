@@ -23,10 +23,18 @@
                     <if cond="counter % 2 == 0">
                         <raise event="toggleA"/>
                     </if>
+                    <send event="subStateA1_timeEvent_0" delay="1s"/>
+                    <script>
+                        console.log('Value:', value);
+                    </script>
                 </onentry>
                 <transition event="toggleA" target="subStateA2"/>
+                <transition event="subStateA1_timeEvent_0">
+                    <raise event="toggleA"/>
+                </transition>
                 <onexit>
                     <assign location="counter" expr="counter + 1"/>
+                    <cancel sendid="subStateA1_timeEvent_0"/>
                 </onexit>
             </state>
 

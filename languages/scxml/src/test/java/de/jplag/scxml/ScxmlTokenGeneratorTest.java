@@ -57,7 +57,8 @@ public class ScxmlTokenGeneratorTest {
     void testCoverage() throws ParsingException {
         File testFile = new File(baseDirectory, TEST_SUBJECTS[2]);
         ScxmlParserAdapter adapter = new ScxmlParserAdapter();
-        List<TokenType> tokenTypes = getTokenTypes(adapter, testFile);
-        assertThat(tokenTypes).containsExactlyInAnyOrder(ScxmlTokenType.values());
+        List<TokenType> actualUniqueTokenTypes = getTokenTypes(adapter, testFile).stream().filter(x -> x != FILE_END).distinct().toList();
+
+        assertThat(actualUniqueTokenTypes).containsExactlyInAnyOrder(ScxmlTokenType.values());
     }
 }
