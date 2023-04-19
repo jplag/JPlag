@@ -5,6 +5,9 @@ import java.util.Set;
 
 import de.jplag.semantics.Variable;
 
+/**
+ * Models a multiple edge in the normalization graph. Contains multiple edges.
+ */
 class MultipleEdge {
     private Set<Edge> edges;
     private boolean isVariableFlow;
@@ -24,10 +27,10 @@ class MultipleEdge {
     }
 
     void addEdge(EdgeType type, Variable cause) {
-        if (type == EdgeType.VARIABLE_FLOW)
-            isVariableFlow = true;
-        if (type == EdgeType.VARIABLE_REVERSE_FLOW)
-            isVariableReverseFlow = true;
+        switch(type) {
+            case VARIABLE_FLOW -> isVariableFlow = true;
+            case VARIABLE_REVERSE_FLOW -> isVariableReverseFlow = true;
+        }
         edges.add(new Edge(type, cause));
     }
 }

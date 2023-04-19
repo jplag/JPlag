@@ -7,6 +7,9 @@ import java.util.List;
 import de.jplag.Token;
 import de.jplag.semantics.CodeSemantics;
 
+/**
+ * Models statements, which are the nodes of the normalization graph.
+ */
 class Statement implements Comparable<Statement> {
 
     private final List<Token> tokens;
@@ -51,12 +54,12 @@ class Statement implements Comparable<Statement> {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (object == null || getClass() != object.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        return tokens.equals(((Statement) object).tokens);
+        return tokens.equals(((Statement) obj).tokens);
     }
 
     @Override

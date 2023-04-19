@@ -87,11 +87,11 @@ public class Submission implements Comparable<Submission> {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == this) {
+    public boolean equals(Object obj) {
+        if (obj == this) {
             return true;
         }
-        if (!(object instanceof Submission otherSubmission)) {
+        if (!(obj instanceof Submission otherSubmission)) {
             return false;
         }
         return otherSubmission.getName().equals(name);
@@ -270,6 +270,9 @@ public class Submission implements Comparable<Submission> {
         return true;
     }
 
+    /**
+     * Perform token string normalization, which makes the token string invariant to dead code insertion and independent statement reordering.
+     */
     void normalize() {
         List<Integer> originalOrder = getOrder(tokenList);
         TokenStringNormalizer.normalize(tokenList);

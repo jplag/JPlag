@@ -5,6 +5,9 @@ import java.util.List;
 
 import de.jplag.Token;
 
+/**
+ * Builds statements, which are the nodes of the normalization graph.
+ */
 class StatementBuilder {
 
     private List<Token> tokens;

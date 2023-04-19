@@ -13,6 +13,9 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import de.jplag.Token;
 import de.jplag.semantics.Variable;
 
+/**
+ * Constructs the normalization graph.
+ */
 class NormalizationGraphConstructor {
     private SimpleDirectedGraph<Statement, MultipleEdge> graph;
     private int bidirectionalBlockDepth;
