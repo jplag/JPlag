@@ -90,7 +90,7 @@ const props = defineProps({
 
 const router = useRouter()
 console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
-let comparison
+let comparison: Comparison = new Comparison('', '', 0)
 
 //getting the comparison file based on the used mode (zip, local, single)
 if (store().local) {
@@ -144,10 +144,6 @@ if (store().local) {
   }
 }
 
-if (!comparison) {
-  comparison = new Comparison('', '', 0)
-  console.log('Unable to build comparison file.')
-}
 const filesOfFirst = ref(comparison.filesOfFirstSubmission)
 const filesOfSecond = ref(comparison.filesOfSecondSubmission)
 
