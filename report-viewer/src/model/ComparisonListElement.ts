@@ -3,8 +3,8 @@
  * For full comparison model see Comparison.ts
  */
 export type ComparisonListElement = {
-    id: number,
-    firstSubmissionId: string,
-    secondSubmissionId: string,
-    similarity: number
+  id: number
+  firstSubmissionId: string
+  secondSubmissionId: string
+  similarity: number
 }

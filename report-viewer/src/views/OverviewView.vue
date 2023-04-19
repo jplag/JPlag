@@ -13,11 +13,7 @@
           additional-info-title=""
           label="Directory path"
         >
-          <p
-            v-for="path in overview.submissionFolderPath"
-            :key="path"
-            :title="path"
-          >
+          <p v-for="path in overview.submissionFolderPath" :key="path" :title="path">
             {{ path }}
           </p>
         </TextInformation>
@@ -29,24 +25,18 @@
         >
           <p v-for="info in overview.fileExtensions" :key="info">{{ info }}</p>
         </TextInformation>
-        <TextInformation
-          :value="overview.matchSensitivity"
-          label="Match Sensitivity"
-        />
+        <TextInformation :value="overview.matchSensitivity.toString()" label="Match Sensitivity" />
         <TextInformation
           :has-additional-info="true"
-          :value="store.getters.getSubmissionIds.size"
+          :value="store().getSubmissionIds.length.toString()"
           additional-info-title="Submission IDs:"
           label="Submissions"
         >
-          <IDsList :ids="store.getters.getSubmissionIds" @id-sent="handleId" />
+          <IDsList :ids="store().getSubmissionIds" @id-sent="handleId" />
         </TextInformation>
+        <TextInformation :value="overview.dateOfExecution" label="Date of execution" />
         <TextInformation
-          :value="overview.dateOfExecution"
-          label="Date of execution"
-        />
-        <TextInformation
-          :value="overview.durationOfExecution"
+          :value="overview.durationOfExecution.toString()"
           label="Duration (in ms)"
         />
       </div>
@@ -70,10 +60,7 @@
         </div>
       </div>
       <p class="section-title">Distribution:</p>
-      <DistributionDiagram
-        :distribution="distributions[selectedMetricIndex]"
-        class="full-width"
-      />
+      <DistributionDiagram :distribution="distributions[selectedMetricIndex]" class="full-width" />
     </div>
     <div class="column-container" style="width: 35%">
       <p class="section-title">Top Comparisons:</p>
@@ -83,72 +70,87 @@
           :top-comparisons="topComps[selectedMetricIndex]"
         />
       </div>
-      <div v-if="missingComparisons!==0 && !isNaN(missingComparisons)">
-        <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{shownComparisons}}, Missing comparisons: {{missingComparisons}}. To see more, re-run JPlag with a higher maximum number argument.</h3>
+      <div v-if="missingComparisons !== 0 && !isNaN(missingComparisons)">
+        <h3>
+          Total comparisons: {{ overview.totalComparisons }}, Shown comparisons:
+          {{ shownComparisons }}, Missing comparisons: {{ missingComparisons }}. To see more, re-run
+          JPlag with a higher maximum number argument.
+        </h3>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onErrorCaptured, Ref, ref } from "vue";
-import router from "@/router";
-import TextInformation from "../components/TextInformation.vue";
-import DistributionDiagram from "@/components/DistributionDiagram.vue";
-import MetricButton from "@/components/MetricButton.vue";
-import ComparisonsTable from "@/components/ComparisonsTable.vue";
-import { OverviewFactory } from "@/model/factories/OverviewFactory";
-import IDsList from "@/components/IDsList.vue";
-import { useStore } from "vuex";
-import { Overview } from "@/model/Overview";
-import { ComparisonListElement } from "@/model/ComparisonListElement";
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import type { Ref } from 'vue'
+
+import { computed, defineComponent, onErrorCaptured, ref } from 'vue'
+import router from '@/router'
+import TextInformation from '../components/TextInformation.vue'
+import DistributionDiagram from '@/components/DistributionDiagram.vue'
+import MetricButton from '@/components/MetricButton.vue'
+import ComparisonsTable from '@/components/ComparisonsTable.vue'
+import { OverviewFactory } from '@/model/factories/OverviewFactory'
+import IDsList from '@/components/IDsList.vue'
+import { Overview } from '@/model/Overview'
+import store from '@/stores/store'
 
 export default defineComponent({
-  name: "OverviewView",
+  name: 'OverviewView',
   components: {
     IDsList,
     ComparisonsTable,
     DistributionDiagram,
     MetricButton,
-    TextInformation,
+    TextInformation
   },
   setup() {
-    const store = useStore();
     const overviewFile = computed(() => {
-      console.log("Start finding overview.json in state...")
-      const index = Object.keys(store.state.files).find((name) =>
-        name.endsWith("overview.json")
-      );
-      return index != undefined
-        ? store.state.files[index]
-        : console.log("Could not find overview.json");
-    });
+      console.log('Start finding overview.json in state...')
+      const index = Object.keys(store().files).find((name) => name.endsWith('overview.json'))
+      return index != undefined ? store().files[index] : console.log('Could not find overview.json')
+    })
 
     const getOverview = (): Overview => {
-      console.log("Generating overview...")
-      let temp!: Overview;
+      console.log('Generating overview...')
+      let temp!: Overview
       //Gets the overview file based on the used mode (zip, local, single).
-      if (store.state.local) {
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          temp = OverviewFactory.getOverview(require("../files/overview.json"));
-        } catch (e) {
-          router.back();
+      if (store().local) {
+        const request = new XMLHttpRequest()
+        request.open('GET', '/src/files/overview.json', false)
+        request.send()
+
+        if (request.status == 200) {
+          temp = OverviewFactory.getOverview(JSON.parse(request.response))
+        } else {
+          router.back()
         }
-      } else if (store.state.zip) {
-        if(overviewFile.value===undefined){
-          return new Overview([],"","",[],0,"",0,[],[],0, new Map<string, Map<string, string>>());
+      } else if (store().zip) {
+        if (overviewFile.value === undefined) {
+          return new Overview(
+            [],
+            '',
+            '',
+            [],
+            0,
+            '',
+            0,
+            [],
+            [],
+            0,
+            new Map<string, Map<string, string>>()
+          )
         }
-        const overviewJson = JSON.parse(overviewFile.value);
-        temp = OverviewFactory.getOverview(overviewJson);
-      } else if (store.state.single) {
-        temp = OverviewFactory.getOverview(JSON.parse(store.state.fileString));
+        const overviewJson = JSON.parse(overviewFile.value)
+        temp = OverviewFactory.getOverview(overviewJson)
+      } else if (store().single) {
+        temp = OverviewFactory.getOverview(JSON.parse(store().fileString))
       }
-      return temp;
-    };
+      return temp
+    }
 
-    let overview = getOverview();
-
+    let overview = getOverview()
 
     /**
      * Handles the selection of an Id to anonymize.
@@ -157,78 +159,75 @@ export default defineComponent({
      * @param ids
      */
     const handleId = (ids: Array<string>) => {
-      if (ids.length === store.getters.getSubmissionIds.length) {
-        if (store.state.anonymous.size > 0) {
-          store.commit("resetAnonymous");
+      if (ids.length === store().getSubmissionIds.length) {
+        if (store().anonymous.size > 0) {
+          store().resetAnonymous()
         } else {
-          store.commit("addAnonymous", ids);
+          store().addAnonymous(ids)
         }
       } else {
-        if (store.state.anonymous.has(ids[0])) {
-          store.commit("removeAnonymous", ids);
+        if (store().anonymous.has(ids[0])) {
+          store().removeAnonymous(ids)
         } else {
-          if (store.state.anonymous.size === 0) {
-            store.commit(
-              "addAnonymous",
-              store.getters.getSubmissionIds.filter((s: string) => s !== ids[0])
-            );
+          if (store().anonymous.size === 0) {
+            store().addAnonymous(store().getSubmissionIds.filter((s: string) => s !== ids[0]))
           } else {
-            store.commit("addAnonymous", ids);
+            store().addAnonymous(ids)
           }
         }
       }
-    };
+    }
 
     //Metrics
     /**
      * Current metric to display distribution and comparisons for.
      * @type {Ref<UnwrapRef<boolean[]>>}
      */
-    let selectedMetric = ref(overview.metrics.map(() => false));
+    let selectedMetric = ref(overview.metrics.map(() => false))
     /**
      * Index of current selected metric. Used to obtain information for the metric from the distribution and top
      * comparisons array.
      * @type {Ref<UnwrapRef<number>>}
      */
-    let selectedMetricIndex = ref(0);
-    selectedMetric.value[selectedMetricIndex.value] = true;
+    let selectedMetricIndex = ref(0)
+    selectedMetric.value[selectedMetricIndex.value] = true
 
     const selectMetric = (metric: number) => {
-      selectedMetric.value = selectedMetric.value.map(() => false);
-      selectedMetric.value[metric] = true;
-      selectedMetricIndex.value = metric;
-    };
+      selectedMetric.value = selectedMetric.value.map(() => false)
+      selectedMetric.value[metric] = true
+      selectedMetricIndex.value = metric
+    }
 
     //Distribution
-    let distributions = ref(overview.metrics.map((m) => m.distribution));
+    let distributions = ref(overview.metrics.map((m) => m.distribution))
 
     //Top Comparisons
     let topComps: Ref<Array<Array<ComparisonListElement>>> = ref(
       overview.metrics.map((m) => m.comparisons)
-    );
+    )
 
-    const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1;
+    const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
     const submissionPathValue = hasMoreSubmissionPaths
-      ? "Click arrow to see all paths"
-      : overview.submissionFolderPath[0];
+      ? 'Click arrow to see all paths'
+      : overview.submissionFolderPath[0]
 
-    const shownComparisons = computed(()=>{
-      return overview.metrics[selectedMetricIndex.value]?.comparisons.length;
-    });
-    const missingComparisons = overview.totalComparisons - shownComparisons.value;
+    const shownComparisons = computed(() => {
+      return overview.metrics[selectedMetricIndex.value]?.comparisons.length
+    })
+    const missingComparisons = overview.totalComparisons - shownComparisons.value
 
-    onErrorCaptured(()=>{
+    onErrorCaptured(() => {
       router.push({
-        name: "ErrorView",
+        name: 'ErrorView',
         state: {
           message: "Overview.json can't be found!",
-          to: "/",
-          routerInfo: "back to FileUpload page"
+          to: '/',
+          routerInfo: 'back to FileUpload page'
         }
-      });
-      store.commit("clearStore");
-      return false;
-    });
+      })
+      store().clearStore()
+      return false
+    })
 
     return {
       overview,
@@ -242,10 +241,10 @@ export default defineComponent({
       missingComparisons,
       handleId,
       selectMetric,
-      store,
-    };
-  },
-});
+      store
+    }
+  }
+})
 </script>
 
 <style scoped>

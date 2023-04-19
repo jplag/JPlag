@@ -8,8 +8,7 @@
       {{ comparison.secondSubmissionId }}
     </h1>
     <p v-for="(cluster, index) in clusters" :key="index" @click="toggleDialog">
-      {{ index + 1 }}. Members:
-      <span id="members">{{ getMemberNames(cluster) }}</span> - Average
+      {{ index + 1 }}. Members: <span id="members">{{ getMemberNames(cluster) }}</span> - Average
       similarity: {{ cluster.averageSimilarity * 100 }}%
       <GDialog v-model="dialog" fullscreen>
         <div id="dialog-header">
@@ -22,47 +21,48 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from "vue";
-import { GDialog } from "gitart-vue-dialog";
-import ClusterRadarChart from "@/components/ClusterRadarChart.vue";
-import { ClusterListElement } from "@/model/ClusterListElement";
-import { ComparisonListElement } from "@/model/ComparisonListElement";
+import type { PropType } from 'vue'
+import type { ClusterListElement } from '@/model/ClusterListElement'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+
+import { defineComponent, ref } from 'vue'
+import { GDialog } from 'gitart-vue-dialog'
+import ClusterRadarChart from '@/components/ClusterRadarChart.vue'
 export default defineComponent({
-  name: "ClustersList",
+  name: 'ClustersList',
   components: { ClusterRadarChart, GDialog },
   props: {
     comparison: {
       type: Object as PropType<ComparisonListElement>,
-      required: true,
-
+      required: true
     },
     clusters: {
       type: Array<ClusterListElement>,
       required: true
-  },
+    }
   },
 
   setup() {
-    const dialog = ref(false);
-    const toggleDialog = () => (dialog.value = !dialog.value);
+    const dialog = ref(false)
+    const toggleDialog = () => (dialog.value = !dialog.value)
     const getMemberNames = (cluster: ClusterListElement) => {
-      const membersIterator = cluster.members.keys();
-      const members = Array.from(membersIterator);
-      let concatenatedMembers = "";
-      const maxMembersToShow = 5;
-      concatenatedMembers = members.slice(0, maxMembersToShow).join(", ");
+      const membersIterator = cluster.members.keys()
+      const members = Array.from(membersIterator)
+      let concatenatedMembers = ''
+      const maxMembersToShow = 5
+      concatenatedMembers = members.slice(0, maxMembersToShow).join(', ')
       if (members.length > maxMembersToShow) {
-        concatenatedMembers += ",...";
+        concatenatedMembers += ',...'
       }
-      return concatenatedMembers;
-    };
+      return concatenatedMembers
+    }
     return {
       dialog,
       toggleDialog,
-      getMemberNames,
-    };
-  },
-});
+      getMemberNames
+    }
+  }
+})
 </script>
 
 <style scoped>

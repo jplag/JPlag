@@ -1,28 +1,28 @@
 <template>
   <h5>
-    <router-link :to="to" class="back">{{routerInfo}}</router-link>
+    <router-link :to="to" class="back">{{ routerInfo }}</router-link>
   </h5>
 </template>
 
-<script>
+<script lang="ts">
 export default {
-  name: "ErrorRouter",
+  name: 'ErrorRouter',
   props: {
     /**
      * Router of error.
      */
     to: {
       type: String,
-      required: true,
+      required: true
     },
     /**
      * Info of router-link.
      */
     routerInfo: {
       type: String,
-      required: true,
-    },
-  },
+      required: true
+    }
+  }
 }
 </script>
 
@@ -36,6 +36,6 @@ export default {
   color: #fff;
   text-align: center;
   display: inline-block;
-  border-radius: 2px
+  border-radius: 2px;
 }
 </style>
