@@ -19,8 +19,19 @@ import de.jplag.scxml.sorting.SortingStrategy;
  */
 public abstract class AbstractScxmlVisitor {
 
+    /**
+     * The current parser adapter that is called to add new tokens.
+     */
     protected ScxmlParserAdapter adapter;
+
+    /**
+     * The sorting strategy to use for visiting nested statechart elements.
+     */
     protected SortingStrategy sorter;
+
+    /**
+     * The current depth in the statechart.
+     */
     protected int depth;
 
     public AbstractScxmlVisitor(ScxmlParserAdapter adapter) {
@@ -40,6 +51,7 @@ public abstract class AbstractScxmlVisitor {
      * Visits a statechart element without effecting the main token stream by temporarily swapping out the current parser
      * adapter. Returns a list of collected token type ordinals.
      * @param element the statechart element to visit
+     * @return a list of visited token type ordinals
      */
     public List<Integer> peekTokens(StatechartElement element) {
         ScxmlParserAdapter prevAdapter = this.adapter;
@@ -76,22 +88,66 @@ public abstract class AbstractScxmlVisitor {
         visitorMap.get(element.getClass()).accept(element);
     }
 
+    /**
+     * Recursively visits a statechart.
+     *
+     * @param statechart the statechart to visit
+     */
     protected abstract void visitStatechart(Statechart statechart);
 
+    /**
+     * Recursively visits a state.
+     *
+     * @param state the state to visit
+     */
     protected abstract void visitState(State state);
 
-    protected abstract void visitActions(List<Action> actions);
-
-    protected abstract void visitIf(If if_);
-
-    protected abstract void visitElseIf(ElseIf elseIf);
-
-    protected abstract void visitElse(Else else_);
-
-    protected abstract void visitExecutableContent(ExecutableContent content);
-
-    protected abstract void visitSimpleExecutableContent(SimpleExecutableContent content);
-
+    /**
+     * Recursively visits a transition.
+     *
+     * @param transition the transition to visit
+     */
     protected abstract void visitTransition(Transition transition);
 
+    /**
+     * Recursively visits a list of actions.
+     *
+     * @param actions the list of actions to visit
+     */
+    protected abstract void visitActions(List<Action> actions);
+
+    /**
+     * Recursively visits an if statechart element.
+     *
+     * @param if_ the if element to visit
+     */
+    protected abstract void visitIf(If if_);
+
+    /**
+     * Recursively visits an elseIf statechart element.
+     *
+     * @param elseIf the elseIf element to visit
+     */
+    protected abstract void visitElseIf(ElseIf elseIf);
+
+    /**
+     * Recursively visits an else statechart element.
+     *
+     * @param else_ the else element to visit
+     */
+    protected abstract void visitElse(Else else_);
+
+    /**
+     * Recursively visits executable content.
+     *
+     * @param content the executable content to visit
+     */
+    protected abstract void visitExecutableContent(ExecutableContent content);
+
+    /**
+     * Visits simple executable content.
+     *
+     * @param content the simple executable content to visit
+     */
+    protected abstract void visitSimpleExecutableContent(SimpleExecutableContent content);
 }

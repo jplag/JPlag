@@ -13,5 +13,6 @@ public interface SortingStrategy {
      * Sorts a list of statechart elements.
      * @param statechartElements the list of statechart elements to sort
      */
+    // TODO: try without type parameter
     <T extends StatechartElement> List<T> sort(List<T> statechartElements);
 }

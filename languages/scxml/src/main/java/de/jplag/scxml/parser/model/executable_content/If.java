@@ -9,6 +9,16 @@ import org.w3c.dom.NodeList;
 
 import de.jplag.scxml.parser.util.NodeUtil;
 
+/**
+ * Represents an {@literal <if>} SCXML element, which is an executable content element used for conditional execution.
+ * The {@literal <if>} element can contain {@literal <elseif>} and {@literal <else>} branches for handling multiple conditions.
+ *
+ * @param cond the cond attribute of the {@literal <if>} element which is the condition expression
+ * for the contained executable contents to be executed
+ * @param contents the list of executable contents to be executed when the condition is met
+ * @param elseIfs represents the list of {@literal <elseif>} branches in the {@literal <if>} element
+ * @param else_ the {@literal <else>} branch corresponding to the {@literal <if>} element, or {@code null} if not present
+ */
 public record If(String cond, List<ExecutableContent> contents, List<ElseIf> elseIfs, Else else_) implements ExecutableContent {
 
     private static final Set<String> ALLOWED_CONTENTS = Set.of("raise", "if", "foreach", "log", "assign", "script", "send", "cancel");
@@ -17,6 +27,15 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
     private static final String ELSEIF_ELEMENT = "elseif";
     private static final String COND_ATTRIBUTE = "cond";
 
+
+    /**
+     * Constructs an If instance with the specified condition and a list of executable contents.
+     * The {@code elseIf} attribute is set to an empty list and the {@code else} is set to null.
+     *
+     * @param cond the cond attribute of the {@literal <if>} element which is the condition expression
+     * for the contained executable contents to be executed
+     * @param contents the list of executable contents to be executed when the condition is met
+     */
     public If(String cond, ExecutableContent... contents) {
         this(cond, new ArrayList<>(List.of(contents)), new ArrayList<>(), null);
     }
@@ -32,8 +51,7 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
     /**
      * Constructs an If statechart element from a given node with optional ElseIf or Else branches. The W3C SCXML
      * specification defines a valid {@literal <if>} element as follows:
-     * <p>
-     * 
+     *
      * <pre>
      * {@code
      * <if cond="cond1">
@@ -52,6 +70,7 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
      * on the same level.
      * @param node the node to create the If object from. Must contain at least one {@literal <if>} element and optionally
      * {@literal <elseif>} or {@literal <else>} tags.
+     * @return an instance of If created from the node
      * @throws IllegalArgumentException when more than one {@literal <else>} statement is present
      */
     public static If fromNode(Node node) throws IllegalArgumentException {

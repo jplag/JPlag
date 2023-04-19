@@ -14,13 +14,19 @@ import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
 public class HandcraftedScxmlTokenGenerator extends SimpleScxmlTokenGenerator {
 
     /**
-     * Creates the visitor.
-     * @param adapter is the parser adapter which receives the generated tokens.
+     * Creates the token generator.
+     * @param adapter the parser adapter which receives the generated tokens
      */
     public HandcraftedScxmlTokenGenerator(ScxmlParserAdapter adapter) {
         super(adapter);
     }
 
+    /**
+     * Visits a state and extracts tokens based on whether its {@code initial}
+     * and {@code parallel} attributes are set to {@code true}.
+     *
+     * @param state the state to visit
+     */
     protected void visitStateAttributes(State state) {
         if (state.initial()) {
             adapter.addToken(INITIAL_STATE, state);

@@ -20,7 +20,7 @@ import de.jplag.scxml.util.AbstractScxmlVisitor;
 public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
 
     /**
-     * Creates the visitor.
+     * Creates the token generator.
      * @param adapter the parser adapter which receives the generated tokens
      */
     public SimpleScxmlTokenGenerator(ScxmlParserAdapter adapter) {
@@ -135,6 +135,7 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
             return;
         }
 
+        // TODO: use entries
         Map<Class<? extends StatechartElement>, ScxmlTokenType> tokenTypeMap = Map.of(Send.class, SEND, Cancel.class, CANCEL);
         ScxmlTokenType type = tokenTypeMap.get(content.getClass());
         adapter.addToken(type, content);

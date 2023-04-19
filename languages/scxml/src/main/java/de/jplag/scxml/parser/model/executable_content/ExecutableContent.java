@@ -9,17 +9,36 @@ import org.w3c.dom.Node;
 import de.jplag.scxml.parser.model.StatechartElement;
 import de.jplag.scxml.parser.util.NodeUtil;
 
+/**
+ * Represents executable content in an SCXML statechart, which are elements that can be executed
+ * during state transitions, state entry, state exit or in conditional statements.
+ */
 public interface ExecutableContent extends StatechartElement {
 
     /**
-     * Defines the set of allowed XML element names that are considered valid executable content. <else> and <elseif>
-     * elements are not allowed as they may only present as children of an <if> element.
+     * Defines the set of allowed XML element names that are considered valid executable content. {@literal <else>} and
+     * {@literal <elseif>} elements are not allowed as they may only present as children of an {@literal <if>} element.
      */
     Set<String> ALLOWED_XML_ELEMENTS = Set.of("raise", "if", "foreach", "log", "assign", "script", "send", "cancel");
 
+    /**
+     * String constant for the <else> element.
+     */
     String ELSE_ELEMENT = "else";
+
+    /**
+     * String constant for the "event" attribute.
+     */
     String EVENT_ATTRIBUTE = "event";
+
+    /**
+     * String constant for the "sendid" attribute.
+     */
     String SEND_ID_ATTRIBUTE = "sendid";
+
+    /**
+     * String constant for the "delay" attribute.
+     */
     String DELAY_ATTRIBUTE = "delay";
 
     /**
