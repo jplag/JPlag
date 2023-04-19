@@ -39,48 +39,44 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import store from '@/stores/store'
 import type { Match } from '@/model/Match'
 
-export default defineComponent({
-  name: 'MatchTable',
-  props: {
-    /**
-     * Matches of the comparison.
-     * type: Array<Match>
-     */
-    matches: {
-      type: Array<Match>
-    },
-    /**
-     * ID of first submission
-     */
-    id1: {
-      type: String
-    },
-    /**
-     * ID of second submission
-     */
-    id2: {
-      type: String
-    }
+defineProps({
+  /**
+   * Matches of the comparison.
+   * type: Array<Match>
+   */
+  matches: {
+    type: Array<Match>
   },
-  setup() {
-    /**
-     * converts the submissionId to the name in the path of match.
-     * @param match
-     * @param submissionId
-     * @return new path of match
-     */
-    const convertSubmissionIdToName = (match: string, submissionId: string): string => {
-      const displayName = store().submissionDisplayName(submissionId) || submissionId
-      return match.replace(submissionId, displayName)
-    }
-    return { convertSubmissionIdToName }
+  /**
+   * ID of first submission
+   */
+  id1: {
+    type: String
+  },
+  /**
+   * ID of second submission
+   */
+  id2: {
+    type: String
   }
 })
+
+defineEmits(['matchSelected'])
+
+/**
+ * converts the submissionId to the name in the path of match.
+ * @param match
+ * @param submissionId
+ * @return new path of match
+ */
+function convertSubmissionIdToName(match: string, submissionId: string): string {
+  const displayName = store().submissionDisplayName(submissionId) || submissionId
+  return match.replace(submissionId, displayName)
+}
 </script>
 
 <style scoped>

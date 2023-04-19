@@ -30,47 +30,40 @@
   <hr />
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 
-export default defineComponent({
-  name: 'TextInformation',
-  props: {
-    label: {
-      type: String,
-      required: true
-    },
-    value: {
-      type: String,
-      required: true
-    },
-    hasAdditionalInfo: {
-      type: Boolean,
-      default: false
-    },
-    additionalInfoTitle: {
-      type: String,
-      default: ''
-    },
-    /**
-     * Indicates whether the value should be hidden.
-     */
-    anonymous: {
-      type: Boolean,
-      default: false
-    }
+defineProps({
+  label: {
+    type: String,
+    required: true
   },
-  setup() {
-    const isCollapsed = ref(false)
-
-    const toggleIsCollapsed = () => (isCollapsed.value = !isCollapsed.value)
-
-    return {
-      isCollapsed,
-      toggleIsCollapsed
-    }
+  value: {
+    type: String,
+    required: true
+  },
+  hasAdditionalInfo: {
+    type: Boolean,
+    default: false
+  },
+  additionalInfoTitle: {
+    type: String,
+    default: ''
+  },
+  /**
+   * Indicates whether the value should be hidden.
+   */
+  anonymous: {
+    type: Boolean,
+    default: false
   }
 })
+
+const isCollapsed = ref(false)
+
+function toggleIsCollapsed() {
+  isCollapsed.value = !isCollapsed.value
+}
 </script>
 
 <style scoped>

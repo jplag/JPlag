@@ -14,26 +14,18 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import type { PropType } from 'vue'
 import type { Metric } from '@/model/Metric'
 
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'MetricButton',
-  props: {
-    metric: {
-      type: Object as PropType<Metric>,
-      required: true
-    },
-    isSelected: {
-      type: Boolean,
-      default: false
-    }
+defineProps({
+  metric: {
+    type: Object as PropType<Metric>,
+    required: true
   },
-  setup() {
-    return {}
+  isSelected: {
+    type: Boolean,
+    default: false
   }
 })
 </script>
