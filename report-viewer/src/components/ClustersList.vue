@@ -20,49 +20,43 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import type { PropType } from 'vue'
 import type { ClusterListElement } from '@/model/ClusterListElement'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 
-import { defineComponent, ref } from 'vue'
+import { ref } from 'vue'
 import { GDialog } from 'gitart-vue-dialog'
 import ClusterRadarChart from '@/components/ClusterRadarChart.vue'
-export default defineComponent({
-  name: 'ClustersList',
-  components: { ClusterRadarChart, GDialog },
-  props: {
-    comparison: {
-      type: Object as PropType<ComparisonListElement>,
-      required: true
-    },
-    clusters: {
-      type: Array<ClusterListElement>,
-      required: true
-    }
-  },
 
-  setup() {
-    const dialog = ref(false)
-    const toggleDialog = () => (dialog.value = !dialog.value)
-    const getMemberNames = (cluster: ClusterListElement) => {
-      const membersIterator = cluster.members.keys()
-      const members = Array.from(membersIterator)
-      let concatenatedMembers = ''
-      const maxMembersToShow = 5
-      concatenatedMembers = members.slice(0, maxMembersToShow).join(', ')
-      if (members.length > maxMembersToShow) {
-        concatenatedMembers += ',...'
-      }
-      return concatenatedMembers
-    }
-    return {
-      dialog,
-      toggleDialog,
-      getMemberNames
-    }
+defineProps({
+  comparison: {
+    type: Object as PropType<ComparisonListElement>,
+    required: true
+  },
+  clusters: {
+    type: Array<ClusterListElement>,
+    required: true
   }
 })
+
+const dialog = ref(false)
+
+function toggleDialog() {
+  dialog.value = !dialog.value
+}
+
+function getMemberNames(cluster: ClusterListElement) {
+  const membersIterator = cluster.members.keys()
+  const members = Array.from(membersIterator)
+  let concatenatedMembers = ''
+  const maxMembersToShow = 5
+  concatenatedMembers = members.slice(0, maxMembersToShow).join(', ')
+  if (members.length > maxMembersToShow) {
+    concatenatedMembers += ',...'
+  }
+  return concatenatedMembers
+}
 </script>
 
 <style scoped>

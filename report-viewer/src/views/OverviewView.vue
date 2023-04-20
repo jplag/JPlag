@@ -81,11 +81,11 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import type { Ref } from 'vue'
 
-import { computed, defineComponent, onErrorCaptured, ref } from 'vue'
+import { computed, onErrorCaptured, ref } from 'vue'
 import router from '@/router'
 import TextInformation from '../components/TextInformation.vue'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
@@ -96,154 +96,127 @@ import IDsList from '@/components/IDsList.vue'
 import { Overview } from '@/model/Overview'
 import store from '@/stores/store'
 
-export default defineComponent({
-  name: 'OverviewView',
-  components: {
-    IDsList,
-    ComparisonsTable,
-    DistributionDiagram,
-    MetricButton,
-    TextInformation
-  },
-  setup() {
-    const overviewFile = computed(() => {
-      console.log('Start finding overview.json in state...')
-      const index = Object.keys(store().files).find((name) => name.endsWith('overview.json'))
-      return index != undefined ? store().files[index] : console.log('Could not find overview.json')
-    })
+const overviewFile = computed(() => {
+  console.log('Start finding overview.json in state...')
+  const index = Object.keys(store().files).find((name) => name.endsWith('overview.json'))
+  return index != undefined ? store().files[index] : console.log('Could not find overview.json')
+})
 
-    const getOverview = (): Overview => {
-      console.log('Generating overview...')
-      let temp!: Overview
-      //Gets the overview file based on the used mode (zip, local, single).
-      if (store().local) {
-        const request = new XMLHttpRequest()
-        request.open('GET', '/src/files/overview.json', false)
-        request.send()
+function getOverview(): Overview {
+  console.log('Generating overview...')
+  let temp!: Overview
+  //Gets the overview file based on the used mode (zip, local, single).
+  if (store().local) {
+    const request = new XMLHttpRequest()
+    request.open('GET', '/src/files/overview.json', false)
+    request.send()
 
-        if (request.status == 200) {
-          temp = OverviewFactory.getOverview(JSON.parse(request.response))
-        } else {
-          router.back()
-        }
-      } else if (store().zip) {
-        if (overviewFile.value === undefined) {
-          return new Overview(
-            [],
-            '',
-            '',
-            [],
-            0,
-            '',
-            0,
-            [],
-            [],
-            0,
-            new Map<string, Map<string, string>>()
-          )
-        }
-        const overviewJson = JSON.parse(overviewFile.value)
-        temp = OverviewFactory.getOverview(overviewJson)
-      } else if (store().single) {
-        temp = OverviewFactory.getOverview(JSON.parse(store().fileString))
-      }
-      return temp
+    if (request.status == 200) {
+      temp = OverviewFactory.getOverview(JSON.parse(request.response))
+    } else {
+      router.back()
     }
+  } else if (store().zip) {
+    if (overviewFile.value === undefined) {
+      return new Overview(
+        [],
+        '',
+        '',
+        [],
+        0,
+        '',
+        0,
+        [],
+        [],
+        0,
+        new Map<string, Map<string, string>>()
+      )
+    }
+    const overviewJson = JSON.parse(overviewFile.value)
+    temp = OverviewFactory.getOverview(overviewJson)
+  } else if (store().single) {
+    temp = OverviewFactory.getOverview(JSON.parse(store().fileString))
+  }
+  return temp
+}
 
-    let overview = getOverview()
+let overview = getOverview()
 
-    /**
-     * Handles the selection of an Id to anonymize.
-     * If all submission ids are provided as parameter it hides or displays them based on their previous state.
-     * If a single id is provided it hides all of the other ids except for the chosen one.
-     * @param ids
-     */
-    const handleId = (ids: Array<string>) => {
-      if (ids.length === store().getSubmissionIds.length) {
-        if (store().anonymous.size > 0) {
-          store().resetAnonymous()
-        } else {
-          store().addAnonymous(ids)
-        }
+/**
+ * Handles the selection of an Id to anonymize.
+ * If all submission ids are provided as parameter it hides or displays them based on their previous state.
+ * If a single id is provided it hides all of the other ids except for the chosen one.
+ * @param ids
+ */
+function handleId(ids: Array<string>) {
+  if (ids.length === store().getSubmissionIds.length) {
+    if (store().anonymous.size > 0) {
+      store().resetAnonymous()
+    } else {
+      store().addAnonymous(ids)
+    }
+  } else {
+    if (store().anonymous.has(ids[0])) {
+      store().removeAnonymous(ids)
+    } else {
+      if (store().anonymous.size === 0) {
+        store().addAnonymous(store().getSubmissionIds.filter((s: string) => s !== ids[0]))
       } else {
-        if (store().anonymous.has(ids[0])) {
-          store().removeAnonymous(ids)
-        } else {
-          if (store().anonymous.size === 0) {
-            store().addAnonymous(store().getSubmissionIds.filter((s: string) => s !== ids[0]))
-          } else {
-            store().addAnonymous(ids)
-          }
-        }
+        store().addAnonymous(ids)
       }
-    }
-
-    //Metrics
-    /**
-     * Current metric to display distribution and comparisons for.
-     * @type {Ref<UnwrapRef<boolean[]>>}
-     */
-    let selectedMetric = ref(overview.metrics.map(() => false))
-    /**
-     * Index of current selected metric. Used to obtain information for the metric from the distribution and top
-     * comparisons array.
-     * @type {Ref<UnwrapRef<number>>}
-     */
-    let selectedMetricIndex = ref(0)
-    selectedMetric.value[selectedMetricIndex.value] = true
-
-    const selectMetric = (metric: number) => {
-      selectedMetric.value = selectedMetric.value.map(() => false)
-      selectedMetric.value[metric] = true
-      selectedMetricIndex.value = metric
-    }
-
-    //Distribution
-    let distributions = ref(overview.metrics.map((m) => m.distribution))
-
-    //Top Comparisons
-    let topComps: Ref<Array<Array<ComparisonListElement>>> = ref(
-      overview.metrics.map((m) => m.comparisons)
-    )
-
-    const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
-    const submissionPathValue = hasMoreSubmissionPaths
-      ? 'Click arrow to see all paths'
-      : overview.submissionFolderPath[0]
-
-    const shownComparisons = computed(() => {
-      return overview.metrics[selectedMetricIndex.value]?.comparisons.length
-    })
-    const missingComparisons = overview.totalComparisons - shownComparisons.value
-
-    onErrorCaptured(() => {
-      router.push({
-        name: 'ErrorView',
-        state: {
-          message: "Overview.json can't be found!",
-          to: '/',
-          routerInfo: 'back to FileUpload page'
-        }
-      })
-      store().clearStore()
-      return false
-    })
-
-    return {
-      overview,
-      selectedMetricIndex,
-      selectedMetric,
-      distributions,
-      topComps,
-      hasMoreSubmissionPaths,
-      submissionPathValue,
-      shownComparisons,
-      missingComparisons,
-      handleId,
-      selectMetric,
-      store
     }
   }
+}
+
+//Metrics
+/**
+ * Current metric to display distribution and comparisons for.
+ * @type {Ref<UnwrapRef<boolean[]>>}
+ */
+let selectedMetric = ref(overview.metrics.map(() => false))
+/**
+ * Index of current selected metric. Used to obtain information for the metric from the distribution and top
+ * comparisons array.
+ * @type {Ref<UnwrapRef<number>>}
+ */
+let selectedMetricIndex = ref(0)
+selectedMetric.value[selectedMetricIndex.value] = true
+
+function selectMetric(metric: number) {
+  selectedMetric.value = selectedMetric.value.map(() => false)
+  selectedMetric.value[metric] = true
+  selectedMetricIndex.value = metric
+}
+
+//Distribution
+let distributions = ref(overview.metrics.map((m) => m.distribution))
+
+//Top Comparisons
+let topComps: Ref<Array<Array<ComparisonListElement>>> = ref(
+  overview.metrics.map((m) => m.comparisons)
+)
+
+const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
+const submissionPathValue = hasMoreSubmissionPaths
+  ? 'Click arrow to see all paths'
+  : overview.submissionFolderPath[0]
+
+const shownComparisons = computed(() => {
+  return overview.metrics[selectedMetricIndex.value]?.comparisons.length
+})
+const missingComparisons = overview.totalComparisons - shownComparisons.value
+
+onErrorCaptured(() => {
+  router.push({
+    name: 'ErrorView',
+    state: {
+      message: "Overview.json can't be found!",
+      to: '/',
+      routerInfo: 'back to FileUpload page'
+    }
+  })
+  store().clearStore()
+  return false
 })
 </script>
 

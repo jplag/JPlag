@@ -4,26 +4,23 @@
   </h5>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'ErrorRouter',
-  props: {
-    /**
-     * Router of error.
-     */
-    to: {
-      type: String,
-      required: true
-    },
-    /**
-     * Info of router-link.
-     */
-    routerInfo: {
-      type: String,
-      required: true
-    }
+<script setup lang="ts">
+defineProps({
+  /**
+   * Router of error.
+   */
+  to: {
+    type: String,
+    required: true
+  },
+  /**
+   * Info of router-link.
+   */
+  routerInfo: {
+    type: String,
+    required: true
   }
-}
+})
 </script>
 
 <style scoped>

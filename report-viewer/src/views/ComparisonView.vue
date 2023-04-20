@@ -64,10 +64,10 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import type { Match } from '@/model/Match'
 
-import { defineComponent, ref } from 'vue'
+import { ref } from 'vue'
 import { generateLineCodeLink } from '@/utils/Utils'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchTable from '@/components/MatchTable.vue'
@@ -77,158 +77,146 @@ import { useRouter } from 'vue-router'
 import { Comparison } from '@/model/Comparison'
 import store from '@/stores/store'
 
-export default defineComponent({
-  name: 'ComparisonView',
-  components: { FilesContainer, MatchTable, TextInformation },
-  props: {
-    firstId: {
-      type: String,
-      required: true
-    },
-    secondId: {
-      type: String,
-      required: true
-    }
+const props = defineProps({
+  firstId: {
+    type: String,
+    required: true
   },
-  setup(props) {
-    const router = useRouter()
-    console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
-    let comparison
-    //getting the comparison file based on the used mode (zip, local, single)
-    if (store().local) {
-      const request = new XMLHttpRequest()
-      request.open('GET', `/src/files/${store().getComparisonFileName(props.firstId, props.secondId)}`, false)
-      console.log(request)
-      request.send()
-
-      if (request.status == 200) {
-        try {
-          comparison = ComparisonFactory.getComparison(JSON.parse(request.response))
-        } catch (e) {
-          router.back()
-        }
-      } else {
-        router.back()
-      }
-    } else if (store().zip) {
-      let comparisonFile = store().getComparisonFileForSubmissions(props.firstId, props.secondId)
-      if (comparisonFile) {
-        comparison = ComparisonFactory.getComparison(JSON.parse(comparisonFile))
-      } else {
-        console.log('Comparison file not found!')
-        router.push({
-          name: 'ErrorView',
-          state: {
-            message: 'Comparison file not found!',
-            to: '/overview',
-            routerInfo: 'back to overview page'
-          }
-        })
-      }
-    } else if (store().single) {
-      try {
-        comparison = ComparisonFactory.getComparison(JSON.parse(store().fileString))
-      } catch (e) {
-        router.push({
-          name: 'ErrorView',
-          state: {
-            message:
-              'Source code of matches not found. To only see the overview, please drop the overview.json directly.',
-            to: '/',
-            routerInfo: 'back to FileUpload page'
-          }
-        })
-        store().clearStore()
-      }
-    }
-    if (!comparison) {
-      comparison = new Comparison('', '', 0)
-      console.log('Unable to build comparison file.')
-    }
-    const filesOfFirst = ref(comparison.filesOfFirstSubmission)
-    const filesOfSecond = ref(comparison.filesOfSecondSubmission)
-
-    /**
-     * Collapses a file in the first files container.
-     * @param title
-     */
-    const toggleCollapseFirst = (title: string) => {
-      const file = filesOfFirst.value.get(title)
-      if (file) {
-        file.collapsed = !file.collapsed
-      }
-    }
-    /**
-     * Collapses a file in the second files container.
-     * @param title
-     */
-    const toggleCollapseSecond = (title: string) => {
-      const file = filesOfSecond.value.get(title)
-      if (file) {
-        file.collapsed = !file.collapsed
-      }
-    }
-    /**
-     * Shows a match in the first files container
-     * @param e
-     * @param panel
-     * @param file
-     * @param line
-     */
-    const showMatchInFirst = (e: unknown, panel: number, file: string, line: number) => {
-      if (!filesOfFirst.value.get(file)?.collapsed) {
-        toggleCollapseFirst(file)
-      }
-      document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
-    }
-    /**
-     * Shows a match in the second files container.
-     * @param e
-     * @param panel
-     * @param file
-     * @param line
-     */
-    const showMatchInSecond = (e: unknown, panel: number, file: string, line: number) => {
-      if (!filesOfSecond.value.get(file)?.collapsed) {
-        toggleCollapseSecond(file)
-      }
-      document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
-    }
-
-    const showMatch = (e: unknown, match: Match) => {
-      showMatchInFirst(e, 1, match.firstFile, match.startInFirst)
-      showMatchInSecond(e, 2, match.secondFile, match.startInSecond)
-    }
-
-    const isAnonymous = (id: string) => store().anonymous.has(id)
-    //Left panel
-    const hideLeftPanel = ref(false)
-    const togglePanel = () => {
-      hideLeftPanel.value = !hideLeftPanel.value
-    }
-
-    const back = () => {
-      router.back()
-    }
-
-    return {
-      comparison,
-      filesOfFirst,
-      filesOfSecond,
-      hideLeftPanel,
-      store,
-
-      toggleCollapseFirst,
-      toggleCollapseSecond,
-      showMatchInFirst,
-      showMatchInSecond,
-      showMatch,
-      togglePanel,
-      isAnonymous,
-      back
-    }
+  secondId: {
+    type: String,
+    required: true
   }
 })
+
+const router = useRouter()
+console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
+let comparison: Comparison = new Comparison('', '', 0)
+
+//getting the comparison file based on the used mode (zip, local, single)
+if (store().local) {
+  const request = new XMLHttpRequest()
+  request.open(
+    'GET',
+    `/src/files/${store().getComparisonFileName(props.firstId, props.secondId)}`,
+    false
+  )
+  console.log(request)
+  request.send()
+
+  if (request.status == 200) {
+    try {
+      comparison = ComparisonFactory.getComparison(JSON.parse(request.response))
+    } catch (e) {
+      router.back()
+    }
+  } else {
+    router.back()
+  }
+} else if (store().zip) {
+  let comparisonFile = store().getComparisonFileForSubmissions(props.firstId, props.secondId)
+  if (comparisonFile) {
+    comparison = ComparisonFactory.getComparison(JSON.parse(comparisonFile))
+  } else {
+    console.log('Comparison file not found!')
+    router.push({
+      name: 'ErrorView',
+      state: {
+        message: 'Comparison file not found!',
+        to: '/overview',
+        routerInfo: 'back to overview page'
+      }
+    })
+  }
+} else if (store().single) {
+  try {
+    comparison = ComparisonFactory.getComparison(JSON.parse(store().fileString))
+  } catch (e) {
+    router.push({
+      name: 'ErrorView',
+      state: {
+        message:
+          'Source code of matches not found. To only see the overview, please drop the overview.json directly.',
+        to: '/',
+        routerInfo: 'back to FileUpload page'
+      }
+    })
+    store().clearStore()
+  }
+}
+
+const filesOfFirst = ref(comparison.filesOfFirstSubmission)
+const filesOfSecond = ref(comparison.filesOfSecondSubmission)
+
+/**
+ * Collapses a file in the first files container.
+ * @param title
+ */
+
+function toggleCollapseFirst(title: string) {
+  const file = filesOfFirst.value.get(title)
+  if (file) {
+    file.collapsed = !file.collapsed
+  }
+}
+
+/**
+ * Collapses a file in the second files container.
+ * @param title
+ */
+function toggleCollapseSecond(title: string) {
+  const file = filesOfSecond.value.get(title)
+  if (file) {
+    file.collapsed = !file.collapsed
+  }
+}
+
+/**
+ * Shows a match in the first files container
+ * @param e
+ * @param panel
+ * @param file
+ * @param line
+ */
+
+function showMatchInFirst(e: unknown, panel: number, file: string, line: number) {
+  if (!filesOfFirst.value.get(file)?.collapsed) {
+    toggleCollapseFirst(file)
+  }
+  document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
+}
+
+/**
+ * Shows a match in the second files container.
+ * @param e
+ * @param panel
+ * @param file
+ * @param line
+ */
+function showMatchInSecond(e: unknown, panel: number, file: string, line: number) {
+  if (!filesOfSecond.value.get(file)?.collapsed) {
+    toggleCollapseSecond(file)
+  }
+  document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
+}
+
+function showMatch(e: unknown, match: Match) {
+  showMatchInFirst(e, 1, match.firstFile, match.startInFirst)
+  showMatchInSecond(e, 2, match.secondFile, match.startInSecond)
+}
+
+function isAnonymous(id: string) {
+  return store().anonymous.has(id)
+}
+
+//Left panel
+const hideLeftPanel = ref(false)
+function togglePanel() {
+  hideLeftPanel.value = !hideLeftPanel.value
+}
+
+function back() {
+  router.back()
+}
 </script>
 
 <style scoped>

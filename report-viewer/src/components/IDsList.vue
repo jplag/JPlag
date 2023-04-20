@@ -17,29 +17,20 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import store from '@/stores/store'
 
-export default defineComponent({
-  emits: ['idSent'],
-  name: 'IDsList',
-  props: {
-    ids: {
-      type: Array<string>,
-      required: true
-    }
-  },
-  setup(_, { emit }) {
-    const emitIdsSent = (ids: string[]) => {
-      emit('idSent', ids)
-    }
-    return {
-      store,
-      emitIdsSent
-    }
+defineProps({
+  ids: {
+    type: Array<string>,
+    required: true
   }
 })
+
+const emit = defineEmits(['idSent'])
+function emitIdsSent(ids: string[]) {
+  emit('idSent', ids)
+}
 </script>
 
 <style scoped>

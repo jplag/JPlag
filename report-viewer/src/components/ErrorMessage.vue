@@ -2,19 +2,16 @@
   <h2>{{ message }}</h2>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'ErrorMessage',
-  props: {
-    /**
-     * Message of error.
-     */
-    message: {
-      type: String,
-      required: true
-    }
+<script setup lang="ts">
+defineProps({
+  /**
+   * Message of error.
+   */
+  message: {
+    type: String,
+    required: true
   }
-}
+})
 </script>
 
 <style scoped>
