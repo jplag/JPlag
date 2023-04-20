@@ -103,9 +103,12 @@ public class ComparisonReportWriter {
         Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
+        List<Token> file1TotalTokens = tokensFirst.stream().filter(x -> x.getFile() != null && x.getFile().equals(startOfFirst.getFile())).toList();
+        List<Token> file2TotalTokens = tokensSecond.stream().filter(x -> x.getFile() != null && x.getFile().equals(startOfSecond.getFile())).toList();
+
         return new Match(relativizedFilePath(startOfFirst.getFile(), comparison.firstSubmission()),
                 relativizedFilePath(startOfSecond.getFile(), comparison.secondSubmission()), startOfFirst.getLine(), endOfFirst.getLine(),
-                startOfSecond.getLine(), endOfSecond.getLine(), match.length());
+                startOfSecond.getLine(), endOfSecond.getLine(), match.length(), file1TotalTokens.size(), file2TotalTokens.size());
     }
 
     private String relativizedFilePath(File file, Submission submission) {
