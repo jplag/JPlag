@@ -271,7 +271,8 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Perform token string normalization, which makes the token string invariant to dead code insertion and independent statement reordering.
+     * Perform token string normalization, which makes the token string invariant to dead code insertion and independent
+     * statement reordering.
      */
     void normalize() {
         List<Integer> originalOrder = getOrder(tokenList);

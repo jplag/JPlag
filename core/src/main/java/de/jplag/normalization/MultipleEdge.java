@@ -27,7 +27,7 @@ class MultipleEdge {
     }
 
     void addEdge(EdgeType type, Variable cause) {
-        switch(type) {
+        switch (type) {
             case VARIABLE_FLOW -> isVariableFlow = true;
             case VARIABLE_REVERSE_FLOW -> isVariableReverseFlow = true;
         }
