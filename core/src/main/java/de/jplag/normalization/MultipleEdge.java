@@ -27,10 +27,10 @@ class MultipleEdge {
     }
 
     void addEdge(EdgeType type, Variable cause) {
-        switch (type) {
-            case VARIABLE_FLOW -> isVariableFlow = true;
-            case VARIABLE_REVERSE_FLOW -> isVariableReverseFlow = true;
-        }
+        if (type == EdgeType.VARIABLE_FLOW)
+            isVariableFlow = true;
+        if (type == EdgeType.VARIABLE_REVERSE_FLOW)
+            isVariableReverseFlow = true;
         edges.add(new Edge(type, cause));
     }
 }
