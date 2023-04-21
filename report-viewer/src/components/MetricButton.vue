@@ -8,32 +8,26 @@
       <p class="metric-name">{{ metric.metricName }}</p>
       <div class="tooltip">
         <img alt="?" src="@/assets/help_outline_black_18dp.svg" />
-        <span class="tooltiptext">{{metric.description}}</span>
+        <span class="tooltiptext">{{ metric.description }}</span>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from "vue";
-import { Metric } from "@/model/Metric";
+<script setup lang="ts">
+import type { PropType } from 'vue'
+import type { Metric } from '@/model/Metric'
 
-export default defineComponent({
-  name: "MetricButton",
-  props: {
-    metric: {
-      type: Object as PropType<Metric>,
-      required: true,
-    },
-    isSelected: {
-      type: Boolean,
-      default: false,
-    },
+defineProps({
+  metric: {
+    type: Object as PropType<Metric>,
+    required: true
   },
-  setup() {
-    return {};
-  },
-});
+  isSelected: {
+    type: Boolean,
+    default: false
+  }
+})
 </script>
 
 <style scoped>
@@ -61,8 +55,6 @@ export default defineComponent({
   background: var(--secondary-color-dark);
   color: white;
 }
-
-
 
 .metric-name {
   font-size: xx-large;
@@ -94,7 +86,7 @@ export default defineComponent({
   background-color: black;
   color: #fff;
   text-align: center;
-  padding: 10px ;
+  padding: 10px;
   border-radius: 6px;
   position: absolute;
   z-index: 1;

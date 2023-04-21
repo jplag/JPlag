@@ -2,63 +2,60 @@
   Container which display a single line of code of a file.
 -->
 <template>
-  <div :class="{'first-line' : isFirst, 'last-line' : isLast, 'visible' : visible}" :style="{background : color}"
-       class="line-wrap">
-    <pre :id="text" ref="lineRef" :class="{ 'match-line' : color !== '#ECECEC' }" class="java">{{ lineNumber }} {{
-        text
-      }}</pre>
+  <div
+    :class="{ 'first-line': isFirst, 'last-line': isLast, visible: visible }"
+    :style="{ background: color }"
+    class="line-wrap"
+  >
+    <pre :id="text" ref="lineRef" :class="{ 'match-line': color !== '#ECECEC' }" class="java"
+      >{{ lineNumber }} {{ text }}</pre
+    >
   </div>
 </template>
 
-<script>
-import {defineComponent, onUpdated, ref} from "vue";
-import hljs from 'highlight.js';
+<script setup lang="ts">
+import { onUpdated, ref } from 'vue'
+import hljs from 'highlight.js'
 
-export default defineComponent({
-  name: "LineOfCode",
-  props: {
-    /**
-     * Indicates whether the line is shown on screen. Used for highlighting on demand.
-     */
-    visible: {
-      type: Boolean,
-      required: true
-    },
-    text: {
-      type: String,
-      required: true
-    },
-    lineNumber: {
-      type: Number,
-      required: true
-    },
-    color: {
-      required: true
-    },
-    fileIndex: {
-      type: Number,
-    },
-    isFirst: {
-      type: Boolean,
-    },
-    isLast: {
-      type: Boolean,
-    }
+const props = defineProps({
+  /**
+   * Indicates whether the line is shown on screen. Used for highlighting on demand.
+   */
+  visible: {
+    type: Boolean,
+    required: true
   },
+  text: {
+    type: String,
+    required: true
+  },
+  lineNumber: {
+    type: Number,
+    required: true
+  },
+  color: {
+    required: true,
+    type: String
+  },
+  fileIndex: {
+    type: Number
+  },
+  isFirst: {
+    type: Boolean
+  },
+  isLast: {
+    type: Boolean
+  }
+})
 
-  setup(props) {
-    let highlighted = false
-    let lineRef = ref(null)
-    //Trigger highlighting when code panel is collapsed.
-    onUpdated(() => {
-      if (props.visible && !highlighted) {
-        hljs.highlightElement(lineRef.value)
-        highlighted = true
-      }
-    })
-    return {
-      lineRef
-    }
+let highlighted = false
+const lineRef = ref(null)
+
+//Trigger highlighting when code panel is collapsed.
+onUpdated(() => {
+  if (props.visible && !highlighted && lineRef.value != null) {
+    hljs.highlightElement(lineRef.value)
+    highlighted = true
   }
 })
 </script>
@@ -82,10 +79,10 @@ code.hljs {
 
 .hljs {
   background: transparent !important;
-  font-family: "JetBrains Mono NL", serif !important;
-  font-weight: bold;    font-size: x-small !important;
+  font-family: 'JetBrains Mono NL', serif !important;
+  font-weight: bold;
+  font-size: x-small !important;
 }
-
 
 .first-line {
   margin-top: 2%;
@@ -96,11 +93,10 @@ code.hljs {
   box-shadow: #777777 0 3px 3px;
 }
 
-.match-line {
-}
+/*.match-line {
+}*/
 
 .line-wrap {
   width: 200%;
 }
-
 </style>

@@ -15,10 +15,7 @@
       <div class="title-section">
         <h1>JPlag Comparison</h1>
         <button id="hide-button" title="Hide sidebar" @click="togglePanel">
-          <img
-            alt="hide"
-            src="@/assets/keyboard_double_arrow_left_black_24dp.svg"
-          />
+          <img alt="hide" src="@/assets/keyboard_double_arrow_left_black_24dp.svg" />
         </button>
       </div>
       <div>
@@ -26,12 +23,12 @@
       </div>
       <TextInformation
         :anonymous="isAnonymous(firstId)"
-        :value="store.getters.submissionDisplayName(firstId)"
+        :value="store().submissionDisplayName(firstId) || ''"
         label="Submission 1"
       />
       <TextInformation
-        :anonymous="store.state.anonymous.has(secondId)"
-        :value="store.getters.submissionDisplayName(secondId)"
+        :anonymous="store().anonymous.has(secondId)"
+        :value="store().submissionDisplayName(secondId) || ''"
         label="Submission 2"
       />
       <TextInformation :value="(comparison.similarity * 100).toFixed(2)" label="Match %" />
@@ -47,8 +44,8 @@
       :submission-id="firstId"
       :files="filesOfFirst"
       :matches="comparison.matchesInFirstSubmission"
-      :files-owner="store.getters.submissionDisplayName(firstId)"
-      :anonymous="store.state.anonymous.has(firstId)"
+      :files-owner="store().submissionDisplayName(firstId) || ''"
+      :anonymous="store().anonymous.has(firstId)"
       files-owner-default="submission 1"
       @toggle-collapse="toggleCollapseFirst"
       @line-selected="showMatchInSecond"
@@ -58,8 +55,8 @@
       :submission-id="secondId"
       :files="filesOfSecond"
       :matches="comparison.matchesInSecondSubmissions"
-      :files-owner="store.getters.submissionDisplayName(secondId)"
-      :anonymous="store.state.anonymous.has(secondId)"
+      :files-owner="store().submissionDisplayName(secondId) || ''"
+      :anonymous="store().anonymous.has(secondId) || false"
       files-owner-default="submission 2"
       @toggle-collapse="toggleCollapseSecond"
       @line-selected="showMatchInFirst"
@@ -67,188 +64,159 @@
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, ref} from "vue";
-import { generateLineCodeLink } from "@/utils/Utils";
-import TextInformation from "@/components/TextInformation.vue";
-import MatchTable from "@/components/MatchTable.vue";
-import { ComparisonFactory } from "@/model/factories/ComparisonFactory";
-import FilesContainer from "@/components/FilesContainer.vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
-import { Match } from "@/model/Match";
-import {Comparison} from "@/model/Comparison";
+<script setup lang="ts">
+import type { Match } from '@/model/Match'
 
-export default defineComponent({
-  name: "ComparisonView",
-  components: { FilesContainer, MatchTable, TextInformation },
-  props: {
-    firstId: {
-      type: String,
-      required: true,
-    },
-    secondId: {
-      type: String,
-      required: true,
-    },
+import { ref } from 'vue'
+import { generateLineCodeLink } from '@/utils/Utils'
+import TextInformation from '@/components/TextInformation.vue'
+import MatchTable from '@/components/MatchTable.vue'
+import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
+import FilesContainer from '@/components/FilesContainer.vue'
+import { useRouter } from 'vue-router'
+import { Comparison } from '@/model/Comparison'
+import store from '@/stores/store'
+
+const props = defineProps({
+  firstId: {
+    type: String,
+    required: true
   },
-  setup(props) {
-    const store = useStore();
-    const router = useRouter();
-    console.log("Generating comparison {%s} - {%s}...", props.firstId, props.secondId);
-    let comparison;
-    //getting the comparison file based on the used mode (zip, local, single)
-    if (store.state.local) {
-      try {
-        comparison = ComparisonFactory.getComparison(
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require(`../files/${store.getters.getComparisonFileName(
-            props.firstId,
-            props.secondId
-          )}.json`)
-        );
-      } catch (exception) {
-        router.back();
-      }
-    } else if (store.state.zip) {
-      let comparisonFile = store.getters.getComparisonFileForSubmissions(
-        props.firstId,
-        props.secondId
-      );
-      if (comparisonFile) {
-        comparison = ComparisonFactory.getComparison(
-          JSON.parse(comparisonFile)
-        );
-      } else {
-        console.log("Comparison file not found!");
-        router.push({
-          name: "ErrorView",
-          state: {
-            message: "Comparison file not found!",
-            to: "/overview",
-            routerInfo: "back to overview page"
-          }
-        });
-      }
-    } else if (store.state.single) {
-      try {
-        comparison = ComparisonFactory.getComparison(
-            JSON.parse(store.state.fileString)
-        );
-      }catch (e){
-        router.push({
-          name: "ErrorView",
-          state: {
-            message: "Source code of matches not found. To only see the overview, please drop the overview.json directly.",
-            to: "/",
-            routerInfo: "back to FileUpload page"
-          }
-        });
-        store.commit("clearStore");
-      }
+  secondId: {
+    type: String,
+    required: true
+  }
+})
+
+const router = useRouter()
+console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
+let comparison: Comparison = new Comparison('', '', 0)
+
+//getting the comparison file based on the used mode (zip, local, single)
+if (store().local) {
+  const request = new XMLHttpRequest()
+  request.open(
+    'GET',
+    `/src/files/${store().getComparisonFileName(props.firstId, props.secondId)}`,
+    false
+  )
+  console.log(request)
+  request.send()
+
+  if (request.status == 200) {
+    try {
+      comparison = ComparisonFactory.getComparison(JSON.parse(request.response))
+    } catch (e) {
+      router.back()
     }
-    if (!comparison) {
-      comparison=new Comparison("","",0);
-      console.log("Unable to build comparison file.");
-    }
-    const filesOfFirst = ref(comparison.filesOfFirstSubmission);
-    const filesOfSecond = ref(comparison.filesOfSecondSubmission);
-
-    /**
-     * Collapses a file in the first files container.
-     * @param title
-     */
-    const toggleCollapseFirst = (title: string) => {
-      const file = filesOfFirst.value.get(title);
-      if (file) {
-        file.collapsed = !file.collapsed;
+  } else {
+    router.back()
+  }
+} else if (store().zip) {
+  let comparisonFile = store().getComparisonFileForSubmissions(props.firstId, props.secondId)
+  if (comparisonFile) {
+    comparison = ComparisonFactory.getComparison(JSON.parse(comparisonFile))
+  } else {
+    console.log('Comparison file not found!')
+    router.push({
+      name: 'ErrorView',
+      state: {
+        message: 'Comparison file not found!',
+        to: '/overview',
+        routerInfo: 'back to overview page'
       }
-    };
-    /**
-     * Collapses a file in the second files container.
-     * @param title
-     */
-    const toggleCollapseSecond = (title: string) => {
-      const file = filesOfSecond.value.get(title);
-      if (file) {
-        file.collapsed = !file.collapsed;
+    })
+  }
+} else if (store().single) {
+  try {
+    comparison = ComparisonFactory.getComparison(JSON.parse(store().fileString))
+  } catch (e) {
+    router.push({
+      name: 'ErrorView',
+      state: {
+        message:
+          'Source code of matches not found. To only see the overview, please drop the overview.json directly.',
+        to: '/',
+        routerInfo: 'back to FileUpload page'
       }
-    };
-    /**
-     * Shows a match in the first files container
-     * @param e
-     * @param panel
-     * @param file
-     * @param line
-     */
-    const showMatchInFirst = (
-      e: unknown,
-      panel: number,
-      file: string,
-      line: number
-    ) => {
-      if (!filesOfFirst.value.get(file)?.collapsed) {
-        toggleCollapseFirst(file);
-      }
-      document
-        .getElementById(generateLineCodeLink(panel, file, line))
-        ?.scrollIntoView();
-    };
-    /**
-     * Shows a match in the second files container.
-     * @param e
-     * @param panel
-     * @param file
-     * @param line
-     */
-    const showMatchInSecond = (
-      e: unknown,
-      panel: number,
-      file: string,
-      line: number
-    ) => {
-      if (!filesOfSecond.value.get(file)?.collapsed) {
-        toggleCollapseSecond(file);
-      }
-      document
-        .getElementById(generateLineCodeLink(panel, file, line))
-        ?.scrollIntoView();
-    };
+    })
+    store().clearStore()
+  }
+}
 
-    const showMatch = (e: unknown, match: Match) => {
-      showMatchInFirst(e, 1, match.firstFile, match.startInFirst);
-      showMatchInSecond(e, 2, match.secondFile, match.startInSecond);
-    };
+const filesOfFirst = ref(comparison.filesOfFirstSubmission)
+const filesOfSecond = ref(comparison.filesOfSecondSubmission)
 
-    const isAnonymous = (id: string) => store.state.anonymous.has(id);
-    //Left panel
-    const hideLeftPanel = ref(false);
-    const togglePanel = () => {
-      hideLeftPanel.value = !hideLeftPanel.value;
-    };
+/**
+ * Collapses a file in the first files container.
+ * @param title
+ */
 
-    const back = () => {
-      router.back();
-    };
+function toggleCollapseFirst(title: string) {
+  const file = filesOfFirst.value.get(title)
+  if (file) {
+    file.collapsed = !file.collapsed
+  }
+}
 
-    return {
-      comparison,
-      filesOfFirst,
-      filesOfSecond,
-      hideLeftPanel,
-      store,
+/**
+ * Collapses a file in the second files container.
+ * @param title
+ */
+function toggleCollapseSecond(title: string) {
+  const file = filesOfSecond.value.get(title)
+  if (file) {
+    file.collapsed = !file.collapsed
+  }
+}
 
-      toggleCollapseFirst,
-      toggleCollapseSecond,
-      showMatchInFirst,
-      showMatchInSecond,
-      showMatch,
-      togglePanel,
-      isAnonymous,
-      back,
-    };
-  },
-});
+/**
+ * Shows a match in the first files container
+ * @param e
+ * @param panel
+ * @param file
+ * @param line
+ */
+
+function showMatchInFirst(e: unknown, panel: number, file: string, line: number) {
+  if (!filesOfFirst.value.get(file)?.collapsed) {
+    toggleCollapseFirst(file)
+  }
+  document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
+}
+
+/**
+ * Shows a match in the second files container.
+ * @param e
+ * @param panel
+ * @param file
+ * @param line
+ */
+function showMatchInSecond(e: unknown, panel: number, file: string, line: number) {
+  if (!filesOfSecond.value.get(file)?.collapsed) {
+    toggleCollapseSecond(file)
+  }
+  document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
+}
+
+function showMatch(e: unknown, match: Match) {
+  showMatchInFirst(e, 1, match.firstFile, match.startInFirst)
+  showMatchInSecond(e, 2, match.secondFile, match.startInSecond)
+}
+
+function isAnonymous(id: string) {
+  return store().anonymous.has(id)
+}
+
+//Left panel
+const hideLeftPanel = ref(false)
+function togglePanel() {
+  hideLeftPanel.value = !hideLeftPanel.value
+}
+
+function back() {
+  router.back()
+}
 </script>
 
 <style scoped>
@@ -329,7 +297,7 @@ h1 {
   display: block;
 }
 
-.animated-back-button{
+.animated-back-button {
   float: right;
   height: 100%;
   position: relative;
@@ -342,22 +310,22 @@ h1 {
   transition: all ease 0.3s;
 }
 
-.animated-back-button::after{
+.animated-back-button::after {
   position: absolute;
   top: 50%;
   right: 0.6em;
   transform: translateY(-50%);
-  content: "«";
+  content: '«';
   font-size: 1.2em;
   transition: all ease 0.3s;
   opacity: 0;
 }
 
-.animated-back-button:hover{
+.animated-back-button:hover {
   padding: 20px 60px 20px 20px;
 }
 
-.animated-back-button:hover::after{
+.animated-back-button:hover::after {
   right: 1.2em;
   opacity: 1;
 }

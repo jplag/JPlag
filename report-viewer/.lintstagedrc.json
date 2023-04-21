@@ -1,0 +1,10 @@
+{
+  "*.ts": [
+    "prettier --write",
+    "eslint"
+  ],
+  "*.vue": [
+    "prettier --write",
+    "eslint"
+  ]
+}

@@ -5,8 +5,8 @@ The JPlag Report Viewer is a Vue 3 + Typescript standalone application that can 
 Before the first run execute:
 
 - Install necessary dependencies by running `npm install` in the /report-viewer folder.
-- Start the application by running the `npm run serve` command in the /report-viewer folder.
-- The report viewer is now accessible in your browser under http://localhost:8080/JPlag/
+- Start the application by running the `npm run dev` command in the /report-viewer folder.
+- The report viewer is now accessible in your browser under http://localhost:8080/
 
 ## Project setup
 ```
@@ -15,7 +15,7 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm run dev
 ```
 
 ### Compiles and minifies for production
@@ -26,6 +26,11 @@ npm run build
 ### Lints and fixes files
 ```
 npm run lint
+```
+
+### Format files with prettier
+```
+npm run format
 ```
 
 ### Customize configuration
