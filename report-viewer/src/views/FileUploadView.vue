@@ -52,6 +52,10 @@ if (typeof queryParams.file === 'string' && queryParams.file !== '') {
     }
   }
 }
+if (queryFileURL !== null) {
+  loadQueryFile(queryFileURL)
+}
+const hasQueryFile = queryFileURL !== null
 
 function navigateToOverview() {
   router.push({
@@ -69,10 +73,19 @@ function navigateToComparisonView(firstId: string, secondId: string) {
   })
 }
 
+/**
+ * Gets the root name of the given directory path.
+ * @param directoryPath Path to extract the root name from.
+ */
 function extractRootName(directoryPath: string) {
   const folders = directoryPath.split('/')
   return folders[0]
 }
+
+/**
+ * Extracts the submission file name from the given directory path.
+ * @param directoryPath Path to extract the submission file name from.
+ */
 function extractSubmissionFileName(directoryPath: string) {
   const folders = directoryPath.split('/')
   const rootName = folders[0]
@@ -85,6 +98,12 @@ function extractSubmissionFileName(directoryPath: string) {
   return folders[submissionFolderIndex + 1]
 }
 
+/**
+ * Gets the full path of the file
+ * @param directoryPath Path to the file
+ * @param fileBase Name of the file
+ * @param originalFileName Original name of the file
+ */
 function extractFileNameWithFullPath(
   directoryPath: string,
   fileBase: string,
@@ -120,7 +139,7 @@ function extractFileNameWithFullPath(
 
 /**
  * Handles zip file on drop. It extracts the zip and saves each file in the store.
- * @param file
+ * @param file Zip file to handle
  */
 function handleZipFile(file: Blob) {
   console.log('Start handling zip file and storing necessary data...')
@@ -164,7 +183,7 @@ function handleZipFile(file: Blob) {
 
 /**
  * Handles a json file on drop. It read the file and passes the file string to next window.
- * @param str
+ * @param str Content of the json file
  */
 function handleJsonFile(str: string) {
   let json = JSON.parse(str)
@@ -189,6 +208,10 @@ function handleJsonFile(str: string) {
   }
 }
 
+/**
+ * Handles a file on drop. It determines the file type and passes it to the corresponding handler.
+ * @param file File to handle
+ */
 function handleFile(file: Blob) {
   switch (file.type) {
     case 'application/zip':
@@ -205,7 +228,7 @@ function handleFile(file: Blob) {
 
 /**
  * Handles file drop.
- * @param e
+ * @param e Drag event of file drop
  */
 async function uploadFile(e: DragEvent) {
   let dropped = e.dataTransfer?.files
@@ -225,6 +248,9 @@ async function uploadFile(e: DragEvent) {
   }
 }
 
+/**
+ * Handles click on Continue with query file.
+ */
 async function loadQueryFile(url: URL) {
   try {
     const response = await fetch(url)
@@ -250,11 +276,6 @@ function continueWithLocal() {
   })
   navigateToOverview()
 }
-
-if (queryFileURL !== null) {
-  loadQueryFile(queryFileURL)
-}
-const hasQueryFile = queryFileURL !== null
 </script>
 
 <style scoped>
