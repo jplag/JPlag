@@ -103,7 +103,7 @@ import store from '@/stores/store'
 /**
  * Gets the overview file based on the used mode (zip, local, single).
  */
-function getOverview(): Overview {
+function getOverview() {
   console.log('Generating overview...')
   let temp!: Overview
   //Gets the overview file based on the used mode (zip, local, single).

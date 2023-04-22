@@ -39,7 +39,7 @@ fetch('/src/files/overview.json').then((response) => (hasLocalFile.value = respo
 
 // Loads file passed in query param, if any.
 const queryParams = useRoute().query
-let queryFileURL = null
+let queryFileURL: URL | null = null
 if (typeof queryParams.file === 'string' && queryParams.file !== '') {
   try {
     queryFileURL = new URL(queryParams.file)
@@ -141,7 +141,7 @@ function extractFileNameWithFullPath(
  * Handles zip file on drop. It extracts the zip and saves each file in the store.
  * @param file Zip file to handle
  */
-function handleZipFile(file: Blob) {
+async function handleZipFile(file: Blob) {
   console.log('Start handling zip file and storing necessary data...')
   return jszip.loadAsync(file).then(async (zip) => {
     for (const originalFileName of Object.keys(zip.files)) {
@@ -212,7 +212,7 @@ function handleJsonFile(str: string) {
  * Handles a file on drop. It determines the file type and passes it to the corresponding handler.
  * @param file File to handle
  */
-function handleFile(file: Blob) {
+async function handleFile(file: Blob) {
   switch (file.type) {
     case 'application/zip':
     case 'application/zip-compressed':

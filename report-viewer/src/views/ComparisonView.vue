@@ -95,7 +95,7 @@ const props = defineProps({
 
 const router = useRouter()
 console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
-let comparison: Comparison = new Comparison('', '', 0)
+let comparison = new Comparison('', '', 0)
 
 //getting the comparison file based on the used mode (zip, local, single)
 if (store().local) {
