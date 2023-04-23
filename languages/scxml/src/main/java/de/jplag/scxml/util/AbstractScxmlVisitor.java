@@ -54,13 +54,13 @@ public abstract class AbstractScxmlVisitor {
      * @return a list of visited token type ordinals
      */
     public List<Integer> peekTokens(StatechartElement element) {
-        ScxmlParserAdapter prevAdapter = this.adapter;
+        ScxmlParserAdapter previousAdapter = this.adapter;
         PeekAdapter peekAdapter = new PeekAdapter();
         // Switch out the main adapter for the peek adapter
         // so that the main token stream is not affected
         this.adapter = peekAdapter;
         visit(element);
-        this.adapter = prevAdapter;
+        this.adapter = previousAdapter;
         return peekAdapter.getTokenTypes();
     }
 
@@ -90,63 +90,54 @@ public abstract class AbstractScxmlVisitor {
 
     /**
      * Recursively visits a statechart.
-     *
      * @param statechart the statechart to visit
      */
     protected abstract void visitStatechart(Statechart statechart);
 
     /**
      * Recursively visits a state.
-     *
      * @param state the state to visit
      */
     protected abstract void visitState(State state);
 
     /**
      * Recursively visits a transition.
-     *
      * @param transition the transition to visit
      */
     protected abstract void visitTransition(Transition transition);
 
     /**
      * Recursively visits a list of actions.
-     *
      * @param actions the list of actions to visit
      */
     protected abstract void visitActions(List<Action> actions);
 
     /**
      * Recursively visits an if statechart element.
-     *
      * @param if_ the if element to visit
      */
     protected abstract void visitIf(If if_);
 
     /**
      * Recursively visits an elseIf statechart element.
-     *
      * @param elseIf the elseIf element to visit
      */
     protected abstract void visitElseIf(ElseIf elseIf);
 
     /**
      * Recursively visits an else statechart element.
-     *
      * @param else_ the else element to visit
      */
     protected abstract void visitElse(Else else_);
 
     /**
      * Recursively visits executable content.
-     *
      * @param content the executable content to visit
      */
     protected abstract void visitExecutableContent(ExecutableContent content);
 
     /**
      * Visits simple executable content.
-     *
      * @param content the simple executable content to visit
      */
     protected abstract void visitSimpleExecutableContent(SimpleExecutableContent content);

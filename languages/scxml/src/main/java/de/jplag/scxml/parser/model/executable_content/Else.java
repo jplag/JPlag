@@ -6,6 +6,6 @@ public record Else(List<ExecutableContent> contents) implements ExecutableConten
 
     @Override
     public String toString() {
-        return "Else";
+        return "Else {";
     }
 }

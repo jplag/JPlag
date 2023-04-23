@@ -33,7 +33,6 @@ public class ScxmlToken extends Token {
      * @param length the length of the token in the view file
      * @param element the corresponding StatechartElement this token was extracted from
      */
-    // TODO: use TokenTrace
     public ScxmlToken(TokenType type, File file, int line, int column, int length, StatechartElement element) {
         super(type, file, line, column, length);
         this.element = element;

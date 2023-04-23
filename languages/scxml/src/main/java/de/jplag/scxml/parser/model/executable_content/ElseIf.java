@@ -6,6 +6,6 @@ public record ElseIf(List<ExecutableContent> contents) implements ExecutableCont
 
     @Override
     public String toString() {
-        return "ElseIf";
+        return "ElseIf {";
     }
 }

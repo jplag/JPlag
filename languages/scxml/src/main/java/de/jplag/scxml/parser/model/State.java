@@ -20,12 +20,19 @@ public record State(String id, List<Transition> transitions, List<State> substat
      * @param actions a non-null list of actions associated with this state
      * @param initial whether this state is an initial state
      * @param parallel whether this state is a parallel state
+     * @throws IllegalArgumentException if {@code transitions} or {@code substates} is null
      */
     public State(String id, List<Transition> transitions, List<State> substates, List<Action> actions, boolean initial, boolean parallel) {
+        if (transitions == null) {
+            throw new IllegalArgumentException("State.transitions must not be null");
+        }
+
+        if (substates == null) {
+            throw new IllegalArgumentException("State.substates must not be null");
+        }
+
         this.id = id;
-        assert transitions != null : "State.transitions must not be null";
         this.transitions = transitions;
-        assert substates != null : "State.substates must not be null";
         this.substates = substates;
         this.actions = actions;
         this.initial = initial;
@@ -68,6 +75,47 @@ public record State(String id, List<Transition> transitions, List<State> substat
         return onEntryContents.flatMap(List::stream).filter(c -> c instanceof Send).map(s -> (Send) s).toList();
     }
 
+    /**
+     * Sets the timed attribute of each transition of this state that is timed. To model a timed transition, itemis Create
+     * adds onentry.send, onexit.cancel and transition elements with matching IDs. These elements will be removed if they
+     * are part of a timed transition.
+     **/
+    private void updateTimedTransitions() {
+        if (this.transitions().isEmpty() || this.actions().isEmpty()) {
+            return;
+        }
+
+        for (Action onExit : onExits().toList()) {
+            var cancelElements = onExit.contents().stream().filter(c -> c instanceof Cancel).map(c -> (Cancel) c).toList();
+            for (Cancel cancel : cancelElements) {
+                replaceMatchingTransitions(cancel.sendid(), onExit, cancel);
+            }
+        }
+    }
+
+    private void replaceMatchingTransitions(String sendId, Action onExit, Cancel cancel) {
+        List<Send> onEntrySends = getOnEntrySends();
+        for (Transition transition : transitions) {
+            boolean foundTimedTransition = false;
+            // First check if there is a matching transition for the sendid
+            if (transition.event() != null && transition.event().equals(sendId)) {
+                // Then check if there is also a matching send element in <onentry>
+                for (Action onEntry : onEntries().toList()) {
+                    for (Send send : onEntrySends) {
+                        if (send.event().equals(sendId)) {
+                            foundTimedTransition = true;
+                            removeTimedTransitionElements(onEntry, send, onExit, cancel, transition);
+                        }
+                    }
+                }
+            }
+            if (foundTimedTransition) {
+                // Replace the transition with a timed transition
+                transitions.set(transitions.indexOf(transition), Transition.makeTimed(transition));
+            }
+        }
+    }
+
     private void removeTimedTransitionElements(Action onEntry, Send send, Action onExit, Cancel cancel, Transition transition) {
         List<ExecutableContent> filteredContents = onEntry.contents().stream().filter(c -> !(c instanceof Send && c.equals(send))).toList();
         if (filteredContents.isEmpty()) {
@@ -89,46 +137,15 @@ public record State(String id, List<Transition> transitions, List<State> substat
         }
     }
 
-    /**
-     * Sets the timed attribute of each transition of this state that is timed. To model a timed transition, itemis Create
-     * adds onentry.send, onexit.cancel and transition elements with matching IDs. These elements will be removed if they
-     * are part of a timed transition.
-     **/
-    private void updateTimedTransitions() {
-        if (this.transitions().isEmpty() || this.actions().isEmpty()) {
-            return;
-        }
-        List<Send> onEntrySends = getOnEntrySends();
-
-        for (Action onExit : onExits().toList()) {
-            for (Cancel cancel : onExit.contents().stream().filter(c -> c instanceof Cancel).map(c -> (Cancel) c).toList()) {
-                String sendId = cancel.sendid();
-                // First check if there is a matching transition for the sendid
-                for (Transition transition : transitions) {
-                    boolean foundTimedTransition = false;
-                    if (transition.event() != null && transition.event().equals(sendId)) {
-                        // Then check if there is also a matching send element in <onentry>
-                        for (Action onEntry : onEntries().toList()) {
-                            for (Send send : onEntrySends) {
-                                if (send.event().equals(sendId)) {
-                                    foundTimedTransition = true;
-                                    // Finally, replace the transition
-                                    removeTimedTransitionElements(onEntry, send, onExit, cancel, transition);
-                                }
-                            }
-                        }
-                    }
-                    if (foundTimedTransition) {
-                        transitions.set(transitions.indexOf(transition), Transition.makeTimed(transition));
-                    }
-                }
-            }
-        }
-    }
-
     @Override
     public String toString() {
-        return String.format("%s: %s {", id, isRegion() ? "Region" : "State");
+        String[] parts = {"", ""};
+        parts[1] = isRegion() ? "Region" : "State";
+        if (initial) {
+            parts[0] = "Initial ";
+            parts[1] = parts[1].toLowerCase();
+        }
+        return String.format("%s: %s%s {", id, parts[0], parts[1]);
     }
 
 }

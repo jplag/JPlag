@@ -1,6 +1,7 @@
 package de.jplag.scxml.parser;
 
 import static de.jplag.scxml.ScxmlTokenType.*;
+import static java.util.Map.entry;
 
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
         if (!actions.isEmpty()) {
             // Only extract a single ENTRY / EXIT token even if the state contains multiple.
             // Functionally, this makes no difference.
-            adapter.addToken(tokenType, null);
+            adapter.addToken(tokenType, actions.get(0));
             List<ExecutableContent> actionContents = actions.stream().flatMap(a -> a.contents().stream()).toList();
             depth++;
             // Do not sort executable content because the order is important
@@ -91,16 +92,17 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
     }
 
     @Override
-    public void visitIf(If if_) {
-        adapter.addToken(IF, if_);
+    public void visitIf(If ifElement) {
+        adapter.addToken(IF, ifElement);
         depth++;
-        for (ExecutableContent content : if_.contents()) {
+        for (ExecutableContent content : ifElement.contents()) {
             visitExecutableContent(content);
         }
-        for (ElseIf elseIf : if_.elseIfs()) {
+        for (ElseIf elseIf : ifElement.elseIfs()) {
             visitElseIf(elseIf);
         }
-        visitElse(if_.else_());
+        visitElse(ifElement.else_());
+        depth--;
         adapter.addEndToken(IF_END);
     }
 
@@ -120,6 +122,7 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
             for (ExecutableContent content : else_.contents()) {
                 visitExecutableContent(content);
             }
+            adapter.addToken(ELSE_END, else_);
         }
     }
 
@@ -130,13 +133,12 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
             return;
         }
 
-        if (content instanceof If if_) {
-            visitIf(if_);
+        if (content instanceof If visitElement) {
+            visitIf(visitElement);
             return;
         }
 
-        // TODO: use entries
-        Map<Class<? extends StatechartElement>, ScxmlTokenType> tokenTypeMap = Map.of(Send.class, SEND, Cancel.class, CANCEL);
+        Map<Class<? extends StatechartElement>, ScxmlTokenType> tokenTypeMap = Map.ofEntries(entry(Send.class, SEND), entry(Cancel.class, CANCEL));
         ScxmlTokenType type = tokenTypeMap.get(content.getClass());
         adapter.addToken(type, content);
     }

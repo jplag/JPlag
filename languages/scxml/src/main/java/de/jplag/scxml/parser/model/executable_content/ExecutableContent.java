@@ -10,8 +10,8 @@ import de.jplag.scxml.parser.model.StatechartElement;
 import de.jplag.scxml.parser.util.NodeUtil;
 
 /**
- * Represents executable content in an SCXML statechart, which are elements that can be executed
- * during state transitions, state entry, state exit or in conditional statements.
+ * Represents executable content in an SCXML statechart, which are elements that can be executed during state
+ * transitions, state entry, state exit or in conditional statements.
  */
 public interface ExecutableContent extends StatechartElement {
 

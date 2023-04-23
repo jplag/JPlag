@@ -78,11 +78,9 @@ public final class NodeUtil {
     /**
      * Retrieves the value of an attribute with the specified name from the given node. If the attribute is not present,
      * {@code null} is returned.
-     *
      * @param node the node containing the attribute
      * @param name the name of the attribute to retrieve
-     * @return the value of the attribute, or {@code null} if the node does not contain an
-     * attribute with the given name
+     * @return the value of the attribute, or {@code null} if the node does not contain an attribute with the given name
      */
     public static String getAttribute(Node node, String name) {
         Node attribute = node.getAttributes().getNamedItem(name);

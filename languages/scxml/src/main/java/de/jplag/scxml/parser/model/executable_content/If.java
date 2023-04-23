@@ -11,13 +11,14 @@ import de.jplag.scxml.parser.util.NodeUtil;
 
 /**
  * Represents an {@literal <if>} SCXML element, which is an executable content element used for conditional execution.
- * The {@literal <if>} element can contain {@literal <elseif>} and {@literal <else>} branches for handling multiple conditions.
- *
- * @param cond the cond attribute of the {@literal <if>} element which is the condition expression
- * for the contained executable contents to be executed
+ * The {@literal <if>} element can contain {@literal <elseif>} and {@literal <else>} branches for handling multiple
+ * conditions.
+ * @param cond the cond attribute of the {@literal <if>} element which is the condition expression for the contained
+ * executable contents to be executed
  * @param contents the list of executable contents to be executed when the condition is met
  * @param elseIfs represents the list of {@literal <elseif>} branches in the {@literal <if>} element
- * @param else_ the {@literal <else>} branch corresponding to the {@literal <if>} element, or {@code null} if not present
+ * @param else_ the {@literal <else>} branch corresponding to the {@literal <if>} element, or {@code null} if not
+ * present
  */
 public record If(String cond, List<ExecutableContent> contents, List<ElseIf> elseIfs, Else else_) implements ExecutableContent {
 
@@ -27,13 +28,11 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
     private static final String ELSEIF_ELEMENT = "elseif";
     private static final String COND_ATTRIBUTE = "cond";
 
-
     /**
-     * Constructs an If instance with the specified condition and a list of executable contents.
-     * The {@code elseIf} attribute is set to an empty list and the {@code else} is set to null.
-     *
-     * @param cond the cond attribute of the {@literal <if>} element which is the condition expression
-     * for the contained executable contents to be executed
+     * Constructs an If instance with the specified condition and a list of executable contents. The {@code elseIf}
+     * attribute is set to an empty list and the {@code else} is set to null.
+     * @param cond the cond attribute of the {@literal <if>} element which is the condition expression for the contained
+     * executable contents to be executed
      * @param contents the list of executable contents to be executed when the condition is met
      */
     public If(String cond, ExecutableContent... contents) {
@@ -113,6 +112,6 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
 
     @Override
     public String toString() {
-        return "If";
+        return "If {";
     }
 }

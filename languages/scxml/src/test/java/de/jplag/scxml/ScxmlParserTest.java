@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
@@ -23,6 +23,7 @@ import de.jplag.scxml.parser.model.Statechart;
 import de.jplag.scxml.parser.model.Transition;
 import de.jplag.scxml.parser.model.executable_content.*;
 import de.jplag.scxml.util.StateBuilder;
+import de.jplag.testutils.FileUtil;
 
 class ScxmlParserTest {
 
@@ -51,12 +52,6 @@ class ScxmlParserTest {
 
     private static Transition transition(String target) {
         return transition(target, (String) null);
-    }
-
-    @BeforeEach
-    public void setUp() {
-        ScxmlLanguage language = new ScxmlLanguage();
-        // FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }
 
     @Test
@@ -117,4 +112,8 @@ class ScxmlParserTest {
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
+    @AfterEach
+    void tearDown() {
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), ScxmlLanguage.VIEW_FILE_SUFFIX);
+    }
 }

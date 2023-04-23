@@ -14,22 +14,20 @@ public enum ScxmlTokenType implements TokenType {
     STATE("State begin"),
     STATE_END("State end", true),
     REGION("Region"),
-    INITIAL_STATE("Initial state"),
     PARALLEL_STATE("Parallel state"),
+    PARALLEL_REGION("Parallel region"),
     ON_ENTRY("OnEntry"),
     ON_EXIT("OnExit"),
     ACTION_END("Action end", true),
-    // Simple executable content
+    // Executable content
     RAISE("Raise"),
     IF("If"),
     IF_END("If end", true),
     ELSE_IF("Else if"),
     ELSE_IF_END("Else if end", true),
     ELSE("Else"),
+    ELSE_END("Else end", true),
     FOREACH("For each"),
-    // LOG("Log"),
-    // TODO: fix comments
-    // Other executable content
     ASSIGNMENT("Assignment"),
     CANCEL("Cancel"),
     SCRIPT("Script"),

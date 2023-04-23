@@ -7,15 +7,15 @@ structure. The tokens are extracted by iterating over this structure.
 ### Token Extraction
 
 There are two token extraction strategies available: the SimpleStatechartTokenGenerator and the
-DynamicStatechartTokenGenerator.
+HandcraftedStatechartTokenGenerator. The active strategy can be set by
 
 The SimpleStatechartTokenGenerator extracts tokens by recursively traversing the
 Statechart object, using the elements outlined in the [SCXML specification](https://www.w3.org/TR/scxml).
-The DynamicStatechartTokenGenerator utilizes a larger token set and extracts tokens based on the attributes of the
-StatechartElement, for example extracting a `PARALLEL_STATE` token for the State object if it is parallel.
+The HandcraftedStatechartTokenGenerator utilizes a larger token set and extracts tokens based on the attributes of the
+statechart element, for example extracting a `PARALLEL_STATE` token for a State if it is parallel.
 
 The set of possible tokens can be found here:
-https://github.com/smjonas/JPlag/blob/statecharts/languages/scxml/src/main/java/de/jplag/scxml/ScxmlTokenType.java
+https://github.com/jplag/JPlag/blob/develop/languages/scxml/src/main/java/de/jplag/scxml/ScxmlTokenType.java
 
 ## Usage
 

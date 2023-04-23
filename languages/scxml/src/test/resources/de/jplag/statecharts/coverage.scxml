@@ -56,11 +56,11 @@
                 <transition target="subStateB1"/>
             </initial>
 
-            <state id="subStateB1">
+            <parallel id="subStateB1">
                 <transition event="toggleB" target="subStateB2"/>
-            </state>
+            </parallel>
 
-            <state id="subStateB2">
+            <parallel id="subStateB2">
                 <onentry>
                     <if cond="counter % 3 == 0">
                         <send event="toggleB" target="#_parent" id="itemProcessedTimer" delay="1s"/>
@@ -72,7 +72,7 @@
                     <cancel sendid="itemProcessedTimer"/>
                 </onentry>
                 <transition event="toggleB" target="subStateB1"/>
-            </state>
+            </parallel>
         </state>
     </parallel>
 

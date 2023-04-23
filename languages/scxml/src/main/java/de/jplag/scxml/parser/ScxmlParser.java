@@ -79,7 +79,7 @@ public class ScxmlParser {
         initialStateTargets.addAll(transitions.stream().map(Transition::target).toList());
     }
 
-    private <T> ArrayList<T> visitChildElements(Node root, Set<String> childNames, Function<Node, T> visitorFunction) {
+    private <T> List<T> visitChildElements(Node root, Set<String> childNames, Function<Node, T> visitorFunction) {
         return new ArrayList<>(NodeUtil.getChildNodes(root, childNames).stream().map(visitorFunction).toList());
     }
 
@@ -101,8 +101,8 @@ public class ScxmlParser {
         Node child = NodeUtil.getFirstChild(node, INITIAL_ELEMENT);
         assert !(parallel && child != null) : "parallel state " + id + " must not have initial element";
 
-        ArrayList<Action> actions = visitChildElements(node, Set.of(ONENTRY_ELEMENT, ONEXIT_ELEMENT), this::visitAction);
-        ArrayList<Transition> transitions = visitChildElements(node, Set.of(TRANSITION_ELEMENT), this::visitTransition);
+        List<Action> actions = visitChildElements(node, Set.of(ONENTRY_ELEMENT, ONEXIT_ELEMENT), this::visitAction);
+        List<Transition> transitions = visitChildElements(node, Set.of(TRANSITION_ELEMENT), this::visitTransition);
         List<State> states = visitChildElements(node, Set.of(STATE_ELEMENT, PARALLEL_STATE_ELEMENT), this::visitState);
         return new State(id, transitions, states, actions, initial, parallel);
     }
