@@ -12,6 +12,10 @@ export class OverviewFactory {
       ? versionJson['report_viewer_version']
       : { major: -1, minor: -1, patch: -1 }
 
+  /**
+   * Creates an overview object from a json object created by by JPlag
+   * @param json the json object
+   */
   static getOverview(json: Record<string, unknown>): Overview {
     const versionField = json.jplag_version as Record<string, number>
     const jplagVersion: Version = {
@@ -86,6 +90,11 @@ export class OverviewFactory {
     )
   }
 
+  /**
+   * Compares the two versions and shows an alert if they are not equal and puts out a warning if they are not
+   * @param jsonVersion the version of the json file
+   * @param reportViewerVersion the version of the report viewer
+   */
   static compareVersions(jsonVersion: Version, reportViewerVersion: Version) {
     if (sessionStorage.getItem('versionAlert') === null) {
       if (

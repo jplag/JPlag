@@ -32,16 +32,29 @@ export interface State {
   submissionIdsToComparisonFileName: Map<string, Map<string, string>>
 }
 
+/**
+ * Internal representation of a file.
+ * @property fileName - The name of the file.
+ * @property data - The content of the file.
+ */
 export interface File {
   fileName: string
   data: string
 }
 
+/**
+ * Internal representation of a single file from a submission.
+ * @property name - The name of the file.
+ * @property file - The file.
+ */
 export interface SubmissionFile {
   name: string
   file: File
 }
 
+/**
+ * Load configuration is used to indicate which mode is used.
+ */
 export interface LoadConfiguration {
   local: boolean
   zip: boolean

@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia'
 import type { State, SubmissionFile, File, LoadConfiguration } from './state'
+import router from '@/router'
 
+/**
+ * The store is a global state management system. It is used to store the state of the application.
+ */
 const store = defineStore('store', {
   state: (): State => ({
     submissionIdsToComparisonFileName: new Map<string, Map<string, string>>(),

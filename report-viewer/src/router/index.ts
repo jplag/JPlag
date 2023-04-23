@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+/**
+ * The router is used to navigate between the different views of the application.
+ */
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
