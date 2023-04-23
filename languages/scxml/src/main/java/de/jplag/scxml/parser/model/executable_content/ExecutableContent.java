@@ -22,7 +22,7 @@ public interface ExecutableContent extends StatechartElement {
     Set<String> ALLOWED_XML_ELEMENTS = Set.of("raise", "if", "foreach", "log", "assign", "script", "send", "cancel");
 
     /**
-     * String constant for the <else> element.
+     * String constant for the {@literal <else>} element.
      */
     String ELSE_ELEMENT = "else";
 

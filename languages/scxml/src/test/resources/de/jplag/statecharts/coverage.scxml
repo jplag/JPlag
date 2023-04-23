@@ -5,6 +5,10 @@
         <data id="counter" expr="0"/>
     </datamodel>
 
+    <initial>
+        <transition target="start"/>
+    </initial>
+
     <state id="start">
         <onentry>
             <raise event="begin"/>
@@ -18,7 +22,7 @@
                 <transition target="subStateA1"/>
             </initial>
 
-            <state id="subStateA1">
+            <parallel id="subStateA1">
                 <onentry>
                     <if cond="counter % 2 == 0">
                         <raise event="toggleA"/>
@@ -32,11 +36,14 @@
                 <transition event="subStateA1_timeEvent_0">
                     <raise event="toggleA"/>
                 </transition>
+                <state id="subStateA11">
+                    <transition event="toggleB" target="subStateB2"/>
+                </state>
                 <onexit>
                     <assign location="counter" expr="counter + 1"/>
                     <cancel sendid="subStateA1_timeEvent_0"/>
                 </onexit>
-            </state>
+            </parallel>
 
             <state id="subStateA2">
                 <onentry>
@@ -56,11 +63,7 @@
                 <transition target="subStateB1"/>
             </initial>
 
-            <parallel id="subStateB1">
-                <transition event="toggleB" target="subStateB2"/>
-            </parallel>
-
-            <parallel id="subStateB2">
+            <state id="subStateB2">
                 <onentry>
                     <if cond="counter % 3 == 0">
                         <send event="toggleB" target="#_parent" id="itemProcessedTimer" delay="1s"/>
@@ -72,7 +75,7 @@
                     <cancel sendid="itemProcessedTimer"/>
                 </onentry>
                 <transition event="toggleB" target="subStateB1"/>
-            </parallel>
+            </state>
         </state>
     </parallel>
 

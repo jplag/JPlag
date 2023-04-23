@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Represents <onentry> and <onexit> SCXML elements which contain executable content to be executed when a state is
- * entered / exited.
+ * Represents {@literal <onentry>} and {@literal <onexit>} SCXML elements which contain executable content to be
+ * executed when a state is entered / exited.
  * @param type the type of the action ({@link Type#ON_ENTRY} or {@link Type#ON_EXIT})
  * @param contents the list of executable contents within the action
  */
@@ -26,11 +26,11 @@ public record Action(Type type, List<ExecutableContent> contents) implements Exe
      */
     public enum Type {
         /**
-         * Represents an <onentry> SCXML element.
+         * Represents an {@literal <onentry>} SCXML element.
          */
         ON_ENTRY,
         /**
-         * Represents an <onexit> SCXML element.
+         * Represents an {@literal <onexit>} SCXML element.
          */
         ON_EXIT,
     }

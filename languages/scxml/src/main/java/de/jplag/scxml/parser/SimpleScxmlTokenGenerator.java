@@ -35,6 +35,11 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
         }
     }
 
+    /**
+     * Visits the actions, transitions and substates of a state. Either of these attributes may be an empty list in which
+     * case no tokens are extracted.
+     * @param state the state whose actions, transitions and substates to visit
+     */
     protected void visitStateContents(State state) {
         visitActions(state.actions());
         for (Transition transition : sorter.sort(state.transitions())) {

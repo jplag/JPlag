@@ -22,17 +22,18 @@ public class HandcraftedScxmlTokenGenerator extends SimpleScxmlTokenGenerator {
     }
 
     /**
-     * Visits a state and extracts tokens based on whether its {@code parallel} and {@code isRegion} attributes are set to
+     * Visits a state and extracts tokens based on whether its {@code initial} and {@code isRegion} attributes are set to
      * {@code true}.
      * @param state the state to visit
      */
     protected void visitStateAttributes(State state) {
-        if (state.isRegion() && state.parallel()) {
-            adapter.addToken(PARALLEL_REGION, state);
+        System.out.println(state.id() + " " + state.isRegion() + " " + state.initial());
+        if (state.isRegion() && state.initial()) {
+            adapter.addToken(INITIAL_REGION, state);
         } else if (state.isRegion()) {
             adapter.addToken(REGION, state);
-        } else if (state.parallel()) {
-            adapter.addToken(PARALLEL_STATE, state);
+        } else if (state.initial()) {
+            adapter.addToken(INITIAL_STATE, state);
         } else {
             adapter.addToken(STATE, state);
         }

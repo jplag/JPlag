@@ -34,6 +34,10 @@ public abstract class AbstractScxmlVisitor {
      */
     protected int depth;
 
+    /**
+     * Constructs a new ScxmlVisitor with the given adapter to use for extracting tokens and using the recursive sorting
+     * strategy.
+     */
     public AbstractScxmlVisitor(ScxmlParserAdapter adapter) {
         this.adapter = adapter;
         this.sorter = new RecursiveSortingStrategy(this);
@@ -75,6 +79,7 @@ public abstract class AbstractScxmlVisitor {
 
     /**
      * Visits the given statechart element while adding extracted tokens to the current parser adapter.
+     * @param element the statechart element to visit
      * @throws IllegalArgumentException when the statechart element is of a type that is not currently handled
      */
     public final void visit(StatechartElement element) throws IllegalArgumentException {

@@ -37,23 +37,25 @@ public class ScxmlParserAdapter extends AbstractParser {
     }
 
     /**
-     * Parses all tokens from a set of files.
-     * @param files the set of files.
-     * @return the list of parsed tokens.
+     * Extracts all tokens from a set of files.
+     * @param files the set of files
+     * @throws ParsingException if the statechart could not be parsed
+     * @return the list of parsed tokens
      */
     public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {
-            parseModelFile(file);
+            parseStatechartFile(file);
         }
         return tokens;
     }
 
     /**
      * Loads a statechart from a file, parses it and extracts tokens from it.
-     * @param file is the statechart file.
+     * @param file the statechart file
+     * @throws ParsingException if the statechart could not be parsed
      */
-    protected void parseModelFile(File file) throws ParsingException {
+    protected void parseStatechartFile(File file) throws ParsingException {
         currentFile = file;
         Statechart statechart;
         view = new ScxmlView(file);

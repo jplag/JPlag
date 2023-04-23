@@ -49,6 +49,7 @@ public class ScxmlParser {
 
     /**
      * Constructs a new ScxmlParser used to parse SCXML documents.
+     * @throws ParserConfigurationException when the document builder for parsing the XML files cannot be constructed
      */
     public ScxmlParser() throws ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -61,7 +62,9 @@ public class ScxmlParser {
      * states. In the second pass, the whole document is visited. This is necessary because an initial state may occur in
      * the document prior to the transitions pointing to it.
      * @param file the SCXML file to parse
+     * @return the statechart constructed from the input statechart file
      */
+    // TODO: only throw ParsingException
     public Statechart parse(File file) throws IOException, SAXException, ParsingException {
         Document document = builder.parse(file);
         try {

@@ -16,15 +16,28 @@ import de.jplag.scxml.parser.ScxmlParserAdapter;
 @MetaInfServices(de.jplag.Language.class)
 public class ScxmlLanguage implements de.jplag.Language {
 
+    /**
+     * The file ending of SCXML statechart files.
+     */
     public static final String FILE_ENDING = ".scxml";
+
+    /**
+     * The file ending of view files.
+     */
     public static final String VIEW_FILE_SUFFIX = ".scxmlview";
 
     private static final String NAME = "SCXML (Statechart XML)";
     private static final String IDENTIFIER = "scxml";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 6;
 
+    /**
+     * The parser adapter to use for parsing and extracting tokens from statecharts.
+     */
     protected final ScxmlParserAdapter parser;
 
+    /**
+     * Constructs a new language instance for SCXML statecharts.
+     */
     public ScxmlLanguage() {
         this.parser = new ScxmlParserAdapter();
     }
