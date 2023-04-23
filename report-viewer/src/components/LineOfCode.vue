@@ -16,6 +16,7 @@
 <script setup lang="ts">
 import { onUpdated, ref } from 'vue'
 import hljs from 'highlight.js'
+import IDsList from '@/components/IDsList.vue'
 
 const props = defineProps({
   /**

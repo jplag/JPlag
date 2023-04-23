@@ -61,6 +61,9 @@ defineProps({
 
 const isCollapsed = ref(false)
 
+/**
+ * Toggles the collapsed state of the additional info container.
+ */
 function toggleIsCollapsed() {
   isCollapsed.value = !isCollapsed.value
 }

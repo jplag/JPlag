@@ -42,10 +42,17 @@ defineProps({
 
 const dialog = ref(false)
 
+/**
+ * Toggles the dialog visibility.
+ */
 function toggleDialog() {
   dialog.value = !dialog.value
 }
 
+/**
+ * @param cluster The cluster to get the members from.
+ * @returns The concatenated string of the first 5 members of the cluster.
+ */
 function getMemberNames(cluster: ClusterListElement) {
   const membersIterator = cluster.members.keys()
   const members = Array.from(membersIterator)
