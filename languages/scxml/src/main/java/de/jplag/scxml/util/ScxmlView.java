@@ -11,6 +11,11 @@ import org.slf4j.LoggerFactory;
 import de.jplag.scxml.ScxmlToken;
 import de.jplag.scxml.ScxmlTokenType;
 
+/**
+ * A utility for generating a textual representation of SCXML statecharts. The contents of the view file are assembled
+ * iteratively as new tokens are enhanced with positional information (line and column numbers) used by the JPlag report
+ * viewer.
+ */
 public class ScxmlView {
 
     private final File file;
@@ -51,6 +56,7 @@ public class ScxmlView {
      * the contents of the file are constructed.
      * @param token the token to enhance and add to the view file
      * @param depth current depth in the statechart to determine the indent in the view file
+     * @return the input token enhanced with view-related information
      */
     public ScxmlToken enhanceToken(ScxmlToken token, int depth) {
         String prefix = "  ".repeat(depth);

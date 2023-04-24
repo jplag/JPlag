@@ -1,14 +1,11 @@
 package de.jplag.scxml.parser;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
@@ -27,8 +24,19 @@ import de.jplag.scxml.util.ScxmlView;
  */
 public class ScxmlParserAdapter extends AbstractParser {
 
+    /**
+     * The list of extracted tokens for the current file.
+     */
     protected List<Token> tokens;
-    protected File currentFile;
+
+    /**
+     * The current statechart input file.
+     */
+    protected File currentStatechartFile;
+
+    /**
+     * The visitor to use for recursively iterating over the statechart to extract tokens.
+     */
     protected AbstractScxmlVisitor visitor;
     protected ScxmlView view;
 
@@ -56,18 +64,18 @@ public class ScxmlParserAdapter extends AbstractParser {
      * @throws ParsingException if the statechart could not be parsed
      */
     protected void parseStatechartFile(File file) throws ParsingException {
-        currentFile = file;
+        currentStatechartFile = file;
         Statechart statechart;
         view = new ScxmlView(file);
 
         try {
             statechart = new ScxmlParser().parse(file);
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            throw new ParsingException(file, "failed to parse statechart:\n" + e.getMessage());
+        } catch (ParserConfigurationException e) {
+            throw new ParsingException(file, "failed to construct XML document builder:\n" + e.getMessage());
         }
 
         visitor.visit(statechart);
-        tokens.add(Token.fileEnd(currentFile));
+        tokens.add(Token.fileEnd(currentStatechartFile));
         view.writeToFile(ScxmlLanguage.VIEW_FILE_SUFFIX);
     }
 
@@ -78,7 +86,7 @@ public class ScxmlParserAdapter extends AbstractParser {
      * @param source the statechart element associated with the token
      */
     public void addToken(ScxmlTokenType type, StatechartElement source) {
-        ScxmlToken token = new ScxmlToken(type, currentFile, source);
+        ScxmlToken token = new ScxmlToken(type, currentStatechartFile, source);
         Token enhancedToken = view.enhanceToken(token, visitor.getCurrentStatechartDepth());
         tokens.add(enhancedToken);
     }

@@ -9,6 +9,11 @@ import de.jplag.scxml.parser.model.executable_content.Cancel;
 import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
 import de.jplag.scxml.parser.model.executable_content.Send;
 
+/**
+ * Represents an SCXML {@code <state>} element in the statechart model. A state can be a simple state, an initial state,
+ * a parallel state, or a region (a state containing substates). A state can have outgoing transitions, actions (such as
+ * onentry and onexit), and timed transitions (a concept specific to itemis CREATE).
+ */
 public record State(String id, List<Transition> transitions, List<State> substates, List<Action> actions, boolean initial, boolean parallel)
         implements StatechartElement {
 

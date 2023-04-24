@@ -35,8 +35,9 @@ public abstract class AbstractScxmlVisitor {
     protected int depth;
 
     /**
-     * Constructs a new ScxmlVisitor with the given adapter to use for extracting tokens and using the recursive sorting
+     * Constructs a new ScxmlVisitor with the given adapter to use for collecting tokens and using the recursive sorting
      * strategy.
+     * @param adapter the adapter used for collecting tokens
      */
     public AbstractScxmlVisitor(ScxmlParserAdapter adapter) {
         this.adapter = adapter;

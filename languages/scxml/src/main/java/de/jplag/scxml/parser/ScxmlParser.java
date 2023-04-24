@@ -63,15 +63,15 @@ public class ScxmlParser {
      * the document prior to the transitions pointing to it.
      * @param file the SCXML file to parse
      * @return the statechart constructed from the input statechart file
+     * @throws ParsingException when the statechart could not be parsed
      */
-    // TODO: only throw ParsingException
-    public Statechart parse(File file) throws IOException, SAXException, ParsingException {
-        Document document = builder.parse(file);
+    public Statechart parse(File file) throws ParsingException {
         try {
+            Document document = builder.parse(file);
             Element element = document.getDocumentElement();
             resolveInitialStates(element);
             return visitRoot(element);
-        } catch (IllegalArgumentException e) {
+        } catch (SAXException | IOException | IllegalArgumentException e) {
             throw new ParsingException(file, "failed to parse statechart: " + e.getMessage());
         }
     }

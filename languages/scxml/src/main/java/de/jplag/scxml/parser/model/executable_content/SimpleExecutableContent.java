@@ -14,11 +14,34 @@ public record SimpleExecutableContent(Type type) implements ExecutableContent {
         return String.valueOf(result.charAt(0)).toUpperCase() + result.substring(1);
     }
 
+    /**
+     * Represents the types of simple executable content.
+     */
     public enum Type {
+        /**
+         * Corresponds to the {@literal <raise>} element, which generates an internal event when executed.
+         */
         RAISE,
+
+        /**
+         * Corresponds to the {@literal <assign>} element, which assigns a new value to a specified data model location when
+         * executed.
+         */
         ASSIGNMENT,
+
+        /**
+         * Corresponds to the {@literal <script>} element, which generates an internal event when executed.
+         */
         SCRIPT,
+
+        /**
+         * Corresponds to the {@literal <foreach>} element, which iterates over a collection.
+         */
         FOREACH,
+
+        /**
+         * Corresponds to the {@literal <log>} element, which prints a log message when executed.
+         */
         LOG
     }
 }

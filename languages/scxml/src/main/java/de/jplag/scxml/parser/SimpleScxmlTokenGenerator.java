@@ -30,6 +30,7 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
 
     @Override
     public void visitStatechart(Statechart statechart) {
+        depth = 0;
         for (State state : sorter.sort(statechart.states())) {
             visitState(state);
         }
