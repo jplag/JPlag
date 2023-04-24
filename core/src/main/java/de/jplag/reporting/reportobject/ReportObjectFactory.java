@@ -8,15 +8,12 @@ import static de.jplag.reporting.reportobject.mapper.SubmissionNameToIdMapper.bu
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.jplag.reporting.FilePathUtil;
-import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,12 +22,14 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.Submission;
+import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.jsonfactory.ToDiskWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
+import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
 import de.jplag.reporting.reportobject.model.Version;
 
 /**
@@ -206,7 +205,6 @@ public class ReportObjectFactory {
         }
         fileWriter.saveAsJSON(fileIndex, path, SUBMISSION_FILE_INDEX_FILE_NAME);
     }
-
 
     private Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {
         Set<Submission> submissions = comparisons.stream().map(JPlagComparison::firstSubmission).collect(Collectors.toSet());

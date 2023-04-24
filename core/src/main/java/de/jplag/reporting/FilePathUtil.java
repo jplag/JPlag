@@ -1,10 +1,10 @@
 package de.jplag.reporting;
 
-import de.jplag.Submission;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Function;
+
+import de.jplag.Submission;
 
 public final class FilePathUtil {
 

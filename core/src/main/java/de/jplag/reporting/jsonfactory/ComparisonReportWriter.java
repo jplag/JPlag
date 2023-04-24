@@ -1,7 +1,5 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -105,8 +103,8 @@ public class ComparisonReportWriter {
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
         return new Match(FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction),
-                FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction), startOfFirst.getLine(), endOfFirst.getLine(),
-                startOfSecond.getLine(), endOfSecond.getLine(), match.length());
+                FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction),
+                startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length());
     }
 
 }
