@@ -109,7 +109,7 @@ function getOverview() {
   //Gets the overview file based on the used mode (zip, local, single).
   if (store().local) {
     const request = new XMLHttpRequest()
-    request.open('GET', '/src/files/overview.json', false)
+    request.open('GET', '/files/overview.json', false)
     request.send()
 
     if (request.status == 200) {
