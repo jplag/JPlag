@@ -116,6 +116,11 @@ const props = defineProps({
   }
 })
 
+/**
+ * Formats the match percentage to a string with 2 decimal places.
+ * @param num The number to format.
+ * @returns The formatted number.
+ */
 function formattedMatchPercentage(num: number) {
   return (num * 100).toFixed(2)
 }
@@ -123,14 +128,27 @@ function formattedMatchPercentage(num: number) {
 const dialog: Ref<Array<boolean>> = ref([])
 props.topComparisons.forEach(() => dialog.value.push(false))
 
+/**
+ * @param submissionId Id to get name for
+ * @returns The display name of the submission with the given id.
+ */
 function displayName(submissionId: string) {
   return store().submissionDisplayName(submissionId)
 }
 
+/**
+ * Toggles the dialog with the given index.
+ * @param index The index of the dialog to toggle.
+ */
 function toggleDialog(index: number) {
   dialog.value[index] = true
 }
 
+/**
+ * Navigate to the comparison view with the given ids.
+ * @param firstId The id of the first submission.
+ * @param secondId The id of the second submission.
+ */
 function navigateToComparisonView(firstId: string, secondId: string) {
   if (!store().single) {
     router.push({
@@ -140,14 +158,28 @@ function navigateToComparisonView(firstId: string, secondId: string) {
   }
 }
 
+/**
+ * @param id1 First Id
+ * @param id2 Second Id
+ * @returns Whether the two ids are in a cluster together.
+ */
 function isInCluster(id1: string, id2: string) {
   return props.clusters.some((c: Cluster) => c.members.includes(id1) && c.members.includes(id2))
 }
 
+/**
+ * @param id SubmissionId to check
+ * @returns Whether the name should be hidden.
+ */
 function isAnonymous(id: string) {
   return store().anonymous.has(id)
 }
 
+/**
+ * @param id First Id
+ * @param others Other Ids that need to be in the cluster
+ * @returns The clusters that the two ids are in together.
+ */
 function getParticipatingMatchesForId(id: string, others: Array<string>) {
   let matches: Array<{ matchedWith: string; percentage: number }> = []
   props.topComparisons.forEach((comparison) => {
@@ -188,6 +220,11 @@ const clustersWithParticipatingMatches: Array<ClusterListElement> = props.cluste
   }
 )
 
+/**
+ * @param id1 First Id to check
+ * @param id2 Second Id to check
+ * @returns All clusters that contain both ids.
+ */
 function getClustersFor(id1: string, id2: string): Array<ClusterListElement> {
   return clustersWithParticipatingMatches.filter((c) => c.members.has(id1) && c.members.has(id2))
 }

@@ -4,7 +4,14 @@ import type { SubmissionFile } from '../SubmissionFile'
 import type { MatchInSingleFile } from '../MatchInSingleFile'
 import store from '@/stores/store'
 
+/**
+ * Factory class for creating Comparison objects
+ */
 export class ComparisonFactory {
+  /**
+   * Creates a comparison object from a json object created by by JPlag
+   * @param json the json object
+   */
   static getComparison(json: Record<string, unknown>): Comparison {
     const filesOfFirstSubmission = store().filesOfSubmission(json.id1 as string)
     const filesOfSecondSubmission = store().filesOfSubmission(json.id2 as string)

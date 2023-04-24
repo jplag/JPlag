@@ -87,10 +87,10 @@ const emit = defineEmits(['toggle-collapse', 'lineSelected'])
 
 /**
  * Passes lineSelected event, emitted from LineOfCode, to parent.
- * @param e
- * @param index
- * @param file
- * @param line
+ * @param e event from clicking on the line
+ * @param index index of the file in the files array
+ * @param file path of the file
+ * @param line line number of the line
  */
 function lineSelected(e: unknown, index: number, file: string, line: number) {
   emit('lineSelected', e, index, file, line)
@@ -98,8 +98,8 @@ function lineSelected(e: unknown, index: number, file: string, line: number) {
 
 /**
  * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.
- * @param match
- * @param submissionId
+ * @param file files path
+ * @param submissionId id of submission
  * @return new path of file
  */
 function convertSubmissionIdToName(file: string, submissionId: string): string {
