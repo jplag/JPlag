@@ -39,7 +39,7 @@ public abstract class AbstractScxmlVisitor {
      * strategy.
      * @param adapter the adapter used for collecting tokens
      */
-    public AbstractScxmlVisitor(ScxmlParserAdapter adapter) {
+    protected AbstractScxmlVisitor(ScxmlParserAdapter adapter) {
         this.adapter = adapter;
         this.sorter = new RecursiveSortingStrategy(this);
     }
@@ -120,9 +120,9 @@ public abstract class AbstractScxmlVisitor {
 
     /**
      * Recursively visits an if statechart element.
-     * @param if_ the if element to visit
+     * @param ifElement the if element to visit
      */
-    protected abstract void visitIf(If if_);
+    protected abstract void visitIf(If ifElement);
 
     /**
      * Recursively visits an elseIf statechart element.
@@ -132,9 +132,9 @@ public abstract class AbstractScxmlVisitor {
 
     /**
      * Recursively visits an else statechart element.
-     * @param else_ the else element to visit
+     * @param elseElement the else element to visit
      */
-    protected abstract void visitElse(Else else_);
+    protected abstract void visitElse(Else elseElement);
 
     /**
      * Recursively visits executable content.

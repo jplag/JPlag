@@ -26,7 +26,7 @@ import de.jplag.scxml.sorting.RecursiveSortingStrategy;
 import de.jplag.scxml.util.AbstractScxmlVisitor;
 import de.jplag.testutils.FileUtil;
 
-public class ScxmlTokenGeneratorTest {
+class ScxmlTokenGeneratorTest {
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "statecharts");
 

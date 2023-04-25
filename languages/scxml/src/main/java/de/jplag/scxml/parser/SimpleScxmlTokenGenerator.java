@@ -122,13 +122,13 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
     }
 
     @Override
-    public void visitElse(Else else_) {
-        if (else_ != null) {
-            adapter.addToken(ELSE, else_);
-            for (ExecutableContent content : else_.contents()) {
+    public void visitElse(Else elseElement) {
+        if (elseElement != null) {
+            adapter.addToken(ELSE, elseElement);
+            for (ExecutableContent content : elseElement.contents()) {
                 visitExecutableContent(content);
             }
-            adapter.addToken(ELSE_END, else_);
+            adapter.addToken(ELSE_END, elseElement);
         }
     }
 

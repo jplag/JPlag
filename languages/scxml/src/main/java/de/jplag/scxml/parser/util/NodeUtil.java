@@ -12,6 +12,10 @@ import org.w3c.dom.NodeList;
  */
 public final class NodeUtil {
 
+    private NodeUtil() {
+
+    }
+
     /**
      * Iterates over all immediate child nodes of the given root node and returns a list of child nodes whose node names
      * match any of the provided node names.
@@ -28,7 +32,6 @@ public final class NodeUtil {
                 matchingChildren.add(children.item(i));
             }
         }
-        // matchingChildren.sort(Comparator.comparing(Node::getNodeName));
         return matchingChildren;
     }
 

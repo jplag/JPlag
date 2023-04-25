@@ -64,7 +64,6 @@ public class ScxmlView {
         String element = token.getStatechartElement() == null ? "" : token.getStatechartElement().toString();
         String content = type.isEndToken() ? "}" : element;
         builder.append(prefix).append(content).append("\n");
-        // TokenTrace trace = new TokenTrace(line++, prefix.length() + 1, content.length());
         return new ScxmlToken(token.getType(), token.getFile(), line++, prefix.length() + 1, content.length(), token.getStatechartElement());
     }
 }

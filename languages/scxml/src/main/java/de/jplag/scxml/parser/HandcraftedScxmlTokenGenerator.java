@@ -27,7 +27,6 @@ public class HandcraftedScxmlTokenGenerator extends SimpleScxmlTokenGenerator {
      * @param state the state to visit
      */
     protected void visitStateAttributes(State state) {
-        System.out.println(state.id() + " " + state.isRegion() + " " + state.initial());
         if (state.isRegion() && state.initial()) {
             adapter.addToken(INITIAL_REGION, state);
         } else if (state.isRegion()) {
