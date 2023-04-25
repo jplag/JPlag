@@ -14,7 +14,9 @@ import com.ibm.icu.text.CharsetMatch;
  * Encapsulates various interactions with files to prevent issues with file encodings.
  */
 public class FileUtils {
-    private static final Charset defaultOutputCharset = StandardCharsets.UTF_8;
+    private static final Charset DEFAULT_OUTPUT_CHARSET = StandardCharsets.UTF_8;
+    private static final char BOM = '\uFEFF';
+    private static final int SINGLE_CHAR_BUFFER_SIZE = 10;
 
     /**
      * Opens a file reader, guessing the charset from the content. Also, if the file is encoded in a UTF* encoding and a bom
@@ -52,8 +54,8 @@ public class FileUtils {
      */
     private static void removeBom(BufferedReader reader, Charset charset) throws IOException {
         if (charset.name().toUpperCase().startsWith("UTF")) {
-            reader.mark(10);
-            if (reader.read() != '\uFEFF') {
+            reader.mark(SINGLE_CHAR_BUFFER_SIZE);
+            if (reader.read() != BOM) {
                 reader.reset();
             }
         }
@@ -80,13 +82,16 @@ public class FileUtils {
     public static Charset detectCharsetFromMultiple(Collection<File> files) {
         Map<String, List<Integer>> charsetValues = new HashMap<>();
 
-        files.stream().map(it -> {
-            try (InputStream stream = new BufferedInputStream(new FileInputStream(it))) {
-                return detectAllCharsets(stream);
+        List<CharsetMatch[]> matchData = new ArrayList<>();
+        for (File file : files) {
+            try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+                matchData.add(detectAllCharsets(stream));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }).forEach(matches -> {
+        }
+
+        for (CharsetMatch[] matches : matchData) {
             Set<String> remaining = new HashSet<>(Set.of(CharsetDetector.getAllDetectableCharsets()));
             for (CharsetMatch match : matches) {
                 charsetValues.putIfAbsent(match.getName(), new ArrayList<>());
@@ -97,12 +102,15 @@ public class FileUtils {
                 charsetValues.putIfAbsent(it, new ArrayList<>());
                 charsetValues.get(it).add(0);
             });
-        });
+        }
 
         AtomicReference<Charset> mostProbable = new AtomicReference<>(StandardCharsets.UTF_8);
-        AtomicReference<Double> mostProbableConfidence = new AtomicReference<>((double) 0);
+        AtomicReference<Double> mostProbableConfidence = new AtomicReference<>(0.0);
         charsetValues.forEach((charset, confidenceValues) -> {
             double average = confidenceValues.stream().mapToInt(it -> it).average().orElse(0);
+            if (confidenceValues.stream().anyMatch(it -> it == 0)) {
+                average = 0;
+            }
             if (average > mostProbableConfidence.get()) {
                 mostProbable.set(Charset.forName(charset));
                 mostProbableConfidence.set(average);
@@ -136,6 +144,6 @@ public class FileUtils {
      * @throws IOException If the file does not exist or is not writable
      */
     public static Writer openFileWriter(File file) throws IOException {
-        return new BufferedWriter(new FileWriter(file, defaultOutputCharset));
+        return new BufferedWriter(new FileWriter(file, DEFAULT_OUTPUT_CHARSET));
     }
 }
