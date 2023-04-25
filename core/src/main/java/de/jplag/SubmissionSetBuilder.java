@@ -31,17 +31,14 @@ public class SubmissionSetBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionSetBuilder.class);
 
-    private final Language language;
     private final JPlagOptions options;
     private final Set<String> excludedFileNames; // Set of file names to be excluded in comparison.
 
     /**
      * Creates a builder for submission sets.
-     * @param language is the language of the submissions.
      * @param options are the configured options.
      */
-    public SubmissionSetBuilder(Language language, JPlagOptions options) {
-        this.language = language;
+    public SubmissionSetBuilder(JPlagOptions options) {
         this.options = options;
         this.excludedFileNames = options.excludedFiles();
     }
@@ -209,7 +206,7 @@ public class SubmissionSetBuilder {
         }
 
         submissionFile = makeCanonical(submissionFile, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), language);
+        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), options.language());
     }
 
     /**

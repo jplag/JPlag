@@ -30,7 +30,6 @@ public class JPlag {
 
     private final JPlagOptions options;
 
-    private final Language language;
     private final ComparisonStrategy comparisonStrategy;
 
     /**
@@ -39,7 +38,6 @@ public class JPlag {
      */
     public JPlag(JPlagOptions options) {
         this.options = options;
-        language = this.options.language();
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
     }
@@ -51,7 +49,7 @@ public class JPlag {
      */
     public JPlagResult run() throws ExitException {
         // Parse and validate submissions.
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(language, options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
         int submissionCount = submissionSet.numberOfSubmissions();
