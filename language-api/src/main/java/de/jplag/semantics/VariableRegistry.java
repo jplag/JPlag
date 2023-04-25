@@ -143,10 +143,7 @@ public class VariableRegistry {
                 semantics.addRead(variable);
             if (nextVariableAccessType.isWrite || (mutableWrite && variable.isMutable()))
                 semantics.addWrite(variable);
-        } else if (nextVariableAccessType.isWrite || mutableWrite) {
-            semantics.markKeep();
-            semantics.markFullPositionSignificance();  // since we don't track reads...
-        }
+        }  // track global variables here through else
         nextVariableAccessType = VariableAccessType.READ;
     }
 
