@@ -75,6 +75,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             "byte", "short", "int", "long", "float", "double", "boolean", "char", // primitives
             "Byte", "Short", "Integer", "Long", "Float", "Double", "Boolean", "Character", "String");
 
+    private static final Set<String> CRITICAL_METHODS = Set.of("System.out.println", "System.out.print");
+
     public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
         this.file = file;
         this.parser = parser;
@@ -471,7 +473,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitMethodInvocation(MethodInvocationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_APPLY, start, positions.getEndPosition(ast, node.getMethodSelect()) - start, CodeSemantics.createControl());
+        long end = positions.getEndPosition(ast, node.getMethodSelect()) - start;
+        CodeSemantics codeSemantics = CRITICAL_METHODS.contains(node.getMethodSelect().toString()) ? CodeSemantics.createCritical() : CodeSemantics.createControl();
+        addToken(JavaTokenType.J_APPLY, start, end, codeSemantics);
         variableRegistry.addAllNonLocalVariablesAsReads();
         scan(node.getTypeArguments(), null);
         // differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
