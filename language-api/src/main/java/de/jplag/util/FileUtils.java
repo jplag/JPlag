@@ -7,6 +7,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import de.jplag.ParsingException;
+
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
 
@@ -17,6 +19,9 @@ public class FileUtils {
     private static final Charset DEFAULT_OUTPUT_CHARSET = StandardCharsets.UTF_8;
     private static final char BOM = '\uFEFF';
     private static final int SINGLE_CHAR_BUFFER_SIZE = 10;
+
+    private FileUtils() {
+    }
 
     /**
      * Opens a file reader, guessing the charset from the content. Also, if the file is encoded in a UTF* encoding and a bom
@@ -79,7 +84,7 @@ public class FileUtils {
      * @param files The files to check
      * @return The most probable charset
      */
-    public static Charset detectCharsetFromMultiple(Collection<File> files) {
+    public static Charset detectCharsetFromMultiple(Collection<File> files) throws ParsingException {
         Map<String, List<Integer>> charsetValues = new HashMap<>();
 
         List<CharsetMatch[]> matchData = new ArrayList<>();
@@ -87,7 +92,7 @@ public class FileUtils {
             try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
                 matchData.add(detectAllCharsets(stream));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new ParsingException(file, e);
             }
         }
 
