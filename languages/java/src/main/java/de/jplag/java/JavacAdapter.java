@@ -49,7 +49,7 @@ public class JavacAdapter {
                 var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
                 ast.accept(scanner, null);
                 parsingExceptions.addAll(scanner.getParsingExceptions());
-                parser.add(Token.fileEnd(file));
+                parser.add(Token.semanticFileEnd(file));
             }
         } catch (IOException exception) {
             throw new ParsingException(null, exception.getMessage(), exception);

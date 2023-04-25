@@ -90,6 +90,10 @@ public class SubmissionSet {
         return invalidSubmissions;
     }
 
+    public void normalizeSubmissions() {
+        submissions.forEach(Submission::normalize);
+    }
+
     private List<Submission> filterValidSubmissions() {
         return allSubmissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(ArrayList::new));
     }

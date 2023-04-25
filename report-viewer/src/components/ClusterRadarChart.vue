@@ -41,18 +41,29 @@ const props = defineProps({
 
 let hasNoMember = false
 
+/**
+ * @returns The id of the first member of the cluster.
+ */
 function getIdOfFirstSubmission() {
   const firstMember = props.cluster.members.keys().next().value
   hasNoMember = !firstMember
   return firstMember
 }
 
-function createLabelsFor(member: string): Array<string> {
+/**
+ * @param member The member to create the labels for.
+ * @returns The labels for the member.
+ */
+function createLabelsFor(member: string) {
   let matchedWith = new Array<string>()
   props.cluster.members.get(member)?.forEach((m) => matchedWith.push(m.matchedWith))
   return matchedWith
 }
 
+/**
+ * @param member The member to create the data set for.
+ * @returns The data set for the member.
+ */
 function createDataSetFor(member: string) {
   let data = new Array<number>()
   props.cluster.members
@@ -61,6 +72,10 @@ function createDataSetFor(member: string) {
   return data
 }
 
+/**
+ * @param num The number to round.
+ * @returns The rounded number.
+ */
 function roundToTwoDecimals(num: number): number {
   return Math.round((num + Number.EPSILON) * 100) / 100
 }

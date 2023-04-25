@@ -127,9 +127,13 @@ defineEmits(['lineSelected', 'toggleCollapse'])
  *   103 : "#FFFF"
  *   ...
  * }
- * @type {Ref<UnwrapRef<{}>>}
  */
 const coloringArray: Ref<Record<number, string>> = ref({})
+
+/**
+ * @param lines Array of lines to check.
+ * @returns true if all lines are empty, false otherwise.
+ */
 function isEmpty(lines: string[]) {
   return lines.length === 0 || lines.every((line) => !line.trim())
 }
@@ -146,7 +150,6 @@ function isEmpty(lines: string[]) {
  * When a line is clicked it uses this link id
  * to scroll into vie the linked line in the linked file of the other submission.
  * Key is line number, value is id of linked line.
- * @type {Ref<UnwrapRef<{}>>}
  */
 const linksArray: Ref<Record<number, { panel?: number; file?: string; line?: number }>> = ref({})
 
@@ -162,9 +165,7 @@ const isLast: Ref<Record<number, boolean>> = ref({})
  */
 const isFirst: Ref<Record<number, boolean>> = ref({})
 
-/**
- * Initializing the the upper arrays.
- */
+// Initializing the the upper arrays.
 props.matches?.forEach((m) => {
   for (let i = m.start; i <= m.end; i++) {
     //assign match color to line

@@ -88,8 +88,8 @@ const options = ref({
   }
 })
 
-//We watch the given distributions parameter. When the distribution of another metric is passed, the diagram is
-//updated with the new data.
+/* We watch the given distributions parameter. When the distribution of another metric is passed, the diagram is
+  updated with the new data. */
 watch(
   () => props.distribution,
   (val) => {
