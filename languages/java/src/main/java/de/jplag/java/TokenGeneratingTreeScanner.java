@@ -474,7 +474,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitMethodInvocation(MethodInvocationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node.getMethodSelect()) - start;
-        CodeSemantics codeSemantics = CRITICAL_METHODS.contains(node.getMethodSelect().toString()) ? CodeSemantics.createCritical() : CodeSemantics.createControl();
+        CodeSemantics codeSemantics = CRITICAL_METHODS.contains(node.getMethodSelect().toString()) ? CodeSemantics.createCritical()
+                : CodeSemantics.createControl();
         addToken(JavaTokenType.J_APPLY, start, end, codeSemantics);
         variableRegistry.addAllNonLocalVariablesAsReads();
         scan(node.getTypeArguments(), null);
