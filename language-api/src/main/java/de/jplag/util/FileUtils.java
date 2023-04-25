@@ -11,6 +11,7 @@ import de.jplag.ParsingException;
 
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
+import de.jplag.ParsingException;
 
 /**
  * Encapsulates various interactions with files to prevent issues with file encodings.
