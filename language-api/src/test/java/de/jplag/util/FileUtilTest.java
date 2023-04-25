@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Set;
 
+import de.jplag.ParsingException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +21,7 @@ public class FileUtilTest {
 
     @ParameterizedTest
     @MethodSource("searchTestFiles")
-    public void testReadFile(File file) throws IOException {
+    void testReadFile(File file) throws IOException {
         String found = FileUtils.readFileContent(file);
 
         Assertions.assertEquals(expectedFileContent, found, "File contains unexpected content: " + file.getAbsolutePath());
@@ -28,13 +29,13 @@ public class FileUtilTest {
 
     @ParameterizedTest
     @MethodSource("searchTestFiles")
-    public void testCharsetDetection(File file) throws IOException {
+    void testCharsetDetection(File file) throws IOException {
         Assertions.assertEquals(Charset.forName(file.getName()), FileUtils.detectCharset(file),
                 "Wrong charset assumed for: " + file.getAbsolutePath());
     }
 
     @Test
-    public void testDetectFromFileSet() {
+    void testDetectFromFileSet() throws ParsingException {
         Set<File> files = Set.of(TEST_FILE_SET_LOCATION.toFile().listFiles());
         Charset encoding = FileUtils.detectCharsetFromMultiple(files);
         Assertions.assertEquals(StandardCharsets.ISO_8859_1, encoding);
