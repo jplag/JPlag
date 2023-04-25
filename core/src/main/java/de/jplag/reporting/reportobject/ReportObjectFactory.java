@@ -200,7 +200,6 @@ public class ReportObjectFactory {
             for (File file : submission.getFiles()) {
                 filePaths.add(FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction));
             }
-            System.out.println(filePaths);
             fileIndex.fileIndexes().put(submissionNameToIdMap.get(submission.getName()), filePaths);
         }
         fileWriter.saveAsJSON(fileIndex, path, SUBMISSION_FILE_INDEX_FILE_NAME);
