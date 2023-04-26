@@ -2,7 +2,7 @@ package de.jplag.java;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.util.FileUtils;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
@@ -35,7 +36,8 @@ public class JavacAdapter {
         var listener = new DiagnosticCollector<>();
 
         List<ParsingException> parsingExceptions = new ArrayList<>();
-        try (final StandardJavaFileManager fileManager = javac.getStandardFileManager(listener, null, StandardCharsets.UTF_8)) {
+        final Charset guessedCharset = FileUtils.detectCharsetFromMultiple(files);
+        try (final StandardJavaFileManager fileManager = javac.getStandardFileManager(listener, null, guessedCharset)) {
             var javaFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
             // We need to disable annotation processing, see
