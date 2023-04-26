@@ -17,7 +17,7 @@ import com.ibm.icu.text.CharsetMatch;
  */
 public class FileUtils {
     private static final Charset DEFAULT_OUTPUT_CHARSET = StandardCharsets.UTF_8;
-    private static final char BOM = '\uFEFF';
+    private static final char BYTE_ORDER_MARK = '\uFEFF';
     private static final int SINGLE_CHAR_BUFFER_SIZE = 10;
 
     private FileUtils() {
