@@ -35,6 +35,15 @@ public class SubmissionSetBuilder {
 
     /**
      * Creates a builder for submission sets.
+     * @param language is the language of the submissions.
+     * @param options are the configured options.
+     */
+    public SubmissionSetBuilder(Language language, JPlagOptions options) {
+        this(options.withLanguageOption(language));
+    }
+
+    /**
+     * Creates a builder for submission sets.
      * @param options are the configured options.
      */
     public SubmissionSetBuilder(JPlagOptions options) {
