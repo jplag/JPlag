@@ -39,7 +39,7 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlagWithExclusionFile(String testSampleName, String exclusionFileName) throws ExitException {
-        return new JPlag(getOptionsWithExclusionFile(testSampleName, exclusionFileName)).run();
+        return JPlag.run(getOptionsWithExclusionFile(testSampleName, exclusionFileName));
 
     }
 
@@ -47,21 +47,21 @@ public abstract class TestBase {
      * Runs JPlag with default options for a given test sample and returns the result.
      */
     protected JPlagResult runJPlagWithDefaultOptions(String testSampleName) throws ExitException {
-        return new JPlag(getDefaultOptions(testSampleName)).run();
+        return JPlag.run(getDefaultOptions(testSampleName));
     }
 
     /**
      * Runs JPlag with customized options and returns the result.
      */
     protected JPlagResult runJPlag(String testSampleName, Function<JPlagOptions, JPlagOptions> customization) throws ExitException {
-        return new JPlag(getOptions(testSampleName, customization)).run();
+        return JPlag.run(getOptions(testSampleName, customization));
     }
 
     /**
      * Runs JPlag with multiple root folders and customized options and returns the result.
      */
     protected JPlagResult runJPlag(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) throws ExitException {
-        return new JPlag(getOptions(newPaths, customization)).run();
+        return JPlag.run(getOptions(newPaths, customization));
     }
 
     /**
@@ -69,10 +69,10 @@ public abstract class TestBase {
      */
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization)
             throws ExitException {
-        return new JPlag(getOptions(newPaths, oldPaths, customization)).run();
+        return JPlag.run(getOptions(newPaths, oldPaths, customization));
     }
 
-    protected JPlagOptions getOptionsWithExclusionFile(String testSampleName, String exclusionFileName) throws ExitException {
+    protected JPlagOptions getOptionsWithExclusionFile(String testSampleName, String exclusionFileName) {
         String blackList = Path.of(BASE_PATH, testSampleName, exclusionFileName).toString();
         return getOptions(testSampleName, options -> options.withExclusionFileName(blackList));
     }

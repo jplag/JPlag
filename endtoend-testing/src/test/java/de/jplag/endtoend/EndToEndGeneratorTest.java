@@ -48,9 +48,9 @@ class EndToEndGeneratorTest {
         File submissionDirectory = TestSuiteHelper.getSubmissionDirectory(language, TEST_SUITE_IDENTIFIER);
         List<ResultDescription> resultDescriptions = new ArrayList<>();
         for (var option : OPTIONS) {
-            JPlagOptions jplagOptions = new JPlagOptions(language, Set.of(submissionDirectory), Set.of())
+            JPlagOptions options = new JPlagOptions(language, Set.of(submissionDirectory), Set.of())
                     .withMinimumTokenMatch(option.minimumTokenMatch());
-            JPlagResult jplagResult = new JPlag(jplagOptions).run();
+            JPlagResult jplagResult = JPlag.run(options);
             List<JPlagComparison> jPlagComparisons = jplagResult.getAllComparisons();
             Map<String, ExpectedResult> expectedResults = jPlagComparisons.stream()
                     .collect(Collectors.toMap(TestSuiteHelper::getTestIdentifier, comparison -> new ExpectedResult(comparison.minimalSimilarity(),
