@@ -22,6 +22,7 @@
         <module>rust</module>
         <module>scala</module>
         <module>scheme</module>
+        <module>scxml</module>
         <module>swift</module>
         <module>text</module>
     </modules>
