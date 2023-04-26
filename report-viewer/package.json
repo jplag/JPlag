@@ -32,7 +32,7 @@
     "@playwright/test": "^1.31.1",
     "@rushstack/eslint-patch": "^1.2.0",
     "@types/jsdom": "^21.1.0",
-    "@types/node": "^18.14.2",
+    "@types/node": "^18.16.1",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-prettier": "^7.1.0",
     "@vue/eslint-config-typescript": "^11.0.3",
