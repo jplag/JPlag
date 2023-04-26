@@ -60,7 +60,7 @@ public class FileUtils {
     private static void removeBom(BufferedReader reader, Charset charset) throws IOException {
         if (charset.name().toUpperCase().startsWith("UTF")) {
             reader.mark(SINGLE_CHAR_BUFFER_SIZE);
-            if (reader.read() != BOM) {
+            if (reader.read() != BYTE_ORDER_MARK) {
                 reader.reset();
             }
         }
