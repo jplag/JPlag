@@ -18,7 +18,7 @@ class StoredMatchesTest extends CommandLineInterfaceTest {
     @Test
     void testValidThreshold() {
         int expectedValue = 999;
-        String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, Integer.toString(expectedValue));
+        String argument = buildArgument("-n", Integer.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(expectedValue, options.maximumNumberOfComparisons());
     }
@@ -26,21 +26,21 @@ class StoredMatchesTest extends CommandLineInterfaceTest {
     @Test
     void testAll() {
         int expectedValue = JPlagOptions.SHOW_ALL_COMPARISONS;
-        String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, Integer.toString(expectedValue));
+        String argument = buildArgument("-n", Integer.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(expectedValue, options.maximumNumberOfComparisons());
     }
 
     @Test
     void testLowerBound() {
-        String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, Integer.toString(-2));
+        String argument = buildArgument("-n", Integer.toString(-2));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(JPlagOptions.SHOW_ALL_COMPARISONS, options.maximumNumberOfComparisons());
     }
 
     @Test
     void testInvalidThreshold() throws Exception {
-        String argument = buildArgument(CommandLineArgument.SHOWN_COMPARISONS, "Not an integer...");
+        String argument = buildArgument("-n", "Not an integer...");
         int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
         assertEquals(1, statusCode);
     }

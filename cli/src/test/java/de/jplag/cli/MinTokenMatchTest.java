@@ -18,21 +18,21 @@ class MinTokenMatchTest extends CommandLineInterfaceTest {
 
     @Test
     void testInvalidInput() throws Exception {
-        String argument = buildArgument(CommandLineArgument.MIN_TOKEN_MATCH, "Not an integer...");
+        String argument = buildArgument("-t", "Not an integer...");
         int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
         assertEquals(1, statusCode);
     }
 
     @Test
     void testUpperBound() throws Exception {
-        String argument = buildArgument(CommandLineArgument.MIN_TOKEN_MATCH, "2147483648"); // max value plus one
+        String argument = buildArgument("-t", "2147483648"); // max value plus one
         int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
         assertEquals(1, statusCode);
     }
 
     @Test
     void testLowerBound() {
-        String argument = buildArgument(CommandLineArgument.MIN_TOKEN_MATCH, Integer.toString(-1));
+        String argument = buildArgument("-t", Integer.toString(-1));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(1, options.minimumTokenMatch().intValue());
     }
@@ -40,7 +40,7 @@ class MinTokenMatchTest extends CommandLineInterfaceTest {
     @Test
     void testValidThreshold() {
         int expectedValue = 50;
-        String argument = buildArgument(CommandLineArgument.MIN_TOKEN_MATCH, Integer.toString(expectedValue));
+        String argument = buildArgument("-t", Integer.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(expectedValue, options.minimumTokenMatch().intValue());
     }

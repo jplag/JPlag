@@ -99,8 +99,9 @@
         </dependency>
 
         <dependency>
-            <groupId>net.sourceforge.argparse4j</groupId>
-            <artifactId>argparse4j</artifactId>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>4.7.2</version>
         </dependency>
     </dependencies>
     <build>

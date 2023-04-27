@@ -17,21 +17,21 @@ class SimiliarityThresholdTest extends CommandLineInterfaceTest {
 
     @Test
     void testInvalidThreshold() throws Exception {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, "Not a Double...");
+        String argument = buildArgument("-m", "Not a Double...");
         int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
         assertEquals(1.0, statusCode);
     }
 
     @Test
     void testLowerBound() {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(-0.01));
+        String argument = buildArgument("-m", Double.toString(-0.01));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(0.0, options.similarityThreshold(), DELTA);
     }
 
     @Test
     void testUpperBound() {
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(1.01));
+        String argument = buildArgument("-m", Double.toString(1.01));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(1.0, options.similarityThreshold(), DELTA);
     }
@@ -39,7 +39,7 @@ class SimiliarityThresholdTest extends CommandLineInterfaceTest {
     @Test
     void testValidThreshold() {
         double expectedValue = 0.5;
-        String argument = buildArgument(CommandLineArgument.SIMILARITY_THRESHOLD, Double.toString(expectedValue));
+        String argument = buildArgument("-m", Double.toString(expectedValue));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(expectedValue, options.similarityThreshold(), DELTA);
     }

@@ -15,12 +15,12 @@ class LanguageTest extends CommandLineInterfaceTest {
     @Test
     void testDefaultLanguage() {
         buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(CommandLineArgument.DEFAULT_LANGUAGE_IDENTIFIER, options.language().getIdentifier());
+        assertEquals(CliOptions.defaultLanguage.getIdentifier(), options.language().getIdentifier());
     }
 
     @Test
     void testInvalidLanguage() throws Exception {
-        String argument = buildArgument(CommandLineArgument.LANGUAGE, "Piet");
+        String argument = buildArgument("-l", "Piet");
         int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
         assertEquals(1, statusCode);
     }
@@ -34,7 +34,7 @@ class LanguageTest extends CommandLineInterfaceTest {
     @Test
     void testValidLanguages() {
         for (Language language : LanguageLoader.getAllAvailableLanguages().values()) {
-            String argument = buildArgument(CommandLineArgument.LANGUAGE, language.getIdentifier());
+            String argument = buildArgument("-l", language.getIdentifier());
             buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
             assertEquals(language.getIdentifier(), options.language().getIdentifier());
             assertEquals(Arrays.asList(language.suffixes()), options.fileSuffixes());
@@ -44,7 +44,7 @@ class LanguageTest extends CommandLineInterfaceTest {
     @Test
     void testCustomSuffixes() {
         List<String> suffixes = List.of("x", "y", "z");
-        String argument = buildArgument(CommandLineArgument.SUFFIXES, String.join(",", suffixes));
+        String argument = buildArgument("--suffixes", String.join(",", suffixes));
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(suffixes, options.fileSuffixes());
     }

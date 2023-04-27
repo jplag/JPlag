@@ -17,7 +17,7 @@ class BaseCodeOptionTest extends CommandLineInterfaceTest {
 
     @Test
     void testCustomName() {
-        String argument = buildArgument(CommandLineArgument.BASE_CODE, NAME);
+        String argument = buildArgument("--bc", NAME);
         buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
         assertEquals(NAME, options.baseCodeSubmissionDirectory().getName());
     }
