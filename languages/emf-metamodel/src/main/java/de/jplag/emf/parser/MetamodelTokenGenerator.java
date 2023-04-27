@@ -51,7 +51,7 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
      * Creates the visitor.
      * @param parser is the parser which receives the generated tokens.
      */
-    public MetamodelTokenGenerator(EcoreParser parser) { // TODO TS: Enable sorting again
+    public MetamodelTokenGenerator(EcoreParser parser) {
         this.parser = parser;
     }
 
