@@ -17,7 +17,6 @@ public class DynamicMetamodelTokenGenerator extends AbstractMetamodelVisitor {
      * @param parser is the parser which receives the generated tokens.
      */
     public DynamicMetamodelTokenGenerator(DynamicEcoreParser parser) {
-        super(false);
         this.parser = parser;
     }
 

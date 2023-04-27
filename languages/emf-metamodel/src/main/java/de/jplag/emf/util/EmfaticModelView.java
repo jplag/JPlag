@@ -82,7 +82,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * elements in subsequently generated Emfatic code while avoiding name collisions.
      */
     private final void replaceElementNamesWithHashes(Resource copiedResource) {
-        AbstractMetamodelVisitor renamer = new AbstractMetamodelVisitor(false) {
+        AbstractMetamodelVisitor renamer = new AbstractMetamodelVisitor() {
             @Override
             protected void visitENamedElement(ENamedElement eNamedElement) {
                 eNamedElement.setName(Integer.toString(eNamedElement.hashCode()));

@@ -14,6 +14,7 @@ import de.jplag.Token;
 import de.jplag.emf.Language;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.MetamodelTokenType;
+import de.jplag.emf.normalization.ModelSorter;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
@@ -58,9 +59,10 @@ public class EcoreParser extends AbstractParser {
         if (model == null) {
             throw new ParsingException(file, "failed to load model");
         } else {
+            ModelSorter.sort(model);
             treeView = createView(file, model);
+            visitor = createMetamodelVisitor();
             for (EObject root : model.getContents()) {
-                visitor = createMetamodelVisitor();
                 visitor.visit(root);
             }
             tokens.add(Token.fileEnd(currentFile));
