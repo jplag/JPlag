@@ -2,6 +2,7 @@ package de.jplag.emf.normalization;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,7 +29,7 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
      */
     public ContainmentOrderNormalizer(List<EObject> modelElementsToSort) {
         this.modelElementsToSort = modelElementsToSort;
-        paths = new HashMap<>();
+        paths = new EnumMap<>(MetamodelTokenType.class);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         }
 
         // 2. compare by position of the nearest neighbor path of the token distribution vectors of the elements subtrees.
-        List<EObject> path = paths.computeIfAbsent(firstType, it -> calculatePath(it));
+        List<EObject> path = paths.computeIfAbsent(firstType, this::calculatePath);
         return path.indexOf(first) - path.indexOf(second);
     }
 
@@ -70,11 +71,8 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
                 if (distance < shortestDistance) {
                     shortestDistance = distance;
                     next = potentialNext;
-                } else if (distance == shortestDistance) {
-                    // Sort according to original order if equal:
-                    if (modelElementsToSort.indexOf(potentialNext) < modelElementsToSort.indexOf(next)) {
-                        next = potentialNext;
-                    }
+                } else if (distance == shortestDistance && modelElementsToSort.indexOf(potentialNext) < modelElementsToSort.indexOf(next)) {
+                    next = potentialNext; // Sort according to original order if equal
                 }
             }
             current = next;

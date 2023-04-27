@@ -2,7 +2,7 @@ package de.jplag.emf.normalization;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +27,14 @@ public final class TokenVectorGenerator {
      * {@link MetamodelTokenType}.
      */
     public static List<Double> generateOccurenceVector(Iterator<EObject> modelElements) {
-        Map<MetamodelTokenType, Integer> tokenTypeHistogram = new HashMap<>();
+        Map<MetamodelTokenType, Integer> tokenTypeHistogram = new EnumMap<>(MetamodelTokenType.class);
 
         while (modelElements.hasNext()) {
             EObject eObject = modelElements.next();
-            tokenTypeHistogram.merge(TokenExtractionRules.element2Token(eObject), 1, Integer::sum);
+            MetamodelTokenType tokenType = TokenExtractionRules.element2Token(eObject);
+            if (tokenType != null) {
+                tokenTypeHistogram.merge(tokenType, 1, Integer::sum);
+            }
         }
         List<Integer> occurenceVector = new ArrayList<>();
         for (MetamodelTokenType type : MetamodelTokenType.values()) {
