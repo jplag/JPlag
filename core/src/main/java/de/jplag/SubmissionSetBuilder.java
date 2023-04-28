@@ -35,7 +35,7 @@ public class SubmissionSetBuilder {
 
     /**
      * Creates a builder for submission sets.
-     * @deprecated in favor of options-only constructor.
+     * @deprecated in favor of {@link #SubmissionSetBuilder(JPlagOptions)}.
      * @param language is the language of the submissions.
      * @param options are the configured options.
      */
