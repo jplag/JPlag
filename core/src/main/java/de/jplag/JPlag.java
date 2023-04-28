@@ -32,17 +32,21 @@ public class JPlag {
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
+     * @deprecated in favor of static JPlag::run.
      * @param options determines the parameterization.
      */
+    @Deprecated(since = "4.3.0")
     public JPlag(JPlagOptions options) {
         this.options = options;
     }
 
     /**
      * Main procedure, executes the comparison of source code submissions.
+     * @deprecated in favor of static JPlag::run.
      * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
      * @throws ExitException if JPlag exits preemptively.
      */
+    @Deprecated(since = "4.3.0")
     public JPlagResult run() throws ExitException {
         return run(options);
     }

@@ -35,9 +35,11 @@ public class SubmissionSetBuilder {
 
     /**
      * Creates a builder for submission sets.
+     * @deprecated in favor of options-only constructor.
      * @param language is the language of the submissions.
      * @param options are the configured options.
      */
+    @Deprecated(since = "4.3.0")
     public SubmissionSetBuilder(Language language, JPlagOptions options) {
         this(options.withLanguageOption(language));
     }
