@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -103,9 +104,8 @@ public class ComparisonReportWriter {
         Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
-        List<Token> firstTotalTokens = tokensFirst.stream().filter(x -> x.getFile() != null && x.getFile().equals(startOfFirst.getFile())).toList();
-        List<Token> secondTotalTokens = tokensSecond.stream().filter(x -> x.getFile() != null && x.getFile().equals(startOfSecond.getFile()))
-                .toList();
+        List<Token> firstTotalTokens = tokensFirst.stream().filter(x -> Objects.equals(x.getFile(), startOfFirst.getFile())).toList();
+        List<Token> secondTotalTokens = tokensSecond.stream().filter(x -> Objects.equals(x.getFile(), startOfSecond.getFile())).toList();
 
         return new Match(relativizedFilePath(startOfFirst.getFile(), comparison.firstSubmission()),
                 relativizedFilePath(startOfSecond.getFile(), comparison.secondSubmission()), startOfFirst.getLine(), endOfFirst.getLine(),
