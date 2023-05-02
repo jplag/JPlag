@@ -1,8 +1,8 @@
 package de.jplag.emf.normalization;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,7 +12,8 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.jplag.emf.MetamodelTokenType;
+import de.jplag.TokenType;
+import de.jplag.emf.parser.ModelingElementTokenizer;
 
 /**
  * Comparator for normalizing the order in a model tree by sorting the elements of containment references according to
@@ -21,21 +22,25 @@ import de.jplag.emf.MetamodelTokenType;
 public class ContainmentOrderNormalizer implements Comparator<EObject> {
 
     private final List<EObject> modelElementsToSort;
-    private final Map<MetamodelTokenType, List<EObject>> paths;
+    private final Map<TokenType, List<EObject>> paths;
+    private final ModelingElementTokenizer tokenizer;
+    private final TokenVectorGenerator tokenVectorGenerator;
 
     /**
      * Creates the normalizing comparator.
      * @param modelElementsToSort are all model elements to sort with the comparator (required for normalization process).
      */
-    public ContainmentOrderNormalizer(List<EObject> modelElementsToSort) {
+    public ContainmentOrderNormalizer(List<EObject> modelElementsToSort, ModelingElementTokenizer tokenizer) {
         this.modelElementsToSort = modelElementsToSort;
-        paths = new EnumMap<>(MetamodelTokenType.class);
+        this.tokenizer = tokenizer;
+        paths = new HashMap<>();
+        tokenVectorGenerator = new TokenVectorGenerator(tokenizer);
     }
 
     @Override
     public int compare(EObject first, EObject second) {
-        MetamodelTokenType firstType = TokenExtractionRules.element2Token(first);
-        MetamodelTokenType secondType = TokenExtractionRules.element2Token(second);
+        TokenType firstType = tokenizer.element2Token(first);
+        TokenType secondType = tokenizer.element2Token(second);
 
         // 0. comparison if token types are absent for one or more elements.
         if (firstType == null && secondType == null) {
@@ -47,7 +52,7 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         }
 
         // 1. comparison by token type
-        int comparisonByType = Integer.compare(firstType.ordinal(), secondType.ordinal());
+        int comparisonByType = firstType.getClass().toString().compareTo(secondType.getClass().toString());
         if (comparisonByType != 0) {
             return comparisonByType;
         }
@@ -82,12 +87,12 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         return path;
     }
 
-    private List<EObject> calculatePath(MetamodelTokenType type) {
-        List<EObject> elements = modelElementsToSort.stream().filter(it -> type.equals(TokenExtractionRules.element2Token(it))).toList();
+    private List<EObject> calculatePath(TokenType type) {
+        List<EObject> elements = modelElementsToSort.stream().filter(it -> type.equals(tokenizer.element2Token(it))).toList();
 
         // Generate token type distributions for the subtrees of the elements to sort:
         Map<EObject, List<Double>> subtreeVectors = new HashMap<>();
-        elements.forEach(it -> subtreeVectors.put(it, TokenVectorGenerator.generateOccurenceVector(it.eAllContents())));
+        elements.forEach(it -> subtreeVectors.put(it, tokenVectorGenerator.generateOccurenceVector(it.eAllContents())));
 
         // Calculate distance matrix:
         double[][] distances = new double[elements.size()][elements.size()];
@@ -98,8 +103,19 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         }
 
         // Start with element that has the most tokens in the subtree:
-        var max = elements.stream().max((first, second) -> Integer.compare(countSubtreeTokens(first), countSubtreeTokens(second))).orElseThrow();
+        var max = Collections.max(elements, (first, second) -> Integer.compare(countSubtreeTokens(first), countSubtreeTokens(second)));
         return calculatePath(elements, max, distances);
+    }
+
+    private int countSubtreeTokens(EObject modelElement) {
+        int count = 0;
+        Iterator<EObject> iterator = modelElement.eAllContents();
+        while (iterator.hasNext()) {
+            if (tokenizer.element2Token(iterator.next()) != null) {
+                count++;
+            }
+        }
+        return count;
     }
 
     private static double euclideanDistance(List<Double> first, List<Double> second) {
@@ -112,16 +128,5 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
             sum += diff * diff;
         }
         return Math.sqrt(sum);
-    }
-
-    private static int countSubtreeTokens(EObject modelElement) {
-        int count = 0;
-        Iterator<EObject> iterator = modelElement.eAllContents();
-        while (iterator.hasNext()) {
-            if (TokenExtractionRules.element2Token(iterator.next()) != null) {
-                count++;
-            }
-        }
-        return count;
     }
 }

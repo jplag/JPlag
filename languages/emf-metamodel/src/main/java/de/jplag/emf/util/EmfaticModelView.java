@@ -37,7 +37,7 @@ public final class EmfaticModelView extends AbstractModelView {
     private final List<String> hashedLines; // code for model element tracing lookup
     private final Map<ENamedElement, Integer> elementToLine; // maps model elements to Emfatic code line numbers
 
-    private Copier modelCopier; // Allows to trace between original and copied elements
+    private final Copier modelCopier; // Allows to trace between original and copied elements
     private int lastLineIndex; // last line given to a token
 
     /**

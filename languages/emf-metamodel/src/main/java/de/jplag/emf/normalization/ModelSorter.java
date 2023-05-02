@@ -7,30 +7,30 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 
+import de.jplag.emf.parser.ModelingElementTokenizer;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 
 /**
  * Utility class that sorts all containment references of an EMF model or metamodel.
  */
-public final class ModelSorter extends AbstractMetamodelVisitor {
+public class ModelSorter extends AbstractMetamodelVisitor {
+
+    private final ModelingElementTokenizer tokenizer;
 
     /**
      * Creates a model sorter.
      */
-    private ModelSorter() {
-        // private constructor for non-instantiability.
+    private ModelSorter(ModelingElementTokenizer tokenizer) {
+        this.tokenizer = tokenizer; // private constructor to hide visitor functionality.
     }
-
-    /*
-     * TODO TS: Currently this only supports the normalization for the handcrafted rules, not the dynamic ones.
-     */
 
     /**
      * Sorts the given model or metamodel.
      * @param modelResource is the resource of the model or metamodel.
+     * @param tokenizer provides the tokenization rules for the sorting.
      */
-    public static void sort(Resource modelResource) {
-        modelResource.getContents().forEach(new ModelSorter()::visit);
+    public static void sort(Resource modelResource, ModelingElementTokenizer tokenizer) {
+        modelResource.getContents().forEach(new ModelSorter(tokenizer)::visit);
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class ModelSorter extends AbstractMetamodelVisitor {
                     @SuppressWarnings("unchecked") // There is no cleaner way
                     List<EObject> containmentList = (List<EObject>) containment;
                     List<EObject> sortedContent = new ArrayList<>(containmentList);
-                    sortedContent.sort(new ContainmentOrderNormalizer(sortedContent));
+                    sortedContent.sort(new ContainmentOrderNormalizer(sortedContent, tokenizer));
                     containmentList.clear();
                     containmentList.addAll(sortedContent);
                 }

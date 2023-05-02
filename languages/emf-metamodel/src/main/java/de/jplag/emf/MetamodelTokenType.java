@@ -37,6 +37,7 @@ public enum MetamodelTokenType implements TokenType {
     private final String description;
     private final boolean isEndToken;
 
+    @Override
     public String getDescription() {
         return description;
     }
