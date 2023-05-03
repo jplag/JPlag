@@ -13,7 +13,7 @@ public abstract class LanguageOptions {
     /**
      * New instance
      */
-    public LanguageOptions() {
+    protected LanguageOptions() {
         this.options = new ArrayList<>();
     }
 

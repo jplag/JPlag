@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
@@ -22,6 +21,7 @@ import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
@@ -92,16 +92,16 @@ public final class CLI {
         return LanguageLoader.getAllAvailableLanguages().values().stream().map(language -> {
             CommandSpec command = CommandSpec.create().name(language.getIdentifier());
 
-            language.getOptions().getOptions().forEach(option -> {
+            for (LanguageOption<?> option : language.getOptions().getOptions()) {
                 command.addOption(OptionSpec.builder("--" + option.getName()).type(option.getType().getJavaType())
                         .description(option.getDescription()).build());
-            });
+            }
             command.addOption(OptionSpec.builder("-h", "--help").usageHelp(true).build());
             command.addPositional(
                     CommandLine.Model.PositionalParamSpec.builder().type(List.class).auxiliaryTypes(File.class).hidden(true).required(false).build());
 
             return command;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     public ParseResult parseOptions(String... args) {
@@ -142,7 +142,7 @@ public final class CLI {
 
         ClusteringOptions clusteringOptions = getClusteringOptions(this.options);
 
-        JPlagOptions options = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
+        JPlagOptions jPlagOptions = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.options.advanced.subdirectory, suffixes, this.options.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.options.advanced.similarityThreshold, this.options.shownComparisons, clusteringOptions,
                 this.options.advanced.debug);
@@ -150,19 +150,20 @@ public final class CLI {
         String baseCodePath = this.options.baseCode;
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
         if (baseCodeDirectory == null || baseCodeDirectory.exists()) {
-            return options.withBaseCodeSubmissionDirectory(baseCodeDirectory);
+            return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
         } else {
             logger.warn("Using legacy partial base code API. Please migrate to new full path base code API.");
-            return options.withBaseCodeSubmissionName(baseCodePath);
+            return jPlagOptions.withBaseCodeSubmissionName(baseCodePath);
         }
     }
 
     private Language loadLanguage(ParseResult result) {
         if (result.subcommand() != null) {
             ParseResult subcommandResult = result.subcommand();
-            Language language = LanguageLoader.getLanguage(subcommandResult.commandSpec().name()).get();
-            LanguageOptions options = language.getOptions();
-            options.getOptions().forEach(option -> {
+            Language language = LanguageLoader.getLanguage(subcommandResult.commandSpec().name())
+                    .orElseThrow(() -> new CliException("This is not supposed to happen. Please create an issue on github for this."));
+            LanguageOptions languageOptions = language.getOptions();
+            languageOptions.getOptions().forEach(option -> {
                 if (subcommandResult.hasMatchedOption("--" + option.getName())) {
                     option.setValue(subcommandResult.matchedOptionValue("--" + option.getName(), null));
                 }

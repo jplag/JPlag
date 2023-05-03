@@ -4,17 +4,17 @@ package de.jplag.options;
  * The available types for language specific options.
  * @param <T> The java type of the option.
  */
-public sealed abstract class OptionType<T> permits OptionType.StringType, OptionType.IntegerType {
-    final static class StringType extends OptionType<String> {
-        public static StringType INSTANCE = new StringType();
+public abstract sealed class OptionType<T> {
+    static final class StringType extends OptionType<String> {
+        public static final StringType INSTANCE = new StringType();
 
         private StringType() {
             super(String.class);
         }
     }
 
-    final static class IntegerType extends OptionType<Integer> {
-        public static IntegerType INSTANCE = new IntegerType();
+    static final class IntegerType extends OptionType<Integer> {
+        public static final IntegerType INSTANCE = new IntegerType();
 
         private IntegerType() {
             super(Integer.class);

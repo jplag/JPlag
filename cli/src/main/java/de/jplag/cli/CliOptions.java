@@ -16,7 +16,7 @@ import picocli.CommandLine.Parameters;
 
 @CommandLine.Command(name = "jplag", description = "", usageHelpAutoWidth = true, abbreviateSynopsis = true)
 public class CliOptions implements Runnable {
-    public static Language defaultLanguage = new de.jplag.java.Language();
+    public static final Language defaultLanguage = new de.jplag.java.Language();
 
     @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism%n", split = ",")
     public File[] rootDirectory = new File[0];
@@ -58,6 +58,9 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "Clustering%n")
     public Clustering clustering = new Clustering();
 
+    /**
+     * Empty run method, so picocli prints help automatically
+     */
     @Override
     public void run() {
     }
@@ -73,22 +76,7 @@ public class CliOptions implements Runnable {
         public String[] suffixes = new String[0];
 
         @Option(names = {"-x",
-                "--exclusion-file"}, description = "All files named in this file will be ignored in the comparison (line-separated list)%n") // TODO
-                                                                                                                                             // does
-                                                                                                                                             // not
-                                                                                                                                             // behave
-                                                                                                                                             // as the
-                                                                                                                                             // description
-                                                                                                                                             // indicates.
-                                                                                                                                             // Check
-                                                                                                                                             // if
-                                                                                                                                             // that
-                                                                                                                                             // is a
-                                                                                                                                             // new
-                                                                                                                                             // thing
-                                                                                                                                             // or an
-                                                                                                                                             // old
-                                                                                                                                             // inconsistency
+                "--exclusion-file"}, description = "All files named in this file will be ignored in the comparison (line-separated list)%n")
         public String exclusionFileName;
 
         @Option(names = {"-m",
