@@ -17,7 +17,7 @@
   "dependencies": {
     "chart.js": "^3.9.1",
     "chartjs-plugin-datalabels": "^2.2.0",
-    "gitart-vue-dialog": "^2.4.1",
+    "gitart-vue-dialog": "^3.0.2",
     "highlight.js": "^11.7.0",
     "jszip": "^3.10.0",
     "pinia": "^2.0.35",
