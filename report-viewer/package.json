@@ -20,7 +20,7 @@
     "gitart-vue-dialog": "^2.4.1",
     "highlight.js": "^11.7.0",
     "jszip": "^3.10.0",
-    "pinia": "^2.0.32",
+    "pinia": "^2.0.35",
     "slash": "^5.0.1",
     "vue": "^3.2.47",
     "vue-chart-3": "^3.1.8",
