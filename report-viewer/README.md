@@ -6,7 +6,7 @@ Before the first run execute:
 
 - Install necessary dependencies by running `npm install` in the /report-viewer folder.
 - Start the application by running the `npm run dev` command in the /report-viewer folder.
-- The report viewer is now accessible in your browser under http://localhost:8080/
+- The report viewer is now accessible in your browser under http://localhost:8080/JPlag/
 
 ## Project setup
 ```
