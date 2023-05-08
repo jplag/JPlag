@@ -47,6 +47,19 @@ public class PythonLanguageCoverageTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("collectSourceCoverageTestFiles")
+    public void testMonotoneTokenOrder(File testFile) throws ParsingException {
+        List<Token> tokens = language.parse(Set.of(testFile));
+
+        for (int i = 0; i < tokens.size() - 2; i++) {
+            if (tokens.get(i).getLine() > tokens.get(i + 1).getLine()) {
+                Assertions.fail("Token " + tokens.get(i).getType() + " reported in line " + tokens.get(i).getLine()
+                        + " has a bigger line index, than token " + tokens.get(i + 1).getType() + " in line " + tokens.get(i + 1).getLine());
+            }
+        }
+    }
+
     public static List<File> collectSourceCoverageTestFiles() {
         return Arrays.asList(Objects.requireNonNull(testFileLocation.listFiles()));
     }
