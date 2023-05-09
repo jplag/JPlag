@@ -102,12 +102,14 @@ if (store().local) {
   const request = new XMLHttpRequest()
   request.open(
     'GET',
-    `/src/files/${store().getComparisonFileName(props.firstId, props.secondId)}`,
+    `/files/${store().getComparisonFileName(props.firstId, props.secondId)}`,
     false
   )
   request.send()
 
   if (request.status == 200) {
+    loadSubmissionFilesFromLocal(props.firstId)
+    loadSubmissionFilesFromLocal(props.secondId)
     try {
       comparison = ComparisonFactory.getComparison(JSON.parse(request.response))
     } catch (e) {
@@ -145,6 +147,35 @@ if (store().local) {
       }
     })
     store().clearStore()
+  }
+}
+
+function getSubmissionFileListFromLocal(submissionId: string): string[] {
+  const request = new XMLHttpRequest()
+  request.open('GET', `/files/submissionFileIndex.json`, false)
+  request.send()
+  if (request.status == 200) {
+    return JSON.parse(request.response).submission_file_indexes[submissionId]
+  } else {
+    return []
+  }
+}
+
+function loadSubmissionFilesFromLocal(submissionId: string) {
+  const request = new XMLHttpRequest()
+  const fileList = getSubmissionFileListFromLocal(submissionId)
+  for (const file of fileList) {
+    request.open('GET', `/files/files/${file.replace(/\\/, '/')}`, false)
+    request.send()
+    if (request.status == 200) {
+      store().saveSubmissionFile({
+        name: submissionId,
+        file: {
+          fileName: file,
+          data: request.response
+        }
+      })
+    }
   }
 }
 

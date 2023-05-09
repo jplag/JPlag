@@ -12,6 +12,8 @@ import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,12 +28,14 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.Submission;
+import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.jsonfactory.ToDiskWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
+import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
 import de.jplag.reporting.reportobject.model.Version;
 
 /**
@@ -44,6 +48,7 @@ public class ReportObjectFactory {
     private static final ToDiskWriter fileWriter = new ToDiskWriter();
     public static final String OVERVIEW_FILE_NAME = "overview.json";
     public static final String SUBMISSIONS_FOLDER = "files";
+    public static final String SUBMISSION_FILE_INDEX_FILE_NAME = "submissionFileIndex.json";
     public static final Version REPORT_VIEWER_VERSION = JPlag.JPLAG_VERSION;
 
     private Map<String, String> submissionNameToIdMap;
@@ -66,6 +71,7 @@ public class ReportObjectFactory {
 
             writeComparisons(result, path);
             writeOverview(result, path);
+            writeSubmissionIndexFile(result, path);
 
             logger.info("Zipping report files...");
             zipAndDelete(path);
@@ -188,6 +194,21 @@ public class ReportObjectFactory {
 
         fileWriter.saveAsJSON(overviewReport, path, OVERVIEW_FILE_NAME);
 
+    }
+
+    private void writeSubmissionIndexFile(JPlagResult result, String path) {
+        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
+        Set<Submission> submissions = getSubmissions(comparisons);
+        SubmissionFileIndex fileIndex = new SubmissionFileIndex(new HashMap<>());
+
+        for (Submission submission : submissions) {
+            List<String> filePaths = new LinkedList<>();
+            for (File file : submission.getFiles()) {
+                filePaths.add(FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction));
+            }
+            fileIndex.fileIndexes().put(submissionNameToIdMap.get(submission.getName()), filePaths);
+        }
+        fileWriter.saveAsJSON(fileIndex, path, SUBMISSION_FILE_INDEX_FILE_NAME);
     }
 
     private Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {

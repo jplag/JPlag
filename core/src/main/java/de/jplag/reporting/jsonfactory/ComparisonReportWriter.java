@@ -1,7 +1,5 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +11,7 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.Token;
+import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
 
@@ -103,16 +102,9 @@ public class ComparisonReportWriter {
         Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
-        return new Match(relativizedFilePath(startOfFirst.getFile(), comparison.firstSubmission()),
-                relativizedFilePath(startOfSecond.getFile(), comparison.secondSubmission()), startOfFirst.getLine(), endOfFirst.getLine(),
-                startOfSecond.getLine(), endOfSecond.getLine(), match.length());
-    }
-
-    private String relativizedFilePath(File file, Submission submission) {
-        if (file.toPath().equals(submission.getRoot().toPath())) {
-            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission)).toString();
-        }
-        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString()).toString();
+        return new Match(FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction),
+                FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction),
+                startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length());
     }
 
 }

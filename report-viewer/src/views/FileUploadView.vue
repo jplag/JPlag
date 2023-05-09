@@ -35,7 +35,7 @@ class LoadError extends Error {}
 store().clearStore()
 const hasLocalFile = ref(false)
 // Checks whether local files exist
-fetch('/src/files/overview.json').then((response) => (hasLocalFile.value = response.status == 200))
+fetch('/files/overview.json').then((response) => (hasLocalFile.value = response.status == 200))
 
 // Loads file passed in query param, if any.
 const queryParams = useRoute().query
