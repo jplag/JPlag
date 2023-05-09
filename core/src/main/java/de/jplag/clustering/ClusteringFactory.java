@@ -31,7 +31,7 @@ public class ClusteringFactory {
     private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
 
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
-        if (comparisons.size() > 0) {
+        if (comparisons.isEmpty()) {
             if (!options.enabled()) {
                 logger.warn(CLUSTERING_DISABLED);
                 return Collections.emptyList();
