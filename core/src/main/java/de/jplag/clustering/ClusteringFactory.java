@@ -31,35 +31,39 @@ public class ClusteringFactory {
     private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
 
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
-        if (!options.enabled()) {
-            logger.warn(CLUSTERING_DISABLED);
-            return Collections.emptyList();
+        if (comparisons.size() > 0) {
+            if (!options.enabled()) {
+                logger.warn(CLUSTERING_DISABLED);
+                return Collections.emptyList();
+            } else {
+                logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor());
+            }
+
+            // init algorithm
+            GenericClusteringAlgorithm clusteringAlgorithm = options.algorithm().create(options);
+
+            // init preprocessor
+            Optional<ClusteringPreprocessor> preprocessor = options.preprocessor().constructPreprocessor(options);
+
+            if (preprocessor.isPresent()) {
+                // Package preprocessor into a clustering algorithm
+                clusteringAlgorithm = new PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor.orElseThrow());
+            }
+
+            // init adapter
+            ClusteringAdapter adapter = new ClusteringAdapter(comparisons, options.similarityMetric());
+
+            // run clustering
+            ClusteringResult<Submission> result = adapter.doClustering(clusteringAlgorithm);
+
+            // remove bad clusters
+            result = removeBadClusters(result);
+            logClusters(result);
+
+            return List.of(result);
         } else {
-            logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor());
+            return Collections.emptyList();
         }
-
-        // init algorithm
-        GenericClusteringAlgorithm clusteringAlgorithm = options.algorithm().create(options);
-
-        // init preprocessor
-        Optional<ClusteringPreprocessor> preprocessor = options.preprocessor().constructPreprocessor(options);
-
-        if (preprocessor.isPresent()) {
-            // Package preprocessor into a clustering algorithm
-            clusteringAlgorithm = new PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor.orElseThrow());
-        }
-
-        // init adapter
-        ClusteringAdapter adapter = new ClusteringAdapter(comparisons, options.similarityMetric());
-
-        // run clustering
-        ClusteringResult<Submission> result = adapter.doClustering(clusteringAlgorithm);
-
-        // remove bad clusters
-        result = removeBadClusters(result);
-        logClusters(result);
-
-        return List.of(result);
     }
 
     private static ClusteringResult<Submission> removeBadClusters(final ClusteringResult<Submission> clustering) {
