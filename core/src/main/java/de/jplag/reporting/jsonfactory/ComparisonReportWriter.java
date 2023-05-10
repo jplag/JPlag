@@ -105,7 +105,7 @@ public class ComparisonReportWriter {
 
         List<Token> firstTotalTokens = tokensFirst.stream().filter(x -> Objects.equals(x.getFile(), startOfFirst.getFile())).toList();
         List<Token> secondTotalTokens = tokensSecond.stream().filter(x -> Objects.equals(x.getFile(), startOfSecond.getFile())).toList();
-        
+
         return new Match(FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction),
                 FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction),
                 startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length(), firstTotalTokens.size(),
