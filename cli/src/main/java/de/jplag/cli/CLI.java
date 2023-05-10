@@ -86,9 +86,7 @@ public final class CLI {
             CLI cli = new CLI();
             Namespace arguments = cli.parseArguments(args);
             JPlagOptions options = cli.buildOptionsFromArguments(arguments);
-            JPlag jplag = new JPlag(options);
-            logger.debug("JPlag initialized");
-            JPlagResult result = jplag.run();
+            JPlagResult result = JPlag.run(options);
             ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
             reportObjectFactory.createAndSaveReport(result, arguments.getString(RESULT_FOLDER.flagWithoutDash()));
         } catch (ExitException exception) {

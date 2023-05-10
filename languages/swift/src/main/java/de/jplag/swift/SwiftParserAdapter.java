@@ -1,7 +1,7 @@
 package de.jplag.swift;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.swift.grammar.Swift5Lexer;
 import de.jplag.swift.grammar.Swift5Parser;
+import de.jplag.util.FileUtils;
 
 public class SwiftParserAdapter extends AbstractParser {
 
@@ -47,10 +48,10 @@ public class SwiftParserAdapter extends AbstractParser {
     }
 
     private void parse(File file) throws ParsingException {
-        try (FileInputStream inputStream = new FileInputStream(file)) {
+        try (BufferedReader reader = FileUtils.openFileReader(file)) {
             currentFile = file;
 
-            Swift5Lexer lexer = new Swift5Lexer(CharStreams.fromStream(inputStream));
+            Swift5Lexer lexer = new Swift5Lexer(CharStreams.fromReader(reader));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             Swift5Parser parser = new Swift5Parser(tokenStream);
 

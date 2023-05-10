@@ -2,7 +2,6 @@ package de.jplag.cpp2;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +16,7 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.cpp2.grammar.CPP14Lexer;
 import de.jplag.cpp2.grammar.CPP14Parser;
+import de.jplag.util.FileUtils;
 
 /**
  * The adapter between {@link AbstractParser} and the ANTLR based parser of this language module.
@@ -37,7 +37,7 @@ public class CPPParserAdapter extends AbstractParser {
             this.currentFile = file;
             logger.trace("Parsing file {}", currentFile);
             try {
-                CPP14Lexer lexer = new CPP14Lexer(CharStreams.fromStream(Files.newInputStream(file.toPath())));
+                CPP14Lexer lexer = new CPP14Lexer(CharStreams.fromReader(FileUtils.openFileReader(file)));
                 // create a buffer of tokens pulled from the lexer
                 CommonTokenStream tokenStream = new CommonTokenStream(lexer);
                 CPP14Parser parser = new CPP14Parser(tokenStream);

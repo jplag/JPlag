@@ -3,6 +3,7 @@
 -->
 <template>
   <div class="container">
+    <!-- Left Panel when hidden -->
     <button
       id="show-button"
       :class="{ hidden: !hideLeftPanel }"
@@ -11,6 +12,8 @@
     >
       <img alt="show" src="@/assets/double_arrow_black_24dp.svg" />
     </button>
+
+    <!-- Left Panel -->
     <div id="sidebar" :class="{ hidden: hideLeftPanel }">
       <div class="title-section">
         <h1>JPlag Comparison</h1>
@@ -39,6 +42,8 @@
         @match-selected="showMatch"
       />
     </div>
+
+    <!-- Files of Submissions -->
     <FilesContainer
       :container-id="1"
       :submission-id="firstId"
@@ -90,20 +95,21 @@ const props = defineProps({
 
 const router = useRouter()
 console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
-let comparison: Comparison = new Comparison('', '', 0)
+let comparison = new Comparison('', '', 0)
 
 //getting the comparison file based on the used mode (zip, local, single)
 if (store().local) {
   const request = new XMLHttpRequest()
   request.open(
     'GET',
-    `/src/files/${store().getComparisonFileName(props.firstId, props.secondId)}`,
+    `/files/${store().getComparisonFileName(props.firstId, props.secondId)}`,
     false
   )
-  console.log(request)
   request.send()
 
   if (request.status == 200) {
+    loadSubmissionFilesFromLocal(props.firstId)
+    loadSubmissionFilesFromLocal(props.secondId)
     try {
       comparison = ComparisonFactory.getComparison(JSON.parse(request.response))
     } catch (e) {
@@ -144,6 +150,35 @@ if (store().local) {
   }
 }
 
+function getSubmissionFileListFromLocal(submissionId: string): string[] {
+  const request = new XMLHttpRequest()
+  request.open('GET', `/files/submissionFileIndex.json`, false)
+  request.send()
+  if (request.status == 200) {
+    return JSON.parse(request.response).submission_file_indexes[submissionId]
+  } else {
+    return []
+  }
+}
+
+function loadSubmissionFilesFromLocal(submissionId: string) {
+  const request = new XMLHttpRequest()
+  const fileList = getSubmissionFileListFromLocal(submissionId)
+  for (const file of fileList) {
+    request.open('GET', `/files/files/${file.replace(/\\/, '/')}`, false)
+    request.send()
+    if (request.status == 200) {
+      store().saveSubmissionFile({
+        name: submissionId,
+        file: {
+          fileName: file,
+          data: request.response
+        }
+      })
+    }
+  }
+}
+
 const filesOfFirst = ref(comparison.filesOfFirstSubmission)
 const filesOfSecond = ref(comparison.filesOfSecondSubmission)
 
@@ -152,6 +187,10 @@ const filesOfSecond = ref(comparison.filesOfSecondSubmission)
  * @param title
  */
 
+/**
+ * Collapses a file in the first files container.
+ * @param title title of the file
+ */
 function toggleCollapseFirst(title: string) {
   const file = filesOfFirst.value.get(title)
   if (file) {
@@ -161,7 +200,7 @@ function toggleCollapseFirst(title: string) {
 
 /**
  * Collapses a file in the second files container.
- * @param title
+ * @param title title of the file
  */
 function toggleCollapseSecond(title: string) {
   const file = filesOfSecond.value.get(title)
@@ -171,11 +210,11 @@ function toggleCollapseSecond(title: string) {
 }
 
 /**
- * Shows a match in the first files container
- * @param e
- * @param panel
- * @param file
- * @param line
+ * Shows a match in the first files container when clicked on a line in the second files container.
+ * @param e The click event
+ * @param panel panel number (1 for left, 2 for right)
+ * @param file (file name)
+ * @param line (line number)
  */
 
 function showMatchInFirst(e: unknown, panel: number, file: string, line: number) {
@@ -186,11 +225,11 @@ function showMatchInFirst(e: unknown, panel: number, file: string, line: number)
 }
 
 /**
- * Shows a match in the second files container.
- * @param e
- * @param panel
- * @param file
- * @param line
+ * Shows a match in the second files container, when clicked on a line in the second files container.
+ * @param e The click event
+ * @param panel panel number (1 for left, 2 for right)
+ * @param file (file name)
+ * @param line (line number)
  */
 function showMatchInSecond(e: unknown, panel: number, file: string, line: number) {
   if (!filesOfSecond.value.get(file)?.collapsed) {
@@ -199,6 +238,11 @@ function showMatchInSecond(e: unknown, panel: number, file: string, line: number
   document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
 }
 
+/**
+ * Shows a match in the first and second files container.
+ * @param e The click event
+ * @param match The match to show
+ */
 function showMatch(e: unknown, match: Match) {
   showMatchInFirst(e, 1, match.firstFile, match.startInFirst)
   showMatchInSecond(e, 2, match.secondFile, match.startInSecond)
@@ -210,6 +254,10 @@ function isAnonymous(id: string) {
 
 //Left panel
 const hideLeftPanel = ref(false)
+
+/**
+ * Toggles the left sidebar panel
+ */
 function togglePanel() {
   hideLeftPanel.value = !hideLeftPanel.value
 }

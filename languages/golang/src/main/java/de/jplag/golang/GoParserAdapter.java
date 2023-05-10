@@ -1,7 +1,7 @@
 package de.jplag.golang;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.golang.grammar.GoLexer;
 import de.jplag.golang.grammar.GoParser;
+import de.jplag.util.FileUtils;
 
 public class GoParserAdapter extends AbstractParser {
     private File currentFile;
@@ -34,10 +35,10 @@ public class GoParserAdapter extends AbstractParser {
     }
 
     private void parseFile(File file) throws ParsingException {
-        try (FileInputStream inputStream = new FileInputStream(file)) {
+        try (BufferedReader reader = FileUtils.openFileReader(file)) {
             currentFile = file;
 
-            GoLexer lexer = new GoLexer(CharStreams.fromStream(inputStream));
+            GoLexer lexer = new GoLexer(CharStreams.fromReader(reader));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             GoParser parser = new GoParser(tokenStream);
 

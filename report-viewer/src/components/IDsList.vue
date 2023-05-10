@@ -28,6 +28,11 @@ defineProps({
 })
 
 const emit = defineEmits(['idSent'])
+
+/**
+ * Emits the ids that should be anonymous
+ * @param ids The ids that should be anonymous
+ */
 function emitIdsSent(ids: string[]) {
   emit('idSent', ids)
 }

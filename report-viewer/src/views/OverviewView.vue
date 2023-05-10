@@ -3,6 +3,7 @@
 -->
 <template>
   <div class="container">
+    <!-- General Information about JPlag run -->
     <div class="column-container" style="width: 30%">
       <h1>JPlag Report</h1>
       <p class="section-title">Main Info:</p>
@@ -45,6 +46,7 @@
       </div>
     </div>
 
+    <!-- Distribution Diagramm -->
     <div class="column-container" style="width: 35%">
       <div id="metrics">
         <p class="section-title">Metric:</p>
@@ -62,12 +64,14 @@
       <p class="section-title">Distribution:</p>
       <DistributionDiagram :distribution="distributions[selectedMetricIndex]" class="full-width" />
     </div>
+
+    <!-- Comparison Table -->
     <div class="column-container" style="width: 35%">
       <p class="section-title">Top Comparisons:</p>
       <div id="comparisonsList">
         <ComparisonsTable
           :clusters="overview.clusters"
-          :top-comparisons="topComps[selectedMetricIndex]"
+          :top-comparisons="topComparisons[selectedMetricIndex]"
         />
       </div>
       <div v-if="missingComparisons !== 0 && !isNaN(missingComparisons)">
@@ -96,19 +100,16 @@ import IDsList from '@/components/IDsList.vue'
 import { Overview } from '@/model/Overview'
 import store from '@/stores/store'
 
-const overviewFile = computed(() => {
-  console.log('Start finding overview.json in state...')
-  const index = Object.keys(store().files).find((name) => name.endsWith('overview.json'))
-  return index != undefined ? store().files[index] : console.log('Could not find overview.json')
-})
-
-function getOverview(): Overview {
+/**
+ * Gets the overview file based on the used mode (zip, local, single).
+ */
+function getOverview() {
   console.log('Generating overview...')
   let temp!: Overview
   //Gets the overview file based on the used mode (zip, local, single).
   if (store().local) {
     const request = new XMLHttpRequest()
-    request.open('GET', '/src/files/overview.json', false)
+    request.open('GET', '/files/overview.json', false)
     request.send()
 
     if (request.status == 200) {
@@ -117,6 +118,12 @@ function getOverview(): Overview {
       router.back()
     }
   } else if (store().zip) {
+    const overviewFile = computed(() => {
+      console.log('Start finding overview.json in state...')
+      const index = Object.keys(store().files).find((name) => name.endsWith('overview.json'))
+      return index != undefined ? store().files[index] : console.log('Could not find overview.json')
+    })
+
     if (overviewFile.value === undefined) {
       return new Overview(
         [],
@@ -140,13 +147,13 @@ function getOverview(): Overview {
   return temp
 }
 
-let overview = getOverview()
+const overview = getOverview()
 
 /**
  * Handles the selection of an Id to anonymize.
  * If all submission ids are provided as parameter it hides or displays them based on their previous state.
  * If a single id is provided it hides all of the other ids except for the chosen one.
- * @param ids
+ * @param ids - IDs to hide
  */
 function handleId(ids: Array<string>) {
   if (ids.length === store().getSubmissionIds.length) {
@@ -169,30 +176,24 @@ function handleId(ids: Array<string>) {
 }
 
 //Metrics
-/**
- * Current metric to display distribution and comparisons for.
- * @type {Ref<UnwrapRef<boolean[]>>}
- */
-let selectedMetric = ref(overview.metrics.map(() => false))
-/**
- * Index of current selected metric. Used to obtain information for the metric from the distribution and top
- * comparisons array.
- * @type {Ref<UnwrapRef<number>>}
- */
-let selectedMetricIndex = ref(0)
+const selectedMetric = ref(overview.metrics.map(() => false))
+
+const selectedMetricIndex = ref(0)
 selectedMetric.value[selectedMetricIndex.value] = true
 
+/**
+ * Switch between metrics
+ * @param metric Metric to switch to
+ */
 function selectMetric(metric: number) {
   selectedMetric.value = selectedMetric.value.map(() => false)
   selectedMetric.value[metric] = true
   selectedMetricIndex.value = metric
 }
 
-//Distribution
-let distributions = ref(overview.metrics.map((m) => m.distribution))
+const distributions = ref(overview.metrics.map((m) => m.distribution))
 
-//Top Comparisons
-let topComps: Ref<Array<Array<ComparisonListElement>>> = ref(
+let topComparisons: Ref<Array<Array<ComparisonListElement>>> = ref(
   overview.metrics.map((m) => m.comparisons)
 )
 

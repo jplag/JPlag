@@ -58,7 +58,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import de.jplag.ParsingException;
+import de.jplag.util.FileUtils;
 
 public class SchemeParser {
     /* used for context in the template production rule */
@@ -68,14 +72,17 @@ public class SchemeParser {
     public static void parseFile(File file, SchemeParser parser, Parser parserX) throws ParsingException {
         try {
             FileInputStream in = new FileInputStream(file);
+            Charset charset = FileUtils.detectCharset(file);
             if (parser == null) {
-                parser = new SchemeParser(in, "UTF-8");
+                parser = new SchemeParser(in, charset.name());
             } else {
-                parser.ReInit(in, "UTF-8");
+                parser.ReInit(in, charset.name());
             }
             parser.parser2 = parserX;
         } catch (FileNotFoundException e) {
             System.out.println("Scheme Parser R4RS:  File " + file.getName() + " not found.");
+            throw new ParsingException(file, e.getMessage(), e);
+        } catch (IOException e) {
             throw new ParsingException(file, e.getMessage(), e);
         }
         try {
