@@ -17,7 +17,7 @@ class NormalizationTest extends TestBase {
 
     NormalizationTest() throws ExitException {
         JPlagOptions options = getDefaultOptions("normalization");
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options.language(), options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
         submissionSet.normalizeSubmissions();
         Function<Submission, List<TokenType>> getTokenString = submission -> submission.getTokenList().stream().map(Token::getType).toList();

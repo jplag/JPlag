@@ -30,9 +30,8 @@ class ReadmeCodeExampleTest {
         File baseCode = new File("/path/to/baseCode");
         JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
 
-        JPlag jplag = new JPlag(options);
         try {
-            JPlagResult result = jplag.run();
+            JPlagResult result = JPlag.run(options);
 
             // Optional
             ReportObjectFactory reportObjectFactory = new ReportObjectFactory();

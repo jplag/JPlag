@@ -100,9 +100,9 @@ class EndToEndSuiteTest {
     private Collection<DynamicTest> generateTestsForResultDescription(File resultJson, ResultDescription result, Language language)
             throws ExitException {
         File submissionDirectory = TestSuiteHelper.getSubmissionDirectory(language, resultJson);
-        JPlagOptions jplagOptions = new JPlagOptions(language, Set.of(submissionDirectory), Set.of())
+        JPlagOptions options = new JPlagOptions(language, Set.of(submissionDirectory), Set.of())
                 .withMinimumTokenMatch(result.options().minimumTokenMatch());
-        JPlagResult jplagResult = new JPlag(jplagOptions).run();
+        JPlagResult jplagResult = JPlag.run(options);
         var comparisons = jplagResult.getAllComparisons().stream().collect(Collectors.toMap(it -> TestSuiteHelper.getTestIdentifier(it), it -> it));
         assertEquals(result.identifierToResultMap().size(), comparisons.size(), "different number of results and expected results");
 
