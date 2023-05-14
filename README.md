@@ -22,7 +22,7 @@ In the following, a list of all supported languages with their supported languag
 |--------------------------------------------------------|--------:|-------------------|:----------------------------------------------------------------:|:---------:|
 | [Java](https://www.java.com)                           |      17 | java              |                              mature                              |   JavaC   |
 | [C++](https://isocpp.org)                              |      11 | cpp               |                              legacy                              |  JavaCC   |
-| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |       8 | csharp            |                               beta                               |  ANTLR 4  |
+| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |       6 | csharp            |                               beta                               |  ANTLR 4  |
 | [Go](https://go.dev)                                   |    1.17 | golang            |                               beta                               |  ANTLR 4  |
 | [Kotlin](https://kotlinlang.org)                       |     1.3 | kotlin            |                               beta                               |  ANTLR 4  |
 | [Python](https://www.python.org)                       |     3.6 | python3           |                              legacy                              |  ANTLR 4  |
