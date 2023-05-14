@@ -85,7 +85,7 @@
         <emf.ecore.xmi.version>2.18.0</emf.ecore.xmi.version>
 
         <!-- The Revision of JPlag -->
-        <revision>4.3.0-SNAPSHOT</revision>
+        <revision>4.3.0</revision>
     </properties>
 
     <dependencyManagement>
