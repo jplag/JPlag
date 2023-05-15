@@ -27,7 +27,7 @@ public abstract class LanguageOptions {
      * @return The new option
      */
     protected <T> LanguageOption<T> createDefaultOption(OptionType<T> type, String name, String description, T defaultValue) {
-        LanguageOption<T> option = new LanguageOptionImpl<>(type, name, description, defaultValue);
+        LanguageOption<T> option = new DefaultLanguageOption<>(type, name, description, defaultValue);
         this.options.add(option);
         return option;
     }
@@ -53,7 +53,7 @@ public abstract class LanguageOptions {
      * @return The new option
      */
     protected <T> LanguageOption<T> createOption(OptionType<T> type, String name, String description) {
-        LanguageOption<T> option = new LanguageOptionImpl<>(type, name, description);
+        LanguageOption<T> option = new DefaultLanguageOption<>(type, name, description);
         this.options.add(option);
         return option;
     }
@@ -72,7 +72,7 @@ public abstract class LanguageOptions {
     /**
      * @return The list of all options
      */
-    public List<LanguageOption<?>> getOptions() {
+    public List<LanguageOption<?>> getOptionsAsList() {
         return Collections.unmodifiableList(this.options);
     }
 }

@@ -49,6 +49,9 @@ public final class CLI {
     private final CommandLine commandLine;
     private final CliOptions options;
 
+    private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
+            + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
+
     /**
      * Main class for using JPlag via the CLI.
      * @param args are the CLI arguments that will be passed to JPlag.
@@ -69,7 +72,7 @@ public final class CLI {
 
                 JPlagResult result = jplag.run();
                 ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-                reportObjectFactory.createAndSaveReport(result, cli.options.resultFolder);
+                reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
             }
         } catch (ExitException exception) {
             logger.error(exception.getMessage()); // do not pass exception here to keep log clean
@@ -95,11 +98,11 @@ public final class CLI {
         return LanguageLoader.getAllAvailableLanguages().values().stream().map(language -> {
             CommandSpec command = CommandSpec.create().name(language.getIdentifier());
 
-            for (LanguageOption<?> option : language.getOptions().getOptions()) {
-                command.addOption(OptionSpec.builder("--" + option.getName()).type(option.getType().getJavaType())
+            for (LanguageOption<?> option : language.getOptions().getOptionsAsList()) {
+                command.addOption(OptionSpec.builder(option.getNameAsUnixParameter()).type(option.getType().getJavaType())
                         .description(option.getDescription()).build());
             }
-            command.addOption(OptionSpec.builder("-h", "--help").usageHelp(true).build());
+            command.mixinStandardHelpOptions(true);
             command.addPositional(
                     CommandLine.Model.PositionalParamSpec.builder().type(List.class).auxiliaryTypes(File.class).hidden(true).required(false).build());
 
@@ -129,8 +132,9 @@ public final class CLI {
 
     private static void finalizeLogger() {
         ILoggerFactory factory = LoggerFactory.getILoggerFactory();
-        if (!(factory instanceof CollectedLoggerFactory collectedLoggerFactory))
+        if (!(factory instanceof CollectedLoggerFactory collectedLoggerFactory)) {
             return;
+        }
         collectedLoggerFactory.finalizeInstances();
     }
 
@@ -169,11 +173,11 @@ public final class CLI {
         if (result.subcommand() != null) {
             ParseResult subcommandResult = result.subcommand();
             Language language = LanguageLoader.getLanguage(subcommandResult.commandSpec().name())
-                    .orElseThrow(() -> new CliException("This is not supposed to happen. Please create an issue on github for this."));
+                    .orElseThrow(() -> new CliException(IMPOSSIBLE_EXCEPTION));
             LanguageOptions languageOptions = language.getOptions();
-            languageOptions.getOptions().forEach(option -> {
-                if (subcommandResult.hasMatchedOption("--" + option.getName())) {
-                    option.setValue(subcommandResult.matchedOptionValue("--" + option.getName(), null));
+            languageOptions.getOptionsAsList().forEach(option -> {
+                if (subcommandResult.hasMatchedOption(option.getNameAsUnixParameter())) {
+                    option.setValue(subcommandResult.matchedOptionValue(option.getNameAsUnixParameter(), null));
                 }
             });
             return language;
@@ -215,5 +219,9 @@ public final class CLI {
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
         return String.format("JPlag - %s%n%n%s", randomDescription, CREDITS);
+    }
+
+    public String getResultFolder() {
+        return this.options.resultFolder;
     }
 }

@@ -10,6 +10,6 @@ public class EmptyOptions extends LanguageOptions {
     public static final EmptyOptions instance = new EmptyOptions();
 
     private EmptyOptions() {
-
+        // private constructor to prevent instantiation
     }
 }
