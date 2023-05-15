@@ -66,6 +66,7 @@ import de.jplag.cpp2.grammar.CPP14Parser.EnumeratorDefinitionContext;
 import de.jplag.cpp2.grammar.CPP14Parser.FunctionBodyContext;
 import de.jplag.cpp2.grammar.CPP14Parser.FunctionDefinitionContext;
 import de.jplag.cpp2.grammar.CPP14Parser.HandlerContext;
+import de.jplag.cpp2.grammar.CPP14Parser.InitDeclaratorContext;
 import de.jplag.cpp2.grammar.CPP14Parser.IterationStatementContext;
 import de.jplag.cpp2.grammar.CPP14Parser.JumpStatementContext;
 import de.jplag.cpp2.grammar.CPP14Parser.LabeledStatementContext;
@@ -335,6 +336,14 @@ public class CPPTokenListener extends CPP14ParserBaseListener {
      */
     private static boolean noPointerInFunctionCallContext(NoPointerDeclaratorContext context) {
         return context != null && (context.parametersAndQualifiers() != null || context.LeftParen() != null);
+    }
+
+    @Override
+    public void enterInitDeclarator(InitDeclaratorContext context) {
+        // method calls with literals as arguments
+        if (context.initializer() != null && context.initializer().LeftParen() != null) {
+            addEnter(APPLY, context.getStart());
+        }
     }
 
     @Override

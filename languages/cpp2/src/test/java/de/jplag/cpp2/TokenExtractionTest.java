@@ -83,7 +83,7 @@ class TokenExtractionTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"this->myMethod(v)", "MyClass::myMethod(v)", "myMethod(v)", "m.myMethod(v)"})
+    @ValueSource(strings = {"this->myMethod(v)", "MyClass::myMethod(v)", "myMethod(v)", "m.myMethod(v)", "myMethod(1)", "myMethod(\"a\")"})
     void testFunctionCalls(String expression, @TempDir Path path) {
         TokenResult result = extractFromString(path, """
                 void a(string v) {
