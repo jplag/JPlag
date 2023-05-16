@@ -6,62 +6,67 @@
   <div class="wrapper">
     <div class="text-container">
       <p class="label-text">{{ label }}</p>
-      <p :class="{ 'anonymous' : anonymous }" :title="anonymous ? '' : value" class="value-text">
-        {{ anonymous ? "Hidden" : value }}</p>
+      <p :class="{ anonymous: anonymous }" :title="anonymous ? '' : value" class="value-text">
+        {{ anonymous ? 'Hidden' : value }}
+      </p>
     </div>
-    <button :class="{ hidden : !hasAdditionalInfo }" class="collapse-button" @click="toggleIsCollapsed">
-      <img v-if="isCollapsed" alt="hide info" src="../assets/keyboard_double_arrow_up_black_18dp.svg">
-      <img v-else alt="additional info" src="../assets/keyboard_double_arrow_down_black_18dp.svg">
+    <button
+      :class="{ hidden: !hasAdditionalInfo }"
+      class="collapse-button"
+      @click="toggleIsCollapsed"
+    >
+      <img
+        v-if="isCollapsed"
+        alt="hide info"
+        src="../assets/keyboard_double_arrow_up_black_18dp.svg"
+      />
+      <img v-else alt="additional info" src="../assets/keyboard_double_arrow_down_black_18dp.svg" />
     </button>
   </div>
-  <div :class="{ hidden : !isCollapsed }" class="additional-info">
+  <div :class="{ hidden: !isCollapsed }" class="additional-info">
     <p class="additional-info-title">{{ additionalInfoTitle }}</p>
     <slot></slot>
   </div>
-  <hr>
+  <hr />
 </template>
 
-<script>
-import {defineComponent, ref} from "vue";
+<script setup lang="ts">
+import { ref } from 'vue'
 
-export default defineComponent({
-  name: "TextInformation",
-  props: {
-    label: {
-      type: String,
-      required: true
-    },
-    value: {
-      required: true
-    },
-    hasAdditionalInfo: {
-      type: Boolean,
-      default: false
-    },
-    additionalInfoTitle: {
-      type: String,
-      default: "",
-    },
-    /**
-     * Indicates whether the value should be hidden.
-     */
-    anonymous: {
-      type: Boolean,
-      default: false
-    }
+defineProps({
+  label: {
+    type: String,
+    required: true
   },
-  setup() {
-    const isCollapsed = ref(false)
-
-    const toggleIsCollapsed = () => isCollapsed.value = !isCollapsed.value
-
-    return {
-      isCollapsed,
-      toggleIsCollapsed
-    }
+  value: {
+    type: String,
+    required: true
+  },
+  hasAdditionalInfo: {
+    type: Boolean,
+    default: false
+  },
+  additionalInfoTitle: {
+    type: String,
+    default: ''
+  },
+  /**
+   * Indicates whether the value should be hidden.
+   */
+  anonymous: {
+    type: Boolean,
+    default: false
   }
-
 })
+
+const isCollapsed = ref(false)
+
+/**
+ * Toggles the collapsed state of the additional info container.
+ */
+function toggleIsCollapsed() {
+  isCollapsed.value = !isCollapsed.value
+}
 </script>
 
 <style scoped>
@@ -74,9 +79,9 @@ p {
 hr {
   border: 0;
   height: 2px;
-  background: linear-gradient(to right, #E2EAFC, transparent, transparent);
+  background: linear-gradient(to right, #e2eafc, transparent, transparent);
   width: 100%;
-  box-shadow: #D7E3FC 0 1px;
+  box-shadow: #d7e3fc 0 1px;
 }
 
 .anonymous {
@@ -130,7 +135,7 @@ hr {
   margin: 3% 0;
   box-shadow: inset var(--shadow-color) 0 0 3px;
   border-radius: 10px;
-  font-family: "JetBrains  NL", serif;
+  font-family: 'JetBrains  NL', serif;
   font-size: smaller;
 }
 
@@ -141,5 +146,4 @@ hr {
 .hidden {
   display: none !important;
 }
-
 </style>

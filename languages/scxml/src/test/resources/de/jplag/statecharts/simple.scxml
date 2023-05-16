@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" datamodel="ecmascript" name="Statechart">
+    <datamodel>
+        <data expr="0" id="t" />
+    </datamodel>
+    <state id="main_region">
+        <initial>
+            <transition target="Start" type="internal">
+            </transition>
+        </initial>
+        <state id="Start">
+            <transition event="user.press_button"  target="Blinking">
+            </transition>
+        </state>
+    </state>
+</scxml>

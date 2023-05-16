@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A class to generate and store hashes over a fixed length subsequence of a given list of values. Hash generation is
@@ -30,10 +29,9 @@ class SubsequenceHashLookupTable {
      * Generates a new subsequence hash lookup table. Performance is optimized to compute hashes in O(n).
      * @param windowSize the size of the subsequences.
      * @param values the values to hash over.
-     * @param markedIndexes the indexes of marked values. Subsequences containing a marked value obtain the {@link #NO_HASH}
-     * value.
+     * @param marked Which values are marked. Subsequences containing a marked value obtain the {@link #NO_HASH} value.
      */
-    SubsequenceHashLookupTable(int windowSize, int[] values, Set<Integer> markedIndexes) {
+    SubsequenceHashLookupTable(int windowSize, int[] values, boolean[] marked) {
         windowSize = Math.max(1, windowSize);
         windowSize = Math.min(MAX_HASH_LENGTH, windowSize);
         this.windowSize = windowSize;
@@ -45,7 +43,7 @@ class SubsequenceHashLookupTable {
 
         subsequenceHashes = new int[values.length - windowSize];
         startIndexToSubsequenceHashesMap = new HashMap<>(subsequenceHashes.length);
-        computeSubsequenceHashes(markedIndexes);
+        computeSubsequenceHashes(marked);
     }
 
     /** Returns the size of the subsequences used for hashing */
@@ -82,10 +80,10 @@ class SubsequenceHashLookupTable {
     /**
      * Creates hashes for all subsequences with windowSize. Code is optimized to perform in O(n) using a windowing approach.
      * Hashes are computed by \sum from (i=0 to windowSize) with hash(values[offset+i]) * 2^(hashLength-1-i)
-     * @param markedIndexes contains the indexes of marked values. Subsequences containing a marked value will receive the
+     * @param marked contains which of the values are marked. Subsequences containing a marked value will receive the
      * {@link #NO_HASH} value.
      */
-    private void computeSubsequenceHashes(Set<Integer> markedIndexes) {
+    private void computeSubsequenceHashes(boolean[] marked) {
         int hash = 0;
         int hashedLength = 0;
         int factor = (windowSize != 1 ? (2 << (windowSize - 2)) : 1);
@@ -102,7 +100,7 @@ class SubsequenceHashLookupTable {
                 hash -= factor * hashValueForValue(values[windowStartIndex]);
             }
             hash = (2 * hash) + hashValueForValue(values[windowEndIndex]);
-            if (markedIndexes.contains(windowEndIndex)) {
+            if (marked[windowEndIndex]) {
                 hashedLength = 0;
             } else {
                 hashedLength++;

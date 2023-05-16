@@ -38,6 +38,14 @@ public interface Language {
     List<Token> parse(Set<File> files) throws ParsingException;
 
     /**
+     * Indicates whether the tokens returned by parse have semantic information added to them, i.e. whether the token
+     * attribute semantics is null or not.
+     */
+    default boolean tokensHaveSemantics() {
+        return false;
+    }
+
+    /**
      * Determines whether a fixed-width font should be used to display that language.
      */
     default boolean isPreformatted() {

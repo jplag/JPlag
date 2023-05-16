@@ -4,14 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.jplag.normalization.TokenStringNormalizer;
 
 /**
  * Represents a single submission. A submission can contain multiple files.
@@ -264,5 +268,34 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Perform token string normalization, which makes the token string invariant to dead code insertion and independent
+     * statement reordering.
+     */
+    void normalize() {
+        List<Integer> originalOrder = getOrder(tokenList);
+        TokenStringNormalizer.normalize(tokenList);
+        List<Integer> normalizedOrder = getOrder(tokenList);
+
+        logger.debug("original line order: {}", originalOrder);
+        logger.debug("line order after normalization: {}", normalizedOrder);
+        Set<Integer> normalizedSet = new HashSet<>(normalizedOrder);
+        List<Integer> removed = originalOrder.stream().filter(l -> !normalizedSet.contains(l)).toList();
+        logger.debug("removed {} line(s): {}", removed.size(), removed);
+    }
+
+    private List<Integer> getOrder(List<Token> tokenList) {
+        List<Integer> order = new ArrayList<>(tokenList.size());  // a little too big
+        int currentLineNumber = tokenList.get(0).getLine();
+        order.add(currentLineNumber);
+        for (Token token : tokenList) {
+            if (token.getLine() != currentLineNumber) {
+                currentLineNumber = token.getLine();
+                order.add(currentLineNumber);
+            }
+        }
+        return order;
     }
 }

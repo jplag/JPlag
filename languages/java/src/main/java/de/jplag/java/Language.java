@@ -46,4 +46,9 @@ public class Language implements de.jplag.Language {
     public List<Token> parse(Set<File> files) throws ParsingException {
         return this.parser.parse(files);
     }
+
+    @Override
+    public boolean tokensHaveSemantics() {
+        return true;
+    }
 }

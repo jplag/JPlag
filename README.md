@@ -18,11 +18,11 @@ JPlag is a system that finds similarities among multiple sets of source code fil
 
 In the following, a list of all supported languages with their supported language version is provided. A language can be selected from the command line using the `-l <cli argument name>` argument.
 
-| Language                                               | Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/3.-Language-Modules) |  parser   |
+| Language                                               | Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/2.-Supported-Languages) |  parser   |
 |--------------------------------------------------------|--------:|-------------------|:----------------------------------------------------------------:|:---------:|
 | [Java](https://www.java.com)                           |      17 | java              |                              mature                              |   JavaC   |
 | [C++](https://isocpp.org)                              |      11 | cpp               |                              legacy                              |  JavaCC   |
-| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |       8 | csharp            |                               beta                               |  ANTLR 4  |
+| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |       6 | csharp            |                               beta                               |  ANTLR 4  |
 | [Go](https://go.dev)                                   |    1.17 | golang            |                               beta                               |  ANTLR 4  |
 | [Kotlin](https://kotlinlang.org)                       |     1.3 | kotlin            |                               beta                               |  ANTLR 4  |
 | [Python](https://www.python.org)                       |     3.6 | python3           |                              legacy                              |  ANTLR 4  |
@@ -114,9 +114,8 @@ Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));
 File baseCode = new File("/path/to/baseCode");
 JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
 
-JPlag jplag = new JPlag(options);
 try {
-    JPlagResult result = jplag.run();
+    JPlagResult result = JPlag.run(options);
      
     // Optional
     ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
