@@ -11,9 +11,10 @@ import org.eclipse.emf.ecore.resource.Resource;
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenType;
 import de.jplag.emf.Language;
 import de.jplag.emf.MetamodelToken;
-import de.jplag.emf.MetamodelTokenType;
+import de.jplag.emf.normalization.ModelSorter;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
@@ -58,9 +59,10 @@ public class EcoreParser extends AbstractParser {
         if (model == null) {
             throw new ParsingException(file, "failed to load model");
         } else {
+            normalizeOrder(model);
             treeView = createView(file, model);
+            visitor = createMetamodelVisitor();
             for (EObject root : model.getContents()) {
-                visitor = createMetamodelVisitor();
                 visitor.visit(root);
             }
             tokens.add(Token.fileEnd(currentFile));
@@ -86,6 +88,13 @@ public class EcoreParser extends AbstractParser {
     }
 
     /**
+     * Extension point for subclasses to employ different normalization.
+     */
+    protected void normalizeOrder(Resource modelResource) {
+        ModelSorter.sort(modelResource, new MetamodelElementTokenizer());
+    }
+
+    /**
      * Extension point for subclasses to employ different token generators.
      * @return a token generating metamodel visitor.
      */
@@ -98,7 +107,7 @@ public class EcoreParser extends AbstractParser {
      * @param type is the token type.
      * @param source is the corresponding {@link EObject} for which the token is added.
      */
-    void addToken(MetamodelTokenType type, EObject source) {
+    protected void addToken(TokenType type, EObject source) {
         MetamodelToken token = new MetamodelToken(type, currentFile, source);
         tokens.add(treeView.convertToMetadataEnrichedToken(token));
     }

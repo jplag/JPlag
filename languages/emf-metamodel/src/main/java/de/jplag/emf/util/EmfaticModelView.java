@@ -37,7 +37,7 @@ public final class EmfaticModelView extends AbstractModelView {
     private final List<String> hashedLines; // code for model element tracing lookup
     private final Map<ENamedElement, Integer> elementToLine; // maps model elements to Emfatic code line numbers
 
-    private Copier modelCopier; // Allows to trace between original and copied elements
+    private final Copier modelCopier; // Allows to trace between original and copied elements
     private int lastLineIndex; // last line given to a token
 
     /**
@@ -82,7 +82,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * elements in subsequently generated Emfatic code while avoiding name collisions.
      */
     private final void replaceElementNamesWithHashes(Resource copiedResource) {
-        AbstractMetamodelVisitor renamer = new AbstractMetamodelVisitor(false) {
+        AbstractMetamodelVisitor renamer = new AbstractMetamodelVisitor() {
             @Override
             protected void visitENamedElement(ENamedElement eNamedElement) {
                 eNamedElement.setName(Integer.toString(eNamedElement.hashCode()));

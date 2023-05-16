@@ -23,7 +23,7 @@ public class MetamodelToken extends Token {
      * @param file is the source model file.
      * @param eObject is the corresponding eObject in the model from which this token was extracted.
      */
-    public MetamodelToken(MetamodelTokenType type, File file, EObject eObject) {
+    public MetamodelToken(TokenType type, File file, EObject eObject) {
         this(type, file, new TokenTrace(), Optional.of(eObject));
     }
 

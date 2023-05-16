@@ -53,10 +53,6 @@ public class MetamodelTreeView extends AbstractModelView {
         private static final String INDENTATION = "  ";
         private static final String NAME_SEPARATOR = " : ";
 
-        private TreeViewBuilder() {
-            super(false);
-        }
-
         @Override
         protected void visitEObject(EObject eObject) {
             String prefix = INDENTATION.repeat(getCurrentTreeDepth());

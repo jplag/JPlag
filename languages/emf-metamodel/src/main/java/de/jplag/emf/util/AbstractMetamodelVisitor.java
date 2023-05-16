@@ -1,7 +1,5 @@
 package de.jplag.emf.util;
 
-import java.util.ArrayList;
-
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -26,12 +24,6 @@ import org.eclipse.emf.ecore.ETypeParameter;
  */
 public abstract class AbstractMetamodelVisitor {
 
-    private final boolean sortContainmentsByType;
-
-    protected AbstractMetamodelVisitor(boolean sortContainmentsByType) {
-        this.sortContainmentsByType = sortContainmentsByType;
-    }
-
     private int currentTreeDepth;
 
     /**
@@ -48,6 +40,7 @@ public abstract class AbstractMetamodelVisitor {
      * @param eObject is the EObject to visit.
      */
     public final void visit(EObject eObject) {
+
         visitEObject(eObject);
         if (eObject instanceof EPackage ePackage) {
             visitEPackage(ePackage);
@@ -98,13 +91,8 @@ public abstract class AbstractMetamodelVisitor {
             visitENamedElement(eNamedElement);
         }
 
-        var children = new ArrayList<>(eObject.eContents());
-        if (sortContainmentsByType) {
-            children.sort((first, second) -> first.eClass().getName().compareTo(second.eClass().getName()));
-        }
-
         currentTreeDepth++;
-        for (EObject child : children) {
+        for (EObject child : eObject.eContents()) {
             visit(child);
         }
         currentTreeDepth--;
