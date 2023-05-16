@@ -18,23 +18,26 @@ public abstract class CommandLineInterfaceTest {
     protected JPlagOptions options;
 
     /**
-     * Builds a CLI string for a CLI argument and a value.
-     * @param flag is the CLI argument.
-     * @param value is the value for that argument.
-     * @return <code>"flag value"</code>
+     * @return An empty {@link ArgumentBuilder}
      */
-    protected String buildArgument(String flag, String value) {
-        return flag + "=" + value;
+    protected ArgumentBuilder arguments() {
+        return new ArgumentBuilder();
+    }
+
+    /**
+     * @return A {@link ArgumentBuilder} containing the CURRENT_DIRECTORY as the root directory
+     */
+    protected ArgumentBuilder defaultArguments() {
+        return arguments().rootDirectory(CURRENT_DIRECTORY);
     }
 
     /**
      * Builds {@link JPlagOptions} via the command line interface. Sets {@link CommandLineInterfaceTest#cli}
-     * @param arguments are the command line interface arguments.
+     * @param builder The argument builder containing the values to pass to the cli
      */
-    protected void buildOptionsFromCLI(String... arguments) {
+    protected void buildOptionsFromCLI(ArgumentBuilder builder) throws CliException {
         cli = new CLI();
-        CommandLine.ParseResult result = cli.parseOptions(arguments);
-        // System.out.println("Parsed arguments: " + parsedKeys(arguments));
+        CommandLine.ParseResult result = cli.parseOptions(builder.getArgumentsAsArray());
         options = cli.buildOptionsFromArguments(result);
     }
 

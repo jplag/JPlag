@@ -1,7 +1,13 @@
 package de.jplag.cli;
 
-public class CliException extends RuntimeException {
+import de.jplag.exceptions.ExitException;
+
+public class CliException extends ExitException {
     public CliException(String message) {
         super(message);
+    }
+
+    public CliException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

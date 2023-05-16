@@ -1,7 +1,7 @@
 package de.jplag.cli;
 
-import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import org.junit.jupiter.api.Test;
 
@@ -10,38 +10,33 @@ import de.jplag.options.JPlagOptions;
 class StoredMatchesTest extends CommandLineInterfaceTest {
 
     @Test
-    void testDefault() {
-        buildOptionsFromCLI(CURRENT_DIRECTORY);
+    void testDefault() throws CliException {
+        buildOptionsFromCLI(defaultArguments());
         assertEquals(JPlagOptions.DEFAULT_SHOWN_COMPARISONS, options.maximumNumberOfComparisons());
     }
 
     @Test
-    void testValidThreshold() {
+    void testValidThreshold() throws CliException {
         int expectedValue = 999;
-        String argument = buildArgument("-n", Integer.toString(expectedValue));
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+        buildOptionsFromCLI(defaultArguments().shownComparisons(expectedValue));
         assertEquals(expectedValue, options.maximumNumberOfComparisons());
     }
 
     @Test
-    void testAll() {
+    void testAll() throws CliException {
         int expectedValue = JPlagOptions.SHOW_ALL_COMPARISONS;
-        String argument = buildArgument("-n", Integer.toString(expectedValue));
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+        buildOptionsFromCLI(defaultArguments().shownComparisons(expectedValue));
         assertEquals(expectedValue, options.maximumNumberOfComparisons());
     }
 
     @Test
-    void testLowerBound() {
-        String argument = buildArgument("-n", Integer.toString(-2));
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+    void testLowerBound() throws CliException {
+        buildOptionsFromCLI(defaultArguments().shownComparisons(-2));
         assertEquals(JPlagOptions.SHOW_ALL_COMPARISONS, options.maximumNumberOfComparisons());
     }
 
     @Test
-    void testInvalidThreshold() throws Exception {
-        String argument = buildArgument("-n", "Not an integer...");
-        int statusCode = catchSystemExit(() -> buildOptionsFromCLI(argument, CURRENT_DIRECTORY));
-        assertEquals(1, statusCode);
+    void testInvalidThreshold() {
+        assertThrowsExactly(CliException.class, () -> buildOptionsFromCLI(defaultArguments().shownComparisons("Not an integer...")));
     }
 }
