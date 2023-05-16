@@ -22,9 +22,11 @@ public enum JavaTokenType implements TokenType {
     J_SWITCH_END("}SWITCH"), // check
     J_CASE("CASE"), // check
     J_TRY_BEGIN("TRY{"), // check
+    J_TRY_END("}TRY"), // check
     J_CATCH_BEGIN("CATCH{"), // check
     J_CATCH_END("}CATCH"), // check
-    J_FINALLY("FINALLY"), // check
+    J_FINALLY_BEGIN("FINALLY{"), // check
+    J_FINALLY_END("}FINALLY"), // check
     J_IF_BEGIN("IF{"), // check
     J_ELSE("ELSE"), // check
     J_IF_END("}IF"), // check
@@ -61,9 +63,6 @@ public enum JavaTokenType implements TokenType {
     J_ANNO_T_END("}ANNO_T"), // check
     J_ANNO_C_BEGIN("ANNO_C{"), // ??
     J_ANNO_C_END("}ANNO_C"), // ??
-
-    // new in 1.7
-    J_TRY_WITH_RESOURCE("TRY_RES"), // check
 
     // new in 1.9
     J_REQUIRES("REQUIRES"), // check
