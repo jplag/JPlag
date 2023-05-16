@@ -75,10 +75,4 @@ public class MetamodelTokenGenerator extends AbstractMetamodelVisitor {
         parser.addToken(ENUM_END, eEnum);
     }
 
-    @Override
-    protected void leaveEOperation(EOperation eOperation) {
-        // ATTACK SURFACE BECOMES LARGER, operations already have many tokens
-        // parser.addToken(OPERATION_END, eOperation);
-    }
-
 }
