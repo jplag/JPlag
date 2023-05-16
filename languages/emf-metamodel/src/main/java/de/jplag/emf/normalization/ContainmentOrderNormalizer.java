@@ -52,7 +52,7 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         }
 
         // 1. comparison by token type
-        int comparisonByType = firstType.getClass().toString().compareTo(secondType.getClass().toString());
+        int comparisonByType = firstType.toString().compareTo(secondType.toString());
         if (comparisonByType != 0) {
             return comparisonByType;
         }
