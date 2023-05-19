@@ -12,7 +12,7 @@
         <dependency>
             <groupId>org.eclipse.emfatic</groupId>
             <artifactId>org.eclipse.emfatic.core</artifactId>
-            <version>1.0.0</version>
+            <version>${emfatic.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>

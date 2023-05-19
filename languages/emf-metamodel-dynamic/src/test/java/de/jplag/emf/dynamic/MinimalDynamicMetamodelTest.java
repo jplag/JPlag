@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,7 @@ class MinimalDynamicMetamodelTest {
     }
 
     @Test
+    @DisplayName("Test tokens generated from example metamodels")
     void testBookstoreMetamodels() throws ParsingException {
         List<File> testFiles = Arrays.stream(TEST_SUBJECTS).map(path -> new File(BASE_PATH.toFile(), path)).toList();
         List<Token> result = language.parse(new HashSet<>(testFiles));

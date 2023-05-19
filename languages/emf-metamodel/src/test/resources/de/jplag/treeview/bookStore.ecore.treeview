@@ -1,0 +1,13 @@
+BookStorePackage : EPackage
+  BookStore : EClass
+    owner : EAttribute
+      EGenericType
+    location : EAttribute
+      EGenericType
+    books : EReference
+      EGenericType
+  Book : EClass
+    name : EAttribute
+      EGenericType
+    isbn : EAttribute
+      EGenericType

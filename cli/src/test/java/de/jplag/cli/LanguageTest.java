@@ -28,7 +28,7 @@ class LanguageTest extends CommandLineInterfaceTest {
     @Test
     void testLoading() {
         var languages = LanguageLoader.getAllAvailableLanguages();
-        assertEquals(15, languages.size(), "Loaded Languages: " + languages.keySet());
+        assertEquals(16, languages.size(), "Loaded Languages: " + languages.keySet());
     }
 
     @Test

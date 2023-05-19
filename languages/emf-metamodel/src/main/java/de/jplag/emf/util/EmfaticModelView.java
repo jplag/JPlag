@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.emfatic.core.generator.emfatic.Writer;
 
 import de.jplag.Token;
+import de.jplag.TokenTrace;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.MetamodelTokenType;
 
@@ -22,7 +23,6 @@ import de.jplag.emf.MetamodelTokenType;
  * Textual view of an EMF metamodel based on Emfatic. Emfatic code is generated for the metamodel and the model elements
  * are then traced to line in the code. The tracing is done via hashes as model element names and keyword detection via
  * regex matching. The tracing is requires, as Emfatic does not provide it itself.
- * @author Timur Saglam
  */
 public final class EmfaticModelView extends AbstractModelView {
     // The following regular expressions match keywords of the Emfatic syntax:
@@ -37,7 +37,7 @@ public final class EmfaticModelView extends AbstractModelView {
     private final List<String> hashedLines; // code for model element tracing lookup
     private final Map<ENamedElement, Integer> elementToLine; // maps model elements to Emfatic code line numbers
 
-    private Copier modelCopier; // Allows to trace between original and copied elements
+    private final Copier modelCopier; // Allows to trace between original and copied elements
     private int lastLineIndex; // last line given to a token
 
     /**
@@ -62,6 +62,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * @param token is the existing token without tracing information.
      * @return the enriched token, with the tracing information corresponding to this view.
      */
+    @Override
     public MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token) {
         int lineIndex = calculateLineIndexOf(token);
         String line = lines.get(lineIndex);
@@ -72,7 +73,8 @@ public final class EmfaticModelView extends AbstractModelView {
         lineIndex++;
         columnIndex += columnIndex == Token.NO_VALUE ? 0 : 1;
 
-        return new MetamodelToken(token.getType(), token.getFile(), lineIndex, columnIndex, length, token.getEObject());
+        TokenTrace trace = new TokenTrace(lineIndex, columnIndex, length);
+        return new MetamodelToken(token.getType(), token.getFile(), trace, token.getEObject());
     }
 
     /**
@@ -80,7 +82,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * elements in subsequently generated Emfatic code while avoiding name collisions.
      */
     private final void replaceElementNamesWithHashes(Resource copiedResource) {
-        AbstractMetamodelVisitor renamer = new AbstractMetamodelVisitor(false) {
+        AbstractMetamodelVisitor renamer = new AbstractMetamodelVisitor() {
             @Override
             protected void visitENamedElement(ENamedElement eNamedElement) {
                 eNamedElement.setName(Integer.toString(eNamedElement.hashCode()));
