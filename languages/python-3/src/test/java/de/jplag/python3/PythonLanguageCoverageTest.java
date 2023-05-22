@@ -19,6 +19,9 @@ public class PythonLanguageCoverageTest {
     private static final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "python3").toFile();
     private static final String[] tokenCoverageFileNames = {"test_utils.py"};
 
+    private static final String[] lineIgnorePrefixes = {"else:", "elif", "#", "pass"};
+    private static final String multilineStringMarker = "\"\"\"";
+
     private final Language language = new Language();
 
     @ParameterizedTest
@@ -77,23 +80,37 @@ public class PythonLanguageCoverageTest {
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             if (!inMultilineString) {
-                if (!(line.isBlank() || line.trim().startsWith("else:") || line.trim().startsWith("elif") || line.trim().equals("pass")
-                        || line.trim().startsWith("#"))) {
-                    if (line.trim().startsWith("\"\"\"")) {
-                        if (!(line.trim().endsWith("\"\"\"") && line.trim().length() > 3)) {
-                            inMultilineString = true;
-                        }
-                    } else {
-                        relevantLineIndices.add(i + 1);
-                    }
+                if (isLineInlineIgnore(line)) {
+                    continue;
+                }
+
+                if (isMultilineStringStart(line)) {
+                    inMultilineString = true;
+                    continue;
                 }
             } else {
-                if (line.trim().endsWith("\"\"\"")) {
+                if (isMultilineStringEnd(line)) {
                     inMultilineString = false;
                 }
+                continue;
             }
+
+            relevantLineIndices.add(i + 1);
         }
 
         return relevantLineIndices;
+    }
+
+    private boolean isLineInlineIgnore(String line) {
+        return line.isBlank() || Arrays.stream(lineIgnorePrefixes).anyMatch(it -> line.trim().startsWith(it))
+                || (line.trim().startsWith(multilineStringMarker) && line.trim().substring(3).contains(multilineStringMarker));
+    }
+
+    private boolean isMultilineStringStart(String line) {
+        return line.trim().startsWith(multilineStringMarker);
+    }
+
+    private boolean isMultilineStringEnd(String line) {
+        return line.trim().contains(multilineStringMarker);
     }
 }
