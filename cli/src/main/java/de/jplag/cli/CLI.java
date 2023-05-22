@@ -66,11 +66,7 @@ public final class CLI {
 
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
                 JPlagOptions options = cli.buildOptionsFromArguments(parseResult);
-                JPlag jplag = new JPlag(options);
-
-                logger.debug("JPlag initialized");
-
-                JPlagResult result = jplag.run();
+                JPlagResult result = JPlag.run(options);
                 ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
                 reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
             }

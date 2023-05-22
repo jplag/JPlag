@@ -1,7 +1,7 @@
 package de.jplag.python3;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import de.jplag.TokenType;
 import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.File_inputContext;
+import de.jplag.util.FileUtils;
 
 public class Parser extends AbstractParser {
 
@@ -43,11 +44,11 @@ public class Parser extends AbstractParser {
     }
 
     private void parseFile(File file) throws ParsingException {
-        try (FileInputStream fileInputStream = new FileInputStream((file))) {
+        try (BufferedReader reader = FileUtils.openFileReader(file)) {
             currentFile = file;
 
             // create a lexer that feeds off of input CharStream
-            Python3Lexer lexer = new Python3Lexer(CharStreams.fromStream(fileInputStream));
+            Python3Lexer lexer = new Python3Lexer(CharStreams.fromReader(reader));
 
             // create a buffer of tokens pulled from the lexer
             CommonTokenStream tokens = new CommonTokenStream(lexer);

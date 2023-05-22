@@ -1,30 +1,18 @@
 <template>
   <div class="container">
     <img alt="JPlag" src="@/assets/logo-nobg.png" />
-    <error-message :message="message"/>
-    <error-router :to="to" :routerInfo="routerInfo"/>
+    <error-message :message="message" />
+    <error-router :to="to" :routerInfo="routerInfo" />
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
-import ErrorMessage from "@/components/ErrorMessage.vue";
-import ErrorRouter from "@/components/ErrorRouter.vue";
+<script setup lang="ts">
+import ErrorMessage from '@/components/ErrorMessage.vue'
+import ErrorRouter from '@/components/ErrorRouter.vue'
 
-export default defineComponent({
-  name: "OverviewErrorView",
-  components: {ErrorRouter, ErrorMessage},
-  setup() {
-    const message = history.state.message;
-    const to = history.state.to;
-    const routerInfo =history.state.routerInfo;
-    return{
-      message,
-      to,
-      routerInfo
-    }
-  },
-});
+const message = history.state.message as string
+const to = history.state.to as string
+const routerInfo = history.state.routerInfo as string
 </script>
 
 <style scoped>

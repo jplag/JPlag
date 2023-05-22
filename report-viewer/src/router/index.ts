@@ -1,36 +1,37 @@
-import "./public-path"
-import {createRouter, createWebHistory, RouteRecordRaw} from "vue-router";
+import { createRouter, createWebHistory } from 'vue-router'
+import FileUploadView from '@/views/FileUploadView.vue'
+import OverviewView from '@/views/OverviewView.vue'
+import ComparisonView from '@/views/ComparisonView.vue'
+import ErrorView from '@/views/ErrorView.vue'
 
 /**
- * Router containing the navigation destinations.
+ * The router is used to navigate between the different views of the application.
  */
-const routes: Array<RouteRecordRaw> = [
-  {
-    path: "/",
-    name: "FileUploadView",
-    component: () => import('@/views/FileUploadView.vue'),
-  },
-  {
-    path: "/overview",
-    name: "OverviewView",
-    component: () => import('@/views/OverviewView.vue'),
-  },
-  {
-    path: "/comparison/:firstId/:secondId",
-    name: "ComparisonView",
-    component: () => import('@/views/ComparisonView.vue'),
-    props: true,
-  },
-  {
-    path: "/error",
-    name: "ErrorView",
-    component: () => import('@/views/ErrorView.vue'),
-  },
-];
-
 const router = createRouter({
-  history: createWebHistory(__webpack_public_path__),
-  routes,
-});
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'FileUploadView',
+      component: FileUploadView
+    },
+    {
+      path: '/overview',
+      name: 'OverviewView',
+      component: OverviewView
+    },
+    {
+      path: '/comparison/:firstId/:secondId',
+      name: 'ComparisonView',
+      component: ComparisonView,
+      props: true
+    },
+    {
+      path: '/error',
+      name: 'ErrorView',
+      component: ErrorView
+    }
+  ]
+})
 
-export default router;
+export default router

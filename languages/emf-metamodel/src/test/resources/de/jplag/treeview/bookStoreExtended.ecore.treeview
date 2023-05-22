@@ -1,0 +1,35 @@
+BookStorePackage : EPackage
+  store : EPackage
+    BookStore : EClass
+      owner : EReference
+        EGenericType
+      name : EAttribute
+        EGenericType
+      location : EAttribute
+        EGenericType
+      books : EReference
+        EGenericType
+    Book : EClass
+      name : EAttribute
+        EGenericType
+      isbn : EAttribute
+        EGenericType
+      author : EReference
+        EGenericType
+      genre : EAttribute
+        EGenericType
+    Genre : EEnum
+      NOVEL : EEnumLiteral
+      COOKBOOK : EEnumLiteral
+      BIOGRAPHY : EEnumLiteral
+      TEXTBOOK : EEnumLiteral
+  person : EPackage
+    Author : EClass
+      isStageName : EAttribute
+        EGenericType
+      EGenericType
+    Person : EClass
+      firstName : EAttribute
+        EGenericType
+      lastName : EAttribute
+        EGenericType

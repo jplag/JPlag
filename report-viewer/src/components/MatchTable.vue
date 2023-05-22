@@ -16,20 +16,20 @@
       <tr
         v-for="(match, index) in matches"
         :key="
-          String(index).concat(match.startInFirst).concat(match.startInSecond)
+          String(index).concat(match.startInFirst.toString()).concat(match.startInSecond.toString())
         "
         :style="{ background: match.color }"
         @click="$emit('matchSelected', $event, match)"
       >
         <td>
           <div class="td-content">
-            <p>{{ convertSubmissionIdToName(match.firstFile, id1) }}</p>
+            <p>{{ convertSubmissionIdToName(match.firstFile, id1 || '') }}</p>
             <p>({{ match.startInFirst }} - {{ match.endInFirst }})</p>
           </div>
         </td>
         <td>
           <div class="td-content">
-            <p>{{ convertSubmissionIdToName(match.secondFile, id2) }}</p>
+            <p>{{ convertSubmissionIdToName(match.secondFile, id2 || '') }}</p>
             <p>({{ match.startInSecond }} - {{ match.endInSecond }})</p>
           </div>
         </td>
@@ -39,46 +39,44 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import store from "@/store/store";
+<script setup lang="ts">
+import store from '@/stores/store'
+import type { Match } from '@/model/Match'
 
-export default defineComponent({
-  name: "MatchTable",
-  props: {
-    /**
-     * Matches of the comparison.
-     * type: Array<Match>
-     */
-    matches: {
-      type: Array,
-    },
-    /**
-     * ID of first submission
-     */
-    id1: {
-      type: String,
-    },
-    /**
-     * ID of second submission
-     */
-    id2: {
-      type: String,
-    },
-  },
-  setup(props) {
+defineProps({
   /**
-   * converts the submissionId to the name in the path of match.
-   * @param match
-   * @param submissionId
-   * @return new path of match
+   * Matches of the comparison.
+   * type: Array<Match>
    */
-    const convertSubmissionIdToName=(match: string, submissionId: string):string=>{
-      return match.replace(submissionId, store.getters.submissionDisplayName(submissionId));
-    };
-    return {convertSubmissionIdToName};
+  matches: {
+    type: Array<Match>
   },
-});
+  /**
+   * ID of first submission
+   */
+  id1: {
+    type: String
+  },
+  /**
+   * ID of second submission
+   */
+  id2: {
+    type: String
+  }
+})
+
+defineEmits(['matchSelected'])
+
+/**
+ * converts the submissionId to the name in the path of match.
+ * @param match
+ * @param submissionId
+ * @return new path of match
+ */
+function convertSubmissionIdToName(match: string, submissionId: string): string {
+  const displayName = store().submissionDisplayName(submissionId) || submissionId
+  return match.replace(submissionId, displayName)
+}
 </script>
 
 <style scoped>

@@ -4,38 +4,38 @@
 <template>
   <div class="container">
     <div class="column-list">
-      <p v-for="(id, index) in ids" :key="index"
-         :class="{'selected' : !store.state.anonymous.has(id) && store.state.anonymous.size !== 0 }"
-         @click="emitIdsSent([id])">
-        {{ store.getters.submissionDisplayName(id) }}
+      <p
+        v-for="(id, index) in ids"
+        :key="index"
+        :class="{ selected: !store().anonymous.has(id) && store().anonymous.size !== 0 }"
+        @click="emitIdsSent([id])"
+      >
+        {{ store().submissionDisplayName(id) }}
       </p>
     </div>
     <button @click="emitIdsSent(ids)">Hide/Show all</button>
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent} from "vue";
-import store from "@/store/store"
+<script setup lang="ts">
+import store from '@/stores/store'
 
-export default defineComponent({
-  emits: ["idSent"],
-  name: "IDsList",
-  props: {
-    ids: {
-      type: Array<string>,
-      required: true
-    }
-  },
-  setup(_, {emit}) {
-    const emitIdsSent = (ids: string[]) => {
-      emit('idSent', ids);}
-    return {
-      store,
-      emitIdsSent
-    }
+defineProps({
+  ids: {
+    type: Array<string>,
+    required: true
   }
 })
+
+const emit = defineEmits(['idSent'])
+
+/**
+ * Emits the ids that should be anonymous
+ * @param ids The ids that should be anonymous
+ */
+function emitIdsSent(ids: string[]) {
+  emit('idSent', ids)
+}
 </script>
 
 <style scoped>

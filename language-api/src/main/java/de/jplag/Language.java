@@ -41,6 +41,14 @@ public interface Language {
     List<Token> parse(Set<File> files) throws ParsingException;
 
     /**
+     * Indicates whether the tokens returned by parse have semantic information added to them, i.e. whether the token
+     * attribute semantics is null or not.
+     */
+    default boolean tokensHaveSemantics() {
+        return false;
+    }
+
+    /**
      * Determines whether a fixed-width font should be used to display that language.
      */
     default boolean isPreformatted() {
@@ -68,5 +76,22 @@ public interface Language {
      */
     default LanguageOptions getOptions() {
         return EmptyOptions.instance;
+    }
+
+    /**
+     * Specifies if the submission order is relevant for this language.
+     * @return defaults to false.
+     */
+    default boolean expectsSubmissionOrder() {
+        return false;
+    }
+
+    /**
+     * Re-orders the provided submission according the requirements of the language.
+     * @param submissions is the list of submissions.
+     * @return the re-ordered list.
+     */
+    default List<File> customizeSubmissionOrder(List<File> submissions) {
+        return submissions;
     }
 }

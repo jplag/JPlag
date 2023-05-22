@@ -8,8 +8,7 @@
       {{ comparison.secondSubmissionId }}
     </h1>
     <p v-for="(cluster, index) in clusters" :key="index" @click="toggleDialog">
-      {{ index + 1 }}. Members:
-      <span id="members">{{ getMemberNames(cluster) }}</span> - Average
+      {{ index + 1 }}. Members: <span id="members">{{ getMemberNames(cluster) }}</span> - Average
       similarity: {{ cluster.averageSimilarity * 100 }}%
       <GDialog v-model="dialog" fullscreen>
         <div id="dialog-header">
@@ -21,48 +20,50 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, PropType } from "vue";
-import { GDialog } from "gitart-vue-dialog";
-import ClusterRadarChart from "@/components/ClusterRadarChart.vue";
-import { ClusterListElement } from "@/model/ClusterListElement";
-import { ComparisonListElement } from "@/model/ComparisonListElement";
-export default defineComponent({
-  name: "ClustersList",
-  components: { ClusterRadarChart, GDialog },
-  props: {
-    comparison: {
-      type: Object as PropType<ComparisonListElement>,
-      required: true,
+<script setup lang="ts">
+import type { PropType } from 'vue'
+import type { ClusterListElement } from '@/model/ClusterListElement'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
 
-    },
-    clusters: {
-      type: Array<ClusterListElement>,
-      required: true
-  },
-  },
+import { ref } from 'vue'
+import { GDialog } from 'gitart-vue-dialog'
+import ClusterRadarChart from '@/components/ClusterRadarChart.vue'
 
-  setup() {
-    const dialog = ref(false);
-    const toggleDialog = () => (dialog.value = !dialog.value);
-    const getMemberNames = (cluster: ClusterListElement) => {
-      const membersIterator = cluster.members.keys();
-      const members = Array.from(membersIterator);
-      let concatenatedMembers = "";
-      const maxMembersToShow = 5;
-      concatenatedMembers = members.slice(0, maxMembersToShow).join(", ");
-      if (members.length > maxMembersToShow) {
-        concatenatedMembers += ",...";
-      }
-      return concatenatedMembers;
-    };
-    return {
-      dialog,
-      toggleDialog,
-      getMemberNames,
-    };
+defineProps({
+  comparison: {
+    type: Object as PropType<ComparisonListElement>,
+    required: true
   },
-});
+  clusters: {
+    type: Array<ClusterListElement>,
+    required: true
+  }
+})
+
+const dialog = ref(false)
+
+/**
+ * Toggles the dialog visibility.
+ */
+function toggleDialog() {
+  dialog.value = !dialog.value
+}
+
+/**
+ * @param cluster The cluster to get the members from.
+ * @returns The concatenated string of the first 5 members of the cluster.
+ */
+function getMemberNames(cluster: ClusterListElement) {
+  const membersIterator = cluster.members.keys()
+  const members = Array.from(membersIterator)
+  let concatenatedMembers = ''
+  const maxMembersToShow = 5
+  concatenatedMembers = members.slice(0, maxMembersToShow).join(', ')
+  if (members.length > maxMembersToShow) {
+    concatenatedMembers += ',...'
+  }
+  return concatenatedMembers
+}
 </script>
 
 <style scoped>
