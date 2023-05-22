@@ -1,0 +1,29 @@
+BookStorePackage : EPackage
+  store : EPackage
+    Store : EClass
+      owner : EReference
+        EGenericType
+      name : EAttribute
+        EGenericType
+      location : EAttribute
+        EGenericType
+    BookStore : EClass
+      books : EReference
+        EGenericType
+      EGenericType
+    Book : EClass
+      title : EAttribute
+        EGenericType
+      isbn : EAttribute
+        EGenericType
+      author : EReference
+        EGenericType
+      category : EAttribute
+        EGenericType
+    Person : EClass
+      firstName : EAttribute
+        EGenericType
+      lastName : EAttribute
+        EGenericType
+      isStageName : EAttribute
+        EGenericType
