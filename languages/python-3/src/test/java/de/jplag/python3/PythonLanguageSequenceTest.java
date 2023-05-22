@@ -21,7 +21,7 @@ public class PythonLanguageSequenceTest {
 
     @ParameterizedTest
     @MethodSource("provideFileData")
-    public void testTokenSequences(File file, TokenType[] sequence) throws ParsingException {
+    void testTokenSequences(File file, TokenType[] sequence) throws ParsingException {
         TokenType[] fileTokens = language.parse(Set.of(file)).stream().map(Token::getType).toArray(TokenType[]::new);
 
         Assertions.assertArrayEquals(sequence, fileTokens);

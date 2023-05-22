@@ -26,7 +26,7 @@ public class PythonLanguageCoverageTest {
 
     @ParameterizedTest
     @MethodSource("collectSourceCoverageTestFiles")
-    public void testSourceCoverage(File testFile) throws ParsingException, IOException {
+    void testSourceCoverage(File testFile) throws ParsingException, IOException {
         List<Token> tokens = language.parse(Set.of(testFile));
         List<Integer> lines = new ArrayList<>(getRelevantSourceFiles(testFile));
 
@@ -39,7 +39,7 @@ public class PythonLanguageCoverageTest {
 
     @ParameterizedTest
     @MethodSource("collectTokenCoverageTestFiles")
-    public void testTokenCoverage(File testFile) throws ParsingException {
+    void testTokenCoverage(File testFile) throws ParsingException {
         Set<TokenType> foundTokens = language.parse(Set.of(testFile)).stream().map(Token::getType).collect(Collectors.toSet());
         List<TokenType> allTokens = new ArrayList<>(List.of(Python3TokenType.values()));
 
@@ -52,7 +52,7 @@ public class PythonLanguageCoverageTest {
 
     @ParameterizedTest
     @MethodSource("collectSourceCoverageTestFiles")
-    public void testMonotoneTokenOrder(File testFile) throws ParsingException {
+    void testMonotoneTokenOrder(File testFile) throws ParsingException {
         List<Token> tokens = language.parse(Set.of(testFile));
 
         for (int i = 0; i < tokens.size() - 2; i++) {

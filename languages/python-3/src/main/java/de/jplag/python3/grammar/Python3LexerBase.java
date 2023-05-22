@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.*;
 
 abstract class Python3LexerBase extends Lexer {
     private LinkedList<Token> tokens = new LinkedList<>();
-    private Stack<Integer> indents = new Stack<>();
+    private Deque<Integer> indents = new LinkedList<>();
     private int opened = 0;
     private Token lastToken = null;
 
@@ -31,7 +31,7 @@ abstract class Python3LexerBase extends Lexer {
                 indents.pop();
             }
 
-            this.emit(commonToken(Python3Lexer.EOF, "<EOF>"));
+            this.emit(commonToken(EOF, "<EOF>"));
         }
 
         Token next = super.nextToken();
@@ -126,7 +126,7 @@ abstract class Python3LexerBase extends Lexer {
     @Override
     public void reset() {
         tokens = new LinkedList<>();
-        indents = new Stack<>();
+        indents = new LinkedList<>();
         opened = 0;
         lastToken = null;
         super.reset();

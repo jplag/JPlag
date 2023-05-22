@@ -7,11 +7,11 @@ public abstract class Python3ParserBase extends Parser {
         super(input);
     }
 
-    public boolean CannotBePlusMinus() {
+    public boolean cannotBePlusMinus() {
         return true;
     }
 
-    public boolean CannotBeDotLpEq() {
+    public boolean cannotBeDotLpEq() {
         return true;
     }
 }
