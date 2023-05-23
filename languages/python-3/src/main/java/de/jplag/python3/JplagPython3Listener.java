@@ -33,10 +33,10 @@ import static de.jplag.python3.Python3TokenType.YIELD;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.jplag.python3.grammar.Python3BaseListener;
 import de.jplag.python3.grammar.Python3Parser;
+import de.jplag.python3.grammar.Python3ParserBaseListener;
 
-public class JplagPython3Listener extends Python3BaseListener {
+public class JplagPython3Listener extends Python3ParserBaseListener {
 
     private final Parser parser;
 
@@ -56,7 +56,7 @@ public class JplagPython3Listener extends Python3BaseListener {
 
     @Override
     public void exitDecorated(Python3Parser.DecoratedContext ctx) {
-        parser.addEnd(DEC_END, ctx.getStart());
+        parser.addEnd(DEC_END, ctx.getStop());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class JplagPython3Listener extends Python3BaseListener {
 
     @Override
     public void exitExcept_clause(Python3Parser.Except_clauseContext ctx) {
-        parser.addEnd(EXCEPT_END, ctx.getStart());
+        parser.addEnd(EXCEPT_END, ctx.getStop());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class JplagPython3Listener extends Python3BaseListener {
 
     @Override
     public void exitWhile_stmt(Python3Parser.While_stmtContext ctx) {
-        parser.addEnd(WHILE_END, ctx.getStart());
+        parser.addEnd(WHILE_END, ctx.getStop());
     }
 
     @Override
@@ -133,7 +133,7 @@ public class JplagPython3Listener extends Python3BaseListener {
 
     @Override
     public void exitIf_stmt(Python3Parser.If_stmtContext ctx) {
-        parser.addEnd(IF_END, ctx.getStart());
+        parser.addEnd(IF_END, ctx.getStop());
     }
 
     @Override
@@ -143,7 +143,7 @@ public class JplagPython3Listener extends Python3BaseListener {
 
     @Override
     public void exitWith_stmt(Python3Parser.With_stmtContext ctx) {
-        parser.addEnd(WITH_END, ctx.getStart());
+        parser.addEnd(WITH_END, ctx.getStop());
     }
 
     @Override
@@ -153,7 +153,7 @@ public class JplagPython3Listener extends Python3BaseListener {
 
     @Override
     public void exitClassdef(Python3Parser.ClassdefContext ctx) {
-        parser.addEnd(CLASS_END, ctx.getStart());
+        parser.addEnd(CLASS_END, ctx.getStop());
     }
 
     @Override
@@ -172,7 +172,7 @@ public class JplagPython3Listener extends Python3BaseListener {
 
     @Override
     public void exitFuncdef(Python3Parser.FuncdefContext ctx) {
-        parser.addEnd(METHOD_END, ctx.getStart());
+        parser.addEnd(METHOD_END, ctx.getStop());
     }
 
     @Override
@@ -197,7 +197,7 @@ public class JplagPython3Listener extends Python3BaseListener {
 
     @Override
     public void exitFor_stmt(Python3Parser.For_stmtContext ctx) {
-        parser.addEnd(FOR_END, ctx.getStart());
+        parser.addEnd(FOR_END, ctx.getStop());
     }
 
     @Override
