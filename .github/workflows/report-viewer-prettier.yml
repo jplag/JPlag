@@ -1,4 +1,4 @@
-name: Report Viewer Prettier Check Workflow # Copy of report viewer deployment, but without deployment for PRs :)
+name: Report Viewer Prettier Check Workflow # Checks the report viewer against the prettier rules
 
 on:
  workflow_dispatch:
