@@ -34,4 +34,4 @@ jobs:
         run: |
           npm install
           npx playwright install --with-deps
-          npm run test:e2s
+          npm run test:e2e
