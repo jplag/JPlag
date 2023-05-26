@@ -1,12 +1,12 @@
 name: Report Viewer Prettier Check Workflow # Checks the report viewer against the prettier rules
 
 on:
- workflow_dispatch:
- push:
-    paths:
+  workflow_dispatch:
+  push:
+    path:
       - report-viewer/**
-    pull_request:
-      types: [ opened, synchronize, reopened ]
+  pull_request:
+    types: [opened, synchronize, reopened]
       
 jobs:
   pre_job:

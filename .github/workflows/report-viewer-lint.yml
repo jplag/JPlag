@@ -1,12 +1,13 @@
 name: Report Viewer ESLint Workflow # Checks linting of report viewer
 
+
 on:
- workflow_dispatch:
- push:
-    paths:
+  workflow_dispatch:
+  push:
+    path:
       - report-viewer/**
-    pull_request:
-      types: [ opened, synchronize, reopened ]
+  pull_request:
+    types: [opened, synchronize, reopened]
       
 jobs:
   pre_job:
