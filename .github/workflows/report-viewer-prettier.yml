@@ -36,6 +36,5 @@ jobs:
         working-directory: report-viewer
         run: |
           npm install
-          npm install prettier
-          prettier --check src/**/*.ts
-          prettier --check src/**/*.vue
+          npx prettier --check src/**/*.ts
+          npx prettier --check src/**/*.vue
