@@ -64,42 +64,98 @@ JPlag can either be used via the CLI or directly via its Java API. For more info
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
 
 ```
-positional arguments:
-  rootDir                Root-directory with submissions to check for plagiarism
+In the new version the language can either be set with the -l parameter or as a subcommand.
+As a subcommand language specific arguments can be set. As of now, there are no such arguments. They will be added to this description.
 
-named arguments:
-  -h, --help             show this help message and exit
-  -new NEW [NEW ...]     Root-directory with submissions to check for plagiarism (same as the root directory)
-  -old OLD [OLD ...]     Root-directory with prior submissions to compare against
-  -l {cpp,csharp,emf,go,java,kotlin,python3,rlang,rust,scala,scheme,swift,text}
-                         Select the language to parse the submissions (default: java)
-  -bc BC                 Path of  the  directory  containing  the  base  code  (common  framework  used  in  all
-                         submissions)
-  -t T                   Tunes the comparison sensitivity by adjusting the  minimum token required to be counted
-                         as a matching section. A smaller <n>  increases  the sensitivity but might lead to more
-                         false-positives
-  -n N                   The maximum number of comparisons that will  be  shown  in the generated report, if set
-                         to -1 all comparisons will be shown (default: 100)
-  -r R                   Name of the directory in which the comparison results will be stored (default: result)
+Usage: jplag [OPTIONS] [root-dirs[,root-dirs...]...] [COMMAND]
 
-Advanced:
-  -d                     Debug parser. Non-parsable files will be stored (default: false)
-  -s S                   Look in directories <root-dir>/*/<dir> for programs
-  -p P                   comma-separated list of all filename suffixes that are included
-  -x X                   All files named in this file will be ignored in the comparison (line-separated list)
-  -m M                   Comparison similarity threshold [0.0-1.0]:  All  comparisons  above this threshold will
-                         be saved (default: 0.0)
+      [root-dirs[,root-dirs...]...]
+                       Root-directory with submissions to check for plagiarism
 
-Clustering:
-  --cluster-skip         Skips the clustering (default: false)
-  --cluster-alg {AGGLOMERATIVE,SPECTRAL}
-                         Which clustering algorithm to use. Agglomerative  merges similar submissions bottom up.
-                         Spectral clustering is  combined  with  Bayesian  Optimization  to  execute the k-Means
-                         clustering  algorithm  multiple   times,   hopefully   finding   a   "good"  clustering
+      -bc, --bc, --base-code=<baseCode>
+                       Path of  the  directory  containing  the  base  code
+                         (common  framework  used  in  all submissions)
+
+  -h, --help           display this help and exit
+  -l, --language=<language>
+                       Select the language to parse the submissions (default:
+                         java)
+
+  -n, --shown-comparisons=<shownComparisons>
+                       The maximum number of comparisons that will  be  shown
+                         in the generated report, if set to -1 all comparisons
+                         will be shown (default: 100)
+
+      -new, --new=<newDirectories>[,<newDirectories>...]
+                       Root-directory with submissions to check for plagiarism
+                         (same as the root directory)
+
+      -old, --old=<oldDirectories>[,<oldDirectories>...]
+                       Root-directory with prior submissions to compare against
+
+  -r, --result-directory=<resultFolder>
+                       Name of the directory in which the comparison results
+                         will be stored (default: result)
+
+  -t, --min-tokens=<minTokenMatch>
+                       Tunes the comparison sensitivity by adjusting the
+                         minimum token required to be counted as a matching
+                         section. A smaller <n>  increases  the sensitivity but
+                         might lead to more false-positives
+
+Advanced
+  -d, --debug          Debug parser. Non-parsable files will be stored
+                         (default: false)
+
+  -m, --similarity-threshold=<similarityThreshold>
+                       Comparison similarity threshold [0.0-1.0]:  All
+                         comparisons  above this threshold will be saved
+                         (default: 0.0)
+
+  -p, --suffixes=<suffixes>[,<suffixes>...]
+                       comma-separated list of all filename suffixes that are
+                         included
+
+  -s, --subdirectory=<subdirectory>
+                       Look in directories <root-dir>/*/<dir> for programs
+
+  -x, --exclusion-file=<exclusionFileName>
+                       All files named in this file will be ignored in the
+                         comparison (line-separated list)
+
+Clustering
+      --cluster-alg, --cluster-algorithm=<algorithm>
+                       Which clustering algorithm to use. Agglomerative  merges
+                         similar submissions bottom up. Spectral clustering is
+                         combined  with  Bayesian  Optimization  to  execute
+                         the k-Means clustering  algorithm  multiple   times,
+                         hopefully   finding   a   "good"  clustering
                          automatically. (default: spectral)
-  --cluster-metric {AVG,MIN,MAX,INTERSECTION}
-                         The metric used for clustering. AVG  is  intersection  over  union, MAX can expose some
-                         attempts of obfuscation. (default: MAX)
+
+      --cluster-metric=<metric>
+                       The metric used for clustering. AVG  is  intersection
+                         over  union, MAX can expose some attempts of
+                         obfuscation. (default: MAX)
+
+      --cluster-skip   Skips the clustering (default: false)
+
+Commands:
+  cpp
+  cpp2
+  csharp
+  emf
+  emf-model
+  go
+  java
+  kotlin
+  python3
+  rlang
+  rust
+  scala
+  scheme
+  scxml
+  swift
+  text
 ```
 
 ### Java API
@@ -110,6 +166,7 @@ The new API makes it easy to integrate JPlag's plagiarism detection into externa
 with [`ReadmeCodeExampleTest#testReadmeCodeExample`](core/src/test/java/de/jplag/special/ReadmeCodeExampleTest.java). -->
 ```java
 Language language = new de.jplag.java.Language();
+language.getOptions(); //Use the object returned by this to set language options(same as language specific arguments above).
 Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));
 File baseCode = new File("/path/to/baseCode");
 JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
