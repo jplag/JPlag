@@ -63,8 +63,8 @@ JPlag can either be used via the CLI or directly via its Java API. For more info
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
 
-In the new version the language can either be set with the -l parameter or as a subcommand. If both a subcommand and the -l option are specified, the subcommand will take priority.
-As a subcommand language specific arguments can be set. As of now, there are no such arguments. They will be added to this description.
+The language can either be set with the -l parameter or as a subcommand. If both a subcommand and the -l option are specified, the subcommand will take priority.
+When using the subcommand language specific arguments can be set.
 A list of language specific options can be obtained by requesting the help page of a subcommand (e.g. "jplag java -h").
 
 ```
