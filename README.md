@@ -63,10 +63,10 @@ JPlag can either be used via the CLI or directly via its Java API. For more info
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
 
-```
 In the new version the language can either be set with the -l parameter or as a subcommand.
 As a subcommand language specific arguments can be set. As of now, there are no such arguments. They will be added to this description.
 
+```
 Usage: jplag [OPTIONS] [root-dirs[,root-dirs...]...] [COMMAND]
 
       [root-dirs[,root-dirs...]...]
