@@ -24,7 +24,7 @@ import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
 /**
- * Base class for language module tests. Automatically adds all common tests tpyes for jplag languages.
+ * Base class for language module tests. Automatically adds all common tests types for jplag languages.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class LanguageModuleTest {
@@ -44,9 +44,15 @@ public abstract class LanguageModuleTest {
         this.collector = new TestDataCollector(this.getTestFileLocation());
     }
 
+    /**
+     * Test the configured source files for source line coverage
+     * @param data The source to check
+     * @throws ParsingException If the parser throws some error
+     * @throws IOException If any IO Exception occurs
+     */
     @ParameterizedTest
     @MethodSource("sourceCoverageFiles")
-    void testSourceCoverage(TestData data) throws ParsingException, IOException {
+    final void testSourceCoverage(TestData data) throws ParsingException, IOException {
         if (data != null) {
             List<Token> tokens = data.parseTokens(this.language);
 
@@ -62,13 +68,23 @@ public abstract class LanguageModuleTest {
         }
     }
 
-    List<TestData> sourceCoverageFiles() {
+    /**
+     * Returns all test sources, that need to be checked for source line coverage
+     * @return The test sources
+     */
+    final List<TestData> sourceCoverageFiles() {
         return addNullGuard(this.collector.getSourceCoverageData());
     }
 
+    /**
+     * Checks the configured source files for token coverage
+     * @param data The source to check
+     * @throws ParsingException If the parser throws some error
+     * @throws IOException If any IO Exception occurs
+     */
     @ParameterizedTest
     @MethodSource("tokenCoverageFiles")
-    void testTokenCoverage(TestData data) throws ParsingException, IOException {
+    final void testTokenCoverage(TestData data) throws ParsingException, IOException {
         if (data != null) {
             List<TokenType> foundTokens = data.parseTokens(this.language).stream().map(Token::getType).toList();
             List<TokenType> languageTokens = new ArrayList<>(this.languageTokens);
@@ -79,13 +95,23 @@ public abstract class LanguageModuleTest {
         }
     }
 
-    List<TestData> tokenCoverageFiles() {
+    /**
+     * Returns all test sources, that need to be checked for token coverage.
+     * @return The test sources
+     */
+    final List<TestData> tokenCoverageFiles() {
         return addNullGuard(this.collector.getTokenCoverageData());
     }
 
+    /**
+     * Tests the configured test sources for contained tokens
+     * @param test The source to test
+     * @throws ParsingException If the parser throws some error
+     * @throws IOException If any IO Exception occurs
+     */
     @ParameterizedTest
     @MethodSource("testTokensContainedData")
-    void testTokensContained(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
+    final void testTokensContained(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
         if (test != null) {
             List<TokenType> foundTokens = test.data().parseTokens(this.language).stream().map(Token::getType).toList();
             List<TokenType> requiredTokens = new ArrayList<>(test.tokens());
@@ -99,13 +125,23 @@ public abstract class LanguageModuleTest {
         }
     }
 
-    List<TestDataCollector.TokenListTest> testTokensContainedData() {
+    /**
+     * Returns all test sources, that need to be checked for contained tokens
+     * @return The test sources
+     */
+    final List<TestDataCollector.TokenListTest> testTokensContainedData() {
         return addNullGuard(this.collector.getContainedTokenData());
     }
 
+    /**
+     * Checks the given test sources for an exact token sequence
+     * @param test The source to check
+     * @throws ParsingException If the parser throws some error
+     * @throws IOException If any IO Exception occurs
+     */
     @ParameterizedTest
     @MethodSource("testTokenSequenceData")
-    void testTokenSequence(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
+    final void testTokenSequence(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
         if (test != null) {
             List<TokenType> extracted = test.data().parseTokens(this.language).stream().map(Token::getType).toList();
             List<TokenType> required = new ArrayList<>(test.tokens());
@@ -118,13 +154,23 @@ public abstract class LanguageModuleTest {
         }
     }
 
-    List<TestDataCollector.TokenListTest> testTokenSequenceData() {
+    /**
+     * Returns all test sources, that need to be checked for a matching token sequence
+     * @return The test sources
+     */
+    final List<TestDataCollector.TokenListTest> testTokenSequenceData() {
         return addNullGuard(this.collector.getTokenSequenceTest());
     }
 
+    /**
+     * Tests all configured test sources for a monotone order of tokens
+     * @param data The test source
+     * @throws ParsingException If the parser throws some error
+     * @throws IOException If any IO Exception occurs
+     */
     @ParameterizedTest
     @MethodSource("getAllTestData")
-    void testMonotoneTokenOrder(TestData data) throws ParsingException, IOException {
+    final void testMonotoneTokenOrder(TestData data) throws ParsingException, IOException {
         if (data != null) {
             List<Token> extracted = data.parseTokens(this.language);
 
@@ -140,9 +186,15 @@ public abstract class LanguageModuleTest {
         }
     }
 
+    /**
+     * Checks that all configured test sources end with a FileEnd token
+     * @param data The test source
+     * @throws ParsingException If the parser throws some error
+     * @throws IOException If any IO Exception occurs
+     */
     @ParameterizedTest
     @MethodSource("getAllTestData")
-    void testTokenSequencesEndsWithFileEnd(TestData data) throws ParsingException, IOException {
+    final void testTokenSequencesEndsWithFileEnd(TestData data) throws ParsingException, IOException {
         if (data != null) {
             List<Token> extracted = data.parseTokens(this.language);
 
@@ -151,15 +203,29 @@ public abstract class LanguageModuleTest {
         }
     }
 
-    Set<TestData> getAllTestData() {
+    /**
+     * Returns all configured test sources
+     * @return The test sources
+     */
+    final Set<TestData> getAllTestData() {
         return addNullGuard(this.collector.getAllTestData());
     }
 
+    /**
+     * Collects the test sources
+     */
     @BeforeAll
-    void collectTestData() {
+    final void collectTestData() {
         collectTestData(this.collector);
     }
 
+    /**
+     * Adds null to the data, if it is empty
+     * @param data The list to modify
+     * @param <T> The type of items
+     * @param <C> The collection type
+     * @return The modified list
+     */
     private <T, C extends Collection<T>> C addNullGuard(C data) {
         if (data.size() == 0) {
             data.add(null);
