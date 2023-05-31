@@ -29,7 +29,7 @@ public class CliOptions implements Runnable {
     public File[] oldDirectories = new File[0];
 
     @Option(names = {"--language",
-            "-l"}, arity = "1", converter = LanguageConverter.class, completionCandidates = LanguageCandidates.class, description = "Select the language to parse the submissions (default: java)%n")
+            "-l"}, arity = "1", converter = LanguageConverter.class, completionCandidates = LanguageCandidates.class, description = "Select the language to parse the submissions (default: java). The language names are the same as the subcommands.%n")
     public Language language = defaultLanguage;
 
     @Option(names = {"-bc", "--bc",
