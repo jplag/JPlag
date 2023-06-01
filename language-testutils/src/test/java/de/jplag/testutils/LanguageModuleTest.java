@@ -5,10 +5,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,6 +39,24 @@ public abstract class LanguageModuleTest {
         this.language = language;
         this.languageTokens = languageTokens;
         this.collector = new TestDataCollector(this.getTestFileLocation());
+    }
+
+    /**
+     * Creates a new language module test
+     * @param language The language to test
+     * @param languageTokens All tokens, that can be reported by the module. The end file token can be omitted.
+     */
+    public LanguageModuleTest(Language language, TokenType[] languageTokens) {
+        this(language, Arrays.asList(languageTokens));
+    }
+
+    /**
+     * Creates a new language module test
+     * @param language The language to test
+     * @param tokenEnum The enum containing the token types
+     */
+    public <T extends Enum<T> & TokenType> LanguageModuleTest(Language language, Class<T> tokenEnum) {
+        this(language, tokenEnum.getEnumConstants());
     }
 
     /**

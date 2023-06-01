@@ -1,7 +1,5 @@
 package de.jplag.kotlin;
 
-import java.util.List;
-
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
@@ -11,7 +9,7 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  */
 public class KotlinLanguageTest extends LanguageModuleTest {
     public KotlinLanguageTest() {
-        super(new de.jplag.kotlin.Language(), List.of(KotlinTokenType.values()));
+        super(new de.jplag.kotlin.Language(), KotlinTokenType.class);
     }
 
     @Override
