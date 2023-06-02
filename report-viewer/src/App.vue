@@ -1,11 +1,18 @@
-<script setup lang="ts">
-import { RouterView } from 'vue-router'
-</script>
-
 <template>
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-  <RouterView />
+  <div :class="{ dark: isDark }">
+    <div class="min-h-screen max-h-fit max-w-screen text-black dark:text-amber-50">
+      <RouterView />
+    </div>
+  </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { RouterView } from 'vue-router'
+
+const isDark = ref(false)
+</script>
 
 <style>
 @font-face {
@@ -32,19 +39,5 @@ import { RouterView } from 'vue-router'
   --on-secondary-color: #000000;
   --on-background-color: #303030;
   --shadow-color: #777777;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html,
-body,
-#app {
-  height: 100%;
-  width: 100%;
-  margin: 0;
 }
 </style>
