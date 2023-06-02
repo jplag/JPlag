@@ -10,6 +10,8 @@ import 'highlight.js/styles/vs.css'
 import 'gitart-vue-dialog/dist/style.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
+import './style.css'
+
 const app = createApp(App)
 
 app.use(createPinia())
