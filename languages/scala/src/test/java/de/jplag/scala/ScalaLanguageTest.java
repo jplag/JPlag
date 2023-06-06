@@ -49,11 +49,11 @@ class ScalaLanguageTest {
     private final Logger logger = LoggerFactory.getLogger(ScalaLanguageTest.class);
     private final String[] testFiles = new String[] {"Parser.scala", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "scala").toFile();
-    private Language language;
+    private ScalaLanguage language;
 
     @BeforeEach
     void setup() {
-        language = new Language();
+        language = new ScalaLanguage();
     }
 
     @Test
@@ -110,7 +110,7 @@ class ScalaLanguageTest {
     /**
      * Gets the line numbers of lines containing actual code, omitting empty lines and comment lines.
      * @param lines lines of a code file
-     * @return an array of the line numbers of code lines
+     * @return a list of the line numbers of code lines
      */
     private List<Integer> getCodeLines(List<String> lines) {
         // This boxed boolean can be accessed from within the lambda method below

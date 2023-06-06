@@ -49,11 +49,11 @@ class KotlinLanguageTest {
     private final Logger logger = LoggerFactory.getLogger(KotlinLanguageTest.class);
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE, "Game.kt"};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "kotlin").toFile();
-    private Language language;
+    private KotlinLanguage language;
 
     @BeforeEach
     void setup() {
-        language = new Language();
+        language = new KotlinLanguage();
     }
 
     @Test

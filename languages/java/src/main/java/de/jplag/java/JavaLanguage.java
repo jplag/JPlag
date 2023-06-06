@@ -1,4 +1,4 @@
-package de.jplag.scheme;
+package de.jplag.java;
 
 import java.io.File;
 import java.util.List;
@@ -9,24 +9,27 @@ import org.kohsuke.MetaInfServices;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Language for Java 9 and newer.
+ */
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class JavaLanguage implements de.jplag.Language {
+    private static final String IDENTIFIER = "java";
 
-    private static final String IDENTIFIER = "scheme";
-    private final de.jplag.scheme.Parser parser;
+    private final Parser parser;
 
-    public Language() {
+    public JavaLanguage() {
         parser = new Parser();
     }
 
     @Override
     public String[] suffixes() {
-        return new String[] {".scm", ".SCM", ".ss", ".SS"};
+        return new String[] {".java", ".JAVA"};
     }
 
     @Override
     public String getName() {
-        return "SchemeR4RS Parser [basic markup]";
+        return "Javac based AST plugin";
     }
 
     @Override
@@ -36,11 +39,16 @@ public class Language implements de.jplag.Language {
 
     @Override
     public int minimumTokenMatch() {
-        return 13;
+        return 9;
     }
 
     @Override
     public List<Token> parse(Set<File> files) throws ParsingException {
         return this.parser.parse(files);
+    }
+
+    @Override
+    public boolean tokensHaveSemantics() {
+        return true;
     }
 }

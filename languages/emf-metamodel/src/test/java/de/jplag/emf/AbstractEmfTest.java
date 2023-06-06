@@ -35,14 +35,14 @@ public abstract class AbstractEmfTest {
 
     @BeforeEach
     protected void setUp() {
-        language = new Language();
+        language = new MetamodelLanguage();
         baseDirectory = BASE_PATH.toFile();
         FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }
 
     @AfterEach
     protected void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), Language.VIEW_FILE_SUFFIX);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), MetamodelLanguage.VIEW_FILE_SUFFIX);
     }
 
     /**

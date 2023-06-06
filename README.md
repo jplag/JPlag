@@ -109,7 +109,7 @@ The new API makes it easy to integrate JPlag's plagiarism detection into externa
 <!-- To assure that the code example is always correct, it must be kept in sync
 with [`ReadmeCodeExampleTest#testReadmeCodeExample`](core/src/test/java/de/jplag/special/ReadmeCodeExampleTest.java). -->
 ```java
-Language language = new de.jplag.java.Language();
+Language language = new de.jplag.java.JavaLanguage();
 Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));
 File baseCode = new File("/path/to/baseCode");
 JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);

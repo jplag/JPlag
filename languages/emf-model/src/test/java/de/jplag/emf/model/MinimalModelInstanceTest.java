@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
+import de.jplag.emf.MetamodelLanguage;
 import de.jplag.testutils.FileUtil;
 
 class MinimalModelInstanceTest {
@@ -30,12 +31,12 @@ class MinimalModelInstanceTest {
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "books");
     private static final String[] TEST_SUBJECTS = {"bookStore.ecore", "bookStore.xml", "bookStore2.xml"};
 
-    private Language language;
+    private ModelLanguage language;
     private File baseDirectory;
 
     @BeforeEach
     public void setUp() {
-        language = new Language();
+        language = new ModelLanguage();
         baseDirectory = BASE_PATH.toFile();
         FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }
@@ -49,7 +50,7 @@ class MinimalModelInstanceTest {
         try {
             List<Token> tokens = language.parse(sortedFiles);
             assertNotEquals(0, tokens.size());
-            logger.debug(TokenPrinter.printTokens(tokens, baseDirectory, Optional.of(de.jplag.emf.Language.VIEW_FILE_SUFFIX)));
+            logger.debug(TokenPrinter.printTokens(tokens, baseDirectory, Optional.of(MetamodelLanguage.VIEW_FILE_SUFFIX)));
             logger.info("Parsed tokens: " + tokens);
             assertEquals(7, tokens.size());
         } catch (ParsingException e) {
@@ -60,7 +61,7 @@ class MinimalModelInstanceTest {
 
     @AfterEach
     public void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), Language.VIEW_FILE_SUFFIX);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), ModelLanguage.VIEW_FILE_SUFFIX);
     }
 
 }

@@ -1,5 +1,6 @@
 package de.jplag.emf.dynamic;
 
+import de.jplag.emf.MetamodelLanguage;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
 import de.jplag.emf.parser.EcoreParser;
 
@@ -8,7 +9,7 @@ import de.jplag.emf.parser.EcoreParser;
  * created token set instead of a hand-picked one.
  * @author Timur Saglam
  */
-public class Language extends de.jplag.emf.Language { // currently not included in the CLI
+public class DynamicMetamodelLanguage extends MetamodelLanguage { // currently not included in the CLI
     private static final String NAME = "EMF metamodels (dynamically created token set)";
     private static final String IDENTIFIER = "emf-dynamic";
 
@@ -17,14 +18,14 @@ public class Language extends de.jplag.emf.Language { // currently not included 
     /**
      * Creates an EMF language instance with a dynamic token parser.
      */
-    public Language() {
+    public DynamicMetamodelLanguage() {
         super(new DynamicEcoreParser());
     }
 
     /**
      * Creates an EMF language instance with a custom token parser.
      */
-    public Language(EcoreParser parser) {
+    public DynamicMetamodelLanguage(EcoreParser parser) {
         super(parser);
     }
 

@@ -1,4 +1,4 @@
-package de.jplag.golang;
+package de.jplag.rlang;
 
 import java.io.File;
 import java.util.List;
@@ -9,22 +9,25 @@ import org.kohsuke.MetaInfServices;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * This represents the R language as a language supported by JPlag.
+ */
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class RlangLanguage implements de.jplag.Language {
 
-    private static final String NAME = "Go Parser";
-    private static final String IDENTIFIER = "go";
+    private static final String NAME = "R Parser";
+    private static final String IDENTIFIER = "rlang";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private static final String[] FILE_EXTENSIONS = {".go"};
-    private final GoParserAdapter parserAdapter;
+    private static final String[] FILE_EXTENSION = {".R", ".r"};
+    private final RParserAdapter parserAdapter;
 
-    public Language() {
-        this.parserAdapter = new GoParserAdapter();
+    public RlangLanguage() {
+        this.parserAdapter = new RParserAdapter();
     }
 
     @Override
     public String[] suffixes() {
-        return FILE_EXTENSIONS;
+        return FILE_EXTENSION;
     }
 
     @Override

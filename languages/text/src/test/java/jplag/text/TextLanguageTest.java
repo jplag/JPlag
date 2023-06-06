@@ -23,7 +23,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
-import de.jplag.text.Language;
+import de.jplag.text.PlainTextLanguage;
 
 class TextLanguageTest {
     private final Logger logger = LoggerFactory.getLogger(TextLanguageTest.class);
@@ -36,7 +36,7 @@ class TextLanguageTest {
 
     @BeforeEach
     public void setUp() {
-        language = new Language();
+        language = new PlainTextLanguage();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }

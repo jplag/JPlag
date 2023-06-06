@@ -15,12 +15,12 @@ import de.jplag.Token;
  * but there are better approaches for text plagiarism out there (based on NLP techniques).
  */
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class PlainTextLanguage implements de.jplag.Language {
 
     private static final String IDENTIFIER = "text";
     private final ParserAdapter parserAdapter;
 
-    public Language() {
+    public PlainTextLanguage() {
         parserAdapter = new ParserAdapter();
     }
 

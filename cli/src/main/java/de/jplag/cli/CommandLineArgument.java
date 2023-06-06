@@ -18,6 +18,7 @@ import de.jplag.NumberOfArgumentValues;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
+import de.jplag.java.JavaLanguage;
 import de.jplag.options.SimilarityMetric;
 
 import net.sourceforge.argparse4j.impl.Arguments;
@@ -37,7 +38,7 @@ public enum CommandLineArgument {
     NEW_DIRECTORY(new Builder("-new", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     OLD_DIRECTORY(new Builder("-old", String.class).nargs(NumberOfArgumentValues.ONE_OR_MORE_VALUES)),
     LANGUAGE(
-            new Builder("-l", String.class).defaultsTo(new de.jplag.java.Language().getIdentifier())
+            new Builder("-l", String.class).defaultsTo(new JavaLanguage().getIdentifier())
                     .choices(LanguageLoader.getAllAvailableLanguageIdentifiers())),
     BASE_CODE("-bc", String.class),
 
@@ -85,7 +86,7 @@ public enum CommandLineArgument {
      * The identifier of the default {@link Language}.
      * @see Language#getIdentifier()
      */
-    public static final String DEFAULT_LANGUAGE_IDENTIFIER = new de.jplag.java.Language().getIdentifier();
+    public static final String DEFAULT_LANGUAGE_IDENTIFIER = new JavaLanguage().getIdentifier();
 
     private final String flag;
     private final NumberOfArgumentValues numberOfValues;
@@ -205,7 +206,7 @@ public enum CommandLineArgument {
             builder.append(substring.substring(0, 1).toUpperCase());
             builder.append(substring.substring(1));
         }
-        return Messages.getString(getClass().getSimpleName() + "." + builder.toString());
+        return Messages.getString(getClass().getSimpleName() + "." + builder);
     }
 
     private static class Builder {
@@ -214,7 +215,7 @@ public enum CommandLineArgument {
         private Optional<Object> defaultValue = Optional.empty();
         private Optional<Collection<String>> choices = Optional.empty();
         private Optional<String> argumentGroup = Optional.empty();
-        private Optional<String> mutuallyExclusiveGroup = Optional.empty();
+        private final Optional<String> mutuallyExclusiveGroup = Optional.empty();
         private Optional<ArgumentAction> action = Optional.empty();
         private Optional<String> metaVar = Optional.empty();
         private Optional<NumberOfArgumentValues> nargs = Optional.empty();
