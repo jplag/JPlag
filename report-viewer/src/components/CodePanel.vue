@@ -2,35 +2,21 @@
   Panel which displays a submission files with its line of code.
 -->
 <template>
-  <div
+  <Interactable
     :id="
       panelId
         ?.toString()
         .concat(filePath || '')
         .concat(fileIndex?.toString() || '-1')
     "
-    class="code-panel-container"
   >
-    <div class="file-title mover">
-      <p style="width: 90%" @click="$emit('toggleCollapse')">
-        <a class="filer-header">{{ title }}</a>
-      </p>
-      <button class="collapse-button" style="width: 10%" @click="$emit('toggleCollapse')">
-        <img
-          v-if="collapse"
-          alt="hide info"
-          src="../assets/keyboard_double_arrow_up_black_18dp.svg"
-        />
-        <img
-          v-else
-          alt="additional info"
-          src="../assets/keyboard_double_arrow_down_black_18dp.svg"
-        />
-      </button>
+    <div @click="$emit('toggleCollapse')" class="text-center font-bold">
+      {{ title }}
     </div>
     <div :class="{ hidden: !collapse }">
-      <div v-if="!isEmpty(lines)" class="code-container">
-        <LineOfCode
+      <div v-if="!isEmpty(lines)" class="flex flex-col items-start w-full overflow-x-auto p-0">
+        <div
+          class="flex flex-row w-full"
           v-for="(line, index) in lines"
           :id="
             String(panelId)
@@ -38,34 +24,39 @@
               .concat((index + 1).toString())
           "
           :key="index"
-          :color="coloringArray[index]"
-          :is-first="isFirst[index]"
-          :is-last="isLast[index]"
-          :line-number="index + 1"
-          :text="line"
-          :visible="collapse"
-          @click="
-            $emit(
-              'lineSelected',
-              $event,
-              linksArray[index].panel,
-              linksArray[index].file,
-              linksArray[index].line
-            )
-          "
-        />
+        >
+          <LineOfCode
+            class="flex-grow"
+            :color="coloringArray[index]"
+            :is-first="isFirst[index]"
+            :is-last="isLast[index]"
+            :line-number="index + 1"
+            :text="line"
+            :visible="collapse"
+            @click="
+              $emit(
+                'lineSelected',
+                $event,
+                linksArray[index].panel,
+                linksArray[index].file,
+                linksArray[index].line
+              )
+            "
+          />
+        </div>
       </div>
-      <div v-else class="code-container">
+      <div v-else class="flex flex-col items-start overflow-x-auto">
         <p>Empty File</p>
       </div>
     </div>
-  </div>
+  </Interactable>
 </template>
 
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { ref, type Ref } from 'vue'
 import LineOfCode from '@/components/LineOfCode.vue'
+import Interactable from './InteractableComponent.vue'
 
 const props = defineProps({
   /**
@@ -191,59 +182,3 @@ for (let i = 0; i < props.lines.length; i++) {
   }
 }
 </script>
-
-<style scoped>
-.code-panel-container {
-  display: flex;
-  flex-direction: column;
-  margin-left: 1%;
-  margin-right: 1%;
-  margin-bottom: 3%;
-  border-radius: 10px;
-  box-shadow: var(--shadow-color) 2px 3px 3px;
-  background: var(--primary-color-light);
-}
-
-.file-title {
-  display: flex;
-}
-
-.file-title > p {
-  text-align: center;
-  color: var(--on-primary-color);
-  font-weight: bold;
-  font-size: large;
-}
-
-.filer-header {
-  cursor: grab;
-}
-
-.code-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  margin: 1%;
-  padding: 1%;
-  background: var(--background-color);
-  box-shadow: inset var(--shadow-color) 0 0 3px 1px;
-  overflow: auto;
-}
-
-.collapse-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: transparent;
-  border: none;
-}
-
-.collapse-button:hover {
-  background: var(--primary-color-dark);
-  border-radius: 10px;
-}
-
-.hidden {
-  display: none !important;
-}
-</style>

@@ -7,7 +7,7 @@
     />
     <input
       type="text"
-      class="w-full p-2 border-2 placeholder:rounded-md"
+      class="placeholder:text-gray-500 bg-transparent border-0 flex-auto outline-none"
       :placeholder="placeholder"
       v-model="inputText"
     />

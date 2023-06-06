@@ -1,5 +1,7 @@
 <template>
-  <Container class="cursor-pointer">
+  <Container
+    class="cursor-pointer bg-interactable-light dark:bg-interactable-dark border-interactable-border-light dark:border-interactable-border-dark"
+  >
     <slot></slot>
   </Container>
 </template>

@@ -2,23 +2,42 @@
   Starting view of the application. Presents the options for loading a JPlag report.
 -->
 <template>
-  <div class="container" @dragover.prevent @drop.prevent="uploadFile">
-    <img alt="JPlag" src="@/assets/logo-nobg.png" />
-    <h1>JPlag Report Viewer</h1>
-    <div v-if="!hasQueryFile" class="container" style="height: auto">
-      <h2>Select an overview or comparison file or a zip to display.</h2>
-      <h3>(No files get uploaded anywhere)</h3>
-      <div class="drop-container">
-        <p>Drop a .json or .zip on this page</p>
+  <div
+    class="h-screen text-center flex items-center"
+    @dragover.prevent
+    @drop.prevent="uploadFileOnDrag"
+  >
+    <div class="w-screen">
+      <div>
+        <img
+          class="mt-8 w-60 h-auto mx-auto"
+          src="@/assets/jplag-light-transparent.png"
+          alt="JPlag Logo"
+          v-if="useDarkMode"
+        />
+        <img
+          class="mt-8 w-60 h-auto mx-auto"
+          src="@/assets/jplag-dark-transparent.png"
+          alt="JPlag Logo"
+          v-else
+        />
       </div>
-      <div v-if="hasLocalFile" class="local-files-container">
-        <p class="local-files-text">Detected local files!</p>
-        <button class="local-files-button" @click="continueWithLocal">
+      <h1 class="text-7xl">JPlag Report Viewer</h1>
+      <div v-if="!hasQueryFile">
+        <div
+          class="px-5 py-5 mt-10 w-96 mx-auto flex flex-col justify-center cursor-pointer border-2 rounded-md border-accent-dark bg-accent bg-opacity-25"
+          @click="uploadFileThroughWindow()"
+        >
+          <div>Drag and Drop zip/Json file on this page</div>
+          <div>Or click here to select a file</div>
+        </div>
+        <div>(No files will be uploaded)</div>
+        <Button class="w-fit mx-auto mt-8" @click="continueWithLocal" v-if="hasLocalFile">
           Continue with local files
-        </button>
+        </Button>
       </div>
+      <div v-else>Loading file...</div>
     </div>
-    <p v-else>Loading file…</p>
   </div>
 </template>
 
@@ -29,6 +48,8 @@ import jszip from 'jszip'
 import router from '@/router'
 import store from '@/stores/store'
 import slash from 'slash'
+import Button from '@/components/ButtonComponent.vue'
+import { useDarkMode } from '../main'
 
 class LoadError extends Error {}
 
@@ -230,7 +251,7 @@ async function handleFile(file: Blob) {
  * Handles file drop.
  * @param e Drag event of file drop
  */
-async function uploadFile(e: DragEvent) {
+async function uploadFileOnDrag(e: DragEvent) {
   let dropped = e.dataTransfer?.files
   try {
     if (dropped?.length === 1) {
@@ -246,6 +267,25 @@ async function uploadFile(e: DragEvent) {
       throw e
     }
   }
+}
+
+async function uploadFileThroughWindow() {
+  let input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.zip,.json'
+  input.multiple = false
+  input.onchange = () => {
+    const files = input.files
+    if (!files) {
+      return
+    }
+    const file = files.item(0)
+    if (!file) {
+      return
+    }
+    handleFile(file)
+  }
+  input.click()
 }
 
 /**

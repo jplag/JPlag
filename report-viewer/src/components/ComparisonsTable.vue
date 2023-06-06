@@ -2,95 +2,80 @@
   Table which display all of the comparisons with their participating ids and similarity percentage for the selected metric.
 -->
 <template>
-  <table>
-    <tr class="head-row">
-      <th>No.</th>
-      <th>Submission 1</th>
-      <th></th>
-      <th>Submission 2</th>
-      <th>Match %</th>
-    </tr>
-  </table>
-
-  <DynamicScroller
-    v-if="topComparisons.length > 0"
-    class="scroller"
-    :items="topComparisons"
-    :min-item-size="48"
-  >
-    <template v-slot="{ item, index, active }">
-      <DynamicScrollerItem
-        :item="item"
-        :active="active"
-        :size-dependencies="[item.firstSubmissionId, item.secondSubmissionId]"
-        :data-index="index"
-      >
-        <table class="inside-table">
-          <tr :class="{ selectableEven: item.id % 2 === 0, selectableOdd: item.id % 2 !== 0 }">
-            <td
-              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
-              class="td1"
-            >
-              {{ item.id }}.
-            </td>
-            <td
-              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
-              :class="{
-                'anonymous-style': isAnonymous(item.firstSubmissionId)
-              }"
-              class="td2"
-            >
-              {{
-                isAnonymous(item.firstSubmissionId) ? 'Hidden' : displayName(item.firstSubmissionId)
-              }}
-            </td>
-            <td
-              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
-              class="td3"
-            >
-              <img alt=">>" src="@/assets/double_arrow_black_18dp.svg" />
-            </td>
-            <td
-              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
-              :class="{
-                'anonymous-style': isAnonymous(item.secondSubmissionId)
-              }"
-              class="td4"
-            >
-              {{
-                isAnonymous(item.secondSubmissionId)
-                  ? 'Hidden'
-                  : displayName(item.secondSubmissionId)
-              }}
-            </td>
-            <td
-              @click="navigateToComparisonView(item.firstSubmissionId, item.secondSubmissionId)"
-              class="td5"
-            >
-              {{ formattedMatchPercentage(item.similarity) }}
-            </td>
-            <td class="td6">
-              <img
-                v-if="isInCluster(item.firstSubmissionId, item.secondSubmissionId)"
-                alt=">>"
-                src="@/assets/keyboard_double_arrow_down_black_18dp.svg"
-                @click="toggleDialog(item.id - 1)"
-              />
-            </td>
-            <GDialog
-              v-if="isInCluster(item.firstSubmissionId, item.secondSubmissionId)"
-              v-model="dialog[item.id - 1]"
-            >
-              <ClustersList
-                :clusters="getClustersFor(item.firstSubmissionId, item.secondSubmissionId)"
-                :comparison="item"
-              />
-            </GDialog>
-          </tr>
-        </table>
-      </DynamicScrollerItem>
-    </template>
-  </DynamicScroller>
+  <div class="flex flex-col">
+    <div class="font-bold">
+      <div class="tableRow">
+        <div class="tableCellName items-center">Submissions in Comparison</div>
+        <div class="tableCellSimilarity !flex-col">
+          <div>Similarity</div>
+          <div class="flex flex-row">
+            <div class="flex-auto">Average</div>
+            <div class="flex-auto">Maximum</div>
+          </div>
+        </div>
+        <div class="tableCellCluster items-center">Cluster</div>
+      </div>
+    </div>
+    <div class="overflow-hidden flex flex-col flex-grow">
+      <DynamicScroller v-if="topComparisons.length > 0" :items="topComparisons" :min-item-size="48">
+        <template v-slot="{ item, index, active }">
+          <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :size-dependencies="[item.firstSubmissionId, item.secondSubmissionId]"
+          >
+            <div class="tableRow" :class="{ 'bg-accent bg-opacity-25': index % 2 == 0 }">
+              <RouterLink
+                :to="{
+                  name: 'ComparisonView',
+                  params: { firstId: item.firstSubmissionId, secondId: item.secondSubmissionId }
+                }"
+                class="flex flex-row flex-grow"
+              >
+                <div class="tableCellName">
+                  <div class="flex-auto">
+                    {{
+                      isAnonymous(item.firstSubmissionId)
+                        ? 'Hidden'
+                        : displayName(item.firstSubmissionId)
+                    }}
+                  </div>
+                  <div class="flex-auto">
+                    {{
+                      isAnonymous(item.secondSubmissionId)
+                        ? 'Hidden'
+                        : displayName(item.secondSubmissionId)
+                    }}
+                  </div>
+                </div>
+                <div class="tableCellSimilarity">
+                  <div class="flex-auto">{{ formattedMatchPercentage(item.similarity) }}%</div>
+                  <div class="flex-auto">{{ formattedMatchPercentage(item.similarity) }}%</div>
+                </div>
+              </RouterLink>
+              <div class="tableCellCluster">
+                <RouterLink :to="'test'">
+                  <div v-if="isInCluster(item.firstSubmissionId, item.secondSubmissionId)">
+                    {{
+                      getClustersFor(item.firstSubmissionId, item.secondSubmissionId)[0].members
+                        .size
+                    }}
+                    <FontAwesomeIcon :icon="['fas', 'user-group']" />
+                    {{
+                      formattedMatchPercentage(
+                        getClustersFor(item.firstSubmissionId, item.secondSubmissionId)[0]
+                          .averageSimilarity / 100
+                      )
+                    }}%
+                  </div>
+                </RouterLink>
+              </div>
+            </div>
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -98,12 +83,14 @@ import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import type { ClusterListElement } from '@/model/ClusterListElement'
 import type { Ref } from 'vue'
-
 import { ref } from 'vue'
-import router from '@/router'
-import { GDialog } from 'gitart-vue-dialog'
-import ClustersList from '@/components/ClustersList.vue'
 import store from '@/stores/store'
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faUserGroup)
 
 const props = defineProps({
   topComparisons: {
@@ -134,28 +121,6 @@ props.topComparisons.forEach(() => dialog.value.push(false))
  */
 function displayName(submissionId: string) {
   return store().submissionDisplayName(submissionId)
-}
-
-/**
- * Toggles the dialog with the given index.
- * @param index The index of the dialog to toggle.
- */
-function toggleDialog(index: number) {
-  dialog.value[index] = true
-}
-
-/**
- * Navigate to the comparison view with the given ids.
- * @param firstId The id of the first submission.
- * @param secondId The id of the second submission.
- */
-function navigateToComparisonView(firstId: string, secondId: string) {
-  if (!store().single) {
-    router.push({
-      name: 'ComparisonView',
-      params: { firstId, secondId }
-    })
-  }
 }
 
 /**
@@ -230,87 +195,24 @@ function getClustersFor(id1: string, id2: string): Array<ClusterListElement> {
 }
 </script>
 
-<style scoped>
-.scroller {
-  height: 650px;
+<style scoped lang="postcss">
+.tableRow {
+  @apply flex flex-row text-center;
 }
 
-table {
-  table-layout: fixed;
-  border-collapse: collapse;
-  font-size: larger;
-  text-align: center;
+.tableCellSimilarity {
+  @apply w-64 tableCell;
 }
 
-.inside-table {
-  width: 100%;
+.tableCellCluster {
+  @apply w-32 tableCell;
 }
 
-th {
-  margin: 0;
-  padding-top: 2%;
-  padding-bottom: 2%;
-  color: var(--on-primary-color);
+.tableCellName {
+  @apply flex-grow tableCell;
 }
 
-td {
-  overflow-wrap: break-word;
-  padding-top: 3%;
-  padding-bottom: 3%;
-}
-
-.td1 {
-  width: 3%;
-}
-
-.td2 {
-  width: 18%;
-  padding-left: 5%;
-}
-
-.td3 {
-  width: 3%;
-}
-
-.td4 {
-  width: 18%;
-  padding-right: 5%;
-}
-
-.td5 {
-  width: 8%;
-}
-
-.td6 {
-  width: 2%;
-}
-
-.anonymous-style {
-  color: #777777;
-  filter: blur(1px);
-}
-
-.head-row {
-  background: var(--primary-color-light);
-}
-
-.selectableEven {
-  background: var(--primary-color-light);
-  cursor: pointer;
-}
-
-.selectableOdd {
-  background: var(--secondary-color);
-  cursor: pointer;
-}
-
-.selectableEven:hover {
-  background: var(--primary-color-dark) !important;
-  cursor: pointer;
-}
-
-.selectableOdd:hover {
-  background: var(--primary-color-dark) !important;
-  cursor: pointer;
+.tableCell {
+  @apply text-center mx-3 flex flex-row justify-center;
 }
 </style>

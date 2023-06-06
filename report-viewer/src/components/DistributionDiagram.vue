@@ -2,16 +2,15 @@
   Bar diagram, displaying the distribution for the selected metric.
 -->
 <template>
-  <div class="wrapper">
-    <BarChart :chartData="chartData" :options="options" class="chart" />
-  </div>
+  <BarChart :chartData="chartData" :options="options" />
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { BarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
+import { useDarkMode } from '@/main'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -22,6 +21,11 @@ const props = defineProps({
     required: true
   }
 })
+
+const tickColor = computed(() => {
+  return useDarkMode.value ? '#ffffff' : '#000000'
+})
+
 //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
 //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
 const maxVal = ref(Math.max(...props.distribution))
@@ -37,53 +41,57 @@ const labels = [
   '11-20%',
   '0-10%'
 ]
-const dataSetStyle = {
-  label: 'Count',
-  backgroundColor: 'rgba(149, 168, 241, 0.5)',
-  borderWidth: 2,
-  borderColor: 'rgba(149, 168, 241, 1)',
-  tickColor: '#000000'
-}
+const dataSetStyle = computed(() => {
+  return {
+    label: 'Comparison Count',
+    backgroundColor: 'rgb(190, 22, 34, 0.5)',
+    borderWidth: 2,
+    borderColor: 'rgb(127, 15, 24)',
+    tickColor: tickColor.value
+  }
+})
 
 let chartData = ref({
   labels: labels,
   datasets: [
     {
-      ...dataSetStyle,
+      ...dataSetStyle.value,
       data: props.distribution
     }
   ]
 })
 
-const options = ref({
-  responsive: true,
-  maintainAspectRatio: false,
-  indexAxis: 'y',
-  scales: {
-    x: {
-      suggestedMax: maxVal.value + 5,
-      ticks: {
-        color: '#000000'
-      }
-    },
-    y: {
-      ticks: {
-        color: '#000000'
-      }
-    }
-  },
-  plugins: {
-    datalabels: {
-      color: '#000000',
-      font: {
-        weight: 'bold'
+const options = computed(() => {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: {
+        suggestedMax: maxVal.value + 5,
+        ticks: {
+          color: tickColor.value
+        }
       },
-      anchor: 'end',
-      align: 'end',
-      clamp: true
+      y: {
+        ticks: {
+          color: tickColor.value
+        }
+      }
     },
-    legend: {
-      display: false
+    plugins: {
+      datalabels: {
+        color: tickColor.value,
+        font: {
+          weight: 'bold'
+        },
+        anchor: 'end',
+        align: 'end',
+        clamp: true
+      },
+      legend: {
+        display: false
+      }
     }
   }
 })
@@ -97,7 +105,7 @@ watch(
       labels: labels,
       datasets: [
         {
-          ...dataSetStyle,
+          ...dataSetStyle.value,
           data: val
         }
       ]
@@ -108,17 +116,3 @@ watch(
   }
 )
 </script>
-
-<style scoped>
-.wrapper {
-  background: var(--background-color);
-  border-radius: 10px;
-  box-shadow: #777777 2px 3px 3px;
-  display: flex;
-  height: 100%;
-}
-
-.chart {
-  width: 100%;
-}
-</style>

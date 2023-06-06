@@ -2,8 +2,43 @@
   A view displaying the .json file of a comparison from a JPlag report.
 -->
 <template>
-  <div class="container">
-    <!-- Left Panel when hidden -->
+  <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-col">
+    <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
+      <Container class="flex-grow">
+        <h2>
+          Comparison: {{ comparison.firstSubmissionId }} - {{ comparison.secondSubmissionId }}
+        </h2>
+      </Container>
+    </div>
+
+    <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5 justify-between">
+      <FilesContainer
+        :container-id="1"
+        :submission-id="firstId"
+        :files="filesOfFirst"
+        :matches="comparison.matchesInFirstSubmission"
+        :files-owner="store().submissionDisplayName(firstId) || ''"
+        :anonymous="store().anonymous.has(firstId)"
+        files-owner-default="Submission 1"
+        @toggle-collapse="toggleCollapseFirst"
+        @line-selected="showMatchInSecond"
+        class="max-h-0 min-h-full flex-1 overflow-hidden"
+      />
+      <FilesContainer
+        :container-id="2"
+        :submission-id="secondId"
+        :files="filesOfSecond"
+        :matches="comparison.matchesInSecondSubmissions"
+        :files-owner="store().submissionDisplayName(secondId) || ''"
+        :anonymous="store().anonymous.has(secondId) || false"
+        files-owner-default="Submission 2"
+        @toggle-collapse="toggleCollapseSecond"
+        @line-selected="showMatchInFirst"
+        class="max-h-0 min-h-full flex-1 overflow-hidden"
+      />
+    </div>
+  </div>
+  <!--div class="container">
     <button
       id="show-button"
       :class="{ hidden: !hideLeftPanel }"
@@ -13,7 +48,6 @@
       <img alt="show" src="@/assets/double_arrow_black_24dp.svg" />
     </button>
 
-    <!-- Left Panel -->
     <div id="sidebar" :class="{ hidden: hideLeftPanel }">
       <div class="title-section">
         <h1>JPlag Comparison</h1>
@@ -43,30 +77,7 @@
       />
     </div>
 
-    <!-- Files of Submissions -->
-    <FilesContainer
-      :container-id="1"
-      :submission-id="firstId"
-      :files="filesOfFirst"
-      :matches="comparison.matchesInFirstSubmission"
-      :files-owner="store().submissionDisplayName(firstId) || ''"
-      :anonymous="store().anonymous.has(firstId)"
-      files-owner-default="submission 1"
-      @toggle-collapse="toggleCollapseFirst"
-      @line-selected="showMatchInSecond"
-    />
-    <FilesContainer
-      :container-id="2"
-      :submission-id="secondId"
-      :files="filesOfSecond"
-      :matches="comparison.matchesInSecondSubmissions"
-      :files-owner="store().submissionDisplayName(secondId) || ''"
-      :anonymous="store().anonymous.has(secondId) || false"
-      files-owner-default="submission 2"
-      @toggle-collapse="toggleCollapseSecond"
-      @line-selected="showMatchInFirst"
-    />
-  </div>
+  </!--div-->
 </template>
 
 <script setup lang="ts">
@@ -81,6 +92,7 @@ import FilesContainer from '@/components/FilesContainer.vue'
 import { useRouter } from 'vue-router'
 import { Comparison } from '@/model/Comparison'
 import store from '@/stores/store'
+import Container from '@/components/ContainerComponent.vue'
 
 const props = defineProps({
   firstId: {
@@ -266,115 +278,3 @@ function back() {
   router.back()
 }
 </script>
-
-<style scoped>
-h1 {
-  color: var(--on-primary-color);
-  text-align: center;
-}
-
-.container {
-  display: flex;
-  align-items: stretch;
-  flex-wrap: nowrap;
-  width: 100%;
-  height: 100%;
-  background: var(--background-color);
-}
-
-.title-section {
-  display: flex;
-  justify-content: space-between;
-}
-
-.title-section > h1 {
-  text-align: left !important;
-}
-
-.hidden {
-  display: none !important;
-}
-
-#sidebar {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  width: 60%;
-  background: var(--primary-color-light);
-  padding: 1%;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-#hide-button {
-  display: flex;
-  flex-direction: column;
-  background: transparent;
-  border-radius: 10px;
-  height: max-content;
-  border: none;
-}
-
-#hide-button:hover {
-  cursor: pointer;
-  background: var(--primary-color-dark);
-}
-
-#show-button {
-  position: absolute;
-  z-index: 1000;
-  left: 0;
-  background: var(--secondary-color);
-  border: none;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  height: 100%;
-  width: 1%;
-}
-
-#show-button img {
-  display: none;
-}
-
-#show-button:hover {
-  cursor: pointer;
-  width: 3%;
-}
-
-#show-button:hover img {
-  display: block;
-}
-
-.animated-back-button {
-  float: right;
-  height: 100%;
-  position: relative;
-
-  font-size: 1.4rem;
-  background: var(--primary-color-dark);
-  background-size: 46px 26px;
-  border: 1px solid #555;
-  color: black;
-  transition: all ease 0.3s;
-}
-
-.animated-back-button::after {
-  position: absolute;
-  top: 50%;
-  right: 0.6em;
-  transform: translateY(-50%);
-  content: '«';
-  font-size: 1.2em;
-  transition: all ease 0.3s;
-  opacity: 0;
-}
-
-.animated-back-button:hover {
-  padding: 20px 60px 20px 20px;
-}
-
-.animated-back-button:hover::after {
-  right: 1.2em;
-  opacity: 1;
-}
-</style>
