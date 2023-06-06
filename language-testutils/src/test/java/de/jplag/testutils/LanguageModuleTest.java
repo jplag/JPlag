@@ -1,9 +1,12 @@
 package de.jplag.testutils;
 
-import de.jplag.*;
-import de.jplag.testutils.datacollector.TestData;
-import de.jplag.testutils.datacollector.TestDataCollector;
-import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,12 +14,10 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.fail;
+import de.jplag.*;
+import de.jplag.testutils.datacollector.TestData;
+import de.jplag.testutils.datacollector.TestDataCollector;
+import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
 /**
  * Base class for language module tests. Automatically adds all common tests types for jplag languages.
@@ -31,8 +32,7 @@ public abstract class LanguageModuleTest {
 
     /**
      * Creates a new language module test
-     *
-     * @param language       The language to test
+     * @param language The language to test
      * @param languageTokens All tokens, that can be reported by the module. The end file token can be omitted.
      */
     public LanguageModuleTest(Language language, List<TokenType> languageTokens) {
@@ -43,8 +43,7 @@ public abstract class LanguageModuleTest {
 
     /**
      * Creates a new language module test
-     *
-     * @param language       The language to test
+     * @param language The language to test
      * @param languageTokens All tokens, that can be reported by the module. The end file token can be omitted.
      */
     public LanguageModuleTest(Language language, TokenType[] languageTokens) {
@@ -53,8 +52,7 @@ public abstract class LanguageModuleTest {
 
     /**
      * Creates a new language module test
-     *
-     * @param language  The language to test
+     * @param language The language to test
      * @param tokenEnum The enum containing the token types
      */
     public <T extends Enum<T> & TokenType> LanguageModuleTest(Language language, Class<T> tokenEnum) {
@@ -63,10 +61,9 @@ public abstract class LanguageModuleTest {
 
     /**
      * Test the configured source files for source line coverage
-     *
      * @param data The source to check
      * @throws ParsingException If the parser throws some error
-     * @throws IOException      If any IO Exception occurs
+     * @throws IOException If any IO Exception occurs
      */
     @ParameterizedTest
     @MethodSource("sourceCoverageFiles")
@@ -86,7 +83,6 @@ public abstract class LanguageModuleTest {
 
     /**
      * Returns all test sources, that need to be checked for source line coverage
-     *
      * @return The test sources
      */
     final List<TestData> sourceCoverageFiles() {
@@ -95,10 +91,9 @@ public abstract class LanguageModuleTest {
 
     /**
      * Checks the configured source files for token coverage
-     *
      * @param data The source to check
      * @throws ParsingException If the parser throws some error
-     * @throws IOException      If any IO Exception occurs
+     * @throws IOException If any IO Exception occurs
      */
     @ParameterizedTest
     @MethodSource("tokenCoverageFiles")
@@ -114,7 +109,6 @@ public abstract class LanguageModuleTest {
 
     /**
      * Returns all test sources, that need to be checked for token coverage.
-     *
      * @return The test sources
      */
     final List<TestData> tokenCoverageFiles() {
@@ -123,10 +117,9 @@ public abstract class LanguageModuleTest {
 
     /**
      * Tests the configured test sources for contained tokens
-     *
      * @param test The source to test
      * @throws ParsingException If the parser throws some error
-     * @throws IOException      If any IO Exception occurs
+     * @throws IOException If any IO Exception occurs
      */
     @ParameterizedTest
     @MethodSource("testTokensContainedData")
@@ -144,7 +137,6 @@ public abstract class LanguageModuleTest {
 
     /**
      * Returns all test sources, that need to be checked for contained tokens
-     *
      * @return The test sources
      */
     final List<TestDataCollector.TokenListTest> testTokensContainedData() {
@@ -153,10 +145,9 @@ public abstract class LanguageModuleTest {
 
     /**
      * Checks the given test sources for an exact token sequence
-     *
      * @param test The source to check
      * @throws ParsingException If the parser throws some error
-     * @throws IOException      If any IO Exception occurs
+     * @throws IOException If any IO Exception occurs
      */
     @ParameterizedTest
     @MethodSource("testTokenSequenceData")
@@ -173,7 +164,6 @@ public abstract class LanguageModuleTest {
 
     /**
      * Returns all test sources, that need to be checked for a matching token sequence
-     *
      * @return The test sources
      */
     final List<TestDataCollector.TokenListTest> testTokenSequenceData() {
@@ -182,10 +172,9 @@ public abstract class LanguageModuleTest {
 
     /**
      * Tests all configured test sources for a monotone order of tokens
-     *
      * @param data The test source
      * @throws ParsingException If the parser throws some error
-     * @throws IOException      If any IO Exception occurs
+     * @throws IOException If any IO Exception occurs
      */
     @ParameterizedTest
     @MethodSource("getAllTestData")
@@ -205,10 +194,9 @@ public abstract class LanguageModuleTest {
 
     /**
      * Checks that all configured test sources end with a FileEnd token
-     *
      * @param data The test source
      * @throws ParsingException If the parser throws some error
-     * @throws IOException      If any IO Exception occurs
+     * @throws IOException If any IO Exception occurs
      */
     @ParameterizedTest
     @MethodSource("getAllTestData")
@@ -221,7 +209,6 @@ public abstract class LanguageModuleTest {
 
     /**
      * Returns all configured test sources
-     *
      * @return The test sources
      */
     final Set<TestData> getAllTestData() {
@@ -238,10 +225,9 @@ public abstract class LanguageModuleTest {
 
     /**
      * Ignores the test, if there is no data, by failing an assumption.
-     *
      * @param data The list containing the test data
-     * @param <T>  The type of items
-     * @param <C>  The collection type
+     * @param <T> The type of items
+     * @param <C> The collection type
      * @return The data
      */
     private <T, C extends Collection<T>> C ignoreEmptyTestType(C data) {
@@ -251,21 +237,18 @@ public abstract class LanguageModuleTest {
 
     /**
      * Collects all tests, that should be executed.
-     *
      * @param collector Use to collect the tests
      */
     abstract protected void collectTestData(TestDataCollector collector);
 
     /**
      * Configure which lines should not be checked for source coverage.
-     *
      * @param collector Used to ignore lines
      */
     abstract protected void configureIgnoredLines(TestSourceIgnoredLinesCollector collector);
 
     /**
      * Returns the default directory structure by default.
-     *
      * @return The test file location
      */
     protected File getTestFileLocation() {
