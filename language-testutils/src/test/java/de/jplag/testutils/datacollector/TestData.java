@@ -8,7 +8,8 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 /**
- * Any kind of test source provider
+ * Provides test code. Each instance represents a single source file. Serves as a way to encapsulate various locations
+ * for test code, such as files or java strings.
  */
 public interface TestData {
     /**

@@ -61,35 +61,35 @@ public class TestDataCollector {
      * @return The test data that should be checked for source coverage
      */
     public List<TestData> getSourceCoverageData() {
-        return sourceCoverageData;
+        return Collections.unmodifiableList(sourceCoverageData);
     }
 
     /**
      * @return The test data that should be checked for token coverage
      */
     public List<TestData> getTokenCoverageData() {
-        return tokenCoverageData;
+        return Collections.unmodifiableList(tokenCoverageData);
     }
 
     /**
      * @return The test data that should be checked for a contained set of tokens
      */
     public List<TokenListTest> getContainedTokenData() {
-        return containedTokenData;
+        return Collections.unmodifiableList(containedTokenData);
     }
 
     /**
      * @return The test data that should be checked for a specific sequence of tokens
      */
     public List<TokenListTest> getTokenSequenceTest() {
-        return tokenSequenceTest;
+        return Collections.unmodifiableList(tokenSequenceTest);
     }
 
     /**
      * @return The list of all test data
      */
     public Set<TestData> getAllTestData() {
-        return allTestData;
+        return Collections.unmodifiableSet(allTestData);
     }
 
     /**
