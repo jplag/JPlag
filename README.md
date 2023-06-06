@@ -21,7 +21,8 @@ In the following, a list of all supported languages with their supported languag
 | Language                                               | Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/2.-Supported-Languages) |  parser   |
 |--------------------------------------------------------|--------:|-------------------|:----------------------------------------------------------------:|:---------:|
 | [Java](https://www.java.com)                           |      17 | java              |                              mature                              |   JavaC   |
-| [C++](https://isocpp.org)                              |      11 | cpp               |                              legacy                              |  JavaCC   |
+| [C/C++](https://isocpp.org)                            |      11 | cpp               |                              legacy                              |  JavaCC   |
+| [C/C++](https://isocpp.org)                            |      14 | cpp2              |                               beta                               |  ANTLR 4  |
 | [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |       6 | csharp            |                               beta                               |  ANTLR 4  |
 | [Go](https://go.dev)                                   |    1.17 | golang            |                               beta                               |  ANTLR 4  |
 | [Kotlin](https://kotlinlang.org)                       |     1.3 | kotlin            |                               beta                               |  ANTLR 4  |
@@ -33,7 +34,7 @@ In the following, a list of all supported languages with their supported languag
 | [Swift](https://www.swift.org)                         |     5.4 | swift             |                               beta                               |  ANTLR 4  |
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/) |  2.25.0 | emf               |                               beta                               |    EMF    |
 | [EMF Model](https://www.eclipse.org/modeling/emf/)     |  2.25.0 | emf-model         |                              alpha                               |    EMF    |
-| Text (naive)                                           |       - | text              |                              legacy                              |  CoreNLP  |
+| Text (naive) 
 
 ## Download and Installation
 You need Java SE 17 to run or build JPlag.
