@@ -16,7 +16,7 @@ JPlag is a system that finds similarities among multiple sets of source code fil
 
 ## Supported Languages
 
-In the following, a list of all supported languages with their supported language version is provided. A language can be selected from the command line using the `-l <cli argument name>` argument.
+In the following, a list of all supported languages with their supported language version is provided. A language can be selected from the command line using subcommands (jplag [jplag options] <language name> [language options]). Alternatively you can use the legacy "-l" argument.
 
 | Language                                               | Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/2.-Supported-Languages) |  parser   |
 |--------------------------------------------------------|--------:|-------------------|:----------------------------------------------------------------:|:---------:|
