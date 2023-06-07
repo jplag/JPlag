@@ -179,7 +179,7 @@ onErrorCaptured(() => {
   router.push({
     name: 'ErrorView',
     state: {
-      message: "Overview.json can't be found!",
+      message: 'Overview.json could not be found!',
       to: '/',
       routerInfo: 'back to FileUpload page'
     }
