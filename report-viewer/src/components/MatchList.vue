@@ -2,7 +2,23 @@
   Table which contains all of the matches for a comparison with navigation links.
 -->
 <template>
-  <div class="match-table-container">
+  <div class="flex flex-row overflow-x-hidden max-w-full min-w-0 space-x-1 text-xs h-fit">
+    <Interactable class="!rounded-2xl whitespace-nowrap flex items-center text-center h-6 my-2">
+      Match Files: TokenCount
+    </Interactable>
+    <div class="w-full flex flex-row space-x-1 overflow-x-auto">
+      <Interactable
+        class="!rounded-2xl !bg-opacity-50 whitespace-nowrap flex items-center text-center h-6 my-2"
+        :style="{ background: match.color }"
+        v-for="[index, match] in matches?.entries()"
+        v-bind:key="index"
+        @click="$emit('matchSelected', $event, match)"
+      >
+        {{ getFileName(match.firstFile) }} - {{ getFileName(match.secondFile) }}: {{ match.tokens }}
+      </Interactable>
+    </div>
+  </div>
+  <!--div class="match-table-container">
     <table>
       <tr>
         <th>Submission 1</th>
@@ -36,12 +52,13 @@
         <td>{{ match.tokens }}</td>
       </tr>
     </table>
-  </div>
+  </!--div-->
 </template>
 
 <script setup lang="ts">
 import store from '@/stores/store'
 import type { Match } from '@/model/Match'
+import Interactable from './InteractableComponent.vue'
 
 defineProps({
   /**
@@ -76,6 +93,10 @@ defineEmits(['matchSelected'])
 function convertSubmissionIdToName(match: string, submissionId: string): string {
   const displayName = store().submissionDisplayName(submissionId) || submissionId
   return match.replace(submissionId, displayName)
+}
+
+function getFileName(fullPath: string) {
+  return fullPath.split(/\\|\//).pop() || ''
 }
 </script>
 

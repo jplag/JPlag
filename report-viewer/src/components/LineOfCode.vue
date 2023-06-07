@@ -3,13 +3,7 @@
 -->
 <template>
   <div :style="{ background: color }" class="flex-grow">
-    <pre
-      :id="text"
-      ref="lineRef"
-      :class="{ 'match-line': color !== '#ECECEC' }"
-      class="java m-0 p-0 float-left"
-      >{{ lineNumber }} {{ text }}</pre
-    >
+    <pre :id="text" ref="lineRef" class="java m-0 p-0 float-left">{{ lineNumber }} {{ text }}</pre>
   </div>
 </template>
 
@@ -39,12 +33,6 @@ const props = defineProps({
   },
   fileIndex: {
     type: Number
-  },
-  isFirst: {
-    type: Boolean
-  },
-  isLast: {
-    type: Boolean
   }
 })
 

@@ -4,7 +4,9 @@
 -->
 <template>
   <div class="flex-auto">
-    {{ anonymousLabel ? 'Hidden' : label }}: <i><slot></slot></i>
+    {{ anonymousLabel ? 'Hidden' : label }}:
+    <i v-if="!anonymousSlot"><slot></slot></i>
+    <i v-else>Hidden</i>
   </div>
 </template>
 

@@ -4,13 +4,22 @@
 <template>
   <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-col">
     <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
-      <Container class="flex-grow">
+      <Container class="flex-grow overflow-hidden">
         <h2>
           Comparison: {{ comparison.firstSubmissionId }} - {{ comparison.secondSubmissionId }}
         </h2>
+        <div class="flex flex-row">
+          <TextInformation label="Average Similarity"></TextInformation>
+        </div>
+        <MatchList
+          :id1="firstId"
+          :id2="secondId"
+          :matches="comparison.allMatches"
+          @match-selected="showMatch"
+        />
       </Container>
     </div>
-
+    <div ref="styleholder"></div>
     <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5 justify-between">
       <FilesContainer
         :container-id="1"
@@ -38,61 +47,25 @@
       />
     </div>
   </div>
-  <!--div class="container">
-    <button
-      id="show-button"
-      :class="{ hidden: !hideLeftPanel }"
-      title="Show sidebar"
-      @click="togglePanel"
-    >
-      <img alt="show" src="@/assets/double_arrow_black_24dp.svg" />
-    </button>
-
-    <div id="sidebar" :class="{ hidden: hideLeftPanel }">
-      <div class="title-section">
-        <h1>JPlag Comparison</h1>
-        <button id="hide-button" title="Hide sidebar" @click="togglePanel">
-          <img alt="hide" src="@/assets/keyboard_double_arrow_left_black_24dp.svg" />
-        </button>
-      </div>
-      <div>
-        <button class="animated-back-button" title="Back button" @click="back">back</button>
-      </div>
-      <TextInformation
-        :anonymous="isAnonymous(firstId)"
-        :value="store().submissionDisplayName(firstId) || ''"
-        label="Submission 1"
-      />
-      <TextInformation
-        :anonymous="store().anonymous.has(secondId)"
-        :value="store().submissionDisplayName(secondId) || ''"
-        label="Submission 2"
-      />
-      <TextInformation :value="(comparison.similarity * 100).toFixed(2)" label="Match %" />
-      <MatchTable
-        :id1="firstId"
-        :id2="secondId"
-        :matches="comparison.allMatches"
-        @match-selected="showMatch"
-      />
-    </div>
-
-  </!--div-->
 </template>
 
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
 
-import { ref } from 'vue'
+import { onMounted, ref, watch, type Ref } from 'vue'
 import { generateLineCodeLink } from '@/utils/Utils'
 import TextInformation from '@/components/TextInformation.vue'
-import MatchTable from '@/components/MatchTable.vue'
+import MatchList from '@/components/MatchList.vue'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
 import { useRouter } from 'vue-router'
 import { Comparison } from '@/model/Comparison'
 import store from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
+
+import hljsLightMode from 'highlight.js/styles/vs.css?raw'
+import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
+import { useDarkMode } from '@/main'
 
 const props = defineProps({
   firstId: {
@@ -196,11 +169,6 @@ const filesOfSecond = ref(comparison.filesOfSecondSubmission)
 
 /**
  * Collapses a file in the first files container.
- * @param title
- */
-
-/**
- * Collapses a file in the first files container.
  * @param title title of the file
  */
 function toggleCollapseFirst(title: string) {
@@ -264,17 +232,27 @@ function isAnonymous(id: string) {
   return store().anonymous.has(id)
 }
 
-//Left panel
-const hideLeftPanel = ref(false)
+// This code is responsible for changing the theme of the highlighted code depending on light/dark mode
+const styleholder: Ref<Node | null> = ref(null)
 
-/**
- * Toggles the left sidebar panel
- */
-function togglePanel() {
-  hideLeftPanel.value = !hideLeftPanel.value
-}
+onMounted(() => {
+  if (styleholder.value == null) {
+    return
+  }
+  const styleHolderDiv = styleholder.value as Node
+  const styleElement = document.createElement('style')
+  styleElement.innerHTML = useDarkMode.value ? hljsDarkMode : hljsLightMode
+  styleHolderDiv.appendChild(styleElement)
+})
 
-function back() {
-  router.back()
-}
+watch(useDarkMode, (newValue) => {
+  if (styleholder.value == null) {
+    return
+  }
+  const styleHolderDiv = styleholder.value as Node
+  styleHolderDiv.removeChild(styleHolderDiv.firstChild as Node)
+  const styleElement = document.createElement('style')
+  styleElement.innerHTML = newValue ? hljsDarkMode : hljsLightMode
+  styleHolderDiv.appendChild(styleElement)
+})
 </script>

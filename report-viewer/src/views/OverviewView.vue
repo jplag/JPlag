@@ -7,16 +7,13 @@
       <Container class="flex-grow">
         <h2>JPlag Report</h2>
         <div class="flex flex-row space-x-5 items-center">
-          <TextInformation>{{ submissionPathValue }}</TextInformation>
-          <div class="flex-auto">
-            Directory: <i>{{ submissionPathValue }}</i>
-          </div>
-          <div class="flex-auto">
-            Total Submissions: <i>{{ store().getSubmissionIds.length }}</i>
-          </div>
-          <div class="flex-auto">
-            Total Comparisons: <i>{{ overview.totalComparisons }}</i>
-          </div>
+          <TextInformation label="Directory">{{ submissionPathValue }}</TextInformation>
+          <TextInformation label="Total Submissions">{{
+            store().getSubmissionIds.length
+          }}</TextInformation>
+          <TextInformation label="Total Comparisons">{{
+            overview.totalComparisons
+          }}</TextInformation>
           <Button @click="router.push('test')"> More </Button>
         </div>
       </Container>
