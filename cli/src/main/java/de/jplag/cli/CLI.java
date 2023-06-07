@@ -1,6 +1,7 @@
 package de.jplag.cli;
 
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_FOOTER;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
@@ -83,6 +85,14 @@ public final class CLI {
     public CLI() {
         this.options = new CliOptions();
         this.commandLine = new CommandLine(options);
+
+        this.commandLine.getHelpSectionMap().put(SECTION_KEY_OPTION_LIST, help -> help.optionList().lines().map(it -> {
+            if (it.startsWith("  -")) {
+                return "    " + it;
+            } else {
+                return it;
+            }
+        }).collect(Collectors.joining(System.lineSeparator())));
 
         buildSubcommands().forEach(commandLine::addSubcommand);
 
