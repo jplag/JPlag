@@ -11,5 +11,6 @@ export type ComparisonListElement = {
   id: number
   firstSubmissionId: string
   secondSubmissionId: string
-  similarity: number
+  averageSimilarity: number
+  maximumSimilarity: number
 }

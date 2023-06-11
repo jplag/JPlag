@@ -22,7 +22,10 @@
     <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5">
       <Container class="max-h-0 min-h-full flex flex-col flex-1">
         <h2>Distribution of Comparisons:</h2>
-        <DistributionDiagram :distribution="distributions[selectedMetric]" class="w-full h-2/3" />
+        <DistributionDiagram
+          :distribution="overview.distribution[selectedMetric].asLinearArray()"
+          class="w-full h-2/3"
+        />
         <div class="flex flex-col flex-grow space-y-1">
           <h3 class="text-lg underline">Options:</h3>
           <ScrollableComponent class="flex-grow space-y-2">
@@ -43,7 +46,7 @@
         </div>
         <ComparisonsTable
           :clusters="overview.clusters"
-          :top-comparisons="topComparisons[0]"
+          :top-comparisons="overview.topComparisons"
           class="flex-1 min-h-0"
         />
       </Container>
@@ -52,15 +55,11 @@
 </template>
 
 <script setup lang="ts">
-import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import type { Ref } from 'vue'
-
 import { computed, onErrorCaptured, ref } from 'vue'
 import router from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
-import { Overview } from '@/model/Overview'
 import store from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import Button from '@/components/ButtonComponent.vue'
@@ -70,54 +69,7 @@ import MetricType from '@/model/ui/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 
-/**
- * Gets the overview file based on the used mode (zip, local, single).
- */
-function getOverview() {
-  console.log('Generating overview...')
-  let temp!: Overview
-  //Gets the overview file based on the used mode (zip, local, single).
-  if (store().local) {
-    const request = new XMLHttpRequest()
-    request.open('GET', '/files/overview.json', false)
-    request.send()
-
-    if (request.status == 200) {
-      temp = OverviewFactory.getOverview(JSON.parse(request.response))
-    } else {
-      router.back()
-    }
-  } else if (store().zip) {
-    const overviewFile = computed(() => {
-      console.log('Start finding overview.json in state...')
-      const index = Object.keys(store().files).find((name) => name.endsWith('overview.json'))
-      return index != undefined ? store().files[index] : console.log('Could not find overview.json')
-    })
-
-    if (overviewFile.value === undefined) {
-      return new Overview(
-        [],
-        '',
-        '',
-        [],
-        0,
-        '',
-        0,
-        [],
-        [],
-        0,
-        new Map<string, Map<string, string>>()
-      )
-    }
-    const overviewJson = JSON.parse(overviewFile.value)
-    temp = OverviewFactory.getOverview(overviewJson)
-  } else if (store().single) {
-    temp = OverviewFactory.getOverview(JSON.parse(store().fileString))
-  }
-  return temp
-}
-
-const overview = getOverview()
+const overview = OverviewFactory.getOverview()
 
 /**
  * Handles the selection of an Id to anonymize.
@@ -159,19 +111,13 @@ function selectMetric(metric: number) {
   console.log('Selected metric: ' + metric)
 }
 
-const distributions = ref(overview.metrics.map((m) => m.distribution))
-
-let topComparisons: Ref<Array<Array<ComparisonListElement>>> = ref(
-  overview.metrics.map((m) => m.comparisons)
-)
-
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
 const submissionPathValue = hasMoreSubmissionPaths
   ? 'Click arrow to see all paths'
   : overview.submissionFolderPath[0]
 
 const shownComparisons = computed(() => {
-  return overview.metrics[selectedMetric.value]?.comparisons.length
+  return overview.topComparisons.length
 })
 const missingComparisons = overview.totalComparisons - shownComparisons.value
 

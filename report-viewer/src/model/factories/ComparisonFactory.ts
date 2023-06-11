@@ -3,6 +3,7 @@ import type { Match } from '../Match'
 import type { SubmissionFile } from '../SubmissionFile'
 import type { MatchInSingleFile } from '../MatchInSingleFile'
 import store from '@/stores/store'
+import { generateHuesForInterval, toHSLAArray } from '@/utils/ColorUtils'
 
 /**
  * Factory class for creating Comparison objects
@@ -99,26 +100,12 @@ export class ComparisonFactory {
   }
 
   private static generateColorsForMatches(num: number): Array<string> {
-    const colors: Array<string> = []
     const numberOfColorsInFirstInterval = Math.round(((80 - 20) / (80 - 20 + (340 - 160))) * num) // number of colors from the first interval
     const numberOfColorsInSecondInterval = num - numberOfColorsInFirstInterval // number of colors from the second interval
-    ComparisonFactory.generateColorsForInterval(20, 80, numberOfColorsInFirstInterval, colors)
-    ComparisonFactory.generateColorsForInterval(160, 340, numberOfColorsInSecondInterval, colors)
-    return colors
-  }
 
-  private static generateColorsForInterval(
-    intervalStart: number,
-    intervalEnd: number,
-    numberOfColorsInInterval: number,
-    colors: Array<string>
-  ) {
-    const interval = intervalEnd - intervalStart
-    const hueDelta = Math.trunc(interval / numberOfColorsInInterval)
-    for (let i = 0; i < numberOfColorsInInterval; i++) {
-      const hue = intervalStart + i * hueDelta
-      colors.push(`hsla(${hue}, 80%, 50%, 0.3)`)
-    }
+    const hues: Array<number> = generateHuesForInterval(20, 80, numberOfColorsInFirstInterval)
+    hues.push(...generateHuesForInterval(160, 340, numberOfColorsInSecondInterval))
+    return toHSLAArray(hues, 0.8, 0.5, 0.3)
   }
 
   private static mapMatch(match: Record<string, unknown>, color: string): Match {

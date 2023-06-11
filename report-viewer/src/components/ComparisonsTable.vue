@@ -13,7 +13,7 @@
             <div class="flex-auto">Maximum</div>
           </div>
         </div>
-        <div class="tableCellCluster items-center">Cluster</div>
+        <div class="tableCellCluster items-center" v-if="displayClusters">Cluster</div>
       </div>
     </div>
     <div class="overflow-hidden flex flex-col flex-grow">
@@ -49,22 +49,35 @@
                   </div>
                 </div>
                 <div class="tableCellSimilarity">
-                  <div class="flex-auto">{{ formattedMatchPercentage(item.similarity) }}%</div>
-                  <div class="flex-auto">{{ formattedMatchPercentage(item.similarity) }}%</div>
+                  <div class="flex-auto">
+                    {{ formattedMatchPercentage(item.averageSimilarity) }}%
+                  </div>
+                  <div class="flex-auto">
+                    {{ formattedMatchPercentage(item.maximumSimilarity) }}%
+                  </div>
                 </div>
               </RouterLink>
-              <div class="tableCellCluster">
-                <RouterLink :to="'test'">
-                  <div v-if="isInCluster(item.firstSubmissionId, item.secondSubmissionId)">
-                    {{
-                      getClustersFor(item.firstSubmissionId, item.secondSubmissionId)[0].members
-                        .size
-                    }}
-                    <FontAwesomeIcon :icon="['fas', 'user-group']" />
+              <div class="tableCellCluster flex !flex-col" v-if="displayClusters">
+                <RouterLink
+                  v-for="index of getClusterIndexesFor(
+                    item.firstSubmissionId,
+                    item.secondSubmissionId
+                  )"
+                  v-bind:key="index"
+                  :to="{
+                    name: 'ClusterView',
+                    params: { clusterIndex: index }
+                  }"
+                >
+                  <div>
+                    {{ clusters?.[index].members?.length }}
+                    <FontAwesomeIcon
+                      :icon="['fas', 'user-group']"
+                      :style="{ color: clusterIconColors[index] }"
+                    />
                     {{
                       formattedMatchPercentage(
-                        getClustersFor(item.firstSubmissionId, item.secondSubmissionId)[0]
-                          .averageSimilarity / 100
+                        (clusters?.[index].averageSimilarity as number) / 100
                       )
                     }}%
                   </div>
@@ -81,7 +94,6 @@
 <script setup lang="ts">
 import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import type { ClusterListElement } from '@/model/ClusterListElement'
 import type { Ref } from 'vue'
 import { ref } from 'vue'
 import store from '@/stores/store'
@@ -89,6 +101,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import { generateHuesForInterval, toHSLAArray } from '@/utils/ColorUtils'
 
 library.add(faUserGroup)
 
@@ -99,9 +112,11 @@ const props = defineProps({
   },
   clusters: {
     type: Array<Cluster>,
-    required: true
+    required: false
   }
 })
+
+const displayClusters = props.clusters != undefined
 
 /**
  * Formats the match percentage to a string with 2 decimal places.
@@ -124,15 +139,6 @@ function displayName(submissionId: string) {
 }
 
 /**
- * @param id1 First Id
- * @param id2 Second Id
- * @returns Whether the two ids are in a cluster together.
- */
-function isInCluster(id1: string, id2: string) {
-  return props.clusters.some((c: Cluster) => c.members.includes(id1) && c.members.includes(id2))
-}
-
-/**
  * @param id SubmissionId to check
  * @returns Whether the name should be hidden.
  */
@@ -140,58 +146,31 @@ function isAnonymous(id: string) {
   return store().anonymous.has(id)
 }
 
-/**
- * @param id First Id
- * @param others Other Ids that need to be in the cluster
- * @returns The clusters that the two ids are in together.
- */
-function getParticipatingMatchesForId(id: string, others: Array<string>) {
-  let matches: Array<{ matchedWith: string; percentage: number }> = []
-  props.topComparisons.forEach((comparison) => {
-    if (
-      comparison.firstSubmissionId.includes(id) &&
-      others.includes(comparison.secondSubmissionId)
-    ) {
-      matches.push({
-        matchedWith: comparison.secondSubmissionId,
-        percentage: comparison.similarity
-      })
-    } else if (
-      comparison.secondSubmissionId.includes(id) &&
-      others.includes(comparison.firstSubmissionId)
-    ) {
-      matches.push({
-        matchedWith: comparison.firstSubmissionId,
-        percentage: comparison.similarity
-      })
-    }
-  })
-  return matches
+let clusterIconColors = [] as Array<string>
+if (props.clusters != undefined) {
+  const hues = generateHuesForInterval(20, 80, Math.floor(props.clusters.length))
+  hues.push(...generateHuesForInterval(160, 340, Math.ceil(props.clusters.length)))
+  clusterIconColors = toHSLAArray(
+    generateHuesForInterval(20, 340, props.clusters.length),
+    0.5,
+    0.5,
+    1
+  )
 }
-
-const clustersWithParticipatingMatches: Array<ClusterListElement> = props.clusters.map(
-  (cluster) => {
-    let membersArray = new Map<string, Array<{ matchedWith: string; percentage: number }>>()
-    cluster.members.forEach((member: string) => {
-      let others = cluster.members.filter((m) => !m.includes(member))
-      membersArray.set(member, getParticipatingMatchesForId(member, others))
-    })
-
-    return {
-      averageSimilarity: cluster.averageSimilarity,
-      strength: cluster.strength,
-      members: membersArray
-    }
-  }
-)
 
 /**
  * @param id1 First Id to check
  * @param id2 Second Id to check
  * @returns All clusters that contain both ids.
  */
-function getClustersFor(id1: string, id2: string): Array<ClusterListElement> {
-  return clustersWithParticipatingMatches.filter((c) => c.members.has(id1) && c.members.has(id2))
+function getClusterIndexesFor(id1: string, id2: string): Array<number> {
+  const indexes = [] as Array<number>
+  props.clusters?.forEach((c: Cluster, index: number) => {
+    if (c.members.includes(id1) && c.members.includes(id2)) {
+      indexes.push(index)
+    }
+  })
+  return indexes
 }
 </script>
 
@@ -201,7 +180,7 @@ function getClustersFor(id1: string, id2: string): Array<ClusterListElement> {
 }
 
 .tableCellSimilarity {
-  @apply w-64 tableCell;
+  @apply w-40 tableCell;
 }
 
 .tableCellCluster {
