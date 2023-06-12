@@ -16,17 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.normalization.TokenStringNormalizer;
+import de.jplag.options.JPlagOptions;
 
 /**
  * Represents a single submission. A submission can contain multiple files.
  */
 public class Submission implements Comparable<Submission> {
     private static final Logger logger = LoggerFactory.getLogger(Submission.class);
-
-    /**
-     * Directory name for storing submission files with parse errors if so requested.
-     */
-    private static final String ERROR_FOLDER = "errors";
 
     /**
      * Identification of the submission (often a directory or file name).
@@ -226,7 +222,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     private static File createErrorDirectory(String... subdirectoryNames) {
-        File subdirectory = Path.of(ERROR_FOLDER, subdirectoryNames).toFile();
+        File subdirectory = Path.of(JPlagOptions.ERROR_FOLDER, subdirectoryNames).toFile();
         if (!subdirectory.exists()) {
             subdirectory.mkdirs();
         }
