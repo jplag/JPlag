@@ -1,5 +1,7 @@
 package de.jplag;
 
+import java.io.File;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -72,6 +74,19 @@ public class JPlag {
         if (logger.isInfoEnabled())
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
+
+        logSkippedSubmissions(submissionSet, options);
+
         return result;
+    }
+
+    private static void logSkippedSubmissions(SubmissionSet submissionSet, JPlagOptions options) {
+        if (submissionSet.getInvalidSubmissions().size() > 0) {
+            List<Submission> skipSet = submissionSet.getInvalidSubmissions();
+            logger.warn("{} submissions were skipped (see errors above): {}", skipSet.size(), skipSet.stream().map(Submission::getName).toList());
+            if (options.debugParser()) {
+                logger.warn("Erroneous submissions were copied to {}", new File("errors").getAbsolutePath());
+            }
+        }
     }
 }
