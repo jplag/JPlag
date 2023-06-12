@@ -81,8 +81,8 @@ public class JPlag {
     }
 
     private static void logSkippedSubmissions(SubmissionSet submissionSet, JPlagOptions options) {
-        if (submissionSet.getInvalidSubmissions().size() > 0) {
-            List<Submission> skipSet = submissionSet.getInvalidSubmissions();
+        List<Submission> skipSet = submissionSet.getInvalidSubmissions();
+        if (!skipSet.isEmpty()) {
             logger.warn("{} submissions were skipped (see errors above): {}", skipSet.size(), skipSet.stream().map(Submission::getName).toList());
             if (options.debugParser()) {
                 logger.warn("Erroneous submissions were copied to {}", new File("errors").getAbsolutePath());
