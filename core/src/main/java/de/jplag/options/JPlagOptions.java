@@ -54,6 +54,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
     public static final int SHOW_ALL_COMPARISONS = 0;
     public static final SimilarityMetric DEFAULT_SIMILARITY_METRIC = SimilarityMetric.AVG;
     public static final Charset CHARSET = StandardCharsets.UTF_8;
+    public static final String ERROR_FOLDER = "errors";
 
     private static final Logger logger = LoggerFactory.getLogger(JPlagOptions.class);
 
