@@ -4,6 +4,7 @@
 <template>
   <div class="flex flex-col">
     <div class="font-bold">
+      <!-- Header -->
       <div class="tableRow">
         <div class="tableCellName items-center">Submissions in Comparison</div>
         <div class="tableCellSimilarity !flex-col">
@@ -16,6 +17,8 @@
         <div class="tableCellCluster items-center" v-if="displayClusters">Cluster</div>
       </div>
     </div>
+
+    <!-- Body -->
     <div class="overflow-hidden flex flex-col flex-grow">
       <DynamicScroller v-if="topComparisons.length > 0" :items="topComparisons" :min-item-size="48">
         <template v-slot="{ item, index, active }">
@@ -24,6 +27,7 @@
             :active="active"
             :size-dependencies="[item.firstSubmissionId, item.secondSubmissionId]"
           >
+            <!-- Row -->
             <div class="tableRow" :class="{ 'bg-accent bg-opacity-25': index % 2 == 0 }">
               <RouterLink
                 :to="{
@@ -32,6 +36,7 @@
                 }"
                 class="flex flex-row flex-grow"
               >
+                <!-- Names -->
                 <div class="tableCellName">
                   <div class="flex-auto">
                     {{
@@ -48,6 +53,8 @@
                     }}
                   </div>
                 </div>
+
+                <!-- Similarities -->
                 <div class="tableCellSimilarity">
                   <div class="flex-auto">
                     {{ formattedMatchPercentage(item.averageSimilarity) }}%
@@ -57,6 +64,8 @@
                   </div>
                 </div>
               </RouterLink>
+
+              <!-- Clusters -->
               <div class="tableCellCluster flex !flex-col" v-if="displayClusters">
                 <RouterLink
                   v-for="index of getClusterIndexesFor(

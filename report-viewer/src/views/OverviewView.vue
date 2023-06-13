@@ -14,7 +14,7 @@
           <TextInformation label="Total Comparisons">{{
             overview.totalComparisons
           }}</TextInformation>
-          <Button @click="router.push('test')"> More </Button>
+          <Button @click="router.push({ name: 'InfoView' })"> More </Button>
         </div>
       </Container>
     </div>
@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref } from 'vue'
+import { onErrorCaptured, ref } from 'vue'
 import router from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
@@ -68,6 +68,8 @@ import OptionsSelectorComponent from '@/components/OptionsSelectorComponent.vue'
 import MetricType from '@/model/ui/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
+import Interactable from '@/components/InteractableComponent.vue'
+import type { RouterLink } from 'vue-router'
 
 const overview = OverviewFactory.getOverview()
 
@@ -113,13 +115,8 @@ function selectMetric(metric: number) {
 
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
 const submissionPathValue = hasMoreSubmissionPaths
-  ? 'Click arrow to see all paths'
+  ? 'Click More to see all paths'
   : overview.submissionFolderPath[0]
-
-const shownComparisons = computed(() => {
-  return overview.topComparisons.length
-})
-const missingComparisons = overview.totalComparisons - shownComparisons.value
 
 onErrorCaptured(() => {
   router.push({
