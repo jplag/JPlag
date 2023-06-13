@@ -10,7 +10,7 @@ import { computed, ref, watch } from 'vue'
 import { BarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import { useDarkMode } from '@/main'
+import store from '@/stores/store'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -23,7 +23,7 @@ const props = defineProps({
 })
 
 const tickColor = computed(() => {
-  return useDarkMode.value ? '#ffffff' : '#000000'
+  return store().uiState.useDarkMode ? '#ffffff' : '#000000'
 })
 
 //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,

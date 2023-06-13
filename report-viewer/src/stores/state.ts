@@ -61,3 +61,7 @@ export interface LoadConfiguration {
   single: boolean
   fileString: string
 }
+
+export interface UIState {
+  useDarkMode: boolean
+}

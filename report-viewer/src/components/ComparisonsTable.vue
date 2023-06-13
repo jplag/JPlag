@@ -152,7 +152,7 @@ function displayName(submissionId: string) {
  * @returns Whether the name should be hidden.
  */
 function isAnonymous(id: string) {
-  return store().anonymous.has(id)
+  return store().state.anonymous.has(id)
 }
 
 let clusterIconColors = [] as Array<string>

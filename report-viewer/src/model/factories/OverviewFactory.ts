@@ -106,7 +106,7 @@ export class OverviewFactory {
     console.log('Generating overview...')
     let temp!: Overview
     //Gets the overview file based on the used mode (zip, local, single).
-    if (store().local) {
+    if (store().state.local) {
       const request = new XMLHttpRequest()
       request.open('GET', '/files/overview.json', false)
       request.send()
@@ -116,11 +116,13 @@ export class OverviewFactory {
       } else {
         throw 'Could not find overview.json in folder.'
       }
-    } else if (store().zip) {
+    } else if (store().state.zip) {
       console.log('Start finding overview.json in state...')
-      const index = Object.keys(store().files).find((name) => name.endsWith('overview.json'))
+      const index = Object.keys(store().state.files).find((name) => name.endsWith('overview.json'))
       const overviewFile =
-        index != undefined ? store().files[index] : console.log('Could not find overview.json')
+        index != undefined
+          ? store().state.files[index]
+          : console.log('Could not find overview.json')
 
       if (overviewFile === undefined) {
         return new Overview(
@@ -140,8 +142,8 @@ export class OverviewFactory {
       }
       const overviewJson = JSON.parse(overviewFile)
       temp = OverviewFactory.extractOverview(overviewJson)
-    } else if (store().single) {
-      temp = OverviewFactory.extractOverview(JSON.parse(store().fileString))
+    } else if (store().state.single) {
+      temp = OverviewFactory.extractOverview(JSON.parse(store().state.fileString))
     }
     return temp
   }

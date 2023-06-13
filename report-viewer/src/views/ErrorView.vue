@@ -6,7 +6,7 @@
           class="mt-8 w-60 h-auto mx-auto"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
-          v-if="useDarkMode"
+          v-if="store().uiState.useDarkMode"
         />
         <img
           class="mt-8 w-60 h-auto mx-auto"
@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import Container from '@/components/ContainerComponent.vue'
 import Interactable from '@/components/InteractableComponent.vue'
-import { useDarkMode } from '@/main'
+import store from '@/stores/store'
 
 const message = history.state.message as string
 const to = history.state.to as string

@@ -1,4 +1,4 @@
-import { createApp, ref } from 'vue'
+import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
@@ -11,8 +11,6 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 import './style.css'
 
-const useDarkMode = ref(false)
-
 const app = createApp(App)
 
 app.use(createPinia())
@@ -20,5 +18,3 @@ app.use(router)
 app.use(VueVirtualScroller)
 
 app.mount('#app')
-
-export { useDarkMode }

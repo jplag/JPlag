@@ -3,13 +3,13 @@
   participants in the cluster.
 -->
 <template>
-  <div>
-    <div v-if="!hasNoMember">
+  <div class="flex flex-col">
+    <div v-if="!hasNoMember" class="flex-grow flex flex-col">
       <DropDownSelector
         :options="selectedOptions"
         @selectionChanged="(value) => updateChartData(value)"
       />
-      <RadarChart :chartData="chartData" :options="options" class="chart"></RadarChart>
+      <RadarChart :chartData="chartData" :options="options" class="flex-grow"></RadarChart>
     </div>
     <div v-else>
       <span>This cluster has no members.</span>
@@ -22,12 +22,12 @@ import type { PropType, Ref } from 'vue'
 import type { ChartData } from 'chart.js'
 import type { ClusterListElement } from '@/model/ClusterListElement'
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { RadarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import { radarChartStyle, radarChartOptions } from '@/assets/radar-chart-configuration'
 import DropDownSelector from './DropDownSelector.vue'
+import store from '@/stores/store'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -74,6 +74,41 @@ function createDataSetFor(member: string) {
 function roundToTwoDecimals(num: number): number {
   return Math.round((num + Number.EPSILON) * 100) / 100
 }
+
+const tickColor = computed(() => {
+  return store().uiState.useDarkMode ? '#ffffff' : '#000000'
+})
+
+const radarChartStyle = {
+  fill: true,
+  backgroundColor: 'rgb(190, 22, 34, 0.5)',
+  borderColor: 'rgb(127, 15, 24)',
+  pointBackgroundColor: 'rgb(190, 22, 34, 1)',
+  pointBorderColor: 'rgb(127, 15, 24)',
+  borderWidth: 2
+}
+const radarChartOptions = computed(() => {
+  return {
+    legend: {
+      display: false
+    },
+    scales: {
+      r: {
+        suggestedMin: 50,
+        suggestedMax: 100,
+        ticks: {
+          color: tickColor.value,
+          backdropColor: 'rgba(0,0,0,0)'
+        }
+      }
+    },
+    plugins: {
+      datalabels: {
+        color: tickColor.value
+      }
+    }
+  }
+})
 
 const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = ref({
   labels: createLabelsFor(idOfFirstSubmission),

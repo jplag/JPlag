@@ -27,7 +27,7 @@
         :files="filesOfFirst"
         :matches="comparison.matchesInFirstSubmission"
         :files-owner="store().submissionDisplayName(firstId) || ''"
-        :anonymous="store().anonymous.has(firstId)"
+        :anonymous="store().state.anonymous.has(firstId)"
         files-owner-default="Submission 1"
         @toggle-collapse="toggleCollapseFirst"
         @line-selected="showMatchInSecond"
@@ -39,7 +39,7 @@
         :files="filesOfSecond"
         :matches="comparison.matchesInSecondSubmissions"
         :files-owner="store().submissionDisplayName(secondId) || ''"
-        :anonymous="store().anonymous.has(secondId) || false"
+        :anonymous="store().state.anonymous.has(secondId) || false"
         files-owner-default="Submission 2"
         @toggle-collapse="toggleCollapseSecond"
         @line-selected="showMatchInFirst"
@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
 
-import { onMounted, ref, watch, type Ref } from 'vue'
+import { onMounted, ref, watch, type Ref, computed } from 'vue'
 import { generateLineCodeLink } from '@/utils/Utils'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
@@ -65,7 +65,6 @@ import Container from '@/components/ContainerComponent.vue'
 
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
-import { useDarkMode } from '@/main'
 
 const props = defineProps({
   firstId: {
@@ -83,7 +82,7 @@ console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondI
 let comparison = new Comparison('', '', 0)
 
 //getting the comparison file based on the used mode (zip, local, single)
-if (store().local) {
+if (store().state.local) {
   const request = new XMLHttpRequest()
   request.open(
     'GET',
@@ -103,7 +102,7 @@ if (store().local) {
   } else {
     router.back()
   }
-} else if (store().zip) {
+} else if (store().state.zip) {
   let comparisonFile = store().getComparisonFileForSubmissions(props.firstId, props.secondId)
   if (comparisonFile) {
     comparison = ComparisonFactory.getComparison(JSON.parse(comparisonFile))
@@ -118,9 +117,9 @@ if (store().local) {
       }
     })
   }
-} else if (store().single) {
+} else if (store().state.single) {
   try {
-    comparison = ComparisonFactory.getComparison(JSON.parse(store().fileString))
+    comparison = ComparisonFactory.getComparison(JSON.parse(store().state.fileString))
   } catch (e) {
     router.push({
       name: 'ErrorView',
@@ -229,7 +228,7 @@ function showMatch(e: unknown, match: Match) {
 }
 
 function isAnonymous(id: string) {
-  return store().anonymous.has(id)
+  return store().state.anonymous.has(id)
 }
 
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
@@ -241,8 +240,12 @@ onMounted(() => {
   }
   const styleHolderDiv = styleholder.value as Node
   const styleElement = document.createElement('style')
-  styleElement.innerHTML = useDarkMode.value ? hljsDarkMode : hljsLightMode
+  styleElement.innerHTML = store().uiState.useDarkMode ? hljsDarkMode : hljsLightMode
   styleHolderDiv.appendChild(styleElement)
+})
+
+const useDarkMode = computed(() => {
+  return store().uiState.useDarkMode
 })
 
 watch(useDarkMode, (newValue) => {

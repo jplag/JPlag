@@ -5,8 +5,8 @@
     </div>
 
     <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5 justify-between">
-      <Container class="max-h-0 min-h-full overflow-hidden flex-1">
-        <ClusterRadarChart :cluster="clusterListElement" />
+      <Container class="max-h-0 min-h-full overflow-hidden flex-1 flex flex-col">
+        <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
       </Container>
       <Container class="max-h-0 min-h-full overflow-hidden w-1/3">
         <ComparisonsTable :topComparisons="comparisons" />

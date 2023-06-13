@@ -48,7 +48,9 @@
           />
           <Button class="w-fit" @click="changeAnnoymousForAll()">
             {{
-              store().anonymous.size == store().getSubmissionIds.length ? 'Show All' : 'Hide All'
+              store().state.anonymous.size == store().getSubmissionIds.length
+                ? 'Show All'
+                : 'Hide All'
             }}
           </Button>
         </div>
@@ -119,7 +121,7 @@ function nameSearchUpdated(newVal: string) {
   for (const search of searches) {
     for (const submissionId of store().getSubmissionIds) {
       if (submissionId.toLowerCase() == search) {
-        store().anonymous.delete(submissionId)
+        store().state.anonymous.delete(submissionId)
       }
     }
   }
@@ -148,10 +150,10 @@ function updateDisplayedComparisons(comparisons: ComparisonListElement[]) {
  * Sets the annonymous set to empty if it is full or adds all submission ids to it if it is not full
  */
 function changeAnnoymousForAll() {
-  if (store().anonymous.size == store().getSubmissionIds.length) {
-    store().anonymous.clear()
+  if (store().state.anonymous.size == store().getSubmissionIds.length) {
+    store().state.anonymous.clear()
   } else {
-    store().anonymous = new Set(store().getSubmissionIds)
+    store().state.anonymous = new Set(store().getSubmissionIds)
   }
 }
 
@@ -171,7 +173,8 @@ const submissionPathValue = hasMoreSubmissionPaths
   ? 'Click More to see all paths'
   : overview.submissionFolderPath[0]
 
-onErrorCaptured(() => {
+onErrorCaptured((e) => {
+  console.log(e)
   router.push({
     name: 'ErrorView',
     state: {

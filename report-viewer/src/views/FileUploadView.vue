@@ -13,7 +13,7 @@
           class="mt-8 w-60 h-auto mx-auto"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
-          v-if="useDarkMode"
+          v-if="store().uiState.useDarkMode"
         />
         <img
           class="mt-8 w-60 h-auto mx-auto"
@@ -49,7 +49,6 @@ import router from '@/router'
 import store from '@/stores/store'
 import slash from 'slash'
 import Button from '@/components/ButtonComponent.vue'
-import { useDarkMode } from '../main'
 
 class LoadError extends Error {}
 
