@@ -26,6 +26,10 @@ const tickColor = computed(() => {
   return store().uiState.useDarkMode ? '#ffffff' : '#000000'
 })
 
+const gridColor = computed(() => {
+  return store().uiState.useDarkMode ? 'rgba(256, 256, 256, 0.2)' : 'rgba(0, 0, 0, 0.2)'
+})
+
 //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
 //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
 const maxVal = ref(Math.max(...props.distribution))
@@ -51,7 +55,7 @@ const dataSetStyle = computed(() => {
   }
 })
 
-let chartData = ref({
+const chartData = ref({
   labels: labels,
   datasets: [
     {
@@ -71,11 +75,17 @@ const options = computed(() => {
         suggestedMax: maxVal.value + 5,
         ticks: {
           color: tickColor.value
+        },
+        grid: {
+          color: gridColor.value
         }
       },
       y: {
         ticks: {
           color: tickColor.value
+        },
+        grid: {
+          color: gridColor.value
         }
       }
     },

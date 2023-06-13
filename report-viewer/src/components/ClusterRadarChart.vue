@@ -79,6 +79,10 @@ const tickColor = computed(() => {
   return store().uiState.useDarkMode ? '#ffffff' : '#000000'
 })
 
+const gridColor = computed(() => {
+  return store().uiState.useDarkMode ? 'rgba(256, 256, 256, 0.2)' : 'rgba(0, 0, 0, 0.2)'
+})
+
 const radarChartStyle = {
   fill: true,
   backgroundColor: 'rgb(190, 22, 34, 0.5)',
@@ -99,6 +103,12 @@ const radarChartOptions = computed(() => {
         ticks: {
           color: tickColor.value,
           backdropColor: 'rgba(0,0,0,0)'
+        },
+        grid: {
+          color: gridColor.value
+        },
+        angleLines: {
+          color: gridColor.value
         }
       }
     },
