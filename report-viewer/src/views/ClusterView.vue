@@ -5,7 +5,7 @@
         <h2>Cluster</h2>
         <div class="flex flex-row space-x-5 items-center">
           <TextInformation label="Average Similarity"
-            >{{ cluster.averageSimilarity }}%</TextInformation
+            >{{ toTwoDecimals(cluster.averageSimilarity) }}%</TextInformation
           >
           <TextInformation label="Cluster Strength">{{ cluster.strength }}</TextInformation>
         </div>
@@ -32,6 +32,7 @@ import TextInformation from '@/components/TextInformation.vue'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
+import { toTwoDecimals } from '@/utils/ComparisonUtils'
 
 const props = defineProps({
   clusterIndex: {

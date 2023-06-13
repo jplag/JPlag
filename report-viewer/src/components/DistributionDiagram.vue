@@ -10,7 +10,7 @@ import { computed, ref, watch } from 'vue'
 import { BarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import store from '@/stores/store'
+import { graphColors } from '@/utils/ColorUtils'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -20,14 +20,6 @@ const props = defineProps({
     type: Array<number>,
     required: true
   }
-})
-
-const tickColor = computed(() => {
-  return store().uiState.useDarkMode ? '#ffffff' : '#000000'
-})
-
-const gridColor = computed(() => {
-  return store().uiState.useDarkMode ? 'rgba(256, 256, 256, 0.2)' : 'rgba(0, 0, 0, 0.2)'
 })
 
 //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
@@ -48,10 +40,10 @@ const labels = [
 const dataSetStyle = computed(() => {
   return {
     label: 'Comparison Count',
-    backgroundColor: 'rgb(190, 22, 34, 0.5)',
+    backgroundColor: graphColors.contentFill,
     borderWidth: 2,
-    borderColor: 'rgb(127, 15, 24)',
-    tickColor: tickColor.value
+    borderColor: graphColors.contentBorder,
+    tickColor: graphColors.ticksAndFont.value
   }
 })
 
@@ -74,24 +66,24 @@ const options = computed(() => {
       x: {
         suggestedMax: maxVal.value + 5,
         ticks: {
-          color: tickColor.value
+          color: graphColors.ticksAndFont.value
         },
         grid: {
-          color: gridColor.value
+          color: graphColors.gridLines.value
         }
       },
       y: {
         ticks: {
-          color: tickColor.value
+          color: graphColors.ticksAndFont.value
         },
         grid: {
-          color: gridColor.value
+          color: graphColors.gridLines.value
         }
       }
     },
     plugins: {
       datalabels: {
-        color: tickColor.value,
+        color: graphColors.ticksAndFont.value,
         font: {
           weight: 'bold'
         },

@@ -27,7 +27,8 @@ import { RadarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import DropDownSelector from './DropDownSelector.vue'
-import store from '@/stores/store'
+import { toTwoDecimals } from '@/utils/ComparisonUtils'
+import { graphColors } from '@/utils/ColorUtils'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -61,34 +62,16 @@ function createLabelsFor(member: string) {
  */
 function createDataSetFor(member: string) {
   let data = new Array<number>()
-  props.cluster.members
-    .get(member)
-    ?.forEach((m) => data.push(roundToTwoDecimals(m.similarity * 100)))
+  props.cluster.members.get(member)?.forEach((m) => data.push(+toTwoDecimals(m.similarity * 100)))
   return data
 }
 
-/**
- * @param num The number to round.
- * @returns The rounded number.
- */
-function roundToTwoDecimals(num: number): number {
-  return Math.round((num + Number.EPSILON) * 100) / 100
-}
-
-const tickColor = computed(() => {
-  return store().uiState.useDarkMode ? '#ffffff' : '#000000'
-})
-
-const gridColor = computed(() => {
-  return store().uiState.useDarkMode ? 'rgba(256, 256, 256, 0.2)' : 'rgba(0, 0, 0, 0.2)'
-})
-
 const radarChartStyle = {
   fill: true,
-  backgroundColor: 'rgb(190, 22, 34, 0.5)',
-  borderColor: 'rgb(127, 15, 24)',
-  pointBackgroundColor: 'rgb(190, 22, 34, 1)',
-  pointBorderColor: 'rgb(127, 15, 24)',
+  backgroundColor: graphColors.contentFill,
+  borderColor: graphColors.contentBorder,
+  pointBackgroundColor: graphColors.pointFill,
+  pointBorderColor: graphColors.contentBorder,
   borderWidth: 2
 }
 const radarChartOptions = computed(() => {
@@ -101,20 +84,20 @@ const radarChartOptions = computed(() => {
         suggestedMin: 50,
         suggestedMax: 100,
         ticks: {
-          color: tickColor.value,
+          color: graphColors.ticksAndFont.value,
           backdropColor: 'rgba(0,0,0,0)'
         },
         grid: {
-          color: gridColor.value
+          color: graphColors.gridLines.value
         },
         angleLines: {
-          color: gridColor.value
+          color: graphColors.gridLines.value
         }
       }
     },
     plugins: {
       datalabels: {
-        color: tickColor.value
+        color: graphColors.ticksAndFont.value
       }
     }
   }

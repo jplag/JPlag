@@ -9,11 +9,50 @@ import { generateHuesForInterval, toHSLAArray } from '@/utils/ColorUtils'
  * Factory class for creating Comparison objects
  */
 export class ComparisonFactory {
+  static getComparison(id1: string, id2: string) {
+    console.log('Generating comparison {%s} - {%s}...', id1, id2)
+    let comparison = new Comparison('', '', 0)
+
+    //getting the comparison file based on the used mode (zip, local, single)
+    if (store().state.local) {
+      const request = new XMLHttpRequest()
+      request.open('GET', `/files/${store().getComparisonFileName(id1, id2)}`, false)
+      request.send()
+
+      if (request.status == 200) {
+        ComparisonFactory.loadSubmissionFilesFromLocal(id1)
+        ComparisonFactory.loadSubmissionFilesFromLocal(id2)
+        try {
+          comparison = ComparisonFactory.extractComparison(JSON.parse(request.response))
+        } catch (e) {
+          throw 'Comparison file not found'
+        }
+      } else {
+        throw 'Comparison file not found'
+      }
+    } else if (store().state.zip) {
+      const comparisonFile = store().getComparisonFileForSubmissions(id1, id2)
+      if (comparisonFile) {
+        comparison = ComparisonFactory.extractComparison(JSON.parse(comparisonFile))
+      } else {
+        throw 'Comparison file not found'
+      }
+    } else if (store().state.single) {
+      try {
+        comparison = ComparisonFactory.extractComparison(JSON.parse(store().state.fileString))
+      } catch (e) {
+        store().clearStore()
+        throw 'No Comparison files given!'
+      }
+    }
+    return comparison
+  }
+
   /**
    * Creates a comparison object from a json object created by by JPlag
    * @param json the json object
    */
-  static getComparison(json: Record<string, unknown>): Comparison {
+  static extractComparison(json: Record<string, unknown>): Comparison {
     const filesOfFirstSubmission = store().filesOfSubmission(json.id1 as string)
     const filesOfSecondSubmission = store().filesOfSubmission(json.id2 as string)
 
@@ -97,6 +136,35 @@ export class ComparisonFactory {
       }
     })
     return acc
+  }
+
+  private static getSubmissionFileListFromLocal(submissionId: string): string[] {
+    const request = new XMLHttpRequest()
+    request.open('GET', `/files/submissionFileIndex.json`, false)
+    request.send()
+    if (request.status == 200) {
+      return JSON.parse(request.response).submission_file_indexes[submissionId]
+    } else {
+      return []
+    }
+  }
+
+  private static loadSubmissionFilesFromLocal(submissionId: string) {
+    const request = new XMLHttpRequest()
+    const fileList = ComparisonFactory.getSubmissionFileListFromLocal(submissionId)
+    for (const file of fileList) {
+      request.open('GET', `/files/files/${file.replace(/\\/, '/')}`, false)
+      request.send()
+      if (request.status == 200) {
+        store().saveSubmissionFile({
+          name: submissionId,
+          file: {
+            fileName: file,
+            data: request.response
+          }
+        })
+      }
+    }
   }
 
   private static generateColorsForMatches(num: number): Array<string> {

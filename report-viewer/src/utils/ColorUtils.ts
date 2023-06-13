@@ -1,3 +1,6 @@
+import store from '@/stores/store'
+import { computed } from 'vue'
+
 function generateHuesForInterval(
   intervalStart: number,
   intervalEnd: number,
@@ -25,7 +28,7 @@ function toHSLAArray(
   hues: Array<number>,
   saturation: number,
   lightness: number,
-  alpha
+  alpha: number
 ): Array<string> {
   const colors: Array<string> = []
   hues.forEach((hue) => {
@@ -34,4 +37,16 @@ function toHSLAArray(
   return colors
 }
 
-export { generateHuesForInterval, toHSLAArray }
+const graphColors = {
+  ticksAndFont: computed(() => {
+    return store().uiState.useDarkMode ? '#ffffff' : '#000000'
+  }),
+  gridLines: computed(() => {
+    return store().uiState.useDarkMode ? 'rgba(256, 256, 256, 0.2)' : 'rgba(0, 0, 0, 0.2)'
+  }),
+  contentFill: 'rgba(190, 22, 34, 0.5)',
+  contentBorder: 'rgb(127, 15, 24)',
+  pointFill: 'rgba(190, 22, 34, 1)'
+}
+
+export { generateHuesForInterval, toHSLAArray, graphColors }

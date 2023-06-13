@@ -21,7 +21,7 @@
         </h2>
         <div class="flex flex-row">
           <TextInformation label="Average Similarity"
-            >{{ comparison.similarity * 100 }}%</TextInformation
+            >{{ toTwoDecimals(comparison.similarity * 100) }}%</TextInformation
           >
         </div>
         <MatchList
@@ -65,13 +65,12 @@
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
 
-import { onMounted, ref, watch, type Ref, computed } from 'vue'
-import { generateLineCodeLink } from '@/utils/Utils'
+import { onMounted, ref, watch, type Ref, computed, onErrorCaptured } from 'vue'
+import { generateLineCodeLink, toTwoDecimals } from '@/utils/ComparisonUtils'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
-import { Comparison } from '@/model/Comparison'
 import store from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 
@@ -90,90 +89,7 @@ const props = defineProps({
   }
 })
 
-console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
-let comparison = new Comparison('', '', 0)
-
-//getting the comparison file based on the used mode (zip, local, single)
-if (store().state.local) {
-  const request = new XMLHttpRequest()
-  request.open(
-    'GET',
-    `/files/${store().getComparisonFileName(props.firstId, props.secondId)}`,
-    false
-  )
-  request.send()
-
-  if (request.status == 200) {
-    loadSubmissionFilesFromLocal(props.firstId)
-    loadSubmissionFilesFromLocal(props.secondId)
-    try {
-      comparison = ComparisonFactory.getComparison(JSON.parse(request.response))
-    } catch (e) {
-      router.back()
-    }
-  } else {
-    router.back()
-  }
-} else if (store().state.zip) {
-  let comparisonFile = store().getComparisonFileForSubmissions(props.firstId, props.secondId)
-  if (comparisonFile) {
-    comparison = ComparisonFactory.getComparison(JSON.parse(comparisonFile))
-  } else {
-    console.log('Comparison file not found!')
-    router.push({
-      name: 'ErrorView',
-      state: {
-        message: 'Comparison file not found!',
-        to: '/overview',
-        routerInfo: 'back to overview page'
-      }
-    })
-  }
-} else if (store().state.single) {
-  try {
-    comparison = ComparisonFactory.getComparison(JSON.parse(store().state.fileString))
-  } catch (e) {
-    router.push({
-      name: 'ErrorView',
-      state: {
-        message:
-          'Source code of matches not found. To only see the overview, please drop the overview.json directly.',
-        to: '/',
-        routerInfo: 'back to FileUpload page'
-      }
-    })
-    store().clearStore()
-  }
-}
-
-function getSubmissionFileListFromLocal(submissionId: string): string[] {
-  const request = new XMLHttpRequest()
-  request.open('GET', `/files/submissionFileIndex.json`, false)
-  request.send()
-  if (request.status == 200) {
-    return JSON.parse(request.response).submission_file_indexes[submissionId]
-  } else {
-    return []
-  }
-}
-
-function loadSubmissionFilesFromLocal(submissionId: string) {
-  const request = new XMLHttpRequest()
-  const fileList = getSubmissionFileListFromLocal(submissionId)
-  for (const file of fileList) {
-    request.open('GET', `/files/files/${file.replace(/\\/, '/')}`, false)
-    request.send()
-    if (request.status == 200) {
-      store().saveSubmissionFile({
-        name: submissionId,
-        file: {
-          fileName: file,
-          data: request.response
-        }
-      })
-    }
-  }
-}
+const comparison = ComparisonFactory.getComparison(props.firstId, props.secondId)
 
 const filesOfFirst = ref(comparison.filesOfFirstSubmission)
 const filesOfSecond = ref(comparison.filesOfSecondSubmission)
@@ -269,5 +185,19 @@ watch(useDarkMode, (newValue) => {
   const styleElement = document.createElement('style')
   styleElement.innerHTML = newValue ? hljsDarkMode : hljsLightMode
   styleHolderDiv.appendChild(styleElement)
+})
+
+onErrorCaptured((e) => {
+  console.log(e)
+  router.push({
+    name: 'ErrorView',
+    state: {
+      message: 'Overview.json could not be found!',
+      to: '/',
+      routerInfo: 'back to FileUpload page'
+    }
+  })
+  store().clearStore()
+  return false
 })
 </script>

@@ -56,12 +56,8 @@
 
                 <!-- Similarities -->
                 <div class="tableCellSimilarity">
-                  <div class="flex-auto">
-                    {{ formattedMatchPercentage(item.averageSimilarity) }}%
-                  </div>
-                  <div class="flex-auto">
-                    {{ formattedMatchPercentage(item.maximumSimilarity) }}%
-                  </div>
+                  <div class="flex-auto">{{ toTwoDecimals(item.averageSimilarity * 100) }}%</div>
+                  <div class="flex-auto">{{ toTwoDecimals(item.maximumSimilarity * 100) }}%</div>
                 </div>
               </RouterLink>
 
@@ -84,11 +80,7 @@
                       :icon="['fas', 'user-group']"
                       :style="{ color: clusterIconColors[index] }"
                     />
-                    {{
-                      formattedMatchPercentage(
-                        (clusters?.[index].averageSimilarity as number) / 100
-                      )
-                    }}%
+                    {{ toTwoDecimals(clusters?.[index].averageSimilarity as number) }}%
                   </div>
                 </RouterLink>
               </div>
@@ -111,6 +103,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateHuesForInterval, toHSLAArray } from '@/utils/ColorUtils'
+import { toTwoDecimals } from '@/utils/ComparisonUtils'
 
 library.add(faUserGroup)
 
@@ -126,15 +119,6 @@ const props = defineProps({
 })
 
 const displayClusters = props.clusters != undefined
-
-/**
- * Formats the match percentage to a string with 2 decimal places.
- * @param num The number to format.
- * @returns The formatted number.
- */
-function formattedMatchPercentage(num: number) {
-  return (num * 100).toFixed(2)
-}
 
 const dialog: Ref<Array<boolean>> = ref([])
 props.topComparisons.forEach(() => dialog.value.push(false))
