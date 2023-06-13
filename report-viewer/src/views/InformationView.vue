@@ -3,7 +3,7 @@
     <Container class="max-h-0 min-h-full overflow-hidden flex-1 flex flex-col">
       <h2>Run Options:</h2>
 
-      <ScrollableComponent class="flex-grow">
+      <ScrollableComponent class="flex-grow px-4 pt-2">
         <TextInformation label="Submission Folder" class="pb-1">{{
           overview.submissionFolderPath.join(', ')
         }}</TextInformation>
@@ -12,7 +12,7 @@
         }}</TextInformation>
         <TextInformation label="Language" class="pb-1">{{ overview.language }}</TextInformation>
         <TextInformation label="File Extentions" class="pb-1">{{
-          overview.fileExtensions
+          overview.fileExtensions.join(', ')
         }}</TextInformation>
         <TextInformation label="Minimum Token Match:" class="pb-1">{{
           overview.matchSensitivity
@@ -23,13 +23,13 @@
     <Container class="max-h-0 min-h-full overflow-hidden flex-1 flex flex-col">
       <h2>Run Data:</h2>
 
-      <ScrollableComponent class="flex-grow">
+      <ScrollableComponent class="flex-grow px-4 pt-2">
         <TextInformation label="Date of Execution" class="pb-1">{{
           overview.dateOfExecution
         }}</TextInformation>
-        <TextInformation label="Execution Duration" class="pb-1">{{
-          overview.durationOfExecution
-        }}</TextInformation>
+        <TextInformation label="Execution Duration" class="pb-1"
+          >{{ overview.durationOfExecution }} ms</TextInformation
+        >
         <TextInformation label="Submission Count" class="pb-1">{{
           store().getSubmissionIds.length
         }}</TextInformation>

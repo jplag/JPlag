@@ -1,5 +1,8 @@
 <template>
-  <Interactable class="px-2 py-1 flex items-center" @click="(e) => $emit('click', e)">
+  <Interactable
+    class="px-2 py-1 flex items-center text-center justify-center"
+    @click="(e) => $emit('click', e)"
+  >
     <slot></slot>
   </Interactable>
 </template>

@@ -20,7 +20,9 @@
           }}
         </h2>
         <div class="flex flex-row">
-          <TextInformation label="Average Similarity"></TextInformation>
+          <TextInformation label="Average Similarity"
+            >{{ comparison.similarity * 100 }}%</TextInformation
+          >
         </div>
         <MatchList
           :id1="firstId"
@@ -69,13 +71,13 @@ import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
-import { useRouter } from 'vue-router'
 import { Comparison } from '@/model/Comparison'
 import store from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
+import router from '@/router'
 
 const props = defineProps({
   firstId: {
@@ -88,7 +90,6 @@ const props = defineProps({
   }
 })
 
-const router = useRouter()
 console.log('Generating comparison {%s} - {%s}...', props.firstId, props.secondId)
 let comparison = new Comparison('', '', 0)
 

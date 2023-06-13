@@ -46,7 +46,7 @@
             class="flex-grow"
             @input-changed="(value) => nameSearchUpdated(value)"
           />
-          <Button class="w-fit" @click="changeAnnoymousForAll()">
+          <Button class="w-24" @click="changeAnnoymousForAll()">
             {{
               store().state.anonymous.size == store().getSubmissionIds.length
                 ? 'Show All'

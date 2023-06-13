@@ -1,15 +1,24 @@
 <template>
   <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-col">
     <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
-      <Container class="flex-grow overflow-hidden"> </Container>
+      <Container class="flex-grow overflow-hidden">
+        <h2>Cluster</h2>
+        <div class="flex flex-row space-x-5 items-center">
+          <TextInformation label="Average Similarity"
+            >{{ cluster.averageSimilarity }}%</TextInformation
+          >
+          <TextInformation label="Cluster Strength">{{ cluster.strength }}</TextInformation>
+        </div>
+      </Container>
     </div>
 
     <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5 justify-between">
       <Container class="max-h-0 min-h-full overflow-hidden flex-1 flex flex-col">
         <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
       </Container>
-      <Container class="max-h-0 min-h-full overflow-hidden w-1/3">
-        <ComparisonsTable :topComparisons="comparisons" />
+      <Container class="max-h-0 min-h-full overflow-hidden w-1/3 space-y-2 flex flex-col">
+        <h2>Comparisons of Cluster Members:</h2>
+        <ComparisonsTable :topComparisons="comparisons" class="flex-1 min-h-0" />
       </Container>
     </div>
   </div>
@@ -19,6 +28,7 @@
 import ClusterRadarChart from '@/components/ClusterRadarChart.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import Container from '@/components/ContainerComponent.vue'
+import TextInformation from '@/components/TextInformation.vue'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
