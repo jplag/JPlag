@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import de.jplag.options.EmptyOptions;
 import de.jplag.options.LanguageOptions;
 
 /**
@@ -75,7 +74,7 @@ public interface Language {
      * @return The options
      */
     default LanguageOptions getOptions() {
-        return EmptyOptions.instance;
+        return LanguageOptions.EMPTY_OPTIONS;
     }
 
     /**
