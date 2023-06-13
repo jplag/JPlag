@@ -38,15 +38,28 @@
         </div>
       </Container>
 
-      <Container class="max-h-0 min-h-full flex-1 flex flex-col">
+      <Container class="max-h-0 min-h-full flex-1 flex flex-col space-y-2">
         <div class="flex flex-row space-x-8 items-center">
           <h2>Top Comparisons:</h2>
-          <SearchBarComponent placeholder="Filter Comparisons" class="flex-grow" />
-          <Button class="w-fit">Hide All</Button>
+          <SearchBarComponent
+            placeholder="Filter/Unhide Comparisons"
+            class="flex-grow"
+            @input-changed="(value) => nameSearchUpdated(value)"
+          />
+          <Button class="w-fit" @click="changeAnnoymousForAll()">
+            {{
+              store().anonymous.size == store().getSubmissionIds.length ? 'Show All' : 'Hide All'
+            }}
+          </Button>
         </div>
+        <OptionsSelector
+          name="Sort By"
+          :labels="['Average Similarity', 'Maximum Similarity']"
+          @selection-changed="(index) => updateComparisonTableSortingMetric(index)"
+        />
         <ComparisonsTable
           :clusters="overview.clusters"
-          :top-comparisons="overview.topComparisons"
+          :top-comparisons="displayedComparisons"
           class="flex-1 min-h-0"
         />
       </Container>
@@ -68,39 +81,79 @@ import OptionsSelectorComponent from '@/components/OptionsSelectorComponent.vue'
 import MetricType from '@/model/ui/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
-import Interactable from '@/components/InteractableComponent.vue'
-import type { RouterLink } from 'vue-router'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
 
 const overview = OverviewFactory.getOverview()
 
+const displayedComparisons = ref(overview.topComparisons)
+
 /**
- * Handles the selection of an Id to anonymize.
- * If all submission ids are provided as parameter it hides or displays them based on their previous state.
- * If a single id is provided it hides all of the other ids except for the chosen one.
- * @param ids - IDs to hide
+ * This funtion gets called when the search bar for the compariosn table has been updated.
+ * It updates the displayed comparisons to only show the ones that  have part of any search result in their id. The search is not case sensitive. The parts can be seprarated by commas or spaces.
+ * It also updates the annonmous set to unhide a submission if its name was typed in the search bar at any point in time.
+ *
+ * @param newVal The new value of the search bar
  */
-function handleId(ids: Array<string>) {
-  if (ids.length === store().getSubmissionIds.length) {
-    if (store().anonymous.size > 0) {
-      store().resetAnonymous()
-    } else {
-      store().addAnonymous(ids)
-    }
-  } else {
-    if (store().anonymous.has(ids[0])) {
-      store().removeAnonymous(ids)
-    } else {
-      if (store().anonymous.size === 0) {
-        store().addAnonymous(store().getSubmissionIds.filter((s: string) => s !== ids[0]))
-      } else {
-        store().addAnonymous(ids)
+function nameSearchUpdated(newVal: string) {
+  const searches = newVal
+    .trimEnd()
+    .toLowerCase()
+    .split(/ +/g)
+    .map((s) => s.trim().replace(/,/g, ''))
+  console.log(searches)
+  if (searches.length == 0) {
+    updateDisplayedComparisons(overview.topComparisons)
+    return
+  }
+
+  updateDisplayedComparisons(
+    overview.topComparisons.filter((c) => {
+      const id1 = c.firstSubmissionId.toLowerCase()
+      const id2 = c.secondSubmissionId.toLowerCase()
+      return searches.some((s) => id1.includes(s) || id2.includes(s))
+    })
+  )
+
+  // Update the anonymous set
+  for (const search of searches) {
+    for (const submissionId of store().getSubmissionIds) {
+      if (submissionId.toLowerCase() == search) {
+        store().anonymous.delete(submissionId)
       }
     }
   }
 }
 
-//Metrics
-// const selectedMetric = ref(overview.metrics.map(() => false))
+const comparisonTableSortingMetric = ref(MetricType.AVERAGE)
+
+function updateComparisonTableSortingMetric(index: number) {
+  comparisonTableSortingMetric.value = index
+  updateDisplayedComparisons(displayedComparisons.value)
+}
+
+function updateDisplayedComparisons(comparisons: ComparisonListElement[]) {
+  if (comparisonTableSortingMetric.value == MetricType.MAXIMUM) {
+    displayedComparisons.value = comparisons.sort(
+      (a, b) => b.maximumSimilarity - a.maximumSimilarity
+    )
+  } else {
+    displayedComparisons.value = comparisons.sort(
+      (a, b) => b.averageSimilarity - a.averageSimilarity
+    )
+  }
+}
+
+/**
+ * Sets the annonymous set to empty if it is full or adds all submission ids to it if it is not full
+ */
+function changeAnnoymousForAll() {
+  if (store().anonymous.size == store().getSubmissionIds.length) {
+    store().anonymous.clear()
+  } else {
+    store().anonymous = new Set(store().getSubmissionIds)
+  }
+}
 
 const selectedMetric = ref(MetricType.AVERAGE)
 
