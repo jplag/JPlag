@@ -22,12 +22,11 @@ public abstract class LanguageOptions {
 
     /**
      * Creates a new option with default value.
-     *
-     * @param type         The type
-     * @param name         The name
-     * @param description  the description
+     * @param type The type
+     * @param name The name
+     * @param description the description
      * @param defaultValue The default value
-     * @param <T>          The java type
+     * @param <T> The java type
      * @return The new option
      */
     protected <T> LanguageOption<T> createDefaultOption(OptionType<T> type, String name, String description, T defaultValue) {
@@ -38,11 +37,10 @@ public abstract class LanguageOptions {
 
     /**
      * Creates a new option with default value and empty description.
-     *
-     * @param type         The type
-     * @param name         The name
+     * @param type The type
+     * @param name The name
      * @param defaultValue The default value
-     * @param <T>          The java type
+     * @param <T> The java type
      * @return The new option
      */
     protected <T> LanguageOption<T> createDefaultOption(OptionType<T> type, String name, T defaultValue) {
@@ -51,11 +49,10 @@ public abstract class LanguageOptions {
 
     /**
      * Creates a new option
-     *
-     * @param type        The type
-     * @param name        The name
+     * @param type The type
+     * @param name The name
      * @param description The description
-     * @param <T>         The java type
+     * @param <T> The java type
      * @return The new option
      */
     protected <T> LanguageOption<T> createOption(OptionType<T> type, String name, String description) {
@@ -66,10 +63,9 @@ public abstract class LanguageOptions {
 
     /**
      * Creates a new option with empty description
-     *
      * @param type The type
      * @param name The name
-     * @param <T>  The java type
+     * @param <T> The java type
      * @return The new option
      */
     protected <T> LanguageOption<T> createOption(OptionType<T> type, String name) {
