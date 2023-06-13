@@ -12,7 +12,7 @@ export default {
       colors: {
         font: {
           light: '#000000',
-          dark: colors.amber[50]
+          dark: '#ffffff'
         },
         backgorund: {
           light: colors.slate[300],
@@ -20,18 +20,18 @@ export default {
         },
         container: {
           light: colors.slate[200],
-          dark: colors.slate[800],
+          dark: '#161B22',
           border: {
             light: colors.slate[400],
-            dark: colors.slate[700]
+            dark: '#363B42'
           }
         },
         interactable: {
           light: colors.slate[50],
-          dark: colors.slate[900],
+          dark: '#30363D',
           border: {
             light: colors.slate[400],
-            dark: '#bbbbbb'
+            dark: '#505A66'
           }
         },
         accent: {
