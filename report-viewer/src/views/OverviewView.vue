@@ -144,6 +144,10 @@ function updateDisplayedComparisons(comparisons: ComparisonListElement[]) {
       (a, b) => b.averageSimilarity - a.averageSimilarity
     )
   }
+  let counter = 1
+  displayedComparisons.value.forEach((c) => {
+    c.id = counter++
+  })
 }
 
 /**

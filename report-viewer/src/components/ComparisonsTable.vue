@@ -20,15 +20,21 @@
 
     <!-- Body -->
     <div class="overflow-hidden flex flex-col flex-grow">
-      <DynamicScroller v-if="topComparisons.length > 0" :items="topComparisons" :min-item-size="48">
+      <DynamicScroller v-if="topComparisons.length > 0" :items="comparisonList" :min-item-size="48">
         <template v-slot="{ item, index, active }">
           <DynamicScrollerItem
             :item="item"
             :active="active"
-            :size-dependencies="[item.firstSubmissionId, item.secondSubmissionId]"
+            :size-dependencies="[
+              item.firstSubmissionId,
+              item.secondSubmissionId,
+              isAnonymous(item.firstSubmissionId),
+              isAnonymous(item.secondSubmissionId)
+            ]"
+            :data-index="index"
           >
             <!-- Row -->
-            <div class="tableRow" :class="{ 'bg-accent bg-opacity-25': index % 2 == 0 }">
+            <div class="tableRow" :class="{ 'bg-accent bg-opacity-25': item.id % 2 == 1 }">
               <RouterLink
                 :to="{
                   name: 'ComparisonView',
@@ -38,14 +44,20 @@
               >
                 <!-- Names -->
                 <div class="tableCellName">
-                  <div class="flex-auto">
+                  <div
+                    class="w-1/2 px-2 break-words"
+                    :class="{ 'blur-[1px]': isAnonymous(item.firstSubmissionId) }"
+                  >
                     {{
                       isAnonymous(item.firstSubmissionId)
                         ? 'Hidden'
                         : displayName(item.firstSubmissionId)
                     }}
                   </div>
-                  <div class="flex-auto">
+                  <div
+                    class="w-1/2 px-2 break-words"
+                    :class="{ 'blur-[1px]': isAnonymous(item.secondSubmissionId) }"
+                  >
                     {{
                       isAnonymous(item.secondSubmissionId)
                         ? 'Hidden'
@@ -56,8 +68,8 @@
 
                 <!-- Similarities -->
                 <div class="tableCellSimilarity">
-                  <div class="flex-auto">{{ toTwoDecimals(item.averageSimilarity * 100) }}%</div>
-                  <div class="flex-auto">{{ toTwoDecimals(item.maximumSimilarity * 100) }}%</div>
+                  <div class="w-1/2">{{ toTwoDecimals(item.averageSimilarity * 100) }}%</div>
+                  <div class="w-1/2">{{ toTwoDecimals(item.maximumSimilarity * 100) }}%</div>
                 </div>
               </RouterLink>
 
@@ -73,6 +85,7 @@
                     name: 'ClusterView',
                     params: { clusterIndex: index }
                   }"
+                  class="w-full"
                 >
                   <div>
                     {{ clusters?.[index].members?.length }}
@@ -95,8 +108,7 @@
 <script setup lang="ts">
 import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import type { Ref } from 'vue'
-import { ref } from 'vue'
+import { toRef } from 'vue'
 import store from '@/stores/store'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -118,10 +130,9 @@ const props = defineProps({
   }
 })
 
-const displayClusters = props.clusters != undefined
+const comparisonList = toRef(props, 'topComparisons')
 
-const dialog: Ref<Array<boolean>> = ref([])
-props.topComparisons.forEach(() => dialog.value.push(false))
+const displayClusters = props.clusters != undefined
 
 /**
  * @param submissionId Id to get name for
@@ -173,11 +184,11 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
 }
 
 .tableCellSimilarity {
-  @apply w-40 tableCell;
+  @apply w-40 tableCell flex-shrink-0;
 }
 
 .tableCellCluster {
-  @apply w-32 tableCell;
+  @apply w-32 tableCell flex-shrink-0;
 }
 
 .tableCellName {
@@ -185,6 +196,6 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
 }
 
 .tableCell {
-  @apply text-center mx-3 flex flex-row justify-center;
+  @apply text-center mx-3 flex flex-row justify-center overflow-hidden;
 }
 </style>
