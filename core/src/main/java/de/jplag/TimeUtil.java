@@ -1,5 +1,7 @@
 package de.jplag;
 
+import java.time.Duration;
+
 public final class TimeUtil {
 
     private TimeUtil() {
@@ -12,10 +14,8 @@ public final class TimeUtil {
      * @return Readable representation of the time interval.
      */
     public static String formatDuration(long durationInMilliseconds) {
-        int timeInSeconds = (int) (durationInMilliseconds / 1000);
-        String hours = (timeInSeconds / 3600 > 0) ? (timeInSeconds / 3600) + " h " : "";
-        String minutes = (timeInSeconds / 60 > 0) ? ((timeInSeconds / 60) % 60) + " min " : "";
-        String seconds = (timeInSeconds % 60) + " sec";
-        return hours + minutes + seconds;
+        Duration duration = Duration.ofMillis(durationInMilliseconds);
+        return String.format("%dh %02dmin %02ds %03dms", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart(),
+                duration.toMillisPart());
     }
 }

@@ -151,4 +151,16 @@ public class FileUtils {
     public static Writer openFileWriter(File file) throws IOException {
         return new BufferedWriter(new FileWriter(file, DEFAULT_OUTPUT_CHARSET));
     }
+
+    /**
+     * Writes the given content into the given file using the default charset
+     * @param file The file
+     * @param content The content
+     * @throws IOException If any error occurs
+     */
+    public static void write(File file, String content) throws IOException {
+        Writer writer = openFileWriter(file);
+        writer.write(content);
+        writer.close();
+    }
 }
