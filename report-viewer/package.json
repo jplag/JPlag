@@ -40,7 +40,7 @@
     "@vue/test-utils": "^2.3.0",
     "@vue/tsconfig": "^0.4.0",
     "eslint": "^8.42.0",
-    "eslint-plugin-vue": "^9.14.0",
+    "eslint-plugin-vue": "^9.14.1",
     "husky": "^8.0.0",
     "jsdom": "^22.1.0",
     "lint-staged": "^13.2.2",
