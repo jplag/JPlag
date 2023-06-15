@@ -73,6 +73,7 @@ public class JPlag {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         
         //aufruf merging
+        //damit es besser ausgeschaltet werden kann
         
         if (logger.isInfoEnabled())
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
