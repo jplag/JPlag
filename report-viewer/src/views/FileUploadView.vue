@@ -23,7 +23,7 @@
         />
       </div>
       <h1 class="text-7xl">JPlag Report Viewer</h1>
-      <div v-if="!hasQueryFile">
+      <div v-if="!hasQueryFile && !loadingFiles">
         <div
           class="px-5 py-5 mt-10 w-96 mx-auto flex flex-col justify-center cursor-pointer border-2 rounded-md border-accent-dark bg-accent bg-opacity-25"
           @click="uploadFileThroughWindow()"
@@ -36,7 +36,12 @@
           Continue with local files
         </Button>
       </div>
-      <div v-else>Loading file...</div>
+      <div v-else class="pt-5 space-y-5">
+        <div
+          class="mx-auto rounded-full w-16 h-16 animate-spin border-t-accent dark:border-t-accent border-interactable-border-light dark:border-interactable-border-dark border-8"
+        ></div>
+        <p class="font-bold text-2xl">Loading file...</p>
+      </div>
     </div>
   </div>
 </template>
@@ -56,6 +61,8 @@ store().clearStore()
 const hasLocalFile = ref(false)
 // Checks whether local files exist
 fetch('/files/overview.json').then((response) => (hasLocalFile.value = response.status == 200))
+
+const loadingFiles = ref(false)
 
 // Loads file passed in query param, if any.
 const queryParams = useRoute().query
@@ -233,6 +240,7 @@ function handleJsonFile(str: string) {
  * @param file File to handle
  */
 async function handleFile(file: Blob) {
+  loadingFiles.value = true
   switch (file.type) {
     case 'application/zip':
     case 'application/zip-compressed':
