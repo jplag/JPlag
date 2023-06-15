@@ -6,22 +6,22 @@
     <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
       <Container class="flex-grow overflow-hidden">
         <h2 class="flex flex-row">
-          Comparison:
-          <p :class="{ 'blur-[1px]': isAnonymous(comparison.firstSubmissionId) }">
+          Comparison: &nbsp;
+          <div :class="{ 'blur-[1px]': isAnonymous(comparison.firstSubmissionId) }">
             {{
               isAnonymous(comparison.firstSubmissionId)
                 ? 'Submission 1'
                 : store().submissionDisplayName(comparison.firstSubmissionId)
             }}
-          </p>
-          -
-          <p :class="{ 'blur-[1px]': isAnonymous(comparison.secondSubmissionId) }">
+          </div>
+          &nbsp;-&nbsp;
+          <div :class="{ 'blur-[1px]': isAnonymous(comparison.secondSubmissionId) }">
             {{
               isAnonymous(comparison.secondSubmissionId)
                 ? 'Submission 2'
                 : store().submissionDisplayName(comparison.secondSubmissionId)
             }}
-          </p>
+          </div>
         </h2>
         <div class="flex flex-row">
           <TextInformation label="Average Similarity"

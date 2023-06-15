@@ -34,6 +34,16 @@ export default {
             dark: '#505A66'
           }
         },
+        scrollbar: {
+          backgorund: { 
+            light: colors.slate[100],
+            dark: '#30363D'
+          },
+          thumb: {
+            light: colors.slate[400],
+            dark: '#505A66'
+          }
+        },
         accent: {
           DEFAULT: '#be1622',
           dark: '#7F0F18'

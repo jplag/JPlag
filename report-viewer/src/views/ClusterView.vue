@@ -5,7 +5,7 @@
         <h2>Cluster</h2>
         <div class="flex flex-row space-x-5 items-center">
           <TextInformation label="Average Similarity"
-            >{{ toTwoDecimals(cluster.averageSimilarity) }}%</TextInformation
+            >{{ toTwoDecimals(cluster.averageSimilarity * 100) }}%</TextInformation
           >
         </div>
       </Container>
@@ -61,6 +61,12 @@ for (let i = 0; i < cluster.members.length; i++) {
     }
   }
 }
+let counter = 1
+comparisons
+  .sort((a, b) => b.averageSimilarity - a.averageSimilarity)
+  .forEach((c) => {
+    c.id = counter++
+  })
 
 for (const member of cluster.members) {
   const membersComparisons: { matchedWith: string; similarity: number }[] = []

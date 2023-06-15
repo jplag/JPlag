@@ -45,7 +45,7 @@
                 <!-- Names -->
                 <div class="tableCellName">
                   <div
-                    class="w-1/2 px-2 break-words"
+                    class="w-1/2 px-2 break-anywhere"
                     :class="{ 'blur-[1px]': isAnonymous(item.firstSubmissionId) }"
                   >
                     {{
@@ -55,7 +55,7 @@
                     }}
                   </div>
                   <div
-                    class="w-1/2 px-2 break-words"
+                    class="w-1/2 px-2 break-anywhere"
                     :class="{ 'blur-[1px]': isAnonymous(item.secondSubmissionId) }"
                   >
                     {{
@@ -93,7 +93,7 @@
                       :icon="['fas', 'user-group']"
                       :style="{ color: clusterIconColors[index] }"
                     />
-                    {{ toTwoDecimals(clusters?.[index].averageSimilarity as number) }}%
+                    {{ toTwoDecimals((clusters?.[index].averageSimilarity as number) * 100) }}%
                   </div>
                 </RouterLink>
               </div>
@@ -196,6 +196,6 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
 }
 
 .tableCell {
-  @apply text-center mx-3 flex flex-row justify-center overflow-hidden;
+  @apply text-center mx-3 flex flex-row justify-center items-center overflow-hidden;
 }
 </style>

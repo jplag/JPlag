@@ -12,4 +12,20 @@
     h2 {
         @apply text-2xl underline;
     }
+
+    *::-webkit-scrollbar {
+        @apply w-1 h-1 cursor-pointer;
+    }
+    *::-webkit-scrollbar-track {
+        @apply bg-scrollbar-backgorund-light dark:bg-scrollbar-backgorund-dark rounded-full border-4;
+    }
+    *::-webkit-scrollbar-thumb {
+        @apply bg-scrollbar-thumb-light dark:bg-scrollbar-thumb-dark rounded-full border-2;
+    }
+}
+
+@layer components {
+    .break-anywhere {
+        overflow-wrap: anywhere;
+    }
 }

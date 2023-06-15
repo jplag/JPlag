@@ -1,10 +1,10 @@
 {
   "*.ts": [
     "npx prettier --write",
-    "npm run lint"
+    "npx eslint"
   ],
   "*.vue": [
     "npx prettier --write",
-    "npm run lint"
+    "npx eslint"
   ]
 }
