@@ -7,7 +7,6 @@
           <TextInformation label="Average Similarity"
             >{{ toTwoDecimals(cluster.averageSimilarity) }}%</TextInformation
           >
-          <TextInformation label="Cluster Strength">{{ cluster.strength }}</TextInformation>
         </div>
       </Container>
     </div>

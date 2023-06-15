@@ -14,6 +14,9 @@
           <TextInformation label="Total Comparisons">{{
             overview.totalComparisons
           }}</TextInformation>
+          <TextInformation label="Min Match Length">{{
+            overview.matchSensitivity
+          }}</TextInformation>
           <Button @click="router.push({ name: 'InfoView' })"> More </Button>
         </div>
       </Container>
