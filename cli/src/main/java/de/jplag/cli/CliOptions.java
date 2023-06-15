@@ -63,6 +63,7 @@ public class CliOptions implements Runnable {
      */
     @Override
     public void run() {
+     //Empty run method, so picocli prints help automatically
     }
 
     public static class Advanced {
