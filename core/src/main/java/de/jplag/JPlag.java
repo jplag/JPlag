@@ -71,6 +71,9 @@ public class JPlag {
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
+        
+        //aufruf merging
+        
         if (logger.isInfoEnabled())
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));

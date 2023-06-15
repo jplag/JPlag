@@ -11,6 +11,8 @@ import java.util.concurrent.ConcurrentMap;
 
 import de.jplag.options.JPlagOptions;
 
+import de.jplag.merging.MatchMerging;
+
 /**
  * This class implements the Greedy String Tiling algorithm as introduced by Michael Wise. However, it is very specific
  * to the classes {@link Token}, and {@link Match}. Class implementation is thread-safe, i.e. submission can be compared
@@ -22,6 +24,8 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
 
     private final int minimumMatchLength;
+    private final int mergeBuffer=5;
+    private final int seperatingThreshold=3;
     private ConcurrentMap<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
 
@@ -29,7 +33,7 @@ public class GreedyStringTiling {
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
-        this.minimumMatchLength = options.minimumTokenMatch();
+        this.minimumMatchLength = options.minimumTokenMatch()-this.mergeBuffer < Integer.valueOf(1) ? 1 : options.minimumTokenMatch()-this.mergeBuffer;
         this.tokenTypeValues = new ConcurrentHashMap<>();
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
     }
@@ -147,6 +151,14 @@ public class GreedyStringTiling {
                 }
             }
         } while (maximumMatchLength != minimumMatchLength);
+        if(mergeBuffer > 0) {
+        	MatchMerging mm = new MatchMerging(minimumMatchLength,mergeBuffer,leftSubmission,rightSubmission,globalMatches,seperatingThreshold);
+        	System.out.println("Buffer: "+mm.getMergeBuffer());
+        	mm.computeNeighbors();
+        	mm.mergeNeighbors();
+        	mm.removeBuffer();
+        	return new JPlagComparison(mm.getLeftSubmission(),mm.getRightSubmission(), mm.getGlobalMatches());
+        }
         return new JPlagComparison(leftSubmission, rightSubmission, globalMatches);
     }
 

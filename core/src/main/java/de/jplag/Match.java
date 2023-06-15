@@ -42,4 +42,16 @@ public record Match(int startOfFirst, int startOfSecond, int length) {
     public int endOfSecond() {
         return startOfSecond + length - 1;
     }
+    
+    public int getStartOfFirst() {
+    	return startOfFirst;
+    }
+    
+    public int getStartOfSecond() {
+    	return startOfSecond;
+    }
+    
+    public int getLength() {
+    	return length;
+    }
 }
