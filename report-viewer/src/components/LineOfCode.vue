@@ -59,7 +59,7 @@ code.hljs {
 
 .hljs {
   background: transparent !important;
-  font-family: 'JetBrains Mono NL', serif !important;
-  font-size: smaller !important;
+  font-family: 'JetBrains Mono NL', monospace !important;
+  font-size: 0.75rem !important;
 }
 </style>
