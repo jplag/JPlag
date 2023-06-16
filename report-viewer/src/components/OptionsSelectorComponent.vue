@@ -6,7 +6,7 @@
     <Interactable
       v-for="[index, label] in labels.entries()"
       :key="label"
-      class="mr-2 px-[12px] w-fit !rounded-2xl flex justify-center items-center text-center box-border h-6 hover:!border-[3px] hover:px-[11px]"
+      class="mr-2 px-[12px] w-fit !rounded-2xl flex justify-center items-center text-center box-border h-6 hover:!border-[2px] hover:px-[11px]"
       :class="{ '!bg-accent !border-accent-dark !bg-opacity-40': index == selected }"
       @click="select(index)"
     >
