@@ -34,7 +34,10 @@
             :data-index="index"
           >
             <!-- Row -->
-            <div class="tableRow" :class="{ 'bg-accent bg-opacity-25': item.id % 2 == 1 }">
+            <div
+              class="tableRow"
+              :class="{ 'bg-accent bg-opacity-25 dark:bg-opacity-40': item.id % 2 == 1 }"
+            >
               <RouterLink
                 :to="{
                   name: 'ComparisonView',

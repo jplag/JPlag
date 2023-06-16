@@ -15,23 +15,23 @@ export default {
           dark: '#ffffff'
         },
         backgorund: {
-          light: colors.slate[300],
-          dark: '#010409'
+          light: 'hsl(0, 0%, 97%)',
+          dark: 'hsl(0, 0%, 3%)'
         },
         container: {
-          light: colors.slate[200],
-          dark: '#161B22',
+          light: 'hsl(200, 5%, 98%)',
+          dark: 'hsl(0, 0%, 8%)',
           border: {
-            light: colors.slate[400],
-            dark: '#363B42'
+            light: 'hsl(0, 0%, 85%)',
+            dark: 'hsl(0, 0%, 13%)'
           }
         },
         interactable: {
-          light: colors.slate[50],
-          dark: '#30363D',
+          light: 'hsl(0, 0%, 100%)',
+          dark: 'hsl(0, 0%, 15%)',
           border: {
-            light: colors.slate[400],
-            dark: '#505A66'
+            light: 'hsl(0, 0%, 85%)',
+            dark: 'hsl(0, 0%, 18%)'
           }
         },
         scrollbar: {
@@ -49,6 +49,9 @@ export default {
           dark: '#7F0F18'
         },
 
+      },
+      borderWidth: {
+        1: '1px',
       }
     },
   },

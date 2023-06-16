@@ -72,7 +72,7 @@ const radarChartStyle = {
   borderColor: graphColors.contentBorder,
   pointBackgroundColor: graphColors.pointFill,
   pointBorderColor: graphColors.contentBorder,
-  borderWidth: 2
+  borderWidth: 1
 }
 const radarChartOptions = computed(() => {
   return {

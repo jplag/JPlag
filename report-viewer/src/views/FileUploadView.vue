@@ -25,7 +25,7 @@
       <h1 class="text-7xl">JPlag Report Viewer</h1>
       <div v-if="!hasQueryFile && !loadingFiles">
         <div
-          class="px-5 py-5 mt-10 w-96 mx-auto flex flex-col justify-center cursor-pointer border-2 rounded-md border-accent-dark bg-accent bg-opacity-25"
+          class="px-5 py-5 mt-10 w-96 mx-auto flex flex-col justify-center cursor-pointer border-1 rounded-md border-accent-dark bg-accent bg-opacity-25"
           @click="uploadFileThroughWindow()"
         >
           <div>Drag and Drop zip/Json file on this page</div>

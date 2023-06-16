@@ -41,7 +41,7 @@ const dataSetStyle = computed(() => {
   return {
     label: 'Comparison Count',
     backgroundColor: graphColors.contentFill,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: graphColors.contentBorder,
     tickColor: graphColors.ticksAndFont.value
   }

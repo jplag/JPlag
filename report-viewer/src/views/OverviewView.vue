@@ -26,7 +26,7 @@
       <Container class="max-h-0 min-h-full flex flex-col flex-1">
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
-          :distribution="overview.distribution[selectedMetric].asLinearArray()"
+          :distribution="overview.distribution[selectedDistributionDiagramMetric].asLinearArray()"
           class="w-full h-2/3"
         />
         <div class="flex flex-col flex-grow space-y-1">
@@ -35,7 +35,7 @@
             <OptionsSelectorComponent
               name="Metric"
               :labels="['Average', 'Maximum']"
-              @selection-changed="(i) => selectMetric(i)"
+              @selection-changed="(i) => selectDistributionDiagramMetric(i)"
             />
           </ScrollableComponent>
         </div>
@@ -106,7 +106,6 @@ function nameSearchUpdated(newVal: string) {
     .toLowerCase()
     .split(/ +/g)
     .map((s) => s.trim().replace(/,/g, ''))
-  console.log(searches)
   if (searches.length == 0) {
     updateDisplayedComparisons(overview.topComparisons)
     return
@@ -130,7 +129,7 @@ function nameSearchUpdated(newVal: string) {
   }
 }
 
-const comparisonTableSortingMetric = ref(MetricType.AVERAGE)
+const comparisonTableSortingMetric = ref(MetricType.AVERAGE.valueOf())
 
 function updateComparisonTableSortingMetric(index: number) {
   comparisonTableSortingMetric.value = index
@@ -153,6 +152,8 @@ function updateDisplayedComparisons(comparisons: ComparisonListElement[]) {
   })
 }
 
+updateComparisonTableSortingMetric(MetricType.AVERAGE.valueOf())
+
 /**
  * Sets the annonymous set to empty if it is full or adds all submission ids to it if it is not full
  */
@@ -164,15 +165,14 @@ function changeAnnoymousForAll() {
   }
 }
 
-const selectedMetric = ref(MetricType.AVERAGE)
+const selectedDistributionDiagramMetric = ref(MetricType.AVERAGE)
 
 /**
  * Switch between metrics
  * @param metric Metric to switch to
  */
-function selectMetric(metric: number) {
-  selectedMetric.value = metric
-  console.log('Selected metric: ' + metric)
+function selectDistributionDiagramMetric(metric: number) {
+  selectedDistributionDiagramMetric.value = metric
 }
 
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
