@@ -9,6 +9,7 @@
         .concat(filePath || '')
         .concat(fileIndex?.toString() || '-1')
     "
+    class="!shadow mx-2"
   >
     <div @click="$emit('toggleCollapse')" class="text-center font-bold">
       {{ title }}

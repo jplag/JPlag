@@ -16,22 +16,22 @@ export default {
         },
         backgorund: {
           light: 'hsl(0, 0%, 97%)',
-          dark: 'hsl(0, 0%, 3%)'
+          dark: 'hsl(180, 80%, 3%)'
         },
         container: {
-          light: 'hsl(200, 5%, 98%)',
-          dark: 'hsl(0, 0%, 8%)',
+          light: 'hsl(0, 0%, 98%)',
+          dark: 'hsl(200, 20%, 13%)',
           border: {
-            light: 'hsl(0, 0%, 85%)',
-            dark: 'hsl(0, 0%, 13%)'
+            light: 'hsl(0, 0%, 80%)',
+            dark: 'hsl(0, 0%, 25%)'
           }
         },
         interactable: {
           light: 'hsl(0, 0%, 100%)',
-          dark: 'hsl(0, 0%, 15%)',
+          dark: 'hsl(180, 30%, 18%)',
           border: {
-            light: 'hsl(0, 0%, 85%)',
-            dark: 'hsl(0, 0%, 18%)'
+            light: 'hsl(0, 0%, 75%)',
+            dark: 'hsl(0, 0%, 30%)'
           }
         },
         scrollbar: {
