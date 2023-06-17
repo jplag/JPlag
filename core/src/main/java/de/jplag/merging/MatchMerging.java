@@ -39,8 +39,8 @@ public class MatchMerging{
 		comparisons=new ArrayList<>(result.getAllComparisons());
 		options=o;
 		minimumTokenMatch=options.minimumTokenMatch();
-		mergeBuffer=5;
-		seperatingThreshold=3;
+		mergeBuffer=o.mergingParameters().mergeBuffer();
+		seperatingThreshold=o.mergingParameters().seperatingThreshold();
 	}
 	
 	public JPlagResult run() {
@@ -48,9 +48,12 @@ public class MatchMerging{
 			leftSubmission=comparisons.get(i).getFirstSubmission();
 			rightSubmission=comparisons.get(i).getSecondSubmission();
 			globalMatches=new ArrayList<>(comparisons.get(i).getMatches());
+			//System.out.println(globalMatches);
 			computeNeighbors();
 			mergeNeighbors();
+			//System.out.println(globalMatches);
 			removeBuffer();
+			//System.out.println(globalMatches);
 			comparisons.set(i,new JPlagComparison(leftSubmission,rightSubmission,globalMatches));
 			
 		}
@@ -102,7 +105,7 @@ public class MatchMerging{
 	public void removeBuffer() {
 		List<Match> toRemove = new ArrayList<Match>();
         for (Match m : globalMatches) {
-            if(m.length()< minimumTokenMatch+mergeBuffer) {
+            if(m.length()< minimumTokenMatch) {
             	toRemove.add(m);
             }
         }

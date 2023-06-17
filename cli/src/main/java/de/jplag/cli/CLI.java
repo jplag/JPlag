@@ -49,6 +49,8 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
+import de.jplag.merging.MergingParameters;
+
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
@@ -156,7 +158,7 @@ public final class CLI {
         JPlagOptions options = new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, null,
                 SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
-                clusteringOptions, DEBUG.getFrom(namespace));
+                clusteringOptions, DEBUG.getFrom(namespace), new MergingParameters());
 
         String baseCodePath = BASE_CODE.getFrom(namespace);
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);

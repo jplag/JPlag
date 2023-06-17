@@ -24,7 +24,7 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
 
     private final int minimumMatchLength;
-    private final int mergeBuffer=5;
+    private final int mergeBuffer;
     //private final int seperatingThreshold=3;
     private ConcurrentMap<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
@@ -33,6 +33,7 @@ public class GreedyStringTiling {
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
+    	this.mergeBuffer = options.mergingParameters().mergeBuffer();
         this.minimumMatchLength = options.minimumTokenMatch()-this.mergeBuffer < Integer.valueOf(1) ? 1 : options.minimumTokenMatch()-this.mergeBuffer;
         this.tokenTypeValues = new ConcurrentHashMap<>();
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
