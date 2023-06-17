@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
 import de.jplag.strategy.ComparisonStrategy;
@@ -72,8 +73,8 @@ public class JPlag {
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         
-        //aufruf merging
-        //damit es besser ausgeschaltet werden kann
+        //Use Match Merging against obfuscation
+        result=new MatchMerging(result,options).run();
         
         if (logger.isInfoEnabled())
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
