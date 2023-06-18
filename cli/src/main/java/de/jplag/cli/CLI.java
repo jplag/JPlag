@@ -154,11 +154,12 @@ public final class CLI {
 
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
+        MergingParameters mergingParameters = new MergingParameters();
 
         JPlagOptions options = new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, null,
                 SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
-                clusteringOptions, DEBUG.getFrom(namespace), new MergingParameters());
+                clusteringOptions, DEBUG.getFrom(namespace), mergingParameters);
 
         String baseCodePath = BASE_CODE.getFrom(namespace);
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);

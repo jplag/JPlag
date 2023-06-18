@@ -1,25 +1,22 @@
 package de.jplag.merging;
 
-public class MergingParameters{
-	private int mergeBuffer;
-	private int seperatingThreshold;
+public record MergingParameters(int mergeBuffer, int seperatingThreshold){
 	
-	public MergingParameters(int mb, int st) {
-		mergeBuffer=mb;
-		seperatingThreshold=st;
+	public MergingParameters(int mergeBuffer, int seperatingThreshold) {
+		this.mergeBuffer=mergeBuffer;
+		this.seperatingThreshold=seperatingThreshold;
 	}
 	
 	public MergingParameters() {
-		mergeBuffer=0;
-		seperatingThreshold=0;
+		this(0,0);
 	}
 	
-	public int mergeBuffer() {
-		return mergeBuffer;
+	public MergingParameters withMergeBuffer(int mergeBuffer) {
+		return new MergingParameters(mergeBuffer,seperatingThreshold);
 	}
 	
-	public int seperatingThreshold() {
-		return seperatingThreshold;
+	public MergingParameters withSeperatingThreshold(int seperatingThreshold) {
+		return new MergingParameters(mergeBuffer,seperatingThreshold);
 	}
 }
 
