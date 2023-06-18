@@ -48,13 +48,14 @@ public class MatchMerging{
 			leftSubmission=comparisons.get(i).getFirstSubmission();
 			rightSubmission=comparisons.get(i).getSecondSubmission();
 			globalMatches=new ArrayList<>(comparisons.get(i).getMatches());
+			globalMatches.addAll(comparisons.get(i).getIgnoredMatches());
 			//System.out.println(globalMatches);
 			computeNeighbors();
 			mergeNeighbors();
 			//System.out.println(globalMatches);
 			removeBuffer();
 			//System.out.println(globalMatches);
-			comparisons.set(i,new JPlagComparison(leftSubmission,rightSubmission,globalMatches));
+			comparisons.set(i,new JPlagComparison(leftSubmission,rightSubmission,globalMatches,List.of()));
 			
 		}
 		//result.setComparisons(comparisons);
