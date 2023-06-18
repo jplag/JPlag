@@ -69,9 +69,9 @@ public class MatchMerging{
 	public void computeNeighbors() {
 		neighbors= new ArrayList<>();
 		List<Match> sortedByFirst= new ArrayList<>(globalMatches);
-		Collections.sort(sortedByFirst, (m1, m2) -> m1.getStartOfFirst() - m2.getStartOfFirst());
+		Collections.sort(sortedByFirst, (m1, m2) -> m1.startOfFirst() - m2.startOfFirst());
 		List<Match> sortedBySecond= new ArrayList<>(globalMatches);
-		Collections.sort(sortedBySecond, (m1, m2) -> m1.getStartOfSecond() - m2.getStartOfSecond());
+		Collections.sort(sortedBySecond, (m1, m2) -> m1.startOfSecond() - m2.startOfSecond());
 		for (int i = 0; i < sortedByFirst.size()-1; i++) {
 			if(sortedBySecond.indexOf(sortedByFirst.get(i))==(sortedBySecond.indexOf(sortedByFirst.get(i+1))-1)) {
             	neighbors.add(Arrays.asList(sortedByFirst.get(i), sortedByFirst.get(i+1)));
@@ -84,15 +84,15 @@ public class MatchMerging{
 		int lengthThreshold = minimumTokenMatch - mergeBuffer;
 		int i=0;
 		while (i < neighbors.size()) {
-			double length = (neighbors.get(i).get(0).getLength() + neighbors.get(i).get(1).getLength())/2.0;
-			double seperating =((neighbors.get(i).get(1).getStartOfFirst()-neighbors.get(i).get(0).endOfFirst()-1)+(neighbors.get(i).get(1).getStartOfSecond()-neighbors.get(i).get(0).endOfSecond()-1))/2.0;
+			double length = (neighbors.get(i).get(0).length() + neighbors.get(i).get(1).length())/2.0;
+			double seperating =((neighbors.get(i).get(1).startOfFirst()-neighbors.get(i).get(0).endOfFirst()-1)+(neighbors.get(i).get(1).startOfSecond()-neighbors.get(i).get(0).endOfSecond()-1))/2.0;
 			//Checking length is not necessary as GST already checked length while computing matches
 			if(seperating <= seperatingThreshold) {
 				System.out.println(length+" "+seperating);
 				System.out.println("Original:"+ neighbors.get(i));
 				globalMatches.removeAll(neighbors.get(i));
-				System.out.println("Merged:"+ new Match(neighbors.get(i).get(0).getStartOfFirst(),neighbors.get(i).get(0).getStartOfSecond(),(int)(length*2+seperating)));
-				globalMatches.add(new Match(neighbors.get(i).get(0).getStartOfFirst(),neighbors.get(i).get(0).getStartOfSecond(),(int)(length*2+seperating)));
+				System.out.println("Merged:"+ new Match(neighbors.get(i).get(0).startOfFirst(),neighbors.get(i).get(0).startOfSecond(),(int)(length*2+seperating)));
+				globalMatches.add(new Match(neighbors.get(i).get(0).startOfFirst(),neighbors.get(i).get(0).startOfSecond(),(int)(length*2+seperating)));
 				i=0;
 				//Manuelles ändern wäre schneller
 				computeNeighbors();
