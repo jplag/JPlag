@@ -55,7 +55,7 @@ public class MatchMerging{
 			//System.out.println(globalMatches);
 			removeBuffer();
 			//System.out.println(globalMatches);
-			comparisons.set(i,new JPlagComparison(leftSubmission,rightSubmission,globalMatches,List.of()));
+			comparisons.set(i,new JPlagComparison(leftSubmission,rightSubmission,globalMatches,new ArrayList<>()));
 			
 		}
 		//result.setComparisons(comparisons);
@@ -92,7 +92,7 @@ public class MatchMerging{
 				System.out.println("Original:"+ neighbors.get(i));
 				globalMatches.removeAll(neighbors.get(i));
 				System.out.println("Merged:"+ new Match(neighbors.get(i).get(0).startOfFirst(),neighbors.get(i).get(0).startOfSecond(),(int)(length*2+seperating)));
-				globalMatches.add(new Match(neighbors.get(i).get(0).startOfFirst(),neighbors.get(i).get(0).startOfSecond(),(int)(length*2+seperating)));
+				globalMatches.add(new Match(neighbors.get(i).get(0).startOfFirst(),neighbors.get(i).get(0).startOfSecond(),(int)(length*2/*+seperating*/)));
 				i=0;
 				//Manuelles ändern wäre schneller
 				computeNeighbors();

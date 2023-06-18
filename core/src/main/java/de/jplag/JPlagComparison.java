@@ -20,7 +20,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
         this.firstSubmission = firstSubmission;
         this.secondSubmission = secondSubmission;
         this.matches = Collections.unmodifiableList(matches);
-        this.ignoredMatches = ignoredMatches;
+        this.ignoredMatches = Collections.unmodifiableList(ignoredMatches);
     }
 
     /**
