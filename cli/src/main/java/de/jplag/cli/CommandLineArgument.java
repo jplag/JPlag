@@ -79,7 +79,9 @@ public enum CommandLineArgument {
     CLUSTER_PREPROCESSING_NONE(new Builder("--cluster-pp-none", Boolean.class).action(Arguments.storeTrue()).hidden()),
     CLUSTER_PREPROCESSING_CDF(new Builder("--cluster-pp-cdf", Boolean.class).action(Arguments.storeTrue()).hidden()),
     CLUSTER_PREPROCESSING_PERCENTILE(new Builder("--cluster-pp-percentile", Double.class).metaVar("percentile").hidden()),
-    CLUSTER_PREPROCESSING_THRESHOLD(new Builder("--cluster-pp-threshold", Double.class).metaVar("threshold").hidden());
+    CLUSTER_PREPROCESSING_THRESHOLD(new Builder("--cluster-pp-threshold", Double.class).metaVar("threshold").hidden()),
+    MERGE_BUFFER("--merge-buffer", Integer.class),
+    SEPERATING_THRESHOLD("--seperating-threshold", Integer.class);
 
     /**
      * The identifier of the default {@link Language}.

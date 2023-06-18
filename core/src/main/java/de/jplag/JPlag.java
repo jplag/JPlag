@@ -62,7 +62,7 @@ public class JPlag {
      * @throws ExitException if JPlag exits preemptively.
      */
     public static JPlagResult run(JPlagOptions options) throws ExitException {
-        GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options.withMergingParameters(new MergingParameters(5,3)));
+        GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options/*.withMergingParameters(new MergingParameters(5,3))*/);
         ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
@@ -75,7 +75,7 @@ public class JPlag {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         
         //Use Match Merging against obfuscation
-        result=new MatchMerging(result,options.withMergingParameters(new MergingParameters(5,3))).run();
+        result=new MatchMerging(result,options/*.withMergingParameters(new MergingParameters(5,3))*/).run();
         
         if (logger.isInfoEnabled())
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));

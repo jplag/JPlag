@@ -27,6 +27,8 @@ import static de.jplag.cli.CommandLineArgument.SHOWN_COMPARISONS;
 import static de.jplag.cli.CommandLineArgument.SIMILARITY_THRESHOLD;
 import static de.jplag.cli.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.cli.CommandLineArgument.SUFFIXES;
+import static de.jplag.cli.CommandLineArgument.MERGE_BUFFER;
+import static de.jplag.cli.CommandLineArgument.SEPERATING_THRESHOLD;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -154,7 +156,7 @@ public final class CLI {
 
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
-        MergingParameters mergingParameters = new MergingParameters();
+        MergingParameters mergingParameters = getMergingParameters(namespace);
 
         JPlagOptions options = new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, null,
                 SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
@@ -171,6 +173,17 @@ public final class CLI {
         }
     }
 
+    private static MergingParameters getMergingParameters(Namespace namespace) {
+        MergingParameters mergingParameters = new MergingParameters();
+        if (MERGE_BUFFER.isSet(namespace)) {
+            mergingParameters = mergingParameters.withMergeBuffer(MERGE_BUFFER.getFrom(namespace));
+        }
+        if (SEPERATING_THRESHOLD.isSet(namespace)) {
+            mergingParameters = mergingParameters.withSeperatingThreshold(SEPERATING_THRESHOLD.getFrom(namespace));
+        }
+        return mergingParameters;
+    }
+    
     private static ClusteringOptions getClusteringOptions(Namespace namespace) {
         ClusteringOptions clusteringOptions = new ClusteringOptions();
         if (CLUSTER_DISABLE.isSet(namespace)) {
