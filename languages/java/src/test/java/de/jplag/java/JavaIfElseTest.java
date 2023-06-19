@@ -24,7 +24,7 @@ class JavaIfElseTest extends AbstractJavaLanguageTest {
     @MethodSource("provideClassPairs")
     @DisplayName("Test difference between if-else, if-if and if-else-if.")
     void testJavaClassPair(String fileName1, String fileName2) throws ParsingException {
-        assertIterableEquals(parseJavaFile(fileName1), parseJavaFile(fileName1));
+        assertIterableEquals(parseJavaFile(fileName1), parseJavaFile(fileName2));
     }
 
     /**
