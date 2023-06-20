@@ -16,7 +16,7 @@ export class OverviewFactory {
    * Creates an overview object from a json object created by by JPlag
    * @param json the json object
    */
-  static extractOverview(json: Record<string, unknown>): Overview {
+  private static extractOverview(json: Record<string, unknown>): Overview {
     const versionField = json.jplag_version as Record<string, number>
     const jplagVersion: Version = {
       major: versionField.major,
@@ -102,7 +102,7 @@ export class OverviewFactory {
   /**
    * Gets the overview file based on the used mode (zip, local, single).
    */
-  static getOverview(): Overview {
+  public static getOverview(): Overview {
     console.log('Generating overview...')
     let temp!: Overview
     //Gets the overview file based on the used mode (zip, local, single).

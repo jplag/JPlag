@@ -4,12 +4,13 @@ import type { SubmissionFile } from '../SubmissionFile'
 import type { MatchInSingleFile } from '../MatchInSingleFile'
 import store from '@/stores/store'
 import { generateHuesForInterval, toHSLAArray } from '@/utils/ColorUtils'
+import slash from 'slash'
 
 /**
  * Factory class for creating Comparison objects
  */
 export class ComparisonFactory {
-  static getComparison(id1: string, id2: string) {
+  public static getComparison(id1: string, id2: string) {
     console.log('Generating comparison {%s} - {%s}...', id1, id2)
     let comparison = new Comparison('', '', 0)
 
@@ -52,7 +53,7 @@ export class ComparisonFactory {
    * Creates a comparison object from a json object created by by JPlag
    * @param json the json object
    */
-  static extractComparison(json: Record<string, unknown>): Comparison {
+  private static extractComparison(json: Record<string, unknown>): Comparison {
     const filesOfFirstSubmission = store().filesOfSubmission(json.id1 as string)
     const filesOfSecondSubmission = store().filesOfSubmission(json.id2 as string)
 
@@ -143,7 +144,9 @@ export class ComparisonFactory {
     request.open('GET', `/files/submissionFileIndex.json`, false)
     request.send()
     if (request.status == 200) {
-      return JSON.parse(request.response).submission_file_indexes[submissionId]
+      return JSON.parse(request.response).submission_file_indexes[submissionId].map(
+        (file: string) => slash(file)
+      )
     } else {
       return []
     }
@@ -153,16 +156,19 @@ export class ComparisonFactory {
     const request = new XMLHttpRequest()
     const fileList = ComparisonFactory.getSubmissionFileListFromLocal(submissionId)
     for (const file of fileList) {
-      request.open('GET', `/files/files/${file.replace(/\\/, '/')}`, false)
+      request.open('GET', `/files/files/${file}`, false)
+      request.overrideMimeType('text/plain')
       request.send()
       if (request.status == 200) {
         store().saveSubmissionFile({
           name: submissionId,
           file: {
-            fileName: file,
+            fileName: slash(file),
             data: request.response
           }
         })
+      } else {
+        console.log('Error loading file: ' + file)
       }
     }
   }
@@ -178,8 +184,8 @@ export class ComparisonFactory {
 
   private static mapMatch(match: Record<string, unknown>, color: string): Match {
     return {
-      firstFile: match.file1 as string,
-      secondFile: match.file2 as string,
+      firstFile: slash(match.file1 as string),
+      secondFile: slash(match.file2 as string),
       startInFirst: match.start1 as number,
       endInFirst: match.end1 as number,
       startInSecond: match.start2 as number,
