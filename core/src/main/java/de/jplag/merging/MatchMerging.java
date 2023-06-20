@@ -23,17 +23,6 @@ public class MatchMerging{
     private List<JPlagComparison> comparisons;
     private JPlagOptions options;
 	
-	/*public MatchMerging(int mml,int mb, Submission ls, Submission rs, List<Match> gm, int st){
-		this.minimumMatchLength = mml;
-		this.mergeBuffer = mb;
-		this.leftSubmission = ls;
-		this.rightSubmission = rs;
-		this.globalMatches = gm;
-		//this.leftTokens = this.leftSubmission.getTokenList();
-		//this.rightTokens = this.rightSubmission.getTokenList();
-		this.seperatingThreshold = st;
-	}*/
-	
 	public MatchMerging(JPlagResult r, JPlagOptions o) {
 		result=r;
 		comparisons=new ArrayList<>(result.getAllComparisons());
@@ -45,10 +34,10 @@ public class MatchMerging{
 	
 	public JPlagResult run() {
 		for(int i=0; i<comparisons.size();i++) {
-			leftSubmission=comparisons.get(i).getFirstSubmission();
-			rightSubmission=comparisons.get(i).getSecondSubmission();
-			globalMatches=new ArrayList<>(comparisons.get(i).getMatches());
-			globalMatches.addAll(comparisons.get(i).getIgnoredMatches());
+			leftSubmission=comparisons.get(i).firstSubmission();
+			rightSubmission=comparisons.get(i).secondSubmission();
+			globalMatches=new ArrayList<>(comparisons.get(i).matches());
+			globalMatches.addAll(comparisons.get(i).ignoredMatches());
 			//System.out.println(globalMatches);
 			computeNeighbors();
 			mergeNeighbors();
@@ -58,7 +47,6 @@ public class MatchMerging{
 			comparisons.set(i,new JPlagComparison(leftSubmission,rightSubmission,globalMatches,new ArrayList<>()));
 			
 		}
-		//result.setComparisons(comparisons);
 		return new JPlagResult(comparisons,result.getSubmissions(),result.getDuration(),options);
 	}
 
@@ -81,7 +69,6 @@ public class MatchMerging{
 	}
 	
 	public void mergeNeighbors() {
-		int lengthThreshold = minimumTokenMatch - mergeBuffer;
 		int i=0;
 		while (i < neighbors.size()) {
 			double length = (neighbors.get(i).get(0).length() + neighbors.get(i).get(1).length())/2.0;
