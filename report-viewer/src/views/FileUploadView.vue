@@ -188,8 +188,8 @@ async function handleZipFile(file: Blob) {
         )
         await zip.files[originalFileName].async('string').then((data) => {
           store().saveSubmissionFile({
-            name: submissionFileName,
-            file: { fileName: fullPathFileName, data: data }
+            name: slash(submissionFileName),
+            file: { fileName: slash(fullPathFileName), data: data }
           })
         })
       } else {
