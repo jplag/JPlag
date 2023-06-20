@@ -36,7 +36,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits<{ (e: 'selectionChanged', index: number): any }>()
+const emit = defineEmits(['selectionChanged'])
 const selected = toRef(props.defaultSelected)
 
 function select(index: number) {

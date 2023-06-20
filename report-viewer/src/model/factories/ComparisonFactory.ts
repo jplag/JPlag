@@ -26,24 +26,24 @@ export class ComparisonFactory {
         try {
           comparison = ComparisonFactory.extractComparison(JSON.parse(request.response))
         } catch (e) {
-          throw 'Comparison file not found'
+          throw new Error('Comparison file not found')
         }
       } else {
-        throw 'Comparison file not found'
+        throw new Error('Comparison file not found')
       }
     } else if (store().state.zip) {
       const comparisonFile = store().getComparisonFileForSubmissions(id1, id2)
       if (comparisonFile) {
         comparison = ComparisonFactory.extractComparison(JSON.parse(comparisonFile))
       } else {
-        throw 'Comparison file not found'
+        throw new Error('Comparison file not found')
       }
     } else if (store().state.single) {
       try {
         comparison = ComparisonFactory.extractComparison(JSON.parse(store().state.fileString))
       } catch (e) {
         store().clearStore()
-        throw 'No Comparison files given!'
+        throw new Error('No Comparison files given!')
       }
     }
     return comparison

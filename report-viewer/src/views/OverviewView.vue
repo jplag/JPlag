@@ -35,7 +35,7 @@
             <OptionsSelectorComponent
               name="Metric"
               :labels="['Average', 'Maximum']"
-              @selection-changed="(i) => selectDistributionDiagramMetric(i)"
+              @selection-changed="(i: number) => selectDistributionDiagramMetric(i)"
             />
           </ScrollableComponent>
         </div>
@@ -82,7 +82,6 @@ import store from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import Button from '@/components/ButtonComponent.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
-import OptionsSelectorComponent from '@/components/OptionsSelectorComponent.vue'
 import MetricType from '@/model/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'

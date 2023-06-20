@@ -114,7 +114,7 @@ export class OverviewFactory {
       if (request.status == 200) {
         temp = OverviewFactory.extractOverview(JSON.parse(request.response))
       } else {
-        throw 'Could not find overview.json in folder.'
+        throw new Error('Could not find overview.json in folder.')
       }
     } else if (store().state.zip) {
       console.log('Start finding overview.json in state...')

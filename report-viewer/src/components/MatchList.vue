@@ -49,6 +49,6 @@ defineProps({
 defineEmits(['matchSelected'])
 
 function getFileName(fullPath: string) {
-  return fullPath.split(/\\|\//).pop() || ''
+  return fullPath.split(/[/\\]/g).pop() || ''
 }
 </script>
