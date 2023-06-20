@@ -23,7 +23,6 @@ const props = defineProps({
   }
 })
 
-console.log(props.options)
 defineEmits(['selectionChanged'])
 
 const selectedOption = ref(props.options.length > 0 ? props.options[0] : '')

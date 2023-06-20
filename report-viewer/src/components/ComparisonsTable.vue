@@ -9,9 +9,9 @@
         <div class="tableCellName items-center">Submissions in Comparison</div>
         <div class="tableCellSimilarity !flex-col">
           <div>Similarity</div>
-          <div class="flex flex-row">
-            <div class="flex-auto">Average</div>
-            <div class="flex-auto">Maximum</div>
+          <div class="flex flex-row w-full">
+            <div class="flex-1">Average</div>
+            <div class="flex-1">Maximum</div>
           </div>
         </div>
         <div class="tableCellCluster items-center" v-if="displayClusters">Cluster</div>
@@ -117,7 +117,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
-import { generateHuesForInterval, toHSLAArray } from '@/utils/ColorUtils'
+import { generateColorsForInterval } from '@/utils/ColorUtils'
 import { toTwoDecimals } from '@/utils/ComparisonUtils'
 
 library.add(faUserGroup)
@@ -155,13 +155,11 @@ function isAnonymous(id: string) {
 
 let clusterIconColors = [] as Array<string>
 if (props.clusters != undefined) {
-  const hues = generateHuesForInterval(20, 80, Math.floor(props.clusters.length))
-  hues.push(...generateHuesForInterval(160, 340, Math.ceil(props.clusters.length)))
-  clusterIconColors = toHSLAArray(
-    generateHuesForInterval(20, 340, props.clusters.length),
-    0.5,
-    0.5,
-    1
+  clusterIconColors.push(
+    ...generateColorsForInterval(20, 80, Math.floor(props.clusters.length), 0.5, 0.5, 1)
+  )
+  clusterIconColors.push(
+    ...generateColorsForInterval(160, 340, Math.ceil(props.clusters.length), 0.5, 0.5, 1)
   )
 }
 

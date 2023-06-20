@@ -164,6 +164,7 @@ function isAnonymous(id: string) {
 }
 
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
+// Changing the used style itsself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
 const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {
