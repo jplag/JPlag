@@ -1,6 +1,6 @@
 package de.jplag.cli;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,40 +8,34 @@ import de.jplag.clustering.Preprocessing;
 
 class ClusteringTest extends CommandLineInterfaceTest {
 
-    private static final double EPSILON = 0.000001;
-
     @Test
-    void parseSkipClustering() {
-        String argument = CommandLineArgument.CLUSTER_DISABLE.flag();
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
-        assertEquals(false, options.clusteringOptions().enabled());
+    void parseSkipClustering() throws CliException {
+        buildOptionsFromCLI(defaultArguments().skipClustering());
+        assertFalse(options.clusteringOptions().enabled());
     }
 
     @Test
-    void parseDefaultClustering() {
-        buildOptionsFromCLI(CURRENT_DIRECTORY);
-        assertEquals(true, options.clusteringOptions().enabled());
+    void parseDefaultClustering() throws CliException {
+        buildOptionsFromCLI(defaultArguments());
+        assertTrue(options.clusteringOptions().enabled());
     }
 
     @Test
-    void parsePercentilePreProcessor() {
-        String argument = buildArgument(CommandLineArgument.CLUSTER_PREPROCESSING_PERCENTILE, Double.toString(0.5));
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+    void parsePercentilePreProcessor() throws CliException {
+        buildOptionsFromCLI(defaultArguments().clusterPpPercentile(.5));
         assertEquals(Preprocessing.PERCENTILE, options.clusteringOptions().preprocessor());
-        assertEquals(0.5, options.clusteringOptions().preprocessorPercentile(), EPSILON);
+        assertEquals(0.5, options.clusteringOptions().preprocessorPercentile());
     }
 
     @Test
-    void parseCdfPreProcessor() {
-        String argument = CommandLineArgument.CLUSTER_PREPROCESSING_CDF.flag();
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+    void parseCdfPreProcessor() throws CliException {
+        buildOptionsFromCLI(defaultArguments().clusterPpCdf());
         assertEquals(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, options.clusteringOptions().preprocessor());
     }
 
     @Test
-    void parseNoPreProcessor() {
-        String argument = CommandLineArgument.CLUSTER_PREPROCESSING_NONE.flag();
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+    void parseNoPreProcessor() throws CliException {
+        buildOptionsFromCLI(defaultArguments().clusterPpNone());
         assertEquals(Preprocessing.NONE, options.clusteringOptions().preprocessor());
     }
 
