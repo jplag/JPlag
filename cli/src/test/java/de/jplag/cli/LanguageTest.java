@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import de.jplag.Language;
 
-class MetamodelDynamicMetamodelLanguageTest extends CommandLineInterfaceTest {
+class LanguageTest extends CommandLineInterfaceTest {
 
     @Test
     void testDefaultLanguage() {

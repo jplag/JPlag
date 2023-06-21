@@ -23,10 +23,10 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
-import de.jplag.text.PlainTextLanguage;
+import de.jplag.text.NaturalLanguage;
 
-class TextLanguageTest {
-    private final Logger logger = LoggerFactory.getLogger(TextLanguageTest.class);
+class NaturalLanguageTest {
+    private final Logger logger = LoggerFactory.getLogger(NaturalLanguageTest.class);
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources");
     private static final String TEST_SUBJECT = "FutureJavaDoc.txt";
@@ -36,7 +36,7 @@ class TextLanguageTest {
 
     @BeforeEach
     public void setUp() {
-        language = new PlainTextLanguage();
+        language = new NaturalLanguage();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }

@@ -12,7 +12,7 @@ import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
-import de.jplag.emf.MetamodelLanguage;
+import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.normalization.ModelSorter;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
@@ -74,7 +74,7 @@ public class EcoreParser extends AbstractParser {
      * @return the correct view file suffix for the model view. Can be overriden in subclasses for alternative views.
      */
     protected String getCorrespondingViewFileSuffix() {
-        return MetamodelLanguage.VIEW_FILE_SUFFIX;
+        return EmfLanguage.VIEW_FILE_SUFFIX;
     }
 
     /**

@@ -13,7 +13,7 @@ import de.jplag.Token;
  * This represents the R language as a language supported by JPlag.
  */
 @MetaInfServices(de.jplag.Language.class)
-public class RlangLanguage implements de.jplag.Language {
+public class RLanguage implements de.jplag.Language {
 
     private static final String NAME = "R Parser";
     private static final String IDENTIFIER = "rlang";
@@ -21,7 +21,7 @@ public class RlangLanguage implements de.jplag.Language {
     private static final String[] FILE_EXTENSION = {".R", ".r"};
     private final RParserAdapter parserAdapter;
 
-    public RlangLanguage() {
+    public RLanguage() {
         this.parserAdapter = new RParserAdapter();
     }
 
