@@ -45,6 +45,8 @@ public class SubmissionSet {
         parseAllSubmissions();
         this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
+        if (Boolean.TRUE.equals(options.language().getOptions().getOptionsAsMap().get("normalize").getValue()))
+            submissions.forEach(Submission::normalize);
     }
 
     /**

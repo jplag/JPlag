@@ -14,6 +14,9 @@ import de.jplag.Token;
  */
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
+
+    private JavaLanguageOptions options = new JavaLanguageOptions();
+
     private static final String IDENTIFIER = "java";
 
     private final Parser parser;
@@ -45,6 +48,11 @@ public class Language implements de.jplag.Language {
     @Override
     public List<Token> parse(Set<File> files) throws ParsingException {
         return this.parser.parse(files);
+    }
+
+    @Override
+    public JavaLanguageOptions getOptions() {
+        return options;
     }
 
     @Override

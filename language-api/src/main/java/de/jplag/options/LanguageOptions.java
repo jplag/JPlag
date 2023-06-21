@@ -3,6 +3,8 @@ package de.jplag.options;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Container for a languages options. Should be implemented per language.
@@ -77,5 +79,12 @@ public abstract class LanguageOptions {
      */
     public List<LanguageOption<?>> getOptionsAsList() {
         return Collections.unmodifiableList(this.options);
+    }
+
+    /**
+     * @return All options, mapped by their name
+     */
+    public Map<String, LanguageOption<?>> getOptionsAsMap() {
+        return options.stream().collect(Collectors.toUnmodifiableMap(LanguageOption::getName, o -> o));
     }
 }

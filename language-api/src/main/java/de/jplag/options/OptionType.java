@@ -21,12 +21,24 @@ public abstract sealed class OptionType<T> {
         }
     }
 
+    static final class BooleanType extends OptionType<Boolean> {
+        public static final BooleanType INSTANCE = new BooleanType();
+
+        private BooleanType() {
+            super(Boolean.class);
+        }
+    }
+
     public static StringType string() {
         return StringType.INSTANCE;
     }
 
     public static IntegerType integer() {
         return IntegerType.INSTANCE;
+    }
+
+    public static BooleanType bool() {  // boolean is a keyword
+        return BooleanType.INSTANCE;
     }
 
     private final Class<T> javaType;
