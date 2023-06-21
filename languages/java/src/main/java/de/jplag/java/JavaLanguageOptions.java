@@ -5,5 +5,5 @@ import de.jplag.options.LanguageOptions;
 import de.jplag.options.OptionType;
 
 public class JavaLanguageOptions extends LanguageOptions {
-    final LanguageOption<Boolean> normalize = createDefaultOption(OptionType.bool(), "normalize", "Enable token string normalization.", false);
+    public final LanguageOption<Boolean> normalize = createDefaultOption(OptionType.bool(), "normalize", "Enable token string normalization.", false);
 }

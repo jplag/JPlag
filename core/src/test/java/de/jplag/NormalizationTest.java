@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
+import de.jplag.java.Language;
 import de.jplag.options.JPlagOptions;
 
 class NormalizationTest extends TestBase {
@@ -17,9 +18,10 @@ class NormalizationTest extends TestBase {
 
     NormalizationTest() throws ExitException {
         JPlagOptions options = getDefaultOptions("normalization");
+        Language language = (Language) options.language();
+        language.getOptions().normalize.setValue(true);
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
-        submissionSet.normalizeSubmissions();
         Function<Submission, List<TokenType>> getTokenString = submission -> submission.getTokenList().stream().map(Token::getType).toList();
         tokenStringMap = submissionSet.getSubmissions().stream().collect(Collectors.toMap(Submission::getName, getTokenString));
         originalTokenString = tokenStringMap.get("Squares.java");
