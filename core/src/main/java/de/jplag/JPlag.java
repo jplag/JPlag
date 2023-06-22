@@ -11,7 +11,6 @@ import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.merging.MatchMerging;
-import de.jplag.merging.MergingParameters;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
 import de.jplag.strategy.ComparisonStrategy;
@@ -73,10 +72,10 @@ public class JPlag {
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
-        
-        //Use Match Merging against obfuscation
-        result=new MatchMerging(result,options).run();
-        
+
+        // Use Match Merging against obfuscation
+        result = new MatchMerging(result, options).run();
+
         if (logger.isInfoEnabled())
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));

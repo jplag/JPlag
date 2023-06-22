@@ -18,17 +18,17 @@ import static de.jplag.cli.CommandLineArgument.CLUSTER_SPECTRAL_NOISE;
 import static de.jplag.cli.CommandLineArgument.DEBUG;
 import static de.jplag.cli.CommandLineArgument.EXCLUDE_FILE;
 import static de.jplag.cli.CommandLineArgument.LANGUAGE;
+import static de.jplag.cli.CommandLineArgument.MERGE_BUFFER;
 import static de.jplag.cli.CommandLineArgument.MIN_TOKEN_MATCH;
 import static de.jplag.cli.CommandLineArgument.NEW_DIRECTORY;
 import static de.jplag.cli.CommandLineArgument.OLD_DIRECTORY;
 import static de.jplag.cli.CommandLineArgument.RESULT_FOLDER;
 import static de.jplag.cli.CommandLineArgument.ROOT_DIRECTORY;
+import static de.jplag.cli.CommandLineArgument.SEPERATING_THRESHOLD;
 import static de.jplag.cli.CommandLineArgument.SHOWN_COMPARISONS;
 import static de.jplag.cli.CommandLineArgument.SIMILARITY_THRESHOLD;
 import static de.jplag.cli.CommandLineArgument.SUBDIRECTORY;
 import static de.jplag.cli.CommandLineArgument.SUFFIXES;
-import static de.jplag.cli.CommandLineArgument.MERGE_BUFFER;
-import static de.jplag.cli.CommandLineArgument.SEPERATING_THRESHOLD;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -48,10 +48,9 @@ import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
+import de.jplag.merging.MergingParameters;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
-
-import de.jplag.merging.MergingParameters;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -183,7 +182,7 @@ public final class CLI {
         }
         return mergingParameters;
     }
-    
+
     private static ClusteringOptions getClusteringOptions(Namespace namespace) {
         ClusteringOptions clusteringOptions = new ClusteringOptions();
         if (CLUSTER_DISABLE.isSet(namespace)) {

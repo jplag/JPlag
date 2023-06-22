@@ -161,15 +161,15 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
                 clusteringOptions, debugParser, mergingParameters);
     }
-    
+
     public JPlagOptions withMergingParameters(MergingParameters mergingParameters) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
                 clusteringOptions, debugParser, mergingParameters);
     }
-    
+
     public MergingParameters mergingParameters() {
-    	return mergingParameters;
+        return mergingParameters;
     }
 
     public boolean hasBaseCode() {

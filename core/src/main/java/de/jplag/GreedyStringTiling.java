@@ -30,8 +30,9 @@ public class GreedyStringTiling {
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
-    	this.mergeBuffer = options.mergingParameters().mergeBuffer();
-        this.minimumMatchLength = options.minimumTokenMatch()-this.mergeBuffer < Integer.valueOf(1) ? 1 : options.minimumTokenMatch()-this.mergeBuffer;
+        this.mergeBuffer = options.mergingParameters().mergeBuffer();
+        this.minimumMatchLength = options.minimumTokenMatch() - this.mergeBuffer < Integer.valueOf(1) ? 1
+                : options.minimumTokenMatch() - this.mergeBuffer;
         this.tokenTypeValues = new ConcurrentHashMap<>();
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
     }
@@ -100,7 +101,7 @@ public class GreedyStringTiling {
 
         // comparison uses <= because it is assumed that the last token is a pivot (FILE_END)
         if (leftTokens.size() <= minimumMatchLength || rightTokens.size() <= minimumMatchLength) {
-            return new JPlagComparison(leftSubmission, rightSubmission, List.of(),List.of());
+            return new JPlagComparison(leftSubmission, rightSubmission, List.of(), List.of());
         }
 
         boolean[] leftMarked = calculateInitiallyMarked(leftSubmission);
@@ -141,12 +142,11 @@ public class GreedyStringTiling {
                 }
             }
             for (Match match : iterationMatches) {
-            	if(match.length()<minimumMatchLength+mergeBuffer) {
-            		addMatchIfNotOverlapping(ignoredMatches, match);
-            	}
-            	else {
+                if (match.length() < minimumMatchLength + mergeBuffer) {
+                    addMatchIfNotOverlapping(ignoredMatches, match);
+                } else {
                     addMatchIfNotOverlapping(globalMatches, match);
-            	}
+                }
                 int leftStartIndex = match.startOfFirst();
                 int rightStartIndex = match.startOfSecond();
                 for (int offset = 0; offset < match.length(); offset++) {
@@ -155,7 +155,7 @@ public class GreedyStringTiling {
                 }
             }
         } while (maximumMatchLength != minimumMatchLength);
-        return new JPlagComparison(leftSubmission, rightSubmission, globalMatches,ignoredMatches);
+        return new JPlagComparison(leftSubmission, rightSubmission, globalMatches, ignoredMatches);
     }
 
     /**
