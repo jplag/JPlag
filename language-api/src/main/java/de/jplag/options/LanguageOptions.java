@@ -3,13 +3,13 @@ package de.jplag.options;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Container for a languages options. Should be implemented per language.
  */
 public abstract class LanguageOptions {
+    public LanguageOption<Boolean> normalize = new DummyOption<>(false);
+
     public static final LanguageOptions EMPTY_OPTIONS = new LanguageOptions() {
     };
 
@@ -18,8 +18,19 @@ public abstract class LanguageOptions {
     /**
      * New instance
      */
-    protected LanguageOptions() {
+    public LanguageOptions(boolean supportsNormalization) {
         this.options = new ArrayList<>();
+        if (supportsNormalization) {
+            var description = "Enable token string normalization, which can help detect certain cases of plagiarism.";
+            this.normalize = createDefaultOption(OptionType.bool(), "normalize", description, false);
+        }
+    }
+
+    /**
+     * New instance
+     */
+    protected LanguageOptions() {
+        this(false);
     }
 
     /**
@@ -79,12 +90,5 @@ public abstract class LanguageOptions {
      */
     public List<LanguageOption<?>> getOptionsAsList() {
         return Collections.unmodifiableList(this.options);
-    }
-
-    /**
-     * @return All options, mapped by their name
-     */
-    public Map<String, LanguageOption<?>> getOptionsAsMap() {
-        return options.stream().collect(Collectors.toUnmodifiableMap(LanguageOption::getName, o -> o));
     }
 }

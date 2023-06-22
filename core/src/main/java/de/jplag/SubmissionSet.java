@@ -11,7 +11,6 @@ import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
 
 /**
  * Collection of all submissions and their basecode if it exists. Parses all submissions upon creation.
@@ -46,9 +45,9 @@ public class SubmissionSet {
         parseAllSubmissions();
         this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
-        LanguageOption<?> normalizeOption = options.language().getOptions().getOptionsAsMap().get("normalize");
-        if (normalizeOption != null && Boolean.TRUE.equals(normalizeOption.getValue()))
+        if (options.language().getOptions().normalize.getValue()) {
             submissions.forEach(Submission::normalize);
+        }
     }
 
     /**
