@@ -35,14 +35,12 @@ public class MatchMerging {
 
     public JPlagResult run() {
         for (int i = 0; i < comparisons.size(); i++) {
-            leftSubmission = comparisons.get(i).firstSubmission();
-            rightSubmission = comparisons.get(i).secondSubmission();
+            leftSubmission = comparisons.get(i).firstSubmission().clone();
+            rightSubmission = comparisons.get(i).secondSubmission().clone();
             globalMatches = new ArrayList<>(comparisons.get(i).matches());
             globalMatches.addAll(comparisons.get(i).ignoredMatches());
-            // System.out.println(globalMatches);
             computeNeighbors();
             mergeNeighbors();
-            // System.out.println(globalMatches);
             removeBuffer();
             // System.out.println(globalMatches);
             comparisons.set(i, new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
@@ -75,15 +73,15 @@ public class MatchMerging {
             double seperating = (seperatingLeft + seperatingRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
             if (seperating <= seperatingThreshold) {
-                System.out.println(lengthUpper+lengthLower + " " + seperating);
+                System.out.println((lengthUpper+lengthLower)/2.0 + " " + seperating);
                 System.out.println("Original:" + neighbors.get(i));
                 globalMatches.removeAll(neighbors.get(i));
                 System.out.println("Merged:" + new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),lengthUpper+lengthLower));
                 globalMatches.add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),lengthUpper+lengthLower));
-                i = 0;
                 removeToken(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),lengthUpper,seperatingLeft,seperatingRight);
                 // Manuelles ändern der Nachbarn wäre schneller
                 computeNeighbors();
+                i = 0;
             } else {
                 i++;
             }
@@ -98,6 +96,7 @@ public class MatchMerging {
         leftSubmission.setTokenList(tokenLeft);
         rightSubmission.setTokenList(tokenRight);
         
+
         for (int i = 0; i < globalMatches.size(); i++) {
             if(globalMatches.get(i).startOfFirst()>startLeft) {
                 Match alteredMatch = new Match(globalMatches.get(i).startOfFirst()-seperatingLeft,globalMatches.get(i).startOfSecond(),globalMatches.get(i).length());

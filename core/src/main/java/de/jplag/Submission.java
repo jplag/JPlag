@@ -294,4 +294,11 @@ public class Submission implements Comparable<Submission> {
         }
         return order;
     }
+    
+    public Submission clone() {
+        Submission cloned = new Submission(name, submissionRootFile, isNew, files, language);
+        cloned.setTokenList(new ArrayList<>(tokenList));
+        cloned.setBaseCodeComparison(baseCodeComparison);
+        return cloned;
+    }
 }
