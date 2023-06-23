@@ -51,11 +51,7 @@ public class MatchMerging {
         return new JPlagResult(comparisons, result.getSubmissions(), result.getDuration(), options);
     }
 
-    public int getMergeBuffer() {
-        return mergeBuffer;
-    }
-
-    public void computeNeighbors() {
+    private void computeNeighbors() {
         neighbors = new ArrayList<>();
         List<Match> sortedByFirst = new ArrayList<>(globalMatches);
         Collections.sort(sortedByFirst, (m1, m2) -> m1.startOfFirst() - m2.startOfFirst());
@@ -69,7 +65,7 @@ public class MatchMerging {
         // System.out.println(neighbors);
     }
 
-    public void mergeNeighbors() {
+    private void mergeNeighbors() {
         int i = 0;
         while (i < neighbors.size()) {
             int lengthUpper=neighbors.get(i).get(0).length();
@@ -94,7 +90,7 @@ public class MatchMerging {
         }
     }
     
-    public void removeToken(int startLeft,int startRight,int lengthUpper,int seperatingLeft,int seperatingRight) {
+    private void removeToken(int startLeft,int startRight,int lengthUpper,int seperatingLeft,int seperatingRight) {
         List<Token> tokenLeft=new ArrayList<>(leftSubmission.getTokenList());
         List<Token> tokenRight=new ArrayList<>(rightSubmission.getTokenList());
         tokenLeft.subList(startLeft+lengthUpper,startLeft+lengthUpper+seperatingLeft).clear();
@@ -114,7 +110,7 @@ public class MatchMerging {
         }  
     }
 
-    public void removeBuffer() {
+    private void removeBuffer() {
         List<Match> toRemove = new ArrayList<Match>();
         for (Match m : globalMatches) {
             if (m.length() < minimumTokenMatch) {
@@ -122,17 +118,5 @@ public class MatchMerging {
             }
         }
         globalMatches.removeAll(toRemove);
-    }
-
-    public Submission getLeftSubmission() {
-        return leftSubmission;
-    }
-
-    public Submission getRightSubmission() {
-        return rightSubmission;
-    }
-
-    public List<Match> getGlobalMatches() {
-        return globalMatches;
     }
 }
