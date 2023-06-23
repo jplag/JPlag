@@ -74,22 +74,19 @@ public class MatchMerging {
         while (i < neighbors.size()) {
             int lengthUpper=neighbors.get(i).get(0).length();
             int lengthLower=neighbors.get(i).get(1).length();
-            double length = (lengthUpper+lengthLower) / 2.0;
             int seperatingLeft = neighbors.get(i).get(1).startOfFirst() - neighbors.get(i).get(0).endOfFirst() - 1;
             int seperatingRight = neighbors.get(i).get(1).startOfSecond() - neighbors.get(i).get(0).endOfSecond() - 1;
             double seperating = (seperatingLeft + seperatingRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
             if (seperating <= seperatingThreshold) {
-                System.out.println(length + " " + seperating);
+                System.out.println(lengthUpper+lengthLower + " " + seperating);
                 System.out.println("Original:" + neighbors.get(i));
                 globalMatches.removeAll(neighbors.get(i));
-                System.out.println("Merged:" + new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),
-                        (int) (length * 2)));
-                globalMatches.add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),
-                        (int) (length * 2/* +seperating */)));
+                System.out.println("Merged:" + new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),lengthUpper+lengthLower));
+                globalMatches.add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),lengthUpper+lengthLower));
                 i = 0;
                 removeToken(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),lengthUpper,seperatingLeft,seperatingRight);
-                // Manuelles ändern wäre schneller
+                // Manuelles ändern der Nachbarn wäre schneller
                 computeNeighbors();
             } else {
                 i++;
