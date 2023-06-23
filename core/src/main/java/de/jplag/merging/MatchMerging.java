@@ -10,6 +10,7 @@ import de.jplag.JPlagResult;
 import de.jplag.Match;
 import de.jplag.Submission;
 import de.jplag.options.JPlagOptions;
+import de.jplag.Token;
 
 public class MatchMerging {
     private int minimumTokenMatch;
@@ -71,25 +72,49 @@ public class MatchMerging {
     public void mergeNeighbors() {
         int i = 0;
         while (i < neighbors.size()) {
-            double length = (neighbors.get(i).get(0).length() + neighbors.get(i).get(1).length()) / 2.0;
-            double seperating = ((neighbors.get(i).get(1).startOfFirst() - neighbors.get(i).get(0).endOfFirst() - 1)
-                    + (neighbors.get(i).get(1).startOfSecond() - neighbors.get(i).get(0).endOfSecond() - 1)) / 2.0;
+            int lengthUpper=neighbors.get(i).get(0).length();
+            int lengthLower=neighbors.get(i).get(1).length();
+            double length = (lengthUpper+lengthLower) / 2.0;
+            int seperatingLeft = neighbors.get(i).get(1).startOfFirst() - neighbors.get(i).get(0).endOfFirst() - 1;
+            int seperatingRight = neighbors.get(i).get(1).startOfSecond() - neighbors.get(i).get(0).endOfSecond() - 1;
+            double seperating = (seperatingLeft + seperatingRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
             if (seperating <= seperatingThreshold) {
                 System.out.println(length + " " + seperating);
                 System.out.println("Original:" + neighbors.get(i));
                 globalMatches.removeAll(neighbors.get(i));
                 System.out.println("Merged:" + new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),
-                        (int) (length * 2 + seperating)));
+                        (int) (length * 2)));
                 globalMatches.add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),
                         (int) (length * 2/* +seperating */)));
                 i = 0;
+                removeToken(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(),lengthUpper,seperatingLeft,seperatingRight);
                 // Manuelles ändern wäre schneller
                 computeNeighbors();
             } else {
                 i++;
             }
         }
+    }
+    
+    public void removeToken(int startLeft,int startRight,int lengthUpper,int seperatingLeft,int seperatingRight) {
+        List<Token> tokenLeft=new ArrayList<>(leftSubmission.getTokenList());
+        List<Token> tokenRight=new ArrayList<>(rightSubmission.getTokenList());
+        tokenLeft.subList(startLeft+lengthUpper,startLeft+lengthUpper+seperatingLeft).clear();
+        tokenRight.subList(startRight+lengthUpper,startRight+lengthUpper+seperatingRight).clear();
+        leftSubmission.setTokenList(tokenLeft);
+        rightSubmission.setTokenList(tokenRight);
+        
+        for (int i = 0; i < globalMatches.size(); i++) {
+            if(globalMatches.get(i).startOfFirst()>startLeft) {
+                Match alteredMatch = new Match(globalMatches.get(i).startOfFirst()-seperatingLeft,globalMatches.get(i).startOfSecond(),globalMatches.get(i).length());
+                globalMatches.set(i, alteredMatch);
+            }
+            if(globalMatches.get(i).startOfSecond()>startRight) {
+                Match alteredMatch = new Match(globalMatches.get(i).startOfFirst(),globalMatches.get(i).startOfSecond()-seperatingRight,globalMatches.get(i).length());
+                globalMatches.set(i, alteredMatch);
+            }
+        }  
     }
 
     public void removeBuffer() {
