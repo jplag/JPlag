@@ -32,7 +32,7 @@
         <div class="flex flex-col flex-grow space-y-1">
           <h3 class="text-lg underline">Options:</h3>
           <ScrollableComponent class="flex-grow space-y-2">
-            <OptionsSelectorComponent
+            <OptionsSelector
               name="Metric"
               :labels="['Average', 'Maximum']"
               @selection-changed="(i: number) => selectDistributionDiagramMetric(i)"

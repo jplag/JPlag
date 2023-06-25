@@ -77,7 +77,7 @@
               </RouterLink>
 
               <!-- Clusters -->
-              <div class="tableCellCluster flex !flex-col" v-if="displayClusters">
+              <div class="tableCellCluster flex !flex-col items-center" v-if="displayClusters">
                 <RouterLink
                   v-for="index of getClusterIndexesFor(
                     item.firstSubmissionId,
@@ -88,15 +88,22 @@
                     name: 'ClusterView',
                     params: { clusterIndex: index }
                   }"
-                  class="w-full"
+                  class="w-full tect-center flex justify-center"
                 >
-                  <div>
+                  <div class="group relative w-fit">
                     {{ clusters?.[index].members?.length }}
                     <FontAwesomeIcon
                       :icon="['fas', 'user-group']"
                       :style="{ color: clusterIconColors[index] }"
                     />
                     {{ toTwoDecimals((clusters?.[index].averageSimilarity as number) * 100) }}%
+                    <div
+                      class="hidden group-hover:flex absolute z-50 top-0 left-[-400px] text-sm h-full items-center text-white bg-gray-950 bg-opacity-90 px-2 rounded-sm tooltipArrow"
+                    >
+                      {{ clusters?.[index].members?.length }} submissions in cluster with average
+                      similarity of
+                      {{ toTwoDecimals((clusters?.[index].averageSimilarity as number) * 100) }}%
+                    </div>
                   </div>
                 </RouterLink>
               </div>
@@ -171,7 +178,7 @@ if (props.clusters != undefined) {
 function getClusterIndexesFor(id1: string, id2: string): Array<number> {
   const indexes = [] as Array<number>
   props.clusters?.forEach((c: Cluster, index: number) => {
-    if (c.members.includes(id1) && c.members.includes(id2)) {
+    if (c.members.includes(id1) && c.members.includes(id2) && c.members.length > 2) {
       indexes.push(index)
     }
   })
@@ -197,6 +204,22 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
 }
 
 .tableCell {
-  @apply text-center mx-3 flex flex-row justify-center items-center overflow-hidden;
+  @apply text-center mx-3 flex flex-row justify-center items-center;
+}
+
+.test {
+  transform: translate(0);
+}
+
+/* Tooltip arrow. Defined down here bacause of the content attribute */
+.tooltipArrow::after {
+  content: ' ';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent rgba(0, 0, 0, 0.9);
 }
 </style>
