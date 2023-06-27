@@ -55,6 +55,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     @Override
     public void visitErrorNode(ErrorNode errorNode) {
+        // does nothing, because we do not handle error nodes right now.
     }
 
     @Override

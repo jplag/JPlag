@@ -18,7 +18,7 @@ public abstract class AbstractAntlrLanguage implements Language {
      * New instance
      * @param parser The parser for source files
      */
-    public AbstractAntlrLanguage(AbstractAntlrParserAdapter<?> parser) {
+    protected AbstractAntlrLanguage(AbstractAntlrParserAdapter<?> parser) {
         this.parser = parser;
     }
 
