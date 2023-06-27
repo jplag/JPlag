@@ -16,7 +16,7 @@ public class Language extends AbstractAntlrLanguage {
     private static final String[] FILE_EXTENSIONS = {".kt"};
 
     public Language() {
-        super(new KotlinParser());
+        super(new KotlinParserAdapter());
     }
 
     @Override

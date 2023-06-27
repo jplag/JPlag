@@ -1,16 +1,23 @@
 package de.jplag.antlr;
 
-import de.jplag.Token;
-import de.jplag.TokenType;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import de.jplag.Token;
+import de.jplag.TokenType;
 
+/**
+ * Base class for Antlr listeners. You can use the create*Mapping functions to map antlr tokens to jplag tokens.
+ * <p>
+ * You should create a constructor matching {@link AbstractAntlrListener#AbstractAntlrListener(TokenCollector, File)}
+ * and create your mapping after calling super.
+ */
 public class AbstractAntlrListener implements ParseTreeListener {
     private final Map<Class<? extends ParserRuleContext>, TokenType> startMapping;
     private final Map<Class<? extends ParserRuleContext>, TokenType> endMapping;
@@ -21,6 +28,11 @@ public class AbstractAntlrListener implements ParseTreeListener {
     private final TokenCollector collector;
     private final File currentFile;
 
+    /**
+     * New instance
+     * @param collector The token collector
+     * @param currentFile The currently processed file
+     */
     public AbstractAntlrListener(TokenCollector collector, File currentFile) {
         this.collector = collector;
         this.currentFile = currentFile;
@@ -82,23 +94,50 @@ public class AbstractAntlrListener implements ParseTreeListener {
         this.collector.addToken(jPlagToken);
     }
 
+    /**
+     * Creates a mapping using the start token from antlr as the location
+     * @param antlrType The antlr context type
+     * @param jplagType The Jplag token type
+     */
     protected void createStartMapping(Class<? extends ParserRuleContext> antlrType, TokenType jplagType) {
         this.startMapping.put(antlrType, jplagType);
     }
 
+    /**
+     * Creates a mapping using the stop token from antlr as the location
+     * @param antlrType The antlr context type
+     * @param jplagType The Jplag token type
+     */
     protected void createStopMapping(Class<? extends ParserRuleContext> antlrType, TokenType jplagType) {
         this.endMapping.put(antlrType, jplagType);
     }
 
+    /**
+     * Creates a mapping using the beginning of the start token as the start location and the distance from the start to the
+     * stop token as the length
+     * @param antlrType The antlr context type
+     * @param jplagType The Jplag token type
+     */
     protected void createRangeMapping(Class<? extends ParserRuleContext> antlrType, TokenType jplagType) {
         this.rangeMapping.put(antlrType, jplagType);
     }
 
+    /**
+     * Creates a start mapping from antlrType to startType and a stop mapping from antlrType to stopType.
+     * @param antlrType The antlr token type
+     * @param startType The token type for the start mapping
+     * @param stopType The token type for the stop mapping
+     */
     protected void createStartStopMapping(Class<? extends ParserRuleContext> antlrType, TokenType startType, TokenType stopType) {
         this.createStartMapping(antlrType, startType);
         this.createStopMapping(antlrType, stopType);
     }
 
+    /**
+     * Creates a mapping for terminal tokens
+     * @param terminalRegex The regex identifying the correct tokens
+     * @param jplagType The jplag token type
+     */
     protected void createTerminalMapping(String terminalRegex, TokenType jplagType) {
         this.terminalMapping.put(terminalRegex, jplagType);
     }

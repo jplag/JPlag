@@ -1,17 +1,24 @@
 package de.jplag.antlr;
 
-import de.jplag.Language;
-import de.jplag.ParsingException;
-import de.jplag.Token;
-
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractAntlrLanguage implements Language {
-    private final AbstractAntlrParser<?> parser;
+import de.jplag.Language;
+import de.jplag.ParsingException;
+import de.jplag.Token;
 
-    public AbstractAntlrLanguage(AbstractAntlrParser<?> parser) {
+/**
+ * Base class for Antlr languages. Handle the parse function from {@link Language}
+ */
+public abstract class AbstractAntlrLanguage implements Language {
+    private final AbstractAntlrParserAdapter<?> parser;
+
+    /**
+     * New instance
+     * @param parser The parser for source files
+     */
+    public AbstractAntlrLanguage(AbstractAntlrParserAdapter<?> parser) {
         this.parser = parser;
     }
 
