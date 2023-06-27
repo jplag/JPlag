@@ -72,7 +72,7 @@ public class JPlag {
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
 
         // Use Altering for obfuscation
-        submissionSet=new Altering(submissionSet,options).run();
+        new Altering(submissionSet,options).run();
         
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);

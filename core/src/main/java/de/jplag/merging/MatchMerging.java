@@ -37,6 +37,10 @@ public class MatchMerging {
         for (int i = 0; i < comparisons.size(); i++) {
             leftSubmission = comparisons.get(i).firstSubmission().clone();
             rightSubmission = comparisons.get(i).secondSubmission().clone();
+            /*System.out.println(leftSubmission.getName());
+            System.out.println(leftSubmission.getTokenList());
+            System.out.println(rightSubmission.getName());
+            System.out.println(rightSubmission.getTokenList());*/
             globalMatches = new ArrayList<>(comparisons.get(i).matches());
             globalMatches.addAll(comparisons.get(i).ignoredMatches());
             computeNeighbors();

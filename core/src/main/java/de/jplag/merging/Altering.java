@@ -32,7 +32,7 @@ public class Altering{
         rules=false;
     }
     
-    public SubmissionSet run() {
+    public void run() {
         fillTypeDict();
         System.out.println(typeDict);
         for(int i=0; i<submissionSet.numberOfSubmissions();i++) {
@@ -53,14 +53,13 @@ public class Altering{
                 submission.setTokenList(tokenList); 
             }  
         }
-        return submissionSet;
     }
     
     private void randomAlteration() {
-        for(int i=0;i < tokenList.size();i++) {
+        //Ignore FILE_END
+        for(int i=0;i < tokenList.size()-1;i++) {
             if (rand.nextInt(10) == 0) {
                 tokenList.get(i).setType(typeDict.get(rand.nextInt(typeDict.size())));
-                //tokenList.get(i).setType(ControlTokenTypes.J_APPLY);
             }
         }
     }
@@ -69,6 +68,7 @@ public class Altering{
         for(int i=0;i < tokenList.size();i++) {
             if(ControlTokenTypes.J_DO_BEGIN.equals(tokenList.get(i).getType())) {
                 System.out.println("Token is J_DO_BEGIN");
+                //tokenList.get(i).setType(ControlTokenTypes.J_APPLY);
             } 
         }  
     }
@@ -84,7 +84,8 @@ public class Altering{
     private void fillTypeDict() {
         typeDict = new ArrayList<>();
         for(int i=0; i<submissionSet.numberOfSubmissions();i++) {
-            for(int j=0; j<submissions.get(i).getTokenList().size();j++) {
+            //Ignore FILE_END
+            for(int j=0; j<submissions.get(i).getTokenList().size()-1;j++) {
                 if(!typeDict.contains(submissions.get(i).getTokenList().get(j).getType())) {
                     typeDict.add(submissions.get(i).getTokenList().get(j).getType());
                 }
