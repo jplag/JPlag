@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.jplag</groupId>
         <artifactId>aggregator</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>language-antlr-utils</artifactId>
     <name>language-antlr-utils</name>
