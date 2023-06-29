@@ -97,6 +97,7 @@ import java.io.File;
 
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.TokenCollector;
+import de.jplag.kotlin.grammar.KotlinParser;
 
 public class KotlinListener extends AbstractAntlrListener {
     public KotlinListener(TokenCollector collector, File currentFile) {
@@ -141,9 +142,10 @@ public class KotlinListener extends AbstractAntlrListener {
         this.createRangeMapping(CallSuffixContext.class, FUNCTION_INVOCATION);
         this.createStartMapping(AssignmentOperatorContext.class, ASSIGNMENT);
 
-        this.createTerminalMapping("throw(@.*)?", THROW);
-        this.createTerminalMapping("return(@.*)?", RETURN);
-        this.createTerminalMapping("continue(@.*)?", CONTINUE);
-        this.createTerminalMapping("break(@.*)?", BREAK);
+        this.createTerminalMapping(KotlinParser.THROW, THROW);
+        this.createTerminalMapping(KotlinParser.RETURN, RETURN);
+        this.createTerminalMapping(KotlinParser.CONTINUE, CONTINUE);
+        this.createTerminalMapping(KotlinParser.BREAK, BREAK);
+        this.createTerminalMapping(KotlinParser.BREAK_AT, BREAK);
     }
 }
