@@ -43,6 +43,8 @@ import de.jplag.reporting.reportobject.model.Version;
  * to the disk.
  */
 public class ReportObjectFactory {
+    private static final String DIRECTORY_ERROR = "Could not create directory {} for report viewer generation";
+
     private static final Logger logger = LoggerFactory.getLogger(ReportObjectFactory.class);
 
     private static final ToDiskWriter fileWriter = new ToDiskWriter();
@@ -76,7 +78,7 @@ public class ReportObjectFactory {
             logger.info("Zipping report files...");
             zipAndDelete(path);
         } catch (IOException e) {
-            logger.error("Could not create directory " + path + " for report viewer generation", e);
+            logger.error(DIRECTORY_ERROR, e, path);
         }
 
     }
@@ -130,7 +132,7 @@ public class ReportObjectFactory {
         try {
             return createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission), file, submissionRoot);
         } catch (IOException e) {
-            logger.error("Could not create directory " + path + " for report viewer generation", e);
+            logger.error(DIRECTORY_ERROR, e, path);
             return null;
         }
     }
@@ -139,7 +141,7 @@ public class ReportObjectFactory {
         try {
             return createDirectory(submissionsPath.getPath(), submissionToIdFunction.apply(submission));
         } catch (IOException e) {
-            logger.error("Could not create directory " + path + " for report viewer generation", e);
+            logger.error(DIRECTORY_ERROR, e, path);
             return null;
         }
     }
@@ -148,7 +150,7 @@ public class ReportObjectFactory {
         try {
             return createDirectory(path, SUBMISSIONS_FOLDER);
         } catch (IOException e) {
-            logger.error("Could not create directory " + path + " for report viewer generation", e);
+            logger.error(DIRECTORY_ERROR, e, path);
             return null;
         }
     }
