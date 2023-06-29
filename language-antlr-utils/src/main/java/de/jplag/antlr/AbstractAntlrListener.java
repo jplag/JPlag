@@ -32,8 +32,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     /**
      * New instance
-     *
-     * @param collector   The token collector
+     * @param collector The token collector
      * @param currentFile The currently processed file
      */
     public AbstractAntlrListener(TokenCollector collector, File currentFile) {
@@ -49,8 +48,8 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     @Override
     public void visitTerminal(TerminalNode terminalNode) {
-        this.terminalMapping.stream().filter(mapping -> mapping.matches(terminalNode.getSymbol())).forEach(mapping ->
-                transformToken(mapping.getTokenType(), terminalNode.getSymbol()));
+        this.terminalMapping.stream().filter(mapping -> mapping.matches(terminalNode.getSymbol()))
+                .forEach(mapping -> transformToken(mapping.getTokenType(), terminalNode.getSymbol()));
     }
 
     @Override
@@ -90,7 +89,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     /**
      * Creates a mapping using the start token from antlr as the location
-     *
      * @param antlrType The antlr context type
      * @param jplagType The Jplag token type
      */
@@ -100,7 +98,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     /**
      * Creates a mapping using the start token from antlr as the location
-     *
      * @param antlrType The antlr context type
      * @param jplagType The Jplag token type
      * @param condition The condition under which the mapping applies
@@ -111,7 +108,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     /**
      * Creates a mapping using the stop token from antlr as the location
-     *
      * @param antlrType The antlr context type
      * @param jplagType The Jplag token type
      */
@@ -121,7 +117,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     /**
      * Creates a mapping using the stop token from antlr as the location
-     *
      * @param antlrType The antlr context type
      * @param jplagType The Jplag token type
      * @param condition The condition under which the mapping applies
@@ -133,7 +128,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
     /**
      * Creates a mapping using the beginning of the start token as the start location and the distance from the start to the
      * stop token as the length
-     *
      * @param antlrType The antlr context type
      * @param jplagType The Jplag token type
      */
@@ -144,7 +138,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
     /**
      * Creates a mapping using the beginning of the start token as the start location and the distance from the start to the
      * stop token as the length
-     *
      * @param antlrType The antlr context type
      * @param jplagType The Jplag token type
      * @param condition The condition under which the mapping applies
@@ -155,10 +148,9 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     /**
      * Creates a start mapping from antlrType to startType and a stop mapping from antlrType to stopType.
-     *
      * @param antlrType The antlr token type
      * @param startType The token type for the start mapping
-     * @param stopType  The token type for the stop mapping
+     * @param stopType The token type for the stop mapping
      */
     protected void createStartStopMapping(Class<? extends ParserRuleContext> antlrType, TokenType startType, TokenType stopType) {
         createStartStopMapping(antlrType, startType, stopType, it -> true);
@@ -166,23 +158,21 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     /**
      * Creates a start mapping from antlrType to startType and a stop mapping from antlrType to stopType.
-     *
      * @param antlrType The antlr token type
      * @param startType The token type for the start mapping
-     * @param stopType  The token type for the stop mapping
+     * @param stopType The token type for the stop mapping
      * @param condition The condition under which the mapping applies
      */
     protected <T extends ParserRuleContext> void createStartStopMapping(Class<T> antlrType, TokenType startType, TokenType stopType,
-                                                                        Predicate<T> condition) {
+            Predicate<T> condition) {
         this.createStartMapping(antlrType, startType, condition);
         this.createStopMapping(antlrType, stopType, condition);
     }
 
     /**
      * Creates a mapping for terminal tokens
-     *
      * @param terminalType The type of the terminal node
-     * @param jplagType    The jplag token type
+     * @param jplagType The jplag token type
      */
     protected void createTerminalMapping(int terminalType, TokenType jplagType) {
         this.createTerminalMapping(terminalType, jplagType, it -> true);
@@ -190,10 +180,9 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     /**
      * Creates a mapping for terminal tokens
-     *
      * @param terminalType The type of the terminal node
-     * @param jplagType    The jplag token type
-     * @param condition    The condition under which the mapping applies
+     * @param jplagType The jplag token type
+     * @param condition The condition under which the mapping applies
      */
     protected void createTerminalMapping(int terminalType, TokenType jplagType, Predicate<org.antlr.v4.runtime.Token> condition) {
         this.terminalMapping.add(new TypeBuilder<>(jplagType, token -> token.getType() == terminalType && condition.test(token)));
