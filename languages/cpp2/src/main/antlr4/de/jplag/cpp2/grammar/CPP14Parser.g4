@@ -790,6 +790,7 @@ theOperator:
 	| GreaterEqual
 	| PlusAssign
 	| MinusAssign
+	| DivAssign
 	| StarAssign
 	| ModAssign
 	| XorAssign

@@ -71,13 +71,30 @@ public class CppLanguageTest extends LanguageModuleTest {
                 CPPTokenType.BRACED_INIT_BEGIN, CPPTokenType.BRACED_INIT_END);
 
         collector.testFile("bc6h_enc.h").testCoverages();
+
+        collector.inlineSource("""
+                void test() {
+                if(true) {
+                    if(false) {
+                    } else {
+                    }
+                } else {
+                }
+                }
+                """);
     }
 
     @Override
     protected void configureIgnoredLines(TestSourceIgnoredLinesCollector collector) {
         collector.ignoreByCondition(line -> line.matches(" *[a-zA-Z]+: *"));
         collector.ignoreByCondition(line -> line.matches(" *\\{*"));
-        collector.ignoreByCondition(line -> line.matches(" *}*"));
+        collector.ignoreLinesByPrefix("}");
+        collector.ignoreLinesByPrefix("//");
+        collector.ignoreLinesByPrefix("#");
+        collector.ignoreLinesByPrefix("namespace");
+        collector.ignoreLinesByPrefix("using");
+        collector.ignoreMultipleLines("/*", "*/");
+        collector.ignoreLinesByContains("else");
     }
 
     private String[] formattedCode(String formatter, String... snippets) {

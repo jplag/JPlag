@@ -1,4 +1,4 @@
-//Taken from https://github.com/0xc0de/bc6h_enc
+//Taken from https://github.com/0xc0de/bc6h_enc modified slightly to work with the tests
 
 /*
 bc6h_enc -- https://github.com/0xc0de/bc6h_enc
@@ -432,10 +432,7 @@ BC6H_INLINE XMVECTOR XMVectorSubtract(FXMVECTOR V1, FXMVECTOR V2) noexcept
 #elif defined(BC6H_ARM_NEON_INTRINSIC)
     return vsubq_f32(V1, V2);
 #else
-    return {V1.x - V2.x,
-            V1.y - V2.y,
-            V1.z - V2.z,
-            V1.w - V2.w};
+    return {V1.x - V2.x, V1.y - V2.y, V1.z - V2.z, V1.w - V2.w};
 #endif
 }
 struct alignas(16) XMVECTORU32
@@ -539,7 +536,7 @@ void std__swap(T& a, T& b) noexcept
     b = temp;
 }
 
-class LDRColorA;
+class LDRColorA{};
 
 class HDRColorA {
 public:
@@ -607,7 +604,7 @@ public:
         return *this;
     }
 
-    /*HDRColorA& operator/=(float f) noexcept
+    HDRColorA& operator/=(float f) noexcept
     {
         const float fInv = 1.0f / f;
         r *= fInv;
@@ -615,7 +612,7 @@ public:
         b *= fInv;
         a *= fInv;
         return *this;
-    }*/
+    }
 
     HDRColorA& Clamp(float fMin, float fMax) noexcept
     {
@@ -1102,23 +1099,7 @@ private:
 #pragma warning(disable : 4480)
 #endif
     enum EField : uint8_t
-    {
-        NA, // N/A
-        M,  // Mode
-        D,  // Shape
-        RW,
-        RX,
-        RY,
-        RZ,
-        GW,
-        GX,
-        GY,
-        GZ,
-        BW,
-        BX,
-        BY,
-        BZ,
-    };
+    { NA, M, D, RX,        RY,        RZ,        GW,        GX,        GY,        GZ,        BW,        BX,        BY,        BZ,    };
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -2421,7 +2402,7 @@ const D3DX_BC6H::ModeInfo D3DX_BC6H::ms_aInfo[] =
 
 const int D3DX_BC6H::ms_aModeToInfo[] =
     {
-        0,  // Mode 1   - 0x00
+/*        0,  // Mode 1   - 0x00
         1,  // Mode 2   - 0x01
         2,  // Mode 3   - 0x02
         10, // Mode 11  - 0x03
@@ -2452,7 +2433,7 @@ const int D3DX_BC6H::ms_aModeToInfo[] =
         -1, // Invalid  - 0x1c
         -1, // Invalid  - 0x1d
         9,  // Mode 10  - 0x1e
-        -1, // Resreved - 0x1f
+        -1, // Resreved - 0x1f*/
 };
 
 //-------------------------------------------------------------------------------------
@@ -2670,9 +2651,7 @@ float OptimizeRGB(
 
         for (size_t iPoint = 0; iPoint < cPixels; iPoint++)
         {
-            const float fDot = (pPoints[pIndex[iPoint]].r - X.r) * Dir.r +
-                (pPoints[pIndex[iPoint]].g - X.g) * Dir.g +
-                (pPoints[pIndex[iPoint]].b - X.b) * Dir.b;
+            const float fDot = (pPoints[pIndex[iPoint]].r - X.r) * Dir.r + (pPoints[pIndex[iPoint]].g - X.g) * Dir.g + (pPoints[pIndex[iPoint]].b - X.b) * Dir.b;
 
             uint32_t iStep;
             if (fDot <= 0.0f)
@@ -2720,8 +2699,7 @@ float OptimizeRGB(
             Y.b += dY.b * f;
         }
 
-        if ((dX.r * dX.r < fEpsilon) && (dX.g * dX.g < fEpsilon) && (dX.b * dX.b < fEpsilon) &&
-            (dY.r * dY.r < fEpsilon) && (dY.g * dY.g < fEpsilon) && (dY.b * dY.b < fEpsilon))
+        if ((dX.r * dX.r < fEpsilon) && (dX.g * dX.g < fEpsilon) && (dX.b * dX.b < fEpsilon) &&            (dY.r * dY.r < fEpsilon) && (dY.g * dY.g < fEpsilon) && (dY.b * dY.b < fEpsilon))
         {
             break;
         }
@@ -3042,9 +3020,7 @@ bool D3DX_BC6H::EndPointsFit(const EncodeParams* pEP, const INTEndPntPair aEndPt
     aBits[1].r = NBits(aEndPts[0].B.r, bTransformed || bIsSigned);
     aBits[1].g = NBits(aEndPts[0].B.g, bTransformed || bIsSigned);
     aBits[1].b = NBits(aEndPts[0].B.b, bTransformed || bIsSigned);
-    if (aBits[0].r > Prec0.r || aBits[1].r > Prec1.r ||
-        aBits[0].g > Prec0.g || aBits[1].g > Prec1.g ||
-        aBits[0].b > Prec0.b || aBits[1].b > Prec1.b)
+    if (aBits[0].r > Prec0.r || aBits[1].r > Prec1.r ||        aBits[0].g > Prec0.g || aBits[1].g > Prec1.g ||        aBits[0].b > Prec0.b || aBits[1].b > Prec1.b)
         return false;
 
     if (ms_aInfo[pEP->uMode].uPartitions)
@@ -3056,9 +3032,7 @@ bool D3DX_BC6H::EndPointsFit(const EncodeParams* pEP, const INTEndPntPair aEndPt
         aBits[3].g = NBits(aEndPts[1].B.g, bTransformed || bIsSigned);
         aBits[3].b = NBits(aEndPts[1].B.b, bTransformed || bIsSigned);
 
-        if (aBits[2].r > Prec2.r || aBits[3].r > Prec3.r ||
-            aBits[2].g > Prec2.g || aBits[3].g > Prec3.g ||
-            aBits[2].b > Prec2.b || aBits[3].b > Prec3.b)
+        if (aBits[2].r > Prec2.r || aBits[3].r > Prec3.r ||            aBits[2].g > Prec2.g || aBits[3].g > Prec3.g ||            aBits[2].b > Prec2.b || aBits[3].b > Prec3.b)
             return false;
     }
 
@@ -3106,15 +3080,9 @@ void D3DX_BC6H::GeneratePaletteQuantized(const EncodeParams* pEP, const INTEndPn
 
     for (size_t i = 0; i < uNumIndices; ++i)
     {
-        aPalette[i].r = FinishUnquantize(
-            (unqEndPts.A.r * (BC6H_WEIGHT_MAX - aWeights[i]) + unqEndPts.B.r * aWeights[i] + BC6H_WEIGHT_ROUND) >> BC6H_WEIGHT_SHIFT,
-            pEP->bSigned);
-        aPalette[i].g = FinishUnquantize(
-            (unqEndPts.A.g * (BC6H_WEIGHT_MAX - aWeights[i]) + unqEndPts.B.g * aWeights[i] + BC6H_WEIGHT_ROUND) >> BC6H_WEIGHT_SHIFT,
-            pEP->bSigned);
-        aPalette[i].b = FinishUnquantize(
-            (unqEndPts.A.b * (BC6H_WEIGHT_MAX - aWeights[i]) + unqEndPts.B.b * aWeights[i] + BC6H_WEIGHT_ROUND) >> BC6H_WEIGHT_SHIFT,
-            pEP->bSigned);
+        aPalette[i].r = FinishUnquantize(            (unqEndPts.A.r * (BC6H_WEIGHT_MAX - aWeights[i]) + unqEndPts.B.r * aWeights[i] + BC6H_WEIGHT_ROUND) >> BC6H_WEIGHT_SHIFT,            pEP->bSigned);
+        aPalette[i].g = FinishUnquantize(           (unqEndPts.A.g * (BC6H_WEIGHT_MAX - aWeights[i]) + unqEndPts.B.g * aWeights[i] + BC6H_WEIGHT_ROUND) >> BC6H_WEIGHT_SHIFT,            pEP->bSigned);
+        aPalette[i].b = FinishUnquantize(           (unqEndPts.A.b * (BC6H_WEIGHT_MAX - aWeights[i]) + unqEndPts.B.b * aWeights[i] + BC6H_WEIGHT_ROUND) >> BC6H_WEIGHT_SHIFT,            pEP->bSigned);
     }
 }
 
@@ -3673,3 +3641,28 @@ void EncodeBC6HS(void* pDest, const void* pSrc) noexcept
 #    undef BC6H_INLINE
 
 #endif
+
+
+
+// Some added code for JPlag to generate missing tokens
+
+enum TestEnum {
+    TestInstance
+};
+
+void test() {
+    do {
+    } while(false);
+
+    try
+    {
+        throw new Exception();
+    }
+    catch(const std::exception& e)
+    {
+    }
+
+    goto x;
+
+    bool* a = new bool[100];
+}

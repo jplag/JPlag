@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
  * the token start, while the last vertical line marks the token end. Tokens that are shorter than the name do not end
  * with a vertical line, e.g. <code>|TOKEN</code>. Tokens with length 1 or 0 are printed in lower case, e.g.
  * <code>|token</code>.
+ *
  * @author Timur Saglam
  */
 public final class TokenPrinter {
@@ -48,7 +49,18 @@ public final class TokenPrinter {
 
     /**
      * Creates a string representation of a set of files line by line and adds the tokens under the lines.
+     *
      * @param tokens is the list of tokens parsed from the files.
+     * @return the string representation.
+     */
+    public static String printTokens(List<Token> tokens) {
+        return printTokens(tokens, null);
+    }
+
+    /**
+     * Creates a string representation of a set of files line by line and adds the tokens under the lines.
+     *
+     * @param tokens        is the list of tokens parsed from the files.
      * @param rootDirectory is the common rootDirectory of the files.
      * @return the string representation.
      */
@@ -58,9 +70,10 @@ public final class TokenPrinter {
 
     /**
      * Creates a string representation of a collection of files line by line and adds the tokens under the lines.
-     * @param tokenList is the list of tokens parsed from the files.
+     *
+     * @param tokenList     is the list of tokens parsed from the files.
      * @param rootDirectory is the common directory of the files.
-     * @param suffix is the optional view file suffix.
+     * @param suffix        is the optional view file suffix.
      * @return the string representation.
      */
     public static String printTokens(List<Token> tokenList, File rootDirectory, Optional<String> suffix) {
@@ -68,7 +81,11 @@ public final class TokenPrinter {
         Map<File, List<Token>> fileToTokens = groupTokensByFile(tokenList);
 
         fileToTokens.forEach((File file, List<Token> fileTokens) -> {
-            builder.append(rootDirectory.toPath().relativize(file.toPath()).toString());
+            if (rootDirectory != null) {
+                builder.append(rootDirectory.toPath().relativize(file.toPath()).toString());
+            } else {
+                builder.append("<unknown path>");
+            }
 
             List<LineData> lineDatas = getLineData(fileTokens, suffix);
             lineDatas.forEach(lineData -> {
@@ -169,9 +186,10 @@ public final class TokenPrinter {
 
     /**
      * This contains all data concerning a line of code in a file and the tokens found in that line.
+     *
      * @param lineNumber the line number inside the file
-     * @param text the code line
-     * @param tokens the tokens found in the code line
+     * @param text       the code line
+     * @param tokens     the tokens found in the code line
      */
     private record LineData(Integer lineNumber, String text, List<Token> tokens) {
 
@@ -205,6 +223,7 @@ public final class TokenPrinter {
 
         /**
          * Appends the given string to the output
+         *
          * @param str the string to append
          * @return this
          */
@@ -221,6 +240,7 @@ public final class TokenPrinter {
 
         /**
          * Appends the given integer to the output.
+         *
          * @param i the integer to append
          * @return this
          */
@@ -230,6 +250,7 @@ public final class TokenPrinter {
 
         /**
          * In SPACIOUS mode, appends an empty line before the next code line.
+         *
          * @return a reference to this
          */
         private PrinterOutputBuilder appendTokenLineSuffix() {
@@ -238,6 +259,7 @@ public final class TokenPrinter {
 
         /**
          * Appends the code line to the StringBuilder, applying the configuration of this TokenPrinter.
+         *
          * @param currentLine The line of code to append
          * @return a reference to this
          */
@@ -261,9 +283,10 @@ public final class TokenPrinter {
          * Appends whitespace padding to the given StringBuilder in order to reach the targetPosition. Note that <b>the indices
          * are 1-based</b>, whereas the positions in currentLine are 0-based. The convention that lines start at position 1
          * comes from the modules, specifically the Java module.
-         * @param currentLine The current line in the code file, indicating where it containes tab characters
+         *
+         * @param currentLine    The current line in the code file, indicating where it containes tab characters
          * @param targetPosition The (1-based) index of the next character within the currentLine that should be labeled
-         * @param breakLine If true, a lineSeparator will be added if the currentPosition is past targetPosition.
+         * @param breakLine      If true, a lineSeparator will be added if the currentPosition is past targetPosition.
          * @return the new position, which is the targetPosition or the end of the line.
          */
         PrinterOutputBuilder advanceToTokenPosition(String currentLine, int targetPosition, boolean breakLine) {
@@ -295,6 +318,7 @@ public final class TokenPrinter {
 
         /**
          * Returns true if the current position is before or at the target position.
+         *
          * @param targetPosition the target position
          * @return true if before or at target position
          */
@@ -304,6 +328,7 @@ public final class TokenPrinter {
 
         /**
          * Appends a newline, plus the amount of padding necessary to align tokens correctly.
+         *
          * @return this
          */
         PrinterOutputBuilder appendTokenLinePrefix() {
@@ -315,6 +340,7 @@ public final class TokenPrinter {
 
         /**
          * Appends the amount of padding given.
+         *
          * @param paddingLength Length of padding to add
          * @return this
          */
@@ -326,6 +352,7 @@ public final class TokenPrinter {
 
         /**
          * Appends a newline.
+         *
          * @return this
          */
         private PrinterOutputBuilder advanceToNextLine() {
