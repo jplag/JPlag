@@ -111,7 +111,7 @@
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
-            <version>4.7.2</version>
+            <version>4.7.4</version>
         </dependency>
     </dependencies>
     <build>
