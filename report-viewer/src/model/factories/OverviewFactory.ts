@@ -125,6 +125,7 @@ export class OverviewFactory {
           : console.log('Could not find overview.json')
 
       if (overviewFile === undefined) {
+        console.log('Could not find overview.json')
         return new Overview(
           [],
           '',

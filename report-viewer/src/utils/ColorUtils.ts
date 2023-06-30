@@ -2,6 +2,36 @@ import store from '@/stores/store'
 import { computed } from 'vue'
 
 /**
+ * Generates an array of HSL-Colors
+ * @param numberOfColors Number of colors to generate
+ * @param saturation Saturation of the colors [0,1]
+ * @param lightness Lightness of the colors [0,1]
+ * @param alpha Alpha value of the colors [0,1]
+ */
+function generateColors(
+  numberOfColors: number,
+  saturation: number,
+  lightness: number,
+  alpha: number
+) {
+  const numberOfColorsInFirstInterval = Math.round(
+    ((80 - 20) / (80 - 20 + (340 - 160))) * numberOfColors
+  ) // number of colors from the first interval
+  const numberOfColorsInSecondInterval = numberOfColors - numberOfColorsInFirstInterval // number of colors from the second interval
+
+  const colors: Array<string> = generateColorsForInterval(
+    20,
+    80,
+    numberOfColorsInFirstInterval,
+    saturation,
+    lightness,
+    alpha
+  )
+  colors.push(...generateColorsForInterval(160, 340, numberOfColorsInSecondInterval, 0.8, 0.5, 0.3))
+  return colors
+}
+
+/**
  * Genertes an array of HSL-Colors for a given interval
  * @param intervalStart start of the interval [0,360]
  * @param intervalEnd end of the interval [0,360] and > intervalStart
@@ -41,4 +71,4 @@ const graphColors = {
   pointFill: 'rgba(190, 22, 34, 1)'
 }
 
-export { generateColorsForInterval, graphColors }
+export { generateColors, graphColors }

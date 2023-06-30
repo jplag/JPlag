@@ -124,7 +124,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
-import { generateColorsForInterval } from '@/utils/ColorUtils'
+import { generateColors } from '@/utils/ColorUtils'
 import { toTwoDecimals } from '@/utils/ComparisonUtils'
 
 library.add(faUserGroup)
@@ -162,12 +162,7 @@ function isAnonymous(id: string) {
 
 let clusterIconColors = [] as Array<string>
 if (props.clusters != undefined) {
-  clusterIconColors.push(
-    ...generateColorsForInterval(20, 80, Math.floor(props.clusters.length), 0.5, 0.5, 1)
-  )
-  clusterIconColors.push(
-    ...generateColorsForInterval(160, 340, Math.ceil(props.clusters.length), 0.5, 0.5, 1)
-  )
+  clusterIconColors = generateColors(props.clusters.length, 0.8, 0.5, 1)
 }
 
 /**
