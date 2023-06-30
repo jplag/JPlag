@@ -19,16 +19,26 @@ public class Altering{
     private List<Token> tokenList;
     private Random rand;
     private List<TokenType> typeDict;
+    private int percent;
 
     
     public Altering(SubmissionSet s,JPlagOptions o) {
         submissionSet=s;
         submissions=submissionSet.getSubmissions();
         options=o;
-        rand = new Random(1337);
+        if(options.alteringParameters().seed()==0) {
+            rand = new Random();
+        }
+        else {
+            rand = new Random(options.alteringParameters().seed());  
+        }
+        percent = options.alteringParameters().percent();
     }
     
     public void run() {
+        if(percent==-1) {
+            return;
+        }
         fillTypeDict();
         System.out.println(typeDict);
         for(int i=0; i<submissionSet.numberOfSubmissions();i++) {
@@ -44,8 +54,7 @@ public class Altering{
     private void randomAlteration() {
         //Ignore FILE_END
         for(int i=0;i < tokenList.size()-1;i++) {
-            //20% Chance of Alteration
-            if (rand.nextInt(10) <= 1) {
+            if (rand.nextInt(10) <= percent) {
                 tokenList.get(i).setType(typeDict.get(rand.nextInt(typeDict.size())));
             }
         }

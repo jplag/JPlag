@@ -19,6 +19,8 @@ import static de.jplag.cli.CommandLineArgument.DEBUG;
 import static de.jplag.cli.CommandLineArgument.EXCLUDE_FILE;
 import static de.jplag.cli.CommandLineArgument.LANGUAGE;
 import static de.jplag.cli.CommandLineArgument.MERGE_BUFFER;
+import static de.jplag.cli.CommandLineArgument.ALTERATION_SEED;
+import static de.jplag.cli.CommandLineArgument.ALTERATION_PERCENT;
 import static de.jplag.cli.CommandLineArgument.MIN_TOKEN_MATCH;
 import static de.jplag.cli.CommandLineArgument.NEW_DIRECTORY;
 import static de.jplag.cli.CommandLineArgument.OLD_DIRECTORY;
@@ -49,6 +51,7 @@ import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
 import de.jplag.merging.MergingParameters;
+import de.jplag.merging.AlteringParameters;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
@@ -156,11 +159,12 @@ public final class CLI {
         var language = LanguageLoader.getLanguage(LANGUAGE.getFrom(namespace)).orElseThrow();
         ClusteringOptions clusteringOptions = getClusteringOptions(namespace);
         MergingParameters mergingParameters = getMergingParameters(namespace);
+        AlteringParameters alteringParameters = getAlteringParameters(namespace);
 
         JPlagOptions options = new JPlagOptions(language, MIN_TOKEN_MATCH.getFrom(namespace), submissionDirectories, oldSubmissionDirectories, null,
                 SUBDIRECTORY.getFrom(namespace), Arrays.stream(fileSuffixes).toList(), EXCLUDE_FILE.getFrom(namespace),
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, SIMILARITY_THRESHOLD.getFrom(namespace), SHOWN_COMPARISONS.getFrom(namespace),
-                clusteringOptions, DEBUG.getFrom(namespace), mergingParameters);
+                clusteringOptions, DEBUG.getFrom(namespace), mergingParameters, alteringParameters);
 
         String baseCodePath = BASE_CODE.getFrom(namespace);
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
@@ -181,6 +185,17 @@ public final class CLI {
             mergingParameters = mergingParameters.withSeperatingThreshold(SEPERATING_THRESHOLD.getFrom(namespace));
         }
         return mergingParameters;
+    }
+    
+    private static AlteringParameters getAlteringParameters(Namespace namespace) {
+        AlteringParameters alteringParameters = new AlteringParameters();
+        if (ALTERATION_SEED.isSet(namespace)) {
+            alteringParameters = alteringParameters.withSeed(ALTERATION_SEED.getFrom(namespace));
+        }
+        if (ALTERATION_PERCENT.isSet(namespace)) {
+            alteringParameters = alteringParameters.withPercent(ALTERATION_PERCENT.getFrom(namespace));
+        }
+        return alteringParameters;
     }
 
     private static ClusteringOptions getClusteringOptions(Namespace namespace) {
