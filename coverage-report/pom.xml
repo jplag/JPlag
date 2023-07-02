@@ -24,6 +24,11 @@
             <artifactId>endtoend-testing</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>language-antlr-utils</artifactId>
+            <version>${revision}</version>
+        </dependency>
 
         <!-- Languages -->
         <dependency>
