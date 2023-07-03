@@ -134,7 +134,7 @@
             <dependency>
                 <groupId>org.kohsuke.metainf-services</groupId>
                 <artifactId>metainf-services</artifactId>
-                <version>1.9</version>
+                <version>1.11</version>
             </dependency>
 
             <dependency>
@@ -167,7 +167,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.3.1</version>
+            <version>5.4.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -409,6 +409,7 @@
                 <module>endtoend-testing</module>
                 <module>languages</module>
                 <module>language-api</module>
+                <module>language-antlr-utils</module>
                 <module>language-testutils</module>
             </modules>
         </profile>
