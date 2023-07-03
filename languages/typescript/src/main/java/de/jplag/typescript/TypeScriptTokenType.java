@@ -1,9 +1,50 @@
 package de.jplag.typescript;
 
-public enum TypeScriptTokenType {
+import de.jplag.TokenType;
 
-    ;
+public enum TypeScriptTokenType implements TokenType {
 
+    IMPORT("IMPORT"),
+    EXPORT("EXPORT"),
+    NAMESPACE("NAMESPACE"),
+
+    CLASS_BEGIN("CLASS{"),
+    CLASS_END("}CLASS"),
+
+    INTERFACE_BEGIN("INTERFACE{"),
+    INTERFACE_END("}INTERFACE"),
+
+    ENUM_BEGIN("ENUM{"),
+    ENUM_END("}ENUM"),
+
+    METHOD_BEGIN("METHOD{"),
+    METHOD_END("}METHOD"),
+
+    WHILE_BEGIN("WHILE{"),
+    WHILE_END("}WHILE"),
+    FOR_BEGIN("FOR{"),
+    FOR_END("}FOR"),
+
+    ASSIGNMENT("ASSIGN"),
+
+    IF_BEGIN("IF{"),
+    IF_END("}IF"),
+    SWITCH_BEGIN("SWITCH{"),
+    SWITCH_END("}SWITCH"),
+    SWITCH_CASE("CASE"),
+
+    TRY_BEGIN("TRY{"),
+    CATCH_BEGIN("}CATCH{"),
+    CATCH_END("}CATCH"),
+    FINALLY_BEGIN("FINALLY{"),
+    FINALLY_END("}FINALLY"),
+
+    BREAK("BREAK"),
+    RETURN("RETURN"),
+    THROW("THROW"),
+    CONTINUE("CONTINUE")
+
+        ;
     private final String description;
 
     public String getDescription() {

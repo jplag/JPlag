@@ -3,18 +3,18 @@ package de.jplag.typescript;
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.antlr.AbstractAntlrLanguage;
 
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-public class TypeScriptLanguage implements Language {
+public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
     private static final String IDENTIFIER = "typescript";
-    private final Parser parser;
 
     public TypeScriptLanguage() {
-        this.parser = new Parser();
+        super(new TypeScriptParserAdapter());
     }
 
     @Override
@@ -37,8 +37,4 @@ public class TypeScriptLanguage implements Language {
         return 9;
     }
 
-    @Override
-    public List<Token> parse(Set<File> files) throws ParsingException {
-        return parser.parse(files);
-    }
 }
