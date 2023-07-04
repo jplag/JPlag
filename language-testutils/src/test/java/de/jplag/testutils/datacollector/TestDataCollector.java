@@ -21,7 +21,6 @@ public class TestDataCollector {
 
     /**
      * Creates a new collector. Should only be called by {@link de.jplag.testutils.LanguageModuleTest}
-     *
      * @param testFileLocation The location containing the test source files.
      */
     public TestDataCollector(File testFileLocation) {
@@ -38,7 +37,6 @@ public class TestDataCollector {
     /**
      * Adds the given files to the test data. Returns a {@link TestDataContext}, that can be used to configure various tests
      * on the given files.
-     *
      * @param fileNames The names of the files to test
      * @return The {@link TestDataContext}
      */
@@ -51,7 +49,6 @@ public class TestDataCollector {
     /**
      * Adds a list of source string to the test data. Returns a {@link TestDataContext}, that can be used to configure
      * various tests on the given files.
-     *
      * @param sources The list of sources
      * @return The {@link TestDataContext}
      */
@@ -97,9 +94,8 @@ public class TestDataCollector {
 
     /**
      * Data for tests, that also require a list of tokens
-     *
      * @param tokens The list of tokens
-     * @param data   The test data
+     * @param data The test data
      */
     public record TokenListTest(List<TokenType> tokens, TestData data) {
     }
@@ -117,7 +113,6 @@ public class TestDataCollector {
 
         /**
          * Test the data set for source coverage
-         *
          * @return self reference
          */
         public TestDataContext testSourceCoverage() {
@@ -127,7 +122,6 @@ public class TestDataCollector {
 
         /**
          * Test the data set for token coverage
-         *
          * @return self reference
          */
         public TestDataContext testTokenCoverage() {
@@ -138,7 +132,6 @@ public class TestDataCollector {
         /**
          * Test the data set for source and token coverage. Behaves just like calling {@link this#testSourceCoverage()} and
          * {@link this#testTokenCoverage()}.
-         *
          * @return self reference
          */
         public TestDataContext testCoverages() {
@@ -149,7 +142,6 @@ public class TestDataCollector {
 
         /**
          * Test the data set for contained tokens. The tokens neither have to occur exclusively nor in the given order.
-         *
          * @param tokens The set of tokens to check for.
          * @return self reference
          */
@@ -161,7 +153,6 @@ public class TestDataCollector {
         /**
          * Test the data set for a specific token sequence. The tokens have to be extracted in that exact order. The file end
          * token can be omitted.
-         *
          * @param tokens The sequence of tokens to check for
          * @return self reference
          */
