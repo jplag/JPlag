@@ -45,7 +45,6 @@ public enum CPPTokenType implements TokenType {
     STATIC_ASSERT("STATIC_ASSERT"),
     VARDEF("VARDEF"),
     QUESTIONMARK("COND"),
-    //ATTRIBUTE("ATTRIBUTE"), TODO check with maintainers
     DEFAULT("DEFAULT"),
     APPLY("APPLY");
 

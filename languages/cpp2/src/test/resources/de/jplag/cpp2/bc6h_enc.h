@@ -542,7 +542,6 @@ class HDRColorA {
 public:
     float r, g, b, a;
 
-public:
     HDRColorA() = default;
     HDRColorA(float _r, float _g, float _b, float _a) noexcept :
         r(_r), g(_g), b(_b), a(_a) {}
