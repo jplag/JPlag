@@ -130,6 +130,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFuncDecl(LLVMIRParser.FuncDeclContext ctx) {
+        transformToken(LLVMTokenType.FUNCTION_DECL, ctx.getStart(), ctx.getStop());
+        super.enterFuncDecl(ctx);
     }
 
     @Override
@@ -138,6 +140,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFuncDef(LLVMIRParser.FuncDefContext ctx) {
+        transformToken(LLVMTokenType.FUNCTION_DEF, ctx.getStart(), ctx.getStop());
+        super.enterFuncDef(ctx);
     }
 
     @Override
@@ -266,10 +270,14 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFuncBody(LLVMIRParser.FuncBodyContext ctx) {
+        transformToken(LLVMTokenType.FUNCTION_BODY_BEGIN, ctx.getStart(), ctx.getStop());
+        super.enterFuncBody(ctx);
     }
 
     @Override
     public void exitFuncBody(LLVMIRParser.FuncBodyContext ctx) {
+        transformToken(LLVMTokenType.FUNCTION_BODY_END, ctx.getStart(), ctx.getStop());
+        super.exitFuncBody(ctx);
     }
 
     @Override
@@ -314,6 +322,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterRetTerm(LLVMIRParser.RetTermContext ctx) {
+        transformToken(LLVMTokenType.RETURN, ctx.getStart(), ctx.getStop());
+        super.enterRetTerm(ctx);
     }
 
     @Override
@@ -322,6 +332,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterBrTerm(LLVMIRParser.BrTermContext ctx) {
+        transformToken(LLVMTokenType.BRANCH, ctx.getStart(), ctx.getStop());
+        super.enterBrTerm(ctx);
     }
 
     @Override
@@ -330,6 +342,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterCondBrTerm(LLVMIRParser.CondBrTermContext ctx) {
+        transformToken(LLVMTokenType.BRANCH, ctx.getStart(), ctx.getStop());
+        super.enterCondBrTerm(ctx);
     }
 
     @Override
@@ -338,6 +352,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterSwitchTerm(LLVMIRParser.SwitchTermContext ctx) {
+        transformToken(LLVMTokenType.BRANCH, ctx.getStart(), ctx.getStop());
+        super.enterSwitchTerm(ctx);
     }
 
     @Override
@@ -346,6 +362,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterIndirectBrTerm(LLVMIRParser.IndirectBrTermContext ctx) {
+        transformToken(LLVMTokenType.BRANCH, ctx.getStart(), ctx.getStop());
+        super.enterIndirectBrTerm(ctx);
     }
 
     @Override
@@ -354,6 +372,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterResumeTerm(LLVMIRParser.ResumeTermContext ctx) {
+        transformToken(LLVMTokenType.RESUME, ctx.getStart(), ctx.getStop());
+        super.enterResumeTerm(ctx);
     }
 
     @Override
@@ -362,6 +382,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterCatchRetTerm(LLVMIRParser.CatchRetTermContext ctx) {
+        transformToken(LLVMTokenType.CATCH_RETURN, ctx.getStart(), ctx.getStop());
+        super.enterCatchRetTerm(ctx);
     }
 
     @Override
@@ -370,6 +392,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterCleanupRetTerm(LLVMIRParser.CleanupRetTermContext ctx) {
+        transformToken(LLVMTokenType.CLEAN_UP_RETURN, ctx.getStart(), ctx.getStop());
+        super.enterCleanupRetTerm(ctx);
     }
 
     @Override
@@ -386,6 +410,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterInvokeTerm(LLVMIRParser.InvokeTermContext ctx) {
+        transformToken(LLVMTokenType.INVOKE, ctx.getStart(), ctx.getStop());
+        super.enterInvokeTerm(ctx);
     }
 
     @Override
@@ -394,6 +420,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterCallBrTerm(LLVMIRParser.CallBrTermContext ctx) {
+        transformToken(LLVMTokenType.CALL_BRANCH, ctx.getStart(), ctx.getStop());
+        super.enterCallBrTerm(ctx);
     }
 
     @Override
@@ -402,6 +430,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterCatchSwitchTerm(LLVMIRParser.CatchSwitchTermContext ctx) {
+        transformToken(LLVMTokenType.CATCH_SWITCH, ctx.getStart(), ctx.getStop());
+        super.enterCatchSwitchTerm(ctx);
     }
 
     @Override
@@ -1298,6 +1328,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterStoreInst(LLVMIRParser.StoreInstContext ctx) {
+        transformToken(LLVMTokenType.STORE, ctx.getStart(), ctx.getStop());
+        super.enterStoreInst(ctx);
     }
 
     @Override
@@ -1322,6 +1354,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFNegInst(LLVMIRParser.FNegInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterFNegInst(ctx);
     }
 
     @Override
@@ -1330,6 +1364,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterAddInst(LLVMIRParser.AddInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterAddInst(ctx);
     }
 
     @Override
@@ -1338,6 +1374,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFAddInst(LLVMIRParser.FAddInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterFAddInst(ctx);
     }
 
     @Override
@@ -1346,6 +1384,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterSubInst(LLVMIRParser.SubInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterSubInst(ctx);
     }
 
     @Override
@@ -1354,6 +1394,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFSubInst(LLVMIRParser.FSubInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterFSubInst(ctx);
     }
 
     @Override
@@ -1362,6 +1404,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterMulInst(LLVMIRParser.MulInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterMulInst(ctx);
     }
 
     @Override
@@ -1370,6 +1414,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFMulInst(LLVMIRParser.FMulInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterFMulInst(ctx);
     }
 
     @Override
@@ -1378,6 +1424,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterUDivInst(LLVMIRParser.UDivInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterUDivInst(ctx);
     }
 
     @Override
@@ -1386,6 +1434,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterSDivInst(LLVMIRParser.SDivInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterSDivInst(ctx);
     }
 
     @Override
@@ -1394,6 +1444,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFDivInst(LLVMIRParser.FDivInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterFDivInst(ctx);
     }
 
     @Override
@@ -1402,6 +1454,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterURemInst(LLVMIRParser.URemInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterURemInst(ctx);
     }
 
     @Override
@@ -1410,6 +1464,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterSRemInst(LLVMIRParser.SRemInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterSRemInst(ctx);
     }
 
     @Override
@@ -1418,6 +1474,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFRemInst(LLVMIRParser.FRemInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterFRemInst(ctx);
     }
 
     @Override
@@ -1426,6 +1484,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterShlInst(LLVMIRParser.ShlInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterShlInst(ctx);
     }
 
     @Override
@@ -1434,6 +1494,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterLShrInst(LLVMIRParser.LShrInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterLShrInst(ctx);
     }
 
     @Override
@@ -1442,6 +1504,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterAShrInst(LLVMIRParser.AShrInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterAShrInst(ctx);
     }
 
     @Override
@@ -1450,6 +1514,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterAndInst(LLVMIRParser.AndInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterAndInst(ctx);
     }
 
     @Override
@@ -1458,6 +1524,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterOrInst(LLVMIRParser.OrInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterOrInst(ctx);
     }
 
     @Override
@@ -1466,6 +1534,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterXorInst(LLVMIRParser.XorInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterXorInst(ctx);
     }
 
     @Override
@@ -1474,6 +1544,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterExtractElementInst(LLVMIRParser.ExtractElementInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterExtractElementInst(ctx);
     }
 
     @Override
@@ -1482,6 +1554,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterInsertElementInst(LLVMIRParser.InsertElementInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterInsertElementInst(ctx);
     }
 
     @Override
@@ -1490,6 +1564,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterShuffleVectorInst(LLVMIRParser.ShuffleVectorInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterShuffleVectorInst(ctx);
     }
 
     @Override
@@ -1498,6 +1574,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterExtractValueInst(LLVMIRParser.ExtractValueInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterExtractValueInst(ctx);
     }
 
     @Override
@@ -1506,6 +1584,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterInsertValueInst(LLVMIRParser.InsertValueInstContext ctx) {
+        transformToken(LLVMTokenType.OPERATION, ctx.getStart(), ctx.getStop());
+        super.enterInsertValueInst(ctx);
     }
 
     @Override
@@ -1514,6 +1594,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterAllocaInst(LLVMIRParser.AllocaInstContext ctx) {
+        transformToken(LLVMTokenType.ALLOCATION, ctx.getStart(), ctx.getStop());
+        super.enterAllocaInst(ctx);
     }
 
     @Override
@@ -1522,6 +1604,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterLoadInst(LLVMIRParser.LoadInstContext ctx) {
+        transformToken(LLVMTokenType.LOAD, ctx.getStart(), ctx.getStop());
+        super.enterLoadInst(ctx);
     }
 
     @Override
@@ -1546,6 +1630,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterGetElementPtrInst(LLVMIRParser.GetElementPtrInstContext ctx) {
+        transformToken(LLVMTokenType.GET_ELEMENT_POINTER, ctx.getStart(), ctx.getStop());
+        super.enterGetElementPtrInst(ctx);
     }
 
     @Override
@@ -1554,6 +1640,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterTruncInst(LLVMIRParser.TruncInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterTruncInst(ctx);
     }
 
     @Override
@@ -1562,6 +1650,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterZExtInst(LLVMIRParser.ZExtInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterZExtInst(ctx);
     }
 
     @Override
@@ -1570,6 +1660,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterSExtInst(LLVMIRParser.SExtInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterSExtInst(ctx);
     }
 
     @Override
@@ -1578,6 +1670,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFpTruncInst(LLVMIRParser.FpTruncInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterFpTruncInst(ctx);
     }
 
     @Override
@@ -1586,6 +1680,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFpExtInst(LLVMIRParser.FpExtInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterFpExtInst(ctx);
     }
 
     @Override
@@ -1594,6 +1690,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFpToUiInst(LLVMIRParser.FpToUiInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterFpToUiInst(ctx);
     }
 
     @Override
@@ -1602,6 +1700,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFpToSiInst(LLVMIRParser.FpToSiInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterFpToSiInst(ctx);
     }
 
     @Override
@@ -1610,6 +1710,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterUiToFpInst(LLVMIRParser.UiToFpInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterUiToFpInst(ctx);
     }
 
     @Override
@@ -1618,6 +1720,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterSiToFpInst(LLVMIRParser.SiToFpInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterSiToFpInst(ctx);
     }
 
     @Override
@@ -1626,6 +1730,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterPtrToIntInst(LLVMIRParser.PtrToIntInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterPtrToIntInst(ctx);
     }
 
     @Override
@@ -1634,6 +1740,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterIntToPtrInst(LLVMIRParser.IntToPtrInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterIntToPtrInst(ctx);
     }
 
     @Override
@@ -1642,6 +1750,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterBitCastInst(LLVMIRParser.BitCastInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterBitCastInst(ctx);
     }
 
     @Override
@@ -1650,6 +1760,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterAddrSpaceCastInst(LLVMIRParser.AddrSpaceCastInstContext ctx) {
+        transformToken(LLVMTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterAddrSpaceCastInst(ctx);
     }
 
     @Override
@@ -1658,6 +1770,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterICmpInst(LLVMIRParser.ICmpInstContext ctx) {
+        transformToken(LLVMTokenType.COMPARISON, ctx.getStart(), ctx.getStop());
+        super.enterICmpInst(ctx);
     }
 
     @Override
@@ -1666,6 +1780,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterFCmpInst(LLVMIRParser.FCmpInstContext ctx) {
+        transformToken(LLVMTokenType.COMPARISON, ctx.getStart(), ctx.getStop());
+        super.enterFCmpInst(ctx);
     }
 
     @Override
@@ -1674,6 +1790,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterPhiInst(LLVMIRParser.PhiInstContext ctx) {
+        transformToken(LLVMTokenType.PHI, ctx.getStart(), ctx.getStop());
+        super.enterPhiInst(ctx);
     }
 
     @Override
@@ -1698,6 +1816,8 @@ public class JPlagLLVMListener extends LLVMParserBaseListener {
 
     @Override
     public void enterCallInst(LLVMIRParser.CallInstContext ctx) {
+        transformToken(LLVMTokenType.CALL, ctx.getStart(), ctx.getStop());
+        super.enterCallInst(ctx);
     }
 
     @Override
