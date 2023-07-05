@@ -1,5 +1,7 @@
 package de.jplag.cli;
 
+import static de.jplag.cli.CommandLineArgument.ALTERATION_PERCENT;
+import static de.jplag.cli.CommandLineArgument.ALTERATION_SEED;
 import static de.jplag.cli.CommandLineArgument.BASE_CODE;
 import static de.jplag.cli.CommandLineArgument.CLUSTER_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY;
 import static de.jplag.cli.CommandLineArgument.CLUSTER_AGGLOMERATIVE_THRESHOLD;
@@ -19,8 +21,6 @@ import static de.jplag.cli.CommandLineArgument.DEBUG;
 import static de.jplag.cli.CommandLineArgument.EXCLUDE_FILE;
 import static de.jplag.cli.CommandLineArgument.LANGUAGE;
 import static de.jplag.cli.CommandLineArgument.MERGE_BUFFER;
-import static de.jplag.cli.CommandLineArgument.ALTERATION_SEED;
-import static de.jplag.cli.CommandLineArgument.ALTERATION_PERCENT;
 import static de.jplag.cli.CommandLineArgument.MIN_TOKEN_MATCH;
 import static de.jplag.cli.CommandLineArgument.NEW_DIRECTORY;
 import static de.jplag.cli.CommandLineArgument.OLD_DIRECTORY;
@@ -50,8 +50,8 @@ import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
-import de.jplag.merging.MergingParameters;
 import de.jplag.merging.AlteringParameters;
+import de.jplag.merging.MergingParameters;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
@@ -186,7 +186,7 @@ public final class CLI {
         }
         return mergingParameters;
     }
-    
+
     private static AlteringParameters getAlteringParameters(Namespace namespace) {
         AlteringParameters alteringParameters = new AlteringParameters();
         if (ALTERATION_SEED.isSet(namespace)) {

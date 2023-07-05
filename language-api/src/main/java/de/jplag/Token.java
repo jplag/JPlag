@@ -137,8 +137,8 @@ public class Token {
     public CodeSemantics getSemantics() {
         return semantics;
     }
-    
+
     public void setType(TokenType t) {
-        type=t;
+        type = t;
     }
 }

@@ -19,8 +19,8 @@ import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
-import de.jplag.merging.MergingParameters;
 import de.jplag.merging.AlteringParameters;
+import de.jplag.merging.MergingParameters;
 import de.jplag.util.FileUtils;
 
 /**
@@ -62,7 +62,8 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
 
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
-                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingParameters(), new AlteringParameters());
+                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingParameters(),
+                new AlteringParameters());
     }
 
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
@@ -169,7 +170,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
                 clusteringOptions, debugParser, mergingParameters, alteringParameters);
     }
-    
+
     public JPlagOptions withAlteringParameters(AlteringParameters alteringParameters) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
@@ -269,7 +270,8 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
             boolean debugParser, MergingParameters mergingParameters, AlteringParameters alteringParameters) throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
-                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingParameters, alteringParameters);
+                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingParameters,
+                alteringParameters);
     }
 
     /**
