@@ -3,7 +3,10 @@ package de.jplag.cli;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_FOOTER;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.List;
@@ -72,8 +75,20 @@ public final class CLI {
                 JPlagResult result = JPlag.run(options);
                 ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
                 reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
+
+                // ReportViewer
+                ReportViewer reportViewer = new ReportViewer();
+                int port = reportViewer.start();
+                logger.info("ReportViewer started on port http://localhost:{}", port);
+                Desktop.getDesktop().browse(URI.create("http://localhost:" + port + "/"));
+
+                // Wait for input of user
+                System.out.println("Press any key to exit...");
+                System.in.read();
+                reportViewer.stop();
+
             }
-        } catch (ExitException exception) {
+        } catch (ExitException | IOException exception) {
             logger.error(exception.getMessage()); // do not pass exception here to keep log clean
             finalizeLogger();
             System.exit(1);
