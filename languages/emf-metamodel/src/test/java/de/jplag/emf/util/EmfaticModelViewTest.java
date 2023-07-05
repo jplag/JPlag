@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import de.jplag.ParsingException;
 import de.jplag.emf.AbstractEmfTest;
 import de.jplag.emf.Language;
 
@@ -23,7 +24,7 @@ class EmfaticModelViewTest extends AbstractEmfTest {
     @ParameterizedTest
     @DisplayName("Test content of emfatic view files of example metamodels")
     @MethodSource("provideModelNames")
-    void testEmfaticViewFiles(String modelName) {
+    void testEmfaticViewFiles(String modelName) throws ParsingException {
         // Load model:
         File modelFile = new File(baseDirectory, modelName);
         Resource modelResource = loadAndVerifyModel(modelFile);

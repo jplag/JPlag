@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import org.eclipse.emf.emfatic.core.generator.emfatic.Writer;
 
+import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenTrace;
 import de.jplag.emf.MetamodelToken;
@@ -44,8 +45,9 @@ public final class EmfaticModelView extends AbstractModelView {
      * Creates an Emfatic view for a metamodel.
      * @param file is the path for the view file to be created.
      * @param modelResource is the resource containing the metamodel.
+     * @throws ParsingException if Emfatic crashes.
      */
-    public EmfaticModelView(File file, Resource modelResource) {
+    public EmfaticModelView(File file, Resource modelResource) throws ParsingException {
         super(file);
         elementToLine = new HashMap<>();
         lines = generateEmfaticCode(viewBuilder, modelResource);
@@ -93,11 +95,16 @@ public final class EmfaticModelView extends AbstractModelView {
 
     /**
      * Generates Emfatic code from a model resource and splits it into lines with a string builder.
+     * @throws ParsingException if the Emfatic writer fails.
      */
-    private final List<String> generateEmfaticCode(StringBuilder builder, Resource modelResource) {
+    private final List<String> generateEmfaticCode(StringBuilder builder, Resource modelResource) throws ParsingException {
         Writer writer = new Writer();
-        String code = writer.write(modelResource, null, null);
-        builder.append(code);
+        try {
+            String code = writer.write(modelResource, null, null);
+            builder.append(code);
+        } catch (Exception exception) { // Emfatic does not properly handle errors, thus throws random exceptions.
+            throw new ParsingException(file, "Emfatic view could not be generated!", exception);
+        }
         return builder.toString().lines().toList();
     }
 
