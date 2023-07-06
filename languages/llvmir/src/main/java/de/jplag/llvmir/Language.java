@@ -19,10 +19,10 @@ public class Language implements de.jplag.Language {
     private static final String IDENTIFIER = "llvmir";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 10;
     private static final String[] FILE_EXTENSIONS = {".ll"};
-    private final LLVMParserAdapter parserAdapter;
+    private final LLVMIRParserAdapter parserAdapter;
 
     public Language() {
-        this.parserAdapter = new LLVMParserAdapter();
+        this.parserAdapter = new LLVMIRParserAdapter();
     }
 
     @Override

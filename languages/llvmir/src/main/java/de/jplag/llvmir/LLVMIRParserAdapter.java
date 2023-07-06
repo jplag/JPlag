@@ -16,8 +16,10 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.llvmir.grammar.LLVMIRLexer;
+import de.jplag.llvmir.grammar.LLVMIRParser;
 
-public class LLVMParserAdapter extends AbstractParser {
+public class LLVMIRParserAdapter extends AbstractParser {
 
     private File currentFile;
     private List<Token> tokens;
@@ -25,7 +27,7 @@ public class LLVMParserAdapter extends AbstractParser {
     /**
      * Creates the LLVMParserAdapter
      */
-    public LLVMParserAdapter() {
+    public LLVMIRParserAdapter() {
         super();
     }
 
@@ -47,14 +49,14 @@ public class LLVMParserAdapter extends AbstractParser {
         try (FileInputStream inputStream = new FileInputStream(file)) {
             currentFile = file;
 
-            LLVMLexer lexer = new LLVMLexer(CharStreams.fromStream(inputStream));
+            LLVMIRLexer lexer = new LLVMIRLexer(CharStreams.fromStream(inputStream));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-            LLVMParser parser = new LLVMParser(tokenStream);
+            LLVMIRParser parser = new LLVMIRParser(tokenStream);
 
-            ParserRuleContext entryContext = parser.llvmFile();
+            ParserRuleContext entryContext = parser.compilationUnit();
             ParseTreeWalker treeWalker = new ParseTreeWalker();
 
-            JPlagLLVMListener listener = new JPlagLLVMListener(this);
+            JPlagLLVMIRListener listener = new JPlagLLVMIRListener(this);
             for (int i = 0; i < entryContext.getChildCount(); i++) {
                 ParseTree parseTree = entryContext.getChild(i);
                 treeWalker.walk(listener, parseTree);
@@ -71,7 +73,7 @@ public class LLVMParserAdapter extends AbstractParser {
      * @param column the start column of the Token in the line
      * @param length the length of the Token
      */
-    /* package-private */ void addToken(LLVMTokenType tokenType, int line, int column, int length) {
+    /* package-private */ void addToken(LLVMIRTokenType tokenType, int line, int column, int length) {
         tokens.add(new Token(tokenType, currentFile, line, column, length));
     }
 }

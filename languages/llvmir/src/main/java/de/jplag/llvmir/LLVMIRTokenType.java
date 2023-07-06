@@ -2,7 +2,7 @@ package de.jplag.llvmir;
 
 import de.jplag.TokenType;
 
-public enum LLVMTokenType implements TokenType {
+public enum LLVMIRTokenType implements TokenType {
 
     FUNCTION_BODY_BEGIN("FUNC{"),
     FUNCTION_BODY_END("}FUNC"),
@@ -32,7 +32,7 @@ public enum LLVMTokenType implements TokenType {
         return description;
     }
 
-    LLVMTokenType(String description) {
+    LLVMIRTokenType(String description) {
         this.description = description;
     }
 }
