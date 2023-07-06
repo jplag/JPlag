@@ -56,7 +56,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
             }
 
             collector.addToken(Token.fileEnd(file));
-        } catch (IOException exception) {
+        } catch (IOException | InternalListenerException exception) {
             throw new ParsingException(file, exception.getMessage(), exception);
         }
     }
