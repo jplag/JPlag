@@ -7,20 +7,22 @@
       Files of {{ anonymous ? filesOwnerDefault : filesOwner }}:
     </h3>
     <ScrollableComponent class="flex-grow">
-      <CodePanel
-        v-for="(file, index) in files.keys()"
-        :key="file.concat(index.toString())"
-        :collapse="files.get(file)?.collapsed"
-        :file-index="index"
-        :lines="files.get(file)?.lines || []"
-        :matches="!matches.get(file) ? [] : matches.get(file)"
-        :panel-id="containerId"
-        :title="convertSubmissionIdToName(file, submissionId)"
-        :filePath="file"
-        @toggle-collapse="$emit('toggle-collapse', file)"
-        @line-selected="lineSelected"
-        class="mt-1"
-      />
+      <VueDraggableNext>
+        <CodePanel
+          v-for="(file, index) in files.keys()"
+          :key="file.concat(index.toString())"
+          :collapse="files.get(file)?.collapsed"
+          :file-index="index"
+          :lines="files.get(file)?.lines || []"
+          :matches="!matches.get(file) ? [] : matches.get(file)"
+          :panel-id="containerId"
+          :title="convertSubmissionIdToName(file, submissionId)"
+          :filePath="file"
+          @toggle-collapse="$emit('toggle-collapse', file)"
+          @line-selected="lineSelected"
+          class="mt-1"
+        />
+      </VueDraggableNext>
     </ScrollableComponent>
   </Container>
 </template>
@@ -33,6 +35,7 @@ import CodePanel from '@/components/CodePanel.vue'
 import store from '@/stores/store'
 import Container from './ContainerComponent.vue'
 import ScrollableComponent from './ScrollableComponent.vue'
+import { VueDraggableNext } from 'vue-draggable-next'
 
 defineProps({
   /**
