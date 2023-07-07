@@ -36,7 +36,9 @@
             <!-- Row -->
             <div
               class="tableRow"
-              :class="{ 'bg-accent bg-opacity-30 dark:bg-opacity-40': item.id % 2 == 1 }"
+              :class="{
+                'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1
+              }"
             >
               <RouterLink
                 :to="{

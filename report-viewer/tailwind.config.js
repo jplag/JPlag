@@ -24,6 +24,10 @@ export default {
           border: {
             light: 'hsl(0, 0%, 80%)',
             dark: 'hsl(0, 0%, 25%)'
+          },
+          secondary: {
+            light: 'hsl(0, 0%, 95%)',
+            dark: 'hsl(200, 20%, 18%)'
           }
         },
         interactable: {
