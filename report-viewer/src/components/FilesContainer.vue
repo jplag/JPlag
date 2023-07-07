@@ -3,7 +3,7 @@
 -->
 <template>
   <Container class="flex flex-col">
-    <h3 class="text-left underline text-lg font-bold">
+    <h3 class="text-left text-lg font-bold">
       Files of {{ anonymous ? filesOwnerDefault : filesOwner }}:
     </h3>
     <ScrollableComponent class="flex-grow">

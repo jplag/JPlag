@@ -5,7 +5,7 @@ export default class Distribution {
     this._distribution = distribution
   }
 
-  public asLinearArray(): Array<number> {
+  get distribution(): Array<number> {
     return this._distribution
   }
 }

@@ -10,7 +10,7 @@
     }
 
     h2 {
-        @apply text-2xl underline;
+        @apply text-3xl;
     }
 
     *::-webkit-scrollbar {

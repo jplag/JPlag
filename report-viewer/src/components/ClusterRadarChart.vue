@@ -27,7 +27,6 @@ import { RadarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import DropDownSelector from './DropDownSelector.vue'
-import { toTwoDecimals } from '@/utils/ComparisonUtils'
 import { graphColors } from '@/utils/ColorUtils'
 
 Chart.register(...registerables)
@@ -62,7 +61,7 @@ function createLabelsFor(member: string) {
  */
 function createDataSetFor(member: string) {
   let data = new Array<number>()
-  props.cluster.members.get(member)?.forEach((m) => data.push(+toTwoDecimals(m.similarity * 100)))
+  props.cluster.members.get(member)?.forEach((m) => data.push(+(m.similarity * 100).toFixed(2)))
   return data
 }
 

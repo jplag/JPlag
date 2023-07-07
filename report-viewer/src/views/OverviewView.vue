@@ -26,7 +26,7 @@
       <Container class="max-h-0 min-h-full flex flex-col flex-1">
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
-          :distribution="overview.distribution[selectedDistributionDiagramMetric].asLinearArray()"
+          :distribution="overview.distribution[selectedDistributionDiagramMetric]"
           class="w-full h-2/3"
         />
         <div class="flex flex-col flex-grow space-y-1">

@@ -6,25 +6,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, type PropType } from 'vue'
 import { BarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '@/utils/ColorUtils'
+import type Distribution from '@/model/Distribution'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
 
 const props = defineProps({
   distribution: {
-    type: Array<number>,
+    type: Object as PropType<Distribution>,
     required: true
   }
 })
 
-//Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
-//otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
-const maxVal = ref(Math.max(...props.distribution))
+const maxVal = ref(Math.max(...props.distribution.distribution))
 const labels = [
   '91-100%',
   '81-90%',
@@ -52,7 +51,7 @@ const chartData = ref({
   datasets: [
     {
       ...dataSetStyle.value,
-      data: props.distribution
+      data: props.distribution.distribution
     }
   ]
 })
@@ -64,6 +63,8 @@ const options = computed(() => {
     indexAxis: 'y',
     scales: {
       x: {
+        //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
+        //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
         suggestedMax: maxVal.value + 5,
         ticks: {
           color: graphColors.ticksAndFont.value
@@ -108,12 +109,12 @@ watch(
       datasets: [
         {
           ...dataSetStyle.value,
-          data: val
+          data: val.distribution
         }
       ]
     }
 
-    maxVal.value = Math.max(...val)
+    maxVal.value = Math.max(...val.distribution)
     options.value.scales.x.suggestedMax = maxVal.value + 5
   }
 )

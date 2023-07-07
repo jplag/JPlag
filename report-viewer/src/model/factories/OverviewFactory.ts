@@ -106,7 +106,7 @@ export class OverviewFactory {
     console.log('Generating overview...')
     let temp!: Overview
     //Gets the overview file based on the used mode (zip, local, single).
-    if (store().state.local) {
+    if (store().state.localModeUsed) {
       const request = new XMLHttpRequest()
       request.open('GET', '/files/overview.json', false)
       request.send()

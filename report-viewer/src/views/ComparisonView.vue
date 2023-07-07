@@ -21,7 +21,7 @@
         </h2>
         <div class="flex flex-row">
           <TextInformation label="Average Similarity"
-            >{{ toTwoDecimals(comparison.similarity * 100) }}%</TextInformation
+            >{{ (comparison.similarity * 100).toFixed(2) }}%</TextInformation
           >
         </div>
         <MatchList
@@ -66,7 +66,7 @@
 import type { Match } from '@/model/Match'
 
 import { onMounted, ref, watch, type Ref, computed, onErrorCaptured } from 'vue'
-import { generateLineCodeLink, toTwoDecimals } from '@/utils/ComparisonUtils'
+import { generateLineCodeLink } from '@/utils/ComparisonUtils'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'

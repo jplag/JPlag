@@ -11,10 +11,12 @@ const store = defineStore('store', {
       anonymous: new Set(),
       files: {},
       submissions: {},
-      local: false,
-      zip: false,
-      single: false,
-      fileString: '',
+      // Mode that was used to load the files
+      localModeUsed: false,
+      zipModeUsed: false,
+      singleModeUsed: false,
+      // only used in single mode
+      singleFillRawContent: '',
       fileIdToDisplayName: new Map()
     },
     uiState: {
@@ -78,10 +80,10 @@ const store = defineStore('store', {
         anonymous: new Set(),
         files: {},
         submissions: {},
-        local: false,
-        zip: false,
-        single: false,
-        fileString: '',
+        localModeUsed: false,
+        zipModeUsed: false,
+        singleModeUsed: false,
+        singleFillRawContent: '',
         fileIdToDisplayName: new Map()
       }
     },
@@ -148,7 +150,7 @@ const store = defineStore('store', {
      * @param payload Type used to input JPlag results
      */
     setLoadingType(payload: LoadConfiguration) {
-      this.state.local = payload.local
+      this.state.localModeUsed = payload.local
       this.state.zip = payload.zip
       this.state.single = payload.single
       this.state.fileString = payload.fileString

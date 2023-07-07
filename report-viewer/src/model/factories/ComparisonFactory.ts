@@ -15,7 +15,7 @@ export class ComparisonFactory {
     let comparison = new Comparison('', '', 0)
 
     //getting the comparison file based on the used mode (zip, local, single)
-    if (store().state.local) {
+    if (store().state.localModeUsed) {
       const request = new XMLHttpRequest()
       request.open('GET', `/files/${store().getComparisonFileName(id1, id2)}`, false)
       request.send()
@@ -62,7 +62,10 @@ export class ComparisonFactory {
 
     const matches = json.matches as Array<Record<string, unknown>>
 
-    const colors = generateColors(matches.length, 0.8, 0.5, 0.3)
+    const matchSaturation = 0.8
+    const matchLightness = 0.5
+    const matchAlpha = 0.3
+    const colors = generateColors(matches.length, matchSaturation, matchLightness, matchAlpha)
     const coloredMatches = matches.map((match, index) => this.mapMatch(match, colors[index]))
 
     const matchesInFirst = this.groupMatchesByFileName(coloredMatches, 1)

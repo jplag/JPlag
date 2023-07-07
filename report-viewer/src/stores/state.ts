@@ -14,19 +14,19 @@ export interface State {
   /**
    * Indicates whether local mode is used.
    */
-  local: boolean
+  localModeUsed: boolean
   /**
    * Indicates whether zip mode is used.
    */
-  zip: boolean
+  zipModeUsed: boolean
   /**
    * Indicates whether single file mode is used.
    */
-  single: boolean
+  singleModeUsed: boolean
   /**
    * Files string if single mode is used.
    */
-  fileString: string
+  singleFillRawContent: string
 
   fileIdToDisplayName: Map<string, string>
   submissionIdsToComparisonFileName: Map<string, Map<string, string>>

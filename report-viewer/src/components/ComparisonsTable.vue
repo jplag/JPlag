@@ -71,8 +71,8 @@
 
                 <!-- Similarities -->
                 <div class="tableCellSimilarity">
-                  <div class="w-1/2">{{ toTwoDecimals(item.averageSimilarity * 100) }}%</div>
-                  <div class="w-1/2">{{ toTwoDecimals(item.maximumSimilarity * 100) }}%</div>
+                  <div class="w-1/2">{{ (item.averageSimilarity * 100).toFixed(2) }}%</div>
+                  <div class="w-1/2">{{ (item.maximumSimilarity * 100).toFixed(2) }}%</div>
                 </div>
               </RouterLink>
 
@@ -96,13 +96,13 @@
                       :icon="['fas', 'user-group']"
                       :style="{ color: clusterIconColors[index] }"
                     />
-                    {{ toTwoDecimals((clusters?.[index].averageSimilarity as number) * 100) }}%
+                    {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
                     <div
                       class="hidden group-hover:flex absolute z-50 top-0 left-[-400px] text-sm h-full items-center text-white bg-gray-950 bg-opacity-90 px-2 rounded-sm tooltipArrow"
                     >
                       {{ clusters?.[index].members?.length }} submissions in cluster with average
                       similarity of
-                      {{ toTwoDecimals((clusters?.[index].averageSimilarity as number) * 100) }}%
+                      {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
                     </div>
                   </div>
                 </RouterLink>
@@ -125,7 +125,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateColors } from '@/utils/ColorUtils'
-import { toTwoDecimals } from '@/utils/ComparisonUtils'
 
 library.add(faUserGroup)
 

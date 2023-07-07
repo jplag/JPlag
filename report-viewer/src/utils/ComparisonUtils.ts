@@ -7,7 +7,3 @@
 export function generateLineCodeLink(index: number, fileName: string, line: number): string {
   return String(index).concat(fileName).concat(String(line))
 }
-
-export function toTwoDecimals(num: number) {
-  return num.toFixed(2)
-}
