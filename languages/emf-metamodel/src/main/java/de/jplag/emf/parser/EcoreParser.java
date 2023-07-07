@@ -82,8 +82,9 @@ public class EcoreParser extends AbstractParser {
      * @param file is the path for the view file to be created.
      * @param modelResource is the resource containing the metamodel.
      * @return the view implementation.
+     * @throws ParsingException if view could not be created due to an invalid model.
      */
-    protected AbstractModelView createView(File file, Resource modelResource) {
+    protected AbstractModelView createView(File file, Resource modelResource) throws ParsingException {
         return new EmfaticModelView(file, modelResource);
     }
 
