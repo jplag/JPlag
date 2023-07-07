@@ -116,7 +116,7 @@ export class OverviewFactory {
       } else {
         throw new Error('Could not find overview.json in folder.')
       }
-    } else if (store().state.zip) {
+    } else if (store().state.zipModeUsed) {
       console.log('Start finding overview.json in state...')
       const index = Object.keys(store().state.files).find((name) => name.endsWith('overview.json'))
       const overviewFile =
@@ -143,8 +143,8 @@ export class OverviewFactory {
       }
       const overviewJson = JSON.parse(overviewFile)
       temp = OverviewFactory.extractOverview(overviewJson)
-    } else if (store().state.single) {
-      temp = OverviewFactory.extractOverview(JSON.parse(store().state.fileString))
+    } else if (store().state.singleModeUsed) {
+      temp = OverviewFactory.extractOverview(JSON.parse(store().state.singleFillRawContent))
     }
     return temp
   }

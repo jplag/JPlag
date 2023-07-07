@@ -14,10 +14,10 @@
     }
 
     *::-webkit-scrollbar {
-        @apply w-1 h-1 cursor-pointer;
+        @apply w-[6px] h-[6px] cursor-pointer;
     }
     *::-webkit-scrollbar-track {
-        @apply bg-scrollbar-backgorund-light dark:bg-scrollbar-backgorund-dark rounded-full border-4;
+        @apply bg-scrollbar-backgorund-light dark:bg-scrollbar-backgorund-dark rounded-full border-2;
     }
     *::-webkit-scrollbar-thumb {
         @apply bg-scrollbar-thumb-light dark:bg-scrollbar-thumb-dark rounded-full border-2;

@@ -31,16 +31,18 @@ export class ComparisonFactory {
       } else {
         throw new Error('Comparison file not found')
       }
-    } else if (store().state.zip) {
+    } else if (store().state.zipModeUsed) {
       const comparisonFile = store().getComparisonFileForSubmissions(id1, id2)
       if (comparisonFile) {
         comparison = ComparisonFactory.extractComparison(JSON.parse(comparisonFile))
       } else {
         throw new Error('Comparison file not found')
       }
-    } else if (store().state.single) {
+    } else if (store().state.singleModeUsed) {
       try {
-        comparison = ComparisonFactory.extractComparison(JSON.parse(store().state.fileString))
+        comparison = ComparisonFactory.extractComparison(
+          JSON.parse(store().state.singleFillRawContent)
+        )
       } catch (e) {
         store().clearStore()
         throw new Error('No Comparison files given!')

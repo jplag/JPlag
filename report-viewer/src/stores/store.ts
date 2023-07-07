@@ -151,9 +151,9 @@ const store = defineStore('store', {
      */
     setLoadingType(payload: LoadConfiguration) {
       this.state.localModeUsed = payload.local
-      this.state.zip = payload.zip
-      this.state.single = payload.single
-      this.state.fileString = payload.fileString
+      this.state.zipModeUsed = payload.zip
+      this.state.singleModeUsed = payload.single
+      this.state.singleFillRawContent = payload.fileString
     },
     /**
      * Switches whether darkMode is being used for the UI
