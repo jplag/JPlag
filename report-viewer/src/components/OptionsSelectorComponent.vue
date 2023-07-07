@@ -1,3 +1,6 @@
+<!--
+  Component for selecting one of multiple options.
+-->
 <template>
   <div class="flex flex-row text-xs h-fit items-center text-center">
     <div v-if="name != ''" class="mr-3 text-base">

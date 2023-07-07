@@ -1,3 +1,6 @@
+<!-- 
+  Base Component for Buttons 
+-->
 <template>
   <Interactable
     class="px-2 py-1 flex items-center text-center justify-center"

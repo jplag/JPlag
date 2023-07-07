@@ -1,3 +1,6 @@
+<!--
+  Base search bar component
+-->
 <template>
   <Interactable class="flex flex-row space-x-2 items-center py-2 px-2">
     <FontAwesomeIcon

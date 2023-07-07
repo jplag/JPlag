@@ -1,3 +1,6 @@
+<!-- 
+  Base Component for DropDownSelectors 
+-->
 <template>
   <Interactable class="p-0 !cursor-default">
     <select

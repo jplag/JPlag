@@ -1,6 +1,5 @@
 <!--
-  A container displaying simple text information. It may include additional information which is being displayed
-  in a drop down container.
+  A container displaying simple text information
 -->
 <template>
   <div class="flex-auto">
