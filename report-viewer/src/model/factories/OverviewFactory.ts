@@ -54,13 +54,14 @@ export class OverviewFactory {
 
     // Max
     distributions.push(new Distribution(metrics[1].distribution as Array<number>))
-    let counter = 1
+    let counter = 0
     for (const comparison of metrics[1].topComparisons as Array<Record<string, unknown>>) {
       const avg = averageSimilarities.get(
         (comparison.first_submission as string) + '-' + (comparison.second_submission as string)
       )
       comparisons.push({
-        id: counter++,
+        sortingPlace: counter++,
+        index: counter,
         firstSubmissionId: comparison.first_submission as string,
         secondSubmissionId: comparison.second_submission as string,
         averageSimilarity: avg as number,
