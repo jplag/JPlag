@@ -47,7 +47,7 @@
           <SearchBarComponent
             placeholder="Filter/Unhide Comparisons"
             class="flex-grow"
-            @input-changed="(value) => nameSearchUpdated(value)"
+            @input-changed="(value) => (searchString = value)"
           />
           <Button class="w-24" @click="changeAnnoymousForAll()">
             {{
@@ -60,7 +60,7 @@
         <OptionsSelector
           name="Sort By"
           :labels="['Average Similarity', 'Maximum Similarity']"
-          @selection-changed="(index) => updateComparisonTableSortingMetric(index)"
+          @selection-changed="(index) => (comparisonTableSortingMetric = index)"
         />
         <ComparisonsTable
           :clusters="overview.clusters"
@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { onErrorCaptured, ref } from 'vue'
+import { computed, onErrorCaptured, ref, watch } from 'vue'
 import router from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
@@ -90,7 +90,8 @@ import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
 
 const overview = OverviewFactory.getOverview()
 
-const displayedComparisons = ref(overview.topComparisons)
+const searchString = ref('')
+const comparisonTableSortingMetric = ref(MetricType.AVERAGE.valueOf())
 
 /**
  * This funtion gets called when the search bar for the compariosn table has been updated.
@@ -99,26 +100,56 @@ const displayedComparisons = ref(overview.topComparisons)
  *
  * @param newVal The new value of the search bar
  */
-function nameSearchUpdated(newVal: string) {
-  const searches = newVal
+function getFilteredComparisons(comparisons: ComparisonListElement[]) {
+  const searches = searchString.value
     .trimEnd()
     .toLowerCase()
     .split(/ +/g)
     .map((s) => s.trim().replace(/,/g, ''))
   if (searches.length == 0) {
-    updateDisplayedComparisons(overview.topComparisons)
+    return comparisons
+  }
+
+  return comparisons.filter((c) => {
+    const id1 = c.firstSubmissionId.toLowerCase()
+    const id2 = c.secondSubmissionId.toLowerCase()
+    return searches.some((s) => id1.includes(s) || id2.includes(s))
+  })
+}
+
+function getSortedComparisons(comparisons: ComparisonListElement[]) {
+  if (comparisonTableSortingMetric.value == MetricType.MAXIMUM) {
+    comparisons.sort((a, b) => b.maximumSimilarity - a.maximumSimilarity)
+  } else {
+    comparisons.sort((a, b) => b.averageSimilarity - a.averageSimilarity)
+  }
+  let index = 0
+  comparisons.forEach((c) => {
+    c.sortingPlace = index++
+  })
+  return overview.topComparisons
+}
+
+const displayedComparisons = computed(() => {
+  const comparisons = getFilteredComparisons(getSortedComparisons(overview.topComparisons))
+  let index = 1
+  comparisons.forEach((c) => {
+    c.index = index++
+  })
+  return comparisons
+})
+
+// Update the anonymous set
+watch(searchString, () => {
+  const searches = searchString.value
+    .trimEnd()
+    .toLowerCase()
+    .split(/ +/g)
+    .map((s) => s.trim().replace(/,/g, ''))
+  if (searches.length == 0) {
     return
   }
 
-  updateDisplayedComparisons(
-    overview.topComparisons.filter((c) => {
-      const id1 = c.firstSubmissionId.toLowerCase()
-      const id2 = c.secondSubmissionId.toLowerCase()
-      return searches.some((s) => id1.includes(s) || id2.includes(s))
-    })
-  )
-
-  // Update the anonymous set
   for (const search of searches) {
     for (const submissionId of store().getSubmissionIds) {
       if (submissionId.toLowerCase() == search) {
@@ -126,32 +157,7 @@ function nameSearchUpdated(newVal: string) {
       }
     }
   }
-}
-
-const comparisonTableSortingMetric = ref(MetricType.AVERAGE.valueOf())
-
-function updateComparisonTableSortingMetric(index: number) {
-  comparisonTableSortingMetric.value = index
-  updateDisplayedComparisons(displayedComparisons.value)
-}
-
-function updateDisplayedComparisons(comparisons: ComparisonListElement[]) {
-  if (comparisonTableSortingMetric.value == MetricType.MAXIMUM) {
-    displayedComparisons.value = comparisons.sort(
-      (a, b) => b.maximumSimilarity - a.maximumSimilarity
-    )
-  } else {
-    displayedComparisons.value = comparisons.sort(
-      (a, b) => b.averageSimilarity - a.averageSimilarity
-    )
-  }
-  let counter = 1
-  displayedComparisons.value.forEach((c) => {
-    c.id = counter++
-  })
-}
-
-updateComparisonTableSortingMetric(MetricType.AVERAGE.valueOf())
+})
 
 /**
  * Sets the annonymous set to empty if it is full or adds all submission ids to it if it is not full

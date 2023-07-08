@@ -6,6 +6,7 @@
     <div class="font-bold">
       <!-- Header -->
       <div class="tableRow">
+        <div class="tableCellNumber"></div>
         <div class="tableCellName items-center">Submissions in Comparison</div>
         <div class="tableCellSimilarity !flex-col">
           <div>Similarity</div>
@@ -37,7 +38,7 @@
             <div
               class="tableRow"
               :class="{
-                'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1
+                'bg-container-secondary-light dark:bg-container-secondary-dark': item.index % 2 == 1
               }"
             >
               <RouterLink
@@ -47,6 +48,11 @@
                 }"
                 class="flex flex-row flex-grow"
               >
+                <!-- Index in sorted list -->
+                <div class="tableCellNumber">
+                  <div class="w-full text-center">{{ item.sortingPlace + 1 }}</div>
+                </div>
+
                 <!-- Names -->
                 <div class="tableCellName">
                   <div
@@ -187,6 +193,10 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
   @apply flex flex-row text-center;
 }
 
+.tableCellNumber {
+  @apply table-cell w-12 flex-shrink-0;
+}
+
 .tableCellSimilarity {
   @apply w-40 tableCell flex-shrink-0;
 }
@@ -201,10 +211,6 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
 
 .tableCell {
   @apply text-center mx-3 flex flex-row justify-center items-center;
-}
-
-.test {
-  transform: translate(0);
 }
 
 /* Tooltip arrow. Defined down here bacause of the content attribute */

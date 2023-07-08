@@ -60,11 +60,12 @@ for (let i = 0; i < cluster.members.length; i++) {
     }
   }
 }
-let counter = 1
+let counter = 0
 comparisons
   .sort((a, b) => b.averageSimilarity - a.averageSimilarity)
   .forEach((c) => {
-    c.id = counter++
+    c.sortingPlace = counter++
+    c.index = counter
   })
 
 for (const member of cluster.members) {
