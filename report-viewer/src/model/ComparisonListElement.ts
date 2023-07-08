@@ -3,14 +3,14 @@
  * For full comparison model see Comparison.ts
  * @see Comparison
  * @property sortingPlace - Where the comparison is placed in the list sorted by the current metric
- * @property index - Index of the comparison in the sorted and filtered list
+ * @property id - Index of the comparison in the sorted and filtered list
  * @property firstSubmissionId - Id of the first submission
  * @property secondSubmissionId - Id of the second submission
  * @property similarity - Similarity of the two submissions
  */
 export type ComparisonListElement = {
   sortingPlace: number
-  index: number
+  id: number
   firstSubmissionId: string
   secondSubmissionId: string
   averageSimilarity: number

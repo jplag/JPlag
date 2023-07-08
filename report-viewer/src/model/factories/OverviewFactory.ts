@@ -61,7 +61,7 @@ export class OverviewFactory {
       )
       comparisons.push({
         sortingPlace: counter++,
-        index: counter,
+        id: counter,
         firstSubmissionId: comparison.first_submission as string,
         secondSubmissionId: comparison.second_submission as string,
         averageSimilarity: avg as number,

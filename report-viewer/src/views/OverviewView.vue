@@ -134,7 +134,7 @@ const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(overview.topComparisons))
   let index = 1
   comparisons.forEach((c) => {
-    c.index = index++
+    c.id = index++
   })
   return comparisons
 })

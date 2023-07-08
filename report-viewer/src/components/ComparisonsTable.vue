@@ -38,7 +38,7 @@
             <div
               class="tableRow"
               :class="{
-                'bg-container-secondary-light dark:bg-container-secondary-dark': item.index % 2 == 1
+                'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1
               }"
             >
               <RouterLink

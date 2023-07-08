@@ -65,7 +65,7 @@ comparisons
   .sort((a, b) => b.averageSimilarity - a.averageSimilarity)
   .forEach((c) => {
     c.sortingPlace = counter++
-    c.index = counter
+    c.id = counter
   })
 
 for (const member of cluster.members) {
