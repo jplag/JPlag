@@ -4,27 +4,45 @@ import de.jplag.TokenType;
 
 public enum LLVMIRTokenType implements TokenType {
 
+    // Functions
     FUNCTION_BODY_BEGIN("FUNC{"),
     FUNCTION_BODY_END("}FUNC"),
     FUNCTION_DECL("FUNC_DECL"),
     FUNCTION_DEF("FUNC_DEF"),
+
+    // Terminator Instructions
     RETURN("RET"),
     BRANCH("BR"),
-    INVOKE("INVOKE"),
+    INVOKE("TRY"),
     CALL_BRANCH("CALL_BR"),
-    RESUME("RESUME"),
-    CATCH_SWITCH("CATCH"),
-    CATCH_RETURN("CATCH_RET"),
+    RESUME("THROW"),
+    CATCH_SWITCH("CATCH_SWITCH"),
+    CATCH_RETURN("CATCH"),
     CLEAN_UP_RETURN("CLEAN_UP_RET"),
+
+    // Operations
     OPERATION("OP"),
+
+    // Memory Operations
     ALLOCATION("ALLOC"),
     LOAD("LOAD"),
     STORE("STORE"),
+    FENCE("FENCE"),
+    COMPARE_EXCHANGE("CMP_XCHG"),
+    ATOMIC_CRMW("ATOMIC_CRMW"),
     GET_ELEMENT_POINTER("GET_ELEMENT_PTR"),
+
+    // Conversion Operations
     CONVERSION("CONV"),
+
+    // Other Operations
     COMPARISON("COMP"),
     PHI("PHI"),
-    CALL("CALL");
+    SELECT("SELECT"),
+    CALL("CALL"),
+    LANDING_PAD("LANDING_PAD"),
+    CATCH_PAD("CATCH_PAD"),
+    CLEAN_UP_PAD("CLEAN_UP_PAD");
 
     private final String description;
 

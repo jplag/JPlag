@@ -1350,6 +1350,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterFenceInst(LLVMIRParser.FenceInstContext ctx) {
+        transformToken(LLVMIRTokenType.FENCE, ctx.getStart(), ctx.getStop());
+        super.enterFenceInst(ctx);
     }
 
     @Override
@@ -1618,6 +1620,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterCmpXchgInst(LLVMIRParser.CmpXchgInstContext ctx) {
+        transformToken(LLVMIRTokenType.COMPARE_EXCHANGE, ctx.getStart(), ctx.getStop());
+        super.enterCmpXchgInst(ctx);
     }
 
     @Override
@@ -1626,6 +1630,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterAtomicRMWInst(LLVMIRParser.AtomicRMWInstContext ctx) {
+        transformToken(LLVMIRTokenType.ATOMIC_CRMW, ctx.getStart(), ctx.getStop());
+        super.enterAtomicRMWInst(ctx);
     }
 
     @Override
@@ -1804,6 +1810,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterSelectInst(LLVMIRParser.SelectInstContext ctx) {
+        transformToken(LLVMIRTokenType.SELECT, ctx.getStart(), ctx.getStop());
+        super.enterSelectInst(ctx);
     }
 
     @Override
@@ -1838,6 +1846,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterLandingPadInst(LLVMIRParser.LandingPadInstContext ctx) {
+        transformToken(LLVMIRTokenType.LANDING_PAD, ctx.getStart(), ctx.getStop());
+        super.enterLandingPadInst(ctx);
     }
 
     @Override
@@ -1846,6 +1856,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterCatchPadInst(LLVMIRParser.CatchPadInstContext ctx) {
+        transformToken(LLVMIRTokenType.CATCH_PAD, ctx.getStart(), ctx.getStop());
+        super.enterCatchPadInst(ctx);
     }
 
     @Override
@@ -1854,6 +1866,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterCleanupPadInst(LLVMIRParser.CleanupPadInstContext ctx) {
+        transformToken(LLVMIRTokenType.CLEAN_UP_PAD, ctx.getStart(), ctx.getStop());
+        super.enterCleanupPadInst(ctx);
     }
 
     @Override
