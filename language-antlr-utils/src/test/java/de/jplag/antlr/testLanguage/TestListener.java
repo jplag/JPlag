@@ -27,7 +27,7 @@ public class TestListener extends AbstractAntlrListener {
                 .withControlSemantics();
         createRangeMapping(OperatorContext.class, SUBTRACTION, rule -> rule.MINUS() != null).withControlSemantics();
         createStartStopMapping(SubExpressionContext.class, SUB_EXPRESSION_BEGIN, SUB_EXPRESSION_END)
-                // .addEndSemanticHandler(holder -> holder.registry().addAllNonLocalVariablesAsReads())
+                // .addEndSemanticHandler(registry -> registry.addAllNonLocalVariablesAsReads())
                 // does not work here, because there is no class context. Is still here as an example.
                 .addLocalScope().withControlSemantics();
         createTerminalMapping(TestParser.NUMBER, NUMBER).withSemantics(CodeSemantics.createKeep());

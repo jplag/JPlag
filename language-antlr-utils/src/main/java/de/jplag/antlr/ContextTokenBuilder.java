@@ -14,9 +14,9 @@ import de.jplag.semantics.VariableScope;
  * @param <T> The type of context
  */
 public class ContextTokenBuilder<T extends ParserRuleContext> extends TokenBuilder<T> {
-    private final Type type;
+    private final ContextTokenBuilderType type;
 
-    ContextTokenBuilder(TokenType tokenType, Predicate<T> condition, TokenCollector collector, File file, Type type) {
+    ContextTokenBuilder(TokenType tokenType, Predicate<T> condition, TokenCollector collector, File file, ContextTokenBuilderType type) {
         super(tokenType, condition, collector, file);
         this.type = type;
     }
@@ -29,13 +29,13 @@ public class ContextTokenBuilder<T extends ParserRuleContext> extends TokenBuild
      * @return Self
      */
     public ContextTokenBuilder<T> addAsVariable(VariableScope scope, boolean mutable, Function<T, String> nameGetter) {
-        addSemanticsHandler((semantics, rule) -> semantics.registry().registerVariable(nameGetter.apply(rule), scope, mutable));
+        addSemanticsHandler((registry, rule) -> registry.registerVariable(nameGetter.apply(rule), scope, mutable));
         return this;
     }
 
     @Override
     protected org.antlr.v4.runtime.Token getAntlrToken(T antlrContent) {
-        if (this.type != Type.STOP) {
+        if (this.type != ContextTokenBuilderType.STOP) {
             return antlrContent.getStart();
         } else {
             return antlrContent.getStop();
@@ -44,16 +44,10 @@ public class ContextTokenBuilder<T extends ParserRuleContext> extends TokenBuild
 
     @Override
     protected int getLength(T antlrContent) {
-        if (this.type != Type.RANGE) {
+        if (this.type != ContextTokenBuilderType.RANGE) {
             return super.getLength(antlrContent);
         } else {
             return antlrContent.getStop().getStopIndex() - antlrContent.getStart().getStartIndex() + 1;
         }
-    }
-
-    enum Type {
-        START,
-        STOP,
-        RANGE
     }
 }

@@ -6,6 +6,7 @@ import java.util.function.Function;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import de.jplag.semantics.CodeSemantics;
+import de.jplag.semantics.VariableRegistry;
 import de.jplag.semantics.VariableScope;
 
 /**
@@ -32,8 +33,8 @@ public class RangeBuilder<T extends ParserRuleContext> {
      * @return Self
      */
     public RangeBuilder<T> addClassContext() {
-        this.start.addSemanticsHandler(holder -> holder.registry().enterClass());
-        this.end.addSemanticsHandler(holder -> holder.registry().exitClass());
+        this.start.addSemanticsHandler(VariableRegistry::enterClass);
+        this.end.addSemanticsHandler(VariableRegistry::exitClass);
         return this;
     }
 
@@ -42,8 +43,8 @@ public class RangeBuilder<T extends ParserRuleContext> {
      * @return Self
      */
     public RangeBuilder<T> addLocalScope() {
-        this.start.addSemanticsHandler(holder -> holder.registry().enterLocalScope());
-        this.end.addSemanticsHandler(holder -> holder.registry().exitLocalScope());
+        this.start.addSemanticsHandler(VariableRegistry::enterLocalScope);
+        this.end.addSemanticsHandler(VariableRegistry::exitLocalScope);
         return this;
     }
 
@@ -52,7 +53,7 @@ public class RangeBuilder<T extends ParserRuleContext> {
      * @param handler The handler
      * @return Self
      */
-    public RangeBuilder<T> addStartSemanticHandler(Consumer<SemanticsDataHolder> handler) {
+    public RangeBuilder<T> addStartSemanticHandler(Consumer<VariableRegistry> handler) {
         this.start.addSemanticsHandler(handler);
         return this;
     }
@@ -62,7 +63,7 @@ public class RangeBuilder<T extends ParserRuleContext> {
      * @param handler The handler
      * @return Self
      */
-    public RangeBuilder<T> addEndSemanticHandler(Consumer<SemanticsDataHolder> handler) {
+    public RangeBuilder<T> addEndSemanticHandler(Consumer<VariableRegistry> handler) {
         this.end.addSemanticsHandler(handler);
         return this;
     }

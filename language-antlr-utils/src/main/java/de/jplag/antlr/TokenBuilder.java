@@ -9,15 +9,15 @@ import java.util.logging.Logger;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
+import de.jplag.semantics.VariableRegistry;
 
 /**
  * Handles the extraction of tokens. Contains information on the appropriate antlr types, the conditions under which the
  * token should be extracted and semantics information.
  * @param <T> The antlr type being mapped
  */
-@SuppressWarnings("UnusedReturnValue")
 public abstract class TokenBuilder<T> {
-    private static final Logger LOG = Logger.getLogger(TokenBuilder.class.getName());
+    private static final Logger logger = Logger.getLogger(TokenBuilder.class.getName());
     private static final String UNEXPECTED_SEMANTICS = "The listener %s indicates, it does not extract semantics. But the token (%s) has semantics information";
     private static final String MISSING_SEMANTICS = "Tokens should contain semantics, but none were supplied";
 
@@ -25,7 +25,7 @@ public abstract class TokenBuilder<T> {
     protected final TokenType tokenType;
 
     private Function<T, CodeSemantics> semanticsSupplier = null;
-    private final List<BiConsumer<SemanticsDataHolder, T>> semanticsHandler;
+    private final List<BiConsumer<VariableRegistry, T>> semanticsHandler;
 
     protected final TokenCollector tokenCollector;
     protected final File file;
@@ -90,7 +90,7 @@ public abstract class TokenBuilder<T> {
      * @param handler The handler function
      * @return Self
      */
-    public TokenBuilder<T> addSemanticsHandler(Consumer<SemanticsDataHolder> handler) {
+    public TokenBuilder<T> addSemanticsHandler(Consumer<VariableRegistry> handler) {
         this.semanticsHandler.add((semantics, rule) -> handler.accept(semantics));
         return this;
     }
@@ -101,12 +101,12 @@ public abstract class TokenBuilder<T> {
      * @param handler The handler
      * @return Self
      */
-    public TokenBuilder<T> addSemanticsHandler(BiConsumer<SemanticsDataHolder, T> handler) {
+    public TokenBuilder<T> addSemanticsHandler(BiConsumer<VariableRegistry, T> handler) {
         this.semanticsHandler.add(handler);
         return this;
     }
 
-    void createToken(T antlrContent, SemanticsDataHolder semantics) {
+    void createToken(T antlrContent, VariableRegistry semantics) {
         org.antlr.v4.runtime.Token antlrToken = getAntlrToken(antlrContent);
 
         int line = antlrToken.getLine();
@@ -116,14 +116,14 @@ public abstract class TokenBuilder<T> {
         Token token;
         if (semantics != null) {
             if (semanticsSupplier == null) {
-                throw new InternalListenerException(MISSING_SEMANTICS);
+                throw new IllegalStateException(MISSING_SEMANTICS);
             }
 
             this.semanticsHandler.forEach(it -> it.accept(semantics, antlrContent));
             token = new Token(this.tokenType, this.file, line, column, length, semanticsSupplier.apply(antlrContent));
         } else {
             if (semanticsSupplier != null) {
-                LOG.warning(() -> String.format(UNEXPECTED_SEMANTICS, this.getClass().getName(), this.tokenType.getDescription()));
+                logger.warning(() -> String.format(UNEXPECTED_SEMANTICS, this.getClass().getName(), this.tokenType.getDescription()));
             }
 
             token = new Token(this.tokenType, this.file, line, column, length);
