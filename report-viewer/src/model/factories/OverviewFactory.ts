@@ -1,10 +1,10 @@
 import { Overview } from '../Overview'
-import type { Metric } from '../Metric'
 import type { ComparisonListElement } from '../ComparisonListElement'
 import type { Cluster } from '@/model/Cluster'
 import store from '@/stores/store'
 import type { Version } from '../Version'
 import versionJson from '@/version.json'
+import Distribution from '../Distribution'
 
 export class OverviewFactory {
   static reportViewerVersion: Version =
@@ -16,7 +16,7 @@ export class OverviewFactory {
    * Creates an overview object from a json object created by by JPlag
    * @param json the json object
    */
-  static getOverview(json: Record<string, unknown>): Overview {
+  private static extractOverview(json: Record<string, unknown>): Overview {
     const versionField = json.jplag_version as Record<string, number>
     const jplagVersion: Version = {
       major: versionField.major,
@@ -35,33 +35,42 @@ export class OverviewFactory {
     const map = new Map<string, string>(Object.entries(jsonSubmissions))
     const dateOfExecution = json.date_of_execution as string
     const duration = json.execution_time as number as number
-    const metrics = [] as Array<Metric>
     const clusters = [] as Array<Cluster>
     const totalComparisons = json.total_comparisons as number
-    ;(json.metrics as Array<unknown>).forEach((jsonMetric) => {
-      const metric = jsonMetric as Record<string, unknown>
-      const comparisons = [] as Array<ComparisonListElement>
 
-      ;(metric.topComparisons as Array<Record<string, unknown>>).forEach(
-        (jsonComparison, index) => {
-          const comparison: ComparisonListElement = {
-            id: (index + 1) as number,
-            firstSubmissionId: jsonComparison.first_submission as string,
-            secondSubmissionId: jsonComparison.second_submission as string,
-            similarity: jsonComparison.similarity as number
-          }
-          comparisons.push(comparison)
-        }
+    const distributions = [] as Array<Distribution>
+    const averageSimilarities: Map<string, number> = new Map<string, number>()
+    const comparisons = [] as Array<ComparisonListElement>
+
+    const metrics = json.metrics as Array<unknown> as Array<Record<string, unknown>>
+    // Average
+    distributions.push(new Distribution(metrics[0].distribution as Array<number>))
+    for (const comparison of metrics[0].topComparisons as Array<Record<string, unknown>>) {
+      averageSimilarities.set(
+        (comparison.first_submission as string) + '-' + (comparison.second_submission as string),
+        comparison.similarity as number
       )
-      metrics.push({
-        metricName: metric.name as string,
-        metricThreshold: metric.threshold as number,
-        distribution: metric.distribution as Array<number>,
-        comparisons: comparisons,
-        description: metric.description as string
+    }
+
+    // Max
+    distributions.push(new Distribution(metrics[1].distribution as Array<number>))
+    let counter = 0
+    for (const comparison of metrics[1].topComparisons as Array<Record<string, unknown>>) {
+      const avg = averageSimilarities.get(
+        (comparison.first_submission as string) + '-' + (comparison.second_submission as string)
+      )
+      comparisons.push({
+        sortingPlace: counter++,
+        id: counter,
+        firstSubmissionId: comparison.first_submission as string,
+        secondSubmissionId: comparison.second_submission as string,
+        averageSimilarity: avg as number,
+        maximumSimilarity: comparison.similarity as number
       })
-    })
+    }
+
     store().saveSubmissionNames(map)
+
     if (json.clusters) {
       ;(json.clusters as Array<unknown>).forEach((jsonCluster) => {
         const cluster = jsonCluster as Record<string, unknown>
@@ -83,11 +92,62 @@ export class OverviewFactory {
       matchSensitivity,
       dateOfExecution,
       duration,
-      metrics,
+      comparisons,
+      distributions,
       clusters,
       totalComparisons,
       new Map()
     )
+  }
+
+  /**
+   * Gets the overview file based on the used mode (zip, local, single).
+   */
+  public static getOverview(): Overview {
+    console.log('Generating overview...')
+    let temp!: Overview
+    //Gets the overview file based on the used mode (zip, local, single).
+    if (store().state.localModeUsed) {
+      const request = new XMLHttpRequest()
+      request.open('GET', '/files/overview.json', false)
+      request.send()
+
+      if (request.status == 200) {
+        temp = OverviewFactory.extractOverview(JSON.parse(request.response))
+      } else {
+        throw new Error('Could not find overview.json in folder.')
+      }
+    } else if (store().state.zipModeUsed) {
+      console.log('Start finding overview.json in state...')
+      const index = Object.keys(store().state.files).find((name) => name.endsWith('overview.json'))
+      const overviewFile =
+        index != undefined
+          ? store().state.files[index]
+          : console.log('Could not find overview.json')
+
+      if (overviewFile === undefined) {
+        console.log('Could not find overview.json')
+        return new Overview(
+          [],
+          '',
+          '',
+          [],
+          0,
+          '',
+          0,
+          [],
+          [],
+          [],
+          0,
+          new Map<string, Map<string, string>>()
+        )
+      }
+      const overviewJson = JSON.parse(overviewFile)
+      temp = OverviewFactory.extractOverview(overviewJson)
+    } else if (store().state.singleModeUsed) {
+      temp = OverviewFactory.extractOverview(JSON.parse(store().state.singleFillRawContent))
+    }
+    return temp
   }
 
   /**
