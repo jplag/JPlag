@@ -1,13 +1,16 @@
 package de.jplag.antlr;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -186,6 +189,72 @@ public class AbstractAntlrListener implements ParseTreeListener {
      */
     protected void createTerminalMapping(int terminalType, TokenType jplagType, Predicate<org.antlr.v4.runtime.Token> condition) {
         this.terminalMapping.add(new TypeBuilder<>(jplagType, token -> token.getType() == terminalType && condition.test(token)));
+    }
+
+    /**
+     * Searches the ancestors of an element for an element of the specific type.
+     * @param context the current element to start the search from.
+     * @param ancestor the class representing the type to search for.
+     * @param stops the types of elements to stop the upward search at.
+     * @param <T> the type of the element to search for.
+     * @return an ancestor of the specified type, or null if not found.
+     */
+    @SafeVarargs
+    protected final <T extends ParserRuleContext> T getAncestor(ParserRuleContext context, Class<T> ancestor,
+            Class<? extends ParserRuleContext>... stops) {
+        ParserRuleContext currentContext = context;
+        Set<Class<? extends ParserRuleContext>> forbidden = Set.of(stops);
+        boolean abort = false;
+        while (currentContext != null && !abort) {
+            if (currentContext.getClass() == ancestor) {
+                return ancestor.cast(currentContext);
+            }
+            if (forbidden.contains(currentContext.getClass())) {
+                abort = true;
+            }
+
+            currentContext = currentContext.getParent();
+        }
+
+        return null;
+    }
+
+    /**
+     * {@return true if an ancestor of the specified type exists}
+     * @param context the current element to start the search from.
+     * @param parent the class representing the type to search for.
+     * @param stops the types of elements to stop the upward search at.
+     * @see #getAncestor(ParserRuleContext, Class, Class[])
+     */
+    @SafeVarargs
+    protected final boolean hasAncestor(ParserRuleContext context, Class<? extends ParserRuleContext> parent,
+            Class<? extends ParserRuleContext>... stops) {
+        return getAncestor(context, parent, stops) != null;
+    }
+
+    /**
+     * Searches a subtree for a descendant of a specific type. Search is done breath-first.
+     * @param context the context to search the subtree from.
+     * @param descendant the class representing the type to search for.
+     * @param <T> the type to search for.
+     * @return the first appearance of an element of the given type in the subtree, or null if no such element exists.
+     */
+    protected final <T extends ParserRuleContext> T getDescendant(ParserRuleContext context, Class<T> descendant) {
+        // simple iterative bfs
+        ArrayDeque<ParserRuleContext> queue = new ArrayDeque<>();
+        queue.add(context);
+        while (!queue.isEmpty()) {
+            ParserRuleContext next = queue.removeFirst();
+            for (ParseTree tree : next.children) {
+                if (tree.getClass() == descendant) {
+                    return descendant.cast(tree);
+                }
+                if (tree instanceof ParserRuleContext parserRuleContext) {
+                    queue.addLast(parserRuleContext);
+                }
+            }
+        }
+        return null;
     }
 
     private <T extends ParserRuleContext> TypeBuilder<RuleContext> initTypeBuilder(Class<T> antlrType, TokenType jplagType, Predicate<T> condition) {
