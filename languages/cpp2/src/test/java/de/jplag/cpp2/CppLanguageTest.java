@@ -6,6 +6,13 @@ import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
+/**
+ * These tests attempt to cover the cpp module in multiple ways. These are the tests currently contained:
+ * <p>
+ * - As the ANTLR grammar requires some workarounds to have the token extraction similar to the Java language module,
+ * there are tests to cover the extraction of such tokens. - Ensures that all tokens are extracted at some point and
+ * source files are suitably covered by testing a huge file (bc6h_enc.h)
+ */
 public class CppLanguageTest extends LanguageModuleTest {
     private static final String[] assignSnippets = {"i = 10", "i += 10", "i -= 10", "i += 10", "i /= 10", "i %= 10", "i >>= 10", "i <<= 10",
             "i &= 10", "i ^= 10", "i |= 10", "i++", "i--", "++i", "--i"};

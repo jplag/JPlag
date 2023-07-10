@@ -202,21 +202,21 @@ public class AbstractAntlrListener implements ParseTreeListener {
     @SafeVarargs
     protected final <T extends ParserRuleContext> T getAncestor(ParserRuleContext context, Class<T> ancestor,
             Class<? extends ParserRuleContext>... stops) {
-        ParserRuleContext currentcontext = context;
+        ParserRuleContext currentContext = context;
         Set<Class<? extends ParserRuleContext>> forbidden = Set.of(stops);
-        do {
-            ParserRuleContext next = currentcontext.getParent();
-            if (next == null) {
-                return null;
+        boolean abort = false;
+        while (currentContext != null && !abort) {
+            if (currentContext.getClass() == ancestor) {
+                return ancestor.cast(currentContext);
             }
-            if (next.getClass() == ancestor) {
-                return ancestor.cast(next);
+            if (forbidden.contains(currentContext.getClass())) {
+                abort = true;
             }
-            if (forbidden.contains(next.getClass())) {
-                return null;
-            }
-            currentcontext = next;
-        } while (true);
+
+            currentContext = currentContext.getParent();
+        }
+
+        return null;
     }
 
     /**

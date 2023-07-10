@@ -9,10 +9,16 @@ import de.jplag.antlr.TokenCollector;
 import de.jplag.cpp2.grammar.CPP14Parser;
 import de.jplag.cpp2.grammar.CPP14Parser.*;
 
+/**
+ * Extracts tokens from the ANTLR parse tree. Token extraction is built to be similar to the Java language module. In
+ * some cases, the grammar is ambiguous and requires surrounding context to extract the correct token.
+ * <p>
+ * Those cases are covered by {@link SimpleTypeSpecifierContext} and {@link SimpleDeclarationContext}
+ */
 public class CPPListener extends AbstractAntlrListener {
     /**
      * New instance
-     * @param collector The token collector
+     * @param collector The token collector the token will be added to
      * @param currentFile The currently processed file
      */
     public CPPListener(TokenCollector collector, File currentFile) {
