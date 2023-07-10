@@ -3,16 +3,59 @@ import type { Match } from '../Match'
 import type { SubmissionFile } from '../SubmissionFile'
 import type { MatchInSingleFile } from '../MatchInSingleFile'
 import store from '@/stores/store'
+import { generateColors } from '@/utils/ColorUtils'
+import slash from 'slash'
 
 /**
  * Factory class for creating Comparison objects
  */
 export class ComparisonFactory {
+  public static getComparison(id1: string, id2: string) {
+    console.log('Generating comparison {%s} - {%s}...', id1, id2)
+    let comparison = new Comparison('', '', 0)
+
+    //getting the comparison file based on the used mode (zip, local, single)
+    if (store().state.localModeUsed) {
+      const request = new XMLHttpRequest()
+      request.open('GET', `/files/${store().getComparisonFileName(id1, id2)}`, false)
+      request.send()
+
+      if (request.status == 200) {
+        ComparisonFactory.loadSubmissionFilesFromLocal(id1)
+        ComparisonFactory.loadSubmissionFilesFromLocal(id2)
+        try {
+          comparison = ComparisonFactory.extractComparison(JSON.parse(request.response))
+        } catch (e) {
+          throw new Error('Comparison file not found')
+        }
+      } else {
+        throw new Error('Comparison file not found')
+      }
+    } else if (store().state.zipModeUsed) {
+      const comparisonFile = store().getComparisonFileForSubmissions(id1, id2)
+      if (comparisonFile) {
+        comparison = ComparisonFactory.extractComparison(JSON.parse(comparisonFile))
+      } else {
+        throw new Error('Comparison file not found')
+      }
+    } else if (store().state.singleModeUsed) {
+      try {
+        comparison = ComparisonFactory.extractComparison(
+          JSON.parse(store().state.singleFillRawContent)
+        )
+      } catch (e) {
+        store().clearStore()
+        throw new Error('No Comparison files given!')
+      }
+    }
+    return comparison
+  }
+
   /**
    * Creates a comparison object from a json object created by by JPlag
    * @param json the json object
    */
-  static getComparison(json: Record<string, unknown>): Comparison {
+  private static extractComparison(json: Record<string, unknown>): Comparison {
     const filesOfFirstSubmission = store().filesOfSubmission(json.id1 as string)
     const filesOfSecondSubmission = store().filesOfSubmission(json.id2 as string)
 
@@ -21,7 +64,10 @@ export class ComparisonFactory {
 
     const matches = json.matches as Array<Record<string, unknown>>
 
-    const colors = this.generateColorsForMatches(matches.length)
+    const matchSaturation = 0.8
+    const matchLightness = 0.5
+    const matchAlpha = 0.3
+    const colors = generateColors(matches.length, matchSaturation, matchLightness, matchAlpha)
     const coloredMatches = matches.map((match, index) => this.mapMatch(match, colors[index]))
 
     const matchesInFirst = this.groupMatchesByFileName(coloredMatches, 1)
@@ -98,33 +144,44 @@ export class ComparisonFactory {
     return acc
   }
 
-  private static generateColorsForMatches(num: number): Array<string> {
-    const colors: Array<string> = []
-    const numberOfColorsInFirstInterval = Math.round(((80 - 20) / (80 - 20 + (340 - 160))) * num) // number of colors from the first interval
-    const numberOfColorsInSecondInterval = num - numberOfColorsInFirstInterval // number of colors from the second interval
-    ComparisonFactory.generateColorsForInterval(20, 80, numberOfColorsInFirstInterval, colors)
-    ComparisonFactory.generateColorsForInterval(160, 340, numberOfColorsInSecondInterval, colors)
-    return colors
+  private static getSubmissionFileListFromLocal(submissionId: string): string[] {
+    const request = new XMLHttpRequest()
+    request.open('GET', `/files/submissionFileIndex.json`, false)
+    request.send()
+    if (request.status == 200) {
+      return JSON.parse(request.response).submission_file_indexes[submissionId].map(
+        (file: string) => slash(file)
+      )
+    } else {
+      return []
+    }
   }
 
-  private static generateColorsForInterval(
-    intervalStart: number,
-    intervalEnd: number,
-    numberOfColorsInInterval: number,
-    colors: Array<string>
-  ) {
-    const interval = intervalEnd - intervalStart
-    const hueDelta = Math.trunc(interval / numberOfColorsInInterval)
-    for (let i = 0; i < numberOfColorsInInterval; i++) {
-      const hue = intervalStart + i * hueDelta
-      colors.push(`hsla(${hue}, 80%, 50%, 0.3)`)
+  private static loadSubmissionFilesFromLocal(submissionId: string) {
+    const request = new XMLHttpRequest()
+    const fileList = ComparisonFactory.getSubmissionFileListFromLocal(submissionId)
+    for (const file of fileList) {
+      request.open('GET', `/files/files/${file}`, false)
+      request.overrideMimeType('text/plain')
+      request.send()
+      if (request.status == 200) {
+        store().saveSubmissionFile({
+          name: submissionId,
+          file: {
+            fileName: slash(file),
+            data: request.response
+          }
+        })
+      } else {
+        console.log('Error loading file: ' + file)
+      }
     }
   }
 
   private static mapMatch(match: Record<string, unknown>, color: string): Match {
     return {
-      firstFile: match.file1 as string,
-      secondFile: match.file2 as string,
+      firstFile: slash(match.file1 as string),
+      secondFile: slash(match.file2 as string),
       startInFirst: match.start1 as number,
       endInFirst: match.end1 as number,
       startInSecond: match.start2 as number,

@@ -1,6 +1,6 @@
 package de.jplag.emf;
 
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -69,7 +69,7 @@ public abstract class AbstractEmfTest {
         assertTrue(viewFile.exists());
         assertTrue(expectedViewFile.exists());
         try {
-            assertIterableEquals(Files.readAllLines(expectedViewFile.toPath()), Files.readAllLines(viewFile.toPath()));
+            assertLinesMatch(Files.readAllLines(expectedViewFile.toPath()), Files.readAllLines(viewFile.toPath()));
         } catch (IOException exception) {
             fail(exception);
         }

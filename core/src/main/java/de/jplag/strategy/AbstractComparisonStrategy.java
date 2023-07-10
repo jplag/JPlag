@@ -15,7 +15,7 @@ import de.jplag.options.JPlagOptions;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(ComparisonStrategy.class);
 
     private final GreedyStringTiling greedyStringTiling;
 
@@ -24,7 +24,6 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     protected AbstractComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
         this.greedyStringTiling = greedyStringTiling;
         this.options = options;
-        logger.info("Start comparing...");
     }
 
     /**

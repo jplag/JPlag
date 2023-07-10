@@ -2,23 +2,47 @@
   Starting view of the application. Presents the options for loading a JPlag report.
 -->
 <template>
-  <div class="container" @dragover.prevent @drop.prevent="uploadFile">
-    <img alt="JPlag" src="@/assets/logo-nobg.png" />
-    <h1>JPlag Report Viewer</h1>
-    <div v-if="!hasQueryFile" class="container" style="height: auto">
-      <h2>Select an overview or comparison file or a zip to display.</h2>
-      <h3>(No files get uploaded anywhere)</h3>
-      <div class="drop-container">
-        <p>Drop a .json or .zip on this page</p>
+  <div
+    class="h-screen text-center flex items-center"
+    @dragover.prevent
+    @drop.prevent="uploadFileOnDrag"
+  >
+    <div class="w-screen">
+      <div>
+        <img
+          class="mt-8 w-60 h-auto mx-auto"
+          src="@/assets/jplag-light-transparent.png"
+          alt="JPlag Logo"
+          v-if="store().uiState.useDarkMode"
+        />
+        <img
+          class="mt-8 w-60 h-auto mx-auto"
+          src="@/assets/jplag-dark-transparent.png"
+          alt="JPlag Logo"
+          v-else
+        />
       </div>
-      <div v-if="hasLocalFile" class="local-files-container">
-        <p class="local-files-text">Detected local files!</p>
-        <button class="local-files-button" @click="continueWithLocal">
+      <h1 class="text-7xl">JPlag Report Viewer</h1>
+      <div v-if="!hasQueryFile && !loadingFiles">
+        <div
+          class="px-5 py-5 mt-10 w-96 mx-auto flex flex-col justify-center cursor-pointer border-1 rounded-md border-accent-dark bg-accent bg-opacity-25"
+          @click="uploadFileThroughWindow()"
+        >
+          <div>Drag and Drop zip/Json file on this page</div>
+          <div>Or click here to select a file</div>
+        </div>
+        <div>(No files will be uploaded)</div>
+        <Button class="w-fit mx-auto mt-8" @click="continueWithLocal" v-if="hasLocalFile">
           Continue with local files
-        </button>
+        </Button>
+      </div>
+      <div v-else class="pt-5 space-y-5">
+        <div
+          class="mx-auto rounded-full w-16 h-16 animate-spin border-t-accent dark:border-t-accent border-interactable-border-light dark:border-interactable-border-dark border-8"
+        ></div>
+        <p class="font-bold text-2xl">Loading file...</p>
       </div>
     </div>
-    <p v-else>Loading file…</p>
   </div>
 </template>
 
@@ -29,6 +53,7 @@ import jszip from 'jszip'
 import router from '@/router'
 import store from '@/stores/store'
 import slash from 'slash'
+import Button from '@/components/ButtonComponent.vue'
 
 class LoadError extends Error {}
 
@@ -36,6 +61,8 @@ store().clearStore()
 const hasLocalFile = ref(false)
 // Checks whether local files exist
 fetch('/files/overview.json').then((response) => (hasLocalFile.value = response.status == 200))
+
+const loadingFiles = ref(false)
 
 // Loads file passed in query param, if any.
 const queryParams = useRoute().query
@@ -161,8 +188,8 @@ async function handleZipFile(file: Blob) {
         )
         await zip.files[originalFileName].async('string').then((data) => {
           store().saveSubmissionFile({
-            name: submissionFileName,
-            file: { fileName: fullPathFileName, data: data }
+            name: slash(submissionFileName),
+            file: { fileName: slash(fullPathFileName), data: data }
           })
         })
       } else {
@@ -213,6 +240,7 @@ function handleJsonFile(str: string) {
  * @param file File to handle
  */
 async function handleFile(file: Blob) {
+  loadingFiles.value = true
   switch (file.type) {
     case 'application/zip':
     case 'application/zip-compressed':
@@ -230,7 +258,7 @@ async function handleFile(file: Blob) {
  * Handles file drop.
  * @param e Drag event of file drop
  */
-async function uploadFile(e: DragEvent) {
+async function uploadFileOnDrag(e: DragEvent) {
   let dropped = e.dataTransfer?.files
   try {
     if (dropped?.length === 1) {
@@ -246,6 +274,25 @@ async function uploadFile(e: DragEvent) {
       throw e
     }
   }
+}
+
+async function uploadFileThroughWindow() {
+  let input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.zip,.json'
+  input.multiple = false
+  input.onchange = () => {
+    const files = input.files
+    if (!files) {
+      return
+    }
+    const file = files.item(0)
+    if (!file) {
+      return
+    }
+    handleFile(file)
+  }
+  input.click()
 }
 
 /**

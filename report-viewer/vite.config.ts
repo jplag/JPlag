@@ -6,6 +6,15 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig((userConfig: UserConfig) => {
+  let base = '/'
+  switch (userConfig.mode) {
+    case 'dev':
+      base = '/JPlag-Dev/'
+      break
+    case 'prod':
+      base = '/JPlag/'
+      break
+  }
   return {
     plugins: [vue()],
     resolve: {
@@ -13,6 +22,6 @@ export default defineConfig((userConfig: UserConfig) => {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
-    base: userConfig.mode != 'dev' ? '/JPlag/' : '/JPlag-Dev/'
+    base: base
   }
 })

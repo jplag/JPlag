@@ -73,8 +73,6 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         // Append date-time
         builder.append(dateFormat.format(timeOfError == null ? new Date() : timeOfError)).append(' ');
 
-        // Append current thread name
-        builder.append('[').append(Thread.currentThread().getName()).append("] ");
         // Append current Level
         builder.append('[').append(renderLevel(level)).append(']').append(' ');
 
