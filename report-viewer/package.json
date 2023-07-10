@@ -17,12 +17,15 @@
     "prepare": "cd .. && husky install report-viewer/.husky"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-regular-svg-icons": "^6.4.0",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/vue-fontawesome": "^3.0.3",
     "chart.js": "^3.9.1",
     "chartjs-plugin-datalabels": "^2.2.0",
-    "gitart-vue-dialog": "^3.1.0",
     "highlight.js": "^11.8.0",
     "jszip": "^3.10.0",
-    "pinia": "^2.1.3",
+    "pinia": "^2.1.4",
     "slash": "^5.1.0",
     "vue": "^3.3.4",
     "vue-chart-3": "^3.1.8",
@@ -40,17 +43,19 @@
     "@vue/eslint-config-typescript": "^11.0.3",
     "@vue/test-utils": "^2.4.0",
     "@vue/tsconfig": "^0.4.0",
-    "eslint": "^8.43.0",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.44.0",
     "eslint-plugin-vue": "^9.15.1",
     "husky": "^8.0.0",
     "jsdom": "^22.1.0",
     "lint-staged": "^13.2.3",
     "npm-run-all": "^4.1.5",
-    "typescript": "^5.1.3",
+    "postcss": "^8.4.24",
     "prettier": "^2.8.8",
-
+    "tailwindcss": "^3.3.2",
+    "typescript": "^5.1.6",
     "vite": "^4.3.9",
-    "vitest": "^0.32.2",
-    "vue-tsc": "^1.6.5"
+    "vitest": "^0.32.4",
+    "vue-tsc": "^1.8.4"
   }
 }

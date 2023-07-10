@@ -3,16 +3,15 @@
   participants in the cluster.
 -->
 <template>
-  <div class="wrapper">
-    <div v-if="!hasNoMember" class="wrapper">
-      <select v-model="selectedMember">
-        <option v-for="(member, index) in cluster.members.keys()" :key="index">
-          {{ member }}
-        </option>
-      </select>
-      <RadarChart :chartData="chartData" :options="options" class="chart"></RadarChart>
+  <div class="flex flex-col">
+    <div v-if="!hasNoMember" class="flex-grow flex flex-col">
+      <DropDownSelector
+        :options="selectedOptions"
+        @selectionChanged="(value) => updateChartData(value)"
+      />
+      <RadarChart :chartData="chartData" :options="options" class="flex-grow"></RadarChart>
     </div>
-    <div v-if="hasNoMember" class="no-member">
+    <div v-else>
       <span>This cluster has no members.</span>
     </div>
   </div>
@@ -23,11 +22,12 @@ import type { PropType, Ref } from 'vue'
 import type { ChartData } from 'chart.js'
 import type { ClusterListElement } from '@/model/ClusterListElement'
 
-import { ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { RadarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import { radarChartStyle, radarChartOptions } from '@/assets/radar-chart-configuration'
+import DropDownSelector from './DropDownSelector.vue'
+import { graphColors } from '@/utils/ColorUtils'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -39,16 +39,11 @@ const props = defineProps({
   }
 })
 
-let hasNoMember = false
+let hasNoMember = props.cluster.members.size == 0
 
-/**
- * @returns The id of the first member of the cluster.
- */
-function getIdOfFirstSubmission() {
-  const firstMember = props.cluster.members.keys().next().value
-  hasNoMember = !firstMember
-  return firstMember
-}
+const selectedOptions = Array.from(props.cluster.members.keys())
+
+const idOfFirstSubmission = selectedOptions.length > 0 ? selectedOptions[0] : ''
 
 /**
  * @param member The member to create the labels for.
@@ -66,64 +61,63 @@ function createLabelsFor(member: string) {
  */
 function createDataSetFor(member: string) {
   let data = new Array<number>()
-  props.cluster.members
-    .get(member)
-    ?.forEach((m) => data.push(roundToTwoDecimals(m.percentage * 100)))
+  props.cluster.members.get(member)?.forEach((m) => data.push(+(m.similarity * 100).toFixed(2)))
   return data
 }
 
-/**
- * @param num The number to round.
- * @returns The rounded number.
- */
-function roundToTwoDecimals(num: number): number {
-  return Math.round((num + Number.EPSILON) * 100) / 100
+const radarChartStyle = {
+  fill: true,
+  backgroundColor: graphColors.contentFill,
+  borderColor: graphColors.contentBorder,
+  pointBackgroundColor: graphColors.pointFill,
+  pointBorderColor: graphColors.contentBorder,
+  borderWidth: 1
 }
-
-const selectedMember = ref(getIdOfFirstSubmission())
+const radarChartOptions = computed(() => {
+  return {
+    legend: {
+      display: false
+    },
+    scales: {
+      r: {
+        suggestedMin: 50,
+        suggestedMax: 100,
+        ticks: {
+          color: graphColors.ticksAndFont.value,
+          backdropColor: 'rgba(0,0,0,0)'
+        },
+        grid: {
+          color: graphColors.gridLines.value
+        },
+        angleLines: {
+          color: graphColors.gridLines.value
+        }
+      }
+    },
+    plugins: {
+      datalabels: {
+        color: graphColors.ticksAndFont.value
+      }
+    }
+  }
+})
 
 const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = ref({
-  labels: createLabelsFor(getIdOfFirstSubmission()),
+  labels: createLabelsFor(idOfFirstSubmission),
   datasets: [
     {
       ...radarChartStyle,
-      label: getIdOfFirstSubmission(),
-      data: createDataSetFor(getIdOfFirstSubmission())
+      label: idOfFirstSubmission,
+      data: createDataSetFor(idOfFirstSubmission)
     }
   ]
 })
 
 const options = ref(radarChartOptions)
 
-watch(
-  () => selectedMember.value,
-  (val) => {
-    chartData.value = {
-      labels: createLabelsFor(val),
-      datasets: [
-        {
-          ...radarChartStyle,
-          label: val,
-          data: createDataSetFor(val)
-        }
-      ]
-    }
-  }
-)
+function updateChartData(value: string) {
+  chartData.value.datasets[0].data = createDataSetFor(value)
+  chartData.value.datasets[0].label = value
+  chartData.value.labels = createLabelsFor(value)
+}
 </script>
-
-<style scoped>
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-}
-.no-member {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-.chart {
-  height: 50vw;
-}
-</style>

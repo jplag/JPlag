@@ -12,5 +12,5 @@ type ClusterListElement = {
 /**
  * The ids of the submissions in the cluster, and the matches between them
  */
-type ClusterListElementMember = Map<string, Array<{ matchedWith: string; percentage: number }>>
+type ClusterListElementMember = Map<string, Array<{ matchedWith: string; similarity: number }>>
 export type { ClusterListElement, ClusterListElementMember }
