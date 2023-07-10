@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.emf.dynamic.DynamicEmfLanguage;
 import de.jplag.emf.model.parser.DynamicModelParser;
 
 /**
@@ -14,13 +15,13 @@ import de.jplag.emf.model.parser.DynamicModelParser;
  * @author Timur Saglam
  */
 @MetaInfServices(de.jplag.Language.class)
-public class Language extends de.jplag.emf.dynamic.Language {
+public class EmfModelLanguage extends DynamicEmfLanguage {
     private static final String NAME = "EMF models (dynamically created token set)";
     private static final String IDENTIFIER = "emf-model";
 
     public static final String VIEW_FILE_SUFFIX = ".treeview";
 
-    public Language() {
+    public EmfModelLanguage() {
         super(new DynamicModelParser());
     }
 

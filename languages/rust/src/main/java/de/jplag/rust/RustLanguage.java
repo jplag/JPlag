@@ -1,4 +1,4 @@
-package de.jplag.rlang;
+package de.jplag.rust;
 
 import java.io.File;
 import java.util.List;
@@ -10,24 +10,25 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 /**
- * This represents the R language as a language supported by JPlag.
+ * This represents the Rust language as a language supported by JPlag.
  */
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class RustLanguage implements de.jplag.Language {
 
-    private static final String NAME = "R Parser";
-    private static final String IDENTIFIER = "rlang";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private static final String[] FILE_EXTENSION = {".R", ".r"};
-    private final RParserAdapter parserAdapter;
+    protected static final String[] FILE_EXTENSIONS = {".rs"};
+    private static final String NAME = "Rust Language Module";
+    private static final String IDENTIFIER = "rust";
+    private static final int MINIMUM_TOKEN_MATCH = 8;
 
-    public Language() {
-        this.parserAdapter = new RParserAdapter();
+    private final RustParserAdapter parserAdapter;
+
+    public RustLanguage() {
+        this.parserAdapter = new RustParserAdapter();
     }
 
     @Override
     public String[] suffixes() {
-        return FILE_EXTENSION;
+        return FILE_EXTENSIONS;
     }
 
     @Override
@@ -42,7 +43,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return MINIMUM_TOKEN_MATCH;
     }
 
     @Override

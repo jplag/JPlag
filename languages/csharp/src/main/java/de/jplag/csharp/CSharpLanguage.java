@@ -14,7 +14,7 @@ import de.jplag.Token;
  * @author Timur Saglam
  */
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class CSharpLanguage implements de.jplag.Language {
     private static final String NAME = "C# 6 Parser";
     private static final String IDENTIFIER = "csharp";
     private static final String[] FILE_ENDINGS = new String[] {".cs", ".CS"};
@@ -22,7 +22,7 @@ public class Language implements de.jplag.Language {
 
     private final CSharpParserAdapter parser;
 
-    public Language() {
+    public CSharpLanguage() {
         parser = new CSharpParserAdapter();
     }
 

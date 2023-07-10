@@ -16,7 +16,7 @@ import de.jplag.emf.parser.EcoreParser;
  * @author Timur Saglam
  */
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class EmfLanguage implements de.jplag.Language {
     public static final String VIEW_FILE_SUFFIX = ".emfatic";
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
 
@@ -26,11 +26,11 @@ public class Language implements de.jplag.Language {
 
     protected final EcoreParser parser;
 
-    public Language() {
+    public EmfLanguage() {
         this(new EcoreParser());
     }
 
-    protected Language(EcoreParser parser) {
+    protected EmfLanguage(EcoreParser parser) {
         this.parser = parser;
     }
 

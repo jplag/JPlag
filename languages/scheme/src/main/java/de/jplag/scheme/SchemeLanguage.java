@@ -1,4 +1,4 @@
-package de.jplag.python3;
+package de.jplag.scheme;
 
 import java.io.File;
 import java.util.List;
@@ -10,24 +10,23 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class SchemeLanguage implements de.jplag.Language {
 
-    private static final String IDENTIFIER = "python3";
+    private static final String IDENTIFIER = "scheme";
+    private final de.jplag.scheme.Parser parser;
 
-    private final Parser parser;
-
-    public Language() {
+    public SchemeLanguage() {
         parser = new Parser();
     }
 
     @Override
     public String[] suffixes() {
-        return new String[] {".py"};
+        return new String[] {".scm", ".SCM", ".ss", ".SS"};
     }
 
     @Override
     public String getName() {
-        return "Python3 Parser";
+        return "SchemeR4RS Parser [basic markup]";
     }
 
     @Override
@@ -37,7 +36,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public int minimumTokenMatch() {
-        return 12;
+        return 13;
     }
 
     @Override

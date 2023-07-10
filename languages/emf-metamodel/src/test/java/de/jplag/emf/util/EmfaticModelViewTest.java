@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import de.jplag.ParsingException;
 import de.jplag.emf.AbstractEmfTest;
-import de.jplag.emf.Language;
+import de.jplag.emf.EmfLanguage;
 
 class EmfaticModelViewTest extends AbstractEmfTest {
 
@@ -31,9 +31,9 @@ class EmfaticModelViewTest extends AbstractEmfTest {
 
         // Generate emfatic view:
         EmfaticModelView view = new EmfaticModelView(modelFile, modelResource);
-        view.writeToFile(Language.VIEW_FILE_SUFFIX);
+        view.writeToFile(EmfLanguage.VIEW_FILE_SUFFIX);
 
         // Compare expected vs. actual view file:
-        assertViewFilesMatch(modelFile, Language.VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
+        assertViewFilesMatch(modelFile, EmfLanguage.VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
     }
 }

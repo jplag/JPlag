@@ -9,7 +9,7 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  */
 public class KotlinLanguageTest extends LanguageModuleTest {
     public KotlinLanguageTest() {
-        super(new de.jplag.kotlin.Language(), KotlinTokenType.class);
+        super(new KotlinLanguage(), KotlinTokenType.class);
     }
 
     @Override

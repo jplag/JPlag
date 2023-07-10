@@ -8,7 +8,7 @@ import org.kohsuke.MetaInfServices
 import java.util
 import scala.jdk.CollectionConverters.{SeqHasAsJava, SetHasAsScala}
 
-class Language extends de.jplag.Language {
+class ScalaLanguage extends de.jplag.Language {
   private val parser = new Parser
   private final val fileExtensions = Array(".scala", ".sc")
 

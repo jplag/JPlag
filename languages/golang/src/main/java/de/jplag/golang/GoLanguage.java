@@ -1,4 +1,4 @@
-package de.jplag.rust;
+package de.jplag.golang;
 
 import java.io.File;
 import java.util.List;
@@ -9,21 +9,17 @@ import org.kohsuke.MetaInfServices;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-/**
- * This represents the Rust language as a language supported by JPlag.
- */
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class GoLanguage implements de.jplag.Language {
 
-    protected static final String[] FILE_EXTENSIONS = {".rs"};
-    private static final String NAME = "Rust Language Module";
-    private static final String IDENTIFIER = "rust";
-    private static final int MINIMUM_TOKEN_MATCH = 8;
+    private static final String NAME = "Go Parser";
+    private static final String IDENTIFIER = "go";
+    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
+    private static final String[] FILE_EXTENSIONS = {".go"};
+    private final GoParserAdapter parserAdapter;
 
-    private final RustParserAdapter parserAdapter;
-
-    public Language() {
-        this.parserAdapter = new RustParserAdapter();
+    public GoLanguage() {
+        this.parserAdapter = new GoParserAdapter();
     }
 
     @Override
@@ -43,7 +39,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public int minimumTokenMatch() {
-        return MINIMUM_TOKEN_MATCH;
+        return DEFAULT_MIN_TOKEN_MATCH;
     }
 
     @Override

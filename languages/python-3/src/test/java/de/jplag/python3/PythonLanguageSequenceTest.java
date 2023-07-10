@@ -17,7 +17,7 @@ import de.jplag.TokenType;
 
 public class PythonLanguageSequenceTest {
     private static final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "python3").toFile();
-    private final Language language = new Language();
+    private final PythonLanguage language = new PythonLanguage();
 
     @ParameterizedTest
     @MethodSource("provideFileData")

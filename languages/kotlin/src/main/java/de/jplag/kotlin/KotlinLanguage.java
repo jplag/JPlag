@@ -8,14 +8,14 @@ import de.jplag.antlr.AbstractAntlrLanguage;
  * This represents the Kotlin language as a language supported by JPlag.
  */
 @MetaInfServices(de.jplag.Language.class)
-public class Language extends AbstractAntlrLanguage {
+public class KotlinLanguage extends AbstractAntlrLanguage {
 
     private static final String NAME = "Kotlin Parser";
     private static final String IDENTIFIER = "kotlin";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".kt"};
 
-    public Language() {
+    public KotlinLanguage() {
         super(new KotlinParserAdapter());
     }
 

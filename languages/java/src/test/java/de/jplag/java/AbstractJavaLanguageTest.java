@@ -32,13 +32,13 @@ public abstract class AbstractJavaLanguageTest {
      */
     @BeforeEach
     void setUp() {
-        language = new Language();
+        language = new JavaLanguage();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }
 
     /**
-     * Parses a java file in the {@link AbstractJavaLanguageTest.baseDirectory} and returns the list of token types.
+     * Parses a java file in the {@link AbstractJavaLanguageTest#baseDirectory} and returns the list of token types.
      * @param fileName is the name of the file to parse.
      * @return the token types.
      * @throws ParsingException if parsing fails.
