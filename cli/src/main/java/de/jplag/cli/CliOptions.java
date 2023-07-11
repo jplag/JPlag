@@ -6,6 +6,7 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
+import de.jplag.java.JavaLanguage;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
 
@@ -16,7 +17,7 @@ import picocli.CommandLine.Parameters;
 
 @CommandLine.Command(name = "jplag", description = "", usageHelpAutoWidth = true, abbreviateSynopsis = true)
 public class CliOptions implements Runnable {
-    public static final Language defaultLanguage = new de.jplag.java.Language();
+    public static final Language defaultLanguage = new JavaLanguage();
 
     @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism%n", split = ",")
     public File[] rootDirectory = new File[0];

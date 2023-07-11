@@ -3,8 +3,16 @@ parser grammar TestParser;
 options { tokenVocab = TestLexer; }
 
 expressionFile
-    : calcExpression EOF
-    | subExpression EOF
+    : varDefs? calcExpression EOF
+    | varDefs? subExpression EOF
+    ;
+
+varDefs
+    : (varDef VAR_SEPARATOR)* varDef LINEBREAK
+    ;
+
+varDef
+    : VAR_NAME
     ;
 
 subExpression
@@ -19,6 +27,11 @@ calcExpression
     | WHITESPACE calcExpression
     | calcExpression WHITESPACE
     | NUMBER
+    | varRef
+    ;
+
+varRef
+    : VAR_NAME
     ;
 
 operator

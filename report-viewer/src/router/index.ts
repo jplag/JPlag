@@ -3,6 +3,8 @@ import FileUploadView from '@/views/FileUploadView.vue'
 import OverviewView from '@/views/OverviewView.vue'
 import ComparisonView from '@/views/ComparisonView.vue'
 import ErrorView from '@/views/ErrorView.vue'
+import ClusterView from '@/views/ClusterView.vue'
+import InformationView from '@/views/InformationView.vue'
 
 /**
  * The router is used to navigate between the different views of the application.
@@ -30,6 +32,17 @@ const router = createRouter({
       path: '/error',
       name: 'ErrorView',
       component: ErrorView
+    },
+    {
+      path: '/cluster/:clusterIndex',
+      name: 'ClusterView',
+      component: ClusterView,
+      props: true
+    },
+    {
+      path: '/info',
+      name: 'InfoView',
+      component: InformationView
     }
   ]
 })

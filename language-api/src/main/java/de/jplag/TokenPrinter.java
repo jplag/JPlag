@@ -49,6 +49,15 @@ public final class TokenPrinter {
     /**
      * Creates a string representation of a set of files line by line and adds the tokens under the lines.
      * @param tokens is the list of tokens parsed from the files.
+     * @return the string representation.
+     */
+    public static String printTokens(List<Token> tokens) {
+        return printTokens(tokens, null);
+    }
+
+    /**
+     * Creates a string representation of a set of files line by line and adds the tokens under the lines.
+     * @param tokens is the list of tokens parsed from the files.
      * @param rootDirectory is the common rootDirectory of the files.
      * @return the string representation.
      */
@@ -68,7 +77,11 @@ public final class TokenPrinter {
         Map<File, List<Token>> fileToTokens = groupTokensByFile(tokenList);
 
         fileToTokens.forEach((File file, List<Token> fileTokens) -> {
-            builder.append(rootDirectory.toPath().relativize(file.toPath()).toString());
+            if (rootDirectory != null) {
+                builder.append(rootDirectory.toPath().relativize(file.toPath()).toString());
+            } else {
+                builder.append("<unknown path>");
+            }
 
             List<LineData> lineDatas = getLineData(fileTokens, suffix);
             lineDatas.forEach(lineData -> {

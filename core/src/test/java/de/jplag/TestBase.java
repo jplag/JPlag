@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import de.jplag.exceptions.ExitException;
+import de.jplag.java.JavaLanguage;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -104,7 +105,7 @@ public abstract class TestBase {
     protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
         var newFiles = newPaths.stream().map(File::new).collect(Collectors.toSet());
         var oldFiles = oldPaths.stream().map(File::new).collect(Collectors.toSet());
-        JPlagOptions options = new JPlagOptions(new de.jplag.java.Language(), newFiles, oldFiles);
+        JPlagOptions options = new JPlagOptions(new JavaLanguage(), newFiles, oldFiles);
         return customization.apply(options);
     }
 

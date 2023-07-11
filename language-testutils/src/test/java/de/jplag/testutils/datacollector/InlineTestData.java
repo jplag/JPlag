@@ -38,4 +38,9 @@ class InlineTestData implements TestData {
     public String describeTestSource() {
         return "(inline source: " + this.testData + " )";
     }
+
+    @Override
+    public String toString() {
+        return "inline: " + System.lineSeparator() + testData;
+    }
 }

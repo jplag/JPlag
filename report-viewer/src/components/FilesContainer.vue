@@ -2,24 +2,29 @@
   Container containing CodePanels for all of the files in a submission.
 -->
 <template>
-  <div class="files-container">
-    <h1>Files of {{ anonymous ? filesOwnerDefault : filesOwner }}</h1>
-    <VueDraggableNext handle=".mover" filter=".unmover">
-      <CodePanel
-        v-for="(file, index) in files.keys()"
-        :key="file.concat(index.toString())"
-        :collapse="files.get(file)?.collapsed"
-        :file-index="index"
-        :lines="files.get(file)?.lines || []"
-        :matches="!matches.get(file) ? [] : matches.get(file)"
-        :panel-id="containerId"
-        :title="convertSubmissionIdToName(file, submissionId)"
-        :filePath="file"
-        @toggle-collapse="$emit('toggle-collapse', file)"
-        @line-selected="lineSelected"
-      />
-    </VueDraggableNext>
-  </div>
+  <Container class="flex flex-col">
+    <h3 class="text-left text-lg font-bold">
+      Files of {{ anonymous ? filesOwnerDefault : filesOwner }}:
+    </h3>
+    <ScrollableComponent class="flex-grow">
+      <VueDraggableNext>
+        <CodePanel
+          v-for="(file, index) in files.keys()"
+          :key="file.concat(index.toString())"
+          :collapse="files.get(file)?.collapsed"
+          :file-index="index"
+          :lines="files.get(file)?.lines || []"
+          :matches="!matches.get(file) ? [] : matches.get(file)"
+          :panel-id="containerId"
+          :title="convertSubmissionIdToName(file, submissionId)"
+          :filePath="file"
+          @toggle-collapse="$emit('toggle-collapse', file)"
+          @line-selected="lineSelected"
+          class="mt-1"
+        />
+      </VueDraggableNext>
+    </ScrollableComponent>
+  </Container>
 </template>
 
 <script setup lang="ts">
@@ -27,8 +32,10 @@ import type { SubmissionFile } from '@/model/SubmissionFile'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 
 import CodePanel from '@/components/CodePanel.vue'
-import { VueDraggableNext } from 'vue-draggable-next'
 import store from '@/stores/store'
+import Container from './ContainerComponent.vue'
+import ScrollableComponent from './ScrollableComponent.vue'
+import { VueDraggableNext } from 'vue-draggable-next'
 
 defineProps({
   /**
@@ -123,6 +130,5 @@ h1 {
   flex-direction: column;
   padding-top: 1%;
   width: 100%;
-  overflow: auto;
 }
 </style>
