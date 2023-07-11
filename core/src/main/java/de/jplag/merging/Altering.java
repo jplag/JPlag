@@ -45,20 +45,20 @@ public class Altering {
                 randomPairwiseSwapping();
             }
             if (submission.getName().startsWith("a_")) {
-                randomAlteration(); 
+                randomAlteration();
             }
             submission.setTokenList(tokenList);
         }
     }
-    
+
     private void randomPairwiseSwapping() {
         // Ignore FILE_END
         for (int i = 0; i < tokenList.size() - 2; i++) {
             if (rand.nextInt(10) <= percent) {
-                TokenType upper=tokenList.get(i).getType();
-                TokenType lower=tokenList.get(i+1).getType();
+                TokenType upper = tokenList.get(i).getType();
+                TokenType lower = tokenList.get(i + 1).getType();
                 tokenList.get(i).setType(lower);
-                tokenList.get(i+1).setType(upper);
+                tokenList.get(i + 1).setType(upper);
             }
         }
     }
