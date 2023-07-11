@@ -6,7 +6,8 @@ public enum TypeScriptTokenType implements TokenType {
 
     IMPORT("IMPORT"),
     EXPORT("EXPORT"),
-    NAMESPACE("NAMESPACE"),
+    NAMESPACE_BEGIN("NAMESPACE{"),
+    NAMESPACE_END("}NAMESPACE"),
 
     CLASS_BEGIN("CLASS{"),
     CLASS_END("}CLASS"),
@@ -42,7 +43,9 @@ public enum TypeScriptTokenType implements TokenType {
     BREAK("BREAK"),
     RETURN("RETURN"),
     THROW("THROW"),
-    CONTINUE("CONTINUE")
+    CONTINUE("CONTINUE"),
+    FUNCTION_CALL("CALL"),
+    ENUM_MEMBER("ENUM_MEMBER")
 
         ;
     private final String description;

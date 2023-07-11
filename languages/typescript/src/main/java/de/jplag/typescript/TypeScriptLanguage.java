@@ -12,6 +12,7 @@ import java.util.Set;
 public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
     private static final String IDENTIFIER = "typescript";
+    private final TypeScriptLanguageOptions options = new TypeScriptLanguageOptions();
 
     public TypeScriptLanguage() {
         super(new TypeScriptParserAdapter());
@@ -34,7 +35,12 @@ public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
     @Override
     public int minimumTokenMatch() {
-        return 9;
+        return 12;
+    }
+
+    @Override
+    public TypeScriptLanguageOptions getOptions() {
+        return options;
     }
 
 }
