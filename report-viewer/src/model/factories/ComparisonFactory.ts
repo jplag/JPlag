@@ -5,50 +5,19 @@ import type { MatchInSingleFile } from '../MatchInSingleFile'
 import store from '@/stores/store'
 import { generateColors } from '@/utils/ColorUtils'
 import slash from 'slash'
+import { BaseFactory } from './BaseFactory'
 
 /**
  * Factory class for creating Comparison objects
  */
-export class ComparisonFactory {
+export class ComparisonFactory extends BaseFactory {
   public static getComparison(id1: string, id2: string) {
-    console.log('Generating comparison {%s} - {%s}...', id1, id2)
-    let comparison = new Comparison('', '', 0)
-
-    //getting the comparison file based on the used mode (zip, local, single)
-    if (store().state.localModeUsed) {
-      const request = new XMLHttpRequest()
-      request.open('GET', `/files/${store().getComparisonFileName(id1, id2)}`, false)
-      request.send()
-
-      if (request.status == 200) {
-        ComparisonFactory.loadSubmissionFilesFromLocal(id1)
-        ComparisonFactory.loadSubmissionFilesFromLocal(id2)
-        try {
-          comparison = ComparisonFactory.extractComparison(JSON.parse(request.response))
-        } catch (e) {
-          throw new Error('Comparison file not found')
-        }
-      } else {
-        throw new Error('Comparison file not found')
-      }
-    } else if (store().state.zipModeUsed) {
-      const comparisonFile = store().getComparisonFileForSubmissions(id1, id2)
-      if (comparisonFile) {
-        comparison = ComparisonFactory.extractComparison(JSON.parse(comparisonFile))
-      } else {
-        throw new Error('Comparison file not found')
-      }
-    } else if (store().state.singleModeUsed) {
-      try {
-        comparison = ComparisonFactory.extractComparison(
-          JSON.parse(store().state.singleFillRawContent)
-        )
-      } catch (e) {
-        store().clearStore()
-        throw new Error('No Comparison files given!')
-      }
+    const filePath = store().getComparisonFileName(id1, id2)
+    if (!filePath) {
+      throw new Error('Comparison file not specified')
     }
-    return comparison
+
+    return this.extractComparison(JSON.parse(this.getFile(filePath)))
   }
 
   /**
@@ -56,11 +25,17 @@ export class ComparisonFactory {
    * @param json the json object
    */
   private static extractComparison(json: Record<string, unknown>): Comparison {
-    const filesOfFirstSubmission = store().filesOfSubmission(json.id1 as string)
-    const filesOfSecondSubmission = store().filesOfSubmission(json.id2 as string)
+    const firstSubmissionId = json.id1 as string
+    const secondSubmissionId = json.id2 as string
+    if (store().state.localModeUsed) {
+      this.loadSubmissionFilesFromLocal(firstSubmissionId)
+      this.loadSubmissionFilesFromLocal(json.id2 as string)
+    }
+    const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
+    const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
 
-    const filesOfFirstConverted = this.convertToFilesByName(filesOfFirstSubmission)
-    const filesOfSecondConverted = this.convertToFilesByName(filesOfSecondSubmission)
+    const filesOfFirstConverted = this.convertToSubmissionFileList(filesOfFirstSubmission)
+    const filesOfSecondConverted = this.convertToSubmissionFileList(filesOfSecondSubmission)
 
     const matches = json.matches as Array<Record<string, unknown>>
 
@@ -70,25 +45,22 @@ export class ComparisonFactory {
     const colors = generateColors(matches.length, matchSaturation, matchLightness, matchAlpha)
     const coloredMatches = matches.map((match, index) => this.mapMatch(match, colors[index]))
 
-    const matchesInFirst = this.groupMatchesByFileName(coloredMatches, 1)
-    const matchesInSecond = this.groupMatchesByFileName(coloredMatches, 2)
-
     const comparison = new Comparison(
-      json.id1 as string,
-      json.id2 as string,
+      firstSubmissionId,
+      secondSubmissionId,
       json.similarity as number
     )
     comparison.filesOfFirstSubmission = filesOfFirstConverted
     comparison.filesOfSecondSubmission = filesOfSecondConverted
     comparison.colors = colors
     comparison.allMatches = coloredMatches
-    comparison.matchesInFirstSubmission = matchesInFirst
-    comparison.matchesInSecondSubmissions = matchesInSecond
+    comparison.matchesInFirstSubmission = this.groupMatchesByFileName(coloredMatches, 1)
+    comparison.matchesInSecondSubmissions = this.groupMatchesByFileName(coloredMatches, 2)
 
     return comparison
   }
 
-  private static convertToFilesByName(
+  private static convertToSubmissionFileList(
     files: Array<{ name: string; value: string }>
   ): Map<string, SubmissionFile> {
     const map = new Map<string, SubmissionFile>()
@@ -109,11 +81,11 @@ export class ComparisonFactory {
 
   private static groupMatchesByFileName(
     matches: Array<Match>,
-    index: number
+    index: 1 | 2
   ): Map<string, Array<MatchInSingleFile>> {
     const acc = new Map<string, Array<MatchInSingleFile>>()
     matches.forEach((val) => {
-      const name = index === 1 ? (val.firstFile as string) : (val.secondFile as string)
+      const name = index === 1 ? val.firstFile : val.secondFile
 
       if (!acc.get(name)) {
         acc.set(name, [])
@@ -121,22 +93,22 @@ export class ComparisonFactory {
 
       if (index === 1) {
         const newVal: MatchInSingleFile = {
-          start: val.startInFirst as number,
-          end: val.endInFirst as number,
+          start: val.startInFirst,
+          end: val.endInFirst,
           linked_panel: 2,
-          linked_file: val.secondFile as string,
-          linked_line: val.startInSecond as number,
-          color: val.color as string
+          linked_file: val.secondFile,
+          linked_line: val.startInSecond,
+          color: val.color
         }
         acc.get(name)?.push(newVal)
       } else {
         const newVal: MatchInSingleFile = {
-          start: val.startInSecond as number,
-          end: val.endInSecond as number,
+          start: val.startInSecond,
+          end: val.endInSecond,
           linked_panel: 1,
-          linked_file: val.firstFile as string,
-          linked_line: val.startInFirst as number,
-          color: val.color as string
+          linked_file: val.firstFile,
+          linked_line: val.startInFirst,
+          color: val.color
         }
         acc.get(name)?.push(newVal)
       }
@@ -145,36 +117,25 @@ export class ComparisonFactory {
   }
 
   private static getSubmissionFileListFromLocal(submissionId: string): string[] {
-    const request = new XMLHttpRequest()
-    request.open('GET', `/files/submissionFileIndex.json`, false)
-    request.send()
-    if (request.status == 200) {
-      return JSON.parse(request.response).submission_file_indexes[submissionId].map(
-        (file: string) => slash(file)
-      )
-    } else {
-      return []
-    }
+    return JSON.parse(this.getLocalFile(`submissionFileIndex.json`)).submission_file_indexes[
+      submissionId
+    ].map((file: string) => slash(file))
   }
 
   private static loadSubmissionFilesFromLocal(submissionId: string) {
-    const request = new XMLHttpRequest()
-    const fileList = ComparisonFactory.getSubmissionFileListFromLocal(submissionId)
-    for (const file of fileList) {
-      request.open('GET', `/files/files/${file}`, false)
-      request.overrideMimeType('text/plain')
-      request.send()
-      if (request.status == 200) {
+    try {
+      const fileList = this.getSubmissionFileListFromLocal(submissionId)
+      for (const filePath of fileList) {
         store().saveSubmissionFile({
           name: submissionId,
           file: {
-            fileName: slash(file),
-            data: request.response
+            fileName: slash(filePath),
+            data: this.getLocalFile(`files/${filePath}`)
           }
         })
-      } else {
-        console.log('Error loading file: ' + file)
       }
+    } catch (e) {
+      console.log(e)
     }
   }
 
