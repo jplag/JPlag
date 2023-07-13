@@ -32,7 +32,7 @@ public class MetricMapperTest {
         // when
         Map<String, List<Integer>> result = MetricMapper.getDistributions(jPlagResult);
 
-        //then
+        // then
         Assertions.assertEquals(Map.of("AVG", EXPECTED_AVG_DISTRIBUTION, "MAX", EXPECTED_MAX_DISTRIBUTION), result);
     }
 
@@ -46,10 +46,9 @@ public class MetricMapperTest {
         List<TopComparison> result = metricMapper.getTopComparisons(jPlagResult);
 
         // then
-        Assertions.assertEquals(List.of(
-                new TopComparison("1", "2", Map.of("AVG", .7, "MAX", .8)),
-                new TopComparison("3", "4", Map.of("AVG", .3, "MAX", .9))
-        ), result);
+        Assertions.assertEquals(
+                List.of(new TopComparison("1", "2", Map.of("AVG", .7, "MAX", .8)), new TopComparison("3", "4", Map.of("AVG", .3, "MAX", .9))),
+                result);
     }
 
     private int[] distribution(List<Integer> expectedDistribution) {
@@ -70,7 +69,6 @@ public class MetricMapperTest {
         JPlagResult jPlagResult = mock(JPlagResult.class);
         doReturn(avgDistribution).when(jPlagResult).getSimilarityDistribution();
         doReturn(maxDistribution).when(jPlagResult).getMaxSimilarityDistribution();
-
 
         JPlagOptions options = mock(JPlagOptions.class);
         doReturn(createComparisonsDto.length).when(options).maximumNumberOfComparisons();

@@ -29,8 +29,8 @@ public class MetricMapper {
      * @return Map with key as name of metric and value as distribution
      */
     public static Map<String, List<Integer>> getDistributions(JPlagResult result) {
-        return Map.of(SimilarityMetric.AVG.name(), convertDistribution(result.getSimilarityDistribution()),
-                SimilarityMetric.MAX.name(), convertDistribution(result.getMaxSimilarityDistribution()));
+        return Map.of(SimilarityMetric.AVG.name(), convertDistribution(result.getSimilarityDistribution()), SimilarityMetric.MAX.name(),
+                convertDistribution(result.getMaxSimilarityDistribution()));
     }
 
     /**
@@ -46,8 +46,7 @@ public class MetricMapper {
     }
 
     private Map<String, Double> getComparisonMetricMap(JPlagComparison comparison) {
-        return Map.of(SimilarityMetric.AVG.name(), comparison.similarity(),
-                SimilarityMetric.MAX.name(), comparison.maximalSimilarity());
+        return Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity());
     }
 
     private static List<Integer> convertDistribution(int[] array) {
