@@ -30,7 +30,7 @@ export class OverviewFactory extends BaseFactory {
     OverviewFactory.compareVersions(jplagVersion, this.reportViewerVersion)
 
     const submissionFolder = json.submission_folder_path as Array<string>
-    const baseCodeFolder = ''
+    const baseCodeFolder = json.base_code_folder_path as string
     const language = json.language as string
     const fileExtensions = json.file_extensions as Array<string>
     const matchSensitivity = json.match_sensitivity as number
