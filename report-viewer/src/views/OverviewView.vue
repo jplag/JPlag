@@ -35,7 +35,9 @@
             <OptionsSelector
               name="Metric"
               :labels="['Average', 'Maximum']"
-              @selection-changed="(i: number) => selectDistributionDiagramMetric(i)"
+              @selection-changed="
+                (i: number) => (selectedDistributionDiagramMetric = getMetricFromNumber(i))
+              "
             />
           </ScrollableComponent>
         </div>
@@ -60,7 +62,9 @@
         <OptionsSelector
           name="Sort By"
           :labels="['Average Similarity', 'Maximum Similarity']"
-          @selection-changed="(index) => (comparisonTableSortingMetric = index)"
+          @selection-changed="
+            (index) => (comparisonTableSortingMetric = getMetricFromNumber(index))
+          "
         />
         <ComparisonsTable
           :clusters="overview.clusters"
@@ -91,7 +95,7 @@ import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
 const overview = OverviewFactory.getOverview()
 
 const searchString = ref('')
-const comparisonTableSortingMetric = ref(MetricType.AVERAGE.valueOf())
+const comparisonTableSortingMetric = ref(MetricType.AVERAGE)
 
 /**
  * This funtion gets called when the search bar for the compariosn table has been updated.
@@ -118,11 +122,11 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 }
 
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
-  if (comparisonTableSortingMetric.value == MetricType.MAXIMUM) {
-    comparisons.sort((a, b) => b.maximumSimilarity - a.maximumSimilarity)
-  } else {
-    comparisons.sort((a, b) => b.averageSimilarity - a.averageSimilarity)
-  }
+  comparisons.sort(
+    (a, b) =>
+      b.similarities[comparisonTableSortingMetric.value] -
+      a.similarities[comparisonTableSortingMetric.value]
+  )
   let index = 0
   comparisons.forEach((c) => {
     c.sortingPlace = index++
@@ -172,12 +176,12 @@ function changeAnnoymousForAll() {
 
 const selectedDistributionDiagramMetric = ref(MetricType.AVERAGE)
 
-/**
- * Switch between metrics
- * @param metric Metric to switch to
- */
-function selectDistributionDiagramMetric(metric: number) {
-  selectedDistributionDiagramMetric.value = metric
+function getMetricFromNumber(metric: number) {
+  if (metric == 0) {
+    return MetricType.AVERAGE
+  } else {
+    return MetricType.MAXIMUM
+  }
 }
 
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
