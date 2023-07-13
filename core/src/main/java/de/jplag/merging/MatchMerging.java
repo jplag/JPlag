@@ -14,7 +14,6 @@ import de.jplag.options.JPlagOptions;
 
 public class MatchMerging {
     private int minimumTokenMatch;
-    private int mergeBuffer;
     private Submission leftSubmission;
     private Submission rightSubmission;
     private List<Match> globalMatches;
@@ -29,7 +28,6 @@ public class MatchMerging {
         comparisons = new ArrayList<>(result.getAllComparisons());
         options = o;
         minimumTokenMatch = options.minimumTokenMatch();
-        mergeBuffer = o.mergingParameters().mergeBuffer();
         seperatingThreshold = o.mergingParameters().seperatingThreshold();
     }
 
@@ -118,7 +116,7 @@ public class MatchMerging {
     }
 
     private void removeBuffer() {
-        List<Match> toRemove = new ArrayList<Match>();
+        List<Match> toRemove = new ArrayList<>();
         for (Match m : globalMatches) {
             if (m.length() < minimumTokenMatch) {
                 toRemove.add(m);

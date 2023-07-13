@@ -1,9 +1,13 @@
 package de.jplag.merging;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.GreedyStringTiling;
@@ -42,85 +46,63 @@ class MergingTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Test Lenght of Matches after Match Merging")
     void testBufferRemoval() {
-        boolean allAboveMTM = true;
-        for (int i = 0; i < comparisonsAfter.size(); i++) {
-            matches = comparisonsAfter.get(i).matches();
-            for (int j = 0; j < matches.size(); j++) {
-                if (matches.get(j).length() < options.minimumTokenMatch()) {
-                    allAboveMTM = false;
-                }
-            }
-        }
-        assert allAboveMTM;
+        checkMatchLength(JPlagComparison::matches, options.minimumTokenMatch(), comparisonsAfter);
     }
 
     @Test
+    @DisplayName("Test Lenght of Matches after Greedy String Tiling")
     void testGSTMatches() {
-        boolean allAboveMTM = true;
-        for (int i = 0; i < comparisonsBefore.size(); i++) {
-            matches = comparisonsBefore.get(i).matches();
-            for (int j = 0; j < matches.size(); j++) {
-                if (matches.get(j).length() < options.minimumTokenMatch()) {
-                    allAboveMTM = false;
-                }
-            }
-        }
-        assert allAboveMTM;
+        checkMatchLength(JPlagComparison::matches, options.minimumTokenMatch(), comparisonsBefore);
     }
 
     @Test
+    @DisplayName("Test Lenght of Ignored Matches after Greedy String Tiling")
     void testGSTIgnoredMatches() {
-        boolean allAboveMB = true;
+        int matchLengthThreshold = options.minimumTokenMatch() - options.mergingParameters().mergeBuffer();
+        checkMatchLength(JPlagComparison::ignoredMatches, matchLengthThreshold, comparisonsBefore);
+    }
 
-        for (int i = 0; i < comparisonsBefore.size(); i++) {
-            matches = comparisonsBefore.get(i).ignoredMatches();
+    private void checkMatchLength(Function<JPlagComparison, List<Match>> matchFunction, int threshold, List<JPlagComparison> comparisons) {
+        for (int i = 0; i < comparisons.size(); i++) {
+            matches = matchFunction.apply(comparisons.get(i));
             for (int j = 0; j < matches.size(); j++) {
-                if (matches.get(j).length() < options.minimumTokenMatch() - options.mergingParameters().mergeBuffer()) {
-                    allAboveMB = false;
-                }
+                assertTrue(matches.get(j).length() >= threshold);
             }
         }
-        assert allAboveMB;
     }
 
     @Test
+    @DisplayName("Test if Similarity Increased after Match Merging")
     void testSimilarityIncreased() {
-        boolean decreasedSimilarity = false;
         for (int i = 0; i < comparisonsAfter.size(); i++) {
-            if (comparisonsAfter.get(i).similarity() < comparisonsBefore.get(i).similarity()) {
-                decreasedSimilarity = true;
-            }
+            assertTrue(comparisonsAfter.get(i).similarity() >= comparisonsBefore.get(i).similarity());
         }
-        assert !decreasedSimilarity;
     }
 
     @Test
+    @DisplayName("Test if Amount of Matches reduced after Match Merging")
     void testFewerMatches() {
-        boolean fewerMatches = true;
         for (int i = 0; i < comparisonsAfter.size(); i++) {
-            if (comparisonsAfter.get(i).matches().size() + comparisonsAfter.get(i).ignoredMatches().size() > comparisonsBefore.get(i).matches().size()
-                    + comparisonsBefore.get(i).ignoredMatches().size()) {
-                fewerMatches = false;
-            }
+            assertTrue(comparisonsAfter.get(i).matches().size() + comparisonsAfter.get(i).ignoredMatches().size() <= comparisonsBefore.get(i)
+                    .matches().size() + comparisonsBefore.get(i).ignoredMatches().size());
         }
-        assert fewerMatches;
     }
 
     @Test
+    @DisplayName("Test if Amount of Token reduced after Match Merging")
     void testFewerToken() {
-        boolean fewerToken = true;
         for (int i = 0; i < comparisonsAfter.size(); i++) {
-            if (comparisonsAfter.get(i).firstSubmission().getTokenList().size() > comparisonsBefore.get(i).firstSubmission().getTokenList().size()
-                    || comparisonsAfter.get(i).secondSubmission().getTokenList().size() > comparisonsBefore.get(i).secondSubmission().getTokenList()
-                            .size()) {
-                fewerToken = false;
-            }
+            assertTrue(comparisonsAfter.get(i).firstSubmission().getTokenList().size() <= comparisonsBefore.get(i).firstSubmission().getTokenList()
+                    .size()
+                    && comparisonsAfter.get(i).secondSubmission().getTokenList().size() <= comparisonsBefore.get(i).secondSubmission().getTokenList()
+                            .size());
         }
-        assert fewerToken;
     }
 
     @Test
+    @DisplayName("Test if Merged Matches have counterparts in the original Matches")
     void testCorrectMerges() {
         boolean correctMerges = true;
         for (int i = 0; i < comparisonsAfter.size(); i++) {
@@ -150,6 +132,6 @@ class MergingTest extends TestBase {
                 }
             }
         }
-        assert correctMerges;
+        assertTrue(correctMerges);
     }
 }
