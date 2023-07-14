@@ -13,8 +13,11 @@ public enum LLVMIRTokenType implements TokenType {
     // Terminator Instructions
     RETURN("RET"),
     BRANCH("BR"),
+    COND_BRANCH("COND_BR"),
     INVOKE("TRY"),
     CALL_BRANCH("CALL_BR"),
+    SWITCH("SWITCH"),
+    INDIRECT_BRANCH("INDIRECT_BRANCH"),
     RESUME("THROW"),
     CATCH_SWITCH("CATCH_SWITCH"),
     CATCH_RETURN("CATCH"),
@@ -39,7 +42,9 @@ public enum LLVMIRTokenType implements TokenType {
     COMPARISON("COMP"),
     PHI("PHI"),
     SELECT("SELECT"),
+    FREEZE("FREEZE"),
     CALL("CALL"),
+    VA_ARG("VA_ARG"),
     LANDING_PAD("LANDING_PAD"),
     CATCH_PAD("CATCH_PAD"),
     CLEAN_UP_PAD("CLEAN_UP_PAD");

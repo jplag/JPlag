@@ -2,7 +2,6 @@ package de.jplag.llvmir;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.jplag.llvmir.grammar.LLVMIRBaseListener;
@@ -346,7 +345,7 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterCondBrTerm(LLVMIRParser.CondBrTermContext ctx) {
-        transformToken(LLVMIRTokenType.BRANCH, ctx.getStart(), ctx.getStop());
+        transformToken(LLVMIRTokenType.COND_BRANCH, ctx.getStart(), ctx.getStop());
         super.enterCondBrTerm(ctx);
     }
 
@@ -356,7 +355,7 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterSwitchTerm(LLVMIRParser.SwitchTermContext ctx) {
-        transformToken(LLVMIRTokenType.BRANCH, ctx.getStart(), ctx.getStop());
+        transformToken(LLVMIRTokenType.SWITCH, ctx.getStart(), ctx.getStop());
         super.enterSwitchTerm(ctx);
     }
 
@@ -366,7 +365,7 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterIndirectBrTerm(LLVMIRParser.IndirectBrTermContext ctx) {
-        transformToken(LLVMIRTokenType.BRANCH, ctx.getStart(), ctx.getStop());
+        transformToken(LLVMIRTokenType.INDIRECT_BRANCH, ctx.getStart(), ctx.getStop());
         super.enterIndirectBrTerm(ctx);
     }
 
@@ -1820,6 +1819,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterFreezeInst(LLVMIRParser.FreezeInstContext ctx) {
+        transformToken(LLVMIRTokenType.FREEZE, ctx.getStart(), ctx.getStop());
+        super.exitFreezeInst(ctx);
     }
 
     @Override
@@ -1838,6 +1839,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterVaargInst(LLVMIRParser.VaargInstContext ctx) {
+        transformToken(LLVMIRTokenType.VA_ARG, ctx.getStart(), ctx.getStop());
+        super.enterVaargInst(ctx);
     }
 
     @Override
@@ -3348,10 +3351,6 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void visitTerminal(TerminalNode node) {
-    }
-
-    @Override
-    public void visitErrorNode(ErrorNode node) {
     }
 
 }
