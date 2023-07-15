@@ -38,7 +38,7 @@ public enum KotlinTokenType implements TokenType {
     FOR_EXPRESSION_BEGIN("FOR"),
     FOR_EXPRESSION_END("}FOR"),
 
-    IF_EXPRESSION_START("IF"),
+    IF_EXPRESSION_BEGIN("IF"),
     IF_EXPRESSION_END("}IF(-ELSE)"),
 
     WHILE_EXPRESSION_START("WHILE"),

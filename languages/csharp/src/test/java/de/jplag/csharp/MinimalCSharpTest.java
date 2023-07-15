@@ -50,7 +50,7 @@ class MinimalCSharpTest {
 
     @BeforeEach
     public void setUp() {
-        language = new Language();
+        language = new CSharpLanguage();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }

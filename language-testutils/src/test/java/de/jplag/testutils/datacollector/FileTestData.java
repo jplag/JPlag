@@ -50,4 +50,9 @@ class FileTestData implements TestData {
     public int hashCode() {
         return Objects.hash(file);
     }
+
+    @Override
+    public String toString() {
+        return this.file.getPath();
+    }
 }

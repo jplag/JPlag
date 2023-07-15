@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -25,6 +27,8 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class LanguageModuleTest {
     private static final Path DEFAULT_TEST_CODE_PATH_BASE = Path.of("src", "test", "resources", "de", "jplag");
+
+    private final Logger LOG = Logger.getLogger(this.getClass().getName());
 
     private final TestDataCollector collector;
     private final Language language;
@@ -68,7 +72,7 @@ public abstract class LanguageModuleTest {
     @ParameterizedTest
     @MethodSource("sourceCoverageFiles")
     final void testSourceCoverage(TestData data) throws ParsingException, IOException {
-        List<Token> tokens = data.parseTokens(this.language);
+        List<Token> tokens = parseTokens(data);
 
         TestSourceIgnoredLinesCollector ignoredLines = new TestSourceIgnoredLinesCollector(data.getSourceLines());
         ignoredLines.ignoreEmptyLines();
@@ -98,7 +102,7 @@ public abstract class LanguageModuleTest {
     @ParameterizedTest
     @MethodSource("tokenCoverageFiles")
     final void testTokenCoverage(TestData data) throws ParsingException, IOException {
-        List<TokenType> foundTokens = data.parseTokens(this.language).stream().map(Token::getType).toList();
+        List<TokenType> foundTokens = extractTokenTypes(data);
         List<TokenType> languageTokens = new ArrayList<>(this.languageTokens);
 
         languageTokens.removeAll(foundTokens);
@@ -124,7 +128,7 @@ public abstract class LanguageModuleTest {
     @ParameterizedTest
     @MethodSource("testTokensContainedData")
     final void testTokensContained(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
-        List<TokenType> foundTokens = test.data().parseTokens(this.language).stream().map(Token::getType).toList();
+        List<TokenType> foundTokens = extractTokenTypes(test.data());
         List<TokenType> requiredTokens = new ArrayList<>(test.tokens());
 
         for (TokenType foundToken : foundTokens) {
@@ -152,7 +156,7 @@ public abstract class LanguageModuleTest {
     @ParameterizedTest
     @MethodSource("testTokenSequenceData")
     final void testTokenSequence(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
-        List<TokenType> extracted = test.data().parseTokens(this.language).stream().map(Token::getType).toList();
+        List<TokenType> extracted = extractTokenTypes(test.data());
         List<TokenType> required = new ArrayList<>(test.tokens());
         if (required.get(required.size() - 1) != SharedTokenType.FILE_END) {
             required.add(SharedTokenType.FILE_END);
@@ -179,7 +183,7 @@ public abstract class LanguageModuleTest {
     @ParameterizedTest
     @MethodSource("getAllTestData")
     final void testMonotoneTokenOrder(TestData data) throws ParsingException, IOException {
-        List<Token> extracted = data.parseTokens(this.language);
+        List<Token> extracted = parseTokens(data);
 
         for (int i = 0; i < extracted.size() - 2; i++) {
             Token first = extracted.get(i);
@@ -201,7 +205,7 @@ public abstract class LanguageModuleTest {
     @ParameterizedTest
     @MethodSource("getAllTestData")
     final void testTokenSequencesEndsWithFileEnd(TestData data) throws ParsingException, IOException {
-        List<Token> extracted = data.parseTokens(this.language);
+        List<Token> extracted = parseTokens(data);
 
         Assertions.assertEquals(SharedTokenType.FILE_END, extracted.get(extracted.size() - 1).getType(),
                 "Last token in " + data.describeTestSource() + " is not file end.");
@@ -211,7 +215,7 @@ public abstract class LanguageModuleTest {
      * Returns all configured test sources
      * @return The test sources
      */
-    final Set<TestData> getAllTestData() {
+    final List<TestData> getAllTestData() {
         return ignoreEmptyTestType(this.collector.getAllTestData());
     }
 
@@ -221,6 +225,17 @@ public abstract class LanguageModuleTest {
     @BeforeAll
     final void collectTestData() {
         collectTestData(this.collector);
+    }
+
+    private List<Token> parseTokens(TestData source) throws ParsingException, IOException {
+        List<Token> tokens = source.parseTokens(this.language);
+        LOG.log(Level.INFO, TokenPrinter.printTokens(tokens));
+        return tokens;
+    }
+
+    private List<TokenType> extractTokenTypes(TestData source) throws ParsingException, IOException {
+        List<Token> tokens = parseTokens(source);
+        return tokens.stream().map(Token::getType).toList();
     }
 
     /**

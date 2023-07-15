@@ -2,216 +2,195 @@
   A view displaying the overview file of a JPlag report.
 -->
 <template>
-  <div class="container">
-    <!-- General Information about JPlag run -->
-    <div class="column-container" style="width: 30%">
-      <h1>JPlag Report</h1>
-      <p class="section-title">Main Info:</p>
-      <div id="basicInfo">
-        <TextInformation
-          :has-additional-info="hasMoreSubmissionPaths"
-          :value="submissionPathValue"
-          additional-info-title=""
-          label="Directory path"
-        >
-          <p v-for="path in overview.submissionFolderPath" :key="path" :title="path">
-            {{ path }}
-          </p>
-        </TextInformation>
-        <TextInformation
-          :has-additional-info="true"
-          :value="overview.language"
-          additional-info-title="File extensions:"
-          label="Language"
-        >
-          <p v-for="info in overview.fileExtensions" :key="info">{{ info }}</p>
-        </TextInformation>
-        <TextInformation :value="overview.matchSensitivity.toString()" label="Match Sensitivity" />
-        <TextInformation
-          :has-additional-info="true"
-          :value="store().getSubmissionIds.length.toString()"
-          additional-info-title="Submission IDs:"
-          label="Submissions"
-        >
-          <IDsList :ids="store().getSubmissionIds" @id-sent="handleId" />
-        </TextInformation>
-        <TextInformation :value="overview.dateOfExecution" label="Date of execution" />
-        <TextInformation
-          :value="overview.durationOfExecution.toString()"
-          label="Duration (in ms)"
-        />
-      </div>
-      <div id="logo-section">
-        <img id="logo" alt="JPlag" src="@/assets/logo-nobg.png" />
-      </div>
-    </div>
-
-    <!-- Distribution Diagramm -->
-    <div class="column-container" style="width: 35%">
-      <div id="metrics">
-        <p class="section-title">Metric:</p>
-        <div id="metrics-list">
-          <MetricButton
-            v-for="(metric, index) in overview.metrics"
-            :id="metric.metricName"
-            :key="metric.metricName"
-            :is-selected="selectedMetric[index]"
-            :metric="metric"
-            @click="selectMetric(index)"
-          />
+  <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-col">
+    <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
+      <Container class="flex-grow">
+        <h2>JPlag Report</h2>
+        <div class="flex flex-row space-x-5 items-center">
+          <TextInformation label="Directory">{{ submissionPathValue }}</TextInformation>
+          <TextInformation label="Total Submissions">{{
+            store().getSubmissionIds.length
+          }}</TextInformation>
+          <TextInformation label="Total Comparisons">{{
+            overview.totalComparisons
+          }}</TextInformation>
+          <TextInformation label="Min Match Length">{{
+            overview.matchSensitivity
+          }}</TextInformation>
+          <Button @click="router.push({ name: 'InfoView' })"> More </Button>
         </div>
-      </div>
-      <p class="section-title">Distribution:</p>
-      <DistributionDiagram :distribution="distributions[selectedMetricIndex]" class="full-width" />
+      </Container>
     </div>
 
-    <!-- Comparison Table -->
-    <div class="column-container" style="width: 35%">
-      <p class="section-title">Top Comparisons:</p>
-      <div id="comparisonsList">
+    <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5">
+      <Container class="max-h-0 min-h-full flex flex-col flex-1">
+        <h2>Distribution of Comparisons:</h2>
+        <DistributionDiagram
+          :distribution="overview.distribution[selectedDistributionDiagramMetric]"
+          class="w-full h-2/3"
+        />
+        <div class="flex flex-col flex-grow space-y-1">
+          <h3 class="text-lg underline">Options:</h3>
+          <ScrollableComponent class="flex-grow space-y-2">
+            <OptionsSelector
+              name="Metric"
+              :labels="['Average', 'Maximum']"
+              @selection-changed="(i: number) => selectDistributionDiagramMetric(i)"
+            />
+          </ScrollableComponent>
+        </div>
+      </Container>
+
+      <Container class="max-h-0 min-h-full flex-1 flex flex-col space-y-2">
+        <div class="flex flex-row space-x-8 items-center">
+          <h2>Top Comparisons:</h2>
+          <SearchBarComponent
+            placeholder="Filter/Unhide Comparisons"
+            class="flex-grow"
+            @input-changed="(value) => (searchString = value)"
+          />
+          <Button class="w-24" @click="changeAnnoymousForAll()">
+            {{
+              store().state.anonymous.size == store().getSubmissionIds.length
+                ? 'Show All'
+                : 'Hide All'
+            }}
+          </Button>
+        </div>
+        <OptionsSelector
+          name="Sort By"
+          :labels="['Average Similarity', 'Maximum Similarity']"
+          @selection-changed="(index) => (comparisonTableSortingMetric = index)"
+        />
         <ComparisonsTable
           :clusters="overview.clusters"
-          :top-comparisons="topComparisons[selectedMetricIndex]"
+          :top-comparisons="displayedComparisons"
+          class="flex-1 min-h-0"
         />
-      </div>
-      <div v-if="missingComparisons !== 0 && !isNaN(missingComparisons)">
-        <h3>
-          Total comparisons: {{ overview.totalComparisons }}, Shown comparisons:
-          {{ shownComparisons }}, Missing comparisons: {{ missingComparisons }}. To see more, re-run
-          JPlag with a higher maximum number argument.
-        </h3>
-      </div>
+      </Container>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import type { Ref } from 'vue'
-
-import { computed, onErrorCaptured, ref } from 'vue'
+import { computed, onErrorCaptured, ref, watch } from 'vue'
 import router from '@/router'
-import TextInformation from '../components/TextInformation.vue'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
-import MetricButton from '@/components/MetricButton.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
-import IDsList from '@/components/IDsList.vue'
-import { Overview } from '@/model/Overview'
 import store from '@/stores/store'
+import Container from '@/components/ContainerComponent.vue'
+import Button from '@/components/ButtonComponent.vue'
+import ScrollableComponent from '@/components/ScrollableComponent.vue'
+import MetricType from '@/model/MetricType'
+import SearchBarComponent from '@/components/SearchBarComponent.vue'
+import TextInformation from '@/components/TextInformation.vue'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
+
+const overview = OverviewFactory.getOverview()
+
+const searchString = ref('')
+const comparisonTableSortingMetric = ref(MetricType.AVERAGE.valueOf())
 
 /**
- * Gets the overview file based on the used mode (zip, local, single).
+ * This funtion gets called when the search bar for the compariosn table has been updated.
+ * It updates the displayed comparisons to only show the ones that  have part of any search result in their id. The search is not case sensitive. The parts can be seprarated by commas or spaces.
+ * It also updates the annonmous set to unhide a submission if its name was typed in the search bar at any point in time.
+ *
+ * @param newVal The new value of the search bar
  */
-function getOverview() {
-  console.log('Generating overview...')
-  let temp!: Overview
-  //Gets the overview file based on the used mode (zip, local, single).
-  if (store().local) {
-    const request = new XMLHttpRequest()
-    request.open('GET', '/files/overview.json', false)
-    request.send()
-
-    if (request.status == 200) {
-      temp = OverviewFactory.getOverview(JSON.parse(request.response))
-    } else {
-      router.back()
-    }
-  } else if (store().zip) {
-    const overviewFile = computed(() => {
-      console.log('Start finding overview.json in state...')
-      const index = Object.keys(store().files).find((name) => name.endsWith('overview.json'))
-      return index != undefined ? store().files[index] : console.log('Could not find overview.json')
-    })
-
-    if (overviewFile.value === undefined) {
-      return new Overview(
-        [],
-        '',
-        '',
-        [],
-        0,
-        '',
-        0,
-        [],
-        [],
-        0,
-        new Map<string, Map<string, string>>()
-      )
-    }
-    const overviewJson = JSON.parse(overviewFile.value)
-    temp = OverviewFactory.getOverview(overviewJson)
-  } else if (store().single) {
-    temp = OverviewFactory.getOverview(JSON.parse(store().fileString))
+function getFilteredComparisons(comparisons: ComparisonListElement[]) {
+  const searches = searchString.value
+    .trimEnd()
+    .toLowerCase()
+    .split(/ +/g)
+    .map((s) => s.trim().replace(/,/g, ''))
+  if (searches.length == 0) {
+    return comparisons
   }
-  return temp
+
+  return comparisons.filter((c) => {
+    const id1 = c.firstSubmissionId.toLowerCase()
+    const id2 = c.secondSubmissionId.toLowerCase()
+    return searches.some((s) => id1.includes(s) || id2.includes(s))
+  })
 }
 
-const overview = getOverview()
-
-/**
- * Handles the selection of an Id to anonymize.
- * If all submission ids are provided as parameter it hides or displays them based on their previous state.
- * If a single id is provided it hides all of the other ids except for the chosen one.
- * @param ids - IDs to hide
- */
-function handleId(ids: Array<string>) {
-  if (ids.length === store().getSubmissionIds.length) {
-    if (store().anonymous.size > 0) {
-      store().resetAnonymous()
-    } else {
-      store().addAnonymous(ids)
-    }
+function getSortedComparisons(comparisons: ComparisonListElement[]) {
+  if (comparisonTableSortingMetric.value == MetricType.MAXIMUM) {
+    comparisons.sort((a, b) => b.maximumSimilarity - a.maximumSimilarity)
   } else {
-    if (store().anonymous.has(ids[0])) {
-      store().removeAnonymous(ids)
-    } else {
-      if (store().anonymous.size === 0) {
-        store().addAnonymous(store().getSubmissionIds.filter((s: string) => s !== ids[0]))
-      } else {
-        store().addAnonymous(ids)
+    comparisons.sort((a, b) => b.averageSimilarity - a.averageSimilarity)
+  }
+  let index = 0
+  comparisons.forEach((c) => {
+    c.sortingPlace = index++
+  })
+  return overview.topComparisons
+}
+
+const displayedComparisons = computed(() => {
+  const comparisons = getFilteredComparisons(getSortedComparisons(overview.topComparisons))
+  let index = 1
+  comparisons.forEach((c) => {
+    c.id = index++
+  })
+  return comparisons
+})
+
+// Update the anonymous set
+watch(searchString, () => {
+  const searches = searchString.value
+    .trimEnd()
+    .toLowerCase()
+    .split(/ +/g)
+    .map((s) => s.trim().replace(/,/g, ''))
+  if (searches.length == 0) {
+    return
+  }
+
+  for (const search of searches) {
+    for (const submissionId of store().getSubmissionIds) {
+      if (submissionId.toLowerCase() == search) {
+        store().state.anonymous.delete(submissionId)
       }
     }
   }
+})
+
+/**
+ * Sets the annonymous set to empty if it is full or adds all submission ids to it if it is not full
+ */
+function changeAnnoymousForAll() {
+  if (store().state.anonymous.size == store().getSubmissionIds.length) {
+    store().state.anonymous.clear()
+  } else {
+    store().state.anonymous = new Set(store().getSubmissionIds)
+  }
 }
 
-//Metrics
-const selectedMetric = ref(overview.metrics.map(() => false))
-
-const selectedMetricIndex = ref(0)
-selectedMetric.value[selectedMetricIndex.value] = true
+const selectedDistributionDiagramMetric = ref(MetricType.AVERAGE)
 
 /**
  * Switch between metrics
  * @param metric Metric to switch to
  */
-function selectMetric(metric: number) {
-  selectedMetric.value = selectedMetric.value.map(() => false)
-  selectedMetric.value[metric] = true
-  selectedMetricIndex.value = metric
+function selectDistributionDiagramMetric(metric: number) {
+  selectedDistributionDiagramMetric.value = metric
 }
-
-const distributions = ref(overview.metrics.map((m) => m.distribution))
-
-let topComparisons: Ref<Array<Array<ComparisonListElement>>> = ref(
-  overview.metrics.map((m) => m.comparisons)
-)
 
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
 const submissionPathValue = hasMoreSubmissionPaths
-  ? 'Click arrow to see all paths'
+  ? 'Click More to see all paths'
   : overview.submissionFolderPath[0]
 
-const shownComparisons = computed(() => {
-  return overview.metrics[selectedMetricIndex.value]?.comparisons.length
-})
-const missingComparisons = overview.totalComparisons - shownComparisons.value
-
-onErrorCaptured(() => {
+onErrorCaptured((e) => {
+  console.log(e)
   router.push({
     name: 'ErrorView',
     state: {
-      message: "Overview.json can't be found!",
+      message: 'Overview.json could not be found!',
       to: '/',
       routerInfo: 'back to FileUpload page'
     }
@@ -220,91 +199,3 @@ onErrorCaptured(() => {
   return false
 })
 </script>
-
-<style scoped>
-h1 {
-  text-align: left;
-  margin-top: 2%;
-  color: var(--on-background-color);
-}
-
-hr {
-  border: 0;
-  height: 2px;
-  background: linear-gradient(to right, #edf2fb, transparent, transparent);
-  width: 100%;
-  box-shadow: #d7e3fc 0 1px;
-}
-
-.container {
-  display: flex;
-  align-items: stretch;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  overflow: auto;
-  background: var(--background-color);
-}
-
-.column-container {
-  display: flex;
-  flex-direction: column;
-  padding: 1%;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.section-title {
-  font-size: x-large;
-  font-weight: bold;
-  text-align: start;
-  margin: 0;
-  padding: 0;
-  color: var(--on-background-color);
-}
-
-#basicInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  padding: 3%;
-  margin-top: 1%;
-  background: var(--primary-color-light);
-  border-radius: 10px;
-  box-shadow: var(--shadow-color) 2px 3px 3px;
-}
-
-#metrics {
-  display: flex;
-  justify-content: start;
-  margin-bottom: 1%;
-}
-
-#metrics-list {
-  display: flex;
-  margin-left: 2%;
-}
-
-#comparisonsList {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  padding: 2%;
-  background: var(--primary-color-light);
-  border-radius: 10px;
-  box-shadow: var(--shadow-color) 2px 3px 3px;
-}
-
-#logo-section {
-  justify-content: center;
-  align-items: center;
-  padding: 5%;
-  display: flex;
-}
-
-#logo {
-  flex-shrink: 2;
-}
-</style>
