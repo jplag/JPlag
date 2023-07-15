@@ -822,6 +822,7 @@ returnAttr:
 	| 'noalias'
 	| 'nonnull'
 	| 'noundef'
+	| align
 	| 'signext'
 	| 'zeroext';
 overflowFlag: 'nsw' | 'nuw';
