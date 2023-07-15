@@ -46,7 +46,7 @@ public class SubmissionSet {
         this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
         if (options.language().getOptions().normalize.getValue()) {
-            submissions.forEach(Submission::normalize);
+            this.submissions.forEach(Submission::normalize);
         }
     }
 
