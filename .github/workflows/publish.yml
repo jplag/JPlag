@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '20'
           distribution: 'temurin'
       - name: Set maven settings.xml
         uses: whelk-io/maven-settings-xml-action@v21

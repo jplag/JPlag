@@ -31,7 +31,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: 17
+        java-version: 20
         distribution: 'temurin'
             
     - name: Run Tests
