@@ -24,50 +24,50 @@ public class CPPListener extends AbstractAntlrListener {
     public CPPListener(TokenCollector collector, File currentFile) {
         super(collector, currentFile);
 
-        createStartStopMapping(ClassSpecifierContext.class, UNION_BEGIN, UNION_END, rule -> rule.classHead().Union() != null);
-        createStartStopMapping(ClassSpecifierContext.class, CLASS_BEGIN, CLASS_END,
+        mapEnterExit(ClassSpecifierContext.class, UNION_BEGIN, UNION_END, rule -> rule.classHead().Union() != null);
+        mapEnterExit(ClassSpecifierContext.class, CLASS_BEGIN, CLASS_END,
                 rule -> rule.classHead().classKey() != null && rule.classHead().classKey().Class() != null);
-        createStartStopMapping(ClassSpecifierContext.class, STRUCT_BEGIN, STRUCT_END,
+        mapEnterExit(ClassSpecifierContext.class, STRUCT_BEGIN, STRUCT_END,
                 rule -> rule.classHead().classKey() != null && rule.classHead().classKey().Struct() != null);
-        createStartStopMapping(EnumSpecifierContext.class, ENUM_BEGIN, ENUM_END);
+        mapEnterExit(EnumSpecifierContext.class, ENUM_BEGIN, ENUM_END);
 
-        createStartStopMapping(FunctionDefinitionContext.class, FUNCTION_BEGIN, FUNCTION_END);
+        mapEnterExit(FunctionDefinitionContext.class, FUNCTION_BEGIN, FUNCTION_END);
 
-        createStartStopMapping(IterationStatementContext.class, DO_BEGIN, DO_END, rule -> rule.Do() != null);
-        createStartStopMapping(IterationStatementContext.class, FOR_BEGIN, FOR_END, rule -> rule.For() != null);
-        createStartStopMapping(IterationStatementContext.class, WHILE_BEGIN, WHILE_END, rule -> rule.While() != null && rule.Do() == null);
+        mapEnterExit(IterationStatementContext.class, DO_BEGIN, DO_END, rule -> rule.Do() != null);
+        mapEnterExit(IterationStatementContext.class, FOR_BEGIN, FOR_END, rule -> rule.For() != null);
+        mapEnterExit(IterationStatementContext.class, WHILE_BEGIN, WHILE_END, rule -> rule.While() != null && rule.Do() == null);
 
-        createStartStopMapping(SelectionStatementContext.class, SWITCH_BEGIN, SWITCH_END, rule -> rule.Switch() != null);
-        createStartStopMapping(SelectionStatementContext.class, IF_BEGIN, IF_END, rule -> rule.If() != null);
-        createTerminalMapping(CPP14Parser.Else, ELSE);
+        mapEnterExit(SelectionStatementContext.class, SWITCH_BEGIN, SWITCH_END, rule -> rule.Switch() != null);
+        mapEnterExit(SelectionStatementContext.class, IF_BEGIN, IF_END, rule -> rule.If() != null);
+        mapTerminal(CPP14Parser.Else, ELSE);
 
-        createStartMapping(LabeledStatementContext.class, CASE, rule -> rule.Case() != null);
-        createStartMapping(LabeledStatementContext.class, DEFAULT, rule -> rule.Default() != null);
+        mapEnter(LabeledStatementContext.class, CASE, rule -> rule.Case() != null);
+        mapEnter(LabeledStatementContext.class, DEFAULT, rule -> rule.Default() != null);
 
-        createStartMapping(TryBlockContext.class, TRY);
-        createStartStopMapping(HandlerContext.class, CATCH_BEGIN, CATCH_END);
+        mapEnter(TryBlockContext.class, TRY);
+        mapEnterExit(HandlerContext.class, CATCH_BEGIN, CATCH_END);
 
-        createStartMapping(JumpStatementContext.class, BREAK, rule -> rule.Break() != null);
-        createStartMapping(JumpStatementContext.class, CONTINUE, rule -> rule.Continue() != null);
-        createStartMapping(JumpStatementContext.class, GOTO, rule -> rule.Goto() != null);
-        createStartMapping(JumpStatementContext.class, RETURN, rule -> rule.Return() != null);
+        mapEnter(JumpStatementContext.class, BREAK, rule -> rule.Break() != null);
+        mapEnter(JumpStatementContext.class, CONTINUE, rule -> rule.Continue() != null);
+        mapEnter(JumpStatementContext.class, GOTO, rule -> rule.Goto() != null);
+        mapEnter(JumpStatementContext.class, RETURN, rule -> rule.Return() != null);
 
-        createStartMapping(ThrowExpressionContext.class, THROW);
+        mapEnter(ThrowExpressionContext.class, THROW);
 
-        createStartMapping(NewExpressionContext.class, NEWCLASS, rule -> rule.newInitializer() != null);
-        createStartMapping(NewExpressionContext.class, NEWARRAY, rule -> rule.newInitializer() == null);
+        mapEnter(NewExpressionContext.class, NEWCLASS, rule -> rule.newInitializer() != null);
+        mapEnter(NewExpressionContext.class, NEWARRAY, rule -> rule.newInitializer() == null);
 
-        createStartMapping(TemplateDeclarationContext.class, GENERIC);
+        mapEnter(TemplateDeclarationContext.class, GENERIC);
 
-        createStartMapping(AssignmentOperatorContext.class, ASSIGN);
-        createStartMapping(BraceOrEqualInitializerContext.class, ASSIGN, rule -> rule.Assign() != null);
-        createStartMapping(UnaryExpressionContext.class, ASSIGN, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null);
+        mapEnter(AssignmentOperatorContext.class, ASSIGN);
+        mapEnter(BraceOrEqualInitializerContext.class, ASSIGN, rule -> rule.Assign() != null);
+        mapEnter(UnaryExpressionContext.class, ASSIGN, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null);
 
-        createStartMapping(StaticAssertDeclarationContext.class, STATIC_ASSERT);
-        createStartMapping(EnumeratorDefinitionContext.class, VARDEF);
-        createStartStopMapping(BracedInitListContext.class, BRACED_INIT_BEGIN, BRACED_INIT_END);
+        mapEnter(StaticAssertDeclarationContext.class, STATIC_ASSERT);
+        mapEnter(EnumeratorDefinitionContext.class, VARDEF);
+        mapEnterExit(BracedInitListContext.class, BRACED_INIT_BEGIN, BRACED_INIT_END);
 
-        createStartMapping(SimpleTypeSpecifierContext.class, VARDEF, rule -> {
+        mapEnter(SimpleTypeSpecifierContext.class, VARDEF, rule -> {
             if (hasAncestor(rule, MemberdeclarationContext.class, FunctionDefinitionContext.class)) {
                 return true;
             }
@@ -82,7 +82,7 @@ public class CPPListener extends AbstractAntlrListener {
             return false;
         });
 
-        createStartMapping(SimpleDeclarationContext.class, APPLY, rule -> {
+        mapEnter(SimpleDeclarationContext.class, APPLY, rule -> {
             if (!hasAncestor(rule, FunctionBodyContext.class)) {
                 return false;
             }
@@ -91,12 +91,12 @@ public class CPPListener extends AbstractAntlrListener {
             return noPointerInFunctionCallContext(noPointerDecl);
         });
 
-        createStartMapping(InitDeclaratorContext.class, APPLY, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null);
-        createStartMapping(ParameterDeclarationContext.class, VARDEF);
-        createStartMapping(ConditionalExpressionContext.class, QUESTIONMARK, rule -> rule.Question() != null);
+        mapEnter(InitDeclaratorContext.class, APPLY, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null);
+        mapEnter(ParameterDeclarationContext.class, VARDEF);
+        mapEnter(ConditionalExpressionContext.class, QUESTIONMARK, rule -> rule.Question() != null);
 
-        createStartMapping(PostfixExpressionContext.class, APPLY, rule -> rule.LeftParen() != null);
-        createStartMapping(PostfixExpressionContext.class, ASSIGN, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null);
+        mapEnter(PostfixExpressionContext.class, APPLY, rule -> rule.LeftParen() != null);
+        mapEnter(PostfixExpressionContext.class, ASSIGN, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null);
     }
 
     /**
