@@ -22,7 +22,7 @@ public class PythonLanguageCoverageTest {
     private static final String[] lineIgnorePrefixes = {"else:", "elif", "#", "pass"};
     private static final String multilineStringMarker = "\"\"\"";
 
-    private final Language language = new Language();
+    private final PythonLanguage language = new PythonLanguage();
 
     @ParameterizedTest
     @MethodSource("collectSourceCoverageTestFiles")

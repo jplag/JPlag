@@ -39,11 +39,11 @@ class RLanguageTest {
     private final Logger logger = LoggerFactory.getLogger(RLanguageTest.class);
     private final String[] testFiles = new String[] {"Game.R", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rlang").toFile();
-    private Language language;
+    private RLanguage language;
 
     @BeforeEach
     void setup() {
-        language = new Language();
+        language = new RLanguage();
     }
 
     @Test

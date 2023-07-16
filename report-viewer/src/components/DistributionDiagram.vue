@@ -2,29 +2,28 @@
   Bar diagram, displaying the distribution for the selected metric.
 -->
 <template>
-  <div class="wrapper">
-    <BarChart :chartData="chartData" :options="options" class="chart" />
-  </div>
+  <BarChart :chartData="chartData" :options="options" />
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch, type PropType } from 'vue'
 import { BarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
+import { graphColors } from '@/utils/ColorUtils'
+import type Distribution from '@/model/Distribution'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
 
 const props = defineProps({
   distribution: {
-    type: Array<number>,
+    type: Object as PropType<Distribution>,
     required: true
   }
 })
-//Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
-//otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
-const maxVal = ref(Math.max(...props.distribution))
+
+const maxVal = ref(Math.max(...props.distribution.distribution))
 const labels = [
   '91-100%',
   '81-90%',
@@ -37,53 +36,65 @@ const labels = [
   '11-20%',
   '0-10%'
 ]
-const dataSetStyle = {
-  label: 'Count',
-  backgroundColor: 'rgba(149, 168, 241, 0.5)',
-  borderWidth: 2,
-  borderColor: 'rgba(149, 168, 241, 1)',
-  tickColor: '#000000'
-}
+const dataSetStyle = computed(() => {
+  return {
+    label: 'Comparison Count',
+    backgroundColor: graphColors.contentFill,
+    borderWidth: 1,
+    borderColor: graphColors.contentBorder,
+    tickColor: graphColors.ticksAndFont.value
+  }
+})
 
-let chartData = ref({
+const chartData = ref({
   labels: labels,
   datasets: [
     {
-      ...dataSetStyle,
-      data: props.distribution
+      ...dataSetStyle.value,
+      data: props.distribution.distribution
     }
   ]
 })
 
-const options = ref({
-  responsive: true,
-  maintainAspectRatio: false,
-  indexAxis: 'y',
-  scales: {
-    x: {
-      suggestedMax: maxVal.value + 5,
-      ticks: {
-        color: '#000000'
-      }
-    },
-    y: {
-      ticks: {
-        color: '#000000'
-      }
-    }
-  },
-  plugins: {
-    datalabels: {
-      color: '#000000',
-      font: {
-        weight: 'bold'
+const options = computed(() => {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    scales: {
+      x: {
+        //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
+        //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
+        suggestedMax: maxVal.value + 5,
+        ticks: {
+          color: graphColors.ticksAndFont.value
+        },
+        grid: {
+          color: graphColors.gridLines.value
+        }
       },
-      anchor: 'end',
-      align: 'end',
-      clamp: true
+      y: {
+        ticks: {
+          color: graphColors.ticksAndFont.value
+        },
+        grid: {
+          color: graphColors.gridLines.value
+        }
+      }
     },
-    legend: {
-      display: false
+    plugins: {
+      datalabels: {
+        color: graphColors.ticksAndFont.value,
+        font: {
+          weight: 'bold'
+        },
+        anchor: 'end',
+        align: 'end',
+        clamp: true
+      },
+      legend: {
+        display: false
+      }
     }
   }
 })
@@ -97,28 +108,14 @@ watch(
       labels: labels,
       datasets: [
         {
-          ...dataSetStyle,
-          data: val
+          ...dataSetStyle.value,
+          data: val.distribution
         }
       ]
     }
 
-    maxVal.value = Math.max(...val)
+    maxVal.value = Math.max(...val.distribution)
     options.value.scales.x.suggestedMax = maxVal.value + 5
   }
 )
 </script>
-
-<style scoped>
-.wrapper {
-  background: var(--background-color);
-  border-radius: 10px;
-  box-shadow: #777777 2px 3px 3px;
-  display: flex;
-  height: 100%;
-}
-
-.chart {
-  width: 100%;
-}
-</style>

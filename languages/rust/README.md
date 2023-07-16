@@ -88,6 +88,6 @@ Currently, macro rule definition bodies and macro macro invocation arguments/bod
 ### Usage
 
 To use the Rust module, add the `-l rust` flag in the CLI, or use a `JPlagOption` object
-with `new de.jplag.rust.Language()` as `language` in the Java API as described in the usage information in
+with `new de.jplag.rust.RustLanguage()` as `language` in the Java API as described in the usage information in
 the [readme of the main project](https://github.com/jplag/JPlag#usage)
 and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).

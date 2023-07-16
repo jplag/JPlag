@@ -7,7 +7,9 @@ public enum TestTokenType implements TokenType {
     SUBTRACTION("MINUS("),
     SUB_EXPRESSION_BEGIN("SUB {"),
     SUB_EXPRESSION_END("} SUB"),
-    NUMBER("NUM");
+    NUMBER("NUM"),
+    VARDEF("VARDEF"),
+    VARREF("VARREF");
 
     private final String description;
 
