@@ -35,16 +35,11 @@ public class MatchMerging {
         for (int i = 0; i < comparisons.size(); i++) {
             leftSubmission = comparisons.get(i).firstSubmission().clone();
             rightSubmission = comparisons.get(i).secondSubmission().clone();
-            /*
-             * System.out.println(leftSubmission.getName()); System.out.println(leftSubmission.getTokenList());
-             * System.out.println(rightSubmission.getName()); System.out.println(rightSubmission.getTokenList());
-             */
             globalMatches = new ArrayList<>(comparisons.get(i).matches());
             globalMatches.addAll(comparisons.get(i).ignoredMatches());
             computeNeighbors();
             mergeNeighbors();
             removeBuffer();
-            // System.out.println(globalMatches);
             comparisons.set(i, new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
 
         }
@@ -62,7 +57,6 @@ public class MatchMerging {
                 neighbors.add(Arrays.asList(sortedByFirst.get(i), sortedByFirst.get(i + 1)));
             }
         }
-        // System.out.println(neighbors);
     }
 
     private void mergeNeighbors() {
@@ -84,7 +78,6 @@ public class MatchMerging {
                         .add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper + lengthLower));
                 removeToken(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper, seperatingLeft,
                         seperatingRight);
-                // Manuelles ändern der Nachbarn wäre schneller
                 computeNeighbors();
                 i = 0;
             } else {
