@@ -12,6 +12,14 @@ import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.options.JPlagOptions;
 
+/**
+ * This class implements match merging against obfuscation. Based on configurable parameters MergeBuffer and
+ * SeperatingThreshold, it alters prior results and merges all neighboring matches that fit the specified thresholds.
+ * When neighboring matches get merged they become one and the tokens separating them get removed from the submission
+ * clone. MergeBuffer describes how shorter a match can be than the Minimum Token Match. SeperatingThreshold describes
+ * how many tokens can be between two neighboring matches. Both are set in {@link JPlagOptions} as
+ * {@link MergingParameters} and default to 0 (which deactivates merging).
+ */
 public class MatchMerging {
     private int minimumTokenMatch;
     private Submission leftSubmission;
@@ -23,6 +31,11 @@ public class MatchMerging {
     private List<JPlagComparison> comparisons;
     private JPlagOptions options;
 
+    /**
+     * Constructor for class MatchMerging
+     * @param JPlagResult is the initially computed result object
+     * @param JPlagOptions encapsulates the adjustable options
+     */
     public MatchMerging(JPlagResult r, JPlagOptions o) {
         result = r;
         comparisons = new ArrayList<>(result.getAllComparisons());
@@ -31,6 +44,11 @@ public class MatchMerging {
         seperatingThreshold = o.mergingParameters().seperatingThreshold();
     }
 
+    /**
+     * Runs the internal match merging pipeline. 
+     * It computes neighboring matches, merges them based on {@link MergingParameters} and removes the merge buffer afterwards.
+     * @return JPlagResult containing the merged matches
+     */
     public JPlagResult run() {
         for (int i = 0; i < comparisons.size(); i++) {
             leftSubmission = comparisons.get(i).firstSubmission().clone();
