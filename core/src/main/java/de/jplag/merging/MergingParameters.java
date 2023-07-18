@@ -2,8 +2,8 @@ package de.jplag.merging;
 
 /**
  * Collection of parameters that describe how a match merging should be performed.
- * @param MergeBuffer describes how shorter a match can be than the Minimum Token Match (Defaults to 0).
- * @param SeperatingThreshold describes how many tokens can be between to neighboring matches (Defaults to 0).
+ * @param mergeBuffer describes how shorter a match can be than the Minimum Token Match (Defaults to 0).
+ * @param seperatingThreshold describes how many tokens can be between to neighboring matches (Defaults to 0).
  */
 public record MergingParameters(int mergeBuffer, int seperatingThreshold) {
 

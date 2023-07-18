@@ -33,8 +33,8 @@ public class MatchMerging {
 
     /**
      * Constructor for class MatchMerging
-     * @param JPlagResult is the initially computed result object
-     * @param JPlagOptions encapsulates the adjustable options
+     * @param result is the initially computed result object
+     * @param options encapsulates the adjustable options
      */
     public MatchMerging(JPlagResult result, JPlagOptions options) {
         this.result = result;
