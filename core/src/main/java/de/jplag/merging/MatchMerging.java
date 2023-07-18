@@ -36,12 +36,12 @@ public class MatchMerging {
      * @param JPlagResult is the initially computed result object
      * @param JPlagOptions encapsulates the adjustable options
      */
-    public MatchMerging(JPlagResult r, JPlagOptions o) {
-        result = r;
-        comparisons = new ArrayList<>(result.getAllComparisons());
-        options = o;
-        minimumTokenMatch = options.minimumTokenMatch();
-        seperatingThreshold = o.mergingParameters().seperatingThreshold();
+    public MatchMerging(JPlagResult result, JPlagOptions options) {
+        this.result = result;
+        this.comparisons = new ArrayList<>(result.getAllComparisons());
+        this.options = options;
+        this.minimumTokenMatch = options.minimumTokenMatch();
+        this.seperatingThreshold = options.mergingParameters().seperatingThreshold();
     }
 
     /**
