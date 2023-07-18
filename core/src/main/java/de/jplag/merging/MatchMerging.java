@@ -45,8 +45,8 @@ public class MatchMerging {
     }
 
     /**
-     * Runs the internal match merging pipeline. 
-     * It computes neighboring matches, merges them based on {@link MergingParameters} and removes the merge buffer afterwards.
+     * Runs the internal match merging pipeline. It computes neighboring matches, merges them based on
+     * {@link MergingParameters} and removes the merge buffer afterwards.
      * @return JPlagResult containing the merged matches
      */
     public JPlagResult run() {
