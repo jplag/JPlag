@@ -4,11 +4,17 @@ import de.jplag.TokenType;
 
 public enum LLVMIRTokenType implements TokenType {
 
+    FILENAME("FILENAME"),
+
     // Functions
     FUNCTION_BODY_BEGIN("FUNC{"),
     FUNCTION_BODY_END("}FUNC"),
     FUNCTION_DECL("FUNC_DECL"),
     FUNCTION_DEF("FUNC_DEF"),
+
+    STRUCTURE("STRUCT"),
+    GLOBAL_VARIABLE("GLOBAL_VAR"),
+    ASSEMBLY("ASM"),
 
     // Terminator Instructions
     RETURN("RET"),

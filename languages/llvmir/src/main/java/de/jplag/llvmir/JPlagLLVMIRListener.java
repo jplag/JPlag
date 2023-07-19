@@ -53,6 +53,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterSourceFilename(LLVMIRParser.SourceFilenameContext ctx) {
+        transformToken(LLVMIRTokenType.FILENAME, ctx.getStart(), ctx.getStop());
+        super.enterSourceFilename(ctx);
     }
 
     @Override
@@ -85,6 +87,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterModuleAsm(LLVMIRParser.ModuleAsmContext ctx) {
+        transformToken(LLVMIRTokenType.ASSEMBLY, ctx.getStart(), ctx.getStop());
+        super.enterModuleAsm(ctx);
     }
 
     @Override
@@ -109,6 +113,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterGlobalDecl(LLVMIRParser.GlobalDeclContext ctx) {
+        transformToken(LLVMIRTokenType.GLOBAL_VARIABLE, ctx.getStart(), ctx.getStop());
+        super.enterGlobalDecl(ctx);
     }
 
     @Override
@@ -117,6 +123,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterGlobalDef(LLVMIRParser.GlobalDefContext ctx) {
+        transformToken(LLVMIRTokenType.GLOBAL_VARIABLE, ctx.getStart(), ctx.getStop());
+        super.enterGlobalDef(ctx);
     }
 
     @Override
@@ -723,6 +731,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterInlineAsm(LLVMIRParser.InlineAsmContext ctx) {
+        transformToken(LLVMIRTokenType.ASSEMBLY, ctx.getStart(), ctx.getStop());
+        super.enterInlineAsm(ctx);
     }
 
     @Override
@@ -1003,6 +1013,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterStructType(LLVMIRParser.StructTypeContext ctx) {
+        transformToken(LLVMIRTokenType.STRUCTURE, ctx.getStart(), ctx.getStop());
+        super.enterStructType(ctx);
     }
 
     @Override
