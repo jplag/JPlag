@@ -58,10 +58,10 @@ public class CliOptions implements Runnable {
 
     @ArgGroup(validate = false, heading = "Clustering%n")
     public Clustering clustering = new Clustering();
-    
+
     @ArgGroup(validate = false, heading = "Merging%n")
     public Merging merging = new Merging();
-    
+
     @ArgGroup(validate = false, heading = "Altering%n")
     public Altering altering = new Altering();
 
@@ -114,20 +114,20 @@ public class CliOptions implements Runnable {
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
         }
     }
-    
+
     public static class Merging {
         @Option(names = {"--merge-buffer"}, description = "Buffer for merging (default: 0)\n")
         public int mergeBuffer;
-        
+
         @Option(names = {"--seperating-threshold"}, description = "Seperation threshold for merging (default: 0)\n")
         public int seperatingThreshold;
 
     }
-    
+
     public static class Altering {
         @Option(names = {"--alteration-seed"}, description = "Seed for altering (default: 0)\n")
         public int seed;
-        
+
         @Option(names = {"--alteration-percent"}, description = "Percentage for altering (default: -1)\n")
         public int percent;
 

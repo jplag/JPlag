@@ -22,6 +22,8 @@ import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
+import de.jplag.merging.AlteringParameters;
+import de.jplag.merging.MergingParameters;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
@@ -31,9 +33,6 @@ import picocli.CommandLine;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.OptionSpec;
 import picocli.CommandLine.ParseResult;
-
-import de.jplag.merging.MergingParameters;
-import de.jplag.merging.AlteringParameters;
 
 /**
  * Command line interface class, allows using via command line.
@@ -166,7 +165,7 @@ public final class CLI {
         JPlagOptions jPlagOptions = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.options.advanced.subdirectory, suffixes, this.options.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.options.advanced.similarityThreshold, this.options.shownComparisons, clusteringOptions,
-                this.options.advanced.debug,mergingParameters,alteringParameters);
+                this.options.advanced.debug, mergingParameters, alteringParameters);
 
         String baseCodePath = this.options.baseCode;
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
@@ -224,17 +223,16 @@ public final class CLI {
 
         return clusteringOptions;
     }
-    
+
     private static MergingParameters getMergingParameters(CliOptions options) {
         MergingParameters mergingParameters = new MergingParameters().withMergeBuffer(options.merging.mergeBuffer)
                 .withSeperatingThreshold(options.merging.seperatingThreshold);
 
         return mergingParameters;
     }
-    
+
     private static AlteringParameters getAlteringParameters(CliOptions options) {
-        AlteringParameters alteringParameters = new AlteringParameters().withSeed(options.altering.seed)
-                .withPercent(options.altering.percent);
+        AlteringParameters alteringParameters = new AlteringParameters().withSeed(options.altering.seed).withPercent(options.altering.percent);
 
         return alteringParameters;
     }
