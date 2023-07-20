@@ -1,8 +1,8 @@
 package de.jplag.merging;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
@@ -13,20 +13,18 @@ import de.jplag.options.JPlagOptions;
 public class Altering {
     private SubmissionSet submissionSet;
     private List<Submission> submissions;
-    private Submission submission;
     private List<Token> tokenList;
-    private Random rand;
+    private SecureRandom rand;
     private List<TokenType> typeDict;
     private int percent;
 
     public Altering(SubmissionSet submissionSet, JPlagOptions options) {
         this.submissionSet = submissionSet;
-        if (options.alteringParameters().seed() == 0) {
-            rand = new Random();
-        } else {
-            rand = new Random(options.alteringParameters().seed());
+        this.rand = new SecureRandom();
+        if (options.alteringParameters().seed() > 0) {
+            rand.setSeed(options.alteringParameters().seed());
         }
-        percent = options.alteringParameters().percent();
+        this.percent = options.alteringParameters().percent();
     }
 
     public void run() {
@@ -36,7 +34,7 @@ public class Altering {
         submissions = submissionSet.getSubmissions();
         fillTypeDict();
         for (int i = 0; i < submissionSet.numberOfSubmissions(); i++) {
-            submission = submissions.get(i);
+            Submission submission = submissions.get(i);
             tokenList = new ArrayList<>(submission.getTokenList());
             if (submission.getName().startsWith("s_")) {
                 randomPairwiseSwapping();
