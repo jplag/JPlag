@@ -87,11 +87,7 @@ public class MatchMerging {
             double seperating = (seperatingLeft + seperatingRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
             if (seperating <= seperatingThreshold) {
-                System.out.println((lengthUpper + lengthLower) / 2.0 + " " + seperating);
-                System.out.println("Original:" + neighbors.get(i));
                 globalMatches.removeAll(neighbors.get(i));
-                System.out.println("Merged:"
-                        + new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper + lengthLower));
                 globalMatches
                         .add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper + lengthLower));
                 removeToken(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper, seperatingLeft,

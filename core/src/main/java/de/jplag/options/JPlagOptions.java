@@ -177,10 +177,6 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
                 clusteringOptions, debugParser, mergingParameters, alteringParameters);
     }
 
-    public MergingParameters mergingParameters() {
-        return mergingParameters;
-    }
-
     public boolean hasBaseCode() {
         return baseCodeSubmissionDirectory != null;
     }

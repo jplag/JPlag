@@ -7,11 +7,6 @@ package de.jplag.merging;
  */
 public record MergingParameters(int mergeBuffer, int seperatingThreshold) {
 
-    public MergingParameters(int mergeBuffer, int seperatingThreshold) {
-        this.mergeBuffer = mergeBuffer;
-        this.seperatingThreshold = seperatingThreshold;
-    }
-
     public MergingParameters() {
         this(0, 0);
     }

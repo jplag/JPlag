@@ -225,16 +225,11 @@ public final class CLI {
     }
 
     private static MergingParameters getMergingParameters(CliOptions options) {
-        MergingParameters mergingParameters = new MergingParameters().withMergeBuffer(options.merging.mergeBuffer)
-                .withSeperatingThreshold(options.merging.seperatingThreshold);
-
-        return mergingParameters;
+        return new MergingParameters().withMergeBuffer(options.merging.mergeBuffer).withSeperatingThreshold(options.merging.seperatingThreshold);
     }
 
     private static AlteringParameters getAlteringParameters(CliOptions options) {
-        AlteringParameters alteringParameters = new AlteringParameters().withSeed(options.altering.seed).withPercent(options.altering.percent);
-
-        return alteringParameters;
+        return new AlteringParameters().withSeed(options.altering.seed).withPercent(options.altering.percent);
     }
 
     private String generateDescription() {
