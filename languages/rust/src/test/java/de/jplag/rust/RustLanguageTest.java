@@ -1,6 +1,7 @@
 package de.jplag.rust;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,11 +44,11 @@ class RustLanguageTest {
     private final Logger logger = LoggerFactory.getLogger(RustLanguageTest.class);
     private final String[] testFiles = new String[] {"deno_core_runtime.rs", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rust").toFile();
-    private Language language;
+    private RustLanguage language;
 
     @BeforeEach
     void setup() {
-        language = new Language();
+        language = new RustLanguage();
     }
 
     @Test
@@ -93,7 +94,7 @@ class RustLanguageTest {
 
         } catch (IOException exception) {
             logger.info("Error while reading test file %s".formatted(fileName), exception);
-            assertTrue(false);
+            fail();
         }
     }
 

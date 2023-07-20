@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.options.LanguageOptions;
+
 /**
  * Common interface for all languages. Each language-front end must provide a concrete language implementation.
  */
@@ -65,6 +67,14 @@ public interface Language {
      */
     default String viewFileSuffix() {
         return "";
+    }
+
+    /**
+     * Returns a new option object for the language.
+     * @return The options
+     */
+    default LanguageOptions getOptions() {
+        return LanguageOptions.EMPTY_OPTIONS;
     }
 
     /**

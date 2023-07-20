@@ -15,7 +15,7 @@ public class TestDataCollector {
     private final List<TokenListTest> containedTokenData;
     private final List<TokenListTest> tokenSequenceTest;
 
-    private final Set<TestData> allTestData;
+    private final List<TestData> allTestData;
 
     private final File testFileLocation;
 
@@ -31,7 +31,7 @@ public class TestDataCollector {
         this.containedTokenData = new ArrayList<>();
         this.tokenSequenceTest = new ArrayList<>();
 
-        this.allTestData = new HashSet<>();
+        this.allTestData = new ArrayList<>();
     }
 
     /**
@@ -88,8 +88,8 @@ public class TestDataCollector {
     /**
      * @return The list of all test data
      */
-    public Set<TestData> getAllTestData() {
-        return Collections.unmodifiableSet(allTestData);
+    public List<TestData> getAllTestData() {
+        return Collections.unmodifiableList(allTestData);
     }
 
     /**

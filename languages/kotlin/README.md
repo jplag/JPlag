@@ -20,7 +20,7 @@ More syntactic elements of Kotlin may turn out to be helpful to include in the f
 
 ### Usage
 
-To use the Kotlin module, add the `-l kotlin` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.kotlin.Language()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+To use the Kotlin module, add the `-l kotlin` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.kotlin.KotlinLanguage()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
 
 <br>
 
