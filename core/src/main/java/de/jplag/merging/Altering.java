@@ -12,7 +12,6 @@ import de.jplag.options.JPlagOptions;
 
 public class Altering {
     private SubmissionSet submissionSet;
-    private JPlagOptions options;
     private List<Submission> submissions;
     private Submission submission;
     private List<Token> tokenList;
@@ -20,10 +19,8 @@ public class Altering {
     private List<TokenType> typeDict;
     private int percent;
 
-    public Altering(SubmissionSet s, JPlagOptions o) {
-        submissionSet = s;
-        submissions = submissionSet.getSubmissions();
-        options = o;
+    public Altering(SubmissionSet submissionSet, JPlagOptions options) {
+        this.submissionSet = submissionSet;
         if (options.alteringParameters().seed() == 0) {
             rand = new Random();
         } else {
@@ -36,8 +33,8 @@ public class Altering {
         if (percent == -1) {
             return;
         }
+        submissions = submissionSet.getSubmissions();
         fillTypeDict();
-        System.out.println(typeDict);
         for (int i = 0; i < submissionSet.numberOfSubmissions(); i++) {
             submission = submissions.get(i);
             tokenList = new ArrayList<>(submission.getTokenList());

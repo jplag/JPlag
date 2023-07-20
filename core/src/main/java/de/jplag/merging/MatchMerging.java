@@ -51,8 +51,8 @@ public class MatchMerging {
      */
     public JPlagResult run() {
         for (int i = 0; i < comparisons.size(); i++) {
-            leftSubmission = comparisons.get(i).firstSubmission().clone();
-            rightSubmission = comparisons.get(i).secondSubmission().clone();
+            leftSubmission = comparisons.get(i).firstSubmission().copy();
+            rightSubmission = comparisons.get(i).secondSubmission().copy();
             globalMatches = new ArrayList<>(comparisons.get(i).matches());
             globalMatches.addAll(comparisons.get(i).ignoredMatches());
             computeNeighbors();

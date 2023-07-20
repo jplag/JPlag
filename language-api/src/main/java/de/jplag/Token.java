@@ -138,7 +138,7 @@ public class Token {
         return semantics;
     }
 
-    public void setType(TokenType t) {
-        type = t;
+    public void setType(TokenType type) {
+        this.type = type;
     }
 }
