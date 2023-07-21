@@ -22,7 +22,6 @@ import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
-import de.jplag.merging.AlteringParameters;
 import de.jplag.merging.MergingParameters;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -160,12 +159,11 @@ public final class CLI {
 
         ClusteringOptions clusteringOptions = getClusteringOptions(this.options);
         MergingParameters mergingParameters = getMergingParameters(this.options);
-        AlteringParameters alteringParameters = getAlteringParameters(this.options);
 
         JPlagOptions jPlagOptions = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.options.advanced.subdirectory, suffixes, this.options.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.options.advanced.similarityThreshold, this.options.shownComparisons, clusteringOptions,
-                this.options.advanced.debug, mergingParameters, alteringParameters);
+                this.options.advanced.debug, mergingParameters);
 
         String baseCodePath = this.options.baseCode;
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
@@ -226,10 +224,6 @@ public final class CLI {
 
     private static MergingParameters getMergingParameters(CliOptions options) {
         return new MergingParameters().withMergeBuffer(options.merging.mergeBuffer).withSeperatingThreshold(options.merging.seperatingThreshold);
-    }
-
-    private static AlteringParameters getAlteringParameters(CliOptions options) {
-        return new AlteringParameters().withSeed(options.altering.seed).withPercent(options.altering.percent);
     }
 
     private String generateDescription() {

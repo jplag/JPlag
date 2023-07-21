@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
-import de.jplag.merging.Altering;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
@@ -70,9 +69,6 @@ public class JPlag {
         int submissionCount = submissionSet.numberOfSubmissions();
         if (submissionCount < 2)
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
-
-        // Use Altering for obfuscation
-        new Altering(submissionSet, options).run();
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
