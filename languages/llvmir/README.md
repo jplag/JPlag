@@ -14,6 +14,10 @@ If the grammar is updated to a more recent<a href="#footnote-1"><sup>1</sup></a>
 
 TODO
 
+### Token Extraction
+
+Changes to the grammar.
+
 ### Usage
 
 To use the LLVM IR module, add the `-l llvmir` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.llvmir.Language()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).

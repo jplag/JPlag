@@ -12,11 +12,11 @@ public enum LLVMIRTokenType implements TokenType {
     FUNCTION_DECL("FUNC_DECL"),
     FUNCTION_DEF("FUNC_DEF"),
 
-    STRUCTURE("STRUCT"),
     GLOBAL_VARIABLE("GLOBAL_VAR"),
     ASSEMBLY("ASM"),
 
     // Constants
+    STRUCTURE("STRUCT"),
     ARRAY("ARR"),
     VECTOR("VEC"),
 
@@ -43,7 +43,7 @@ public enum LLVMIRTokenType implements TokenType {
     OR("OR"),
     XOR("XOR"),
 
-    //Vector operations
+    // Vector operations
     EXTRACT_ELEM("EXTRACT_ELEMENT"),
     INSERT_ELEM("INSERT_ELEM"),
     SHUFFLE_VEC("SHUFFLE_VECTOR"),
