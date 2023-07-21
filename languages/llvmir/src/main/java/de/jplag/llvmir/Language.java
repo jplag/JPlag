@@ -17,7 +17,7 @@ public class Language implements de.jplag.Language {
 
     private static final String NAME = "LLVMIR Parser";
     private static final String IDENTIFIER = "llvmir";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 15;
+    private static final int DEFAULT_MIN_TOKEN_MATCH = 20;
     private static final String[] FILE_EXTENSIONS = {".ll"};
     private final LLVMIRParserAdapter parserAdapter;
 

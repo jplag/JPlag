@@ -587,6 +587,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterStructConst(LLVMIRParser.StructConstContext ctx) {
+        transformToken(LLVMIRTokenType.STRUCTURE, ctx.getStart(), ctx.getStop());
+        super.enterStructConst(ctx);
     }
 
     @Override
@@ -595,6 +597,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterArrayConst(LLVMIRParser.ArrayConstContext ctx) {
+        transformToken(LLVMIRTokenType.ARRAY, ctx.getStart(), ctx.getStop());
+        super.enterArrayConst(ctx);
     }
 
     @Override
@@ -603,6 +607,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterVectorConst(LLVMIRParser.VectorConstContext ctx) {
+        transformToken(LLVMIRTokenType.VECTOR, ctx.getStart(), ctx.getStop());
+        super.enterVectorConst(ctx);
     }
 
     @Override
@@ -1013,8 +1019,6 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterStructType(LLVMIRParser.StructTypeContext ctx) {
-        transformToken(LLVMIRTokenType.STRUCTURE, ctx.getStart(), ctx.getStop());
-        super.enterStructType(ctx);
     }
 
     @Override
@@ -1079,6 +1083,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterBitCastExpr(LLVMIRParser.BitCastExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterBitCastExpr(ctx);
     }
 
     @Override
@@ -1087,6 +1093,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterGetElementPtrExpr(LLVMIRParser.GetElementPtrExprContext ctx) {
+        transformToken(LLVMIRTokenType.GET_ELEMENT_POINTER, ctx.getStart(), ctx.getStop());
+        super.enterGetElementPtrExpr(ctx);
     }
 
     @Override
@@ -1103,6 +1111,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterAddrSpaceCastExpr(LLVMIRParser.AddrSpaceCastExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterAddrSpaceCastExpr(ctx);
     }
 
     @Override
@@ -1111,6 +1121,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterIntToPtrExpr(LLVMIRParser.IntToPtrExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterIntToPtrExpr(ctx);
     }
 
     @Override
@@ -1119,6 +1131,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterICmpExpr(LLVMIRParser.ICmpExprContext ctx) {
+        transformToken(LLVMIRTokenType.COMPARISON, ctx.getStart(), ctx.getStop());
+        super.enterICmpExpr(ctx);
     }
 
     @Override
@@ -1127,6 +1141,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterFCmpExpr(LLVMIRParser.FCmpExprContext ctx) {
+        transformToken(LLVMIRTokenType.COMPARISON, ctx.getStart(), ctx.getStop());
+        super.enterFCmpExpr(ctx);
     }
 
     @Override
@@ -1135,6 +1151,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterSelectExpr(LLVMIRParser.SelectExprContext ctx) {
+        transformToken(LLVMIRTokenType.SELECT, ctx.getStart(), ctx.getStop());
+        super.enterSelectExpr(ctx);
     }
 
     @Override
@@ -1143,6 +1161,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterTruncExpr(LLVMIRParser.TruncExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterTruncExpr(ctx);
     }
 
     @Override
@@ -1151,6 +1171,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterZExtExpr(LLVMIRParser.ZExtExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterZExtExpr(ctx);
     }
 
     @Override
@@ -1159,6 +1181,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterSExtExpr(LLVMIRParser.SExtExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterSExtExpr(ctx);
     }
 
     @Override
@@ -1167,6 +1191,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterFpTruncExpr(LLVMIRParser.FpTruncExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterFpTruncExpr(ctx);
     }
 
     @Override
@@ -1175,6 +1201,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterFpExtExpr(LLVMIRParser.FpExtExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterFpExtExpr(ctx);
     }
 
     @Override
@@ -1183,6 +1211,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterFpToUiExpr(LLVMIRParser.FpToUiExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterFpToUiExpr(ctx);
     }
 
     @Override
@@ -1191,6 +1221,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterFpToSiExpr(LLVMIRParser.FpToSiExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterFpToSiExpr(ctx);
     }
 
     @Override
@@ -1199,6 +1231,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterUiToFpExpr(LLVMIRParser.UiToFpExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterUiToFpExpr(ctx);
     }
 
     @Override
@@ -1207,6 +1241,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterSiToFpExpr(LLVMIRParser.SiToFpExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterSiToFpExpr(ctx);
     }
 
     @Override
@@ -1215,6 +1251,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterPtrToIntExpr(LLVMIRParser.PtrToIntExprContext ctx) {
+        transformToken(LLVMIRTokenType.CONVERSION, ctx.getStart(), ctx.getStop());
+        super.enterPtrToIntExpr(ctx);
     }
 
     @Override
@@ -1223,6 +1261,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterExtractElementExpr(LLVMIRParser.ExtractElementExprContext ctx) {
+        transformToken(LLVMIRTokenType.EXTRACT_ELEM, ctx.getStart(), ctx.getStop());
+        super.enterExtractElementExpr(ctx);
     }
 
     @Override
@@ -1231,6 +1271,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterInsertElementExpr(LLVMIRParser.InsertElementExprContext ctx) {
+        transformToken(LLVMIRTokenType.INSERT_ELEM, ctx.getStart(), ctx.getStop());
+        super.enterInsertElementExpr(ctx);
     }
 
     @Override
@@ -1239,6 +1281,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterShuffleVectorExpr(LLVMIRParser.ShuffleVectorExprContext ctx) {
+        transformToken(LLVMIRTokenType.SHUFFLE_VEC, ctx.getStart(), ctx.getStop());
+        super.enterShuffleVectorExpr(ctx);
     }
 
     @Override
@@ -1247,6 +1291,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterShlExpr(LLVMIRParser.ShlExprContext ctx) {
+        transformToken(LLVMIRTokenType.SHIFT, ctx.getStart(), ctx.getStop());
+        super.enterShlExpr(ctx);
     }
 
     @Override
@@ -1255,6 +1301,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterLShrExpr(LLVMIRParser.LShrExprContext ctx) {
+        transformToken(LLVMIRTokenType.SHIFT, ctx.getStart(), ctx.getStop());
+        super.enterLShrExpr(ctx);
     }
 
     @Override
@@ -1263,6 +1311,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterAShrExpr(LLVMIRParser.AShrExprContext ctx) {
+        transformToken(LLVMIRTokenType.SHIFT, ctx.getStart(), ctx.getStop());
+        super.enterAShrExpr(ctx);
     }
 
     @Override
@@ -1271,6 +1321,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterAndExpr(LLVMIRParser.AndExprContext ctx) {
+        transformToken(LLVMIRTokenType.AND, ctx.getStart(), ctx.getStop());
+        super.enterAndExpr(ctx);
     }
 
     @Override
@@ -1279,6 +1331,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterOrExpr(LLVMIRParser.OrExprContext ctx) {
+        transformToken(LLVMIRTokenType.OR, ctx.getStart(), ctx.getStop());
+        super.enterOrExpr(ctx);
     }
 
     @Override
@@ -1287,6 +1341,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterXorExpr(LLVMIRParser.XorExprContext ctx) {
+        transformToken(LLVMIRTokenType.XOR, ctx.getStart(), ctx.getStop());
+        super.enterXorExpr(ctx);
     }
 
     @Override
@@ -1295,6 +1351,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterAddExpr(LLVMIRParser.AddExprContext ctx) {
+        transformToken(LLVMIRTokenType.ADD, ctx.getStart(), ctx.getStop());
+        super.enterAddExpr(ctx);
     }
 
     @Override
@@ -1303,6 +1361,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterSubExpr(LLVMIRParser.SubExprContext ctx) {
+        transformToken(LLVMIRTokenType.SUB, ctx.getStart(), ctx.getStop());
+        super.enterSubExpr(ctx);
     }
 
     @Override
@@ -1311,6 +1371,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterMulExpr(LLVMIRParser.MulExprContext ctx) {
+        transformToken(LLVMIRTokenType.MUL, ctx.getStart(), ctx.getStop());
+        super.enterMulExpr(ctx);
     }
 
     @Override

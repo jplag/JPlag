@@ -16,6 +16,10 @@ public enum LLVMIRTokenType implements TokenType {
     GLOBAL_VARIABLE("GLOBAL_VAR"),
     ASSEMBLY("ASM"),
 
+    // Constants
+    ARRAY("ARR"),
+    VECTOR("VEC"),
+
     // Terminator Instructions
     RETURN("RET"),
     BRANCH("BR"),
