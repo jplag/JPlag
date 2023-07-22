@@ -19,8 +19,14 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.TopComparison;
 
 public class MetricMapperTest {
-    private static final List<Integer> EXPECTED_AVG_DISTRIBUTION = List.of(29, 23, 19, 17, 13, 11, 7, 5, 3, 2);
-    private static final List<Integer> EXPECTED_MAX_DISTRIBUTION = List.of(50, 48, 20, 13, 10, 1, 3, 1, 0, 0);
+    private static final List<Integer> EXPECTED_AVG_DISTRIBUTION = List.of(1, 0, 0, 2, 3, 15, 5, 2, 16, 5, 2, 18, 3, 21, 2, 1, 5, 0, 14, 32, 25, 4, 2,
+            12, 3, 2, 5, 5, 0, 5, 1, 5, 2, 5, 4, 5, 3, 5, 18, 21, 30, 4, 3, 10, 2, 3, 17, 28, 4, 10, 2, 4, 3, 0, 2, 20, 4, 0, 19, 5, 25, 9, 4, 18, 1,
+            1, 1, 0, 31, 15, 35, 38, 40, 43, 45, 49, 50, 50, 50, 53, 60, 71, 73, 74, 80, 83, 87, 93, 95, 99, 102, 105, 106, 110, 113, 113, 117, 117,
+            122, 124);
+    private static final List<Integer> EXPECTED_MAX_DISTRIBUTION = List.of(130, 129, 124, 116, 114, 110, 110, 108, 103, 101, 99, 97, 96, 92, 82, 81,
+            70, 67, 64, 63, 59, 56, 52, 50, 50, 50, 49, 47, 43, 5, 6, 11, 4, 2, 3, 20, 37, 5, 0, 2, 33, 30, 19, 4, 5, 24, 40, 6, 3, 9, 2, 3, 18, 3, 5,
+            1, 4, 1, 0, 0, 5, 5, 14, 5, 42, 4, 18, 0, 0, 10, 4, 3, 17, 33, 4, 4, 3, 4, 39, 0, 20, 2, 4, 9, 0, 5, 0, 8, 23, 4, 2, 39, 3, 4, 1, 0, 3,
+            33, 2, 1);
     private final MetricMapper metricMapper = new MetricMapper(Submission::getName);
 
     @Test

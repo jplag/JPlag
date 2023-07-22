@@ -7,6 +7,8 @@ import versionJson from '@/version.json'
 import Distribution from '../Distribution'
 import MetricType from '../MetricType'
 import { BaseFactory } from './BaseFactory'
+import PercentileDistribution from '../PercentileDistribution'
+import TenValueDistribution from '../TenthPercentileDistribution'
 
 export class OverviewFactory extends BaseFactory {
   static reportViewerVersion: Version =
@@ -68,18 +70,47 @@ export class OverviewFactory extends BaseFactory {
   private static extractDistributions(
     json: Record<string, unknown>
   ): Record<MetricType, Distribution> {
-    const distributionsMap = json.distributions as Record<string, Array<number>>
+    if (json.distributions) {
+      return this.extractDistributionsFromMap(json.distributions as Record<string, Array<number>>)
+    } else if (json.metrics) {
+      return this.extractDistributionsFromMetrics(json.metrics as Array<Record<string, unknown>>)
+    }
+    throw new Error('No distributions found')
+  }
+
+  private static extractDistributionsFromMap(
+    distributionsMap: Record<string, Array<number>>
+  ): Record<MetricType, Distribution> {
     const distributions = {} as Record<MetricType, Distribution>
     for (const [key, value] of Object.entries(distributionsMap)) {
-      distributions[key as MetricType] = new Distribution(value as Array<number>)
+      distributions[key as MetricType] = new PercentileDistribution(value as Array<number>)
     }
     return distributions
+  }
+
+  private static extractDistributionsFromMetrics(
+    metrics: Array<Record<string, unknown>>
+  ): Record<MetricType, Distribution> {
+    return {
+      [MetricType.AVERAGE]: new TenValueDistribution(metrics[0].distribution as Array<number>),
+      [MetricType.MAXIMUM]: new TenValueDistribution(metrics[1].distribution as Array<number>)
+    }
   }
 
   private static extractTopComparisons(
     json: Record<string, unknown>
   ): Array<ComparisonListElement> {
-    const jsonComparisons = json.top_comparisons as Array<Record<string, unknown>>
+    if (json.top_comparisons) {
+      return this.extractTopComparisonsFromMap(
+        json.top_comparisons as Array<Record<string, unknown>>
+      )
+    } else if (json.metrics) {
+      return this.extractTopComparisonsFromMetrics(json.metrics as Array<Record<string, unknown>>)
+    }
+    throw new Error('No top comparisons found')
+  }
+
+  private static extractTopComparisonsFromMap(jsonComparisons: Array<Record<string, unknown>>) {
     const comparisons = [] as Array<ComparisonListElement>
     let counter = 0
     for (const topComparison of jsonComparisons) {
@@ -93,6 +124,40 @@ export class OverviewFactory extends BaseFactory {
     }
     return comparisons
   }
+
+  private static extractTopComparisonsFromMetrics(metrics: Array<Record<string, unknown>>) {
+    const averageSimilarities: Map<string, number> = new Map<string, number>()
+    const comparisons = [] as Array<ComparisonListElement>
+
+    // Average
+    for (const comparison of metrics[0].topComparisons as Array<Record<string, unknown>>) {
+      averageSimilarities.set(
+        (comparison.first_submission as string) + '-' + (comparison.second_submission as string),
+        comparison.similarity as number
+      )
+    }
+
+    // Max
+    let counter = 0
+    for (const comparison of metrics[1].topComparisons as Array<Record<string, unknown>>) {
+      const avg = averageSimilarities.get(
+        (comparison.first_submission as string) + '-' + (comparison.second_submission as string)
+      )
+      comparisons.push({
+        sortingPlace: counter++,
+        id: counter,
+        firstSubmissionId: comparison.first_submission as string,
+        secondSubmissionId: comparison.second_submission as string,
+        similarities: {
+          [MetricType.AVERAGE]: avg as number,
+          [MetricType.MAXIMUM]: comparison.similarity as number
+        }
+      })
+    }
+
+    return comparisons
+  }
+
   private static extractClusters(json: Record<string, unknown>): Array<Cluster> {
     if (!json.clusters) {
       return []
