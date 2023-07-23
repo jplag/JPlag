@@ -22,14 +22,15 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
-        assertEquals(1, result.getSimilarityDistribution()[6]);
+        assertEquals(1, result.getSimilarityDistribution()[66]);
         assertEquals(0.666, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
     @Test
     @DisplayName("test submissions with a custom minimum token match")
     void testWithMinTokenMatch() throws ExitException {
-        var expectedDistribution = new int[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+        var expectedDistribution = new int[100];
+        expectedDistribution[96] = 1;
         JPlagResult result = runJPlag("SimpleDuplicate", it -> it.withMinimumTokenMatch(4));
 
         assertEquals(2, result.getNumberOfSubmissions());
@@ -90,7 +91,7 @@ class BasicFunctionalityTest extends TestBase {
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
-        assertEquals(1, result.getSimilarityDistribution()[6]);
+        assertEquals(1, result.getSimilarityDistribution()[66]);
         assertEquals(0.666, result.getAllComparisons().get(0).similarity(), DELTA);
 
         var matches = result.getAllComparisons().get(0).matches();
