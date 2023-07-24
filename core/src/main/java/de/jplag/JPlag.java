@@ -76,6 +76,8 @@ public class JPlag {
         // Use Match Merging against obfuscation
         result = new MatchMerging(result, options).run();
 
+        logSimilarities(result);
+
         if (logger.isInfoEnabled())
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
@@ -92,6 +94,13 @@ public class JPlag {
             if (options.debugParser()) {
                 logger.warn("Erroneous submissions were copied to {}", new File(JPlagOptions.ERROR_FOLDER).getAbsolutePath());
             }
+        }
+    }
+
+    private static void logSimilarities(JPlagResult result) {
+        for (JPlagComparison comparison : result.getAllComparisons()) {
+            logger.info("Comparing {}-{}: {}", comparison.firstSubmission().getName(), comparison.secondSubmission().getName(),
+                    comparison.similarity());
         }
     }
 }
