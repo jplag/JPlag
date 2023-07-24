@@ -23,6 +23,9 @@ public enum LLVMIRTokenType implements TokenType {
     // Terminator Instructions
     RETURN("RET"),
     BRANCH("BR"),
+    SWITCH("SWITCH"),
+    CASE("CASE"),
+    CONDITIONAL_BRANCH("COND_BR"),
     INVOKE("TRY"),
     CALL_BRANCH("CALL_BR"),
     RESUME("THROW"),
