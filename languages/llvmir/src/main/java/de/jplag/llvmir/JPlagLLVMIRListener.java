@@ -48,6 +48,8 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterTypeDef(LLVMIRParser.TypeDefContext ctx) {
+        transformToken(LLVMIRTokenType.TYPE_DEFINITION, ctx.getStart(), ctx.getStop());
+        super.enterTypeDef(ctx);
     }
 
     @Override
@@ -92,13 +94,13 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterFuncBody(LLVMIRParser.FuncBodyContext ctx) {
-        transformToken(LLVMIRTokenType.FUNCTION_BODY_BEGIN, ctx.getStart(), ctx.getStop());
+        transformToken(LLVMIRTokenType.FUNCTION_BODY_BEGIN, ctx.getStart());
         super.enterFuncBody(ctx);
     }
 
     @Override
     public void exitFuncBody(LLVMIRParser.FuncBodyContext ctx) {
-        transformToken(LLVMIRTokenType.FUNCTION_BODY_END, ctx.getStart(), ctx.getStop());
+        transformToken(LLVMIRTokenType.FUNCTION_BODY_END, ctx.getStop());
         super.exitFuncBody(ctx);
     }
 
@@ -196,6 +198,18 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
     public void enterInlineAsm(LLVMIRParser.InlineAsmContext ctx) {
         transformToken(LLVMIRTokenType.ASSEMBLY, ctx.getStart(), ctx.getStop());
         super.enterInlineAsm(ctx);
+    }
+
+    @Override
+    public void enterVectorType(LLVMIRParser.VectorTypeContext ctx) {
+    }
+
+    @Override
+    public void enterArrayType(LLVMIRParser.ArrayTypeContext ctx) {
+    }
+
+    @Override
+    public void enterStructType(LLVMIRParser.StructTypeContext ctx) {
     }
 
     @Override
@@ -550,7 +564,7 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterAtomicRMWInst(LLVMIRParser.AtomicRMWInstContext ctx) {
-        transformToken(LLVMIRTokenType.ATOMIC_CRMW, ctx.getStart(), ctx.getStop());
+        transformToken(LLVMIRTokenType.ATOMIC_READ_MODIFY_WRITE, ctx.getStart(), ctx.getStop());
         super.enterAtomicRMWInst(ctx);
     }
 

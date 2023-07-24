@@ -14,6 +14,7 @@ public enum LLVMIRTokenType implements TokenType {
 
     GLOBAL_VARIABLE("GLOBAL_VAR"),
     ASSEMBLY("ASM"),
+    TYPE_DEFINITION("TYPE_DEF"),
 
     // Constants
     STRUCTURE("STRUCT"),
@@ -28,9 +29,9 @@ public enum LLVMIRTokenType implements TokenType {
     CONDITIONAL_BRANCH("COND_BR"),
     INVOKE("TRY"),
     CALL_BRANCH("CALL_BR"),
-    RESUME("THROW"),
+    RESUME("RESUME"),
     CATCH_SWITCH("CATCH_SWITCH"),
-    CATCH_RETURN("CATCH"),
+    CATCH_RETURN("CATCH_RET"),
     CLEAN_UP_RETURN("CLEAN_UP_RET"),
 
     // Binary Operations
@@ -61,7 +62,7 @@ public enum LLVMIRTokenType implements TokenType {
     STORE("STORE"),
     FENCE("FENCE"),
     COMPARE_EXCHANGE("CMP_XCHG"),
-    ATOMIC_CRMW("ATOMIC_CRMW"),
+    ATOMIC_READ_MODIFY_WRITE("ATOMIC_RMW"),
     GET_ELEMENT_POINTER("GET_ELEMENT_PTR"),
 
     // Conversion Operations
