@@ -22,8 +22,8 @@ import de.jplag.options.JPlagOptions;
  */
 public class MatchMerging {
     private int minimumTokenMatch;
-    private Submission leftSubmission;
-    private Submission rightSubmission;
+    private Submission firstSubmission;
+    private Submission secondSubmission;
     private List<Match> globalMatches;
     private List<List<Match>> neighbors;
     private int seperatingThreshold;
@@ -51,14 +51,14 @@ public class MatchMerging {
      */
     public JPlagResult run() {
         for (int i = 0; i < comparisons.size(); i++) {
-            leftSubmission = comparisons.get(i).firstSubmission().copy();
-            rightSubmission = comparisons.get(i).secondSubmission().copy();
+            firstSubmission = comparisons.get(i).firstSubmission().copy();
+            secondSubmission = comparisons.get(i).secondSubmission().copy();
             globalMatches = new ArrayList<>(comparisons.get(i).matches());
             globalMatches.addAll(comparisons.get(i).ignoredMatches());
             computeNeighbors();
             mergeNeighbors();
             removeBuffer();
-            comparisons.set(i, new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
+            comparisons.set(i, new JPlagComparison(firstSubmission, secondSubmission, globalMatches, new ArrayList<>()));
 
         }
         return new JPlagResult(comparisons, result.getSubmissions(), result.getDuration(), options);
@@ -82,16 +82,16 @@ public class MatchMerging {
         while (i < neighbors.size()) {
             int lengthUpper = neighbors.get(i).get(0).length();
             int lengthLower = neighbors.get(i).get(1).length();
-            int seperatingLeft = neighbors.get(i).get(1).startOfFirst() - neighbors.get(i).get(0).endOfFirst() - 1;
-            int seperatingRight = neighbors.get(i).get(1).startOfSecond() - neighbors.get(i).get(0).endOfSecond() - 1;
-            double seperating = (seperatingLeft + seperatingRight) / 2.0;
+            int seperatingFirst = neighbors.get(i).get(1).startOfFirst() - neighbors.get(i).get(0).endOfFirst() - 1;
+            int seperatingSecond = neighbors.get(i).get(1).startOfSecond() - neighbors.get(i).get(0).endOfSecond() - 1;
+            double seperating = (seperatingFirst + seperatingSecond) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
             if (seperating <= seperatingThreshold) {
                 globalMatches.removeAll(neighbors.get(i));
                 globalMatches
                         .add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper + lengthLower));
-                removeToken(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper, seperatingLeft,
-                        seperatingRight);
+                removeToken(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper, seperatingFirst,
+                        seperatingSecond);
                 computeNeighbors();
                 i = 0;
             } else {
@@ -100,22 +100,22 @@ public class MatchMerging {
         }
     }
 
-    private void removeToken(int startLeft, int startRight, int lengthUpper, int seperatingLeft, int seperatingRight) {
-        List<Token> tokenLeft = new ArrayList<>(leftSubmission.getTokenList());
-        List<Token> tokenRight = new ArrayList<>(rightSubmission.getTokenList());
-        tokenLeft.subList(startLeft + lengthUpper, startLeft + lengthUpper + seperatingLeft).clear();
-        tokenRight.subList(startRight + lengthUpper, startRight + lengthUpper + seperatingRight).clear();
-        leftSubmission.setTokenList(tokenLeft);
-        rightSubmission.setTokenList(tokenRight);
+    private void removeToken(int startFirst, int startSecond, int lengthUpper, int seperatingFirst, int seperatingSecond) {
+        List<Token> tokenFirst = new ArrayList<>(firstSubmission.getTokenList());
+        List<Token> tokenSecond = new ArrayList<>(secondSubmission.getTokenList());
+        tokenFirst.subList(startFirst + lengthUpper, startFirst + lengthUpper + seperatingFirst).clear();
+        tokenSecond.subList(startSecond + lengthUpper, startSecond + lengthUpper + seperatingSecond).clear();
+        firstSubmission.setTokenList(tokenFirst);
+        secondSubmission.setTokenList(tokenSecond);
 
         for (int i = 0; i < globalMatches.size(); i++) {
-            if (globalMatches.get(i).startOfFirst() > startLeft) {
-                Match alteredMatch = new Match(globalMatches.get(i).startOfFirst() - seperatingLeft, globalMatches.get(i).startOfSecond(),
+            if (globalMatches.get(i).startOfFirst() > startFirst) {
+                Match alteredMatch = new Match(globalMatches.get(i).startOfFirst() - seperatingFirst, globalMatches.get(i).startOfSecond(),
                         globalMatches.get(i).length());
                 globalMatches.set(i, alteredMatch);
             }
-            if (globalMatches.get(i).startOfSecond() > startRight) {
-                Match alteredMatch = new Match(globalMatches.get(i).startOfFirst(), globalMatches.get(i).startOfSecond() - seperatingRight,
+            if (globalMatches.get(i).startOfSecond() > startSecond) {
+                Match alteredMatch = new Match(globalMatches.get(i).startOfFirst(), globalMatches.get(i).startOfSecond() - seperatingSecond,
                         globalMatches.get(i).length());
                 globalMatches.set(i, alteredMatch);
             }
@@ -124,9 +124,9 @@ public class MatchMerging {
 
     private void removeBuffer() {
         List<Match> toRemove = new ArrayList<>();
-        for (Match m : globalMatches) {
-            if (m.length() < minimumTokenMatch) {
-                toRemove.add(m);
+        for (Match match : globalMatches) {
+            if (match.length() < minimumTokenMatch) {
+                toRemove.add(match);
             }
         }
         globalMatches.removeAll(toRemove);
