@@ -8,7 +8,7 @@ export default class HundredValueDistribution extends Distribution {
   /**
    * Returns the distribution summed at every tenth percentile
    */
-  public getTenthPercentileFormattedValues(): number[] {
+  public splitIntoTenBuckets(): number[] {
     const tenValueArray = new Array<number>(10).fill(0)
     for (let i = 0; i < 100; i++) {
       tenValueArray[Math.floor(i / 10)] += this._distribution[i]

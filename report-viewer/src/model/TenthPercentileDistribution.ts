@@ -5,7 +5,7 @@ export default class TenValueDistribution extends Distribution {
     super(distribution)
   }
 
-  public getTenthPercentileFormattedValues(): number[] {
+  public splitIntoTenBuckets(): number[] {
     return this._distribution
   }
 }
