@@ -50,6 +50,7 @@ public class MatchMerging {
      * @return JPlagResult containing the merged matches
      */
     public JPlagResult run() {
+        long timeBeforeStartInMillis = System.currentTimeMillis();
         for (int i = 0; i < comparisons.size(); i++) {
             firstSubmission = comparisons.get(i).firstSubmission().copy();
             secondSubmission = comparisons.get(i).secondSubmission().copy();
@@ -61,7 +62,8 @@ public class MatchMerging {
             comparisons.set(i, new JPlagComparison(firstSubmission, secondSubmission, globalMatches, new ArrayList<>()));
 
         }
-        return new JPlagResult(comparisons, result.getSubmissions(), result.getDuration(), options);
+        long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
+        return new JPlagResult(comparisons, result.getSubmissions(), result.getDuration() + durationInMillis, options);
     }
 
     private void computeNeighbors() {

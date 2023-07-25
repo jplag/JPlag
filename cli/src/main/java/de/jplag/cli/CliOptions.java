@@ -59,7 +59,7 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "Clustering%n")
     public Clustering clustering = new Clustering();
 
-    @ArgGroup(validate = false, heading = "Merging%n")
+    @ArgGroup(validate = false, heading = "Match Merging%nDefense mechanism against obfuscation that merges neighboring matches based on these parameters:\n")
     public Merging merging = new Merging();
 
     /**
@@ -113,10 +113,12 @@ public class CliOptions implements Runnable {
     }
 
     public static class Merging {
-        @Option(names = {"--merge-buffer"}, description = "Buffer for merging (default: 0)\n")
+        @Option(names = {
+                "--merge-buffer"}, description = "Defines how much lower the length of a match can be than the minimum match length (default: 0)\n")
         public int mergeBuffer;
 
-        @Option(names = {"--seperating-threshold"}, description = "Seperation threshold for merging (default: 0)\n")
+        @Option(names = {
+                "--seperating-threshold"}, description = "Defines how many token there can be between two neighboring matches (default: 0)\n")
         public int seperatingThreshold;
 
     }
