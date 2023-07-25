@@ -7,8 +7,8 @@ import versionJson from '@/version.json'
 import Distribution from '../Distribution'
 import MetricType from '../MetricType'
 import { BaseFactory } from './BaseFactory'
-import PercentileDistribution from '../PercentileDistribution'
-import TenValueDistribution from '../TenthPercentileDistribution'
+import PercentileDistribution from '../HundredValueDistribution'
+import TenValueDistribution from '../TenValueDistribution'
 
 export class OverviewFactory extends BaseFactory {
   static reportViewerVersion: Version =
