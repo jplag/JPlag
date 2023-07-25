@@ -10,7 +10,7 @@ export default class HundredValueDistribution extends Distribution {
    */
   public splitIntoTenBuckets(): number[] {
     const tenValueArray = new Array<number>(10).fill(0)
-    for (let i = 0; i < 100; i++) {
+    for (let i = 99; i >= 0; i--) {
       tenValueArray[Math.floor(i / 10)] += this._distribution[i]
     }
     return tenValueArray
