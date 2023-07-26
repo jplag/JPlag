@@ -15,38 +15,17 @@
       {{ title }}
     </div>
     <div class="mx-1 overflow-x-auto">
-      <div :class="{ hidden: !collapse }" class="w-fit min-w-full">
-        <div v-if="!isEmpty(lines)" class="flex flex-col items-start w-full p-0">
-          <div
-            class="flex flex-row w-full"
-            v-for="(line, index) in lines"
-            :id="
-              String(panelId)
-                .concat(filePath || '')
-                .concat((index + 1).toString())
-            "
-            :key="index"
-          >
-            <LineOfCode
-              class="flex-grow"
-              :color="coloringArray[index]"
-              :line-number="index + 1"
-              :text="line"
-              :visible="collapse"
-              @click="
-                $emit(
-                  'lineSelected',
-                  $event,
-                  linksArray[index].panel,
-                  linksArray[index].file,
-                  linksArray[index].line
-                )
-              "
-            />
-          </div>
-        </div>
+      <div v-if="collapse" class="w-fit min-w-full !text-xs">
+        <table v-if="!isEmpty(lines)" class="w-full">
+          <tr v-for="(line, index) in result" :key="index" class="w-full">
+            <td class="float-right pr-3">{{ index + 1 }}</td>
+            <td class="w-full" :style="{ background: coloringArray[index] }">
+              <pre v-html="line" class="hljs"></pre>
+            </td>
+          </tr>
+        </table>
         <div v-else class="flex flex-col items-start overflow-x-auto">
-          <p>Empty File</p>
+          <i>Empty File</i>
         </div>
       </div>
     </div>
@@ -56,8 +35,8 @@
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { ref, type Ref } from 'vue'
-import LineOfCode from '@/components/LineOfCode.vue'
 import Interactable from './InteractableComponent.vue'
+import hljs from 'highlight.js'
 
 const props = defineProps({
   /**
@@ -166,4 +145,29 @@ for (let i = 0; i < props.lines.length; i++) {
     linksArray.value[i] = {}
   }
 }
+
+const value = hljs.highlight(props.lines.join('\n'), { language: 'java' }).value
+const openTags: string[] = []
+const result = value
+  .replace(/(<span [^>]+>)|(<\/span>)|(\n)/g, (match) => {
+    if (match === '\n') {
+      return '</span>'.repeat(openTags.length) + '\n' + openTags.join('')
+    }
+
+    if (match === '</span>') {
+      openTags.pop()
+    } else {
+      openTags.push(match)
+    }
+
+    return match
+  })
+  .split('\n')
 </script>
+
+<style scoped>
+.hljs {
+  font-family: 'JetBrains Mono NL', monospace !important;
+  background: transparent !important;
+}
+</style>
