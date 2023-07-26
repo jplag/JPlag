@@ -20,7 +20,6 @@ const store = {
     expect(map.has('D')).toBeTruthy()
   },
   saveComparisonFileLookup: (map) => {
-    console.log(map)
     expect(map.has('A')).toBeTruthy()
     expect(map.has('B')).toBeTruthy()
   }
