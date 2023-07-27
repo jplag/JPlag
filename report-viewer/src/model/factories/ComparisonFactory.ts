@@ -52,9 +52,7 @@ export class ComparisonFactory extends BaseFactory {
       this.extractSimilarities(json),
       filesOfFirstConverted,
       filesOfSecondConverted,
-      coloredMatches,
-      this.groupMatchesByFileName(coloredMatches, 1),
-      this.groupMatchesByFileName(coloredMatches, 2)
+      coloredMatches
     )
   }
 
@@ -103,43 +101,6 @@ export class ComparisonFactory extends BaseFactory {
       })
     })
     return map
-  }
-
-  private static groupMatchesByFileName(
-    matches: Array<Match>,
-    index: 1 | 2
-  ): Map<string, Array<MatchInSingleFile>> {
-    const acc = new Map<string, Array<MatchInSingleFile>>()
-    matches.forEach((val) => {
-      const name = index === 1 ? val.firstFile : val.secondFile
-
-      if (!acc.get(name)) {
-        acc.set(name, [])
-      }
-
-      if (index === 1) {
-        const newVal: MatchInSingleFile = {
-          start: val.startInFirst,
-          end: val.endInFirst,
-          linked_panel: 2,
-          linked_file: val.secondFile,
-          linked_line: val.startInSecond,
-          color: val.color
-        }
-        acc.get(name)?.push(newVal)
-      } else {
-        const newVal: MatchInSingleFile = {
-          start: val.startInSecond,
-          end: val.endInSecond,
-          linked_panel: 1,
-          linked_file: val.firstFile,
-          linked_line: val.startInFirst,
-          color: val.color
-        }
-        acc.get(name)?.push(newVal)
-      }
-    })
-    return acc
   }
 
   private static getSubmissionFileListFromLocal(submissionId: string): string[] {
