@@ -12,7 +12,7 @@
         :style="{ background: match.color }"
         v-for="[index, match] in matches?.entries()"
         v-bind:key="index"
-        @click="$emit('matchSelected', $event, match)"
+        @click="$emit('matchSelected', match)"
       >
         {{ getFileName(match.firstFile) }} - {{ getFileName(match.secondFile) }}: {{ match.tokens }}
       </Interactable>

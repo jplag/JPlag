@@ -11,15 +11,14 @@
         <CodePanel
           v-for="(file, index) in files.keys()"
           :key="file.concat(index.toString())"
+          ref="codePanels"
           :collapse="files.get(file)?.collapsed"
           :file-index="index"
           :lines="files.get(file)?.lines || []"
           :matches="!matches.get(file) ? [] : matches.get(file)"
-          :panel-id="containerId"
           :title="convertSubmissionIdToName(file, submissionId)"
           :filePath="file"
-          @toggle-collapse="$emit('toggle-collapse', file)"
-          @line-selected="lineSelected"
+          @line-selected="(match) => $emit('line-selected', match)"
           class="mt-1"
         />
       </VueDraggableNext>
@@ -29,22 +28,15 @@
 
 <script setup lang="ts">
 import type { SubmissionFile } from '@/model/SubmissionFile'
-import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-
 import CodePanel from '@/components/CodePanel.vue'
 import store from '@/stores/store'
 import Container from './ContainerComponent.vue'
 import ScrollableComponent from './ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
+import { ref } from 'vue'
+import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 
-defineProps({
-  /**
-   * Id of the files container. We have only two so it is either 1 or 2.
-   */
-  containerId: {
-    type: Number,
-    required: true
-  },
+const props = defineProps({
   /**
    * Id of the submission to thich the files belong.
    */
@@ -90,18 +82,7 @@ defineProps({
   }
 })
 
-const emit = defineEmits(['toggle-collapse', 'lineSelected'])
-
-/**
- * Passes lineSelected event, emitted from LineOfCode, to parent.
- * @param e event from clicking on the line
- * @param index index of the file in the files array
- * @param file path of the file
- * @param line line number of the line
- */
-function lineSelected(e: unknown, index: number, file: string, line: number) {
-  emit('lineSelected', e, index, file, line)
-}
+defineEmits(['lineSelected'])
 
 /**
  * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.
@@ -117,6 +98,19 @@ function convertSubmissionIdToName(file: string, submissionId: string): string {
     ? '..' + filePath.substring(filePathLength - 40, filePathLength)
     : filePath
 }
+
+const codePanels = ref([])
+
+function scrollTo(file: string, line: number) {
+  console.log('scrolling to', file)
+  const fileIndex = Array.from(props.files.keys()).indexOf(file)
+  console.log('fileIndex', fileIndex)
+  ;(codePanels.value[fileIndex] as unknown as typeof CodePanel).scrollTo(line)
+}
+
+defineExpose({
+  scrollTo
+})
 </script>
 
 <style scoped>

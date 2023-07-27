@@ -1,7 +1,7 @@
 import { Comparison } from '../Comparison'
 import type { Match } from '../Match'
+import { MatchInSingleFile } from '../MatchInSingleFile'
 import type { SubmissionFile } from '../SubmissionFile'
-import type { MatchInSingleFile } from '../MatchInSingleFile'
 import store from '@/stores/store'
 import { generateColors } from '@/utils/ColorUtils'
 import slash from 'slash'
@@ -109,7 +109,7 @@ export class ComparisonFactory {
 
   private static groupMatchesByFileName(
     matches: Array<Match>,
-    index: number
+    index: 1 | 2
   ): Map<string, Array<MatchInSingleFile>> {
     const acc = new Map<string, Array<MatchInSingleFile>>()
     matches.forEach((val) => {
@@ -119,27 +119,7 @@ export class ComparisonFactory {
         acc.set(name, [])
       }
 
-      if (index === 1) {
-        const newVal: MatchInSingleFile = {
-          start: val.startInFirst as number,
-          end: val.endInFirst as number,
-          linked_panel: 2,
-          linked_file: val.secondFile as string,
-          linked_line: val.startInSecond as number,
-          color: val.color as string
-        }
-        acc.get(name)?.push(newVal)
-      } else {
-        const newVal: MatchInSingleFile = {
-          start: val.startInSecond as number,
-          end: val.endInSecond as number,
-          linked_panel: 1,
-          linked_file: val.firstFile as string,
-          linked_line: val.startInFirst as number,
-          color: val.color as string
-        }
-        acc.get(name)?.push(newVal)
-      }
+      acc.get(name)?.push(new MatchInSingleFile(val, index))
     })
     return acc
   }
