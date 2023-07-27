@@ -6,6 +6,7 @@ import store from '@/stores/store'
 import { generateColors } from '@/utils/ColorUtils'
 import slash from 'slash'
 import { BaseFactory } from './BaseFactory'
+import MetricType from '../MetricType'
 
 /**
  * Factory class for creating Comparison objects
@@ -45,19 +46,44 @@ export class ComparisonFactory extends BaseFactory {
     const colors = generateColors(matches.length, matchSaturation, matchLightness, matchAlpha)
     const coloredMatches = matches.map((match, index) => this.mapMatch(match, colors[index]))
 
-    const comparison = new Comparison(
+    return new Comparison(
       firstSubmissionId,
       secondSubmissionId,
-      json.similarity as number
+      this.extractSimilarities(json),
+      filesOfFirstConverted,
+      filesOfSecondConverted,
+      coloredMatches,
+      this.groupMatchesByFileName(coloredMatches, 1),
+      this.groupMatchesByFileName(coloredMatches, 2)
     )
-    comparison.filesOfFirstSubmission = filesOfFirstConverted
-    comparison.filesOfSecondSubmission = filesOfSecondConverted
-    comparison.colors = colors
-    comparison.allMatches = coloredMatches
-    comparison.matchesInFirstSubmission = this.groupMatchesByFileName(coloredMatches, 1)
-    comparison.matchesInSecondSubmissions = this.groupMatchesByFileName(coloredMatches, 2)
+  }
 
-    return comparison
+  private static extractSimilarities(json: Record<string, unknown>): Record<MetricType, number> {
+    if (json.similarities) {
+      return this.extractSimilaritiesFromMap(json.similarities as Record<string, number>)
+    } else if (json.similarity) {
+      return this.extractSimilaritiesFromSingleValue(json.similarity as number)
+    }
+    throw new Error('No similarities found in comparison file')
+  }
+
+  private static extractSimilaritiesFromSingleValue(
+    avgSimilarity: number
+  ): Record<MetricType, number> {
+    return {
+      [MetricType.AVERAGE]: avgSimilarity,
+      [MetricType.MAXIMUM]: Number.NaN
+    }
+  }
+
+  private static extractSimilaritiesFromMap(
+    similarityMap: Record<string, number>
+  ): Record<MetricType, number> {
+    const similarities = {} as Record<MetricType, number>
+    for (const [key, value] of Object.entries(similarityMap)) {
+      similarities[key as MetricType] = value
+    }
+    return similarities
   }
 
   private static convertToSubmissionFileList(
