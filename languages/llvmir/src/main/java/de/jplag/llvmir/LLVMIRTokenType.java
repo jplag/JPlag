@@ -12,7 +12,7 @@ public enum LLVMIRTokenType implements TokenType {
     FUNCTION_DECL("FUNC_DECL"),
     FUNCTION_DEF("FUNC_DEF"),
 
-    GLOBAL_VARIABLE("GLOBAL_VAR"),
+    GLOBAL_VARIABLE("GLOB_VAR"),
     ASSEMBLY("ASM"),
     TYPE_DEFINITION("TYPE_DEF"),
 
@@ -35,11 +35,11 @@ public enum LLVMIRTokenType implements TokenType {
     CLEAN_UP_RETURN("CLEAN_UP_RET"),
 
     // Binary Operations
-    ADD("ADDITION"),
-    SUB("SUBTRACTION"),
-    MUL("MULTIPLICATION"),
-    DIV("DIVISION"),
-    REM("REMAINDER"),
+    ADDITION("ADD"),
+    SUBTRACTION("SUB"),
+    MULTIPLICATION("MUL"),
+    DIVISION("DIV"),
+    REMAINDER("REM"),
 
     // Bitwise instruction
     SHIFT("SHIFT"),
@@ -48,13 +48,13 @@ public enum LLVMIRTokenType implements TokenType {
     XOR("XOR"),
 
     // Vector operations
-    EXTRACT_ELEM("EXTRACT_ELEMENT"),
-    INSERT_ELEM("INSERT_ELEM"),
-    SHUFFLE_VEC("SHUFFLE_VECTOR"),
+    EXTRACT_ELEMENT("EXTRACT_ELEM"),
+    INSERT_ELEMENT("INSERT_ELEM"),
+    SHUFFLE_VECTOR("SHUFFLE_VEC"),
 
     // Aggregate Operations
-    EXTRACT_VAL("EXTRACT_VALUE"),
-    INSERT_VAL("INSERT_VALUE"),
+    EXTRACT_VALUE("EXTRACT_VAL"),
+    INSERT_VALUE("INSERT_VAL"),
 
     // Memory Operations
     ALLOCATION("ALLOC"),
