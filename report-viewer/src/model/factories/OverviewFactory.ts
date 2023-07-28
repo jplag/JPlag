@@ -2,15 +2,15 @@ import { Overview } from '../Overview'
 import type { ComparisonListElement } from '../ComparisonListElement'
 import type { Cluster } from '@/model/Cluster'
 import store from '@/stores/store'
-import type { Version } from '../Version'
+import { Version } from '../Version'
 import versionJson from '@/version.json'
 import Distribution from '../Distribution'
 
 export class OverviewFactory {
   static reportViewerVersion: Version =
     versionJson['report_viewer_version'] !== undefined
-      ? versionJson['report_viewer_version']
-      : { major: -1, minor: -1, patch: -1 }
+      ? this.extractVersion(versionJson['report_viewer_version'] as Record<string, number>)
+      : new Version(-1, -1, -1)
 
   /**
    * Creates an overview object from a json object created by by JPlag
@@ -18,11 +18,7 @@ export class OverviewFactory {
    */
   private static extractOverview(json: Record<string, unknown>): Overview {
     const versionField = json.jplag_version as Record<string, number>
-    const jplagVersion: Version = {
-      major: versionField.major,
-      minor: versionField.minor,
-      patch: versionField.patch
-    }
+    const jplagVersion = this.extractVersion(versionField)
 
     OverviewFactory.compareVersions(jplagVersion, this.reportViewerVersion)
 
@@ -157,24 +153,8 @@ export class OverviewFactory {
    */
   static compareVersions(jsonVersion: Version, reportViewerVersion: Version) {
     if (sessionStorage.getItem('versionAlert') === null) {
-      if (
-        reportViewerVersion.major === 0 &&
-        reportViewerVersion.minor === 0 &&
-        reportViewerVersion.patch === 0
-      ) {
-        alert('The development version (0.0.0) of JPlag is used.')
-      }
-
-      if (
-        jsonVersion.major !== reportViewerVersion.major ||
-        jsonVersion.minor !== reportViewerVersion.minor ||
-        jsonVersion.patch !== reportViewerVersion.patch
-      ) {
-        if (
-          reportViewerVersion.major === -1 &&
-          reportViewerVersion.minor === -1 &&
-          reportViewerVersion.patch === -1
-        ) {
+      if (jsonVersion.compareTo(reportViewerVersion) !== 0) {
+        if (reportViewerVersion.isInvalid()) {
           console.warn(
             "The report viewer's version cannot be read from version.json file. Please configure it correctly."
           )
@@ -184,17 +164,9 @@ export class OverviewFactory {
           )
           alert(
             "The result's version(" +
-              jsonVersion.major +
-              '.' +
-              jsonVersion.minor +
-              '.' +
-              jsonVersion.patch +
+              jsonVersion.toString() +
               ") tag does not fit the report viewer's version(" +
-              reportViewerVersion.major +
-              '.' +
-              reportViewerVersion.minor +
-              '.' +
-              reportViewerVersion.patch +
+              reportViewerVersion.toString() +
               '). ' +
               'Trying to read it anyhow but be careful.'
           )
@@ -217,5 +189,9 @@ export class OverviewFactory {
     }
 
     store().saveComparisonFileLookup(comparisonMap)
+  }
+
+  public static extractVersion(versionField: Record<string, number>): Version {
+    return new Version(versionField.major, versionField.minor, versionField.patch)
   }
 }

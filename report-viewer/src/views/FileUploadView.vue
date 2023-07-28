@@ -43,6 +43,7 @@
         <p class="font-bold text-2xl">Loading file...</p>
       </div>
     </div>
+    <VersionInfoComponent class="absolute bottom-3 left-3" />
   </div>
 </template>
 
@@ -54,6 +55,7 @@ import router from '@/router'
 import store from '@/stores/store'
 import slash from 'slash'
 import Button from '@/components/ButtonComponent.vue'
+import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
 
 class LoadError extends Error {}
 

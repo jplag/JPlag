@@ -52,6 +52,10 @@ export default {
           DEFAULT: '#be1622',
           dark: '#7F0F18'
         },
+        link: {
+          DEFAULT: '#0070f3',
+          dark: '#00c'
+        }
 
       },
       borderWidth: {
