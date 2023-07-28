@@ -4,27 +4,26 @@
 <template>
   <Interactable class="!shadow mx-2">
     <div @click="collapsed = !collapsed" class="text-center font-bold">
-      {{ title }}
+      {{ getFileDisplayName(file) }}
     </div>
     <div class="mx-1 overflow-x-auto">
       <div v-if="!collapsed" class="w-fit min-w-full !text-xs">
-        <table v-if="!isEmpty(lines)" class="w-full">
+        <table v-if="file.data.trim() !== ''" class="w-full">
           <tr
-            v-for="(line, index) in result"
+            v-for="(line, index) in codeLines"
             :key="index"
             class="w-full cursor-default"
-            :class="{ 'cursor-pointer': lineMatch[index] !== null }"
-            @click="lineSelected(index + 1)"
+            :class="{ 'cursor-pointer': line.match !== null }"
+            @click="lineSelected(index)"
           >
             <td class="float-right pr-3">{{ index + 1 }}</td>
             <td
               class="w-full"
               :style="{
-                background:
-                  lineMatch[index] !== null ? lineMatch[index]?.color : 'hsla(0, 0%, 0%, 0)'
+                background: line.match !== null ? line.match.color : 'hsla(0, 0%, 0%, 0)'
               }"
             >
-              <pre v-html="line" class="hljs" ref="lineRefs"></pre>
+              <pre v-html="line.line" class="code-font !bg-transparent" ref="lineRefs"></pre>
             </td>
           </tr>
         </table>
@@ -38,37 +37,22 @@
 
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, type PropType } from 'vue'
 import Interactable from './InteractableComponent.vue'
 import hljs from 'highlight.js'
 import type { Match } from '@/model/Match'
+import type { SubmissionFile } from '@/stores/state'
 
 const props = defineProps({
   /**
-   * Title of the displayed file.
-   */
-  title: {
-    type: String,
-    required: true
-  },
-  /**
-   * Index of file amongst other files in submission.
-   */
-  fileIndex: {
-    type: Number,
-    required: true
-  },
-  /**
    * Code lines of the file.
-   * type: Array<string>
    */
-  lines: {
-    type: Array<string>,
+  file: {
+    type: Object as PropType<SubmissionFile>,
     required: true
   },
   /**
    * Matches in the file
-   * type: Array<MatchInSingleFile>
    */
   matches: {
     type: Array<MatchInSingleFile>,
@@ -77,17 +61,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['lineSelected'])
-
 const collapsed = ref(true)
-
-/**
- * @param lines Array of lines to check.
- * @returns true if all lines are empty, false otherwise.
- */
-function isEmpty(lines: string[]) {
-  return lines.length === 0 || lines.every((line) => !line.trim())
-}
-
 const lineRefs = ref<HTMLElement[]>([])
 
 function scrollTo(lineNumber: number) {
@@ -101,9 +75,9 @@ defineExpose({
   scrollTo
 })
 
-const value = hljs.highlight(props.lines.join('\n'), { language: 'java' }).value
+const highlightedCode = hljs.highlight(props.file.data, { language: 'java' }).value
 const openTags: string[] = []
-const result = value
+const formatedCode = highlightedCode
   .replace(/(<span [^>]+>)|(<\/span>)|(\n)/g, (match) => {
     if (match === '\n') {
       return '</span>'.repeat(openTags.length) + '\n' + openTags.join('')
@@ -119,24 +93,37 @@ const result = value
   })
   .split('\n')
 
-const lineMatch: (null | Match)[] = new Array(result.length).fill(null)
+const codeLines: { line: string; match: null | Match }[] = formatedCode.map((line) => {
+  return { line, match: null }
+})
 props.matches?.forEach((m) => {
   for (let i = m.start; i <= m.end; i++) {
-    //assign match color to line
-    lineMatch[i - 1] = m.match
+    //assign match to line
+    codeLines[i - 1].match = m.match
   }
 })
 
-function lineSelected(line: number) {
-  if (lineMatch[line - 1] !== null) {
-    emit('lineSelected', lineMatch[line - 1])
+function lineSelected(lineIndex: number) {
+  if (codeLines[lineIndex].match !== null) {
+    emit('lineSelected', codeLines[lineIndex].match)
   }
+}
+
+/**
+ * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.
+ * @param file submission file
+ * @return new path of file
+ */
+function getFileDisplayName(file: SubmissionFile): string {
+  const filePathLength = file.fileName.length
+  return filePathLength > 40
+    ? '...' + file.fileName.substring(filePathLength - 40, filePathLength)
+    : file.fileName
 }
 </script>
 
 <style scoped>
-.hljs {
+.code-font {
   font-family: 'JetBrains Mono NL', monospace !important;
-  background: transparent !important;
 }
 </style>

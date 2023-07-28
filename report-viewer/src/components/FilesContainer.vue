@@ -4,20 +4,17 @@
 <template>
   <Container class="flex flex-col">
     <h3 class="text-left text-lg font-bold">
-      Files of {{ anonymous ? filesOwnerDefault : filesOwner }}:
+      Files of
+      {{ anonymous ? anonymousFilesOwnerDefault : store().submissionDisplayName(submissionId) }}:
     </h3>
     <ScrollableComponent class="flex-grow">
       <VueDraggableNext>
         <CodePanel
-          v-for="(file, index) in files.keys()"
-          :key="file.concat(index.toString())"
+          v-for="(file, index) in filesRef"
+          :key="index"
           ref="codePanels"
-          :collapse="files.get(file)?.collapsed"
-          :file-index="index"
-          :lines="files.get(file)?.lines || []"
-          :matches="!matches.get(file) ? [] : matches.get(file)"
-          :title="convertSubmissionIdToName(file, submissionId)"
-          :filePath="file"
+          :file="file"
+          :matches="!matches.get(file.fileName) ? [] : matches.get(file.fileName)"
           @line-selected="(match) => $emit('line-selected', match)"
           class="mt-1"
         />
@@ -27,47 +24,32 @@
 </template>
 
 <script setup lang="ts">
-import type { SubmissionFile } from '@/model/SubmissionFile'
+import type { SubmissionFile } from '@/stores/state'
 import CodePanel from '@/components/CodePanel.vue'
-import store from '@/stores/store'
 import Container from './ContainerComponent.vue'
 import ScrollableComponent from './ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
+import store from '@/stores/store'
 
 const props = defineProps({
   /**
-   * Id of the submission to thich the files belong.
-   */
-  filesOwner: {
-    type: String,
-    required: true
-  },
-  /**
-   * Default value of the submission to which the files belong.
-   */
-  filesOwnerDefault: {
-    type: String,
-    required: true
-  },
-  /**
    * Files of the submission.
-   * type: Array<SubmissionFile>
    */
   files: {
-    type: Map<string, SubmissionFile>,
+    type: Array<SubmissionFile>,
     required: true
   },
   /**
-   * Matche of submission.
+   * Matches of submission.
    */
   matches: {
     type: Map<string, MatchInSingleFile[]>,
     required: true
   },
   /**
-   * Default value of the submission to which the files belong.
+   * Submission id of the files.
    */
   submissionId: {
     type: String,
@@ -79,33 +61,37 @@ const props = defineProps({
   anonymous: {
     type: Boolean,
     required: true
+  },
+  /**
+   * The default value of the owner of the files.
+   */
+  anonymousFilesOwnerDefault: {
+    type: String,
+    required: true
   }
 })
 
 defineEmits(['lineSelected'])
 
-/**
- * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.
- * @param file files path
- * @param submissionId id of submission
- * @return new path of file
- */
-function convertSubmissionIdToName(file: string, submissionId: string): string {
-  const displayName = store().submissionDisplayName(submissionId) || submissionId
-  const filePath = file.replace(submissionId, displayName)
-  const filePathLength = filePath.length
-  return filePathLength > 40
-    ? '..' + filePath.substring(filePathLength - 40, filePathLength)
-    : filePath
-}
+const filesRef = computed(() => {
+  return props.files.map((file) => {
+    return {
+      ...file,
+      owner: props.anonymous
+        ? props.anonymousFilesOwnerDefault
+        : store().submissionDisplayName(props.submissionId)
+    }
+  })
+})
 
-const codePanels = ref([])
+const codePanels: Ref<(typeof CodePanel)[]> = ref([])
 
 function scrollTo(file: string, line: number) {
   console.log('scrolling to', file)
-  const fileIndex = Array.from(props.files.keys()).indexOf(file)
-  console.log('fileIndex', fileIndex)
-  ;(codePanels.value[fileIndex] as unknown as typeof CodePanel).scrollTo(line)
+  const fileIndex = Array.from(props.files).findIndex((f) => f.fileName === file)
+  if (fileIndex !== -1) {
+    codePanels.value[fileIndex].scrollTo(line)
+  }
 }
 
 defineExpose({

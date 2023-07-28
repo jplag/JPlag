@@ -39,9 +39,8 @@
         :submission-id="firstId"
         :files="filesOfFirst"
         :matches="comparison.matchesInFirstSubmission"
-        :files-owner="store().submissionDisplayName(firstId) || ''"
         :anonymous="isAnonymous(firstId)"
-        files-owner-default="Submission 1"
+        anonymous-files-owner-default="Submission 1"
         @line-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
       />
@@ -50,9 +49,8 @@
         :submission-id="secondId"
         :files="filesOfSecond"
         :matches="comparison.matchesInSecondSubmissions"
-        :files-owner="store().submissionDisplayName(secondId) || ''"
         :anonymous="isAnonymous(secondId)"
-        files-owner-default="Submission 2"
+        anonymous-files-owner-default="Submission 2"
         @line-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
       />

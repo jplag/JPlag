@@ -1,7 +1,6 @@
 import { Comparison } from '../Comparison'
 import type { Match } from '../Match'
 import { MatchInSingleFile } from '../MatchInSingleFile'
-import type { SubmissionFile } from '../SubmissionFile'
 import store from '@/stores/store'
 import { generateColors } from '@/utils/ColorUtils'
 import slash from 'slash'
@@ -56,12 +55,6 @@ export class ComparisonFactory {
    * @param json the json object
    */
   private static extractComparison(json: Record<string, unknown>): Comparison {
-    const filesOfFirstSubmission = store().filesOfSubmission(json.id1 as string)
-    const filesOfSecondSubmission = store().filesOfSubmission(json.id2 as string)
-
-    const filesOfFirstConverted = this.convertToFilesByName(filesOfFirstSubmission)
-    const filesOfSecondConverted = this.convertToFilesByName(filesOfSecondSubmission)
-
     const matches = json.matches as Array<Record<string, unknown>>
 
     const matchSaturation = 0.8
@@ -78,33 +71,14 @@ export class ComparisonFactory {
       json.id2 as string,
       json.similarity as number
     )
-    comparison.filesOfFirstSubmission = filesOfFirstConverted
-    comparison.filesOfSecondSubmission = filesOfSecondConverted
+    comparison.filesOfFirstSubmission = store().filesOfSubmission(json.id1 as string)
+    comparison.filesOfSecondSubmission = store().filesOfSubmission(json.id2 as string)
     comparison.colors = colors
     comparison.allMatches = coloredMatches
     comparison.matchesInFirstSubmission = matchesInFirst
     comparison.matchesInSecondSubmissions = matchesInSecond
 
     return comparison
-  }
-
-  private static convertToFilesByName(
-    files: Array<{ name: string; value: string }>
-  ): Map<string, SubmissionFile> {
-    const map = new Map<string, SubmissionFile>()
-    files.forEach((val) => {
-      if (!map.get(val.name)) {
-        map.set(val.name as string, {
-          lines: [],
-          collapsed: false
-        })
-      }
-      map.set(val.name as string, {
-        lines: val.value.split(/\r?\n/),
-        collapsed: false
-      })
-    })
-    return map
   }
 
   private static groupMatchesByFileName(
@@ -146,11 +120,9 @@ export class ComparisonFactory {
       request.send()
       if (request.status == 200) {
         store().saveSubmissionFile({
-          name: submissionId,
-          file: {
-            fileName: slash(file),
-            data: request.response
-          }
+          submissionId,
+          fileName: slash(file),
+          data: request.response
         })
       } else {
         console.log('Error loading file: ' + file)

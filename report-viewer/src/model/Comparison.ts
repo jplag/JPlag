@@ -1,5 +1,5 @@
 import type { Match } from './Match'
-import type { SubmissionFile } from './SubmissionFile'
+import type { SubmissionFile } from '@/stores/state'
 import type { MatchInSingleFile } from './MatchInSingleFile'
 
 /**
@@ -14,20 +14,20 @@ export class Comparison {
     this._firstSubmissionId = firstSubmissionId
     this._secondSubmissionId = secondSubmissionId
     this._similarity = similarity
-    this._filesOfFirstSubmission = new Map()
-    this._filesOfSecondSubmission = new Map()
+    this._filesOfFirstSubmission = []
+    this._filesOfSecondSubmission = []
     this._colors = []
     this._allMatches = []
     this._matchesInFirstSubmission = new Map()
     this._matchesInSecondSubmissions = new Map()
   }
 
-  private _filesOfFirstSubmission: Map<string, SubmissionFile>
+  private _filesOfFirstSubmission: SubmissionFile[]
 
   /**
    * @return Map of all files of the first submission
    */
-  get filesOfFirstSubmission(): Map<string, SubmissionFile> {
+  get filesOfFirstSubmission(): SubmissionFile[] {
     return this._filesOfFirstSubmission
   }
 
@@ -35,16 +35,16 @@ export class Comparison {
    * Set the files of the first submission
    * @param value Map to set to
    */
-  set filesOfFirstSubmission(value: Map<string, SubmissionFile>) {
+  set filesOfFirstSubmission(value: SubmissionFile[]) {
     this._filesOfFirstSubmission = value
   }
 
-  private _filesOfSecondSubmission: Map<string, SubmissionFile>
+  private _filesOfSecondSubmission: SubmissionFile[]
 
   /**
    * @return Map of all files of the second submission
    */
-  get filesOfSecondSubmission(): Map<string, SubmissionFile> {
+  get filesOfSecondSubmission(): SubmissionFile[] {
     return this._filesOfSecondSubmission
   }
 
@@ -52,7 +52,7 @@ export class Comparison {
    * Set the files of the second submission
    * @param value Map to set to
    */
-  set filesOfSecondSubmission(value: Map<string, SubmissionFile>) {
+  set filesOfSecondSubmission(value: SubmissionFile[]) {
     this._filesOfSecondSubmission = value
   }
 
