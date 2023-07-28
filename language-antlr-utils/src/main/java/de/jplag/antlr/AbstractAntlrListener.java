@@ -25,7 +25,6 @@ import de.jplag.semantics.VariableRegistry;
 public class AbstractAntlrListener implements ParseTreeListener {
     private final List<ContextTokenBuilder<ParserRuleContext>> startMappings;
     private final List<ContextTokenBuilder<ParserRuleContext>> endMappings;
-    private final List<ContextTokenBuilder<ParserRuleContext>> rangeMappings;
 
     private final List<TerminalTokenBuilder> terminalMapping;
 
@@ -46,7 +45,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
         this.startMappings = new ArrayList<>();
         this.endMappings = new ArrayList<>();
-        this.rangeMappings = new ArrayList<>();
 
         this.terminalMapping = new ArrayList<>();
 
@@ -78,8 +76,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
     @Override
     public void enterEveryRule(ParserRuleContext rule) {
         this.startMappings.stream().filter(mapping -> mapping.matches(rule)).forEach(mapping -> mapping.createToken(rule, variableRegistry));
-
-        this.rangeMappings.stream().filter(mapping -> mapping.matches(rule)).forEach(mapping -> mapping.createToken(rule, variableRegistry));
     }
 
     @Override
@@ -94,8 +90,8 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @param <T> The type of {@link ParserRuleContext}
      * @return The builder for the token
      */
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> createStartMapping(Class<T> antlrType, TokenType jplagType) {
-        return this.createStartMapping(antlrType, jplagType, it -> true);
+    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapEnter(Class<T> antlrType, TokenType jplagType) {
+        return this.mapEnter(antlrType, jplagType, it -> true);
     }
 
     /**
@@ -107,8 +103,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @return The builder for the token
      */
     @SuppressWarnings("unchecked")
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> createStartMapping(Class<T> antlrType, TokenType jplagType,
-            Predicate<T> condition) {
+    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapEnter(Class<T> antlrType, TokenType jplagType, Predicate<T> condition) {
         ContextTokenBuilder<T> builder = initTypeBuilder(antlrType, jplagType, condition, ContextTokenBuilderType.START);
         this.startMappings.add((ContextTokenBuilder<ParserRuleContext>) builder);
         return builder;
@@ -121,8 +116,8 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @param <T> The type of {@link ParserRuleContext}
      * @return The builder for the token
      */
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> createStopMapping(Class<T> antlrType, TokenType jplagType) {
-        return this.createStopMapping(antlrType, jplagType, it -> true);
+    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapExit(Class<T> antlrType, TokenType jplagType) {
+        return this.mapExit(antlrType, jplagType, it -> true);
     }
 
     /**
@@ -134,8 +129,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @return The builder for the token
      */
     @SuppressWarnings("unchecked")
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> createStopMapping(Class<T> antlrType, TokenType jplagType,
-            Predicate<T> condition) {
+    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapExit(Class<T> antlrType, TokenType jplagType, Predicate<T> condition) {
         ContextTokenBuilder<T> builder = initTypeBuilder(antlrType, jplagType, condition, ContextTokenBuilderType.STOP);
         this.endMappings.add((ContextTokenBuilder<ParserRuleContext>) builder);
         return builder;
@@ -149,8 +143,8 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @param <T> The type of {@link ParserRuleContext}
      * @return The builder for the token
      */
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> createRangeMapping(Class<T> antlrType, TokenType jplagType) {
-        return this.createRangeMapping(antlrType, jplagType, it -> true);
+    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapRange(Class<T> antlrType, TokenType jplagType) {
+        return this.mapRange(antlrType, jplagType, it -> true);
     }
 
     /**
@@ -163,10 +157,9 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @return The builder for the token
      */
     @SuppressWarnings("unchecked")
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> createRangeMapping(Class<T> antlrType, TokenType jplagType,
-            Predicate<T> condition) {
+    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapRange(Class<T> antlrType, TokenType jplagType, Predicate<T> condition) {
         ContextTokenBuilder<T> builder = initTypeBuilder(antlrType, jplagType, condition, ContextTokenBuilderType.RANGE);
-        this.rangeMappings.add((ContextTokenBuilder<ParserRuleContext>) builder);
+        this.startMappings.add((ContextTokenBuilder<ParserRuleContext>) builder);
         return builder;
     }
 
@@ -178,8 +171,8 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @param <T> The type of {@link ParserRuleContext}
      * @return The builder for the token
      */
-    protected <T extends ParserRuleContext> RangeBuilder<T> createStartStopMapping(Class<T> antlrType, TokenType startType, TokenType stopType) {
-        return createStartStopMapping(antlrType, startType, stopType, it -> true);
+    protected <T extends ParserRuleContext> RangeBuilder<T> mapEnterExit(Class<T> antlrType, TokenType startType, TokenType stopType) {
+        return mapEnterExit(antlrType, startType, stopType, it -> true);
     }
 
     /**
@@ -191,10 +184,10 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @param <T> The type of {@link ParserRuleContext}
      * @return The builder for the token
      */
-    protected <T extends ParserRuleContext> RangeBuilder<T> createStartStopMapping(Class<T> antlrType, TokenType startType, TokenType stopType,
+    protected <T extends ParserRuleContext> RangeBuilder<T> mapEnterExit(Class<T> antlrType, TokenType startType, TokenType stopType,
             Predicate<T> condition) {
-        ContextTokenBuilder<T> start = this.createStartMapping(antlrType, startType, condition);
-        ContextTokenBuilder<T> end = this.createStopMapping(antlrType, stopType, condition);
+        ContextTokenBuilder<T> start = this.mapEnter(antlrType, startType, condition);
+        ContextTokenBuilder<T> end = this.mapExit(antlrType, stopType, condition);
         return new RangeBuilder<>(start, end);
     }
 
@@ -204,8 +197,8 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @param jplagType The jplag token type
      * @return The builder for the token
      */
-    protected TerminalTokenBuilder createTerminalMapping(int terminalType, TokenType jplagType) {
-        return this.createTerminalMapping(terminalType, jplagType, it -> true);
+    protected TerminalTokenBuilder mapTerminal(int terminalType, TokenType jplagType) {
+        return this.mapTerminal(terminalType, jplagType, it -> true);
     }
 
     /**
@@ -215,7 +208,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @param condition The condition under which the mapping applies
      * @return The builder for the token
      */
-    protected TerminalTokenBuilder createTerminalMapping(int terminalType, TokenType jplagType, Predicate<org.antlr.v4.runtime.Token> condition) {
+    protected TerminalTokenBuilder mapTerminal(int terminalType, TokenType jplagType, Predicate<org.antlr.v4.runtime.Token> condition) {
         TerminalTokenBuilder builder = new TerminalTokenBuilder(jplagType, token -> token.getType() == terminalType && condition.test(token),
                 this.collector, this.currentFile);
         this.terminalMapping.add(builder);
