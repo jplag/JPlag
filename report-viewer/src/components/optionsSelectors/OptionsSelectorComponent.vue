@@ -3,13 +3,13 @@
 -->
 <template>
   <div class="flex flex-row text-xs h-fit items-center text-center">
-    <div v-if="name != ''" class="mr-3 text-base">
-      {{ name }}
+    <div v-if="title != ''" class="mr-3 text-base">
+      {{ title }}
     </div>
     <div v-for="[index, label] in labels.entries()" :key="index">
       <ToolTipComponent
         v-if="(label as ToolTipLabel).displayValue !== undefined"
-        direction="left"
+        direction="right"
         :tooltip-text="(label as ToolTipLabel).tooltip"
       >
         <template #default>
@@ -21,7 +21,7 @@
         </template>
 
         <template #tooltip>
-          <p class="whitespace-nowrap min-h-[1.25rem] flex items-center">
+          <p class="whitespace-pre min-h-[1.25rem] flex items-center">
             {{ (label as ToolTipLabel).tooltip }}
           </p>
         </template>
@@ -47,7 +47,7 @@ type ToolTipLabel = {
 }
 
 const props = defineProps({
-  name: {
+  title: {
     type: String,
     required: false,
     default: ''

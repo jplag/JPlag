@@ -1,8 +1,8 @@
 <template>
-  <div class="relative inline-block group z-10">
+  <div class="relative inline-block group">
     <slot></slot>
     <div
-      class="absolute hidden group-hover:block bg-black bg-opacity-60 px-1 rounded-md text-white text-center"
+      class="absolute hidden group-hover:block bg-black bg-opacity-60 px-1 rounded-md text-white text-center z-10"
       :style="tooltipPosition"
     >
       <slot name="tooltip"></slot>

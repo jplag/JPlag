@@ -29,13 +29,13 @@
           :distribution="overview.distribution[selectedDistributionDiagramMetric]"
           class="w-full h-2/3"
         />
-        <div class="flex flex-col flex-grow space-y-1">
+        <div class="flex flex-col flex-grow">
           <h3 class="text-lg underline">Options:</h3>
-          <ScrollableComponent class="flex-grow space-y-2">
-            <OptionsSelector
-              name="Metric"
-              :labels="['Average', 'Maximum']"
+          <ScrollableComponent class="flex-grow h-fit">
+            <MetricSelector
+              title="Metric"
               @selection-changed="(i: number) => selectDistributionDiagramMetric(i)"
+              class="mt-2"
             />
           </ScrollableComponent>
         </div>
@@ -57,9 +57,8 @@
             }}
           </Button>
         </div>
-        <OptionsSelector
-          name="Sort By"
-          :labels="['Average Similarity', 'Maximum Similarity']"
+        <MetricSelector
+          title="Sort By"
           @selection-changed="(index) => (comparisonTableSortingMetric = index)"
         />
         <ComparisonsTable
@@ -86,7 +85,7 @@ import MetricType from '@/model/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
+import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 
 const overview = OverviewFactory.getOverview()
 
