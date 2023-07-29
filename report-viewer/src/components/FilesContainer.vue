@@ -10,7 +10,7 @@
     <ScrollableComponent class="flex-grow">
       <VueDraggableNext>
         <CodePanel
-          v-for="(file, index) in filesRef"
+          v-for="(file, index) in files"
           :key="index"
           ref="codePanels"
           :file="file"
@@ -29,7 +29,7 @@ import CodePanel from '@/components/CodePanel.vue'
 import Container from './ContainerComponent.vue'
 import ScrollableComponent from './ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { computed, ref, type Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import store from '@/stores/store'
 
@@ -72,17 +72,6 @@ const props = defineProps({
 })
 
 defineEmits(['lineSelected'])
-
-const filesRef = computed(() => {
-  return props.files.map((file) => {
-    return {
-      ...file,
-      owner: props.anonymous
-        ? props.anonymousFilesOwnerDefault
-        : store().submissionDisplayName(props.submissionId)
-    }
-  })
-})
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
 
