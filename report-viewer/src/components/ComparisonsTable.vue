@@ -98,21 +98,23 @@
                   }"
                   class="w-full tect-center flex justify-center"
                 >
-                  <div class="group relative w-fit">
-                    {{ clusters?.[index].members?.length }}
-                    <FontAwesomeIcon
-                      :icon="['fas', 'user-group']"
-                      :style="{ color: clusterIconColors[index] }"
-                    />
-                    {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
-                    <div
-                      class="hidden group-hover:flex absolute z-50 top-0 left-[-400px] text-sm h-full items-center text-white bg-gray-950 bg-opacity-90 px-2 rounded-sm tooltipArrow"
-                    >
-                      {{ clusters?.[index].members?.length }} submissions in cluster with average
-                      similarity of
+                  <ToolTipComponent class="w-fit" direction="left">
+                    <template #default>
+                      {{ clusters?.[index].members?.length }}
+                      <FontAwesomeIcon
+                        :icon="['fas', 'user-group']"
+                        :style="{ color: clusterIconColors[index] }"
+                      />
                       {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
-                    </div>
-                  </div>
+                    </template>
+                    <template #tooltip>
+                      <p class="whitespace-nowrap text-sm">
+                        {{ clusters?.[index].members?.length }} submissions in cluster with average
+                        similarity of
+                        {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
+                      </p>
+                    </template>
+                  </ToolTipComponent>
                 </RouterLink>
               </div>
             </div>
@@ -133,6 +135,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateColors } from '@/utils/ColorUtils'
+import ToolTipComponent from './ToolTipComponent.vue'
 
 library.add(faUserGroup)
 
