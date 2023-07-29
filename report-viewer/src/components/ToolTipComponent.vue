@@ -1,11 +1,13 @@
 <template>
-  <div class="relative inline-block group">
-    <slot></slot>
+  <div class="relative inline-block group z-10">
+    <slot v-if="!defaultText"></slot>
+    <div v-else>{{ defaultText }}</div>
     <div
-      class="absolute hidden group-hover:block bg-black bg-opacity-60 px-1 text-sm rounded-md text-white text-center"
+      class="absolute hidden group-hover:block bg-black bg-opacity-60 px-1 rounded-md text-white text-center"
       :style="tooltipPosition"
     >
-      <slot name="tooltip"></slot>
+      <slot name="tooltip" v-if="!tooltipText"></slot>
+      <div class="text-sm" v-else>{{ tooltipText }}</div>
       <div class="border-4 border-solid absolute" :style="arrowStyle"><!-- Arrow --></div>
     </div>
   </div>
@@ -19,6 +21,16 @@ const props = defineProps({
     type: String as PropType<'top' | 'bottom' | 'left' | 'right'>,
     required: false,
     default: 'top'
+  },
+  defaultText: {
+    type: String,
+    required: false,
+    default: undefined
+  },
+  tooltipText: {
+    type: String,
+    required: false,
+    default: undefined
   }
 })
 
@@ -29,13 +41,18 @@ const tooltipPosition = computed(() => {
     style.top = '50%'
     style.transform = 'translateY(-50%)'
     if (props.direction == 'left') {
-      style.right = '120%'
+      style.right = '105%'
     } else {
-      style.left = '120%'
+      style.left = '105%'
     }
   } else {
     style.left = '50%'
     style.transform = 'translateX(-50%)'
+    if (props.direction == 'top') {
+      style.bottom = '105%'
+    } else {
+      style.top = '105%'
+    }
   }
 
   return style
