@@ -1,13 +1,11 @@
 <template>
   <div class="relative inline-block group z-10">
-    <slot v-if="!defaultText"></slot>
-    <div v-else>{{ defaultText }}</div>
+    <slot></slot>
     <div
       class="absolute hidden group-hover:block bg-black bg-opacity-60 px-1 rounded-md text-white text-center"
       :style="tooltipPosition"
     >
-      <slot name="tooltip" v-if="!tooltipText"></slot>
-      <div class="text-sm" v-else>{{ tooltipText }}</div>
+      <slot name="tooltip"></slot>
       <div class="border-4 border-solid absolute" :style="arrowStyle"><!-- Arrow --></div>
     </div>
   </div>
@@ -21,16 +19,6 @@ const props = defineProps({
     type: String as PropType<'top' | 'bottom' | 'left' | 'right'>,
     required: false,
     default: 'top'
-  },
-  defaultText: {
-    type: String,
-    required: false,
-    default: undefined
-  },
-  tooltipText: {
-    type: String,
-    required: false,
-    default: undefined
   }
 })
 

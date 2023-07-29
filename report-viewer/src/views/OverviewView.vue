@@ -86,7 +86,7 @@ import MetricType from '@/model/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
+import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 
 const overview = OverviewFactory.getOverview()
 
