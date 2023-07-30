@@ -11,8 +11,27 @@
         <div class="tableCellSimilarity !flex-col">
           <div>Similarity</div>
           <div class="flex flex-row w-full">
-            <div class="flex-1">Average</div>
-            <div class="flex-1">Maximum</div>
+            <ToolTipComponent class="flex-1">
+              <template #default>
+                <p class="w-full text-center">{{ metricToolTips[MetricType.AVERAGE].shortName }}</p>
+              </template>
+              <template #tooltip>
+                <p class="whitespace-pre text-sm">
+                  {{ metricToolTips[MetricType.AVERAGE].tooltip }}
+                </p>
+              </template>
+            </ToolTipComponent>
+
+            <ToolTipComponent class="flex-1">
+              <template #default>
+                <p class="w-full text-center">{{ metricToolTips[MetricType.MAXIMUM].shortName }}</p>
+              </template>
+              <template #tooltip>
+                <p class="whitespace-pre text-sm">
+                  {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
+                </p>
+              </template>
+            </ToolTipComponent>
           </div>
         </div>
         <div class="tableCellCluster items-center" v-if="displayClusters">Cluster</div>
@@ -136,6 +155,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateColors } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
+import MetricType, { metricToolTips } from '@/model/MetricType'
 
 library.add(faUserGroup)
 

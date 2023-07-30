@@ -2,7 +2,7 @@
   <div class="relative inline-block group">
     <slot></slot>
     <div
-      class="absolute hidden group-hover:block bg-black bg-opacity-60 px-1 rounded-md text-white text-center z-10"
+      class="absolute hidden group-hover:block px-1 rounded-md text-white text-center z-10"
       :style="tooltipPosition"
     >
       <slot name="tooltip"></slot>
@@ -21,6 +21,8 @@ const props = defineProps({
     default: 'top'
   }
 })
+
+const opacity = 0.8
 
 const tooltipPosition = computed(() => {
   const style: StyleValue = {}
@@ -42,6 +44,7 @@ const tooltipPosition = computed(() => {
       style.top = '105%'
     }
   }
+  style.backgroundColor = `rgba(0,0,0,${opacity})`
 
   return style
 })
@@ -50,13 +53,9 @@ const arrowStyle = computed(() => {
   const style: StyleValue = {}
   style.content = ' '
 
-  function getBorderColor(current: String, other: String) {
-    return other == current ? 'rgba(0,0,0,0.6)' : 'transparent'
-  }
-
   style.borderColor = ''
   for (const dir of ['top', 'right', 'bottom', 'left']) {
-    style.borderColor += getBorderColor(dir, props.direction) + ' '
+    style.borderColor += dir == props.direction ? `rgba(0,0,0,${opacity}) ` : 'transparent '
   }
 
   if (props.direction == 'left' || props.direction == 'right') {
