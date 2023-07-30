@@ -1,16 +1,17 @@
 package de.jplag.typescript;
 
-import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.antlr.AbstractAntlrParserAdapter;
-import de.jplag.antlr.TokenCollector;
-import de.jplag.typescript.grammar.TypeScriptLexer;
-import de.jplag.typescript.grammar.TypeScriptParser;
+import java.io.File;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.io.File;
+import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.antlr.AbstractAntlrParserAdapter;
+import de.jplag.antlr.TokenCollector;
+import de.jplag.typescript.grammar.TypeScriptLexer;
+import de.jplag.typescript.grammar.TypeScriptParser;
 
 public class TypeScriptParserAdapter extends AbstractAntlrParserAdapter<TypeScriptParser> {
 

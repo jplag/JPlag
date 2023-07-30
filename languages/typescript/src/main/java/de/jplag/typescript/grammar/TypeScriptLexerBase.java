@@ -1,36 +1,31 @@
 package de.jplag.typescript.grammar;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 abstract class TypeScriptLexerBase extends Lexer {
     /**
-     * Stores values of nested modes. By default mode is strict or
-     * defined externally (useStrictDefault)
+     * Stores values of nested modes. By default mode is strict or defined externally (useStrictDefault)
      */
     private final Deque<Boolean> scopeStrictModes = new ArrayDeque<>();
 
     private Token lastToken = null;
     /**
-     * Default value of strict mode
-     * Can be defined externally by setUseStrictDefault
+     * Default value of strict mode Can be defined externally by setUseStrictDefault
      */
     private boolean useStrictDefault = false;
     /**
-     * Current value of strict mode
-     * Can be defined during parsing, see StringFunctions.js and StringGlobal.js samples
+     * Current value of strict mode Can be defined during parsing, see StringFunctions.js and StringGlobal.js samples
      */
     private boolean useStrictCurrent = false;
     /**
-     * Keeps track of the current depth of nested template string backticks.
-     * E.g. after the X in:
-     * `${a ? `${X
-     * templateDepth will be 2. This variable is needed to determine if a `}` is a
-     * plain CloseBrace, or one that closes an expression inside a template string.
+     * Keeps track of the current depth of nested template string backticks. E.g. after the X in: `${a ? `${X templateDepth
+     * will be 2. This variable is needed to determine if a `}` is a plain CloseBrace, or one that closes an expression
+     * inside a template string.
      */
     private int templateDepth = 0;
 
@@ -62,12 +57,9 @@ abstract class TypeScriptLexerBase extends Lexer {
     }
 
     /**
-     * Return the next token from the character stream and records this last
-     * token in case it resides on the default channel. This recorded token
-     * is used to determine when the lexer could possibly match a regex
-     * literal. Also changes scopeStrictModes stack if tokenize special
-     * string 'use strict';
-     *
+     * Return the next token from the character stream and records this last token in case it resides on the default
+     * channel. This recorded token is used to determine when the lexer could possibly match a regex literal. Also changes
+     * scopeStrictModes stack if tokenize special string 'use strict';
      * @return the next token from the character stream.
      */
     @Override
@@ -82,26 +74,21 @@ abstract class TypeScriptLexerBase extends Lexer {
         return next;
     }
 
-    protected void ProcessOpenBrace()
-    {
+    protected void ProcessOpenBrace() {
         openBracesCount++;
         useStrictCurrent = scopeStrictModes.size() > 0 && scopeStrictModes.peek() || useStrictDefault;
         scopeStrictModes.push(useStrictCurrent);
     }
 
-    protected void ProcessCloseBrace()
-    {
+    protected void ProcessCloseBrace() {
         openBracesCount--;
         useStrictCurrent = scopeStrictModes.size() > 0 ? scopeStrictModes.pop() : useStrictDefault;
     }
 
-    protected void ProcessStringLiteral()
-    {
-        if (lastToken == null || lastToken.getType() == TypeScriptLexer.OpenBrace)
-        {
+    protected void ProcessStringLiteral() {
+        if (lastToken == null || lastToken.getType() == TypeScriptLexer.OpenBrace) {
             String text = getText();
-            if (text.equals("\"use strict\"") || text.equals("'use strict'"))
-            {
+            if (text.equals("\"use strict\"") || text.equals("'use strict'")) {
                 if (scopeStrictModes.size() > 0)
                     scopeStrictModes.pop();
                 useStrictCurrent = true;

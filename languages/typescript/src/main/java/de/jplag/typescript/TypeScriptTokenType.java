@@ -45,9 +45,15 @@ public enum TypeScriptTokenType implements TokenType {
     THROW("THROW"),
     CONTINUE("CONTINUE"),
     FUNCTION_CALL("CALL"),
-    ENUM_MEMBER("ENUM_MEMBER")
+    ENUM_MEMBER("ENUM_MEMBER"),
 
-        ;
+    CONSTRUCTOR_BEGIN("CONSTRUCT{"),
+    CONSTRUCTOR_END("}CONSTRUCT"),
+
+    DECLARATION("DECLARE")
+
+    ;
+
     private final String description;
 
     public String getDescription() {

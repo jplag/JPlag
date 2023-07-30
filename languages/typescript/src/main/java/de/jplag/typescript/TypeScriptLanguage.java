@@ -1,13 +1,6 @@
 package de.jplag.typescript;
 
-import de.jplag.Language;
-import de.jplag.ParsingException;
-import de.jplag.Token;
 import de.jplag.antlr.AbstractAntlrLanguage;
-
-import java.io.File;
-import java.util.List;
-import java.util.Set;
 
 public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
@@ -20,7 +13,7 @@ public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
     @Override
     public String[] suffixes() {
-        return new String[]{".ts", ".js"};
+        return new String[] {".ts", ".js"};
     }
 
     @Override

@@ -1,58 +1,69 @@
 package de.jplag.typescript;
 
-import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.antlr.TokenCollector;
-import de.jplag.typescript.grammar.TypeScriptParser;
-import de.jplag.typescript.grammar.TypeScriptParserBaseListener;
+import static de.jplag.typescript.TypeScriptTokenType.*;
 import static de.jplag.typescript.grammar.TypeScriptParser.*;
 
 import java.io.File;
 
-import static de.jplag.typescript.TypeScriptTokenType.*;
+import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.antlr.TokenCollector;
 
 public class TypeScriptListener extends AbstractAntlrListener {
 
     public TypeScriptListener(TokenCollector collector, File currentFile) {
         super(collector, currentFile);
 
-        this.createRangeMapping(ImportStatementContext.class, IMPORT);
-        this.createRangeMapping(ExportStatementContext.class, EXPORT);
-        this.createStartStopMapping(NamespaceDeclarationContext.class, NAMESPACE_BEGIN, NAMESPACE_END);
+        this.mapRange(ImportStatementContext.class, IMPORT);
+        this.mapTerminal(Export, EXPORT);
+        this.mapEnterExit(NamespaceDeclarationContext.class, NAMESPACE_BEGIN, NAMESPACE_END);
 
-        this.createStartStopMapping(ClassDeclarationContext.class, CLASS_BEGIN, CLASS_END);
-        this.createStartStopMapping(InterfaceDeclarationContext.class, INTERFACE_BEGIN, INTERFACE_END);
-        this.createStartStopMapping(EnumDeclarationContext.class, ENUM_BEGIN, ENUM_END);
-        this.createRangeMapping(VariableDeclarationContext.class, ASSIGNMENT, it -> it.Assign() != null);
-        this.createStartStopMapping(IfStatementContext.class, IF_BEGIN, IF_END);
-        this.createStartStopMapping(SwitchStatementContext.class, SWITCH_BEGIN, SWITCH_END);
-        this.createRangeMapping(CaseClauseContext.class, SWITCH_CASE);
-        this.createRangeMapping(DefaultClauseContext.class, SWITCH_CASE);
-        this.createStartStopMapping(MethodDeclarationExpressionContext.class, METHOD_BEGIN, METHOD_END);
-        // For why both are needed is needed see testFile: methods
-        this.createStartStopMapping(FunctionDeclarationContext.class, METHOD_BEGIN, METHOD_END);
-        this.createRangeMapping(FunctionDeclarationContext.class, ASSIGNMENT);
+        this.mapEnterExit(ClassDeclarationContext.class, CLASS_BEGIN, CLASS_END);
+        this.mapEnterExit(InterfaceDeclarationContext.class, INTERFACE_BEGIN, INTERFACE_END);
+        this.mapRange(PropertySignaturContext.class, DECLARATION);
+        this.mapEnterExit(EnumDeclarationContext.class, ENUM_BEGIN, ENUM_END);
+        this.mapRange(VariableDeclarationContext.class, DECLARATION);
+        this.mapRange(VariableDeclarationContext.class, ASSIGNMENT, it -> it.Assign() != null);
+        this.mapEnterExit(IfStatementContext.class, IF_BEGIN, IF_END);
+        this.mapTerminal(Else, IF_BEGIN);
+        this.mapEnterExit(SwitchStatementContext.class, SWITCH_BEGIN, SWITCH_END);
+        this.mapRange(CaseClauseContext.class, SWITCH_CASE);
+        this.mapRange(DefaultClauseContext.class, SWITCH_CASE);
+        this.mapEnterExit(MethodDeclarationExpressionContext.class, METHOD_BEGIN, METHOD_END);
 
-        this.createStartStopMapping(ArrowFunctionDeclarationContext.class, METHOD_BEGIN, METHOD_END);
-        this.createStartStopMapping(FunctionExpressionDeclarationContext.class, METHOD_BEGIN, METHOD_END);
-        this.createStartStopMapping(GetterSetterDeclarationExpressionContext.class, METHOD_BEGIN, METHOD_END);
-        this.createRangeMapping(PropertyDeclarationExpressionContext.class, ASSIGNMENT, it -> it.initializer() != null);
-        this.createRangeMapping(PropertySetterContext.class, ASSIGNMENT);
-        this.createStartStopMapping(WhileStatementContext.class, WHILE_BEGIN, WHILE_END);
-        this.createStartStopMapping(ForStatementContext.class, FOR_BEGIN, FOR_END);
-        this.createStartStopMapping(ForVarStatementContext.class, FOR_BEGIN, FOR_END);
-        this.createStartStopMapping(ForInStatementContext.class, FOR_BEGIN, FOR_END);
-        this.createRangeMapping(TryStatementContext.class, TRY_BEGIN);
-        this.createStartStopMapping(CatchProductionContext.class, CATCH_BEGIN, CATCH_END);
-        this.createStartStopMapping(FinallyProductionContext.class, FINALLY_BEGIN, FINALLY_END);
+        this.mapRange(FunctionDeclarationContext.class, DECLARATION);
+        this.mapRange(FunctionDeclarationContext.class, ASSIGNMENT);
+        this.mapEnterExit(FunctionDeclarationContext.class, METHOD_BEGIN, METHOD_END);
 
+        this.mapEnterExit(ArrowFunctionDeclarationContext.class, METHOD_BEGIN, METHOD_END);
+        this.mapEnterExit(FunctionExpressionDeclarationContext.class, METHOD_BEGIN, METHOD_END);
+        this.mapEnterExit(GetterSetterDeclarationExpressionContext.class, METHOD_BEGIN, METHOD_END);
+        this.mapRange(PropertyDeclarationExpressionContext.class, DECLARATION);
+        this.mapRange(PropertyDeclarationExpressionContext.class, ASSIGNMENT, it -> it.initializer() != null);
+        this.mapRange(PropertySetterContext.class, ASSIGNMENT);
+        this.mapEnterExit(WhileStatementContext.class, WHILE_BEGIN, WHILE_END);
+        this.mapEnterExit(ForStatementContext.class, FOR_BEGIN, FOR_END);
+        this.mapEnterExit(ForVarStatementContext.class, FOR_BEGIN, FOR_END);
+        this.mapEnterExit(ForInStatementContext.class, FOR_BEGIN, FOR_END);
+        this.mapRange(TryStatementContext.class, TRY_BEGIN);
+        this.mapEnterExit(CatchProductionContext.class, CATCH_BEGIN, CATCH_END);
+        this.mapEnterExit(FinallyProductionContext.class, FINALLY_BEGIN, FINALLY_END);
 
-        this.createRangeMapping(BreakStatementContext.class, BREAK);
-        this.createRangeMapping(ReturnStatementContext.class, RETURN);
-        this.createRangeMapping(ContinueStatementContext.class, CONTINUE);
-        this.createRangeMapping(ThrowStatementContext.class, THROW);
-        this.createRangeMapping(EnumMemberContext.class, ENUM_MEMBER);
+        this.mapRange(BreakStatementContext.class, BREAK);
+        this.mapRange(ReturnStatementContext.class, RETURN);
+        this.mapRange(ContinueStatementContext.class, CONTINUE);
+        this.mapRange(ThrowStatementContext.class, THROW);
+        this.mapRange(EnumMemberContext.class, ENUM_MEMBER);
 
-        // this.createRangeMapping(CallSignatureContext.class, FUNCTION_CALL);
+        this.mapEnterExit(ConstructorDeclarationContext.class, CONSTRUCTOR_BEGIN, CONSTRUCTOR_END);
+
+        this.mapRange(AssignmentExpressionContext.class, ASSIGNMENT);
+
+        this.mapRange(PostDecreaseExpressionContext.class, ASSIGNMENT);
+        this.mapRange(PreDecreaseExpressionContext.class, ASSIGNMENT);
+        this.mapRange(PostIncrementExpressionContext.class, ASSIGNMENT);
+        this.mapRange(PreIncrementExpressionContext.class, ASSIGNMENT);
+
+        this.mapRange(ArgumentsContext.class, FUNCTION_CALL);
     }
 
 }

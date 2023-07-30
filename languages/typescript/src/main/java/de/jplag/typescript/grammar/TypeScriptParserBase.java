@@ -6,11 +6,10 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
 
 /**
- * All parser methods that used in grammar (p, prev, notLineTerminator, etc.)
- * should start with lower case char similar to parser rules.
+ * All parser methods that used in grammar (p, prev, notLineTerminator, etc.) should start with lower case char similar
+ * to parser rules.
  */
-public abstract class TypeScriptParserBase extends Parser
-{
+public abstract class TypeScriptParserBase extends Parser {
     public TypeScriptParserBase(TokenStream input) {
         super(input);
     }
@@ -57,17 +56,11 @@ public abstract class TypeScriptParserBase extends Parser
     }
 
     /**
-     * Returns {@code true} iff on the current index of the parser's
-     * token stream a token of the given {@code type} exists on the
-     * {@code HIDDEN} channel.
-     *
-     * @param type
-     *         the type of the token on the {@code HIDDEN} channel
-     *         to check.
-     *
-     * @return {@code true} iff on the current index of the parser's
-     * token stream a token of the given {@code type} exists on the
-     * {@code HIDDEN} channel.
+     * Returns {@code true} iff on the current index of the parser's token stream a token of the given {@code type} exists
+     * on the {@code HIDDEN} channel.
+     * @param type the type of the token on the {@code HIDDEN} channel to check.
+     * @return {@code true} iff on the current index of the parser's token stream a token of the given {@code type} exists
+     * on the {@code HIDDEN} channel.
      */
     private boolean here(final int type) {
 
@@ -81,15 +74,10 @@ public abstract class TypeScriptParserBase extends Parser
     }
 
     /**
-     * Returns {@code true} iff on the current index of the parser's
-     * token stream a token exists on the {@code HIDDEN} channel which
-     * either is a line terminator, or is a multi line comment that
-     * contains a line terminator.
-     *
-     * @return {@code true} iff on the current index of the parser's
-     * token stream a token exists on the {@code HIDDEN} channel which
-     * either is a line terminator, or is a multi line comment that
-     * contains a line terminator.
+     * Returns {@code true} iff on the current index of the parser's token stream a token exists on the {@code HIDDEN}
+     * channel which either is a line terminator, or is a multi line comment that contains a line terminator.
+     * @return {@code true} iff on the current index of the parser's token stream a token exists on the {@code HIDDEN}
+     * channel which either is a line terminator, or is a multi line comment that contains a line terminator.
      */
     protected boolean lineTerminatorAhead() {
 
@@ -118,7 +106,7 @@ public abstract class TypeScriptParserBase extends Parser
         int type = ahead.getType();
 
         // Check if the token is, or contains a line terminator.
-        return (type == TypeScriptParser.MultiLineComment && (text.contains("\r") || text.contains("\n"))) ||
-                (type == TypeScriptParser.LineTerminator);
+        return (type == TypeScriptParser.MultiLineComment && (text.contains("\r") || text.contains("\n")))
+                || (type == TypeScriptParser.LineTerminator);
     }
 }
