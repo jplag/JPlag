@@ -56,7 +56,7 @@ const props = defineProps({
    */
   matches: {
     type: Array<MatchInSingleFile>,
-    required: false
+    required: true
   }
 })
 
@@ -93,13 +93,10 @@ const formatedCode = highlightedCode
   })
   .split('\n')
 
-const codeLines: { line: string; match: null | Match }[] = formatedCode.map((line) => {
-  return { line, match: null }
-})
-props.matches?.forEach((m) => {
-  for (let i = m.start; i <= m.end; i++) {
-    //assign match to line
-    codeLines[i - 1].match = m.match
+const codeLines: { line: string; match: null | Match }[] = formatedCode.map((line, index) => {
+  return {
+    line,
+    match: props.matches?.find((m) => m.start <= index + 1 && index + 1 <= m.end)?.match ?? null
   }
 })
 
