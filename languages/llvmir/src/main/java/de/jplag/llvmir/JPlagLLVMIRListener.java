@@ -64,14 +64,6 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
     }
 
     @Override
-    public void enterIndirectSymbolDef(LLVMIRParser.IndirectSymbolDefContext ctx) {
-    }
-
-    @Override
-    public void exitIndirectSymbolDef(LLVMIRParser.IndirectSymbolDefContext ctx) {
-    }
-
-    @Override
     public void enterFuncDecl(LLVMIRParser.FuncDeclContext ctx) {
         transformToken(LLVMIRTokenType.FUNCTION_DECL, ctx.getStart(), ctx.getStop());
         super.enterFuncDecl(ctx);
@@ -81,14 +73,6 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
     public void enterFuncDef(LLVMIRParser.FuncDefContext ctx) {
         transformToken(LLVMIRTokenType.FUNCTION_DEF, ctx.getStart(), ctx.getStop());
         super.enterFuncDef(ctx);
-    }
-
-    @Override
-    public void enterIndirectSymbol(LLVMIRParser.IndirectSymbolContext ctx) {
-    }
-
-    @Override
-    public void exitIndirectSymbol(LLVMIRParser.IndirectSymbolContext ctx) {
     }
 
     @Override
@@ -197,18 +181,6 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
     public void enterInlineAsm(LLVMIRParser.InlineAsmContext ctx) {
         transformToken(LLVMIRTokenType.ASSEMBLY, ctx.getStart(), ctx.getStop());
         super.enterInlineAsm(ctx);
-    }
-
-    @Override
-    public void enterVectorType(LLVMIRParser.VectorTypeContext ctx) {
-    }
-
-    @Override
-    public void enterArrayType(LLVMIRParser.ArrayTypeContext ctx) {
-    }
-
-    @Override
-    public void enterStructType(LLVMIRParser.StructTypeContext ctx) {
     }
 
     @Override
@@ -386,10 +358,6 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
     }
 
     @Override
-    public void enterFNegExpr(LLVMIRParser.FNegExprContext ctx) {
-    }
-
-    @Override
     public void enterStoreInst(LLVMIRParser.StoreInstContext ctx) {
         transformToken(LLVMIRTokenType.STORE, ctx.getStart(), ctx.getStop());
         super.enterStoreInst(ctx);
@@ -399,10 +367,6 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
     public void enterFenceInst(LLVMIRParser.FenceInstContext ctx) {
         transformToken(LLVMIRTokenType.FENCE, ctx.getStart(), ctx.getStop());
         super.enterFenceInst(ctx);
-    }
-
-    @Override
-    public void enterFNegInst(LLVMIRParser.FNegInstContext ctx) {
     }
 
     @Override
@@ -701,22 +665,14 @@ public class JPlagLLVMIRListener extends LLVMIRBaseListener {
 
     @Override
     public void enterClause(LLVMIRParser.ClauseContext ctx) {
+        transformToken(LLVMIRTokenType.CLAUSE, ctx.getStart(), ctx.getStop());
+        super.enterClause(ctx);
     }
 
     @Override
     public void enterAtomicOrdering(LLVMIRParser.AtomicOrderingContext ctx) {
-    }
-
-    @Override
-    public void exitAtomicOrdering(LLVMIRParser.AtomicOrderingContext ctx) {
-    }
-
-    @Override
-    public void enterAtomicOp(LLVMIRParser.AtomicOpContext ctx) {
-    }
-
-    @Override
-    public void exitAtomicOp(LLVMIRParser.AtomicOpContext ctx) {
+        transformToken(LLVMIRTokenType.ATOMIC_ORDERING, ctx.getStart(), ctx.getStop());
+        super.enterAtomicOrdering(ctx);
     }
 
 }

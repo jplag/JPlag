@@ -63,6 +63,7 @@ public enum LLVMIRTokenType implements TokenType {
     FENCE("FENCE"),
     COMPARE_EXCHANGE("CMP_XCHG"),
     ATOMIC_READ_MODIFY_WRITE("ATOMIC_RMW"),
+    ATOMIC_ORDERING("ATOMIC"),
     GET_ELEMENT_POINTER("GET_ELEMENT_PTR"),
 
     // Conversion Operations
@@ -74,6 +75,7 @@ public enum LLVMIRTokenType implements TokenType {
     SELECT("SELECT"),
     CALL("CALL"),
     LANDING_PAD("LANDING_PAD"),
+    CLAUSE("CLAUSE"),
     CATCH_PAD("CATCH_PAD"),
     CLEAN_UP_PAD("CLEAN_UP_PAD");
 
