@@ -1,7 +1,7 @@
 package de.jplag.csharp;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.csharp.grammar.CSharpLexer;
 import de.jplag.csharp.grammar.CSharpParser;
+import de.jplag.util.FileUtils;
 
 /**
  * Parser adapter for the ANTLR 4 CSharp Parser and Lexer. It receives file to parse and passes them to the ANTLR
@@ -51,11 +52,11 @@ public class CSharpParserAdapter extends AbstractParser {
     }
 
     private void parseFile(File file) throws ParsingException {
-        try (FileInputStream inputStream = new FileInputStream(file)) {
+        try (BufferedReader reader = FileUtils.openFileReader(file)) {
             currentFile = file;
 
             // create a lexer, a parser and a buffer between them.
-            CSharpLexer lexer = new CSharpLexer(CharStreams.fromStream(inputStream));
+            CSharpLexer lexer = new CSharpLexer(CharStreams.fromReader(reader));
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             CSharpParser parser = new CSharpParser(tokens);
 

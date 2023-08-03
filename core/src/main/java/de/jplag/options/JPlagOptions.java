@@ -2,7 +2,6 @@ package de.jplag.options;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +19,7 @@ import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
+import de.jplag.util.FileUtils;
 
 /**
  * This record defines the options to configure {@link JPlag}.
@@ -54,6 +54,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
     public static final int SHOW_ALL_COMPARISONS = 0;
     public static final SimilarityMetric DEFAULT_SIMILARITY_METRIC = SimilarityMetric.AVG;
     public static final Charset CHARSET = StandardCharsets.UTF_8;
+    public static final String ERROR_FOLDER = "errors";
 
     private static final Logger logger = LoggerFactory.getLogger(JPlagOptions.class);
 
@@ -184,7 +185,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
     }
 
     private Set<String> readExclusionFile(final String exclusionFileName) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(exclusionFileName, JPlagOptions.CHARSET))) {
+        try (BufferedReader reader = FileUtils.openFileReader(new File(exclusionFileName))) {
             final var excludedFileNames = reader.lines().collect(Collectors.toSet());
             if (logger.isDebugEnabled()) {
                 logger.debug("Excluded files:{}{}", System.lineSeparator(), String.join(System.lineSeparator(), excludedFileNames));

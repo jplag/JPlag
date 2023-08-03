@@ -1,10 +1,13 @@
 package de.jplag.scala
 
 import de.jplag.scala.ScalaTokenType._
+import de.jplag.util.FileUtils
 import de.jplag.{AbstractParser, ParsingException, Token}
 
 import java.io.File
+import java.util.stream.Collectors
 import scala.collection.mutable.ListBuffer
+import scala.meta.Member.ParamClauseGroup
 import scala.meta._
 
 
@@ -132,8 +135,10 @@ class Parser extends AbstractParser {
 
                         maybeAddAndApply(finallyExpression, FINALLY)
                     })
-                case Term.Apply(function, arguments) if !isStandardOperator(getMethodIdentifier(function)) && arguments.nonEmpty =>
+                case call: Term.Apply if !isStandardOperator(getMethodIdentifier(call.fun)) && call.argClause.nonEmpty =>
                     // function calls with no arguments are not covered here; see README
+                    val function = call.fun
+                    val arguments = call.argClause
                     TR(traverse = _ => {
 
                         add(APPLY, function, fromEnd = false)
@@ -151,12 +156,12 @@ class Parser extends AbstractParser {
                     })
                 case Term.NewAnonymous(_) => TR(Some(NEW_CREATION_BEGIN), Some(NEW_CREATION_END))
                 case Term.Return(_) => TR(Some(RETURN))
-                case Term.Match(expression, cases) => TR(Some(MATCH_BEGIN), Some(MATCH_END), traverse = _ => {
-                    apply(expression)
-                    processCases(cases)
+                case matchTerm: Term.Match => TR(Some(MATCH_BEGIN), Some(MATCH_END), traverse = _ => {
+                    apply(matchTerm.expr)
+                    processCases(matchTerm.cases)
                 })
                 case Term.Throw(_) => TR(Some(THROW))
-                case Term.Function(_) => TR(Some(FUNCTION_BEGIN), Some(FUNCTION_END))
+                case _: Term.Function => TR(Some(FUNCTION_BEGIN), Some(FUNCTION_END))
                 case Term.PartialFunction(cases) => TR(Some(PARTIAL_FUNCTION_BEGIN), Some(PARTIAL_FUNCTION_END), traverse = _ => {
                     processCases(cases)
                 })
@@ -165,7 +170,11 @@ class Parser extends AbstractParser {
                     add(FOR_BODY_BEGIN, body, fromEnd = false)
                     encloseAndApply(body, TR(Some(YIELD), Some(FOR_BODY_END)))
                 })
-                case Term.If(condition, thenExpression, elseExpression) => TR(traverse = _ => {
+                case ifTerm: Term.If => TR(traverse = _ => {
+                    val condition = ifTerm.cond
+                    val thenExpression = ifTerm.thenp
+                    val elseExpression = ifTerm.elsep
+
                     add(IF, tree, fromEnd = false)
                     apply(condition)
 
@@ -184,30 +193,30 @@ class Parser extends AbstractParser {
                 case scala.meta.Pkg(_) => TR(Some(PACKAGE))
                 case scala.meta.Import(_) => TR(Some(IMPORT))
 
-                case Defn.Def(modifiers, name, typeParameters, parameterLists, _, body) =>
+                case definition: Defn.Def =>
                     TR(traverse = _ => {
-                        applyRecursively(modifiers)
-                        add(METHOD_DEF, name, fromEnd = false)
-                        assignRecursively(typeParameters, TYPE_PARAMETER)
-                        assignRecursively(parameterLists, PARAMETER)
+                        applyRecursively(definition.mods)
+                        add(METHOD_DEF, definition.name, fromEnd = false)
+                        assignRecursively(getTParams(definition.paramClauseGroups), TYPE_PARAMETER)
+                        assignRecursively(getPParamsLists(definition.paramClauseGroups), PARAMETER)
 
-                        encloseAndApply(body, TR(Some(METHOD_BEGIN), Some(METHOD_END)))
+                        encloseAndApply(definition.body, TR(Some(METHOD_BEGIN), Some(METHOD_END)))
                     })
-                case Defn.Macro(modifiers, _, typeParameters, parameterLists, _, body) => TR(Some(MACRO), traverse = _ => {
-                    applyRecursively(Seq(modifiers, typeParameters, parameterLists))
-                    encloseAndApply(body, TR(Some(MACRO_BEGIN), Some(MACRO_END)))
+                case macroDef: Defn.Macro => TR(Some(MACRO), traverse = _ => {
+                    applyRecursively(Seq(macroDef.mods, getTParams(macroDef.paramClauseGroups), getPParamsLists(macroDef.paramClauseGroups)))
+                    encloseAndApply(macroDef.body, TR(Some(MACRO_BEGIN), Some(MACRO_END)))
                 })
-                case Defn.Class(_) =>
+                case _: Defn.Class =>
                     TR(Some(CLASS_BEGIN), Some(CLASS_END))
                 case Defn.Object(_) => TR(Some(OBJECT_BEGIN), Some(OBJECT_END))
-                case Defn.Trait(_) => TR(Some(TRAIT_BEGIN), Some(TRAIT_END))
-                case Defn.Type(_) => TR(Some(TYPE))
-                case Defn.Var(modifiers, patterns, declaredType, optionalValue) => TR(traverse = _ => {
-                    apply(modifiers)
-                    for (pattern <- patterns) {
-                        handleDefinitionPattern(pattern, optionalValue)
+                case _: Defn.Trait => TR(Some(TRAIT_BEGIN), Some(TRAIT_END))
+                case _: Defn.Type => TR(Some(TYPE))
+                case varDef: Defn.Var => TR(traverse = _ => {
+                    apply(varDef.mods)
+                    for (pattern <- varDef.pats) {
+                        handleDefinitionPattern(pattern, Some(varDef.body))
                     }
-                    apply(declaredType)
+                    apply(varDef.decltpe)
                 })
                 case Defn.Val(modifiers, patterns, declaredType, value) => TR(traverse = _ => {
                     apply(modifiers)
@@ -220,24 +229,24 @@ class Parser extends AbstractParser {
 
                 case Decl.Var(_) => TR(Some(VARIABLE_DEFINITION))
                 case Decl.Val(_) => TR(Some(VARIABLE_DEFINITION))
-                case Decl.Def(_) => TR(Some(METHOD_BEGIN), Some(METHOD_END))
-                case Decl.Type(_) => TR(Some(TYPE))
+                case _: Decl.Def => TR(Some(METHOD_BEGIN), Some(METHOD_END))
+                case _: Decl.Type => TR(Some(TYPE))
 
-                case Ctor.Secondary(_) =>
+                case _: Ctor.Secondary =>
                     TR(Some(CONSTRUCTOR_BEGIN), Some(CONSTRUCTOR_END))
 
-                case Init(_, _, argumentLists) if argumentLists.nonEmpty => TR(traverse = _ => {
-                    assignRecursively(argumentLists, ARGUMENT, doApply = true)
+                case init: Init if getArgLists(init.argClauses).nonEmpty => TR(traverse = _ => {
+                    assignRecursively(getArgLists(init.argClauses), ARGUMENT, doApply = true)
                 })
                 case Enumerator.Guard(_) => TR(Some(GUARD))
 
                 case Term.Param(_) => TR(traverse = _ => add(PARAMETER, tree, fromEnd = false))
-                case Term.ApplyInfix(_, operator, _, _) if operator.value.contains("=") && !Array("==", "!=").contains(operator.value) => TR(Some(ASSIGN))
-                case Term.ApplyInfix(function, operator, typeArgs, arguments) if !isStandardOperator(operator.value) => TR(traverse = _ => {
+                case term: Term.ApplyInfix if term.op.value.contains("=") && !Array("==", "!=").contains(term.op.value) => TR(Some(ASSIGN))
+                case term: Term.ApplyInfix if !isStandardOperator(term.op.value) => TR(traverse = _ => {
                     add(APPLY, tree, fromEnd = false)
-                    apply(function)
-                    assignRecursively(typeArgs, TYPE_ARGUMENT, doApply = true)
-                    assignRecursively(arguments, ARGUMENT, doApply = true)
+                    apply(term.lhs)
+                    assignRecursively(term.targClause.values, TYPE_ARGUMENT, doApply = true)
+                    assignRecursively(term.argClause.values, ARGUMENT, doApply = true)
                 })
                 case Term.Select(refObj, member) =>
                     TR(traverse = _ => {
@@ -245,20 +254,20 @@ class Parser extends AbstractParser {
                         if (!isStandardOperator(member.value)) add(MEMBER, member, fromEnd = false)
                         apply(member)
                     })
-                case Term.ApplyType(_, typeArgs) => TR(traverse = _ => {
+                case term: Term.ApplyType => TR(traverse = _ => {
                     add(APPLY, tree, fromEnd = false)
-                    assignRecursively(typeArgs, TYPE_ARGUMENT)
+                    assignRecursively(term.targClause.values, TYPE_ARGUMENT)
                 })
                 case Term.New(_) => TR(Some(NEW_OBJECT))
                 case Self(_) => TR(Some(SELF_TYPE))
-                case block@Term.Block(_) => block.parent match {
+                case block@Term.Block(_) => block.parent.get.parent match {
                     // inner block
-                    case Some(Term.Apply(_)) => TR(Some(BLOCK_START), Some(BLOCK_END))
+                    case _: Some[Term.Apply] => TR(Some(BLOCK_START), Some(BLOCK_END))
                     // block in an expression context, e.g. for, if, while
                     case _ => TR()
                 }
                 case Enumerator.Generator(_) => TR(Some(ENUM_GENERATOR))
-                case meta.Type.Param(_) => TR(Some(TYPE_PARAMETER))
+                case _: meta.Type.Param => TR(Some(TYPE_PARAMETER))
 
                 case _ => TR()
             }
@@ -343,8 +352,7 @@ class Parser extends AbstractParser {
         currentFile = file
 
         try {
-            val bytes = java.nio.file.Files.readAllBytes(file.toPath)
-            val text = new String(bytes, "UTF-8")
+            val text = FileUtils.readFileContent(file)
             val input = Input.VirtualFile(file.getPath, text)
             val ast = input.parse[Source].get
             traverser(ast)
@@ -389,4 +397,15 @@ class Parser extends AbstractParser {
         }
     }
 
+    private def getTParams(groups: List[ParamClauseGroup]): List[Type.Param] = {
+        groups.flatMap(it => it.tparamClause.values)
+    }
+
+    private def getPParamsLists(groups: List[ParamClauseGroup]): List[List[Term.Param]] = {
+        groups.flatMap(it => it.paramClauses.map(clause => clause.values))
+    }
+
+    private def getArgLists(arguments: Seq[Term.ArgClause]): List[List[Term]] = {
+        arguments.map(it => it.values).toList
+    }
 }

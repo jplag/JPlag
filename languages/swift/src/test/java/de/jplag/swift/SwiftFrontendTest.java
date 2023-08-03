@@ -55,11 +55,11 @@ class SwiftFrontendTest {
     private final Logger logger = LoggerFactory.getLogger(SwiftFrontendTest.class);
     private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "swift").toFile();
-    private Language language;
+    private SwiftLanguage language;
 
     @BeforeEach
     void setup() {
-        language = new Language();
+        language = new SwiftLanguage();
     }
 
     @Test

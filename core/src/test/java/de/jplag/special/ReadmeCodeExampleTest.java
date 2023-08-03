@@ -10,6 +10,7 @@ import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.exceptions.ExitException;
+import de.jplag.java.JavaLanguage;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
@@ -25,14 +26,13 @@ class ReadmeCodeExampleTest {
      */
     @Test
     void testReadmeCodeExample() {
-        Language language = new de.jplag.java.Language();
+        Language language = new JavaLanguage();
         Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));
         File baseCode = new File("/path/to/baseCode");
         JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
 
-        JPlag jplag = new JPlag(options);
         try {
-            JPlagResult result = jplag.run();
+            JPlagResult result = JPlag.run(options);
 
             // Optional
             ReportObjectFactory reportObjectFactory = new ReportObjectFactory();

@@ -28,7 +28,6 @@ public enum JavaTokenType implements TokenType {
     J_FINALLY_BEGIN("FINALLY{"), // check
     J_FINALLY_END("}FINALLY"), // check
     J_IF_BEGIN("IF{"), // check
-    J_ELSE("ELSE"), // check
     J_IF_END("}IF"), // check
     J_COND("COND"), // check
     J_BREAK("BREAK"), // check
