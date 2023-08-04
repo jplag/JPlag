@@ -13,26 +13,24 @@ import de.jplag.Token;
 import de.jplag.options.JPlagOptions;
 
 /**
- * This class implements match merging against obfuscation. Based on configurable parameters MergeBuffer and
- * SeperatingThreshold, it alters prior results and merges all neighboring matches that fit the specified thresholds.
- * When neighboring matches get merged they become one and the tokens separating them get removed from the submission
- * clone. MergeBuffer describes how shorter a match can be than the Minimum Token Match. SeperatingThreshold describes
- * how many tokens can be between two neighboring matches. Both are set in {@link JPlagOptions} as
- * {@link MergingParameters} and default to 0 (which deactivates merging).
+ * This class implements a match merging algorithm which serves as defense mechanism against obfuscation attacks. Based
+ * on configurable parameters MergeBuffer and SeperatingThreshold, it alters prior results and merges all neighboring
+ * matches that fit the specified thresholds. When neighboring matches get merged they become one and the tokens
+ * separating them get removed from the submission clone. MergeBuffer describes how shorter a match can be than the
+ * Minimum Token Match. SeperatingThreshold describes how many tokens can be between two neighboring matches. Both are
+ * set in {@link JPlagOptions} as {@link MergingParameters} and default to 0 (which deactivates merging).
  */
 public class MatchMerging {
-    private int minimumTokenMatch;
     private Submission firstSubmission;
     private Submission secondSubmission;
     private List<Match> globalMatches;
     private List<List<Match>> neighbors;
-    private int seperatingThreshold;
     private JPlagResult result;
     private List<JPlagComparison> comparisons;
     private JPlagOptions options;
 
     /**
-     * Constructor for class MatchMerging
+     * Instantiates the match merging algorithm for a comparison result and a set of specific options.
      * @param result is the initially computed result object
      * @param options encapsulates the adjustable options
      */
@@ -40,8 +38,6 @@ public class MatchMerging {
         this.result = result;
         this.comparisons = new ArrayList<>(result.getAllComparisons());
         this.options = options;
-        this.minimumTokenMatch = options.minimumTokenMatch();
-        this.seperatingThreshold = options.mergingParameters().seperatingThreshold();
     }
 
     /**
@@ -88,7 +84,7 @@ public class MatchMerging {
             int seperatingSecond = neighbors.get(i).get(1).startOfSecond() - neighbors.get(i).get(0).endOfSecond() - 1;
             double seperating = (seperatingFirst + seperatingSecond) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
-            if (seperating <= seperatingThreshold) {
+            if (seperating <= options.mergingParameters().seperatingThreshold()) {
                 globalMatches.removeAll(neighbors.get(i));
                 globalMatches
                         .add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper + lengthLower));
@@ -127,7 +123,7 @@ public class MatchMerging {
     private void removeBuffer() {
         List<Match> toRemove = new ArrayList<>();
         for (Match match : globalMatches) {
-            if (match.length() < minimumTokenMatch) {
+            if (match.length() < options.minimumTokenMatch()) {
                 toRemove.add(match);
             }
         }

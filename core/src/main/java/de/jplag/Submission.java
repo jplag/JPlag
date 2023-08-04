@@ -296,7 +296,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return Submission containing a deep copy of the tokenList and shallow copies of the remaining fields.
+     * @return Submission containing shallow copies of its fields.
      */
     public Submission copy() {
         Submission copy = new Submission(name, submissionRootFile, isNew, files, language);

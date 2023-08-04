@@ -59,7 +59,7 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "Clustering%n")
     public Clustering clustering = new Clustering();
 
-    @ArgGroup(validate = false, heading = "Match Merging%nDefense mechanism against obfuscation that merges neighboring matches based on these parameters:\n")
+    @ArgGroup(validate = false, heading = "Match Merging defense mechanism against obfuscation that merges neighboring matches based on these parameters:%n")
     public Merging merging = new Merging();
 
     /**
