@@ -1,28 +1,22 @@
 package de.jplag.llvmir;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.ParsingException;
-import de.jplag.Token;
+import de.jplag.antlr.AbstractAntlrLanguage;
 
 /**
  * This represents the LLVMIR language as a language supported by JPlag.
  */
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class LLVMIRLanguage extends AbstractAntlrLanguage {
 
     private static final String NAME = "LLVMIR Parser";
     private static final String IDENTIFIER = "llvmir";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 20;
     private static final String[] FILE_EXTENSIONS = {".ll"};
-    private final LLVMIRParserAdapter parserAdapter;
 
-    public Language() {
-        this.parserAdapter = new LLVMIRParserAdapter();
+    public LLVMIRLanguage() {
+        super(new LLVMIRParserAdapter());
     }
 
     @Override
@@ -43,10 +37,5 @@ public class Language implements de.jplag.Language {
     @Override
     public int minimumTokenMatch() {
         return DEFAULT_MIN_TOKEN_MATCH;
-    }
-
-    @Override
-    public List<Token> parse(Set<File> files) throws ParsingException {
-        return parserAdapter.parse(files);
     }
 }
