@@ -22,15 +22,22 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.ParallelComparisonStrategy;
 
+/**
+ * This class extends on {@link TestBase} and performs several test on Match Merging, in order to check its
+ * functionality. Therefore it uses two java programs and feds them into the JPlag pipeline. Results are stored before-
+ * and after Match Merging and used for all tests.
+ */
 class MergingTest extends TestBase {
     private JPlagOptions options;
     private JPlagResult result;
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
     private List<JPlagComparison> comparisonsAfter;
+    private final int MERGE_BUFFER = 8;
+    private final int SEPERATING_THRESHOLD = 2;
 
     MergingTest() throws ExitException {
-        options = getDefaultOptions("merging").withMergingParameters(new MergingParameters(8, 2));
+        options = getDefaultOptions("merging").withMergingParameters(new MergingParameters(MERGE_BUFFER, SEPERATING_THRESHOLD));
 
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
@@ -46,19 +53,19 @@ class MergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test Lenght of Matches after Match Merging")
+    @DisplayName("Test length of matches after Match Merging")
     void testBufferRemoval() {
         checkMatchLength(JPlagComparison::matches, options.minimumTokenMatch(), comparisonsAfter);
     }
 
     @Test
-    @DisplayName("Test Lenght of Matches after Greedy String Tiling")
+    @DisplayName("Test length of matches after Greedy String Tiling")
     void testGSTMatches() {
         checkMatchLength(JPlagComparison::matches, options.minimumTokenMatch(), comparisonsBefore);
     }
 
     @Test
-    @DisplayName("Test Lenght of Ignored Matches after Greedy String Tiling")
+    @DisplayName("Test length of ignored matches after Greedy String Tiling")
     void testGSTIgnoredMatches() {
         int matchLengthThreshold = options.minimumTokenMatch() - options.mergingParameters().mergeBuffer();
         checkMatchLength(JPlagComparison::ignoredMatches, matchLengthThreshold, comparisonsBefore);
@@ -74,7 +81,7 @@ class MergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test if Similarity Increased after Match Merging")
+    @DisplayName("Test if similarity increased after Match Merging")
     void testSimilarityIncreased() {
         for (int i = 0; i < comparisonsAfter.size(); i++) {
             assertTrue(comparisonsAfter.get(i).similarity() >= comparisonsBefore.get(i).similarity());
@@ -82,7 +89,7 @@ class MergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test if Amount of Matches reduced after Match Merging")
+    @DisplayName("Test if amount of matches reduced after Match Merging")
     void testFewerMatches() {
         for (int i = 0; i < comparisonsAfter.size(); i++) {
             assertTrue(comparisonsAfter.get(i).matches().size() + comparisonsAfter.get(i).ignoredMatches().size() <= comparisonsBefore.get(i)
@@ -91,7 +98,7 @@ class MergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test if Amount of Token reduced after Match Merging")
+    @DisplayName("Test if amount of token reduced after Match Merging")
     void testFewerToken() {
         for (int i = 0; i < comparisonsAfter.size(); i++) {
             assertTrue(comparisonsAfter.get(i).firstSubmission().getTokenList().size() <= comparisonsBefore.get(i).firstSubmission().getTokenList()
@@ -102,7 +109,7 @@ class MergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test if Merged Matches have counterparts in the original Matches")
+    @DisplayName("Test if merged matches have counterparts in the original matches")
     void testCorrectMerges() {
         boolean correctMerges = true;
         for (int i = 0; i < comparisonsAfter.size(); i++) {

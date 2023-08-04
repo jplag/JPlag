@@ -40,7 +40,7 @@ public class MatchMerging {
 
     /**
      * Runs the internal match merging pipeline. It computes neighboring matches, merges them based on
-     * {@link MergingParameters} and removes the merge buffer afterwards.
+     * {@link MergingParameters} and removes remaining too short matches afterwards.
      * @return JPlagResult containing the merged matches
      */
     public JPlagResult run() {
@@ -50,7 +50,7 @@ public class MatchMerging {
             secondSubmission = comparisons.get(i).secondSubmission().copy();
             List<Match> globalMatches = new ArrayList<>(comparisons.get(i).matches());
             globalMatches.addAll(comparisons.get(i).ignoredMatches());
-            globalMatches = removeBuffer(mergeNeighbors(globalMatches));
+            globalMatches = removeTooShortMatches(mergeNeighbors(globalMatches));
             comparisons.set(i, new JPlagComparison(firstSubmission, secondSubmission, globalMatches, new ArrayList<>()));
 
         }
@@ -58,6 +58,12 @@ public class MatchMerging {
         return new JPlagResult(comparisons, result.getSubmissions(), result.getDuration() + durationInMillis, options);
     }
 
+    /**
+     * Computes neighbors by sorting based on order of matches in the first and the second submission and then checking
+     * which are next to each other in both.
+     * @param globalMatches
+     * @return neighbors containing a list of pairs of neighboring matches
+     */
     private List<List<Match>> computeNeighbors(List<Match> globalMatches) {
         List<List<Match>> neighbors = new ArrayList<>();
         List<Match> sortedByFirst = new ArrayList<>(globalMatches);
@@ -72,6 +78,12 @@ public class MatchMerging {
         return neighbors;
     }
 
+    /**
+     * This function iterates through the neighboring matches and checks which fit the merging criteria. Those who do are
+     * merged and the original matches are removed. This is done, until there are either no neighbors left, or none fit the
+     * criteria
+     * @return globalMatches containing merged matches.
+     */
     private List<Match> mergeNeighbors(List<Match> globalMatches) {
         int i = 0;
         List<List<Match>> neighbors = computeNeighbors(globalMatches);
@@ -97,6 +109,19 @@ public class MatchMerging {
         return globalMatches;
     }
 
+    /**
+     * This function removes token from both submissions after a merge has been performed. Additionally it moves the
+     * starting positions from matches, that occur after the merged neighboring matches, by the amount of removed token.
+     * @param globalMatches
+     * @param startFirst begin of the upper neighbor in the first submission
+     * @param startSecond begin of the upper neighbor in the second submission
+     * @param lengthUpper length of the upper neighbor
+     * @param seperatingFirst amount of token that separate the neighboring matches in the first submission and need to be
+     * removed
+     * @param seperatingSecond amount token that separate the neighboring matches in the send submission and need to be
+     * removed
+     * @return globalMatches with the mentioned changes.
+     */
     private List<Match> removeToken(List<Match> globalMatches, int startFirst, int startSecond, int lengthUpper, int seperatingFirst,
             int seperatingSecond) {
         List<Token> tokenFirst = new ArrayList<>(firstSubmission.getTokenList());
@@ -121,7 +146,11 @@ public class MatchMerging {
         return globalMatches;
     }
 
-    private List<Match> removeBuffer(List<Match> globalMatches) {
+    /**
+     * This method marks the end of the merging pipeline and removes the remaining too short matches from
+     * @param globalMatches
+     */
+    private List<Match> removeTooShortMatches(List<Match> globalMatches) {
         List<Match> toRemove = new ArrayList<>();
         for (Match match : globalMatches) {
             if (match.length() < options.minimumTokenMatch()) {
