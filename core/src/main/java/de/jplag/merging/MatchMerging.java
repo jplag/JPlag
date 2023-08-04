@@ -23,8 +23,6 @@ import de.jplag.options.JPlagOptions;
 public class MatchMerging {
     private Submission firstSubmission;
     private Submission secondSubmission;
-    private List<Match> globalMatches;
-    private List<List<Match>> neighbors;
     private JPlagResult result;
     private List<JPlagComparison> comparisons;
     private JPlagOptions options;
@@ -50,11 +48,9 @@ public class MatchMerging {
         for (int i = 0; i < comparisons.size(); i++) {
             firstSubmission = comparisons.get(i).firstSubmission().copy();
             secondSubmission = comparisons.get(i).secondSubmission().copy();
-            globalMatches = new ArrayList<>(comparisons.get(i).matches());
+            List<Match> globalMatches = new ArrayList<>(comparisons.get(i).matches());
             globalMatches.addAll(comparisons.get(i).ignoredMatches());
-            computeNeighbors();
-            mergeNeighbors();
-            removeBuffer();
+            globalMatches = removeBuffer(mergeNeighbors(globalMatches));
             comparisons.set(i, new JPlagComparison(firstSubmission, secondSubmission, globalMatches, new ArrayList<>()));
 
         }
@@ -62,8 +58,8 @@ public class MatchMerging {
         return new JPlagResult(comparisons, result.getSubmissions(), result.getDuration() + durationInMillis, options);
     }
 
-    private void computeNeighbors() {
-        neighbors = new ArrayList<>();
+    private List<List<Match>> computeNeighbors(List<Match> globalMatches) {
+        List<List<Match>> neighbors = new ArrayList<>();
         List<Match> sortedByFirst = new ArrayList<>(globalMatches);
         Collections.sort(sortedByFirst, (m1, m2) -> m1.startOfFirst() - m2.startOfFirst());
         List<Match> sortedBySecond = new ArrayList<>(globalMatches);
@@ -73,10 +69,12 @@ public class MatchMerging {
                 neighbors.add(Arrays.asList(sortedByFirst.get(i), sortedByFirst.get(i + 1)));
             }
         }
+        return neighbors;
     }
 
-    private void mergeNeighbors() {
+    private List<Match> mergeNeighbors(List<Match> globalMatches) {
         int i = 0;
+        List<List<Match>> neighbors = computeNeighbors(globalMatches);
         while (i < neighbors.size()) {
             int lengthUpper = neighbors.get(i).get(0).length();
             int lengthLower = neighbors.get(i).get(1).length();
@@ -88,17 +86,19 @@ public class MatchMerging {
                 globalMatches.removeAll(neighbors.get(i));
                 globalMatches
                         .add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper + lengthLower));
-                removeToken(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper, seperatingFirst,
-                        seperatingSecond);
-                computeNeighbors();
+                removeToken(globalMatches, neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper,
+                        seperatingFirst, seperatingSecond);
+                neighbors = computeNeighbors(globalMatches);
                 i = 0;
             } else {
                 i++;
             }
         }
+        return globalMatches;
     }
 
-    private void removeToken(int startFirst, int startSecond, int lengthUpper, int seperatingFirst, int seperatingSecond) {
+    private List<Match> removeToken(List<Match> globalMatches, int startFirst, int startSecond, int lengthUpper, int seperatingFirst,
+            int seperatingSecond) {
         List<Token> tokenFirst = new ArrayList<>(firstSubmission.getTokenList());
         List<Token> tokenSecond = new ArrayList<>(secondSubmission.getTokenList());
         tokenFirst.subList(startFirst + lengthUpper, startFirst + lengthUpper + seperatingFirst).clear();
@@ -118,9 +118,10 @@ public class MatchMerging {
                 globalMatches.set(i, alteredMatch);
             }
         }
+        return globalMatches;
     }
 
-    private void removeBuffer() {
+    private List<Match> removeBuffer(List<Match> globalMatches) {
         List<Match> toRemove = new ArrayList<>();
         for (Match match : globalMatches) {
             if (match.length() < options.minimumTokenMatch()) {
@@ -128,5 +129,6 @@ public class MatchMerging {
             }
         }
         globalMatches.removeAll(toRemove);
+        return globalMatches;
     }
 }
