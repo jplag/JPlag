@@ -13,16 +13,22 @@ public class JavaLanguageTest extends LanguageModuleTest {
 
     @Override
     protected void collectTestData(TestDataCollector collector) {
+        // Test cases regarding the extraction from if and else conditions.
         collector.testFile("IfElse.java", "IfIf.java", "IfElseIf.java").testSourceCoverage().testTokenSequence(J_IMPORT, J_CLASS_BEGIN,
                 J_METHOD_BEGIN, J_VARDEF, J_IF_BEGIN, J_THROW, J_NEWCLASS, J_IF_END, J_IF_BEGIN, J_APPLY, J_APPLY, J_IF_END, J_METHOD_END,
                 J_CLASS_END);
+
+        // Test cases regarding the extraction from implicit vs. explicit blocks in Java code.
         collector.testFile("IfWithBraces.java", "IfWithoutBraces.java").testSourceCoverage().testTokenSequence(J_PACKAGE, J_IMPORT, J_CLASS_BEGIN,
                 J_METHOD_BEGIN, J_VARDEF, J_IF_BEGIN, J_THROW, J_NEWCLASS, J_IF_END, J_IF_BEGIN, J_APPLY, J_APPLY, J_IF_END, J_IF_BEGIN, J_APPLY,
                 J_IF_END, J_METHOD_END, J_CLASS_END);
+
         collector.testFile("Verbose.java", "Compact.java").testSourceCoverage().testTokenSequence(J_PACKAGE, J_IMPORT, J_CLASS_BEGIN, J_METHOD_BEGIN,
                 J_VARDEF, J_VARDEF, J_IF_BEGIN, J_APPLY, J_RETURN, J_IF_END, J_VARDEF, J_FOR_BEGIN, J_VARDEF, J_APPLY, J_ASSIGN, J_IF_BEGIN, J_APPLY,
                 J_APPLY, J_ASSIGN, J_IF_END, J_FOR_END, J_IF_BEGIN, J_APPLY, J_ASSIGN, J_IF_END, J_IF_BEGIN, J_APPLY, J_APPLY, J_ASSIGN, J_IF_END,
                 J_RETURN, J_METHOD_END, J_CLASS_END);
+
+        // Test difference between try block and try-with-resource block.
         collector.testFile("Try.java", "TryWithResource.java").testSourceCoverage().testTokenSequence(J_PACKAGE, J_IMPORT, J_IMPORT, J_IMPORT,
                 J_CLASS_BEGIN, J_METHOD_BEGIN, J_VARDEF, J_APPLY, J_NEWCLASS, J_METHOD_END, J_METHOD_BEGIN, J_VARDEF, J_VARDEF, J_TRY_BEGIN, J_VARDEF,
                 J_ASSIGN, J_NEWCLASS, J_NEWCLASS, J_WHILE_BEGIN, J_APPLY, J_APPLY, J_APPLY, J_WHILE_END, J_CATCH_BEGIN, J_VARDEF, J_APPLY,
