@@ -223,7 +223,8 @@ public final class CLI {
     }
 
     private static MergingParameters getMergingParameters(CliOptions options) {
-        return new MergingParameters().withMergeBuffer(options.merging.mergeBuffer).withSeperatingThreshold(options.merging.seperatingThreshold);
+        return new MergingParameters().withEnable(options.merging.enable).withMergeBuffer(options.merging.mergeBuffer)
+                .withSeperatingThreshold(options.merging.seperatingThreshold);
     }
 
     private String generateDescription() {

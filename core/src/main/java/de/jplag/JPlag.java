@@ -74,7 +74,9 @@ public class JPlag {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
 
         // Use Match Merging against obfuscation
-        result = new MatchMerging(result, options).run();
+        if (options.mergingParameters().enable()) {
+            result = new MatchMerging(result, options).run();
+        }
 
         if (logger.isInfoEnabled())
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));

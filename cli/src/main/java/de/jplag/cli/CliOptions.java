@@ -113,12 +113,15 @@ public class CliOptions implements Runnable {
     }
 
     public static class Merging {
+        @Option(names = {"--match-merging"}, description = "Enables match merging (default: false)%n")
+        public boolean enable;
+
         @Option(names = {
-                "--merge-buffer"}, description = "Defines how much lower the length of a match can be than the minimum match length (default: 0)\n")
+                "--merge-buffer"}, description = "Defines how much lower the length of a match can be than the minimum match length (default: 0)%n")
         public int mergeBuffer;
 
         @Option(names = {
-                "--seperating-threshold"}, description = "Defines how many token there can be between two neighboring matches (default: 0)\n")
+                "--seperating-threshold"}, description = "Defines how many token there can be between two neighboring matches (default: 0)%n")
         public int seperatingThreshold;
 
     }

@@ -25,7 +25,7 @@ import de.jplag.strategy.ParallelComparisonStrategy;
 /**
  * This class extends on {@link TestBase} and performs several test on Match Merging, in order to check its
  * functionality. Therefore it uses two java programs and feds them into the JPlag pipeline. Results are stored before-
- * and after Match Merging and used for all tests.
+ * and after Match Merging and used for all tests. The two samples are from PROGpedia and under the CC BY 4.0 license.
  */
 class MergingTest extends TestBase {
     private JPlagOptions options;
@@ -37,7 +37,7 @@ class MergingTest extends TestBase {
     private final int SEPERATING_THRESHOLD = 2;
 
     MergingTest() throws ExitException {
-        options = getDefaultOptions("merging").withMergingParameters(new MergingParameters(MERGE_BUFFER, SEPERATING_THRESHOLD));
+        options = getDefaultOptions("merging").withMergingParameters(new MergingParameters(true, MERGE_BUFFER, SEPERATING_THRESHOLD));
 
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
