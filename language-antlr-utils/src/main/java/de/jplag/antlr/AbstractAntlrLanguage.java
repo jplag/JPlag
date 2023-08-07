@@ -42,6 +42,10 @@ public abstract class AbstractAntlrLanguage implements Language {
         return this.parser.parse(files);
     }
 
+    /**
+     * Lazily creates the parser. Has to be implemented, if no parser is passed in the constructor.
+     * @return The newly initialized parser
+     */
     protected AbstractAntlrParserAdapter<?> initializeParser() {
         throw new UnsupportedOperationException(
                 String.format("The initializeParser method needs to be implemented for %s", this.getClass().getName()));
