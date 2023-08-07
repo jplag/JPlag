@@ -85,19 +85,22 @@ public class MatchMerging {
     private List<Match> mergeNeighbors(List<Match> globalMatches, Submission firstSubmission, Submission secondSubmission) {
         int i = 0;
         List<List<Match>> neighbors = computeNeighbors(globalMatches);
+
         while (i < neighbors.size()) {
-            int lengthUpper = neighbors.get(i).get(0).length();
-            int lengthLower = neighbors.get(i).get(1).length();
-            int seperatingFirst = neighbors.get(i).get(1).startOfFirst() - neighbors.get(i).get(0).endOfFirst() - 1;
-            int seperatingSecond = neighbors.get(i).get(1).startOfSecond() - neighbors.get(i).get(0).endOfSecond() - 1;
-            double seperating = (seperatingFirst + seperatingSecond) / 2.0;
+            Match firstNeighbor = neighbors.get(i).get(0);
+            Match secondNeighbor = neighbors.get(i).get(1);
+
+            int lengthUpper = firstNeighbor.length();
+            int lengthLower = secondNeighbor.length();
+            int tokenBetweenFirst = secondNeighbor.startOfFirst() - firstNeighbor.endOfFirst() - 1;
+            int tokensBetweenSecond = secondNeighbor.startOfSecond() - firstNeighbor.endOfSecond() - 1;
+            double averageTokensBetweenMatches = (tokenBetweenFirst + tokensBetweenSecond) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
-            if (seperating <= options.mergingParameters().seperatingThreshold()) {
+            if (averageTokensBetweenMatches <= options.mergingParameters().seperatingThreshold()) {
                 globalMatches.removeAll(neighbors.get(i));
-                globalMatches
-                        .add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper + lengthLower));
-                globalMatches = removeToken(globalMatches, firstSubmission, secondSubmission, neighbors.get(i).get(0).startOfFirst(),
-                        neighbors.get(i).get(0).startOfSecond(), lengthUpper, seperatingFirst, seperatingSecond);
+                globalMatches.add(new Match(firstNeighbor.startOfFirst(), firstNeighbor.startOfSecond(), lengthUpper + lengthLower));
+                globalMatches = removeToken(globalMatches, firstSubmission, secondSubmission, firstNeighbor.startOfFirst(),
+                        firstNeighbor.startOfSecond(), lengthUpper, tokenBetweenFirst, tokensBetweenSecond);
                 neighbors = computeNeighbors(globalMatches);
                 i = 0;
             } else {
@@ -116,25 +119,25 @@ public class MatchMerging {
      * @param startFirst begin of the upper neighbor in the first submission
      * @param startSecond begin of the upper neighbor in the second submission
      * @param lengthUpper length of the upper neighbor
-     * @param seperatingFirst amount of token that separate the neighboring matches in the first submission and need to be
-     * removed
-     * @param seperatingSecond amount token that separate the neighboring matches in the send submission and need to be
+     * @param tokensBetweenFirst amount of token that separate the neighboring matches in the first submission and need to
+     * be removed
+     * @param tokensBetweenSecond amount token that separate the neighboring matches in the send submission and need to be
      * removed
      * @return shiftedMatches with the mentioned changes.
      */
     private List<Match> removeToken(List<Match> globalMatches, Submission firstSubmission, Submission secondSubmission, int startFirst,
-            int startSecond, int lengthUpper, int seperatingFirst, int seperatingSecond) {
+            int startSecond, int lengthUpper, int tokensBetweenFirst, int tokensBetweenSecond) {
         List<Token> tokenFirst = new ArrayList<>(firstSubmission.getTokenList());
         List<Token> tokenSecond = new ArrayList<>(secondSubmission.getTokenList());
-        tokenFirst.subList(startFirst + lengthUpper, startFirst + lengthUpper + seperatingFirst).clear();
-        tokenSecond.subList(startSecond + lengthUpper, startSecond + lengthUpper + seperatingSecond).clear();
+        tokenFirst.subList(startFirst + lengthUpper, startFirst + lengthUpper + tokensBetweenFirst).clear();
+        tokenSecond.subList(startSecond + lengthUpper, startSecond + lengthUpper + tokensBetweenSecond).clear();
         firstSubmission.setTokenList(tokenFirst);
         secondSubmission.setTokenList(tokenSecond);
 
         List<Match> shiftedMatches = new ArrayList<>();
         for (Match match : globalMatches) {
-            int leftShift = match.startOfFirst() > startFirst ? seperatingFirst : 0;
-            int rightShift = match.startOfSecond() > startSecond ? seperatingSecond : 0;
+            int leftShift = match.startOfFirst() > startFirst ? tokensBetweenFirst : 0;
+            int rightShift = match.startOfSecond() > startSecond ? tokensBetweenSecond : 0;
             Match alteredMatch = new Match(match.startOfFirst() - leftShift, match.startOfSecond() - rightShift, match.length());
             shiftedMatches.add(alteredMatch);
         }
