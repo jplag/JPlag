@@ -21,8 +21,6 @@ import de.jplag.options.JPlagOptions;
  * set in {@link JPlagOptions} as {@link MergingParameters} and default to 0 (which deactivates merging).
  */
 public class MatchMerging {
-    private Submission firstSubmission;
-    private Submission secondSubmission;
     private JPlagOptions options;
 
     /**
@@ -41,18 +39,21 @@ public class MatchMerging {
      */
     public JPlagResult mergeMatchesOf(JPlagResult result) {
         long timeBeforeStartInMillis = System.currentTimeMillis();
-        List<JPlagComparison> comparisons = new ArrayList<>(result.getAllComparisons());
-        for (int i = 0; i < comparisons.size(); i++) {
-            firstSubmission = comparisons.get(i).firstSubmission().copy();
-            secondSubmission = comparisons.get(i).secondSubmission().copy();
-            List<Match> globalMatches = new ArrayList<>(comparisons.get(i).matches());
-            globalMatches.addAll(comparisons.get(i).ignoredMatches());
-            globalMatches = removeTooShortMatches(mergeNeighbors(globalMatches));
-            comparisons.set(i, new JPlagComparison(firstSubmission, secondSubmission, globalMatches, new ArrayList<>()));
 
+        List<JPlagComparison> comparisons = new ArrayList<>(result.getAllComparisons());
+        List<JPlagComparison> comparisonsMerged = new ArrayList<>();
+
+        for (JPlagComparison comparison : comparisons) {
+            Submission firstSubmission = comparison.firstSubmission().copy();
+            Submission secondSubmission = comparison.secondSubmission().copy();
+            List<Match> globalMatches = new ArrayList<>(comparison.matches());
+            globalMatches.addAll(comparison.ignoredMatches());
+            globalMatches = removeTooShortMatches(mergeNeighbors(globalMatches, firstSubmission, secondSubmission));
+            comparisonsMerged.add(new JPlagComparison(firstSubmission, secondSubmission, globalMatches, new ArrayList<>()));
         }
+
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisons, result.getSubmissions(), result.getDuration() + durationInMillis, options);
+        return new JPlagResult(comparisonsMerged, result.getSubmissions(), result.getDuration() + durationInMillis, options);
     }
 
     /**
@@ -81,7 +82,7 @@ public class MatchMerging {
      * criteria
      * @return globalMatches containing merged matches.
      */
-    private List<Match> mergeNeighbors(List<Match> globalMatches) {
+    private List<Match> mergeNeighbors(List<Match> globalMatches, Submission firstSubmission, Submission secondSubmission) {
         int i = 0;
         List<List<Match>> neighbors = computeNeighbors(globalMatches);
         while (i < neighbors.size()) {
@@ -95,8 +96,8 @@ public class MatchMerging {
                 globalMatches.removeAll(neighbors.get(i));
                 globalMatches
                         .add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper + lengthLower));
-                removeToken(globalMatches, neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper,
-                        seperatingFirst, seperatingSecond);
+                removeToken(globalMatches, firstSubmission, secondSubmission, neighbors.get(i).get(0).startOfFirst(),
+                        neighbors.get(i).get(0).startOfSecond(), lengthUpper, seperatingFirst, seperatingSecond);
                 neighbors = computeNeighbors(globalMatches);
                 i = 0;
             } else {
@@ -110,6 +111,8 @@ public class MatchMerging {
      * This function removes token from both submissions after a merge has been performed. Additionally it moves the
      * starting positions from matches, that occur after the merged neighboring matches, by the amount of removed token.
      * @param globalMatches
+     * @param firstSubmission is the first submission
+     * @param secondSubmission is the second submission
      * @param startFirst begin of the upper neighbor in the first submission
      * @param startSecond begin of the upper neighbor in the second submission
      * @param lengthUpper length of the upper neighbor
@@ -119,8 +122,8 @@ public class MatchMerging {
      * removed
      * @return globalMatches with the mentioned changes.
      */
-    private List<Match> removeToken(List<Match> globalMatches, int startFirst, int startSecond, int lengthUpper, int seperatingFirst,
-            int seperatingSecond) {
+    private List<Match> removeToken(List<Match> globalMatches, Submission firstSubmission, Submission secondSubmission, int startFirst,
+            int startSecond, int lengthUpper, int seperatingFirst, int seperatingSecond) {
         List<Token> tokenFirst = new ArrayList<>(firstSubmission.getTokenList());
         List<Token> tokenSecond = new ArrayList<>(secondSubmission.getTokenList());
         tokenFirst.subList(startFirst + lengthUpper, startFirst + lengthUpper + seperatingFirst).clear();
