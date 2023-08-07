@@ -96,7 +96,7 @@ public class MatchMerging {
                 globalMatches.removeAll(neighbors.get(i));
                 globalMatches
                         .add(new Match(neighbors.get(i).get(0).startOfFirst(), neighbors.get(i).get(0).startOfSecond(), lengthUpper + lengthLower));
-                removeToken(globalMatches, firstSubmission, secondSubmission, neighbors.get(i).get(0).startOfFirst(),
+                globalMatches = removeToken(globalMatches, firstSubmission, secondSubmission, neighbors.get(i).get(0).startOfFirst(),
                         neighbors.get(i).get(0).startOfSecond(), lengthUpper, seperatingFirst, seperatingSecond);
                 neighbors = computeNeighbors(globalMatches);
                 i = 0;
@@ -120,7 +120,7 @@ public class MatchMerging {
      * removed
      * @param seperatingSecond amount token that separate the neighboring matches in the send submission and need to be
      * removed
-     * @return globalMatches with the mentioned changes.
+     * @return shiftedMatches with the mentioned changes.
      */
     private List<Match> removeToken(List<Match> globalMatches, Submission firstSubmission, Submission secondSubmission, int startFirst,
             int startSecond, int lengthUpper, int seperatingFirst, int seperatingSecond) {
@@ -131,19 +131,15 @@ public class MatchMerging {
         firstSubmission.setTokenList(tokenFirst);
         secondSubmission.setTokenList(tokenSecond);
 
-        for (int i = 0; i < globalMatches.size(); i++) {
-            if (globalMatches.get(i).startOfFirst() > startFirst) {
-                Match alteredMatch = new Match(globalMatches.get(i).startOfFirst() - seperatingFirst, globalMatches.get(i).startOfSecond(),
-                        globalMatches.get(i).length());
-                globalMatches.set(i, alteredMatch);
-            }
-            if (globalMatches.get(i).startOfSecond() > startSecond) {
-                Match alteredMatch = new Match(globalMatches.get(i).startOfFirst(), globalMatches.get(i).startOfSecond() - seperatingSecond,
-                        globalMatches.get(i).length());
-                globalMatches.set(i, alteredMatch);
-            }
+        List<Match> shiftedMatches = new ArrayList<>();
+        for (Match match : globalMatches) {
+            int leftShift = match.startOfFirst() > startFirst ? seperatingFirst : 0;
+            int rightShift = match.startOfSecond() > startSecond ? seperatingSecond : 0;
+            Match alteredMatch = new Match(match.startOfFirst() - leftShift, match.startOfSecond() - rightShift, match.length());
+            shiftedMatches.add(alteredMatch);
         }
-        return globalMatches;
+
+        return shiftedMatches;
     }
 
     /**
