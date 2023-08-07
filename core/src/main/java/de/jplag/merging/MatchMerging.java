@@ -23,28 +23,25 @@ import de.jplag.options.JPlagOptions;
 public class MatchMerging {
     private Submission firstSubmission;
     private Submission secondSubmission;
-    private JPlagResult result;
-    private List<JPlagComparison> comparisons;
     private JPlagOptions options;
 
     /**
      * Instantiates the match merging algorithm for a comparison result and a set of specific options.
-     * @param result is the initially computed result object
      * @param options encapsulates the adjustable options
      */
-    public MatchMerging(JPlagResult result, JPlagOptions options) {
-        this.result = result;
-        this.comparisons = new ArrayList<>(result.getAllComparisons());
+    public MatchMerging(JPlagOptions options) {
         this.options = options;
     }
 
     /**
      * Runs the internal match merging pipeline. It computes neighboring matches, merges them based on
      * {@link MergingParameters} and removes remaining too short matches afterwards.
+     * @param result is the initially computed result object
      * @return JPlagResult containing the merged matches
      */
-    public JPlagResult run() {
+    public JPlagResult mergeMatchesOf(JPlagResult result) {
         long timeBeforeStartInMillis = System.currentTimeMillis();
+        List<JPlagComparison> comparisons = new ArrayList<>(result.getAllComparisons());
         for (int i = 0; i < comparisons.size(); i++) {
             firstSubmission = comparisons.get(i).firstSubmission().copy();
             secondSubmission = comparisons.get(i).secondSubmission().copy();
@@ -67,9 +64,9 @@ public class MatchMerging {
     private List<List<Match>> computeNeighbors(List<Match> globalMatches) {
         List<List<Match>> neighbors = new ArrayList<>();
         List<Match> sortedByFirst = new ArrayList<>(globalMatches);
-        Collections.sort(sortedByFirst, (m1, m2) -> m1.startOfFirst() - m2.startOfFirst());
+        Collections.sort(sortedByFirst, (match1, match2) -> match1.startOfFirst() - match2.startOfFirst());
         List<Match> sortedBySecond = new ArrayList<>(globalMatches);
-        Collections.sort(sortedBySecond, (m1, m2) -> m1.startOfSecond() - m2.startOfSecond());
+        Collections.sort(sortedBySecond, (match1, match2) -> match1.startOfSecond() - match2.startOfSecond());
         for (int i = 0; i < sortedByFirst.size() - 1; i++) {
             if (sortedBySecond.indexOf(sortedByFirst.get(i)) == (sortedBySecond.indexOf(sortedByFirst.get(i + 1)) - 1)) {
                 neighbors.add(Arrays.asList(sortedByFirst.get(i), sortedByFirst.get(i + 1)));

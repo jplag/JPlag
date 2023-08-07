@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,8 @@ class MergingTest extends TestBase {
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
     private List<JPlagComparison> comparisonsAfter;
+    private ComparisonStrategy comparisonStrategy;
+    private SubmissionSet submissionSet;
     private final int MERGE_BUFFER = 8;
     private final int SEPERATING_THRESHOLD = 2;
 
@@ -40,16 +43,19 @@ class MergingTest extends TestBase {
         options = getDefaultOptions("merging").withMergingParameters(new MergingParameters(true, MERGE_BUFFER, SEPERATING_THRESHOLD));
 
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
-        ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
+        comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
 
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
-        SubmissionSet submissionSet = builder.buildSubmissionSet();
+        submissionSet = builder.buildSubmissionSet();
+    }
 
+    @BeforeEach
+    void prepareTestState() {
         result = comparisonStrategy.compareSubmissions(submissionSet);
         comparisonsBefore = result.getAllComparisons();
 
         if (options.mergingParameters().enable()) {
-            result = new MatchMerging(result, options).run();
+            result = new MatchMerging(options).mergeMatchesOf(result);
         }
         comparisonsAfter = result.getAllComparisons();
     }

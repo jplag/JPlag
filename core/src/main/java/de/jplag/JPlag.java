@@ -75,7 +75,7 @@ public class JPlag {
 
         // Use Match Merging against obfuscation
         if (options.mergingParameters().enable()) {
-            result = new MatchMerging(result, options).run();
+            result = new MatchMerging(options).mergeMatchesOf(result);
         }
 
         if (logger.isInfoEnabled())
