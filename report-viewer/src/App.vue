@@ -1,50 +1,30 @@
-<script setup lang="ts">
-import { RouterView } from 'vue-router'
-</script>
-
 <template>
-  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-  <RouterView />
+  <div :class="{ dark: store().uiState.useDarkMode }">
+    <div
+      class="min-h-screen max-h-fit max-w-screen text-black dark:text-amber-50 bg-backgorund-light dark:bg-backgorund-dark"
+    >
+      <RouterView class="max-h-screen overflow-hidden" />
+      <Button
+        class="absolute right-2 bottom-2 w-12 text-center h-12 flex justify-center items-center"
+        @click="store().changeUseDarkMode()"
+      >
+        <FontAwesomeIcon
+          class="text-2xl"
+          :icon="store().uiState.useDarkMode ? ['fas', 'sun'] : ['fas', 'moon']"
+        />
+      </Button>
+    </div>
+  </div>
 </template>
 
-<style>
-@font-face {
-  font-family: 'JetBrains Mono NL';
-  src: url('./fonts/jetbrains-mono/JetBrainsMonoNL-Light.ttf');
-}
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+import Button from './components/ButtonComponent.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
+import store from './stores/store'
 
-@font-face {
-  font-family: 'JetBrains Mono NL';
-  src: url('./fonts/jetbrains-mono/JetBrainsMonoNL-Bold.ttf');
-  font-weight: bold;
-}
-
-:root {
-  --primary-color: #e2eafc;
-  --primary-color-light: #edf2fb;
-  --primary-color-dark: #d7e3fc;
-  --secondary-color: #b6ccfe;
-  --secondary-color-light: #c1d3fe;
-  --secondary-color-dark: #abc4ff;
-
-  --background-color: #ffffff;
-  --on-primary-color: #303030;
-  --on-secondary-color: #000000;
-  --on-background-color: #303030;
-  --shadow-color: #777777;
-}
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html,
-body,
-#app {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-}
-</style>
+library.add(faMoon)
+library.add(faSun)
+</script>

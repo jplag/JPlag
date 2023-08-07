@@ -12,6 +12,7 @@
 [![Report Viewer](https://img.shields.io/badge/report%20viewer-online-b80025)](https://jplag.github.io/JPlag/)
 [![Java Version](https://img.shields.io/badge/java-SE%2017-yellowgreen)](#download-and-installation)
 
+
 JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development. JPlag currently supports various programming languages, EMF metamodels, and natural language text.
 
 ## Supported Languages
@@ -167,7 +168,7 @@ The new API makes it easy to integrate JPlag's plagiarism detection into externa
 <!-- To assure that the code example is always correct, it must be kept in sync
 with [`ReadmeCodeExampleTest#testReadmeCodeExample`](core/src/test/java/de/jplag/special/ReadmeCodeExampleTest.java). -->
 ```java
-Language language = new de.jplag.java.Language();
+JavaLanguage language = new JavaLanguage();
 language.getOptions(); //Use the object returned by this to set language options(same as language specific arguments above).
 Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));
 File baseCode = new File("/path/to/baseCode");

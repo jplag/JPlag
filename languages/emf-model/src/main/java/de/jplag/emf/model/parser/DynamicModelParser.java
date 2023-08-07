@@ -9,8 +9,9 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 
 import de.jplag.ParsingException;
+import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
-import de.jplag.emf.model.Language;
+import de.jplag.emf.model.EmfModelLanguage;
 import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
 import de.jplag.emf.util.MetamodelTreeView;
@@ -37,9 +38,9 @@ public class DynamicModelParser extends DynamicEcoreParser {
     @Override
     protected void parseModelFile(File file) throws ParsingException {
         // implicit assumption: Metamodel gets parsed first!
-        if (file.getName().endsWith(de.jplag.emf.Language.FILE_ENDING)) {
+        if (file.getName().endsWith(EmfLanguage.FILE_ENDING)) {
             parseMetamodelFile(file);
-        } else if (file.getName().endsWith(Language.VIEW_FILE_SUFFIX)) {
+        } else if (file.getName().endsWith(EmfModelLanguage.VIEW_FILE_SUFFIX)) {
             logger.warn(VIEW_FILE_WARNING, file.getName());
         } else {
             if (metapackages.isEmpty()) {
@@ -51,7 +52,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
 
     @Override
     protected String getCorrespondingViewFileSuffix() {
-        return Language.VIEW_FILE_SUFFIX;
+        return EmfModelLanguage.VIEW_FILE_SUFFIX;
     }
 
     @Override

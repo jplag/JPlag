@@ -66,9 +66,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final SourcePositions positions;
     private final CompilationUnitTree ast;
 
-    private List<ParsingException> parsingExceptions = new ArrayList<>();
+    private final List<ParsingException> parsingExceptions = new ArrayList<>();
 
-    private VariableRegistry variableRegistry;
+    private final VariableRegistry variableRegistry;
 
     private static final Set<String> IMMUTABLES = Set.of(
             // from https://medium.com/@bpnorlander/java-understanding-primitive-types-and-wrapper-objects-a6798fb2afe9
@@ -292,7 +292,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         scan(node.getResources(), null);
         scan(node.getBlock(), null);
         long end = positions.getEndPosition(ast, node);
-        addToken(JavaTokenType.J_TRY_END, end, 1, CodeSemantics.createControl());
         scan(node.getCatches(), null);
         if (node.getFinallyBlock() != null) {
             start = positions.getStartPosition(ast, node.getFinallyBlock());
@@ -301,6 +300,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             end = positions.getEndPosition(ast, node.getFinallyBlock());
             addToken(JavaTokenType.J_FINALLY_END, end, 1, CodeSemantics.createControl());
         }
+        addToken(JavaTokenType.J_TRY_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
@@ -372,7 +372,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitNewClass(NewClassTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        if (node.getTypeArguments().size() > 0) {
+        if (!node.getTypeArguments().isEmpty()) {
             addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), new CodeSemantics());
         }
         addToken(JavaTokenType.J_NEWCLASS, start, 3, new CodeSemantics());
