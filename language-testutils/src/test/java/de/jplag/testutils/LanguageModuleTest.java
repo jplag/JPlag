@@ -1,22 +1,33 @@
 package de.jplag.testutils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import de.jplag.*;
+import de.jplag.Language;
+import de.jplag.ParsingException;
+import de.jplag.SharedTokenType;
+import de.jplag.Token;
+import de.jplag.TokenPrinter;
+import de.jplag.TokenType;
 import de.jplag.testutils.datacollector.TestData;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
@@ -71,6 +82,7 @@ public abstract class LanguageModuleTest {
      */
     @ParameterizedTest
     @MethodSource("sourceCoverageFiles")
+    @DisplayName("Test that every line leads to at least one token")
     final void testSourceCoverage(TestData data) throws ParsingException, IOException {
         List<Token> tokens = parseTokens(data);
 
@@ -81,7 +93,7 @@ public abstract class LanguageModuleTest {
 
         tokens.stream().map(Token::getLine).forEach(relevantLines::remove);
 
-        Assertions.assertTrue(relevantLines.isEmpty(),
+        assertTrue(relevantLines.isEmpty(),
                 "Test test source " + data.describeTestSource() + " contained uncovered lines:" + System.lineSeparator() + relevantLines);
     }
 
@@ -101,14 +113,14 @@ public abstract class LanguageModuleTest {
      */
     @ParameterizedTest
     @MethodSource("tokenCoverageFiles")
+    @DisplayName("Test that every token occurs at least once")
     final void testTokenCoverage(TestData data) throws ParsingException, IOException {
         List<TokenType> foundTokens = extractTokenTypes(data);
         List<TokenType> languageTokens = new ArrayList<>(this.languageTokens);
 
         languageTokens.removeAll(foundTokens);
 
-        Assertions.assertTrue(languageTokens.isEmpty(),
-                "Some tokens were not found in " + data.describeTestSource() + System.lineSeparator() + languageTokens);
+        assertTrue(languageTokens.isEmpty(), "Some tokens were not found in " + data.describeTestSource() + System.lineSeparator() + languageTokens);
     }
 
     /**
@@ -120,23 +132,25 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Tests the configured test sources for contained tokens
+     * Tests the configured test sources for contained tokens. The tokens neither have to occur exclusively nor in the given
+     * order.
      * @param test The source to test
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
      */
     @ParameterizedTest
     @MethodSource("testTokensContainedData")
+    @DisplayName("Test that the specified tokens at least occur")
     final void testTokensContained(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
         List<TokenType> foundTokens = extractTokenTypes(test.data());
-        List<TokenType> requiredTokens = new ArrayList<>(test.tokens());
+        List<TokenType> expectedTokens = new ArrayList<>(test.tokens());
 
         for (TokenType foundToken : foundTokens) {
-            requiredTokens.remove(foundToken);
+            expectedTokens.remove(foundToken);
         }
 
-        Assertions.assertTrue(requiredTokens.isEmpty(),
-                "Some required tokens were not found in " + test.data().describeTestSource() + System.lineSeparator() + requiredTokens);
+        assertTrue(expectedTokens.isEmpty(),
+                "Some expected tokens were not found in " + test.data().describeTestSource() + System.lineSeparator() + expectedTokens);
     }
 
     /**
@@ -155,15 +169,21 @@ public abstract class LanguageModuleTest {
      */
     @ParameterizedTest
     @MethodSource("testTokenSequenceData")
+    @DisplayName("Test if extracted token sequence matches")
     final void testTokenSequence(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
         List<TokenType> extracted = extractTokenTypes(test.data());
-        List<TokenType> required = new ArrayList<>(test.tokens());
-        if (required.get(required.size() - 1) != SharedTokenType.FILE_END) {
-            required.add(SharedTokenType.FILE_END);
+        List<TokenType> expected = new ArrayList<>(test.tokens());
+        if (expected.get(expected.size() - 1) != SharedTokenType.FILE_END) {
+            expected.add(SharedTokenType.FILE_END);
         }
+        assertTokensMatch(expected, extracted, "Extracted token from " + test.data().describeTestSource() + " does not match expected sequence.");
+    }
 
-        Assertions.assertEquals(required, extracted,
-                "Extracted token from " + test.data().describeTestSource() + " does not match required sequence.");
+    /**
+     * Convenience method for using assertLinesMatch with token lists.
+     */
+    private void assertTokensMatch(List<TokenType> expected, List<TokenType> extracted, String message) {
+        assertLinesMatch(expected.stream().map(Object::toString), extracted.stream().map(Object::toString), message);
     }
 
     /**
@@ -182,6 +202,7 @@ public abstract class LanguageModuleTest {
      */
     @ParameterizedTest
     @MethodSource("getAllTestData")
+    @DisplayName("Test that the tokens map to ascending line numbers")
     final void testMonotoneTokenOrder(TestData data) throws ParsingException, IOException {
         List<Token> extracted = parseTokens(data);
 
@@ -204,10 +225,11 @@ public abstract class LanguageModuleTest {
      */
     @ParameterizedTest
     @MethodSource("getAllTestData")
+    @DisplayName("Test that the last token is the file end token")
     final void testTokenSequencesEndsWithFileEnd(TestData data) throws ParsingException, IOException {
         List<Token> extracted = parseTokens(data);
 
-        Assertions.assertEquals(SharedTokenType.FILE_END, extracted.get(extracted.size() - 1).getType(),
+        assertEquals(SharedTokenType.FILE_END, extracted.get(extracted.size() - 1).getType(),
                 "Last token in " + data.describeTestSource() + " is not file end.");
     }
 
