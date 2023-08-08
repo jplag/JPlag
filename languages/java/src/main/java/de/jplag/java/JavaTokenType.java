@@ -76,6 +76,7 @@ public enum JavaTokenType implements TokenType {
 
     private final String description;
 
+    @Override
     public String getDescription() {
         return this.description;
     }

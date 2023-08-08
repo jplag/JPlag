@@ -15,17 +15,20 @@ import de.jplag.exceptions.ExitException;
  */
 @Deprecated(since = "4.0.0", forRemoval = true)
 class LegacyBaseCodeTest extends BaseCodeTest {
+    @Override
     @Test
     void testBasecodeUserSubmissionComparison() throws ExitException {
         JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionName("base"));
         verifyResults(result);
     }
 
+    @Override
     @Test
     void testTinyBasecode() {
         assertThrows(BasecodeException.class, () -> runJPlag("TinyBasecode", it -> it.withBaseCodeSubmissionName("base")));
     }
 
+    @Override
     @Test
     void testEmptySubmission() throws ExitException {
         JPlagResult result = runJPlag("emptysubmission", it -> it.withBaseCodeSubmissionName("base"));
@@ -38,12 +41,14 @@ class LegacyBaseCodeTest extends BaseCodeTest {
         verifyResults(result);
     }
 
+    @Override
     @Test
     void testBasecodePathComparison() throws ExitException {
         JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionName(getBasePath("basecode-base")));
         assertEquals(3, result.getNumberOfSubmissions()); // "basecode/base" is now a user submission.
     }
 
+    @Override
     @Test
     void testInvalidBasecode() {
         assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> it.withBaseCodeSubmissionName("WrongBasecode")));
@@ -57,6 +62,7 @@ class LegacyBaseCodeTest extends BaseCodeTest {
     /**
      * The simple duplicate contains obvious plagiarism.
      */
+    @Override
     @Test
     void testSubdirectoryGlobalBasecode() throws ExitException {
         String basecode = getBasePath("SubdirectoryBase");
@@ -67,6 +73,7 @@ class LegacyBaseCodeTest extends BaseCodeTest {
     /**
      * The simple duplicate contains obvious plagiarism.
      */
+    @Override
     @Test
     void testSubdirectoryLocalBasecode() throws ExitException {
         JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> it.withSubdirectoryName("src").withBaseCodeSubmissionName("Base"));
