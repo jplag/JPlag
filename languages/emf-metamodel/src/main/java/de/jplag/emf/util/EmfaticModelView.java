@@ -9,6 +9,8 @@ import java.util.Optional;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
@@ -27,9 +29,11 @@ import de.jplag.emf.MetamodelTokenType;
  */
 public final class EmfaticModelView extends AbstractModelView {
     // The following regular expressions match keywords of the Emfatic syntax:
+    private static final String PACKAGE_REGEX = "package\\s+\\S+;";
     private static final String TYPE_KEYWORD_REGEX = "(package |class |datatype |enum )";
     private static final String FEATURE_KEYWORD_REGEX = "(.*attr .*|op .*|.*ref .*|.*val .*).*";
     private static final String TYPE_SUFFIX_REGEX = "(;| extends| \\{)";
+    private static final String LINE_SUFFIX_REGEX = ";";
     private static final char CLOSING_CHAR = '}';
     private static final String ANYTHING_REGEX = ".*";
 
@@ -40,6 +44,7 @@ public final class EmfaticModelView extends AbstractModelView {
 
     private final Copier modelCopier; // Allows to trace between original and copied elements
     private int lastLineIndex; // last line given to a token
+    private final int rootPackageIndex;
 
     /**
      * Creates an Emfatic view for a metamodel.
@@ -57,6 +62,7 @@ public final class EmfaticModelView extends AbstractModelView {
         Resource copiedResource = EMFUtil.copyModel(modelResource, modelCopier);
         replaceElementNamesWithHashes(copiedResource);
         hashedLines = generateEmfaticCode(new StringBuilder(), copiedResource);
+        rootPackageIndex = findIndexOfRootPackage(hashedLines);
     }
 
     /**
@@ -109,6 +115,18 @@ public final class EmfaticModelView extends AbstractModelView {
     }
 
     /**
+     * Calculates the index of the root package declaration, as it has unique syntax in Emfatic.
+     */
+    private final int findIndexOfRootPackage(List<String> lines) {
+        for (int index = 0; index < lines.size(); index++) {
+            if (lines.get(index).matches(PACKAGE_REGEX)) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Calculates the line index of a metamodel token from the emfatic code. If it cannot be found, the last index is used.
      */
     private int calculateLineIndexOf(MetamodelToken token) {
@@ -135,7 +153,7 @@ public final class EmfaticModelView extends AbstractModelView {
      */
     private int findEndIndexOf(int declarationIndex) {
         int indentation = indentationOf(lines.get(declarationIndex));
-        if (declarationIndex > 1) { // exception for top level package
+        if (declarationIndex > rootPackageIndex) { // exception for top level package
             for (int i = declarationIndex + 1; i < lines.size(); i++) {
                 String nextLine = lines.get(i);
                 if (nextLine.length() > indentation && CLOSING_CHAR == nextLine.charAt(indentation)) {
@@ -186,7 +204,8 @@ public final class EmfaticModelView extends AbstractModelView {
      * Checks if a line (with leading whitespace removed) contains an element based on the elements hash.
      */
     private boolean isDeclaration(ENamedElement element, String hash, String line) {
-        return isStructuralFeature(element, hash, line) || isEnumLiteral(element, hash, line) || isType(hash, line);
+        return isStructuralFeature(element, hash, line) || isTypedElement(element, hash, line) || isEnumLiteral(element, hash, line)
+                || isType(hash, line);
     }
 
     private boolean isType(String hash, String line) {
@@ -197,8 +216,12 @@ public final class EmfaticModelView extends AbstractModelView {
         return element instanceof EEnumLiteral && line.matches(hash + ANYTHING_REGEX);
     }
 
+    private boolean isTypedElement(ENamedElement element, String hash, String line) {
+        return element instanceof EOperation && element instanceof EParameter && line.matches(FEATURE_KEYWORD_REGEX + hash + ANYTHING_REGEX);
+    }
+
     private boolean isStructuralFeature(ENamedElement element, String hash, String line) {
-        return element instanceof ETypedElement && line.matches(FEATURE_KEYWORD_REGEX + hash + ANYTHING_REGEX);
+        return element instanceof ETypedElement && line.matches(FEATURE_KEYWORD_REGEX + hash + LINE_SUFFIX_REGEX);
     }
 
 }
