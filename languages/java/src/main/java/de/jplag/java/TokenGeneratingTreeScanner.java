@@ -216,10 +216,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitDoWhileLoop(DoWhileLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_DO_BEGIN, start, 2, CodeSemantics.createLoopBegin());
+        long end = positions.getEndPosition(ast, node.getStatement()) - 1;
+        addToken(JavaTokenType.J_LOOP_BEGIN, start, 2, CodeSemantics.createLoopBegin());
         scan(node.getStatement(), null);
-        addToken(JavaTokenType.J_DO_END, end, 1, CodeSemantics.createLoopEnd());
+        addToken(JavaTokenType.J_LOOP_END, end, 1, CodeSemantics.createLoopEnd());
         scan(node.getCondition(), null);
         return null;
     }
@@ -228,9 +228,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitWhileLoop(WhileLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_WHILE_BEGIN, start, 5, CodeSemantics.createLoopBegin());
+        addToken(JavaTokenType.J_LOOP_BEGIN, start, 5, CodeSemantics.createLoopBegin());
         super.visitWhileLoop(node, null);
-        addToken(JavaTokenType.J_WHILE_END, end, 1, CodeSemantics.createLoopEnd());
+        addToken(JavaTokenType.J_LOOP_END, end, 1, CodeSemantics.createLoopEnd());
         return null;
     }
 
@@ -239,9 +239,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_FOR_BEGIN, start, 3, CodeSemantics.createLoopBegin());
+        addToken(JavaTokenType.J_LOOP_BEGIN, start, 3, CodeSemantics.createLoopBegin());
         super.visitForLoop(node, null);
-        addToken(JavaTokenType.J_FOR_END, end, 1, CodeSemantics.createLoopEnd());
+        addToken(JavaTokenType.J_LOOP_END, end, 1, CodeSemantics.createLoopEnd());
         variableRegistry.exitLocalScope();
         return null;
     }
@@ -251,9 +251,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_FOR_BEGIN, start, 3, CodeSemantics.createLoopBegin());
+        addToken(JavaTokenType.J_LOOP_BEGIN, start, 3, CodeSemantics.createLoopBegin());
         super.visitEnhancedForLoop(node, null);
-        addToken(JavaTokenType.J_FOR_END, end, 1, CodeSemantics.createLoopEnd());
+        addToken(JavaTokenType.J_LOOP_END, end, 1, CodeSemantics.createLoopEnd());
         variableRegistry.exitLocalScope();
         return null;
     }

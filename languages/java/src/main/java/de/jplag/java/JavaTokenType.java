@@ -12,12 +12,8 @@ public enum JavaTokenType implements TokenType {
     J_VARDEF("VARDEF"), // check
     J_SYNC_BEGIN("SYNC{"), // check
     J_SYNC_END("}SYNC"), // check
-    J_DO_BEGIN("DO{"), // check
-    J_DO_END("}DO"), // check
-    J_WHILE_BEGIN("WHILE{"), // check
-    J_WHILE_END("}WHILE"), // check
-    J_FOR_BEGIN("FOR{"), // check
-    J_FOR_END("}FOR"), // check
+    J_LOOP_BEGIN("LOOP{"), // check
+    J_LOOP_END("}LOOP"), // check
     J_SWITCH_BEGIN("SWITCH{"), // check
     J_SWITCH_END("}SWITCH"), // check
     J_CASE("CASE"), // check
