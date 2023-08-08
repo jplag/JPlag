@@ -11,6 +11,7 @@ public enum SharedTokenType implements TokenType {
 
     private final String description;
 
+    @Override
     public String getDescription() {
         return description;
     }
