@@ -1,6 +1,7 @@
 package de.jplag.testutils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -177,6 +178,7 @@ public abstract class LanguageModuleTest {
             expected.add(SharedTokenType.FILE_END);
         }
         assertTokensMatch(expected, extracted, "Extracted token from " + test.data().describeTestSource() + " does not match expected sequence.");
+        assertIterableEquals(expected, extracted);
     }
 
     /**
