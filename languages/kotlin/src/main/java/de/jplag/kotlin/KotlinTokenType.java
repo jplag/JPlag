@@ -76,6 +76,7 @@ public enum KotlinTokenType implements TokenType {
 
     private final String description;
 
+    @Override
     public String getDescription() {
         return description;
     }
