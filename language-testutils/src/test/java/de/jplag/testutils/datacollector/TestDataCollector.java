@@ -98,6 +98,11 @@ public class TestDataCollector {
      * @param data The test data
      */
     public record TokenListTest(List<TokenType> tokens, TestData data) {
+
+        @Override
+        public String toString() {
+            return data.toString(); // readable test name
+        }
     }
 
     /**
