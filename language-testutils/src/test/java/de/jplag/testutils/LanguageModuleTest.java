@@ -116,10 +116,10 @@ public abstract class LanguageModuleTest {
     @MethodSource("tokenCoverageFiles")
     @DisplayName("Test that every token occurs at least once")
     final void testTokenCoverage(TestData data) throws ParsingException, IOException {
-        List<TokenType> foundTokens = extractTokenTypes(data);
+        List<TokenType> actualTokens = extractTokenTypes(data);
         List<TokenType> languageTokens = new ArrayList<>(this.languageTokens);
 
-        languageTokens.removeAll(foundTokens);
+        languageTokens.removeAll(actualTokens);
 
         assertTrue(languageTokens.isEmpty(), "Some tokens were not found in " + data.describeTestSource() + System.lineSeparator() + languageTokens);
     }
@@ -143,10 +143,10 @@ public abstract class LanguageModuleTest {
     @MethodSource("testTokensContainedData")
     @DisplayName("Test that the specified tokens at least occur")
     final void testTokensContained(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
-        List<TokenType> foundTokens = extractTokenTypes(test.data());
+        List<TokenType> actualTokens = extractTokenTypes(test.data());
         List<TokenType> expectedTokens = new ArrayList<>(test.tokens());
 
-        for (TokenType foundToken : foundTokens) {
+        for (TokenType foundToken : actualTokens) {
             expectedTokens.remove(foundToken);
         }
 
@@ -172,20 +172,20 @@ public abstract class LanguageModuleTest {
     @MethodSource("testTokenSequenceData")
     @DisplayName("Test if extracted token sequence matches")
     final void testTokenSequence(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
-        List<TokenType> extracted = extractTokenTypes(test.data());
+        List<TokenType> actual = extractTokenTypes(test.data());
         List<TokenType> expected = new ArrayList<>(test.tokens());
         if (expected.get(expected.size() - 1) != SharedTokenType.FILE_END) {
             expected.add(SharedTokenType.FILE_END);
         }
-        assertTokensMatch(expected, extracted, "Extracted token from " + test.data().describeTestSource() + " does not match expected sequence.");
-        assertIterableEquals(expected, extracted);
+        assertTokensMatch(expected, actual, "Extracted token from " + test.data().describeTestSource() + " does not match expected sequence.");
+        assertIterableEquals(expected, actual);
     }
 
     /**
      * Convenience method for using assertLinesMatch with token lists.
      */
-    private void assertTokensMatch(List<TokenType> expected, List<TokenType> extracted, String message) {
-        assertLinesMatch(expected.stream().map(Object::toString), extracted.stream().map(Object::toString), message);
+    private void assertTokensMatch(List<TokenType> expected, List<TokenType> actual, String message) {
+        assertLinesMatch(expected.stream().map(Object::toString), actual.stream().map(Object::toString), message);
     }
 
     /**
@@ -206,11 +206,11 @@ public abstract class LanguageModuleTest {
     @MethodSource("getAllTestData")
     @DisplayName("Test that the tokens map to ascending line numbers")
     final void testMonotoneTokenOrder(TestData data) throws ParsingException, IOException {
-        List<Token> extracted = parseTokens(data);
+        List<Token> tokens = parseTokens(data);
 
-        for (int i = 0; i < extracted.size() - 2; i++) {
-            Token first = extracted.get(i);
-            Token second = extracted.get(i + 1);
+        for (int i = 0; i < tokens.size() - 2; i++) {
+            Token first = tokens.get(i);
+            Token second = tokens.get(i + 1);
 
             if (first.getLine() > second.getLine()) {
                 fail(String.format("Invalid token order. Token %s has a higher line number (%s) than token %s (%s).", first.getType(),
@@ -229,9 +229,9 @@ public abstract class LanguageModuleTest {
     @MethodSource("getAllTestData")
     @DisplayName("Test that the last token is the file end token")
     final void testTokenSequencesEndsWithFileEnd(TestData data) throws ParsingException, IOException {
-        List<Token> extracted = parseTokens(data);
+        List<Token> tokens = parseTokens(data);
 
-        assertEquals(SharedTokenType.FILE_END, extracted.get(extracted.size() - 1).getType(),
+        assertEquals(SharedTokenType.FILE_END, tokens.get(tokens.size() - 1).getType(),
                 "Last token in " + data.describeTestSource() + " is not file end.");
     }
 
