@@ -15,13 +15,14 @@ export class BaseFactory {
       return this.getLocalFile(path)
     } else if (store().state.zipModeUsed) {
       const index = Object.keys(store().state.files).find((name) => name.endsWith(path))
-      if (index != undefined) {
-        const file = store().state.files[index]
-        if (file != undefined) {
-          return file
-        }
+      if (index == undefined) {
+        throw new Error(`Could not find ${path} in zip file.`)
       }
-      throw new Error(`Could not find ${path} in zip file.`)
+      const file = store().state.files[index]
+      if (file == undefined) {
+        throw new Error(`Could not load ${path}.`)
+      }
+      return file
     } else if (store().state.singleModeUsed) {
       return store().state.singleFillRawContent
     }

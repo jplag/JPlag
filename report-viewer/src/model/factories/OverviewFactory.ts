@@ -10,6 +10,9 @@ import { BaseFactory } from './BaseFactory'
 import PercentileDistribution from '../HundredValueDistribution'
 import TenValueDistribution from '../TenValueDistribution'
 
+/**
+ * Factory class for creating Overview objects
+ */
 export class OverviewFactory extends BaseFactory {
   static reportViewerVersion: Version =
     versionJson['report_viewer_version'] !== undefined
@@ -129,7 +132,7 @@ export class OverviewFactory extends BaseFactory {
     const averageSimilarities: Map<string, number> = new Map<string, number>()
     const comparisons = [] as Array<ComparisonListElement>
 
-    // Average
+    // Save the average similarities in a temporary map to combine them with the max similarities later
     for (const comparison of metrics[0].topComparisons as Array<Record<string, unknown>>) {
       averageSimilarities.set(
         (comparison.first_submission as string) + '-' + (comparison.second_submission as string),
@@ -137,7 +140,7 @@ export class OverviewFactory extends BaseFactory {
       )
     }
 
-    // Max
+    // Extract the max similarities and combine them with the average similarities
     let counter = 0
     for (const comparison of metrics[1].topComparisons as Array<Record<string, unknown>>) {
       const avg = averageSimilarities.get(

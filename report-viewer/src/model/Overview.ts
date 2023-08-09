@@ -41,7 +41,8 @@ export class Overview {
     this._durationOfExecution = durationOfExecution
     this._topComparisons = topComparisons
     this._distributions = distributions
-    ;(this._clusters = clusters), (this._totalComparisons = totalComparisons)
+    this._clusters = clusters
+    this._totalComparisons = totalComparisons
   }
 
   /**
