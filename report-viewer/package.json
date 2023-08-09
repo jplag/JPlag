@@ -55,7 +55,7 @@
     "tailwindcss": "^3.3.3",
     "typescript": "^5.1.6",
     "vite": "^4.4.8",
-    "vitest": "^0.32.4",
+    "vitest": "^0.34.1",
     "vue-tsc": "^1.8.8"
   }
 }
