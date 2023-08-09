@@ -9,6 +9,8 @@ public enum LLVMIRTokenType implements TokenType {
     // Functions
     FUNCTION_BODY_BEGIN("FUNC{"),
     FUNCTION_BODY_END("}FUNC"),
+    BASIC_BLOCK_BEGIN("BLOCK{"),
+    BASIC_BLOCK_END("}BLOCK"),
     FUNCTION_DECLARATION("FUNC_DECL"),
     FUNCTION_DEFINITION("FUNC_DEF"),
 
@@ -27,7 +29,7 @@ public enum LLVMIRTokenType implements TokenType {
     SWITCH("SWITCH"),
     CASE("CASE"),
     CONDITIONAL_BRANCH("COND_BR"),
-    INVOKE("TRY"),
+    INVOKE("INVOKE"),
     CALL_BRANCH("CALL_BR"),
     RESUME("RESUME"),
     CATCH_SWITCH("CATCH_SWITCH"),
@@ -67,6 +69,7 @@ public enum LLVMIRTokenType implements TokenType {
     GET_ELEMENT_POINTER("GET_ELEMENT_PTR"),
 
     // Conversion Operations
+    BITCAST("BITCAST"),
     CONVERSION("CONV"),
 
     // Other Operations
@@ -74,6 +77,7 @@ public enum LLVMIRTokenType implements TokenType {
     PHI("PHI"),
     SELECT("SELECT"),
     CALL("CALL"),
+    VARIABLE_ARGUMENT("VA_ARG"),
     LANDING_PAD("LANDING_PAD"),
     CLAUSE("CLAUSE"),
     CATCH_PAD("CATCH_PAD"),
