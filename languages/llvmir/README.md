@@ -15,7 +15,8 @@ If the grammar is updated to a more recent<a href="#footnote-1"><sup>1</sup></a>
 
 ### Token Extraction
 
-TODO
+The choice of tokens includes nesting tokens for functions and basic blocks and separate tokens for various elements.
+These include binary and bitwise instructions (like addition and or), memory operations (like load and store), terminator instructions (like branches), conversions, global variables, type definitions, constants and others.
 
 
 ### Usage
