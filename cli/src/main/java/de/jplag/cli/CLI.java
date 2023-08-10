@@ -1,6 +1,8 @@
 package de.jplag.cli;
 
-import static picocli.CommandLine.Model.UsageMessageSpec.*;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION_HEADING;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -55,6 +57,8 @@ public final class CLI {
 
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
+
+    private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
     /**
      * Main class for using JPlag via the CLI.
@@ -226,7 +230,7 @@ public final class CLI {
 
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
-        return String.format("%nJPlag - %s%n%s%n%n", randomDescription, CREDITS);
+        return String.format(DESCRIPTION_PATTERN, randomDescription, CREDITS);
     }
 
     public String getResultFolder() {

@@ -13,6 +13,9 @@ import picocli.CommandLine;
 public class ParamLabelRenderer implements CommandLine.Help.IParamLabelRenderer {
     private final CommandLine.Help.IParamLabelRenderer base;
 
+    private static final String PARAM_LABEL_PATTERN = "=<{%s}>";
+    private static final String VALUE_SEPARATOR = ", ";
+
     /**
      * New instance
      * @param base The base renderer used for all non enum types
@@ -27,8 +30,8 @@ public class ParamLabelRenderer implements CommandLine.Help.IParamLabelRenderer 
         if (argSpec.type().isEnum()) {
             @SuppressWarnings("unchecked")
             Enum<?>[] enumConstants = ((Class<Enum<?>>) argSpec.type()).getEnumConstants();
-            String enumValueNames = Arrays.stream(enumConstants).map(Enum::name).collect(Collectors.joining(", "));
-            return CommandLine.Help.Ansi.AUTO.text(String.format("=<{%s}>", enumValueNames));
+            String enumValueNames = Arrays.stream(enumConstants).map(Enum::name).collect(Collectors.joining(VALUE_SEPARATOR));
+            return CommandLine.Help.Ansi.AUTO.text(String.format(PARAM_LABEL_PATTERN, enumValueNames));
         }
 
         return base.renderParameterLabel(argSpec, ansi, styles);
