@@ -1,15 +1,16 @@
 package de.jplag.antlr;
 
-import de.jplag.ParsingException;
-import de.jplag.antlr.testLanguage.TestLanguage;
-import de.jplag.antlr.testLanguage.TestParserAdapter;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import de.jplag.ParsingException;
+import de.jplag.antlr.testLanguage.TestLanguage;
+import de.jplag.antlr.testLanguage.TestParserAdapter;
 
 /**
  * Some tests for the abstract antlr language
