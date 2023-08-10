@@ -1,5 +1,7 @@
 package de.jplag.llvmir;
 
+import static de.jplag.llvmir.LLVMIRTokenType.*;
+
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
@@ -15,19 +17,18 @@ class LLVMIRLanguageTest extends LanguageModuleTest {
     @Override
     protected void collectTestData(TestDataCollector collector) {
         // All Tokens except: [CATCH_SWITCH, CATCH_RETURN, CLEAN_UP_RETURN, CATCH_PAD, CLEAN_UP_PAD]
-        collector.testFile("Complete.ll").testSourceCoverage().testContainedTokens(LLVMIRTokenType.FILENAME, LLVMIRTokenType.FUNCTION_BODY_BEGIN,
-                LLVMIRTokenType.FUNCTION_BODY_END, LLVMIRTokenType.BASIC_BLOCK_BEGIN, LLVMIRTokenType.BASIC_BLOCK_END,
-                LLVMIRTokenType.FUNCTION_DECLARATION, LLVMIRTokenType.FUNCTION_DEFINITION, LLVMIRTokenType.GLOBAL_VARIABLE, LLVMIRTokenType.ASSEMBLY,
-                LLVMIRTokenType.TYPE_DEFINITION, LLVMIRTokenType.STRUCTURE, LLVMIRTokenType.ARRAY, LLVMIRTokenType.VECTOR, LLVMIRTokenType.RETURN,
-                LLVMIRTokenType.BRANCH, LLVMIRTokenType.SWITCH, LLVMIRTokenType.CASE, LLVMIRTokenType.CONDITIONAL_BRANCH, LLVMIRTokenType.INVOKE,
-                LLVMIRTokenType.CALL_BRANCH, LLVMIRTokenType.RESUME, LLVMIRTokenType.ADDITION, LLVMIRTokenType.SUBTRACTION,
-                LLVMIRTokenType.MULTIPLICATION, LLVMIRTokenType.DIVISION, LLVMIRTokenType.REMAINDER, LLVMIRTokenType.SHIFT, LLVMIRTokenType.AND,
-                LLVMIRTokenType.OR, LLVMIRTokenType.XOR, LLVMIRTokenType.EXTRACT_ELEMENT, LLVMIRTokenType.INSERT_ELEMENT,
-                LLVMIRTokenType.SHUFFLE_VECTOR, LLVMIRTokenType.EXTRACT_VALUE, LLVMIRTokenType.INSERT_VALUE, LLVMIRTokenType.ALLOCATION,
-                LLVMIRTokenType.LOAD, LLVMIRTokenType.STORE, LLVMIRTokenType.FENCE, LLVMIRTokenType.COMPARE_EXCHANGE,
-                LLVMIRTokenType.ATOMIC_READ_MODIFY_WRITE, LLVMIRTokenType.ATOMIC_ORDERING, LLVMIRTokenType.GET_ELEMENT_POINTER,
-                LLVMIRTokenType.BITCAST, LLVMIRTokenType.CONVERSION, LLVMIRTokenType.COMPARISON, LLVMIRTokenType.PHI, LLVMIRTokenType.SELECT,
-                LLVMIRTokenType.CALL, LLVMIRTokenType.VARIABLE_ARGUMENT, LLVMIRTokenType.LANDING_PAD, LLVMIRTokenType.CLAUSE);
+        collector.testFile("Complete.ll").testSourceCoverage().testContainedTokens(FILENAME, FUNCTION_BODY_BEGIN, FUNCTION_BODY_END,
+                BASIC_BLOCK_BEGIN, BASIC_BLOCK_END, FUNCTION_DECLARATION, FUNCTION_DEFINITION, GLOBAL_VARIABLE, ASSEMBLY, TYPE_DEFINITION, STRUCTURE,
+                ARRAY, VECTOR, RETURN, BRANCH, SWITCH, CASE, CONDITIONAL_BRANCH, INVOKE, CALL_BRANCH, RESUME, ADDITION, SUBTRACTION, MULTIPLICATION,
+                DIVISION, REMAINDER, SHIFT, AND, OR, XOR, EXTRACT_ELEMENT, INSERT_ELEMENT, SHUFFLE_VECTOR, EXTRACT_VALUE, INSERT_VALUE, ALLOCATION,
+                LOAD, STORE, FENCE, COMPARE_EXCHANGE, ATOMIC_READ_MODIFY_WRITE, ATOMIC_ORDERING, GET_ELEMENT_POINTER, BITCAST, CONVERSION, COMPARISON,
+                PHI, SELECT, CALL, VARIABLE_ARGUMENT, LANDING_PAD, CLAUSE);
+
+        // Finding an example for the new exception handling instructions was difficult.
+        // Therefore, the NewExceptionHandling.ll file can only be parsed and not executed.
+        collector.testFile("NewExceptionHandling.ll").testSourceCoverage().testContainedTokens(CATCH_SWITCH, CATCH_RETURN, CLEAN_UP_RETURN, CATCH_PAD,
+                CLEAN_UP_PAD);
+
     }
 
     @Override
