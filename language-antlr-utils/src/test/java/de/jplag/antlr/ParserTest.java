@@ -2,7 +2,7 @@ package de.jplag.antlr;
 
 import static de.jplag.antlr.testLanguage.TestTokenType.*;
 
-import de.jplag.antlr.testLanguage.TestLangauge;
+import de.jplag.antlr.testLanguage.TestLanguage;
 import de.jplag.antlr.testLanguage.TestTokenType;
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
@@ -10,7 +10,7 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
 public class ParserTest extends LanguageModuleTest {
     public ParserTest() {
-        super(new TestLangauge(), TestTokenType.class);
+        super(new TestLanguage(), TestTokenType.class);
     }
 
     @Override
