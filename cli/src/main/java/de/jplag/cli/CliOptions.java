@@ -91,7 +91,7 @@ public class CliOptions implements Runnable {
     }
 
     public static class Clustering {
-        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: false)\n")
+        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: false)%n")
         public boolean disable;
 
         @ArgGroup
