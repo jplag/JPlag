@@ -1,7 +1,8 @@
 package de.jplag.cli;
 
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_FOOTER;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION_HEADING;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -49,11 +50,15 @@ public final class CLI {
             "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work", "The tech is out there!",
             "Developed by plagiarism experts."};
 
+    private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";
+
     private final CommandLine commandLine;
     private final CliOptions options;
 
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
+
+    private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
     /**
      * Main class for using JPlag via the CLI.
@@ -87,6 +92,8 @@ public final class CLI {
         this.options = new CliOptions();
         this.commandLine = new CommandLine(options);
 
+        this.commandLine.setHelpFactory(new HelpFactory());
+
         this.commandLine.getHelpSectionMap().put(SECTION_KEY_OPTION_LIST, help -> help.optionList().lines().map(it -> {
             if (it.startsWith("  -")) {
                 return "    " + it;
@@ -97,7 +104,8 @@ public final class CLI {
 
         buildSubcommands().forEach(commandLine::addSubcommand);
 
-        this.commandLine.getHelpSectionMap().put(SECTION_KEY_FOOTER, help -> generateDescription());
+        this.commandLine.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
+        this.commandLine.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, help -> OPTION_LIST_HEADING);
         this.commandLine.setAllowSubcommandsAsOptionParameters(true);
     }
 
@@ -222,7 +230,7 @@ public final class CLI {
 
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
-        return String.format("JPlag - %s%n%n%s", randomDescription, CREDITS);
+        return String.format(DESCRIPTION_PATTERN, randomDescription, CREDITS);
     }
 
     public String getResultFolder() {
