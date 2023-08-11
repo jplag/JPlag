@@ -7,9 +7,6 @@ It is based on the [LLVMIR ANTLR4 grammar](https://github.com/antlr/grammars-v4/
 
 The grammar definition targets LLVM 15.
 
-The grammar in this repo contains a fix, see the comment in the [LLVMIR grammar](src/main/antlr4/de/jplag/llvmir/grammar/LLVMIR.g4).
-
-
 If the grammar is updated to a more recent<a href="#footnote-1"><sup>1</sup></a> syntax definition, this module should surely be updated as well.
 
 
@@ -26,4 +23,4 @@ To use the LLVM IR module, add the `-l llvmir` flag in the CLI, or use a `JPlagO
 <br>
 
 #### Footnotes
-<section id="footnote-1"><sup>1 </sup>The grammar files are taken from grammar-v4, with the most recent modification in <a href="https://github.com/antlr/grammars-v4/tree/fe8ee8e03ffc4af9270e430a17817d25480b72f5/llvm-ir">commit 9644ff9</a> from March 2023.</section>
+<section id="footnote-1"><sup>1 </sup>The grammar files are taken from grammar-v4, with the most recent modification in <a href="https://github.com/antlr/grammars-v4/tree/768b12e1db509aa700a316e3eed1e23e8c4bdb06/llvm-ir">commit 768b12e</a> from August 2023.</section>
