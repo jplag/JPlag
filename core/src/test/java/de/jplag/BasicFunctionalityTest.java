@@ -14,6 +14,7 @@ import de.jplag.exceptions.ExitException;
  */
 class BasicFunctionalityTest extends TestBase {
 
+    private static int DISTRIBUTION_INDEX = 66;
     @Test
     @DisplayName("test submissions that contain obvious plagiarism")
     void testSimpleDuplicate() throws ExitException {
@@ -22,7 +23,7 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
-        assertEquals(1, result.getSimilarityDistribution()[66]);
+        assertEquals(1, result.getSimilarityDistribution()[DISTRIBUTION_INDEX]);
         assertEquals(0.666, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
@@ -91,7 +92,7 @@ class BasicFunctionalityTest extends TestBase {
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
-        assertEquals(1, result.getSimilarityDistribution()[66]);
+        assertEquals(1, result.getSimilarityDistribution()[DISTRIBUTION_INDEX]);
         assertEquals(0.666, result.getAllComparisons().get(0).similarity(), DELTA);
 
         var matches = result.getAllComparisons().get(0).matches();
