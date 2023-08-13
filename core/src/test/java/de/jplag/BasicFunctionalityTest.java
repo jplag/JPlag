@@ -15,6 +15,7 @@ import de.jplag.exceptions.ExitException;
 class BasicFunctionalityTest extends TestBase {
 
     private static int DISTRIBUTION_INDEX = 66;
+
     @Test
     @DisplayName("test submissions that contain obvious plagiarism")
     void testSimpleDuplicate() throws ExitException {
