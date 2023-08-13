@@ -5,6 +5,7 @@ import store from '@/stores/store'
 import type { Version } from '../Version'
 import versionJson from '@/version.json'
 import Distribution from '../Distribution'
+import { LanguageParser, getLanguageParser } from '../Language'
 
 export class OverviewFactory {
   static reportViewerVersion: Version =
@@ -28,7 +29,7 @@ export class OverviewFactory {
 
     const submissionFolder = json.submission_folder_path as Array<string>
     const baseCodeFolder = ''
-    const language = json.language as string
+    const language = getLanguageParser(json.language as string)
     const fileExtensions = json.file_extensions as Array<string>
     const matchSensitivity = json.match_sensitivity as number
     const jsonSubmissions = json.submission_id_to_display_name as Map<string, string>
@@ -130,7 +131,7 @@ export class OverviewFactory {
         return new Overview(
           [],
           '',
-          '',
+          LanguageParser.JAVA,
           [],
           0,
           '',

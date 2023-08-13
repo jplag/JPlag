@@ -5,7 +5,7 @@
   <Container class="flex flex-col">
     <h3 class="text-left text-lg font-bold">
       Files of
-      {{ anonymous ? anonymousFilesOwnerDefault : store().submissionDisplayName(submissionId) }}:
+      {{ fileOwnerDisplayName }}:
     </h3>
     <ScrollableComponent class="flex-grow">
       <VueDraggableNext>
@@ -14,7 +14,10 @@
           :key="index"
           ref="codePanels"
           :file="file"
-          :matches="!matches.get(file.fileName) ? [] : matches.get(file.fileName)"
+          :matches="
+            !matches.get(file.fileName) ? [] : (matches.get(file.fileName) as MatchInSingleFile[])
+          "
+          :highlight-language="highlightLanguage"
           @line-selected="(match) => $emit('line-selected', match)"
           class="mt-1"
         />
@@ -29,9 +32,9 @@ import CodePanel from '@/components/CodePanel.vue'
 import Container from './ContainerComponent.vue'
 import ScrollableComponent from './ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { ref, type Ref } from 'vue'
+import { ref, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import store from '@/stores/store'
+import type { HighlightLanguage } from '@/model/Language'
 
 const props = defineProps({
   /**
@@ -49,24 +52,17 @@ const props = defineProps({
     required: true
   },
   /**
-   * Submission id of the files.
+   * Name of the owner of the files.
    */
-  submissionId: {
+  fileOwnerDisplayName: {
     type: String,
     required: true
   },
   /**
-   * The bool value of that whether id is hidden.
+   * Language of the files.
    */
-  anonymous: {
-    type: Boolean,
-    required: true
-  },
-  /**
-   * The default value of the owner of the files.
-   */
-  anonymousFilesOwnerDefault: {
-    type: String,
+  highlightLanguage: {
+    type: String as PropType<HighlightLanguage>,
     required: true
   }
 })
@@ -87,17 +83,3 @@ defineExpose({
   scrollTo
 })
 </script>
-
-<style scoped>
-h1 {
-  text-align: center;
-}
-
-.files-container {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: column;
-  padding-top: 1%;
-  width: 100%;
-}
-</style>

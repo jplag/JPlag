@@ -36,21 +36,27 @@
     <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5 justify-between">
       <FilesContainer
         ref="panel1"
-        :submission-id="firstId"
         :files="filesOfFirst"
         :matches="comparison.matchesInFirstSubmission"
-        :anonymous="isAnonymous(firstId)"
-        anonymous-files-owner-default="Submission 1"
+        :file-owner-display-name="
+          isAnonymous(comparison.secondSubmissionId)
+            ? 'Submission 1'
+            : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
+        "
+        :highlight-language="getHighlightLanguage(language)"
         @line-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
       />
       <FilesContainer
         ref="panel2"
-        :submission-id="secondId"
         :files="filesOfSecond"
         :matches="comparison.matchesInSecondSubmissions"
-        :anonymous="isAnonymous(secondId)"
-        anonymous-files-owner-default="Submission 2"
+        :file-owner-display-name="
+          isAnonymous(comparison.secondSubmissionId)
+            ? 'Submission 2'
+            : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
+        "
+        :highlight-language="getHighlightLanguage(language)"
         @line-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
       />
@@ -68,10 +74,11 @@ import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
 import store from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
-
+import { getHighlightLanguage } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import router from '@/router'
+import { OverviewFactory } from '@/model/factories/OverviewFactory'
 
 const props = defineProps({
   firstId: {
@@ -84,6 +91,7 @@ const props = defineProps({
   }
 })
 
+const language = OverviewFactory.getOverview().language
 const comparison = ComparisonFactory.getComparison(props.firstId, props.secondId)
 
 const filesOfFirst = ref(comparison.filesOfFirstSubmission)

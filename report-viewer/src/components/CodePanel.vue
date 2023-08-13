@@ -39,9 +39,10 @@
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { ref, nextTick, type PropType } from 'vue'
 import Interactable from './InteractableComponent.vue'
-import hljs from 'highlight.js'
 import type { Match } from '@/model/Match'
 import type { SubmissionFile } from '@/stores/state'
+import { highlight } from '@/utils/CodeHighlighter'
+import type { HighlightLanguage } from '@/model/Language'
 
 const props = defineProps({
   /**
@@ -56,6 +57,13 @@ const props = defineProps({
    */
   matches: {
     type: Array<MatchInSingleFile>,
+    required: true
+  },
+  /**
+   * Language of the file.
+   */
+  highlightLanguage: {
+    type: String as PropType<HighlightLanguage>,
     required: true
   }
 })
@@ -75,25 +83,10 @@ defineExpose({
   scrollTo
 })
 
-const highlightedCode = hljs.highlight(props.file.data, { language: 'java' }).value
-const openTags: string[] = []
-const formatedCode = highlightedCode
-  .replace(/(<span [^>]+>)|(<\/span>)|(\n)/g, (match) => {
-    if (match === '\n') {
-      return '</span>'.repeat(openTags.length) + '\n' + openTags.join('')
-    }
-
-    if (match === '</span>') {
-      openTags.pop()
-    } else {
-      openTags.push(match)
-    }
-
-    return match
-  })
-  .split('\n')
-
-const codeLines: { line: string; match: null | Match }[] = formatedCode.map((line, index) => {
+const codeLines: { line: string; match: null | Match }[] = highlight(
+  props.file.data,
+  props.highlightLanguage
+).map((line, index) => {
   return {
     line,
     match: props.matches?.find((m) => m.start <= index + 1 && index + 1 <= m.end)?.match ?? null
