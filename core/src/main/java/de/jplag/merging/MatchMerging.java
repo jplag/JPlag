@@ -7,6 +7,7 @@ import java.util.List;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
+import de.jplag.SharedTokenType;
 import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.options.JPlagOptions;
@@ -95,8 +96,10 @@ public class MatchMerging {
             int tokenBetweenLeft = lowerNeighbor.startOfFirst() - upperNeighbor.endOfFirst() - 1;
             int tokensBetweenRight = lowerNeighbor.startOfSecond() - upperNeighbor.endOfSecond() - 1;
             double averageTokensBetweenMatches = (tokenBetweenLeft + tokensBetweenRight) / 2.0;
+            // int maxTokensBetweenMatches = Math.max(tokenBetweenLeft,tokensBetweenRight);
             // Checking length is not necessary as GST already checked length while computing matches
-            if (averageTokensBetweenMatches <= options.mergingParameters().seperatingThreshold()) {
+            if (averageTokensBetweenMatches <= options.mergingParameters().seperatingThreshold()
+                    && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperNeighbor, tokenBetweenLeft, tokensBetweenRight)) {
                 globalMatches.remove(upperNeighbor);
                 globalMatches.remove(lowerNeighbor);
                 globalMatches.add(new Match(upperNeighbor.startOfFirst(), upperNeighbor.startOfSecond(), lengthUpper + lengthLower));
@@ -108,6 +111,46 @@ public class MatchMerging {
             }
         }
         return globalMatches;
+    }
+
+    /**
+     * This function checks if a merge would go over file boundaries.
+     * @param leftSubmission is the left submission
+     * @param rightSubmission is the right submission
+     * @param upperNeighbor is the upper neighboring match
+     * @param tokensBetweenLeft amount of token that separate the neighboring matches in the left submission and need to be
+     * removed
+     * @param tokensBetweenRight amount token that separate the neighboring matches in the send submission and need to be
+     * removed
+     * @return true if the merge goes over file boundaries.
+     */
+    private boolean mergeOverlapsFiles(Submission leftSubmission, Submission rightSubmission, Match upperNeighbor, int tokensBetweenLeft,
+            int tokensBetweenRight) {
+        if (leftSubmission.getFiles().size() == 1 && rightSubmission.getFiles().size() == 1) {
+            return false;
+        }
+        int startLeft = upperNeighbor.startOfFirst();
+        int startRight = upperNeighbor.startOfSecond();
+        int lengthUpper = upperNeighbor.length();
+
+        List<Token> tokenLeft = new ArrayList<>(leftSubmission.getTokenList());
+        List<Token> tokenRight = new ArrayList<>(rightSubmission.getTokenList());
+        tokenLeft = tokenLeft.subList(startLeft + lengthUpper, startLeft + lengthUpper + tokensBetweenLeft);
+        tokenRight = tokenRight.subList(startRight + lengthUpper, startRight + lengthUpper + tokensBetweenRight);
+
+        for (Token token : tokenLeft) {
+            if (token.getType().equals(SharedTokenType.FILE_END)) {
+                return true;
+            }
+        }
+
+        for (Token token : tokenRight) {
+            if (token.getType().equals(SharedTokenType.FILE_END)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

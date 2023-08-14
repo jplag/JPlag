@@ -54,7 +54,7 @@ class MergingTest extends TestBase {
         result = comparisonStrategy.compareSubmissions(submissionSet);
         comparisonsBefore = result.getAllComparisons();
 
-        if (options.mergingParameters().enable()) {
+        if (options.mergingParameters().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
         comparisonsAfter = result.getAllComparisons();

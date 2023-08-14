@@ -114,7 +114,7 @@ public class CliOptions implements Runnable {
 
     public static class Merging {
         @Option(names = {"--match-merging"}, description = "Enables match merging (default: false)%n")
-        public boolean enable;
+        public boolean enabled;
 
         @Option(names = {
                 "--merge-buffer"}, description = "Defines how much lower the length of a match can be than the minimum match length (default: 0)%n")

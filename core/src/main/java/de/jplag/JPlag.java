@@ -74,7 +74,7 @@ public class JPlag {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
 
         // Use Match Merging against obfuscation
-        if (options.mergingParameters().enable()) {
+        if (options.mergingParameters().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
 
