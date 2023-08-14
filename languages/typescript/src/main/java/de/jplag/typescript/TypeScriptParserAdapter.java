@@ -15,12 +15,20 @@ import de.jplag.typescript.grammar.TypeScriptParser;
 
 public class TypeScriptParserAdapter extends AbstractAntlrParserAdapter<TypeScriptParser> {
 
-    public TypeScriptParserAdapter() {
+    private final boolean useStrictDefault;
+
+    /**
+     * Creates a new Parser adapter for the Typescript Antlr Grammar
+     * @param useStrictDefault True if the grammars should parse the files using the JavaScript strict syntax
+     */
+    public TypeScriptParserAdapter(boolean useStrictDefault) {
+        this.useStrictDefault = useStrictDefault;
     }
 
     @Override
     protected Lexer createLexer(CharStream input) {
         TypeScriptLexer lexer = new TypeScriptLexer(input);
+        lexer.setUseStrictDefault(useStrictDefault);
         return lexer;
     }
 

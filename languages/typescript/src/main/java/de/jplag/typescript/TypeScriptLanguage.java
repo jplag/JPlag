@@ -8,7 +8,7 @@ public class TypeScriptLanguage extends AbstractAntlrLanguage {
     private final TypeScriptLanguageOptions options = new TypeScriptLanguageOptions();
 
     public TypeScriptLanguage() {
-        super(new TypeScriptParserAdapter());
+        super();
     }
 
     @Override
@@ -36,4 +36,8 @@ public class TypeScriptLanguage extends AbstractAntlrLanguage {
         return options;
     }
 
+    @Override
+    protected TypeScriptParserAdapter initializeParser() {
+        return new TypeScriptParserAdapter(getOptions().useStrictDefault.getValue());
+    }
 }
