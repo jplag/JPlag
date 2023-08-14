@@ -111,7 +111,7 @@ public abstract class TokenBuilder<T> {
 
         int line = antlrToken.getLine();
         int column = antlrToken.getCharPositionInLine() + 1;
-        int length = antlrToken.getText().length();
+        int length = getLength(antlrContent);
 
         Token token;
         if (semantics != null) {
