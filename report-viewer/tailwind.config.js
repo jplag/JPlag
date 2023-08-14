@@ -55,8 +55,8 @@ export default {
         link: {
           DEFAULT: '#0070f3',
           dark: '#00c'
-        }
-
+        },
+        error: '#dc322f'
       },
       borderWidth: {
         1: '1px',

@@ -1,10 +1,10 @@
 <template>
-  <div class="text-sm">
+  <div class="text-sm font-bold">
     <div v-if="reportViewerVersion.isDevVersion()">
       You are using a development version of the JPlag Report Viewer.
     </div>
 
-    <div v-else-if="newestVersion.compareTo(reportViewerVersion) > 0" class="text-left">
+    <div v-else-if="newestVersion.compareTo(reportViewerVersion) > 0" class="text-left text-error">
       You are using an outdated version of the JPlag Report Viewer ({{
         reportViewerVersion.toString()
       }}).<br />
@@ -13,11 +13,7 @@
       >.
     </div>
 
-    <div v-else>
-      You are using the latest version of the JPlag Report Viewer ({{
-        reportViewerVersion.toString()
-      }}).
-    </div>
+    <div v-else>JPlag v.{{ reportViewerVersion.toString() }}</div>
   </div>
 </template>
 
