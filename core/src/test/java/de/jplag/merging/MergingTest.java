@@ -1,5 +1,6 @@
 package de.jplag.merging;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -15,9 +16,11 @@ import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
+import de.jplag.SharedTokenType;
 import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
+import de.jplag.Token;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.strategy.ComparisonStrategy;
@@ -25,8 +28,9 @@ import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
  * This class extends on {@link TestBase} and performs several test on Match Merging, in order to check its
- * functionality. Therefore it uses two java programs and feds them into the JPlag pipeline. Results are stored before-
- * and after Match Merging and used for all tests. The two samples are from PROGpedia and under the CC BY 4.0 license.
+ * functionality. Therefore it uses java programs and feds them into the JPlag pipeline. Results are stored before- and
+ * after Match Merging and used for all tests. The samples named "original" and "plag" are from PROGpedia and under the
+ * CC BY 4.0 license.
  */
 class MergingTest extends TestBase {
     private JPlagOptions options;
@@ -37,7 +41,7 @@ class MergingTest extends TestBase {
     private ComparisonStrategy comparisonStrategy;
     private SubmissionSet submissionSet;
     private final int MERGE_BUFFER = 8;
-    private final int SEPERATING_THRESHOLD = 2;
+    private final int SEPERATING_THRESHOLD = 10;
 
     MergingTest() throws ExitException {
         options = getDefaultOptions("merging").withMergingParameters(new MergingParameters(true, MERGE_BUFFER, SEPERATING_THRESHOLD));
@@ -114,6 +118,48 @@ class MergingTest extends TestBase {
                     && comparisonsAfter.get(i).secondSubmission().getTokenList().size() <= comparisonsBefore.get(i).secondSubmission().getTokenList()
                             .size());
         }
+    }
+
+    @Test
+    @DisplayName("Test if amount of FILE_END token stayed the same")
+    void testFileEnd() {
+        int amountFileEndBefore = 0;
+        for (JPlagComparison comparison : comparisonsBefore) {
+            List<Token> tokenLeft = new ArrayList<>(comparison.firstSubmission().getTokenList());
+            List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
+
+            for (Token token : tokenLeft) {
+                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                    amountFileEndBefore++;
+                }
+            }
+
+            for (Token token : tokenRight) {
+                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                    amountFileEndBefore++;
+                }
+            }
+        }
+
+        int amountFileEndAfter = 0;
+        for (JPlagComparison comparison : comparisonsAfter) {
+            List<Token> tokenLeft = new ArrayList<>(comparison.firstSubmission().getTokenList());
+            List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
+
+            for (Token token : tokenLeft) {
+                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                    amountFileEndAfter++;
+                }
+            }
+
+            for (Token token : tokenRight) {
+                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                    amountFileEndAfter++;
+                }
+            }
+        }
+
+        assertEquals(amountFileEndBefore, amountFileEndAfter);
     }
 
     @Test
