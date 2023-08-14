@@ -91,6 +91,7 @@ export class OverviewFactory extends BaseFactory {
     return distributions
   }
 
+  /** @deprecated since 5.0.0. Use the new format with {@link extractDistributionsFromMap} */
   private static extractDistributionsFromMetrics(
     metrics: Array<Record<string, unknown>>
   ): Record<MetricType, Distribution> {
@@ -128,6 +129,7 @@ export class OverviewFactory extends BaseFactory {
     return comparisons
   }
 
+  /** @deprecated since 5.0.0. Use the new format with {@link extractTopComparisonsFromMap} */
   private static extractTopComparisonsFromMetrics(metrics: Array<Record<string, unknown>>) {
     const averageSimilarities: Map<string, number> = new Map<string, number>()
     const comparisons = [] as Array<ComparisonListElement>

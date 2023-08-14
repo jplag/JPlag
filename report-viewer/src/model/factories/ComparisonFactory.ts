@@ -65,6 +65,7 @@ export class ComparisonFactory extends BaseFactory {
     throw new Error('No similarities found in comparison file')
   }
 
+  /** @deprecated since 5.0.0. Use the new format with {@link extractSimilaritiesFromMap} */
   private static extractSimilaritiesFromSingleValue(
     avgSimilarity: number
   ): Record<MetricType, number> {
