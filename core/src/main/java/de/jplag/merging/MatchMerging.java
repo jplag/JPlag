@@ -96,7 +96,6 @@ public class MatchMerging {
             int tokenBetweenLeft = lowerNeighbor.startOfFirst() - upperNeighbor.endOfFirst() - 1;
             int tokensBetweenRight = lowerNeighbor.startOfSecond() - upperNeighbor.endOfSecond() - 1;
             double averageTokensBetweenMatches = (tokenBetweenLeft + tokensBetweenRight) / 2.0;
-            // int maxTokensBetweenMatches = Math.max(tokenBetweenLeft,tokensBetweenRight);
             // Checking length is not necessary as GST already checked length while computing matches
             if (averageTokensBetweenMatches <= options.mergingParameters().seperatingThreshold()
                     && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperNeighbor, tokenBetweenLeft, tokensBetweenRight)) {
