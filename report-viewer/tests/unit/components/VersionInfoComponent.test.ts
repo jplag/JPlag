@@ -40,10 +40,8 @@ describe('VersionInfoComponent', () => {
 function mockVersionResponse(version: string) {
   return {
     json: () =>
-      new Promise((resolve) => {
-        resolve({
-          tag_name: version
-        })
+      Promise.resolve({
+        tag_name: version
       })
   }
 }
