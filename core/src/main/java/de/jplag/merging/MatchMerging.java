@@ -137,19 +137,16 @@ public class MatchMerging {
         tokenLeft = tokenLeft.subList(startLeft + lengthUpper, startLeft + lengthUpper + tokensBetweenLeft);
         tokenRight = tokenRight.subList(startRight + lengthUpper, startRight + lengthUpper + tokensBetweenRight);
 
-        for (Token token : tokenLeft) {
-            if (token.getType().equals(SharedTokenType.FILE_END)) {
-                return true;
-            }
-        }
+        return containsFileEndToken(tokenLeft) || containsFileEndToken(tokenRight);
+    }
 
-        for (Token token : tokenRight) {
-            if (token.getType().equals(SharedTokenType.FILE_END)) {
-                return true;
-            }
-        }
-
-        return false;
+    /**
+     * This function checks whether a list of token contains FILE_END
+     * @param token is the list of token
+     * @return true if FILE_END is in token
+     */
+    private boolean containsFileEndToken(List<Token> token) {
+        return token.stream().map(Token::getType).anyMatch(it -> it.equals(SharedTokenType.FILE_END));
     }
 
     /**

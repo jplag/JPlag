@@ -7,7 +7,7 @@ package de.jplag.merging;
  */
 public record MergingParameters(boolean enabled, int mergeBuffer, int seperatingThreshold) {
 
-    /*
+    /**
      * The default values of MergingParameters are false for the enable-switch and 0 for both mergeBuffer and
      * seperatingThreshold. These completely deactivate MatchMerging.
      */
@@ -15,7 +15,7 @@ public record MergingParameters(boolean enabled, int mergeBuffer, int seperating
         this(false, 0, 0);
     }
 
-    /*
+    /**
      * Builder pattern method for setting enabled
      * @param enabled containing the new value
      * @return MergingParameters with specified enabled
@@ -24,7 +24,7 @@ public record MergingParameters(boolean enabled, int mergeBuffer, int seperating
         return new MergingParameters(enabled, mergeBuffer, seperatingThreshold);
     }
 
-    /*
+    /**
      * Builder pattern method for setting mergeBuffer
      * @param mergeBuffer containing the new value
      * @return MergingParameters with specified mergeBuffer
@@ -33,7 +33,7 @@ public record MergingParameters(boolean enabled, int mergeBuffer, int seperating
         return new MergingParameters(enabled, mergeBuffer, seperatingThreshold);
     }
 
-    /*
+    /**
      * Builder pattern method for setting seperatingThreshold
      * @param seperatingThreshold containing the new value
      * @return MergingParameters with specified seperatingThreshold
