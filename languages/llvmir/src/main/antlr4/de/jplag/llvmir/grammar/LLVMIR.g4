@@ -20,6 +20,12 @@
   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
+
+  Modifications:
+  Rename 'case' rule to 'case_' to match the generated case_() method in the LLVMIRParser
+  with the JavaDoc of the enterCase() and exitCase() methods of the LLVMIRListener
+  to fix a JavaDoc issue.
+  - Niklas Heneka
  */
 
 grammar LLVMIR;
@@ -152,7 +158,7 @@ condBrTerm:
 		',' metadataAttachment
 	)*;
 switchTerm:
-	'switch' typeValue ',' label '[' case* ']' (
+	'switch' typeValue ',' label '[' case_* ']' (
 		',' metadataAttachment
 	)*;
 indirectBrTerm:
@@ -182,7 +188,7 @@ catchSwitchTerm:
 		',' metadataAttachment
 	)*;
 label: 'label' LocalIdent;
-case: typeConst ',' label;
+case_: typeConst ',' label;
 unwindTarget: 'to' 'caller' | label;
 handlers: label (',' label)*;
 metadataNode:

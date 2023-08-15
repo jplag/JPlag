@@ -19,7 +19,7 @@ import static de.jplag.llvmir.grammar.LLVMIRParser.BitCastInstContext;
 import static de.jplag.llvmir.grammar.LLVMIRParser.BrTermContext;
 import static de.jplag.llvmir.grammar.LLVMIRParser.CallBrTermContext;
 import static de.jplag.llvmir.grammar.LLVMIRParser.CallInstContext;
-import static de.jplag.llvmir.grammar.LLVMIRParser.CaseContext;
+import static de.jplag.llvmir.grammar.LLVMIRParser.Case_Context;
 import static de.jplag.llvmir.grammar.LLVMIRParser.CatchPadInstContext;
 import static de.jplag.llvmir.grammar.LLVMIRParser.CatchRetTermContext;
 import static de.jplag.llvmir.grammar.LLVMIRParser.CatchSwitchTermContext;
@@ -140,7 +140,7 @@ public class LLVMIRListener extends AbstractAntlrListener {
         this.mapRange(InvokeTermContext.class, INVOKE);
         this.mapRange(CallBrTermContext.class, CALL_BRANCH);
         this.mapRange(CatchSwitchTermContext.class, CATCH_SWITCH);
-        this.mapRange(CaseContext.class, CASE);
+        this.mapRange(Case_Context.class, CASE);
         this.mapRange(StructConstContext.class, STRUCTURE);
         this.mapRange(ArrayConstContext.class, ARRAY);
         this.mapRange(VectorConstContext.class, VECTOR);

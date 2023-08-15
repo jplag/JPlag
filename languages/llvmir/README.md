@@ -5,7 +5,9 @@ It is based on the [LLVMIR ANTLR4 grammar](https://github.com/antlr/grammars-v4/
 
 ### LLVM IR specification compatibility
 
-The grammar definition targets LLVM 15.
+The grammar definition targets LLVM 15, released in September 2022.
+
+The grammar in this repo contains a fix, see the comment in the [LLVM IR grammar](src/main/antlr4/de/jplag/llvmir/grammar/LLVMIR.g4).
 
 If the grammar is updated to a more recent<a href="#footnote-1"><sup>1</sup></a> syntax definition, this module should surely be updated as well.
 
