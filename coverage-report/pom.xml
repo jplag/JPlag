@@ -126,6 +126,11 @@
             <artifactId>emf-model</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>typescript</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

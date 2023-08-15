@@ -1,7 +1,9 @@
 package de.jplag.typescript;
 
 import de.jplag.antlr.AbstractAntlrLanguage;
+import org.kohsuke.MetaInfServices;
 
+@MetaInfServices(de.jplag.Language.class)
 public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
     private static final String IDENTIFIER = "typescript";
