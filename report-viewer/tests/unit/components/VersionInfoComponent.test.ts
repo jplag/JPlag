@@ -1,6 +1,6 @@
 import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, it, beforeEach, vi, expect, afterEach } from 'vitest'
+import { describe, it, vi, expect } from 'vitest'
 import version from '@/version.json'
 
 vi.mock('@/version.json')

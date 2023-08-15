@@ -28,8 +28,6 @@ const reportViewerVersion: Version =
     ? OverviewFactory.extractVersion(versionJson['report_viewer_version'])
     : new Version(-1, -1, -1)
 
-console.log('Report Viewer Version: ' + reportViewerVersion.toString())
-
 const newestVersion = ref(new Version(-1, -1, -1))
 
 fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
