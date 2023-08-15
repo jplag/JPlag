@@ -7,6 +7,9 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 
+/**
+ * Copied from https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/Java
+ */
 abstract class TypeScriptLexerBase extends Lexer {
     /**
      * Stores values of nested modes. By default mode is strict or defined externally (useStrictDefault)

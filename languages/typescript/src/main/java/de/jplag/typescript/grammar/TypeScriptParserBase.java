@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.TokenStream;
 /**
  * All parser methods that used in grammar (p, prev, notLineTerminator, etc.) should start with lower case char similar
  * to parser rules.
+ * Copied from https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/Java
  */
 public abstract class TypeScriptParserBase extends Parser {
     public TypeScriptParserBase(TokenStream input) {

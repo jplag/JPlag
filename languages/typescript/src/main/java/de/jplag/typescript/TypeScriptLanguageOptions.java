@@ -4,8 +4,14 @@ import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
 import de.jplag.options.OptionType;
 
+/**
+ * Language Specific options for the TypeScript language
+ */
 public class TypeScriptLanguageOptions extends LanguageOptions {
 
+    /**
+     * Whether the Antlr Grammar should parse
+     */
     public LanguageOption<Boolean> useStrictDefault;
 
     public TypeScriptLanguageOptions() {

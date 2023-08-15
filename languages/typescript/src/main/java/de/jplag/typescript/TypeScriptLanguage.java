@@ -3,6 +3,9 @@ package de.jplag.typescript;
 import de.jplag.antlr.AbstractAntlrLanguage;
 import org.kohsuke.MetaInfServices;
 
+/**
+ * This represents the TypeScript language as a language supported by JPlag.
+ */
 @MetaInfServices(de.jplag.Language.class)
 public class TypeScriptLanguage extends AbstractAntlrLanguage {
 

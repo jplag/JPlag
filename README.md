@@ -20,22 +20,23 @@ JPlag is a system that finds similarities among multiple sets of source code fil
 In the following, a list of all supported languages with their supported language version is provided. A language can be selected from the command line using subcommands (jplag [jplag options] <language name> [language options]). Alternatively you can use the legacy "-l" argument.
 
 | Language                                               | Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/2.-Supported-Languages) |  parser   |
-|--------------------------------------------------------|--------:|-------------------|:----------------------------------------------------------------:|:---------:|
-| [Java](https://www.java.com)                           |      17 | java              |                              mature                              |   JavaC   |
-| [C/C++](https://isocpp.org)                            |      11 | cpp               |                              legacy                              |  JavaCC   |
-| [C/C++](https://isocpp.org)                            |      14 | cpp2              |                               beta                               |  ANTLR 4  |
-| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |       6 | csharp            |                               beta                               |  ANTLR 4  |
-| [Go](https://go.dev)                                   |    1.17 | golang            |                               beta                               |  ANTLR 4  |
-| [Kotlin](https://kotlinlang.org)                       |     1.3 | kotlin            |                               beta                               |  ANTLR 4  |
-| [Python](https://www.python.org)                       |     3.6 | python3           |                              legacy                              |  ANTLR 4  |
-| [R](https://www.r-project.org/)                        |   3.5.0 | rlang             |                               beta                               |  ANTLR 4  |
-| [Rust](https://www.rust-lang.org/)                     |  1.60.0 | rust              |                               beta                               |  ANTLR 4  |
-| [Scala](https://www.scala-lang.org)                    |  2.13.8 | scala             |                               beta                               | Scalameta |
-| [Scheme](http://www.scheme-reports.org)                |       ? | scheme            |                             unknown                              |  JavaCC   |
-| [Swift](https://www.swift.org)                         |     5.4 | swift             |                               beta                               |  ANTLR 4  |
-| [EMF Metamodel](https://www.eclipse.org/modeling/emf/) |  2.25.0 | emf               |                               beta                               |    EMF    |
-| [EMF Model](https://www.eclipse.org/modeling/emf/)     |  2.25.0 | emf-model         |                              alpha                               |    EMF    |
-| Text (naive)                                           |       - | text              |                              legacy                              |  CoreNLP  |
+|--------------------------------------------------------|--------:|-------------------|:-------------------------------------------------------------------:|:---------:|
+| [Java](https://www.java.com)                           |      17 | java              |                               mature                                |   JavaC   |
+| [C/C++](https://isocpp.org)                            |      11 | cpp               |                               legacy                                |  JavaCC   |
+| [C/C++](https://isocpp.org)                            |      14 | cpp2              |                                beta                                 |  ANTLR 4  |
+| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |       6 | csharp            |                                beta                                 |  ANTLR 4  |
+| [Go](https://go.dev)                                   |    1.17 | golang            |                                beta                                 |  ANTLR 4  |
+| [Kotlin](https://kotlinlang.org)                       |     1.3 | kotlin            |                                beta                                 |  ANTLR 4  |
+| [Python](https://www.python.org)                       |     3.6 | python3           |                               legacy                                |  ANTLR 4  |
+| [R](https://www.r-project.org/)                        |   3.5.0 | rlang             |                                beta                                 |  ANTLR 4  |
+| [Rust](https://www.rust-lang.org/)                     |  1.60.0 | rust              |                                beta                                 |  ANTLR 4  |
+| [Scala](https://www.scala-lang.org)                    |  2.13.8 | scala             |                                beta                                 | Scalameta |
+| [Scheme](http://www.scheme-reports.org)                |       ? | scheme            |                               unknown                               |  JavaCC   |
+| [Swift](https://www.swift.org)                         |     5.4 | swift             |                                beta                                 |  ANTLR 4  |
+| [EMF Metamodel](https://www.eclipse.org/modeling/emf/) |  2.25.0 | emf               |                                beta                                 |    EMF    |
+| [EMF Model](https://www.eclipse.org/modeling/emf/)     |  2.25.0 | emf-model         |                                alpha                                |    EMF    |
+| [TypeScript](https://www.typescriptlang.org/)          | 3.7-4.9 | typescript        |                                beta                                 |  ANTLR 4  |
+| Text (naive)                                           |       - | text              |                               legacy                                |  CoreNLP  |
 
 ## Download and Installation
 You need Java SE 17 to run or build JPlag.
@@ -158,6 +159,7 @@ Commands:
   scheme
   scxml
   swift
+  typescript
   text
 ```
 
