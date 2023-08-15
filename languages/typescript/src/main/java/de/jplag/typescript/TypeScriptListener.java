@@ -36,46 +36,45 @@ import static de.jplag.typescript.TypeScriptTokenType.THROW;
 import static de.jplag.typescript.TypeScriptTokenType.TRY_BEGIN;
 import static de.jplag.typescript.TypeScriptTokenType.WHILE_BEGIN;
 import static de.jplag.typescript.TypeScriptTokenType.WHILE_END;
-
-import static de.jplag.typescript.grammar.TypeScriptParser.ImportStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.Export;
-import static de.jplag.typescript.grammar.TypeScriptParser.NamespaceDeclarationContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.ClassDeclarationContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.InterfaceDeclarationContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.PropertySignaturContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.EnumDeclarationContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.VariableDeclarationContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.IfStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.Else;
-import static de.jplag.typescript.grammar.TypeScriptParser.SwitchStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.CaseClauseContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.DefaultClauseContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.MethodDeclarationExpressionContext;
 import static de.jplag.typescript.grammar.TypeScriptParser.ArgumentsContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.PreIncrementExpressionContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ArrowFunctionDeclarationContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.AssignmentExpressionContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.BreakStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.CaseClauseContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.CatchProductionContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ClassDeclarationContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ConstructorDeclarationContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ContinueStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.DefaultClauseContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.Else;
+import static de.jplag.typescript.grammar.TypeScriptParser.EnumDeclarationContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.EnumMemberContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.Export;
+import static de.jplag.typescript.grammar.TypeScriptParser.FinallyProductionContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ForInStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ForStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ForVarStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.FunctionDeclarationContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.FunctionExpressionDeclarationContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.GetterSetterDeclarationExpressionContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.IfStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ImportStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.InterfaceDeclarationContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.MethodDeclarationExpressionContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.NamespaceDeclarationContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.PostDecreaseExpressionContext;
 import static de.jplag.typescript.grammar.TypeScriptParser.PostIncrementExpressionContext;
 import static de.jplag.typescript.grammar.TypeScriptParser.PreDecreaseExpressionContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.PostDecreaseExpressionContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.EnumMemberContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.ThrowStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.ContinueStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.ReturnStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.BreakStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.FinallyProductionContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.CatchProductionContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.TryStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.ForInStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.ForVarStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.ForStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.WhileStatementContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.PropertySetterContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.PreIncrementExpressionContext;
 import static de.jplag.typescript.grammar.TypeScriptParser.PropertyDeclarationExpressionContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.GetterSetterDeclarationExpressionContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.FunctionExpressionDeclarationContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.ArrowFunctionDeclarationContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.FunctionDeclarationContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.ConstructorDeclarationContext;
-import static de.jplag.typescript.grammar.TypeScriptParser.AssignmentExpressionContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.PropertySetterContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.PropertySignaturContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ReturnStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.SwitchStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.ThrowStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.TryStatementContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.VariableDeclarationContext;
+import static de.jplag.typescript.grammar.TypeScriptParser.WhileStatementContext;
 
 import java.io.File;
 
@@ -101,7 +100,6 @@ public class TypeScriptListener extends AbstractAntlrListener {
         this.mapEnterExit(InterfaceDeclarationContext.class, INTERFACE_BEGIN, INTERFACE_END);
         this.mapEnterExit(ConstructorDeclarationContext.class, CONSTRUCTOR_BEGIN, CONSTRUCTOR_END);
 
-
         this.mapEnterExit(EnumDeclarationContext.class, ENUM_BEGIN, ENUM_END);
         this.mapRange(EnumMemberContext.class, ENUM_MEMBER);
 
@@ -123,7 +121,6 @@ public class TypeScriptListener extends AbstractAntlrListener {
 
         this.mapEnterExit(ArrowFunctionDeclarationContext.class, METHOD_BEGIN, METHOD_END);
         this.mapEnterExit(FunctionExpressionDeclarationContext.class, METHOD_BEGIN, METHOD_END);
-
 
         this.mapEnterExit(WhileStatementContext.class, WHILE_BEGIN, WHILE_END);
         this.mapEnterExit(ForStatementContext.class, FOR_BEGIN, FOR_END);

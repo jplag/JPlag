@@ -1,13 +1,5 @@
 package de.jplag.typescript;
 
-import de.jplag.TokenType;
-import de.jplag.testutils.LanguageModuleTest;
-import de.jplag.testutils.datacollector.TestDataCollector;
-import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static de.jplag.typescript.TypeScriptTokenType.ENUM_BEGIN;
 import static de.jplag.typescript.TypeScriptTokenType.ENUM_END;
 import static de.jplag.typescript.TypeScriptTokenType.ENUM_MEMBER;
@@ -15,6 +7,14 @@ import static de.jplag.typescript.TypeScriptTokenType.INTERFACE_BEGIN;
 import static de.jplag.typescript.TypeScriptTokenType.INTERFACE_END;
 import static de.jplag.typescript.TypeScriptTokenType.NAMESPACE_BEGIN;
 import static de.jplag.typescript.TypeScriptTokenType.NAMESPACE_END;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.jplag.TokenType;
+import de.jplag.testutils.LanguageModuleTest;
+import de.jplag.testutils.datacollector.TestDataCollector;
+import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
 public class JavaScriptLanguageTest extends LanguageModuleTest {
 
