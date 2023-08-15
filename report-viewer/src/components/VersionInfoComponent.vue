@@ -13,7 +13,7 @@
       >.
     </div>
 
-    <div v-else>JPlag v.{{ reportViewerVersion.toString() }}</div>
+    <div v-else>JPlag v{{ reportViewerVersion.toString() }}</div>
   </div>
 </template>
 
@@ -27,6 +27,8 @@ const reportViewerVersion: Version =
   versionJson['report_viewer_version'] !== undefined
     ? OverviewFactory.extractVersion(versionJson['report_viewer_version'])
     : new Version(-1, -1, -1)
+
+console.log('Report Viewer Version: ' + reportViewerVersion.toString())
 
 const newestVersion = ref(new Version(-1, -1, -1))
 
