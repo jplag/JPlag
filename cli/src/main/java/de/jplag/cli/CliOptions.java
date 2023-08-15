@@ -59,6 +59,9 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "Clustering%n")
     public Clustering clustering = new Clustering();
 
+    @ArgGroup(validate = false, heading = "Match Merging defense mechanism against obfuscation that merges neighboring matches based on these parameters:%n")
+    public Merging merging = new Merging();
+
     /**
      * Empty run method, so picocli prints help automatically
      */
@@ -88,7 +91,7 @@ public class CliOptions implements Runnable {
     }
 
     public static class Clustering {
-        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: false)\n")
+        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: false)%n")
         public boolean disable;
 
         @ArgGroup
@@ -107,6 +110,20 @@ public class CliOptions implements Runnable {
                             + "attempts of obfuscation. (default: MAX)%n")
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
         }
+    }
+
+    public static class Merging {
+        @Option(names = {"--match-merging"}, description = "Enables match merging (default: false)%n")
+        public boolean enabled;
+
+        @Option(names = {
+                "--merge-buffer"}, description = "Defines how much lower the length of a match can be than the minimum match length (default: 0)%n")
+        public int mergeBuffer;
+
+        @Option(names = {
+                "--seperating-threshold"}, description = "Defines how many token there can be between two neighboring matches (default: 0)%n")
+        public int seperatingThreshold;
+
     }
 
     @Option(names = {"--cluster-spectral-bandwidth"}, hidden = true)
