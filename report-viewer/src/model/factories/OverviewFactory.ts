@@ -7,7 +7,7 @@ import versionJson from '@/version.json'
 import Distribution from '../Distribution'
 import MetricType from '../MetricType'
 import { BaseFactory } from './BaseFactory'
-import PercentileDistribution from '../HundredValueDistribution'
+import HundredValueDistribution from '../HundredValueDistribution'
 import TenValueDistribution from '../TenValueDistribution'
 
 /**
@@ -86,7 +86,7 @@ export class OverviewFactory extends BaseFactory {
   ): Record<MetricType, Distribution> {
     const distributions = {} as Record<MetricType, Distribution>
     for (const [key, value] of Object.entries(distributionsMap)) {
-      distributions[key as MetricType] = new PercentileDistribution(value as Array<number>)
+      distributions[key as MetricType] = new HundredValueDistribution(value as Array<number>)
     }
     return distributions
   }
