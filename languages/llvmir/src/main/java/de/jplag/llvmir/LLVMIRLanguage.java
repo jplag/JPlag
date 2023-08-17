@@ -2,12 +2,13 @@ package de.jplag.llvmir;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.antlr.AbstractAntlrLanguage;
 
 /**
  * This represents the LLVMIR language as a language supported by JPlag.
  */
-@MetaInfServices(de.jplag.Language.class)
+@MetaInfServices(Language.class)
 public class LLVMIRLanguage extends AbstractAntlrLanguage {
 
     private static final String NAME = "LLVMIR Parser";
