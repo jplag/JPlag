@@ -17,21 +17,13 @@ export class Version {
   }
 
   public compareTo(other: Version): number {
-    if (this.major > other.major) {
-      return 1
-    } else if (this.major < other.major) {
-      return -1
-    } else if (this.minor > other.minor) {
-      return 1
-    } else if (this.minor < other.minor) {
-      return -1
-    } else if (this.patch > other.patch) {
-      return 1
-    } else if (this.patch < other.patch) {
-      return -1
-    } else {
-      return 0
+    if (this.major !== other.major) {
+      return this.major - other.major
     }
+    if (this.minor !== other.minor) {
+      return this.minor - other.minor
+    }
+    return this.patch - other.patch
   }
 
   public isDevVersion(): boolean {
