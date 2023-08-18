@@ -92,16 +92,8 @@ public class GreedyStringTiling {
      * @return the comparison results.
      */
     private JPlagComparison compareInternal(Submission leftSubmission, Submission rightSubmission) {
-        List<Token> leftTokens = leftSubmission.getTokenList();
-        List<Token> rightTokens = rightSubmission.getTokenList();
-
         int[] leftValues = tokenValueListFromSubmission(leftSubmission);
         int[] rightValues = tokenValueListFromSubmission(rightSubmission);
-
-        // comparison uses <= because it is assumed that the last token is a pivot (FILE_END)
-        if (leftTokens.size() <= minimumMatchLength || rightTokens.size() <= minimumMatchLength) {
-            return new JPlagComparison(leftSubmission, rightSubmission, List.of(), List.of());
-        }
 
         boolean[] leftMarked = calculateInitiallyMarked(leftSubmission);
         boolean[] rightMarked = calculateInitiallyMarked(rightSubmission);
