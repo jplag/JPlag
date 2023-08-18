@@ -17,7 +17,7 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-antlr-utils</artifactId>
-            <version>4.4.0-SNAPSHOT</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 
