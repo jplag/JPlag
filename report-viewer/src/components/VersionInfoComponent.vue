@@ -1,6 +1,7 @@
 <template>
   <div class="text-sm font-bold">
-    <div v-if="reportViewerVersion.isDevVersion()">
+    <div v-if="reportViewerVersion.isInvalid()">Could not load version information</div>
+    <div v-else-if="reportViewerVersion.isDevVersion()">
       You are using a development version of the JPlag Report Viewer.
     </div>
 
@@ -41,5 +42,8 @@ fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
       parseInt(versionArray[1]),
       parseInt(versionArray[2])
     )
+  })
+  .catch(() => {
+    newestVersion.value = new Version(-1, -1, -1)
   })
 </script>
