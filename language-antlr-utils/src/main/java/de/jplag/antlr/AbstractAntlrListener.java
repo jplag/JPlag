@@ -25,7 +25,6 @@ import de.jplag.semantics.VariableRegistry;
 public class AbstractAntlrListener implements ParseTreeListener {
     private final List<ContextTokenBuilder<ParserRuleContext>> startMappings;
     private final List<ContextTokenBuilder<ParserRuleContext>> endMappings;
-    private final List<ContextTokenBuilder<ParserRuleContext>> rangeMappings;
 
     private final List<TerminalTokenBuilder> terminalMapping;
 
@@ -46,7 +45,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
         this.startMappings = new ArrayList<>();
         this.endMappings = new ArrayList<>();
-        this.rangeMappings = new ArrayList<>();
 
         this.terminalMapping = new ArrayList<>();
 
@@ -78,8 +76,6 @@ public class AbstractAntlrListener implements ParseTreeListener {
     @Override
     public void enterEveryRule(ParserRuleContext rule) {
         this.startMappings.stream().filter(mapping -> mapping.matches(rule)).forEach(mapping -> mapping.createToken(rule, variableRegistry));
-
-        this.rangeMappings.stream().filter(mapping -> mapping.matches(rule)).forEach(mapping -> mapping.createToken(rule, variableRegistry));
     }
 
     @Override
@@ -163,7 +159,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
     @SuppressWarnings("unchecked")
     protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapRange(Class<T> antlrType, TokenType jplagType, Predicate<T> condition) {
         ContextTokenBuilder<T> builder = initTypeBuilder(antlrType, jplagType, condition, ContextTokenBuilderType.RANGE);
-        this.rangeMappings.add((ContextTokenBuilder<ParserRuleContext>) builder);
+        this.startMappings.add((ContextTokenBuilder<ParserRuleContext>) builder);
         return builder;
     }
 

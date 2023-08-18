@@ -33,7 +33,7 @@ class FileTestData implements TestData {
 
     @Override
     public String describeTestSource() {
-        return "(File: " + this.file.getPath() + ")";
+        return "(File: " + this.file.getName() + ")";
     }
 
     @Override
@@ -53,6 +53,6 @@ class FileTestData implements TestData {
 
     @Override
     public String toString() {
-        return this.file.getPath();
+        return this.file.getName();
     }
 }

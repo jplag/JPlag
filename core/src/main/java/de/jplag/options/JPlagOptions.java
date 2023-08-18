@@ -306,11 +306,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
             while (normalizedName.endsWith(File.separator)) {
                 normalizedName = normalizedName.substring(0, normalizedName.length() - 1);
             }
-            if (normalizedName.isEmpty() || normalizedName.contains(File.separator)) {
-                throw new BasecodeException(
-                        "The basecode directory name \"" + normalizedName + "\" cannot contain dots! Please migrate to the path-based API.");
-            }
-            if (normalizedName.contains(".")) {
+            if (normalizedName.isEmpty() || normalizedName.contains(File.separator) || normalizedName.contains(".")) {
                 throw new BasecodeException(
                         "The basecode directory name \"" + normalizedName + "\" cannot contain dots! Please migrate to the path-based API.");
             }
