@@ -21,7 +21,7 @@
         </h2>
         <div class="flex flex-row">
           <TextInformation label="Average Similarity"
-            >{{ (comparison.similarity * 100).toFixed(2) }}%</TextInformation
+            >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
           >
         </div>
         <MatchList
@@ -77,6 +77,7 @@ import Container from '@/components/ContainerComponent.vue'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import router from '@/router'
+import MetricType from '@/model/MetricType'
 
 const props = defineProps({
   firstId: {

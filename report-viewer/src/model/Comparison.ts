@@ -1,6 +1,7 @@
 import type { Match } from './Match'
 import type { SubmissionFile } from './SubmissionFile'
 import type { MatchInSingleFile } from './MatchInSingleFile'
+import type MetricType from './MetricType'
 
 /**
  * Comparison model used by the ComparisonView
@@ -8,21 +9,26 @@ import type { MatchInSingleFile } from './MatchInSingleFile'
 export class Comparison {
   private readonly _firstSubmissionId: string
   private readonly _secondSubmissionId: string
-  private readonly _similarity: number
+  private readonly _similarities: Record<MetricType, number>
+  private _filesOfFirstSubmission: Map<string, SubmissionFile>
+  private _filesOfSecondSubmission: Map<string, SubmissionFile>
+  private _allMatches: Array<Match>
 
-  constructor(firstSubmissionId: string, secondSubmissionId: string, similarity: number) {
+  constructor(
+    firstSubmissionId: string,
+    secondSubmissionId: string,
+    similarities: Record<MetricType, number>,
+    filesOfFirstSubmission: Map<string, SubmissionFile>,
+    filesOfSecondSubmission: Map<string, SubmissionFile>,
+    allMatches: Array<Match>
+  ) {
     this._firstSubmissionId = firstSubmissionId
     this._secondSubmissionId = secondSubmissionId
-    this._similarity = similarity
-    this._filesOfFirstSubmission = new Map()
-    this._filesOfSecondSubmission = new Map()
-    this._colors = []
-    this._allMatches = []
-    this._matchesInFirstSubmission = new Map()
-    this._matchesInSecondSubmissions = new Map()
+    this._similarities = similarities
+    this._filesOfFirstSubmission = filesOfFirstSubmission
+    this._filesOfSecondSubmission = filesOfSecondSubmission
+    this._allMatches = allMatches
   }
-
-  private _filesOfFirstSubmission: Map<string, SubmissionFile>
 
   /**
    * @return Map of all files of the first submission
@@ -32,48 +38,11 @@ export class Comparison {
   }
 
   /**
-   * Set the files of the first submission
-   * @param value Map to set to
-   */
-  set filesOfFirstSubmission(value: Map<string, SubmissionFile>) {
-    this._filesOfFirstSubmission = value
-  }
-
-  private _filesOfSecondSubmission: Map<string, SubmissionFile>
-
-  /**
    * @return Map of all files of the second submission
    */
   get filesOfSecondSubmission(): Map<string, SubmissionFile> {
     return this._filesOfSecondSubmission
   }
-
-  /**
-   * Set the files of the second submission
-   * @param value Map to set to
-   */
-  set filesOfSecondSubmission(value: Map<string, SubmissionFile>) {
-    this._filesOfSecondSubmission = value
-  }
-
-  private _colors: Array<string>
-
-  /**
-   * @return Array of all colors used to display the matches
-   */
-  get colors(): Array<string> {
-    return this._colors
-  }
-
-  /**
-   * Set the colors used to display the matches
-   * @param value Colors to set to
-   */
-  set colors(value: Array<string>) {
-    this._colors = value
-  }
-
-  private _allMatches: Array<Match>
 
   /**
    * @return Array of all matches
@@ -83,45 +52,17 @@ export class Comparison {
   }
 
   /**
-   * Set the array of all matches
-   * @param value Matches to set to
-   */
-  set allMatches(value: Array<Match>) {
-    this._allMatches = value
-  }
-
-  private _matchesInFirstSubmission: Map<string, Array<MatchInSingleFile>>
-
-  /**
    * @return Map of all matches in the first submission
    */
   get matchesInFirstSubmission(): Map<string, Array<MatchInSingleFile>> {
-    return this._matchesInFirstSubmission
+    return this.groupMatchesByFileName(1)
   }
-
-  /**
-   * Set the matches in the first submission
-   * @param value Matches in the first submission to set to
-   */
-  set matchesInFirstSubmission(value: Map<string, Array<MatchInSingleFile>>) {
-    this._matchesInFirstSubmission = value
-  }
-
-  private _matchesInSecondSubmissions: Map<string, Array<MatchInSingleFile>>
 
   /**
    * @return Map of all matches in the second submission
    */
   get matchesInSecondSubmissions(): Map<string, Array<MatchInSingleFile>> {
-    return this._matchesInSecondSubmissions
-  }
-
-  /**
-   * Set the matches in the second submission
-   * @param value Matches in the first submission to set to
-   */
-  set matchesInSecondSubmissions(value: Map<string, Array<MatchInSingleFile>>) {
-    this._matchesInSecondSubmissions = value
+    return this.groupMatchesByFileName(2)
   }
 
   /**
@@ -141,7 +82,41 @@ export class Comparison {
   /**
    * @return Similarity of the two submissions
    */
-  get similarity() {
-    return this._similarity
+  get similarities() {
+    return this._similarities
+  }
+
+  private groupMatchesByFileName(index: 1 | 2): Map<string, Array<MatchInSingleFile>> {
+    const acc = new Map<string, Array<MatchInSingleFile>>()
+    this.allMatches.forEach((val) => {
+      const name = index === 1 ? val.firstFile : val.secondFile
+
+      if (!acc.get(name)) {
+        acc.set(name, [])
+      }
+
+      if (index === 1) {
+        const newVal: MatchInSingleFile = {
+          start: val.startInFirst,
+          end: val.endInFirst,
+          linked_panel: 2,
+          linked_file: val.secondFile,
+          linked_line: val.startInSecond,
+          color: val.color
+        }
+        acc.get(name)?.push(newVal)
+      } else {
+        const newVal: MatchInSingleFile = {
+          start: val.startInSecond,
+          end: val.endInSecond,
+          linked_panel: 1,
+          linked_file: val.firstFile,
+          linked_line: val.startInFirst,
+          color: val.color
+        }
+        acc.get(name)?.push(newVal)
+      }
+    })
+    return acc
   }
 }
