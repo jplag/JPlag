@@ -40,7 +40,7 @@ class MergingTest extends TestBase {
     private List<JPlagComparison> comparisonsAfter;
     private ComparisonStrategy comparisonStrategy;
     private SubmissionSet submissionSet;
-    private final int MERGE_BUFFER = 8;
+    private final int MERGE_BUFFER = 1;
     private final int SEPERATING_THRESHOLD = 10;
 
     MergingTest() throws ExitException {
@@ -79,8 +79,7 @@ class MergingTest extends TestBase {
     @Test
     @DisplayName("Test length of ignored matches after Greedy String Tiling")
     void testGSTIgnoredMatches() {
-        int matchLengthThreshold = options.minimumTokenMatch() - options.mergingParameters().mergeBuffer();
-        checkMatchLength(JPlagComparison::ignoredMatches, matchLengthThreshold, comparisonsBefore);
+        checkMatchLength(JPlagComparison::ignoredMatches, options.mergingParameters().mergeBuffer(), comparisonsBefore);
     }
 
     private void checkMatchLength(Function<JPlagComparison, List<Match>> matchFunction, int threshold, List<JPlagComparison> comparisons) {

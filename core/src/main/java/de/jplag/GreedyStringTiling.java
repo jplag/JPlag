@@ -23,6 +23,7 @@ public class GreedyStringTiling {
 
     private final int minimumMatchLength;
     private final int mergeBuffer;
+    private JPlagOptions options;
     private ConcurrentMap<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
 
@@ -30,8 +31,9 @@ public class GreedyStringTiling {
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
 
     public GreedyStringTiling(JPlagOptions options) {
-        this.mergeBuffer = options.mergingParameters().mergeBuffer();
-        this.minimumMatchLength = Math.max(options.minimumTokenMatch() - this.mergeBuffer, 1);
+        this.options = options;
+        this.mergeBuffer = Math.min(Math.max(options.mergingParameters().mergeBuffer(), 1), options.minimumTokenMatch());
+        this.minimumMatchLength = options.mergingParameters().enabled() ? this.mergeBuffer : options.minimumTokenMatch();
         this.tokenTypeValues = new ConcurrentHashMap<>();
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
     }
@@ -133,7 +135,7 @@ public class GreedyStringTiling {
                 }
             }
             for (Match match : iterationMatches) {
-                if (match.length() < minimumMatchLength + mergeBuffer) {
+                if (match.length() < options.minimumTokenMatch()) {
                     addMatchIfNotOverlapping(ignoredMatches, match);
                 } else {
                     addMatchIfNotOverlapping(globalMatches, match);
