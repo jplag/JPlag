@@ -23,7 +23,7 @@ const props = defineProps({
   }
 })
 
-const maxVal = ref(Math.max(...props.distribution.distribution))
+const maxVal = ref(Math.max(...props.distribution.splitIntoTenBuckets()))
 const labels = [
   '91-100%',
   '81-90%',
@@ -51,7 +51,7 @@ const chartData = ref({
   datasets: [
     {
       ...dataSetStyle.value,
-      data: props.distribution.distribution
+      data: props.distribution.splitIntoTenBuckets()
     }
   ]
 })
@@ -109,12 +109,12 @@ watch(
       datasets: [
         {
           ...dataSetStyle.value,
-          data: val.distribution
+          data: val.splitIntoTenBuckets()
         }
       ]
     }
 
-    maxVal.value = Math.max(...val.distribution)
+    maxVal.value = Math.max(...val.splitIntoTenBuckets())
     options.value.scales.x.suggestedMax = maxVal.value + 5
   }
 )

@@ -30,6 +30,7 @@ import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import MetricType from '@/model/MetricType'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
 
 const props = defineProps({
@@ -43,6 +44,7 @@ const overview = OverviewFactory.getOverview()
 const cluster = overview.clusters[props.clusterIndex]
 const comparisons = [] as Array<ComparisonListElement>
 const clusterMemberList = new Map() as ClusterListElementMember
+const usedMetric = MetricType.AVERAGE
 
 function getComparisonFor(id1: string, id2: string) {
   return overview.topComparisons.find(
@@ -62,7 +64,7 @@ for (let i = 0; i < cluster.members.length; i++) {
 }
 let counter = 0
 comparisons
-  .sort((a, b) => b.averageSimilarity - a.averageSimilarity)
+  .sort((a, b) => b.similarities[usedMetric] - a.similarities[usedMetric])
   .forEach((c) => {
     c.sortingPlace = counter++
     c.id = counter
@@ -75,7 +77,7 @@ for (const member of cluster.members) {
     .forEach((c) => {
       membersComparisons.push({
         matchedWith: c.firstSubmissionId === member ? c.secondSubmissionId : c.firstSubmissionId,
-        similarity: c.averageSimilarity
+        similarity: c.similarities[usedMetric]
       })
     })
   clusterMemberList.set(member, membersComparisons)

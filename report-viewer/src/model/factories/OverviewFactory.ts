@@ -5,12 +5,26 @@ import store from '@/stores/store'
 import { Version } from '../Version'
 import versionJson from '@/version.json'
 import Distribution from '../Distribution'
+import MetricType from '../MetricType'
+import { BaseFactory } from './BaseFactory'
+import HundredValueDistribution from '../HundredValueDistribution'
+import TenValueDistribution from '../TenValueDistribution'
 
-export class OverviewFactory {
+/**
+ * Factory class for creating Overview objects
+ */
+export class OverviewFactory extends BaseFactory {
   static reportViewerVersion: Version =
     versionJson['report_viewer_version'] !== undefined
       ? this.extractVersion(versionJson['report_viewer_version'] as Record<string, number>)
       : new Version(-1, -1, -1)
+
+  /**
+   * Gets the overview file based on the used mode (zip, local, single).
+   */
+  public static getOverview(): Overview {
+    return this.extractOverview(JSON.parse(this.getFile('overview.json')))
+  }
 
   /**
    * Creates an overview object from a json object created by by JPlag
@@ -23,24 +37,101 @@ export class OverviewFactory {
     OverviewFactory.compareVersions(jplagVersion, this.reportViewerVersion)
 
     const submissionFolder = json.submission_folder_path as Array<string>
-    const baseCodeFolder = ''
+    const baseCodeFolder = json.base_code_folder_path as string
     const language = json.language as string
     const fileExtensions = json.file_extensions as Array<string>
     const matchSensitivity = json.match_sensitivity as number
-    const jsonSubmissions = json.submission_id_to_display_name as Map<string, string>
-    const map = new Map<string, string>(Object.entries(jsonSubmissions))
     const dateOfExecution = json.date_of_execution as string
     const duration = json.execution_time as number as number
-    const clusters = [] as Array<Cluster>
     const totalComparisons = json.total_comparisons as number
 
-    const distributions = [] as Array<Distribution>
+    this.saveIdToDisplayNameMap(json)
+    this.saveComparisonFilesLookup(json)
+
+    return new Overview(
+      submissionFolder,
+      baseCodeFolder,
+      language,
+      fileExtensions,
+      matchSensitivity,
+      dateOfExecution,
+      duration,
+      this.extractTopComparisons(json),
+      this.extractDistributions(json),
+      this.extractClusters(json),
+      totalComparisons
+    )
+  }
+
+  public static extractVersion(versionField: Record<string, number>): Version {
+    return new Version(versionField.major, versionField.minor, versionField.patch)
+  }
+
+  private static extractDistributions(
+    json: Record<string, unknown>
+  ): Record<MetricType, Distribution> {
+    if (json.distributions) {
+      return this.extractDistributionsFromMap(json.distributions as Record<string, Array<number>>)
+    } else if (json.metrics) {
+      return this.extractDistributionsFromMetrics(json.metrics as Array<Record<string, unknown>>)
+    }
+    throw new Error('No distributions found')
+  }
+
+  private static extractDistributionsFromMap(
+    distributionsMap: Record<string, Array<number>>
+  ): Record<MetricType, Distribution> {
+    const distributions = {} as Record<MetricType, Distribution>
+    for (const [key, value] of Object.entries(distributionsMap)) {
+      distributions[key as MetricType] = new HundredValueDistribution(value as Array<number>)
+    }
+    return distributions
+  }
+
+  /** @deprecated since 5.0.0. Use the new format with {@link extractDistributionsFromMap} */
+  private static extractDistributionsFromMetrics(
+    metrics: Array<Record<string, unknown>>
+  ): Record<MetricType, Distribution> {
+    return {
+      [MetricType.AVERAGE]: new TenValueDistribution(metrics[0].distribution as Array<number>),
+      [MetricType.MAXIMUM]: new TenValueDistribution(metrics[1].distribution as Array<number>)
+    }
+  }
+
+  private static extractTopComparisons(
+    json: Record<string, unknown>
+  ): Array<ComparisonListElement> {
+    if (json.top_comparisons) {
+      return this.extractTopComparisonsFromMap(
+        json.top_comparisons as Array<Record<string, unknown>>
+      )
+    } else if (json.metrics) {
+      return this.extractTopComparisonsFromMetrics(json.metrics as Array<Record<string, unknown>>)
+    }
+    throw new Error('No top comparisons found')
+  }
+
+  private static extractTopComparisonsFromMap(jsonComparisons: Array<Record<string, unknown>>) {
+    const comparisons = [] as Array<ComparisonListElement>
+    let counter = 0
+    for (const topComparison of jsonComparisons) {
+      comparisons.push({
+        sortingPlace: counter++,
+        id: counter,
+        firstSubmissionId: topComparison.first_submission as string,
+        secondSubmissionId: topComparison.second_submission as string,
+        similarities: topComparison.similarities as Record<MetricType, number>
+      })
+    }
+    return comparisons
+  }
+
+  /** @deprecated since 5.0.0. Use the new format with {@link extractTopComparisonsFromMap} */
+  private static extractTopComparisonsFromMetrics(metrics: Array<Record<string, unknown>>) {
     const averageSimilarities: Map<string, number> = new Map<string, number>()
     const comparisons = [] as Array<ComparisonListElement>
 
-    const metrics = json.metrics as Array<unknown> as Array<Record<string, unknown>>
-    // Average
-    distributions.push(new Distribution(metrics[0].distribution as Array<number>))
+    // Save the average similarities in a temporary map to combine them with the max similarities later
     for (const comparison of metrics[0].topComparisons as Array<Record<string, unknown>>) {
       averageSimilarities.set(
         (comparison.first_submission as string) + '-' + (comparison.second_submission as string),
@@ -48,8 +139,7 @@ export class OverviewFactory {
       )
     }
 
-    // Max
-    distributions.push(new Distribution(metrics[1].distribution as Array<number>))
+    // Extract the max similarities and combine them with the average similarities
     let counter = 0
     for (const comparison of metrics[1].topComparisons as Array<Record<string, unknown>>) {
       const avg = averageSimilarities.get(
@@ -60,90 +150,51 @@ export class OverviewFactory {
         id: counter,
         firstSubmissionId: comparison.first_submission as string,
         secondSubmissionId: comparison.second_submission as string,
-        averageSimilarity: avg as number,
-        maximumSimilarity: comparison.similarity as number
-      })
-    }
-
-    store().saveSubmissionNames(map)
-
-    if (json.clusters) {
-      ;(json.clusters as Array<unknown>).forEach((jsonCluster) => {
-        const cluster = jsonCluster as Record<string, unknown>
-        const newCluster: Cluster = {
-          averageSimilarity: cluster.average_similarity as number,
-          strength: cluster.strength as number,
-          members: cluster.members as Array<string>
+        similarities: {
+          [MetricType.AVERAGE]: avg as number,
+          [MetricType.MAXIMUM]: comparison.similarity as number
         }
-        clusters.push(newCluster)
       })
     }
 
-    OverviewFactory.saveSubmissionsToComparisonNameMap(json)
-    return new Overview(
-      submissionFolder,
-      baseCodeFolder,
-      language,
-      fileExtensions,
-      matchSensitivity,
-      dateOfExecution,
-      duration,
-      comparisons,
-      distributions,
-      clusters,
-      totalComparisons,
-      new Map()
-    )
+    return comparisons
   }
 
-  /**
-   * Gets the overview file based on the used mode (zip, local, single).
-   */
-  public static getOverview(): Overview {
-    console.log('Generating overview...')
-    let temp!: Overview
-    //Gets the overview file based on the used mode (zip, local, single).
-    if (store().state.localModeUsed) {
-      const request = new XMLHttpRequest()
-      request.open('GET', '/files/overview.json', false)
-      request.send()
-
-      if (request.status == 200) {
-        temp = OverviewFactory.extractOverview(JSON.parse(request.response))
-      } else {
-        throw new Error('Could not find overview.json in folder.')
-      }
-    } else if (store().state.zipModeUsed) {
-      console.log('Start finding overview.json in state...')
-      const index = Object.keys(store().state.files).find((name) => name.endsWith('overview.json'))
-      const overviewFile =
-        index != undefined
-          ? store().state.files[index]
-          : console.log('Could not find overview.json')
-
-      if (overviewFile === undefined) {
-        console.log('Could not find overview.json')
-        return new Overview(
-          [],
-          '',
-          '',
-          [],
-          0,
-          '',
-          0,
-          [],
-          [],
-          [],
-          0,
-          new Map<string, Map<string, string>>()
-        )
-      }
-      const overviewJson = JSON.parse(overviewFile)
-      temp = OverviewFactory.extractOverview(overviewJson)
-    } else if (store().state.singleModeUsed) {
-      temp = OverviewFactory.extractOverview(JSON.parse(store().state.singleFillRawContent))
+  private static extractClusters(json: Record<string, unknown>): Array<Cluster> {
+    if (!json.clusters) {
+      return []
     }
-    return temp
+
+    const clusters = [] as Array<Cluster>
+    for (const jsonCluster of json.clusters as Array<Record<string, unknown>>) {
+      clusters.push({
+        averageSimilarity: jsonCluster.average_similarity as number,
+        strength: jsonCluster.strength as number,
+        members: jsonCluster.members as Array<string>
+      })
+    }
+    return clusters
+  }
+
+  private static saveIdToDisplayNameMap(json: Record<string, unknown>) {
+    const jsonSubmissions = json.submission_id_to_display_name as Map<string, string>
+    const map = new Map<string, string>(Object.entries(jsonSubmissions))
+
+    store().saveSubmissionNames(map)
+  }
+
+  private static saveComparisonFilesLookup(json: Record<string, unknown>) {
+    const submissionIdsToComparisonName = json.submission_ids_to_comparison_file_name as Map<
+      string,
+      Map<string, string>
+    >
+    const test: Array<Array<string | object>> = Object.entries(submissionIdsToComparisonName)
+    const comparisonMap = new Map<string, Map<string, string>>()
+    for (const [key, value] of test) {
+      comparisonMap.set(key as string, new Map(Object.entries(value as object)))
+    }
+
+    store().saveComparisonFileLookup(comparisonMap)
   }
 
   /**
@@ -175,23 +226,5 @@ export class OverviewFactory {
 
       sessionStorage.setItem('versionAlert', 'true')
     }
-  }
-
-  private static saveSubmissionsToComparisonNameMap(json: Record<string, unknown>) {
-    const submissionIdsToComparisonName = json.submission_ids_to_comparison_file_name as Map<
-      string,
-      Map<string, string>
-    >
-    const test: Array<Array<string | object>> = Object.entries(submissionIdsToComparisonName)
-    const comparisonMap = new Map<string, Map<string, string>>()
-    for (const [key, value] of test) {
-      comparisonMap.set(key as string, new Map(Object.entries(value as object)))
-    }
-
-    store().saveComparisonFileLookup(comparisonMap)
-  }
-
-  public static extractVersion(versionField: Record<string, number>): Version {
-    return new Version(versionField.major, versionField.minor, versionField.patch)
   }
 }

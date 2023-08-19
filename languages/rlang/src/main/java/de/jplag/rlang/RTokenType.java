@@ -35,6 +35,7 @@ public enum RTokenType implements TokenType {
 
     private final String description;
 
+    @Override
     public String getDescription() {
         return this.description;
     }

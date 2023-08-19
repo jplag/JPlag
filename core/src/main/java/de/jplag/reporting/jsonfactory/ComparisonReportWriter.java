@@ -12,6 +12,7 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.Token;
+import de.jplag.options.SimilarityMetric;
 import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
@@ -55,7 +56,8 @@ public class ComparisonReportWriter {
             String secondSubmissionId = submissionToIdFunction.apply(comparison.secondSubmission());
             String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
-            var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
+            var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId,
+                    Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity()),
                     convertMatchesToReportMatches(comparison));
             fileWriter.saveAsJSON(comparisonReport, path, fileName);
         });
