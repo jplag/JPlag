@@ -14,10 +14,10 @@ import de.jplag.options.JPlagOptions;
 
 /**
  * This class implements a match merging algorithm which serves as a defense mechanism against obfuscation attacks.
- * Based on configurable parameters MergeBuffer and GapSize, it alters prior results from pairwise submission
+ * Based on configurable parameters NeighborLength and GapSize, it alters prior results from pairwise submission
  * comparisons and merges all neighboring matches that fit the specified thresholds. Submissions are referred to as left
  * and right and neighboring matches as upper and lower. When neighboring matches get merged they become one and the
- * tokens separating them get removed from the submission clone. MergeBuffer describes how short a match can be and
+ * tokens separating them get removed from the submission clone. NeighborLength describes how short a match can be and
  * GapSize describes how many tokens can be between two neighboring matches. Both are set in {@link JPlagOptions} as
  * {@link MergingParameters} and default to (2,6).
  */

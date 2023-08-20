@@ -231,7 +231,7 @@ public final class CLI {
     }
 
     private static MergingParameters getMergingParameters(CliOptions options) {
-        return new MergingParameters(options.merging.enabled, options.merging.mergeBuffer, options.merging.gapSize);
+        return new MergingParameters(options.merging.enabled, options.merging.neighborLength, options.merging.gapSize);
     }
 
     private String generateDescription() {
