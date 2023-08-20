@@ -41,10 +41,10 @@ class MergingTest extends TestBase {
     private ComparisonStrategy comparisonStrategy;
     private SubmissionSet submissionSet;
     private final int MERGE_BUFFER = 1;
-    private final int SEPERATING_THRESHOLD = 10;
+    private final int GAP_SIZE = 10;
 
     MergingTest() throws ExitException {
-        options = getDefaultOptions("merging").withMergingParameters(new MergingParameters(true, MERGE_BUFFER, SEPERATING_THRESHOLD));
+        options = getDefaultOptions("merging").withMergingParameters(new MergingParameters(true, MERGE_BUFFER, GAP_SIZE));
 
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);

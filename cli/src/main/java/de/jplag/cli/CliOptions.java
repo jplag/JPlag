@@ -119,9 +119,8 @@ public class CliOptions implements Runnable {
         @Option(names = {"--merge-buffer"}, description = "Defines how low the length of a match can be, to be considered (default: 2)%n")
         public int mergeBuffer;
 
-        @Option(names = {
-                "--seperating-threshold"}, description = "Defines how many token there can be between two neighboring matches (default: 6)%n")
-        public int seperatingThreshold;
+        @Option(names = {"--gap-size"}, description = "Defines how many token there can be between two neighboring matches (default: 6)%n")
+        public int gapSize;
 
     }
 

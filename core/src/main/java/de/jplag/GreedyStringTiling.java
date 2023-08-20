@@ -32,6 +32,7 @@ public class GreedyStringTiling {
 
     public GreedyStringTiling(JPlagOptions options) {
         this.options = options;
+        // Ensures 1 <= mergeBuffer <= minimumTokenMatch
         this.mergeBuffer = Math.min(Math.max(options.mergingParameters().mergeBuffer(), 1), options.minimumTokenMatch());
         this.minimumMatchLength = options.mergingParameters().enabled() ? this.mergeBuffer : options.minimumTokenMatch();
         this.tokenTypeValues = new ConcurrentHashMap<>();
