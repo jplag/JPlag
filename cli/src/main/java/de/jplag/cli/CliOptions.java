@@ -59,7 +59,7 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "Clustering%n")
     public Clustering clustering = new Clustering();
 
-    @ArgGroup(validate = false, heading = "Match Merging defense mechanism against obfuscation that merges neighboring matches based on these parameters:%n")
+    @ArgGroup(validate = false, heading = "Match Merging defense that merges neighboring matches to increase the similarity between plagiarisms:%n")
     public Merging merging = new Merging();
 
     /**
@@ -116,8 +116,7 @@ public class CliOptions implements Runnable {
         @Option(names = {"--match-merging"}, description = "Enables match merging (default: false)%n")
         public boolean enabled;
 
-        @Option(names = {
-                "--merge-buffer"}, description = "Defines how much lower the length of a match can be than the minimum match length (default: 0)%n")
+        @Option(names = {"--merge-buffer"}, description = "Defines how low the length of a match can be, to be considered (default: 0)%n")
         public int mergeBuffer;
 
         @Option(names = {
