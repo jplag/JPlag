@@ -2,17 +2,17 @@ package de.jplag.merging;
 
 /**
  * Collection of parameters that describe how a match merging should be performed.
- * @param mergeBuffer describes how short a match can be, to be considered (Defaults to 0).
- * @param seperatingThreshold describes how many tokens can be between to neighboring matches (Defaults to 0).
+ * @param mergeBuffer describes how short a match can be, to be considered (Defaults to 2).
+ * @param seperatingThreshold describes how many tokens can be between to neighboring matches (Defaults to 6).
  */
 public record MergingParameters(boolean enabled, int mergeBuffer, int seperatingThreshold) {
 
     /**
      * The default values of MergingParameters are false for the enable-switch, which deactivate MatchMerging, while
-     * mergeBuffer and seperatingThreshold default to (0,0), which in testing yielded the best results.
+     * mergeBuffer and seperatingThreshold default to (2,6), which in testing yielded the best results.
      */
     public MergingParameters() {
-        this(false, 0, 0);
+        this(false, 2, 6);
     }
 
     /**

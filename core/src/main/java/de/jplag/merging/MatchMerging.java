@@ -19,7 +19,7 @@ import de.jplag.options.JPlagOptions;
  * to as left and right and neighboring matches as upper and lower. When neighboring matches get merged they become one
  * and the tokens separating them get removed from the submission clone. MergeBuffer describes how short a match can be
  * and SeperatingThreshold describes how many tokens can be between two neighboring matches. Both are set in
- * {@link JPlagOptions} as {@link MergingParameters} and default to (0,0).
+ * {@link JPlagOptions} as {@link MergingParameters} and default to (2,6).
  */
 public class MatchMerging {
     private JPlagOptions options;
