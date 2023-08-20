@@ -27,7 +27,7 @@
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
           :distribution="overview.distribution[selectedDistributionDiagramMetric]"
-          class="w-full h-2/3"
+          class="!w-full !h-2/3"
         />
         <div class="flex flex-col flex-grow space-y-1">
           <h3 class="text-lg underline">Options:</h3>

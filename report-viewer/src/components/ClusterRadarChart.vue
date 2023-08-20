@@ -3,13 +3,15 @@
   participants in the cluster.
 -->
 <template>
-  <div class="flex flex-col">
-    <div v-if="!hasNoMember" class="flex-grow flex flex-col">
+  <div class="flex flex-col max-h-full">
+    <div v-if="!hasNoMember" class="flex-grow flex flex-col max-h-full overflow-hidden">
       <DropDownSelector
         :options="selectedOptions"
         @selectionChanged="(value) => updateChartData(value)"
       />
-      <RadarChart :chartData="chartData" :options="options" class="flex-grow"></RadarChart>
+      <div class="flex-grow min-h-0 flex justify-center">
+        <Radar :data="chartData" :options="options" />
+      </div>
     </div>
     <div v-else>
       <span>This cluster has no members.</span>
@@ -23,7 +25,7 @@ import type { ChartData } from 'chart.js'
 import type { ClusterListElement } from '@/model/ClusterListElement'
 
 import { computed, ref } from 'vue'
-import { RadarChart } from 'vue-chart-3'
+import { Radar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import DropDownSelector from './DropDownSelector.vue'
