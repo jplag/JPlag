@@ -19,7 +19,7 @@ import de.jplag.options.JPlagOptions;
  * and right and neighboring matches as upper and lower. When neighboring matches get merged they become one and the
  * tokens separating them get removed from the submission clone. NeighborLength describes how short a match can be and
  * GapSize describes how many tokens can be between two neighboring matches. Both are set in {@link JPlagOptions} as
- * {@link MergingParameters} and default to (2,6).
+ * {@link MergingOptions} and default to (2,6).
  */
 public class MatchMerging {
     private JPlagOptions options;
@@ -34,7 +34,7 @@ public class MatchMerging {
 
     /**
      * Runs the internal match merging pipeline. It computes neighboring matches, merges them based on
-     * {@link MergingParameters} and removes remaining too short matches afterwards.
+     * {@link MergingOptions} and removes remaining too short matches afterwards.
      * @param result is the initially computed result object
      * @return JPlagResult containing the merged matches
      */
@@ -97,7 +97,7 @@ public class MatchMerging {
             int tokensBetweenRight = lowerNeighbor.startOfSecond() - upperNeighbor.endOfSecond() - 1;
             double averageTokensBetweenMatches = (tokenBetweenLeft + tokensBetweenRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
-            if (averageTokensBetweenMatches <= options.mergingParameters().gapSize()
+            if (averageTokensBetweenMatches <= options.mergingOptions().gapSize()
                     && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperNeighbor, tokenBetweenLeft, tokensBetweenRight)) {
                 globalMatches.remove(upperNeighbor);
                 globalMatches.remove(lowerNeighbor);

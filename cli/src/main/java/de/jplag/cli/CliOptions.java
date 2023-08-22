@@ -59,7 +59,7 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "Clustering%n")
     public Clustering clustering = new Clustering();
 
-    @ArgGroup(validate = false, heading = "Match Merging defense that merges neighboring matches to increase the similarity between plagiarisms:%n")
+    @ArgGroup(validate = false, heading = "Merging of neighboring matches to increase the similarity of concealed plagiarism:%n")
     public Merging merging = new Merging();
 
     /**
@@ -116,7 +116,7 @@ public class CliOptions implements Runnable {
         @Option(names = {"--match-merging"}, description = "Enables match merging (default: false)%n")
         public boolean enabled;
 
-        @Option(names = {"--neighbor-length"}, description = "Defines how low the length of a match can be, to be considered (default: 2)%n")
+        @Option(names = {"--neighbor-length"}, description = "Defines how short a match can be, to be considered (default: 2)%n")
         public int neighborLength;
 
         @Option(names = {"--gap-size"}, description = "Defines how many token there can be between two neighboring matches (default: 6)%n")

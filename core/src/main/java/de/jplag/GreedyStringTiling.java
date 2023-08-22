@@ -33,8 +33,8 @@ public class GreedyStringTiling {
     public GreedyStringTiling(JPlagOptions options) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
-        this.neighborLength = Math.min(Math.max(options.mergingParameters().neighborLength(), 1), options.minimumTokenMatch());
-        this.minimumMatchLength = options.mergingParameters().enabled() ? this.neighborLength : options.minimumTokenMatch();
+        this.neighborLength = Math.min(Math.max(options.mergingOptions().neighborLength(), 1), options.minimumTokenMatch());
+        this.minimumMatchLength = options.mergingOptions().enabled() ? this.neighborLength : options.minimumTokenMatch();
         this.tokenTypeValues = new ConcurrentHashMap<>();
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
     }
