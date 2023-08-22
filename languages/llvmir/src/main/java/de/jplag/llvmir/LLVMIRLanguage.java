@@ -6,7 +6,7 @@ import de.jplag.Language;
 import de.jplag.antlr.AbstractAntlrLanguage;
 
 /**
- * This represents the LLVMIR language as a language supported by JPlag.
+ * The entry point for the ANTLR parser based LLVM IR language module.
  */
 @MetaInfServices(Language.class)
 public class LLVMIRLanguage extends AbstractAntlrLanguage {

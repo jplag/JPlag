@@ -2,6 +2,9 @@ package de.jplag.llvmir;
 
 import de.jplag.TokenType;
 
+/**
+ * LLVM IR token types extracted by this language module.
+ */
 public enum LLVMIRTokenType implements TokenType {
 
     FILENAME("FILENAME"),
@@ -85,11 +88,12 @@ public enum LLVMIRTokenType implements TokenType {
 
     private final String description;
 
-    public String getDescription() {
-        return description;
-    }
-
     LLVMIRTokenType(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 }

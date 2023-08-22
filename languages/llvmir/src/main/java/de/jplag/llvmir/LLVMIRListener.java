@@ -115,8 +115,18 @@ import java.io.File;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.TokenCollector;
 
+/**
+ * Extracts tokens from the ANTLR parse tree. The token abstraction includes nesting tokens for functions and basic
+ * blocks and separate tokens for different elements. These include binary and bitwise instructions, memory operations,
+ * terminator instructions, conversions, global variables, type definitions, constants, and others.
+ */
 public class LLVMIRListener extends AbstractAntlrListener {
 
+    /**
+     * New instance
+     * @param collector The token collector the token will be added to
+     * @param currentFile The currently processed file
+     */
     public LLVMIRListener(TokenCollector collector, File currentFile) {
         super(collector, currentFile);
 
