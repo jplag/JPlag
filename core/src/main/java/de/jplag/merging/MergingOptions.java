@@ -2,14 +2,14 @@ package de.jplag.merging;
 
 /**
  * Collection of parameters that describe how a match merging should be performed.
- * @param neighborLength describes how short a match can be, to be considered (Defaults to 2).
- * @param gapSize describes how many tokens can be between to neighboring matches (Defaults to 6).
+ * @param minimumNeighborLength describes how short a match can be, to be considered (Defaults to 2).
+ * @param maximumGapSize describes how many tokens can be between to neighboring matches (Defaults to 6).
  */
-public record MergingOptions(boolean enabled, int neighborLength, int gapSize) {
+public record MergingOptions(boolean enabled, int minimumNeighborLength, int maximumGapSize) {
 
     /**
      * The default values of MergingOptions are false for the enable-switch, which deactivate MatchMerging, while
-     * neighborLength and gapSize default to (2,6), which in testing yielded the best results.
+     * minimumNeighborLength and maximumGapSize default to (2,6), which in testing yielded the best results.
      */
     public MergingOptions() {
         this(false, 2, 6);
@@ -21,24 +21,24 @@ public record MergingOptions(boolean enabled, int neighborLength, int gapSize) {
      * @return MergingOptions with specified enabled
      */
     public MergingOptions withEnabled(boolean enabled) {
-        return new MergingOptions(enabled, neighborLength, gapSize);
+        return new MergingOptions(enabled, minimumNeighborLength, maximumGapSize);
     }
 
     /**
-     * Builder pattern method for setting neighborLength
-     * @param neighborLength containing the new value
-     * @return MergingOptions with specified neighborLength
+     * Builder pattern method for setting minimumNeighborLength
+     * @param minimumNeighborLength containing the new value
+     * @return MergingOptions with specified minimumNeighborLength
      */
-    public MergingOptions withNeighborLength(int neighborLength) {
-        return new MergingOptions(enabled, neighborLength, gapSize);
+    public MergingOptions withMinimumNeighborLength(int minimumNeighborLength) {
+        return new MergingOptions(enabled, minimumNeighborLength, maximumGapSize);
     }
 
     /**
-     * Builder pattern method for setting gapSize
-     * @param gapSize containing the new value
-     * @return MergingOptions with specified gapSize
+     * Builder pattern method for setting maximumGapSize
+     * @param maximumGapSize containing the new value
+     * @return MergingOptions with specified maximumGapSize
      */
-    public MergingOptions withGapSize(int gapSize) {
-        return new MergingOptions(enabled, neighborLength, gapSize);
+    public MergingOptions withMaximumGapSize(int maximumGapSize) {
+        return new MergingOptions(enabled, minimumNeighborLength, maximumGapSize);
     }
 }

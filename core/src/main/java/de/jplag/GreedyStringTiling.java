@@ -22,7 +22,7 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
 
     private final int minimumMatchLength;
-    private final int neighborLength;
+    private final int minimumNeighborLength;
     private JPlagOptions options;
     private ConcurrentMap<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
@@ -33,8 +33,8 @@ public class GreedyStringTiling {
     public GreedyStringTiling(JPlagOptions options) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
-        this.neighborLength = Math.min(Math.max(options.mergingOptions().neighborLength(), 1), options.minimumTokenMatch());
-        this.minimumMatchLength = options.mergingOptions().enabled() ? this.neighborLength : options.minimumTokenMatch();
+        this.minimumNeighborLength = Math.min(Math.max(options.mergingOptions().minimumNeighborLength(), 1), options.minimumTokenMatch());
+        this.minimumMatchLength = options.mergingOptions().enabled() ? this.minimumNeighborLength : options.minimumTokenMatch();
         this.tokenTypeValues = new ConcurrentHashMap<>();
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
     }

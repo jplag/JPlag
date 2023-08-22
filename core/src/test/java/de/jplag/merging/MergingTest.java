@@ -40,11 +40,11 @@ class MergingTest extends TestBase {
     private List<JPlagComparison> comparisonsAfter;
     private ComparisonStrategy comparisonStrategy;
     private SubmissionSet submissionSet;
-    private final int NEIGHBOR_LENGTH = 1;
-    private final int GAP_SIZE = 10;
+    private final int MINIMUM_NEIGHBOR_LENGTH = 1;
+    private final int MAXIMUM_GAP_SIZE = 10;
 
     MergingTest() throws ExitException {
-        options = getDefaultOptions("merging").withMergingOptions(new MergingOptions(true, NEIGHBOR_LENGTH, GAP_SIZE));
+        options = getDefaultOptions("merging").withMergingOptions(new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE));
 
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
@@ -79,7 +79,7 @@ class MergingTest extends TestBase {
     @Test
     @DisplayName("Test length of ignored matches after Greedy String Tiling")
     void testGSTIgnoredMatches() {
-        checkMatchLength(JPlagComparison::ignoredMatches, options.mergingOptions().neighborLength(), comparisonsBefore);
+        checkMatchLength(JPlagComparison::ignoredMatches, options.mergingOptions().minimumNeighborLength(), comparisonsBefore);
     }
 
     private void checkMatchLength(Function<JPlagComparison, List<Match>> matchFunction, int threshold, List<JPlagComparison> comparisons) {

@@ -14,12 +14,12 @@ import de.jplag.options.JPlagOptions;
 
 /**
  * This class implements a match merging algorithm which serves as a defense mechanism against obfuscation attacks.
- * Based on configurable parameters NeighborLength and GapSize, it alters prior results from pairwise submission
- * comparisons and merges all neighboring matches that fit the specified thresholds. Submissions are referred to as left
- * and right and neighboring matches as upper and lower. When neighboring matches get merged they become one and the
- * tokens separating them get removed from the submission clone. NeighborLength describes how short a match can be and
- * GapSize describes how many tokens can be between two neighboring matches. Both are set in {@link JPlagOptions} as
- * {@link MergingOptions} and default to (2,6).
+ * Based on configurable parameters MinimumNeighborLength and MaximumGapSize, it alters prior results from pairwise
+ * submission comparisons and merges all neighboring matches that fit the specified thresholds. Submissions are referred
+ * to as left and right and neighboring matches as upper and lower. When neighboring matches get merged they become one
+ * and the tokens separating them get removed from the submission clone. MinimumNeighborLength describes how short a
+ * match can be and MaximumGapSize describes how many tokens can be between two neighboring matches. Both are set in
+ * {@link JPlagOptions} as {@link MergingOptions} and default to (2,6).
  */
 public class MatchMerging {
     private JPlagOptions options;
@@ -97,7 +97,7 @@ public class MatchMerging {
             int tokensBetweenRight = lowerNeighbor.startOfSecond() - upperNeighbor.endOfSecond() - 1;
             double averageTokensBetweenMatches = (tokenBetweenLeft + tokensBetweenRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
-            if (averageTokensBetweenMatches <= options.mergingOptions().gapSize()
+            if (averageTokensBetweenMatches <= options.mergingOptions().maximumGapSize()
                     && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperNeighbor, tokenBetweenLeft, tokensBetweenRight)) {
                 globalMatches.remove(upperNeighbor);
                 globalMatches.remove(lowerNeighbor);
