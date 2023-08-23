@@ -26,6 +26,7 @@
         <module>scxml</module>
         <module>swift</module>
         <module>text</module>
+        <module>llvmir</module>
     </modules>
     <dependencies>
         <dependency>
