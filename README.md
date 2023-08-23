@@ -35,7 +35,7 @@ In the following, a list of all supported languages with their supported languag
 | [Swift](https://www.swift.org)                         |     5.4 | swift             |                                beta                                 |  ANTLR 4  |
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/) |  2.25.0 | emf               |                                beta                                 |    EMF    |
 | [EMF Model](https://www.eclipse.org/modeling/emf/)     |  2.25.0 | emf-model         |                                alpha                                |    EMF    |
-| [TypeScript](https://www.typescriptlang.org/)          | 3.7-4.9 | typescript        |                                beta                                 |  ANTLR 4  |
+| [TypeScript](https://www.typescriptlang.org/)          |      ~5 | typescript        |                                beta                                 |  ANTLR 4  |
 | Text (naive)                                           |       - | text              |                               legacy                                |  CoreNLP  |
 
 ## Download and Installation

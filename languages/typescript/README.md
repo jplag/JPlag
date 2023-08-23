@@ -10,7 +10,7 @@ It is based on the [TypeScript ANTLR4 grammar](https://github.com/antlr/grammars
 
 Since the grammar has no support for decorators the version can be estimated < 5.0. The grammar can still parse files with decorators, but can not extract a tokens for them.
 <br> The grammar can parse multiple language features from version 4.x.
-<br> It can not extract an import token for type imports introduced in version 3.8.
+<br> Because of this the version is still given as an estimated v5.
 
 If there are any major updates or fixes to the grammar<a href="#footnote-1"><sup>1</sup></a>, they should surely be applied to this module as well.
 

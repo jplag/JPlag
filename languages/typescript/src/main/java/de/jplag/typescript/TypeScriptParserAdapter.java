@@ -13,6 +13,9 @@ import de.jplag.antlr.TokenCollector;
 import de.jplag.typescript.grammar.TypeScriptLexer;
 import de.jplag.typescript.grammar.TypeScriptParser;
 
+/**
+ * The Antlr adapter used for the TypeScript language module
+ */
 public class TypeScriptParserAdapter extends AbstractAntlrParserAdapter<TypeScriptParser> {
 
     private final boolean useStrictDefault;

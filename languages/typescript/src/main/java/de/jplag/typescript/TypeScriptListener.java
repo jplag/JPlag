@@ -81,6 +81,9 @@ import java.io.File;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.TokenCollector;
 
+/**
+ * This class is responsible for mapping parsed TypeScript to the internal Token structure
+ */
 public class TypeScriptListener extends AbstractAntlrListener {
 
     public TypeScriptListener(TokenCollector collector, File currentFile) {

@@ -13,10 +13,6 @@ public class TypeScriptLanguage extends AbstractAntlrLanguage {
     private static final String IDENTIFIER = "typescript";
     private final TypeScriptLanguageOptions options = new TypeScriptLanguageOptions();
 
-    public TypeScriptLanguage() {
-        super();
-    }
-
     @Override
     public String[] suffixes() {
         return new String[] {".ts", ".js"};
