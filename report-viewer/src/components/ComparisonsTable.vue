@@ -199,7 +199,7 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
 }
 
 .tableCellNumber {
-  @apply table-cell w-12 flex-shrink-0;
+  @apply w-12 tableCell flex-shrink-0;
 }
 
 .tableCellSimilarity {
