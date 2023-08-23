@@ -79,8 +79,12 @@
 
                 <!-- Similarities -->
                 <div class="tableCellSimilarity">
-                  <div class="w-1/2">{{ (item.averageSimilarity * 100).toFixed(2) }}%</div>
-                  <div class="w-1/2">{{ (item.maximumSimilarity * 100).toFixed(2) }}%</div>
+                  <div class="w-1/2">
+                    {{ (item.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%
+                  </div>
+                  <div class="w-1/2">
+                    {{ (item.similarities[MetricType.MAXIMUM] * 100).toFixed(2) }}%
+                  </div>
                 </div>
               </RouterLink>
 
@@ -133,6 +137,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateColors } from '@/utils/ColorUtils'
+import MetricType from '@/model/MetricType'
 
 library.add(faUserGroup)
 
@@ -194,7 +199,7 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
 }
 
 .tableCellNumber {
-  @apply table-cell w-12 flex-shrink-0;
+  @apply w-12 tableCell flex-shrink-0;
 }
 
 .tableCellSimilarity {

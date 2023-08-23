@@ -20,13 +20,16 @@ public class NewJavaFeaturesTest extends TestBase {
     private static final String VERSION_MISMATCH_MESSAGE = "Using Java version %s instead of %s may skew the results.";
     private static final String VERSION_MATCH_MESSAGE = "Java version matches, but results deviate from expected values";
     private static final String JAVA_VERSION_KEY = "java.version";
+    private static final String CI_VARIABLE = "CI";
 
     @Test
     @DisplayName("test comparison of Java files with modern language features")
     public void testJavaFeatureDuplicates() throws ExitException {
         // pre-condition
         String actualJavaVersion = System.getProperty(JAVA_VERSION_KEY);
-        assumeTrue(actualJavaVersion.startsWith(EXPECTED_JAVA_VERSION), VERSION_MISMATCH_MESSAGE.formatted(actualJavaVersion, EXPECTED_JAVA_VERSION));
+        boolean isCiRun = System.getenv(CI_VARIABLE) != null;
+        boolean isCorrectJavaVersion = actualJavaVersion.startsWith(EXPECTED_JAVA_VERSION);
+        assumeTrue(isCorrectJavaVersion || isCiRun, VERSION_MISMATCH_MESSAGE.formatted(actualJavaVersion, EXPECTED_JAVA_VERSION));
 
         JPlagResult result = runJPlagWithExclusionFile(ROOT_DIRECTORY, EXCLUSION_FILE_NAME);
 

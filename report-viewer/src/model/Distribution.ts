@@ -1,11 +1,12 @@
-export default class Distribution {
-  private readonly _distribution: Array<number>
+export default abstract class Distribution {
+  protected readonly _distribution: number[]
 
-  constructor(distribution: Array<number>) {
+  constructor(distribution: number[]) {
     this._distribution = distribution
   }
 
-  get distribution(): Array<number> {
-    return this._distribution
-  }
+  /**
+   * Returns the distribution summed at every tenth percentile
+   */
+  public abstract splitIntoTenBuckets(): number[]
 }

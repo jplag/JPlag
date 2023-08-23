@@ -23,6 +23,7 @@ import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
+import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
@@ -165,11 +166,12 @@ public final class CLI {
         }
 
         ClusteringOptions clusteringOptions = getClusteringOptions(this.options);
+        MergingOptions mergingOptions = getMergingOptions(this.options);
 
         JPlagOptions jPlagOptions = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.options.advanced.subdirectory, suffixes, this.options.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.options.advanced.similarityThreshold, this.options.shownComparisons, clusteringOptions,
-                this.options.advanced.debug);
+                this.options.advanced.debug, mergingOptions);
 
         String baseCodePath = this.options.baseCode;
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
@@ -226,6 +228,10 @@ public final class CLI {
         }
 
         return clusteringOptions;
+    }
+
+    private static MergingOptions getMergingOptions(CliOptions options) {
+        return new MergingOptions(options.merging.enabled, options.merging.minimumNeighborLength, options.merging.maximumGapSize);
     }
 
     private String generateDescription() {
