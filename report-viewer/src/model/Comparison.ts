@@ -1,7 +1,7 @@
 import type { Match } from './Match'
 import type { SubmissionFile } from './SubmissionFile'
 import type { MatchInSingleFile } from './MatchInSingleFile'
-import type MetricType from './MetricType'
+import type { MetricType } from './MetricType'
 
 /**
  * Comparison model used by the ComparisonView

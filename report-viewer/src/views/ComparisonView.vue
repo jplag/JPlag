@@ -71,13 +71,13 @@ import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
-import router from '@/router'
-import MetricType from '@/model/MetricType'
+import { router } from '@/router'
+import { MetricType } from '@/model/MetricType'
 
 const props = defineProps({
   firstId: {

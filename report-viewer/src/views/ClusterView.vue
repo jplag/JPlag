@@ -30,7 +30,7 @@ import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import MetricType from '@/model/MetricType'
+import { MetricType } from '@/model/MetricType'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
 
 const props = defineProps({

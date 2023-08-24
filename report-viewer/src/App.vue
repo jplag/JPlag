@@ -23,7 +23,7 @@ import Button from './components/ButtonComponent.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
-import store from './stores/store'
+import { store } from './stores/store'
 
 library.add(faMoon)
 library.add(faSun)

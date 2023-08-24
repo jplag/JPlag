@@ -1,4 +1,4 @@
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 
 /**
  * This class provides some basic functionality for the factories.
