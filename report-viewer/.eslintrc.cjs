@@ -13,6 +13,15 @@ module.exports = {
     ecmaVersion: 'latest'
   },
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off"
-  }
+    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "no-restricted-exports": ['error', { 'restrictDefaultExports': { 'direct': true } }],
+  },
+  overrides: [
+    {
+      files: ['*.config.ts', '*.config.js', '*.d.ts'],
+      rules: {
+       "no-restricted-exports": "off"
+      }
+    }
+  ]
 }
