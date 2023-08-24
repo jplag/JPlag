@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, type PropType } from 'vue'
+import { computed, type PropType } from 'vue'
 import { BarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
@@ -100,24 +100,4 @@ const options = computed(() => {
     }
   }
 })
-
-/* We watch the given distributions parameter. When the distribution of another metric is passed, the diagram is
-  updated with the new data. */
-watch(
-  () => props.distribution,
-  (val) => {
-    chartData.value = {
-      labels: labels,
-      datasets: [
-        {
-          ...dataSetStyle.value,
-          data: val.splitIntoTenBuckets()
-        }
-      ]
-    }
-
-    maxVal.value = Math.max(...val.splitIntoTenBuckets())
-    options.value.scales.x.suggestedMax = maxVal.value + 5
-  }
-)
 </script>
