@@ -10,7 +10,7 @@
       v-for="[index, label] in labels.entries()"
       :key="label"
       class="mr-2 px-[12px] w-fit !rounded-2xl flex justify-center items-center text-center box-border h-6 hover:!border-[2px] hover:px-[11px]"
-      :class="{ '!bg-accent !border-accent-dark !bg-opacity-40': index == selected }"
+      :class="{ '!bg-accent !border-accent-dark !bg-opacity-40': index == getSelected() }"
       @click="select(index)"
     >
       {{ label }}
@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import Interactable from './InteractableComponent.vue'
-import { toRef } from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps({
   name: {
@@ -40,7 +40,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['selectionChanged'])
-const selected = toRef(props.defaultSelected)
+const selected = ref(-1)
+
+function getSelected() {
+  if (selected.value == -1) {
+    return props.defaultSelected
+  }
+  return selected.value
+}
 
 function select(index: number) {
   emit('selectionChanged', index)

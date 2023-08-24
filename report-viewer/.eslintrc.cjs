@@ -12,6 +12,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest'
   },
+  plugins: ['@typescript-eslint', 'vue'],
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "vue/no-setup-props-reactivity-loss": "error"
