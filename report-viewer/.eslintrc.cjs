@@ -13,6 +13,7 @@ module.exports = {
     ecmaVersion: 'latest'
   },
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off"
+    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "vue/no-setup-props-reactivity-loss": "error"
   }
 }
