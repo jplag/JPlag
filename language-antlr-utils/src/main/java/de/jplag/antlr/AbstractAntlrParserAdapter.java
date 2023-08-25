@@ -53,6 +53,8 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
      */
     public List<Token> parse(Set<File> files) throws ParsingException {
         List<File> filesList = new ArrayList<>(files);
+        if (files.isEmpty())
+            return new ArrayList<>();
         File firstFile = filesList.remove(0);
         TokenCollector collector = new TokenCollector(extractsSemantics, firstFile);
         parseFile(firstFile, collector);

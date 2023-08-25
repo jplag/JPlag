@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -60,7 +61,8 @@ public class AbstractAntlrListener implements ParseTreeListener {
      */
     @SuppressWarnings("unchecked")
     public <T extends ParserRuleContext> ContextVisitor<T> visit(Class<T> antlrType, Predicate<T> condition) {
-        ContextVisitor<T> visitor = new ContextVisitor<>(condition.and(rule -> rule.getClass() == antlrType), collector, variableRegistry);
+        Predicate<T> typeCheck = rule -> rule.getClass() == antlrType;
+        ContextVisitor<T> visitor = new ContextVisitor<>(typeCheck.and(condition), collector, variableRegistry);
         contextVisitors.add((ContextVisitor<ParserRuleContext>) visitor);
         return visitor;
     }
@@ -81,8 +83,9 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @param condition An additional condition for the visit.
      * @return A visitor for the node.
      */
-    public TerminalVisitor visit(int terminalType, Predicate<org.antlr.v4.runtime.Token> condition) {
-        TerminalVisitor visitor = new TerminalVisitor(condition.and(rule -> rule.getType() == terminalType), collector, variableRegistry);
+    public TerminalVisitor visit(int terminalType, Predicate<Token> condition) {
+        Predicate<Token> typeCheck = rule -> rule.getType() == terminalType;
+        TerminalVisitor visitor = new TerminalVisitor(typeCheck.and(condition), collector, variableRegistry);
         terminalVisitors.add(visitor);
         return visitor;
     }
