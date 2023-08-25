@@ -88,6 +88,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
         return this;
     }
 
+    @Override
     void exit(T entity) {
         exitHandlers.forEach(handler -> handler.accept(entity));
     }

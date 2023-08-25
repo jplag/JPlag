@@ -33,7 +33,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
      * New instance
      * @param extractsSemantics If true, the listener will extract semantics along with every token
      */
-    public AbstractAntlrParserAdapter(boolean extractsSemantics) {
+    protected AbstractAntlrParserAdapter(boolean extractsSemantics) {
         super();
         this.extractsSemantics = extractsSemantics;
     }
@@ -41,7 +41,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
     /**
      * New instance
      */
-    public AbstractAntlrParserAdapter() {
+    protected AbstractAntlrParserAdapter() {
         this(false);
     }
 
