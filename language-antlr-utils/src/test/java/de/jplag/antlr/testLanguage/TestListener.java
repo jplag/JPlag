@@ -19,17 +19,12 @@ public class TestListener extends AbstractAntlrListener {
      */
     public TestListener(TokenCollector collector, File currentFile) {
         super(collector, currentFile, true);
-
-        mapEnter(VarDefContext.class, VARDEF).addAsVariable(VariableScope.FILE, false, rule -> rule.VAR_NAME().getText())
-                .withSemantics(CodeSemantics.createKeep());
-
-        mapRange(CalcExpressionContext.class, ADDITION, rule -> rule.operator() != null && rule.operator().PLUS() != null).withControlSemantics();
-        mapRange(OperatorContext.class, SUBTRACTION, rule -> rule.MINUS() != null).withControlSemantics();
-        mapEnterExit(SubExpressionContext.class, SUB_EXPRESSION_BEGIN, SUB_EXPRESSION_END)
-                // .addEndSemanticHandler(registry -> registry.addAllNonLocalVariablesAsReads())
-                // does not work here, because there is no class context. Is still here as an example.
-                .addLocalScope().withControlSemantics();
-        mapTerminal(TestParser.NUMBER, NUMBER).withSemantics(CodeSemantics.createKeep());
-        mapEnter(VarRefContext.class, VARREF).withSemantics(CodeSemantics.createKeep());
+        visit(VarDefContext.class).map(VARDEF).withSemantics(CodeSemantics::createKeep)
+                .onEnter(rule -> variableRegistry.registerVariable(rule.VAR_NAME().getText(), VariableScope.FILE, false));
+        visit(CalcExpressionContext.class, rule -> rule.operator() != null && rule.operator().PLUS() != null).map(ADDITION).withControlSemantics();
+        visit(OperatorContext.class, rule -> rule.MINUS() != null).map(SUBTRACTION).withControlSemantics();
+        visit(SubExpressionContext.class).map(SUB_EXPRESSION_BEGIN, SUB_EXPRESSION_END).addLocalScope().withControlSemantics();
+        visit(TestParser.NUMBER).map(NUMBER).withSemantics(CodeSemantics::createKeep);
+        visit(VarDefContext.class).map(VARDEF).withSemantics(CodeSemantics::createKeep);
     }
 }

@@ -3,6 +3,7 @@ package de.jplag.antlr;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +26,25 @@ import de.jplag.util.FileUtils;
  * @param <T> The type of the antlr parser
  */
 public abstract class AbstractAntlrParserAdapter<T extends Parser> extends AbstractParser {
+
+    private final boolean extractsSemantics;
+
+    /**
+     * New instance
+     * @param extractsSemantics If true, the listener will extract semantics along with every token
+     */
+    public AbstractAntlrParserAdapter(boolean extractsSemantics) {
+        super();
+        this.extractsSemantics = extractsSemantics;
+    }
+
+    /**
+     * New instance
+     */
+    public AbstractAntlrParserAdapter() {
+        this(false);
+    }
+
     /**
      * Parsers the set of files
      * @param files The files
@@ -32,12 +52,15 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
      * @throws ParsingException If anything goes wrong
      */
     public List<Token> parse(Set<File> files) throws ParsingException {
-        TokenCollector collector = new TokenCollector();
-
-        for (File file : files) {
+        List<File> filesList = new ArrayList<>(files);
+        File firstFile = filesList.remove(0);
+        TokenCollector collector = new TokenCollector(extractsSemantics, firstFile);
+        parseFile(firstFile, collector);
+        for (File file : filesList) {
+            collector.addFileEndToken(file);  // takes the NEXT file
             parseFile(file, collector);
         }
-
+        collector.addFileEndToken(null);
         return collector.getTokens();
     }
 
@@ -54,8 +77,6 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
             for (ParseTree child : entryContext.children) {
                 treeWalker.walk(listener, child);
             }
-
-            collector.addToken(Token.fileEnd(file));
         } catch (IOException exception) {
             throw new ParsingException(file, exception.getMessage(), exception);
         }

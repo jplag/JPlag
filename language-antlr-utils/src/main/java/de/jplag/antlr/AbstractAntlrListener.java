@@ -13,7 +13,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.jplag.TokenType;
 import de.jplag.semantics.VariableRegistry;
 
 /**
@@ -23,15 +22,11 @@ import de.jplag.semantics.VariableRegistry;
  */
 @SuppressWarnings("unused")
 public class AbstractAntlrListener implements ParseTreeListener {
-    private final List<ContextTokenBuilder<ParserRuleContext>> startMappings;
-    private final List<ContextTokenBuilder<ParserRuleContext>> endMappings;
-
-    private final List<TerminalTokenBuilder> terminalMapping;
-
     private final TokenCollector collector;
     private final File currentFile;
-
-    private VariableRegistry variableRegistry;
+    private final List<ContextVisitor<ParserRuleContext>> contextVisitors;
+    private final List<TerminalVisitor> terminalVisitors;
+    protected final VariableRegistry variableRegistry;
 
     /**
      * New instance
@@ -42,15 +37,9 @@ public class AbstractAntlrListener implements ParseTreeListener {
     public AbstractAntlrListener(TokenCollector collector, File currentFile, boolean extractsSemantics) {
         this.collector = collector;
         this.currentFile = currentFile;
-
-        this.startMappings = new ArrayList<>();
-        this.endMappings = new ArrayList<>();
-
-        this.terminalMapping = new ArrayList<>();
-
-        if (extractsSemantics) {
-            this.variableRegistry = new VariableRegistry();
-        }
+        this.contextVisitors = new ArrayList<>();
+        this.terminalVisitors = new ArrayList<>();
+        this.variableRegistry = new VariableRegistry();
     }
 
     /**
@@ -62,10 +51,55 @@ public class AbstractAntlrListener implements ParseTreeListener {
         this(collector, currentFile, false);
     }
 
+    /**
+     * Visit the given node.
+     * @param antlrType The antlr type of the node.
+     * @param condition An additional condition for the visit.
+     * @return A visitor for the node.
+     * @param <T> The class of the node.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends ParserRuleContext> ContextVisitor<T> visit(Class<T> antlrType, Predicate<T> condition) {
+        ContextVisitor<T> visitor = new ContextVisitor<>(condition.and(rule -> rule.getClass() == antlrType), collector, variableRegistry);
+        contextVisitors.add((ContextVisitor<ParserRuleContext>) visitor);
+        return visitor;
+    }
+
+    /**
+     * Visit the given node.
+     * @param antlrType The antlr type of the node.
+     * @return A visitor for the node.
+     * @param <T> The class of the node.
+     */
+    public <T extends ParserRuleContext> ContextVisitor<T> visit(Class<T> antlrType) {
+        return visit(antlrType, ignore -> true);
+    }
+
+    /**
+     * Visit the given terminal.
+     * @param terminalType The type of the terminal.
+     * @param condition An additional condition for the visit.
+     * @return A visitor for the node.
+     */
+    public TerminalVisitor visit(int terminalType, Predicate<org.antlr.v4.runtime.Token> condition) {
+        TerminalVisitor visitor = new TerminalVisitor(condition.and(rule -> rule.getType() == terminalType), collector, variableRegistry);
+        terminalVisitors.add(visitor);
+        return visitor;
+    }
+
+    /**
+     * Visit the given terminal.
+     * @param terminalType The type of the terminal.
+     * @return A visitor for the node.
+     */
+    public TerminalVisitor visit(int terminalType) {
+        return visit(terminalType, ignore -> true);
+    }
+
     @Override
     public void visitTerminal(TerminalNode terminalNode) {
-        this.terminalMapping.stream().filter(mapping -> mapping.matches(terminalNode.getSymbol()))
-                .forEach(mapping -> mapping.createToken(terminalNode.getSymbol(), variableRegistry));
+        this.terminalVisitors.stream().filter(visitor -> visitor.matches(terminalNode.getSymbol()))
+                .forEach(visitor -> visitor.enter(terminalNode.getSymbol()));
     }
 
     @Override
@@ -75,144 +109,12 @@ public class AbstractAntlrListener implements ParseTreeListener {
 
     @Override
     public void enterEveryRule(ParserRuleContext rule) {
-        this.startMappings.stream().filter(mapping -> mapping.matches(rule)).forEach(mapping -> mapping.createToken(rule, variableRegistry));
+        this.contextVisitors.stream().filter(visitor -> visitor.matches(rule)).forEach(visitor -> visitor.enter(rule));
     }
 
     @Override
     public void exitEveryRule(ParserRuleContext rule) {
-        this.endMappings.stream().filter(mapping -> mapping.matches(rule)).forEach(mapping -> mapping.createToken(rule, variableRegistry));
-    }
-
-    /**
-     * Creates a mapping using the start token from antlr as the location
-     * @param antlrType The antlr context type
-     * @param jplagType The Jplag token type
-     * @param <T> The type of {@link ParserRuleContext}
-     * @return The builder for the token
-     */
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapEnter(Class<T> antlrType, TokenType jplagType) {
-        return this.mapEnter(antlrType, jplagType, it -> true);
-    }
-
-    /**
-     * Creates a mapping using the start token from antlr as the location
-     * @param antlrType The antlr context type
-     * @param jplagType The Jplag token type
-     * @param condition The condition under which the mapping applies
-     * @param <T> The type of {@link ParserRuleContext}
-     * @return The builder for the token
-     */
-    @SuppressWarnings("unchecked")
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapEnter(Class<T> antlrType, TokenType jplagType, Predicate<T> condition) {
-        ContextTokenBuilder<T> builder = initTypeBuilder(antlrType, jplagType, condition, ContextTokenBuilderType.START);
-        this.startMappings.add((ContextTokenBuilder<ParserRuleContext>) builder);
-        return builder;
-    }
-
-    /**
-     * Creates a mapping using the stop token from antlr as the location
-     * @param antlrType The antlr context type
-     * @param jplagType The Jplag token type
-     * @param <T> The type of {@link ParserRuleContext}
-     * @return The builder for the token
-     */
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapExit(Class<T> antlrType, TokenType jplagType) {
-        return this.mapExit(antlrType, jplagType, it -> true);
-    }
-
-    /**
-     * Creates a mapping using the stop token from antlr as the location
-     * @param antlrType The antlr context type
-     * @param jplagType The Jplag token type
-     * @param condition The condition under which the mapping applies
-     * @param <T> The type of {@link ParserRuleContext}
-     * @return The builder for the token
-     */
-    @SuppressWarnings("unchecked")
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapExit(Class<T> antlrType, TokenType jplagType, Predicate<T> condition) {
-        ContextTokenBuilder<T> builder = initTypeBuilder(antlrType, jplagType, condition, ContextTokenBuilderType.STOP);
-        this.endMappings.add((ContextTokenBuilder<ParserRuleContext>) builder);
-        return builder;
-    }
-
-    /**
-     * Creates a mapping using the beginning of the start token as the start location and the distance from the start to the
-     * stop token as the length
-     * @param antlrType The antlr context type
-     * @param jplagType The Jplag token type
-     * @param <T> The type of {@link ParserRuleContext}
-     * @return The builder for the token
-     */
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapRange(Class<T> antlrType, TokenType jplagType) {
-        return this.mapRange(antlrType, jplagType, it -> true);
-    }
-
-    /**
-     * Creates a mapping using the beginning of the start token as the start location and the distance from the start to the
-     * stop token as the length
-     * @param antlrType The antlr context type
-     * @param jplagType The Jplag token type
-     * @param condition The condition under which the mapping applies
-     * @param <T> The type of {@link ParserRuleContext}
-     * @return The builder for the token
-     */
-    @SuppressWarnings("unchecked")
-    protected <T extends ParserRuleContext> ContextTokenBuilder<T> mapRange(Class<T> antlrType, TokenType jplagType, Predicate<T> condition) {
-        ContextTokenBuilder<T> builder = initTypeBuilder(antlrType, jplagType, condition, ContextTokenBuilderType.RANGE);
-        this.startMappings.add((ContextTokenBuilder<ParserRuleContext>) builder);
-        return builder;
-    }
-
-    /**
-     * Creates a start mapping from antlrType to startType and a stop mapping from antlrType to stopType.
-     * @param antlrType The antlr token type
-     * @param startType The token type for the start mapping
-     * @param stopType The token type for the stop mapping
-     * @param <T> The type of {@link ParserRuleContext}
-     * @return The builder for the token
-     */
-    protected <T extends ParserRuleContext> RangeBuilder<T> mapEnterExit(Class<T> antlrType, TokenType startType, TokenType stopType) {
-        return mapEnterExit(antlrType, startType, stopType, it -> true);
-    }
-
-    /**
-     * Creates a start mapping from antlrType to startType and a stop mapping from antlrType to stopType.
-     * @param antlrType The antlr token type
-     * @param startType The token type for the start mapping
-     * @param stopType The token type for the stop mapping
-     * @param condition The condition under which the mapping applies
-     * @param <T> The type of {@link ParserRuleContext}
-     * @return The builder for the token
-     */
-    protected <T extends ParserRuleContext> RangeBuilder<T> mapEnterExit(Class<T> antlrType, TokenType startType, TokenType stopType,
-            Predicate<T> condition) {
-        ContextTokenBuilder<T> start = this.mapEnter(antlrType, startType, condition);
-        ContextTokenBuilder<T> end = this.mapExit(antlrType, stopType, condition);
-        return new RangeBuilder<>(start, end);
-    }
-
-    /**
-     * Creates a mapping for terminal tokens
-     * @param terminalType The type of the terminal node
-     * @param jplagType The jplag token type
-     * @return The builder for the token
-     */
-    protected TerminalTokenBuilder mapTerminal(int terminalType, TokenType jplagType) {
-        return this.mapTerminal(terminalType, jplagType, it -> true);
-    }
-
-    /**
-     * Creates a mapping for terminal tokens
-     * @param terminalType The type of the terminal node
-     * @param jplagType The jplag token type
-     * @param condition The condition under which the mapping applies
-     * @return The builder for the token
-     */
-    protected TerminalTokenBuilder mapTerminal(int terminalType, TokenType jplagType, Predicate<org.antlr.v4.runtime.Token> condition) {
-        TerminalTokenBuilder builder = new TerminalTokenBuilder(jplagType, token -> token.getType() == terminalType && condition.test(token),
-                this.collector, this.currentFile);
-        this.terminalMapping.add(builder);
-        return builder;
+        this.contextVisitors.stream().filter(visitor -> visitor.matches(rule)).forEach(visitor -> visitor.exit(rule));
     }
 
     /**
@@ -279,11 +181,5 @@ public class AbstractAntlrListener implements ParseTreeListener {
             }
         }
         return null;
-    }
-
-    private <T extends ParserRuleContext> ContextTokenBuilder<T> initTypeBuilder(Class<T> antlrType, TokenType jplagType, Predicate<T> condition,
-            ContextTokenBuilderType type) {
-        return new ContextTokenBuilder<>(jplagType, rule -> rule.getClass() == antlrType && condition.test(antlrType.cast(rule)), this.collector,
-                this.currentFile, type);
     }
 }
