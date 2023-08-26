@@ -70,16 +70,16 @@ public abstract class AbstractAntlrListener {
         return visit(terminalType, ignore -> true);
     }
 
-    void visitTerminal(HandlerData<Token> handlerData) {
-        this.terminalVisitors.stream().filter(visitor -> visitor.matches(handlerData.entity())).forEach(visitor -> visitor.enter(handlerData));
+    void visitTerminal(HandlerData<Token> data) {
+        this.terminalVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.enter(data));
     }
 
-    void enterEveryRule(HandlerData<ParserRuleContext> handlerData) {
-        this.contextVisitors.stream().filter(visitor -> visitor.matches(handlerData.entity())).forEach(visitor -> visitor.enter(handlerData));
+    void enterEveryRule(HandlerData<ParserRuleContext> data) {
+        this.contextVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.enter(data));
     }
 
-    void exitEveryRule(HandlerData<ParserRuleContext> handlerData) {
-        this.contextVisitors.stream().filter(visitor -> visitor.matches(handlerData.entity())).forEach(visitor -> visitor.exit(handlerData));
+    void exitEveryRule(HandlerData<ParserRuleContext> data) {
+        this.contextVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.exit(data));
     }
 
     /**

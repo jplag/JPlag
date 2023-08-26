@@ -17,6 +17,7 @@ import de.jplag.semantics.VariableRegistry;
 public abstract class AbstractVisitor<T> {
     private final Predicate<T> condition;
     private final List<Consumer<HandlerData<T>>> entryHandlers;
+    private TokenType entryTokenType;
     private Function<T, CodeSemantics> entrySemantics;
 
     /**
@@ -53,7 +54,7 @@ public abstract class AbstractVisitor<T> {
      * @return Self
      */
     public AbstractVisitor<T> mapEnter(TokenType tokenType) {
-        map(entryHandlers, tokenType, entrySemantics, this::extractEnterToken);
+        entryTokenType = tokenType;
         return this;
     }
 
@@ -111,13 +112,13 @@ public abstract class AbstractVisitor<T> {
     /**
      * Enter a given entity, injecting the needed dependencies.
      */
-    void enter(HandlerData<T> handlerData) {
-        entryHandlers.forEach(handler -> handler.accept(handlerData));
+    void enter(HandlerData<T> data) {
+        addToken(data, entryTokenType, entrySemantics, this::extractEnterToken);
+        entryHandlers.forEach(handler -> handler.accept(data));
     }
 
-    void map(List<Consumer<HandlerData<T>>> handlers, TokenType tokenType, Function<T, CodeSemantics> semantics, Function<T, Token> extractToken) {
-        handlers.add(0, handlerData -> handlerData.collector().addToken(tokenType, semantics, handlerData.entity(), extractToken,
-                handlerData.variableRegistry()));
+    void addToken(HandlerData<T> data, TokenType tokenType, Function<T, CodeSemantics> semantics, Function<T, Token> extractToken) {
+        data.collector().addToken(tokenType, semantics, data.entity(), extractToken, data.variableRegistry());
     }
 
     abstract Token extractEnterToken(T entity);
