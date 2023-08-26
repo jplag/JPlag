@@ -93,15 +93,12 @@ import static de.jplag.kotlin.grammar.KotlinParser.WhenConditionContext;
 import static de.jplag.kotlin.grammar.KotlinParser.WhenExpressionContext;
 import static de.jplag.kotlin.grammar.KotlinParser.WhileExpressionContext;
 
-import java.io.File;
-
 import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.antlr.TokenCollector;
 import de.jplag.kotlin.grammar.KotlinParser;
 
 public class KotlinListener extends AbstractAntlrListener {
-    public KotlinListener(TokenCollector collector, File currentFile) {
-        super(collector, currentFile);
+    public KotlinListener() {
+        super();
 
         visit(PackageHeaderContext.class).map(PACKAGE);
         visit(ImportHeaderContext.class).map(IMPORT);

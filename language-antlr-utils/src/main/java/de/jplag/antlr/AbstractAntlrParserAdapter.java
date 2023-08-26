@@ -71,11 +71,9 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
             Lexer lexer = this.createLexer(CharStreams.fromReader(reader));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             T parser = this.createParser(tokenStream);
-
             ParserRuleContext entryContext = this.getEntryContext(parser);
             ParseTreeWalker treeWalker = new ParseTreeWalker();
-
-            AbstractAntlrListener listener = this.createListener(collector, file);
+            InternalListener listener = new InternalListener(this.getListener(), collector);
             for (ParseTree child : entryContext.children) {
                 treeWalker.walk(listener, child);
             }
@@ -106,10 +104,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
     protected abstract ParserRuleContext getEntryContext(T parser);
 
     /**
-     * Creates the listener
-     * @param collector The token collector
-     * @param currentFile The current file
-     * @return The parser
+     * @return The listener. Should be created once statically since it never changes.
      */
-    protected abstract AbstractAntlrListener createListener(TokenCollector collector, File currentFile);
+    protected abstract AbstractAntlrListener getListener();
 }

@@ -2,10 +2,7 @@ package de.jplag.antlr;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 import org.antlr.v4.runtime.Token;
 
@@ -19,21 +16,25 @@ import de.jplag.semantics.VariableRegistry;
  */
 public abstract class AbstractVisitor<T> {
     private final Predicate<T> condition;
-    private final List<Consumer<T>> entryHandlers;
-    private final TokenCollector tokenCollector;
+    private final List<Consumer<HandlerData<T>>> entryHandlers;
     private Function<T, CodeSemantics> semanticsSupplier;
-    VariableRegistry variableRegistry;  // used in ContextVisitor
 
     /**
      * @param condition The condition for the visit.
-     * @param tokenCollector The used token collector.
-     * @param variableRegistry The used variable registry.
      */
-    AbstractVisitor(Predicate<T> condition, TokenCollector tokenCollector, VariableRegistry variableRegistry) {
+    AbstractVisitor(Predicate<T> condition) {
         this.condition = condition;
-        this.tokenCollector = tokenCollector;
         this.entryHandlers = new ArrayList<>();
-        this.variableRegistry = variableRegistry;
+    }
+
+    /**
+     * Add an action the visitor runs upon entering the entity.
+     * @param handler The action, takes the entity and the variable registry as parameter.
+     * @return Self
+     */
+    public AbstractVisitor<T> onEnter(BiConsumer<T, VariableRegistry> handler) {
+        entryHandlers.add(handlerData -> handler.accept(handlerData.entity(), handlerData.variableRegistry()));
+        return this;
     }
 
     /**
@@ -42,7 +43,7 @@ public abstract class AbstractVisitor<T> {
      * @return Self
      */
     public AbstractVisitor<T> onEnter(Consumer<T> handler) {
-        this.entryHandlers.add(handler);
+        entryHandlers.add(handlerData -> handler.accept(handlerData.entity()));
         return this;
     }
 
@@ -101,21 +102,22 @@ public abstract class AbstractVisitor<T> {
 
     /**
      * @param entity The entity to check.
-     * @return Whether the visitor should be visited.
+     * @return Whether to visit the entity.
      */
     boolean matches(T entity) {
         return this.condition.test(entity);
     }
 
-    void enter(T entity) {
-        entryHandlers.forEach(handler -> handler.accept(entity));
+    /**
+     * Enter a given entity, injecting the needed dependencies.
+     */
+    void enter(HandlerData<T> handlerData) {
+        entryHandlers.forEach(handler -> handler.accept(handlerData));
     }
 
-    void exit(T entity) {
-    }
-
-    void map(List<Consumer<T>> handlers, TokenType tokenType, Function<T, Token> extractToken) {
-        handlers.add(0, value -> tokenCollector.addToken(tokenType, semanticsSupplier, value, extractToken, variableRegistry));
+    void map(List<Consumer<HandlerData<T>>> handlers, TokenType tokenType, Function<T, Token> extractToken) {
+        handlers.add(0, handlerData -> handlerData.collector().addToken(tokenType, semanticsSupplier, handlerData.entity(), extractToken,
+                handlerData.variableRegistry()));
     }
 
     abstract Token extractEnterToken(T entity);

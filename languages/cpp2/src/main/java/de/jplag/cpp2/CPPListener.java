@@ -2,10 +2,7 @@ package de.jplag.cpp2;
 
 import static de.jplag.cpp2.CPPTokenType.*;
 
-import java.io.File;
-
 import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.antlr.TokenCollector;
 import de.jplag.cpp2.grammar.CPP14Parser;
 import de.jplag.cpp2.grammar.CPP14Parser.*;
 
@@ -18,11 +15,9 @@ import de.jplag.cpp2.grammar.CPP14Parser.*;
 public class CPPListener extends AbstractAntlrListener {
     /**
      * New instance
-     * @param collector The token collector the token will be added to
-     * @param currentFile The currently processed file
      */
-    public CPPListener(TokenCollector collector, File currentFile) {
-        super(collector, currentFile);
+    public CPPListener() {
+        super();
 
         visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END);
         visit(ClassSpecifierContext.class, rule -> rule.classHead().classKey() != null && rule.classHead().classKey().Class() != null)

@@ -2,6 +2,7 @@ package de.jplag.antlr;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -16,11 +17,21 @@ import de.jplag.semantics.VariableRegistry;
  * @param <T> The antlr type of the node.
  */
 public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor<T> {
-    private final List<Consumer<T>> exitHandlers;
+    private final List<Consumer<HandlerData<T>>> exitHandlers;
 
-    ContextVisitor(Predicate<T> condition, TokenCollector tokenCollector, VariableRegistry variableRegistry) {
-        super(condition, tokenCollector, variableRegistry);
+    ContextVisitor(Predicate<T> condition) {
+        super(condition);
         this.exitHandlers = new ArrayList<>();
+    }
+
+    /**
+     * Add an action the visitor runs upon exiting the entity.
+     * @param handler The action, takes the entity and the variable registry as parameter.
+     * @return Self
+     */
+    public AbstractVisitor<T> onExit(BiConsumer<T, VariableRegistry> handler) {
+        exitHandlers.add(handlerData -> handler.accept(handlerData.entity(), handlerData.variableRegistry()));
+        return this;
     }
 
     /**
@@ -29,7 +40,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @return Self
      */
     public AbstractVisitor<T> onExit(Consumer<T> handler) {
-        this.exitHandlers.add(handler);
+        exitHandlers.add(handlerData -> handler.accept(handlerData.entity()));
         return this;
     }
 
@@ -73,8 +84,8 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @return Self
      */
     public ContextVisitor<T> addLocalScope() {
-        onEnter(ignore -> variableRegistry.enterLocalScope());
-        onExit(ignore -> variableRegistry.exitLocalScope());
+        onEnter((ignore, variableRegistry) -> variableRegistry.enterLocalScope());
+        onExit((ignore, variableRegistry) -> variableRegistry.exitLocalScope());
         return this;
     }
 
@@ -83,14 +94,16 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @return Self
      */
     public ContextVisitor<T> addClassScope() {
-        onEnter(ignore -> variableRegistry.enterClass());
-        onExit(ignore -> variableRegistry.exitClass());
+        onEnter((ignore, variableRegistry) -> variableRegistry.enterClass());
+        onExit((ignore, variableRegistry) -> variableRegistry.exitClass());
         return this;
     }
 
-    @Override
-    void exit(T entity) {
-        exitHandlers.forEach(handler -> handler.accept(entity));
+    /**
+     * Exit a given entity, injecting the needed dependencies.
+     */
+    void exit(HandlerData<T> handlerData) {
+        exitHandlers.forEach(handler -> handler.accept(handlerData));
     }
 
     Token extractEnterToken(T entity) {

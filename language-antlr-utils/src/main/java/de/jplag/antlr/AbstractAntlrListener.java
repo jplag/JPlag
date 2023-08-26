@@ -1,6 +1,5 @@
 package de.jplag.antlr;
 
-import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,47 +8,19 @@ import java.util.function.Predicate;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
-import de.jplag.semantics.VariableRegistry;
 
 /**
- * Base class for Antlr listeners. You can use the create*Mapping functions to map antlr tokens to jplag tokens.
- * <p>
- * You should create a constructor matching one of the constructors and create your mapping after calling super.
+ * Base class for Antlr listeners. This is a quasi-static class that is only created once per language. Use by
+ * overwriting the constructor, calling super(), and then calling the visit methods.
  */
-@SuppressWarnings("unused")
-public class AbstractAntlrListener implements ParseTreeListener {
-    private final TokenCollector collector;
-    private final File currentFile;
+public abstract class AbstractAntlrListener {
     private final List<ContextVisitor<ParserRuleContext>> contextVisitors;
     private final List<TerminalVisitor> terminalVisitors;
-    protected final VariableRegistry variableRegistry;
 
-    /**
-     * New instance
-     * @param collector The token collector
-     * @param currentFile The currently processed file
-     * @param extractsSemantics If true, the listener will extract semantics along with every token
-     */
-    public AbstractAntlrListener(TokenCollector collector, File currentFile, boolean extractsSemantics) {
-        this.collector = collector;
-        this.currentFile = currentFile;
-        this.contextVisitors = new ArrayList<>();
-        this.terminalVisitors = new ArrayList<>();
-        this.variableRegistry = new VariableRegistry();
-    }
-
-    /**
-     * Creates a new AbstractAntlrListener, that does not collect semantics information
-     * @param collector The collector, obtained by the parser
-     * @param currentFile The current file, obtained by the parser
-     */
-    public AbstractAntlrListener(TokenCollector collector, File currentFile) {
-        this(collector, currentFile, false);
+    public AbstractAntlrListener() {
+        contextVisitors = new ArrayList<>();
+        terminalVisitors = new ArrayList<>();
     }
 
     /**
@@ -62,7 +33,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
     @SuppressWarnings("unchecked")
     public <T extends ParserRuleContext> ContextVisitor<T> visit(Class<T> antlrType, Predicate<T> condition) {
         Predicate<T> typeCheck = rule -> rule.getClass() == antlrType;
-        ContextVisitor<T> visitor = new ContextVisitor<>(typeCheck.and(condition), collector, variableRegistry);
+        ContextVisitor<T> visitor = new ContextVisitor<>(typeCheck.and(condition));
         contextVisitors.add((ContextVisitor<ParserRuleContext>) visitor);
         return visitor;
     }
@@ -85,7 +56,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
      */
     public TerminalVisitor visit(int terminalType, Predicate<Token> condition) {
         Predicate<Token> typeCheck = rule -> rule.getType() == terminalType;
-        TerminalVisitor visitor = new TerminalVisitor(typeCheck.and(condition), collector, variableRegistry);
+        TerminalVisitor visitor = new TerminalVisitor(typeCheck.and(condition));
         terminalVisitors.add(visitor);
         return visitor;
     }
@@ -99,25 +70,16 @@ public class AbstractAntlrListener implements ParseTreeListener {
         return visit(terminalType, ignore -> true);
     }
 
-    @Override
-    public void visitTerminal(TerminalNode terminalNode) {
-        this.terminalVisitors.stream().filter(visitor -> visitor.matches(terminalNode.getSymbol()))
-                .forEach(visitor -> visitor.enter(terminalNode.getSymbol()));
+    void visitTerminal(HandlerData<Token> handlerData) {
+        this.terminalVisitors.stream().filter(visitor -> visitor.matches(handlerData.entity())).forEach(visitor -> visitor.enter(handlerData));
     }
 
-    @Override
-    public void visitErrorNode(ErrorNode errorNode) {
-        // does nothing, because we do not handle error nodes right now.
+    void enterEveryRule(HandlerData<ParserRuleContext> handlerData) {
+        this.contextVisitors.stream().filter(visitor -> visitor.matches(handlerData.entity())).forEach(visitor -> visitor.enter(handlerData));
     }
 
-    @Override
-    public void enterEveryRule(ParserRuleContext rule) {
-        this.contextVisitors.stream().filter(visitor -> visitor.matches(rule)).forEach(visitor -> visitor.enter(rule));
-    }
-
-    @Override
-    public void exitEveryRule(ParserRuleContext rule) {
-        this.contextVisitors.stream().filter(visitor -> visitor.matches(rule)).forEach(visitor -> visitor.exit(rule));
+    void exitEveryRule(HandlerData<ParserRuleContext> handlerData) {
+        this.contextVisitors.stream().filter(visitor -> visitor.matches(handlerData.entity())).forEach(visitor -> visitor.exit(handlerData));
     }
 
     /**
@@ -129,7 +91,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @return an ancestor of the specified type, or null if not found.
      */
     @SafeVarargs
-    protected final <T extends ParserRuleContext> T getAncestor(ParserRuleContext context, Class<T> ancestor,
+    protected static <T extends ParserRuleContext> T getAncestor(ParserRuleContext context, Class<T> ancestor,
             Class<? extends ParserRuleContext>... stops) {
         ParserRuleContext currentContext = context;
         Set<Class<? extends ParserRuleContext>> forbidden = Set.of(stops);
@@ -156,7 +118,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @see #getAncestor(ParserRuleContext, Class, Class[])
      */
     @SafeVarargs
-    protected final boolean hasAncestor(ParserRuleContext context, Class<? extends ParserRuleContext> parent,
+    protected static boolean hasAncestor(ParserRuleContext context, Class<? extends ParserRuleContext> parent,
             Class<? extends ParserRuleContext>... stops) {
         return getAncestor(context, parent, stops) != null;
     }
@@ -168,7 +130,7 @@ public class AbstractAntlrListener implements ParseTreeListener {
      * @param <T> the type to search for.
      * @return the first appearance of an element of the given type in the subtree, or null if no such element exists.
      */
-    protected final <T extends ParserRuleContext> T getDescendant(ParserRuleContext context, Class<T> descendant) {
+    protected static <T extends ParserRuleContext> T getDescendant(ParserRuleContext context, Class<T> descendant) {
         // simple iterative bfs
         ArrayDeque<ParserRuleContext> queue = new ArrayDeque<>();
         queue.add(context);
