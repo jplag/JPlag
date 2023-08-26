@@ -18,7 +18,7 @@ public abstract class AbstractAntlrListener {
     private final List<ContextVisitor<ParserRuleContext>> contextVisitors;
     private final List<TerminalVisitor> terminalVisitors;
 
-    public AbstractAntlrListener() {
+    protected AbstractAntlrListener() {
         contextVisitors = new ArrayList<>();
         terminalVisitors = new ArrayList<>();
     }
