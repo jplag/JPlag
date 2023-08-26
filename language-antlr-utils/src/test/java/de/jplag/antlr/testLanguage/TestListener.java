@@ -7,10 +7,11 @@ import de.jplag.antlr.TestParser.*;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableScope;
 
-public class TestListener extends AbstractAntlrListener {
+class TestListener extends AbstractAntlrListener {
 
-    public TestListener() {
+    TestListener() {
         super();
+
         visit(VarDefContext.class).map(VARDEF).withSemantics(CodeSemantics::createKeep)
                 .onEnter((rule, variableRegistry) -> variableRegistry.registerVariable(rule.VAR_NAME().getText(), VariableScope.FILE, false));
         visit(CalcExpressionContext.class, rule -> rule.operator() != null && rule.operator().PLUS() != null).map(ADDITION).withControlSemantics();

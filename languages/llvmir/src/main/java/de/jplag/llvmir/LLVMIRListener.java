@@ -117,12 +117,9 @@ import de.jplag.antlr.AbstractAntlrListener;
  * blocks and separate tokens for different elements. These include binary and bitwise instructions, memory operations,
  * terminator instructions, conversions, global variables, type definitions, constants, and others.
  */
-public class LLVMIRListener extends AbstractAntlrListener {
+class LLVMIRListener extends AbstractAntlrListener {
 
-    /**
-     * New instance
-     */
-    public LLVMIRListener() {
+    LLVMIRListener() {
         super();
 
         visit(SourceFilenameContext.class).map(FILENAME);

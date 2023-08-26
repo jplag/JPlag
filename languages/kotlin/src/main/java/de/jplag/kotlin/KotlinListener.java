@@ -96,8 +96,9 @@ import static de.jplag.kotlin.grammar.KotlinParser.WhileExpressionContext;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.kotlin.grammar.KotlinParser;
 
-public class KotlinListener extends AbstractAntlrListener {
-    public KotlinListener() {
+class KotlinListener extends AbstractAntlrListener {
+
+    KotlinListener() {
         super();
 
         visit(PackageHeaderContext.class).map(PACKAGE);

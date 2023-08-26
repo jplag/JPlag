@@ -12,11 +12,9 @@ import de.jplag.cpp2.grammar.CPP14Parser.*;
  * <p>
  * Those cases are covered by {@link SimpleTypeSpecifierContext} and {@link SimpleDeclarationContext}
  */
-public class CPPListener extends AbstractAntlrListener {
-    /**
-     * New instance
-     */
-    public CPPListener() {
+class CPPListener extends AbstractAntlrListener {
+
+    CPPListener() {
         super();
 
         visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END);
