@@ -17,7 +17,7 @@ import de.jplag.semantics.VariableRegistry;
 public abstract class AbstractVisitor<T> {
     private final Predicate<T> condition;
     private final List<Consumer<HandlerData<T>>> entryHandlers;
-    private Function<T, CodeSemantics> semanticsSupplier;
+    private Function<T, CodeSemantics> entrySemantics;
 
     /**
      * @param condition The condition for the visit.
@@ -53,7 +53,7 @@ public abstract class AbstractVisitor<T> {
      * @return Self
      */
     public AbstractVisitor<T> mapEnter(TokenType tokenType) {
-        map(entryHandlers, tokenType, this::extractEnterToken);
+        map(entryHandlers, tokenType, entrySemantics, this::extractEnterToken);
         return this;
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractVisitor<T> {
      * @return Self
      */
     public AbstractVisitor<T> withSemantics(Function<T, CodeSemantics> semanticsSupplier) {
-        this.semanticsSupplier = semanticsSupplier;
+        this.entrySemantics = semanticsSupplier;
         return this;
     }
 
@@ -86,7 +86,7 @@ public abstract class AbstractVisitor<T> {
      * @return Self
      */
     public AbstractVisitor<T> withSemantics(Supplier<CodeSemantics> semanticsSupplier) {
-        this.semanticsSupplier = ignore -> semanticsSupplier.get();
+        this.entrySemantics = ignore -> semanticsSupplier.get();
         return this;
     }
 
@@ -96,7 +96,7 @@ public abstract class AbstractVisitor<T> {
      * @return Self
      */
     public AbstractVisitor<T> withControlSemantics() {
-        this.semanticsSupplier = ignore -> CodeSemantics.createControl();
+        withSemantics(CodeSemantics::createControl);
         return this;
     }
 
@@ -115,8 +115,8 @@ public abstract class AbstractVisitor<T> {
         entryHandlers.forEach(handler -> handler.accept(handlerData));
     }
 
-    void map(List<Consumer<HandlerData<T>>> handlers, TokenType tokenType, Function<T, Token> extractToken) {
-        handlers.add(0, handlerData -> handlerData.collector().addToken(tokenType, semanticsSupplier, handlerData.entity(), extractToken,
+    void map(List<Consumer<HandlerData<T>>> handlers, TokenType tokenType, Function<T, CodeSemantics> semantics, Function<T, Token> extractToken) {
+        handlers.add(0, handlerData -> handlerData.collector().addToken(tokenType, semantics, handlerData.entity(), extractToken,
                 handlerData.variableRegistry()));
     }
 

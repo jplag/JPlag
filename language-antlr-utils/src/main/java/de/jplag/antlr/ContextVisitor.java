@@ -2,14 +2,13 @@ package de.jplag.antlr;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.*;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
 import de.jplag.TokenType;
+import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableRegistry;
 
 /**
@@ -18,6 +17,7 @@ import de.jplag.semantics.VariableRegistry;
  */
 public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor<T> {
     private final List<Consumer<HandlerData<T>>> exitHandlers;
+    private Function<T, CodeSemantics> exitSemantics;
 
     ContextVisitor(Predicate<T> condition) {
         super(condition);
@@ -50,7 +50,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @return Self
      */
     public ContextVisitor<T> mapExit(TokenType tokenType) {
-        map(exitHandlers, tokenType, ParserRuleContext::getStop);
+        map(exitHandlers, tokenType, exitSemantics, ParserRuleContext::getStop);
         return this;
     }
 
@@ -76,6 +76,32 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      */
     public ContextVisitor<T> map(TokenType enterTokenType, TokenType exitTokenType) {
         mapEnterExit(enterTokenType, exitTokenType);
+        return this;
+    }
+
+    @Override
+    public ContextVisitor<T> withSemantics(Function<T, CodeSemantics> semantics) {
+        super.withSemantics(semantics);
+        this.exitSemantics = semantics;
+        return this;
+    }
+
+    @Override
+    public ContextVisitor<T> withSemantics(Supplier<CodeSemantics> semantics) {
+        super.withSemantics(semantics);
+        this.exitSemantics = ignore -> semantics.get();
+        return this;
+    }
+
+    /**
+     * Tell the visitor that if it generates a token upon entering the entity, it should have semantics of type loop begin,
+     * same for the exit and loop end. If it doesn't generate a token, the semantics are discarded. This is not checked and
+     * does not lead to a warning.
+     * @return Self
+     */
+    public ContextVisitor<T> withLoopSemantics() {
+        super.withSemantics(CodeSemantics::createLoopBegin);
+        this.exitSemantics = ignore -> CodeSemantics.createLoopEnd();
         return this;
     }
 
