@@ -24,10 +24,9 @@ public class TokenCollector {
     /**
      * @param extractsSemantics If semantics are extracted
      */
-    TokenCollector(boolean extractsSemantics, File initialFile) {
+    TokenCollector(boolean extractsSemantics) {
         this.collected = new ArrayList<>();
         this.extractsSemantics = extractsSemantics;
-        this.file = initialFile;
     }
 
     /**
@@ -63,14 +62,13 @@ public class TokenCollector {
         addToken(token);
     }
 
-    /**
-     * Add a file end token.
-     * @param newFile The next file, null if there isn't one.
-     */
-    void addFileEndToken(File newFile) {
+    void enterFile(File newFile) {
+        this.file = newFile;
+    }
+
+    void addFileEndToken() {
         addToken(extractsSemantics ? Token.semanticFileEnd(file) : Token.fileEnd(file));
         // don't need to update semantics because variable registry is new for every file
-        this.file = newFile;
     }
 
     private void addToken(Token token) {

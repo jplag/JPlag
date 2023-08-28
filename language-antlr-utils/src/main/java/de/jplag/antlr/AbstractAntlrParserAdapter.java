@@ -3,7 +3,6 @@ package de.jplag.antlr;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -52,21 +51,15 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
      * @throws ParsingException If anything goes wrong
      */
     public List<Token> parse(Set<File> files) throws ParsingException {
-        List<File> filesList = new ArrayList<>(files);
-        if (files.isEmpty())
-            return new ArrayList<>();
-        File firstFile = filesList.remove(0);
-        TokenCollector collector = new TokenCollector(extractsSemantics, firstFile);
-        parseFile(firstFile, collector);
-        for (File file : filesList) {
-            collector.addFileEndToken(file);  // takes the NEXT file
+        TokenCollector collector = new TokenCollector(extractsSemantics);
+        for (File file : files) {
             parseFile(file, collector);
         }
-        collector.addFileEndToken(null);
         return collector.getTokens();
     }
 
     private void parseFile(File file, TokenCollector collector) throws ParsingException {
+        collector.enterFile(file);
         try (Reader reader = FileUtils.openFileReader(file)) {
             Lexer lexer = this.createLexer(CharStreams.fromReader(reader));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -80,6 +73,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
         } catch (IOException exception) {
             throw new ParsingException(file, exception.getMessage(), exception);
         }
+        collector.addFileEndToken();
     }
 
     /**
