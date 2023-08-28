@@ -39,6 +39,11 @@ public class TokenCollector {
 
     <T> void addToken(TokenType jplagType, Function<T, CodeSemantics> semanticsSupplier, T entity,
             Function<T, org.antlr.v4.runtime.Token> extractToken, VariableRegistry variableRegistry) {
+        if (jplagType == null) {
+            if (semanticsSupplier != null)
+                logger.warning("Received semantics, but no token type, so no token was generated and the semantics discarded");
+            return;
+        }
         org.antlr.v4.runtime.Token antlrToken = extractToken.apply(entity);
         int line = antlrToken.getLine();
         int column = antlrToken.getCharPositionInLine() + 1;

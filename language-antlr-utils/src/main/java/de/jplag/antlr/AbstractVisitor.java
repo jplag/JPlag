@@ -70,8 +70,7 @@ public abstract class AbstractVisitor<T> {
     }
 
     /**
-     * Tell the visitor that if it generates a token upon entering the entity, it should have semantics. If it doesn't
-     * generate a token, the semantics are discarded. This is not checked and does not lead to a warning.
+     * Tell the visitor that if it generates a token upon entering the entity, it should have semantics.
      * @param semanticsSupplier A function that takes the entity and returns the semantics.
      * @return Self
      */
@@ -81,8 +80,7 @@ public abstract class AbstractVisitor<T> {
     }
 
     /**
-     * Tell the visitor that if it generates a token upon entering the entity, it should have semantics. If it doesn't
-     * generate a token, the semantics are discarded. This is not checked and does not lead to a warning.
+     * Tell the visitor that if it generates a token upon entering the entity, it should have semantics.
      * @param semanticsSupplier A function that returns the semantics.
      * @return Self
      */
@@ -92,8 +90,7 @@ public abstract class AbstractVisitor<T> {
     }
 
     /**
-     * Tell the visitor that if it generates a token upon entering the entity, it should have semantics of type control. If
-     * it doesn't generate a token, the semantics are discarded. This is not checked and does not lead to a warning.
+     * Tell the visitor that if it generates a token upon entering the entity, it should have semantics of type control.
      * @return Self
      */
     public AbstractVisitor<T> withControlSemantics() {

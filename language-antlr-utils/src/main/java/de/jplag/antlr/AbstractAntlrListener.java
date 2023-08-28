@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
  * Base class for Antlr listeners. This is a quasi-static class that is only created once per language. Use by
@@ -70,14 +71,23 @@ public abstract class AbstractAntlrListener {
         return visit(terminalType, ignore -> true);
     }
 
+    /**
+     * Called by {@link InternalListener#visitTerminal(TerminalNode)} as part of antlr framework.
+     */
     void visitTerminal(HandlerData<Token> data) {
         this.terminalVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.enter(data));
     }
 
+    /**
+     * Called by {@link InternalListener#enterEveryRule(ParserRuleContext)} as part of antlr framework.
+     */
     void enterEveryRule(HandlerData<ParserRuleContext> data) {
         this.contextVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.enter(data));
     }
 
+    /**
+     * Called by {@link InternalListener#exitEveryRule(ParserRuleContext)} as part of antlr framework.
+     */
     void exitEveryRule(HandlerData<ParserRuleContext> data) {
         this.contextVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.exit(data));
     }
