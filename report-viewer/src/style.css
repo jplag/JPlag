@@ -3,29 +3,29 @@
 @tailwind utilities;
 
 @layer base {
-    #app {
-        font-family: Avenir, Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-    h2 {
-        @apply text-3xl;
-    }
+  h2 {
+    @apply text-3xl;
+  }
 
-    *::-webkit-scrollbar {
-        @apply w-[6px] h-[6px] cursor-pointer;
-    }
-    *::-webkit-scrollbar-track {
-        @apply bg-scrollbar-backgorund-light dark:bg-scrollbar-backgorund-dark rounded-full border-2;
-    }
-    *::-webkit-scrollbar-thumb {
-        @apply bg-scrollbar-thumb-light dark:bg-scrollbar-thumb-dark rounded-full border-2;
-    }
+  *::-webkit-scrollbar {
+    @apply w-[6px] h-[6px] cursor-pointer;
+  }
+  *::-webkit-scrollbar-track {
+    @apply bg-scrollbar-backgorund-light dark:bg-scrollbar-backgorund-dark rounded-full border-2;
+  }
+  *::-webkit-scrollbar-thumb {
+    @apply bg-scrollbar-thumb-light dark:bg-scrollbar-thumb-dark rounded-full border-2;
+  }
 }
 
 @layer components {
-    .break-anywhere {
-        overflow-wrap: anywhere;
-    }
+  .break-anywhere {
+    overflow-wrap: anywhere;
+  }
 }
