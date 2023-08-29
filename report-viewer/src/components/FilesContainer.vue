@@ -71,6 +71,11 @@ defineEmits(['lineSelected'])
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
 
+/**
+ * Scrolls to the given file and line in the container.
+ * @param file Name of the file to scroll to.
+ * @param line Line to scroll to.
+ */
 function scrollTo(file: string, line: number) {
   console.log('scrolling to', file)
   const fileIndex = Array.from(props.files).findIndex((f) => f.fileName === file)

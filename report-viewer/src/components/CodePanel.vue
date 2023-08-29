@@ -6,9 +6,11 @@
     <div @click="collapsed = !collapsed" class="text-center font-bold">
       {{ getFileDisplayName(file) }}
     </div>
+
     <div class="mx-1 overflow-x-auto">
       <div v-if="!collapsed" class="w-fit min-w-full !text-xs">
         <table v-if="file.data.trim() !== ''" class="w-full">
+          <!-- One row in table per code line -->
           <tr
             v-for="(line, index) in codeLines"
             :key="index"
@@ -16,7 +18,9 @@
             :class="{ 'cursor-pointer': line.match !== null }"
             @click="lineSelected(index)"
           >
+            <!-- Line number -->
             <td class="float-right pr-3">{{ index + 1 }}</td>
+            <!-- Code line -->
             <td
               class="w-full"
               :style="{
@@ -27,6 +31,7 @@
             </td>
           </tr>
         </table>
+
         <div v-else class="flex flex-col items-start overflow-x-auto">
           <i>Empty File</i>
         </div>
@@ -69,19 +74,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['lineSelected'])
+
 const collapsed = ref(true)
 const lineRefs = ref<HTMLElement[]>([])
-
-function scrollTo(lineNumber: number) {
-  collapsed.value = false
-  nextTick(function () {
-    lineRefs.value[lineNumber - 1].scrollIntoView({ behavior: 'smooth', block: 'center' })
-  })
-}
-
-defineExpose({
-  scrollTo
-})
 
 const codeLines: { line: string; match: null | Match }[] = highlight(
   props.file.data,
@@ -98,6 +93,21 @@ function lineSelected(lineIndex: number) {
     emit('lineSelected', codeLines[lineIndex].match)
   }
 }
+
+/**
+ * Scrolls to the line number in the file.
+ * @param lineNumber line number in the file
+ */
+function scrollTo(lineNumber: number) {
+  collapsed.value = false
+  nextTick(function () {
+    lineRefs.value[lineNumber - 1].scrollIntoView({ behavior: 'smooth', block: 'center' })
+  })
+}
+
+defineExpose({
+  scrollTo
+})
 
 /**
  * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.

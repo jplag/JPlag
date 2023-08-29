@@ -2,11 +2,12 @@ import type { HighlightLanguage } from '@/model/Language'
 import hljs from 'highlight.js'
 
 /**
- * Hightlights the given code with the given language
- * Splits the resulting html into seperate lines
+ * Hightlights the given code with the given language.
+ * Splits the resulting html into seperate lines.
+ * The returned string is an array of html lines, consisting of spans with the hljs classes and the code.
  * Source: https://stackoverflow.com/a/70656181
- * @param code
- * @param lang
+ * @param code Code to highlight
+ * @param lang Language to highlight the code with
  * @returns
  */
 export function highlight(code: string, lang: HighlightLanguage) {
