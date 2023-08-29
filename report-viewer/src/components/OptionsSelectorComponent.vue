@@ -2,15 +2,15 @@
   Component for selecting one of multiple options.
 -->
 <template>
-  <div class="flex flex-row text-xs h-fit items-center text-center">
+  <div class="flex h-fit flex-row items-center text-center text-xs">
     <div v-if="name != ''" class="mr-3 text-base">
       {{ name }}
     </div>
     <Interactable
       v-for="[index, label] in labels.entries()"
       :key="label"
-      class="mr-2 px-[12px] w-fit !rounded-2xl flex justify-center items-center text-center box-border h-6 hover:!border-[2px] hover:px-[11px]"
-      :class="{ '!bg-accent !border-accent-dark !bg-opacity-40': index == selected }"
+      class="mr-2 box-border flex h-6 w-fit items-center justify-center !rounded-2xl px-[12px] text-center hover:!border-[2px] hover:px-[11px]"
+      :class="{ '!border-accent-dark !bg-accent !bg-opacity-40': index == selected }"
       @click="select(index)"
     >
       {{ label }}

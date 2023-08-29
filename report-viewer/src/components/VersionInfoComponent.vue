@@ -10,7 +10,7 @@
         reportViewerVersion.toString()
       }}).<br />
       Version {{ newestVersion.toString() }} is available on
-      <a href="https://github.com/jplag/JPlag/releases/latest" class="underline text-link">GitHub</a
+      <a href="https://github.com/jplag/JPlag/releases/latest" class="text-link underline">GitHub</a
       >.
     </div>
 

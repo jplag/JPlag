@@ -2,8 +2,8 @@
   A view displaying the .json file of a comparison from a JPlag report.
 -->
 <template>
-  <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-col">
-    <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
+  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
       <Container class="flex-grow overflow-hidden">
         <h2>
           Comparison:
@@ -33,7 +33,7 @@
       </Container>
     </div>
     <div ref="styleholder"></div>
-    <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5 justify-between">
+    <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
       <FilesContainer
         :container-id="1"
         :submission-id="firstId"
