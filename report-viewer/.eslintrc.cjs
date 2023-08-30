@@ -3,7 +3,7 @@ require('@rushstack/eslint-patch/modern-module-resolution')
 
 module.exports = {
   root: true,
-  'extends': [
+  extends: [
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     '@vue/eslint-config-typescript',
@@ -16,5 +16,13 @@ module.exports = {
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
     "vue/no-setup-props-reactivity-loss": "error"
-  }
+  },
+  overrides: [
+    {
+      files: ['*.html'],
+      rules: {
+        'vue/comment-directive': 'off'
+      }
+    }
+  ]
 }

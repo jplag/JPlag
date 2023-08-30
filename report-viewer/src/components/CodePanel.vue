@@ -9,16 +9,16 @@
         .concat(filePath || '')
         .concat(fileIndex?.toString() || '-1')
     "
-    class="!shadow mx-2"
+    class="mx-2 !shadow"
   >
     <div @click="$emit('toggleCollapse')" class="text-center font-bold">
       {{ title }}
     </div>
     <div class="mx-1 overflow-x-auto">
       <div :class="{ hidden: !collapse }" class="w-fit min-w-full">
-        <div v-if="!isEmpty(lines)" class="flex flex-col items-start w-full p-0">
+        <div v-if="!isEmpty(lines)" class="flex w-full flex-col items-start p-0">
           <div
-            class="flex flex-row w-full"
+            class="flex w-full flex-row"
             v-for="(line, index) in lines"
             :id="
               String(panelId)
