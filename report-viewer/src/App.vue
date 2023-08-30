@@ -1,11 +1,11 @@
 <template>
   <div :class="{ dark: store().uiState.useDarkMode }">
     <div
-      class="min-h-screen max-h-fit max-w-screen text-black dark:text-amber-50 bg-backgorund-light dark:bg-backgorund-dark"
+      class="max-w-screen max-h-fit min-h-screen bg-backgorund-light text-black dark:bg-backgorund-dark dark:text-amber-50"
     >
       <RouterView class="max-h-screen overflow-hidden" />
       <Button
-        class="absolute right-2 bottom-2 w-12 text-center h-12 flex justify-center items-center"
+        class="absolute bottom-2 right-2 flex h-12 w-12 items-center justify-center text-center"
         @click="store().changeUseDarkMode()"
       >
         <FontAwesomeIcon

@@ -4,7 +4,7 @@
 -->
 <template>
   <div class="flex flex-col">
-    <div v-if="!hasNoMember" class="flex-grow flex flex-col">
+    <div v-if="!hasNoMember" class="flex flex-grow flex-col">
       <DropDownSelector
         :options="selectedOptions"
         @selectionChanged="(value) => updateChartData(value)"
