@@ -7,7 +7,7 @@
     <div v-if="!hasNoMember" class="flex-grow flex flex-col max-h-full overflow-hidden">
       <DropDownSelector
         :options="selectedOptions"
-        @selectionChanged="(value) => updateChartData(value)"
+        @selectionChanged="(value) => (idOfShownSubmission = value)"
       />
       <div class="flex-grow min-h-0 flex justify-center">
         <Radar :data="chartData" :options="options" />
@@ -45,7 +45,7 @@ let hasNoMember = props.cluster.members.size == 0
 
 const selectedOptions = Array.from(props.cluster.members.keys())
 
-const idOfFirstSubmission = selectedOptions.length > 0 ? selectedOptions[0] : ''
+const idOfShownSubmission = ref(selectedOptions.length > 0 ? selectedOptions[0] : '')
 
 /**
  * @param member The member to create the labels for.
@@ -104,22 +104,18 @@ const radarChartOptions = computed(() => {
   }
 })
 
-const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = ref({
-  labels: createLabelsFor(idOfFirstSubmission),
-  datasets: [
-    {
-      ...radarChartStyle,
-      label: idOfFirstSubmission,
-      data: createDataSetFor(idOfFirstSubmission)
-    }
-  ]
+const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = computed(() => {
+  return {
+    labels: createLabelsFor(idOfShownSubmission.value),
+    datasets: [
+      {
+        ...radarChartStyle,
+        label: idOfShownSubmission.value,
+        data: createDataSetFor(idOfShownSubmission.value)
+      }
+    ]
+  }
 })
 
 const options = ref(radarChartOptions)
-
-function updateChartData(value: string) {
-  chartData.value.datasets[0].data = createDataSetFor(value)
-  chartData.value.datasets[0].label = value
-  chartData.value.labels = createLabelsFor(value)
-}
 </script>
