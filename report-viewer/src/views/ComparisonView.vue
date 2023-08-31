@@ -90,10 +90,10 @@ const props = defineProps({
   }
 })
 
-const comparison = ComparisonFactory.getComparison(props.firstId, props.secondId)
+const comparison = computed(() => ComparisonFactory.getComparison(props.firstId, props.secondId))
 
-const filesOfFirst = ref(comparison.filesOfFirstSubmission)
-const filesOfSecond = ref(comparison.filesOfSecondSubmission)
+const filesOfFirst = ref(comparison.value.filesOfFirstSubmission)
+const filesOfSecond = ref(comparison.value.filesOfSecondSubmission)
 
 /**
  * Collapses a file in the first files container.

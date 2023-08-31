@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import { ref, type Ref } from 'vue'
+import { computed, ref, type Ref } from 'vue'
 import LineOfCode from '@/components/LineOfCode.vue'
 import Interactable from './InteractableComponent.vue'
 
@@ -143,21 +143,26 @@ function isEmpty(lines: string[]) {
  * to scroll into vie the linked line in the linked file of the other submission.
  * Key is line number, value is id of linked line.
  */
-const linksArray: Ref<Record<number, { panel?: number; file?: string; line?: number }>> = ref({})
+const linksArray: Ref<Record<number, { panel?: number; file?: string; line?: number }>> = computed(
+  () => {
+    const links: Record<number, { panel?: number; file?: string; line?: number }> = {}
 
-// Initializing the the upper arrays.
-props.matches?.forEach((m) => {
-  for (let i = m.start; i <= m.end; i++) {
-    //assign match color to line
-    coloringArray.value[i - 1] = m.color
-    //assign link object to line.
-    linksArray.value[i - 1] = {
-      panel: m.linked_panel,
-      file: m.linked_file,
-      line: m.linked_line
-    }
+    props.matches?.forEach((m) => {
+      for (let i = m.start; i <= m.end; i++) {
+        //assign match color to line
+        coloringArray.value[i - 1] = m.color
+        //assign link object to line.
+        linksArray.value[i - 1] = {
+          panel: m.linked_panel,
+          file: m.linked_file,
+          line: m.linked_line
+        }
+      }
+    })
+
+    return links
   }
-})
+)
 
 //assign default values for all line which are not contained in matches
 for (let i = 0; i < props.lines.length; i++) {

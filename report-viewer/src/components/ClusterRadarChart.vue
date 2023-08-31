@@ -41,9 +41,9 @@ const props = defineProps({
 
 let hasNoMember = props.cluster.members.size == 0
 
-const selectedOptions = Array.from(props.cluster.members.keys())
+const selectedOptions = computed(() => Array.from(props.cluster.members.keys()))
 
-const idOfFirstSubmission = selectedOptions.length > 0 ? selectedOptions[0] : ''
+const idOfFirstSubmission = selectedOptions.value.length > 0 ? selectedOptions.value[0] : ''
 
 /**
  * @param member The member to create the labels for.
