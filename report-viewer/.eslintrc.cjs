@@ -15,9 +15,16 @@ module.exports = {
   plugins: ['@typescript-eslint', 'vue'],
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "no-restricted-exports": ['error', { 'restrictDefaultExports': { 'direct': true } }],
     "vue/no-setup-props-reactivity-loss": "error"
   },
   overrides: [
+    {
+      files: ['*.config.ts', '*.config.js', '*.d.ts'],
+      rules: {
+       "no-restricted-exports": "off"
+      }
+    },
     {
       files: ['*.html'],
       rules: {

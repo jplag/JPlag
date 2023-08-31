@@ -11,7 +11,7 @@ import { BarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '@/utils/ColorUtils'
-import type Distribution from '@/model/Distribution'
+import type { Distribution } from '@/model/Distribution'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)

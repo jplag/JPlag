@@ -164,4 +164,4 @@ const store = defineStore('store', {
   }
 })
 
-export default store
+export { store }

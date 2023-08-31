@@ -131,13 +131,13 @@
 import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { toRef } from 'vue'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateColors } from '@/utils/ColorUtils'
-import MetricType from '@/model/MetricType'
+import { MetricType } from '@/model/MetricType'
 
 library.add(faUserGroup)
 

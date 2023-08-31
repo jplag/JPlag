@@ -52,7 +52,7 @@ import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 
 const overview = OverviewFactory.getOverview()
 
