@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import Interactable from '@/components/InteractableComponent.vue'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   options: {
@@ -28,5 +28,15 @@ const props = defineProps({
 
 defineEmits(['selectionChanged'])
 
-const selectedOption = computed(() => (props.options.length > 0 ? props.options[0] : ''))
+const _selectedOption = ref('')
+
+const selectedOption = computed({
+  get: () => {
+    if (_selectedOption.value === '') {
+      return props.options[0]
+    }
+    return _selectedOption.value
+  },
+  set: (value) => (_selectedOption.value = value)
+})
 </script>
