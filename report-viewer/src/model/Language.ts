@@ -1,7 +1,7 @@
 /**
  * Enum for the language parsers JPlag supports
  */
-enum LanguageParser {
+enum ParserLanguage {
   JAVA = 'Javac based AST plugin',
   PYTHON = 'Python3 Parser',
   CPP = 'C/C++ Scanner [basic markup]',
@@ -27,10 +27,10 @@ enum LanguageParser {
  * @param language String representation of language the files were parsed with
  * @returns The LanguageParser enum value
  */
-function getLanguageParser(language: string): LanguageParser {
-  for (const key in LanguageParser) {
-    if (LanguageParser[key as keyof typeof LanguageParser] === language) {
-      return LanguageParser[key as keyof typeof LanguageParser]
+function getLanguageParser(language: string): ParserLanguage {
+  for (const key in ParserLanguage) {
+    if (ParserLanguage[key as keyof typeof ParserLanguage] === language) {
+      return ParserLanguage[key as keyof typeof ParserLanguage]
     }
   }
 
@@ -62,40 +62,40 @@ enum HighlightLanguage {
  * @param language Language the files were parsed with
  * @returns The language for highlight.js
  */
-function getHighlightLanguage(language: LanguageParser | undefined): HighlightLanguage {
+function getHighlightLanguage(language: ParserLanguage | undefined): HighlightLanguage {
   switch (language) {
-    case LanguageParser.PYTHON:
+    case ParserLanguage.PYTHON:
       return HighlightLanguage.PYTHON
-    case LanguageParser.CPP:
-    case LanguageParser.CPP2:
+    case ParserLanguage.CPP:
+    case ParserLanguage.CPP2:
       return HighlightLanguage.CPP
-    case LanguageParser.C_SHARP:
+    case ParserLanguage.C_SHARP:
       return HighlightLanguage.C_SHARP
-    case LanguageParser.EMF_METAMODEL:
-    case LanguageParser.EMF_METAMODEL_DYNAMIC:
-    case LanguageParser.EMF_MODEL:
-    case LanguageParser.SCXML:
+    case ParserLanguage.EMF_METAMODEL:
+    case ParserLanguage.EMF_METAMODEL_DYNAMIC:
+    case ParserLanguage.EMF_MODEL:
+    case ParserLanguage.SCXML:
       return HighlightLanguage.XML
-    case LanguageParser.GO:
+    case ParserLanguage.GO:
       return HighlightLanguage.GO
-    case LanguageParser.KOTLIN:
+    case ParserLanguage.KOTLIN:
       return HighlightLanguage.KOTLIN
-    case LanguageParser.R_LANG:
+    case ParserLanguage.R_LANG:
       return HighlightLanguage.R_LANG
-    case LanguageParser.RUST:
+    case ParserLanguage.RUST:
       return HighlightLanguage.RUST
-    case LanguageParser.SCALA:
+    case ParserLanguage.SCALA:
       return HighlightLanguage.SCALA
-    case LanguageParser.SCHEME:
+    case ParserLanguage.SCHEME:
       return HighlightLanguage.SCHEME
-    case LanguageParser.SWIFT:
+    case ParserLanguage.SWIFT:
       return HighlightLanguage.SWIFT
-    case LanguageParser.TEXT:
+    case ParserLanguage.TEXT:
       return HighlightLanguage.TEXT
-    case LanguageParser.JAVA:
+    case ParserLanguage.JAVA:
     default:
       return HighlightLanguage.JAVA
   }
 }
 
-export { LanguageParser, getLanguageParser, HighlightLanguage, getHighlightLanguage }
+export { ParserLanguage, getLanguageParser, HighlightLanguage, getHighlightLanguage }
