@@ -2,13 +2,13 @@
   Table which contains all of the matches for a comparison with navigation links.
 -->
 <template>
-  <div class="flex flex-row overflow-x-hidden max-w-full min-w-0 space-x-1 text-xs h-fit">
-    <Interactable class="!rounded-2xl whitespace-nowrap flex items-center text-center h-6 my-2">
+  <div class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs">
+    <Interactable class="my-2 flex h-6 items-center whitespace-nowrap !rounded-2xl text-center">
       Match Files: TokenCount
     </Interactable>
-    <div class="w-full flex flex-row space-x-1 overflow-x-auto">
+    <div class="flex w-full flex-row space-x-1 overflow-x-auto">
       <Interactable
-        class="!rounded-2xl !bg-opacity-50 whitespace-nowrap flex items-center text-center h-6 my-2"
+        class="my-2 flex h-6 items-center whitespace-nowrap !rounded-2xl !bg-opacity-50 text-center"
         :style="{ background: match.color }"
         v-for="[index, match] in matches?.entries()"
         v-bind:key="index"

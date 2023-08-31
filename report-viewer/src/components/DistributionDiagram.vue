@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, type PropType } from 'vue'
+import { computed, type PropType } from 'vue'
 import { BarChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
@@ -23,7 +23,7 @@ const props = defineProps({
   }
 })
 
-const maxVal = ref(Math.max(...props.distribution.splitIntoTenBuckets()))
+const maxVal = computed(() => Math.max(...props.distribution.splitIntoTenBuckets()))
 const labels = [
   '91-100%',
   '81-90%',
@@ -46,14 +46,16 @@ const dataSetStyle = computed(() => {
   }
 })
 
-const chartData = ref({
-  labels: labels,
-  datasets: [
-    {
-      ...dataSetStyle.value,
-      data: props.distribution.splitIntoTenBuckets()
-    }
-  ]
+const chartData = computed(() => {
+  return {
+    labels: labels,
+    datasets: [
+      {
+        ...dataSetStyle.value,
+        data: props.distribution.splitIntoTenBuckets()
+      }
+    ]
+  }
 })
 
 const options = computed(() => {
@@ -98,24 +100,4 @@ const options = computed(() => {
     }
   }
 })
-
-/* We watch the given distributions parameter. When the distribution of another metric is passed, the diagram is
-  updated with the new data. */
-watch(
-  () => props.distribution,
-  (val) => {
-    chartData.value = {
-      labels: labels,
-      datasets: [
-        {
-          ...dataSetStyle.value,
-          data: val.splitIntoTenBuckets()
-        }
-      ]
-    }
-
-    maxVal.value = Math.max(...val.splitIntoTenBuckets())
-    options.value.scales.x.suggestedMax = maxVal.value + 5
-  }
-)
 </script>

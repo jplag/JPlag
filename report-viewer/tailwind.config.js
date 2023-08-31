@@ -3,10 +3,7 @@ import colors from 'tailwindcss/colors'
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,vue}"
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,vue}'],
   theme: {
     extend: {
       colors: {
@@ -39,7 +36,7 @@ export default {
           }
         },
         scrollbar: {
-          backgorund: { 
+          backgorund: {
             light: colors.slate[100],
             dark: '#30363D'
           },
@@ -59,10 +56,9 @@ export default {
         error: '#dc322f'
       },
       borderWidth: {
-        1: '1px',
+        1: '1px'
       }
-    },
+    }
   },
-  plugins: [],
+  plugins: []
 }
-
