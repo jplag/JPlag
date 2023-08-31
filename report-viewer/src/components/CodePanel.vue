@@ -2,7 +2,7 @@
   Panel which displays a submission files with its line of code.
 -->
 <template>
-  <Interactable class="!shadow mx-2">
+  <Interactable class="mx-2 !shadow">
     <div @click="collapsed = !collapsed" class="text-center font-bold">
       {{ getFileDisplayName(file) }}
     </div>
@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import { ref, nextTick, type PropType } from 'vue'
+import { ref, nextTick, type PropType, computed, type Ref } from 'vue'
 import Interactable from './InteractableComponent.vue'
 import type { Match } from '@/model/Match'
 import type { SubmissionFile } from '@/stores/state'
@@ -78,19 +78,18 @@ const emit = defineEmits(['lineSelected'])
 const collapsed = ref(true)
 const lineRefs = ref<HTMLElement[]>([])
 
-const codeLines: { line: string; match: null | Match }[] = highlight(
-  props.file.data,
-  props.highlightLanguage
-).map((line, index) => {
-  return {
-    line,
-    match: props.matches?.find((m) => m.start <= index + 1 && index + 1 <= m.end)?.match ?? null
-  }
-})
+const codeLines: Ref<{ line: string; match: null | Match }[]> = computed(() =>
+  highlight(props.file.data, props.highlightLanguage).map((line, index) => {
+    return {
+      line,
+      match: props.matches?.find((m) => m.start <= index + 1 && index + 1 <= m.end)?.match ?? null
+    }
+  })
+)
 
 function lineSelected(lineIndex: number) {
-  if (codeLines[lineIndex].match !== null) {
-    emit('lineSelected', codeLines[lineIndex].match)
+  if (codeLines.value[lineIndex].match !== null) {
+    emit('lineSelected', codeLines.value[lineIndex].match)
   }
 }
 

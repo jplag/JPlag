@@ -2,11 +2,11 @@ package de.jplag.antlr.testLanguage;
 
 import de.jplag.antlr.AbstractAntlrLanguage;
 
-public class TestLangauge extends AbstractAntlrLanguage {
+public class TestLanguage extends AbstractAntlrLanguage {
     /**
      * New instance
      */
-    public TestLangauge() {
+    public TestLanguage() {
         super(new TestParserAdapter());
     }
 

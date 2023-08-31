@@ -7,6 +7,7 @@ public record TextTokenType(String description) implements TokenType {
         this.description = description.toLowerCase();
     }
 
+    @Override
     public String getDescription() {
         return this.description;
     }

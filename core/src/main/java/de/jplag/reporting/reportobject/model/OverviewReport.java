@@ -31,7 +31,9 @@ public record OverviewReport(
 
         @JsonProperty("execution_time") long executionTime,
 
-        @JsonProperty("metrics") List<Metric> metrics,
+        @JsonProperty("distributions") Map<String, List<Integer>> distributions,
+
+        @JsonProperty("top_comparisons") List<TopComparison> topComparisons,
 
         @JsonProperty("clusters") List<Cluster> clusters,
 

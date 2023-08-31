@@ -2,8 +2,8 @@
   A view displaying the .json file of a comparison from a JPlag report.
 -->
 <template>
-  <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-col">
-    <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
+  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
       <Container class="flex-grow overflow-hidden">
         <h2>
           Comparison:
@@ -21,7 +21,7 @@
         </h2>
         <div class="flex flex-row">
           <TextInformation label="Average Similarity"
-            >{{ (comparison.similarity * 100).toFixed(2) }}%</TextInformation
+            >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
           >
         </div>
         <MatchList
@@ -33,7 +33,7 @@
       </Container>
     </div>
     <div ref="styleholder"></div>
-    <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5 justify-between">
+    <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
       <FilesContainer
         ref="panel1"
         :files="filesOfFirst"
@@ -72,12 +72,13 @@ import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import { getHighlightLanguage } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
-import router from '@/router'
+import { router } from '@/router'
+import { MetricType } from '@/model/MetricType'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
 
 const props = defineProps({
@@ -92,10 +93,10 @@ const props = defineProps({
 })
 
 const language = OverviewFactory.getOverview().language
-const comparison = ComparisonFactory.getComparison(props.firstId, props.secondId)
+const comparison = computed(() => ComparisonFactory.getComparison(props.firstId, props.secondId))
 
-const filesOfFirst = ref(comparison.filesOfFirstSubmission)
-const filesOfSecond = ref(comparison.filesOfSecondSubmission)
+const filesOfFirst = ref(comparison.value.filesOfFirstSubmission)
+const filesOfSecond = ref(comparison.value.filesOfSecondSubmission)
 
 const panel1: Ref<typeof FilesContainer | null> = ref(null)
 const panel2: Ref<typeof FilesContainer | null> = ref(null)
@@ -105,7 +106,6 @@ const panel2: Ref<typeof FilesContainer | null> = ref(null)
  * @param file (file name)
  * @param line (line number)
  */
-
 function showMatchInFirst(match: Match) {
   panel1.value?.scrollTo(match.firstFile, match.startInFirst)
 }

@@ -23,7 +23,7 @@ import de.jplag.testutils.FileUtil;
  */
 public abstract class AbstractEmfTest {
 
-    protected static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "models");
+    protected static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "emf");
 
     protected static final String[] TEST_SUBJECTS = {"bookStore.ecore", // base metamodel
             "bookStoreExtended.ecore", // extended version of base metamodel

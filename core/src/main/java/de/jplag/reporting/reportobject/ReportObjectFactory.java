@@ -33,7 +33,6 @@ import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.jsonfactory.ToDiskWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
-import de.jplag.reporting.reportobject.model.Metric;
 import de.jplag.reporting.reportobject.model.OverviewReport;
 import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
 import de.jplag.reporting.reportobject.model.Version;
@@ -175,7 +174,7 @@ public class ReportObjectFactory {
 
         int totalComparisons = result.getAllComparisons().size();
         int numberOfMaximumComparisons = result.getOptions().maximumNumberOfComparisons();
-        int shownComparisons = totalComparisons > numberOfMaximumComparisons ? numberOfMaximumComparisons : totalComparisons;
+        int shownComparisons = Math.min(totalComparisons, numberOfMaximumComparisons);
         int missingComparisons = totalComparisons > numberOfMaximumComparisons ? (totalComparisons - numberOfMaximumComparisons) : 0;
         logger.info("Total Comparisons: {}. Comparisons in Report: {}. Omitted Comparisons: {}.", totalComparisons, shownComparisons,
                 missingComparisons);
@@ -190,7 +189,8 @@ public class ReportObjectFactory {
                 result.getOptions().minimumTokenMatch(), // matchSensitivity
                 getDate(),// dateOfExecution
                 result.getDuration(), // executionTime
-                getMetrics(result),// metrics
+                MetricMapper.getDistributions(result), // distribution
+                new MetricMapper(submissionToIdFunction).getTopComparisons(result),// topComparisons
                 clusteringResultMapper.map(result), // clusters
                 totalComparisons); // totalComparisons
 
@@ -218,16 +218,6 @@ public class ReportObjectFactory {
         Set<Submission> secondSubmissions = comparisons.stream().map(JPlagComparison::secondSubmission).collect(Collectors.toSet());
         submissions.addAll(secondSubmissions);
         return submissions;
-    }
-
-    /**
-     * Gets the used metrics in a JPlag comparison. As Max Metric is included in every JPlag run, this always include Max
-     * Metric.
-     * @return A list contains Metric DTOs.
-     */
-    private List<Metric> getMetrics(JPlagResult result) {
-        MetricMapper metricMapper = new MetricMapper(submissionToIdFunction);
-        return List.of(metricMapper.getAverageMetric(result), metricMapper.getMaxMetric(result));
     }
 
     private String getDate() {

@@ -103,6 +103,7 @@ class TokenPrinterTest {
 
         private final String description;
 
+        @Override
         public String getDescription() {
             return description;
         }

@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import type { SubmissionFile } from '@/stores/state'
 import CodePanel from '@/components/CodePanel.vue'
+import { store } from '@/stores/store'
 import Container from './ContainerComponent.vue'
 import ScrollableComponent from './ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
