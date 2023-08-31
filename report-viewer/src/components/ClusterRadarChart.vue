@@ -3,13 +3,13 @@
   participants in the cluster.
 -->
 <template>
-  <div class="flex flex-col max-h-full">
-    <div v-if="!hasNoMember" class="flex-grow flex flex-col max-h-full overflow-hidden">
+  <div class="flex max-h-full flex-col">
+    <div v-if="!hasNoMember" class="flex max-h-full flex-grow flex-col overflow-hidden">
       <DropDownSelector
         :options="selectedOptions"
         @selectionChanged="(value) => (idOfShownSubmission = value)"
       />
-      <div class="flex-grow min-h-0 flex justify-center">
+      <div class="flex min-h-0 flex-grow justify-center">
         <Radar :data="chartData" :options="options" />
       </div>
     </div>
@@ -43,9 +43,9 @@ const props = defineProps({
 
 let hasNoMember = props.cluster.members.size == 0
 
-const selectedOptions = Array.from(props.cluster.members.keys())
+const selectedOptions = computed(() => Array.from(props.cluster.members.keys()))
 
-const idOfShownSubmission = ref(selectedOptions.length > 0 ? selectedOptions[0] : '')
+const idOfShownSubmission = ref(selectedOptions.value.length > 0 ? selectedOptions.value[0] : '')
 
 /**
  * @param member The member to create the labels for.

@@ -1,14 +1,14 @@
 import { Overview } from '../Overview'
 import type { ComparisonListElement } from '../ComparisonListElement'
 import type { Cluster } from '@/model/Cluster'
-import store from '@/stores/store'
-import type { Version } from '../Version'
+import { store } from '@/stores/store'
+import { Version } from '../Version'
 import versionJson from '@/version.json'
-import Distribution from '../Distribution'
-import MetricType from '../MetricType'
+import { Distribution } from '../Distribution'
+import { MetricType } from '../MetricType'
 import { BaseFactory } from './BaseFactory'
-import HundredValueDistribution from '../HundredValueDistribution'
-import TenValueDistribution from '../TenValueDistribution'
+import { HundredValueDistribution } from '../HundredValueDistribution'
+import { TenValueDistribution } from '../TenValueDistribution'
 
 /**
  * Factory class for creating Overview objects
@@ -16,8 +16,8 @@ import TenValueDistribution from '../TenValueDistribution'
 export class OverviewFactory extends BaseFactory {
   static reportViewerVersion: Version =
     versionJson['report_viewer_version'] !== undefined
-      ? versionJson['report_viewer_version']
-      : { major: -1, minor: -1, patch: -1 }
+      ? this.extractVersion(versionJson['report_viewer_version'] as Record<string, number>)
+      : new Version(-1, -1, -1)
 
   /**
    * Gets the overview file based on the used mode (zip, local, single).
@@ -31,7 +31,9 @@ export class OverviewFactory extends BaseFactory {
    * @param json the json object
    */
   private static extractOverview(json: Record<string, unknown>): Overview {
-    const jplagVersion = this.extractVersion(json)
+    const versionField = json.jplag_version as Record<string, number>
+    const jplagVersion = this.extractVersion(versionField)
+
     OverviewFactory.compareVersions(jplagVersion, this.reportViewerVersion)
 
     const submissionFolder = json.submission_folder_path as Array<string>
@@ -61,13 +63,8 @@ export class OverviewFactory extends BaseFactory {
     )
   }
 
-  private static extractVersion(json: Record<string, unknown>): Version {
-    const versionField = json.jplag_version as Record<string, number>
-    return {
-      major: versionField.major,
-      minor: versionField.minor,
-      patch: versionField.patch
-    }
+  public static extractVersion(versionField: Record<string, number>): Version {
+    return new Version(versionField.major, versionField.minor, versionField.patch)
   }
 
   private static extractDistributions(
@@ -207,24 +204,8 @@ export class OverviewFactory extends BaseFactory {
    */
   static compareVersions(jsonVersion: Version, reportViewerVersion: Version) {
     if (sessionStorage.getItem('versionAlert') === null) {
-      if (
-        reportViewerVersion.major === 0 &&
-        reportViewerVersion.minor === 0 &&
-        reportViewerVersion.patch === 0
-      ) {
-        alert('The development version (0.0.0) of JPlag is used.')
-      }
-
-      if (
-        jsonVersion.major !== reportViewerVersion.major ||
-        jsonVersion.minor !== reportViewerVersion.minor ||
-        jsonVersion.patch !== reportViewerVersion.patch
-      ) {
-        if (
-          reportViewerVersion.major === -1 &&
-          reportViewerVersion.minor === -1 &&
-          reportViewerVersion.patch === -1
-        ) {
+      if (jsonVersion.compareTo(reportViewerVersion) !== 0) {
+        if (reportViewerVersion.isInvalid()) {
           console.warn(
             "The report viewer's version cannot be read from version.json file. Please configure it correctly."
           )
@@ -234,17 +215,9 @@ export class OverviewFactory extends BaseFactory {
           )
           alert(
             "The result's version(" +
-              jsonVersion.major +
-              '.' +
-              jsonVersion.minor +
-              '.' +
-              jsonVersion.patch +
+              jsonVersion.toString() +
               ") tag does not fit the report viewer's version(" +
-              reportViewerVersion.major +
-              '.' +
-              reportViewerVersion.minor +
-              '.' +
-              reportViewerVersion.patch +
+              reportViewerVersion.toString() +
               '). ' +
               'Trying to read it anyhow but be careful.'
           )

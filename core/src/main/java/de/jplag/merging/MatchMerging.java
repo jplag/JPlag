@@ -13,13 +13,13 @@ import de.jplag.Token;
 import de.jplag.options.JPlagOptions;
 
 /**
- * This class implements a match merging algorithm which serves as defense mechanism against obfuscation attacks. Based
- * on configurable parameters MergeBuffer and SeperatingThreshold, it alters prior results from pairwise submission
- * comparisons and merges all neighboring matches that fit the specified thresholds. Submissions are referred to as left
- * and right and neighboring matches as upper and lower. When neighboring matches get merged they become one and the
- * tokens separating them get removed from the submission clone. MergeBuffer describes how shorter a match can be than
- * the Minimum Token Match. SeperatingThreshold describes how many tokens can be between two neighboring matches. Both
- * are set in {@link JPlagOptions} as {@link MergingParameters} and default to 0 (which deactivates merging).
+ * This class implements a match merging algorithm which serves as a defense mechanism against obfuscation attacks.
+ * Based on configurable parameters MinimumNeighborLength and MaximumGapSize, it alters prior results from pairwise
+ * submission comparisons and merges all neighboring matches that fit the specified thresholds. Submissions are referred
+ * to as left and right and neighboring matches as upper and lower. When neighboring matches get merged they become one
+ * and the tokens separating them get removed from the submission clone. MinimumNeighborLength describes how short a
+ * match can be and MaximumGapSize describes how many tokens can be between two neighboring matches. Both are set in
+ * {@link JPlagOptions} as {@link MergingOptions} and default to (2,6).
  */
 public class MatchMerging {
     private JPlagOptions options;
@@ -34,7 +34,7 @@ public class MatchMerging {
 
     /**
      * Runs the internal match merging pipeline. It computes neighboring matches, merges them based on
-     * {@link MergingParameters} and removes remaining too short matches afterwards.
+     * {@link MergingOptions} and removes remaining too short matches afterwards.
      * @param result is the initially computed result object
      * @return JPlagResult containing the merged matches
      */
@@ -97,7 +97,7 @@ public class MatchMerging {
             int tokensBetweenRight = lowerNeighbor.startOfSecond() - upperNeighbor.endOfSecond() - 1;
             double averageTokensBetweenMatches = (tokenBetweenLeft + tokensBetweenRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
-            if (averageTokensBetweenMatches <= options.mergingParameters().seperatingThreshold()
+            if (averageTokensBetweenMatches <= options.mergingOptions().maximumGapSize()
                     && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperNeighbor, tokenBetweenLeft, tokensBetweenRight)) {
                 globalMatches.remove(upperNeighbor);
                 globalMatches.remove(lowerNeighbor);

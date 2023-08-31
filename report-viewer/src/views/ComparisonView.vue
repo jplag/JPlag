@@ -2,8 +2,8 @@
   A view displaying the .json file of a comparison from a JPlag report.
 -->
 <template>
-  <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-col">
-    <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
+  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
       <Container class="flex-grow overflow-hidden">
         <h2>
           Comparison:
@@ -33,7 +33,7 @@
       </Container>
     </div>
     <div ref="styleholder"></div>
-    <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5 justify-between">
+    <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
       <FilesContainer
         :container-id="1"
         :submission-id="firstId"
@@ -71,13 +71,13 @@ import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
-import router from '@/router'
-import MetricType from '@/model/MetricType'
+import { router } from '@/router'
+import { MetricType } from '@/model/MetricType'
 
 const props = defineProps({
   firstId: {
@@ -90,10 +90,10 @@ const props = defineProps({
   }
 })
 
-const comparison = ComparisonFactory.getComparison(props.firstId, props.secondId)
+const comparison = computed(() => ComparisonFactory.getComparison(props.firstId, props.secondId))
 
-const filesOfFirst = ref(comparison.filesOfFirstSubmission)
-const filesOfSecond = ref(comparison.filesOfSecondSubmission)
+const filesOfFirst = ref(comparison.value.filesOfFirstSubmission)
+const filesOfSecond = ref(comparison.value.filesOfSecondSubmission)
 
 /**
  * Collapses a file in the first files container.

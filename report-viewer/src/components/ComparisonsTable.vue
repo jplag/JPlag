@@ -10,7 +10,7 @@
         <div class="tableCellName items-center">Submissions in Comparison</div>
         <div class="tableCellSimilarity !flex-col">
           <div>Similarity</div>
-          <div class="flex flex-row w-full">
+          <div class="flex w-full flex-row">
             <div class="flex-1">Average</div>
             <div class="flex-1">Maximum</div>
           </div>
@@ -20,7 +20,7 @@
     </div>
 
     <!-- Body -->
-    <div class="overflow-hidden flex flex-col flex-grow">
+    <div class="flex flex-grow flex-col overflow-hidden">
       <DynamicScroller v-if="topComparisons.length > 0" :items="comparisonList" :min-item-size="48">
         <template v-slot="{ item, index, active }">
           <DynamicScrollerItem
@@ -46,7 +46,7 @@
                   name: 'ComparisonView',
                   params: { firstId: item.firstSubmissionId, secondId: item.secondSubmissionId }
                 }"
-                class="flex flex-row flex-grow"
+                class="flex flex-grow flex-row"
               >
                 <!-- Index in sorted list -->
                 <div class="tableCellNumber">
@@ -56,7 +56,7 @@
                 <!-- Names -->
                 <div class="tableCellName">
                   <div
-                    class="w-1/2 px-2 break-anywhere"
+                    class="break-anywhere w-1/2 px-2"
                     :class="{ 'blur-[1px]': isAnonymous(item.firstSubmissionId) }"
                   >
                     {{
@@ -66,7 +66,7 @@
                     }}
                   </div>
                   <div
-                    class="w-1/2 px-2 break-anywhere"
+                    class="break-anywhere w-1/2 px-2"
                     :class="{ 'blur-[1px]': isAnonymous(item.secondSubmissionId) }"
                   >
                     {{
@@ -100,7 +100,7 @@
                     name: 'ClusterView',
                     params: { clusterIndex: index }
                   }"
-                  class="w-full tect-center flex justify-center"
+                  class="tect-center flex w-full justify-center"
                 >
                   <div class="group relative w-fit">
                     {{ clusters?.[index].members?.length }}
@@ -110,7 +110,7 @@
                     />
                     {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
                     <div
-                      class="hidden group-hover:flex absolute z-50 top-0 left-[-400px] text-sm h-full items-center text-white bg-gray-950 bg-opacity-90 px-2 rounded-sm tooltipArrow"
+                      class="tooltipArrow absolute left-[-400px] top-0 z-50 hidden h-full items-center rounded-sm bg-gray-950 bg-opacity-90 px-2 text-sm text-white group-hover:flex"
                     >
                       {{ clusters?.[index].members?.length }} submissions in cluster with average
                       similarity of
@@ -131,13 +131,13 @@
 import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { toRef } from 'vue'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateColors } from '@/utils/ColorUtils'
-import MetricType from '@/model/MetricType'
+import { MetricType } from '@/model/MetricType'
 
 library.add(faUserGroup)
 
@@ -199,23 +199,23 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
 }
 
 .tableCellNumber {
-  @apply table-cell w-12 flex-shrink-0;
+  @apply tableCell w-12 flex-shrink-0;
 }
 
 .tableCellSimilarity {
-  @apply w-40 tableCell flex-shrink-0;
+  @apply tableCell w-40 flex-shrink-0;
 }
 
 .tableCellCluster {
-  @apply w-32 tableCell flex-shrink-0;
+  @apply tableCell w-32 flex-shrink-0;
 }
 
 .tableCellName {
-  @apply flex-grow tableCell;
+  @apply tableCell flex-grow;
 }
 
 .tableCell {
-  @apply text-center mx-3 flex flex-row justify-center items-center;
+  @apply mx-3 flex flex-row items-center justify-center text-center;
 }
 
 /* Tooltip arrow. Defined down here bacause of the content attribute */
