@@ -78,7 +78,6 @@ const codePanels: Ref<(typeof CodePanel)[]> = ref([])
  * @param line Line to scroll to.
  */
 function scrollTo(file: string, line: number) {
-  console.log('scrolling to', file)
   const fileIndex = Array.from(props.files).findIndex((f) => f.fileName === file)
   if (fileIndex !== -1) {
     codePanels.value[fileIndex].scrollTo(line)

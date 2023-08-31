@@ -18,7 +18,8 @@ enum LanguageParser {
   SCHEME = 'SchemeR4RS Parser [basic markup]',
   SWIFT = 'Swift Parser',
   TEXT = 'Text Parser (naive)',
-  SCXML = 'SCXML (Statechart XML)'
+  SCXML = 'SCXML (Statechart XML)',
+  LLVM = 'LLVMIR Parser'
 }
 
 /**
