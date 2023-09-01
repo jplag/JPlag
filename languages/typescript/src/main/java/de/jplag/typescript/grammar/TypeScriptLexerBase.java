@@ -8,8 +8,8 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 
 /**
- * Copied from https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/Java.
- * Slightly modified to fit JPlag code style
+ * Copied from https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/Java. Slightly modified to fit
+ * JPlag code style
  */
 abstract class TypeScriptLexerBase extends Lexer {
     /**
@@ -123,10 +123,10 @@ abstract class TypeScriptLexerBase extends Lexer {
 
         return switch (this.lastToken.getType()) {
             case TypeScriptLexer.Identifier, TypeScriptLexer.NullLiteral, TypeScriptLexer.BooleanLiteral, TypeScriptLexer.This, TypeScriptLexer.CloseBracket, TypeScriptLexer.CloseParen, TypeScriptLexer.OctalIntegerLiteral, TypeScriptLexer.DecimalLiteral, TypeScriptLexer.HexIntegerLiteral, TypeScriptLexer.StringLiteral, TypeScriptLexer.PlusPlus, TypeScriptLexer.MinusMinus ->
-                // After any of the tokens above, no regex literal can follow.
+                    // After any of the tokens above, no regex literal can follow.
                     false;
             default ->
-                // In all other cases, a regex literal _is_ possible.
+                    // In all other cases, a regex literal _is_ possible.
                     true;
         };
     }
