@@ -77,6 +77,9 @@ const options = computed(() => {
         suggestedMax: maxVal.value + 5,
         type: props.xScale,
         ticks: {
+          // ensures that in log mode tick labels are not overlappein
+          minRotation: props.xScale === 'logarithmic' ? 30 : 0,
+          autoSkipPadding: 10,
           color: graphColors.ticksAndFont.value,
           // ensures that in log mode only integer values are shown
           callback: function (value: any) {
