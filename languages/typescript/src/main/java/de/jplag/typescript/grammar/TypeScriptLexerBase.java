@@ -8,7 +8,8 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Token;
 
 /**
- * Copied from https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/Java
+ * Copied from https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/Java.
+ * Slightly modified to fit JPlag code style
  */
 abstract class TypeScriptLexerBase extends Lexer {
     /**
@@ -34,7 +35,7 @@ abstract class TypeScriptLexerBase extends Lexer {
 
     private int openBracesCount = 0;
 
-    public TypeScriptLexerBase(CharStream input) {
+    protected TypeScriptLexerBase(CharStream input) {
         super(input);
     }
 
@@ -47,15 +48,15 @@ abstract class TypeScriptLexerBase extends Lexer {
         useStrictCurrent = value;
     }
 
-    public boolean IsStrictMode() {
+    public boolean isStrictMode() {
         return useStrictCurrent;
     }
 
-    public void StartTemplateString() {
+    public void startTemplateString() {
         this.openBracesCount = 0;
     }
 
-    public boolean IsInTemplateString() {
+    public boolean isInTemplateString() {
         return this.templateDepth > 0 && this.openBracesCount == 0;
     }
 
@@ -77,41 +78,42 @@ abstract class TypeScriptLexerBase extends Lexer {
         return next;
     }
 
-    protected void ProcessOpenBrace() {
+    protected void processOpenBrace() {
         openBracesCount++;
-        useStrictCurrent = scopeStrictModes.size() > 0 && scopeStrictModes.peek() || useStrictDefault;
+        useStrictCurrent = !scopeStrictModes.isEmpty() && scopeStrictModes.peek() || useStrictDefault;
         scopeStrictModes.push(useStrictCurrent);
     }
 
-    protected void ProcessCloseBrace() {
+    protected void processCloseBrace() {
         openBracesCount--;
-        useStrictCurrent = scopeStrictModes.size() > 0 ? scopeStrictModes.pop() : useStrictDefault;
+        useStrictCurrent = scopeStrictModes.isEmpty() ? useStrictDefault : scopeStrictModes.pop();
     }
 
-    protected void ProcessStringLiteral() {
+    protected void processStringLiteral() {
         if (lastToken == null || lastToken.getType() == TypeScriptLexer.OpenBrace) {
             String text = getText();
             if (text.equals("\"use strict\"") || text.equals("'use strict'")) {
-                if (scopeStrictModes.size() > 0)
+                if (!scopeStrictModes.isEmpty()) {
                     scopeStrictModes.pop();
+                }
                 useStrictCurrent = true;
-                scopeStrictModes.push(useStrictCurrent);
+                scopeStrictModes.push(true);
             }
         }
     }
 
-    protected void IncreaseTemplateDepth() {
+    protected void increaseTemplateDepth() {
         this.templateDepth++;
     }
 
-    protected void DecreaseTemplateDepth() {
+    protected void decreaseTemplateDepth() {
         this.templateDepth--;
     }
 
     /**
      * Returns {@code true} if the lexer can match a regex literal.
      */
-    protected boolean IsRegexPossible() {
+    protected boolean isRegexPossible() {
 
         if (this.lastToken == null) {
             // No token has been produced yet: at the start of the input,
@@ -119,24 +121,13 @@ abstract class TypeScriptLexerBase extends Lexer {
             return true;
         }
 
-        switch (this.lastToken.getType()) {
-            case TypeScriptLexer.Identifier:
-            case TypeScriptLexer.NullLiteral:
-            case TypeScriptLexer.BooleanLiteral:
-            case TypeScriptLexer.This:
-            case TypeScriptLexer.CloseBracket:
-            case TypeScriptLexer.CloseParen:
-            case TypeScriptLexer.OctalIntegerLiteral:
-            case TypeScriptLexer.DecimalLiteral:
-            case TypeScriptLexer.HexIntegerLiteral:
-            case TypeScriptLexer.StringLiteral:
-            case TypeScriptLexer.PlusPlus:
-            case TypeScriptLexer.MinusMinus:
+        return switch (this.lastToken.getType()) {
+            case TypeScriptLexer.Identifier, TypeScriptLexer.NullLiteral, TypeScriptLexer.BooleanLiteral, TypeScriptLexer.This, TypeScriptLexer.CloseBracket, TypeScriptLexer.CloseParen, TypeScriptLexer.OctalIntegerLiteral, TypeScriptLexer.DecimalLiteral, TypeScriptLexer.HexIntegerLiteral, TypeScriptLexer.StringLiteral, TypeScriptLexer.PlusPlus, TypeScriptLexer.MinusMinus ->
                 // After any of the tokens above, no regex literal can follow.
-                return false;
-            default:
+                    false;
+            default ->
                 // In all other cases, a regex literal _is_ possible.
-                return true;
-        }
+                    true;
+        };
     }
 }
