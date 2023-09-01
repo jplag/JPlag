@@ -9,7 +9,11 @@
 
     <div class="mx-1 overflow-x-auto">
       <div v-if="!collapsed" class="w-fit min-w-full !text-xs">
-        <table v-if="file.data.trim() !== ''" class="w-full">
+        <table
+          v-if="file.data.trim() !== ''"
+          class="w-full"
+          :aria-describedby="`Content of file ${file.fileName}`"
+        >
           <!-- One row in table per code line -->
           <tr
             v-for="(line, index) in codeLines"
@@ -100,7 +104,7 @@ function lineSelected(lineIndex: number) {
 function scrollTo(lineNumber: number) {
   collapsed.value = false
   nextTick(function () {
-    lineRefs.value[lineNumber - 1].scrollIntoView({ behavior: 'smooth', block: 'center' })
+    lineRefs.value[lineNumber - 1].scrollIntoView({ block: 'center' })
   })
 }
 
