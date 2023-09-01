@@ -40,6 +40,6 @@ public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
     @Override
     protected TypeScriptParserAdapter initializeParser() {
-        return new TypeScriptParserAdapter(getOptions().useStrictDefault.getValue());
+        return new TypeScriptParserAdapter(getOptions().useStrictDefault());
     }
 }
