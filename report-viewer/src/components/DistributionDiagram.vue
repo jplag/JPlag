@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type Prop, type PropType } from 'vue'
+import { computed, type PropType } from 'vue'
 import { Bar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
@@ -77,7 +77,13 @@ const options = computed(() => {
         suggestedMax: maxVal.value + 5,
         type: props.xScale,
         ticks: {
-          color: graphColors.ticksAndFont.value
+          color: graphColors.ticksAndFont.value,
+          // ensures that in log mode only integer values are shown
+          callback: function (value: any) {
+            if (value % 1 === 0) {
+              return value
+            }
+          }
         },
         grid: {
           color: graphColors.gridLines.value
