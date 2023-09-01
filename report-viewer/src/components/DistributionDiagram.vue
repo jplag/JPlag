@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type PropType } from 'vue'
+import { computed, type Prop, type PropType } from 'vue'
 import { Bar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
@@ -22,6 +22,11 @@ const props = defineProps({
   distribution: {
     type: Object as PropType<Distribution>,
     required: true
+  },
+  xScale: {
+    type: String as PropType<'linear' | 'logarithmic'>,
+    required: false,
+    default: 'linear'
   }
 })
 
@@ -70,6 +75,7 @@ const options = computed(() => {
         //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
         //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
         suggestedMax: maxVal.value + 5,
+        type: props.xScale,
         ticks: {
           color: graphColors.ticksAndFont.value
         },
