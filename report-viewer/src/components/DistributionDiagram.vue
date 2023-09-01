@@ -2,12 +2,14 @@
   Bar diagram, displaying the distribution for the selected metric.
 -->
 <template>
-  <BarChart :chartData="chartData" :options="options" />
+  <div>
+    <Bar :data="chartData" :options="options" />
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed, type PropType } from 'vue'
-import { BarChart } from 'vue-chart-3'
+import { Bar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '@/utils/ColorUtils'
@@ -62,7 +64,7 @@ const options = computed(() => {
   return {
     responsive: true,
     maintainAspectRatio: false,
-    indexAxis: 'y',
+    indexAxis: 'y' as 'y',
     scales: {
       x: {
         //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
@@ -88,10 +90,10 @@ const options = computed(() => {
       datalabels: {
         color: graphColors.ticksAndFont.value,
         font: {
-          weight: 'bold'
+          weight: 'bold' as 'bold'
         },
-        anchor: 'end',
-        align: 'end',
+        anchor: 'end' as 'end',
+        align: 'end' as 'end',
         clamp: true
       },
       legend: {
