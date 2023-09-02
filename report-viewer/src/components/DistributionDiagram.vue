@@ -86,9 +86,7 @@ const options = computed(() => {
           color: graphColors.ticksAndFont.value,
           // ensures that in log mode ticks are placed evenly appart
           callback: function (value: any) {
-            console.log(value)
             if (props.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
-              console.log('match')
               return value
             }
             if (props.xScale !== 'logarithmic') {
