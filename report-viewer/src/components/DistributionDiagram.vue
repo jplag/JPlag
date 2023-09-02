@@ -74,16 +74,24 @@ const options = computed(() => {
       x: {
         //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
         //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
-        suggestedMax: maxVal.value + 5,
+        suggestedMax:
+          props.xScale === 'linear'
+            ? maxVal.value + 5
+            : 10 ** Math.ceil(Math.log10(maxVal.value + 5)),
         type: props.xScale,
         ticks: {
           // ensures that in log mode tick labels are not overlappein
           minRotation: props.xScale === 'logarithmic' ? 30 : 0,
           autoSkipPadding: 10,
           color: graphColors.ticksAndFont.value,
-          // ensures that in log mode only integer values are shown
+          // ensures that in log mode ticks are placed evenly appart
           callback: function (value: any) {
-            if (value % 1 === 0) {
+            console.log(value)
+            if (props.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
+              console.log('match')
+              return value
+            }
+            if (props.xScale !== 'logarithmic') {
               return value
             }
           }
