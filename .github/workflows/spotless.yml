@@ -4,6 +4,18 @@ on:
   push: 
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/spotless.yml"
+      - "cli/**"
+      - "core/**"
+      - "endtoend-testing/**"
+      - "language-antlr-utils/**"
+      - "language-api/**"
+      - "language-testutils/**"
+      - "languages/**"
+      - "pom.xml"
+      - "formatter.xml"
+      - "spotless.importorder"
   
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
