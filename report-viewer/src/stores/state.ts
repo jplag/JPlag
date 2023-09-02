@@ -59,7 +59,6 @@ export interface LoadConfiguration {
   local: boolean
   zip: boolean
   single: boolean
-  fileString: string
 }
 
 export interface UIState {

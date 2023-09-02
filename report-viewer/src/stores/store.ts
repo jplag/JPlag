@@ -153,7 +153,13 @@ const store = defineStore('store', {
       this.state.localModeUsed = payload.local
       this.state.zipModeUsed = payload.zip
       this.state.singleModeUsed = payload.single
-      this.state.singleFillRawContent = payload.fileString
+    },
+    /**
+     * Sets the raw content of the single file mode
+     * @param payload Raw content of the single file mode
+     */
+    setSingleFileRawContent(payload: string) {
+      this.state.singleFillRawContent = payload
     },
     /**
      * Switches whether darkMode is being used for the UI
