@@ -2,6 +2,16 @@ name: Build
 
 on:
   push: 
+    paths:
+      - ".github/workflows/maven-build.yml"
+      - "cli/**"
+      - "core/**"
+      - "endtoend-testing/**"
+      - "language-antlr-utils/**"
+      - "language-api/**"
+      - "language-testutils/**"
+      - "languages/**"
+      - "pom.xml"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
