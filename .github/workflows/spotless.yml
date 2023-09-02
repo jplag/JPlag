@@ -1,7 +1,19 @@
 name: Spotless Style Check
 
 on:
-  push: 
+  push:
+    paths:
+      - ".github/workflows/spotless.yml"
+      - "cli/**"
+      - "core/**"
+      - "endtoend-testing/**"
+      - "language-antlr-utils/**"
+      - "language-api/**"
+      - "language-testutils/**"
+      - "languages/**"
+      - "pom.xml"
+      - "formatter.xml"
+      - "spotless.importorder"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
