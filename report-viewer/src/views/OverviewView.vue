@@ -92,7 +92,7 @@ import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
 
-const overview = OverviewFactory.getOverview()
+const overview = await OverviewFactory.getOverview()
 
 const searchString = ref('')
 const comparisonTableSortingMetric = ref(MetricType.AVERAGE)

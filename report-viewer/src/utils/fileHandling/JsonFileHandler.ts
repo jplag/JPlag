@@ -9,7 +9,6 @@ export class JsonFileHandler extends FileHandler {
     file: Blob
   ): Promise<{ fileType: 'overview' } | { fileType: 'comparison'; id1: string; id2: string }> {
     const content = await file.text()
-    console.log(content)
     const json = JSON.parse(content)
 
     store().setSingleFileRawContent(content)

@@ -11,13 +11,13 @@ import { MetricType } from '../MetricType'
  * Factory class for creating Comparison objects
  */
 export class ComparisonFactory extends BaseFactory {
-  public static getComparison(id1: string, id2: string) {
+  public static async getComparison(id1: string, id2: string): Promise<Comparison> {
     const filePath = store().getComparisonFileName(id1, id2)
     if (!filePath) {
       throw new Error('Comparison file not specified')
     }
 
-    return this.extractComparison(JSON.parse(this.getFile(filePath)))
+    return this.extractComparison(JSON.parse(await this.getFile(filePath)))
   }
 
   /**
@@ -27,9 +27,9 @@ export class ComparisonFactory extends BaseFactory {
   private static extractComparison(json: Record<string, unknown>): Comparison {
     const firstSubmissionId = json.id1 as string
     const secondSubmissionId = json.id2 as string
-    if (store().state.localModeUsed) {
+    if (store().state.localModeUsed && !store().state.zipModeUsed) {
       this.loadSubmissionFilesFromLocal(firstSubmissionId)
-      this.loadSubmissionFilesFromLocal(json.id2 as string)
+      this.loadSubmissionFilesFromLocal(secondSubmissionId)
     }
     const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
@@ -103,21 +103,21 @@ export class ComparisonFactory extends BaseFactory {
     return map
   }
 
-  private static getSubmissionFileListFromLocal(submissionId: string): string[] {
-    return JSON.parse(this.getLocalFile(`submissionFileIndex.json`)).submission_file_indexes[
-      submissionId
-    ].map((file: string) => slash(file))
+  private static async getSubmissionFileListFromLocal(submissionId: string): Promise<string[]> {
+    return JSON.parse(
+      await this.getLocalFile(`submissionFileIndex.json`).then((file) => file.text())
+    ).submission_file_indexes[submissionId].map((file: string) => slash(file))
   }
 
-  private static loadSubmissionFilesFromLocal(submissionId: string) {
+  private static async loadSubmissionFilesFromLocal(submissionId: string) {
     try {
-      const fileList = this.getSubmissionFileListFromLocal(submissionId)
+      const fileList = await this.getSubmissionFileListFromLocal(submissionId)
       for (const filePath of fileList) {
         store().saveSubmissionFile({
           name: submissionId,
           file: {
             fileName: slash(filePath),
-            data: this.getLocalFile(`files/${filePath}`)
+            data: await this.getLocalFile(`files/${filePath}`).then((file) => file.text())
           }
         })
       }

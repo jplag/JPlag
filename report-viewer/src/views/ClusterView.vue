@@ -40,7 +40,7 @@ const props = defineProps({
   }
 })
 
-const overview = OverviewFactory.getOverview()
+const overview = await OverviewFactory.getOverview()
 const cluster = overview.clusters[props.clusterIndex]
 const comparisons = [] as Array<ComparisonListElement>
 const clusterMemberList = new Map() as ClusterListElementMember

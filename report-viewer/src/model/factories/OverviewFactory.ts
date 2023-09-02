@@ -22,8 +22,8 @@ export class OverviewFactory extends BaseFactory {
   /**
    * Gets the overview file based on the used mode (zip, local, single).
    */
-  public static getOverview(): Overview {
-    return this.extractOverview(JSON.parse(this.getFile('overview.json')))
+  public static async getOverview(): Promise<Overview> {
+    return this.extractOverview(JSON.parse(await this.getFile('overview.json')))
   }
 
   /**

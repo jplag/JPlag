@@ -90,10 +90,12 @@ const props = defineProps({
   }
 })
 
-const comparison = computed(() => ComparisonFactory.getComparison(props.firstId, props.secondId))
+// This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the pafe anyway.
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
+const comparison = await ComparisonFactory.getComparison(props.firstId, props.secondId)
 
-const filesOfFirst = ref(comparison.value.filesOfFirstSubmission)
-const filesOfSecond = ref(comparison.value.filesOfSecondSubmission)
+const filesOfFirst = ref(comparison.filesOfFirstSubmission)
+const filesOfSecond = ref(comparison.filesOfSecondSubmission)
 
 /**
  * Collapses a file in the first files container.

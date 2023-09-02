@@ -32,7 +32,7 @@
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
-        <Button class="mx-auto mt-8 w-fit" @click="continueWithLocal" v-if="hasLocalFile">
+        <Button class="mx-auto mt-8 w-fit" @click="continueWithLocal" v-if="localFiles !== 'none'">
           Continue with local files
         </Button>
       </div>
@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import { store } from '@/stores/store'
@@ -58,9 +58,22 @@ import { JsonFileHandler } from '@/utils/fileHandling/JsonFileHandler'
 import { ZipFileHandler } from '@/utils/fileHandling/ZipFileHandler'
 
 store().clearStore()
-const hasLocalFile = ref(false)
+const localFiles: Ref<'json' | 'zip' | 'none'> = ref('none')
 // Checks whether local files exist
-fetch('/files/overview.json').then((response) => (hasLocalFile.value = response.status == 200))
+fetch('/files/overview.json')
+  .then((response) => {
+    if (response.status == 200) {
+      localFiles.value = 'json'
+    }
+  })
+  .catch(() => {})
+fetch('/results.zip')
+  .then((response) => {
+    if (response.status == 200) {
+      localFiles.value = 'zip'
+    }
+  })
+  .catch(() => {})
 
 const loadingFiles = ref(false)
 
@@ -202,7 +215,7 @@ async function loadQueryFile(url: URL) {
 function continueWithLocal() {
   store().setLoadingType({
     local: true,
-    zip: false,
+    zip: localFiles.value === 'zip',
     single: false
   })
   navigateToOverview()
