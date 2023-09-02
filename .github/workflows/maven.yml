@@ -3,7 +3,7 @@ name: Build
 on:
   push: 
     paths:
-      - ".github/workflows/maven-build.yml"
+      - ".github/workflows/maven.yml"
       - "cli/**"
       - "core/**"
       - "endtoend-testing/**"
@@ -15,7 +15,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - ".github/workflows/maven-build.yml"
+      - ".github/workflows/maven.yml"
       - "cli/**"
       - "core/**"
       - "endtoend-testing/**"
