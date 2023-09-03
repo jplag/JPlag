@@ -1,15 +1,11 @@
 import { test, expect } from '@playwright/test'
+import { uploadFile } from './TestUtils'
 
 test('Test comparison table and comparsion view', async ({ page }) => {
   await page.goto('/')
 
-  // upload zip through file chooser
-  const fileChooserPromise = page.waitForEvent('filechooser')
-  await page.getByText('Drag and Drop zip/Json file on this page').click()
-  const fileChooser = await fileChooserPromise
-  await fileChooser.setFiles('tests/e2e/assets/result_small_cluster.zip')
+  await uploadFile('result_small_cluster.zip', page)
 
-  await page.waitForURL('/overview')
   // check for elements in average similarity table
   const bodyOverviewAverageSorted = await page.locator('body').textContent()
   expect(bodyOverviewAverageSorted).toContain('1CA')
