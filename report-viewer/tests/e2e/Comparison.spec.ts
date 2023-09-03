@@ -7,37 +7,36 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   await uploadFile('result_small_cluster.zip', page)
 
   // check for elements in average similarity table
-  const bodyOverviewAverageSorted = await page.locator('body').textContent()
-  expect(bodyOverviewAverageSorted).toContain('1CA')
-  expect(bodyOverviewAverageSorted).toContain('2DC')
+  const comparisonTableAverageSorted = await page.getByText('Cluster1').textContent()
+  expect(comparisonTableAverageSorted).toContain('1CA')
+  expect(comparisonTableAverageSorted).toContain('2DC')
 
   await page.getByText('Maximum Similarity').click()
   // check for elements in maximum similarity table
-  const bodyOverviewMaxSorted = await page.locator('body').textContent()
-  expect(bodyOverviewMaxSorted).toContain('1CA')
-  expect(bodyOverviewMaxSorted).toContain('2BC')
+  const comparisonTableMaxSorted = await page.getByText('Cluster1').textContent()
+  expect(comparisonTableMaxSorted).toContain('1CA')
+  expect(comparisonTableMaxSorted).toContain('2BC')
 
   await page.getByText('Hide All').click()
   // check for elements being hidden
-  const bodyOverviewHidden = await page.locator('body').textContent()
-  expect(bodyOverviewHidden).toContain('1HiddenHidden')
-  expect(bodyOverviewHidden).toContain('3HiddenHidden')
-  expect(bodyOverviewHidden).toContain('4HiddenHidden')
+  const comparisonTableOverviewHidden = await page.getByText('Cluster1').textContent()
+  expect(comparisonTableOverviewHidden).toContain('1HiddenHidden')
+  expect(comparisonTableOverviewHidden).toContain('3HiddenHidden')
+  expect(comparisonTableOverviewHidden).toContain('4HiddenHidden')
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('A')
   // check for elements being unhidden and filtered
-  await page.waitForTimeout(1000)
-  const bodyOverviewFilteredA = await page.locator('body').textContent()
-  expect(bodyOverviewFilteredA).toContain('1HiddenA')
-  expect(bodyOverviewFilteredA).toContain('3HiddenA')
+  const comparisonTableOverviewFilteredA = await page.getByText('Cluster1').textContent()
+  expect(comparisonTableOverviewFilteredA).toContain('1HiddenA')
+  expect(comparisonTableOverviewFilteredA).toContain('3HiddenA')
   // we cant check for 4Hidden because the dynamic scroller just moves it of screen, so the text is still there but not visible
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('A C')
   // check for elements being unhidden and filtered
-  const bodyOverviewFilteredAC = await page.locator('body').textContent()
-  expect(bodyOverviewFilteredAC).toContain('1CA')
-  expect(bodyOverviewFilteredAC).toContain('3HiddenA')
-  expect(bodyOverviewFilteredAC).toContain('4HiddenC')
+  const comparisonTableOverviewFilteredAC = await page.getByText('Cluster1').textContent()
+  expect(comparisonTableOverviewFilteredAC).toContain('1CA')
+  expect(comparisonTableOverviewFilteredAC).toContain('3HiddenA')
+  expect(comparisonTableOverviewFilteredAC).toContain('4HiddenC')
 
   // go to comparison page
   await page.getByRole('link', { name: '1 C A 99.60% 99.60%' }).click()

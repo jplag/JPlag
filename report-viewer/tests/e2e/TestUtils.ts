@@ -7,7 +7,7 @@ import { Page, expect } from '@playwright/test'
  * @param fileName
  */
 export async function uploadFile(fileName: string, page: Page) {
-  expect(page.url()).toBe('http://localhost:8080/')
+  expect(page).toHaveURL('/')
 
   // upload file through file chooser
   const fileChooserPromise = page.waitForEvent('filechooser')
