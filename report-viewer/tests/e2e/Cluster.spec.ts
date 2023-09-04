@@ -39,7 +39,7 @@ async function compareClusterDiagramm(page: Page, submissionId: string) {
   // This timeout is so that the screenshot is taken after the animation is finished
   await page.waitForTimeout(3000)
   const radarChart = await page.locator('canvas').first().screenshot()
-  expect(radarChart).toMatchSnapshot(`screenshots/Small_Cluster_${submissionId}.png`)
+  expect(radarChart).toMatchSnapshot(`cluster_${submissionId}.png`)
 }
 
 function compareTableRow(
