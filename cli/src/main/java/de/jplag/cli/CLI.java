@@ -171,7 +171,8 @@ public final class CLI {
         JPlagOptions jPlagOptions = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.options.advanced.subdirectory, suffixes, this.options.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.options.advanced.similarityThreshold, this.options.shownComparisons, clusteringOptions,
-                this.options.advanced.debug, mergingOptions);
+                this.options.advanced.debug, mergingOptions, JPlagOptions.DEFAULT_PRE_PARSE_HOOK, JPlagOptions.DEFAULT_PARSE_HOOK,
+                JPlagOptions.DEFAULT_PRE_COMPARE_HOOK, JPlagOptions.DEFAULT_COMPARE_HOOK);
 
         String baseCodePath = this.options.baseCode;
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);

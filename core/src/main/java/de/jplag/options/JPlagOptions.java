@@ -10,16 +10,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlag;
+import de.jplag.JPlagComparison;
 import de.jplag.Language;
+import de.jplag.Submission;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.merging.MergingOptions;
+import de.jplag.strategy.SubmissionTuple;
 import de.jplag.util.FileUtils;
 
 /**
@@ -44,11 +48,21 @@ import de.jplag.util.FileUtils;
  * set to {@link #SHOW_ALL_COMPARISONS} all comparisons will be shown.
  * @param clusteringOptions Clustering options
  * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
+ * @param mergingOptions Parameters for match merging.
+ * @param preParseHook Hook to be executed before any submission is parsed. The hook is called with the list of all
+ * {@link Submission} instances that will be parsed. The default hook does nothing.
+ * @param parseHook Hook to be executed after parsing a single submision. The hook is called with the {@link Submission}
+ * that has just been parsed. The default hook does nothing.
+ * @param preCompareHook Hook to be executed directly before performing submission comparisons. The hook is called with
+ * the list of all {@link SubmissionTuple} instances that will be compared. The default hook does nothing.
+ * @param compareHook Hook to be executed after comparing two submissions. The hook is called with the
+ * {@link JPlagComparison} result. The default hook does nothing.
  */
 public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
         File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
         SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-        boolean debugParser, MergingOptions mergingOptions) {
+        boolean debugParser, MergingOptions mergingOptions, Consumer<List<Submission>> preParseHook, Consumer<Submission> parseHook,
+        Consumer<List<SubmissionTuple>> preCompareHook, Consumer<JPlagComparison> compareHook) {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 100;
@@ -59,15 +73,29 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
 
     private static final Logger logger = LoggerFactory.getLogger(JPlagOptions.class);
 
+    public static final Consumer<List<Submission>> DEFAULT_PRE_PARSE_HOOK = submissions -> {
+    };
+
+    public static final Consumer<Submission> DEFAULT_PARSE_HOOK = submission -> {
+    };
+
+    public static final Consumer<List<SubmissionTuple>> DEFAULT_PRE_COMPARE_HOOK = comparisons -> {
+    };
+
+    public static final Consumer<JPlagComparison> DEFAULT_COMPARE_HOOK = comparison -> {
+    };
+
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
-                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions());
+                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), DEFAULT_PRE_PARSE_HOOK,
+                DEFAULT_PARSE_HOOK, DEFAULT_PRE_COMPARE_HOOK, DEFAULT_COMPARE_HOOK);
     }
 
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-            boolean debugParser, MergingOptions mergingOptions) {
+            boolean debugParser, MergingOptions mergingOptions, Consumer<List<Submission>> preParseHook, Consumer<Submission> parseHook,
+            Consumer<List<SubmissionTuple>> preCompareHook, Consumer<JPlagComparison> compareHook) {
         this.language = language;
         this.debugParser = debugParser;
         this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
@@ -82,90 +110,118 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
         this.subdirectoryName = subdirectoryName;
         this.clusteringOptions = clusteringOptions;
         this.mergingOptions = mergingOptions;
+        this.preParseHook = preParseHook;
+        this.parseHook = parseHook;
+        this.preCompareHook = preCompareHook;
+        this.compareHook = compareHook;
     }
 
     public JPlagOptions withLanguageOption(Language language) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withDebugParser(boolean debugParser) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withFileSuffixes(List<String> fileSuffixes) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withSimilarityThreshold(double similarityThreshold) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withMaximumNumberOfComparisons(int maximumNumberOfComparisons) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withSimilarityMetric(SimilarityMetric similarityMetric) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withMinimumTokenMatch(Integer minimumTokenMatch) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withExclusionFileName(String exclusionFileName) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withSubmissionDirectories(Set<File> submissionDirectories) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withOldSubmissionDirectories(Set<File> oldSubmissionDirectories) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withBaseCodeSubmissionDirectory(File baseCodeSubmissionDirectory) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withSubdirectoryName(String subdirectoryName) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withClusteringOptions(ClusteringOptions clusteringOptions) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public JPlagOptions withMergingOptions(MergingOptions mergingOptions) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
+    }
+
+    public JPlagOptions withPreParseHook(Consumer<List<Submission>> preParseHook) {
+        return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
+                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
+    }
+
+    public JPlagOptions withParseHook(Consumer<Submission> parseHook) {
+        return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
+                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
+    }
+
+    public JPlagOptions withPreCompareHook(Consumer<List<SubmissionTuple>> preCompareHook) {
+        return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
+                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
+    }
+
+    public JPlagOptions withCompareHook(Consumer<JPlagComparison> compareHook) {
+        return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
+                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
+                clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
     }
 
     public boolean hasBaseCode() {
@@ -254,10 +310,12 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
     public JPlagOptions(Language language, Integer minimumTokenMatch, File submissionDirectory, Set<File> oldSubmissionDirectories,
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-            boolean debugParser, MergingOptions mergingOptions) throws BasecodeException {
+            boolean debugParser, MergingOptions mergingOptions, Consumer<List<Submission>> preParseHook, Consumer<Submission> parseHook,
+            Consumer<List<SubmissionTuple>> preCompareHook, Consumer<JPlagComparison> compareHook) throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
-                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions);
+                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, preParseHook,
+                parseHook, preCompareHook, compareHook);
     }
 
     /**
@@ -280,7 +338,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
         try {
             return new JPlagOptions(language, minimumTokenMatch, submissionDirectory, oldSubmissionDirectories, baseCodeSubmissionName,
                     subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                    clusteringOptions, debugParser, mergingOptions);
+                    clusteringOptions, debugParser, mergingOptions, preParseHook, parseHook, preCompareHook, compareHook);
         } catch (BasecodeException e) {
             throw new IllegalArgumentException(e.getMessage(), e.getCause());
         }

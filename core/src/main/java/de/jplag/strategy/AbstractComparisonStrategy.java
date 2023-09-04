@@ -47,6 +47,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     protected Optional<JPlagComparison> compareSubmissions(Submission first, Submission second) {
         JPlagComparison comparison = greedyStringTiling.compare(first, second);
         logger.info("Comparing {}-{}: {}", first.getName(), second.getName(), comparison.similarity());
+        this.options.compareHook().accept(comparison);
 
         if (options.similarityMetric().isAboveThreshold(comparison, options.similarityThreshold())) {
             return Optional.of(comparison);
@@ -57,7 +58,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     /**
      * @return a list of all submission tuples to be processed.
      */
-    protected static List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
+    protected List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
         List<SubmissionTuple> tuples = new ArrayList<>();
         List<Submission> validSubmissions = submissions.stream().filter(s -> s.getTokenList() != null).toList();
 
@@ -70,6 +71,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
                 }
             }
         }
+        this.options.preCompareHook().accept(tuples);
         return tuples;
     }
 }

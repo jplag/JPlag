@@ -135,6 +135,8 @@ public class SubmissionSet {
      * Parse all given submissions.
      */
     private void parseSubmissions(List<Submission> submissions) {
+        this.options.preParseHook().accept(submissions);
+
         if (submissions.isEmpty()) {
             logger.warn("No submissions to parse!");
             return;
@@ -167,6 +169,8 @@ public class SubmissionSet {
             } else {
                 logger.error("ERROR -> Submission {} removed", currentSubmissionName);
             }
+
+            this.options.parseHook().accept(submission);
         }
 
         int validSubmissions = submissions.size() - errors - tooShort;
