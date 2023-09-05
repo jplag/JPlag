@@ -12,12 +12,8 @@ public class TypeScriptLanguageOptions extends LanguageOptions {
     /**
      * Whether the Antlr Grammar should parse
      */
-    private final LanguageOption<Boolean> useStrictDefault;
-
-    public TypeScriptLanguageOptions() {
-        useStrictDefault = createDefaultOption(OptionType.bool(), "useStrictMode", "If set JPlag parses files with the JavaScript strict syntax",
-                false);
-    }
+    private final LanguageOption<Boolean> useStrictDefault = createDefaultOption(OptionType.bool(), "useStrictMode",
+            "If set JPlag parses files with the JavaScript strict syntax", false);
 
     public boolean useStrictDefault() {
         return this.useStrictDefault.getValue();

@@ -18,7 +18,7 @@ If there are any major updates or fixes to the grammar<a href="#footnote-1"><sup
 The choice of tokens is intended to be similar to the Java or Python modules. It includes a range of nesting structures (class, method, control flow expressions) as well as variable declaration, object creation and assignment.
 
 ### Usage
-To use the Kotlin module, add the `-l typescript` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.typescript.TypeScriptLanguage()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+To use the TypeScript module, use the `typescript` subcommand in the CLI, or use a `JPlagOption` object with `new de.jplag.typescript.TypeScriptLanguage()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
 
 #### Footnotes
 <section id="footnote-1"><sup>1 </sup>The grammar files are taken from grammar-v4, with the most recent modification in <a href="https://github.com/antlr/grammars-v4/commit/764afe99457c07ae81ac07ed3a351a96fb5330d8">commit 768b12e</a> from March 2023.</section>
