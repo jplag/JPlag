@@ -1,10 +1,7 @@
 {
-  "*.ts": [
-    "npx prettier --write",
-    "npx eslint"
-  ],
-  "*.vue": [
-    "npx prettier --write",
-    "npx eslint"
-  ]
+  "*.ts": ["npx prettier --write", "npx eslint"],
+  "*.vue": ["npx prettier --write", "npx eslint"],
+  "*.js": ["npx prettier --write", "npx eslint"],
+  "*.html": ["npx prettier --write", "npx eslint"],
+  "*.css": ["npx prettier --write"]
 }

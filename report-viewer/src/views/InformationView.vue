@@ -1,6 +1,6 @@
 <template>
-  <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-row space-x-5 p-5">
-    <Container class="max-h-0 min-h-full overflow-hidden flex-1 flex flex-col">
+  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-row space-x-5 p-5">
+    <Container class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden">
       <h2>Run Options:</h2>
 
       <ScrollableComponent class="flex-grow px-4 pt-2">
@@ -20,7 +20,7 @@
       </ScrollableComponent>
     </Container>
 
-    <Container class="max-h-0 min-h-full overflow-hidden flex-1 flex flex-col">
+    <Container class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden">
       <h2>Run Data:</h2>
 
       <ScrollableComponent class="flex-grow px-4 pt-2">
@@ -52,7 +52,7 @@ import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 
 const overview = OverviewFactory.getOverview()
 

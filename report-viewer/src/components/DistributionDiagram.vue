@@ -2,16 +2,18 @@
   Bar diagram, displaying the distribution for the selected metric.
 -->
 <template>
-  <BarChart :chartData="chartData" :options="options" />
+  <div>
+    <Bar :data="chartData" :options="options" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, type PropType } from 'vue'
-import { BarChart } from 'vue-chart-3'
+import { computed, type PropType } from 'vue'
+import { Bar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '@/utils/ColorUtils'
-import type Distribution from '@/model/Distribution'
+import type { Distribution } from '@/model/Distribution'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -23,7 +25,7 @@ const props = defineProps({
   }
 })
 
-const maxVal = ref(Math.max(...props.distribution.splitIntoTenBuckets()))
+const maxVal = computed(() => Math.max(...props.distribution.splitIntoTenBuckets()))
 const labels = [
   '91-100%',
   '81-90%',
@@ -46,21 +48,23 @@ const dataSetStyle = computed(() => {
   }
 })
 
-const chartData = ref({
-  labels: labels,
-  datasets: [
-    {
-      ...dataSetStyle.value,
-      data: props.distribution.splitIntoTenBuckets()
-    }
-  ]
+const chartData = computed(() => {
+  return {
+    labels: labels,
+    datasets: [
+      {
+        ...dataSetStyle.value,
+        data: props.distribution.splitIntoTenBuckets()
+      }
+    ]
+  }
 })
 
 const options = computed(() => {
   return {
     responsive: true,
     maintainAspectRatio: false,
-    indexAxis: 'y',
+    indexAxis: 'y' as 'y',
     scales: {
       x: {
         //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
@@ -86,10 +90,10 @@ const options = computed(() => {
       datalabels: {
         color: graphColors.ticksAndFont.value,
         font: {
-          weight: 'bold'
+          weight: 'bold' as 'bold'
         },
-        anchor: 'end',
-        align: 'end',
+        anchor: 'end' as 'end',
+        align: 'end' as 'end',
         clamp: true
       },
       legend: {
@@ -98,24 +102,4 @@ const options = computed(() => {
     }
   }
 })
-
-/* We watch the given distributions parameter. When the distribution of another metric is passed, the diagram is
-  updated with the new data. */
-watch(
-  () => props.distribution,
-  (val) => {
-    chartData.value = {
-      labels: labels,
-      datasets: [
-        {
-          ...dataSetStyle.value,
-          data: val.splitIntoTenBuckets()
-        }
-      ]
-    }
-
-    maxVal.value = Math.max(...val.splitIntoTenBuckets())
-    options.value.scales.x.suggestedMax = maxVal.value + 5
-  }
-)
 </script>

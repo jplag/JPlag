@@ -5,9 +5,13 @@ on:
   workflow_dispatch:
   push:
     path:
-      - report-viewer/**
+      - ".github/workflows/report-viewer-lint.yml"
+      - "report-viewer/**"
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/report-viewer-lint.yml"
+      - "report-viewer/**"
       
 jobs:
   pre_job:

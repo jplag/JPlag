@@ -1,4 +1,4 @@
-import type MetricType from './MetricType'
+import type { MetricType } from './MetricType'
 
 /**
  * Comparison model used by the Comparison Table in Overview. Only the needed attributes to display are included.

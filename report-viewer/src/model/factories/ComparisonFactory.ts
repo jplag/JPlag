@@ -1,12 +1,11 @@
 import { Comparison } from '../Comparison'
 import type { Match } from '../Match'
 import type { SubmissionFile } from '../SubmissionFile'
-import type { MatchInSingleFile } from '../MatchInSingleFile'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import { generateColors } from '@/utils/ColorUtils'
 import slash from 'slash'
 import { BaseFactory } from './BaseFactory'
-import MetricType from '../MetricType'
+import { MetricType } from '../MetricType'
 
 /**
  * Factory class for creating Comparison objects

@@ -5,6 +5,9 @@ on:
  push:
     branches:
       - develop
+    paths:
+      - ".github/workflows/report-viewer-dev.yml"
+      - "report-viewer/**"
       
 jobs:
   build-and-deploy:

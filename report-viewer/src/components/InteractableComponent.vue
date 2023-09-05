@@ -3,7 +3,7 @@
 -->
 <template>
   <Container
-    class="cursor-pointer !shadow-none bg-interactable-light dark:bg-interactable-dark border-interactable-border-light dark:border-interactable-border-dark"
+    class="cursor-pointer border-interactable-border-light bg-interactable-light !shadow-none dark:border-interactable-border-dark dark:bg-interactable-dark"
   >
     <slot></slot>
   </Container>
