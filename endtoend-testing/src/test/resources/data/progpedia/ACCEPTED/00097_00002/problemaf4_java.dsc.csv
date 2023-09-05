@@ -1,0 +1,842 @@
+id,type,token,location,code
+1,TRANSLATIONUNITDECLARATION,"/data/00000019/submissions/05568731_Sociologia_110307027/ProblemaF4.java",,""
+2,RECORDDECLARATION,"NGrupos",ProblemaF4.java(3:1-11:2),"class NGrupos {
+    int apartir4; //numero de grupos com 4 ou mais elementos
+    int npmenor4; //numero de pessoas que pertencem a grupos com menos de 4 elementos
+
+    NGrupos(){
+	apartir4=0;
+	npmenor4=0;
+    }
+}"
+3,RECORDDECLARATION,"VerticesAdj",ProblemaF4.java(13:1-22:2),"class VerticesAdj {
+
+    int vertice;
+    VerticesAdj prox;
+
+    VerticesAdj(int v,VerticesAdj p){
+	vertice=v;
+	prox=p;
+    }
+}"
+4,RECORDDECLARATION,"Grafo",ProblemaF4.java(24:1-108:2),"class Grafo {
+
+    VerticesAdj g[]; //grafo
+    VerticesAdj gT[]; //grafo transposto
+    int nverts;
+    NGrupos ngrupos; //indica quantos grupos existem para >=4 elementos e para <4 elementos
+
+    private boolean vvisitado[]; //vector auxiliar para as pesquisas em profundidade
+    private Stack<Integer>decresT_final; //pilha que tem os vertices por ordem decrescente de t_final. No topo da pilha fica o vertice que tem maior t_final 
+    private int n; //variavel auxiliar para determinar quantos elementos tem cada grupo
+
+    Grafo(int nv){
+	g=new VerticesAdj[nv+1];
+	gT=new VerticesAdj[nv+1];
+	for(int i=1;i<=nv;i++){
+	    g[i]=null;
+	    gT[i]=null;
+	}
+
+	nverts=nv;
+
+	ngrupos=new NGrupos();
+
+	vvisitado=new boolean[nv+1];
+	for(int i=1;i<=nv;i++)
+	    vvisitado[i]=false;
+	decresT_final=new Stack<Integer>();
+	n=0;
+    }
+
+    void inserirLigacao(int de, int para){
+	g[de]=new VerticesAdj(para,g[de]);
+	gT[para]=new VerticesAdj(de,gT[para]);
+    }
+
+    NGrupos numeroGrupos(){
+	DFS_G();
+	DFS_GT_tfinal();
+
+	return ngrupos;
+    }
+
+    void DFS_G(){
+	for(int i=1;i<=nverts;i++)
+	    if(!vvisitado[i])
+		DFS_Gvisit(i);
+    }
+
+   private void DFS_Gvisit(int v){
+	vvisitado[v]=true;
+
+	for(VerticesAdj p=g[v];p!=null;p=p.prox)
+	    if(!vvisitado[p.vertice])
+		DFS_Gvisit(p.vertice);
+
+	decresT_final.push(v);
+    }
+
+    void DFS_GT_tfinal(){ //visita em profundidade o grafo transposto, mas comecando a visitar pelos vertices de t_fianl maior
+	for(int i=1;i<=nverts;i++)
+	    vvisitado[i]=false;
+
+	while(!decresT_final.empty()){
+	    int v=decresT_final.pop();
+	    if(!vvisitado[v]){
+		DFS_GTvisit(v);
+		if(n<4)
+		    ngrupos.npmenor4+=n;
+		else
+		    ngrupos.apartir4++;
+		n=0;
+	    }
+	}
+    }
+
+    private void DFS_GTvisit(int v){
+	vvisitado[v]=true;
+
+	for(VerticesAdj p=gT[v];p!=null;p=p.prox)
+	    if(!vvisitado[p.vertice])
+		DFS_GTvisit(p.vertice);
+
+	n++;
+    }
+}"
+5,RECORDDECLARATION,"ProblemaF4",ProblemaF4.java(110:1-133:2),"class ProblemaF4 {
+
+    public static void main(String []args){
+	Scanner sc=new Scanner(System.in);
+	int ncasos;
+
+	ncasos=sc.nextInt();
+	for(int i=1;i<=ncasos;i++){
+	    int nalunos=sc.nextInt();
+	    Grafo grafo=new Grafo(nalunos);
+	    while(nalunos-->0){
+		int aluno=sc.nextInt();
+		int namigos=sc.nextInt();
+		while(namigos-->0){
+		    int amigo=sc.nextInt();
+		    grafo.inserirLigacao(aluno,amigo);
+		}
+	    }
+	    System.out.println(""Caso #""+i);
+	    NGrupos ngrupos=grafo.numeroGrupos();
+	    System.out.println(ngrupos.apartir4+"" ""+ngrupos.npmenor4);
+	}
+    }
+}"
+6,INCLUDEDECLARATION,"java.util",,""
+7,FIELDDECLARATION,"this",,""
+8,FIELDDECLARATION,"apartir4",ProblemaF4.java(4:5-4:18),"apartir4"
+9,FIELDDECLARATION,"npmenor4",ProblemaF4.java(5:5-5:18),"npmenor4"
+10,CONSTRUCTORDECLARATION,"NGrupos",ProblemaF4.java(7:5-10:6),"NGrupos(){
+	apartir4=0;
+	npmenor4=0;
+    }"
+11,COMPOUNDSTATEMENT,"",ProblemaF4.java(7:14-10:6),"{
+	apartir4=0;
+	npmenor4=0;
+    }"
+12,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(8:2-8:10),"this"
+13,RETURNSTATEMENT,"",,""
+14,BINARYOPERATOR,"=",ProblemaF4.java(8:2-8:13),"apartir4=0;"
+15,BINARYOPERATOR,"=",ProblemaF4.java(9:2-9:13),"npmenor4=0;"
+16,MEMBEREXPRESSION,"apartir4",ProblemaF4.java(8:2-8:10),"apartir4"
+17,LITERAL,"",ProblemaF4.java(8:11-8:12),"0"
+18,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(9:2-9:10),"this"
+19,MEMBEREXPRESSION,"npmenor4",ProblemaF4.java(9:2-9:10),"npmenor4"
+20,LITERAL,"",ProblemaF4.java(9:11-9:12),"0"
+21,FIELDDECLARATION,"this",,""
+22,FIELDDECLARATION,"vertice",ProblemaF4.java(15:5-15:17),"vertice"
+23,FIELDDECLARATION,"prox",ProblemaF4.java(16:5-16:22),"prox"
+24,CONSTRUCTORDECLARATION,"VerticesAdj",ProblemaF4.java(18:5-21:6),"VerticesAdj(int v,VerticesAdj p){
+	vertice=v;
+	prox=p;
+    }"
+25,COMPOUNDSTATEMENT,"",ProblemaF4.java(18:37-21:6),"{
+	vertice=v;
+	prox=p;
+    }"
+26,PARAMVARIABLEDECLARATION,"v",ProblemaF4.java(18:17-18:22),"int v"
+27,PARAMVARIABLEDECLARATION,"p",ProblemaF4.java(18:23-18:36),"VerticesAdj p"
+28,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(19:2-19:9),"this"
+29,RETURNSTATEMENT,"",,""
+30,BINARYOPERATOR,"=",ProblemaF4.java(19:2-19:12),"vertice=v;"
+31,BINARYOPERATOR,"=",ProblemaF4.java(20:2-20:9),"prox=p;"
+32,MEMBEREXPRESSION,"prox",ProblemaF4.java(20:2-20:6),"prox"
+33,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(20:7-20:8),"p"
+34,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(20:2-20:6),"this"
+35,MEMBEREXPRESSION,"vertice",ProblemaF4.java(19:2-19:9),"vertice"
+36,DECLAREDREFERENCEEXPRESSION,"v",ProblemaF4.java(19:10-19:11),"v"
+37,FIELDDECLARATION,"this",,""
+38,FIELDDECLARATION,"g",ProblemaF4.java(26:5-26:21),"g"
+39,FIELDDECLARATION,"gT",ProblemaF4.java(27:5-27:22),"gT"
+40,FIELDDECLARATION,"nverts",ProblemaF4.java(28:5-28:16),"nverts"
+41,FIELDDECLARATION,"ngrupos",ProblemaF4.java(29:5-29:21),"ngrupos"
+42,FIELDDECLARATION,"vvisitado",ProblemaF4.java(31:5-31:33),"vvisitado"
+43,FIELDDECLARATION,"decresT_final",ProblemaF4.java(32:5-32:41),"decresT_final"
+44,FIELDDECLARATION,"n",ProblemaF4.java(33:5-33:19),"n"
+45,METHODDECLARATION,"inserirLigacao",ProblemaF4.java(54:5-57:6),"void inserirLigacao(int de, int para){
+	g[de]=new VerticesAdj(para,g[de]);
+	gT[para]=new VerticesAdj(de,gT[para]);
+    }"
+46,METHODDECLARATION,"numeroGrupos",ProblemaF4.java(59:5-64:6),"NGrupos numeroGrupos(){
+	DFS_G();
+	DFS_GT_tfinal();
+
+	return ngrupos;
+    }"
+47,METHODDECLARATION,"DFS_G",ProblemaF4.java(66:5-70:6),"void DFS_G(){
+	for(int i=1;i<=nverts;i++)
+	    if(!vvisitado[i])
+		DFS_Gvisit(i);
+    }"
+48,METHODDECLARATION,"DFS_Gvisit",ProblemaF4.java(72:4-80:6),"private void DFS_Gvisit(int v){
+	vvisitado[v]=true;
+
+	for(VerticesAdj p=g[v];p!=null;p=p.prox)
+	    if(!vvisitado[p.vertice])
+		DFS_Gvisit(p.vertice);
+
+	decresT_final.push(v);
+    }"
+49,METHODDECLARATION,"DFS_GT_tfinal",ProblemaF4.java(82:5-97:6),"void DFS_GT_tfinal(){ //visita em profundidade o grafo transposto, mas comecando a visitar pelos vertices de t_fianl maior
+	for(int i=1;i<=nverts;i++)
+	    vvisitado[i]=false;
+
+	while(!decresT_final.empty()){
+	    int v=decresT_final.pop();
+	    if(!vvisitado[v]){
+		DFS_GTvisit(v);
+		if(n<4)
+		    ngrupos.npmenor4+=n;
+		else
+		    ngrupos.apartir4++;
+		n=0;
+	    }
+	}
+    }"
+50,METHODDECLARATION,"DFS_GTvisit",ProblemaF4.java(99:5-107:6),"private void DFS_GTvisit(int v){
+	vvisitado[v]=true;
+
+	for(VerticesAdj p=gT[v];p!=null;p=p.prox)
+	    if(!vvisitado[p.vertice])
+		DFS_GTvisit(p.vertice);
+
+	n++;
+    }"
+51,CONSTRUCTORDECLARATION,"Grafo",ProblemaF4.java(35:5-52:6),"Grafo(int nv){
+	g=new VerticesAdj[nv+1];
+	gT=new VerticesAdj[nv+1];
+	for(int i=1;i<=nv;i++){
+	    g[i]=null;
+	    gT[i]=null;
+	}
+
+	nverts=nv;
+
+	ngrupos=new NGrupos();
+
+	vvisitado=new boolean[nv+1];
+	for(int i=1;i<=nv;i++)
+	    vvisitado[i]=false;
+	decresT_final=new Stack<Integer>();
+	n=0;
+    }"
+52,VARIABLEDECLARATION,"this",,""
+53,COMPOUNDSTATEMENT,"",ProblemaF4.java(66:17-70:6),"{
+	for(int i=1;i<=nverts;i++)
+	    if(!vvisitado[i])
+		DFS_Gvisit(i);
+    }"
+54,LITERAL,"",ProblemaF4.java(67:12-67:13),"1"
+55,RETURNSTATEMENT,"",,""
+56,FORSTATEMENT,"",ProblemaF4.java(67:2-69:17),"for(int i=1;i<=nverts;i++)
+	    if(!vvisitado[i])
+		DFS_Gvisit(i);"
+57,IFSTATEMENT,"",ProblemaF4.java(68:6-69:17),"if(!vvisitado[i])
+		DFS_Gvisit(i);"
+58,DECLARATIONSTATEMENT,"",ProblemaF4.java(67:6-67:13),"int i=1"
+59,BINARYOPERATOR,"<=",ProblemaF4.java(67:14-67:23),"i<=nverts"
+60,UNARYOPERATOR,"++",ProblemaF4.java(67:24-67:27),"i++"
+61,VARIABLEDECLARATION,"i",ProblemaF4.java(67:10-67:13),"i=1"
+62,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(68:10-68:19),"this"
+63,UNARYOPERATOR,"!",ProblemaF4.java(68:9-68:22),"!vvisitado[i]"
+64,CALLEXPRESSION,"DFS_Gvisit",ProblemaF4.java(69:3-69:17),"DFS_Gvisit(i);"
+65,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(69:14-69:15),"i"
+66,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(67:24-67:25),"i"
+67,METHODDECLARATION,"DFS_Gvisit",,""
+68,PARAMVARIABLEDECLARATION,"int0",,""
+69,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(68:10-68:22),"vvisitado[i]"
+70,MEMBEREXPRESSION,"vvisitado",ProblemaF4.java(68:10-68:19),"vvisitado"
+71,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(68:20-68:21),"i"
+72,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(67:14-67:15),"i"
+73,MEMBEREXPRESSION,"nverts",ProblemaF4.java(67:17-67:23),"nverts"
+74,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(67:17-67:23),"this"
+75,VARIABLEDECLARATION,"this",,""
+76,COMPOUNDSTATEMENT,"",ProblemaF4.java(72:34-80:6),"{
+	vvisitado[v]=true;
+
+	for(VerticesAdj p=g[v];p!=null;p=p.prox)
+	    if(!vvisitado[p.vertice])
+		DFS_Gvisit(p.vertice);
+
+	decresT_final.push(v);
+    }"
+77,PARAMVARIABLEDECLARATION,"v",ProblemaF4.java(72:28-72:33),"int v"
+78,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(73:2-73:11),"this"
+79,RETURNSTATEMENT,"",,""
+80,BINARYOPERATOR,"=",ProblemaF4.java(73:2-73:20),"vvisitado[v]=true;"
+81,FORSTATEMENT,"",ProblemaF4.java(75:2-77:25),"for(VerticesAdj p=g[v];p!=null;p=p.prox)
+	    if(!vvisitado[p.vertice])
+		DFS_Gvisit(p.vertice);"
+82,MEMBERCALLEXPRESSION,"push",ProblemaF4.java(79:2-79:24),"decresT_final.push(v);"
+83,DECLAREDREFERENCEEXPRESSION,"push",ProblemaF4.java(79:16-79:20),"push"
+84,DECLAREDREFERENCEEXPRESSION,"v",ProblemaF4.java(79:21-79:22),"v"
+85,MEMBEREXPRESSION,"decresT_final",ProblemaF4.java(79:2-79:15),"decresT_final"
+86,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(79:2-79:15),"this"
+87,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(73:2-73:14),"vvisitado[v]"
+88,LITERAL,"",ProblemaF4.java(73:15-73:19),"true"
+89,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(75:20-75:21),"this"
+90,MEMBEREXPRESSION,"vvisitado",ProblemaF4.java(73:2-73:11),"vvisitado"
+91,DECLAREDREFERENCEEXPRESSION,"v",ProblemaF4.java(73:12-73:13),"v"
+92,IFSTATEMENT,"",ProblemaF4.java(76:6-77:25),"if(!vvisitado[p.vertice])
+		DFS_Gvisit(p.vertice);"
+93,DECLARATIONSTATEMENT,"",ProblemaF4.java(75:6-75:24),"VerticesAdj p=g[v]"
+94,BINARYOPERATOR,"!=",ProblemaF4.java(75:25-75:32),"p!=null"
+95,BINARYOPERATOR,"=",ProblemaF4.java(75:33-75:41),"p=p.prox"
+96,VARIABLEDECLARATION,"p",ProblemaF4.java(75:18-75:24),"p=g[v]"
+97,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(76:10-76:19),"this"
+98,UNARYOPERATOR,"!",ProblemaF4.java(76:9-76:30),"!vvisitado[p.vertice]"
+99,CALLEXPRESSION,"DFS_Gvisit",ProblemaF4.java(77:3-77:25),"DFS_Gvisit(p.vertice);"
+100,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(77:14-77:15),"p"
+101,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(75:33-75:34),"p"
+102,MEMBEREXPRESSION,"vertice",ProblemaF4.java(77:14-77:23),"p.vertice"
+103,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(76:10-76:30),"vvisitado[p.vertice]"
+104,MEMBEREXPRESSION,"vvisitado",ProblemaF4.java(76:10-76:19),"vvisitado"
+105,MEMBEREXPRESSION,"vertice",ProblemaF4.java(76:20-76:29),"p.vertice"
+106,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(76:20-76:21),"p"
+107,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(75:25-75:26),"p"
+108,LITERAL,"",ProblemaF4.java(75:28-75:32),"null"
+109,MEMBEREXPRESSION,"prox",ProblemaF4.java(75:35-75:41),"p.prox"
+110,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(75:35-75:36),"p"
+111,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(75:20-75:24),"g[v]"
+112,MEMBEREXPRESSION,"g",ProblemaF4.java(75:20-75:21),"g"
+113,DECLAREDREFERENCEEXPRESSION,"v",ProblemaF4.java(75:22-75:23),"v"
+114,VARIABLEDECLARATION,"this",,""
+115,COMPOUNDSTATEMENT,"",ProblemaF4.java(99:36-107:6),"{
+	vvisitado[v]=true;
+
+	for(VerticesAdj p=gT[v];p!=null;p=p.prox)
+	    if(!vvisitado[p.vertice])
+		DFS_GTvisit(p.vertice);
+
+	n++;
+    }"
+116,PARAMVARIABLEDECLARATION,"v",ProblemaF4.java(99:30-99:35),"int v"
+117,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(100:2-100:11),"this"
+118,RETURNSTATEMENT,"",,""
+119,BINARYOPERATOR,"=",ProblemaF4.java(100:2-100:20),"vvisitado[v]=true;"
+120,FORSTATEMENT,"",ProblemaF4.java(102:2-104:26),"for(VerticesAdj p=gT[v];p!=null;p=p.prox)
+	    if(!vvisitado[p.vertice])
+		DFS_GTvisit(p.vertice);"
+121,UNARYOPERATOR,"++",ProblemaF4.java(106:2-106:6),"n++;"
+122,MEMBEREXPRESSION,"n",ProblemaF4.java(106:2-106:3),"n"
+123,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(106:2-106:3),"this"
+124,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(100:2-100:14),"vvisitado[v]"
+125,LITERAL,"",ProblemaF4.java(100:15-100:19),"true"
+126,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(102:20-102:22),"this"
+127,MEMBEREXPRESSION,"vvisitado",ProblemaF4.java(100:2-100:11),"vvisitado"
+128,DECLAREDREFERENCEEXPRESSION,"v",ProblemaF4.java(100:12-100:13),"v"
+129,IFSTATEMENT,"",ProblemaF4.java(103:6-104:26),"if(!vvisitado[p.vertice])
+		DFS_GTvisit(p.vertice);"
+130,DECLARATIONSTATEMENT,"",ProblemaF4.java(102:6-102:25),"VerticesAdj p=gT[v]"
+131,BINARYOPERATOR,"!=",ProblemaF4.java(102:26-102:33),"p!=null"
+132,BINARYOPERATOR,"=",ProblemaF4.java(102:34-102:42),"p=p.prox"
+133,VARIABLEDECLARATION,"p",ProblemaF4.java(102:18-102:25),"p=gT[v]"
+134,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(103:10-103:19),"this"
+135,UNARYOPERATOR,"!",ProblemaF4.java(103:9-103:30),"!vvisitado[p.vertice]"
+136,CALLEXPRESSION,"DFS_GTvisit",ProblemaF4.java(104:3-104:26),"DFS_GTvisit(p.vertice);"
+137,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(104:15-104:16),"p"
+138,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(102:34-102:35),"p"
+139,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(103:10-103:30),"vvisitado[p.vertice]"
+140,MEMBEREXPRESSION,"vvisitado",ProblemaF4.java(103:10-103:19),"vvisitado"
+141,MEMBEREXPRESSION,"vertice",ProblemaF4.java(103:20-103:29),"p.vertice"
+142,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(103:20-103:21),"p"
+143,METHODDECLARATION,"DFS_GTvisit",,""
+144,MEMBEREXPRESSION,"vertice",ProblemaF4.java(104:15-104:24),"p.vertice"
+145,PARAMVARIABLEDECLARATION,"int0",,""
+146,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(102:26-102:27),"p"
+147,LITERAL,"",ProblemaF4.java(102:29-102:33),"null"
+148,MEMBEREXPRESSION,"prox",ProblemaF4.java(102:36-102:42),"p.prox"
+149,DECLAREDREFERENCEEXPRESSION,"p",ProblemaF4.java(102:36-102:37),"p"
+150,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(102:20-102:25),"gT[v]"
+151,MEMBEREXPRESSION,"gT",ProblemaF4.java(102:20-102:22),"gT"
+152,DECLAREDREFERENCEEXPRESSION,"v",ProblemaF4.java(102:23-102:24),"v"
+153,VARIABLEDECLARATION,"this",,""
+154,COMPOUNDSTATEMENT,"",ProblemaF4.java(82:25-97:6),"{ //visita em profundidade o grafo transposto, mas comecando a visitar pelos vertices de t_fianl maior
+	for(int i=1;i<=nverts;i++)
+	    vvisitado[i]=false;
+
+	while(!decresT_final.empty()){
+	    int v=decresT_final.pop();
+	    if(!vvisitado[v]){
+		DFS_GTvisit(v);
+		if(n<4)
+		    ngrupos.npmenor4+=n;
+		else
+		    ngrupos.apartir4++;
+		n=0;
+	    }
+	}
+    }"
+155,LITERAL,"",ProblemaF4.java(83:12-83:13),"1"
+156,RETURNSTATEMENT,"",,""
+157,FORSTATEMENT,"",ProblemaF4.java(83:2-84:25),"for(int i=1;i<=nverts;i++)
+	    vvisitado[i]=false;"
+158,WHILESTATEMENT,"",ProblemaF4.java(86:2-96:3),"while(!decresT_final.empty()){
+	    int v=decresT_final.pop();
+	    if(!vvisitado[v]){
+		DFS_GTvisit(v);
+		if(n<4)
+		    ngrupos.npmenor4+=n;
+		else
+		    ngrupos.apartir4++;
+		n=0;
+	    }
+	}"
+159,BINARYOPERATOR,"=",ProblemaF4.java(84:6-84:25),"vvisitado[i]=false;"
+160,DECLARATIONSTATEMENT,"",ProblemaF4.java(83:6-83:13),"int i=1"
+161,BINARYOPERATOR,"<=",ProblemaF4.java(83:14-83:23),"i<=nverts"
+162,UNARYOPERATOR,"++",ProblemaF4.java(83:24-83:27),"i++"
+163,VARIABLEDECLARATION,"i",ProblemaF4.java(83:10-83:13),"i=1"
+164,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(84:6-84:15),"this"
+165,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(86:9-86:22),"this"
+166,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(83:14-83:15),"i"
+167,MEMBEREXPRESSION,"nverts",ProblemaF4.java(83:17-83:23),"nverts"
+168,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(83:17-83:23),"this"
+169,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(83:24-83:25),"i"
+170,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(84:6-84:18),"vvisitado[i]"
+171,LITERAL,"",ProblemaF4.java(84:19-84:24),"false"
+172,MEMBEREXPRESSION,"vvisitado",ProblemaF4.java(84:6-84:15),"vvisitado"
+173,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(84:16-84:17),"i"
+174,UNARYOPERATOR,"!",ProblemaF4.java(86:8-86:30),"!decresT_final.empty()"
+175,COMPOUNDSTATEMENT,"",ProblemaF4.java(86:31-96:3),"{
+	    int v=decresT_final.pop();
+	    if(!vvisitado[v]){
+		DFS_GTvisit(v);
+		if(n<4)
+		    ngrupos.npmenor4+=n;
+		else
+		    ngrupos.apartir4++;
+		n=0;
+	    }
+	}"
+176,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(87:12-87:25),"this"
+177,MEMBERCALLEXPRESSION,"empty",ProblemaF4.java(86:9-86:30),"decresT_final.empty()"
+178,DECLAREDREFERENCEEXPRESSION,"empty",ProblemaF4.java(86:23-86:28),"empty"
+179,MEMBEREXPRESSION,"decresT_final",ProblemaF4.java(86:9-86:22),"decresT_final"
+180,DECLARATIONSTATEMENT,"",ProblemaF4.java(87:6-87:32),"int v=decresT_final.pop();"
+181,IFSTATEMENT,"",ProblemaF4.java(88:6-95:7),"if(!vvisitado[v]){
+		DFS_GTvisit(v);
+		if(n<4)
+		    ngrupos.npmenor4+=n;
+		else
+		    ngrupos.apartir4++;
+		n=0;
+	    }"
+182,VARIABLEDECLARATION,"v",ProblemaF4.java(87:10-87:31),"v=decresT_final.pop()"
+183,COMPOUNDSTATEMENT,"",ProblemaF4.java(88:23-95:7),"{
+		DFS_GTvisit(v);
+		if(n<4)
+		    ngrupos.npmenor4+=n;
+		else
+		    ngrupos.apartir4++;
+		n=0;
+	    }"
+184,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(88:10-88:19),"this"
+185,UNARYOPERATOR,"!",ProblemaF4.java(88:9-88:22),"!vvisitado[v]"
+186,DECLAREDREFERENCEEXPRESSION,"v",ProblemaF4.java(89:15-89:16),"v"
+187,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(88:10-88:22),"vvisitado[v]"
+188,MEMBEREXPRESSION,"vvisitado",ProblemaF4.java(88:10-88:19),"vvisitado"
+189,DECLAREDREFERENCEEXPRESSION,"v",ProblemaF4.java(88:20-88:21),"v"
+190,CALLEXPRESSION,"DFS_GTvisit",ProblemaF4.java(89:3-89:18),"DFS_GTvisit(v);"
+191,IFSTATEMENT,"",ProblemaF4.java(90:3-93:26),"if(n<4)
+		    ngrupos.npmenor4+=n;
+		else
+		    ngrupos.apartir4++;"
+192,BINARYOPERATOR,"=",ProblemaF4.java(94:3-94:7),"n=0;"
+193,MEMBEREXPRESSION,"n",ProblemaF4.java(94:3-94:4),"n"
+194,LITERAL,"",ProblemaF4.java(94:5-94:6),"0"
+195,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(94:3-94:4),"this"
+196,BINARYOPERATOR,"+=",ProblemaF4.java(91:7-91:27),"ngrupos.npmenor4+=n;"
+197,UNARYOPERATOR,"++",ProblemaF4.java(93:7-93:26),"ngrupos.apartir4++;"
+198,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(90:6-90:7),"this"
+199,BINARYOPERATOR,"<",ProblemaF4.java(90:6-90:9),"n<4"
+200,DECLAREDREFERENCEEXPRESSION,"ngrupos",ProblemaF4.java(91:7-91:14),"ngrupos"
+201,DECLAREDREFERENCEEXPRESSION,"ngrupos",ProblemaF4.java(93:7-93:14),"ngrupos"
+202,MEMBEREXPRESSION,"apartir4",ProblemaF4.java(93:7-93:23),"ngrupos.apartir4"
+203,MEMBEREXPRESSION,"n",ProblemaF4.java(90:6-90:7),"n"
+204,LITERAL,"",ProblemaF4.java(90:8-90:9),"4"
+205,MEMBEREXPRESSION,"npmenor4",ProblemaF4.java(91:7-91:23),"ngrupos.npmenor4"
+206,MEMBEREXPRESSION,"n",ProblemaF4.java(91:25-91:26),"n"
+207,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(91:25-91:26),"this"
+208,MEMBERCALLEXPRESSION,"pop",ProblemaF4.java(87:12-87:31),"decresT_final.pop()"
+209,DECLAREDREFERENCEEXPRESSION,"pop",ProblemaF4.java(87:26-87:29),"pop"
+210,MEMBEREXPRESSION,"decresT_final",ProblemaF4.java(87:12-87:25),"decresT_final"
+211,VARIABLEDECLARATION,"this",,""
+212,COMPOUNDSTATEMENT,"",ProblemaF4.java(54:42-57:6),"{
+	g[de]=new VerticesAdj(para,g[de]);
+	gT[para]=new VerticesAdj(de,gT[para]);
+    }"
+213,PARAMVARIABLEDECLARATION,"de",ProblemaF4.java(54:25-54:31),"int de"
+214,PARAMVARIABLEDECLARATION,"para",ProblemaF4.java(54:33-54:41),"int para"
+215,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(55:2-55:3),"this"
+216,RETURNSTATEMENT,"",,""
+217,BINARYOPERATOR,"=",ProblemaF4.java(55:2-55:36),"g[de]=new VerticesAdj(para,g[de]);"
+218,BINARYOPERATOR,"=",ProblemaF4.java(56:2-56:40),"gT[para]=new VerticesAdj(de,gT[para]);"
+219,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(55:2-55:7),"g[de]"
+220,NEWEXPRESSION,"",ProblemaF4.java(55:8-55:35),"new VerticesAdj(para,g[de])"
+221,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(56:2-56:4),"this"
+222,CONSTRUCTEXPRESSION,"",ProblemaF4.java(55:8-55:35),"new VerticesAdj(para,g[de])"
+223,CONSTRUCTORDECLARATION,"VerticesAdj",,""
+224,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(55:29-55:34),"g[de]"
+225,MEMBEREXPRESSION,"g",ProblemaF4.java(55:29-55:30),"g"
+226,DECLAREDREFERENCEEXPRESSION,"de",ProblemaF4.java(55:31-55:33),"de"
+227,PARAMVARIABLEDECLARATION,"verticesadj1",,""
+228,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(55:29-55:30),"this"
+229,DECLAREDREFERENCEEXPRESSION,"para",ProblemaF4.java(55:24-55:28),"para"
+230,PARAMVARIABLEDECLARATION,"int0",,""
+231,MEMBEREXPRESSION,"g",ProblemaF4.java(55:2-55:3),"g"
+232,DECLAREDREFERENCEEXPRESSION,"de",ProblemaF4.java(55:4-55:6),"de"
+233,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(56:2-56:10),"gT[para]"
+234,NEWEXPRESSION,"",ProblemaF4.java(56:11-56:39),"new VerticesAdj(de,gT[para])"
+235,MEMBEREXPRESSION,"gT",ProblemaF4.java(56:2-56:4),"gT"
+236,DECLAREDREFERENCEEXPRESSION,"para",ProblemaF4.java(56:5-56:9),"para"
+237,DECLAREDREFERENCEEXPRESSION,"de",ProblemaF4.java(56:27-56:29),"de"
+238,CONSTRUCTEXPRESSION,"",ProblemaF4.java(56:11-56:39),"new VerticesAdj(de,gT[para])"
+239,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(56:30-56:38),"gT[para]"
+240,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(56:30-56:32),"this"
+241,MEMBEREXPRESSION,"gT",ProblemaF4.java(56:30-56:32),"gT"
+242,DECLAREDREFERENCEEXPRESSION,"para",ProblemaF4.java(56:33-56:37),"para"
+243,COMPOUNDSTATEMENT,"",ProblemaF4.java(35:18-52:6),"{
+	g=new VerticesAdj[nv+1];
+	gT=new VerticesAdj[nv+1];
+	for(int i=1;i<=nv;i++){
+	    g[i]=null;
+	    gT[i]=null;
+	}
+
+	nverts=nv;
+
+	ngrupos=new NGrupos();
+
+	vvisitado=new boolean[nv+1];
+	for(int i=1;i<=nv;i++)
+	    vvisitado[i]=false;
+	decresT_final=new Stack<Integer>();
+	n=0;
+    }"
+244,PARAMVARIABLEDECLARATION,"nv",ProblemaF4.java(35:11-35:17),"int nv"
+245,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(36:2-36:3),"this"
+246,RETURNSTATEMENT,"",,""
+247,BINARYOPERATOR,"=",ProblemaF4.java(36:2-36:26),"g=new VerticesAdj[nv+1];"
+248,BINARYOPERATOR,"=",ProblemaF4.java(37:2-37:27),"gT=new VerticesAdj[nv+1];"
+249,FORSTATEMENT,"",ProblemaF4.java(38:2-41:3),"for(int i=1;i<=nv;i++){
+	    g[i]=null;
+	    gT[i]=null;
+	}"
+250,BINARYOPERATOR,"=",ProblemaF4.java(43:2-43:12),"nverts=nv;"
+251,BINARYOPERATOR,"=",ProblemaF4.java(45:2-45:24),"ngrupos=new NGrupos();"
+252,BINARYOPERATOR,"=",ProblemaF4.java(47:2-47:30),"vvisitado=new boolean[nv+1];"
+253,FORSTATEMENT,"",ProblemaF4.java(48:2-49:25),"for(int i=1;i<=nv;i++)
+	    vvisitado[i]=false;"
+254,BINARYOPERATOR,"=",ProblemaF4.java(50:2-50:37),"decresT_final=new Stack<Integer>();"
+255,BINARYOPERATOR,"=",ProblemaF4.java(51:2-51:6),"n=0;"
+256,MEMBEREXPRESSION,"g",ProblemaF4.java(36:2-36:3),"g"
+257,ARRAYCREATIONEXPRESSION,"",ProblemaF4.java(36:4-36:25),"new VerticesAdj[nv+1]"
+258,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(37:2-37:4),"this"
+259,DECLAREDREFERENCEEXPRESSION,"nv",ProblemaF4.java(36:20-36:22),"nv"
+260,BINARYOPERATOR,"+",ProblemaF4.java(36:20-36:24),"nv+1"
+261,LITERAL,"",ProblemaF4.java(36:23-36:24),"1"
+262,MEMBEREXPRESSION,"nverts",ProblemaF4.java(43:2-43:8),"nverts"
+263,DECLAREDREFERENCEEXPRESSION,"nv",ProblemaF4.java(43:9-43:11),"nv"
+264,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(45:2-45:9),"this"
+265,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(43:2-43:8),"this"
+266,BINARYOPERATOR,"=",ProblemaF4.java(49:6-49:25),"vvisitado[i]=false;"
+267,DECLARATIONSTATEMENT,"",ProblemaF4.java(48:6-48:13),"int i=1"
+268,BINARYOPERATOR,"<=",ProblemaF4.java(48:14-48:19),"i<=nv"
+269,UNARYOPERATOR,"++",ProblemaF4.java(48:20-48:23),"i++"
+270,VARIABLEDECLARATION,"i",ProblemaF4.java(48:10-48:13),"i=1"
+271,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(49:6-49:15),"this"
+272,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(50:2-50:15),"this"
+273,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(48:20-48:21),"i"
+274,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(48:14-48:15),"i"
+275,LITERAL,"",ProblemaF4.java(48:12-48:13),"1"
+276,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(49:6-49:18),"vvisitado[i]"
+277,LITERAL,"",ProblemaF4.java(49:19-49:24),"false"
+278,MEMBEREXPRESSION,"vvisitado",ProblemaF4.java(49:6-49:15),"vvisitado"
+279,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(49:16-49:17),"i"
+280,DECLAREDREFERENCEEXPRESSION,"nv",ProblemaF4.java(48:17-48:19),"nv"
+281,MEMBEREXPRESSION,"vvisitado",ProblemaF4.java(47:2-47:11),"vvisitado"
+282,ARRAYCREATIONEXPRESSION,"",ProblemaF4.java(47:12-47:29),"new boolean[nv+1]"
+283,BINARYOPERATOR,"+",ProblemaF4.java(47:24-47:28),"nv+1"
+284,DECLAREDREFERENCEEXPRESSION,"nv",ProblemaF4.java(47:24-47:26),"nv"
+285,LITERAL,"",ProblemaF4.java(47:27-47:28),"1"
+286,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(47:2-47:11),"this"
+287,MEMBEREXPRESSION,"decresT_final",ProblemaF4.java(50:2-50:15),"decresT_final"
+288,NEWEXPRESSION,"",ProblemaF4.java(50:16-50:36),"new Stack<Integer>()"
+289,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(51:2-51:3),"this"
+290,CONSTRUCTEXPRESSION,"",ProblemaF4.java(50:16-50:36),"new Stack<Integer>()"
+291,MEMBEREXPRESSION,"n",ProblemaF4.java(51:2-51:3),"n"
+292,LITERAL,"",ProblemaF4.java(51:4-51:5),"0"
+293,COMPOUNDSTATEMENT,"",ProblemaF4.java(38:24-41:3),"{
+	    g[i]=null;
+	    gT[i]=null;
+	}"
+294,DECLARATIONSTATEMENT,"",ProblemaF4.java(38:6-38:13),"int i=1"
+295,BINARYOPERATOR,"<=",ProblemaF4.java(38:14-38:19),"i<=nv"
+296,UNARYOPERATOR,"++",ProblemaF4.java(38:20-38:23),"i++"
+297,VARIABLEDECLARATION,"i",ProblemaF4.java(38:10-38:13),"i=1"
+298,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(39:6-39:7),"this"
+299,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(38:14-38:15),"i"
+300,DECLAREDREFERENCEEXPRESSION,"nv",ProblemaF4.java(38:17-38:19),"nv"
+301,LITERAL,"",ProblemaF4.java(38:12-38:13),"1"
+302,BINARYOPERATOR,"=",ProblemaF4.java(39:6-39:16),"g[i]=null;"
+303,BINARYOPERATOR,"=",ProblemaF4.java(40:6-40:17),"gT[i]=null;"
+304,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(38:20-38:21),"i"
+305,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(40:6-40:11),"gT[i]"
+306,LITERAL,"",ProblemaF4.java(40:12-40:16),"null"
+307,MEMBEREXPRESSION,"gT",ProblemaF4.java(40:6-40:8),"gT"
+308,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(40:9-40:10),"i"
+309,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(40:6-40:8),"this"
+310,ARRAYSUBSCRIPTIONEXPRESSION,"",ProblemaF4.java(39:6-39:10),"g[i]"
+311,LITERAL,"",ProblemaF4.java(39:11-39:15),"null"
+312,MEMBEREXPRESSION,"g",ProblemaF4.java(39:6-39:7),"g"
+313,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(39:8-39:9),"i"
+314,MEMBEREXPRESSION,"gT",ProblemaF4.java(37:2-37:4),"gT"
+315,ARRAYCREATIONEXPRESSION,"",ProblemaF4.java(37:5-37:26),"new VerticesAdj[nv+1]"
+316,DECLAREDREFERENCEEXPRESSION,"nv",ProblemaF4.java(37:21-37:23),"nv"
+317,BINARYOPERATOR,"+",ProblemaF4.java(37:21-37:25),"nv+1"
+318,LITERAL,"",ProblemaF4.java(37:24-37:25),"1"
+319,MEMBEREXPRESSION,"ngrupos",ProblemaF4.java(45:2-45:9),"ngrupos"
+320,NEWEXPRESSION,"",ProblemaF4.java(45:10-45:23),"new NGrupos()"
+321,CONSTRUCTEXPRESSION,"",ProblemaF4.java(45:10-45:23),"new NGrupos()"
+322,CONSTRUCTORDECLARATION,"NGrupos",ProblemaF4.java(7:5-10:6),"NGrupos(){
+	apartir4=0;
+	menor4=0;
+    }"
+323,VARIABLEDECLARATION,"this",,""
+324,COMPOUNDSTATEMENT,"",ProblemaF4.java(59:27-64:6),"{
+	DFS_G();
+	DFS_GT_tfinal();
+
+	return ngrupos;
+    }"
+325,CALLEXPRESSION,"DFS_G",ProblemaF4.java(60:2-60:10),"DFS_G();"
+326,RETURNSTATEMENT,"",ProblemaF4.java(63:2-63:17),"return ngrupos;"
+327,CALLEXPRESSION,"DFS_GT_tfinal",ProblemaF4.java(61:2-61:18),"DFS_GT_tfinal();"
+328,MEMBEREXPRESSION,"ngrupos",ProblemaF4.java(63:9-63:16),"ngrupos"
+329,DECLAREDREFERENCEEXPRESSION,"this",ProblemaF4.java(63:9-63:16),"this"
+330,METHODDECLARATION,"DFS_G",,""
+331,METHODDECLARATION,"DFS_GT_tfinal",,""
+332,FIELDDECLARATION,"this",,""
+333,METHODDECLARATION,"main",ProblemaF4.java(112:5-132:6),"public static void main(String []args){
+	Scanner sc=new Scanner(System.in);
+	int ncasos;
+
+	ncasos=sc.nextInt();
+	for(int i=1;i<=ncasos;i++){
+	    int nalunos=sc.nextInt();
+	    Grafo grafo=new Grafo(nalunos);
+	    while(nalunos-->0){
+		int aluno=sc.nextInt();
+		int namigos=sc.nextInt();
+		while(namigos-->0){
+		    int amigo=sc.nextInt();
+		    grafo.inserirLigacao(aluno,amigo);
+		}
+	    }
+	    System.out.println(""Caso #""+i);
+	    NGrupos ngrupos=grafo.numeroGrupos();
+	    System.out.println(ngrupos.apartir4+"" ""+ngrupos.npmenor4);
+	}
+    }"
+334,CONSTRUCTORDECLARATION,"ProblemaF4",,""
+335,VARIABLEDECLARATION,"this",,""
+336,COMPOUNDSTATEMENT,"",ProblemaF4.java(112:43-132:6),"{
+	Scanner sc=new Scanner(System.in);
+	int ncasos;
+
+	ncasos=sc.nextInt();
+	for(int i=1;i<=ncasos;i++){
+	    int nalunos=sc.nextInt();
+	    Grafo grafo=new Grafo(nalunos);
+	    while(nalunos-->0){
+		int aluno=sc.nextInt();
+		int namigos=sc.nextInt();
+		while(namigos-->0){
+		    int amigo=sc.nextInt();
+		    grafo.inserirLigacao(aluno,amigo);
+		}
+	    }
+	    System.out.println(""Caso #""+i);
+	    NGrupos ngrupos=grafo.numeroGrupos();
+	    System.out.println(ngrupos.apartir4+"" ""+ngrupos.npmenor4);
+	}
+    }"
+337,PARAMVARIABLEDECLARATION,"args",ProblemaF4.java(112:29-112:42),"String []args"
+338,DECLAREDREFERENCEEXPRESSION,"System",ProblemaF4.java(113:25-113:31),"System"
+339,RETURNSTATEMENT,"",,""
+340,DECLARATIONSTATEMENT,"",ProblemaF4.java(113:2-113:36),"Scanner sc=new Scanner(System.in);"
+341,DECLARATIONSTATEMENT,"",ProblemaF4.java(114:2-114:13),"int ncasos;"
+342,BINARYOPERATOR,"=",ProblemaF4.java(116:2-116:22),"ncasos=sc.nextInt();"
+343,FORSTATEMENT,"",ProblemaF4.java(117:2-131:3),"for(int i=1;i<=ncasos;i++){
+	    int nalunos=sc.nextInt();
+	    Grafo grafo=new Grafo(nalunos);
+	    while(nalunos-->0){
+		int aluno=sc.nextInt();
+		int namigos=sc.nextInt();
+		while(namigos-->0){
+		    int amigo=sc.nextInt();
+		    grafo.inserirLigacao(aluno,amigo);
+		}
+	    }
+	    System.out.println(""Caso #""+i);
+	    NGrupos ngrupos=grafo.numeroGrupos();
+	    System.out.println(ngrupos.apartir4+"" ""+ngrupos.npmenor4);
+	}"
+344,VARIABLEDECLARATION,"sc",ProblemaF4.java(113:10-113:35),"sc=new Scanner(System.in)"
+345,VARIABLEDECLARATION,"ncasos",ProblemaF4.java(114:6-114:12),"ncasos"
+346,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+347,NEWEXPRESSION,"",ProblemaF4.java(113:13-113:35),"new Scanner(System.in)"
+348,CONSTRUCTEXPRESSION,"",ProblemaF4.java(113:13-113:35),"new Scanner(System.in)"
+349,MEMBEREXPRESSION,"in",ProblemaF4.java(113:25-113:34),"System.in"
+350,COMPOUNDSTATEMENT,"",ProblemaF4.java(117:28-131:3),"{
+	    int nalunos=sc.nextInt();
+	    Grafo grafo=new Grafo(nalunos);
+	    while(nalunos-->0){
+		int aluno=sc.nextInt();
+		int namigos=sc.nextInt();
+		while(namigos-->0){
+		    int amigo=sc.nextInt();
+		    grafo.inserirLigacao(aluno,amigo);
+		}
+	    }
+	    System.out.println(""Caso #""+i);
+	    NGrupos ngrupos=grafo.numeroGrupos();
+	    System.out.println(ngrupos.apartir4+"" ""+ngrupos.npmenor4);
+	}"
+351,DECLARATIONSTATEMENT,"",ProblemaF4.java(117:6-117:13),"int i=1"
+352,BINARYOPERATOR,"<=",ProblemaF4.java(117:14-117:23),"i<=ncasos"
+353,UNARYOPERATOR,"++",ProblemaF4.java(117:24-117:27),"i++"
+354,VARIABLEDECLARATION,"i",ProblemaF4.java(117:10-117:13),"i=1"
+355,DECLAREDREFERENCEEXPRESSION,"sc",ProblemaF4.java(118:18-118:20),"sc"
+356,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(117:14-117:15),"i"
+357,DECLAREDREFERENCEEXPRESSION,"ncasos",ProblemaF4.java(117:17-117:23),"ncasos"
+358,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(117:24-117:25),"i"
+359,DECLARATIONSTATEMENT,"",ProblemaF4.java(118:6-118:31),"int nalunos=sc.nextInt();"
+360,DECLARATIONSTATEMENT,"",ProblemaF4.java(119:6-119:37),"Grafo grafo=new Grafo(nalunos);"
+361,WHILESTATEMENT,"",ProblemaF4.java(120:6-127:7),"while(nalunos-->0){
+		int aluno=sc.nextInt();
+		int namigos=sc.nextInt();
+		while(namigos-->0){
+		    int amigo=sc.nextInt();
+		    grafo.inserirLigacao(aluno,amigo);
+		}
+	    }"
+362,MEMBERCALLEXPRESSION,"println",ProblemaF4.java(128:6-128:37),"System.out.println(""Caso #""+i);"
+363,DECLARATIONSTATEMENT,"",ProblemaF4.java(129:6-129:43),"NGrupos ngrupos=grafo.numeroGrupos();"
+364,MEMBERCALLEXPRESSION,"println",ProblemaF4.java(130:6-130:64),"System.out.println(ngrupos.apartir4+"" ""+ngrupos.npmenor4);"
+365,VARIABLEDECLARATION,"nalunos",ProblemaF4.java(118:10-118:30),"nalunos=sc.nextInt()"
+366,VARIABLEDECLARATION,"grafo",ProblemaF4.java(119:12-119:36),"grafo=new Grafo(nalunos)"
+367,VARIABLEDECLARATION,"ngrupos",ProblemaF4.java(129:14-129:42),"ngrupos=grafo.numeroGrupos()"
+368,BINARYOPERATOR,">",ProblemaF4.java(120:12-120:23),"nalunos-->0"
+369,COMPOUNDSTATEMENT,"",ProblemaF4.java(120:24-127:7),"{
+		int aluno=sc.nextInt();
+		int namigos=sc.nextInt();
+		while(namigos-->0){
+		    int amigo=sc.nextInt();
+		    grafo.inserirLigacao(aluno,amigo);
+		}
+	    }"
+370,DECLAREDREFERENCEEXPRESSION,"sc",ProblemaF4.java(121:13-121:15),"sc"
+371,DECLAREDREFERENCEEXPRESSION,"System",ProblemaF4.java(128:6-128:12),"System"
+372,DECLARATIONSTATEMENT,"",ProblemaF4.java(121:3-121:26),"int aluno=sc.nextInt();"
+373,DECLARATIONSTATEMENT,"",ProblemaF4.java(122:3-122:28),"int namigos=sc.nextInt();"
+374,WHILESTATEMENT,"",ProblemaF4.java(123:3-126:4),"while(namigos-->0){
+		    int amigo=sc.nextInt();
+		    grafo.inserirLigacao(aluno,amigo);
+		}"
+375,VARIABLEDECLARATION,"aluno",ProblemaF4.java(121:7-121:25),"aluno=sc.nextInt()"
+376,VARIABLEDECLARATION,"namigos",ProblemaF4.java(122:7-122:27),"namigos=sc.nextInt()"
+377,DECLAREDREFERENCEEXPRESSION,"nalunos",ProblemaF4.java(120:12-120:19),"nalunos"
+378,BINARYOPERATOR,">",ProblemaF4.java(123:9-123:20),"namigos-->0"
+379,COMPOUNDSTATEMENT,"",ProblemaF4.java(123:21-126:4),"{
+		    int amigo=sc.nextInt();
+		    grafo.inserirLigacao(aluno,amigo);
+		}"
+380,DECLAREDREFERENCEEXPRESSION,"sc",ProblemaF4.java(124:17-124:19),"sc"
+381,DECLARATIONSTATEMENT,"",ProblemaF4.java(124:7-124:30),"int amigo=sc.nextInt();"
+382,MEMBERCALLEXPRESSION,"inserirLigacao",ProblemaF4.java(125:7-125:41),"grafo.inserirLigacao(aluno,amigo);"
+383,VARIABLEDECLARATION,"amigo",ProblemaF4.java(124:11-124:29),"amigo=sc.nextInt()"
+384,DECLAREDREFERENCEEXPRESSION,"namigos",ProblemaF4.java(123:9-123:16),"namigos"
+385,MEMBERCALLEXPRESSION,"nextInt",ProblemaF4.java(124:17-124:29),"sc.nextInt()"
+386,DECLAREDREFERENCEEXPRESSION,"nextInt",ProblemaF4.java(124:20-124:27),"nextInt"
+387,DECLAREDREFERENCEEXPRESSION,"grafo",ProblemaF4.java(125:7-125:12),"grafo"
+388,DECLAREDREFERENCEEXPRESSION,"inserirLigacao",ProblemaF4.java(125:13-125:27),"inserirLigacao"
+389,METHODDECLARATION,"inserirLigacao",,""
+390,DECLAREDREFERENCEEXPRESSION,"amigo",ProblemaF4.java(125:34-125:39),"amigo"
+391,PARAMVARIABLEDECLARATION,"int1",,""
+392,DECLAREDREFERENCEEXPRESSION,"aluno",ProblemaF4.java(125:28-125:33),"aluno"
+393,PARAMVARIABLEDECLARATION,"int0",,""
+394,UNARYOPERATOR,"--",ProblemaF4.java(123:9-123:18),"namigos--"
+395,LITERAL,"",ProblemaF4.java(123:19-123:20),"0"
+396,MEMBERCALLEXPRESSION,"nextInt",ProblemaF4.java(121:13-121:25),"sc.nextInt()"
+397,DECLAREDREFERENCEEXPRESSION,"nextInt",ProblemaF4.java(121:16-121:23),"nextInt"
+398,MEMBERCALLEXPRESSION,"nextInt",ProblemaF4.java(122:15-122:27),"sc.nextInt()"
+399,DECLAREDREFERENCEEXPRESSION,"nextInt",ProblemaF4.java(122:18-122:25),"nextInt"
+400,DECLAREDREFERENCEEXPRESSION,"sc",ProblemaF4.java(122:15-122:17),"sc"
+401,UNARYOPERATOR,"--",ProblemaF4.java(120:12-120:21),"nalunos--"
+402,LITERAL,"",ProblemaF4.java(120:22-120:23),"0"
+403,DECLAREDREFERENCEEXPRESSION,"println",ProblemaF4.java(128:17-128:24),"println"
+404,DECLAREDREFERENCEEXPRESSION,"grafo",ProblemaF4.java(129:22-129:27),"grafo"
+405,BINARYOPERATOR,"+",ProblemaF4.java(128:25-128:35),"""Caso #""+i"
+406,MEMBEREXPRESSION,"out",ProblemaF4.java(128:6-128:16),"System.out"
+407,LITERAL,"",ProblemaF4.java(128:25-128:33),"""Caso #"""
+408,DECLAREDREFERENCEEXPRESSION,"i",ProblemaF4.java(128:34-128:35),"i"
+409,NEWEXPRESSION,"",ProblemaF4.java(119:18-119:36),"new Grafo(nalunos)"
+410,CONSTRUCTEXPRESSION,"",ProblemaF4.java(119:18-119:36),"new Grafo(nalunos)"
+411,CONSTRUCTORDECLARATION,"Grafo",main.java(180:2-187:3),"public Grafo(int n) {
+		nvs = n;
+		narcos = 0;
+		verts = new No[n + 1];
+		for (int i = 0; i <= n; i++)
+			verts[i] = new No();
+		// para vertices numerados de 1 a n (posicao 0 nao vai ser usada)
+	}"
+412,DECLAREDREFERENCEEXPRESSION,"nalunos",ProblemaF4.java(119:28-119:35),"nalunos"
+413,PARAMVARIABLEDECLARATION,"n",main.java(180:15-180:20),"int n"
+414,MEMBERCALLEXPRESSION,"numeroGrupos",ProblemaF4.java(129:22-129:42),"grafo.numeroGrupos()"
+415,DECLAREDREFERENCEEXPRESSION,"numeroGrupos",ProblemaF4.java(129:28-129:40),"numeroGrupos"
+416,METHODDECLARATION,"numeroGrupos",,""
+417,DECLAREDREFERENCEEXPRESSION,"System",ProblemaF4.java(130:6-130:12),"System"
+418,MEMBERCALLEXPRESSION,"nextInt",ProblemaF4.java(118:18-118:30),"sc.nextInt()"
+419,DECLAREDREFERENCEEXPRESSION,"nextInt",ProblemaF4.java(118:21-118:28),"nextInt"
+420,DECLAREDREFERENCEEXPRESSION,"println",ProblemaF4.java(130:17-130:24),"println"
+421,BINARYOPERATOR,"+",ProblemaF4.java(130:25-130:62),"ngrupos.apartir4+"" ""+ngrupos.npmenor4"
+422,MEMBEREXPRESSION,"out",ProblemaF4.java(130:6-130:16),"System.out"
+423,DECLAREDREFERENCEEXPRESSION,"ngrupos",ProblemaF4.java(130:25-130:32),"ngrupos"
+424,BINARYOPERATOR,"+",ProblemaF4.java(130:25-130:45),"ngrupos.apartir4+"" """
+425,MEMBEREXPRESSION,"npmenor4",ProblemaF4.java(130:46-130:62),"ngrupos.npmenor4"
+426,MEMBEREXPRESSION,"apartir4",ProblemaF4.java(130:25-130:41),"ngrupos.apartir4"
+427,LITERAL,"",ProblemaF4.java(130:42-130:45),""" """
+428,DECLAREDREFERENCEEXPRESSION,"ngrupos",ProblemaF4.java(130:46-130:53),"ngrupos"
+429,LITERAL,"",ProblemaF4.java(117:12-117:13),"1"
+430,DECLAREDREFERENCEEXPRESSION,"ncasos",ProblemaF4.java(116:2-116:8),"ncasos"
+431,MEMBERCALLEXPRESSION,"nextInt",ProblemaF4.java(116:9-116:21),"sc.nextInt()"
+432,DECLAREDREFERENCEEXPRESSION,"nextInt",ProblemaF4.java(116:12-116:19),"nextInt"
+433,DECLAREDREFERENCEEXPRESSION,"sc",ProblemaF4.java(116:9-116:11),"sc"

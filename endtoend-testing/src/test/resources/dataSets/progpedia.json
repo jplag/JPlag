@@ -1,0 +1,9 @@
+{
+  "name": "progpedia",
+  "language": "java",
+  "format": "PROGPEDIA",
+  "goldStandardFile": "data/progpedia/plagiate.csv",
+  "options": {
+    "baseCodeDirectory": "base"
+  }
+}

@@ -1,0 +1,1037 @@
+id,type,token,location,code
+1,TRANSLATIONUNITDECLARATION,"/data/00000019/submissions/00532305_Sociologia_080316099/sociologia.java",,""
+2,RECORDDECLARATION,"GNode",sociologia.java(3:1-11:2),"class GNode{
+    public ArrayList<Integer> filhos= new ArrayList<Integer>();
+    public ArrayList<Integer> DFSresult= new ArrayList<Integer>();
+    public int cor= 0;
+    /*
+      0= branco
+      1= cinza
+    */
+}"
+3,RECORDDECLARATION,"Search",sociologia.java(13:1-28:2),"class Search{
+    public void DFS(GNode inicio, GNode[] listapontos, GNode origem){
+	inicio.cor= 1;
+	for(int k= 0; k< inicio.filhos.size(); k++){
+	    int temp= inicio.filhos.get(k);
+	    if(origem.DFSresult.contains(temp)== false){
+		origem.DFSresult.add(temp);
+	    }
+	    GNode filho= new GNode();
+	    if(listapontos[temp-1].cor== 0){
+		filho= listapontos[temp-1];
+	    }
+	    DFS(filho, listapontos, origem);
+	}
+    }
+}"
+4,RECORDDECLARATION,"sociologia",sociologia.java(30:1-102:2),"class sociologia{
+    public static void main(String args[]){
+	Scanner stdin= new Scanner(System.in);
+	int numerocasos= stdin.nextInt();
+	for(int contadorcasos= 0; contadorcasos< numerocasos; contadorcasos++){
+	    int numeropessoas= stdin.nextInt();
+	    GNode[] listadenos= new GNode[numeropessoas];
+	    GNode[] listadenosinvertida= new GNode[numeropessoas];
+	    for(int i= 0; i< numeropessoas; i++){
+		listadenosinvertida[i]= new GNode();
+		listadenosinvertida[i].DFSresult.add(i+1);
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		int posicaono= stdin.nextInt();
+		int posicaotemp= posicaono-1;
+		listadenos[posicaotemp]= new GNode();
+		listadenos[posicaotemp].DFSresult.add(posicaono);
+		int numerofilhos= stdin.nextInt();
+		if(numerofilhos!= 0){
+		    for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }
+		}
+	    }
+	   
+	    Search DFSnormal= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSnormal.DFS(listadenos[contadorpessoas], listadenos, listadenos[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenos[resetnos].cor= 0;
+		}
+	    }
+	    Search DFSinvertida= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSinvertida.DFS(listadenosinvertida[contadorpessoas], listadenosinvertida, listadenosinvertida[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenosinvertida[resetnos].cor= 0;
+		}
+	    }
+
+	    int contadordegrupos= 0;
+	    int numerodenosdefora= 0;
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    ArrayList<Integer> conjuncao= new ArrayList<Integer>();
+		    conjuncao= listadenos[contadorpessoas].DFSresult;
+		    conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);
+		    for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }
+		    if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }	
+		}
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    numerodenosdefora++;
+		}
+	    }
+	    if(contadordegrupos== 0){
+		numerodenosdefora= numeropessoas;
+	    }
+	    System.out.println(""Caso #"" + (contadorcasos+1));
+	    System.out.println(contadordegrupos + "" "" + numerodenosdefora);
+	}
+    }
+}"
+5,INCLUDEDECLARATION,"java.util",,""
+6,FIELDDECLARATION,"this",,""
+7,FIELDDECLARATION,"filhos",sociologia.java(4:5-4:64),"filhos = new ArrayList<Integer>()"
+8,FIELDDECLARATION,"DFSresult",sociologia.java(5:5-5:67),"DFSresult = new ArrayList<Integer>()"
+9,FIELDDECLARATION,"cor",sociologia.java(6:5-6:23),"cor = 0"
+10,CONSTRUCTORDECLARATION,"GNode",,""
+11,LITERAL,"",sociologia.java(6:21-6:22),"0"
+12,NEWEXPRESSION,"",sociologia.java(4:39-4:63),"new ArrayList<Integer>()"
+13,CONSTRUCTEXPRESSION,"",sociologia.java(4:39-4:63),"new ArrayList<Integer>()"
+14,NEWEXPRESSION,"",sociologia.java(5:42-5:66),"new ArrayList<Integer>()"
+15,CONSTRUCTEXPRESSION,"",sociologia.java(5:42-5:66),"new ArrayList<Integer>()"
+16,FIELDDECLARATION,"this",,""
+17,METHODDECLARATION,"DFS",sociologia.java(14:5-27:6),"public void DFS(GNode inicio, GNode[] listapontos, GNode origem){
+	inicio.cor= 1;
+	for(int k= 0; k< inicio.filhos.size(); k++){
+	    int temp= inicio.filhos.get(k);
+	    if(origem.DFSresult.contains(temp)== false){
+		origem.DFSresult.add(temp);
+	    }
+	    GNode filho= new GNode();
+	    if(listapontos[temp-1].cor== 0){
+		filho= listapontos[temp-1];
+	    }
+	    DFS(filho, listapontos, origem);
+	}
+    }"
+18,CONSTRUCTORDECLARATION,"Search",,""
+19,VARIABLEDECLARATION,"this",,""
+20,COMPOUNDSTATEMENT,"",sociologia.java(14:69-27:6),"{
+	inicio.cor= 1;
+	for(int k= 0; k< inicio.filhos.size(); k++){
+	    int temp= inicio.filhos.get(k);
+	    if(origem.DFSresult.contains(temp)== false){
+		origem.DFSresult.add(temp);
+	    }
+	    GNode filho= new GNode();
+	    if(listapontos[temp-1].cor== 0){
+		filho= listapontos[temp-1];
+	    }
+	    DFS(filho, listapontos, origem);
+	}
+    }"
+21,PARAMVARIABLEDECLARATION,"inicio",sociologia.java(14:21-14:33),"GNode inicio"
+22,PARAMVARIABLEDECLARATION,"listapontos",sociologia.java(14:35-14:54),"GNode[] listapontos"
+23,PARAMVARIABLEDECLARATION,"origem",sociologia.java(14:56-14:68),"GNode origem"
+24,DECLAREDREFERENCEEXPRESSION,"inicio",sociologia.java(15:2-15:8),"inicio"
+25,RETURNSTATEMENT,"",,""
+26,BINARYOPERATOR,"=",sociologia.java(15:2-15:16),"inicio.cor= 1;"
+27,FORSTATEMENT,"",sociologia.java(16:2-26:3),"for(int k= 0; k< inicio.filhos.size(); k++){
+	    int temp= inicio.filhos.get(k);
+	    if(origem.DFSresult.contains(temp)== false){
+		origem.DFSresult.add(temp);
+	    }
+	    GNode filho= new GNode();
+	    if(listapontos[temp-1].cor== 0){
+		filho= listapontos[temp-1];
+	    }
+	    DFS(filho, listapontos, origem);
+	}"
+28,MEMBEREXPRESSION,"cor",sociologia.java(15:2-15:12),"inicio.cor"
+29,LITERAL,"",sociologia.java(15:14-15:15),"1"
+30,LITERAL,"",sociologia.java(16:13-16:14),"0"
+31,COMPOUNDSTATEMENT,"",sociologia.java(16:45-26:3),"{
+	    int temp= inicio.filhos.get(k);
+	    if(origem.DFSresult.contains(temp)== false){
+		origem.DFSresult.add(temp);
+	    }
+	    GNode filho= new GNode();
+	    if(listapontos[temp-1].cor== 0){
+		filho= listapontos[temp-1];
+	    }
+	    DFS(filho, listapontos, origem);
+	}"
+32,DECLARATIONSTATEMENT,"",sociologia.java(16:6-16:14),"int k= 0"
+33,BINARYOPERATOR,"<",sociologia.java(16:16-16:39),"k< inicio.filhos.size()"
+34,UNARYOPERATOR,"++",sociologia.java(16:41-16:44),"k++"
+35,VARIABLEDECLARATION,"k",sociologia.java(16:10-16:14),"k= 0"
+36,DECLAREDREFERENCEEXPRESSION,"inicio",sociologia.java(17:16-17:22),"inicio"
+37,DECLAREDREFERENCEEXPRESSION,"k",sociologia.java(16:41-16:42),"k"
+38,DECLAREDREFERENCEEXPRESSION,"k",sociologia.java(16:16-16:17),"k"
+39,DECLARATIONSTATEMENT,"",sociologia.java(17:6-17:37),"int temp= inicio.filhos.get(k);"
+40,IFSTATEMENT,"",sociologia.java(18:6-20:7),"if(origem.DFSresult.contains(temp)== false){
+		origem.DFSresult.add(temp);
+	    }"
+41,DECLARATIONSTATEMENT,"",sociologia.java(21:6-21:31),"GNode filho= new GNode();"
+42,IFSTATEMENT,"",sociologia.java(22:6-24:7),"if(listapontos[temp-1].cor== 0){
+		filho= listapontos[temp-1];
+	    }"
+43,CALLEXPRESSION,"DFS",sociologia.java(25:6-25:38),"DFS(filho, listapontos, origem);"
+44,VARIABLEDECLARATION,"temp",sociologia.java(17:10-17:36),"temp= inicio.filhos.get(k)"
+45,VARIABLEDECLARATION,"filho",sociologia.java(21:12-21:30),"filho= new GNode()"
+46,NEWEXPRESSION,"",sociologia.java(21:19-21:30),"new GNode()"
+47,CONSTRUCTEXPRESSION,"",sociologia.java(21:19-21:30),"new GNode()"
+48,CONSTRUCTORDECLARATION,"GNode",,""
+49,COMPOUNDSTATEMENT,"",sociologia.java(18:49-20:7),"{
+		origem.DFSresult.add(temp);
+	    }"
+50,BINARYOPERATOR,"==",sociologia.java(18:9-18:48),"origem.DFSresult.contains(temp)== false"
+51,DECLAREDREFERENCEEXPRESSION,"origem",sociologia.java(19:3-19:9),"origem"
+52,MEMBERCALLEXPRESSION,"add",sociologia.java(19:3-19:30),"origem.DFSresult.add(temp);"
+53,DECLAREDREFERENCEEXPRESSION,"add",sociologia.java(19:20-19:23),"add"
+54,DECLAREDREFERENCEEXPRESSION,"temp",sociologia.java(19:24-19:28),"temp"
+55,MEMBEREXPRESSION,"DFSresult",sociologia.java(19:3-19:19),"origem.DFSresult"
+56,MEMBERCALLEXPRESSION,"contains",sociologia.java(18:9-18:40),"origem.DFSresult.contains(temp)"
+57,LITERAL,"",sociologia.java(18:43-18:48),"false"
+58,DECLAREDREFERENCEEXPRESSION,"contains",sociologia.java(18:26-18:34),"contains"
+59,DECLAREDREFERENCEEXPRESSION,"temp",sociologia.java(18:35-18:39),"temp"
+60,MEMBEREXPRESSION,"DFSresult",sociologia.java(18:9-18:25),"origem.DFSresult"
+61,DECLAREDREFERENCEEXPRESSION,"origem",sociologia.java(18:9-18:15),"origem"
+62,MEMBERCALLEXPRESSION,"get",sociologia.java(17:16-17:36),"inicio.filhos.get(k)"
+63,DECLAREDREFERENCEEXPRESSION,"get",sociologia.java(17:30-17:33),"get"
+64,DECLAREDREFERENCEEXPRESSION,"k",sociologia.java(17:34-17:35),"k"
+65,MEMBEREXPRESSION,"filhos",sociologia.java(17:16-17:29),"inicio.filhos"
+66,METHODDECLARATION,"DFS",,""
+67,DECLAREDREFERENCEEXPRESSION,"filho",sociologia.java(25:10-25:15),"filho"
+68,DECLAREDREFERENCEEXPRESSION,"listapontos",sociologia.java(25:17-25:28),"listapontos"
+69,DECLAREDREFERENCEEXPRESSION,"origem",sociologia.java(25:30-25:36),"origem"
+70,PARAMVARIABLEDECLARATION,"gnode0",,""
+71,COMPOUNDSTATEMENT,"",sociologia.java(22:37-24:7),"{
+		filho= listapontos[temp-1];
+	    }"
+72,PARAMVARIABLEDECLARATION,"gnodePtr1",,""
+73,PARAMVARIABLEDECLARATION,"gnode2",,""
+74,BINARYOPERATOR,"==",sociologia.java(22:9-22:36),"listapontos[temp-1].cor== 0"
+75,DECLAREDREFERENCEEXPRESSION,"filho",sociologia.java(23:3-23:8),"filho"
+76,MEMBEREXPRESSION,"cor",sociologia.java(22:9-22:32),"listapontos[temp-1].cor"
+77,LITERAL,"",sociologia.java(22:35-22:36),"0"
+78,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(22:9-22:28),"listapontos[temp-1]"
+79,DECLAREDREFERENCEEXPRESSION,"listapontos",sociologia.java(22:9-22:20),"listapontos"
+80,BINARYOPERATOR,"-",sociologia.java(22:21-22:27),"temp-1"
+81,DECLAREDREFERENCEEXPRESSION,"temp",sociologia.java(22:21-22:25),"temp"
+82,LITERAL,"",sociologia.java(22:26-22:27),"1"
+83,BINARYOPERATOR,"=",sociologia.java(23:3-23:30),"filho= listapontos[temp-1];"
+84,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(23:10-23:29),"listapontos[temp-1]"
+85,DECLAREDREFERENCEEXPRESSION,"listapontos",sociologia.java(23:10-23:21),"listapontos"
+86,BINARYOPERATOR,"-",sociologia.java(23:22-23:28),"temp-1"
+87,DECLAREDREFERENCEEXPRESSION,"temp",sociologia.java(23:22-23:26),"temp"
+88,LITERAL,"",sociologia.java(23:27-23:28),"1"
+89,MEMBERCALLEXPRESSION,"size",sociologia.java(16:19-16:39),"inicio.filhos.size()"
+90,DECLAREDREFERENCEEXPRESSION,"inicio",sociologia.java(16:19-16:25),"inicio"
+91,DECLAREDREFERENCEEXPRESSION,"size",sociologia.java(16:33-16:37),"size"
+92,MEMBEREXPRESSION,"filhos",sociologia.java(16:19-16:32),"inicio.filhos"
+93,FIELDDECLARATION,"this",,""
+94,METHODDECLARATION,"main",sociologia.java(31:5-101:6),"public static void main(String args[]){
+	Scanner stdin= new Scanner(System.in);
+	int numerocasos= stdin.nextInt();
+	for(int contadorcasos= 0; contadorcasos< numerocasos; contadorcasos++){
+	    int numeropessoas= stdin.nextInt();
+	    GNode[] listadenos= new GNode[numeropessoas];
+	    GNode[] listadenosinvertida= new GNode[numeropessoas];
+	    for(int i= 0; i< numeropessoas; i++){
+		listadenosinvertida[i]= new GNode();
+		listadenosinvertida[i].DFSresult.add(i+1);
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		int posicaono= stdin.nextInt();
+		int posicaotemp= posicaono-1;
+		listadenos[posicaotemp]= new GNode();
+		listadenos[posicaotemp].DFSresult.add(posicaono);
+		int numerofilhos= stdin.nextInt();
+		if(numerofilhos!= 0){
+		    for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }
+		}
+	    }
+	   
+	    Search DFSnormal= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSnormal.DFS(listadenos[contadorpessoas], listadenos, listadenos[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenos[resetnos].cor= 0;
+		}
+	    }
+	    Search DFSinvertida= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSinvertida.DFS(listadenosinvertida[contadorpessoas], listadenosinvertida, listadenosinvertida[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenosinvertida[resetnos].cor= 0;
+		}
+	    }
+
+	    int contadordegrupos= 0;
+	    int numerodenosdefora= 0;
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    ArrayList<Integer> conjuncao= new ArrayList<Integer>();
+		    conjuncao= listadenos[contadorpessoas].DFSresult;
+		    conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);
+		    for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }
+		    if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }	
+		}
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    numerodenosdefora++;
+		}
+	    }
+	    if(contadordegrupos== 0){
+		numerodenosdefora= numeropessoas;
+	    }
+	    System.out.println(""Caso #"" + (contadorcasos+1));
+	    System.out.println(contadordegrupos + "" "" + numerodenosdefora);
+	}
+    }"
+95,CONSTRUCTORDECLARATION,"sociologia",,""
+96,VARIABLEDECLARATION,"this",,""
+97,COMPOUNDSTATEMENT,"",sociologia.java(31:43-101:6),"{
+	Scanner stdin= new Scanner(System.in);
+	int numerocasos= stdin.nextInt();
+	for(int contadorcasos= 0; contadorcasos< numerocasos; contadorcasos++){
+	    int numeropessoas= stdin.nextInt();
+	    GNode[] listadenos= new GNode[numeropessoas];
+	    GNode[] listadenosinvertida= new GNode[numeropessoas];
+	    for(int i= 0; i< numeropessoas; i++){
+		listadenosinvertida[i]= new GNode();
+		listadenosinvertida[i].DFSresult.add(i+1);
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		int posicaono= stdin.nextInt();
+		int posicaotemp= posicaono-1;
+		listadenos[posicaotemp]= new GNode();
+		listadenos[posicaotemp].DFSresult.add(posicaono);
+		int numerofilhos= stdin.nextInt();
+		if(numerofilhos!= 0){
+		    for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }
+		}
+	    }
+	   
+	    Search DFSnormal= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSnormal.DFS(listadenos[contadorpessoas], listadenos, listadenos[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenos[resetnos].cor= 0;
+		}
+	    }
+	    Search DFSinvertida= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSinvertida.DFS(listadenosinvertida[contadorpessoas], listadenosinvertida, listadenosinvertida[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenosinvertida[resetnos].cor= 0;
+		}
+	    }
+
+	    int contadordegrupos= 0;
+	    int numerodenosdefora= 0;
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    ArrayList<Integer> conjuncao= new ArrayList<Integer>();
+		    conjuncao= listadenos[contadorpessoas].DFSresult;
+		    conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);
+		    for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }
+		    if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }	
+		}
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    numerodenosdefora++;
+		}
+	    }
+	    if(contadordegrupos== 0){
+		numerodenosdefora= numeropessoas;
+	    }
+	    System.out.println(""Caso #"" + (contadorcasos+1));
+	    System.out.println(contadordegrupos + "" "" + numerodenosdefora);
+	}
+    }"
+98,PARAMVARIABLEDECLARATION,"args",sociologia.java(31:29-31:42),"String args[]"
+99,DECLAREDREFERENCEEXPRESSION,"System",sociologia.java(32:29-32:35),"System"
+100,RETURNSTATEMENT,"",,""
+101,DECLARATIONSTATEMENT,"",sociologia.java(32:2-32:40),"Scanner stdin= new Scanner(System.in);"
+102,DECLARATIONSTATEMENT,"",sociologia.java(33:2-33:35),"int numerocasos= stdin.nextInt();"
+103,FORSTATEMENT,"",sociologia.java(34:2-100:3),"for(int contadorcasos= 0; contadorcasos< numerocasos; contadorcasos++){
+	    int numeropessoas= stdin.nextInt();
+	    GNode[] listadenos= new GNode[numeropessoas];
+	    GNode[] listadenosinvertida= new GNode[numeropessoas];
+	    for(int i= 0; i< numeropessoas; i++){
+		listadenosinvertida[i]= new GNode();
+		listadenosinvertida[i].DFSresult.add(i+1);
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		int posicaono= stdin.nextInt();
+		int posicaotemp= posicaono-1;
+		listadenos[posicaotemp]= new GNode();
+		listadenos[posicaotemp].DFSresult.add(posicaono);
+		int numerofilhos= stdin.nextInt();
+		if(numerofilhos!= 0){
+		    for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }
+		}
+	    }
+	   
+	    Search DFSnormal= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSnormal.DFS(listadenos[contadorpessoas], listadenos, listadenos[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenos[resetnos].cor= 0;
+		}
+	    }
+	    Search DFSinvertida= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSinvertida.DFS(listadenosinvertida[contadorpessoas], listadenosinvertida, listadenosinvertida[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenosinvertida[resetnos].cor= 0;
+		}
+	    }
+
+	    int contadordegrupos= 0;
+	    int numerodenosdefora= 0;
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    ArrayList<Integer> conjuncao= new ArrayList<Integer>();
+		    conjuncao= listadenos[contadorpessoas].DFSresult;
+		    conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);
+		    for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }
+		    if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }	
+		}
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    numerodenosdefora++;
+		}
+	    }
+	    if(contadordegrupos== 0){
+		numerodenosdefora= numeropessoas;
+	    }
+	    System.out.println(""Caso #"" + (contadorcasos+1));
+	    System.out.println(contadordegrupos + "" "" + numerodenosdefora);
+	}"
+104,VARIABLEDECLARATION,"stdin",sociologia.java(32:10-32:39),"stdin= new Scanner(System.in)"
+105,VARIABLEDECLARATION,"numerocasos",sociologia.java(33:6-33:34),"numerocasos= stdin.nextInt()"
+106,DECLAREDREFERENCEEXPRESSION,"stdin",sociologia.java(33:19-33:24),"stdin"
+107,MEMBERCALLEXPRESSION,"nextInt",sociologia.java(33:19-33:34),"stdin.nextInt()"
+108,DECLAREDREFERENCEEXPRESSION,"nextInt",sociologia.java(33:25-33:32),"nextInt"
+109,LITERAL,"",sociologia.java(34:25-34:26),"0"
+110,COMPOUNDSTATEMENT,"",sociologia.java(34:72-100:3),"{
+	    int numeropessoas= stdin.nextInt();
+	    GNode[] listadenos= new GNode[numeropessoas];
+	    GNode[] listadenosinvertida= new GNode[numeropessoas];
+	    for(int i= 0; i< numeropessoas; i++){
+		listadenosinvertida[i]= new GNode();
+		listadenosinvertida[i].DFSresult.add(i+1);
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		int posicaono= stdin.nextInt();
+		int posicaotemp= posicaono-1;
+		listadenos[posicaotemp]= new GNode();
+		listadenos[posicaotemp].DFSresult.add(posicaono);
+		int numerofilhos= stdin.nextInt();
+		if(numerofilhos!= 0){
+		    for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }
+		}
+	    }
+	   
+	    Search DFSnormal= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSnormal.DFS(listadenos[contadorpessoas], listadenos, listadenos[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenos[resetnos].cor= 0;
+		}
+	    }
+	    Search DFSinvertida= new Search();
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSinvertida.DFS(listadenosinvertida[contadorpessoas], listadenosinvertida, listadenosinvertida[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenosinvertida[resetnos].cor= 0;
+		}
+	    }
+
+	    int contadordegrupos= 0;
+	    int numerodenosdefora= 0;
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    ArrayList<Integer> conjuncao= new ArrayList<Integer>();
+		    conjuncao= listadenos[contadorpessoas].DFSresult;
+		    conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);
+		    for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }
+		    if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }	
+		}
+	    }
+	    for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    numerodenosdefora++;
+		}
+	    }
+	    if(contadordegrupos== 0){
+		numerodenosdefora= numeropessoas;
+	    }
+	    System.out.println(""Caso #"" + (contadorcasos+1));
+	    System.out.println(contadordegrupos + "" "" + numerodenosdefora);
+	}"
+111,DECLARATIONSTATEMENT,"",sociologia.java(34:6-34:26),"int contadorcasos= 0"
+112,BINARYOPERATOR,"<",sociologia.java(34:28-34:54),"contadorcasos< numerocasos"
+113,UNARYOPERATOR,"++",sociologia.java(34:56-34:71),"contadorcasos++"
+114,VARIABLEDECLARATION,"contadorcasos",sociologia.java(34:10-34:26),"contadorcasos= 0"
+115,DECLAREDREFERENCEEXPRESSION,"stdin",sociologia.java(35:25-35:30),"stdin"
+116,DECLAREDREFERENCEEXPRESSION,"contadorcasos",sociologia.java(34:28-34:41),"contadorcasos"
+117,DECLAREDREFERENCEEXPRESSION,"numerocasos",sociologia.java(34:43-34:54),"numerocasos"
+118,DECLARATIONSTATEMENT,"",sociologia.java(35:6-35:41),"int numeropessoas= stdin.nextInt();"
+119,DECLARATIONSTATEMENT,"",sociologia.java(36:6-36:51),"GNode[] listadenos= new GNode[numeropessoas];"
+120,DECLARATIONSTATEMENT,"",sociologia.java(37:6-37:60),"GNode[] listadenosinvertida= new GNode[numeropessoas];"
+121,FORSTATEMENT,"",sociologia.java(38:6-41:7),"for(int i= 0; i< numeropessoas; i++){
+		listadenosinvertida[i]= new GNode();
+		listadenosinvertida[i].DFSresult.add(i+1);
+	    }"
+122,FORSTATEMENT,"",sociologia.java(42:6-56:7),"for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		int posicaono= stdin.nextInt();
+		int posicaotemp= posicaono-1;
+		listadenos[posicaotemp]= new GNode();
+		listadenos[posicaotemp].DFSresult.add(posicaono);
+		int numerofilhos= stdin.nextInt();
+		if(numerofilhos!= 0){
+		    for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }
+		}
+	    }"
+123,DECLARATIONSTATEMENT,"",sociologia.java(58:6-58:37),"Search DFSnormal= new Search();"
+124,FORSTATEMENT,"",sociologia.java(59:6-64:7),"for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSnormal.DFS(listadenos[contadorpessoas], listadenos, listadenos[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenos[resetnos].cor= 0;
+		}
+	    }"
+125,DECLARATIONSTATEMENT,"",sociologia.java(65:6-65:40),"Search DFSinvertida= new Search();"
+126,FORSTATEMENT,"",sociologia.java(66:6-71:7),"for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		DFSinvertida.DFS(listadenosinvertida[contadorpessoas], listadenosinvertida, listadenosinvertida[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenosinvertida[resetnos].cor= 0;
+		}
+	    }"
+127,DECLARATIONSTATEMENT,"",sociologia.java(73:6-73:30),"int contadordegrupos= 0;"
+128,DECLARATIONSTATEMENT,"",sociologia.java(74:6-74:31),"int numerodenosdefora= 0;"
+129,FORSTATEMENT,"",sociologia.java(75:6-89:7),"for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    ArrayList<Integer> conjuncao= new ArrayList<Integer>();
+		    conjuncao= listadenos[contadorpessoas].DFSresult;
+		    conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);
+		    for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }
+		    if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }	
+		}
+	    }"
+130,FORSTATEMENT,"",sociologia.java(90:6-94:7),"for(int contadorpessoas= 0; contadorpessoas< numeropessoas; contadorpessoas++){
+		if(listadenos[contadorpessoas].cor== 0){
+		    numerodenosdefora++;
+		}
+	    }"
+131,IFSTATEMENT,"",sociologia.java(95:6-97:7),"if(contadordegrupos== 0){
+		numerodenosdefora= numeropessoas;
+	    }"
+132,MEMBERCALLEXPRESSION,"println",sociologia.java(98:6-98:55),"System.out.println(""Caso #"" + (contadorcasos+1));"
+133,MEMBERCALLEXPRESSION,"println",sociologia.java(99:6-99:69),"System.out.println(contadordegrupos + "" "" + numerodenosdefora);"
+134,VARIABLEDECLARATION,"numeropessoas",sociologia.java(35:10-35:40),"numeropessoas= stdin.nextInt()"
+135,VARIABLEDECLARATION,"listadenos",sociologia.java(36:14-36:50),"listadenos= new GNode[numeropessoas]"
+136,VARIABLEDECLARATION,"listadenosinvertida",sociologia.java(37:14-37:59),"listadenosinvertida= new GNode[numeropessoas]"
+137,VARIABLEDECLARATION,"DFSnormal",sociologia.java(58:13-58:36),"DFSnormal= new Search()"
+138,VARIABLEDECLARATION,"DFSinvertida",sociologia.java(65:13-65:39),"DFSinvertida= new Search()"
+139,VARIABLEDECLARATION,"contadordegrupos",sociologia.java(73:10-73:29),"contadordegrupos= 0"
+140,VARIABLEDECLARATION,"numerodenosdefora",sociologia.java(74:10-74:30),"numerodenosdefora= 0"
+141,DECLAREDREFERENCEEXPRESSION,"contadorcasos",sociologia.java(34:56-34:69),"contadorcasos"
+142,LITERAL,"",sociologia.java(38:17-38:18),"0"
+143,DECLAREDREFERENCEEXPRESSION,"println",sociologia.java(98:17-98:24),"println"
+144,DECLAREDREFERENCEEXPRESSION,"System",sociologia.java(99:6-99:12),"System"
+145,BINARYOPERATOR,"+",sociologia.java(98:25-98:53),"""Caso #"" + (contadorcasos+1)"
+146,LITERAL,"",sociologia.java(98:25-98:33),"""Caso #"""
+147,BINARYOPERATOR,"+",sociologia.java(98:37-98:52),"contadorcasos+1"
+148,DECLAREDREFERENCEEXPRESSION,"contadorcasos",sociologia.java(98:37-98:50),"contadorcasos"
+149,MEMBEREXPRESSION,"out",sociologia.java(98:6-98:16),"System.out"
+150,LITERAL,"",sociologia.java(98:51-98:52),"1"
+151,DECLAREDREFERENCEEXPRESSION,"System",sociologia.java(98:6-98:12),"System"
+152,COMPOUNDSTATEMENT,"",sociologia.java(95:30-97:7),"{
+		numerodenosdefora= numeropessoas;
+	    }"
+153,COMPOUNDSTATEMENT,"",sociologia.java(38:42-41:7),"{
+		listadenosinvertida[i]= new GNode();
+		listadenosinvertida[i].DFSresult.add(i+1);
+	    }"
+154,DECLARATIONSTATEMENT,"",sociologia.java(38:10-38:18),"int i= 0"
+155,BINARYOPERATOR,"<",sociologia.java(38:20-38:36),"i< numeropessoas"
+156,UNARYOPERATOR,"++",sociologia.java(38:38-38:41),"i++"
+157,VARIABLEDECLARATION,"i",sociologia.java(38:14-38:18),"i= 0"
+158,DECLAREDREFERENCEEXPRESSION,"listadenosinvertida",sociologia.java(39:3-39:22),"listadenosinvertida"
+159,LITERAL,"",sociologia.java(42:31-42:32),"0"
+160,DECLAREDREFERENCEEXPRESSION,"i",sociologia.java(38:20-38:21),"i"
+161,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(38:23-38:36),"numeropessoas"
+162,DECLAREDREFERENCEEXPRESSION,"i",sociologia.java(38:38-38:39),"i"
+163,BINARYOPERATOR,"=",sociologia.java(39:3-39:39),"listadenosinvertida[i]= new GNode();"
+164,MEMBERCALLEXPRESSION,"add",sociologia.java(40:3-40:45),"listadenosinvertida[i].DFSresult.add(i+1);"
+165,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(39:3-39:25),"listadenosinvertida[i]"
+166,NEWEXPRESSION,"",sociologia.java(39:27-39:38),"new GNode()"
+167,DECLAREDREFERENCEEXPRESSION,"listadenosinvertida",sociologia.java(40:3-40:22),"listadenosinvertida"
+168,DECLAREDREFERENCEEXPRESSION,"i",sociologia.java(39:23-39:24),"i"
+169,CONSTRUCTEXPRESSION,"",sociologia.java(39:27-39:38),"new GNode()"
+170,DECLAREDREFERENCEEXPRESSION,"add",sociologia.java(40:36-40:39),"add"
+171,BINARYOPERATOR,"+",sociologia.java(40:40-40:43),"i+1"
+172,DECLAREDREFERENCEEXPRESSION,"i",sociologia.java(40:40-40:41),"i"
+173,LITERAL,"",sociologia.java(40:42-40:43),"1"
+174,MEMBEREXPRESSION,"DFSresult",sociologia.java(40:3-40:35),"listadenosinvertida[i].DFSresult"
+175,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(40:3-40:25),"listadenosinvertida[i]"
+176,DECLAREDREFERENCEEXPRESSION,"i",sociologia.java(40:23-40:24),"i"
+177,BINARYOPERATOR,"==",sociologia.java(95:9-95:29),"contadordegrupos== 0"
+178,DECLAREDREFERENCEEXPRESSION,"numerodenosdefora",sociologia.java(96:3-96:20),"numerodenosdefora"
+179,BINARYOPERATOR,"=",sociologia.java(96:3-96:36),"numerodenosdefora= numeropessoas;"
+180,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(96:22-96:35),"numeropessoas"
+181,DECLAREDREFERENCEEXPRESSION,"contadordegrupos",sociologia.java(95:9-95:25),"contadordegrupos"
+182,LITERAL,"",sociologia.java(95:28-95:29),"0"
+183,LITERAL,"",sociologia.java(74:29-74:30),"0"
+184,LITERAL,"",sociologia.java(59:31-59:32),"0"
+185,COMPOUNDSTATEMENT,"",sociologia.java(42:84-56:7),"{
+		int posicaono= stdin.nextInt();
+		int posicaotemp= posicaono-1;
+		listadenos[posicaotemp]= new GNode();
+		listadenos[posicaotemp].DFSresult.add(posicaono);
+		int numerofilhos= stdin.nextInt();
+		if(numerofilhos!= 0){
+		    for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }
+		}
+	    }"
+186,DECLARATIONSTATEMENT,"",sociologia.java(42:10-42:32),"int contadorpessoas= 0"
+187,BINARYOPERATOR,"<",sociologia.java(42:34-42:64),"contadorpessoas< numeropessoas"
+188,UNARYOPERATOR,"++",sociologia.java(42:66-42:83),"contadorpessoas++"
+189,VARIABLEDECLARATION,"contadorpessoas",sociologia.java(42:14-42:32),"contadorpessoas= 0"
+190,DECLAREDREFERENCEEXPRESSION,"stdin",sociologia.java(43:18-43:23),"stdin"
+191,CONSTRUCTEXPRESSION,"",sociologia.java(58:24-58:36),"new Search()"
+192,DECLARATIONSTATEMENT,"",sociologia.java(43:3-43:34),"int posicaono= stdin.nextInt();"
+193,DECLARATIONSTATEMENT,"",sociologia.java(44:3-44:32),"int posicaotemp= posicaono-1;"
+194,BINARYOPERATOR,"=",sociologia.java(45:3-45:40),"listadenos[posicaotemp]= new GNode();"
+195,MEMBERCALLEXPRESSION,"add",sociologia.java(46:3-46:52),"listadenos[posicaotemp].DFSresult.add(posicaono);"
+196,DECLARATIONSTATEMENT,"",sociologia.java(47:3-47:37),"int numerofilhos= stdin.nextInt();"
+197,IFSTATEMENT,"",sociologia.java(48:3-55:4),"if(numerofilhos!= 0){
+		    for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }
+		}"
+198,VARIABLEDECLARATION,"posicaono",sociologia.java(43:7-43:33),"posicaono= stdin.nextInt()"
+199,VARIABLEDECLARATION,"posicaotemp",sociologia.java(44:7-44:31),"posicaotemp= posicaono-1"
+200,VARIABLEDECLARATION,"numerofilhos",sociologia.java(47:7-47:36),"numerofilhos= stdin.nextInt()"
+201,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(42:66-42:81),"contadorpessoas"
+202,COMPOUNDSTATEMENT,"",sociologia.java(48:23-55:4),"{
+		    for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }
+		}"
+203,DECLAREDREFERENCEEXPRESSION,"add",sociologia.java(46:37-46:40),"add"
+204,DECLAREDREFERENCEEXPRESSION,"stdin",sociologia.java(47:21-47:26),"stdin"
+205,DECLAREDREFERENCEEXPRESSION,"posicaono",sociologia.java(46:41-46:50),"posicaono"
+206,MEMBEREXPRESSION,"DFSresult",sociologia.java(46:3-46:36),"listadenos[posicaotemp].DFSresult"
+207,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(46:3-46:26),"listadenos[posicaotemp]"
+208,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(46:3-46:13),"listadenos"
+209,DECLAREDREFERENCEEXPRESSION,"posicaotemp",sociologia.java(46:14-46:25),"posicaotemp"
+210,BINARYOPERATOR,"-",sociologia.java(44:20-44:31),"posicaono-1"
+211,DECLAREDREFERENCEEXPRESSION,"posicaono",sociologia.java(44:20-44:29),"posicaono"
+212,LITERAL,"",sociologia.java(44:30-44:31),"1"
+213,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(45:3-45:26),"listadenos[posicaotemp]"
+214,NEWEXPRESSION,"",sociologia.java(45:28-45:39),"new GNode()"
+215,CONSTRUCTEXPRESSION,"",sociologia.java(45:28-45:39),"new GNode()"
+216,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(45:3-45:13),"listadenos"
+217,DECLAREDREFERENCEEXPRESSION,"posicaotemp",sociologia.java(45:14-45:25),"posicaotemp"
+218,MEMBERCALLEXPRESSION,"nextInt",sociologia.java(43:18-43:33),"stdin.nextInt()"
+219,DECLAREDREFERENCEEXPRESSION,"nextInt",sociologia.java(43:24-43:31),"nextInt"
+220,BINARYOPERATOR,"!=",sociologia.java(48:6-48:22),"numerofilhos!= 0"
+221,LITERAL,"",sociologia.java(49:31-49:32),"0"
+222,DECLAREDREFERENCEEXPRESSION,"numerofilhos",sociologia.java(48:6-48:18),"numerofilhos"
+223,LITERAL,"",sociologia.java(48:21-48:22),"0"
+224,FORSTATEMENT,"",sociologia.java(49:7-54:8),"for(int contadorfilhos= 0; contadorfilhos< numerofilhos; contadorfilhos++){
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }"
+225,COMPOUNDSTATEMENT,"",sociologia.java(49:81-54:8),"{
+			int valortemp= stdin.nextInt();
+			int valortemptemp= valortemp-1;
+			listadenos[posicaotemp].filhos.add(valortemp);
+			listadenosinvertida[valortemptemp].filhos.add(posicaono);
+		    }"
+226,DECLARATIONSTATEMENT,"",sociologia.java(49:11-49:32),"int contadorfilhos= 0"
+227,BINARYOPERATOR,"<",sociologia.java(49:34-49:62),"contadorfilhos< numerofilhos"
+228,UNARYOPERATOR,"++",sociologia.java(49:64-49:80),"contadorfilhos++"
+229,VARIABLEDECLARATION,"contadorfilhos",sociologia.java(49:15-49:32),"contadorfilhos= 0"
+230,DECLAREDREFERENCEEXPRESSION,"stdin",sociologia.java(50:19-50:24),"stdin"
+231,DECLARATIONSTATEMENT,"",sociologia.java(50:4-50:35),"int valortemp= stdin.nextInt();"
+232,DECLARATIONSTATEMENT,"",sociologia.java(51:4-51:35),"int valortemptemp= valortemp-1;"
+233,MEMBERCALLEXPRESSION,"add",sociologia.java(52:4-52:50),"listadenos[posicaotemp].filhos.add(valortemp);"
+234,MEMBERCALLEXPRESSION,"add",sociologia.java(53:4-53:61),"listadenosinvertida[valortemptemp].filhos.add(posicaono);"
+235,VARIABLEDECLARATION,"valortemp",sociologia.java(50:8-50:34),"valortemp= stdin.nextInt()"
+236,VARIABLEDECLARATION,"valortemptemp",sociologia.java(51:8-51:34),"valortemptemp= valortemp-1"
+237,DECLAREDREFERENCEEXPRESSION,"contadorfilhos",sociologia.java(49:64-49:78),"contadorfilhos"
+238,BINARYOPERATOR,"-",sociologia.java(51:23-51:34),"valortemp-1"
+239,DECLAREDREFERENCEEXPRESSION,"valortemp",sociologia.java(51:23-51:32),"valortemp"
+240,LITERAL,"",sociologia.java(51:33-51:34),"1"
+241,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(52:4-52:14),"listadenos"
+242,DECLAREDREFERENCEEXPRESSION,"add",sociologia.java(52:35-52:38),"add"
+243,DECLAREDREFERENCEEXPRESSION,"listadenosinvertida",sociologia.java(53:4-53:23),"listadenosinvertida"
+244,DECLAREDREFERENCEEXPRESSION,"valortemp",sociologia.java(52:39-52:48),"valortemp"
+245,MEMBEREXPRESSION,"filhos",sociologia.java(52:4-52:34),"listadenos[posicaotemp].filhos"
+246,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(52:4-52:27),"listadenos[posicaotemp]"
+247,DECLAREDREFERENCEEXPRESSION,"posicaotemp",sociologia.java(52:15-52:26),"posicaotemp"
+248,MEMBERCALLEXPRESSION,"nextInt",sociologia.java(50:19-50:34),"stdin.nextInt()"
+249,DECLAREDREFERENCEEXPRESSION,"nextInt",sociologia.java(50:25-50:32),"nextInt"
+250,DECLAREDREFERENCEEXPRESSION,"add",sociologia.java(53:46-53:49),"add"
+251,DECLAREDREFERENCEEXPRESSION,"posicaono",sociologia.java(53:50-53:59),"posicaono"
+252,MEMBEREXPRESSION,"filhos",sociologia.java(53:4-53:45),"listadenosinvertida[valortemptemp].filhos"
+253,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(53:4-53:38),"listadenosinvertida[valortemptemp]"
+254,DECLAREDREFERENCEEXPRESSION,"valortemptemp",sociologia.java(53:24-53:37),"valortemptemp"
+255,DECLAREDREFERENCEEXPRESSION,"contadorfilhos",sociologia.java(49:34-49:48),"contadorfilhos"
+256,DECLAREDREFERENCEEXPRESSION,"numerofilhos",sociologia.java(49:50-49:62),"numerofilhos"
+257,MEMBERCALLEXPRESSION,"nextInt",sociologia.java(47:21-47:36),"stdin.nextInt()"
+258,DECLAREDREFERENCEEXPRESSION,"nextInt",sociologia.java(47:27-47:34),"nextInt"
+259,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(42:34-42:49),"contadorpessoas"
+260,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(42:51-42:64),"numeropessoas"
+261,COMPOUNDSTATEMENT,"",sociologia.java(90:84-94:7),"{
+		if(listadenos[contadorpessoas].cor== 0){
+		    numerodenosdefora++;
+		}
+	    }"
+262,DECLARATIONSTATEMENT,"",sociologia.java(90:10-90:32),"int contadorpessoas= 0"
+263,BINARYOPERATOR,"<",sociologia.java(90:34-90:64),"contadorpessoas< numeropessoas"
+264,UNARYOPERATOR,"++",sociologia.java(90:66-90:83),"contadorpessoas++"
+265,VARIABLEDECLARATION,"contadorpessoas",sociologia.java(90:14-90:32),"contadorpessoas= 0"
+266,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(91:6-91:16),"listadenos"
+267,IFSTATEMENT,"",sociologia.java(91:3-93:4),"if(listadenos[contadorpessoas].cor== 0){
+		    numerodenosdefora++;
+		}"
+268,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(90:66-90:81),"contadorpessoas"
+269,COMPOUNDSTATEMENT,"",sociologia.java(91:42-93:4),"{
+		    numerodenosdefora++;
+		}"
+270,BINARYOPERATOR,"==",sociologia.java(91:6-91:41),"listadenos[contadorpessoas].cor== 0"
+271,DECLAREDREFERENCEEXPRESSION,"numerodenosdefora",sociologia.java(92:7-92:24),"numerodenosdefora"
+272,UNARYOPERATOR,"++",sociologia.java(92:7-92:27),"numerodenosdefora++;"
+273,MEMBEREXPRESSION,"cor",sociologia.java(91:6-91:37),"listadenos[contadorpessoas].cor"
+274,LITERAL,"",sociologia.java(91:40-91:41),"0"
+275,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(91:6-91:33),"listadenos[contadorpessoas]"
+276,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(91:17-91:32),"contadorpessoas"
+277,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(90:34-90:49),"contadorpessoas"
+278,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(90:51-90:64),"numeropessoas"
+279,LITERAL,"",sociologia.java(90:31-90:32),"0"
+280,NEWEXPRESSION,"",sociologia.java(65:27-65:39),"new Search()"
+281,CONSTRUCTEXPRESSION,"",sociologia.java(65:27-65:39),"new Search()"
+282,CONSTRUCTORDECLARATION,"Search",,""
+283,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(36:36-36:49),"numeropessoas"
+284,ARRAYCREATIONEXPRESSION,"",sociologia.java(37:35-37:59),"new GNode[numeropessoas]"
+285,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(37:45-37:58),"numeropessoas"
+286,LITERAL,"",sociologia.java(75:31-75:32),"0"
+287,ARRAYCREATIONEXPRESSION,"",sociologia.java(36:26-36:50),"new GNode[numeropessoas]"
+288,MEMBERCALLEXPRESSION,"nextInt",sociologia.java(35:25-35:40),"stdin.nextInt()"
+289,DECLAREDREFERENCEEXPRESSION,"nextInt",sociologia.java(35:31-35:38),"nextInt"
+290,COMPOUNDSTATEMENT,"",sociologia.java(66:84-71:7),"{
+		DFSinvertida.DFS(listadenosinvertida[contadorpessoas], listadenosinvertida, listadenosinvertida[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenosinvertida[resetnos].cor= 0;
+		}
+	    }"
+291,DECLARATIONSTATEMENT,"",sociologia.java(66:10-66:32),"int contadorpessoas= 0"
+292,BINARYOPERATOR,"<",sociologia.java(66:34-66:64),"contadorpessoas< numeropessoas"
+293,UNARYOPERATOR,"++",sociologia.java(66:66-66:83),"contadorpessoas++"
+294,VARIABLEDECLARATION,"contadorpessoas",sociologia.java(66:14-66:32),"contadorpessoas= 0"
+295,DECLAREDREFERENCEEXPRESSION,"DFSinvertida",sociologia.java(67:3-67:15),"DFSinvertida"
+296,LITERAL,"",sociologia.java(73:28-73:29),"0"
+297,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(66:34-66:49),"contadorpessoas"
+298,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(66:51-66:64),"numeropessoas"
+299,LITERAL,"",sociologia.java(66:31-66:32),"0"
+300,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(66:66-66:81),"contadorpessoas"
+301,MEMBERCALLEXPRESSION,"DFS",sociologia.java(67:3-67:117),"DFSinvertida.DFS(listadenosinvertida[contadorpessoas], listadenosinvertida, listadenosinvertida[contadorpessoas]);"
+302,FORSTATEMENT,"",sociologia.java(68:3-70:4),"for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenosinvertida[resetnos].cor= 0;
+		}"
+303,COMPOUNDSTATEMENT,"",sociologia.java(68:60-70:4),"{
+		    listadenosinvertida[resetnos].cor= 0;
+		}"
+304,DECLARATIONSTATEMENT,"",sociologia.java(68:7-68:22),"int resetnos= 0"
+305,BINARYOPERATOR,"<",sociologia.java(68:24-68:47),"resetnos< numeropessoas"
+306,UNARYOPERATOR,"++",sociologia.java(68:49-68:59),"resetnos++"
+307,VARIABLEDECLARATION,"resetnos",sociologia.java(68:11-68:22),"resetnos= 0"
+308,DECLAREDREFERENCEEXPRESSION,"listadenosinvertida",sociologia.java(69:7-69:26),"listadenosinvertida"
+309,BINARYOPERATOR,"=",sociologia.java(69:7-69:44),"listadenosinvertida[resetnos].cor= 0;"
+310,DECLAREDREFERENCEEXPRESSION,"resetnos",sociologia.java(68:49-68:57),"resetnos"
+311,MEMBEREXPRESSION,"cor",sociologia.java(69:7-69:40),"listadenosinvertida[resetnos].cor"
+312,LITERAL,"",sociologia.java(69:42-69:43),"0"
+313,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(69:7-69:36),"listadenosinvertida[resetnos]"
+314,DECLAREDREFERENCEEXPRESSION,"resetnos",sociologia.java(69:27-69:35),"resetnos"
+315,DECLAREDREFERENCEEXPRESSION,"resetnos",sociologia.java(68:24-68:32),"resetnos"
+316,LITERAL,"",sociologia.java(68:21-68:22),"0"
+317,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(68:34-68:47),"numeropessoas"
+318,DECLAREDREFERENCEEXPRESSION,"DFS",sociologia.java(67:16-67:19),"DFS"
+319,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(67:79-67:115),"listadenosinvertida[contadorpessoas]"
+320,DECLAREDREFERENCEEXPRESSION,"listadenosinvertida",sociologia.java(67:20-67:39),"listadenosinvertida"
+321,DECLAREDREFERENCEEXPRESSION,"listadenosinvertida",sociologia.java(67:79-67:98),"listadenosinvertida"
+322,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(67:99-67:114),"contadorpessoas"
+323,DECLAREDREFERENCEEXPRESSION,"listadenosinvertida",sociologia.java(67:58-67:77),"listadenosinvertida"
+324,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(67:20-67:56),"listadenosinvertida[contadorpessoas]"
+325,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(67:40-67:55),"contadorpessoas"
+326,DECLAREDREFERENCEEXPRESSION,"println",sociologia.java(99:17-99:24),"println"
+327,BINARYOPERATOR,"+",sociologia.java(99:25-99:67),"contadordegrupos + "" "" + numerodenosdefora"
+328,MEMBEREXPRESSION,"out",sociologia.java(99:6-99:16),"System.out"
+329,DECLAREDREFERENCEEXPRESSION,"contadordegrupos",sociologia.java(99:25-99:41),"contadordegrupos"
+330,BINARYOPERATOR,"+",sociologia.java(99:25-99:47),"contadordegrupos + "" """
+331,DECLAREDREFERENCEEXPRESSION,"numerodenosdefora",sociologia.java(99:50-99:67),"numerodenosdefora"
+332,LITERAL,"",sociologia.java(99:44-99:47),""" """
+333,COMPOUNDSTATEMENT,"",sociologia.java(59:84-64:7),"{
+		DFSnormal.DFS(listadenos[contadorpessoas], listadenos, listadenos[contadorpessoas]);
+		for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenos[resetnos].cor= 0;
+		}
+	    }"
+334,DECLARATIONSTATEMENT,"",sociologia.java(59:10-59:32),"int contadorpessoas= 0"
+335,BINARYOPERATOR,"<",sociologia.java(59:34-59:64),"contadorpessoas< numeropessoas"
+336,UNARYOPERATOR,"++",sociologia.java(59:66-59:83),"contadorpessoas++"
+337,VARIABLEDECLARATION,"contadorpessoas",sociologia.java(59:14-59:32),"contadorpessoas= 0"
+338,DECLAREDREFERENCEEXPRESSION,"DFSnormal",sociologia.java(60:3-60:12),"DFSnormal"
+339,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(59:66-59:81),"contadorpessoas"
+340,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(59:34-59:49),"contadorpessoas"
+341,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(59:51-59:64),"numeropessoas"
+342,MEMBERCALLEXPRESSION,"DFS",sociologia.java(60:3-60:87),"DFSnormal.DFS(listadenos[contadorpessoas], listadenos, listadenos[contadorpessoas]);"
+343,FORSTATEMENT,"",sociologia.java(61:3-63:4),"for(int resetnos= 0; resetnos< numeropessoas; resetnos++){
+		    listadenos[resetnos].cor= 0;
+		}"
+344,COMPOUNDSTATEMENT,"",sociologia.java(61:60-63:4),"{
+		    listadenos[resetnos].cor= 0;
+		}"
+345,DECLARATIONSTATEMENT,"",sociologia.java(61:7-61:22),"int resetnos= 0"
+346,BINARYOPERATOR,"<",sociologia.java(61:24-61:47),"resetnos< numeropessoas"
+347,UNARYOPERATOR,"++",sociologia.java(61:49-61:59),"resetnos++"
+348,VARIABLEDECLARATION,"resetnos",sociologia.java(61:11-61:22),"resetnos= 0"
+349,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(62:7-62:17),"listadenos"
+350,DECLAREDREFERENCEEXPRESSION,"resetnos",sociologia.java(61:49-61:57),"resetnos"
+351,DECLAREDREFERENCEEXPRESSION,"resetnos",sociologia.java(61:24-61:32),"resetnos"
+352,BINARYOPERATOR,"=",sociologia.java(62:7-62:35),"listadenos[resetnos].cor= 0;"
+353,MEMBEREXPRESSION,"cor",sociologia.java(62:7-62:31),"listadenos[resetnos].cor"
+354,LITERAL,"",sociologia.java(62:33-62:34),"0"
+355,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(62:7-62:27),"listadenos[resetnos]"
+356,DECLAREDREFERENCEEXPRESSION,"resetnos",sociologia.java(62:18-62:26),"resetnos"
+357,LITERAL,"",sociologia.java(61:21-61:22),"0"
+358,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(61:34-61:47),"numeropessoas"
+359,DECLAREDREFERENCEEXPRESSION,"DFS",sociologia.java(60:13-60:16),"DFS"
+360,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(60:58-60:85),"listadenos[contadorpessoas]"
+361,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(60:58-60:68),"listadenos"
+362,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(60:69-60:84),"contadorpessoas"
+363,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(60:46-60:56),"listadenos"
+364,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(60:17-60:44),"listadenos[contadorpessoas]"
+365,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(60:17-60:27),"listadenos"
+366,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(60:28-60:43),"contadorpessoas"
+367,COMPOUNDSTATEMENT,"",sociologia.java(75:84-89:7),"{
+		if(listadenos[contadorpessoas].cor== 0){
+		    ArrayList<Integer> conjuncao= new ArrayList<Integer>();
+		    conjuncao= listadenos[contadorpessoas].DFSresult;
+		    conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);
+		    for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }
+		    if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }	
+		}
+	    }"
+368,DECLARATIONSTATEMENT,"",sociologia.java(75:10-75:32),"int contadorpessoas= 0"
+369,BINARYOPERATOR,"<",sociologia.java(75:34-75:64),"contadorpessoas< numeropessoas"
+370,UNARYOPERATOR,"++",sociologia.java(75:66-75:83),"contadorpessoas++"
+371,VARIABLEDECLARATION,"contadorpessoas",sociologia.java(75:14-75:32),"contadorpessoas= 0"
+372,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(76:6-76:16),"listadenos"
+373,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(75:34-75:49),"contadorpessoas"
+374,DECLAREDREFERENCEEXPRESSION,"numeropessoas",sociologia.java(75:51-75:64),"numeropessoas"
+375,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(75:66-75:81),"contadorpessoas"
+376,IFSTATEMENT,"",sociologia.java(76:3-88:4),"if(listadenos[contadorpessoas].cor== 0){
+		    ArrayList<Integer> conjuncao= new ArrayList<Integer>();
+		    conjuncao= listadenos[contadorpessoas].DFSresult;
+		    conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);
+		    for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }
+		    if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }	
+		}"
+377,COMPOUNDSTATEMENT,"",sociologia.java(76:42-88:4),"{
+		    ArrayList<Integer> conjuncao= new ArrayList<Integer>();
+		    conjuncao= listadenos[contadorpessoas].DFSresult;
+		    conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);
+		    for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }
+		    if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }	
+		}"
+378,BINARYOPERATOR,"==",sociologia.java(76:6-76:41),"listadenos[contadorpessoas].cor== 0"
+379,CONSTRUCTEXPRESSION,"",sociologia.java(77:37-77:61),"new ArrayList<Integer>()"
+380,DECLARATIONSTATEMENT,"",sociologia.java(77:7-77:62),"ArrayList<Integer> conjuncao= new ArrayList<Integer>();"
+381,BINARYOPERATOR,"=",sociologia.java(78:7-78:56),"conjuncao= listadenos[contadorpessoas].DFSresult;"
+382,MEMBERCALLEXPRESSION,"retainAll",sociologia.java(79:7-79:75),"conjuncao.retainAll(listadenosinvertida[contadorpessoas].DFSresult);"
+383,FORSTATEMENT,"",sociologia.java(80:7-84:8),"for(int l= 0; l< conjuncao.size(); l++){
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }"
+384,IFSTATEMENT,"",sociologia.java(85:7-87:8),"if(conjuncao.size() >= 4){
+			contadordegrupos++;
+		    }"
+385,VARIABLEDECLARATION,"conjuncao",sociologia.java(77:26-77:61),"conjuncao= new ArrayList<Integer>()"
+386,COMPOUNDSTATEMENT,"",sociologia.java(85:32-87:8),"{
+			contadordegrupos++;
+		    }"
+387,BINARYOPERATOR,">=",sociologia.java(85:10-85:31),"conjuncao.size() >= 4"
+388,DECLAREDREFERENCEEXPRESSION,"contadordegrupos",sociologia.java(86:4-86:20),"contadordegrupos"
+389,MEMBERCALLEXPRESSION,"size",sociologia.java(85:10-85:26),"conjuncao.size()"
+390,LITERAL,"",sociologia.java(85:30-85:31),"4"
+391,DECLAREDREFERENCEEXPRESSION,"size",sociologia.java(85:20-85:24),"size"
+392,DECLAREDREFERENCEEXPRESSION,"conjuncao",sociologia.java(85:10-85:19),"conjuncao"
+393,UNARYOPERATOR,"++",sociologia.java(86:4-86:23),"contadordegrupos++;"
+394,NEWEXPRESSION,"",sociologia.java(77:37-77:61),"new ArrayList<Integer>()"
+395,DECLAREDREFERENCEEXPRESSION,"retainAll",sociologia.java(79:17-79:26),"retainAll"
+396,LITERAL,"",sociologia.java(80:18-80:19),"0"
+397,MEMBEREXPRESSION,"DFSresult",sociologia.java(79:27-79:73),"listadenosinvertida[contadorpessoas].DFSresult"
+398,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(79:27-79:63),"listadenosinvertida[contadorpessoas]"
+399,DECLAREDREFERENCEEXPRESSION,"listadenosinvertida",sociologia.java(79:27-79:46),"listadenosinvertida"
+400,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(79:47-79:62),"contadorpessoas"
+401,DECLAREDREFERENCEEXPRESSION,"conjuncao",sociologia.java(79:7-79:16),"conjuncao"
+402,DECLAREDREFERENCEEXPRESSION,"conjuncao",sociologia.java(78:7-78:16),"conjuncao"
+403,MEMBEREXPRESSION,"DFSresult",sociologia.java(78:18-78:55),"listadenos[contadorpessoas].DFSresult"
+404,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(78:18-78:45),"listadenos[contadorpessoas]"
+405,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(78:18-78:28),"listadenos"
+406,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(78:29-78:44),"contadorpessoas"
+407,COMPOUNDSTATEMENT,"",sociologia.java(80:46-84:8),"{
+			if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}
+		    }"
+408,DECLARATIONSTATEMENT,"",sociologia.java(80:11-80:19),"int l= 0"
+409,BINARYOPERATOR,"<",sociologia.java(80:21-80:40),"l< conjuncao.size()"
+410,UNARYOPERATOR,"++",sociologia.java(80:42-80:45),"l++"
+411,VARIABLEDECLARATION,"l",sociologia.java(80:15-80:19),"l= 0"
+412,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(81:7-81:17),"listadenos"
+413,DECLAREDREFERENCEEXPRESSION,"l",sociologia.java(80:42-80:43),"l"
+414,DECLAREDREFERENCEEXPRESSION,"l",sociologia.java(80:21-80:22),"l"
+415,MEMBERCALLEXPRESSION,"size",sociologia.java(80:24-80:40),"conjuncao.size()"
+416,DECLAREDREFERENCEEXPRESSION,"size",sociologia.java(80:34-80:38),"size"
+417,DECLAREDREFERENCEEXPRESSION,"conjuncao",sociologia.java(80:24-80:33),"conjuncao"
+418,IFSTATEMENT,"",sociologia.java(81:4-83:5),"if(listadenos[contadorpessoas].DFSresult.size()!= 1){
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}"
+419,COMPOUNDSTATEMENT,"",sociologia.java(81:56-83:5),"{
+			    listadenos[(conjuncao.get(l))-1].cor= 1;
+			}"
+420,BINARYOPERATOR,"!=",sociologia.java(81:7-81:55),"listadenos[contadorpessoas].DFSresult.size()!= 1"
+421,DECLAREDREFERENCEEXPRESSION,"listadenos",sociologia.java(82:8-82:18),"listadenos"
+422,MEMBERCALLEXPRESSION,"size",sociologia.java(81:7-81:51),"listadenos[contadorpessoas].DFSresult.size()"
+423,LITERAL,"",sociologia.java(81:54-81:55),"1"
+424,DECLAREDREFERENCEEXPRESSION,"size",sociologia.java(81:45-81:49),"size"
+425,MEMBEREXPRESSION,"DFSresult",sociologia.java(81:7-81:44),"listadenos[contadorpessoas].DFSresult"
+426,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(81:7-81:34),"listadenos[contadorpessoas]"
+427,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(81:18-81:33),"contadorpessoas"
+428,BINARYOPERATOR,"=",sociologia.java(82:8-82:48),"listadenos[(conjuncao.get(l))-1].cor= 1;"
+429,MEMBEREXPRESSION,"cor",sociologia.java(82:8-82:44),"listadenos[(conjuncao.get(l))-1].cor"
+430,LITERAL,"",sociologia.java(82:46-82:47),"1"
+431,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(82:8-82:40),"listadenos[(conjuncao.get(l))-1]"
+432,BINARYOPERATOR,"-",sociologia.java(82:19-82:39),"(conjuncao.get(l))-1"
+433,MEMBERCALLEXPRESSION,"get",sociologia.java(82:20-82:36),"conjuncao.get(l)"
+434,LITERAL,"",sociologia.java(82:38-82:39),"1"
+435,DECLAREDREFERENCEEXPRESSION,"get",sociologia.java(82:30-82:33),"get"
+436,DECLAREDREFERENCEEXPRESSION,"l",sociologia.java(82:34-82:35),"l"
+437,DECLAREDREFERENCEEXPRESSION,"conjuncao",sociologia.java(82:20-82:29),"conjuncao"
+438,MEMBEREXPRESSION,"cor",sociologia.java(76:6-76:37),"listadenos[contadorpessoas].cor"
+439,LITERAL,"",sociologia.java(76:40-76:41),"0"
+440,ARRAYSUBSCRIPTIONEXPRESSION,"",sociologia.java(76:6-76:33),"listadenos[contadorpessoas]"
+441,DECLAREDREFERENCEEXPRESSION,"contadorpessoas",sociologia.java(76:17-76:32),"contadorpessoas"
+442,NEWEXPRESSION,"",sociologia.java(58:24-58:36),"new Search()"
+443,NEWEXPRESSION,"",sociologia.java(32:17-32:39),"new Scanner(System.in)"
+444,CONSTRUCTEXPRESSION,"",sociologia.java(32:17-32:39),"new Scanner(System.in)"
+445,MEMBEREXPRESSION,"in",sociologia.java(32:29-32:38),"System.in"

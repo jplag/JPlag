@@ -1,0 +1,940 @@
+id,type,token,location,code
+1,TRANSLATIONUNITDECLARATION,"/data/00000019/submissions/00763155_Sociologia_090307011/NegElec_oje.java",,""
+2,RECORDDECLARATION,"No",NegElec_oje.java(5:1-20:2),"class No{
+	int no;
+	int tempof;
+	LinkedList<No> adj;
+	boolean visitado;
+
+	No(int n){
+		no = n;
+		tempof = 0;
+		adj = new LinkedList<No>();
+		visitado = false;
+	}
+	void addLigacao(No x){
+		adj.addLast(x);
+	}
+}"
+3,RECORDDECLARATION,"Graph",NegElec_oje.java(22:1-120:2),"class Graph{
+	int tempo, npessoas;
+	No g[];
+	No gt[];
+	LinkedList<Integer> grupos;
+
+	Graph(int np){
+		this.npessoas = np;
+		tempo = 0;
+		g = new No[np+1];
+		gt = new No[np+1];
+		grupos = new LinkedList<Integer>();
+	}
+	private void inicializar(){
+		for(int i = 1; i<=npessoas; i++){
+			g[i] = new No(i);
+			gt[i] = new No(i);
+		}
+	}
+	void createGrafo(Scanner in){
+		inicializar();
+		for(int i = 1; i<=npessoas; i++){
+			int pessoa = in.nextInt();
+			int namigo = in.nextInt();
+			for(int j = 0; j<namigo; j++){
+				int amigo = in.nextInt();
+				g[pessoa].addLigacao(g[amigo]);
+				gt[amigo].addLigacao(gt[pessoa]);
+			}
+		}
+	}
+
+	void DFS(){
+		for(int i = 1; i<=npessoas; i++){
+			if(!g[i].visitado)
+				DFSVisit(g[i]);
+		}
+	}
+	private void DFSVisit(No x){
+		tempo++;
+		x.visitado = true;
+		for(No cursor: x.adj){
+			if(!cursor.visitado)
+				DFSVisit(cursor);
+		}
+		tempo++;
+		x.tempof =tempo;
+		gt[x.no].tempof = tempo;
+	}
+	private No findMax(){
+		int maximo = 0;
+		No max = new No(0);
+
+		for(int i = 1; i<=npessoas; i++){
+			if(!gt[i].visitado){
+				if(gt[i].tempof > maximo){
+					maximo = gt[i].tempof;
+					max = gt[i];
+				}
+			}
+		}
+		return max;
+	}
+	private boolean allVisited(){
+		for(int i = 1; i<=npessoas; i++){
+			if(!gt[i].visitado)
+				return false;
+		}
+		return true;
+	}
+
+	void DFS_T(){
+		while(!allVisited()){
+			No TMax = findMax();
+			int nelementos = NelementosGrupo(TMax);
+			grupos.addLast(nelementos);
+			TMax.tempof = 0;
+		}
+	}
+	private int NelementosGrupo(No x){
+		int count = 1;
+		x.visitado = true;
+		for(No cursor: x.adj){
+			if(!cursor.visitado)
+				count +=NelementosGrupo(cursor);
+		}
+		return count;
+	}
+
+	void Output(){
+		int ngrupos = 0;
+		int deFora = 0;
+		for(int x: grupos){
+			if(x>=4){ngrupos++;}
+			else {deFora+=x;}
+		}
+		System.out.printf(""%d %d\n"", ngrupos, deFora);
+	}
+}"
+4,RECORDDECLARATION,"NegElec_oje",NegElec_oje.java(121:1-138:2),"public class NegElec_oje {
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		int ncasos = in.nextInt();
+		for(int i = 1; i<=ncasos; i++){
+			int np = in.nextInt();
+			Graph novo = new Graph(np);
+			novo.createGrafo(in);
+			novo.DFS();
+			novo.DFS_T();
+
+			System.out.printf(""Caso #%d\n"", i);
+			novo.Output();
+		}
+
+	}
+
+}"
+5,INCLUDEDECLARATION,"java.util.LinkedList",,""
+6,INCLUDEDECLARATION,"java.util.Scanner",,""
+7,FIELDDECLARATION,"this",,""
+8,FIELDDECLARATION,"no",NegElec_oje.java(6:2-6:9),"no"
+9,FIELDDECLARATION,"tempof",NegElec_oje.java(7:2-7:13),"tempof"
+10,FIELDDECLARATION,"adj",NegElec_oje.java(8:2-8:21),"adj"
+11,FIELDDECLARATION,"visitado",NegElec_oje.java(9:2-9:19),"visitado"
+12,METHODDECLARATION,"addLigacao",NegElec_oje.java(17:2-19:3),"void addLigacao(No x){
+		adj.addLast(x);
+	}"
+13,CONSTRUCTORDECLARATION,"No",NegElec_oje.java(11:2-16:3),"No(int n){
+		no = n;
+		tempof = 0;
+		adj = new LinkedList<No>();
+		visitado = false;
+	}"
+14,VARIABLEDECLARATION,"this",,""
+15,COMPOUNDSTATEMENT,"",NegElec_oje.java(17:23-19:3),"{
+		adj.addLast(x);
+	}"
+16,PARAMVARIABLEDECLARATION,"x",NegElec_oje.java(17:18-17:22),"No x"
+17,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(18:3-18:6),"this"
+18,RETURNSTATEMENT,"",,""
+19,MEMBERCALLEXPRESSION,"addLast",NegElec_oje.java(18:3-18:18),"adj.addLast(x);"
+20,DECLAREDREFERENCEEXPRESSION,"addLast",NegElec_oje.java(18:7-18:14),"addLast"
+21,DECLAREDREFERENCEEXPRESSION,"x",NegElec_oje.java(18:15-18:16),"x"
+22,MEMBEREXPRESSION,"adj",NegElec_oje.java(18:3-18:6),"adj"
+23,COMPOUNDSTATEMENT,"",NegElec_oje.java(11:11-16:3),"{
+		no = n;
+		tempof = 0;
+		adj = new LinkedList<No>();
+		visitado = false;
+	}"
+24,PARAMVARIABLEDECLARATION,"n",NegElec_oje.java(11:5-11:10),"int n"
+25,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(12:3-12:5),"this"
+26,RETURNSTATEMENT,"",,""
+27,BINARYOPERATOR,"=",NegElec_oje.java(12:3-12:10),"no = n;"
+28,BINARYOPERATOR,"=",NegElec_oje.java(13:3-13:14),"tempof = 0;"
+29,BINARYOPERATOR,"=",NegElec_oje.java(14:3-14:30),"adj = new LinkedList<No>();"
+30,BINARYOPERATOR,"=",NegElec_oje.java(15:3-15:20),"visitado = false;"
+31,MEMBEREXPRESSION,"no",NegElec_oje.java(12:3-12:5),"no"
+32,DECLAREDREFERENCEEXPRESSION,"n",NegElec_oje.java(12:8-12:9),"n"
+33,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(13:3-13:9),"this"
+34,MEMBEREXPRESSION,"adj",NegElec_oje.java(14:3-14:6),"adj"
+35,NEWEXPRESSION,"",NegElec_oje.java(14:9-14:29),"new LinkedList<No>()"
+36,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(15:3-15:11),"this"
+37,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(14:3-14:6),"this"
+38,CONSTRUCTEXPRESSION,"",NegElec_oje.java(14:9-14:29),"new LinkedList<No>()"
+39,MEMBEREXPRESSION,"tempof",NegElec_oje.java(13:3-13:9),"tempof"
+40,LITERAL,"",NegElec_oje.java(13:12-13:13),"0"
+41,MEMBEREXPRESSION,"visitado",NegElec_oje.java(15:3-15:11),"visitado"
+42,LITERAL,"",NegElec_oje.java(15:14-15:19),"false"
+43,FIELDDECLARATION,"this",,""
+44,METHODDECLARATION,"main",NegElec_oje.java(122:2-136:3),"public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		int ncasos = in.nextInt();
+		for(int i = 1; i<=ncasos; i++){
+			int np = in.nextInt();
+			Graph novo = new Graph(np);
+			novo.createGrafo(in);
+			novo.DFS();
+			novo.DFS_T();
+
+			System.out.printf(""Caso #%d\n"", i);
+			novo.Output();
+		}
+
+	}"
+45,CONSTRUCTORDECLARATION,"NegElec_oje",,""
+46,VARIABLEDECLARATION,"this",,""
+47,COMPOUNDSTATEMENT,"",NegElec_oje.java(122:41-136:3),"{
+		Scanner in = new Scanner(System.in);
+		int ncasos = in.nextInt();
+		for(int i = 1; i<=ncasos; i++){
+			int np = in.nextInt();
+			Graph novo = new Graph(np);
+			novo.createGrafo(in);
+			novo.DFS();
+			novo.DFS_T();
+
+			System.out.printf(""Caso #%d\n"", i);
+			novo.Output();
+		}
+
+	}"
+48,PARAMVARIABLEDECLARATION,"args",NegElec_oje.java(122:26-122:39),"String[] args"
+49,DECLAREDREFERENCEEXPRESSION,"System",NegElec_oje.java(123:28-123:34),"System"
+50,RETURNSTATEMENT,"",,""
+51,DECLARATIONSTATEMENT,"",NegElec_oje.java(123:3-123:39),"Scanner in = new Scanner(System.in);"
+52,DECLARATIONSTATEMENT,"",NegElec_oje.java(124:3-124:29),"int ncasos = in.nextInt();"
+53,FORSTATEMENT,"",NegElec_oje.java(125:3-134:4),"for(int i = 1; i<=ncasos; i++){
+			int np = in.nextInt();
+			Graph novo = new Graph(np);
+			novo.createGrafo(in);
+			novo.DFS();
+			novo.DFS_T();
+
+			System.out.printf(""Caso #%d\n"", i);
+			novo.Output();
+		}"
+54,VARIABLEDECLARATION,"in",NegElec_oje.java(123:11-123:38),"in = new Scanner(System.in)"
+55,VARIABLEDECLARATION,"ncasos",NegElec_oje.java(124:7-124:28),"ncasos = in.nextInt()"
+56,NEWEXPRESSION,"",NegElec_oje.java(123:16-123:38),"new Scanner(System.in)"
+57,CONSTRUCTEXPRESSION,"",NegElec_oje.java(123:16-123:38),"new Scanner(System.in)"
+58,MEMBEREXPRESSION,"in",NegElec_oje.java(123:28-123:37),"System.in"
+59,LITERAL,"",NegElec_oje.java(125:15-125:16),"1"
+60,MEMBERCALLEXPRESSION,"nextInt",NegElec_oje.java(124:16-124:28),"in.nextInt()"
+61,DECLAREDREFERENCEEXPRESSION,"nextInt",NegElec_oje.java(124:19-124:26),"nextInt"
+62,DECLAREDREFERENCEEXPRESSION,"in",NegElec_oje.java(124:16-124:18),"in"
+63,COMPOUNDSTATEMENT,"",NegElec_oje.java(125:33-134:4),"{
+			int np = in.nextInt();
+			Graph novo = new Graph(np);
+			novo.createGrafo(in);
+			novo.DFS();
+			novo.DFS_T();
+
+			System.out.printf(""Caso #%d\n"", i);
+			novo.Output();
+		}"
+64,DECLARATIONSTATEMENT,"",NegElec_oje.java(125:7-125:16),"int i = 1"
+65,BINARYOPERATOR,"<=",NegElec_oje.java(125:18-125:27),"i<=ncasos"
+66,UNARYOPERATOR,"++",NegElec_oje.java(125:29-125:32),"i++"
+67,VARIABLEDECLARATION,"i",NegElec_oje.java(125:11-125:16),"i = 1"
+68,DECLAREDREFERENCEEXPRESSION,"in",NegElec_oje.java(126:13-126:15),"in"
+69,DECLARATIONSTATEMENT,"",NegElec_oje.java(126:4-126:26),"int np = in.nextInt();"
+70,DECLARATIONSTATEMENT,"",NegElec_oje.java(127:4-127:31),"Graph novo = new Graph(np);"
+71,MEMBERCALLEXPRESSION,"createGrafo",NegElec_oje.java(128:4-128:25),"novo.createGrafo(in);"
+72,MEMBERCALLEXPRESSION,"DFS",NegElec_oje.java(129:4-129:15),"novo.DFS();"
+73,MEMBERCALLEXPRESSION,"DFS_T",NegElec_oje.java(130:4-130:17),"novo.DFS_T();"
+74,MEMBERCALLEXPRESSION,"printf",NegElec_oje.java(132:4-132:39),"System.out.printf(""Caso #%d\n"", i);"
+75,MEMBERCALLEXPRESSION,"Output",NegElec_oje.java(133:4-133:18),"novo.Output();"
+76,VARIABLEDECLARATION,"np",NegElec_oje.java(126:8-126:25),"np = in.nextInt()"
+77,VARIABLEDECLARATION,"novo",NegElec_oje.java(127:10-127:30),"novo = new Graph(np)"
+78,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(125:29-125:30),"i"
+79,DECLAREDREFERENCEEXPRESSION,"DFS",NegElec_oje.java(129:9-129:12),"DFS"
+80,METHODDECLARATION,"DFS",,""
+81,DECLAREDREFERENCEEXPRESSION,"novo",NegElec_oje.java(130:4-130:8),"novo"
+82,DECLAREDREFERENCEEXPRESSION,"novo",NegElec_oje.java(129:4-129:8),"novo"
+83,DECLAREDREFERENCEEXPRESSION,"Output",NegElec_oje.java(133:9-133:15),"Output"
+84,METHODDECLARATION,"Output",,""
+85,DECLAREDREFERENCEEXPRESSION,"novo",NegElec_oje.java(133:4-133:8),"novo"
+86,MEMBERCALLEXPRESSION,"nextInt",NegElec_oje.java(126:13-126:25),"in.nextInt()"
+87,DECLAREDREFERENCEEXPRESSION,"nextInt",NegElec_oje.java(126:16-126:23),"nextInt"
+88,NEWEXPRESSION,"",NegElec_oje.java(127:17-127:30),"new Graph(np)"
+89,CONSTRUCTEXPRESSION,"",NegElec_oje.java(127:17-127:30),"new Graph(np)"
+90,CONSTRUCTORDECLARATION,"Graph",Prob19.java(28:5-33:6),"Graph(int n) {
+	this.n = n;
+	nodes  = new Node[n+1]; // +1 se os comecam em 1 ao inves de 0
+	for (int i=1; i<=n; i++)
+	    nodes[i] = new Node();
+    }"
+91,DECLAREDREFERENCEEXPRESSION,"np",NegElec_oje.java(127:27-127:29),"np"
+92,PARAMVARIABLEDECLARATION,"n",Prob19.java(28:11-28:16),"int n"
+93,DECLAREDREFERENCEEXPRESSION,"novo",NegElec_oje.java(128:4-128:8),"novo"
+94,DECLAREDREFERENCEEXPRESSION,"DFS_T",NegElec_oje.java(130:9-130:14),"DFS_T"
+95,METHODDECLARATION,"DFS_T",,""
+96,DECLAREDREFERENCEEXPRESSION,"System",NegElec_oje.java(132:4-132:10),"System"
+97,DECLAREDREFERENCEEXPRESSION,"printf",NegElec_oje.java(132:15-132:21),"printf"
+98,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(132:36-132:37),"i"
+99,MEMBEREXPRESSION,"out",NegElec_oje.java(132:4-132:14),"System.out"
+100,LITERAL,"",NegElec_oje.java(132:22-132:34),"""Caso #%d\n"""
+101,DECLAREDREFERENCEEXPRESSION,"createGrafo",NegElec_oje.java(128:9-128:20),"createGrafo"
+102,METHODDECLARATION,"createGrafo",,""
+103,DECLAREDREFERENCEEXPRESSION,"in",NegElec_oje.java(128:21-128:23),"in"
+104,PARAMVARIABLEDECLARATION,"java.util.scanner0",,""
+105,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(125:18-125:19),"i"
+106,DECLAREDREFERENCEEXPRESSION,"ncasos",NegElec_oje.java(125:21-125:27),"ncasos"
+107,FIELDDECLARATION,"this",,""
+108,FIELDDECLARATION,"tempo",NegElec_oje.java(23:2-23:22),"tempo"
+109,FIELDDECLARATION,"g",NegElec_oje.java(24:2-24:9),"g"
+110,FIELDDECLARATION,"gt",NegElec_oje.java(25:2-25:10),"gt"
+111,FIELDDECLARATION,"grupos",NegElec_oje.java(26:2-26:29),"grupos"
+112,METHODDECLARATION,"inicializar",NegElec_oje.java(35:2-40:3),"private void inicializar(){
+		for(int i = 1; i<=npessoas; i++){
+			g[i] = new No(i);
+			gt[i] = new No(i);
+		}
+	}"
+113,METHODDECLARATION,"createGrafo",NegElec_oje.java(41:2-52:3),"void createGrafo(Scanner in){
+		inicializar();
+		for(int i = 1; i<=npessoas; i++){
+			int pessoa = in.nextInt();
+			int namigo = in.nextInt();
+			for(int j = 0; j<namigo; j++){
+				int amigo = in.nextInt();
+				g[pessoa].addLigacao(g[amigo]);
+				gt[amigo].addLigacao(gt[pessoa]);
+			}
+		}
+	}"
+114,METHODDECLARATION,"DFS",NegElec_oje.java(54:2-59:3),"void DFS(){
+		for(int i = 1; i<=npessoas; i++){
+			if(!g[i].visitado)
+				DFSVisit(g[i]);
+		}
+	}"
+115,METHODDECLARATION,"DFSVisit",NegElec_oje.java(60:2-70:3),"private void DFSVisit(No x){
+		tempo++;
+		x.visitado = true;
+		for(No cursor: x.adj){
+			if(!cursor.visitado)
+				DFSVisit(cursor);
+		}
+		tempo++;
+		x.tempof =tempo;
+		gt[x.no].tempof = tempo;
+	}"
+116,METHODDECLARATION,"findMax",NegElec_oje.java(71:2-84:3),"private No findMax(){
+		int maximo = 0;
+		No max = new No(0);
+
+		for(int i = 1; i<=npessoas; i++){
+			if(!gt[i].visitado){
+				if(gt[i].tempof > maximo){
+					maximo = gt[i].tempof;
+					max = gt[i];
+				}
+			}
+		}
+		return max;
+	}"
+117,METHODDECLARATION,"allVisited",NegElec_oje.java(85:2-91:3),"private boolean allVisited(){
+		for(int i = 1; i<=npessoas; i++){
+			if(!gt[i].visitado)
+				return false;
+		}
+		return true;
+	}"
+118,METHODDECLARATION,"DFS_T",NegElec_oje.java(93:2-100:3),"void DFS_T(){
+		while(!allVisited()){
+			No TMax = findMax();
+			int nelementos = NelementosGrupo(TMax);
+			grupos.addLast(nelementos);
+			TMax.tempof = 0;
+		}
+	}"
+119,METHODDECLARATION,"NelementosGrupo",NegElec_oje.java(101:2-109:3),"private int NelementosGrupo(No x){
+		int count = 1;
+		x.visitado = true;
+		for(No cursor: x.adj){
+			if(!cursor.visitado)
+				count +=NelementosGrupo(cursor);
+		}
+		return count;
+	}"
+120,METHODDECLARATION,"Output",NegElec_oje.java(111:2-119:3),"void Output(){
+		int ngrupos = 0;
+		int deFora = 0;
+		for(int x: grupos){
+			if(x>=4){ngrupos++;}
+			else {deFora+=x;}
+		}
+		System.out.printf(""%d %d\n"", ngrupos, deFora);
+	}"
+121,CONSTRUCTORDECLARATION,"Graph",NegElec_oje.java(28:2-34:3),"Graph(int np){
+		this.npessoas = np;
+		tempo = 0;
+		g = new No[np+1];
+		gt = new No[np+1];
+		grupos = new LinkedList<Integer>();
+	}"
+122,VARIABLEDECLARATION,"this",,""
+123,COMPOUNDSTATEMENT,"",NegElec_oje.java(54:12-59:3),"{
+		for(int i = 1; i<=npessoas; i++){
+			if(!g[i].visitado)
+				DFSVisit(g[i]);
+		}
+	}"
+124,LITERAL,"",NegElec_oje.java(55:15-55:16),"1"
+125,RETURNSTATEMENT,"",,""
+126,FORSTATEMENT,"",NegElec_oje.java(55:3-58:4),"for(int i = 1; i<=npessoas; i++){
+			if(!g[i].visitado)
+				DFSVisit(g[i]);
+		}"
+127,COMPOUNDSTATEMENT,"",NegElec_oje.java(55:35-58:4),"{
+			if(!g[i].visitado)
+				DFSVisit(g[i]);
+		}"
+128,DECLARATIONSTATEMENT,"",NegElec_oje.java(55:7-55:16),"int i = 1"
+129,BINARYOPERATOR,"<=",NegElec_oje.java(55:18-55:29),"i<=npessoas"
+130,UNARYOPERATOR,"++",NegElec_oje.java(55:31-55:34),"i++"
+131,VARIABLEDECLARATION,"i",NegElec_oje.java(55:11-55:16),"i = 1"
+132,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(56:8-56:9),"this"
+133,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(55:18-55:19),"i"
+134,MEMBEREXPRESSION,"npessoas",NegElec_oje.java(55:21-55:29),"npessoas"
+135,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(55:21-55:29),"this"
+136,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(55:31-55:32),"i"
+137,IFSTATEMENT,"",NegElec_oje.java(56:4-57:20),"if(!g[i].visitado)
+				DFSVisit(g[i]);"
+138,CALLEXPRESSION,"DFSVisit",NegElec_oje.java(57:5-57:20),"DFSVisit(g[i]);"
+139,UNARYOPERATOR,"!",NegElec_oje.java(56:7-56:21),"!g[i].visitado"
+140,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(57:14-57:15),"this"
+141,METHODDECLARATION,"DFSVisit",,""
+142,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(57:14-57:18),"g[i]"
+143,MEMBEREXPRESSION,"g",NegElec_oje.java(57:14-57:15),"g"
+144,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(57:16-57:17),"i"
+145,PARAMVARIABLEDECLARATION,"no0",,""
+146,MEMBEREXPRESSION,"visitado",NegElec_oje.java(56:8-56:21),"g[i].visitado"
+147,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(56:8-56:12),"g[i]"
+148,MEMBEREXPRESSION,"g",NegElec_oje.java(56:8-56:9),"g"
+149,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(56:10-56:11),"i"
+150,VARIABLEDECLARATION,"this",,""
+151,COMPOUNDSTATEMENT,"",NegElec_oje.java(85:30-91:3),"{
+		for(int i = 1; i<=npessoas; i++){
+			if(!gt[i].visitado)
+				return false;
+		}
+		return true;
+	}"
+152,LITERAL,"",NegElec_oje.java(86:15-86:16),"1"
+153,RETURNSTATEMENT,"",NegElec_oje.java(90:3-90:15),"return true;"
+154,FORSTATEMENT,"",NegElec_oje.java(86:3-89:4),"for(int i = 1; i<=npessoas; i++){
+			if(!gt[i].visitado)
+				return false;
+		}"
+155,LITERAL,"",NegElec_oje.java(90:10-90:14),"true"
+156,COMPOUNDSTATEMENT,"",NegElec_oje.java(86:35-89:4),"{
+			if(!gt[i].visitado)
+				return false;
+		}"
+157,DECLARATIONSTATEMENT,"",NegElec_oje.java(86:7-86:16),"int i = 1"
+158,BINARYOPERATOR,"<=",NegElec_oje.java(86:18-86:29),"i<=npessoas"
+159,UNARYOPERATOR,"++",NegElec_oje.java(86:31-86:34),"i++"
+160,VARIABLEDECLARATION,"i",NegElec_oje.java(86:11-86:16),"i = 1"
+161,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(87:8-87:10),"this"
+162,IFSTATEMENT,"",NegElec_oje.java(87:4-88:18),"if(!gt[i].visitado)
+				return false;"
+163,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(86:31-86:32),"i"
+164,UNARYOPERATOR,"!",NegElec_oje.java(87:7-87:22),"!gt[i].visitado"
+165,RETURNSTATEMENT,"",NegElec_oje.java(88:5-88:18),"return false;"
+166,LITERAL,"",NegElec_oje.java(88:12-88:17),"false"
+167,MEMBEREXPRESSION,"visitado",NegElec_oje.java(87:8-87:22),"gt[i].visitado"
+168,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(87:8-87:13),"gt[i]"
+169,MEMBEREXPRESSION,"gt",NegElec_oje.java(87:8-87:10),"gt"
+170,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(87:11-87:12),"i"
+171,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(86:18-86:19),"i"
+172,MEMBEREXPRESSION,"npessoas",NegElec_oje.java(86:21-86:29),"npessoas"
+173,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(86:21-86:29),"this"
+174,COMPOUNDSTATEMENT,"",NegElec_oje.java(28:15-34:3),"{
+		this.npessoas = np;
+		tempo = 0;
+		g = new No[np+1];
+		gt = new No[np+1];
+		grupos = new LinkedList<Integer>();
+	}"
+175,PARAMVARIABLEDECLARATION,"np",NegElec_oje.java(28:8-28:14),"int np"
+176,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(29:3-29:7),"this"
+177,RETURNSTATEMENT,"",,""
+178,BINARYOPERATOR,"=",NegElec_oje.java(29:3-29:22),"this.npessoas = np;"
+179,BINARYOPERATOR,"=",NegElec_oje.java(30:3-30:13),"tempo = 0;"
+180,BINARYOPERATOR,"=",NegElec_oje.java(31:3-31:20),"g = new No[np+1];"
+181,BINARYOPERATOR,"=",NegElec_oje.java(32:3-32:21),"gt = new No[np+1];"
+182,BINARYOPERATOR,"=",NegElec_oje.java(33:3-33:38),"grupos = new LinkedList<Integer>();"
+183,MEMBEREXPRESSION,"tempo",NegElec_oje.java(30:3-30:8),"tempo"
+184,LITERAL,"",NegElec_oje.java(30:11-30:12),"0"
+185,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(31:3-31:4),"this"
+186,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(30:3-30:8),"this"
+187,MEMBEREXPRESSION,"gt",NegElec_oje.java(32:3-32:5),"gt"
+188,ARRAYCREATIONEXPRESSION,"",NegElec_oje.java(32:8-32:20),"new No[np+1]"
+189,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(33:3-33:9),"this"
+190,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(32:3-32:5),"this"
+191,DECLAREDREFERENCEEXPRESSION,"np",NegElec_oje.java(32:15-32:17),"np"
+192,BINARYOPERATOR,"+",NegElec_oje.java(32:15-32:19),"np+1"
+193,LITERAL,"",NegElec_oje.java(32:18-32:19),"1"
+194,MEMBEREXPRESSION,"grupos",NegElec_oje.java(33:3-33:9),"grupos"
+195,NEWEXPRESSION,"",NegElec_oje.java(33:12-33:37),"new LinkedList<Integer>()"
+196,CONSTRUCTEXPRESSION,"",NegElec_oje.java(33:12-33:37),"new LinkedList<Integer>()"
+197,MEMBEREXPRESSION,"g",NegElec_oje.java(31:3-31:4),"g"
+198,ARRAYCREATIONEXPRESSION,"",NegElec_oje.java(31:7-31:19),"new No[np+1]"
+199,BINARYOPERATOR,"+",NegElec_oje.java(31:14-31:18),"np+1"
+200,DECLAREDREFERENCEEXPRESSION,"np",NegElec_oje.java(31:14-31:16),"np"
+201,LITERAL,"",NegElec_oje.java(31:17-31:18),"1"
+202,MEMBEREXPRESSION,"npessoas",NegElec_oje.java(29:3-29:16),"this.npessoas"
+203,DECLAREDREFERENCEEXPRESSION,"np",NegElec_oje.java(29:19-29:21),"np"
+204,VARIABLEDECLARATION,"this",,""
+205,COMPOUNDSTATEMENT,"",NegElec_oje.java(93:14-100:3),"{
+		while(!allVisited()){
+			No TMax = findMax();
+			int nelementos = NelementosGrupo(TMax);
+			grupos.addLast(nelementos);
+			TMax.tempof = 0;
+		}
+	}"
+206,CALLEXPRESSION,"allVisited",NegElec_oje.java(94:10-94:22),"allVisited()"
+207,RETURNSTATEMENT,"",,""
+208,WHILESTATEMENT,"",NegElec_oje.java(94:3-99:4),"while(!allVisited()){
+			No TMax = findMax();
+			int nelementos = NelementosGrupo(TMax);
+			grupos.addLast(nelementos);
+			TMax.tempof = 0;
+		}"
+209,UNARYOPERATOR,"!",NegElec_oje.java(94:9-94:22),"!allVisited()"
+210,COMPOUNDSTATEMENT,"",NegElec_oje.java(94:23-99:4),"{
+			No TMax = findMax();
+			int nelementos = NelementosGrupo(TMax);
+			grupos.addLast(nelementos);
+			TMax.tempof = 0;
+		}"
+211,CALLEXPRESSION,"findMax",NegElec_oje.java(95:14-95:23),"findMax()"
+212,METHODDECLARATION,"allVisited",,""
+213,DECLARATIONSTATEMENT,"",NegElec_oje.java(95:4-95:24),"No TMax = findMax();"
+214,DECLARATIONSTATEMENT,"",NegElec_oje.java(96:4-96:43),"int nelementos = NelementosGrupo(TMax);"
+215,MEMBERCALLEXPRESSION,"addLast",NegElec_oje.java(97:4-97:31),"grupos.addLast(nelementos);"
+216,BINARYOPERATOR,"=",NegElec_oje.java(98:4-98:20),"TMax.tempof = 0;"
+217,VARIABLEDECLARATION,"TMax",NegElec_oje.java(95:7-95:23),"TMax = findMax()"
+218,VARIABLEDECLARATION,"nelementos",NegElec_oje.java(96:8-96:42),"nelementos = NelementosGrupo(TMax)"
+219,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(97:4-97:10),"this"
+220,CALLEXPRESSION,"NelementosGrupo",NegElec_oje.java(96:21-96:42),"NelementosGrupo(TMax)"
+221,METHODDECLARATION,"NelementosGrupo",,""
+222,DECLAREDREFERENCEEXPRESSION,"TMax",NegElec_oje.java(96:37-96:41),"TMax"
+223,PARAMVARIABLEDECLARATION,"no0",,""
+224,DECLAREDREFERENCEEXPRESSION,"addLast",NegElec_oje.java(97:11-97:18),"addLast"
+225,DECLAREDREFERENCEEXPRESSION,"TMax",NegElec_oje.java(98:4-98:8),"TMax"
+226,DECLAREDREFERENCEEXPRESSION,"nelementos",NegElec_oje.java(97:19-97:29),"nelementos"
+227,MEMBEREXPRESSION,"grupos",NegElec_oje.java(97:4-97:10),"grupos"
+228,METHODDECLARATION,"findMax",,""
+229,MEMBEREXPRESSION,"tempof",NegElec_oje.java(98:4-98:15),"TMax.tempof"
+230,LITERAL,"",NegElec_oje.java(98:18-98:19),"0"
+231,VARIABLEDECLARATION,"this",,""
+232,COMPOUNDSTATEMENT,"",NegElec_oje.java(71:22-84:3),"{
+		int maximo = 0;
+		No max = new No(0);
+
+		for(int i = 1; i<=npessoas; i++){
+			if(!gt[i].visitado){
+				if(gt[i].tempof > maximo){
+					maximo = gt[i].tempof;
+					max = gt[i];
+				}
+			}
+		}
+		return max;
+	}"
+233,LITERAL,"",NegElec_oje.java(72:16-72:17),"0"
+234,RETURNSTATEMENT,"",NegElec_oje.java(83:3-83:14),"return max;"
+235,DECLARATIONSTATEMENT,"",NegElec_oje.java(72:3-72:18),"int maximo = 0;"
+236,DECLARATIONSTATEMENT,"",NegElec_oje.java(73:3-73:22),"No max = new No(0);"
+237,FORSTATEMENT,"",NegElec_oje.java(75:3-82:4),"for(int i = 1; i<=npessoas; i++){
+			if(!gt[i].visitado){
+				if(gt[i].tempof > maximo){
+					maximo = gt[i].tempof;
+					max = gt[i];
+				}
+			}
+		}"
+238,VARIABLEDECLARATION,"maximo",NegElec_oje.java(72:7-72:17),"maximo = 0"
+239,VARIABLEDECLARATION,"max",NegElec_oje.java(73:6-73:21),"max = new No(0)"
+240,LITERAL,"",NegElec_oje.java(73:19-73:20),"0"
+241,LITERAL,"",NegElec_oje.java(75:15-75:16),"1"
+242,COMPOUNDSTATEMENT,"",NegElec_oje.java(75:35-82:4),"{
+			if(!gt[i].visitado){
+				if(gt[i].tempof > maximo){
+					maximo = gt[i].tempof;
+					max = gt[i];
+				}
+			}
+		}"
+243,DECLARATIONSTATEMENT,"",NegElec_oje.java(75:7-75:16),"int i = 1"
+244,BINARYOPERATOR,"<=",NegElec_oje.java(75:18-75:29),"i<=npessoas"
+245,UNARYOPERATOR,"++",NegElec_oje.java(75:31-75:34),"i++"
+246,VARIABLEDECLARATION,"i",NegElec_oje.java(75:11-75:16),"i = 1"
+247,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(76:8-76:10),"this"
+248,DECLAREDREFERENCEEXPRESSION,"max",NegElec_oje.java(83:10-83:13),"max"
+249,IFSTATEMENT,"",NegElec_oje.java(76:4-81:5),"if(!gt[i].visitado){
+				if(gt[i].tempof > maximo){
+					maximo = gt[i].tempof;
+					max = gt[i];
+				}
+			}"
+250,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(75:31-75:32),"i"
+251,COMPOUNDSTATEMENT,"",NegElec_oje.java(76:23-81:5),"{
+				if(gt[i].tempof > maximo){
+					maximo = gt[i].tempof;
+					max = gt[i];
+				}
+			}"
+252,UNARYOPERATOR,"!",NegElec_oje.java(76:7-76:22),"!gt[i].visitado"
+253,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(77:8-77:10),"this"
+254,IFSTATEMENT,"",NegElec_oje.java(77:5-80:6),"if(gt[i].tempof > maximo){
+					maximo = gt[i].tempof;
+					max = gt[i];
+				}"
+255,COMPOUNDSTATEMENT,"",NegElec_oje.java(77:30-80:6),"{
+					maximo = gt[i].tempof;
+					max = gt[i];
+				}"
+256,BINARYOPERATOR,">",NegElec_oje.java(77:8-77:29),"gt[i].tempof > maximo"
+257,DECLAREDREFERENCEEXPRESSION,"maximo",NegElec_oje.java(78:6-78:12),"maximo"
+258,MEMBEREXPRESSION,"tempof",NegElec_oje.java(77:8-77:20),"gt[i].tempof"
+259,DECLAREDREFERENCEEXPRESSION,"maximo",NegElec_oje.java(77:23-77:29),"maximo"
+260,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(77:8-77:13),"gt[i]"
+261,MEMBEREXPRESSION,"gt",NegElec_oje.java(77:8-77:10),"gt"
+262,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(77:11-77:12),"i"
+263,BINARYOPERATOR,"=",NegElec_oje.java(78:6-78:28),"maximo = gt[i].tempof;"
+264,BINARYOPERATOR,"=",NegElec_oje.java(79:6-79:18),"max = gt[i];"
+265,MEMBEREXPRESSION,"tempof",NegElec_oje.java(78:15-78:27),"gt[i].tempof"
+266,DECLAREDREFERENCEEXPRESSION,"max",NegElec_oje.java(79:6-79:9),"max"
+267,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(78:15-78:17),"this"
+268,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(78:15-78:20),"gt[i]"
+269,MEMBEREXPRESSION,"gt",NegElec_oje.java(78:15-78:17),"gt"
+270,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(78:18-78:19),"i"
+271,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(79:12-79:17),"gt[i]"
+272,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(79:12-79:14),"this"
+273,MEMBEREXPRESSION,"gt",NegElec_oje.java(79:12-79:14),"gt"
+274,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(79:15-79:16),"i"
+275,MEMBEREXPRESSION,"visitado",NegElec_oje.java(76:8-76:22),"gt[i].visitado"
+276,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(76:8-76:13),"gt[i]"
+277,MEMBEREXPRESSION,"gt",NegElec_oje.java(76:8-76:10),"gt"
+278,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(76:11-76:12),"i"
+279,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(75:18-75:19),"i"
+280,MEMBEREXPRESSION,"npessoas",NegElec_oje.java(75:21-75:29),"npessoas"
+281,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(75:21-75:29),"this"
+282,NEWEXPRESSION,"",NegElec_oje.java(73:12-73:21),"new No(0)"
+283,CONSTRUCTEXPRESSION,"",NegElec_oje.java(73:12-73:21),"new No(0)"
+284,CONSTRUCTORDECLARATION,"No",,""
+285,PARAMVARIABLEDECLARATION,"int0",,""
+286,VARIABLEDECLARATION,"this",,""
+287,COMPOUNDSTATEMENT,"",NegElec_oje.java(60:29-70:3),"{
+		tempo++;
+		x.visitado = true;
+		for(No cursor: x.adj){
+			if(!cursor.visitado)
+				DFSVisit(cursor);
+		}
+		tempo++;
+		x.tempof =tempo;
+		gt[x.no].tempof = tempo;
+	}"
+288,PARAMVARIABLEDECLARATION,"x",NegElec_oje.java(60:24-60:28),"No x"
+289,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(61:3-61:8),"this"
+290,RETURNSTATEMENT,"",,""
+291,UNARYOPERATOR,"++",NegElec_oje.java(61:3-61:11),"tempo++;"
+292,BINARYOPERATOR,"=",NegElec_oje.java(62:3-62:21),"x.visitado = true;"
+293,FOREACHSTATEMENT,"",NegElec_oje.java(63:3-66:4),"for(No cursor: x.adj){
+			if(!cursor.visitado)
+				DFSVisit(cursor);
+		}"
+294,UNARYOPERATOR,"++",NegElec_oje.java(67:3-67:11),"tempo++;"
+295,BINARYOPERATOR,"=",NegElec_oje.java(68:3-68:19),"x.tempof =tempo;"
+296,BINARYOPERATOR,"=",NegElec_oje.java(69:3-69:27),"gt[x.no].tempof = tempo;"
+297,MEMBEREXPRESSION,"tempo",NegElec_oje.java(67:3-67:8),"tempo"
+298,DECLAREDREFERENCEEXPRESSION,"x",NegElec_oje.java(68:3-68:4),"x"
+299,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(67:3-67:8),"this"
+300,MEMBEREXPRESSION,"tempo",NegElec_oje.java(61:3-61:8),"tempo"
+301,DECLAREDREFERENCEEXPRESSION,"x",NegElec_oje.java(62:3-62:4),"x"
+302,MEMBEREXPRESSION,"tempof",NegElec_oje.java(69:3-69:18),"gt[x.no].tempof"
+303,MEMBEREXPRESSION,"tempo",NegElec_oje.java(69:21-69:26),"tempo"
+304,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(69:3-69:11),"gt[x.no]"
+305,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(69:21-69:26),"this"
+306,MEMBEREXPRESSION,"gt",NegElec_oje.java(69:3-69:5),"gt"
+307,MEMBEREXPRESSION,"no",NegElec_oje.java(69:6-69:10),"x.no"
+308,DECLAREDREFERENCEEXPRESSION,"x",NegElec_oje.java(69:6-69:7),"x"
+309,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(69:3-69:5),"this"
+310,MEMBEREXPRESSION,"visitado",NegElec_oje.java(62:3-62:13),"x.visitado"
+311,LITERAL,"",NegElec_oje.java(62:16-62:20),"true"
+312,DECLAREDREFERENCEEXPRESSION,"x",NegElec_oje.java(63:18-63:19),"x"
+313,MEMBEREXPRESSION,"tempof",NegElec_oje.java(68:3-68:11),"x.tempof"
+314,MEMBEREXPRESSION,"tempo",NegElec_oje.java(68:13-68:18),"tempo"
+315,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(68:13-68:18),"this"
+316,DECLARATIONSTATEMENT,"",NegElec_oje.java(63:7-63:16),"No cursor"
+317,MEMBEREXPRESSION,"adj",NegElec_oje.java(63:18-63:23),"x.adj"
+318,COMPOUNDSTATEMENT,"",NegElec_oje.java(63:24-66:4),"{
+			if(!cursor.visitado)
+				DFSVisit(cursor);
+		}"
+319,VARIABLEDECLARATION,"cursor",NegElec_oje.java(63:10-63:16),"cursor"
+320,DECLAREDREFERENCEEXPRESSION,"cursor",NegElec_oje.java(64:8-64:14),"cursor"
+321,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+322,IFSTATEMENT,"",NegElec_oje.java(64:4-65:22),"if(!cursor.visitado)
+				DFSVisit(cursor);"
+323,CALLEXPRESSION,"DFSVisit",NegElec_oje.java(65:5-65:22),"DFSVisit(cursor);"
+324,UNARYOPERATOR,"!",NegElec_oje.java(64:7-64:23),"!cursor.visitado"
+325,DECLAREDREFERENCEEXPRESSION,"cursor",NegElec_oje.java(65:14-65:20),"cursor"
+326,MEMBEREXPRESSION,"visitado",NegElec_oje.java(64:8-64:23),"cursor.visitado"
+327,VARIABLEDECLARATION,"this",,""
+328,COMPOUNDSTATEMENT,"",NegElec_oje.java(41:30-52:3),"{
+		inicializar();
+		for(int i = 1; i<=npessoas; i++){
+			int pessoa = in.nextInt();
+			int namigo = in.nextInt();
+			for(int j = 0; j<namigo; j++){
+				int amigo = in.nextInt();
+				g[pessoa].addLigacao(g[amigo]);
+				gt[amigo].addLigacao(gt[pessoa]);
+			}
+		}
+	}"
+329,PARAMVARIABLEDECLARATION,"in",NegElec_oje.java(41:19-41:29),"Scanner in"
+330,CALLEXPRESSION,"inicializar",NegElec_oje.java(42:3-42:17),"inicializar();"
+331,RETURNSTATEMENT,"",,""
+332,FORSTATEMENT,"",NegElec_oje.java(43:3-51:4),"for(int i = 1; i<=npessoas; i++){
+			int pessoa = in.nextInt();
+			int namigo = in.nextInt();
+			for(int j = 0; j<namigo; j++){
+				int amigo = in.nextInt();
+				g[pessoa].addLigacao(g[amigo]);
+				gt[amigo].addLigacao(gt[pessoa]);
+			}
+		}"
+333,COMPOUNDSTATEMENT,"",NegElec_oje.java(43:35-51:4),"{
+			int pessoa = in.nextInt();
+			int namigo = in.nextInt();
+			for(int j = 0; j<namigo; j++){
+				int amigo = in.nextInt();
+				g[pessoa].addLigacao(g[amigo]);
+				gt[amigo].addLigacao(gt[pessoa]);
+			}
+		}"
+334,DECLARATIONSTATEMENT,"",NegElec_oje.java(43:7-43:16),"int i = 1"
+335,BINARYOPERATOR,"<=",NegElec_oje.java(43:18-43:29),"i<=npessoas"
+336,UNARYOPERATOR,"++",NegElec_oje.java(43:31-43:34),"i++"
+337,VARIABLEDECLARATION,"i",NegElec_oje.java(43:11-43:16),"i = 1"
+338,DECLAREDREFERENCEEXPRESSION,"in",NegElec_oje.java(44:17-44:19),"in"
+339,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(43:18-43:19),"i"
+340,LITERAL,"",NegElec_oje.java(43:15-43:16),"1"
+341,DECLARATIONSTATEMENT,"",NegElec_oje.java(44:4-44:30),"int pessoa = in.nextInt();"
+342,DECLARATIONSTATEMENT,"",NegElec_oje.java(45:4-45:30),"int namigo = in.nextInt();"
+343,FORSTATEMENT,"",NegElec_oje.java(46:4-50:5),"for(int j = 0; j<namigo; j++){
+				int amigo = in.nextInt();
+				g[pessoa].addLigacao(g[amigo]);
+				gt[amigo].addLigacao(gt[pessoa]);
+			}"
+344,VARIABLEDECLARATION,"pessoa",NegElec_oje.java(44:8-44:29),"pessoa = in.nextInt()"
+345,VARIABLEDECLARATION,"namigo",NegElec_oje.java(45:8-45:29),"namigo = in.nextInt()"
+346,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(43:31-43:32),"i"
+347,MEMBERCALLEXPRESSION,"nextInt",NegElec_oje.java(44:17-44:29),"in.nextInt()"
+348,DECLAREDREFERENCEEXPRESSION,"nextInt",NegElec_oje.java(44:20-44:27),"nextInt"
+349,MEMBERCALLEXPRESSION,"nextInt",NegElec_oje.java(45:17-45:29),"in.nextInt()"
+350,DECLAREDREFERENCEEXPRESSION,"nextInt",NegElec_oje.java(45:20-45:27),"nextInt"
+351,DECLAREDREFERENCEEXPRESSION,"in",NegElec_oje.java(45:17-45:19),"in"
+352,COMPOUNDSTATEMENT,"",NegElec_oje.java(46:33-50:5),"{
+				int amigo = in.nextInt();
+				g[pessoa].addLigacao(g[amigo]);
+				gt[amigo].addLigacao(gt[pessoa]);
+			}"
+353,DECLARATIONSTATEMENT,"",NegElec_oje.java(46:8-46:17),"int j = 0"
+354,BINARYOPERATOR,"<",NegElec_oje.java(46:19-46:27),"j<namigo"
+355,UNARYOPERATOR,"++",NegElec_oje.java(46:29-46:32),"j++"
+356,VARIABLEDECLARATION,"j",NegElec_oje.java(46:12-46:17),"j = 0"
+357,DECLAREDREFERENCEEXPRESSION,"in",NegElec_oje.java(47:17-47:19),"in"
+358,LITERAL,"",NegElec_oje.java(46:16-46:17),"0"
+359,DECLAREDREFERENCEEXPRESSION,"j",NegElec_oje.java(46:19-46:20),"j"
+360,DECLARATIONSTATEMENT,"",NegElec_oje.java(47:5-47:30),"int amigo = in.nextInt();"
+361,MEMBERCALLEXPRESSION,"addLigacao",NegElec_oje.java(48:5-48:36),"g[pessoa].addLigacao(g[amigo]);"
+362,MEMBERCALLEXPRESSION,"addLigacao",NegElec_oje.java(49:5-49:38),"gt[amigo].addLigacao(gt[pessoa]);"
+363,VARIABLEDECLARATION,"amigo",NegElec_oje.java(47:9-47:29),"amigo = in.nextInt()"
+364,DECLAREDREFERENCEEXPRESSION,"j",NegElec_oje.java(46:29-46:30),"j"
+365,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(48:5-48:6),"this"
+366,MEMBERCALLEXPRESSION,"nextInt",NegElec_oje.java(47:17-47:29),"in.nextInt()"
+367,DECLAREDREFERENCEEXPRESSION,"nextInt",NegElec_oje.java(47:20-47:27),"nextInt"
+368,DECLAREDREFERENCEEXPRESSION,"addLigacao",NegElec_oje.java(48:15-48:25),"addLigacao"
+369,METHODDECLARATION,"addLigacao",,""
+370,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(49:5-49:7),"this"
+371,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(48:26-48:34),"g[amigo]"
+372,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(48:5-48:14),"g[pessoa]"
+373,MEMBEREXPRESSION,"g",NegElec_oje.java(48:5-48:6),"g"
+374,DECLAREDREFERENCEEXPRESSION,"pessoa",NegElec_oje.java(48:7-48:13),"pessoa"
+375,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(48:26-48:27),"this"
+376,MEMBEREXPRESSION,"g",NegElec_oje.java(48:26-48:27),"g"
+377,DECLAREDREFERENCEEXPRESSION,"amigo",NegElec_oje.java(48:28-48:33),"amigo"
+378,PARAMVARIABLEDECLARATION,"no0",,""
+379,DECLAREDREFERENCEEXPRESSION,"addLigacao",NegElec_oje.java(49:15-49:25),"addLigacao"
+380,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(49:26-49:36),"gt[pessoa]"
+381,MEMBEREXPRESSION,"gt",NegElec_oje.java(49:26-49:28),"gt"
+382,DECLAREDREFERENCEEXPRESSION,"pessoa",NegElec_oje.java(49:29-49:35),"pessoa"
+383,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(49:26-49:28),"this"
+384,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(49:5-49:14),"gt[amigo]"
+385,MEMBEREXPRESSION,"gt",NegElec_oje.java(49:5-49:7),"gt"
+386,DECLAREDREFERENCEEXPRESSION,"amigo",NegElec_oje.java(49:8-49:13),"amigo"
+387,DECLAREDREFERENCEEXPRESSION,"namigo",NegElec_oje.java(46:21-46:27),"namigo"
+388,MEMBEREXPRESSION,"npessoas",NegElec_oje.java(43:21-43:29),"npessoas"
+389,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(43:21-43:29),"this"
+390,METHODDECLARATION,"inicializar",,""
+391,VARIABLEDECLARATION,"this",,""
+392,COMPOUNDSTATEMENT,"",NegElec_oje.java(111:15-119:3),"{
+		int ngrupos = 0;
+		int deFora = 0;
+		for(int x: grupos){
+			if(x>=4){ngrupos++;}
+			else {deFora+=x;}
+		}
+		System.out.printf(""%d %d\n"", ngrupos, deFora);
+	}"
+393,LITERAL,"",NegElec_oje.java(112:17-112:18),"0"
+394,RETURNSTATEMENT,"",,""
+395,DECLARATIONSTATEMENT,"",NegElec_oje.java(112:3-112:19),"int ngrupos = 0;"
+396,DECLARATIONSTATEMENT,"",NegElec_oje.java(113:3-113:18),"int deFora = 0;"
+397,FOREACHSTATEMENT,"",NegElec_oje.java(114:3-117:4),"for(int x: grupos){
+			if(x>=4){ngrupos++;}
+			else {deFora+=x;}
+		}"
+398,MEMBERCALLEXPRESSION,"printf",NegElec_oje.java(118:3-118:49),"System.out.printf(""%d %d\n"", ngrupos, deFora);"
+399,VARIABLEDECLARATION,"ngrupos",NegElec_oje.java(112:7-112:18),"ngrupos = 0"
+400,VARIABLEDECLARATION,"deFora",NegElec_oje.java(113:7-113:17),"deFora = 0"
+401,LITERAL,"",NegElec_oje.java(113:16-113:17),"0"
+402,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(114:14-114:20),"this"
+403,DECLAREDREFERENCEEXPRESSION,"printf",NegElec_oje.java(118:14-118:20),"printf"
+404,DECLAREDREFERENCEEXPRESSION,"deFora",NegElec_oje.java(118:41-118:47),"deFora"
+405,DECLAREDREFERENCEEXPRESSION,"ngrupos",NegElec_oje.java(118:32-118:39),"ngrupos"
+406,LITERAL,"",NegElec_oje.java(118:21-118:30),"""%d %d\n"""
+407,MEMBEREXPRESSION,"out",NegElec_oje.java(118:3-118:13),"System.out"
+408,DECLAREDREFERENCEEXPRESSION,"System",NegElec_oje.java(118:3-118:9),"System"
+409,DECLARATIONSTATEMENT,"",NegElec_oje.java(114:7-114:12),"int x"
+410,MEMBEREXPRESSION,"grupos",NegElec_oje.java(114:14-114:20),"grupos"
+411,COMPOUNDSTATEMENT,"",NegElec_oje.java(114:21-117:4),"{
+			if(x>=4){ngrupos++;}
+			else {deFora+=x;}
+		}"
+412,VARIABLEDECLARATION,"x",NegElec_oje.java(114:11-114:12),"x"
+413,DECLAREDREFERENCEEXPRESSION,"x",NegElec_oje.java(115:7-115:8),"x"
+414,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+415,IFSTATEMENT,"",NegElec_oje.java(115:4-116:21),"if(x>=4){ngrupos++;}
+			else {deFora+=x;}"
+416,COMPOUNDSTATEMENT,"",NegElec_oje.java(115:12-115:24),"{ngrupos++;}"
+417,COMPOUNDSTATEMENT,"",NegElec_oje.java(116:9-116:21),"{deFora+=x;}"
+418,BINARYOPERATOR,">=",NegElec_oje.java(115:7-115:11),"x>=4"
+419,DECLAREDREFERENCEEXPRESSION,"ngrupos",NegElec_oje.java(115:13-115:20),"ngrupos"
+420,DECLAREDREFERENCEEXPRESSION,"deFora",NegElec_oje.java(116:10-116:16),"deFora"
+421,LITERAL,"",NegElec_oje.java(115:10-115:11),"4"
+422,UNARYOPERATOR,"++",NegElec_oje.java(115:13-115:23),"ngrupos++;"
+423,BINARYOPERATOR,"+=",NegElec_oje.java(116:10-116:20),"deFora+=x;"
+424,DECLAREDREFERENCEEXPRESSION,"x",NegElec_oje.java(116:18-116:19),"x"
+425,VARIABLEDECLARATION,"this",,""
+426,COMPOUNDSTATEMENT,"",NegElec_oje.java(35:28-40:3),"{
+		for(int i = 1; i<=npessoas; i++){
+			g[i] = new No(i);
+			gt[i] = new No(i);
+		}
+	}"
+427,LITERAL,"",NegElec_oje.java(36:15-36:16),"1"
+428,RETURNSTATEMENT,"",,""
+429,FORSTATEMENT,"",NegElec_oje.java(36:3-39:4),"for(int i = 1; i<=npessoas; i++){
+			g[i] = new No(i);
+			gt[i] = new No(i);
+		}"
+430,COMPOUNDSTATEMENT,"",NegElec_oje.java(36:35-39:4),"{
+			g[i] = new No(i);
+			gt[i] = new No(i);
+		}"
+431,DECLARATIONSTATEMENT,"",NegElec_oje.java(36:7-36:16),"int i = 1"
+432,BINARYOPERATOR,"<=",NegElec_oje.java(36:18-36:29),"i<=npessoas"
+433,UNARYOPERATOR,"++",NegElec_oje.java(36:31-36:34),"i++"
+434,VARIABLEDECLARATION,"i",NegElec_oje.java(36:11-36:16),"i = 1"
+435,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(37:4-37:5),"this"
+436,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(36:18-36:19),"i"
+437,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(36:31-36:32),"i"
+438,BINARYOPERATOR,"=",NegElec_oje.java(37:4-37:21),"g[i] = new No(i);"
+439,BINARYOPERATOR,"=",NegElec_oje.java(38:4-38:22),"gt[i] = new No(i);"
+440,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(38:4-38:9),"gt[i]"
+441,NEWEXPRESSION,"",NegElec_oje.java(38:12-38:21),"new No(i)"
+442,CONSTRUCTEXPRESSION,"",NegElec_oje.java(38:12-38:21),"new No(i)"
+443,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(38:19-38:20),"i"
+444,MEMBEREXPRESSION,"gt",NegElec_oje.java(38:4-38:6),"gt"
+445,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(38:7-38:8),"i"
+446,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(38:4-38:6),"this"
+447,ARRAYSUBSCRIPTIONEXPRESSION,"",NegElec_oje.java(37:4-37:8),"g[i]"
+448,NEWEXPRESSION,"",NegElec_oje.java(37:11-37:20),"new No(i)"
+449,MEMBEREXPRESSION,"g",NegElec_oje.java(37:4-37:5),"g"
+450,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(37:6-37:7),"i"
+451,DECLAREDREFERENCEEXPRESSION,"i",NegElec_oje.java(37:18-37:19),"i"
+452,CONSTRUCTEXPRESSION,"",NegElec_oje.java(37:11-37:20),"new No(i)"
+453,MEMBEREXPRESSION,"npessoas",NegElec_oje.java(36:21-36:29),"npessoas"
+454,DECLAREDREFERENCEEXPRESSION,"this",NegElec_oje.java(36:21-36:29),"this"
+455,VARIABLEDECLARATION,"this",,""
+456,COMPOUNDSTATEMENT,"",NegElec_oje.java(101:35-109:3),"{
+		int count = 1;
+		x.visitado = true;
+		for(No cursor: x.adj){
+			if(!cursor.visitado)
+				count +=NelementosGrupo(cursor);
+		}
+		return count;
+	}"
+457,PARAMVARIABLEDECLARATION,"x",NegElec_oje.java(101:30-101:34),"No x"
+458,LITERAL,"",NegElec_oje.java(102:15-102:16),"1"
+459,RETURNSTATEMENT,"",NegElec_oje.java(108:3-108:16),"return count;"
+460,DECLARATIONSTATEMENT,"",NegElec_oje.java(102:3-102:17),"int count = 1;"
+461,BINARYOPERATOR,"=",NegElec_oje.java(103:3-103:21),"x.visitado = true;"
+462,FOREACHSTATEMENT,"",NegElec_oje.java(104:3-107:4),"for(No cursor: x.adj){
+			if(!cursor.visitado)
+				count +=NelementosGrupo(cursor);
+		}"
+463,VARIABLEDECLARATION,"count",NegElec_oje.java(102:7-102:16),"count = 1"
+464,DECLAREDREFERENCEEXPRESSION,"count",NegElec_oje.java(108:10-108:15),"count"
+465,MEMBEREXPRESSION,"visitado",NegElec_oje.java(103:3-103:13),"x.visitado"
+466,LITERAL,"",NegElec_oje.java(103:16-103:20),"true"
+467,DECLAREDREFERENCEEXPRESSION,"x",NegElec_oje.java(104:18-104:19),"x"
+468,DECLAREDREFERENCEEXPRESSION,"x",NegElec_oje.java(103:3-103:4),"x"
+469,DECLARATIONSTATEMENT,"",NegElec_oje.java(104:7-104:16),"No cursor"
+470,MEMBEREXPRESSION,"adj",NegElec_oje.java(104:18-104:23),"x.adj"
+471,COMPOUNDSTATEMENT,"",NegElec_oje.java(104:24-107:4),"{
+			if(!cursor.visitado)
+				count +=NelementosGrupo(cursor);
+		}"
+472,VARIABLEDECLARATION,"cursor",NegElec_oje.java(104:10-104:16),"cursor"
+473,DECLAREDREFERENCEEXPRESSION,"cursor",NegElec_oje.java(105:8-105:14),"cursor"
+474,IFSTATEMENT,"",NegElec_oje.java(105:4-106:37),"if(!cursor.visitado)
+				count +=NelementosGrupo(cursor);"
+475,BINARYOPERATOR,"+=",NegElec_oje.java(106:5-106:37),"count +=NelementosGrupo(cursor);"
+476,UNARYOPERATOR,"!",NegElec_oje.java(105:7-105:23),"!cursor.visitado"
+477,DECLAREDREFERENCEEXPRESSION,"count",NegElec_oje.java(106:5-106:10),"count"
+478,MEMBEREXPRESSION,"visitado",NegElec_oje.java(105:8-105:23),"cursor.visitado"
+479,CALLEXPRESSION,"NelementosGrupo",NegElec_oje.java(106:13-106:36),"NelementosGrupo(cursor)"
+480,DECLAREDREFERENCEEXPRESSION,"cursor",NegElec_oje.java(106:29-106:35),"cursor"
+481,UNINITIALIZEDVALUE,"Uninitialized Value",,""

@@ -17,13 +17,12 @@ public final class TestDirectoryConstants {
     public static final Path BASE_PATH_TO_RESULT_JSON = Path.of("src", "test", "resources", "results");
 
     /**
-     * Base path to the endToEnd testing resources
+     * Base path to the data set descriptors
      */
-    public static final Path BASE_PATH_TO_LANGUAGE_RESOURCES = Path.of("src", "test", "resources", "languageTestFiles");
+    public static final Path BASE_PATH_TO_DATA_SET_DESCRIPTORS = Path.of("src", "test", "resources", "dataSets");
 
     /**
-     * Create the complete path to the submission files. Here the temporary system path is extended with the
-     * "SUBMISSION_DIRECTORY_NAME", which is predefined in this class.
+     * Base path to the resources directory
      */
-    public static final Path TEMPORARY_SUBMISSION_DIRECTORY_NAME = Path.of("target", "testing-directory-submission");
+    public static final Path BASE_PATH_TO_RESOURCES = Path.of("src", "test", "resources");
 }

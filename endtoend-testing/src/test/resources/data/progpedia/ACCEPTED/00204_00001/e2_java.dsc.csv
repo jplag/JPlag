@@ -1,0 +1,914 @@
+id,type,token,location,code
+1,TRANSLATIONUNITDECLARATION,"/data/00000019/submissions/06294789_Sociologia_up201200316/E2.java",,""
+2,RECORDDECLARATION,"Arco",E2.java(5:1-21:2),"class Arco {
+    int no_final;
+    int valor;
+    
+    Arco(int fim, int v){
+	no_final = fim;
+	valor = v;
+    }
+
+    int extremo_final() {
+	return no_final;
+    }
+
+    int valor_arco() {
+	return valor;
+    }
+}"
+3,RECORDDECLARATION,"No",E2.java(24:1-31:2),"class No {
+    //int label;
+    LinkedList<Arco> adjs;
+
+    No() {
+	adjs = new LinkedList<Arco>();
+    }
+}"
+4,RECORDDECLARATION,"Grafo",E2.java(34:1-69:2),"class Grafo {
+    No verts[];
+    int nvs, narcos;
+			
+    public Grafo(int n) {
+	nvs = n;
+	narcos = 0;
+	verts  = new No[n+1];
+	for (int i = 0 ; i <= n ; i++)
+	    verts[i] = new No();
+        // para vertices numerados de 1 a n (posicao 0 nao vai ser usada)
+    }
+    
+    public int num_vertices(){
+	return nvs;
+    }
+
+    public int num_arcos(){
+	return narcos;
+    }
+
+    public LinkedList<Arco> adjs_no(int i) {
+	return verts[i].adjs;
+    }
+    
+    public void insert_new_arc(int i, int j, int valor_ij){
+	verts[i].adjs.addFirst(new Arco(j,valor_ij));
+        narcos++;
+    }
+
+    public Arco find_arc(int i, int j){
+	for (Arco adj: adjs_no(i))
+	    if (adj.extremo_final() == j) return adj;
+	return null;
+    }
+}"
+5,RECORDDECLARATION,"E2",E2.java(72:1-145:2),"class E2 {
+	public static void main(String args[]){
+		Scanner in = new Scanner(System.in);
+		int n = in.nextInt();
+		for (int i = 1; i <= n; i++) {
+			constroiGrafo(in, i);
+		}
+	}
+	
+	static void constroiGrafo(Scanner in, int ii){
+		int nAl=in.nextInt();
+		Grafo g = new Grafo(nAl);
+		for (int i = 1; i <= nAl; i++) {
+			int al = in.nextInt(), num = in.nextInt();
+			for (int j = 1; j <= num; j++) {
+				int p = in.nextInt();
+				g.insert_new_arc(al, p, 0);
+			}
+		}
+		
+		System.out.println(""Caso #"" + ii);
+		fortementeConexa(g);
+	}
+	
+	static void DFSVisit(Grafo g, int v, boolean vis[], Stack<Integer> S){
+		vis[v]=true;
+		for (Arco a : g.adjs_no(v)) {
+			if(vis[a.extremo_final()]==false){
+				DFSVisit(g, a.extremo_final(), vis, S);
+			}
+		}
+		S.push(v);
+	}
+	
+	static void fortementeConexa(Grafo g){
+		Stack<Integer> S = new Stack<Integer>();
+		boolean vis[] = new boolean[g.nvs+1];
+		for (int i = 1; i <= g.nvs; i++) {
+			vis[i] = false;
+		}
+		for (int i = 1; i <= g.nvs; i++) {
+			if(vis[i]==false){
+				DFSVisit(g, i, vis, S);
+			}
+		}
+		for (int i = 1; i <= g.nvs; i++) {
+			vis[i] = false;
+		}
+		Grafo gt  = grafoTransposto(g);
+		int nG = 0, num = gt.nvs;
+		while(S.isEmpty()==false){
+			int v = S.pop();
+			if(vis[v]==false){
+				Stack<Integer> Sa = new Stack<Integer>();
+				DFSVisit(gt, v, vis, Sa);
+				if(Sa.size()>=4){
+					nG++;
+					num -= Sa.size();
+				}
+			}
+		}
+		System.out.println(nG + "" "" + num);
+	}
+	
+	static Grafo grafoTransposto(Grafo g){
+		Grafo gt = new Grafo(g.nvs);
+		for (int i = 1; i <= g.nvs; i++) {
+			for (Arco a : g.adjs_no(i)) {
+				gt.insert_new_arc(a.extremo_final(), i, 0);
+			}
+		}
+		return gt;
+	}
+}"
+6,INCLUDEDECLARATION,"java.util.Scanner",,""
+7,INCLUDEDECLARATION,"java.util.LinkedList",,""
+8,INCLUDEDECLARATION,"java.util.Stack",,""
+9,FIELDDECLARATION,"this",,""
+10,FIELDDECLARATION,"no_final",E2.java(6:5-6:18),"no_final"
+11,FIELDDECLARATION,"valor",E2.java(7:5-7:15),"valor"
+12,METHODDECLARATION,"extremo_final",E2.java(14:5-16:6),"int extremo_final() {
+	return no_final;
+    }"
+13,METHODDECLARATION,"valor_arco",E2.java(18:5-20:6),"int valor_arco() {
+	return valor;
+    }"
+14,CONSTRUCTORDECLARATION,"Arco",E2.java(9:5-12:6),"Arco(int fim, int v){
+	no_final = fim;
+	valor = v;
+    }"
+15,COMPOUNDSTATEMENT,"",E2.java(9:25-12:6),"{
+	no_final = fim;
+	valor = v;
+    }"
+16,PARAMVARIABLEDECLARATION,"fim",E2.java(9:10-9:17),"int fim"
+17,PARAMVARIABLEDECLARATION,"v",E2.java(9:19-9:24),"int v"
+18,DECLAREDREFERENCEEXPRESSION,"this",E2.java(10:2-10:10),"this"
+19,RETURNSTATEMENT,"",,""
+20,BINARYOPERATOR,"=",E2.java(10:2-10:17),"no_final = fim;"
+21,BINARYOPERATOR,"=",E2.java(11:2-11:12),"valor = v;"
+22,MEMBEREXPRESSION,"valor",E2.java(11:2-11:7),"valor"
+23,DECLAREDREFERENCEEXPRESSION,"v",E2.java(11:10-11:11),"v"
+24,DECLAREDREFERENCEEXPRESSION,"this",E2.java(11:2-11:7),"this"
+25,MEMBEREXPRESSION,"no_final",E2.java(10:2-10:10),"no_final"
+26,DECLAREDREFERENCEEXPRESSION,"fim",E2.java(10:13-10:16),"fim"
+27,VARIABLEDECLARATION,"this",,""
+28,COMPOUNDSTATEMENT,"",E2.java(18:22-20:6),"{
+	return valor;
+    }"
+29,DECLAREDREFERENCEEXPRESSION,"this",E2.java(19:9-19:14),"this"
+30,RETURNSTATEMENT,"",E2.java(19:2-19:15),"return valor;"
+31,MEMBEREXPRESSION,"valor",E2.java(19:9-19:14),"valor"
+32,VARIABLEDECLARATION,"this",,""
+33,COMPOUNDSTATEMENT,"",E2.java(14:25-16:6),"{
+	return no_final;
+    }"
+34,DECLAREDREFERENCEEXPRESSION,"this",E2.java(15:9-15:17),"this"
+35,RETURNSTATEMENT,"",E2.java(15:2-15:18),"return no_final;"
+36,MEMBEREXPRESSION,"no_final",E2.java(15:9-15:17),"no_final"
+37,FIELDDECLARATION,"this",,""
+38,METHODDECLARATION,"main",E2.java(73:2-79:3),"public static void main(String args[]){
+		Scanner in = new Scanner(System.in);
+		int n = in.nextInt();
+		for (int i = 1; i <= n; i++) {
+			constroiGrafo(in, i);
+		}
+	}"
+39,METHODDECLARATION,"constroiGrafo",E2.java(81:2-94:3),"static void constroiGrafo(Scanner in, int ii){
+		int nAl=in.nextInt();
+		Grafo g = new Grafo(nAl);
+		for (int i = 1; i <= nAl; i++) {
+			int al = in.nextInt(), num = in.nextInt();
+			for (int j = 1; j <= num; j++) {
+				int p = in.nextInt();
+				g.insert_new_arc(al, p, 0);
+			}
+		}
+		
+		System.out.println(""Caso #"" + ii);
+		fortementeConexa(g);
+	}"
+40,METHODDECLARATION,"DFSVisit",E2.java(96:2-104:3),"static void DFSVisit(Grafo g, int v, boolean vis[], Stack<Integer> S){
+		vis[v]=true;
+		for (Arco a : g.adjs_no(v)) {
+			if(vis[a.extremo_final()]==false){
+				DFSVisit(g, a.extremo_final(), vis, S);
+			}
+		}
+		S.push(v);
+	}"
+41,METHODDECLARATION,"fortementeConexa",E2.java(106:2-134:3),"static void fortementeConexa(Grafo g){
+		Stack<Integer> S = new Stack<Integer>();
+		boolean vis[] = new boolean[g.nvs+1];
+		for (int i = 1; i <= g.nvs; i++) {
+			vis[i] = false;
+		}
+		for (int i = 1; i <= g.nvs; i++) {
+			if(vis[i]==false){
+				DFSVisit(g, i, vis, S);
+			}
+		}
+		for (int i = 1; i <= g.nvs; i++) {
+			vis[i] = false;
+		}
+		Grafo gt  = grafoTransposto(g);
+		int nG = 0, num = gt.nvs;
+		while(S.isEmpty()==false){
+			int v = S.pop();
+			if(vis[v]==false){
+				Stack<Integer> Sa = new Stack<Integer>();
+				DFSVisit(gt, v, vis, Sa);
+				if(Sa.size()>=4){
+					nG++;
+					num -= Sa.size();
+				}
+			}
+		}
+		System.out.println(nG + "" "" + num);
+	}"
+42,METHODDECLARATION,"grafoTransposto",E2.java(136:2-144:3),"static Grafo grafoTransposto(Grafo g){
+		Grafo gt = new Grafo(g.nvs);
+		for (int i = 1; i <= g.nvs; i++) {
+			for (Arco a : g.adjs_no(i)) {
+				gt.insert_new_arc(a.extremo_final(), i, 0);
+			}
+		}
+		return gt;
+	}"
+43,CONSTRUCTORDECLARATION,"E2",,""
+44,VARIABLEDECLARATION,"this",,""
+45,COMPOUNDSTATEMENT,"",E2.java(73:40-79:3),"{
+		Scanner in = new Scanner(System.in);
+		int n = in.nextInt();
+		for (int i = 1; i <= n; i++) {
+			constroiGrafo(in, i);
+		}
+	}"
+46,PARAMVARIABLEDECLARATION,"args",E2.java(73:26-73:39),"String args[]"
+47,DECLAREDREFERENCEEXPRESSION,"System",E2.java(74:28-74:34),"System"
+48,RETURNSTATEMENT,"",,""
+49,DECLARATIONSTATEMENT,"",E2.java(74:3-74:39),"Scanner in = new Scanner(System.in);"
+50,DECLARATIONSTATEMENT,"",E2.java(75:3-75:24),"int n = in.nextInt();"
+51,FORSTATEMENT,"",E2.java(76:3-78:4),"for (int i = 1; i <= n; i++) {
+			constroiGrafo(in, i);
+		}"
+52,VARIABLEDECLARATION,"in",E2.java(74:11-74:38),"in = new Scanner(System.in)"
+53,VARIABLEDECLARATION,"n",E2.java(75:7-75:23),"n = in.nextInt()"
+54,LITERAL,"",E2.java(76:16-76:17),"1"
+55,MEMBERCALLEXPRESSION,"nextInt",E2.java(75:11-75:23),"in.nextInt()"
+56,DECLAREDREFERENCEEXPRESSION,"nextInt",E2.java(75:14-75:21),"nextInt"
+57,DECLAREDREFERENCEEXPRESSION,"in",E2.java(75:11-75:13),"in"
+58,NEWEXPRESSION,"",E2.java(74:16-74:38),"new Scanner(System.in)"
+59,CONSTRUCTEXPRESSION,"",E2.java(74:16-74:38),"new Scanner(System.in)"
+60,MEMBEREXPRESSION,"in",E2.java(74:28-74:37),"System.in"
+61,COMPOUNDSTATEMENT,"",E2.java(76:32-78:4),"{
+			constroiGrafo(in, i);
+		}"
+62,DECLARATIONSTATEMENT,"",E2.java(76:8-76:17),"int i = 1"
+63,BINARYOPERATOR,"<=",E2.java(76:19-76:25),"i <= n"
+64,UNARYOPERATOR,"++",E2.java(76:27-76:30),"i++"
+65,VARIABLEDECLARATION,"i",E2.java(76:12-76:17),"i = 1"
+66,DECLAREDREFERENCEEXPRESSION,"in",E2.java(77:18-77:20),"in"
+67,CALLEXPRESSION,"constroiGrafo",E2.java(77:4-77:25),"constroiGrafo(in, i);"
+68,DECLAREDREFERENCEEXPRESSION,"i",E2.java(76:27-76:28),"i"
+69,DECLAREDREFERENCEEXPRESSION,"i",E2.java(77:22-77:23),"i"
+70,PARAMVARIABLEDECLARATION,"in",E2.java(81:28-81:38),"Scanner in"
+71,PARAMVARIABLEDECLARATION,"ii",E2.java(81:40-81:46),"int ii"
+72,DECLAREDREFERENCEEXPRESSION,"i",E2.java(76:19-76:20),"i"
+73,DECLAREDREFERENCEEXPRESSION,"n",E2.java(76:24-76:25),"n"
+74,VARIABLEDECLARATION,"this",,""
+75,COMPOUNDSTATEMENT,"",E2.java(106:39-134:3),"{
+		Stack<Integer> S = new Stack<Integer>();
+		boolean vis[] = new boolean[g.nvs+1];
+		for (int i = 1; i <= g.nvs; i++) {
+			vis[i] = false;
+		}
+		for (int i = 1; i <= g.nvs; i++) {
+			if(vis[i]==false){
+				DFSVisit(g, i, vis, S);
+			}
+		}
+		for (int i = 1; i <= g.nvs; i++) {
+			vis[i] = false;
+		}
+		Grafo gt  = grafoTransposto(g);
+		int nG = 0, num = gt.nvs;
+		while(S.isEmpty()==false){
+			int v = S.pop();
+			if(vis[v]==false){
+				Stack<Integer> Sa = new Stack<Integer>();
+				DFSVisit(gt, v, vis, Sa);
+				if(Sa.size()>=4){
+					nG++;
+					num -= Sa.size();
+				}
+			}
+		}
+		System.out.println(nG + "" "" + num);
+	}"
+76,PARAMVARIABLEDECLARATION,"g",E2.java(106:31-106:38),"Grafo g"
+77,CALLEXPRESSION,"fortementeConexa",E2.java(93:3-93:23),"fortementeConexa(g);"
+78,CONSTRUCTEXPRESSION,"",E2.java(107:22-107:42),"new Stack<Integer>()"
+79,RETURNSTATEMENT,"",,""
+80,DECLARATIONSTATEMENT,"",E2.java(107:3-107:43),"Stack<Integer> S = new Stack<Integer>();"
+81,DECLARATIONSTATEMENT,"",E2.java(108:3-108:40),"boolean vis[] = new boolean[g.nvs+1];"
+82,FORSTATEMENT,"",E2.java(109:3-111:4),"for (int i = 1; i <= g.nvs; i++) {
+			vis[i] = false;
+		}"
+83,FORSTATEMENT,"",E2.java(112:3-116:4),"for (int i = 1; i <= g.nvs; i++) {
+			if(vis[i]==false){
+				DFSVisit(g, i, vis, S);
+			}
+		}"
+84,FORSTATEMENT,"",E2.java(117:3-119:4),"for (int i = 1; i <= g.nvs; i++) {
+			vis[i] = false;
+		}"
+85,DECLARATIONSTATEMENT,"",E2.java(120:3-120:34),"Grafo gt  = grafoTransposto(g);"
+86,DECLARATIONSTATEMENT,"",E2.java(121:3-121:28),"int nG = 0, num = gt.nvs;"
+87,WHILESTATEMENT,"",E2.java(122:3-132:4),"while(S.isEmpty()==false){
+			int v = S.pop();
+			if(vis[v]==false){
+				Stack<Integer> Sa = new Stack<Integer>();
+				DFSVisit(gt, v, vis, Sa);
+				if(Sa.size()>=4){
+					nG++;
+					num -= Sa.size();
+				}
+			}
+		}"
+88,MEMBERCALLEXPRESSION,"println",E2.java(133:3-133:38),"System.out.println(nG + "" "" + num);"
+89,VARIABLEDECLARATION,"S",E2.java(107:18-107:42),"S = new Stack<Integer>()"
+90,VARIABLEDECLARATION,"vis",E2.java(108:11-108:39),"vis[] = new boolean[g.nvs+1]"
+91,VARIABLEDECLARATION,"gt",E2.java(120:9-120:33),"gt  = grafoTransposto(g)"
+92,VARIABLEDECLARATION,"nG",E2.java(121:7-121:13),"nG = 0"
+93,VARIABLEDECLARATION,"num",E2.java(121:15-121:27),"num = gt.nvs"
+94,DECLAREDREFERENCEEXPRESSION,"S",E2.java(122:9-122:10),"S"
+95,CALLEXPRESSION,"grafoTransposto",E2.java(120:15-120:33),"grafoTransposto(g)"
+96,DECLAREDREFERENCEEXPRESSION,"g",E2.java(120:31-120:32),"g"
+97,PARAMVARIABLEDECLARATION,"g",E2.java(136:31-136:38),"Grafo g"
+98,COMPOUNDSTATEMENT,"",E2.java(109:36-111:4),"{
+			vis[i] = false;
+		}"
+99,DECLARATIONSTATEMENT,"",E2.java(109:8-109:17),"int i = 1"
+100,BINARYOPERATOR,"<=",E2.java(109:19-109:29),"i <= g.nvs"
+101,UNARYOPERATOR,"++",E2.java(109:31-109:34),"i++"
+102,VARIABLEDECLARATION,"i",E2.java(109:12-109:17),"i = 1"
+103,DECLAREDREFERENCEEXPRESSION,"vis",E2.java(110:4-110:7),"vis"
+104,LITERAL,"",E2.java(112:16-112:17),"1"
+105,DECLAREDREFERENCEEXPRESSION,"i",E2.java(109:19-109:20),"i"
+106,MEMBEREXPRESSION,"nvs",E2.java(109:24-109:29),"g.nvs"
+107,DECLAREDREFERENCEEXPRESSION,"g",E2.java(109:24-109:25),"g"
+108,LITERAL,"",E2.java(109:16-109:17),"1"
+109,BINARYOPERATOR,"=",E2.java(110:4-110:19),"vis[i] = false;"
+110,DECLAREDREFERENCEEXPRESSION,"i",E2.java(109:31-109:32),"i"
+111,ARRAYSUBSCRIPTIONEXPRESSION,"",E2.java(110:4-110:10),"vis[i]"
+112,LITERAL,"",E2.java(110:13-110:18),"false"
+113,DECLAREDREFERENCEEXPRESSION,"i",E2.java(110:8-110:9),"i"
+114,LITERAL,"",E2.java(121:12-121:13),"0"
+115,DECLAREDREFERENCEEXPRESSION,"gt",E2.java(121:21-121:23),"gt"
+116,COMPOUNDSTATEMENT,"",E2.java(112:36-116:4),"{
+			if(vis[i]==false){
+				DFSVisit(g, i, vis, S);
+			}
+		}"
+117,DECLARATIONSTATEMENT,"",E2.java(112:8-112:17),"int i = 1"
+118,BINARYOPERATOR,"<=",E2.java(112:19-112:29),"i <= g.nvs"
+119,UNARYOPERATOR,"++",E2.java(112:31-112:34),"i++"
+120,VARIABLEDECLARATION,"i",E2.java(112:12-112:17),"i = 1"
+121,DECLAREDREFERENCEEXPRESSION,"vis",E2.java(113:7-113:10),"vis"
+122,LITERAL,"",E2.java(117:16-117:17),"1"
+123,DECLAREDREFERENCEEXPRESSION,"i",E2.java(112:19-112:20),"i"
+124,MEMBEREXPRESSION,"nvs",E2.java(112:24-112:29),"g.nvs"
+125,DECLAREDREFERENCEEXPRESSION,"g",E2.java(112:24-112:25),"g"
+126,IFSTATEMENT,"",E2.java(113:4-115:5),"if(vis[i]==false){
+				DFSVisit(g, i, vis, S);
+			}"
+127,DECLAREDREFERENCEEXPRESSION,"i",E2.java(112:31-112:32),"i"
+128,COMPOUNDSTATEMENT,"",E2.java(113:21-115:5),"{
+				DFSVisit(g, i, vis, S);
+			}"
+129,BINARYOPERATOR,"==",E2.java(113:7-113:20),"vis[i]==false"
+130,DECLAREDREFERENCEEXPRESSION,"g",E2.java(114:14-114:15),"g"
+131,ARRAYSUBSCRIPTIONEXPRESSION,"",E2.java(113:7-113:13),"vis[i]"
+132,LITERAL,"",E2.java(113:15-113:20),"false"
+133,DECLAREDREFERENCEEXPRESSION,"i",E2.java(113:11-113:12),"i"
+134,CALLEXPRESSION,"DFSVisit",E2.java(114:5-114:28),"DFSVisit(g, i, vis, S);"
+135,DECLAREDREFERENCEEXPRESSION,"i",E2.java(114:17-114:18),"i"
+136,DECLAREDREFERENCEEXPRESSION,"vis",E2.java(114:20-114:23),"vis"
+137,DECLAREDREFERENCEEXPRESSION,"S",E2.java(114:25-114:26),"S"
+138,PARAMVARIABLEDECLARATION,"g",E2.java(96:23-96:30),"Grafo g"
+139,PARAMVARIABLEDECLARATION,"v",E2.java(96:32-96:37),"int v"
+140,PARAMVARIABLEDECLARATION,"S",E2.java(96:54-96:70),"Stack<Integer> S"
+141,PARAMVARIABLEDECLARATION,"vis",E2.java(96:39-96:52),"boolean vis[]"
+142,NEWEXPRESSION,"",E2.java(107:22-107:42),"new Stack<Integer>()"
+143,MEMBEREXPRESSION,"nvs",E2.java(121:21-121:27),"gt.nvs"
+144,DECLAREDREFERENCEEXPRESSION,"g",E2.java(108:31-108:32),"g"
+145,BINARYOPERATOR,"==",E2.java(122:9-122:27),"S.isEmpty()==false"
+146,COMPOUNDSTATEMENT,"",E2.java(122:28-132:4),"{
+			int v = S.pop();
+			if(vis[v]==false){
+				Stack<Integer> Sa = new Stack<Integer>();
+				DFSVisit(gt, v, vis, Sa);
+				if(Sa.size()>=4){
+					nG++;
+					num -= Sa.size();
+				}
+			}
+		}"
+147,DECLAREDREFERENCEEXPRESSION,"S",E2.java(123:12-123:13),"S"
+148,DECLAREDREFERENCEEXPRESSION,"System",E2.java(133:3-133:9),"System"
+149,MEMBERCALLEXPRESSION,"isEmpty",E2.java(122:9-122:20),"S.isEmpty()"
+150,LITERAL,"",E2.java(122:22-122:27),"false"
+151,DECLAREDREFERENCEEXPRESSION,"isEmpty",E2.java(122:11-122:18),"isEmpty"
+152,DECLARATIONSTATEMENT,"",E2.java(123:4-123:20),"int v = S.pop();"
+153,IFSTATEMENT,"",E2.java(124:4-131:5),"if(vis[v]==false){
+				Stack<Integer> Sa = new Stack<Integer>();
+				DFSVisit(gt, v, vis, Sa);
+				if(Sa.size()>=4){
+					nG++;
+					num -= Sa.size();
+				}
+			}"
+154,VARIABLEDECLARATION,"v",E2.java(123:8-123:19),"v = S.pop()"
+155,COMPOUNDSTATEMENT,"",E2.java(124:21-131:5),"{
+				Stack<Integer> Sa = new Stack<Integer>();
+				DFSVisit(gt, v, vis, Sa);
+				if(Sa.size()>=4){
+					nG++;
+					num -= Sa.size();
+				}
+			}"
+156,DECLAREDREFERENCEEXPRESSION,"vis",E2.java(124:7-124:10),"vis"
+157,BINARYOPERATOR,"==",E2.java(124:7-124:20),"vis[v]==false"
+158,CONSTRUCTEXPRESSION,"",E2.java(125:25-125:45),"new Stack<Integer>()"
+159,DECLARATIONSTATEMENT,"",E2.java(125:5-125:46),"Stack<Integer> Sa = new Stack<Integer>();"
+160,CALLEXPRESSION,"DFSVisit",E2.java(126:5-126:30),"DFSVisit(gt, v, vis, Sa);"
+161,IFSTATEMENT,"",E2.java(127:5-130:6),"if(Sa.size()>=4){
+					nG++;
+					num -= Sa.size();
+				}"
+162,VARIABLEDECLARATION,"Sa",E2.java(125:20-125:45),"Sa = new Stack<Integer>()"
+163,COMPOUNDSTATEMENT,"",E2.java(127:21-130:6),"{
+					nG++;
+					num -= Sa.size();
+				}"
+164,NEWEXPRESSION,"",E2.java(125:25-125:45),"new Stack<Integer>()"
+165,DECLAREDREFERENCEEXPRESSION,"gt",E2.java(126:14-126:16),"gt"
+166,BINARYOPERATOR,">=",E2.java(127:8-127:20),"Sa.size()>=4"
+167,DECLAREDREFERENCEEXPRESSION,"nG",E2.java(128:6-128:8),"nG"
+168,UNARYOPERATOR,"++",E2.java(128:6-128:11),"nG++;"
+169,BINARYOPERATOR,"-=",E2.java(129:6-129:23),"num -= Sa.size();"
+170,DECLAREDREFERENCEEXPRESSION,"num",E2.java(129:6-129:9),"num"
+171,MEMBERCALLEXPRESSION,"size",E2.java(129:13-129:22),"Sa.size()"
+172,DECLAREDREFERENCEEXPRESSION,"size",E2.java(129:16-129:20),"size"
+173,DECLAREDREFERENCEEXPRESSION,"Sa",E2.java(129:13-129:15),"Sa"
+174,MEMBERCALLEXPRESSION,"size",E2.java(127:8-127:17),"Sa.size()"
+175,LITERAL,"",E2.java(127:19-127:20),"4"
+176,DECLAREDREFERENCEEXPRESSION,"size",E2.java(127:11-127:15),"size"
+177,DECLAREDREFERENCEEXPRESSION,"Sa",E2.java(127:8-127:10),"Sa"
+178,DECLAREDREFERENCEEXPRESSION,"v",E2.java(126:18-126:19),"v"
+179,DECLAREDREFERENCEEXPRESSION,"vis",E2.java(126:21-126:24),"vis"
+180,DECLAREDREFERENCEEXPRESSION,"Sa",E2.java(126:26-126:28),"Sa"
+181,ARRAYSUBSCRIPTIONEXPRESSION,"",E2.java(124:7-124:13),"vis[v]"
+182,LITERAL,"",E2.java(124:15-124:20),"false"
+183,DECLAREDREFERENCEEXPRESSION,"v",E2.java(124:11-124:12),"v"
+184,MEMBERCALLEXPRESSION,"pop",E2.java(123:12-123:19),"S.pop()"
+185,DECLAREDREFERENCEEXPRESSION,"pop",E2.java(123:14-123:17),"pop"
+186,DECLAREDREFERENCEEXPRESSION,"println",E2.java(133:14-133:21),"println"
+187,BINARYOPERATOR,"+",E2.java(133:22-133:36),"nG + "" "" + num"
+188,BINARYOPERATOR,"+",E2.java(133:22-133:30),"nG + "" """
+189,DECLAREDREFERENCEEXPRESSION,"num",E2.java(133:33-133:36),"num"
+190,DECLAREDREFERENCEEXPRESSION,"nG",E2.java(133:22-133:24),"nG"
+191,LITERAL,"",E2.java(133:27-133:30),""" """
+192,MEMBEREXPRESSION,"out",E2.java(133:3-133:13),"System.out"
+193,COMPOUNDSTATEMENT,"",E2.java(117:36-119:4),"{
+			vis[i] = false;
+		}"
+194,DECLARATIONSTATEMENT,"",E2.java(117:8-117:17),"int i = 1"
+195,BINARYOPERATOR,"<=",E2.java(117:19-117:29),"i <= g.nvs"
+196,UNARYOPERATOR,"++",E2.java(117:31-117:34),"i++"
+197,VARIABLEDECLARATION,"i",E2.java(117:12-117:17),"i = 1"
+198,DECLAREDREFERENCEEXPRESSION,"vis",E2.java(118:4-118:7),"vis"
+199,DECLAREDREFERENCEEXPRESSION,"i",E2.java(117:19-117:20),"i"
+200,DECLAREDREFERENCEEXPRESSION,"i",E2.java(117:31-117:32),"i"
+201,MEMBEREXPRESSION,"nvs",E2.java(117:24-117:29),"g.nvs"
+202,DECLAREDREFERENCEEXPRESSION,"g",E2.java(117:24-117:25),"g"
+203,BINARYOPERATOR,"=",E2.java(118:4-118:19),"vis[i] = false;"
+204,ARRAYSUBSCRIPTIONEXPRESSION,"",E2.java(118:4-118:10),"vis[i]"
+205,LITERAL,"",E2.java(118:13-118:18),"false"
+206,DECLAREDREFERENCEEXPRESSION,"i",E2.java(118:8-118:9),"i"
+207,ARRAYCREATIONEXPRESSION,"",E2.java(108:19-108:39),"new boolean[g.nvs+1]"
+208,BINARYOPERATOR,"+",E2.java(108:31-108:38),"g.nvs+1"
+209,MEMBEREXPRESSION,"nvs",E2.java(108:31-108:36),"g.nvs"
+210,LITERAL,"",E2.java(108:37-108:38),"1"
+211,DECLAREDREFERENCEEXPRESSION,"g",E2.java(93:20-93:21),"g"
+212,VARIABLEDECLARATION,"this",,""
+213,COMPOUNDSTATEMENT,"",E2.java(136:39-144:3),"{
+		Grafo gt = new Grafo(g.nvs);
+		for (int i = 1; i <= g.nvs; i++) {
+			for (Arco a : g.adjs_no(i)) {
+				gt.insert_new_arc(a.extremo_final(), i, 0);
+			}
+		}
+		return gt;
+	}"
+214,DECLAREDREFERENCEEXPRESSION,"g",E2.java(137:24-137:25),"g"
+215,RETURNSTATEMENT,"",E2.java(143:3-143:13),"return gt;"
+216,DECLARATIONSTATEMENT,"",E2.java(137:3-137:31),"Grafo gt = new Grafo(g.nvs);"
+217,FORSTATEMENT,"",E2.java(138:3-142:4),"for (int i = 1; i <= g.nvs; i++) {
+			for (Arco a : g.adjs_no(i)) {
+				gt.insert_new_arc(a.extremo_final(), i, 0);
+			}
+		}"
+218,VARIABLEDECLARATION,"gt",E2.java(137:9-137:30),"gt = new Grafo(g.nvs)"
+219,COMPOUNDSTATEMENT,"",E2.java(138:36-142:4),"{
+			for (Arco a : g.adjs_no(i)) {
+				gt.insert_new_arc(a.extremo_final(), i, 0);
+			}
+		}"
+220,DECLARATIONSTATEMENT,"",E2.java(138:8-138:17),"int i = 1"
+221,BINARYOPERATOR,"<=",E2.java(138:19-138:29),"i <= g.nvs"
+222,UNARYOPERATOR,"++",E2.java(138:31-138:34),"i++"
+223,VARIABLEDECLARATION,"i",E2.java(138:12-138:17),"i = 1"
+224,DECLAREDREFERENCEEXPRESSION,"g",E2.java(139:18-139:19),"g"
+225,DECLAREDREFERENCEEXPRESSION,"gt",E2.java(143:10-143:12),"gt"
+226,DECLAREDREFERENCEEXPRESSION,"i",E2.java(138:19-138:20),"i"
+227,MEMBEREXPRESSION,"nvs",E2.java(138:24-138:29),"g.nvs"
+228,DECLAREDREFERENCEEXPRESSION,"g",E2.java(138:24-138:25),"g"
+229,LITERAL,"",E2.java(138:16-138:17),"1"
+230,FOREACHSTATEMENT,"",E2.java(139:4-141:5),"for (Arco a : g.adjs_no(i)) {
+				gt.insert_new_arc(a.extremo_final(), i, 0);
+			}"
+231,DECLAREDREFERENCEEXPRESSION,"i",E2.java(138:31-138:32),"i"
+232,DECLARATIONSTATEMENT,"",E2.java(139:9-139:15),"Arco a"
+233,MEMBERCALLEXPRESSION,"adjs_no",E2.java(139:18-139:30),"g.adjs_no(i)"
+234,COMPOUNDSTATEMENT,"",E2.java(139:32-141:5),"{
+				gt.insert_new_arc(a.extremo_final(), i, 0);
+			}"
+235,VARIABLEDECLARATION,"a",E2.java(139:14-139:15),"a"
+236,DECLAREDREFERENCEEXPRESSION,"gt",E2.java(140:5-140:7),"gt"
+237,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+238,MEMBERCALLEXPRESSION,"insert_new_arc",E2.java(140:5-140:48),"gt.insert_new_arc(a.extremo_final(), i, 0);"
+239,DECLAREDREFERENCEEXPRESSION,"insert_new_arc",E2.java(140:8-140:22),"insert_new_arc"
+240,METHODDECLARATION,"insert_new_arc",main.java(201:2-204:3),"public void insert_new_arc(int i, int j, int valor_ij) {
+		verts[i].adjs.addFirst(new Arco(j, valor_ij));
+		narcos++;
+	}"
+241,LITERAL,"",E2.java(140:45-140:46),"0"
+242,PARAMVARIABLEDECLARATION,"valor_ij",main.java(201:43-201:55),"int valor_ij"
+243,DECLAREDREFERENCEEXPRESSION,"i",E2.java(140:42-140:43),"i"
+244,PARAMVARIABLEDECLARATION,"j",main.java(201:36-201:41),"int j"
+245,MEMBERCALLEXPRESSION,"extremo_final",E2.java(140:23-140:40),"a.extremo_final()"
+246,DECLAREDREFERENCEEXPRESSION,"extremo_final",E2.java(140:25-140:38),"extremo_final"
+247,METHODDECLARATION,"extremo_final",main.java(158:2-160:3),"int extremo_final() {
+		return no_final;
+	}"
+248,PARAMVARIABLEDECLARATION,"i",main.java(201:29-201:34),"int i"
+249,DECLAREDREFERENCEEXPRESSION,"a",E2.java(140:23-140:24),"a"
+250,DECLAREDREFERENCEEXPRESSION,"adjs_no",E2.java(139:20-139:27),"adjs_no"
+251,METHODDECLARATION,"adjs_no",main.java(197:2-199:3),"public LinkedList<Arco> adjs_no(int i) {
+		return verts[i].adjs;
+	}"
+252,DECLAREDREFERENCEEXPRESSION,"i",E2.java(139:28-139:29),"i"
+253,PARAMVARIABLEDECLARATION,"i",main.java(197:34-197:39),"int i"
+254,NEWEXPRESSION,"",E2.java(137:14-137:30),"new Grafo(g.nvs)"
+255,CONSTRUCTEXPRESSION,"",E2.java(137:14-137:30),"new Grafo(g.nvs)"
+256,CONSTRUCTORDECLARATION,"Grafo",main.java(180:2-187:3),"public Grafo(int n) {
+		nvs = n;
+		narcos = 0;
+		verts = new No[n + 1];
+		for (int i = 0; i <= n; i++)
+			verts[i] = new No();
+		// para vertices numerados de 1 a n (posicao 0 nao vai ser usada)
+	}"
+257,MEMBEREXPRESSION,"nvs",E2.java(137:24-137:29),"g.nvs"
+258,PARAMVARIABLEDECLARATION,"n",main.java(180:15-180:20),"int n"
+259,VARIABLEDECLARATION,"this",,""
+260,COMPOUNDSTATEMENT,"",E2.java(81:47-94:3),"{
+		int nAl=in.nextInt();
+		Grafo g = new Grafo(nAl);
+		for (int i = 1; i <= nAl; i++) {
+			int al = in.nextInt(), num = in.nextInt();
+			for (int j = 1; j <= num; j++) {
+				int p = in.nextInt();
+				g.insert_new_arc(al, p, 0);
+			}
+		}
+		
+		System.out.println(""Caso #"" + ii);
+		fortementeConexa(g);
+	}"
+261,DECLAREDREFERENCEEXPRESSION,"in",E2.java(82:11-82:13),"in"
+262,RETURNSTATEMENT,"",,""
+263,DECLARATIONSTATEMENT,"",E2.java(82:3-82:24),"int nAl=in.nextInt();"
+264,DECLARATIONSTATEMENT,"",E2.java(83:3-83:28),"Grafo g = new Grafo(nAl);"
+265,FORSTATEMENT,"",E2.java(84:3-90:4),"for (int i = 1; i <= nAl; i++) {
+			int al = in.nextInt(), num = in.nextInt();
+			for (int j = 1; j <= num; j++) {
+				int p = in.nextInt();
+				g.insert_new_arc(al, p, 0);
+			}
+		}"
+266,MEMBERCALLEXPRESSION,"println",E2.java(92:3-92:37),"System.out.println(""Caso #"" + ii);"
+267,VARIABLEDECLARATION,"nAl",E2.java(82:7-82:23),"nAl=in.nextInt()"
+268,VARIABLEDECLARATION,"g",E2.java(83:9-83:27),"g = new Grafo(nAl)"
+269,LITERAL,"",E2.java(84:16-84:17),"1"
+270,COMPOUNDSTATEMENT,"",E2.java(84:34-90:4),"{
+			int al = in.nextInt(), num = in.nextInt();
+			for (int j = 1; j <= num; j++) {
+				int p = in.nextInt();
+				g.insert_new_arc(al, p, 0);
+			}
+		}"
+271,DECLARATIONSTATEMENT,"",E2.java(84:8-84:17),"int i = 1"
+272,BINARYOPERATOR,"<=",E2.java(84:19-84:27),"i <= nAl"
+273,UNARYOPERATOR,"++",E2.java(84:29-84:32),"i++"
+274,VARIABLEDECLARATION,"i",E2.java(84:12-84:17),"i = 1"
+275,DECLAREDREFERENCEEXPRESSION,"in",E2.java(85:13-85:15),"in"
+276,DECLAREDREFERENCEEXPRESSION,"System",E2.java(92:3-92:9),"System"
+277,DECLARATIONSTATEMENT,"",E2.java(85:4-85:46),"int al = in.nextInt(), num = in.nextInt();"
+278,FORSTATEMENT,"",E2.java(86:4-89:5),"for (int j = 1; j <= num; j++) {
+				int p = in.nextInt();
+				g.insert_new_arc(al, p, 0);
+			}"
+279,VARIABLEDECLARATION,"al",E2.java(85:8-85:25),"al = in.nextInt()"
+280,VARIABLEDECLARATION,"num",E2.java(85:27-85:45),"num = in.nextInt()"
+281,DECLAREDREFERENCEEXPRESSION,"i",E2.java(84:29-84:30),"i"
+282,MEMBERCALLEXPRESSION,"nextInt",E2.java(85:33-85:45),"in.nextInt()"
+283,DECLAREDREFERENCEEXPRESSION,"nextInt",E2.java(85:36-85:43),"nextInt"
+284,DECLAREDREFERENCEEXPRESSION,"in",E2.java(85:33-85:35),"in"
+285,LITERAL,"",E2.java(86:17-86:18),"1"
+286,COMPOUNDSTATEMENT,"",E2.java(86:35-89:5),"{
+				int p = in.nextInt();
+				g.insert_new_arc(al, p, 0);
+			}"
+287,DECLARATIONSTATEMENT,"",E2.java(86:9-86:18),"int j = 1"
+288,BINARYOPERATOR,"<=",E2.java(86:20-86:28),"j <= num"
+289,UNARYOPERATOR,"++",E2.java(86:30-86:33),"j++"
+290,VARIABLEDECLARATION,"j",E2.java(86:13-86:18),"j = 1"
+291,DECLAREDREFERENCEEXPRESSION,"in",E2.java(87:13-87:15),"in"
+292,DECLARATIONSTATEMENT,"",E2.java(87:5-87:26),"int p = in.nextInt();"
+293,MEMBERCALLEXPRESSION,"insert_new_arc",E2.java(88:5-88:32),"g.insert_new_arc(al, p, 0);"
+294,VARIABLEDECLARATION,"p",E2.java(87:9-87:25),"p = in.nextInt()"
+295,DECLAREDREFERENCEEXPRESSION,"j",E2.java(86:30-86:31),"j"
+296,MEMBERCALLEXPRESSION,"nextInt",E2.java(87:13-87:25),"in.nextInt()"
+297,DECLAREDREFERENCEEXPRESSION,"nextInt",E2.java(87:16-87:23),"nextInt"
+298,DECLAREDREFERENCEEXPRESSION,"insert_new_arc",E2.java(88:7-88:21),"insert_new_arc"
+299,LITERAL,"",E2.java(88:29-88:30),"0"
+300,DECLAREDREFERENCEEXPRESSION,"p",E2.java(88:26-88:27),"p"
+301,DECLAREDREFERENCEEXPRESSION,"al",E2.java(88:22-88:24),"al"
+302,DECLAREDREFERENCEEXPRESSION,"g",E2.java(88:5-88:6),"g"
+303,DECLAREDREFERENCEEXPRESSION,"j",E2.java(86:20-86:21),"j"
+304,DECLAREDREFERENCEEXPRESSION,"num",E2.java(86:25-86:28),"num"
+305,MEMBERCALLEXPRESSION,"nextInt",E2.java(85:13-85:25),"in.nextInt()"
+306,DECLAREDREFERENCEEXPRESSION,"nextInt",E2.java(85:16-85:23),"nextInt"
+307,DECLAREDREFERENCEEXPRESSION,"i",E2.java(84:19-84:20),"i"
+308,DECLAREDREFERENCEEXPRESSION,"nAl",E2.java(84:24-84:27),"nAl"
+309,DECLAREDREFERENCEEXPRESSION,"nAl",E2.java(83:23-83:26),"nAl"
+310,NEWEXPRESSION,"",E2.java(83:13-83:27),"new Grafo(nAl)"
+311,CONSTRUCTEXPRESSION,"",E2.java(83:13-83:27),"new Grafo(nAl)"
+312,DECLAREDREFERENCEEXPRESSION,"println",E2.java(92:14-92:21),"println"
+313,BINARYOPERATOR,"+",E2.java(92:22-92:35),"""Caso #"" + ii"
+314,MEMBEREXPRESSION,"out",E2.java(92:3-92:13),"System.out"
+315,LITERAL,"",E2.java(92:22-92:30),"""Caso #"""
+316,DECLAREDREFERENCEEXPRESSION,"ii",E2.java(92:33-92:35),"ii"
+317,MEMBERCALLEXPRESSION,"nextInt",E2.java(82:11-82:23),"in.nextInt()"
+318,DECLAREDREFERENCEEXPRESSION,"nextInt",E2.java(82:14-82:21),"nextInt"
+319,VARIABLEDECLARATION,"this",,""
+320,COMPOUNDSTATEMENT,"",E2.java(96:71-104:3),"{
+		vis[v]=true;
+		for (Arco a : g.adjs_no(v)) {
+			if(vis[a.extremo_final()]==false){
+				DFSVisit(g, a.extremo_final(), vis, S);
+			}
+		}
+		S.push(v);
+	}"
+321,CALLEXPRESSION,"DFSVisit",E2.java(100:5-100:44),"DFSVisit(g, a.extremo_final(), vis, S);"
+322,DECLAREDREFERENCEEXPRESSION,"vis",E2.java(97:3-97:6),"vis"
+323,RETURNSTATEMENT,"",,""
+324,DECLAREDREFERENCEEXPRESSION,"g",E2.java(100:14-100:15),"g"
+325,DECLAREDREFERENCEEXPRESSION,"vis",E2.java(100:36-100:39),"vis"
+326,MEMBERCALLEXPRESSION,"extremo_final",E2.java(100:17-100:34),"a.extremo_final()"
+327,DECLAREDREFERENCEEXPRESSION,"S",E2.java(100:41-100:42),"S"
+328,BINARYOPERATOR,"=",E2.java(97:3-97:15),"vis[v]=true;"
+329,FOREACHSTATEMENT,"",E2.java(98:3-102:4),"for (Arco a : g.adjs_no(v)) {
+			if(vis[a.extremo_final()]==false){
+				DFSVisit(g, a.extremo_final(), vis, S);
+			}
+		}"
+330,MEMBERCALLEXPRESSION,"push",E2.java(103:3-103:13),"S.push(v);"
+331,ARRAYSUBSCRIPTIONEXPRESSION,"",E2.java(97:3-97:9),"vis[v]"
+332,LITERAL,"",E2.java(97:10-97:14),"true"
+333,DECLAREDREFERENCEEXPRESSION,"g",E2.java(98:17-98:18),"g"
+334,DECLAREDREFERENCEEXPRESSION,"v",E2.java(97:7-97:8),"v"
+335,DECLAREDREFERENCEEXPRESSION,"push",E2.java(103:5-103:9),"push"
+336,DECLAREDREFERENCEEXPRESSION,"v",E2.java(103:10-103:11),"v"
+337,DECLAREDREFERENCEEXPRESSION,"S",E2.java(103:3-103:4),"S"
+338,DECLARATIONSTATEMENT,"",E2.java(98:8-98:14),"Arco a"
+339,MEMBERCALLEXPRESSION,"adjs_no",E2.java(98:17-98:29),"g.adjs_no(v)"
+340,COMPOUNDSTATEMENT,"",E2.java(98:31-102:4),"{
+			if(vis[a.extremo_final()]==false){
+				DFSVisit(g, a.extremo_final(), vis, S);
+			}
+		}"
+341,VARIABLEDECLARATION,"a",E2.java(98:13-98:14),"a"
+342,DECLAREDREFERENCEEXPRESSION,"vis",E2.java(99:7-99:10),"vis"
+343,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+344,IFSTATEMENT,"",E2.java(99:4-101:5),"if(vis[a.extremo_final()]==false){
+				DFSVisit(g, a.extremo_final(), vis, S);
+			}"
+345,COMPOUNDSTATEMENT,"",E2.java(99:37-101:5),"{
+				DFSVisit(g, a.extremo_final(), vis, S);
+			}"
+346,BINARYOPERATOR,"==",E2.java(99:7-99:36),"vis[a.extremo_final()]==false"
+347,ARRAYSUBSCRIPTIONEXPRESSION,"",E2.java(99:7-99:29),"vis[a.extremo_final()]"
+348,LITERAL,"",E2.java(99:31-99:36),"false"
+349,MEMBERCALLEXPRESSION,"extremo_final",E2.java(99:11-99:28),"a.extremo_final()"
+350,DECLAREDREFERENCEEXPRESSION,"a",E2.java(99:11-99:12),"a"
+351,DECLAREDREFERENCEEXPRESSION,"extremo_final",E2.java(99:13-99:26),"extremo_final"
+352,DECLAREDREFERENCEEXPRESSION,"a",E2.java(100:17-100:18),"a"
+353,DECLAREDREFERENCEEXPRESSION,"extremo_final",E2.java(100:19-100:32),"extremo_final"
+354,DECLAREDREFERENCEEXPRESSION,"adjs_no",E2.java(98:19-98:26),"adjs_no"
+355,DECLAREDREFERENCEEXPRESSION,"v",E2.java(98:27-98:28),"v"
+356,FIELDDECLARATION,"this",,""
+357,FIELDDECLARATION,"verts",E2.java(35:5-35:16),"verts"
+358,FIELDDECLARATION,"nvs",E2.java(36:5-36:21),"nvs"
+359,METHODDECLARATION,"num_vertices",E2.java(47:5-49:6),"public int num_vertices(){
+	return nvs;
+    }"
+360,METHODDECLARATION,"num_arcos",E2.java(51:5-53:6),"public int num_arcos(){
+	return narcos;
+    }"
+361,METHODDECLARATION,"adjs_no",E2.java(55:5-57:6),"public LinkedList<Arco> adjs_no(int i) {
+	return verts[i].adjs;
+    }"
+362,METHODDECLARATION,"insert_new_arc",E2.java(59:5-62:6),"public void insert_new_arc(int i, int j, int valor_ij){
+	verts[i].adjs.addFirst(new Arco(j,valor_ij));
+        narcos++;
+    }"
+363,METHODDECLARATION,"find_arc",E2.java(64:5-68:6),"public Arco find_arc(int i, int j){
+	for (Arco adj: adjs_no(i))
+	    if (adj.extremo_final() == j) return adj;
+	return null;
+    }"
+364,CONSTRUCTORDECLARATION,"Grafo",E2.java(38:5-45:6),"public Grafo(int n) {
+	nvs = n;
+	narcos = 0;
+	verts  = new No[n+1];
+	for (int i = 0 ; i <= n ; i++)
+	    verts[i] = new No();
+        // para vertices numerados de 1 a n (posicao 0 nao vai ser usada)
+    }"
+365,VARIABLEDECLARATION,"this",,""
+366,COMPOUNDSTATEMENT,"",E2.java(59:59-62:6),"{
+	verts[i].adjs.addFirst(new Arco(j,valor_ij));
+        narcos++;
+    }"
+367,PARAMVARIABLEDECLARATION,"i",E2.java(59:32-59:37),"int i"
+368,PARAMVARIABLEDECLARATION,"j",E2.java(59:39-59:44),"int j"
+369,PARAMVARIABLEDECLARATION,"valor_ij",E2.java(59:46-59:58),"int valor_ij"
+370,DECLAREDREFERENCEEXPRESSION,"this",E2.java(60:2-60:7),"this"
+371,RETURNSTATEMENT,"",,""
+372,MEMBERCALLEXPRESSION,"addFirst",E2.java(60:2-60:47),"verts[i].adjs.addFirst(new Arco(j,valor_ij));"
+373,UNARYOPERATOR,"++",E2.java(61:9-61:18),"narcos++;"
+374,DECLAREDREFERENCEEXPRESSION,"addFirst",E2.java(60:16-60:24),"addFirst"
+375,DECLAREDREFERENCEEXPRESSION,"this",E2.java(61:9-61:15),"this"
+376,NEWEXPRESSION,"",E2.java(60:25-60:45),"new Arco(j,valor_ij)"
+377,MEMBEREXPRESSION,"adjs",E2.java(60:2-60:15),"verts[i].adjs"
+378,ARRAYSUBSCRIPTIONEXPRESSION,"",E2.java(60:2-60:10),"verts[i]"
+379,DECLAREDREFERENCEEXPRESSION,"j",E2.java(60:34-60:35),"j"
+380,MEMBEREXPRESSION,"verts",E2.java(60:2-60:7),"verts"
+381,DECLAREDREFERENCEEXPRESSION,"i",E2.java(60:8-60:9),"i"
+382,CONSTRUCTEXPRESSION,"",E2.java(60:25-60:45),"new Arco(j,valor_ij)"
+383,CONSTRUCTORDECLARATION,"Arco",main.java(153:2-156:3),"Arco(int fim, int v) {
+		no_final = fim;
+		valor = v;
+	}"
+384,DECLAREDREFERENCEEXPRESSION,"valor_ij",E2.java(60:36-60:44),"valor_ij"
+385,PARAMVARIABLEDECLARATION,"v",main.java(153:16-153:21),"int v"
+386,PARAMVARIABLEDECLARATION,"fim",main.java(153:7-153:14),"int fim"
+387,MEMBEREXPRESSION,"narcos",E2.java(61:9-61:15),"narcos"
+388,VARIABLEDECLARATION,"this",,""
+389,COMPOUNDSTATEMENT,"",E2.java(47:30-49:6),"{
+	return nvs;
+    }"
+390,DECLAREDREFERENCEEXPRESSION,"this",E2.java(48:9-48:12),"this"
+391,RETURNSTATEMENT,"",E2.java(48:2-48:13),"return nvs;"
+392,MEMBEREXPRESSION,"nvs",E2.java(48:9-48:12),"nvs"
+393,VARIABLEDECLARATION,"this",,""
+394,COMPOUNDSTATEMENT,"",E2.java(51:27-53:6),"{
+	return narcos;
+    }"
+395,DECLAREDREFERENCEEXPRESSION,"this",E2.java(52:9-52:15),"this"
+396,RETURNSTATEMENT,"",E2.java(52:2-52:16),"return narcos;"
+397,MEMBEREXPRESSION,"narcos",E2.java(52:9-52:15),"narcos"
+398,VARIABLEDECLARATION,"this",,""
+399,COMPOUNDSTATEMENT,"",E2.java(55:44-57:6),"{
+	return verts[i].adjs;
+    }"
+400,PARAMVARIABLEDECLARATION,"i",E2.java(55:37-55:42),"int i"
+401,DECLAREDREFERENCEEXPRESSION,"this",E2.java(56:9-56:14),"this"
+402,RETURNSTATEMENT,"",E2.java(56:2-56:23),"return verts[i].adjs;"
+403,MEMBEREXPRESSION,"adjs",E2.java(56:9-56:22),"verts[i].adjs"
+404,ARRAYSUBSCRIPTIONEXPRESSION,"",E2.java(56:9-56:17),"verts[i]"
+405,MEMBEREXPRESSION,"verts",E2.java(56:9-56:14),"verts"
+406,DECLAREDREFERENCEEXPRESSION,"i",E2.java(56:15-56:16),"i"
+407,VARIABLEDECLARATION,"this",,""
+408,COMPOUNDSTATEMENT,"",E2.java(64:39-68:6),"{
+	for (Arco adj: adjs_no(i))
+	    if (adj.extremo_final() == j) return adj;
+	return null;
+    }"
+409,PARAMVARIABLEDECLARATION,"i",E2.java(64:26-64:31),"int i"
+410,PARAMVARIABLEDECLARATION,"j",E2.java(64:33-64:38),"int j"
+411,DECLAREDREFERENCEEXPRESSION,"i",E2.java(65:25-65:26),"i"
+412,RETURNSTATEMENT,"",E2.java(67:2-67:14),"return null;"
+413,FOREACHSTATEMENT,"",E2.java(65:2-66:47),"for (Arco adj: adjs_no(i))
+	    if (adj.extremo_final() == j) return adj;"
+414,DECLARATIONSTATEMENT,"",E2.java(65:7-65:15),"Arco adj"
+415,CALLEXPRESSION,"adjs_no",E2.java(65:17-65:27),"adjs_no(i)"
+416,IFSTATEMENT,"",E2.java(66:6-66:47),"if (adj.extremo_final() == j) return adj;"
+417,VARIABLEDECLARATION,"adj",E2.java(65:12-65:15),"adj"
+418,DECLAREDREFERENCEEXPRESSION,"adj",E2.java(66:10-66:13),"adj"
+419,LITERAL,"",E2.java(67:9-67:13),"null"
+420,BINARYOPERATOR,"==",E2.java(66:10-66:34),"adj.extremo_final() == j"
+421,RETURNSTATEMENT,"",E2.java(66:36-66:47),"return adj;"
+422,DECLAREDREFERENCEEXPRESSION,"adj",E2.java(66:43-66:46),"adj"
+423,MEMBERCALLEXPRESSION,"extremo_final",E2.java(66:10-66:29),"adj.extremo_final()"
+424,DECLAREDREFERENCEEXPRESSION,"j",E2.java(66:33-66:34),"j"
+425,DECLAREDREFERENCEEXPRESSION,"extremo_final",E2.java(66:14-66:27),"extremo_final"
+426,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+427,COMPOUNDSTATEMENT,"",E2.java(38:25-45:6),"{
+	nvs = n;
+	narcos = 0;
+	verts  = new No[n+1];
+	for (int i = 0 ; i <= n ; i++)
+	    verts[i] = new No();
+        // para vertices numerados de 1 a n (posicao 0 nao vai ser usada)
+    }"
+428,PARAMVARIABLEDECLARATION,"n",E2.java(38:18-38:23),"int n"
+429,DECLAREDREFERENCEEXPRESSION,"this",E2.java(39:2-39:5),"this"
+430,RETURNSTATEMENT,"",,""
+431,BINARYOPERATOR,"=",E2.java(39:2-39:10),"nvs = n;"
+432,BINARYOPERATOR,"=",E2.java(40:2-40:13),"narcos = 0;"
+433,BINARYOPERATOR,"=",E2.java(41:2-41:23),"verts  = new No[n+1];"
+434,FORSTATEMENT,"",E2.java(42:2-43:26),"for (int i = 0 ; i <= n ; i++)
+	    verts[i] = new No();"
+435,MEMBEREXPRESSION,"verts",E2.java(41:2-41:7),"verts"
+436,ARRAYCREATIONEXPRESSION,"",E2.java(41:11-41:22),"new No[n+1]"
+437,LITERAL,"",E2.java(42:15-42:16),"0"
+438,DECLAREDREFERENCEEXPRESSION,"this",E2.java(41:2-41:7),"this"
+439,DECLAREDREFERENCEEXPRESSION,"n",E2.java(41:18-41:19),"n"
+440,BINARYOPERATOR,"+",E2.java(41:18-41:21),"n+1"
+441,LITERAL,"",E2.java(41:20-41:21),"1"
+442,BINARYOPERATOR,"=",E2.java(43:6-43:26),"verts[i] = new No();"
+443,DECLARATIONSTATEMENT,"",E2.java(42:7-42:16),"int i = 0"
+444,BINARYOPERATOR,"<=",E2.java(42:19-42:25),"i <= n"
+445,UNARYOPERATOR,"++",E2.java(42:28-42:31),"i++"
+446,VARIABLEDECLARATION,"i",E2.java(42:11-42:16),"i = 0"
+447,DECLAREDREFERENCEEXPRESSION,"this",E2.java(43:6-43:11),"this"
+448,DECLAREDREFERENCEEXPRESSION,"i",E2.java(42:28-42:29),"i"
+449,DECLAREDREFERENCEEXPRESSION,"i",E2.java(42:19-42:20),"i"
+450,ARRAYSUBSCRIPTIONEXPRESSION,"",E2.java(43:6-43:14),"verts[i]"
+451,NEWEXPRESSION,"",E2.java(43:17-43:25),"new No()"
+452,CONSTRUCTEXPRESSION,"",E2.java(43:17-43:25),"new No()"
+453,CONSTRUCTORDECLARATION,"No",main.java(171:2-173:3),"No() {
+		adjs = new LinkedList<Arco>();
+	}"
+454,MEMBEREXPRESSION,"verts",E2.java(43:6-43:11),"verts"
+455,DECLAREDREFERENCEEXPRESSION,"i",E2.java(43:12-43:13),"i"
+456,DECLAREDREFERENCEEXPRESSION,"n",E2.java(42:24-42:25),"n"
+457,MEMBEREXPRESSION,"narcos",E2.java(40:2-40:8),"narcos"
+458,LITERAL,"",E2.java(40:11-40:12),"0"
+459,DECLAREDREFERENCEEXPRESSION,"this",E2.java(40:2-40:8),"this"
+460,MEMBEREXPRESSION,"nvs",E2.java(39:2-39:5),"nvs"
+461,DECLAREDREFERENCEEXPRESSION,"n",E2.java(39:8-39:9),"n"
+462,FIELDDECLARATION,"this",,""
+463,FIELDDECLARATION,"adjs",E2.java(26:5-26:27),"adjs"
+464,CONSTRUCTORDECLARATION,"No",E2.java(28:5-30:6),"No() {
+	adjs = new LinkedList<Arco>();
+    }"
+465,COMPOUNDSTATEMENT,"",E2.java(28:10-30:6),"{
+	adjs = new LinkedList<Arco>();
+    }"
+466,DECLAREDREFERENCEEXPRESSION,"this",E2.java(29:2-29:6),"this"
+467,RETURNSTATEMENT,"",,""
+468,BINARYOPERATOR,"=",E2.java(29:2-29:32),"adjs = new LinkedList<Arco>();"
+469,MEMBEREXPRESSION,"adjs",E2.java(29:2-29:6),"adjs"
+470,NEWEXPRESSION,"",E2.java(29:9-29:31),"new LinkedList<Arco>()"
+471,CONSTRUCTEXPRESSION,"",E2.java(29:9-29:31),"new LinkedList<Arco>()"

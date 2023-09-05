@@ -1,0 +1,888 @@
+id,type,token,location,code
+1,TRANSLATIONUNITDECLARATION,"/data/00000019/submissions/00869545_Sociologia_070316072/Sociologia.java",,""
+2,RECORDDECLARATION,"GNode",Sociologia.java(3:1-16:2),"class GNode {
+	int id, color, dist;
+	GNode pai;
+	ArrayList<Integer> adj;
+	ArrayList<Integer> pre;
+
+	GNode(int id) {
+		this.id=id;
+		color=0; //0=white 1=grey 2=black
+		pai=null;
+		adj=new ArrayList<Integer> (); //lista de adjacencias
+		pre=new ArrayList<Integer> (); //lista de precedente aka transposta
+	}
+}"
+3,RECORDDECLARATION,"Grafo",Sociologia.java(18:1-106:2),"class Grafo { 
+	GNode lista[];
+	int n;
+	boolean clean;
+	Stack<GNode> ft; //reverse finishing order
+	
+	Grafo(int n){
+		this.n=n;
+		lista=new GNode[n];
+		clean=true;
+		ft=new Stack<GNode> ();
+	}
+	
+	public void DFS() {
+		if(!clean)
+			ClearSec();
+		
+		for(GNode u:lista)
+			if(u.color==0)
+				DFS(u);
+	}
+	
+	private void DFS(GNode u)
+	{
+		u.color=1;
+		
+		for(int i: u.adj) 
+		{
+			GNode v=lista[i-1];
+			if(v.color==0) 
+			{
+				v.pai=u;
+				DFS(v);
+			}
+		}
+		
+		u.color=2;
+		ft.push(u);
+	}
+
+	private void ClearSec() {
+		ft.clear();
+		for(GNode i:lista) {
+			i.color=0;
+			i.pai=null;
+		}
+	}
+	
+	public void TransposeGrafo() {
+//		for(GNode v: lista)
+//			for (int u: v.adj) {
+//				lista[u-1].pre.add(v.id);
+//			}
+		
+		ArrayList<Integer> tmp;
+		for(GNode v: lista) {
+			tmp=v.adj;
+			v.adj=v.pre;
+			v.pre=tmp;
+		}
+		ClearSec();
+	}
+	
+	@SuppressWarnings(""unchecked"")
+	public void ComponentesConexos() {
+		Stack<GNode> s;
+		int grupo, naogrupo, tamanho;
+		
+		DFS();
+		s=(Stack<GNode>) ft.clone();
+		TransposeGrafo();
+		
+		grupo=naogrupo=tamanho=0;
+		while (!s.isEmpty()) {
+			GNode v=s.pop();
+			if (v.color==0) {
+				DFS(v);
+				tamanho=ft.size();
+				if(tamanho>3)
+					grupo++;
+				else
+					naogrupo+=tamanho;
+				ft.clear();
+			}
+		}
+		
+		System.out.println(grupo+"" ""+naogrupo);
+	}
+}"
+4,RECORDDECLARATION,"Sociologia",Sociologia.java(108:1-141:2),"public class Sociologia {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Scanner in=new Scanner(System.in);
+		
+		int nc=in.nextInt(); //num de casos
+		
+		for(int i=1; i<=nc; i++) {
+			int na=in.nextInt(); //num de alunos
+			Grafo grafo=new Grafo(na);
+			
+			for(int j=0; j<na; j++) //Inicializar
+				grafo.lista[j]=new GNode(j+1);
+			
+			for(int j=0; j<na; j++) {
+				int x=in.nextInt(); //id do aluno
+				//grafo.lista[x-1]=new GNode(x);
+				int nf=in.nextInt(); //qnts alunos vai contar
+				
+				for(int k=0; k<nf; k++){
+					int amigo=in.nextInt();
+					grafo.lista[x-1].adj.add( amigo );
+					grafo.lista[amigo-1].pre.add(x);
+				}
+			}
+			System.out.println(""Caso #""+i);
+			grafo.ComponentesConexos();
+		}
+
+	}
+}"
+5,INCLUDEDECLARATION,"java.util",,""
+6,FIELDDECLARATION,"this",,""
+7,METHODDECLARATION,"main",Sociologia.java(113:2-140:3),"public static void main(String[] args) {
+		Scanner in=new Scanner(System.in);
+		
+		int nc=in.nextInt(); //num de casos
+		
+		for(int i=1; i<=nc; i++) {
+			int na=in.nextInt(); //num de alunos
+			Grafo grafo=new Grafo(na);
+			
+			for(int j=0; j<na; j++) //Inicializar
+				grafo.lista[j]=new GNode(j+1);
+			
+			for(int j=0; j<na; j++) {
+				int x=in.nextInt(); //id do aluno
+				//grafo.lista[x-1]=new GNode(x);
+				int nf=in.nextInt(); //qnts alunos vai contar
+				
+				for(int k=0; k<nf; k++){
+					int amigo=in.nextInt();
+					grafo.lista[x-1].adj.add( amigo );
+					grafo.lista[amigo-1].pre.add(x);
+				}
+			}
+			System.out.println(""Caso #""+i);
+			grafo.ComponentesConexos();
+		}
+
+	}"
+8,CONSTRUCTORDECLARATION,"Sociologia",,""
+9,VARIABLEDECLARATION,"this",,""
+10,COMPOUNDSTATEMENT,"",Sociologia.java(113:41-140:3),"{
+		Scanner in=new Scanner(System.in);
+		
+		int nc=in.nextInt(); //num de casos
+		
+		for(int i=1; i<=nc; i++) {
+			int na=in.nextInt(); //num de alunos
+			Grafo grafo=new Grafo(na);
+			
+			for(int j=0; j<na; j++) //Inicializar
+				grafo.lista[j]=new GNode(j+1);
+			
+			for(int j=0; j<na; j++) {
+				int x=in.nextInt(); //id do aluno
+				//grafo.lista[x-1]=new GNode(x);
+				int nf=in.nextInt(); //qnts alunos vai contar
+				
+				for(int k=0; k<nf; k++){
+					int amigo=in.nextInt();
+					grafo.lista[x-1].adj.add( amigo );
+					grafo.lista[amigo-1].pre.add(x);
+				}
+			}
+			System.out.println(""Caso #""+i);
+			grafo.ComponentesConexos();
+		}
+
+	}"
+11,PARAMVARIABLEDECLARATION,"args",Sociologia.java(113:26-113:39),"String[] args"
+12,DECLAREDREFERENCEEXPRESSION,"System",Sociologia.java(114:26-114:32),"System"
+13,RETURNSTATEMENT,"",,""
+14,DECLARATIONSTATEMENT,"",Sociologia.java(114:3-114:37),"Scanner in=new Scanner(System.in);"
+15,DECLARATIONSTATEMENT,"",Sociologia.java(116:3-116:23),"int nc=in.nextInt();"
+16,FORSTATEMENT,"",Sociologia.java(118:3-138:4),"for(int i=1; i<=nc; i++) {
+			int na=in.nextInt(); //num de alunos
+			Grafo grafo=new Grafo(na);
+			
+			for(int j=0; j<na; j++) //Inicializar
+				grafo.lista[j]=new GNode(j+1);
+			
+			for(int j=0; j<na; j++) {
+				int x=in.nextInt(); //id do aluno
+				//grafo.lista[x-1]=new GNode(x);
+				int nf=in.nextInt(); //qnts alunos vai contar
+				
+				for(int k=0; k<nf; k++){
+					int amigo=in.nextInt();
+					grafo.lista[x-1].adj.add( amigo );
+					grafo.lista[amigo-1].pre.add(x);
+				}
+			}
+			System.out.println(""Caso #""+i);
+			grafo.ComponentesConexos();
+		}"
+17,VARIABLEDECLARATION,"in",Sociologia.java(114:11-114:36),"in=new Scanner(System.in)"
+18,VARIABLEDECLARATION,"nc",Sociologia.java(116:7-116:22),"nc=in.nextInt()"
+19,DECLAREDREFERENCEEXPRESSION,"in",Sociologia.java(116:10-116:12),"in"
+20,COMPOUNDSTATEMENT,"",Sociologia.java(118:28-138:4),"{
+			int na=in.nextInt(); //num de alunos
+			Grafo grafo=new Grafo(na);
+			
+			for(int j=0; j<na; j++) //Inicializar
+				grafo.lista[j]=new GNode(j+1);
+			
+			for(int j=0; j<na; j++) {
+				int x=in.nextInt(); //id do aluno
+				//grafo.lista[x-1]=new GNode(x);
+				int nf=in.nextInt(); //qnts alunos vai contar
+				
+				for(int k=0; k<nf; k++){
+					int amigo=in.nextInt();
+					grafo.lista[x-1].adj.add( amigo );
+					grafo.lista[amigo-1].pre.add(x);
+				}
+			}
+			System.out.println(""Caso #""+i);
+			grafo.ComponentesConexos();
+		}"
+21,DECLARATIONSTATEMENT,"",Sociologia.java(118:7-118:14),"int i=1"
+22,BINARYOPERATOR,"<=",Sociologia.java(118:16-118:21),"i<=nc"
+23,UNARYOPERATOR,"++",Sociologia.java(118:23-118:26),"i++"
+24,VARIABLEDECLARATION,"i",Sociologia.java(118:11-118:14),"i=1"
+25,DECLAREDREFERENCEEXPRESSION,"in",Sociologia.java(119:11-119:13),"in"
+26,DECLARATIONSTATEMENT,"",Sociologia.java(119:4-119:24),"int na=in.nextInt();"
+27,DECLARATIONSTATEMENT,"",Sociologia.java(120:4-120:30),"Grafo grafo=new Grafo(na);"
+28,FORSTATEMENT,"",Sociologia.java(122:4-123:35),"for(int j=0; j<na; j++) //Inicializar
+				grafo.lista[j]=new GNode(j+1);"
+29,FORSTATEMENT,"",Sociologia.java(125:4-135:5),"for(int j=0; j<na; j++) {
+				int x=in.nextInt(); //id do aluno
+				//grafo.lista[x-1]=new GNode(x);
+				int nf=in.nextInt(); //qnts alunos vai contar
+				
+				for(int k=0; k<nf; k++){
+					int amigo=in.nextInt();
+					grafo.lista[x-1].adj.add( amigo );
+					grafo.lista[amigo-1].pre.add(x);
+				}
+			}"
+30,MEMBERCALLEXPRESSION,"println",Sociologia.java(136:4-136:35),"System.out.println(""Caso #""+i);"
+31,MEMBERCALLEXPRESSION,"ComponentesConexos",Sociologia.java(137:4-137:31),"grafo.ComponentesConexos();"
+32,VARIABLEDECLARATION,"na",Sociologia.java(119:8-119:23),"na=in.nextInt()"
+33,VARIABLEDECLARATION,"grafo",Sociologia.java(120:10-120:29),"grafo=new Grafo(na)"
+34,DECLAREDREFERENCEEXPRESSION,"i",Sociologia.java(118:23-118:24),"i"
+35,COMPOUNDSTATEMENT,"",Sociologia.java(125:28-135:5),"{
+				int x=in.nextInt(); //id do aluno
+				//grafo.lista[x-1]=new GNode(x);
+				int nf=in.nextInt(); //qnts alunos vai contar
+				
+				for(int k=0; k<nf; k++){
+					int amigo=in.nextInt();
+					grafo.lista[x-1].adj.add( amigo );
+					grafo.lista[amigo-1].pre.add(x);
+				}
+			}"
+36,DECLARATIONSTATEMENT,"",Sociologia.java(125:8-125:15),"int j=0"
+37,BINARYOPERATOR,"<",Sociologia.java(125:17-125:21),"j<na"
+38,UNARYOPERATOR,"++",Sociologia.java(125:23-125:26),"j++"
+39,VARIABLEDECLARATION,"j",Sociologia.java(125:12-125:15),"j=0"
+40,DECLAREDREFERENCEEXPRESSION,"in",Sociologia.java(126:11-126:13),"in"
+41,DECLAREDREFERENCEEXPRESSION,"System",Sociologia.java(136:4-136:10),"System"
+42,LITERAL,"",Sociologia.java(125:14-125:15),"0"
+43,DECLAREDREFERENCEEXPRESSION,"j",Sociologia.java(125:23-125:24),"j"
+44,DECLAREDREFERENCEEXPRESSION,"j",Sociologia.java(125:17-125:18),"j"
+45,DECLAREDREFERENCEEXPRESSION,"na",Sociologia.java(125:19-125:21),"na"
+46,DECLARATIONSTATEMENT,"",Sociologia.java(126:5-126:24),"int x=in.nextInt();"
+47,DECLARATIONSTATEMENT,"",Sociologia.java(128:5-128:25),"int nf=in.nextInt();"
+48,FORSTATEMENT,"",Sociologia.java(130:5-134:6),"for(int k=0; k<nf; k++){
+					int amigo=in.nextInt();
+					grafo.lista[x-1].adj.add( amigo );
+					grafo.lista[amigo-1].pre.add(x);
+				}"
+49,VARIABLEDECLARATION,"x",Sociologia.java(126:9-126:23),"x=in.nextInt()"
+50,VARIABLEDECLARATION,"nf",Sociologia.java(128:9-128:24),"nf=in.nextInt()"
+51,DECLAREDREFERENCEEXPRESSION,"in",Sociologia.java(128:12-128:14),"in"
+52,COMPOUNDSTATEMENT,"",Sociologia.java(130:28-134:6),"{
+					int amigo=in.nextInt();
+					grafo.lista[x-1].adj.add( amigo );
+					grafo.lista[amigo-1].pre.add(x);
+				}"
+53,DECLARATIONSTATEMENT,"",Sociologia.java(130:9-130:16),"int k=0"
+54,BINARYOPERATOR,"<",Sociologia.java(130:18-130:22),"k<nf"
+55,UNARYOPERATOR,"++",Sociologia.java(130:24-130:27),"k++"
+56,VARIABLEDECLARATION,"k",Sociologia.java(130:13-130:16),"k=0"
+57,DECLAREDREFERENCEEXPRESSION,"in",Sociologia.java(131:16-131:18),"in"
+58,DECLARATIONSTATEMENT,"",Sociologia.java(131:6-131:29),"int amigo=in.nextInt();"
+59,MEMBERCALLEXPRESSION,"add",Sociologia.java(132:6-132:40),"grafo.lista[x-1].adj.add( amigo );"
+60,MEMBERCALLEXPRESSION,"add",Sociologia.java(133:6-133:38),"grafo.lista[amigo-1].pre.add(x);"
+61,VARIABLEDECLARATION,"amigo",Sociologia.java(131:10-131:28),"amigo=in.nextInt()"
+62,DECLAREDREFERENCEEXPRESSION,"k",Sociologia.java(130:24-130:25),"k"
+63,MEMBERCALLEXPRESSION,"nextInt",Sociologia.java(131:16-131:28),"in.nextInt()"
+64,DECLAREDREFERENCEEXPRESSION,"nextInt",Sociologia.java(131:19-131:26),"nextInt"
+65,DECLAREDREFERENCEEXPRESSION,"add",Sociologia.java(133:31-133:34),"add"
+66,DECLAREDREFERENCEEXPRESSION,"x",Sociologia.java(133:35-133:36),"x"
+67,MEMBEREXPRESSION,"pre",Sociologia.java(133:6-133:30),"grafo.lista[amigo-1].pre"
+68,ARRAYSUBSCRIPTIONEXPRESSION,"",Sociologia.java(133:6-133:26),"grafo.lista[amigo-1]"
+69,MEMBEREXPRESSION,"lista",Sociologia.java(133:6-133:17),"grafo.lista"
+70,BINARYOPERATOR,"-",Sociologia.java(133:18-133:25),"amigo-1"
+71,DECLAREDREFERENCEEXPRESSION,"amigo",Sociologia.java(133:18-133:23),"amigo"
+72,LITERAL,"",Sociologia.java(133:24-133:25),"1"
+73,DECLAREDREFERENCEEXPRESSION,"grafo",Sociologia.java(133:6-133:11),"grafo"
+74,DECLAREDREFERENCEEXPRESSION,"grafo",Sociologia.java(132:6-132:11),"grafo"
+75,DECLAREDREFERENCEEXPRESSION,"add",Sociologia.java(132:27-132:30),"add"
+76,DECLAREDREFERENCEEXPRESSION,"amigo",Sociologia.java(132:32-132:37),"amigo"
+77,MEMBEREXPRESSION,"adj",Sociologia.java(132:6-132:26),"grafo.lista[x-1].adj"
+78,ARRAYSUBSCRIPTIONEXPRESSION,"",Sociologia.java(132:6-132:22),"grafo.lista[x-1]"
+79,MEMBEREXPRESSION,"lista",Sociologia.java(132:6-132:17),"grafo.lista"
+80,BINARYOPERATOR,"-",Sociologia.java(132:18-132:21),"x-1"
+81,DECLAREDREFERENCEEXPRESSION,"x",Sociologia.java(132:18-132:19),"x"
+82,LITERAL,"",Sociologia.java(132:20-132:21),"1"
+83,DECLAREDREFERENCEEXPRESSION,"k",Sociologia.java(130:18-130:19),"k"
+84,LITERAL,"",Sociologia.java(130:15-130:16),"0"
+85,DECLAREDREFERENCEEXPRESSION,"nf",Sociologia.java(130:20-130:22),"nf"
+86,MEMBERCALLEXPRESSION,"nextInt",Sociologia.java(128:12-128:24),"in.nextInt()"
+87,DECLAREDREFERENCEEXPRESSION,"nextInt",Sociologia.java(128:15-128:22),"nextInt"
+88,MEMBERCALLEXPRESSION,"nextInt",Sociologia.java(126:11-126:23),"in.nextInt()"
+89,DECLAREDREFERENCEEXPRESSION,"nextInt",Sociologia.java(126:14-126:21),"nextInt"
+90,MEMBERCALLEXPRESSION,"nextInt",Sociologia.java(119:11-119:23),"in.nextInt()"
+91,DECLAREDREFERENCEEXPRESSION,"nextInt",Sociologia.java(119:14-119:21),"nextInt"
+92,BINARYOPERATOR,"=",Sociologia.java(123:5-123:35),"grafo.lista[j]=new GNode(j+1);"
+93,DECLARATIONSTATEMENT,"",Sociologia.java(122:8-122:15),"int j=0"
+94,BINARYOPERATOR,"<",Sociologia.java(122:17-122:21),"j<na"
+95,UNARYOPERATOR,"++",Sociologia.java(122:23-122:26),"j++"
+96,VARIABLEDECLARATION,"j",Sociologia.java(122:12-122:15),"j=0"
+97,DECLAREDREFERENCEEXPRESSION,"grafo",Sociologia.java(123:5-123:10),"grafo"
+98,DECLAREDREFERENCEEXPRESSION,"j",Sociologia.java(122:17-122:18),"j"
+99,DECLAREDREFERENCEEXPRESSION,"na",Sociologia.java(122:19-122:21),"na"
+100,DECLAREDREFERENCEEXPRESSION,"j",Sociologia.java(122:23-122:24),"j"
+101,LITERAL,"",Sociologia.java(122:14-122:15),"0"
+102,ARRAYSUBSCRIPTIONEXPRESSION,"",Sociologia.java(123:5-123:19),"grafo.lista[j]"
+103,NEWEXPRESSION,"",Sociologia.java(123:20-123:34),"new GNode(j+1)"
+104,MEMBEREXPRESSION,"lista",Sociologia.java(123:5-123:16),"grafo.lista"
+105,DECLAREDREFERENCEEXPRESSION,"j",Sociologia.java(123:17-123:18),"j"
+106,DECLAREDREFERENCEEXPRESSION,"j",Sociologia.java(123:30-123:31),"j"
+107,CONSTRUCTEXPRESSION,"",Sociologia.java(123:20-123:34),"new GNode(j+1)"
+108,CONSTRUCTORDECLARATION,"GNode",,""
+109,BINARYOPERATOR,"+",Sociologia.java(123:30-123:33),"j+1"
+110,LITERAL,"",Sociologia.java(123:32-123:33),"1"
+111,PARAMVARIABLEDECLARATION,"unknown0",,""
+112,NEWEXPRESSION,"",Sociologia.java(120:16-120:29),"new Grafo(na)"
+113,CONSTRUCTEXPRESSION,"",Sociologia.java(120:16-120:29),"new Grafo(na)"
+114,CONSTRUCTORDECLARATION,"Grafo",main.java(180:2-187:3),"public Grafo(int n) {
+		nvs = n;
+		narcos = 0;
+		verts = new No[n + 1];
+		for (int i = 0; i <= n; i++)
+			verts[i] = new No();
+		// para vertices numerados de 1 a n (posicao 0 nao vai ser usada)
+	}"
+115,DECLAREDREFERENCEEXPRESSION,"na",Sociologia.java(120:26-120:28),"na"
+116,PARAMVARIABLEDECLARATION,"n",main.java(180:15-180:20),"int n"
+117,DECLAREDREFERENCEEXPRESSION,"println",Sociologia.java(136:15-136:22),"println"
+118,DECLAREDREFERENCEEXPRESSION,"grafo",Sociologia.java(137:4-137:9),"grafo"
+119,BINARYOPERATOR,"+",Sociologia.java(136:23-136:33),"""Caso #""+i"
+120,LITERAL,"",Sociologia.java(136:23-136:31),"""Caso #"""
+121,DECLAREDREFERENCEEXPRESSION,"i",Sociologia.java(136:32-136:33),"i"
+122,MEMBEREXPRESSION,"out",Sociologia.java(136:4-136:14),"System.out"
+123,DECLAREDREFERENCEEXPRESSION,"ComponentesConexos",Sociologia.java(137:10-137:28),"ComponentesConexos"
+124,METHODDECLARATION,"ComponentesConexos",,""
+125,DECLAREDREFERENCEEXPRESSION,"i",Sociologia.java(118:16-118:17),"i"
+126,LITERAL,"",Sociologia.java(118:13-118:14),"1"
+127,DECLAREDREFERENCEEXPRESSION,"nc",Sociologia.java(118:19-118:21),"nc"
+128,NEWEXPRESSION,"",Sociologia.java(114:14-114:36),"new Scanner(System.in)"
+129,CONSTRUCTEXPRESSION,"",Sociologia.java(114:14-114:36),"new Scanner(System.in)"
+130,MEMBEREXPRESSION,"in",Sociologia.java(114:26-114:35),"System.in"
+131,MEMBERCALLEXPRESSION,"nextInt",Sociologia.java(116:10-116:22),"in.nextInt()"
+132,DECLAREDREFERENCEEXPRESSION,"nextInt",Sociologia.java(116:13-116:20),"nextInt"
+133,FIELDDECLARATION,"this",,""
+134,FIELDDECLARATION,"lista",Sociologia.java(19:2-19:16),"lista"
+135,FIELDDECLARATION,"n",Sociologia.java(20:2-20:8),"n"
+136,FIELDDECLARATION,"clean",Sociologia.java(21:2-21:16),"clean"
+137,FIELDDECLARATION,"ft",Sociologia.java(22:2-22:18),"ft"
+138,METHODDECLARATION,"DFS",Sociologia.java(31:2-38:3),"public void DFS() {
+		if(!clean)
+			ClearSec();
+		
+		for(GNode u:lista)
+			if(u.color==0)
+				DFS(u);
+	}"
+139,METHODDECLARATION,"DFS",Sociologia.java(40:2-56:3),"private void DFS(GNode u)
+	{
+		u.color=1;
+		
+		for(int i: u.adj) 
+		{
+			GNode v=lista[i-1];
+			if(v.color==0) 
+			{
+				v.pai=u;
+				DFS(v);
+			}
+		}
+		
+		u.color=2;
+		ft.push(u);
+	}"
+140,METHODDECLARATION,"ClearSec",Sociologia.java(58:2-64:3),"private void ClearSec() {
+		ft.clear();
+		for(GNode i:lista) {
+			i.color=0;
+			i.pai=null;
+		}
+	}"
+141,METHODDECLARATION,"TransposeGrafo",Sociologia.java(66:2-79:3),"public void TransposeGrafo() {
+//		for(GNode v: lista)
+//			for (int u: v.adj) {
+//				lista[u-1].pre.add(v.id);
+//			}
+		
+		ArrayList<Integer> tmp;
+		for(GNode v: lista) {
+			tmp=v.adj;
+			v.adj=v.pre;
+			v.pre=tmp;
+		}
+		ClearSec();
+	}"
+142,METHODDECLARATION,"ComponentesConexos",Sociologia.java(81:2-105:3),"@SuppressWarnings(""unchecked"")
+	public void ComponentesConexos() {
+		Stack<GNode> s;
+		int grupo, naogrupo, tamanho;
+		
+		DFS();
+		s=(Stack<GNode>) ft.clone();
+		TransposeGrafo();
+		
+		grupo=naogrupo=tamanho=0;
+		while (!s.isEmpty()) {
+			GNode v=s.pop();
+			if (v.color==0) {
+				DFS(v);
+				tamanho=ft.size();
+				if(tamanho>3)
+					grupo++;
+				else
+					naogrupo+=tamanho;
+				ft.clear();
+			}
+		}
+		
+		System.out.println(grupo+"" ""+naogrupo);
+	}"
+143,CONSTRUCTORDECLARATION,"Grafo",Sociologia.java(24:2-29:3),"Grafo(int n){
+		this.n=n;
+		lista=new GNode[n];
+		clean=true;
+		ft=new Stack<GNode> ();
+	}"
+144,VARIABLEDECLARATION,"this",,""
+145,COMPOUNDSTATEMENT,"",Sociologia.java(31:20-38:3),"{
+		if(!clean)
+			ClearSec();
+		
+		for(GNode u:lista)
+			if(u.color==0)
+				DFS(u);
+	}"
+146,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(32:7-32:12),"this"
+147,RETURNSTATEMENT,"",,""
+148,IFSTATEMENT,"",Sociologia.java(32:3-33:15),"if(!clean)
+			ClearSec();"
+149,FOREACHSTATEMENT,"",Sociologia.java(35:3-37:12),"for(GNode u:lista)
+			if(u.color==0)
+				DFS(u);"
+150,UNARYOPERATOR,"!",Sociologia.java(32:6-32:12),"!clean"
+151,CALLEXPRESSION,"ClearSec",Sociologia.java(33:4-33:15),"ClearSec();"
+152,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(35:15-35:20),"this"
+153,MEMBEREXPRESSION,"clean",Sociologia.java(32:7-32:12),"clean"
+154,METHODDECLARATION,"ClearSec",,""
+155,DECLARATIONSTATEMENT,"",Sociologia.java(35:7-35:14),"GNode u"
+156,MEMBEREXPRESSION,"lista",Sociologia.java(35:15-35:20),"lista"
+157,IFSTATEMENT,"",Sociologia.java(36:4-37:12),"if(u.color==0)
+				DFS(u);"
+158,VARIABLEDECLARATION,"u",Sociologia.java(35:13-35:14),"u"
+159,DECLAREDREFERENCEEXPRESSION,"u",Sociologia.java(36:7-36:8),"u"
+160,BINARYOPERATOR,"==",Sociologia.java(36:7-36:17),"u.color==0"
+161,CALLEXPRESSION,"DFS",Sociologia.java(37:5-37:12),"DFS(u);"
+162,DECLAREDREFERENCEEXPRESSION,"u",Sociologia.java(37:9-37:10),"u"
+163,MEMBEREXPRESSION,"color",Sociologia.java(36:7-36:14),"u.color"
+164,LITERAL,"",Sociologia.java(36:16-36:17),"0"
+165,METHODDECLARATION,"DFS",,""
+166,PARAMVARIABLEDECLARATION,"gnode0",,""
+167,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+168,COMPOUNDSTATEMENT,"",Sociologia.java(24:14-29:3),"{
+		this.n=n;
+		lista=new GNode[n];
+		clean=true;
+		ft=new Stack<GNode> ();
+	}"
+169,PARAMVARIABLEDECLARATION,"n",Sociologia.java(24:8-24:13),"int n"
+170,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(25:3-25:7),"this"
+171,RETURNSTATEMENT,"",,""
+172,BINARYOPERATOR,"=",Sociologia.java(25:3-25:12),"this.n=n;"
+173,BINARYOPERATOR,"=",Sociologia.java(26:3-26:22),"lista=new GNode[n];"
+174,BINARYOPERATOR,"=",Sociologia.java(27:3-27:14),"clean=true;"
+175,BINARYOPERATOR,"=",Sociologia.java(28:3-28:26),"ft=new Stack<GNode> ();"
+176,MEMBEREXPRESSION,"n",Sociologia.java(25:3-25:9),"this.n"
+177,DECLAREDREFERENCEEXPRESSION,"n",Sociologia.java(25:10-25:11),"n"
+178,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(26:3-26:8),"this"
+179,MEMBEREXPRESSION,"clean",Sociologia.java(27:3-27:8),"clean"
+180,LITERAL,"",Sociologia.java(27:9-27:13),"true"
+181,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(28:3-28:5),"this"
+182,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(27:3-27:8),"this"
+183,MEMBEREXPRESSION,"lista",Sociologia.java(26:3-26:8),"lista"
+184,ARRAYCREATIONEXPRESSION,"",Sociologia.java(26:9-26:21),"new GNode[n]"
+185,DECLAREDREFERENCEEXPRESSION,"n",Sociologia.java(26:19-26:20),"n"
+186,MEMBEREXPRESSION,"ft",Sociologia.java(28:3-28:5),"ft"
+187,NEWEXPRESSION,"",Sociologia.java(28:6-28:25),"new Stack<GNode> ()"
+188,CONSTRUCTEXPRESSION,"",Sociologia.java(28:6-28:25),"new Stack<GNode> ()"
+189,VARIABLEDECLARATION,"this",,""
+190,COMPOUNDSTATEMENT,"",Sociologia.java(66:31-79:3),"{
+//		for(GNode v: lista)
+//			for (int u: v.adj) {
+//				lista[u-1].pre.add(v.id);
+//			}
+		
+		ArrayList<Integer> tmp;
+		for(GNode v: lista) {
+			tmp=v.adj;
+			v.adj=v.pre;
+			v.pre=tmp;
+		}
+		ClearSec();
+	}"
+191,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+192,RETURNSTATEMENT,"",,""
+193,DECLARATIONSTATEMENT,"",Sociologia.java(72:3-72:26),"ArrayList<Integer> tmp;"
+194,FOREACHSTATEMENT,"",Sociologia.java(73:3-77:4),"for(GNode v: lista) {
+			tmp=v.adj;
+			v.adj=v.pre;
+			v.pre=tmp;
+		}"
+195,CALLEXPRESSION,"ClearSec",Sociologia.java(78:3-78:14),"ClearSec();"
+196,VARIABLEDECLARATION,"tmp",Sociologia.java(72:22-72:25),"tmp"
+197,DECLARATIONSTATEMENT,"",Sociologia.java(73:7-73:14),"GNode v"
+198,MEMBEREXPRESSION,"lista",Sociologia.java(73:16-73:21),"lista"
+199,COMPOUNDSTATEMENT,"",Sociologia.java(73:23-77:4),"{
+			tmp=v.adj;
+			v.adj=v.pre;
+			v.pre=tmp;
+		}"
+200,VARIABLEDECLARATION,"v",Sociologia.java(73:13-73:14),"v"
+201,DECLAREDREFERENCEEXPRESSION,"tmp",Sociologia.java(74:4-74:7),"tmp"
+202,BINARYOPERATOR,"=",Sociologia.java(74:4-74:14),"tmp=v.adj;"
+203,BINARYOPERATOR,"=",Sociologia.java(75:4-75:16),"v.adj=v.pre;"
+204,BINARYOPERATOR,"=",Sociologia.java(76:4-76:14),"v.pre=tmp;"
+205,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(73:16-73:21),"this"
+206,MEMBEREXPRESSION,"adj",Sociologia.java(74:8-74:13),"v.adj"
+207,DECLAREDREFERENCEEXPRESSION,"v",Sociologia.java(75:4-75:5),"v"
+208,DECLAREDREFERENCEEXPRESSION,"v",Sociologia.java(74:8-74:9),"v"
+209,MEMBEREXPRESSION,"adj",Sociologia.java(75:4-75:9),"v.adj"
+210,MEMBEREXPRESSION,"pre",Sociologia.java(75:10-75:15),"v.pre"
+211,DECLAREDREFERENCEEXPRESSION,"v",Sociologia.java(76:4-76:5),"v"
+212,DECLAREDREFERENCEEXPRESSION,"v",Sociologia.java(75:10-75:11),"v"
+213,MEMBEREXPRESSION,"pre",Sociologia.java(76:4-76:9),"v.pre"
+214,DECLAREDREFERENCEEXPRESSION,"tmp",Sociologia.java(76:10-76:13),"tmp"
+215,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+216,VARIABLEDECLARATION,"this",,""
+217,COMPOUNDSTATEMENT,"",Sociologia.java(58:26-64:3),"{
+		ft.clear();
+		for(GNode i:lista) {
+			i.color=0;
+			i.pai=null;
+		}
+	}"
+218,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(59:3-59:5),"this"
+219,RETURNSTATEMENT,"",,""
+220,MEMBERCALLEXPRESSION,"clear",Sociologia.java(59:3-59:14),"ft.clear();"
+221,FOREACHSTATEMENT,"",Sociologia.java(60:3-63:4),"for(GNode i:lista) {
+			i.color=0;
+			i.pai=null;
+		}"
+222,DECLARATIONSTATEMENT,"",Sociologia.java(60:7-60:14),"GNode i"
+223,MEMBEREXPRESSION,"lista",Sociologia.java(60:15-60:20),"lista"
+224,COMPOUNDSTATEMENT,"",Sociologia.java(60:22-63:4),"{
+			i.color=0;
+			i.pai=null;
+		}"
+225,VARIABLEDECLARATION,"i",Sociologia.java(60:13-60:14),"i"
+226,DECLAREDREFERENCEEXPRESSION,"i",Sociologia.java(61:4-61:5),"i"
+227,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+228,BINARYOPERATOR,"=",Sociologia.java(61:4-61:14),"i.color=0;"
+229,BINARYOPERATOR,"=",Sociologia.java(62:4-62:15),"i.pai=null;"
+230,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(60:15-60:20),"this"
+231,MEMBEREXPRESSION,"color",Sociologia.java(61:4-61:11),"i.color"
+232,LITERAL,"",Sociologia.java(61:12-61:13),"0"
+233,DECLAREDREFERENCEEXPRESSION,"i",Sociologia.java(62:4-62:5),"i"
+234,MEMBEREXPRESSION,"pai",Sociologia.java(62:4-62:9),"i.pai"
+235,LITERAL,"",Sociologia.java(62:10-62:14),"null"
+236,DECLAREDREFERENCEEXPRESSION,"clear",Sociologia.java(59:6-59:11),"clear"
+237,MEMBEREXPRESSION,"ft",Sociologia.java(59:3-59:5),"ft"
+238,VARIABLEDECLARATION,"this",,""
+239,COMPOUNDSTATEMENT,"",Sociologia.java(82:35-105:3),"{
+		Stack<GNode> s;
+		int grupo, naogrupo, tamanho;
+		
+		DFS();
+		s=(Stack<GNode>) ft.clone();
+		TransposeGrafo();
+		
+		grupo=naogrupo=tamanho=0;
+		while (!s.isEmpty()) {
+			GNode v=s.pop();
+			if (v.color==0) {
+				DFS(v);
+				tamanho=ft.size();
+				if(tamanho>3)
+					grupo++;
+				else
+					naogrupo+=tamanho;
+				ft.clear();
+			}
+		}
+		
+		System.out.println(grupo+"" ""+naogrupo);
+	}"
+240,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+241,RETURNSTATEMENT,"",,""
+242,DECLARATIONSTATEMENT,"",Sociologia.java(83:3-83:18),"Stack<GNode> s;"
+243,DECLARATIONSTATEMENT,"",Sociologia.java(84:3-84:32),"int grupo, naogrupo, tamanho;"
+244,CALLEXPRESSION,"DFS",Sociologia.java(86:3-86:9),"DFS();"
+245,BINARYOPERATOR,"=",Sociologia.java(87:3-87:31),"s=(Stack<GNode>) ft.clone();"
+246,CALLEXPRESSION,"TransposeGrafo",Sociologia.java(88:3-88:20),"TransposeGrafo();"
+247,BINARYOPERATOR,"=",Sociologia.java(90:3-90:28),"grupo=naogrupo=tamanho=0;"
+248,WHILESTATEMENT,"",Sociologia.java(91:3-102:4),"while (!s.isEmpty()) {
+			GNode v=s.pop();
+			if (v.color==0) {
+				DFS(v);
+				tamanho=ft.size();
+				if(tamanho>3)
+					grupo++;
+				else
+					naogrupo+=tamanho;
+				ft.clear();
+			}
+		}"
+249,MEMBERCALLEXPRESSION,"println",Sociologia.java(104:3-104:42),"System.out.println(grupo+"" ""+naogrupo);"
+250,VARIABLEDECLARATION,"s",Sociologia.java(83:16-83:17),"s"
+251,VARIABLEDECLARATION,"grupo",Sociologia.java(84:7-84:12),"grupo"
+252,VARIABLEDECLARATION,"naogrupo",Sociologia.java(84:14-84:22),"naogrupo"
+253,VARIABLEDECLARATION,"tamanho",Sociologia.java(84:24-84:31),"tamanho"
+254,DECLAREDREFERENCEEXPRESSION,"s",Sociologia.java(87:3-87:4),"s"
+255,CASTEXPRESSION,"static_cast",Sociologia.java(87:5-87:30),"(Stack<GNode>) ft.clone()"
+256,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(87:20-87:22),"this"
+257,MEMBERCALLEXPRESSION,"clone",Sociologia.java(87:20-87:30),"ft.clone()"
+258,DECLAREDREFERENCEEXPRESSION,"clone",Sociologia.java(87:23-87:28),"clone"
+259,MEMBEREXPRESSION,"ft",Sociologia.java(87:20-87:22),"ft"
+260,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+261,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+262,UNARYOPERATOR,"!",Sociologia.java(91:10-91:22),"!s.isEmpty()"
+263,COMPOUNDSTATEMENT,"",Sociologia.java(91:24-102:4),"{
+			GNode v=s.pop();
+			if (v.color==0) {
+				DFS(v);
+				tamanho=ft.size();
+				if(tamanho>3)
+					grupo++;
+				else
+					naogrupo+=tamanho;
+				ft.clear();
+			}
+		}"
+264,DECLAREDREFERENCEEXPRESSION,"s",Sociologia.java(92:12-92:13),"s"
+265,DECLAREDREFERENCEEXPRESSION,"System",Sociologia.java(104:3-104:9),"System"
+266,MEMBERCALLEXPRESSION,"isEmpty",Sociologia.java(91:11-91:22),"s.isEmpty()"
+267,DECLAREDREFERENCEEXPRESSION,"isEmpty",Sociologia.java(91:13-91:20),"isEmpty"
+268,DECLAREDREFERENCEEXPRESSION,"s",Sociologia.java(91:11-91:12),"s"
+269,DECLARATIONSTATEMENT,"",Sociologia.java(92:4-92:20),"GNode v=s.pop();"
+270,IFSTATEMENT,"",Sociologia.java(93:4-101:5),"if (v.color==0) {
+				DFS(v);
+				tamanho=ft.size();
+				if(tamanho>3)
+					grupo++;
+				else
+					naogrupo+=tamanho;
+				ft.clear();
+			}"
+271,VARIABLEDECLARATION,"v",Sociologia.java(92:10-92:19),"v=s.pop()"
+272,COMPOUNDSTATEMENT,"",Sociologia.java(93:20-101:5),"{
+				DFS(v);
+				tamanho=ft.size();
+				if(tamanho>3)
+					grupo++;
+				else
+					naogrupo+=tamanho;
+				ft.clear();
+			}"
+273,DECLAREDREFERENCEEXPRESSION,"v",Sociologia.java(93:8-93:9),"v"
+274,BINARYOPERATOR,"==",Sociologia.java(93:8-93:18),"v.color==0"
+275,DECLAREDREFERENCEEXPRESSION,"v",Sociologia.java(94:9-94:10),"v"
+276,CALLEXPRESSION,"DFS",Sociologia.java(94:5-94:12),"DFS(v);"
+277,BINARYOPERATOR,"=",Sociologia.java(95:5-95:23),"tamanho=ft.size();"
+278,IFSTATEMENT,"",Sociologia.java(96:5-99:24),"if(tamanho>3)
+					grupo++;
+				else
+					naogrupo+=tamanho;"
+279,MEMBERCALLEXPRESSION,"clear",Sociologia.java(100:5-100:16),"ft.clear();"
+280,DECLAREDREFERENCEEXPRESSION,"clear",Sociologia.java(100:8-100:13),"clear"
+281,MEMBEREXPRESSION,"ft",Sociologia.java(100:5-100:7),"ft"
+282,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(100:5-100:7),"this"
+283,UNARYOPERATOR,"++",Sociologia.java(97:6-97:14),"grupo++;"
+284,BINARYOPERATOR,"+=",Sociologia.java(99:6-99:24),"naogrupo+=tamanho;"
+285,BINARYOPERATOR,">",Sociologia.java(96:8-96:17),"tamanho>3"
+286,DECLAREDREFERENCEEXPRESSION,"grupo",Sociologia.java(97:6-97:11),"grupo"
+287,DECLAREDREFERENCEEXPRESSION,"naogrupo",Sociologia.java(99:6-99:14),"naogrupo"
+288,DECLAREDREFERENCEEXPRESSION,"tamanho",Sociologia.java(99:16-99:23),"tamanho"
+289,DECLAREDREFERENCEEXPRESSION,"tamanho",Sociologia.java(96:8-96:15),"tamanho"
+290,LITERAL,"",Sociologia.java(96:16-96:17),"3"
+291,DECLAREDREFERENCEEXPRESSION,"tamanho",Sociologia.java(95:5-95:12),"tamanho"
+292,MEMBERCALLEXPRESSION,"size",Sociologia.java(95:13-95:22),"ft.size()"
+293,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(95:13-95:15),"this"
+294,DECLAREDREFERENCEEXPRESSION,"size",Sociologia.java(95:16-95:20),"size"
+295,MEMBEREXPRESSION,"ft",Sociologia.java(95:13-95:15),"ft"
+296,MEMBEREXPRESSION,"color",Sociologia.java(93:8-93:15),"v.color"
+297,LITERAL,"",Sociologia.java(93:17-93:18),"0"
+298,MEMBERCALLEXPRESSION,"pop",Sociologia.java(92:12-92:19),"s.pop()"
+299,DECLAREDREFERENCEEXPRESSION,"pop",Sociologia.java(92:14-92:17),"pop"
+300,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+301,METHODDECLARATION,"DFS",,""
+302,DECLAREDREFERENCEEXPRESSION,"grupo",Sociologia.java(90:3-90:8),"grupo"
+303,BINARYOPERATOR,"=",Sociologia.java(90:9-90:27),"naogrupo=tamanho=0"
+304,DECLAREDREFERENCEEXPRESSION,"naogrupo",Sociologia.java(90:9-90:17),"naogrupo"
+305,BINARYOPERATOR,"=",Sociologia.java(90:18-90:27),"tamanho=0"
+306,DECLAREDREFERENCEEXPRESSION,"tamanho",Sociologia.java(90:18-90:25),"tamanho"
+307,LITERAL,"",Sociologia.java(90:26-90:27),"0"
+308,METHODDECLARATION,"TransposeGrafo",,""
+309,DECLAREDREFERENCEEXPRESSION,"println",Sociologia.java(104:14-104:21),"println"
+310,BINARYOPERATOR,"+",Sociologia.java(104:22-104:40),"grupo+"" ""+naogrupo"
+311,BINARYOPERATOR,"+",Sociologia.java(104:22-104:31),"grupo+"" """
+312,DECLAREDREFERENCEEXPRESSION,"naogrupo",Sociologia.java(104:32-104:40),"naogrupo"
+313,DECLAREDREFERENCEEXPRESSION,"grupo",Sociologia.java(104:22-104:27),"grupo"
+314,LITERAL,"",Sociologia.java(104:28-104:31),""" """
+315,MEMBEREXPRESSION,"out",Sociologia.java(104:3-104:13),"System.out"
+316,VARIABLEDECLARATION,"this",,""
+317,COMPOUNDSTATEMENT,"",Sociologia.java(41:2-56:3),"{
+		u.color=1;
+		
+		for(int i: u.adj) 
+		{
+			GNode v=lista[i-1];
+			if(v.color==0) 
+			{
+				v.pai=u;
+				DFS(v);
+			}
+		}
+		
+		u.color=2;
+		ft.push(u);
+	}"
+318,PARAMVARIABLEDECLARATION,"u",Sociologia.java(40:19-40:26),"GNode u"
+319,DECLAREDREFERENCEEXPRESSION,"u",Sociologia.java(42:3-42:4),"u"
+320,RETURNSTATEMENT,"",,""
+321,BINARYOPERATOR,"=",Sociologia.java(42:3-42:13),"u.color=1;"
+322,FOREACHSTATEMENT,"",Sociologia.java(44:3-52:4),"for(int i: u.adj) 
+		{
+			GNode v=lista[i-1];
+			if(v.color==0) 
+			{
+				v.pai=u;
+				DFS(v);
+			}
+		}"
+323,BINARYOPERATOR,"=",Sociologia.java(54:3-54:13),"u.color=2;"
+324,MEMBERCALLEXPRESSION,"push",Sociologia.java(55:3-55:14),"ft.push(u);"
+325,MEMBEREXPRESSION,"color",Sociologia.java(54:3-54:10),"u.color"
+326,LITERAL,"",Sociologia.java(54:11-54:12),"2"
+327,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(55:3-55:5),"this"
+328,DECLAREDREFERENCEEXPRESSION,"u",Sociologia.java(54:3-54:4),"u"
+329,DECLARATIONSTATEMENT,"",Sociologia.java(44:7-44:12),"int i"
+330,MEMBEREXPRESSION,"adj",Sociologia.java(44:14-44:19),"u.adj"
+331,COMPOUNDSTATEMENT,"",Sociologia.java(45:3-52:4),"{
+			GNode v=lista[i-1];
+			if(v.color==0) 
+			{
+				v.pai=u;
+				DFS(v);
+			}
+		}"
+332,VARIABLEDECLARATION,"i",Sociologia.java(44:11-44:12),"i"
+333,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(46:12-46:17),"this"
+334,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+335,DECLAREDREFERENCEEXPRESSION,"u",Sociologia.java(44:14-44:15),"u"
+336,DECLARATIONSTATEMENT,"",Sociologia.java(46:4-46:23),"GNode v=lista[i-1];"
+337,IFSTATEMENT,"",Sociologia.java(47:4-51:5),"if(v.color==0) 
+			{
+				v.pai=u;
+				DFS(v);
+			}"
+338,VARIABLEDECLARATION,"v",Sociologia.java(46:10-46:22),"v=lista[i-1]"
+339,COMPOUNDSTATEMENT,"",Sociologia.java(48:4-51:5),"{
+				v.pai=u;
+				DFS(v);
+			}"
+340,ARRAYSUBSCRIPTIONEXPRESSION,"",Sociologia.java(46:12-46:22),"lista[i-1]"
+341,MEMBEREXPRESSION,"lista",Sociologia.java(46:12-46:17),"lista"
+342,BINARYOPERATOR,"-",Sociologia.java(46:18-46:21),"i-1"
+343,DECLAREDREFERENCEEXPRESSION,"i",Sociologia.java(46:18-46:19),"i"
+344,LITERAL,"",Sociologia.java(46:20-46:21),"1"
+345,DECLAREDREFERENCEEXPRESSION,"v",Sociologia.java(47:7-47:8),"v"
+346,BINARYOPERATOR,"==",Sociologia.java(47:7-47:17),"v.color==0"
+347,DECLAREDREFERENCEEXPRESSION,"v",Sociologia.java(49:5-49:6),"v"
+348,MEMBEREXPRESSION,"color",Sociologia.java(47:7-47:14),"v.color"
+349,LITERAL,"",Sociologia.java(47:16-47:17),"0"
+350,BINARYOPERATOR,"=",Sociologia.java(49:5-49:13),"v.pai=u;"
+351,CALLEXPRESSION,"DFS",Sociologia.java(50:5-50:12),"DFS(v);"
+352,DECLAREDREFERENCEEXPRESSION,"v",Sociologia.java(50:9-50:10),"v"
+353,MEMBEREXPRESSION,"pai",Sociologia.java(49:5-49:10),"v.pai"
+354,DECLAREDREFERENCEEXPRESSION,"u",Sociologia.java(49:11-49:12),"u"
+355,DECLAREDREFERENCEEXPRESSION,"push",Sociologia.java(55:6-55:10),"push"
+356,DECLAREDREFERENCEEXPRESSION,"u",Sociologia.java(55:11-55:12),"u"
+357,MEMBEREXPRESSION,"ft",Sociologia.java(55:3-55:5),"ft"
+358,MEMBEREXPRESSION,"color",Sociologia.java(42:3-42:10),"u.color"
+359,LITERAL,"",Sociologia.java(42:11-42:12),"1"
+360,FIELDDECLARATION,"this",,""
+361,FIELDDECLARATION,"id",Sociologia.java(4:2-4:22),"id"
+362,FIELDDECLARATION,"pai",Sociologia.java(5:2-5:12),"pai"
+363,FIELDDECLARATION,"adj",Sociologia.java(6:2-6:25),"adj"
+364,FIELDDECLARATION,"pre",Sociologia.java(7:2-7:25),"pre"
+365,CONSTRUCTORDECLARATION,"GNode",Sociologia.java(9:2-15:3),"GNode(int id) {
+		this.id=id;
+		color=0; //0=white 1=grey 2=black
+		pai=null;
+		adj=new ArrayList<Integer> (); //lista de adjacencias
+		pre=new ArrayList<Integer> (); //lista de precedente aka transposta
+	}"
+366,COMPOUNDSTATEMENT,"",Sociologia.java(9:16-15:3),"{
+		this.id=id;
+		color=0; //0=white 1=grey 2=black
+		pai=null;
+		adj=new ArrayList<Integer> (); //lista de adjacencias
+		pre=new ArrayList<Integer> (); //lista de precedente aka transposta
+	}"
+367,PARAMVARIABLEDECLARATION,"id",Sociologia.java(9:8-9:14),"int id"
+368,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(10:3-10:7),"this"
+369,RETURNSTATEMENT,"",,""
+370,BINARYOPERATOR,"=",Sociologia.java(10:3-10:14),"this.id=id;"
+371,BINARYOPERATOR,"=",Sociologia.java(11:3-11:11),"color=0;"
+372,BINARYOPERATOR,"=",Sociologia.java(12:3-12:12),"pai=null;"
+373,BINARYOPERATOR,"=",Sociologia.java(13:3-13:33),"adj=new ArrayList<Integer> ();"
+374,BINARYOPERATOR,"=",Sociologia.java(14:3-14:33),"pre=new ArrayList<Integer> ();"
+375,MEMBEREXPRESSION,"pai",Sociologia.java(12:3-12:6),"pai"
+376,LITERAL,"",Sociologia.java(12:7-12:11),"null"
+377,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(13:3-13:6),"this"
+378,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(12:3-12:6),"this"
+379,MEMBEREXPRESSION,"pre",Sociologia.java(14:3-14:6),"pre"
+380,NEWEXPRESSION,"",Sociologia.java(14:7-14:32),"new ArrayList<Integer> ()"
+381,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(14:3-14:6),"this"
+382,CONSTRUCTEXPRESSION,"",Sociologia.java(14:7-14:32),"new ArrayList<Integer> ()"
+383,MEMBEREXPRESSION,"color",Sociologia.java(11:3-11:8),"color"
+384,LITERAL,"",Sociologia.java(11:9-11:10),"0"
+385,DECLAREDREFERENCEEXPRESSION,"this",Sociologia.java(11:3-11:8),"this"
+386,MEMBEREXPRESSION,"adj",Sociologia.java(13:3-13:6),"adj"
+387,NEWEXPRESSION,"",Sociologia.java(13:7-13:32),"new ArrayList<Integer> ()"
+388,CONSTRUCTEXPRESSION,"",Sociologia.java(13:7-13:32),"new ArrayList<Integer> ()"
+389,MEMBEREXPRESSION,"id",Sociologia.java(10:3-10:10),"this.id"
+390,DECLAREDREFERENCEEXPRESSION,"id",Sociologia.java(10:11-10:13),"id"

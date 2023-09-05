@@ -1,0 +1,1757 @@
+id,type,token,location,code
+1,TRANSLATIONUNITDECLARATION,"/data/00000019/submissions/00536624_Sociologia_c0616062/Main.java",,""
+2,RECORDDECLARATION,"Main",Main.java(4:1-197:2),"public class Main 
+{
+	public static void resetCheckedMatrix(boolean []checkedMatrix,int matrixDim) 
+	{
+		for(int c=0;c<matrixDim;c++)
+			checkedMatrix[c] = false;
+	}
+	public static void resetRelationCountMatrix(int []rcMatrix,int matrixDim) 
+	{
+		for(int c=0;c<matrixDim;c++)
+				rcMatrix[c] = 0;
+	}
+	public static void fillRelationCountMatrix(boolean[][] matrix,int []rcMatrix ,int matrixDim) 
+	{
+		for(int c=0;c<matrixDim;c++)
+			for(int l=0; l<matrixDim; l++)
+			{
+				if(matrix[c][l])
+					rcMatrix[c]++;
+			}
+	}
+	public static void showRelationCountMatrix(int []rcMatrix,int matrixDim) 
+	{
+		for(int c=0;c<matrixDim;c++)
+					System.out.print(""["" +  rcMatrix[c]+ ""]"");
+		
+		System.out.println();
+	}
+	
+	public static void linkMatrix(boolean[][] matrix,int matrixDim)
+	{
+		for(int c=0;c<matrixDim;c++)
+		{
+			for(int l=0; l<matrixDim; l++)
+			{
+					// IF XY ...
+					if(matrix[c][l])
+					{
+						for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}
+					}				
+			}
+		}
+	}
+	public static void resetMatrix(boolean[][] matrix,int matrixDim)
+	{
+		int c,l;
+		
+		for(c=0;c<matrixDim;c++)
+		{
+			for(l=0; l<c; l++)
+				matrix[c][l] = false;
+			
+			matrix[c][l] = true;
+			
+			for(++l;l<matrixDim;l++)
+				matrix[c][l] = false;
+		}		
+	}
+	public static void showMatrix(boolean[][] matrix,int matrixDim)
+	{
+		int c,l;
+		
+		System.out.print(""|||"");
+		
+		for(c=0;c<matrixDim;c++)
+			System.out.print(""|"" + (c+1) + ""|"");
+	
+		System.out.print(""\n"");
+		
+		for(c=0;c<matrixDim;c++)
+		{
+			System.out.print(""|"" + (c+1) + ""|"");
+			
+			for(l=0;l<matrixDim;l++)
+			{
+				System.out.print(""["" + (matrix[c][l] ? 1 : 0) + ""]"");
+			}
+			System.out.print(""\n"");
+		}		
+		System.out.println(""\n"");		
+	}
+	public static void main(String[] args) throws IOException 
+	{
+		InputStreamReader converter = new InputStreamReader (System.in);
+		Scanner scanner = new Scanner(converter);
+
+		int nSituations = scanner.nextInt();
+		
+		for(int s=1;s<=nSituations;s++)
+		{
+			
+			int matrixDim = scanner.nextInt();
+			
+			boolean matrix[][] = new boolean[matrixDim][matrixDim];
+			
+			resetMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+
+			
+			
+			
+			for(int i=0;i<matrixDim;i++)
+			{
+				int index = scanner.nextInt();
+				int relations = scanner.nextInt();
+				
+				for(int j=1;j<=relations;j++)
+				{
+					int c = scanner.nextInt();
+					
+					matrix[index-1][c-1] = true;
+				}
+			}
+			
+			//showMatrix(matrix,matrixDim);
+			
+			//boolean k=false;if(!k) return;
+			
+			
+			linkMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+			
+			int[] rcMatrix = new int[matrixDim];
+			boolean[] checkedMatrix = new boolean[matrixDim]; 
+			
+			resetRelationCountMatrix(rcMatrix,matrixDim);
+			resetCheckedMatrix(checkedMatrix,matrixDim);
+			fillRelationCountMatrix(matrix,rcMatrix,matrixDim);
+			//showRelationCountMatrix(rcMatrix, matrixDim);
+			
+			int nGroups = 0;
+			int nOut = 0;
+			
+			
+			
+			for(int c=0;c<matrixDim;c++)
+			{
+				if(checkedMatrix[c])
+					continue;
+				
+				int nRelationsC = rcMatrix[c];
+				
+				int c1;
+				
+				int nElements = 1;
+				
+				for(c1=0;c1<matrixDim;c1++)
+				{
+					if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}
+				}
+				
+				if(nElements < 4)
+					nOut += nElements;
+				else
+					nGroups++;
+				
+			}
+			
+			System.out.println(""Caso #"" + s + ""\n"" + nGroups + "" "" + nOut );
+			
+		}
+	}
+
+}"
+3,INCLUDEDECLARATION,"java.io",,""
+4,INCLUDEDECLARATION,"java.util.Scanner",,""
+5,FIELDDECLARATION,"this",,""
+6,METHODDECLARATION,"resetCheckedMatrix",Main.java(6:2-10:3),"public static void resetCheckedMatrix(boolean []checkedMatrix,int matrixDim) 
+	{
+		for(int c=0;c<matrixDim;c++)
+			checkedMatrix[c] = false;
+	}"
+7,METHODDECLARATION,"resetRelationCountMatrix",Main.java(11:2-15:3),"public static void resetRelationCountMatrix(int []rcMatrix,int matrixDim) 
+	{
+		for(int c=0;c<matrixDim;c++)
+				rcMatrix[c] = 0;
+	}"
+8,METHODDECLARATION,"fillRelationCountMatrix",Main.java(16:2-24:3),"public static void fillRelationCountMatrix(boolean[][] matrix,int []rcMatrix ,int matrixDim) 
+	{
+		for(int c=0;c<matrixDim;c++)
+			for(int l=0; l<matrixDim; l++)
+			{
+				if(matrix[c][l])
+					rcMatrix[c]++;
+			}
+	}"
+9,METHODDECLARATION,"showRelationCountMatrix",Main.java(25:2-31:3),"public static void showRelationCountMatrix(int []rcMatrix,int matrixDim) 
+	{
+		for(int c=0;c<matrixDim;c++)
+					System.out.print(""["" +  rcMatrix[c]+ ""]"");
+		
+		System.out.println();
+	}"
+10,METHODDECLARATION,"linkMatrix",Main.java(33:2-53:3),"public static void linkMatrix(boolean[][] matrix,int matrixDim)
+	{
+		for(int c=0;c<matrixDim;c++)
+		{
+			for(int l=0; l<matrixDim; l++)
+			{
+					// IF XY ...
+					if(matrix[c][l])
+					{
+						for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}
+					}				
+			}
+		}
+	}"
+11,METHODDECLARATION,"resetMatrix",Main.java(54:2-68:3),"public static void resetMatrix(boolean[][] matrix,int matrixDim)
+	{
+		int c,l;
+		
+		for(c=0;c<matrixDim;c++)
+		{
+			for(l=0; l<c; l++)
+				matrix[c][l] = false;
+			
+			matrix[c][l] = true;
+			
+			for(++l;l<matrixDim;l++)
+				matrix[c][l] = false;
+		}		
+	}"
+12,METHODDECLARATION,"showMatrix",Main.java(69:2-91:3),"public static void showMatrix(boolean[][] matrix,int matrixDim)
+	{
+		int c,l;
+		
+		System.out.print(""|||"");
+		
+		for(c=0;c<matrixDim;c++)
+			System.out.print(""|"" + (c+1) + ""|"");
+	
+		System.out.print(""\n"");
+		
+		for(c=0;c<matrixDim;c++)
+		{
+			System.out.print(""|"" + (c+1) + ""|"");
+			
+			for(l=0;l<matrixDim;l++)
+			{
+				System.out.print(""["" + (matrix[c][l] ? 1 : 0) + ""]"");
+			}
+			System.out.print(""\n"");
+		}		
+		System.out.println(""\n"");		
+	}"
+13,METHODDECLARATION,"main",Main.java(92:2-195:3),"public static void main(String[] args) throws IOException 
+	{
+		InputStreamReader converter = new InputStreamReader (System.in);
+		Scanner scanner = new Scanner(converter);
+
+		int nSituations = scanner.nextInt();
+		
+		for(int s=1;s<=nSituations;s++)
+		{
+			
+			int matrixDim = scanner.nextInt();
+			
+			boolean matrix[][] = new boolean[matrixDim][matrixDim];
+			
+			resetMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+
+			
+			
+			
+			for(int i=0;i<matrixDim;i++)
+			{
+				int index = scanner.nextInt();
+				int relations = scanner.nextInt();
+				
+				for(int j=1;j<=relations;j++)
+				{
+					int c = scanner.nextInt();
+					
+					matrix[index-1][c-1] = true;
+				}
+			}
+			
+			//showMatrix(matrix,matrixDim);
+			
+			//boolean k=false;if(!k) return;
+			
+			
+			linkMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+			
+			int[] rcMatrix = new int[matrixDim];
+			boolean[] checkedMatrix = new boolean[matrixDim]; 
+			
+			resetRelationCountMatrix(rcMatrix,matrixDim);
+			resetCheckedMatrix(checkedMatrix,matrixDim);
+			fillRelationCountMatrix(matrix,rcMatrix,matrixDim);
+			//showRelationCountMatrix(rcMatrix, matrixDim);
+			
+			int nGroups = 0;
+			int nOut = 0;
+			
+			
+			
+			for(int c=0;c<matrixDim;c++)
+			{
+				if(checkedMatrix[c])
+					continue;
+				
+				int nRelationsC = rcMatrix[c];
+				
+				int c1;
+				
+				int nElements = 1;
+				
+				for(c1=0;c1<matrixDim;c1++)
+				{
+					if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}
+				}
+				
+				if(nElements < 4)
+					nOut += nElements;
+				else
+					nGroups++;
+				
+			}
+			
+			System.out.println(""Caso #"" + s + ""\n"" + nGroups + "" "" + nOut );
+			
+		}
+	}"
+14,CONSTRUCTORDECLARATION,"Main",,""
+15,VARIABLEDECLARATION,"this",,""
+16,COMPOUNDSTATEMENT,"",Main.java(7:2-10:3),"{
+		for(int c=0;c<matrixDim;c++)
+			checkedMatrix[c] = false;
+	}"
+17,PARAMVARIABLEDECLARATION,"checkedMatrix",Main.java(6:40-6:63),"boolean []checkedMatrix"
+18,PARAMVARIABLEDECLARATION,"matrixDim",Main.java(6:64-6:77),"int matrixDim"
+19,LITERAL,"",Main.java(8:13-8:14),"0"
+20,RETURNSTATEMENT,"",,""
+21,FORSTATEMENT,"",Main.java(8:3-9:29),"for(int c=0;c<matrixDim;c++)
+			checkedMatrix[c] = false;"
+22,BINARYOPERATOR,"=",Main.java(9:4-9:29),"checkedMatrix[c] = false;"
+23,DECLARATIONSTATEMENT,"",Main.java(8:7-8:14),"int c=0"
+24,BINARYOPERATOR,"<",Main.java(8:15-8:26),"c<matrixDim"
+25,UNARYOPERATOR,"++",Main.java(8:27-8:30),"c++"
+26,VARIABLEDECLARATION,"c",Main.java(8:11-8:14),"c=0"
+27,DECLAREDREFERENCEEXPRESSION,"checkedMatrix",Main.java(9:4-9:17),"checkedMatrix"
+28,DECLAREDREFERENCEEXPRESSION,"c",Main.java(8:15-8:16),"c"
+29,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(8:17-8:26),"matrixDim"
+30,DECLAREDREFERENCEEXPRESSION,"c",Main.java(8:27-8:28),"c"
+31,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(9:4-9:20),"checkedMatrix[c]"
+32,LITERAL,"",Main.java(9:23-9:28),"false"
+33,DECLAREDREFERENCEEXPRESSION,"c",Main.java(9:18-9:19),"c"
+34,VARIABLEDECLARATION,"this",,""
+35,COMPOUNDSTATEMENT,"",Main.java(12:2-15:3),"{
+		for(int c=0;c<matrixDim;c++)
+				rcMatrix[c] = 0;
+	}"
+36,PARAMVARIABLEDECLARATION,"rcMatrix",Main.java(11:46-11:60),"int []rcMatrix"
+37,PARAMVARIABLEDECLARATION,"matrixDim",Main.java(11:61-11:74),"int matrixDim"
+38,LITERAL,"",Main.java(13:13-13:14),"0"
+39,RETURNSTATEMENT,"",,""
+40,FORSTATEMENT,"",Main.java(13:3-14:21),"for(int c=0;c<matrixDim;c++)
+				rcMatrix[c] = 0;"
+41,BINARYOPERATOR,"=",Main.java(14:5-14:21),"rcMatrix[c] = 0;"
+42,DECLARATIONSTATEMENT,"",Main.java(13:7-13:14),"int c=0"
+43,BINARYOPERATOR,"<",Main.java(13:15-13:26),"c<matrixDim"
+44,UNARYOPERATOR,"++",Main.java(13:27-13:30),"c++"
+45,VARIABLEDECLARATION,"c",Main.java(13:11-13:14),"c=0"
+46,DECLAREDREFERENCEEXPRESSION,"rcMatrix",Main.java(14:5-14:13),"rcMatrix"
+47,DECLAREDREFERENCEEXPRESSION,"c",Main.java(13:27-13:28),"c"
+48,DECLAREDREFERENCEEXPRESSION,"c",Main.java(13:15-13:16),"c"
+49,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(13:17-13:26),"matrixDim"
+50,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(14:5-14:16),"rcMatrix[c]"
+51,LITERAL,"",Main.java(14:19-14:20),"0"
+52,DECLAREDREFERENCEEXPRESSION,"c",Main.java(14:14-14:15),"c"
+53,VARIABLEDECLARATION,"this",,""
+54,COMPOUNDSTATEMENT,"",Main.java(55:2-68:3),"{
+		int c,l;
+		
+		for(c=0;c<matrixDim;c++)
+		{
+			for(l=0; l<c; l++)
+				matrix[c][l] = false;
+			
+			matrix[c][l] = true;
+			
+			for(++l;l<matrixDim;l++)
+				matrix[c][l] = false;
+		}		
+	}"
+55,PARAMVARIABLEDECLARATION,"matrix",Main.java(54:33-54:51),"boolean[][] matrix"
+56,PARAMVARIABLEDECLARATION,"matrixDim",Main.java(54:52-54:65),"int matrixDim"
+57,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+58,RETURNSTATEMENT,"",,""
+59,DECLARATIONSTATEMENT,"",Main.java(56:3-56:11),"int c,l;"
+60,FORSTATEMENT,"",Main.java(58:3-67:4),"for(c=0;c<matrixDim;c++)
+		{
+			for(l=0; l<c; l++)
+				matrix[c][l] = false;
+			
+			matrix[c][l] = true;
+			
+			for(++l;l<matrixDim;l++)
+				matrix[c][l] = false;
+		}"
+61,VARIABLEDECLARATION,"c",Main.java(56:7-56:8),"c"
+62,VARIABLEDECLARATION,"l",Main.java(56:9-56:10),"l"
+63,DECLAREDREFERENCEEXPRESSION,"c",Main.java(58:7-58:8),"c"
+64,COMPOUNDSTATEMENT,"",Main.java(59:3-67:4),"{
+			for(l=0; l<c; l++)
+				matrix[c][l] = false;
+			
+			matrix[c][l] = true;
+			
+			for(++l;l<matrixDim;l++)
+				matrix[c][l] = false;
+		}"
+65,BINARYOPERATOR,"=",Main.java(58:7-58:10),"c=0"
+66,BINARYOPERATOR,"<",Main.java(58:11-58:22),"c<matrixDim"
+67,UNARYOPERATOR,"++",Main.java(58:23-58:26),"c++"
+68,DECLAREDREFERENCEEXPRESSION,"l",Main.java(60:8-60:9),"l"
+69,DECLAREDREFERENCEEXPRESSION,"c",Main.java(58:23-58:24),"c"
+70,DECLAREDREFERENCEEXPRESSION,"c",Main.java(58:11-58:12),"c"
+71,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(58:13-58:22),"matrixDim"
+72,FORSTATEMENT,"",Main.java(60:4-61:26),"for(l=0; l<c; l++)
+				matrix[c][l] = false;"
+73,BINARYOPERATOR,"=",Main.java(63:4-63:24),"matrix[c][l] = true;"
+74,FORSTATEMENT,"",Main.java(65:4-66:26),"for(++l;l<matrixDim;l++)
+				matrix[c][l] = false;"
+75,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(63:4-63:16),"matrix[c][l]"
+76,LITERAL,"",Main.java(63:19-63:23),"true"
+77,DECLAREDREFERENCEEXPRESSION,"l",Main.java(65:10-65:11),"l"
+78,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(63:4-63:13),"matrix[c]"
+79,DECLAREDREFERENCEEXPRESSION,"l",Main.java(63:14-63:15),"l"
+80,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(63:4-63:10),"matrix"
+81,DECLAREDREFERENCEEXPRESSION,"c",Main.java(63:11-63:12),"c"
+82,BINARYOPERATOR,"=",Main.java(66:5-66:26),"matrix[c][l] = false;"
+83,UNARYOPERATOR,"++",Main.java(65:8-65:11),"++l"
+84,BINARYOPERATOR,"<",Main.java(65:12-65:23),"l<matrixDim"
+85,UNARYOPERATOR,"++",Main.java(65:24-65:27),"l++"
+86,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(66:5-66:11),"matrix"
+87,DECLAREDREFERENCEEXPRESSION,"l",Main.java(65:24-65:25),"l"
+88,DECLAREDREFERENCEEXPRESSION,"l",Main.java(65:12-65:13),"l"
+89,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(66:5-66:17),"matrix[c][l]"
+90,LITERAL,"",Main.java(66:20-66:25),"false"
+91,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(66:5-66:14),"matrix[c]"
+92,DECLAREDREFERENCEEXPRESSION,"l",Main.java(66:15-66:16),"l"
+93,DECLAREDREFERENCEEXPRESSION,"c",Main.java(66:12-66:13),"c"
+94,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(65:14-65:23),"matrixDim"
+95,BINARYOPERATOR,"=",Main.java(61:5-61:26),"matrix[c][l] = false;"
+96,BINARYOPERATOR,"=",Main.java(60:8-60:11),"l=0"
+97,BINARYOPERATOR,"<",Main.java(60:13-60:16),"l<c"
+98,UNARYOPERATOR,"++",Main.java(60:18-60:21),"l++"
+99,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(61:5-61:11),"matrix"
+100,LITERAL,"",Main.java(60:10-60:11),"0"
+101,DECLAREDREFERENCEEXPRESSION,"l",Main.java(60:13-60:14),"l"
+102,DECLAREDREFERENCEEXPRESSION,"l",Main.java(60:18-60:19),"l"
+103,DECLAREDREFERENCEEXPRESSION,"c",Main.java(60:15-60:16),"c"
+104,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(61:5-61:17),"matrix[c][l]"
+105,LITERAL,"",Main.java(61:20-61:25),"false"
+106,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(61:5-61:14),"matrix[c]"
+107,DECLAREDREFERENCEEXPRESSION,"l",Main.java(61:15-61:16),"l"
+108,DECLAREDREFERENCEEXPRESSION,"c",Main.java(61:12-61:13),"c"
+109,LITERAL,"",Main.java(58:9-58:10),"0"
+110,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+111,VARIABLEDECLARATION,"this",,""
+112,COMPOUNDSTATEMENT,"",Main.java(17:2-24:3),"{
+		for(int c=0;c<matrixDim;c++)
+			for(int l=0; l<matrixDim; l++)
+			{
+				if(matrix[c][l])
+					rcMatrix[c]++;
+			}
+	}"
+113,PARAMVARIABLEDECLARATION,"matrix",Main.java(16:45-16:63),"boolean[][] matrix"
+114,PARAMVARIABLEDECLARATION,"rcMatrix",Main.java(16:64-16:78),"int []rcMatrix"
+115,PARAMVARIABLEDECLARATION,"matrixDim",Main.java(16:80-16:93),"int matrixDim"
+116,LITERAL,"",Main.java(18:13-18:14),"0"
+117,RETURNSTATEMENT,"",,""
+118,FORSTATEMENT,"",Main.java(18:3-23:5),"for(int c=0;c<matrixDim;c++)
+			for(int l=0; l<matrixDim; l++)
+			{
+				if(matrix[c][l])
+					rcMatrix[c]++;
+			}"
+119,FORSTATEMENT,"",Main.java(19:4-23:5),"for(int l=0; l<matrixDim; l++)
+			{
+				if(matrix[c][l])
+					rcMatrix[c]++;
+			}"
+120,DECLARATIONSTATEMENT,"",Main.java(18:7-18:14),"int c=0"
+121,BINARYOPERATOR,"<",Main.java(18:15-18:26),"c<matrixDim"
+122,UNARYOPERATOR,"++",Main.java(18:27-18:30),"c++"
+123,VARIABLEDECLARATION,"c",Main.java(18:11-18:14),"c=0"
+124,LITERAL,"",Main.java(19:14-19:15),"0"
+125,DECLAREDREFERENCEEXPRESSION,"c",Main.java(18:27-18:28),"c"
+126,DECLAREDREFERENCEEXPRESSION,"c",Main.java(18:15-18:16),"c"
+127,COMPOUNDSTATEMENT,"",Main.java(20:4-23:5),"{
+				if(matrix[c][l])
+					rcMatrix[c]++;
+			}"
+128,DECLARATIONSTATEMENT,"",Main.java(19:8-19:15),"int l=0"
+129,BINARYOPERATOR,"<",Main.java(19:17-19:28),"l<matrixDim"
+130,UNARYOPERATOR,"++",Main.java(19:30-19:33),"l++"
+131,VARIABLEDECLARATION,"l",Main.java(19:12-19:15),"l=0"
+132,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(21:8-21:14),"matrix"
+133,DECLAREDREFERENCEEXPRESSION,"l",Main.java(19:17-19:18),"l"
+134,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(19:19-19:28),"matrixDim"
+135,DECLAREDREFERENCEEXPRESSION,"l",Main.java(19:30-19:31),"l"
+136,IFSTATEMENT,"",Main.java(21:5-22:20),"if(matrix[c][l])
+					rcMatrix[c]++;"
+137,UNARYOPERATOR,"++",Main.java(22:6-22:20),"rcMatrix[c]++;"
+138,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(21:8-21:20),"matrix[c][l]"
+139,DECLAREDREFERENCEEXPRESSION,"rcMatrix",Main.java(22:6-22:14),"rcMatrix"
+140,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(22:6-22:17),"rcMatrix[c]"
+141,DECLAREDREFERENCEEXPRESSION,"c",Main.java(22:15-22:16),"c"
+142,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(21:8-21:17),"matrix[c]"
+143,DECLAREDREFERENCEEXPRESSION,"l",Main.java(21:18-21:19),"l"
+144,DECLAREDREFERENCEEXPRESSION,"c",Main.java(21:15-21:16),"c"
+145,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(18:17-18:26),"matrixDim"
+146,VARIABLEDECLARATION,"this",,""
+147,COMPOUNDSTATEMENT,"",Main.java(93:2-195:3),"{
+		InputStreamReader converter = new InputStreamReader (System.in);
+		Scanner scanner = new Scanner(converter);
+
+		int nSituations = scanner.nextInt();
+		
+		for(int s=1;s<=nSituations;s++)
+		{
+			
+			int matrixDim = scanner.nextInt();
+			
+			boolean matrix[][] = new boolean[matrixDim][matrixDim];
+			
+			resetMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+
+			
+			
+			
+			for(int i=0;i<matrixDim;i++)
+			{
+				int index = scanner.nextInt();
+				int relations = scanner.nextInt();
+				
+				for(int j=1;j<=relations;j++)
+				{
+					int c = scanner.nextInt();
+					
+					matrix[index-1][c-1] = true;
+				}
+			}
+			
+			//showMatrix(matrix,matrixDim);
+			
+			//boolean k=false;if(!k) return;
+			
+			
+			linkMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+			
+			int[] rcMatrix = new int[matrixDim];
+			boolean[] checkedMatrix = new boolean[matrixDim]; 
+			
+			resetRelationCountMatrix(rcMatrix,matrixDim);
+			resetCheckedMatrix(checkedMatrix,matrixDim);
+			fillRelationCountMatrix(matrix,rcMatrix,matrixDim);
+			//showRelationCountMatrix(rcMatrix, matrixDim);
+			
+			int nGroups = 0;
+			int nOut = 0;
+			
+			
+			
+			for(int c=0;c<matrixDim;c++)
+			{
+				if(checkedMatrix[c])
+					continue;
+				
+				int nRelationsC = rcMatrix[c];
+				
+				int c1;
+				
+				int nElements = 1;
+				
+				for(c1=0;c1<matrixDim;c1++)
+				{
+					if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}
+				}
+				
+				if(nElements < 4)
+					nOut += nElements;
+				else
+					nGroups++;
+				
+			}
+			
+			System.out.println(""Caso #"" + s + ""\n"" + nGroups + "" "" + nOut );
+			
+		}
+	}"
+148,PARAMVARIABLEDECLARATION,"args",Main.java(92:26-92:39),"String[] args"
+149,OBJECTTYPE,"IOException",,""
+150,DECLAREDREFERENCEEXPRESSION,"System",Main.java(94:56-94:62),"System"
+151,RETURNSTATEMENT,"",,""
+152,DECLARATIONSTATEMENT,"",Main.java(94:3-94:67),"InputStreamReader converter = new InputStreamReader (System.in);"
+153,DECLARATIONSTATEMENT,"",Main.java(95:3-95:44),"Scanner scanner = new Scanner(converter);"
+154,DECLARATIONSTATEMENT,"",Main.java(97:3-97:39),"int nSituations = scanner.nextInt();"
+155,FORSTATEMENT,"",Main.java(99:3-194:4),"for(int s=1;s<=nSituations;s++)
+		{
+			
+			int matrixDim = scanner.nextInt();
+			
+			boolean matrix[][] = new boolean[matrixDim][matrixDim];
+			
+			resetMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+
+			
+			
+			
+			for(int i=0;i<matrixDim;i++)
+			{
+				int index = scanner.nextInt();
+				int relations = scanner.nextInt();
+				
+				for(int j=1;j<=relations;j++)
+				{
+					int c = scanner.nextInt();
+					
+					matrix[index-1][c-1] = true;
+				}
+			}
+			
+			//showMatrix(matrix,matrixDim);
+			
+			//boolean k=false;if(!k) return;
+			
+			
+			linkMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+			
+			int[] rcMatrix = new int[matrixDim];
+			boolean[] checkedMatrix = new boolean[matrixDim]; 
+			
+			resetRelationCountMatrix(rcMatrix,matrixDim);
+			resetCheckedMatrix(checkedMatrix,matrixDim);
+			fillRelationCountMatrix(matrix,rcMatrix,matrixDim);
+			//showRelationCountMatrix(rcMatrix, matrixDim);
+			
+			int nGroups = 0;
+			int nOut = 0;
+			
+			
+			
+			for(int c=0;c<matrixDim;c++)
+			{
+				if(checkedMatrix[c])
+					continue;
+				
+				int nRelationsC = rcMatrix[c];
+				
+				int c1;
+				
+				int nElements = 1;
+				
+				for(c1=0;c1<matrixDim;c1++)
+				{
+					if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}
+				}
+				
+				if(nElements < 4)
+					nOut += nElements;
+				else
+					nGroups++;
+				
+			}
+			
+			System.out.println(""Caso #"" + s + ""\n"" + nGroups + "" "" + nOut );
+			
+		}"
+156,VARIABLEDECLARATION,"converter",Main.java(94:21-94:66),"converter = new InputStreamReader (System.in)"
+157,VARIABLEDECLARATION,"scanner",Main.java(95:11-95:43),"scanner = new Scanner(converter)"
+158,VARIABLEDECLARATION,"nSituations",Main.java(97:7-97:38),"nSituations = scanner.nextInt()"
+159,NEWEXPRESSION,"",Main.java(95:21-95:43),"new Scanner(converter)"
+160,CONSTRUCTEXPRESSION,"",Main.java(95:21-95:43),"new Scanner(converter)"
+161,DECLAREDREFERENCEEXPRESSION,"converter",Main.java(95:33-95:42),"converter"
+162,DECLAREDREFERENCEEXPRESSION,"scanner",Main.java(97:21-97:28),"scanner"
+163,NEWEXPRESSION,"",Main.java(94:33-94:66),"new InputStreamReader (System.in)"
+164,CONSTRUCTEXPRESSION,"",Main.java(94:33-94:66),"new InputStreamReader (System.in)"
+165,MEMBEREXPRESSION,"in",Main.java(94:56-94:65),"System.in"
+166,LITERAL,"",Main.java(99:13-99:14),"1"
+167,MEMBERCALLEXPRESSION,"nextInt",Main.java(97:21-97:38),"scanner.nextInt()"
+168,DECLAREDREFERENCEEXPRESSION,"nextInt",Main.java(97:29-97:36),"nextInt"
+169,COMPOUNDSTATEMENT,"",Main.java(100:3-194:4),"{
+			
+			int matrixDim = scanner.nextInt();
+			
+			boolean matrix[][] = new boolean[matrixDim][matrixDim];
+			
+			resetMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+
+			
+			
+			
+			for(int i=0;i<matrixDim;i++)
+			{
+				int index = scanner.nextInt();
+				int relations = scanner.nextInt();
+				
+				for(int j=1;j<=relations;j++)
+				{
+					int c = scanner.nextInt();
+					
+					matrix[index-1][c-1] = true;
+				}
+			}
+			
+			//showMatrix(matrix,matrixDim);
+			
+			//boolean k=false;if(!k) return;
+			
+			
+			linkMatrix(matrix,matrixDim);
+			//showMatrix(matrix,matrixDim);
+			
+			int[] rcMatrix = new int[matrixDim];
+			boolean[] checkedMatrix = new boolean[matrixDim]; 
+			
+			resetRelationCountMatrix(rcMatrix,matrixDim);
+			resetCheckedMatrix(checkedMatrix,matrixDim);
+			fillRelationCountMatrix(matrix,rcMatrix,matrixDim);
+			//showRelationCountMatrix(rcMatrix, matrixDim);
+			
+			int nGroups = 0;
+			int nOut = 0;
+			
+			
+			
+			for(int c=0;c<matrixDim;c++)
+			{
+				if(checkedMatrix[c])
+					continue;
+				
+				int nRelationsC = rcMatrix[c];
+				
+				int c1;
+				
+				int nElements = 1;
+				
+				for(c1=0;c1<matrixDim;c1++)
+				{
+					if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}
+				}
+				
+				if(nElements < 4)
+					nOut += nElements;
+				else
+					nGroups++;
+				
+			}
+			
+			System.out.println(""Caso #"" + s + ""\n"" + nGroups + "" "" + nOut );
+			
+		}"
+170,DECLARATIONSTATEMENT,"",Main.java(99:7-99:14),"int s=1"
+171,BINARYOPERATOR,"<=",Main.java(99:15-99:29),"s<=nSituations"
+172,UNARYOPERATOR,"++",Main.java(99:30-99:33),"s++"
+173,VARIABLEDECLARATION,"s",Main.java(99:11-99:14),"s=1"
+174,DECLAREDREFERENCEEXPRESSION,"scanner",Main.java(102:20-102:27),"scanner"
+175,DECLAREDREFERENCEEXPRESSION,"s",Main.java(99:15-99:16),"s"
+176,DECLAREDREFERENCEEXPRESSION,"nSituations",Main.java(99:18-99:29),"nSituations"
+177,DECLARATIONSTATEMENT,"",Main.java(102:4-102:38),"int matrixDim = scanner.nextInt();"
+178,DECLARATIONSTATEMENT,"",Main.java(104:4-104:59),"boolean matrix[][] = new boolean[matrixDim][matrixDim];"
+179,CALLEXPRESSION,"resetMatrix",Main.java(106:4-106:34),"resetMatrix(matrix,matrixDim);"
+180,FORSTATEMENT,"",Main.java(112:4-123:5),"for(int i=0;i<matrixDim;i++)
+			{
+				int index = scanner.nextInt();
+				int relations = scanner.nextInt();
+				
+				for(int j=1;j<=relations;j++)
+				{
+					int c = scanner.nextInt();
+					
+					matrix[index-1][c-1] = true;
+				}
+			}"
+181,CALLEXPRESSION,"linkMatrix",Main.java(130:4-130:33),"linkMatrix(matrix,matrixDim);"
+182,DECLARATIONSTATEMENT,"",Main.java(133:4-133:40),"int[] rcMatrix = new int[matrixDim];"
+183,DECLARATIONSTATEMENT,"",Main.java(134:4-134:53),"boolean[] checkedMatrix = new boolean[matrixDim];"
+184,CALLEXPRESSION,"resetRelationCountMatrix",Main.java(136:4-136:49),"resetRelationCountMatrix(rcMatrix,matrixDim);"
+185,CALLEXPRESSION,"resetCheckedMatrix",Main.java(137:4-137:48),"resetCheckedMatrix(checkedMatrix,matrixDim);"
+186,CALLEXPRESSION,"fillRelationCountMatrix",Main.java(138:4-138:55),"fillRelationCountMatrix(matrix,rcMatrix,matrixDim);"
+187,DECLARATIONSTATEMENT,"",Main.java(141:4-141:20),"int nGroups = 0;"
+188,DECLARATIONSTATEMENT,"",Main.java(142:4-142:17),"int nOut = 0;"
+189,FORSTATEMENT,"",Main.java(146:4-190:5),"for(int c=0;c<matrixDim;c++)
+			{
+				if(checkedMatrix[c])
+					continue;
+				
+				int nRelationsC = rcMatrix[c];
+				
+				int c1;
+				
+				int nElements = 1;
+				
+				for(c1=0;c1<matrixDim;c1++)
+				{
+					if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}
+				}
+				
+				if(nElements < 4)
+					nOut += nElements;
+				else
+					nGroups++;
+				
+			}"
+190,MEMBERCALLEXPRESSION,"println",Main.java(192:4-192:68),"System.out.println(""Caso #"" + s + ""\n"" + nGroups + "" "" + nOut );"
+191,VARIABLEDECLARATION,"matrixDim",Main.java(102:8-102:37),"matrixDim = scanner.nextInt()"
+192,VARIABLEDECLARATION,"matrix",Main.java(104:12-104:58),"matrix[][] = new boolean[matrixDim][matrixDim]"
+193,VARIABLEDECLARATION,"rcMatrix",Main.java(133:10-133:39),"rcMatrix = new int[matrixDim]"
+194,VARIABLEDECLARATION,"checkedMatrix",Main.java(134:14-134:52),"checkedMatrix = new boolean[matrixDim]"
+195,VARIABLEDECLARATION,"nGroups",Main.java(141:8-141:19),"nGroups = 0"
+196,VARIABLEDECLARATION,"nOut",Main.java(142:8-142:16),"nOut = 0"
+197,DECLAREDREFERENCEEXPRESSION,"s",Main.java(99:30-99:31),"s"
+198,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(134:42-134:51),"matrixDim"
+199,LITERAL,"",Main.java(141:18-141:19),"0"
+200,METHODDECLARATION,"resetMatrix",,""
+201,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(106:16-106:22),"matrix"
+202,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(106:23-106:32),"matrixDim"
+203,LITERAL,"",Main.java(112:14-112:15),"0"
+204,PARAMVARIABLEDECLARATION,"booleanPtrPtr0",,""
+205,PARAMVARIABLEDECLARATION,"int1",,""
+206,COMPOUNDSTATEMENT,"",Main.java(147:4-190:5),"{
+				if(checkedMatrix[c])
+					continue;
+				
+				int nRelationsC = rcMatrix[c];
+				
+				int c1;
+				
+				int nElements = 1;
+				
+				for(c1=0;c1<matrixDim;c1++)
+				{
+					if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}
+				}
+				
+				if(nElements < 4)
+					nOut += nElements;
+				else
+					nGroups++;
+				
+			}"
+207,DECLARATIONSTATEMENT,"",Main.java(146:8-146:15),"int c=0"
+208,BINARYOPERATOR,"<",Main.java(146:16-146:27),"c<matrixDim"
+209,UNARYOPERATOR,"++",Main.java(146:28-146:31),"c++"
+210,VARIABLEDECLARATION,"c",Main.java(146:12-146:15),"c=0"
+211,DECLAREDREFERENCEEXPRESSION,"checkedMatrix",Main.java(148:8-148:21),"checkedMatrix"
+212,DECLAREDREFERENCEEXPRESSION,"System",Main.java(192:4-192:10),"System"
+213,LITERAL,"",Main.java(146:14-146:15),"0"
+214,DECLAREDREFERENCEEXPRESSION,"c",Main.java(146:16-146:17),"c"
+215,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(146:18-146:27),"matrixDim"
+216,CONTINUESTATEMENT,"",Main.java(149:6-149:15),"continue;"
+217,IFSTATEMENT,"",Main.java(148:5-149:15),"if(checkedMatrix[c])
+					continue;"
+218,DECLARATIONSTATEMENT,"",Main.java(151:5-151:35),"int nRelationsC = rcMatrix[c];"
+219,DECLARATIONSTATEMENT,"",Main.java(153:5-153:12),"int c1;"
+220,DECLARATIONSTATEMENT,"",Main.java(155:5-155:23),"int nElements = 1;"
+221,FORSTATEMENT,"",Main.java(157:5-183:6),"for(c1=0;c1<matrixDim;c1++)
+				{
+					if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}
+				}"
+222,IFSTATEMENT,"",Main.java(185:5-188:16),"if(nElements < 4)
+					nOut += nElements;
+				else
+					nGroups++;"
+223,VARIABLEDECLARATION,"nRelationsC",Main.java(151:9-151:34),"nRelationsC = rcMatrix[c]"
+224,VARIABLEDECLARATION,"c1",Main.java(153:9-153:11),"c1"
+225,VARIABLEDECLARATION,"nElements",Main.java(155:9-155:22),"nElements = 1"
+226,DECLAREDREFERENCEEXPRESSION,"c",Main.java(146:28-146:29),"c"
+227,BINARYOPERATOR,"+=",Main.java(186:6-186:24),"nOut += nElements;"
+228,UNARYOPERATOR,"++",Main.java(188:6-188:16),"nGroups++;"
+229,BINARYOPERATOR,"<",Main.java(185:8-185:21),"nElements < 4"
+230,DECLAREDREFERENCEEXPRESSION,"nOut",Main.java(186:6-186:10),"nOut"
+231,DECLAREDREFERENCEEXPRESSION,"nGroups",Main.java(188:6-188:13),"nGroups"
+232,DECLAREDREFERENCEEXPRESSION,"nElements",Main.java(185:8-185:17),"nElements"
+233,LITERAL,"",Main.java(185:20-185:21),"4"
+234,DECLAREDREFERENCEEXPRESSION,"nElements",Main.java(186:14-186:23),"nElements"
+235,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+236,LITERAL,"",Main.java(155:21-155:22),"1"
+237,COMPOUNDSTATEMENT,"",Main.java(158:5-183:6),"{
+					if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}
+				}"
+238,BINARYOPERATOR,"=",Main.java(157:9-157:13),"c1=0"
+239,BINARYOPERATOR,"<",Main.java(157:14-157:26),"c1<matrixDim"
+240,UNARYOPERATOR,"++",Main.java(157:27-157:31),"c1++"
+241,DECLAREDREFERENCEEXPRESSION,"checkedMatrix",Main.java(159:10-159:23),"checkedMatrix"
+242,IFSTATEMENT,"",Main.java(159:6-182:7),"if(!checkedMatrix[c1] && (c!=c1))
+					{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}"
+243,DECLAREDREFERENCEEXPRESSION,"c1",Main.java(157:27-157:29),"c1"
+244,COMPOUNDSTATEMENT,"",Main.java(160:6-182:7),"{
+						int nRelationsC1 = rcMatrix[c1];
+	
+						if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}
+					}"
+245,BINARYOPERATOR,"&&",Main.java(159:9-159:38),"!checkedMatrix[c1] && (c!=c1)"
+246,DECLAREDREFERENCEEXPRESSION,"rcMatrix",Main.java(161:26-161:34),"rcMatrix"
+247,UNARYOPERATOR,"!",Main.java(159:9-159:27),"!checkedMatrix[c1]"
+248,BINARYOPERATOR,"!=",Main.java(159:32-159:37),"c!=c1"
+249,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(159:10-159:27),"checkedMatrix[c1]"
+250,DECLAREDREFERENCEEXPRESSION,"c",Main.java(159:32-159:33),"c"
+251,DECLAREDREFERENCEEXPRESSION,"c1",Main.java(159:24-159:26),"c1"
+252,DECLAREDREFERENCEEXPRESSION,"c1",Main.java(159:35-159:37),"c1"
+253,DECLARATIONSTATEMENT,"",Main.java(161:7-161:39),"int nRelationsC1 = rcMatrix[c1];"
+254,IFSTATEMENT,"",Main.java(163:7-181:8),"if(nRelationsC == nRelationsC1)
+						{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}"
+255,VARIABLEDECLARATION,"nRelationsC1",Main.java(161:11-161:38),"nRelationsC1 = rcMatrix[c1]"
+256,COMPOUNDSTATEMENT,"",Main.java(164:7-181:8),"{
+							
+							boolean equal = true;
+							
+							for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}
+	
+							if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}
+						}"
+257,DECLAREDREFERENCEEXPRESSION,"nRelationsC",Main.java(163:10-163:21),"nRelationsC"
+258,BINARYOPERATOR,"==",Main.java(163:10-163:37),"nRelationsC == nRelationsC1"
+259,LITERAL,"",Main.java(166:24-166:28),"true"
+260,DECLARATIONSTATEMENT,"",Main.java(166:8-166:29),"boolean equal = true;"
+261,FORSTATEMENT,"",Main.java(168:8-173:9),"for(int l=0;l<matrixDim;l++)
+							{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}"
+262,IFSTATEMENT,"",Main.java(175:8-180:9),"if(equal)
+							{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}"
+263,VARIABLEDECLARATION,"equal",Main.java(166:16-166:28),"equal = true"
+264,COMPOUNDSTATEMENT,"",Main.java(176:8-180:9),"{
+								checkedMatrix[c] = true;
+								checkedMatrix[c1] = true;
+								nElements++;
+							}"
+265,DECLAREDREFERENCEEXPRESSION,"equal",Main.java(175:11-175:16),"equal"
+266,DECLAREDREFERENCEEXPRESSION,"checkedMatrix",Main.java(177:9-177:22),"checkedMatrix"
+267,BREAKSTATEMENT,"",Main.java(172:10-172:16),"break;"
+268,BINARYOPERATOR,"=",Main.java(177:9-177:33),"checkedMatrix[c] = true;"
+269,BINARYOPERATOR,"=",Main.java(178:9-178:34),"checkedMatrix[c1] = true;"
+270,UNARYOPERATOR,"++",Main.java(179:9-179:21),"nElements++;"
+271,DECLAREDREFERENCEEXPRESSION,"nElements",Main.java(179:9-179:18),"nElements"
+272,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(178:9-178:26),"checkedMatrix[c1]"
+273,LITERAL,"",Main.java(178:29-178:33),"true"
+274,DECLAREDREFERENCEEXPRESSION,"checkedMatrix",Main.java(178:9-178:22),"checkedMatrix"
+275,DECLAREDREFERENCEEXPRESSION,"c1",Main.java(178:23-178:25),"c1"
+276,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(177:9-177:25),"checkedMatrix[c]"
+277,LITERAL,"",Main.java(177:28-177:32),"true"
+278,DECLAREDREFERENCEEXPRESSION,"c",Main.java(177:23-177:24),"c"
+279,LITERAL,"",Main.java(168:18-168:19),"0"
+280,COMPOUNDSTATEMENT,"",Main.java(169:8-173:9),"{
+								equal &= (matrix[c][l] == matrix[c1][l]);
+								if(!equal)
+									break;
+							}"
+281,DECLARATIONSTATEMENT,"",Main.java(168:12-168:19),"int l=0"
+282,BINARYOPERATOR,"<",Main.java(168:20-168:31),"l<matrixDim"
+283,UNARYOPERATOR,"++",Main.java(168:32-168:35),"l++"
+284,VARIABLEDECLARATION,"l",Main.java(168:16-168:19),"l=0"
+285,DECLAREDREFERENCEEXPRESSION,"equal",Main.java(170:9-170:14),"equal"
+286,BINARYOPERATOR,"&=",Main.java(170:9-170:50),"equal &= (matrix[c][l] == matrix[c1][l]);"
+287,IFSTATEMENT,"",Main.java(171:9-172:16),"if(!equal)
+									break;"
+288,DECLAREDREFERENCEEXPRESSION,"l",Main.java(168:32-168:33),"l"
+289,UNARYOPERATOR,"!",Main.java(171:12-171:18),"!equal"
+290,DECLAREDREFERENCEEXPRESSION,"equal",Main.java(171:13-171:18),"equal"
+291,BINARYOPERATOR,"==",Main.java(170:19-170:48),"matrix[c][l] == matrix[c1][l]"
+292,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(170:19-170:31),"matrix[c][l]"
+293,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(170:35-170:48),"matrix[c1][l]"
+294,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(170:35-170:45),"matrix[c1]"
+295,DECLAREDREFERENCEEXPRESSION,"l",Main.java(170:46-170:47),"l"
+296,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(170:35-170:41),"matrix"
+297,DECLAREDREFERENCEEXPRESSION,"c1",Main.java(170:42-170:44),"c1"
+298,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(170:19-170:28),"matrix[c]"
+299,DECLAREDREFERENCEEXPRESSION,"l",Main.java(170:29-170:30),"l"
+300,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(170:19-170:25),"matrix"
+301,DECLAREDREFERENCEEXPRESSION,"c",Main.java(170:26-170:27),"c"
+302,DECLAREDREFERENCEEXPRESSION,"l",Main.java(168:20-168:21),"l"
+303,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(168:22-168:31),"matrixDim"
+304,DECLAREDREFERENCEEXPRESSION,"nRelationsC1",Main.java(163:25-163:37),"nRelationsC1"
+305,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(161:26-161:38),"rcMatrix[c1]"
+306,DECLAREDREFERENCEEXPRESSION,"c1",Main.java(161:35-161:37),"c1"
+307,DECLAREDREFERENCEEXPRESSION,"c1",Main.java(157:9-157:11),"c1"
+308,LITERAL,"",Main.java(157:12-157:13),"0"
+309,DECLAREDREFERENCEEXPRESSION,"c1",Main.java(157:14-157:16),"c1"
+310,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(157:17-157:26),"matrixDim"
+311,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(151:23-151:34),"rcMatrix[c]"
+312,DECLAREDREFERENCEEXPRESSION,"rcMatrix",Main.java(151:23-151:31),"rcMatrix"
+313,DECLAREDREFERENCEEXPRESSION,"c",Main.java(151:32-151:33),"c"
+314,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(148:8-148:24),"checkedMatrix[c]"
+315,DECLAREDREFERENCEEXPRESSION,"c",Main.java(148:22-148:23),"c"
+316,ARRAYCREATIONEXPRESSION,"",Main.java(104:25-104:58),"new boolean[matrixDim][matrixDim]"
+317,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(104:37-104:46),"matrixDim"
+318,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(104:48-104:57),"matrixDim"
+319,LITERAL,"",Main.java(142:15-142:16),"0"
+320,ARRAYCREATIONEXPRESSION,"",Main.java(133:21-133:39),"new int[matrixDim]"
+321,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(133:29-133:38),"matrixDim"
+322,DECLAREDREFERENCEEXPRESSION,"println",Main.java(192:15-192:22),"println"
+323,BINARYOPERATOR,"+",Main.java(192:23-192:65),"""Caso #"" + s + ""\n"" + nGroups + "" "" + nOut"
+324,BINARYOPERATOR,"+",Main.java(192:23-192:58),"""Caso #"" + s + ""\n"" + nGroups + "" """
+325,DECLAREDREFERENCEEXPRESSION,"nOut",Main.java(192:61-192:65),"nOut"
+326,BINARYOPERATOR,"+",Main.java(192:23-192:52),"""Caso #"" + s + ""\n"" + nGroups"
+327,LITERAL,"",Main.java(192:55-192:58),""" """
+328,BINARYOPERATOR,"+",Main.java(192:23-192:42),"""Caso #"" + s + ""\n"""
+329,DECLAREDREFERENCEEXPRESSION,"nGroups",Main.java(192:45-192:52),"nGroups"
+330,BINARYOPERATOR,"+",Main.java(192:23-192:35),"""Caso #"" + s"
+331,LITERAL,"",Main.java(192:38-192:42),"""\n"""
+332,LITERAL,"",Main.java(192:23-192:31),"""Caso #"""
+333,DECLAREDREFERENCEEXPRESSION,"s",Main.java(192:34-192:35),"s"
+334,MEMBEREXPRESSION,"out",Main.java(192:4-192:14),"System.out"
+335,METHODDECLARATION,"fillRelationCountMatrix",,""
+336,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(138:28-138:34),"matrix"
+337,DECLAREDREFERENCEEXPRESSION,"rcMatrix",Main.java(138:35-138:43),"rcMatrix"
+338,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(138:44-138:53),"matrixDim"
+339,PARAMVARIABLEDECLARATION,"booleanPtrPtr0",,""
+340,PARAMVARIABLEDECLARATION,"intPtr1",,""
+341,PARAMVARIABLEDECLARATION,"int2",,""
+342,METHODDECLARATION,"linkMatrix",,""
+343,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(130:15-130:21),"matrix"
+344,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(130:22-130:31),"matrixDim"
+345,PARAMVARIABLEDECLARATION,"int1",,""
+346,PARAMVARIABLEDECLARATION,"booleanPtrPtr0",,""
+347,MEMBERCALLEXPRESSION,"nextInt",Main.java(102:20-102:37),"scanner.nextInt()"
+348,DECLAREDREFERENCEEXPRESSION,"nextInt",Main.java(102:28-102:35),"nextInt"
+349,METHODDECLARATION,"resetCheckedMatrix",,""
+350,DECLAREDREFERENCEEXPRESSION,"checkedMatrix",Main.java(137:23-137:36),"checkedMatrix"
+351,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(137:37-137:46),"matrixDim"
+352,PARAMVARIABLEDECLARATION,"booleanPtr0",,""
+353,PARAMVARIABLEDECLARATION,"int1",,""
+354,ARRAYCREATIONEXPRESSION,"",Main.java(134:30-134:52),"new boolean[matrixDim]"
+355,METHODDECLARATION,"resetRelationCountMatrix",,""
+356,DECLAREDREFERENCEEXPRESSION,"rcMatrix",Main.java(136:29-136:37),"rcMatrix"
+357,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(136:38-136:47),"matrixDim"
+358,PARAMVARIABLEDECLARATION,"intPtr0",,""
+359,PARAMVARIABLEDECLARATION,"int1",,""
+360,COMPOUNDSTATEMENT,"",Main.java(113:4-123:5),"{
+				int index = scanner.nextInt();
+				int relations = scanner.nextInt();
+				
+				for(int j=1;j<=relations;j++)
+				{
+					int c = scanner.nextInt();
+					
+					matrix[index-1][c-1] = true;
+				}
+			}"
+361,DECLARATIONSTATEMENT,"",Main.java(112:8-112:15),"int i=0"
+362,BINARYOPERATOR,"<",Main.java(112:16-112:27),"i<matrixDim"
+363,UNARYOPERATOR,"++",Main.java(112:28-112:31),"i++"
+364,VARIABLEDECLARATION,"i",Main.java(112:12-112:15),"i=0"
+365,DECLAREDREFERENCEEXPRESSION,"scanner",Main.java(114:17-114:24),"scanner"
+366,DECLAREDREFERENCEEXPRESSION,"i",Main.java(112:28-112:29),"i"
+367,DECLAREDREFERENCEEXPRESSION,"i",Main.java(112:16-112:17),"i"
+368,DECLARATIONSTATEMENT,"",Main.java(114:5-114:35),"int index = scanner.nextInt();"
+369,DECLARATIONSTATEMENT,"",Main.java(115:5-115:39),"int relations = scanner.nextInt();"
+370,FORSTATEMENT,"",Main.java(117:5-122:6),"for(int j=1;j<=relations;j++)
+				{
+					int c = scanner.nextInt();
+					
+					matrix[index-1][c-1] = true;
+				}"
+371,VARIABLEDECLARATION,"index",Main.java(114:9-114:34),"index = scanner.nextInt()"
+372,VARIABLEDECLARATION,"relations",Main.java(115:9-115:38),"relations = scanner.nextInt()"
+373,LITERAL,"",Main.java(117:15-117:16),"1"
+374,MEMBERCALLEXPRESSION,"nextInt",Main.java(115:21-115:38),"scanner.nextInt()"
+375,DECLAREDREFERENCEEXPRESSION,"nextInt",Main.java(115:29-115:36),"nextInt"
+376,DECLAREDREFERENCEEXPRESSION,"scanner",Main.java(115:21-115:28),"scanner"
+377,COMPOUNDSTATEMENT,"",Main.java(118:5-122:6),"{
+					int c = scanner.nextInt();
+					
+					matrix[index-1][c-1] = true;
+				}"
+378,DECLARATIONSTATEMENT,"",Main.java(117:9-117:16),"int j=1"
+379,BINARYOPERATOR,"<=",Main.java(117:17-117:29),"j<=relations"
+380,UNARYOPERATOR,"++",Main.java(117:30-117:33),"j++"
+381,VARIABLEDECLARATION,"j",Main.java(117:13-117:16),"j=1"
+382,DECLAREDREFERENCEEXPRESSION,"scanner",Main.java(119:14-119:21),"scanner"
+383,DECLAREDREFERENCEEXPRESSION,"j",Main.java(117:17-117:18),"j"
+384,DECLARATIONSTATEMENT,"",Main.java(119:6-119:32),"int c = scanner.nextInt();"
+385,BINARYOPERATOR,"=",Main.java(121:6-121:34),"matrix[index-1][c-1] = true;"
+386,VARIABLEDECLARATION,"c",Main.java(119:10-119:31),"c = scanner.nextInt()"
+387,DECLAREDREFERENCEEXPRESSION,"j",Main.java(117:30-117:31),"j"
+388,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(121:6-121:12),"matrix"
+389,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(121:6-121:26),"matrix[index-1][c-1]"
+390,LITERAL,"",Main.java(121:29-121:33),"true"
+391,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(121:6-121:21),"matrix[index-1]"
+392,BINARYOPERATOR,"-",Main.java(121:22-121:25),"c-1"
+393,BINARYOPERATOR,"-",Main.java(121:13-121:20),"index-1"
+394,DECLAREDREFERENCEEXPRESSION,"c",Main.java(121:22-121:23),"c"
+395,DECLAREDREFERENCEEXPRESSION,"index",Main.java(121:13-121:18),"index"
+396,LITERAL,"",Main.java(121:19-121:20),"1"
+397,LITERAL,"",Main.java(121:24-121:25),"1"
+398,MEMBERCALLEXPRESSION,"nextInt",Main.java(119:14-119:31),"scanner.nextInt()"
+399,DECLAREDREFERENCEEXPRESSION,"nextInt",Main.java(119:22-119:29),"nextInt"
+400,DECLAREDREFERENCEEXPRESSION,"relations",Main.java(117:20-117:29),"relations"
+401,MEMBERCALLEXPRESSION,"nextInt",Main.java(114:17-114:34),"scanner.nextInt()"
+402,DECLAREDREFERENCEEXPRESSION,"nextInt",Main.java(114:25-114:32),"nextInt"
+403,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(112:18-112:27),"matrixDim"
+404,VARIABLEDECLARATION,"this",,""
+405,COMPOUNDSTATEMENT,"",Main.java(26:2-31:3),"{
+		for(int c=0;c<matrixDim;c++)
+					System.out.print(""["" +  rcMatrix[c]+ ""]"");
+		
+		System.out.println();
+	}"
+406,PARAMVARIABLEDECLARATION,"rcMatrix",Main.java(25:45-25:59),"int []rcMatrix"
+407,PARAMVARIABLEDECLARATION,"matrixDim",Main.java(25:60-25:73),"int matrixDim"
+408,LITERAL,"",Main.java(27:13-27:14),"0"
+409,RETURNSTATEMENT,"",,""
+410,FORSTATEMENT,"",Main.java(27:3-28:48),"for(int c=0;c<matrixDim;c++)
+					System.out.print(""["" +  rcMatrix[c]+ ""]"");"
+411,MEMBERCALLEXPRESSION,"println",Main.java(30:3-30:24),"System.out.println();"
+412,MEMBERCALLEXPRESSION,"print",Main.java(28:6-28:48),"System.out.print(""["" +  rcMatrix[c]+ ""]"");"
+413,DECLARATIONSTATEMENT,"",Main.java(27:7-27:14),"int c=0"
+414,BINARYOPERATOR,"<",Main.java(27:15-27:26),"c<matrixDim"
+415,UNARYOPERATOR,"++",Main.java(27:27-27:30),"c++"
+416,VARIABLEDECLARATION,"c",Main.java(27:11-27:14),"c=0"
+417,DECLAREDREFERENCEEXPRESSION,"System",Main.java(28:6-28:12),"System"
+418,DECLAREDREFERENCEEXPRESSION,"System",Main.java(30:3-30:9),"System"
+419,DECLAREDREFERENCEEXPRESSION,"c",Main.java(27:15-27:16),"c"
+420,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(27:17-27:26),"matrixDim"
+421,DECLAREDREFERENCEEXPRESSION,"c",Main.java(27:27-27:28),"c"
+422,DECLAREDREFERENCEEXPRESSION,"print",Main.java(28:17-28:22),"print"
+423,BINARYOPERATOR,"+",Main.java(28:23-28:46),"""["" +  rcMatrix[c]+ ""]"""
+424,MEMBEREXPRESSION,"out",Main.java(28:6-28:16),"System.out"
+425,LITERAL,"",Main.java(28:23-28:26),"""["""
+426,BINARYOPERATOR,"+",Main.java(28:23-28:41),"""["" +  rcMatrix[c]"
+427,LITERAL,"",Main.java(28:43-28:46),"""]"""
+428,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(28:30-28:41),"rcMatrix[c]"
+429,DECLAREDREFERENCEEXPRESSION,"rcMatrix",Main.java(28:30-28:38),"rcMatrix"
+430,DECLAREDREFERENCEEXPRESSION,"c",Main.java(28:39-28:40),"c"
+431,DECLAREDREFERENCEEXPRESSION,"println",Main.java(30:14-30:21),"println"
+432,MEMBEREXPRESSION,"out",Main.java(30:3-30:13),"System.out"
+433,VARIABLEDECLARATION,"this",,""
+434,COMPOUNDSTATEMENT,"",Main.java(70:2-91:3),"{
+		int c,l;
+		
+		System.out.print(""|||"");
+		
+		for(c=0;c<matrixDim;c++)
+			System.out.print(""|"" + (c+1) + ""|"");
+	
+		System.out.print(""\n"");
+		
+		for(c=0;c<matrixDim;c++)
+		{
+			System.out.print(""|"" + (c+1) + ""|"");
+			
+			for(l=0;l<matrixDim;l++)
+			{
+				System.out.print(""["" + (matrix[c][l] ? 1 : 0) + ""]"");
+			}
+			System.out.print(""\n"");
+		}		
+		System.out.println(""\n"");		
+	}"
+435,PARAMVARIABLEDECLARATION,"matrix",Main.java(69:32-69:50),"boolean[][] matrix"
+436,PARAMVARIABLEDECLARATION,"matrixDim",Main.java(69:51-69:64),"int matrixDim"
+437,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+438,RETURNSTATEMENT,"",,""
+439,DECLARATIONSTATEMENT,"",Main.java(71:3-71:11),"int c,l;"
+440,MEMBERCALLEXPRESSION,"print",Main.java(73:3-73:27),"System.out.print(""|||"");"
+441,FORSTATEMENT,"",Main.java(75:3-76:40),"for(c=0;c<matrixDim;c++)
+			System.out.print(""|"" + (c+1) + ""|"");"
+442,MEMBERCALLEXPRESSION,"print",Main.java(78:3-78:26),"System.out.print(""\n"");"
+443,FORSTATEMENT,"",Main.java(80:3-89:4),"for(c=0;c<matrixDim;c++)
+		{
+			System.out.print(""|"" + (c+1) + ""|"");
+			
+			for(l=0;l<matrixDim;l++)
+			{
+				System.out.print(""["" + (matrix[c][l] ? 1 : 0) + ""]"");
+			}
+			System.out.print(""\n"");
+		}"
+444,MEMBERCALLEXPRESSION,"println",Main.java(90:3-90:28),"System.out.println(""\n"");"
+445,VARIABLEDECLARATION,"c",Main.java(71:7-71:8),"c"
+446,VARIABLEDECLARATION,"l",Main.java(71:9-71:10),"l"
+447,DECLAREDREFERENCEEXPRESSION,"print",Main.java(78:14-78:19),"print"
+448,DECLAREDREFERENCEEXPRESSION,"c",Main.java(80:7-80:8),"c"
+449,LITERAL,"",Main.java(78:20-78:24),"""\n"""
+450,MEMBEREXPRESSION,"out",Main.java(78:3-78:13),"System.out"
+451,DECLAREDREFERENCEEXPRESSION,"System",Main.java(78:3-78:9),"System"
+452,DECLAREDREFERENCEEXPRESSION,"print",Main.java(73:14-73:19),"print"
+453,DECLAREDREFERENCEEXPRESSION,"c",Main.java(75:7-75:8),"c"
+454,LITERAL,"",Main.java(73:20-73:25),"""|||"""
+455,MEMBEREXPRESSION,"out",Main.java(73:3-73:13),"System.out"
+456,DECLAREDREFERENCEEXPRESSION,"System",Main.java(73:3-73:9),"System"
+457,UNINITIALIZEDVALUE,"Uninitialized Value",,""
+458,MEMBERCALLEXPRESSION,"print",Main.java(76:4-76:40),"System.out.print(""|"" + (c+1) + ""|"");"
+459,BINARYOPERATOR,"=",Main.java(75:7-75:10),"c=0"
+460,BINARYOPERATOR,"<",Main.java(75:11-75:22),"c<matrixDim"
+461,UNARYOPERATOR,"++",Main.java(75:23-75:26),"c++"
+462,DECLAREDREFERENCEEXPRESSION,"System",Main.java(76:4-76:10),"System"
+463,DECLAREDREFERENCEEXPRESSION,"c",Main.java(75:11-75:12),"c"
+464,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(75:13-75:22),"matrixDim"
+465,LITERAL,"",Main.java(75:9-75:10),"0"
+466,DECLAREDREFERENCEEXPRESSION,"c",Main.java(75:23-75:24),"c"
+467,DECLAREDREFERENCEEXPRESSION,"print",Main.java(76:15-76:20),"print"
+468,BINARYOPERATOR,"+",Main.java(76:21-76:38),"""|"" + (c+1) + ""|"""
+469,MEMBEREXPRESSION,"out",Main.java(76:4-76:14),"System.out"
+470,LITERAL,"",Main.java(76:21-76:24),"""|"""
+471,BINARYOPERATOR,"+",Main.java(76:21-76:32),"""|"" + (c+1)"
+472,LITERAL,"",Main.java(76:35-76:38),"""|"""
+473,BINARYOPERATOR,"+",Main.java(76:28-76:31),"c+1"
+474,DECLAREDREFERENCEEXPRESSION,"c",Main.java(76:28-76:29),"c"
+475,LITERAL,"",Main.java(76:30-76:31),"1"
+476,COMPOUNDSTATEMENT,"",Main.java(81:3-89:4),"{
+			System.out.print(""|"" + (c+1) + ""|"");
+			
+			for(l=0;l<matrixDim;l++)
+			{
+				System.out.print(""["" + (matrix[c][l] ? 1 : 0) + ""]"");
+			}
+			System.out.print(""\n"");
+		}"
+477,BINARYOPERATOR,"=",Main.java(80:7-80:10),"c=0"
+478,BINARYOPERATOR,"<",Main.java(80:11-80:22),"c<matrixDim"
+479,UNARYOPERATOR,"++",Main.java(80:23-80:26),"c++"
+480,DECLAREDREFERENCEEXPRESSION,"System",Main.java(82:4-82:10),"System"
+481,DECLAREDREFERENCEEXPRESSION,"System",Main.java(90:3-90:9),"System"
+482,DECLAREDREFERENCEEXPRESSION,"c",Main.java(80:11-80:12),"c"
+483,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(80:13-80:22),"matrixDim"
+484,MEMBERCALLEXPRESSION,"print",Main.java(82:4-82:40),"System.out.print(""|"" + (c+1) + ""|"");"
+485,FORSTATEMENT,"",Main.java(84:4-87:5),"for(l=0;l<matrixDim;l++)
+			{
+				System.out.print(""["" + (matrix[c][l] ? 1 : 0) + ""]"");
+			}"
+486,MEMBERCALLEXPRESSION,"print",Main.java(88:4-88:27),"System.out.print(""\n"");"
+487,DECLAREDREFERENCEEXPRESSION,"c",Main.java(80:23-80:24),"c"
+488,DECLAREDREFERENCEEXPRESSION,"print",Main.java(82:15-82:20),"print"
+489,DECLAREDREFERENCEEXPRESSION,"l",Main.java(84:8-84:9),"l"
+490,BINARYOPERATOR,"+",Main.java(82:21-82:38),"""|"" + (c+1) + ""|"""
+491,BINARYOPERATOR,"+",Main.java(82:21-82:32),"""|"" + (c+1)"
+492,LITERAL,"",Main.java(82:35-82:38),"""|"""
+493,LITERAL,"",Main.java(82:21-82:24),"""|"""
+494,BINARYOPERATOR,"+",Main.java(82:28-82:31),"c+1"
+495,DECLAREDREFERENCEEXPRESSION,"c",Main.java(82:28-82:29),"c"
+496,MEMBEREXPRESSION,"out",Main.java(82:4-82:14),"System.out"
+497,LITERAL,"",Main.java(82:30-82:31),"1"
+498,COMPOUNDSTATEMENT,"",Main.java(85:4-87:5),"{
+				System.out.print(""["" + (matrix[c][l] ? 1 : 0) + ""]"");
+			}"
+499,BINARYOPERATOR,"=",Main.java(84:8-84:11),"l=0"
+500,BINARYOPERATOR,"<",Main.java(84:12-84:23),"l<matrixDim"
+501,UNARYOPERATOR,"++",Main.java(84:24-84:27),"l++"
+502,DECLAREDREFERENCEEXPRESSION,"System",Main.java(86:5-86:11),"System"
+503,DECLAREDREFERENCEEXPRESSION,"System",Main.java(88:4-88:10),"System"
+504,LITERAL,"",Main.java(84:10-84:11),"0"
+505,DECLAREDREFERENCEEXPRESSION,"l",Main.java(84:12-84:13),"l"
+506,MEMBERCALLEXPRESSION,"print",Main.java(86:5-86:58),"System.out.print(""["" + (matrix[c][l] ? 1 : 0) + ""]"");"
+507,DECLAREDREFERENCEEXPRESSION,"l",Main.java(84:24-84:25),"l"
+508,DECLAREDREFERENCEEXPRESSION,"print",Main.java(86:16-86:21),"print"
+509,BINARYOPERATOR,"+",Main.java(86:22-86:56),"""["" + (matrix[c][l] ? 1 : 0) + ""]"""
+510,BINARYOPERATOR,"+",Main.java(86:22-86:50),"""["" + (matrix[c][l] ? 1 : 0)"
+511,LITERAL,"",Main.java(86:53-86:56),"""]"""
+512,LITERAL,"",Main.java(86:22-86:25),"""["""
+513,CONDITIONALEXPRESSION,"",Main.java(86:29-86:49),"matrix[c][l] ? 1 : 0"
+514,LITERAL,"",Main.java(86:44-86:45),"1"
+515,LITERAL,"",Main.java(86:48-86:49),"0"
+516,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(86:29-86:41),"matrix[c][l]"
+517,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(86:29-86:38),"matrix[c]"
+518,DECLAREDREFERENCEEXPRESSION,"l",Main.java(86:39-86:40),"l"
+519,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(86:29-86:35),"matrix"
+520,DECLAREDREFERENCEEXPRESSION,"c",Main.java(86:36-86:37),"c"
+521,MEMBEREXPRESSION,"out",Main.java(86:5-86:15),"System.out"
+522,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(84:14-84:23),"matrixDim"
+523,DECLAREDREFERENCEEXPRESSION,"print",Main.java(88:15-88:20),"print"
+524,LITERAL,"",Main.java(88:21-88:25),"""\n"""
+525,MEMBEREXPRESSION,"out",Main.java(88:4-88:14),"System.out"
+526,LITERAL,"",Main.java(80:9-80:10),"0"
+527,DECLAREDREFERENCEEXPRESSION,"println",Main.java(90:14-90:21),"println"
+528,LITERAL,"",Main.java(90:22-90:26),"""\n"""
+529,MEMBEREXPRESSION,"out",Main.java(90:3-90:13),"System.out"
+530,VARIABLEDECLARATION,"this",,""
+531,COMPOUNDSTATEMENT,"",Main.java(34:2-53:3),"{
+		for(int c=0;c<matrixDim;c++)
+		{
+			for(int l=0; l<matrixDim; l++)
+			{
+					// IF XY ...
+					if(matrix[c][l])
+					{
+						for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}
+					}				
+			}
+		}
+	}"
+532,PARAMVARIABLEDECLARATION,"matrix",Main.java(33:32-33:50),"boolean[][] matrix"
+533,PARAMVARIABLEDECLARATION,"matrixDim",Main.java(33:51-33:64),"int matrixDim"
+534,LITERAL,"",Main.java(35:13-35:14),"0"
+535,RETURNSTATEMENT,"",,""
+536,FORSTATEMENT,"",Main.java(35:3-52:4),"for(int c=0;c<matrixDim;c++)
+		{
+			for(int l=0; l<matrixDim; l++)
+			{
+					// IF XY ...
+					if(matrix[c][l])
+					{
+						for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}
+					}				
+			}
+		}"
+537,COMPOUNDSTATEMENT,"",Main.java(36:3-52:4),"{
+			for(int l=0; l<matrixDim; l++)
+			{
+					// IF XY ...
+					if(matrix[c][l])
+					{
+						for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}
+					}				
+			}
+		}"
+538,DECLARATIONSTATEMENT,"",Main.java(35:7-35:14),"int c=0"
+539,BINARYOPERATOR,"<",Main.java(35:15-35:26),"c<matrixDim"
+540,UNARYOPERATOR,"++",Main.java(35:27-35:30),"c++"
+541,VARIABLEDECLARATION,"c",Main.java(35:11-35:14),"c=0"
+542,LITERAL,"",Main.java(37:14-37:15),"0"
+543,DECLAREDREFERENCEEXPRESSION,"c",Main.java(35:15-35:16),"c"
+544,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(35:17-35:26),"matrixDim"
+545,FORSTATEMENT,"",Main.java(37:4-51:5),"for(int l=0; l<matrixDim; l++)
+			{
+					// IF XY ...
+					if(matrix[c][l])
+					{
+						for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}
+					}				
+			}"
+546,DECLAREDREFERENCEEXPRESSION,"c",Main.java(35:27-35:28),"c"
+547,COMPOUNDSTATEMENT,"",Main.java(38:4-51:5),"{
+					// IF XY ...
+					if(matrix[c][l])
+					{
+						for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}
+					}				
+			}"
+548,DECLARATIONSTATEMENT,"",Main.java(37:8-37:15),"int l=0"
+549,BINARYOPERATOR,"<",Main.java(37:17-37:28),"l<matrixDim"
+550,UNARYOPERATOR,"++",Main.java(37:30-37:33),"l++"
+551,VARIABLEDECLARATION,"l",Main.java(37:12-37:15),"l=0"
+552,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(40:9-40:15),"matrix"
+553,DECLAREDREFERENCEEXPRESSION,"l",Main.java(37:17-37:18),"l"
+554,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(37:19-37:28),"matrixDim"
+555,IFSTATEMENT,"",Main.java(40:6-50:7),"if(matrix[c][l])
+					{
+						for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}
+					}"
+556,DECLAREDREFERENCEEXPRESSION,"l",Main.java(37:30-37:31),"l"
+557,COMPOUNDSTATEMENT,"",Main.java(41:6-50:7),"{
+						for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}
+					}"
+558,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(40:9-40:21),"matrix[c][l]"
+559,LITERAL,"",Main.java(42:25-42:26),"0"
+560,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(40:9-40:18),"matrix[c]"
+561,DECLAREDREFERENCEEXPRESSION,"l",Main.java(40:19-40:20),"l"
+562,DECLAREDREFERENCEEXPRESSION,"c",Main.java(40:16-40:17),"c"
+563,FORSTATEMENT,"",Main.java(42:7-49:8),"for(int colSearch=0;colSearch<matrixDim;colSearch++)
+						{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}"
+564,COMPOUNDSTATEMENT,"",Main.java(43:7-49:8),"{
+							if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true; // XZ
+							
+							if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true; // ZY								
+						}"
+565,DECLARATIONSTATEMENT,"",Main.java(42:11-42:26),"int colSearch=0"
+566,BINARYOPERATOR,"<",Main.java(42:27-42:46),"colSearch<matrixDim"
+567,UNARYOPERATOR,"++",Main.java(42:47-42:58),"colSearch++"
+568,VARIABLEDECLARATION,"colSearch",Main.java(42:15-42:26),"colSearch=0"
+569,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(44:11-44:17),"matrix"
+570,DECLAREDREFERENCEEXPRESSION,"colSearch",Main.java(42:47-42:56),"colSearch"
+571,DECLAREDREFERENCEEXPRESSION,"colSearch",Main.java(42:27-42:36),"colSearch"
+572,IFSTATEMENT,"",Main.java(44:8-45:37),"if(matrix[l][colSearch]) // ... AND YZ
+								matrix[c][colSearch] = true;"
+573,IFSTATEMENT,"",Main.java(47:8-48:37),"if(matrix[colSearch][c]) // ... AND ZX
+								matrix[colSearch][l] = true;"
+574,BINARYOPERATOR,"=",Main.java(48:9-48:37),"matrix[colSearch][l] = true;"
+575,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(47:11-47:31),"matrix[colSearch][c]"
+576,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(48:9-48:15),"matrix"
+577,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(48:9-48:29),"matrix[colSearch][l]"
+578,LITERAL,"",Main.java(48:32-48:36),"true"
+579,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(48:9-48:26),"matrix[colSearch]"
+580,DECLAREDREFERENCEEXPRESSION,"l",Main.java(48:27-48:28),"l"
+581,DECLAREDREFERENCEEXPRESSION,"colSearch",Main.java(48:16-48:25),"colSearch"
+582,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(47:11-47:28),"matrix[colSearch]"
+583,DECLAREDREFERENCEEXPRESSION,"c",Main.java(47:29-47:30),"c"
+584,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(47:11-47:17),"matrix"
+585,DECLAREDREFERENCEEXPRESSION,"colSearch",Main.java(47:18-47:27),"colSearch"
+586,BINARYOPERATOR,"=",Main.java(45:9-45:37),"matrix[c][colSearch] = true;"
+587,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(44:11-44:31),"matrix[l][colSearch]"
+588,DECLAREDREFERENCEEXPRESSION,"matrix",Main.java(45:9-45:15),"matrix"
+589,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(44:11-44:20),"matrix[l]"
+590,DECLAREDREFERENCEEXPRESSION,"colSearch",Main.java(44:21-44:30),"colSearch"
+591,DECLAREDREFERENCEEXPRESSION,"l",Main.java(44:18-44:19),"l"
+592,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(45:9-45:29),"matrix[c][colSearch]"
+593,LITERAL,"",Main.java(45:32-45:36),"true"
+594,ARRAYSUBSCRIPTIONEXPRESSION,"",Main.java(45:9-45:18),"matrix[c]"
+595,DECLAREDREFERENCEEXPRESSION,"colSearch",Main.java(45:19-45:28),"colSearch"
+596,DECLAREDREFERENCEEXPRESSION,"c",Main.java(45:16-45:17),"c"
+597,DECLAREDREFERENCEEXPRESSION,"matrixDim",Main.java(42:37-42:46),"matrixDim"

@@ -1,0 +1,973 @@
+id,type,token,location,code
+1,TRANSLATIONUNITDECLARATION,"/data/00000019/submissions/00047772_Sociologia_070316062/Social.java",,""
+2,RECORDDECLARATION,"Social",Social.java(3:1-106:2),"class Social{
+    
+    public static Stack<Integer> s = new Stack<Integer>();
+    public static int ctr = 0;
+    public static int[] flood;
+
+    public static void printGraph(ArrayList<ArrayList<Integer>> g){
+	for(int i=1; i<g.size(); i++){
+	    System.out.print(i+"" -> "");
+	    for(int j=0; j<g.get(i).size(); j++)
+		System.out.print(g.get(i).get(j)+"" "");
+	    System.out.println();
+	}
+    }
+    
+    public static void dfs(ArrayList<ArrayList<Integer>> g){
+	int v[] = new int[g.size()];
+	for(int i=1; i<g.size(); i++)
+	    if(v[i]==0)
+		runDFS(g,i,v);
+    }
+    
+    public static void runDFS(ArrayList<ArrayList<Integer>> g, int n, int[] v){
+	v[n]=1;
+	for(int i=0; i<g.get(n).size(); i++)
+	    if(v[g.get(n).get(i)]==0)
+		runDFS(g,g.get(n).get(i),v);
+	if(!s.contains(n))
+	    s.push(n);
+    }
+    
+    public static ArrayList<ArrayList<Integer>> transpose(ArrayList<ArrayList<Integer>> g){
+	ArrayList<ArrayList<Integer>> s = new ArrayList<ArrayList<Integer>>();
+	for(int i=0; i<g.size(); i++)
+	    s.add(new ArrayList<Integer>());
+	
+	for(int i=0; i<g.size(); i++)
+	    for(int j=0; j<g.get(i).size(); j++)
+		s.get(g.get(i).get(j)).add(i);
+	return s;
+    }
+    
+    public static void solve(ArrayList<ArrayList<Integer>> g){
+	flood = new int[g.size()];
+	while(!s.isEmpty()){
+	    int n = s.pop();
+	    if(flood[n]==0){
+		ctr++;	
+		solve_2(g,n,flood);
+	    }
+	}
+    }
+    
+    public static void solve_2(ArrayList<ArrayList<Integer>> g, int n, int[] flood){
+	flood[n]=ctr;
+	for(int i=0; i<g.get(n).size(); i++)
+	    if(flood[g.get(n).get(i)]==0)
+		solve_2(g,g.get(n).get(i),flood);
+    }
+    
+    public static void main(String[] args){
+	
+	Scanner input = new Scanner(System.in);
+	
+	int nrcases = input.nextInt();
+	for(int k=0; k<nrcases; k++){
+	    System.out.println(""Caso #""+(k+1));
+	    ArrayList<ArrayList<Integer>> g = new ArrayList<ArrayList<Integer>>();
+	    s = new Stack<Integer>();
+	    ctr = 0;
+	    
+	    int nrnodes = input.nextInt();
+	    for(int i=0; i<nrnodes+1; i++)
+		g.add(new ArrayList<Integer>());
+	    
+	    for(int i=0; i<nrnodes; i++){
+		int node  = input.nextInt();
+		int nrcons = input.nextInt();
+		for(int j=0; j<nrcons; j++)
+		    g.get(node).add(input.nextInt());
+	    }
+	    //printGraph(g);
+	    dfs(g);
+	    g=transpose(g);
+	    solve(g);
+	    
+	    Arrays.sort(flood);
+	    int groups = 0;
+	    int pplgro = 0;
+
+	    for(int i=1; i<flood.length; i++){
+		int nrppl = 0;
+		for(int j=0; j<flood.length; j++)
+		    if(flood[j]==i)
+			nrppl++;
+		if(nrppl>=4){
+		    groups++;
+		    pplgro+=nrppl;
+		}
+	    }
+	    System.out.println(groups+"" ""+(nrnodes-pplgro));
+	}
+    }
+}"
+3,INCLUDEDECLARATION,"java.util",,""
+4,FIELDDECLARATION,"this",,""
+5,FIELDDECLARATION,"s",Social.java(5:5-5:59),"s = new Stack<Integer>()"
+6,FIELDDECLARATION,"ctr",Social.java(6:5-6:31),"ctr = 0"
+7,FIELDDECLARATION,"flood",Social.java(7:5-7:31),"flood"
+8,METHODDECLARATION,"printGraph",Social.java(9:5-16:6),"public static void printGraph(ArrayList<ArrayList<Integer>> g){
+	for(int i=1; i<g.size(); i++){
+	    System.out.print(i+"" -> "");
+	    for(int j=0; j<g.get(i).size(); j++)
+		System.out.print(g.get(i).get(j)+"" "");
+	    System.out.println();
+	}
+    }"
+9,METHODDECLARATION,"dfs",Social.java(18:5-23:6),"public static void dfs(ArrayList<ArrayList<Integer>> g){
+	int v[] = new int[g.size()];
+	for(int i=1; i<g.size(); i++)
+	    if(v[i]==0)
+		runDFS(g,i,v);
+    }"
+10,METHODDECLARATION,"runDFS",Social.java(25:5-32:6),"public static void runDFS(ArrayList<ArrayList<Integer>> g, int n, int[] v){
+	v[n]=1;
+	for(int i=0; i<g.get(n).size(); i++)
+	    if(v[g.get(n).get(i)]==0)
+		runDFS(g,g.get(n).get(i),v);
+	if(!s.contains(n))
+	    s.push(n);
+    }"
+11,METHODDECLARATION,"transpose",Social.java(34:5-43:6),"public static ArrayList<ArrayList<Integer>> transpose(ArrayList<ArrayList<Integer>> g){
+	ArrayList<ArrayList<Integer>> s = new ArrayList<ArrayList<Integer>>();
+	for(int i=0; i<g.size(); i++)
+	    s.add(new ArrayList<Integer>());
+	
+	for(int i=0; i<g.size(); i++)
+	    for(int j=0; j<g.get(i).size(); j++)
+		s.get(g.get(i).get(j)).add(i);
+	return s;
+    }"
+12,METHODDECLARATION,"solve",Social.java(45:5-54:6),"public static void solve(ArrayList<ArrayList<Integer>> g){
+	flood = new int[g.size()];
+	while(!s.isEmpty()){
+	    int n = s.pop();
+	    if(flood[n]==0){
+		ctr++;	
+		solve_2(g,n,flood);
+	    }
+	}
+    }"
+13,METHODDECLARATION,"solve_2",Social.java(56:5-61:6),"public static void solve_2(ArrayList<ArrayList<Integer>> g, int n, int[] flood){
+	flood[n]=ctr;
+	for(int i=0; i<g.get(n).size(); i++)
+	    if(flood[g.get(n).get(i)]==0)
+		solve_2(g,g.get(n).get(i),flood);
+    }"
+14,METHODDECLARATION,"main",Social.java(63:5-105:6),"public static void main(String[] args){
+	
+	Scanner input = new Scanner(System.in);
+	
+	int nrcases = input.nextInt();
+	for(int k=0; k<nrcases; k++){
+	    System.out.println(""Caso #""+(k+1));
+	    ArrayList<ArrayList<Integer>> g = new ArrayList<ArrayList<Integer>>();
+	    s = new Stack<Integer>();
+	    ctr = 0;
+	    
+	    int nrnodes = input.nextInt();
+	    for(int i=0; i<nrnodes+1; i++)
+		g.add(new ArrayList<Integer>());
+	    
+	    for(int i=0; i<nrnodes; i++){
+		int node  = input.nextInt();
+		int nrcons = input.nextInt();
+		for(int j=0; j<nrcons; j++)
+		    g.get(node).add(input.nextInt());
+	    }
+	    //printGraph(g);
+	    dfs(g);
+	    g=transpose(g);
+	    solve(g);
+	    
+	    Arrays.sort(flood);
+	    int groups = 0;
+	    int pplgro = 0;
+
+	    for(int i=1; i<flood.length; i++){
+		int nrppl = 0;
+		for(int j=0; j<flood.length; j++)
+		    if(flood[j]==i)
+			nrppl++;
+		if(nrppl>=4){
+		    groups++;
+		    pplgro+=nrppl;
+		}
+	    }
+	    System.out.println(groups+"" ""+(nrnodes-pplgro));
+	}
+    }"
+15,CONSTRUCTORDECLARATION,"Social",,""
+16,VARIABLEDECLARATION,"this",,""
+17,COMPOUNDSTATEMENT,"",Social.java(45:62-54:6),"{
+	flood = new int[g.size()];
+	while(!s.isEmpty()){
+	    int n = s.pop();
+	    if(flood[n]==0){
+		ctr++;	
+		solve_2(g,n,flood);
+	    }
+	}
+    }"
+18,PARAMVARIABLEDECLARATION,"g",Social.java(45:30-45:61),"ArrayList<ArrayList<Integer>> g"
+19,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(46:2-46:7),"Social"
+20,RETURNSTATEMENT,"",,""
+21,BINARYOPERATOR,"=",Social.java(46:2-46:28),"flood = new int[g.size()];"
+22,WHILESTATEMENT,"",Social.java(47:2-53:3),"while(!s.isEmpty()){
+	    int n = s.pop();
+	    if(flood[n]==0){
+		ctr++;	
+		solve_2(g,n,flood);
+	    }
+	}"
+23,UNARYOPERATOR,"!",Social.java(47:8-47:20),"!s.isEmpty()"
+24,COMPOUNDSTATEMENT,"",Social.java(47:21-53:3),"{
+	    int n = s.pop();
+	    if(flood[n]==0){
+		ctr++;	
+		solve_2(g,n,flood);
+	    }
+	}"
+25,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(48:14-48:15),"Social"
+26,DECLARATIONSTATEMENT,"",Social.java(48:6-48:22),"int n = s.pop();"
+27,IFSTATEMENT,"",Social.java(49:6-52:7),"if(flood[n]==0){
+		ctr++;	
+		solve_2(g,n,flood);
+	    }"
+28,VARIABLEDECLARATION,"n",Social.java(48:10-48:21),"n = s.pop()"
+29,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(47:9-47:10),"Social"
+30,COMPOUNDSTATEMENT,"",Social.java(49:21-52:7),"{
+		ctr++;	
+		solve_2(g,n,flood);
+	    }"
+31,BINARYOPERATOR,"==",Social.java(49:9-49:20),"flood[n]==0"
+32,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(50:3-50:6),"Social"
+33,ARRAYSUBSCRIPTIONEXPRESSION,"",Social.java(49:9-49:17),"flood[n]"
+34,LITERAL,"",Social.java(49:19-49:20),"0"
+35,MEMBEREXPRESSION,"flood",Social.java(49:9-49:14),"flood"
+36,DECLAREDREFERENCEEXPRESSION,"n",Social.java(49:15-49:16),"n"
+37,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(49:9-49:14),"Social"
+38,UNARYOPERATOR,"++",Social.java(50:3-50:9),"ctr++;"
+39,CALLEXPRESSION,"solve_2",Social.java(51:3-51:22),"solve_2(g,n,flood);"
+40,MEMBEREXPRESSION,"ctr",Social.java(50:3-50:6),"ctr"
+41,DECLAREDREFERENCEEXPRESSION,"g",Social.java(51:11-51:12),"g"
+42,METHODDECLARATION,"solve_2",Social.java(56:5-61:6),"public static void solve_2(ArrayList<ArrayList<Integer>> g, int n, int[] flood){
+	flood[n]=ctr;
+	for(int i=0; i<g.get(n).size(); i++)
+	    if(flood[g.get(n).get(i)]==0)
+		solve_2(g,g.get(n).get(i),flood);
+    }"
+43,DECLAREDREFERENCEEXPRESSION,"n",Social.java(51:13-51:14),"n"
+44,MEMBEREXPRESSION,"flood",Social.java(51:15-51:20),"flood"
+45,PARAMVARIABLEDECLARATION,"g",Social.java(56:32-56:63),"ArrayList<ArrayList<Integer>> g"
+46,PARAMVARIABLEDECLARATION,"n",Social.java(56:65-56:70),"int n"
+47,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(51:15-51:20),"Social"
+48,PARAMVARIABLEDECLARATION,"flood",Social.java(56:72-56:83),"int[] flood"
+49,MEMBERCALLEXPRESSION,"pop",Social.java(48:14-48:21),"s.pop()"
+50,DECLAREDREFERENCEEXPRESSION,"pop",Social.java(48:16-48:19),"pop"
+51,MEMBEREXPRESSION,"s",Social.java(48:14-48:15),"s"
+52,MEMBERCALLEXPRESSION,"isEmpty",Social.java(47:9-47:20),"s.isEmpty()"
+53,DECLAREDREFERENCEEXPRESSION,"isEmpty",Social.java(47:11-47:18),"isEmpty"
+54,MEMBEREXPRESSION,"s",Social.java(47:9-47:10),"s"
+55,MEMBEREXPRESSION,"flood",Social.java(46:2-46:7),"flood"
+56,ARRAYCREATIONEXPRESSION,"",Social.java(46:10-46:27),"new int[g.size()]"
+57,DECLAREDREFERENCEEXPRESSION,"g",Social.java(46:18-46:19),"g"
+58,MEMBERCALLEXPRESSION,"size",Social.java(46:18-46:26),"g.size()"
+59,DECLAREDREFERENCEEXPRESSION,"size",Social.java(46:20-46:24),"size"
+60,NEWEXPRESSION,"",Social.java(5:38-5:58),"new Stack<Integer>()"
+61,CONSTRUCTEXPRESSION,"",Social.java(5:38-5:58),"new Stack<Integer>()"
+62,VARIABLEDECLARATION,"this",,""
+63,COMPOUNDSTATEMENT,"",Social.java(9:67-16:6),"{
+	for(int i=1; i<g.size(); i++){
+	    System.out.print(i+"" -> "");
+	    for(int j=0; j<g.get(i).size(); j++)
+		System.out.print(g.get(i).get(j)+"" "");
+	    System.out.println();
+	}
+    }"
+64,PARAMVARIABLEDECLARATION,"g",Social.java(9:35-9:66),"ArrayList<ArrayList<Integer>> g"
+65,LITERAL,"",Social.java(10:12-10:13),"1"
+66,RETURNSTATEMENT,"",,""
+67,FORSTATEMENT,"",Social.java(10:2-15:3),"for(int i=1; i<g.size(); i++){
+	    System.out.print(i+"" -> "");
+	    for(int j=0; j<g.get(i).size(); j++)
+		System.out.print(g.get(i).get(j)+"" "");
+	    System.out.println();
+	}"
+68,COMPOUNDSTATEMENT,"",Social.java(10:31-15:3),"{
+	    System.out.print(i+"" -> "");
+	    for(int j=0; j<g.get(i).size(); j++)
+		System.out.print(g.get(i).get(j)+"" "");
+	    System.out.println();
+	}"
+69,DECLARATIONSTATEMENT,"",Social.java(10:6-10:13),"int i=1"
+70,BINARYOPERATOR,"<",Social.java(10:15-10:25),"i<g.size()"
+71,UNARYOPERATOR,"++",Social.java(10:27-10:30),"i++"
+72,VARIABLEDECLARATION,"i",Social.java(10:10-10:13),"i=1"
+73,DECLAREDREFERENCEEXPRESSION,"System",Social.java(11:6-11:12),"System"
+74,MEMBERCALLEXPRESSION,"print",Social.java(11:6-11:33),"System.out.print(i+"" -> "");"
+75,FORSTATEMENT,"",Social.java(12:6-13:41),"for(int j=0; j<g.get(i).size(); j++)
+		System.out.print(g.get(i).get(j)+"" "");"
+76,MEMBERCALLEXPRESSION,"println",Social.java(14:6-14:27),"System.out.println();"
+77,DECLAREDREFERENCEEXPRESSION,"i",Social.java(10:27-10:28),"i"
+78,DECLAREDREFERENCEEXPRESSION,"println",Social.java(14:17-14:24),"println"
+79,MEMBEREXPRESSION,"out",Social.java(14:6-14:16),"System.out"
+80,DECLAREDREFERENCEEXPRESSION,"System",Social.java(14:6-14:12),"System"
+81,DECLAREDREFERENCEEXPRESSION,"print",Social.java(11:17-11:22),"print"
+82,LITERAL,"",Social.java(12:16-12:17),"0"
+83,BINARYOPERATOR,"+",Social.java(11:23-11:31),"i+"" -> """
+84,DECLAREDREFERENCEEXPRESSION,"i",Social.java(11:23-11:24),"i"
+85,LITERAL,"",Social.java(11:25-11:31),""" -> """
+86,MEMBEREXPRESSION,"out",Social.java(11:6-11:16),"System.out"
+87,MEMBERCALLEXPRESSION,"print",Social.java(13:3-13:41),"System.out.print(g.get(i).get(j)+"" "");"
+88,DECLARATIONSTATEMENT,"",Social.java(12:10-12:17),"int j=0"
+89,BINARYOPERATOR,"<",Social.java(12:19-12:36),"j<g.get(i).size()"
+90,UNARYOPERATOR,"++",Social.java(12:38-12:41),"j++"
+91,VARIABLEDECLARATION,"j",Social.java(12:14-12:17),"j=0"
+92,DECLAREDREFERENCEEXPRESSION,"System",Social.java(13:3-13:9),"System"
+93,DECLAREDREFERENCEEXPRESSION,"j",Social.java(12:38-12:39),"j"
+94,DECLAREDREFERENCEEXPRESSION,"j",Social.java(12:19-12:20),"j"
+95,MEMBERCALLEXPRESSION,"size",Social.java(12:21-12:36),"g.get(i).size()"
+96,DECLAREDREFERENCEEXPRESSION,"g",Social.java(12:21-12:22),"g"
+97,DECLAREDREFERENCEEXPRESSION,"size",Social.java(12:30-12:34),"size"
+98,MEMBERCALLEXPRESSION,"get",Social.java(12:21-12:29),"g.get(i)"
+99,DECLAREDREFERENCEEXPRESSION,"get",Social.java(12:23-12:26),"get"
+100,DECLAREDREFERENCEEXPRESSION,"i",Social.java(12:27-12:28),"i"
+101,DECLAREDREFERENCEEXPRESSION,"print",Social.java(13:14-13:19),"print"
+102,BINARYOPERATOR,"+",Social.java(13:20-13:39),"g.get(i).get(j)+"" """
+103,MEMBEREXPRESSION,"out",Social.java(13:3-13:13),"System.out"
+104,DECLAREDREFERENCEEXPRESSION,"g",Social.java(13:20-13:21),"g"
+105,MEMBERCALLEXPRESSION,"get",Social.java(13:20-13:35),"g.get(i).get(j)"
+106,LITERAL,"",Social.java(13:36-13:39),""" """
+107,DECLAREDREFERENCEEXPRESSION,"get",Social.java(13:29-13:32),"get"
+108,DECLAREDREFERENCEEXPRESSION,"j",Social.java(13:33-13:34),"j"
+109,MEMBERCALLEXPRESSION,"get",Social.java(13:20-13:28),"g.get(i)"
+110,DECLAREDREFERENCEEXPRESSION,"get",Social.java(13:22-13:25),"get"
+111,DECLAREDREFERENCEEXPRESSION,"i",Social.java(13:26-13:27),"i"
+112,DECLAREDREFERENCEEXPRESSION,"i",Social.java(10:15-10:16),"i"
+113,MEMBERCALLEXPRESSION,"size",Social.java(10:17-10:25),"g.size()"
+114,DECLAREDREFERENCEEXPRESSION,"size",Social.java(10:19-10:23),"size"
+115,DECLAREDREFERENCEEXPRESSION,"g",Social.java(10:17-10:18),"g"
+116,VARIABLEDECLARATION,"this",,""
+117,COMPOUNDSTATEMENT,"",Social.java(56:84-61:6),"{
+	flood[n]=ctr;
+	for(int i=0; i<g.get(n).size(); i++)
+	    if(flood[g.get(n).get(i)]==0)
+		solve_2(g,g.get(n).get(i),flood);
+    }"
+118,PARAMVARIABLEDECLARATION,"g",Social.java(56:32-56:63),"ArrayList<ArrayList<Integer>> g"
+119,PARAMVARIABLEDECLARATION,"n",Social.java(56:65-56:70),"int n"
+120,PARAMVARIABLEDECLARATION,"flood",Social.java(56:72-56:83),"int[] flood"
+121,DECLAREDREFERENCEEXPRESSION,"flood",Social.java(57:2-57:7),"flood"
+122,RETURNSTATEMENT,"",,""
+123,BINARYOPERATOR,"=",Social.java(57:2-57:15),"flood[n]=ctr;"
+124,FORSTATEMENT,"",Social.java(58:2-60:36),"for(int i=0; i<g.get(n).size(); i++)
+	    if(flood[g.get(n).get(i)]==0)
+		solve_2(g,g.get(n).get(i),flood);"
+125,ARRAYSUBSCRIPTIONEXPRESSION,"",Social.java(57:2-57:10),"flood[n]"
+126,MEMBEREXPRESSION,"ctr",Social.java(57:11-57:14),"ctr"
+127,LITERAL,"",Social.java(58:12-58:13),"0"
+128,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(57:11-57:14),"Social"
+129,DECLAREDREFERENCEEXPRESSION,"n",Social.java(57:8-57:9),"n"
+130,IFSTATEMENT,"",Social.java(59:6-60:36),"if(flood[g.get(n).get(i)]==0)
+		solve_2(g,g.get(n).get(i),flood);"
+131,DECLARATIONSTATEMENT,"",Social.java(58:6-58:13),"int i=0"
+132,BINARYOPERATOR,"<",Social.java(58:15-58:32),"i<g.get(n).size()"
+133,UNARYOPERATOR,"++",Social.java(58:34-58:37),"i++"
+134,VARIABLEDECLARATION,"i",Social.java(58:10-58:13),"i=0"
+135,DECLAREDREFERENCEEXPRESSION,"flood",Social.java(59:9-59:14),"flood"
+136,BINARYOPERATOR,"==",Social.java(59:9-59:34),"flood[g.get(n).get(i)]==0"
+137,CALLEXPRESSION,"solve_2",Social.java(60:3-60:36),"solve_2(g,g.get(n).get(i),flood);"
+138,DECLAREDREFERENCEEXPRESSION,"g",Social.java(60:11-60:12),"g"
+139,DECLAREDREFERENCEEXPRESSION,"i",Social.java(58:34-58:35),"i"
+140,ARRAYSUBSCRIPTIONEXPRESSION,"",Social.java(59:9-59:31),"flood[g.get(n).get(i)]"
+141,LITERAL,"",Social.java(59:33-59:34),"0"
+142,MEMBERCALLEXPRESSION,"get",Social.java(59:15-59:30),"g.get(n).get(i)"
+143,DECLAREDREFERENCEEXPRESSION,"g",Social.java(59:15-59:16),"g"
+144,DECLAREDREFERENCEEXPRESSION,"get",Social.java(59:24-59:27),"get"
+145,DECLAREDREFERENCEEXPRESSION,"i",Social.java(59:28-59:29),"i"
+146,MEMBERCALLEXPRESSION,"get",Social.java(59:15-59:23),"g.get(n)"
+147,DECLAREDREFERENCEEXPRESSION,"get",Social.java(59:17-59:20),"get"
+148,DECLAREDREFERENCEEXPRESSION,"n",Social.java(59:21-59:22),"n"
+149,METHODDECLARATION,"solve_2",,""
+150,MEMBERCALLEXPRESSION,"get",Social.java(60:13-60:28),"g.get(n).get(i)"
+151,DECLAREDREFERENCEEXPRESSION,"flood",Social.java(60:29-60:34),"flood"
+152,DECLAREDREFERENCEEXPRESSION,"get",Social.java(60:22-60:25),"get"
+153,PARAMVARIABLEDECLARATION,"e1",,""
+154,DECLAREDREFERENCEEXPRESSION,"i",Social.java(60:26-60:27),"i"
+155,MEMBERCALLEXPRESSION,"get",Social.java(60:13-60:21),"g.get(n)"
+156,DECLAREDREFERENCEEXPRESSION,"get",Social.java(60:15-60:18),"get"
+157,DECLAREDREFERENCEEXPRESSION,"n",Social.java(60:19-60:20),"n"
+158,DECLAREDREFERENCEEXPRESSION,"g",Social.java(60:13-60:14),"g"
+159,PARAMVARIABLEDECLARATION,"java.util.arraylist0",,""
+160,PARAMVARIABLEDECLARATION,"intPtr2",,""
+161,DECLAREDREFERENCEEXPRESSION,"i",Social.java(58:15-58:16),"i"
+162,MEMBERCALLEXPRESSION,"size",Social.java(58:17-58:32),"g.get(n).size()"
+163,DECLAREDREFERENCEEXPRESSION,"g",Social.java(58:17-58:18),"g"
+164,DECLAREDREFERENCEEXPRESSION,"size",Social.java(58:26-58:30),"size"
+165,MEMBERCALLEXPRESSION,"get",Social.java(58:17-58:25),"g.get(n)"
+166,DECLAREDREFERENCEEXPRESSION,"get",Social.java(58:19-58:22),"get"
+167,DECLAREDREFERENCEEXPRESSION,"n",Social.java(58:23-58:24),"n"
+168,VARIABLEDECLARATION,"this",,""
+169,COMPOUNDSTATEMENT,"",Social.java(34:91-43:6),"{
+	ArrayList<ArrayList<Integer>> s = new ArrayList<ArrayList<Integer>>();
+	for(int i=0; i<g.size(); i++)
+	    s.add(new ArrayList<Integer>());
+	
+	for(int i=0; i<g.size(); i++)
+	    for(int j=0; j<g.get(i).size(); j++)
+		s.get(g.get(i).get(j)).add(i);
+	return s;
+    }"
+170,PARAMVARIABLEDECLARATION,"g",Social.java(34:59-34:90),"ArrayList<ArrayList<Integer>> g"
+171,CONSTRUCTEXPRESSION,"",Social.java(35:36-35:71),"new ArrayList<ArrayList<Integer>>()"
+172,RETURNSTATEMENT,"",Social.java(42:2-42:11),"return s;"
+173,DECLARATIONSTATEMENT,"",Social.java(35:2-35:72),"ArrayList<ArrayList<Integer>> s = new ArrayList<ArrayList<Integer>>();"
+174,FORSTATEMENT,"",Social.java(36:2-37:38),"for(int i=0; i<g.size(); i++)
+	    s.add(new ArrayList<Integer>());"
+175,FORSTATEMENT,"",Social.java(39:2-41:33),"for(int i=0; i<g.size(); i++)
+	    for(int j=0; j<g.get(i).size(); j++)
+		s.get(g.get(i).get(j)).add(i);"
+176,VARIABLEDECLARATION,"s",Social.java(35:32-35:71),"s = new ArrayList<ArrayList<Integer>>()"
+177,MEMBERCALLEXPRESSION,"add",Social.java(37:6-37:38),"s.add(new ArrayList<Integer>());"
+178,DECLARATIONSTATEMENT,"",Social.java(36:6-36:13),"int i=0"
+179,BINARYOPERATOR,"<",Social.java(36:15-36:25),"i<g.size()"
+180,UNARYOPERATOR,"++",Social.java(36:27-36:30),"i++"
+181,VARIABLEDECLARATION,"i",Social.java(36:10-36:13),"i=0"
+182,DECLAREDREFERENCEEXPRESSION,"s",Social.java(37:6-37:7),"s"
+183,LITERAL,"",Social.java(39:12-39:13),"0"
+184,DECLAREDREFERENCEEXPRESSION,"i",Social.java(36:15-36:16),"i"
+185,LITERAL,"",Social.java(36:12-36:13),"0"
+186,DECLAREDREFERENCEEXPRESSION,"add",Social.java(37:8-37:11),"add"
+187,DECLAREDREFERENCEEXPRESSION,"i",Social.java(36:27-36:28),"i"
+188,NEWEXPRESSION,"",Social.java(37:12-37:36),"new ArrayList<Integer>()"
+189,CONSTRUCTEXPRESSION,"",Social.java(37:12-37:36),"new ArrayList<Integer>()"
+190,MEMBERCALLEXPRESSION,"size",Social.java(36:17-36:25),"g.size()"
+191,DECLAREDREFERENCEEXPRESSION,"g",Social.java(36:17-36:18),"g"
+192,DECLAREDREFERENCEEXPRESSION,"size",Social.java(36:19-36:23),"size"
+193,NEWEXPRESSION,"",Social.java(35:36-35:71),"new ArrayList<ArrayList<Integer>>()"
+194,FORSTATEMENT,"",Social.java(40:6-41:33),"for(int j=0; j<g.get(i).size(); j++)
+		s.get(g.get(i).get(j)).add(i);"
+195,DECLARATIONSTATEMENT,"",Social.java(39:6-39:13),"int i=0"
+196,BINARYOPERATOR,"<",Social.java(39:15-39:25),"i<g.size()"
+197,UNARYOPERATOR,"++",Social.java(39:27-39:30),"i++"
+198,VARIABLEDECLARATION,"i",Social.java(39:10-39:13),"i=0"
+199,LITERAL,"",Social.java(40:16-40:17),"0"
+200,DECLAREDREFERENCEEXPRESSION,"s",Social.java(42:9-42:10),"s"
+201,DECLAREDREFERENCEEXPRESSION,"i",Social.java(39:15-39:16),"i"
+202,MEMBERCALLEXPRESSION,"size",Social.java(39:17-39:25),"g.size()"
+203,DECLAREDREFERENCEEXPRESSION,"size",Social.java(39:19-39:23),"size"
+204,DECLAREDREFERENCEEXPRESSION,"g",Social.java(39:17-39:18),"g"
+205,MEMBERCALLEXPRESSION,"add",Social.java(41:3-41:33),"s.get(g.get(i).get(j)).add(i);"
+206,DECLARATIONSTATEMENT,"",Social.java(40:10-40:17),"int j=0"
+207,BINARYOPERATOR,"<",Social.java(40:19-40:36),"j<g.get(i).size()"
+208,UNARYOPERATOR,"++",Social.java(40:38-40:41),"j++"
+209,VARIABLEDECLARATION,"j",Social.java(40:14-40:17),"j=0"
+210,DECLAREDREFERENCEEXPRESSION,"s",Social.java(41:3-41:4),"s"
+211,DECLAREDREFERENCEEXPRESSION,"i",Social.java(39:27-39:28),"i"
+212,DECLAREDREFERENCEEXPRESSION,"j",Social.java(40:19-40:20),"j"
+213,MEMBERCALLEXPRESSION,"size",Social.java(40:21-40:36),"g.get(i).size()"
+214,DECLAREDREFERENCEEXPRESSION,"g",Social.java(40:21-40:22),"g"
+215,DECLAREDREFERENCEEXPRESSION,"size",Social.java(40:30-40:34),"size"
+216,MEMBERCALLEXPRESSION,"get",Social.java(40:21-40:29),"g.get(i)"
+217,DECLAREDREFERENCEEXPRESSION,"get",Social.java(40:23-40:26),"get"
+218,DECLAREDREFERENCEEXPRESSION,"i",Social.java(40:27-40:28),"i"
+219,DECLAREDREFERENCEEXPRESSION,"j",Social.java(40:38-40:39),"j"
+220,DECLAREDREFERENCEEXPRESSION,"add",Social.java(41:26-41:29),"add"
+221,DECLAREDREFERENCEEXPRESSION,"i",Social.java(41:30-41:31),"i"
+222,MEMBERCALLEXPRESSION,"get",Social.java(41:3-41:25),"s.get(g.get(i).get(j))"
+223,DECLAREDREFERENCEEXPRESSION,"get",Social.java(41:5-41:8),"get"
+224,MEMBERCALLEXPRESSION,"get",Social.java(41:9-41:24),"g.get(i).get(j)"
+225,DECLAREDREFERENCEEXPRESSION,"g",Social.java(41:9-41:10),"g"
+226,DECLAREDREFERENCEEXPRESSION,"get",Social.java(41:18-41:21),"get"
+227,DECLAREDREFERENCEEXPRESSION,"j",Social.java(41:22-41:23),"j"
+228,MEMBERCALLEXPRESSION,"get",Social.java(41:9-41:17),"g.get(i)"
+229,DECLAREDREFERENCEEXPRESSION,"get",Social.java(41:11-41:14),"get"
+230,DECLAREDREFERENCEEXPRESSION,"i",Social.java(41:15-41:16),"i"
+231,VARIABLEDECLARATION,"this",,""
+232,COMPOUNDSTATEMENT,"",Social.java(25:79-32:6),"{
+	v[n]=1;
+	for(int i=0; i<g.get(n).size(); i++)
+	    if(v[g.get(n).get(i)]==0)
+		runDFS(g,g.get(n).get(i),v);
+	if(!s.contains(n))
+	    s.push(n);
+    }"
+233,PARAMVARIABLEDECLARATION,"g",Social.java(25:31-25:62),"ArrayList<ArrayList<Integer>> g"
+234,PARAMVARIABLEDECLARATION,"n",Social.java(25:64-25:69),"int n"
+235,PARAMVARIABLEDECLARATION,"v",Social.java(25:71-25:78),"int[] v"
+236,DECLAREDREFERENCEEXPRESSION,"v",Social.java(26:2-26:3),"v"
+237,RETURNSTATEMENT,"",,""
+238,BINARYOPERATOR,"=",Social.java(26:2-26:9),"v[n]=1;"
+239,FORSTATEMENT,"",Social.java(27:2-29:31),"for(int i=0; i<g.get(n).size(); i++)
+	    if(v[g.get(n).get(i)]==0)
+		runDFS(g,g.get(n).get(i),v);"
+240,IFSTATEMENT,"",Social.java(30:2-31:16),"if(!s.contains(n))
+	    s.push(n);"
+241,UNARYOPERATOR,"!",Social.java(30:5-30:19),"!s.contains(n)"
+242,MEMBERCALLEXPRESSION,"push",Social.java(31:6-31:16),"s.push(n);"
+243,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(31:6-31:7),"Social"
+244,DECLAREDREFERENCEEXPRESSION,"push",Social.java(31:8-31:12),"push"
+245,DECLAREDREFERENCEEXPRESSION,"n",Social.java(31:13-31:14),"n"
+246,MEMBEREXPRESSION,"s",Social.java(31:6-31:7),"s"
+247,MEMBERCALLEXPRESSION,"contains",Social.java(30:6-30:19),"s.contains(n)"
+248,DECLAREDREFERENCEEXPRESSION,"contains",Social.java(30:8-30:16),"contains"
+249,DECLAREDREFERENCEEXPRESSION,"n",Social.java(30:17-30:18),"n"
+250,MEMBEREXPRESSION,"s",Social.java(30:6-30:7),"s"
+251,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(30:6-30:7),"Social"
+252,ARRAYSUBSCRIPTIONEXPRESSION,"",Social.java(26:2-26:6),"v[n]"
+253,LITERAL,"",Social.java(26:7-26:8),"1"
+254,LITERAL,"",Social.java(27:12-27:13),"0"
+255,DECLAREDREFERENCEEXPRESSION,"n",Social.java(26:4-26:5),"n"
+256,IFSTATEMENT,"",Social.java(28:6-29:31),"if(v[g.get(n).get(i)]==0)
+		runDFS(g,g.get(n).get(i),v);"
+257,DECLARATIONSTATEMENT,"",Social.java(27:6-27:13),"int i=0"
+258,BINARYOPERATOR,"<",Social.java(27:15-27:32),"i<g.get(n).size()"
+259,UNARYOPERATOR,"++",Social.java(27:34-27:37),"i++"
+260,VARIABLEDECLARATION,"i",Social.java(27:10-27:13),"i=0"
+261,DECLAREDREFERENCEEXPRESSION,"v",Social.java(28:9-28:10),"v"
+262,BINARYOPERATOR,"==",Social.java(28:9-28:30),"v[g.get(n).get(i)]==0"
+263,CALLEXPRESSION,"runDFS",Social.java(29:3-29:31),"runDFS(g,g.get(n).get(i),v);"
+264,DECLAREDREFERENCEEXPRESSION,"g",Social.java(29:10-29:11),"g"
+265,DECLAREDREFERENCEEXPRESSION,"i",Social.java(27:34-27:35),"i"
+266,ARRAYSUBSCRIPTIONEXPRESSION,"",Social.java(28:9-28:27),"v[g.get(n).get(i)]"
+267,LITERAL,"",Social.java(28:29-28:30),"0"
+268,MEMBERCALLEXPRESSION,"get",Social.java(28:11-28:26),"g.get(n).get(i)"
+269,DECLAREDREFERENCEEXPRESSION,"g",Social.java(28:11-28:12),"g"
+270,DECLAREDREFERENCEEXPRESSION,"get",Social.java(28:20-28:23),"get"
+271,DECLAREDREFERENCEEXPRESSION,"i",Social.java(28:24-28:25),"i"
+272,MEMBERCALLEXPRESSION,"get",Social.java(28:11-28:19),"g.get(n)"
+273,DECLAREDREFERENCEEXPRESSION,"get",Social.java(28:13-28:16),"get"
+274,DECLAREDREFERENCEEXPRESSION,"n",Social.java(28:17-28:18),"n"
+275,METHODDECLARATION,"runDFS",,""
+276,MEMBERCALLEXPRESSION,"get",Social.java(29:12-29:27),"g.get(n).get(i)"
+277,DECLAREDREFERENCEEXPRESSION,"v",Social.java(29:28-29:29),"v"
+278,PARAMVARIABLEDECLARATION,"java.util.arraylist0",,""
+279,DECLAREDREFERENCEEXPRESSION,"g",Social.java(29:12-29:13),"g"
+280,PARAMVARIABLEDECLARATION,"intPtr2",,""
+281,DECLAREDREFERENCEEXPRESSION,"get",Social.java(29:21-29:24),"get"
+282,PARAMVARIABLEDECLARATION,"e1",,""
+283,DECLAREDREFERENCEEXPRESSION,"i",Social.java(29:25-29:26),"i"
+284,MEMBERCALLEXPRESSION,"get",Social.java(29:12-29:20),"g.get(n)"
+285,DECLAREDREFERENCEEXPRESSION,"get",Social.java(29:14-29:17),"get"
+286,DECLAREDREFERENCEEXPRESSION,"n",Social.java(29:18-29:19),"n"
+287,DECLAREDREFERENCEEXPRESSION,"i",Social.java(27:15-27:16),"i"
+288,MEMBERCALLEXPRESSION,"size",Social.java(27:17-27:32),"g.get(n).size()"
+289,DECLAREDREFERENCEEXPRESSION,"g",Social.java(27:17-27:18),"g"
+290,DECLAREDREFERENCEEXPRESSION,"size",Social.java(27:26-27:30),"size"
+291,MEMBERCALLEXPRESSION,"get",Social.java(27:17-27:25),"g.get(n)"
+292,DECLAREDREFERENCEEXPRESSION,"get",Social.java(27:19-27:22),"get"
+293,DECLAREDREFERENCEEXPRESSION,"n",Social.java(27:23-27:24),"n"
+294,LITERAL,"",Social.java(6:29-6:30),"0"
+295,VARIABLEDECLARATION,"this",,""
+296,COMPOUNDSTATEMENT,"",Social.java(18:60-23:6),"{
+	int v[] = new int[g.size()];
+	for(int i=1; i<g.size(); i++)
+	    if(v[i]==0)
+		runDFS(g,i,v);
+    }"
+297,PARAMVARIABLEDECLARATION,"g",Social.java(18:28-18:59),"ArrayList<ArrayList<Integer>> g"
+298,DECLAREDREFERENCEEXPRESSION,"g",Social.java(19:20-19:21),"g"
+299,RETURNSTATEMENT,"",,""
+300,DECLARATIONSTATEMENT,"",Social.java(19:2-19:30),"int v[] = new int[g.size()];"
+301,FORSTATEMENT,"",Social.java(20:2-22:17),"for(int i=1; i<g.size(); i++)
+	    if(v[i]==0)
+		runDFS(g,i,v);"
+302,VARIABLEDECLARATION,"v",Social.java(19:6-19:29),"v[] = new int[g.size()]"
+303,LITERAL,"",Social.java(20:12-20:13),"1"
+304,IFSTATEMENT,"",Social.java(21:6-22:17),"if(v[i]==0)
+		runDFS(g,i,v);"
+305,DECLARATIONSTATEMENT,"",Social.java(20:6-20:13),"int i=1"
+306,BINARYOPERATOR,"<",Social.java(20:15-20:25),"i<g.size()"
+307,UNARYOPERATOR,"++",Social.java(20:27-20:30),"i++"
+308,VARIABLEDECLARATION,"i",Social.java(20:10-20:13),"i=1"
+309,DECLAREDREFERENCEEXPRESSION,"v",Social.java(21:9-21:10),"v"
+310,DECLAREDREFERENCEEXPRESSION,"i",Social.java(20:27-20:28),"i"
+311,DECLAREDREFERENCEEXPRESSION,"i",Social.java(20:15-20:16),"i"
+312,CALLEXPRESSION,"runDFS",Social.java(22:3-22:17),"runDFS(g,i,v);"
+313,MEMBERCALLEXPRESSION,"size",Social.java(20:17-20:25),"g.size()"
+314,DECLAREDREFERENCEEXPRESSION,"g",Social.java(20:17-20:18),"g"
+315,DECLAREDREFERENCEEXPRESSION,"size",Social.java(20:19-20:23),"size"
+316,BINARYOPERATOR,"==",Social.java(21:9-21:16),"v[i]==0"
+317,DECLAREDREFERENCEEXPRESSION,"g",Social.java(22:10-22:11),"g"
+318,ARRAYSUBSCRIPTIONEXPRESSION,"",Social.java(21:9-21:13),"v[i]"
+319,LITERAL,"",Social.java(21:15-21:16),"0"
+320,DECLAREDREFERENCEEXPRESSION,"i",Social.java(21:11-21:12),"i"
+321,METHODDECLARATION,"runDFS",Social.java(25:5-32:6),"public static void runDFS(ArrayList<ArrayList<Integer>> g, int n, int[] v){
+	v[n]=1;
+	for(int i=0; i<g.get(n).size(); i++)
+	    if(v[g.get(n).get(i)]==0)
+		runDFS(g,g.get(n).get(i),v);
+	if(!s.contains(n))
+	    s.push(n);
+    }"
+322,DECLAREDREFERENCEEXPRESSION,"i",Social.java(22:12-22:13),"i"
+323,DECLAREDREFERENCEEXPRESSION,"v",Social.java(22:14-22:15),"v"
+324,PARAMVARIABLEDECLARATION,"n",Social.java(25:64-25:69),"int n"
+325,PARAMVARIABLEDECLARATION,"v",Social.java(25:71-25:78),"int[] v"
+326,PARAMVARIABLEDECLARATION,"g",Social.java(25:31-25:62),"ArrayList<ArrayList<Integer>> g"
+327,ARRAYCREATIONEXPRESSION,"",Social.java(19:12-19:29),"new int[g.size()]"
+328,MEMBERCALLEXPRESSION,"size",Social.java(19:20-19:28),"g.size()"
+329,DECLAREDREFERENCEEXPRESSION,"size",Social.java(19:22-19:26),"size"
+330,VARIABLEDECLARATION,"this",,""
+331,COMPOUNDSTATEMENT,"",Social.java(63:43-105:6),"{
+	
+	Scanner input = new Scanner(System.in);
+	
+	int nrcases = input.nextInt();
+	for(int k=0; k<nrcases; k++){
+	    System.out.println(""Caso #""+(k+1));
+	    ArrayList<ArrayList<Integer>> g = new ArrayList<ArrayList<Integer>>();
+	    s = new Stack<Integer>();
+	    ctr = 0;
+	    
+	    int nrnodes = input.nextInt();
+	    for(int i=0; i<nrnodes+1; i++)
+		g.add(new ArrayList<Integer>());
+	    
+	    for(int i=0; i<nrnodes; i++){
+		int node  = input.nextInt();
+		int nrcons = input.nextInt();
+		for(int j=0; j<nrcons; j++)
+		    g.get(node).add(input.nextInt());
+	    }
+	    //printGraph(g);
+	    dfs(g);
+	    g=transpose(g);
+	    solve(g);
+	    
+	    Arrays.sort(flood);
+	    int groups = 0;
+	    int pplgro = 0;
+
+	    for(int i=1; i<flood.length; i++){
+		int nrppl = 0;
+		for(int j=0; j<flood.length; j++)
+		    if(flood[j]==i)
+			nrppl++;
+		if(nrppl>=4){
+		    groups++;
+		    pplgro+=nrppl;
+		}
+	    }
+	    System.out.println(groups+"" ""+(nrnodes-pplgro));
+	}
+    }"
+332,PARAMVARIABLEDECLARATION,"args",Social.java(63:29-63:42),"String[] args"
+333,DECLAREDREFERENCEEXPRESSION,"System",Social.java(65:30-65:36),"System"
+334,RETURNSTATEMENT,"",,""
+335,DECLARATIONSTATEMENT,"",Social.java(65:2-65:41),"Scanner input = new Scanner(System.in);"
+336,DECLARATIONSTATEMENT,"",Social.java(67:2-67:32),"int nrcases = input.nextInt();"
+337,FORSTATEMENT,"",Social.java(68:2-104:3),"for(int k=0; k<nrcases; k++){
+	    System.out.println(""Caso #""+(k+1));
+	    ArrayList<ArrayList<Integer>> g = new ArrayList<ArrayList<Integer>>();
+	    s = new Stack<Integer>();
+	    ctr = 0;
+	    
+	    int nrnodes = input.nextInt();
+	    for(int i=0; i<nrnodes+1; i++)
+		g.add(new ArrayList<Integer>());
+	    
+	    for(int i=0; i<nrnodes; i++){
+		int node  = input.nextInt();
+		int nrcons = input.nextInt();
+		for(int j=0; j<nrcons; j++)
+		    g.get(node).add(input.nextInt());
+	    }
+	    //printGraph(g);
+	    dfs(g);
+	    g=transpose(g);
+	    solve(g);
+	    
+	    Arrays.sort(flood);
+	    int groups = 0;
+	    int pplgro = 0;
+
+	    for(int i=1; i<flood.length; i++){
+		int nrppl = 0;
+		for(int j=0; j<flood.length; j++)
+		    if(flood[j]==i)
+			nrppl++;
+		if(nrppl>=4){
+		    groups++;
+		    pplgro+=nrppl;
+		}
+	    }
+	    System.out.println(groups+"" ""+(nrnodes-pplgro));
+	}"
+338,VARIABLEDECLARATION,"input",Social.java(65:10-65:40),"input = new Scanner(System.in)"
+339,VARIABLEDECLARATION,"nrcases",Social.java(67:6-67:31),"nrcases = input.nextInt()"
+340,MEMBERCALLEXPRESSION,"nextInt",Social.java(67:16-67:31),"input.nextInt()"
+341,DECLAREDREFERENCEEXPRESSION,"nextInt",Social.java(67:22-67:29),"nextInt"
+342,DECLAREDREFERENCEEXPRESSION,"input",Social.java(67:16-67:21),"input"
+343,LITERAL,"",Social.java(68:12-68:13),"0"
+344,NEWEXPRESSION,"",Social.java(65:18-65:40),"new Scanner(System.in)"
+345,CONSTRUCTEXPRESSION,"",Social.java(65:18-65:40),"new Scanner(System.in)"
+346,MEMBEREXPRESSION,"in",Social.java(65:30-65:39),"System.in"
+347,COMPOUNDSTATEMENT,"",Social.java(68:30-104:3),"{
+	    System.out.println(""Caso #""+(k+1));
+	    ArrayList<ArrayList<Integer>> g = new ArrayList<ArrayList<Integer>>();
+	    s = new Stack<Integer>();
+	    ctr = 0;
+	    
+	    int nrnodes = input.nextInt();
+	    for(int i=0; i<nrnodes+1; i++)
+		g.add(new ArrayList<Integer>());
+	    
+	    for(int i=0; i<nrnodes; i++){
+		int node  = input.nextInt();
+		int nrcons = input.nextInt();
+		for(int j=0; j<nrcons; j++)
+		    g.get(node).add(input.nextInt());
+	    }
+	    //printGraph(g);
+	    dfs(g);
+	    g=transpose(g);
+	    solve(g);
+	    
+	    Arrays.sort(flood);
+	    int groups = 0;
+	    int pplgro = 0;
+
+	    for(int i=1; i<flood.length; i++){
+		int nrppl = 0;
+		for(int j=0; j<flood.length; j++)
+		    if(flood[j]==i)
+			nrppl++;
+		if(nrppl>=4){
+		    groups++;
+		    pplgro+=nrppl;
+		}
+	    }
+	    System.out.println(groups+"" ""+(nrnodes-pplgro));
+	}"
+348,DECLARATIONSTATEMENT,"",Social.java(68:6-68:13),"int k=0"
+349,BINARYOPERATOR,"<",Social.java(68:15-68:24),"k<nrcases"
+350,UNARYOPERATOR,"++",Social.java(68:26-68:29),"k++"
+351,VARIABLEDECLARATION,"k",Social.java(68:10-68:13),"k=0"
+352,DECLAREDREFERENCEEXPRESSION,"System",Social.java(69:6-69:12),"System"
+353,MEMBERCALLEXPRESSION,"println",Social.java(69:6-69:41),"System.out.println(""Caso #""+(k+1));"
+354,DECLARATIONSTATEMENT,"",Social.java(70:6-70:76),"ArrayList<ArrayList<Integer>> g = new ArrayList<ArrayList<Integer>>();"
+355,BINARYOPERATOR,"=",Social.java(71:6-71:31),"s = new Stack<Integer>();"
+356,BINARYOPERATOR,"=",Social.java(72:6-72:14),"ctr = 0;"
+357,DECLARATIONSTATEMENT,"",Social.java(74:6-74:36),"int nrnodes = input.nextInt();"
+358,FORSTATEMENT,"",Social.java(75:6-76:35),"for(int i=0; i<nrnodes+1; i++)
+		g.add(new ArrayList<Integer>());"
+359,FORSTATEMENT,"",Social.java(78:6-83:7),"for(int i=0; i<nrnodes; i++){
+		int node  = input.nextInt();
+		int nrcons = input.nextInt();
+		for(int j=0; j<nrcons; j++)
+		    g.get(node).add(input.nextInt());
+	    }"
+360,CALLEXPRESSION,"dfs",Social.java(85:6-85:13),"dfs(g);"
+361,BINARYOPERATOR,"=",Social.java(86:6-86:21),"g=transpose(g);"
+362,CALLEXPRESSION,"solve",Social.java(87:6-87:15),"solve(g);"
+363,STATICCALLEXPRESSION,"sort",Social.java(89:6-89:25),"Arrays.sort(flood);"
+364,DECLARATIONSTATEMENT,"",Social.java(90:6-90:21),"int groups = 0;"
+365,DECLARATIONSTATEMENT,"",Social.java(91:6-91:21),"int pplgro = 0;"
+366,FORSTATEMENT,"",Social.java(93:6-102:7),"for(int i=1; i<flood.length; i++){
+		int nrppl = 0;
+		for(int j=0; j<flood.length; j++)
+		    if(flood[j]==i)
+			nrppl++;
+		if(nrppl>=4){
+		    groups++;
+		    pplgro+=nrppl;
+		}
+	    }"
+367,MEMBERCALLEXPRESSION,"println",Social.java(103:6-103:54),"System.out.println(groups+"" ""+(nrnodes-pplgro));"
+368,VARIABLEDECLARATION,"g",Social.java(70:36-70:75),"g = new ArrayList<ArrayList<Integer>>()"
+369,VARIABLEDECLARATION,"nrnodes",Social.java(74:10-74:35),"nrnodes = input.nextInt()"
+370,VARIABLEDECLARATION,"groups",Social.java(90:10-90:20),"groups = 0"
+371,VARIABLEDECLARATION,"pplgro",Social.java(91:10-91:20),"pplgro = 0"
+372,DECLAREDREFERENCEEXPRESSION,"k",Social.java(68:26-68:27),"k"
+373,COMPOUNDSTATEMENT,"",Social.java(78:34-83:7),"{
+		int node  = input.nextInt();
+		int nrcons = input.nextInt();
+		for(int j=0; j<nrcons; j++)
+		    g.get(node).add(input.nextInt());
+	    }"
+374,DECLARATIONSTATEMENT,"",Social.java(78:10-78:17),"int i=0"
+375,BINARYOPERATOR,"<",Social.java(78:19-78:28),"i<nrnodes"
+376,UNARYOPERATOR,"++",Social.java(78:30-78:33),"i++"
+377,VARIABLEDECLARATION,"i",Social.java(78:14-78:17),"i=0"
+378,DECLAREDREFERENCEEXPRESSION,"input",Social.java(79:15-79:20),"input"
+379,DECLAREDREFERENCEEXPRESSION,"g",Social.java(85:10-85:11),"g"
+380,LITERAL,"",Social.java(78:16-78:17),"0"
+381,DECLAREDREFERENCEEXPRESSION,"i",Social.java(78:19-78:20),"i"
+382,DECLARATIONSTATEMENT,"",Social.java(79:3-79:31),"int node  = input.nextInt();"
+383,DECLARATIONSTATEMENT,"",Social.java(80:3-80:32),"int nrcons = input.nextInt();"
+384,FORSTATEMENT,"",Social.java(81:3-82:40),"for(int j=0; j<nrcons; j++)
+		    g.get(node).add(input.nextInt());"
+385,VARIABLEDECLARATION,"node",Social.java(79:7-79:30),"node  = input.nextInt()"
+386,VARIABLEDECLARATION,"nrcons",Social.java(80:7-80:31),"nrcons = input.nextInt()"
+387,DECLAREDREFERENCEEXPRESSION,"i",Social.java(78:30-78:31),"i"
+388,LITERAL,"",Social.java(81:13-81:14),"0"
+389,DECLAREDREFERENCEEXPRESSION,"input",Social.java(80:16-80:21),"input"
+390,MEMBERCALLEXPRESSION,"nextInt",Social.java(79:15-79:30),"input.nextInt()"
+391,DECLAREDREFERENCEEXPRESSION,"nextInt",Social.java(79:21-79:28),"nextInt"
+392,MEMBERCALLEXPRESSION,"add",Social.java(82:7-82:40),"g.get(node).add(input.nextInt());"
+393,DECLARATIONSTATEMENT,"",Social.java(81:7-81:14),"int j=0"
+394,BINARYOPERATOR,"<",Social.java(81:16-81:24),"j<nrcons"
+395,UNARYOPERATOR,"++",Social.java(81:26-81:29),"j++"
+396,VARIABLEDECLARATION,"j",Social.java(81:11-81:14),"j=0"
+397,DECLAREDREFERENCEEXPRESSION,"g",Social.java(82:7-82:8),"g"
+398,DECLAREDREFERENCEEXPRESSION,"add",Social.java(82:19-82:22),"add"
+399,DECLAREDREFERENCEEXPRESSION,"j",Social.java(81:26-81:27),"j"
+400,MEMBERCALLEXPRESSION,"nextInt",Social.java(82:23-82:38),"input.nextInt()"
+401,MEMBERCALLEXPRESSION,"get",Social.java(82:7-82:18),"g.get(node)"
+402,DECLAREDREFERENCEEXPRESSION,"get",Social.java(82:9-82:12),"get"
+403,DECLAREDREFERENCEEXPRESSION,"input",Social.java(82:23-82:28),"input"
+404,DECLAREDREFERENCEEXPRESSION,"node",Social.java(82:13-82:17),"node"
+405,DECLAREDREFERENCEEXPRESSION,"nextInt",Social.java(82:29-82:36),"nextInt"
+406,DECLAREDREFERENCEEXPRESSION,"j",Social.java(81:16-81:17),"j"
+407,DECLAREDREFERENCEEXPRESSION,"nrcons",Social.java(81:18-81:24),"nrcons"
+408,MEMBERCALLEXPRESSION,"nextInt",Social.java(80:16-80:31),"input.nextInt()"
+409,DECLAREDREFERENCEEXPRESSION,"nextInt",Social.java(80:22-80:29),"nextInt"
+410,DECLAREDREFERENCEEXPRESSION,"nrnodes",Social.java(78:21-78:28),"nrnodes"
+411,METHODDECLARATION,"solve",Social.java(45:5-54:6),"public static void solve(ArrayList<ArrayList<Integer>> g){
+	flood = new int[g.size()];
+	while(!s.isEmpty()){
+	    int n = s.pop();
+	    if(flood[n]==0){
+		ctr++;	
+		solve_2(g,n,flood);
+	    }
+	}
+    }"
+412,DECLAREDREFERENCEEXPRESSION,"g",Social.java(87:12-87:13),"g"
+413,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(89:18-89:23),"Social"
+414,PARAMVARIABLEDECLARATION,"g",Social.java(45:30-45:61),"ArrayList<ArrayList<Integer>> g"
+415,MEMBEREXPRESSION,"s",Social.java(71:6-71:7),"s"
+416,NEWEXPRESSION,"",Social.java(71:10-71:30),"new Stack<Integer>()"
+417,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(72:6-72:9),"Social"
+418,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(71:6-71:7),"Social"
+419,CONSTRUCTEXPRESSION,"",Social.java(71:10-71:30),"new Stack<Integer>()"
+420,LITERAL,"",Social.java(90:19-90:20),"0"
+421,MEMBEREXPRESSION,"flood",Social.java(89:18-89:23),"flood"
+422,LITERAL,"",Social.java(93:16-93:17),"1"
+423,DECLAREDREFERENCEEXPRESSION,"println",Social.java(69:17-69:24),"println"
+424,CONSTRUCTEXPRESSION,"",Social.java(70:40-70:75),"new ArrayList<ArrayList<Integer>>()"
+425,BINARYOPERATOR,"+",Social.java(69:25-69:39),"""Caso #""+(k+1)"
+426,LITERAL,"",Social.java(69:25-69:33),"""Caso #"""
+427,BINARYOPERATOR,"+",Social.java(69:35-69:38),"k+1"
+428,DECLAREDREFERENCEEXPRESSION,"k",Social.java(69:35-69:36),"k"
+429,LITERAL,"",Social.java(69:37-69:38),"1"
+430,MEMBEREXPRESSION,"out",Social.java(69:6-69:16),"System.out"
+431,LITERAL,"",Social.java(91:19-91:20),"0"
+432,COMPOUNDSTATEMENT,"",Social.java(93:39-102:7),"{
+		int nrppl = 0;
+		for(int j=0; j<flood.length; j++)
+		    if(flood[j]==i)
+			nrppl++;
+		if(nrppl>=4){
+		    groups++;
+		    pplgro+=nrppl;
+		}
+	    }"
+433,DECLARATIONSTATEMENT,"",Social.java(93:10-93:17),"int i=1"
+434,BINARYOPERATOR,"<",Social.java(93:19-93:33),"i<flood.length"
+435,UNARYOPERATOR,"++",Social.java(93:35-93:38),"i++"
+436,VARIABLEDECLARATION,"i",Social.java(93:14-93:17),"i=1"
+437,LITERAL,"",Social.java(94:15-94:16),"0"
+438,DECLAREDREFERENCEEXPRESSION,"System",Social.java(103:6-103:12),"System"
+439,DECLAREDREFERENCEEXPRESSION,"i",Social.java(93:35-93:36),"i"
+440,DECLAREDREFERENCEEXPRESSION,"i",Social.java(93:19-93:20),"i"
+441,DECLARATIONSTATEMENT,"",Social.java(94:3-94:17),"int nrppl = 0;"
+442,FORSTATEMENT,"",Social.java(95:3-97:12),"for(int j=0; j<flood.length; j++)
+		    if(flood[j]==i)
+			nrppl++;"
+443,IFSTATEMENT,"",Social.java(98:3-101:4),"if(nrppl>=4){
+		    groups++;
+		    pplgro+=nrppl;
+		}"
+444,VARIABLEDECLARATION,"nrppl",Social.java(94:7-94:16),"nrppl = 0"
+445,COMPOUNDSTATEMENT,"",Social.java(98:15-101:4),"{
+		    groups++;
+		    pplgro+=nrppl;
+		}"
+446,IFSTATEMENT,"",Social.java(96:7-97:12),"if(flood[j]==i)
+			nrppl++;"
+447,DECLARATIONSTATEMENT,"",Social.java(95:7-95:14),"int j=0"
+448,BINARYOPERATOR,"<",Social.java(95:16-95:30),"j<flood.length"
+449,UNARYOPERATOR,"++",Social.java(95:32-95:35),"j++"
+450,VARIABLEDECLARATION,"j",Social.java(95:11-95:14),"j=0"
+451,DECLAREDREFERENCEEXPRESSION,"Social",Social.java(96:10-96:15),"Social"
+452,DECLAREDREFERENCEEXPRESSION,"nrppl",Social.java(98:6-98:11),"nrppl"
+453,DECLAREDREFERENCEEXPRESSION,"j",Social.java(95:32-95:33),"j"
+454,DECLAREDREFERENCEEXPRESSION,"j",Social.java(95:16-95:17),"j"
+455,UNARYOPERATOR,"++",Social.java(97:4-97:12),"nrppl++;"
+456,MEMBEREXPRESSION,"length",Social.java(95:18-95:30),"flood.length"
+457,DECLAREDREFERENCEEXPRESSION,"flood",Social.java(95:18-95:23),"flood"
+458,BINARYOPERATOR,"==",Social.java(96:10-96:21),"flood[j]==i"
+459,DECLAREDREFERENCEEXPRESSION,"nrppl",Social.java(97:4-97:9),"nrppl"
+460,ARRAYSUBSCRIPTIONEXPRESSION,"",Social.java(96:10-96:18),"flood[j]"
+461,DECLAREDREFERENCEEXPRESSION,"i",Social.java(96:20-96:21),"i"
+462,MEMBEREXPRESSION,"flood",Social.java(96:10-96:15),"flood"
+463,DECLAREDREFERENCEEXPRESSION,"j",Social.java(96:16-96:17),"j"
+464,LITERAL,"",Social.java(95:13-95:14),"0"
+465,BINARYOPERATOR,">=",Social.java(98:6-98:14),"nrppl>=4"
+466,DECLAREDREFERENCEEXPRESSION,"groups",Social.java(99:7-99:13),"groups"
+467,LITERAL,"",Social.java(98:13-98:14),"4"
+468,UNARYOPERATOR,"++",Social.java(99:7-99:16),"groups++;"
+469,BINARYOPERATOR,"+=",Social.java(100:7-100:21),"pplgro+=nrppl;"
+470,DECLAREDREFERENCEEXPRESSION,"pplgro",Social.java(100:7-100:13),"pplgro"
+471,DECLAREDREFERENCEEXPRESSION,"nrppl",Social.java(100:15-100:20),"nrppl"
+472,MEMBEREXPRESSION,"length",Social.java(93:21-93:33),"flood.length"
+473,DECLAREDREFERENCEEXPRESSION,"flood",Social.java(93:21-93:26),"flood"
+474,LITERAL,"",Social.java(75:16-75:17),"0"
+475,MEMBERCALLEXPRESSION,"nextInt",Social.java(74:20-74:35),"input.nextInt()"
+476,DECLAREDREFERENCEEXPRESSION,"nextInt",Social.java(74:26-74:33),"nextInt"
+477,DECLAREDREFERENCEEXPRESSION,"input",Social.java(74:20-74:25),"input"
+478,NEWEXPRESSION,"",Social.java(70:40-70:75),"new ArrayList<ArrayList<Integer>>()"
+479,METHODDECLARATION,"dfs",Social.java(18:5-23:6),"public static void dfs(ArrayList<ArrayList<Integer>> g){
+	int v[] = new int[g.size()];
+	for(int i=1; i<g.size(); i++)
+	    if(v[i]==0)
+		runDFS(g,i,v);
+    }"
+480,DECLAREDREFERENCEEXPRESSION,"g",Social.java(86:6-86:7),"g"
+481,PARAMVARIABLEDECLARATION,"g",Social.java(18:28-18:59),"ArrayList<ArrayList<Integer>> g"
+482,DECLAREDREFERENCEEXPRESSION,"println",Social.java(103:17-103:24),"println"
+483,BINARYOPERATOR,"+",Social.java(103:25-103:52),"groups+"" ""+(nrnodes-pplgro)"
+484,BINARYOPERATOR,"+",Social.java(103:25-103:35),"groups+"" """
+485,BINARYOPERATOR,"-",Social.java(103:37-103:51),"nrnodes-pplgro"
+486,DECLAREDREFERENCEEXPRESSION,"groups",Social.java(103:25-103:31),"groups"
+487,LITERAL,"",Social.java(103:32-103:35),""" """
+488,DECLAREDREFERENCEEXPRESSION,"nrnodes",Social.java(103:37-103:44),"nrnodes"
+489,MEMBEREXPRESSION,"out",Social.java(103:6-103:16),"System.out"
+490,DECLAREDREFERENCEEXPRESSION,"pplgro",Social.java(103:45-103:51),"pplgro"
+491,CALLEXPRESSION,"transpose",Social.java(86:8-86:20),"transpose(g)"
+492,METHODDECLARATION,"transpose",Social.java(34:5-43:6),"public static ArrayList<ArrayList<Integer>> transpose(ArrayList<ArrayList<Integer>> g){
+	ArrayList<ArrayList<Integer>> s = new ArrayList<ArrayList<Integer>>();
+	for(int i=0; i<g.size(); i++)
+	    s.add(new ArrayList<Integer>());
+	
+	for(int i=0; i<g.size(); i++)
+	    for(int j=0; j<g.get(i).size(); j++)
+		s.get(g.get(i).get(j)).add(i);
+	return s;
+    }"
+493,DECLAREDREFERENCEEXPRESSION,"g",Social.java(86:18-86:19),"g"
+494,PARAMVARIABLEDECLARATION,"g",Social.java(34:59-34:90),"ArrayList<ArrayList<Integer>> g"
+495,MEMBEREXPRESSION,"ctr",Social.java(72:6-72:9),"ctr"
+496,LITERAL,"",Social.java(72:12-72:13),"0"
+497,MEMBERCALLEXPRESSION,"add",Social.java(76:3-76:35),"g.add(new ArrayList<Integer>());"
+498,DECLARATIONSTATEMENT,"",Social.java(75:10-75:17),"int i=0"
+499,BINARYOPERATOR,"<",Social.java(75:19-75:30),"i<nrnodes+1"
+500,UNARYOPERATOR,"++",Social.java(75:32-75:35),"i++"
+501,VARIABLEDECLARATION,"i",Social.java(75:14-75:17),"i=0"
+502,DECLAREDREFERENCEEXPRESSION,"g",Social.java(76:3-76:4),"g"
+503,DECLAREDREFERENCEEXPRESSION,"i",Social.java(75:32-75:33),"i"
+504,DECLAREDREFERENCEEXPRESSION,"i",Social.java(75:19-75:20),"i"
+505,BINARYOPERATOR,"+",Social.java(75:21-75:30),"nrnodes+1"
+506,DECLAREDREFERENCEEXPRESSION,"nrnodes",Social.java(75:21-75:28),"nrnodes"
+507,LITERAL,"",Social.java(75:29-75:30),"1"
+508,DECLAREDREFERENCEEXPRESSION,"add",Social.java(76:5-76:8),"add"
+509,NEWEXPRESSION,"",Social.java(76:9-76:33),"new ArrayList<Integer>()"
+510,CONSTRUCTEXPRESSION,"",Social.java(76:9-76:33),"new ArrayList<Integer>()"
+511,DECLAREDREFERENCEEXPRESSION,"k",Social.java(68:15-68:16),"k"
+512,DECLAREDREFERENCEEXPRESSION,"nrcases",Social.java(68:17-68:24),"nrcases"
