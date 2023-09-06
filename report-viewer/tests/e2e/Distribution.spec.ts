@@ -29,7 +29,10 @@ async function compareDistributionDiagramm(page: Page, options: string[]) {
 }
 
 function getAllOptionCombinations() {
-  const options = [['Average', 'Maximum']]
+  const options = [
+    ['Average', 'Maximum'],
+    ['Linear', 'Logarithmic']
+  ]
 
   function combine(a: string[][], b: string[]) {
     const combinations: string[][] = []
