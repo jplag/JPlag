@@ -35,26 +35,28 @@
     <div ref="styleholder"></div>
     <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
       <FilesContainer
-        :container-id="1"
-        :submission-id="firstId"
+        ref="panel1"
         :files="filesOfFirst"
         :matches="comparison.matchesInFirstSubmission"
-        :files-owner="store().submissionDisplayName(firstId) || ''"
-        :anonymous="isAnonymous(firstId)"
-        files-owner-default="Submission 1"
-        @toggle-collapse="toggleCollapseFirst"
+        :file-owner-display-name="
+          isAnonymous(comparison.secondSubmissionId)
+            ? 'Submission 1'
+            : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
+        "
+        :highlight-language="getHighlightLanguage(language)"
         @line-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
       />
       <FilesContainer
-        :container-id="2"
-        :submission-id="secondId"
+        ref="panel2"
         :files="filesOfSecond"
         :matches="comparison.matchesInSecondSubmissions"
-        :files-owner="store().submissionDisplayName(secondId) || ''"
-        :anonymous="isAnonymous(secondId)"
-        files-owner-default="Submission 2"
-        @toggle-collapse="toggleCollapseSecond"
+        :file-owner-display-name="
+          isAnonymous(comparison.secondSubmissionId)
+            ? 'Submission 2'
+            : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
+        "
+        :highlight-language="getHighlightLanguage(language)"
         @line-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
       />
@@ -66,18 +68,18 @@
 import type { Match } from '@/model/Match'
 
 import { onMounted, ref, watch, type Ref, computed, onErrorCaptured } from 'vue'
-import { generateLineCodeLink } from '@/utils/ComparisonUtils'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
-
+import { getHighlightLanguage } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { router } from '@/router'
 import { MetricType } from '@/model/MetricType'
+import { OverviewFactory } from '@/model/factories/OverviewFactory'
 
 const props = defineProps({
   firstId: {
@@ -90,60 +92,31 @@ const props = defineProps({
   }
 })
 
+const language = OverviewFactory.getOverview().language
 const comparison = computed(() => ComparisonFactory.getComparison(props.firstId, props.secondId))
 
 const filesOfFirst = ref(comparison.value.filesOfFirstSubmission)
 const filesOfSecond = ref(comparison.value.filesOfSecondSubmission)
 
-/**
- * Collapses a file in the first files container.
- * @param title title of the file
- */
-function toggleCollapseFirst(title: string) {
-  const file = filesOfFirst.value.get(title)
-  if (file) {
-    file.collapsed = !file.collapsed
-  }
-}
-
-/**
- * Collapses a file in the second files container.
- * @param title title of the file
- */
-function toggleCollapseSecond(title: string) {
-  const file = filesOfSecond.value.get(title)
-  if (file) {
-    file.collapsed = !file.collapsed
-  }
-}
+const panel1: Ref<typeof FilesContainer | null> = ref(null)
+const panel2: Ref<typeof FilesContainer | null> = ref(null)
 
 /**
  * Shows a match in the first files container when clicked on a line in the second files container.
- * @param e The click event
- * @param panel panel number (1 for left, 2 for right)
  * @param file (file name)
  * @param line (line number)
  */
-
-function showMatchInFirst(e: unknown, panel: number, file: string, line: number) {
-  if (!filesOfFirst.value.get(file)?.collapsed) {
-    toggleCollapseFirst(file)
-  }
-  document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
+function showMatchInFirst(match: Match) {
+  panel1.value?.scrollTo(match.firstFile, match.startInFirst)
 }
 
 /**
  * Shows a match in the second files container, when clicked on a line in the second files container.
- * @param e The click event
- * @param panel panel number (1 for left, 2 for right)
  * @param file (file name)
  * @param line (line number)
  */
-function showMatchInSecond(e: unknown, panel: number, file: string, line: number) {
-  if (!filesOfSecond.value.get(file)?.collapsed) {
-    toggleCollapseSecond(file)
-  }
-  document.getElementById(generateLineCodeLink(panel, file, line))?.scrollIntoView()
+function showMatchInSecond(match: Match) {
+  panel2.value?.scrollTo(match.secondFile, match.startInSecond)
 }
 
 /**
@@ -151,9 +124,9 @@ function showMatchInSecond(e: unknown, panel: number, file: string, line: number
  * @param e The click event
  * @param match The match to show
  */
-function showMatch(e: unknown, match: Match) {
-  showMatchInFirst(e, 1, match.firstFile, match.startInFirst)
-  showMatchInSecond(e, 2, match.secondFile, match.startInSecond)
+function showMatch(match: Match) {
+  showMatchInFirst(match)
+  showMatchInSecond(match)
 }
 
 function isAnonymous(id: string) {
