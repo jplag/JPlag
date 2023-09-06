@@ -2,8 +2,18 @@ name: Build
 
 on:
   push: 
+    paths:
+      - ".github/workflows/maven.yml"
+      - "**/pom.xml"
+      - "**.java"
+      - "**.g4"
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/maven.yml"
+      - "**/pom.xml"
+      - "**.java"
+      - "**.g4"
   
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

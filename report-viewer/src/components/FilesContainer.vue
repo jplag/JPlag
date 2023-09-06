@@ -4,22 +4,21 @@
 <template>
   <Container class="flex flex-col">
     <h3 class="text-left text-lg font-bold">
-      Files of {{ anonymous ? filesOwnerDefault : filesOwner }}:
+      Files of
+      {{ fileOwnerDisplayName }}:
     </h3>
     <ScrollableComponent class="flex-grow">
       <VueDraggableNext>
         <CodePanel
-          v-for="(file, index) in files.keys()"
-          :key="file.concat(index.toString())"
-          :collapse="files.get(file)?.collapsed"
-          :file-index="index"
-          :lines="files.get(file)?.lines || []"
-          :matches="!matches.get(file) ? [] : matches.get(file)"
-          :panel-id="containerId"
-          :title="convertSubmissionIdToName(file, submissionId)"
-          :filePath="file"
-          @toggle-collapse="$emit('toggle-collapse', file)"
-          @line-selected="lineSelected"
+          v-for="(file, index) in files"
+          :key="index"
+          ref="codePanels"
+          :file="file"
+          :matches="
+            !matches.get(file.fileName) ? [] : (matches.get(file.fileName) as MatchInSingleFile[])
+          "
+          :highlight-language="highlightLanguage"
+          @line-selected="(match) => $emit('line-selected', match)"
           class="mt-1"
         />
       </VueDraggableNext>
@@ -28,107 +27,63 @@
 </template>
 
 <script setup lang="ts">
-import type { SubmissionFile } from '@/model/SubmissionFile'
-import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-
+import type { SubmissionFile } from '@/stores/state'
 import CodePanel from '@/components/CodePanel.vue'
-import { store } from '@/stores/store'
 import Container from './ContainerComponent.vue'
 import ScrollableComponent from './ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
+import { ref, type PropType, type Ref } from 'vue'
+import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
+import type { HighlightLanguage } from '@/model/Language'
 
-defineProps({
-  /**
-   * Id of the files container. We have only two so it is either 1 or 2.
-   */
-  containerId: {
-    type: Number,
-    required: true
-  },
-  /**
-   * Id of the submission to thich the files belong.
-   */
-  filesOwner: {
-    type: String,
-    required: true
-  },
-  /**
-   * Default value of the submission to which the files belong.
-   */
-  filesOwnerDefault: {
-    type: String,
-    required: true
-  },
+const props = defineProps({
   /**
    * Files of the submission.
-   * type: Array<SubmissionFile>
    */
   files: {
-    type: Map<string, SubmissionFile>,
+    type: Array<SubmissionFile>,
     required: true
   },
   /**
-   * Matche of submission.
+   * Matches of submission.
    */
   matches: {
     type: Map<string, MatchInSingleFile[]>,
     required: true
   },
   /**
-   * Default value of the submission to which the files belong.
+   * Name of the owner of the files.
    */
-  submissionId: {
+  fileOwnerDisplayName: {
     type: String,
     required: true
   },
   /**
-   * The bool value of that whether id is hidden.
+   * Language of the files.
    */
-  anonymous: {
-    type: Boolean,
+  highlightLanguage: {
+    type: String as PropType<HighlightLanguage>,
     required: true
   }
 })
 
-const emit = defineEmits(['toggle-collapse', 'lineSelected'])
+defineEmits(['lineSelected'])
+
+const codePanels: Ref<(typeof CodePanel)[]> = ref([])
 
 /**
- * Passes lineSelected event, emitted from LineOfCode, to parent.
- * @param e event from clicking on the line
- * @param index index of the file in the files array
- * @param file path of the file
- * @param line line number of the line
+ * Scrolls to the given file and line in the container.
+ * @param file Name of the file to scroll to.
+ * @param line Line to scroll to.
  */
-function lineSelected(e: unknown, index: number, file: string, line: number) {
-  emit('lineSelected', e, index, file, line)
+function scrollTo(file: string, line: number) {
+  const fileIndex = Array.from(props.files).findIndex((f) => f.fileName === file)
+  if (fileIndex !== -1) {
+    codePanels.value[fileIndex].scrollTo(line)
+  }
 }
 
-/**
- * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.
- * @param file files path
- * @param submissionId id of submission
- * @return new path of file
- */
-function convertSubmissionIdToName(file: string, submissionId: string): string {
-  const displayName = store().submissionDisplayName(submissionId) || submissionId
-  const filePath = file.replace(submissionId, displayName)
-  const filePathLength = filePath.length
-  return filePathLength > 40
-    ? '..' + filePath.substring(filePathLength - 40, filePathLength)
-    : filePath
-}
+defineExpose({
+  scrollTo
+})
 </script>
-
-<style scoped>
-h1 {
-  text-align: center;
-}
-
-.files-container {
-  display: flex;
-  flex-wrap: nowrap;
-  flex-direction: column;
-  padding-top: 1%;
-  width: 100%;
-}
-</style>
