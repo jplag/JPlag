@@ -26,8 +26,8 @@
       <Container class="flex max-h-0 min-h-full flex-1 flex-col">
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
-          :distribution="overview.distribution[selectedDistributionDiagramMetric]"
-          :x-scale="distributionDiagramScaleX"
+          :distribution="overview.distribution[store().uiState.distributionChartConfig.metric]"
+          :x-scale="store().uiState.distributionChartConfig.xScale"
           class="h-2/3 w-full"
         />
         <div class="flex flex-grow flex-col space-y-1">
@@ -36,16 +36,21 @@
             <OptionsSelector
               name="Metric"
               :labels="['Average', 'Maximum']"
+              :defaultSelected="getIndexFromMetric(store().uiState.distributionChartConfig.metric)"
               @selection-changed="
-                (i: number) => (selectedDistributionDiagramMetric = getMetricFromNumber(i))
+                (i: number) =>
+                  (store().uiState.distributionChartConfig.metric = getMetricFromNumber(i))
               "
             />
             <OptionsSelector
               class="mt-2"
               name="Scale x-Axis:"
               :labels="['Linear', 'Logarithmic']"
+              :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
               @selection-changed="
-                (i: number) => (distributionDiagramScaleX = i == 0 ? 'linear' : 'logarithmic')
+                (i: number) =>
+                  (store().uiState.distributionChartConfig.xScale =
+                    i == 0 ? 'linear' : 'logarithmic')
               "
             />
           </ScrollableComponent>
@@ -71,8 +76,9 @@
         <OptionsSelector
           name="Sort By"
           :labels="['Average Similarity', 'Maximum Similarity']"
+          :defaultSelected="getIndexFromMetric(store().uiState.comparisonTableSortingMetric)"
           @selection-changed="
-            (index) => (comparisonTableSortingMetric = getMetricFromNumber(index))
+            (index) => (store().uiState.comparisonTableSortingMetric = getMetricFromNumber(index))
           "
         />
         <ComparisonsTable
@@ -86,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref, watch, type Ref } from 'vue'
+import { computed, onErrorCaptured, ref, watch } from 'vue'
 import { router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
@@ -104,8 +110,6 @@ import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
 const overview = OverviewFactory.getOverview()
 
 const searchString = ref('')
-const comparisonTableSortingMetric = ref(MetricType.AVERAGE)
-const distributionDiagramScaleX: Ref<'linear' | 'logarithmic'> = ref('linear')
 
 /**
  * This funtion gets called when the search bar for the compariosn table has been updated.
@@ -134,8 +138,8 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
   comparisons.sort(
     (a, b) =>
-      b.similarities[comparisonTableSortingMetric.value] -
-      a.similarities[comparisonTableSortingMetric.value]
+      b.similarities[store().uiState.comparisonTableSortingMetric] -
+      a.similarities[store().uiState.comparisonTableSortingMetric]
   )
   let index = 0
   comparisons.forEach((c) => {
@@ -184,13 +188,19 @@ function changeAnnoymousForAll() {
   }
 }
 
-const selectedDistributionDiagramMetric = ref(MetricType.AVERAGE)
-
 function getMetricFromNumber(metric: number) {
   if (metric == 0) {
     return MetricType.AVERAGE
   } else {
     return MetricType.MAXIMUM
+  }
+}
+
+function getIndexFromMetric(metric: MetricType) {
+  if (metric == MetricType.AVERAGE) {
+    return 0
+  } else {
+    return 1
   }
 }
 
