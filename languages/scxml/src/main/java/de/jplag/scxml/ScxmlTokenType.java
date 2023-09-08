@@ -152,6 +152,7 @@ public enum ScxmlTokenType implements TokenType {
     /**
      * @return the description for this token type
      */
+    @Override
     public String getDescription() {
         return description;
     }

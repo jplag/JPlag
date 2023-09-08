@@ -102,6 +102,16 @@
             <artifactId>emf-model</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>typescript</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>llvmir</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- CLI -->
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>
@@ -111,7 +121,7 @@
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
-            <version>4.7.4</version>
+            <version>4.7.5</version>
         </dependency>
     </dependencies>
     <build>

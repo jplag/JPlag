@@ -46,7 +46,7 @@ public class BaseCodeTest extends TestBase {
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
-        assertEquals(1, result.getSimilarityDistribution()[8]);
+        assertEquals(1, result.getSimilarityDistribution()[81]);
         assertEquals(0.8125, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
@@ -94,7 +94,7 @@ public class BaseCodeTest extends TestBase {
         assertEquals(submissions, result.getNumberOfSubmissions());
         assertEquals(comparisons, result.getAllComparisons().size());
         assertEquals(1, result.getAllComparisons().get(0).matches().size());
-        assertEquals(1, result.getSimilarityDistribution()[9]);
+        assertEquals(1, result.getSimilarityDistribution()[94]);
         assertEquals(0.9473, result.getAllComparisons().get(0).similarity(), DELTA);
     }
 
