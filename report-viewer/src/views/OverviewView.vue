@@ -17,7 +17,17 @@
           <TextInformation label="Min Match Length">{{
             overview.matchSensitivity
           }}</TextInformation>
-          <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+
+          <ToolTipComponent direction="left">
+            <template #default>
+              <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+            </template>
+            <template #tooltip>
+              <p class="flex min-h-[1.25rem] items-center whitespace-pre">
+                More information about the CLI run of JPlag
+              </p>
+            </template>
+          </ToolTipComponent>
         </div>
       </Container>
     </div>
@@ -35,14 +45,14 @@
           <ScrollableComponent class="h-fit flex-grow">
             <MetricSelector
               class="mt-2"
-              title="Metric"
+              title="Metric:"
               @selection-changed="
                 (i: number) => (selectedDistributionDiagramMetric = getMetricFromNumber(i))
               "
             />
             <OptionsSelector
               class="mt-2"
-              name="Scale x-Axis:"
+              title="Scale x-Axis:"
               :labels="['Linear', 'Logarithmic']"
               @selection-changed="
                 (i: number) => (distributionDiagramScaleX = i == 0 ? 'linear' : 'logarithmic')
@@ -55,11 +65,24 @@
       <Container class="flex max-h-0 min-h-full flex-1 flex-col space-y-2">
         <div class="flex flex-row items-center space-x-8">
           <h2>Top Comparisons:</h2>
-          <SearchBarComponent
-            placeholder="Filter/Unhide Comparisons"
-            class="flex-grow"
-            @input-changed="(value) => (searchString = value)"
-          />
+          <ToolTipComponent direction="bottom" class="flex-grow">
+            <template #default>
+              <SearchBarComponent
+                placeholder="Filter/Unhide Comparisons"
+                @input-changed="(value) => (searchString = value)"
+              />
+            </template>
+            <template #tooltip>
+              <p class="flex min-h-[1.25rem] items-center whitespace-pre">
+                Type in the name of a submission to only show comparisons that contain this
+                submission.
+              </p>
+              <p class="flex min-h-[1.25rem] items-center whitespace-pre">
+                Fully written out names get unhidden.
+              </p>
+            </template>
+          </ToolTipComponent>
+
           <Button class="w-24" @click="changeAnnoymousForAll()">
             {{
               store().state.anonymous.size == store().getSubmissionIds.length
@@ -99,6 +122,8 @@ import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 
 const overview = OverviewFactory.getOverview()
 

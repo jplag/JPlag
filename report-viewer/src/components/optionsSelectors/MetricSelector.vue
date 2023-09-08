@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import OptionsSelectorComponent from './OptionsSelectorComponent.vue'
-import MetricType, { metricToolTips } from '@/model/MetricType'
+import { MetricType, metricToolTips } from '@/model/MetricType'
 
 const props = defineProps({
   metrics: {

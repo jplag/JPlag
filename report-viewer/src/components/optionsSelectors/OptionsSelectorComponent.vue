@@ -2,26 +2,22 @@
   Component for selecting one of multiple options.
 -->
 <template>
-  <div class="flex flex-row text-xs h-fit items-center text-center">
+  <div class="flex h-fit flex-row items-center text-center text-xs">
     <div v-if="title != ''" class="mr-3 text-base">
       {{ title }}
     </div>
     <div v-for="[index, label] in labels.entries()" :key="index">
-      <ToolTipComponent
-        v-if="(label as ToolTipLabel).displayValue !== undefined"
-        direction="right"
-        :tooltip-text="(label as ToolTipLabel).tooltip"
-      >
+      <ToolTipComponent v-if="(label as ToolTipLabel).displayValue !== undefined" direction="right">
         <template #default>
           <OptionComponent
             :label="(label as ToolTipLabel).displayValue"
-            :selected="index == selected"
+            :selected="index == getSelected()"
             @click="select(index)"
           />
         </template>
 
         <template #tooltip>
-          <p class="whitespace-pre min-h-[1.25rem] flex items-center">
+          <p class="flex min-h-[1.25rem] items-center whitespace-pre">
             {{ (label as ToolTipLabel).tooltip }}
           </p>
         </template>
@@ -29,7 +25,7 @@
       <OptionComponent
         v-else
         :label="label as string"
-        :selected="index == selected"
+        :selected="index == getSelected()"
         @click="select(index)"
       />
     </div>
@@ -37,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from 'vue'
+import { ref } from 'vue'
 import ToolTipComponent from '../ToolTipComponent.vue'
 import OptionComponent from './OptionComponent.vue'
 
@@ -64,7 +60,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['selectionChanged'])
-const selected = toRef(props.defaultSelected)
+const selected = ref(-1)
+
+function getSelected() {
+  if (selected.value == -1) {
+    return props.defaultSelected
+  }
+  return selected.value
+}
 
 function select(index: number) {
   emit('selectionChanged', index)
