@@ -7,6 +7,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed, type Ref } from 'vue'
 import OptionsSelectorComponent from './OptionsSelectorComponent.vue'
 import { MetricType, metricToolTips } from '@/model/MetricType'
 
@@ -25,12 +26,10 @@ const props = defineProps({
 
 defineEmits(['selectionChanged'])
 
-const labels: { displayValue: string; tooltip: string }[] = []
-
-for (const metric of props.metrics) {
-  labels.push({
+const labels: Ref<{ displayValue: string; tooltip: string }[]> = computed(() =>
+  props.metrics.map((metric) => ({
     displayValue: metricToolTips[metric].longName,
     tooltip: metricToolTips[metric].tooltip
-  })
-}
+  }))
+)
 </script>

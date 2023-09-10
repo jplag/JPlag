@@ -45,7 +45,7 @@
               class="mt-2"
               title="Metric:"
               @selection-changed="
-                (i: number) => (selectedDistributionDiagramMetric = getMetricFromNumber(i))
+                (metric: MetricType) => (selectedDistributionDiagramMetric = metric)
               "
             />
             <OptionsSelector
@@ -89,9 +89,7 @@
         </div>
         <MetricSelector
           title="Sort By:"
-          @selection-changed="
-            (index) => (comparisonTableSortingMetric = getMetricFromNumber(index))
-          "
+          @selection-changed="(metric: MetricType) => (comparisonTableSortingMetric = metric)"
         />
         <ComparisonsTable
           :clusters="overview.clusters"
@@ -205,14 +203,6 @@ function changeAnnoymousForAll() {
 }
 
 const selectedDistributionDiagramMetric = ref(MetricType.AVERAGE)
-
-function getMetricFromNumber(metric: number) {
-  if (metric == 0) {
-    return MetricType.AVERAGE
-  } else {
-    return MetricType.MAXIMUM
-  }
-}
 
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
 const submissionPathValue = hasMoreSubmissionPaths
