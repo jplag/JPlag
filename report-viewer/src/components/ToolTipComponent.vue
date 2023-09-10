@@ -1,12 +1,12 @@
 <template>
-  <div class="relative inline-block group">
+  <div class="group relative inline-block">
     <slot></slot>
     <div
-      class="absolute hidden group-hover:block px-1 rounded-md text-white text-center z-10"
+      class="absolute z-10 hidden rounded-md px-1 text-center text-white group-hover:block"
       :style="tooltipPosition"
     >
       <slot name="tooltip"></slot>
-      <div class="border-4 border-solid absolute" :style="arrowStyle"><!-- Arrow --></div>
+      <div class="absolute border-4 border-solid" :style="arrowStyle"><!-- Arrow --></div>
     </div>
   </div>
 </template>
