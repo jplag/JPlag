@@ -11,7 +11,7 @@
         <div class="tableCellSimilarity !flex-col">
           <div>Similarity</div>
           <div class="flex w-full flex-row">
-            <ToolTipComponent class="flex-1">
+            <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
               <template #default>
                 <p class="w-full text-center">{{ metricToolTips[MetricType.AVERAGE].shortName }}</p>
               </template>
@@ -22,7 +22,7 @@
               </template>
             </ToolTipComponent>
 
-            <ToolTipComponent class="flex-1">
+            <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
               <template #default>
                 <p class="w-full text-center">{{ metricToolTips[MetricType.MAXIMUM].shortName }}</p>
               </template>

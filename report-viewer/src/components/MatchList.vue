@@ -8,9 +8,7 @@
         <OptionComponent label="Match Files: TokenCount" />
       </template>
       <template #tooltip>
-        <p class="flex min-h-[1.25rem] items-center whitespace-pre">
-          Click on a match to show it in the code view.
-        </p>
+        <p class="whitespace-pre text-sm">Click on a match to show it in the code view.</p>
       </template>
     </ToolTipComponent>
 

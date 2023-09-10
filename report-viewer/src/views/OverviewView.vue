@@ -23,9 +23,7 @@
               <Button @click="router.push({ name: 'InfoView' })"> More </Button>
             </template>
             <template #tooltip>
-              <p class="flex min-h-[1.25rem] items-center whitespace-pre">
-                More information about the CLI run of JPlag
-              </p>
+              <p class="whitespace-pre text-sm">More information about the CLI run of JPlag</p>
             </template>
           </ToolTipComponent>
         </div>
@@ -73,13 +71,11 @@
               />
             </template>
             <template #tooltip>
-              <p class="flex min-h-[1.25rem] items-center whitespace-pre">
+              <p class="whitespace-pre text-sm">
                 Type in the name of a submission to only show comparisons that contain this
                 submission.
               </p>
-              <p class="flex min-h-[1.25rem] items-center whitespace-pre">
-                Fully written out names get unhidden.
-              </p>
+              <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
             </template>
           </ToolTipComponent>
 
@@ -92,7 +88,7 @@
           </Button>
         </div>
         <MetricSelector
-          title="Sort By"
+          title="Sort By:"
           @selection-changed="
             (index) => (comparisonTableSortingMetric = getMetricFromNumber(index))
           "

@@ -17,7 +17,7 @@
         </template>
 
         <template #tooltip>
-          <p class="flex min-h-[1.25rem] items-center whitespace-pre">
+          <p class="whitespace-pre text-sm">
             {{ (label as ToolTipLabel).tooltip }}
           </p>
         </template>
