@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
-import OptionComponent from '@/components/optionsSelectors/OptionComponent.vue'
 import { MetricType } from '@/model/MetricType'
 
 describe('OptionSelectorComponent', () => {
