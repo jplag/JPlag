@@ -1,6 +1,6 @@
 <template>
   <OptionsSelectorComponent
-    :name="name"
+    :title="title"
     :labels="labels"
     @selection-changed="(i) => $emit('selectionChanged', metrics[i])"
   />
@@ -17,7 +17,7 @@ const props = defineProps({
     required: false,
     default: [MetricType.AVERAGE, MetricType.MAXIMUM]
   },
-  name: {
+  title: {
     type: String,
     required: false,
     default: ''
