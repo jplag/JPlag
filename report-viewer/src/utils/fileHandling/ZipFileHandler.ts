@@ -1,7 +1,7 @@
 import { store } from '@/stores/store'
 import jszip from 'jszip'
 import slash from 'slash'
-import { FileHandler } from '../../../FileHandler'
+import { FileHandler } from './FileHandler'
 
 /**
  * Class for handling zip files.

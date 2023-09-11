@@ -1,5 +1,5 @@
 import { store } from '@/stores/store'
-import { FileHandler } from '../../../FileHandler'
+import { FileHandler } from './FileHandler'
 
 /**
  * Class for handling single json files.
