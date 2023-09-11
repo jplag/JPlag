@@ -7,9 +7,9 @@
  * @property startInSecond - Starting line of the match in the second file.
  * @property endInSecond - Ending line of the match in the second file.
  * @property tokens - Number of tokens in the match.
- * @property color - Color of the match.
+ * @property colorIndex - Index of the color to use for the match.
  */
-export type Match = {
+export interface Match {
   firstFile: string
   secondFile: string
   startInFirst: number
@@ -17,5 +17,5 @@ export type Match = {
   startInSecond: number
   endInSecond: number
   tokens: number
-  color: string
+  colorIndex?: number
 }

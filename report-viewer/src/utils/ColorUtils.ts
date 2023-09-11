@@ -59,6 +59,16 @@ function generateColorsForInterval(
   return colors
 }
 
+const matchColors: { red: number; green: number; blue: number }[] = []
+
+function getMatchColorCount() {
+  return matchColors.length
+}
+
+function getMatchColor(index: number, alpha: number) {
+  return `rgba(${matchColors[index].red}, ${matchColors[index].green}, ${matchColors[index].blue}, ${alpha})`
+}
+
 const graphColors = {
   ticksAndFont: computed(() => {
     return store().uiState.useDarkMode ? '#ffffff' : '#000000'
@@ -71,4 +81,4 @@ const graphColors = {
   pointFill: 'rgba(190, 22, 34, 1)'
 }
 
-export { generateColors, graphColors }
+export { generateColors, graphColors, getMatchColorCount, getMatchColor }
