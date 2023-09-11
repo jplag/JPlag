@@ -5,13 +5,16 @@ on:
  push:
     branches:
       - develop
+    paths:
+      - ".github/workflows/report-viewer-dev.yml"
+      - "report-viewer/**"
       
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - uses: actions/setup-node@v3
         with:

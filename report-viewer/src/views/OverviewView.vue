@@ -27,6 +27,7 @@
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
           :distribution="overview.distribution[selectedDistributionDiagramMetric]"
+          :x-scale="distributionDiagramScaleX"
           class="h-2/3 w-full"
         />
         <div class="flex flex-grow flex-col space-y-1">
@@ -37,6 +38,14 @@
               :labels="['Average', 'Maximum']"
               @selection-changed="
                 (i: number) => (selectedDistributionDiagramMetric = getMetricFromNumber(i))
+              "
+            />
+            <OptionsSelector
+              class="mt-2"
+              name="Scale x-Axis:"
+              :labels="['Linear', 'Logarithmic']"
+              @selection-changed="
+                (i: number) => (distributionDiagramScaleX = i == 0 ? 'linear' : 'logarithmic')
               "
             />
           </ScrollableComponent>
@@ -77,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref, watch } from 'vue'
+import { computed, onErrorCaptured, ref, watch, type Ref } from 'vue'
 import { router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
@@ -96,6 +105,7 @@ const overview = await OverviewFactory.getOverview()
 
 const searchString = ref('')
 const comparisonTableSortingMetric = ref(MetricType.AVERAGE)
+const distributionDiagramScaleX: Ref<'linear' | 'logarithmic'> = ref('linear')
 
 /**
  * This funtion gets called when the search bar for the compariosn table has been updated.

@@ -4,6 +4,7 @@ import type { Cluster } from '@/model/Cluster'
 import { store } from '@/stores/store'
 import { Version } from '../Version'
 import versionJson from '@/version.json'
+import { getLanguageParser } from '../Language'
 import { Distribution } from '../Distribution'
 import { MetricType } from '../MetricType'
 import { BaseFactory } from './BaseFactory'
@@ -38,7 +39,7 @@ export class OverviewFactory extends BaseFactory {
 
     const submissionFolder = json.submission_folder_path as Array<string>
     const baseCodeFolder = json.base_code_folder_path as string
-    const language = json.language as string
+    const language = getLanguageParser(json.language as string)
     const fileExtensions = json.file_extensions as Array<string>
     const matchSensitivity = json.match_sensitivity as number
     const dateOfExecution = json.date_of_execution as string

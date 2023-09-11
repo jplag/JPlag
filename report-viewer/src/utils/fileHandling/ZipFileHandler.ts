@@ -1,7 +1,7 @@
 import { store } from '@/stores/store'
 import jszip from 'jszip'
 import slash from 'slash'
-import { FileHandler } from './FileHandler'
+import { FileHandler } from '../../../FileHandler'
 
 /**
  * Class for handling zip files.
@@ -27,8 +27,9 @@ export class ZipFileHandler extends FileHandler {
           )
           await zip.files[originalFileName].async('string').then((data) => {
             store().saveSubmissionFile({
-              name: slash(submissionFileName),
-              file: { fileName: slash(fullPathFileName), data: data }
+              submissionId: slash(submissionFileName),
+              fileName: slash(fullPathFileName),
+              data: data
             })
           })
         } else {

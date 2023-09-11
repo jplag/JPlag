@@ -1,6 +1,5 @@
 import { Comparison } from '../Comparison'
 import type { Match } from '../Match'
-import type { SubmissionFile } from '../SubmissionFile'
 import { store } from '@/stores/store'
 import { generateColors } from '@/utils/ColorUtils'
 import slash from 'slash'
@@ -17,25 +16,22 @@ export class ComparisonFactory extends BaseFactory {
       throw new Error('Comparison file not specified')
     }
 
-    return this.extractComparison(JSON.parse(await this.getFile(filePath)))
+    return await this.extractComparison(JSON.parse(await this.getFile(filePath)))
   }
 
   /**
    * Creates a comparison object from a json object created by by JPlag
    * @param json the json object
    */
-  private static extractComparison(json: Record<string, unknown>): Comparison {
+  private static async extractComparison(json: Record<string, unknown>): Promise<Comparison> {
     const firstSubmissionId = json.id1 as string
     const secondSubmissionId = json.id2 as string
     if (store().state.localModeUsed && !store().state.zipModeUsed) {
-      this.loadSubmissionFilesFromLocal(firstSubmissionId)
-      this.loadSubmissionFilesFromLocal(secondSubmissionId)
+      await this.loadSubmissionFilesFromLocal(firstSubmissionId)
+      await this.loadSubmissionFilesFromLocal(secondSubmissionId)
     }
     const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
-
-    const filesOfFirstConverted = this.convertToSubmissionFileList(filesOfFirstSubmission)
-    const filesOfSecondConverted = this.convertToSubmissionFileList(filesOfSecondSubmission)
 
     const matches = json.matches as Array<Record<string, unknown>>
 
@@ -49,8 +45,8 @@ export class ComparisonFactory extends BaseFactory {
       firstSubmissionId,
       secondSubmissionId,
       this.extractSimilarities(json),
-      filesOfFirstConverted,
-      filesOfSecondConverted,
+      filesOfFirstSubmission,
+      filesOfSecondSubmission,
       coloredMatches
     )
   }
@@ -84,25 +80,6 @@ export class ComparisonFactory extends BaseFactory {
     return similarities
   }
 
-  private static convertToSubmissionFileList(
-    files: Array<{ name: string; value: string }>
-  ): Map<string, SubmissionFile> {
-    const map = new Map<string, SubmissionFile>()
-    files.forEach((val) => {
-      if (!map.get(val.name)) {
-        map.set(val.name as string, {
-          lines: [],
-          collapsed: false
-        })
-      }
-      map.set(val.name as string, {
-        lines: val.value.split(/\r?\n/),
-        collapsed: false
-      })
-    })
-    return map
-  }
-
   private static async getSubmissionFileListFromLocal(submissionId: string): Promise<string[]> {
     return JSON.parse(
       await this.getLocalFile(`submissionFileIndex.json`).then((file) => file.text())
@@ -114,11 +91,9 @@ export class ComparisonFactory extends BaseFactory {
       const fileList = await this.getSubmissionFileListFromLocal(submissionId)
       for (const filePath of fileList) {
         store().saveSubmissionFile({
-          name: submissionId,
-          file: {
-            fileName: slash(filePath),
-            data: await this.getLocalFile(`files/${filePath}`).then((file) => file.text())
-          }
+          fileName: slash(filePath),
+          submissionId: submissionId,
+          data: await this.getLocalFile(`files/${filePath}`).then((file) => file.text())
         })
       }
     } catch (e) {

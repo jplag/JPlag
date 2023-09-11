@@ -2,51 +2,42 @@
   Panel which displays a submission files with its line of code.
 -->
 <template>
-  <Interactable
-    :id="
-      panelId
-        ?.toString()
-        .concat(filePath || '')
-        .concat(fileIndex?.toString() || '-1')
-    "
-    class="mx-2 !shadow"
-  >
-    <div @click="$emit('toggleCollapse')" class="text-center font-bold">
-      {{ title }}
+  <Interactable class="mx-2 !shadow">
+    <div @click="collapsed = !collapsed" class="text-center font-bold">
+      {{ getFileDisplayName(file) }}
     </div>
+
     <div class="mx-1 overflow-x-auto">
-      <div :class="{ hidden: !collapse }" class="w-fit min-w-full">
-        <div v-if="!isEmpty(lines)" class="flex w-full flex-col items-start p-0">
-          <div
-            class="flex w-full flex-row"
-            v-for="(line, index) in lines"
-            :id="
-              String(panelId)
-                .concat(filePath || '')
-                .concat((index + 1).toString())
-            "
+      <div v-if="!collapsed" class="w-fit min-w-full !text-xs">
+        <table
+          v-if="file.data.trim() !== ''"
+          class="w-full"
+          :aria-describedby="`Content of file ${file.fileName}`"
+        >
+          <!-- One row in table per code line -->
+          <tr
+            v-for="(line, index) in codeLines"
             :key="index"
+            class="w-full cursor-default"
+            :class="{ 'cursor-pointer': line.match !== null }"
+            @click="lineSelected(index)"
           >
-            <LineOfCode
-              class="flex-grow"
-              :color="coloringArray[index]"
-              :line-number="index + 1"
-              :text="line"
-              :visible="collapse"
-              @click="
-                $emit(
-                  'lineSelected',
-                  $event,
-                  linksArray[index].panel,
-                  linksArray[index].file,
-                  linksArray[index].line
-                )
-              "
-            />
-          </div>
-        </div>
+            <!-- Line number -->
+            <td class="float-right pr-3">{{ index + 1 }}</td>
+            <!-- Code line -->
+            <td
+              class="w-full"
+              :style="{
+                background: line.match !== null ? line.match.color : 'hsla(0, 0%, 0%, 0)'
+              }"
+            >
+              <pre v-html="line.line" class="code-font !bg-transparent" ref="lineRefs"></pre>
+            </td>
+          </tr>
+        </table>
+
         <div v-else class="flex flex-col items-start overflow-x-auto">
-          <p>Empty File</p>
+          <i>Empty File</i>
         </div>
       </div>
     </div>
@@ -55,120 +46,87 @@
 
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import { computed, ref, type Ref } from 'vue'
-import LineOfCode from '@/components/LineOfCode.vue'
+import { ref, nextTick, type PropType, computed, type Ref } from 'vue'
 import Interactable from './InteractableComponent.vue'
+import type { Match } from '@/model/Match'
+import type { SubmissionFile } from '@/stores/state'
+import { highlight } from '@/utils/CodeHighlighter'
+import type { HighlightLanguage } from '@/model/Language'
 
 const props = defineProps({
   /**
-   * Path of the displayed file.
-   */
-  filePath: {
-    type: String
-  },
-  /**
-   * Title of the displayed file.
-   */
-  title: {
-    type: String
-  },
-  /**
-   * Index of file amongst other files in submission.
-   */
-  fileIndex: {
-    type: Number
-  },
-  /**
    * Code lines of the file.
-   * type: Array<string>
    */
-  lines: {
-    type: Array<string>,
+  file: {
+    type: Object as PropType<SubmissionFile>,
     required: true
   },
   /**
    * Matches in the file
-   * type: Array<MatchInSingleFile>
    */
   matches: {
-    type: Array<MatchInSingleFile>
+    type: Array<MatchInSingleFile>,
+    required: true
   },
   /**
-   * Id of the FilesContainer. Needed for lines link generation.
+   * Language of the file.
    */
-  panelId: {
-    type: Number
-  },
-  /**
-   * Indicates whether files is collapsed or not.
-   */
-  collapse: {
-    type: Boolean
+  highlightLanguage: {
+    type: String as PropType<HighlightLanguage>,
+    required: true
   }
 })
 
-defineEmits(['lineSelected', 'toggleCollapse'])
+const emit = defineEmits(['lineSelected'])
 
-/**
- * An object containing the color of each line in code. Keys are line numbers, values are their color.
- * Example: {
- *   ...
- *   100 : "#3333"
- *   101 : "#3333"
- *   102 : "#3333"
- *   103 : "#FFFF"
- *   ...
- * }
- */
-const coloringArray: Ref<Record<number, string>> = ref({})
+const collapsed = ref(true)
+const lineRefs = ref<HTMLElement[]>([])
 
-/**
- * @param lines Array of lines to check.
- * @returns true if all lines are empty, false otherwise.
- */
-function isEmpty(lines: string[]) {
-  return lines.length === 0 || lines.every((line) => !line.trim())
-}
-
-/**
- * An object containing an object from which an id is to of the line to which this is linked is constructed.
- * Id object contains panel, file name, first line number of linked matched.
- * Example: {
- *   panel: 1,
- *   file: "Example.java",
- *   line: 121
- * }
- * Constructed ID (generateLineCodeLink from Utils.ts): 1Example.java121
- * When a line is clicked it uses this link id
- * to scroll into vie the linked line in the linked file of the other submission.
- * Key is line number, value is id of linked line.
- */
-const linksArray: Ref<Record<number, { panel?: number; file?: string; line?: number }>> = computed(
-  () => {
-    const links: Record<number, { panel?: number; file?: string; line?: number }> = {}
-
-    props.matches?.forEach((m) => {
-      for (let i = m.start; i <= m.end; i++) {
-        //assign match color to line
-        coloringArray.value[i - 1] = m.color
-        //assign link object to line.
-        linksArray.value[i - 1] = {
-          panel: m.linked_panel,
-          file: m.linked_file,
-          line: m.linked_line
-        }
-      }
-    })
-
-    return links
-  }
+const codeLines: Ref<{ line: string; match: null | Match }[]> = computed(() =>
+  highlight(props.file.data, props.highlightLanguage).map((line, index) => {
+    return {
+      line,
+      match: props.matches?.find((m) => m.start <= index + 1 && index + 1 <= m.end)?.match ?? null
+    }
+  })
 )
 
-//assign default values for all line which are not contained in matches
-for (let i = 0; i < props.lines.length; i++) {
-  if (!coloringArray.value[i]) {
-    coloringArray.value[i] = 'hsla(0, 0%, 0%, 0)'
-    linksArray.value[i] = {}
+function lineSelected(lineIndex: number) {
+  if (codeLines.value[lineIndex].match !== null) {
+    emit('lineSelected', codeLines.value[lineIndex].match)
   }
 }
+
+/**
+ * Scrolls to the line number in the file.
+ * @param lineNumber line number in the file
+ */
+function scrollTo(lineNumber: number) {
+  collapsed.value = false
+  nextTick(function () {
+    lineRefs.value[lineNumber - 1].scrollIntoView({ block: 'center' })
+  })
+}
+
+defineExpose({
+  scrollTo
+})
+
+/**
+ * converts the submissionId to the name in the path of file. If the length of path exceeds 40, then the file path displays the abbreviation.
+ * @param file submission file
+ * @return new path of file
+ */
+function getFileDisplayName(file: SubmissionFile): string {
+  const filePathLength = file.fileName.length
+  return filePathLength > 40
+    ? '...' + file.fileName.substring(filePathLength - 40, filePathLength)
+    : file.fileName
+}
 </script>
+
+<style scoped>
+.code-font {
+  font-family: 'JetBrains Mono NL', monospace !important;
+}
+</style>

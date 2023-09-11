@@ -33,23 +33,27 @@ export interface State {
 }
 
 /**
- * Internal representation of a file.
- * @property fileName - The name of the file.
- * @property data - The content of the file.
+ * Internal representation of a single file.
  */
 export interface File {
+  /**
+   * The name of the file.
+   */
   fileName: string
+  /**
+   * The files content.
+   */
   data: string
 }
 
 /**
  * Internal representation of a single file from a submission.
- * @property name - The name of the file.
- * @property file - The file.
  */
-export interface SubmissionFile {
-  name: string
-  file: File
+export interface SubmissionFile extends File {
+  /**
+   * The id of the submission.
+   */
+  submissionId: string
 }
 
 /**
