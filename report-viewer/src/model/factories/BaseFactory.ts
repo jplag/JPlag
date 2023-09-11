@@ -14,7 +14,9 @@ export class BaseFactory {
   protected static async getFile(path: string): Promise<string> {
     if (store().state.localModeUsed) {
       if (store().state.zipModeUsed) {
-        await new ZipFileHandler().handleFile(await this.getLocalFile('results.zip'))
+        await new ZipFileHandler().handleFile(
+          await this.getLocalFile(window.location.origin + '/results.zip')
+        )
         return this.getFileFromStore(path)
       } else {
         return await (await this.getLocalFile(`/files/${path}`)).text()
@@ -47,6 +49,7 @@ export class BaseFactory {
    */
   protected static async getLocalFile(path: string): Promise<Blob> {
     const request = await fetch(path)
+    console.log(request)
 
     if (request.status == 200) {
       return request.blob()
