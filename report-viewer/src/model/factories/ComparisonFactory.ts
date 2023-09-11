@@ -119,7 +119,7 @@ export class ComparisonFactory extends BaseFactory {
     const matchesSecond = Array.from(matches)
       .sort((a, b) => a.startInSecond - b.startInSecond)
       .sort((a, b) => (a.secondFile > b.secondFile ? 1 : -1))
-    const sortedSize = Array.from(matches).sort((a, b) => a.tokens - b.tokens)
+    const sortedSize = Array.from(matches).sort((a, b) => b.tokens - a.tokens)
 
     function canColor(matchList: Match[], index: number) {
       return (

@@ -9,7 +9,7 @@
     <div class="flex w-full flex-row space-x-1 overflow-x-auto">
       <Interactable
         class="my-2 flex h-6 items-center whitespace-nowrap !rounded-2xl !bg-opacity-50 text-center"
-        :style="{ background: match.color }"
+        :style="{ background: getMatchColor(match.colorIndex as number, 0.3) }"
         v-for="[index, match] in matches?.entries()"
         v-bind:key="index"
         @click="$emit('matchSelected', match)"
@@ -23,6 +23,7 @@
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
 import Interactable from './InteractableComponent.vue'
+import { getMatchColor } from '@/utils/ColorUtils'
 
 defineProps({
   /**

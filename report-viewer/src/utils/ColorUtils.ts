@@ -59,7 +59,15 @@ function generateColorsForInterval(
   return colors
 }
 
-const matchColors: { red: number; green: number; blue: number }[] = []
+const matchColors: { red: number; green: number; blue: number }[] = [
+  { red: 0, green: 9, blue: 255 },
+  { red: 254, green: 255, blue: 0 },
+  { red: 0, green: 255, blue: 254 },
+  { red: 255, green: 0, blue: 243 },
+  { red: 0, green: 180, blue: 180 },
+  { red: 255, green: 118, blue: 0 },
+  { red: 0, green: 255, blue: 160 }
+]
 
 function getMatchColorCount() {
   return matchColors.length
