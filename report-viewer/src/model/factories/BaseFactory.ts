@@ -14,9 +14,7 @@ export class BaseFactory {
   protected static async getFile(path: string): Promise<string> {
     if (store().state.localModeUsed) {
       if (store().state.zipModeUsed) {
-        await new ZipFileHandler().handleFile(
-          await this.getLocalFile(window.location.origin + '/results.zip')
-        )
+        await new ZipFileHandler().handleFile(await this.getLocalFile('results.zip'))
         return this.getFileFromStore(path)
       } else {
         return await (await this.getLocalFile(`/files/${path}`)).text()
@@ -48,9 +46,7 @@ export class BaseFactory {
    * @throws Error if the file could not be found
    */
   protected static async getLocalFile(path: string): Promise<Blob> {
-    const request = await fetch(path)
-    console.log(request)
-
+    const request = await fetch(window.location.origin + '/' + path)
     if (request.status == 200) {
       return request.blob()
     } else {

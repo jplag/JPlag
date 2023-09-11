@@ -82,7 +82,7 @@ export class ComparisonFactory extends BaseFactory {
 
   private static async getSubmissionFileListFromLocal(submissionId: string): Promise<string[]> {
     return JSON.parse(
-      await this.getLocalFile(`submissionFileIndex.json`).then((file) => file.text())
+      await this.getLocalFile(`files/submissionFileIndex.json`).then((file) => file.text())
     ).submission_file_indexes[submissionId].map((file: string) => slash(file))
   }
 
@@ -93,7 +93,7 @@ export class ComparisonFactory extends BaseFactory {
         store().saveSubmissionFile({
           fileName: slash(filePath),
           submissionId: submissionId,
-          data: await this.getLocalFile(`files/${filePath}`).then((file) => file.text())
+          data: await this.getLocalFile(`files/files/${filePath}`).then((file) => file.text())
         })
       }
     } catch (e) {
