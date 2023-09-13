@@ -1,7 +1,7 @@
 import type { Match } from './Match'
-import type { SubmissionFile } from './SubmissionFile'
-import type { MatchInSingleFile } from './MatchInSingleFile'
-import type MetricType from './MetricType'
+import type { SubmissionFile } from '@/stores/state'
+import { MatchInSingleFile } from './MatchInSingleFile'
+import type { MetricType } from './MetricType'
 
 /**
  * Comparison model used by the ComparisonView
@@ -10,16 +10,16 @@ export class Comparison {
   private readonly _firstSubmissionId: string
   private readonly _secondSubmissionId: string
   private readonly _similarities: Record<MetricType, number>
-  private _filesOfFirstSubmission: Map<string, SubmissionFile>
-  private _filesOfSecondSubmission: Map<string, SubmissionFile>
+  private _filesOfFirstSubmission: SubmissionFile[]
+  private _filesOfSecondSubmission: SubmissionFile[]
   private _allMatches: Array<Match>
 
   constructor(
     firstSubmissionId: string,
     secondSubmissionId: string,
     similarities: Record<MetricType, number>,
-    filesOfFirstSubmission: Map<string, SubmissionFile>,
-    filesOfSecondSubmission: Map<string, SubmissionFile>,
+    filesOfFirstSubmission: SubmissionFile[],
+    filesOfSecondSubmission: SubmissionFile[],
     allMatches: Array<Match>
   ) {
     this._firstSubmissionId = firstSubmissionId
@@ -33,14 +33,14 @@ export class Comparison {
   /**
    * @return Map of all files of the first submission
    */
-  get filesOfFirstSubmission(): Map<string, SubmissionFile> {
+  get filesOfFirstSubmission(): SubmissionFile[] {
     return this._filesOfFirstSubmission
   }
 
   /**
    * @return Map of all files of the second submission
    */
-  get filesOfSecondSubmission(): Map<string, SubmissionFile> {
+  get filesOfSecondSubmission(): SubmissionFile[] {
     return this._filesOfSecondSubmission
   }
 
@@ -88,34 +88,14 @@ export class Comparison {
 
   private groupMatchesByFileName(index: 1 | 2): Map<string, Array<MatchInSingleFile>> {
     const acc = new Map<string, Array<MatchInSingleFile>>()
-    this.allMatches.forEach((val) => {
-      const name = index === 1 ? val.firstFile : val.secondFile
+    this._allMatches.forEach((val) => {
+      const name = index === 1 ? (val.firstFile as string) : (val.secondFile as string)
 
       if (!acc.get(name)) {
         acc.set(name, [])
       }
 
-      if (index === 1) {
-        const newVal: MatchInSingleFile = {
-          start: val.startInFirst,
-          end: val.endInFirst,
-          linked_panel: 2,
-          linked_file: val.secondFile,
-          linked_line: val.startInSecond,
-          color: val.color
-        }
-        acc.get(name)?.push(newVal)
-      } else {
-        const newVal: MatchInSingleFile = {
-          start: val.startInSecond,
-          end: val.endInSecond,
-          linked_panel: 1,
-          linked_file: val.firstFile,
-          linked_line: val.startInFirst,
-          color: val.color
-        }
-        acc.get(name)?.push(newVal)
-      }
+      acc.get(name)?.push(new MatchInSingleFile(val, index))
     })
     return acc
   }

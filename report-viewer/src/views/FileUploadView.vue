@@ -3,20 +3,20 @@
 -->
 <template>
   <div
-    class="h-screen text-center flex items-center"
+    class="flex h-screen items-center text-center"
     @dragover.prevent
     @drop.prevent="uploadFileOnDrag"
   >
     <div class="w-screen">
       <div>
         <img
-          class="mt-8 w-60 h-auto mx-auto"
+          class="mx-auto mt-8 h-auto w-60"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
           v-if="store().uiState.useDarkMode"
         />
         <img
-          class="mt-8 w-60 h-auto mx-auto"
+          class="mx-auto mt-8 h-auto w-60"
           src="@/assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
           v-else
@@ -25,22 +25,22 @@
       <h1 class="text-7xl">JPlag Report Viewer</h1>
       <div v-if="!hasQueryFile && !loadingFiles">
         <div
-          class="px-5 py-5 mt-10 w-96 mx-auto flex flex-col justify-center cursor-pointer border-1 rounded-md border-accent-dark bg-accent bg-opacity-25"
+          class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
           <div>Drag and Drop zip/Json file on this page</div>
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
-        <Button class="w-fit mx-auto mt-8" @click="continueWithLocal" v-if="hasLocalFile">
+        <Button class="mx-auto mt-8 w-fit" @click="continueWithLocal" v-if="hasLocalFile">
           Continue with local files
         </Button>
       </div>
-      <div v-else class="pt-5 space-y-5">
+      <div v-else class="space-y-5 pt-5">
         <div
-          class="mx-auto rounded-full w-16 h-16 animate-spin border-t-accent dark:border-t-accent border-interactable-border-light dark:border-interactable-border-dark border-8"
+          class="mx-auto h-16 w-16 animate-spin rounded-full border-8 border-interactable-border-light border-t-accent dark:border-interactable-border-dark dark:border-t-accent"
         ></div>
-        <p class="font-bold text-2xl">Loading file...</p>
+        <p class="text-2xl font-bold">Loading file...</p>
       </div>
     </div>
     <VersionInfoComponent class="absolute bottom-3 left-3" />
@@ -51,8 +51,8 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import jszip from 'jszip'
-import router from '@/router'
-import store from '@/stores/store'
+import { router } from '@/router'
+import { store } from '@/stores/store'
 import slash from 'slash'
 import Button from '@/components/ButtonComponent.vue'
 import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
@@ -190,8 +190,9 @@ async function handleZipFile(file: Blob) {
         )
         await zip.files[originalFileName].async('string').then((data) => {
           store().saveSubmissionFile({
-            name: slash(submissionFileName),
-            file: { fileName: slash(fullPathFileName), data: data }
+            submissionId: slash(submissionFileName),
+            fileName: slash(fullPathFileName),
+            data: data
           })
         })
       } else {

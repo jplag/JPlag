@@ -1,4 +1,4 @@
-export default abstract class Distribution {
+export abstract class Distribution {
   protected readonly _distribution: number[]
 
   constructor(distribution: number[]) {

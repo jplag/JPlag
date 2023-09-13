@@ -3,7 +3,7 @@
 -->
 <template>
   <div
-    class="p-2 border-1 rounded-md bg-container-light dark:bg-container-dark border-container-border-light box-border dark:border-container-border-dark shadow dark:shadow-black"
+    class="box-border rounded-md border-1 border-container-border-light bg-container-light p-2 shadow dark:border-container-border-dark dark:bg-container-dark dark:shadow-black"
   >
     <slot></slot>
   </div>

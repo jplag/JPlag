@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
-import MetricType from '@/model/MetricType'
-import HundredValueDistribution from '@/model/HundredValueDistribution'
-import TenValueDistribution from '@/model/TenValueDistribution'
+import { MetricType } from '@/model/MetricType'
+import { HundredValueDistribution } from '@/model/HundredValueDistribution'
+import { TenValueDistribution } from '@/model/TenValueDistribution'
 import validNew from './ValidNewOverview.json'
 import validOld from './ValidOldOverview.json'
 
@@ -28,7 +28,7 @@ const store = {
 describe('Test JSON to Overview', () => {
   beforeAll(() => {
     vi.mock('@/stores/store', () => ({
-      default: vi.fn(() => {
+      store: vi.fn(() => {
         return store
       })
     }))

@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import de.jplag.antlr.*;
 
 public class TestParserAdapter extends AbstractAntlrParserAdapter<TestParser> {
-    private static final TestListener testListener = new TestListener();
+    private static final TestListener listener = new TestListener();
 
     @Override
     protected Lexer createLexer(CharStream input) {
@@ -27,6 +27,6 @@ public class TestParserAdapter extends AbstractAntlrParserAdapter<TestParser> {
 
     @Override
     protected AbstractAntlrListener getListener() {
-        return testListener;
+        return listener;
     }
 }
