@@ -5,6 +5,11 @@ on:
     branches:
       - main
       - develop
+    paths:
+      - ".github/workflows/sonarcloud-branch.yml"
+      - "**/pom.xml"
+      - "**.java"
+      - "**.g4"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -16,7 +21,7 @@ jobs:
     if: ${{ github.actor != 'dependabot[bot]' }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up JDK

@@ -1,6 +1,5 @@
 import { Comparison } from '../Comparison'
 import type { Match } from '../Match'
-import type { SubmissionFile } from '../SubmissionFile'
 import { store } from '@/stores/store'
 import { generateColors } from '@/utils/ColorUtils'
 import slash from 'slash'
@@ -14,6 +13,7 @@ export class ComparisonFactory extends BaseFactory {
   public static getComparison(id1: string, id2: string) {
     const filePath = store().getComparisonFileName(id1, id2)
     if (!filePath) {
+      console.log(filePath)
       throw new Error('Comparison file not specified')
     }
 
@@ -34,9 +34,6 @@ export class ComparisonFactory extends BaseFactory {
     const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
 
-    const filesOfFirstConverted = this.convertToSubmissionFileList(filesOfFirstSubmission)
-    const filesOfSecondConverted = this.convertToSubmissionFileList(filesOfSecondSubmission)
-
     const matches = json.matches as Array<Record<string, unknown>>
 
     const matchSaturation = 0.8
@@ -49,8 +46,8 @@ export class ComparisonFactory extends BaseFactory {
       firstSubmissionId,
       secondSubmissionId,
       this.extractSimilarities(json),
-      filesOfFirstConverted,
-      filesOfSecondConverted,
+      filesOfFirstSubmission,
+      filesOfSecondSubmission,
       coloredMatches
     )
   }
@@ -84,25 +81,6 @@ export class ComparisonFactory extends BaseFactory {
     return similarities
   }
 
-  private static convertToSubmissionFileList(
-    files: Array<{ name: string; value: string }>
-  ): Map<string, SubmissionFile> {
-    const map = new Map<string, SubmissionFile>()
-    files.forEach((val) => {
-      if (!map.get(val.name)) {
-        map.set(val.name as string, {
-          lines: [],
-          collapsed: false
-        })
-      }
-      map.set(val.name as string, {
-        lines: val.value.split(/\r?\n/),
-        collapsed: false
-      })
-    })
-    return map
-  }
-
   private static getSubmissionFileListFromLocal(submissionId: string): string[] {
     return JSON.parse(this.getLocalFile(`submissionFileIndex.json`)).submission_file_indexes[
       submissionId
@@ -114,11 +92,9 @@ export class ComparisonFactory extends BaseFactory {
       const fileList = this.getSubmissionFileListFromLocal(submissionId)
       for (const filePath of fileList) {
         store().saveSubmissionFile({
-          name: submissionId,
-          file: {
-            fileName: slash(filePath),
-            data: this.getLocalFile(`files/${filePath}`)
-          }
+          submissionId,
+          fileName: slash(filePath),
+          data: this.getLocalFile(`files/${filePath}`)
         })
       }
     } catch (e) {
