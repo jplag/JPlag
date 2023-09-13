@@ -15,8 +15,6 @@ import de.jplag.cpp2.grammar.CPP14Parser.*;
 class CPPListener extends AbstractAntlrListener {
 
     CPPListener() {
-        super();
-
         visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END);
         visit(ClassSpecifierContext.class, rule -> rule.classHead().classKey() != null && rule.classHead().classKey().Class() != null)
                 .map(CLASS_BEGIN, CLASS_END);

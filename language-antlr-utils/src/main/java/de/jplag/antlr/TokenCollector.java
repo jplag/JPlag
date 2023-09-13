@@ -39,8 +39,9 @@ public class TokenCollector {
     <T> void addToken(TokenType jplagType, Function<T, CodeSemantics> semanticsSupplier, T entity,
             Function<T, org.antlr.v4.runtime.Token> extractToken, VariableRegistry variableRegistry) {
         if (jplagType == null) {
-            if (semanticsSupplier != null)
+            if (semanticsSupplier != null) {
                 logger.warning("Received semantics, but no token type, so no token was generated and the semantics discarded");
+            }
             return;
         }
         org.antlr.v4.runtime.Token antlrToken = extractToken.apply(entity);
@@ -49,14 +50,16 @@ public class TokenCollector {
         int length = antlrToken.getText().length();
         Token token;
         if (extractsSemantics) {
-            if (semanticsSupplier == null)
+            if (semanticsSupplier == null) {
                 throw new IllegalStateException(String.format("Expected semantics bud did not receive any for token %s", jplagType.getDescription()));
+            }
             CodeSemantics semantics = semanticsSupplier.apply(entity);
             token = new Token(jplagType, this.file, line, column, length, semantics);
             variableRegistry.updateSemantics(semantics);
         } else {
-            if (semanticsSupplier != null)
+            if (semanticsSupplier != null) {
                 logger.warning(() -> String.format("Received semantics for token %s despite not expecting any", jplagType.getDescription()));
+            }
             token = new Token(jplagType, this.file, line, column, length);
         }
         addToken(token);

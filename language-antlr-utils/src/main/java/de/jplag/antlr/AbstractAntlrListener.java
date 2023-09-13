@@ -12,13 +12,16 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
- * Base class for Antlr listeners. This is a quasi-static class that is only created once per language. Use by
- * overwriting the constructor, calling super(), and then calling the visit methods.
+ * Base class for Antlr listeners. This is a quasi-static class that is only created once per language. Use by calling
+ * the visit methods in the overwritten constructor.
  */
 public abstract class AbstractAntlrListener {
     private final List<ContextVisitor<ParserRuleContext>> contextVisitors;
     private final List<TerminalVisitor> terminalVisitors;
 
+    /**
+     * New instance
+     */
     protected AbstractAntlrListener() {
         contextVisitors = new ArrayList<>();
         terminalVisitors = new ArrayList<>();

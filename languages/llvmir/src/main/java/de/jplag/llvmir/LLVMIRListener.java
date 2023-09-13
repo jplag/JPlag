@@ -120,8 +120,6 @@ import de.jplag.antlr.AbstractAntlrListener;
 class LLVMIRListener extends AbstractAntlrListener {
 
     LLVMIRListener() {
-        super();
-
         visit(SourceFilenameContext.class).map(FILENAME);
         visit(ModuleAsmContext.class).map(ASSEMBLY);
         visit(TypeDefContext.class).map(TYPE_DEFINITION);

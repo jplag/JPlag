@@ -33,7 +33,6 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
      * @param extractsSemantics If true, the listener will extract semantics along with every token
      */
     protected AbstractAntlrParserAdapter(boolean extractsSemantics) {
-        super();
         this.extractsSemantics = extractsSemantics;
     }
 
