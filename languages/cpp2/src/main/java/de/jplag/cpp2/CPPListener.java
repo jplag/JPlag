@@ -23,11 +23,23 @@ import de.jplag.semantics.VariableScope;
 class CPPListener extends AbstractAntlrListener {
 
     CPPListener() {
-        super();
-
-        visit(UnqualifiedIdContext.class).withSemantics(CodeSemantics::new);
-
-        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).withSemantics(CodeSemantics::new);
+        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).addClassScope().withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
+            for (MemberdeclarationContext member : ctx.memberSpecification().memberdeclaration()) {
+                if (member.memberDeclaratorList() != null) {
+                    // I don't even know man
+                    SimpleTypeSpecifierContext ugh = member.declSpecifierSeq().declSpecifier().get(0).typeSpecifier().trailingTypeSpecifier()
+                            .simpleTypeSpecifier();
+                    boolean typeMutable = ugh.theTypeName() != null;
+                    for (var decl : member.memberDeclaratorList().memberDeclarator()) {
+                        // decl.declarator().noPointerDeclarator() may alternatively be used, todo
+                        CPP14Parser.PointerDeclaratorContext pd = decl.declarator().pointerDeclarator();
+                        String name = pd.noPointerDeclarator().getText();
+                        boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
+                        varReg.registerVariable(name, VariableScope.CLASS, mutable);
+                    }
+                }
+            }
+        });
 
         mapClass(ClassKeyContext::Class, CLASS_BEGIN, CLASS_END);
         mapClass(ClassKeyContext::Struct, STRUCT_BEGIN, STRUCT_END);  // structs are basically just classes
@@ -108,12 +120,30 @@ class CPPListener extends AbstractAntlrListener {
 
         visit(InitDeclaratorContext.class, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null).map(APPLY)
                 .withSemantics(CodeSemantics::createControl);
-        visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new);
+        visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) ->  {
+            CPP14Parser.DeclSpecifierContext declSpecifier = ctx.declSpecifierSeq().declSpecifier().get(0);
+            boolean typeMutable = declSpecifier.typeSpecifier().trailingTypeSpecifier().simpleTypeSpecifier().theTypeName() != null;
+            CPP14Parser.PointerDeclaratorContext pd = ctx.declarator().pointerDeclarator();
+            String name = pd.noPointerDeclarator().getText();
+            boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
+            varReg.registerVariable(name, VariableScope.LOCAL, mutable);
+            varReg.setIgnoreNextVariableAccess(true);
+        });
         visit(ConditionalExpressionContext.class, rule -> rule.Question() != null).map(QUESTIONMARK).withSemantics(CodeSemantics::new);
 
         visit(PostfixExpressionContext.class, rule -> rule.LeftParen() != null).map(APPLY).withSemantics(CodeSemantics::createControl);
         visit(PostfixExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGN)
                 .withSemantics(CodeSemantics::new);
+
+        visit(UnqualifiedIdContext.class).onEnter((ctx, varReg) -> {
+                // assumption: all local variable references are unqualified
+                // may or may not be correct but good enough heuristic anyways
+                var parentCtx = ctx.getParent().getParent();
+        if (!parentCtx.getParent().getParent().getText().contains("(")) {
+            boolean mutable = parentCtx.getClass() == PostfixExpressionContext.class // after dot
+                    && ((PostfixExpressionContext) parentCtx).postfixExpression().getText().equals("this");
+            varReg.registerVariableAccess(ctx.getText(), mutable);
+        }});
     }
 
     /**
