@@ -78,6 +78,6 @@ const arrowStyle = computed(() => {
 }
 
 *:hover > .delay-visible {
-  transition-delay: 0.25s;
+  transition-delay: 0.2s;
 }
 </style>

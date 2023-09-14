@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type Ref } from 'vue'
+import { computed, type PropType, type Ref } from 'vue'
 import OptionsSelectorComponent from './OptionsSelectorComponent.vue'
 import { MetricType, metricToolTips } from '@/model/MetricType'
 
@@ -21,6 +21,11 @@ const props = defineProps({
     type: String,
     required: false,
     default: ''
+  },
+  defaultSelection: {
+    type: String as PropType<MetricType>,
+    required: false,
+    default: MetricType.AVERAGE
   }
 })
 
