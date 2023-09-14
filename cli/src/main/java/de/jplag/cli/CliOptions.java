@@ -53,7 +53,7 @@ public class CliOptions implements Runnable {
             "--result-directory"}, description = "Name of the directory in which the comparison results will be stored (default: result)%n")
     public String resultFolder = "results";
 
-    @ArgGroup(heading = "Advanced%n")
+    @ArgGroup(heading = "Advanced%n", exclusive = false)
     public Advanced advanced = new Advanced();
 
     @ArgGroup(validate = false, heading = "Clustering%n")
