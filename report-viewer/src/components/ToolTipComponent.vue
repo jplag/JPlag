@@ -2,7 +2,7 @@
   <div class="group relative inline-block">
     <slot></slot>
     <div
-      class="delay-visible invisible absolute z-10 rounded-md px-1 text-center text-white group-hover:visible"
+      class="invisible absolute z-10 rounded-md px-1 text-center text-white delay-0 group-hover:visible group-hover:delay-200"
       :style="tooltipPosition"
     >
       <slot name="tooltip"></slot>
@@ -71,13 +71,3 @@ const arrowStyle = computed(() => {
   return style
 })
 </script>
-
-<style scoped>
-.delay-visible {
-  transition-delay: 0s;
-}
-
-*:hover > .delay-visible {
-  transition-delay: 0.2s;
-}
-</style>
