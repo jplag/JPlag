@@ -213,7 +213,7 @@ const submissionPathValue = hasMoreSubmissionPaths
   : overview.submissionFolderPath[0]
 
 onErrorCaptured((e) => {
-  console.log('here', e)
+  console.log(e)
   router.push({
     name: 'ErrorView',
     state: {
