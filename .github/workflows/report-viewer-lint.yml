@@ -4,7 +4,7 @@ name: Report Viewer ESLint Workflow # Checks linting of report viewer
 on:
   workflow_dispatch:
   push:
-    path:
+    paths:
       - ".github/workflows/report-viewer-lint.yml"
       - "report-viewer/**"
   pull_request:
@@ -35,7 +35,7 @@ jobs:
       
       - uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "18"
 
       - name: Install and Lint 🎨
         working-directory: report-viewer
