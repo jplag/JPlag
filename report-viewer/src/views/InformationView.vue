@@ -54,7 +54,7 @@ import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
 import { store } from '@/stores/store'
 
-const overview = OverviewFactory.getOverview()
+const overview = await OverviewFactory.getOverview()
 
 const totalComparisons = overview.totalComparisons
 const shownComparisons = overview.topComparisons.length

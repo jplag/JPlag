@@ -17,7 +17,15 @@
           <TextInformation label="Min Match Length">{{
             overview.matchSensitivity
           }}</TextInformation>
-          <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+
+          <ToolTipComponent direction="left">
+            <template #default>
+              <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+            </template>
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">More information about the CLI run of JPlag</p>
+            </template>
+          </ToolTipComponent>
         </div>
       </Container>
     </div>
@@ -32,19 +40,18 @@
         />
         <div class="flex flex-grow flex-col space-y-1">
           <h3 class="text-lg underline">Options:</h3>
-          <ScrollableComponent class="flex-grow space-y-2">
-            <OptionsSelector
-              name="Metric"
-              :labels="['Average', 'Maximum']"
-              :defaultSelected="getIndexFromMetric(store().uiState.distributionChartConfig.metric)"
+          <ScrollableComponent class="h-fit flex-grow">
+            <MetricSelector
+              class="mt-2"
+              title="Metric:"
+              :defaultSelected="store().uiState.distributionChartConfig.metric"
               @selection-changed="
-                (i: number) =>
-                  (store().uiState.distributionChartConfig.metric = getMetricFromNumber(i))
+                (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
               "
             />
             <OptionsSelector
               class="mt-2"
-              name="Scale x-Axis:"
+              title="Scale x-Axis:"
               :labels="['Linear', 'Logarithmic']"
               :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
               @selection-changed="
@@ -60,11 +67,22 @@
       <Container class="flex max-h-0 min-h-full flex-1 flex-col space-y-2">
         <div class="flex flex-row items-center space-x-8">
           <h2>Top Comparisons:</h2>
-          <SearchBarComponent
-            placeholder="Filter/Unhide Comparisons"
-            class="flex-grow"
-            @input-changed="(value) => (searchString = value)"
-          />
+          <ToolTipComponent direction="bottom" class="flex-grow">
+            <template #default>
+              <SearchBarComponent
+                placeholder="Filter/Unhide Comparisons"
+                @input-changed="(value) => (searchString = value)"
+              />
+            </template>
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">
+                Type in the name of a submission to only show comparisons that contain this
+                submission.
+              </p>
+              <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
+            </template>
+          </ToolTipComponent>
+
           <Button class="w-24" @click="changeAnnoymousForAll()">
             {{
               store().state.anonymous.size == store().getSubmissionIds.length
@@ -73,12 +91,11 @@
             }}
           </Button>
         </div>
-        <OptionsSelector
-          name="Sort By"
-          :labels="['Average Similarity', 'Maximum Similarity']"
-          :defaultSelected="getIndexFromMetric(store().uiState.comparisonTableSortingMetric)"
+        <MetricSelector
+          title="Sort By:"
+          :defaultSelected="store().uiState.comparisonTableSortingMetric"
           @selection-changed="
-            (index) => (store().uiState.comparisonTableSortingMetric = getMetricFromNumber(index))
+            (metric: MetricType) => (store().uiState.comparisonTableSortingMetric = metric)
           "
         />
         <ComparisonsTable
@@ -105,9 +122,11 @@ import { MetricType } from '@/model/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
+import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 
-const overview = OverviewFactory.getOverview()
+const overview = await OverviewFactory.getOverview()
 
 const searchString = ref('')
 
@@ -188,29 +207,13 @@ function changeAnnoymousForAll() {
   }
 }
 
-function getMetricFromNumber(metric: number) {
-  if (metric == 0) {
-    return MetricType.AVERAGE
-  } else {
-    return MetricType.MAXIMUM
-  }
-}
-
-function getIndexFromMetric(metric: MetricType) {
-  if (metric == MetricType.AVERAGE) {
-    return 0
-  } else {
-    return 1
-  }
-}
-
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
 const submissionPathValue = hasMoreSubmissionPaths
   ? 'Click More to see all paths'
   : overview.submissionFolderPath[0]
 
 onErrorCaptured((e) => {
-  console.log(e)
+  console.log('here', e)
   router.push({
     name: 'ErrorView',
     state: {
