@@ -11,8 +11,27 @@
         <div class="tableCellSimilarity !flex-col">
           <div>Similarity</div>
           <div class="flex w-full flex-row">
-            <div class="flex-1">Average</div>
-            <div class="flex-1">Maximum</div>
+            <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
+              <template #default>
+                <p class="w-full text-center">{{ metricToolTips[MetricType.AVERAGE].shortName }}</p>
+              </template>
+              <template #tooltip>
+                <p class="whitespace-pre text-sm">
+                  {{ metricToolTips[MetricType.AVERAGE].tooltip }}
+                </p>
+              </template>
+            </ToolTipComponent>
+
+            <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
+              <template #default>
+                <p class="w-full text-center">{{ metricToolTips[MetricType.MAXIMUM].shortName }}</p>
+              </template>
+              <template #tooltip>
+                <p class="whitespace-pre text-sm">
+                  {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
+                </p>
+              </template>
+            </ToolTipComponent>
           </div>
         </div>
         <div class="tableCellCluster items-center" v-if="displayClusters">Cluster</div>
@@ -102,21 +121,23 @@
                   }"
                   class="tect-center flex w-full justify-center"
                 >
-                  <div class="group relative w-fit">
-                    {{ clusters?.[index].members?.length }}
-                    <FontAwesomeIcon
-                      :icon="['fas', 'user-group']"
-                      :style="{ color: clusterIconColors[index] }"
-                    />
-                    {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
-                    <div
-                      class="tooltipArrow absolute left-[-400px] top-0 z-50 hidden h-full items-center rounded-sm bg-gray-950 bg-opacity-90 px-2 text-sm text-white group-hover:flex"
-                    >
-                      {{ clusters?.[index].members?.length }} submissions in cluster with average
-                      similarity of
+                  <ToolTipComponent class="w-fit" direction="left">
+                    <template #default>
+                      {{ clusters?.[index].members?.length }}
+                      <FontAwesomeIcon
+                        :icon="['fas', 'user-group']"
+                        :style="{ color: clusterIconColors[index] }"
+                      />
                       {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
-                    </div>
-                  </div>
+                    </template>
+                    <template #tooltip>
+                      <p class="whitespace-nowrap text-sm">
+                        {{ clusters?.[index].members?.length }} submissions in cluster with average
+                        similarity of
+                        {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
+                      </p>
+                    </template>
+                  </ToolTipComponent>
                 </RouterLink>
               </div>
             </div>
@@ -137,7 +158,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateColors } from '@/utils/ColorUtils'
-import { MetricType } from '@/model/MetricType'
+import ToolTipComponent from './ToolTipComponent.vue'
+import { MetricType, metricToolTips } from '@/model/MetricType'
 
 library.add(faUserGroup)
 

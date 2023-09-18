@@ -17,7 +17,15 @@
           <TextInformation label="Min Match Length">{{
             overview.matchSensitivity
           }}</TextInformation>
-          <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+
+          <ToolTipComponent direction="left">
+            <template #default>
+              <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+            </template>
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">More information about the CLI run of JPlag</p>
+            </template>
+          </ToolTipComponent>
         </div>
       </Container>
     </div>
@@ -32,17 +40,17 @@
         />
         <div class="flex flex-grow flex-col space-y-1">
           <h3 class="text-lg underline">Options:</h3>
-          <ScrollableComponent class="flex-grow space-y-2">
-            <OptionsSelector
-              name="Metric"
-              :labels="['Average', 'Maximum']"
+          <ScrollableComponent class="h-fit flex-grow">
+            <MetricSelector
+              class="mt-2"
+              title="Metric:"
               @selection-changed="
-                (i: number) => (selectedDistributionDiagramMetric = getMetricFromNumber(i))
+                (metric: MetricType) => (selectedDistributionDiagramMetric = metric)
               "
             />
             <OptionsSelector
               class="mt-2"
-              name="Scale x-Axis:"
+              title="Scale x-Axis:"
               :labels="['Linear', 'Logarithmic']"
               @selection-changed="
                 (i: number) => (distributionDiagramScaleX = i == 0 ? 'linear' : 'logarithmic')
@@ -55,11 +63,22 @@
       <Container class="flex max-h-0 min-h-full flex-1 flex-col space-y-2">
         <div class="flex flex-row items-center space-x-8">
           <h2>Top Comparisons:</h2>
-          <SearchBarComponent
-            placeholder="Filter/Unhide Comparisons"
-            class="flex-grow"
-            @input-changed="(value) => (searchString = value)"
-          />
+          <ToolTipComponent direction="bottom" class="flex-grow">
+            <template #default>
+              <SearchBarComponent
+                placeholder="Filter/Unhide Comparisons"
+                @input-changed="(value) => (searchString = value)"
+              />
+            </template>
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">
+                Type in the name of a submission to only show comparisons that contain this
+                submission.
+              </p>
+              <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
+            </template>
+          </ToolTipComponent>
+
           <Button class="w-24" @click="changeAnnoymousForAll()">
             {{
               store().state.anonymous.size == store().getSubmissionIds.length
@@ -68,12 +87,9 @@
             }}
           </Button>
         </div>
-        <OptionsSelector
-          name="Sort By"
-          :labels="['Average Similarity', 'Maximum Similarity']"
-          @selection-changed="
-            (index) => (comparisonTableSortingMetric = getMetricFromNumber(index))
-          "
+        <MetricSelector
+          title="Sort By:"
+          @selection-changed="(metric: MetricType) => (comparisonTableSortingMetric = metric)"
         />
         <ComparisonsTable
           :clusters="overview.clusters"
@@ -99,7 +115,9 @@ import { MetricType } from '@/model/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
+import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 
 const overview = await OverviewFactory.getOverview()
 
@@ -185,14 +203,6 @@ function changeAnnoymousForAll() {
 }
 
 const selectedDistributionDiagramMetric = ref(MetricType.AVERAGE)
-
-function getMetricFromNumber(metric: number) {
-  if (metric == 0) {
-    return MetricType.AVERAGE
-  } else {
-    return MetricType.MAXIMUM
-  }
-}
 
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
 const submissionPathValue = hasMoreSubmissionPaths
