@@ -2,11 +2,11 @@
   A view displaying the overview file of a JPlag report.
 -->
 <template>
-  <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-col">
-    <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
+  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
       <Container class="flex-grow">
         <h2>JPlag Report</h2>
-        <div class="flex flex-row space-x-5 items-center">
+        <div class="flex flex-row items-center space-x-5">
           <TextInformation label="Directory">{{ submissionPathValue }}</TextInformation>
           <TextInformation label="Total Submissions">{{
             store().getSubmissionIds.length
@@ -22,14 +22,15 @@
       </Container>
     </div>
 
-    <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5">
-      <Container class="max-h-0 min-h-full flex flex-col flex-1">
+    <div class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 p-5 pt-5">
+      <Container class="flex max-h-0 min-h-full flex-1 flex-col">
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
           :distribution="overview.distribution[selectedDistributionDiagramMetric]"
-          class="w-full h-2/3"
+          :x-scale="distributionDiagramScaleX"
+          class="h-2/3 w-full"
         />
-        <div class="flex flex-col flex-grow space-y-1">
+        <div class="flex flex-grow flex-col space-y-1">
           <h3 class="text-lg underline">Options:</h3>
           <ScrollableComponent class="flex-grow space-y-2">
             <OptionsSelector
@@ -39,12 +40,20 @@
                 (i: number) => (selectedDistributionDiagramMetric = getMetricFromNumber(i))
               "
             />
+            <OptionsSelector
+              class="mt-2"
+              name="Scale x-Axis:"
+              :labels="['Linear', 'Logarithmic']"
+              @selection-changed="
+                (i: number) => (distributionDiagramScaleX = i == 0 ? 'linear' : 'logarithmic')
+              "
+            />
           </ScrollableComponent>
         </div>
       </Container>
 
-      <Container class="max-h-0 min-h-full flex-1 flex flex-col space-y-2">
-        <div class="flex flex-row space-x-8 items-center">
+      <Container class="flex max-h-0 min-h-full flex-1 flex-col space-y-2">
+        <div class="flex flex-row items-center space-x-8">
           <h2>Top Comparisons:</h2>
           <SearchBarComponent
             placeholder="Filter/Unhide Comparisons"
@@ -69,7 +78,7 @@
         <ComparisonsTable
           :clusters="overview.clusters"
           :top-comparisons="displayedComparisons"
-          class="flex-1 min-h-0"
+          class="min-h-0 flex-1"
         />
       </Container>
     </div>
@@ -77,16 +86,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref, watch } from 'vue'
-import router from '@/router'
+import { computed, onErrorCaptured, ref, watch, type Ref } from 'vue'
+import { router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import Button from '@/components/ButtonComponent.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
-import MetricType from '@/model/MetricType'
+import { MetricType } from '@/model/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
@@ -96,6 +105,7 @@ const overview = OverviewFactory.getOverview()
 
 const searchString = ref('')
 const comparisonTableSortingMetric = ref(MetricType.AVERAGE)
+const distributionDiagramScaleX: Ref<'linear' | 'logarithmic'> = ref('linear')
 
 /**
  * This funtion gets called when the search bar for the compariosn table has been updated.

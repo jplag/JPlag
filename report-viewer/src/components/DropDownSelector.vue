@@ -2,11 +2,11 @@
   Base Component for DropDownSelectors 
 -->
 <template>
-  <Interactable class="p-0 !cursor-default">
+  <Interactable class="!cursor-default p-0">
     <select
       v-model="selectedOption"
       @change="$emit('selectionChanged', selectedOption)"
-      class="bg-interactable-light dark:bg-interactable-dark w-full m-0 cursor-pointer"
+      class="m-0 w-full cursor-pointer bg-interactable-light dark:bg-interactable-dark"
     >
       <option v-for="option in options" :key="option">
         {{ option }}
@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import Interactable from '@/components/InteractableComponent.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
   options: {
@@ -28,5 +28,15 @@ const props = defineProps({
 
 defineEmits(['selectionChanged'])
 
-const selectedOption = ref(props.options.length > 0 ? props.options[0] : '')
+const _selectedOption = ref('')
+
+const selectedOption = computed({
+  get: () => {
+    if (_selectedOption.value === '') {
+      return props.options[0]
+    }
+    return _selectedOption.value
+  },
+  set: (value) => (_selectedOption.value = value)
+})
 </script>

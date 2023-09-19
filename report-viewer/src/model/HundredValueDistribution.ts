@@ -1,10 +1,10 @@
-import Distribution from './Distribution'
+import { Distribution } from './Distribution'
 
 /**
  * This class represents he JPlag Distribution of a metric.
  * It is composed of 100 values, each representing the sum of the values of the metric in the corresponding percentile.
  */
-export default class HundredValueDistribution extends Distribution {
+export class HundredValueDistribution extends Distribution {
   constructor(distribution: number[]) {
     super(distribution)
   }

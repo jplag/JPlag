@@ -10,8 +10,6 @@ import de.jplag.semantics.VariableScope;
 class TestListener extends AbstractAntlrListener {
 
     TestListener() {
-        super();
-
         visit(VarDefContext.class).map(VARDEF).withSemantics(CodeSemantics::createKeep)
                 .onEnter((rule, variableRegistry) -> variableRegistry.registerVariable(rule.VAR_NAME().getText(), VariableScope.FILE, false));
         visit(CalcExpressionContext.class, rule -> rule.operator() != null && rule.operator().PLUS() != null).map(ADDITION).withControlSemantics();

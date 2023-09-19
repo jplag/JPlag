@@ -2,7 +2,7 @@
   Base search bar component
 -->
 <template>
-  <Interactable class="flex flex-row space-x-2 items-center py-2 px-2">
+  <Interactable class="flex flex-row items-center space-x-2 px-2 py-2">
     <FontAwesomeIcon
       :icon="['fas', 'magnifying-glass']"
       class="text-gray-500"
@@ -10,7 +10,7 @@
     />
     <input
       type="text"
-      class="placeholder:text-gray-500 bg-transparent border-0 flex-auto outline-none"
+      class="flex-auto border-0 bg-transparent outline-none placeholder:text-gray-500"
       :placeholder="placeholder"
       v-model="inputText"
     />

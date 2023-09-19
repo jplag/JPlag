@@ -2,8 +2,8 @@ import { vi, it, beforeAll, describe, expect } from 'vitest'
 import validNew from './ValidNewComparison.json'
 import validOld from './ValidOldComparison.json'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
-import store from '@/stores/store'
-import MetricType from '@/model/MetricType'
+import { store } from '@/stores/store'
+import { MetricType } from '@/model/MetricType'
 
 const store = {
   state: {
@@ -32,7 +32,7 @@ const store = {
 describe('Test JSON to Comparison', () => {
   beforeAll(() => {
     vi.mock('@/stores/store', () => ({
-      default: vi.fn(() => {
+      store: vi.fn(() => {
         return store
       })
     }))

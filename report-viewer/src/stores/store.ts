@@ -25,15 +25,18 @@ const store = defineStore('store', {
   }),
   getters: {
     /**
-     * @param name the name of the submission
+     * @param submissionID the name of the submission
      * @returns files in the submission of the given name
      */
-    filesOfSubmission: (state) => (name: string) => {
-      return Array.from(state.state.submissions[name], ([name, value]) => ({
-        name,
-        value
-      }))
-    },
+    filesOfSubmission:
+      (state) =>
+      (submissionId: string): SubmissionFile[] => {
+        return Array.from(state.state.submissions[submissionId], ([name, value]) => ({
+          submissionId,
+          fileName: name,
+          data: value
+        }))
+      },
     /**
      * @param name the name of the submission
      * @returns the display name of the submission
@@ -134,15 +137,15 @@ const store = defineStore('store', {
     },
     /**
      * Saves the given submission file
-     * @param submissionFile the submission file to save
+     * @param submissionFile the file to save
      */
     saveSubmissionFile(submissionFile: SubmissionFile) {
-      if (!this.state.submissions[submissionFile.name]) {
-        this.state.submissions[submissionFile.name] = new Map()
+      if (!this.state.submissions[submissionFile.submissionId]) {
+        this.state.submissions[submissionFile.submissionId] = new Map()
       }
-      this.state.submissions[submissionFile.name].set(
-        submissionFile.file.fileName,
-        submissionFile.file.data
+      this.state.submissions[submissionFile.submissionId].set(
+        submissionFile.fileName,
+        submissionFile.data
       )
     },
     /**
@@ -164,4 +167,4 @@ const store = defineStore('store', {
   }
 })
 
-export default store
+export { store }

@@ -96,8 +96,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
 
     /**
      * Tell the visitor that if it generates a token upon entering the entity, it should have semantics of type loop begin,
-     * same for the exit and loop end. If it doesn't generate a token, the semantics are discarded. This is not checked and
-     * does not lead to a warning.
+     * same for the exit and loop end.
      * @return Self
      */
     public ContextVisitor<T> withLoopSemantics() {

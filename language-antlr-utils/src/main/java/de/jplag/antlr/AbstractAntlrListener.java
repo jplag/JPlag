@@ -9,15 +9,19 @@ import java.util.function.Predicate;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
- * Base class for Antlr listeners. This is a quasi-static class that is only created once per language. Use by
- * overwriting the constructor, calling super(), and then calling the visit methods.
+ * Base class for Antlr listeners. This is a quasi-static class that is only created once per language. Use by calling
+ * the visit methods in the overwritten constructor.
  */
 public abstract class AbstractAntlrListener {
     private final List<ContextVisitor<ParserRuleContext>> contextVisitors;
     private final List<TerminalVisitor> terminalVisitors;
 
+    /**
+     * New instance
+     */
     protected AbstractAntlrListener() {
         contextVisitors = new ArrayList<>();
         terminalVisitors = new ArrayList<>();
@@ -70,14 +74,23 @@ public abstract class AbstractAntlrListener {
         return visit(terminalType, ignore -> true);
     }
 
+    /**
+     * Called by {@link InternalListener#visitTerminal(TerminalNode)} as part of antlr framework.
+     */
     void visitTerminal(HandlerData<Token> data) {
         this.terminalVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.enter(data));
     }
 
+    /**
+     * Called by {@link InternalListener#enterEveryRule(ParserRuleContext)} as part of antlr framework.
+     */
     void enterEveryRule(HandlerData<ParserRuleContext> data) {
         this.contextVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.enter(data));
     }
 
+    /**
+     * Called by {@link InternalListener#exitEveryRule(ParserRuleContext)} as part of antlr framework.
+     */
     void exitEveryRule(HandlerData<ParserRuleContext> data) {
         this.contextVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.exit(data));
     }

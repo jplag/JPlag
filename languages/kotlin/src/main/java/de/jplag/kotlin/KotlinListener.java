@@ -99,8 +99,6 @@ import de.jplag.kotlin.grammar.KotlinParser;
 class KotlinListener extends AbstractAntlrListener {
 
     KotlinListener() {
-        super();
-
         visit(PackageHeaderContext.class).map(PACKAGE);
         visit(ImportHeaderContext.class).map(IMPORT);
         visit(ClassDeclarationContext.class).map(CLASS_DECLARATION);

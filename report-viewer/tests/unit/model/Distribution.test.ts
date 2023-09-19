@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import Distribution from '@/model/Distribution'
-import TenValueDistribution from '@/model/TenValueDistribution'
-import HundredValueDistribution from '@/model/HundredValueDistribution'
+import { Distribution } from '@/model/Distribution'
+import { TenValueDistribution } from '@/model/TenValueDistribution'
+import { HundredValueDistribution } from '@/model/HundredValueDistribution'
 
 describe('Distribution', () => {
   it.each([
