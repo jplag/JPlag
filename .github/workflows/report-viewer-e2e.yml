@@ -7,7 +7,6 @@ on:
     paths:
       - ".github/workflows/report-viewer-e2e.yml"
       - "report-viewer/**"
-  push:
 
 jobs:
   pre_job:
