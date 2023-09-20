@@ -1,5 +1,8 @@
 package de.jplag.semantics;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +14,8 @@ import java.util.Set;
  * Registry of variables to assist in generating token semantics.
  */
 public class VariableRegistry {
+    private static final Logger logger = LoggerFactory.getLogger(VariableRegistry.class);
+
     private CodeSemantics semantics;
     private Map<String, Variable> fileVariables;
     private Deque<Map<String, Variable>> classVariables; // map class name to map of variable names to variables
@@ -113,6 +118,7 @@ public class VariableRegistry {
      * @param mutable Whether the variable is mutable.
      */
     public void registerVariable(String variableName, VariableScope scope, boolean mutable) {
+        logger.debug("Register variable " + variableName);
         Variable variable = new Variable(variableName, scope, mutable);
         switch (scope) {
             case FILE -> fileVariables.put(variableName, variable);

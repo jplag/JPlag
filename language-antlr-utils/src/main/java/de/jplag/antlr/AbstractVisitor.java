@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.function.*;
 
 import org.antlr.v4.runtime.Token;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
@@ -15,6 +17,8 @@ import de.jplag.semantics.VariableRegistry;
  * @param <T> The type of the visited entity.
  */
 public abstract class AbstractVisitor<T> {
+    private static final Logger logger = LoggerFactory.getLogger(TokenCollector.class);
+
     private final Predicate<T> condition;
     private final List<Consumer<HandlerData<T>>> entryHandlers;
     private TokenType entryTokenType;
@@ -85,7 +89,7 @@ public abstract class AbstractVisitor<T> {
      * @return Self
      */
     public AbstractVisitor<T> withSemantics(Supplier<CodeSemantics> semanticsSupplier) {
-        this.entrySemantics = ignore -> semanticsSupplier.get();
+        withSemantics(ignore -> semanticsSupplier.get());
         return this;
     }
 
@@ -110,7 +114,10 @@ public abstract class AbstractVisitor<T> {
      * Enter a given entity, injecting the needed dependencies.
      */
     void enter(HandlerData<T> data) {
-        addToken(data, entryTokenType, entrySemantics, this::extractEnterToken);
+        if (entryTokenType == null && entrySemantics != null) {
+            logger.warn("Received semantics, but no token type, so no token was generated and the semantics discarded");
+        }
+        addToken(data, entryTokenType, entrySemantics, this::extractEnterToken);  // addToken takes null token types
         entryHandlers.forEach(handler -> handler.accept(data));
     }
 
