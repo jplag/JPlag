@@ -2,6 +2,7 @@
   <OptionsSelectorComponent
     :title="title"
     :labels="labels"
+    :default-selected="metrics.indexOf(defaultSelected)"
     @selection-changed="(i) => $emit('selectionChanged', metrics[i])"
   />
 </template>
@@ -22,7 +23,7 @@ const props = defineProps({
     required: false,
     default: ''
   },
-  defaultSelection: {
+  defaultSelected: {
     type: String as PropType<MetricType>,
     required: false,
     default: MetricType.AVERAGE

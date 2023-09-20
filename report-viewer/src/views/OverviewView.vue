@@ -34,8 +34,8 @@
       <Container class="flex max-h-0 min-h-full flex-1 flex-col">
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
-          :distribution="overview.distribution[selectedDistributionDiagramMetric]"
-          :x-scale="distributionDiagramScaleX"
+          :distribution="overview.distribution[store().uiState.distributionChartConfig.metric]"
+          :x-scale="store().uiState.distributionChartConfig.xScale"
           class="h-2/3 w-full"
         />
         <div class="flex flex-grow flex-col space-y-1">
@@ -44,16 +44,20 @@
             <MetricSelector
               class="mt-2"
               title="Metric:"
+              :defaultSelected="store().uiState.distributionChartConfig.metric"
               @selection-changed="
-                (metric: MetricType) => (selectedDistributionDiagramMetric = metric)
+                (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
               "
             />
             <OptionsSelector
               class="mt-2"
               title="Scale x-Axis:"
               :labels="['Linear', 'Logarithmic']"
+              :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
               @selection-changed="
-                (i: number) => (distributionDiagramScaleX = i == 0 ? 'linear' : 'logarithmic')
+                (i: number) =>
+                  (store().uiState.distributionChartConfig.xScale =
+                    i == 0 ? 'linear' : 'logarithmic')
               "
             />
           </ScrollableComponent>
@@ -89,7 +93,10 @@
         </div>
         <MetricSelector
           title="Sort By:"
-          @selection-changed="(metric: MetricType) => (comparisonTableSortingMetric = metric)"
+          :defaultSelected="store().uiState.comparisonTableSortingMetric"
+          @selection-changed="
+            (metric: MetricType) => (store().uiState.comparisonTableSortingMetric = metric)
+          "
         />
         <ComparisonsTable
           :clusters="overview.clusters"
@@ -102,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref, watch, type Ref } from 'vue'
+import { computed, onErrorCaptured, ref, watch } from 'vue'
 import { router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
@@ -122,8 +129,6 @@ import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorCompon
 const overview = await OverviewFactory.getOverview()
 
 const searchString = ref('')
-const comparisonTableSortingMetric = ref(MetricType.AVERAGE)
-const distributionDiagramScaleX: Ref<'linear' | 'logarithmic'> = ref('linear')
 
 /**
  * This funtion gets called when the search bar for the compariosn table has been updated.
@@ -152,8 +157,8 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
   comparisons.sort(
     (a, b) =>
-      b.similarities[comparisonTableSortingMetric.value] -
-      a.similarities[comparisonTableSortingMetric.value]
+      b.similarities[store().uiState.comparisonTableSortingMetric] -
+      a.similarities[store().uiState.comparisonTableSortingMetric]
   )
   let index = 0
   comparisons.forEach((c) => {
@@ -201,8 +206,6 @@ function changeAnnoymousForAll() {
     store().state.anonymous = new Set(store().getSubmissionIds)
   }
 }
-
-const selectedDistributionDiagramMetric = ref(MetricType.AVERAGE)
 
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
 const submissionPathValue = hasMoreSubmissionPaths
