@@ -8,9 +8,11 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.jplag.TokenType;
 import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.antlr.ContextVisitor;
 import de.jplag.cpp2.grammar.CPP14Parser;
 import de.jplag.cpp2.grammar.CPP14Parser.*;
 import de.jplag.semantics.CodeSemantics;
+import de.jplag.semantics.VariableAccessType;
 import de.jplag.semantics.VariableRegistry;
 import de.jplag.semantics.VariableScope;
 
@@ -23,23 +25,24 @@ import de.jplag.semantics.VariableScope;
 class CPPListener extends AbstractAntlrListener {
 
     CPPListener() {
-        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).addClassScope().withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
-            for (MemberdeclarationContext member : ctx.memberSpecification().memberdeclaration()) {
-                if (member.memberDeclaratorList() != null) {
-                    // I don't even know man
-                    SimpleTypeSpecifierContext ugh = member.declSpecifierSeq().declSpecifier().get(0).typeSpecifier().trailingTypeSpecifier()
-                            .simpleTypeSpecifier();
-                    boolean typeMutable = ugh.theTypeName() != null;
-                    for (var decl : member.memberDeclaratorList().memberDeclarator()) {
-                        // decl.declarator().noPointerDeclarator() may alternatively be used, todo
-                        CPP14Parser.PointerDeclaratorContext pd = decl.declarator().pointerDeclarator();
-                        String name = pd.noPointerDeclarator().getText();
-                        boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
-                        varReg.registerVariable(name, VariableScope.CLASS, mutable);
+        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).addClassScope()
+                .withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
+                    for (MemberdeclarationContext member : ctx.memberSpecification().memberdeclaration()) {
+                        if (member.memberDeclaratorList() != null) {
+                            // I don't even know man
+                            SimpleTypeSpecifierContext ugh = member.declSpecifierSeq().declSpecifier().get(0).typeSpecifier().trailingTypeSpecifier()
+                                    .simpleTypeSpecifier();
+                            // boolean typeMutable = ugh.theTypeName() != null;
+                            for (var decl : member.memberDeclaratorList().memberDeclarator()) {
+                                // decl.declarator().noPointerDeclarator() may alternatively be used, todo
+                                CPP14Parser.PointerDeclaratorContext pd = decl.declarator().pointerDeclarator();
+                                String name = pd.noPointerDeclarator().getText();
+                                // boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
+                                varReg.registerVariable(name, VariableScope.CLASS, true);
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
 
         mapClass(ClassKeyContext::Class, CLASS_BEGIN, CLASS_END);
         mapClass(ClassKeyContext::Struct, STRUCT_BEGIN, STRUCT_END);  // structs are basically just classes
@@ -77,13 +80,25 @@ class CPPListener extends AbstractAntlrListener {
 
         visit(TemplateDeclarationContext.class).map(GENERIC).withSemantics(CodeSemantics::new);
 
-        visit(AssignmentOperatorContext.class).map(ASSIGN).withSemantics(CodeSemantics::new);  // todo variables
-        visit(BraceOrEqualInitializerContext.class, rule -> rule.Assign() != null).map(ASSIGN).withSemantics(CodeSemantics::new);
+        visit(AssignmentOperatorContext.class).map(ASSIGN).withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
+            varReg.setNextVariableAccessType(VariableAccessType.WRITE);
+        });  // todo variables
+        // todo use parent instead, this starts at =
+//        visit(BraceOrEqualInitializerContext.class, rule -> rule.Assign() != null).map(ASSIGN).withSemantics(CodeSemantics::new)
+//                .onEnter((rule, varReg) -> {
+//                    varReg.setNextVariableAccessType(VariableAccessType.WRITE);
+//                });
+//        ;
         visit(UnaryExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGN)
-                .withSemantics(CodeSemantics::new);
+                .withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
+                    varReg.setNextVariableAccessType(VariableAccessType.READ_WRITE);
+                });
+        ;
 
         visit(StaticAssertDeclarationContext.class).map(STATIC_ASSERT).withSemantics(CodeSemantics::createControl);
-        visit(EnumeratorDefinitionContext.class).map(VARDEF).withSemantics(CodeSemantics::new);
+        visit(EnumeratorDefinitionContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
+            varReg.setNextVariableAccessType(VariableAccessType.WRITE);
+        });
         visit(BracedInitListContext.class).map(BRACED_INIT_BEGIN, BRACED_INIT_END).withSemantics(CodeSemantics::new);
 
         visit(SimpleTypeSpecifierContext.class, rule -> {
@@ -100,50 +115,68 @@ class CPPListener extends AbstractAntlrListener {
             SimpleDeclarationContext parent = getAncestor(context, SimpleDeclarationContext.class);
             if (parent == null)  // at this point we know parent exists
                 throw new IllegalStateException();
-            boolean typeMutable = context.theTypeName() != null; // block is duplicate to member variable register
+            // boolean typeMutable = context.theTypeName() != null; // block is duplicate to member variable register
             for (var decl : parent.initDeclaratorList().initDeclarator()) {
                 PointerDeclaratorContext pd = decl.declarator().pointerDeclarator();
                 String name = decl.declarator().getText();
-                boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
-                variableRegistry.registerVariable(name, VariableScope.LOCAL, mutable);
+                // boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
+                variableRegistry.registerVariable(name, VariableScope.LOCAL, true);
+                variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE); // todo multiple??
             }
         });
 
-        visit(SimpleDeclarationContext.class, rule -> {
+        mapApply(visit(SimpleDeclarationContext.class, rule -> {
             if (!hasAncestor(rule, FunctionBodyContext.class)) {
                 return false;
             }
 
             NoPointerDeclaratorContext noPointerDecl = getDescendant(rule, NoPointerDeclaratorContext.class);
             return noPointerInFunctionCallContext(noPointerDecl);
-        }).map(APPLY).withSemantics(CodeSemantics::createControl);
+        }));
 
-        visit(InitDeclaratorContext.class, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null).map(APPLY)
-                .withSemantics(CodeSemantics::createControl);
-        visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) ->  {
+        mapApply(visit(InitDeclaratorContext.class, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null));
+        visit(InitDeclaratorContext.class,
+                rule -> rule.initializer() != null && rule.initializer().braceOrEqualInitializer() != null
+                        && rule.initializer().braceOrEqualInitializer().Assign() != null).map(ASSIGN).withSemantics(CodeSemantics::new)
+                                .onEnter((rule, varReg) -> {
+                                    varReg.setNextVariableAccessType(VariableAccessType.WRITE);
+                                });
+        visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
             CPP14Parser.DeclSpecifierContext declSpecifier = ctx.declSpecifierSeq().declSpecifier().get(0);
-            boolean typeMutable = declSpecifier.typeSpecifier().trailingTypeSpecifier().simpleTypeSpecifier().theTypeName() != null;
+            // boolean typeMutable = declSpecifier.typeSpecifier().trailingTypeSpecifier().simpleTypeSpecifier().theTypeName() !=
+            // null;
             CPP14Parser.PointerDeclaratorContext pd = ctx.declarator().pointerDeclarator();
             String name = pd.noPointerDeclarator().getText();
-            boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
-            varReg.registerVariable(name, VariableScope.LOCAL, mutable);
-            varReg.setIgnoreNextVariableAccess(true);
+            // boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
+            varReg.registerVariable(name, VariableScope.LOCAL, true);
+            varReg.setNextVariableAccessType(VariableAccessType.WRITE);
+            // varReg.setIgnoreNextVariableAccess(true); // todo work this out, also write for method calls
         });
         visit(ConditionalExpressionContext.class, rule -> rule.Question() != null).map(QUESTIONMARK).withSemantics(CodeSemantics::new);
 
-        visit(PostfixExpressionContext.class, rule -> rule.LeftParen() != null).map(APPLY).withSemantics(CodeSemantics::createControl);
+        mapApply(visit(PostfixExpressionContext.class, rule -> rule.LeftParen() != null));
         visit(PostfixExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGN)
-                .withSemantics(CodeSemantics::new);
+                .withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
+                    varReg.setNextVariableAccessType(VariableAccessType.READ_WRITE);
+                });
 
         visit(UnqualifiedIdContext.class).onEnter((ctx, varReg) -> {
-                // assumption: all local variable references are unqualified
-                // may or may not be correct but good enough heuristic anyways
-                var parentCtx = ctx.getParent().getParent();
-        if (!parentCtx.getParent().getParent().getText().contains("(")) {
-            boolean mutable = parentCtx.getClass() == PostfixExpressionContext.class // after dot
-                    && ((PostfixExpressionContext) parentCtx).postfixExpression().getText().equals("this");
-            varReg.registerVariableAccess(ctx.getText(), mutable);
-        }});
+            // assumption: all local variable references are unqualified
+            // may or may not be correct but good enough heuristic anyways
+            var parentCtx = ctx.getParent().getParent();
+            if (!parentCtx.getParent().getParent().getText().contains("(")) {
+                boolean isClassVariable = parentCtx.getClass() == PostfixExpressionContext.class // after dot
+                        && ((PostfixExpressionContext) parentCtx).postfixExpression().getText().equals("this");
+                varReg.registerVariableAccess(ctx.getText(), isClassVariable);
+            }
+        });
+    }
+
+    private void mapApply(ContextVisitor<?> visitor) {
+        visitor.onExit((ctx, varReg) -> varReg.setMutableWrite(false)).onEnter((ctx, varReg) -> {
+            varReg.addAllNonLocalVariablesAsReads();
+            varReg.setMutableWrite(true);
+        }).map(APPLY).withControlSemantics();
     }
 
     /**
@@ -166,13 +199,13 @@ class CPPListener extends AbstractAntlrListener {
                 // I don't even know man
                 SimpleTypeSpecifierContext ugh = member.declSpecifierSeq().declSpecifier().get(0).typeSpecifier().trailingTypeSpecifier()
                         .simpleTypeSpecifier();
-                boolean typeMutable = ugh.theTypeName() != null;
+                // boolean typeMutable = ugh.theTypeName() != null;
                 for (var decl : member.memberDeclaratorList().memberDeclarator()) {
                     // decl.declarator().noPointerDeclarator() may alternatively be used, todo
                     PointerDeclaratorContext pd = decl.declarator().pointerDeclarator();
                     String name = pd.noPointerDeclarator().getText();
-                    boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
-                    variableRegistry.registerVariable(name, VariableScope.CLASS, mutable);
+                    // boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
+                    variableRegistry.registerVariable(name, VariableScope.CLASS, true);
                 }
             }
         }
