@@ -25,6 +25,24 @@ import de.jplag.util.FileUtils;
  * @param <T> The type of the antlr parser
  */
 public abstract class AbstractAntlrParserAdapter<T extends Parser> extends AbstractParser {
+
+    private final boolean extractsSemantics;
+
+    /**
+     * New instance
+     * @param extractsSemantics If true, the listener will extract semantics along with every token
+     */
+    protected AbstractAntlrParserAdapter(boolean extractsSemantics) {
+        this.extractsSemantics = extractsSemantics;
+    }
+
+    /**
+     * New instance
+     */
+    protected AbstractAntlrParserAdapter() {
+        this(false);
+    }
+
     /**
      * Parsers the set of files
      * @param files The files
@@ -32,33 +50,29 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
      * @throws ParsingException If anything goes wrong
      */
     public List<Token> parse(Set<File> files) throws ParsingException {
-        TokenCollector collector = new TokenCollector();
-
+        TokenCollector collector = new TokenCollector(extractsSemantics);
         for (File file : files) {
             parseFile(file, collector);
         }
-
         return collector.getTokens();
     }
 
     private void parseFile(File file, TokenCollector collector) throws ParsingException {
+        collector.enterFile(file);
         try (Reader reader = FileUtils.openFileReader(file)) {
             Lexer lexer = this.createLexer(CharStreams.fromReader(reader));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             T parser = this.createParser(tokenStream);
-
             ParserRuleContext entryContext = this.getEntryContext(parser);
             ParseTreeWalker treeWalker = new ParseTreeWalker();
-
-            AbstractAntlrListener listener = this.createListener(collector, file);
+            InternalListener listener = new InternalListener(this.getListener(), collector);
             for (ParseTree child : entryContext.children) {
                 treeWalker.walk(listener, child);
             }
-
-            collector.addToken(Token.fileEnd(file));
         } catch (IOException exception) {
             throw new ParsingException(file, exception.getMessage(), exception);
         }
+        collector.addFileEndToken();
     }
 
     /**
@@ -83,10 +97,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
     protected abstract ParserRuleContext getEntryContext(T parser);
 
     /**
-     * Creates the listener
-     * @param collector The token collector
-     * @param currentFile The current file
-     * @return The parser
+     * @return The listener. Should be created once statically since it never changes.
      */
-    protected abstract AbstractAntlrListener createListener(TokenCollector collector, File currentFile);
+    protected abstract AbstractAntlrListener getListener();
 }
