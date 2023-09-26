@@ -34,16 +34,12 @@ const keys = computed(() => Array.from(props.cluster.members.keys()))
 const labels = computed(() =>
   Array.from(keys.value).map((m) => store().submissionDisplayName(m) ?? m)
 )
-console.log(labels.value)
 const edges = computed(() => {
   const edges: { source: number; target: number }[] = []
   props.cluster.members.forEach((member, key) => {
     member.forEach((match) => {
       const firstIndex = keys.value.indexOf(key)
       const secondIndex = keys.value.indexOf(match.matchedWith)
-      if (firstIndex == -1 || secondIndex == -1) {
-        console.log(`Could not find index for ${key} or ${match.matchedWith}`)
-      }
       if (firstIndex < secondIndex) {
         edges.push({ source: firstIndex, target: secondIndex })
       }
@@ -52,7 +48,19 @@ const edges = computed(() => {
   return edges
 })
 
-const data = computed(() => {
+function getSimilarityFromKeyIndex(firstIndex: number, secondIndex: number) {
+  const firstSubmission = props.cluster.members.get(keys.value[firstIndex])
+  if (!firstSubmission) {
+    return 0
+  }
+  const match = firstSubmission.find((m) => m.matchedWith == keys.value[secondIndex])
+  if (!match) {
+    return 0
+  }
+  return match.similarity
+}
+
+const graphData = computed(() => {
   return {
     labels: labels.value,
     datasets: [
@@ -63,18 +71,21 @@ const data = computed(() => {
         pointHoverBackgroundColor: graphColors.contentFill,
         pointBorderColor: graphColors.ticksAndFont.value,
         pointHoverBorderColor: graphColors.ticksAndFont.value,
-        data: Array.from(keys.value).map((_, index) => ({ x: getX(index), y: getY(index) })),
+        data: Array.from(keys.value).map((_, index) => ({
+          x: Math.cos((2 * Math.PI * index) / keys.value.length) + 1,
+          y: Math.sin((2 * Math.PI * index) / keys.value.length) + 1
+        })),
         edges: edges.value,
         edgeLineBorderColor: (ctx: any) =>
-          borderColor(keys.value[ctx.raw.source], keys.value[ctx.raw.target]),
+          graphColors.contentFillAlpha(getSimilarityFromKeyIndex(ctx.raw.source, ctx.raw.target)),
         edgeLineBorderWidth: (ctx: any) =>
-          borderWidth(keys.value[ctx.raw.source], keys.value[ctx.raw.target])
+          5 * getSimilarityFromKeyIndex(ctx.raw.source, ctx.raw.target) + 1
       }
     ]
   }
 })
 
-const options = computed(() => {
+const graphOptions = computed(() => {
   return {
     animation: false as false,
     plugins: {
@@ -98,38 +109,6 @@ const options = computed(() => {
   }
 })
 
-function borderColor(firstSubmissionId: string, secondSubmissionId: string) {
-  const firstSubmission = props.cluster.members.get(firstSubmissionId)
-  if (!firstSubmission) {
-    return 'rgba(0,0,0,0)'
-  }
-  const match = firstSubmission.find((m) => m.matchedWith == secondSubmissionId)
-  if (!match) {
-    return 'rgba(0,0,0,0)'
-  }
-  return graphColors.contentFillAlpha(match.similarity)
-}
-
-function borderWidth(firstSubmissionId: string, secondSubmissionId: string) {
-  const firstSubmission = props.cluster.members.get(firstSubmissionId)
-  if (!firstSubmission) {
-    return 'rgba(0,0,0,0)'
-  }
-  const match = firstSubmission.find((m) => m.matchedWith == secondSubmissionId)
-  if (!match) {
-    return 'rgba(0,0,0,0)'
-  }
-  return 4 * match.similarity + 1
-}
-
-function getX(index: number) {
-  return Math.sin((2 * Math.PI * index) / keys.value.length) + 1
-}
-
-function getY(index: number) {
-  return Math.cos((2 * Math.PI * index) / keys.value.length) + 1
-}
-
 const chart: Ref<Chart | null> = ref(null)
 
 function drawGraph() {
@@ -148,8 +127,8 @@ function drawGraph() {
   console.log(graphCanvas.value)
   chart.value = new Chart(ctx, {
     type: 'graph',
-    data: data.value,
-    options: options.value
+    data: graphData.value,
+    options: graphOptions.value
   })
   loaded.value = true
 }
@@ -161,8 +140,8 @@ onMounted(() => {
 watch(
   computed(() => {
     return {
-      d: data.value,
-      o: options.value
+      d: graphData.value,
+      o: graphOptions.value
     }
   }),
   () => {

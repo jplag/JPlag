@@ -13,8 +13,24 @@
 
     <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
       <Container class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden">
-        <!--ClusterRadarChart :cluster="clusterListElement" class="flex-grow" /-->
-        <ClusterGraph :cluster="clusterListElement" class="flex-grow" />
+        <OptionsSelectorComponent
+          :labels="['Graph', 'Radar']"
+          @selectionChanged="
+            (index) => (selectedClusterVisualization = index == 0 ? 'Graph' : 'Radar')
+          "
+          title="Cluster Visualization:"
+          class="mb-3"
+        />
+        <ClusterRadarChart
+          v-if="selectedClusterVisualization == 'Radar'"
+          :cluster="clusterListElement"
+          class="flex-grow"
+        />
+        <ClusterGraph
+          v-if="selectedClusterVisualization == 'Graph'"
+          :cluster="clusterListElement"
+          class="flex-grow"
+        />
       </Container>
       <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2">
         <h2>Comparisons of Cluster Members:</h2>
@@ -34,6 +50,8 @@ import type { ClusterListElement, ClusterListElementMember } from '@/model/Clust
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { MetricType } from '@/model/MetricType'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
+import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
+import { ref } from 'vue'
 
 const props = defineProps({
   clusterIndex: {
@@ -46,6 +64,7 @@ const overview = await OverviewFactory.getOverview()
 const cluster = overview.clusters[props.clusterIndex]
 const comparisons = [] as Array<ComparisonListElement>
 const clusterMemberList = new Map() as ClusterListElementMember
+const selectedClusterVisualization: Ref<'Graph' | 'Radar'> = ref('Graph')
 const usedMetric = MetricType.AVERAGE
 
 function getComparisonFor(id1: string, id2: string) {
