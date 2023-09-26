@@ -68,7 +68,10 @@ const graphColors = {
   }),
   contentFill: 'rgba(190, 22, 34, 0.5)',
   contentBorder: 'rgb(127, 15, 24)',
-  pointFill: 'rgba(190, 22, 34, 1)'
+  pointFill: 'rgba(190, 22, 34, 1)',
+  contentFillAlpha(alpha: number) {
+    return `rgba(190, 22, 34, ${alpha})`
+  }
 }
 
 export { generateColors, graphColors }

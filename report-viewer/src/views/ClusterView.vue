@@ -13,7 +13,8 @@
 
     <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
       <Container class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden">
-        <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
+        <!--ClusterRadarChart :cluster="clusterListElement" class="flex-grow" /-->
+        <ClusterGraph :cluster="clusterListElement" class="flex-grow" />
       </Container>
       <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2">
         <h2>Comparisons of Cluster Members:</h2>
@@ -25,6 +26,7 @@
 
 <script setup lang="ts">
 import ClusterRadarChart from '@/components/ClusterRadarChart.vue'
+import ClusterGraph from '@/components/ClusterGraph.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
