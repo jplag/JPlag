@@ -34,7 +34,7 @@
     "vue-virtual-scroller": "^2.0.0-beta.8"
   },
   "devDependencies": {
-    "@playwright/test": "^1.38.0",
+    "@playwright/test": "^1.38.1",
     "@rushstack/eslint-patch": "^1.4.0",
     "@types/jsdom": "^21.1.3",
     "@types/node": "^18.18.0",
