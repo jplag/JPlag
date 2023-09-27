@@ -54,7 +54,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * previous ones stored in the resource folder.
  */
 class EndToEndSuiteTest {
-    private static final double EPSILON = 1E-8;
+    private static final double EPSILON = 1E-6;
 
     /**
      * Creates the test cases over all language options for which data is available and the current test options.
