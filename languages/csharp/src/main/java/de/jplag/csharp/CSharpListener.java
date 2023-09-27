@@ -482,7 +482,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     @Override
     public void exitAccessor_declarations(Accessor_declarationsContext context) {
-        transformToken(ACCESSORS_END, context.getStart());
+        transformToken(ACCESSORS_END, context.getStop());
         super.enterAccessor_declarations(context);
     }
 
@@ -494,7 +494,7 @@ public class CSharpListener extends CSharpParserBaseListener {
 
     @Override
     public void exitAccessor_body(Accessor_bodyContext context) {
-        transformToken(ACCESSOR_END, context.getStart());
+        transformToken(ACCESSOR_END, context.getStop());
         super.exitAccessor_body(context);
     }
 

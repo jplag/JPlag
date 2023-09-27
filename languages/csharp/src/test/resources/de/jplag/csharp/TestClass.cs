@@ -15,8 +15,7 @@ public class MyClass
         if(parameter1 == 0) {
             Console.WriteLine("Second parameter {0}", parameter2);
         } else {
-            Console.WriteLine("First Parameter {0}, second parameter {1}", 
-                                                    parameter1, parameter2);
+            Console.WriteLine("First Parameter {0}, second parameter {1}", parameter1, parameter2);
         }
         
     }
