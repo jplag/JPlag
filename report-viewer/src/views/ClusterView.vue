@@ -51,7 +51,7 @@ import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { MetricType } from '@/model/MetricType'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 
 const props = defineProps({
   clusterIndex: {

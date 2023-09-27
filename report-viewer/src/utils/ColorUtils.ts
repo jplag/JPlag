@@ -59,6 +59,11 @@ function generateColorsForInterval(
   return colors
 }
 
+const graphRGB = {
+  red: 190,
+  green: 22,
+  blue: 34
+}
 const graphColors = {
   ticksAndFont: computed(() => {
     return store().uiState.useDarkMode ? '#ffffff' : '#000000'
@@ -66,11 +71,11 @@ const graphColors = {
   gridLines: computed(() => {
     return store().uiState.useDarkMode ? 'rgba(256, 256, 256, 0.2)' : 'rgba(0, 0, 0, 0.2)'
   }),
-  contentFill: 'rgba(190, 22, 34, 0.5)',
+  contentFill: `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, 0.5)`,
   contentBorder: 'rgb(127, 15, 24)',
-  pointFill: 'rgba(190, 22, 34, 1)',
+  pointFill: `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, 1)`,
   contentFillAlpha(alpha: number) {
-    return `rgba(190, 22, 34, ${alpha})`
+    return `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, ${alpha})`
   }
 }
 
