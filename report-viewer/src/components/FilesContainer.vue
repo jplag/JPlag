@@ -18,7 +18,7 @@
             !matches.get(file.fileName) ? [] : (matches.get(file.fileName) as MatchInSingleFile[])
           "
           :highlight-language="highlightLanguage"
-          @line-selected="(match) => $emit('line-selected', match)"
+          @line-selected="(match) => $emit('lineSelected', match)"
           class="mt-1"
         />
       </VueDraggableNext>
