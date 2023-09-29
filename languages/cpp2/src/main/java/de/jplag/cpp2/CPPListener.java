@@ -2,10 +2,7 @@ package de.jplag.cpp2;
 
 import static de.jplag.cpp2.CPPTokenType.*;
 
-import java.io.File;
-
 import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.antlr.TokenCollector;
 import de.jplag.cpp2.grammar.CPP14Parser;
 import de.jplag.cpp2.grammar.CPP14Parser.*;
 
@@ -15,59 +12,53 @@ import de.jplag.cpp2.grammar.CPP14Parser.*;
  * <p>
  * Those cases are covered by {@link SimpleTypeSpecifierContext} and {@link SimpleDeclarationContext}
  */
-public class CPPListener extends AbstractAntlrListener {
-    /**
-     * New instance
-     * @param collector The token collector the token will be added to
-     * @param currentFile The currently processed file
-     */
-    public CPPListener(TokenCollector collector, File currentFile) {
-        super(collector, currentFile);
+class CPPListener extends AbstractAntlrListener {
 
-        mapEnterExit(ClassSpecifierContext.class, UNION_BEGIN, UNION_END, rule -> rule.classHead().Union() != null);
-        mapEnterExit(ClassSpecifierContext.class, CLASS_BEGIN, CLASS_END,
-                rule -> rule.classHead().classKey() != null && rule.classHead().classKey().Class() != null);
-        mapEnterExit(ClassSpecifierContext.class, STRUCT_BEGIN, STRUCT_END,
-                rule -> rule.classHead().classKey() != null && rule.classHead().classKey().Struct() != null);
-        mapEnterExit(EnumSpecifierContext.class, ENUM_BEGIN, ENUM_END);
+    CPPListener() {
+        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END);
+        visit(ClassSpecifierContext.class, rule -> rule.classHead().classKey() != null && rule.classHead().classKey().Class() != null)
+                .map(CLASS_BEGIN, CLASS_END);
+        visit(ClassSpecifierContext.class, rule -> rule.classHead().classKey() != null && rule.classHead().classKey().Struct() != null)
+                .map(STRUCT_BEGIN, STRUCT_END);
+        visit(EnumSpecifierContext.class).map(ENUM_BEGIN, ENUM_END);
 
-        mapEnterExit(FunctionDefinitionContext.class, FUNCTION_BEGIN, FUNCTION_END);
+        visit(FunctionDefinitionContext.class).map(FUNCTION_BEGIN, FUNCTION_END);
 
-        mapEnterExit(IterationStatementContext.class, DO_BEGIN, DO_END, rule -> rule.Do() != null);
-        mapEnterExit(IterationStatementContext.class, FOR_BEGIN, FOR_END, rule -> rule.For() != null);
-        mapEnterExit(IterationStatementContext.class, WHILE_BEGIN, WHILE_END, rule -> rule.While() != null && rule.Do() == null);
+        visit(IterationStatementContext.class, rule -> rule.Do() != null).map(DO_BEGIN, DO_END);
+        visit(IterationStatementContext.class, rule -> rule.For() != null).map(FOR_BEGIN, FOR_END);
+        visit(IterationStatementContext.class, rule -> rule.While() != null && rule.Do() == null).map(WHILE_BEGIN, WHILE_END);
 
-        mapEnterExit(SelectionStatementContext.class, SWITCH_BEGIN, SWITCH_END, rule -> rule.Switch() != null);
-        mapEnterExit(SelectionStatementContext.class, IF_BEGIN, IF_END, rule -> rule.If() != null);
-        mapTerminal(CPP14Parser.Else, ELSE);
+        visit(SelectionStatementContext.class, rule -> rule.Switch() != null).map(SWITCH_BEGIN, SWITCH_END);
+        visit(SelectionStatementContext.class, rule -> rule.If() != null).map(IF_BEGIN, IF_END);
+        visit(CPP14Parser.Else).map(ELSE);
 
-        mapEnter(LabeledStatementContext.class, CASE, rule -> rule.Case() != null);
-        mapEnter(LabeledStatementContext.class, DEFAULT, rule -> rule.Default() != null);
+        visit(LabeledStatementContext.class, rule -> rule.Case() != null).map(CASE);
+        visit(LabeledStatementContext.class, rule -> rule.Default() != null).map(DEFAULT);
 
-        mapEnter(TryBlockContext.class, TRY);
-        mapEnterExit(HandlerContext.class, CATCH_BEGIN, CATCH_END);
+        visit(TryBlockContext.class).map(TRY);
+        visit(HandlerContext.class).map(CATCH_BEGIN, CATCH_END);
 
-        mapEnter(JumpStatementContext.class, BREAK, rule -> rule.Break() != null);
-        mapEnter(JumpStatementContext.class, CONTINUE, rule -> rule.Continue() != null);
-        mapEnter(JumpStatementContext.class, GOTO, rule -> rule.Goto() != null);
-        mapEnter(JumpStatementContext.class, RETURN, rule -> rule.Return() != null);
+        visit(JumpStatementContext.class, rule -> rule.Break() != null).map(BREAK);
+        visit(JumpStatementContext.class, rule -> rule.Continue() != null).map(CONTINUE);
+        visit(JumpStatementContext.class, rule -> rule.Goto() != null).map(GOTO);
+        visit(JumpStatementContext.class, rule -> rule.Return() != null).map(RETURN);
 
-        mapEnter(ThrowExpressionContext.class, THROW);
+        visit(ThrowExpressionContext.class).map(THROW);
 
-        mapEnter(NewExpressionContext.class, NEWCLASS, rule -> rule.newInitializer() != null);
-        mapEnter(NewExpressionContext.class, NEWARRAY, rule -> rule.newInitializer() == null);
+        visit(NewExpressionContext.class, rule -> rule.newInitializer() != null).map(NEWCLASS);
+        visit(NewExpressionContext.class, rule -> rule.newInitializer() == null).map(NEWARRAY);
 
-        mapEnter(TemplateDeclarationContext.class, GENERIC);
+        visit(TemplateDeclarationContext.class).map(GENERIC);
 
-        mapEnter(AssignmentOperatorContext.class, ASSIGN);
-        mapEnter(BraceOrEqualInitializerContext.class, ASSIGN, rule -> rule.Assign() != null);
-        mapEnter(UnaryExpressionContext.class, ASSIGN, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null);
+        visit(AssignmentOperatorContext.class).map(ASSIGN);
+        visit(BraceOrEqualInitializerContext.class, rule -> rule.Assign() != null).map(ASSIGN);
+        visit(UnaryExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGN);
 
-        mapEnter(StaticAssertDeclarationContext.class, STATIC_ASSERT);
-        mapEnter(EnumeratorDefinitionContext.class, VARDEF);
-        mapEnterExit(BracedInitListContext.class, BRACED_INIT_BEGIN, BRACED_INIT_END);
+        visit(StaticAssertDeclarationContext.class).map(STATIC_ASSERT);
+        visit(EnumeratorDefinitionContext.class).map(VARDEF);
+        visit(BracedInitListContext.class).map(BRACED_INIT_BEGIN, BRACED_INIT_END);
 
-        mapEnter(SimpleTypeSpecifierContext.class, VARDEF, rule -> {
+        visit(SimpleTypeSpecifierContext.class, rule -> {
             if (hasAncestor(rule, MemberdeclarationContext.class, FunctionDefinitionContext.class)) {
                 return true;
             }
@@ -80,23 +71,23 @@ public class CPPListener extends AbstractAntlrListener {
             }
 
             return false;
-        });
+        }).map(VARDEF);
 
-        mapEnter(SimpleDeclarationContext.class, APPLY, rule -> {
+        visit(SimpleDeclarationContext.class, rule -> {
             if (!hasAncestor(rule, FunctionBodyContext.class)) {
                 return false;
             }
 
             NoPointerDeclaratorContext noPointerDecl = getDescendant(rule, NoPointerDeclaratorContext.class);
             return noPointerInFunctionCallContext(noPointerDecl);
-        });
+        }).map(APPLY);
 
-        mapEnter(InitDeclaratorContext.class, APPLY, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null);
-        mapEnter(ParameterDeclarationContext.class, VARDEF);
-        mapEnter(ConditionalExpressionContext.class, QUESTIONMARK, rule -> rule.Question() != null);
+        visit(InitDeclaratorContext.class, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null).map(APPLY);
+        visit(ParameterDeclarationContext.class).map(VARDEF);
+        visit(ConditionalExpressionContext.class, rule -> rule.Question() != null).map(QUESTIONMARK);
 
-        mapEnter(PostfixExpressionContext.class, APPLY, rule -> rule.LeftParen() != null);
-        mapEnter(PostfixExpressionContext.class, ASSIGN, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null);
+        visit(PostfixExpressionContext.class, rule -> rule.LeftParen() != null).map(APPLY);
+        visit(PostfixExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGN);
     }
 
     /**

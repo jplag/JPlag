@@ -2,27 +2,34 @@
   Table which contains all of the matches for a comparison with navigation links.
 -->
 <template>
-  <div class="flex flex-row overflow-x-hidden max-w-full min-w-0 space-x-1 text-xs h-fit">
-    <Interactable class="!rounded-2xl whitespace-nowrap flex items-center text-center h-6 my-2">
-      Match Files: TokenCount
-    </Interactable>
-    <div class="w-full flex flex-row space-x-1 overflow-x-auto">
-      <Interactable
-        class="!rounded-2xl !bg-opacity-50 whitespace-nowrap flex items-center text-center h-6 my-2"
+  <div class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs">
+    <ToolTipComponent direction="right">
+      <template #default>
+        <OptionComponent label="Match Files: TokenCount" />
+      </template>
+      <template #tooltip>
+        <p class="whitespace-pre text-sm">Click on a match to show it in the code view.</p>
+      </template>
+    </ToolTipComponent>
+
+    <div class="flex w-full flex-row space-x-1 overflow-x-auto">
+      <OptionComponent
         :style="{ background: match.color }"
         v-for="[index, match] in matches?.entries()"
         v-bind:key="index"
-        @click="$emit('matchSelected', $event, match)"
-      >
-        {{ getFileName(match.firstFile) }} - {{ getFileName(match.secondFile) }}: {{ match.tokens }}
-      </Interactable>
+        @click="$emit('matchSelected', match)"
+        :label="
+          getFileName(match.firstFile) + ' - ' + getFileName(match.secondFile) + ': ' + match.tokens
+        "
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
-import Interactable from './InteractableComponent.vue'
+import OptionComponent from './optionsSelectors/OptionComponent.vue'
+import ToolTipComponent from './ToolTipComponent.vue'
 
 defineProps({
   /**

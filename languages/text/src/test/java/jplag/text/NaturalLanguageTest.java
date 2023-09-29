@@ -13,7 +13,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
@@ -54,19 +53,19 @@ class NaturalLanguageTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"\n", "\r", "\r\n",})
-    void testLineBreakInputs(String input, @TempDir Path tempDir) throws IOException, ParsingException {
-        Path filePath = tempDir.resolve("input.txt");
-        Files.writeString(filePath, input);
-        List<Token> result = language.parse(Set.of(filePath.toFile()));
+    void testLineBreakInputs(String input) throws IOException, ParsingException {
+        File testFile = File.createTempFile("input", "txt");
+        Files.writeString(testFile.toPath(), input);
+        List<Token> result = language.parse(Set.of(testFile));
         assertEquals(1, result.size());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"\ntoken", "\rtoken", "\r\ntoken",})
-    void testTokenAfterLineBreak(String input, @TempDir Path tempDir) throws IOException, ParsingException {
-        Path filePath = tempDir.resolve("input.txt");
-        Files.writeString(filePath, input);
-        List<Token> result = language.parse(Set.of(filePath.toFile()));
+    void testTokenAfterLineBreak(String input) throws IOException, ParsingException {
+        File testFile = File.createTempFile("input", "txt");
+        Files.writeString(testFile.toPath(), input);
+        List<Token> result = language.parse(Set.of(testFile));
         assertEquals(2, result.get(0).getLine());
     }
 

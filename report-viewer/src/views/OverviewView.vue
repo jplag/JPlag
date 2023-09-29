@@ -2,11 +2,11 @@
   A view displaying the overview file of a JPlag report.
 -->
 <template>
-  <div class="absolute top-0 bottom-0 left-0 right-0 flex flex-col">
-    <div class="relative top-0 left-0 right-0 p-5 pb-0 flex space-x-5">
+  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
       <Container class="flex-grow">
         <h2>JPlag Report</h2>
-        <div class="flex flex-row space-x-5 items-center">
+        <div class="flex flex-row items-center space-x-5">
           <TextInformation label="Directory">{{ submissionPathValue }}</TextInformation>
           <TextInformation label="Total Submissions">{{
             store().getSubmissionIds.length
@@ -17,38 +17,72 @@
           <TextInformation label="Min Match Length">{{
             overview.matchSensitivity
           }}</TextInformation>
-          <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+
+          <ToolTipComponent direction="left">
+            <template #default>
+              <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+            </template>
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">More information about the CLI run of JPlag</p>
+            </template>
+          </ToolTipComponent>
         </div>
       </Container>
     </div>
 
-    <div class="relative bottom-0 right-0 left-0 flex flex-grow space-x-5 p-5 pt-5">
-      <Container class="max-h-0 min-h-full flex flex-col flex-1">
+    <div class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 p-5 pt-5">
+      <Container class="flex max-h-0 min-h-full flex-1 flex-col">
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
-          :distribution="overview.distribution[selectedDistributionDiagramMetric]"
-          class="w-full h-2/3"
+          :distribution="overview.distribution[store().uiState.distributionChartConfig.metric]"
+          :x-scale="store().uiState.distributionChartConfig.xScale"
+          class="h-2/3 w-full"
         />
-        <div class="flex flex-col flex-grow space-y-1">
+        <div class="flex flex-grow flex-col space-y-1">
           <h3 class="text-lg underline">Options:</h3>
-          <ScrollableComponent class="flex-grow space-y-2">
+          <ScrollableComponent class="h-fit flex-grow">
+            <MetricSelector
+              class="mt-2"
+              title="Metric:"
+              :defaultSelected="store().uiState.distributionChartConfig.metric"
+              @selection-changed="
+                (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
+              "
+            />
             <OptionsSelector
-              name="Metric"
-              :labels="['Average', 'Maximum']"
-              @selection-changed="(i: number) => selectDistributionDiagramMetric(i)"
+              class="mt-2"
+              title="Scale x-Axis:"
+              :labels="['Linear', 'Logarithmic']"
+              :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
+              @selection-changed="
+                (i: number) =>
+                  (store().uiState.distributionChartConfig.xScale =
+                    i == 0 ? 'linear' : 'logarithmic')
+              "
             />
           </ScrollableComponent>
         </div>
       </Container>
 
-      <Container class="max-h-0 min-h-full flex-1 flex flex-col space-y-2">
-        <div class="flex flex-row space-x-8 items-center">
+      <Container class="flex max-h-0 min-h-full flex-1 flex-col space-y-2">
+        <div class="flex flex-row items-center space-x-8">
           <h2>Top Comparisons:</h2>
-          <SearchBarComponent
-            placeholder="Filter/Unhide Comparisons"
-            class="flex-grow"
-            @input-changed="(value) => (searchString = value)"
-          />
+          <ToolTipComponent direction="bottom" class="flex-grow">
+            <template #default>
+              <SearchBarComponent
+                placeholder="Filter/Unhide Comparisons"
+                @input-changed="(value) => (searchString = value)"
+              />
+            </template>
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">
+                Type in the name of a submission to only show comparisons that contain this
+                submission.
+              </p>
+              <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
+            </template>
+          </ToolTipComponent>
+
           <Button class="w-24" @click="changeAnnoymousForAll()">
             {{
               store().state.anonymous.size == store().getSubmissionIds.length
@@ -57,15 +91,17 @@
             }}
           </Button>
         </div>
-        <OptionsSelector
-          name="Sort By"
-          :labels="['Average Similarity', 'Maximum Similarity']"
-          @selection-changed="(index) => (comparisonTableSortingMetric = index)"
+        <MetricSelector
+          title="Sort By:"
+          :defaultSelected="store().uiState.comparisonTableSortingMetric"
+          @selection-changed="
+            (metric: MetricType) => (store().uiState.comparisonTableSortingMetric = metric)
+          "
         />
         <ComparisonsTable
           :clusters="overview.clusters"
           :top-comparisons="displayedComparisons"
-          class="flex-1 min-h-0"
+          class="min-h-0 flex-1"
         />
       </Container>
     </div>
@@ -74,24 +110,25 @@
 
 <script setup lang="ts">
 import { computed, onErrorCaptured, ref, watch } from 'vue'
-import router from '@/router'
+import { router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import Button from '@/components/ButtonComponent.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
-import MetricType from '@/model/MetricType'
+import { MetricType } from '@/model/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
+import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 
-const overview = OverviewFactory.getOverview()
+const overview = await OverviewFactory.getOverview()
 
 const searchString = ref('')
-const comparisonTableSortingMetric = ref(MetricType.AVERAGE.valueOf())
 
 /**
  * This funtion gets called when the search bar for the compariosn table has been updated.
@@ -118,11 +155,11 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 }
 
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
-  if (comparisonTableSortingMetric.value == MetricType.MAXIMUM) {
-    comparisons.sort((a, b) => b.maximumSimilarity - a.maximumSimilarity)
-  } else {
-    comparisons.sort((a, b) => b.averageSimilarity - a.averageSimilarity)
-  }
+  comparisons.sort(
+    (a, b) =>
+      b.similarities[store().uiState.comparisonTableSortingMetric] -
+      a.similarities[store().uiState.comparisonTableSortingMetric]
+  )
   let index = 0
   comparisons.forEach((c) => {
     c.sortingPlace = index++
@@ -168,16 +205,6 @@ function changeAnnoymousForAll() {
   } else {
     store().state.anonymous = new Set(store().getSubmissionIds)
   }
-}
-
-const selectedDistributionDiagramMetric = ref(MetricType.AVERAGE)
-
-/**
- * Switch between metrics
- * @param metric Metric to switch to
- */
-function selectDistributionDiagramMetric(metric: number) {
-  selectedDistributionDiagramMetric.value = metric
 }
 
 const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1

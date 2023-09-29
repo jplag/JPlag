@@ -3,20 +3,20 @@
 -->
 <template>
   <div
-    class="h-screen text-center flex items-center"
+    class="flex h-screen items-center text-center"
     @dragover.prevent
     @drop.prevent="uploadFileOnDrag"
   >
     <div class="w-screen">
       <div>
         <img
-          class="mt-8 w-60 h-auto mx-auto"
+          class="mx-auto mt-8 h-auto w-60"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
           v-if="store().uiState.useDarkMode"
         />
         <img
-          class="mt-8 w-60 h-auto mx-auto"
+          class="mx-auto mt-8 h-auto w-60"
           src="@/assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
           v-else
@@ -25,42 +25,55 @@
       <h1 class="text-7xl">JPlag Report Viewer</h1>
       <div v-if="!hasQueryFile && !loadingFiles">
         <div
-          class="px-5 py-5 mt-10 w-96 mx-auto flex flex-col justify-center cursor-pointer border-1 rounded-md border-accent-dark bg-accent bg-opacity-25"
+          class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
           <div>Drag and Drop zip/Json file on this page</div>
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
-        <Button class="w-fit mx-auto mt-8" @click="continueWithLocal" v-if="hasLocalFile">
+        <Button class="mx-auto mt-8 w-fit" @click="continueWithLocal" v-if="localFiles !== 'none'">
           Continue with local files
         </Button>
       </div>
-      <div v-else class="pt-5 space-y-5">
+      <div v-else class="space-y-5 pt-5">
         <div
-          class="mx-auto rounded-full w-16 h-16 animate-spin border-t-accent dark:border-t-accent border-interactable-border-light dark:border-interactable-border-dark border-8"
+          class="mx-auto h-16 w-16 animate-spin rounded-full border-8 border-interactable-border-light border-t-accent dark:border-interactable-border-dark dark:border-t-accent"
         ></div>
-        <p class="font-bold text-2xl">Loading file...</p>
+        <p class="text-2xl font-bold">Loading file...</p>
       </div>
     </div>
+    <VersionInfoComponent class="absolute bottom-3 left-3" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
-import jszip from 'jszip'
-import router from '@/router'
-import store from '@/stores/store'
-import slash from 'slash'
+import { router } from '@/router'
+import { store } from '@/stores/store'
 import Button from '@/components/ButtonComponent.vue'
-
-class LoadError extends Error {}
+import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
+import { JsonFileHandler } from '@/utils/fileHandling/JsonFileHandler'
+import { ZipFileHandler } from '@/utils/fileHandling/ZipFileHandler'
 
 store().clearStore()
-const hasLocalFile = ref(false)
+const localFiles: Ref<'json' | 'zip' | 'none'> = ref('none')
 // Checks whether local files exist
-fetch('/files/overview.json').then((response) => (hasLocalFile.value = response.status == 200))
+fetch('/files/overview.json')
+  .then((response) => {
+    if (response.status == 200) {
+      localFiles.value = 'json'
+    }
+  })
+  .catch(() => {})
+fetch('/results.zip')
+  .then((response) => {
+    if (response.status == 200) {
+      localFiles.value = 'zip'
+    }
+  })
+  .catch(() => {})
 
 const loadingFiles = ref(false)
 
@@ -101,137 +114,20 @@ function navigateToComparisonView(firstId: string, secondId: string) {
 }
 
 /**
- * Gets the root name of the given directory path.
- * @param directoryPath Path to extract the root name from.
- */
-function extractRootName(directoryPath: string) {
-  const folders = directoryPath.split('/')
-  return folders[0]
-}
-
-/**
- * Extracts the submission file name from the given directory path.
- * @param directoryPath Path to extract the submission file name from.
- */
-function extractSubmissionFileName(directoryPath: string) {
-  const folders = directoryPath.split('/')
-  const rootName = folders[0]
-  let submissionFolderIndex = -1
-  if (rootName === 'files') {
-    submissionFolderIndex = folders.findIndex((folder) => folder === 'files')
-  } else {
-    submissionFolderIndex = folders.findIndex((folder) => folder === 'submissions')
-  }
-  return folders[submissionFolderIndex + 1]
-}
-
-/**
- * Gets the full path of the file
- * @param directoryPath Path to the file
- * @param fileBase Name of the file
- * @param originalFileName Original name of the file
- */
-function extractFileNameWithFullPath(
-  directoryPath: string,
-  fileBase: string,
-  originalFileName: string
-) {
-  let fullPath = ''
-  const rootName = extractRootName(directoryPath)
-  const filesOrSubmissionsIndex_filePath = directoryPath.indexOf(
-    rootName === 'files' ? 'files' : 'submissions'
-  )
-  const filesOrSubmissionsIndex_originalFileName = originalFileName.indexOf(
-    rootName === 'files' ? 'files' : 'submissions'
-  )
-  const unixSubfolderPathAfterSubmissions = directoryPath.substring(
-    filesOrSubmissionsIndex_filePath +
-      (rootName === 'files' ? 'files'.length : 'submissions'.length) +
-      1
-  )
-  const originalPathWithoutSubmissions = originalFileName.substring(
-    filesOrSubmissionsIndex_originalFileName +
-      (rootName === 'files' ? 'files'.length : 'submissions'.length)
-  )
-  if (originalPathWithoutSubmissions.charAt(0) === '\\') {
-    fullPath = unixSubfolderPathAfterSubmissions + '\\' + fileBase
-    while (fullPath.includes('/')) {
-      fullPath = fullPath.replace('/', '\\')
-    }
-  } else {
-    fullPath = unixSubfolderPathAfterSubmissions + '/' + fileBase
-  }
-  return fullPath
-}
-
-/**
- * Handles zip file on drop. It extracts the zip and saves each file in the store.
- * @param file Zip file to handle
- */
-async function handleZipFile(file: Blob) {
-  console.log('Start handling zip file and storing necessary data...')
-  return jszip.loadAsync(file).then(async (zip) => {
-    for (const originalFileName of Object.keys(zip.files)) {
-      const unixFileName = slash(originalFileName)
-      if (
-        /((.+\/)*)(files|submissions)\/(.+)\/(.+)/.test(unixFileName) &&
-        !/^__MACOSX\//.test(unixFileName)
-      ) {
-        const directoryPath = unixFileName.substring(0, unixFileName.lastIndexOf('/'))
-        const fileBase = unixFileName.substring(unixFileName.lastIndexOf('/') + 1)
-
-        const submissionFileName = extractSubmissionFileName(directoryPath)
-        const fullPathFileName = extractFileNameWithFullPath(
-          directoryPath,
-          fileBase,
-          originalFileName
-        )
-        await zip.files[originalFileName].async('string').then((data) => {
-          store().saveSubmissionFile({
-            name: slash(submissionFileName),
-            file: { fileName: slash(fullPathFileName), data: data }
-          })
-        })
-      } else {
-        await zip.files[originalFileName].async('string').then((data) => {
-          store().saveFile({ fileName: unixFileName, data: data })
-        })
-      }
-    }
-    store().setLoadingType({
-      local: false,
-      zip: true,
-      single: false,
-      fileString: ''
-    })
-    navigateToOverview()
-  })
-}
-
-/**
  * Handles a json file on drop. It read the file and passes the file string to next window.
- * @param str Content of the json file
+ * @param file The json file to handle
  */
-function handleJsonFile(str: string) {
-  let json = JSON.parse(str)
-  if (json['submission_folder_path']) {
-    store().setLoadingType({
-      local: false,
-      zip: false,
-      single: true,
-      fileString: str
-    })
+async function handleJsonFile(file: Blob) {
+  store().setLoadingType({
+    local: false,
+    zip: false,
+    single: true
+  })
+  const fileContentType = await new JsonFileHandler().handleFile(file)
+  if (fileContentType.fileType === 'overview') {
     navigateToOverview()
-  } else if (json['id1'] && json['id2']) {
-    store().setLoadingType({
-      local: false,
-      zip: false,
-      single: true,
-      fileString: str
-    })
-    navigateToComparisonView(json['id1'], json['id2'])
-  } else {
-    throw new LoadError(`Invalid JSON: ${json}`)
+  } else if (fileContentType.fileType === 'comparison') {
+    navigateToComparisonView(fileContentType.id1, fileContentType.id2)
   }
 }
 
@@ -246,11 +142,17 @@ async function handleFile(file: Blob) {
     case 'application/zip-compressed':
     case 'application/x-zip-compressed':
     case 'application/x-zip':
-      return handleZipFile(file)
+      store().setLoadingType({
+        local: false,
+        zip: true,
+        single: false
+      })
+      await new ZipFileHandler().handleFile(file)
+      return navigateToOverview()
     case 'application/json':
-      return file.text().then(handleJsonFile)
+      return await handleJsonFile(file)
     default:
-      throw new LoadError(`Unknown MIME type '${file.type}'`)
+      throw new Error(`Unknown MIME type '${file.type}'`)
   }
 }
 
@@ -264,15 +166,11 @@ async function uploadFileOnDrag(e: DragEvent) {
     if (dropped?.length === 1) {
       await handleFile(dropped[0])
     } else {
-      throw new LoadError('Not exactly one file')
+      throw new Error('Not exactly one file')
     }
   } catch (e) {
-    if (e instanceof LoadError) {
-      console.warn(e)
-      alert(e.message)
-    } else {
-      throw e
-    }
+    alert((e as Error).message)
+    throw e
   }
 }
 
@@ -302,7 +200,7 @@ async function loadQueryFile(url: URL) {
   try {
     const response = await fetch(url)
     if (!response.ok) {
-      throw new LoadError('Response not OK')
+      throw new Error('Response not OK')
     }
     await handleFile(await response.blob())
   } catch (e) {
@@ -317,9 +215,8 @@ async function loadQueryFile(url: URL) {
 function continueWithLocal() {
   store().setLoadingType({
     local: true,
-    zip: false,
-    single: false,
-    fileString: ''
+    zip: localFiles.value === 'zip',
+    single: false
   })
   navigateToOverview()
 }

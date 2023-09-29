@@ -1,7 +1,8 @@
 package de.jplag.cli;
 
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_FOOTER;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION_HEADING;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.awt.*;
 import java.io.File;
@@ -25,6 +26,7 @@ import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
+import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
@@ -52,11 +54,15 @@ public final class CLI {
             "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work", "The tech is out there!",
             "Developed by plagiarism experts."};
 
+    private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";
+
     private final CommandLine commandLine;
     private final CliOptions options;
 
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
+
+    private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
     /**
      * Main class for using JPlag via the CLI.
@@ -102,6 +108,8 @@ public final class CLI {
         this.options = new CliOptions();
         this.commandLine = new CommandLine(options);
 
+        this.commandLine.setHelpFactory(new HelpFactory());
+
         this.commandLine.getHelpSectionMap().put(SECTION_KEY_OPTION_LIST, help -> help.optionList().lines().map(it -> {
             if (it.startsWith("  -")) {
                 return "    " + it;
@@ -112,7 +120,8 @@ public final class CLI {
 
         buildSubcommands().forEach(commandLine::addSubcommand);
 
-        this.commandLine.getHelpSectionMap().put(SECTION_KEY_FOOTER, help -> generateDescription());
+        this.commandLine.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
+        this.commandLine.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, help -> OPTION_LIST_HEADING);
         this.commandLine.setAllowSubcommandsAsOptionParameters(true);
     }
 
@@ -172,11 +181,12 @@ public final class CLI {
         }
 
         ClusteringOptions clusteringOptions = getClusteringOptions(this.options);
+        MergingOptions mergingOptions = getMergingOptions(this.options);
 
         JPlagOptions jPlagOptions = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.options.advanced.subdirectory, suffixes, this.options.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.options.advanced.similarityThreshold, this.options.shownComparisons, clusteringOptions,
-                this.options.advanced.debug);
+                this.options.advanced.debug, mergingOptions);
 
         String baseCodePath = this.options.baseCode;
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
@@ -235,9 +245,13 @@ public final class CLI {
         return clusteringOptions;
     }
 
+    private static MergingOptions getMergingOptions(CliOptions options) {
+        return new MergingOptions(options.merging.enabled, options.merging.minimumNeighborLength, options.merging.maximumGapSize);
+    }
+
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
-        return String.format("JPlag - %s%n%n%s", randomDescription, CREDITS);
+        return String.format(DESCRIPTION_PATTERN, randomDescription, CREDITS);
     }
 
     public String getResultFolder() {

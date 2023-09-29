@@ -1,4 +1,4 @@
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import { computed } from 'vue'
 
 /**

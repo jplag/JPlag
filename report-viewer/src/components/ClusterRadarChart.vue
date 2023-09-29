@@ -3,13 +3,15 @@
   participants in the cluster.
 -->
 <template>
-  <div class="flex flex-col">
-    <div v-if="!hasNoMember" class="flex-grow flex flex-col">
+  <div class="flex max-h-full flex-col">
+    <div v-if="!hasNoMember" class="flex max-h-full flex-grow flex-col overflow-hidden">
       <DropDownSelector
         :options="selectedOptions"
-        @selectionChanged="(value) => updateChartData(value)"
+        @selectionChanged="(value) => (idOfShownSubmission = value)"
       />
-      <RadarChart :chartData="chartData" :options="options" class="flex-grow"></RadarChart>
+      <div class="flex min-h-0 flex-grow justify-center">
+        <Radar :data="chartData" :options="options" />
+      </div>
     </div>
     <div v-else>
       <span>This cluster has no members.</span>
@@ -23,7 +25,7 @@ import type { ChartData } from 'chart.js'
 import type { ClusterListElement } from '@/model/ClusterListElement'
 
 import { computed, ref } from 'vue'
-import { RadarChart } from 'vue-chart-3'
+import { Radar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import DropDownSelector from './DropDownSelector.vue'
@@ -41,9 +43,9 @@ const props = defineProps({
 
 let hasNoMember = props.cluster.members.size == 0
 
-const selectedOptions = Array.from(props.cluster.members.keys())
+const selectedOptions = computed(() => Array.from(props.cluster.members.keys()))
 
-const idOfFirstSubmission = selectedOptions.length > 0 ? selectedOptions[0] : ''
+const idOfShownSubmission = ref(selectedOptions.value.length > 0 ? selectedOptions.value[0] : '')
 
 /**
  * @param member The member to create the labels for.
@@ -102,22 +104,18 @@ const radarChartOptions = computed(() => {
   }
 })
 
-const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = ref({
-  labels: createLabelsFor(idOfFirstSubmission),
-  datasets: [
-    {
-      ...radarChartStyle,
-      label: idOfFirstSubmission,
-      data: createDataSetFor(idOfFirstSubmission)
-    }
-  ]
+const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = computed(() => {
+  return {
+    labels: createLabelsFor(idOfShownSubmission.value),
+    datasets: [
+      {
+        ...radarChartStyle,
+        label: idOfShownSubmission.value,
+        data: createDataSetFor(idOfShownSubmission.value)
+      }
+    ]
+  }
 })
 
 const options = ref(radarChartOptions)
-
-function updateChartData(value: string) {
-  chartData.value.datasets[0].data = createDataSetFor(value)
-  chartData.value.datasets[0].label = value
-  chartData.value.labels = createLabelsFor(value)
-}
 </script>

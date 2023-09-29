@@ -2,16 +2,18 @@
   Bar diagram, displaying the distribution for the selected metric.
 -->
 <template>
-  <BarChart :chartData="chartData" :options="options" />
+  <div>
+    <Bar :data="chartData" :options="options" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, type PropType } from 'vue'
-import { BarChart } from 'vue-chart-3'
+import { computed, type PropType } from 'vue'
+import { Bar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '@/utils/ColorUtils'
-import type Distribution from '@/model/Distribution'
+import type { Distribution } from '@/model/Distribution'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -20,10 +22,15 @@ const props = defineProps({
   distribution: {
     type: Object as PropType<Distribution>,
     required: true
+  },
+  xScale: {
+    type: String as PropType<'linear' | 'logarithmic'>,
+    required: false,
+    default: 'linear'
   }
 })
 
-const maxVal = ref(Math.max(...props.distribution.distribution))
+const maxVal = computed(() => Math.max(...props.distribution.splitIntoTenBuckets()))
 const labels = [
   '91-100%',
   '81-90%',
@@ -46,28 +53,46 @@ const dataSetStyle = computed(() => {
   }
 })
 
-const chartData = ref({
-  labels: labels,
-  datasets: [
-    {
-      ...dataSetStyle.value,
-      data: props.distribution.distribution
-    }
-  ]
+const chartData = computed(() => {
+  return {
+    labels: labels,
+    datasets: [
+      {
+        ...dataSetStyle.value,
+        data: props.distribution.splitIntoTenBuckets()
+      }
+    ]
+  }
 })
 
 const options = computed(() => {
   return {
     responsive: true,
     maintainAspectRatio: false,
-    indexAxis: 'y',
+    indexAxis: 'y' as 'y',
     scales: {
       x: {
         //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
         //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
-        suggestedMax: maxVal.value + 5,
+        suggestedMax:
+          props.xScale === 'linear'
+            ? maxVal.value + 5
+            : 10 ** Math.ceil(Math.log10(maxVal.value + 5)),
+        type: props.xScale,
         ticks: {
-          color: graphColors.ticksAndFont.value
+          // ensures that in log mode tick labels are not overlappein
+          minRotation: props.xScale === 'logarithmic' ? 30 : 0,
+          autoSkipPadding: 10,
+          color: graphColors.ticksAndFont.value,
+          // ensures that in log mode ticks are placed evenly appart
+          callback: function (value: any) {
+            if (props.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
+              return value
+            }
+            if (props.xScale !== 'logarithmic') {
+              return value
+            }
+          }
         },
         grid: {
           color: graphColors.gridLines.value
@@ -86,10 +111,10 @@ const options = computed(() => {
       datalabels: {
         color: graphColors.ticksAndFont.value,
         font: {
-          weight: 'bold'
+          weight: 'bold' as 'bold'
         },
-        anchor: 'end',
-        align: 'end',
+        anchor: 'end' as 'end',
+        align: 'end' as 'end',
         clamp: true
       },
       legend: {
@@ -98,24 +123,4 @@ const options = computed(() => {
     }
   }
 })
-
-/* We watch the given distributions parameter. When the distribution of another metric is passed, the diagram is
-  updated with the new data. */
-watch(
-  () => props.distribution,
-  (val) => {
-    chartData.value = {
-      labels: labels,
-      datasets: [
-        {
-          ...dataSetStyle.value,
-          data: val.distribution
-        }
-      ]
-    }
-
-    maxVal.value = Math.max(...val.distribution)
-    options.value.scales.x.suggestedMax = maxVal.value + 5
-  }
-)
 </script>

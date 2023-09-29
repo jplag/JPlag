@@ -53,11 +53,14 @@ public class CliOptions implements Runnable {
             "--result-directory"}, description = "Name of the directory in which the comparison results will be stored (default: result)%n")
     public String resultFolder = "results";
 
-    @ArgGroup(heading = "Advanced%n")
+    @ArgGroup(heading = "Advanced%n", exclusive = false)
     public Advanced advanced = new Advanced();
 
     @ArgGroup(validate = false, heading = "Clustering%n")
     public Clustering clustering = new Clustering();
+
+    @ArgGroup(validate = false, heading = "Merging of neighboring matches to increase the similarity of concealed plagiarism:%n")
+    public Merging merging = new Merging();
 
     /**
      * Empty run method, so picocli prints help automatically
@@ -88,7 +91,7 @@ public class CliOptions implements Runnable {
     }
 
     public static class Clustering {
-        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: false)\n")
+        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: false)%n")
         public boolean disable;
 
         @ArgGroup
@@ -107,6 +110,18 @@ public class CliOptions implements Runnable {
                             + "attempts of obfuscation. (default: MAX)%n")
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
         }
+    }
+
+    public static class Merging {
+        @Option(names = {"--match-merging"}, description = "Enables match merging (default: false)%n")
+        public boolean enabled;
+
+        @Option(names = {"--neighbor-length"}, description = "Defines how short a match can be, to be considered (default: 2)%n")
+        public int minimumNeighborLength;
+
+        @Option(names = {"--gap-size"}, description = "Defines how many token there can be between two neighboring matches (default: 6)%n")
+        public int maximumGapSize;
+
     }
 
     @Option(names = {"--cluster-spectral-bandwidth"}, hidden = true)

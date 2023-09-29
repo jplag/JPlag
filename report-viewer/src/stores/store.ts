@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { State, SubmissionFile, File, LoadConfiguration, UIState } from './state'
+import { MetricType } from '@/model/MetricType'
 
 /**
  * The store is a global state management system. It is used to store the state of the application.
@@ -20,20 +21,28 @@ const store = defineStore('store', {
       fileIdToDisplayName: new Map()
     },
     uiState: {
-      useDarkMode: false
+      useDarkMode: false,
+      comparisonTableSortingMetric: MetricType.AVERAGE,
+      distributionChartConfig: {
+        metric: MetricType.AVERAGE,
+        xScale: 'linear'
+      }
     }
   }),
   getters: {
     /**
-     * @param name the name of the submission
+     * @param submissionID the name of the submission
      * @returns files in the submission of the given name
      */
-    filesOfSubmission: (state) => (name: string) => {
-      return Array.from(state.state.submissions[name], ([name, value]) => ({
-        name,
-        value
-      }))
-    },
+    filesOfSubmission:
+      (state) =>
+      (submissionId: string): SubmissionFile[] => {
+        return Array.from(state.state.submissions[submissionId], ([name, value]) => ({
+          submissionId,
+          fileName: name,
+          data: value
+        }))
+      },
     /**
      * @param name the name of the submission
      * @returns the display name of the submission
@@ -134,15 +143,15 @@ const store = defineStore('store', {
     },
     /**
      * Saves the given submission file
-     * @param submissionFile the submission file to save
+     * @param submissionFile the file to save
      */
     saveSubmissionFile(submissionFile: SubmissionFile) {
-      if (!this.state.submissions[submissionFile.name]) {
-        this.state.submissions[submissionFile.name] = new Map()
+      if (!this.state.submissions[submissionFile.submissionId]) {
+        this.state.submissions[submissionFile.submissionId] = new Map()
       }
-      this.state.submissions[submissionFile.name].set(
-        submissionFile.file.fileName,
-        submissionFile.file.data
+      this.state.submissions[submissionFile.submissionId].set(
+        submissionFile.fileName,
+        submissionFile.data
       )
     },
     /**
@@ -153,7 +162,13 @@ const store = defineStore('store', {
       this.state.localModeUsed = payload.local
       this.state.zipModeUsed = payload.zip
       this.state.singleModeUsed = payload.single
-      this.state.singleFillRawContent = payload.fileString
+    },
+    /**
+     * Sets the raw content of the single file mode
+     * @param payload Raw content of the single file mode
+     */
+    setSingleFileRawContent(payload: string) {
+      this.state.singleFillRawContent = payload
     },
     /**
      * Switches whether darkMode is being used for the UI
@@ -164,4 +179,4 @@ const store = defineStore('store', {
   }
 })
 
-export default store
+export { store }

@@ -10,9 +10,28 @@
         <div class="tableCellName items-center">Submissions in Comparison</div>
         <div class="tableCellSimilarity !flex-col">
           <div>Similarity</div>
-          <div class="flex flex-row w-full">
-            <div class="flex-1">Average</div>
-            <div class="flex-1">Maximum</div>
+          <div class="flex w-full flex-row">
+            <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
+              <template #default>
+                <p class="w-full text-center">{{ metricToolTips[MetricType.AVERAGE].shortName }}</p>
+              </template>
+              <template #tooltip>
+                <p class="whitespace-pre text-sm">
+                  {{ metricToolTips[MetricType.AVERAGE].tooltip }}
+                </p>
+              </template>
+            </ToolTipComponent>
+
+            <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
+              <template #default>
+                <p class="w-full text-center">{{ metricToolTips[MetricType.MAXIMUM].shortName }}</p>
+              </template>
+              <template #tooltip>
+                <p class="whitespace-pre text-sm">
+                  {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
+                </p>
+              </template>
+            </ToolTipComponent>
           </div>
         </div>
         <div class="tableCellCluster items-center" v-if="displayClusters">Cluster</div>
@@ -20,7 +39,7 @@
     </div>
 
     <!-- Body -->
-    <div class="overflow-hidden flex flex-col flex-grow">
+    <div class="flex flex-grow flex-col overflow-hidden">
       <DynamicScroller v-if="topComparisons.length > 0" :items="comparisonList" :min-item-size="48">
         <template v-slot="{ item, index, active }">
           <DynamicScrollerItem
@@ -46,7 +65,7 @@
                   name: 'ComparisonView',
                   params: { firstId: item.firstSubmissionId, secondId: item.secondSubmissionId }
                 }"
-                class="flex flex-row flex-grow"
+                class="flex flex-grow flex-row"
               >
                 <!-- Index in sorted list -->
                 <div class="tableCellNumber">
@@ -56,7 +75,7 @@
                 <!-- Names -->
                 <div class="tableCellName">
                   <div
-                    class="w-1/2 px-2 break-anywhere"
+                    class="break-anywhere w-1/2 px-2"
                     :class="{ 'blur-[1px]': isAnonymous(item.firstSubmissionId) }"
                   >
                     {{
@@ -66,7 +85,7 @@
                     }}
                   </div>
                   <div
-                    class="w-1/2 px-2 break-anywhere"
+                    class="break-anywhere w-1/2 px-2"
                     :class="{ 'blur-[1px]': isAnonymous(item.secondSubmissionId) }"
                   >
                     {{
@@ -79,8 +98,12 @@
 
                 <!-- Similarities -->
                 <div class="tableCellSimilarity">
-                  <div class="w-1/2">{{ (item.averageSimilarity * 100).toFixed(2) }}%</div>
-                  <div class="w-1/2">{{ (item.maximumSimilarity * 100).toFixed(2) }}%</div>
+                  <div class="w-1/2">
+                    {{ (item.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%
+                  </div>
+                  <div class="w-1/2">
+                    {{ (item.similarities[MetricType.MAXIMUM] * 100).toFixed(2) }}%
+                  </div>
                 </div>
               </RouterLink>
 
@@ -96,23 +119,25 @@
                     name: 'ClusterView',
                     params: { clusterIndex: index }
                   }"
-                  class="w-full tect-center flex justify-center"
+                  class="tect-center flex w-full justify-center"
                 >
-                  <div class="group relative w-fit">
-                    {{ clusters?.[index].members?.length }}
-                    <FontAwesomeIcon
-                      :icon="['fas', 'user-group']"
-                      :style="{ color: clusterIconColors[index] }"
-                    />
-                    {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
-                    <div
-                      class="hidden group-hover:flex absolute z-50 top-0 left-[-400px] text-sm h-full items-center text-white bg-gray-950 bg-opacity-90 px-2 rounded-sm tooltipArrow"
-                    >
-                      {{ clusters?.[index].members?.length }} submissions in cluster with average
-                      similarity of
+                  <ToolTipComponent class="w-fit" direction="left">
+                    <template #default>
+                      {{ clusters?.[index].members?.length }}
+                      <FontAwesomeIcon
+                        :icon="['fas', 'user-group']"
+                        :style="{ color: clusterIconColors[index] }"
+                      />
                       {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
-                    </div>
-                  </div>
+                    </template>
+                    <template #tooltip>
+                      <p class="whitespace-nowrap text-sm">
+                        {{ clusters?.[index].members?.length }} submissions in cluster with average
+                        similarity of
+                        {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
+                      </p>
+                    </template>
+                  </ToolTipComponent>
                 </RouterLink>
               </div>
             </div>
@@ -127,12 +152,14 @@
 import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { toRef } from 'vue'
-import store from '@/stores/store'
+import { store } from '@/stores/store'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateColors } from '@/utils/ColorUtils'
+import ToolTipComponent from './ToolTipComponent.vue'
+import { MetricType, metricToolTips } from '@/model/MetricType'
 
 library.add(faUserGroup)
 
@@ -194,23 +221,23 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
 }
 
 .tableCellNumber {
-  @apply table-cell w-12 flex-shrink-0;
+  @apply tableCell w-12 flex-shrink-0;
 }
 
 .tableCellSimilarity {
-  @apply w-40 tableCell flex-shrink-0;
+  @apply tableCell w-40 flex-shrink-0;
 }
 
 .tableCellCluster {
-  @apply w-32 tableCell flex-shrink-0;
+  @apply tableCell w-32 flex-shrink-0;
 }
 
 .tableCellName {
-  @apply flex-grow tableCell;
+  @apply tableCell flex-grow;
 }
 
 .tableCell {
-  @apply text-center mx-3 flex flex-row justify-center items-center;
+  @apply mx-3 flex flex-row items-center justify-center text-center;
 }
 
 /* Tooltip arrow. Defined down here bacause of the content attribute */
