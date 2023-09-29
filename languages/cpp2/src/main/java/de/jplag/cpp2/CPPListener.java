@@ -4,6 +4,7 @@ import static de.jplag.cpp2.CPPTokenType.*;
 
 import java.util.function.Function;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import de.jplag.TokenType;
@@ -25,25 +26,7 @@ import de.jplag.semantics.VariableScope;
 class CPPListener extends AbstractAntlrListener {
 
     CPPListener() {
-        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).addClassScope()
-                .withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
-                    for (MemberdeclarationContext member : ctx.memberSpecification().memberdeclaration()) {
-                        if (member.memberDeclaratorList() != null) {
-                            // I don't even know man
-                            SimpleTypeSpecifierContext ugh = member.declSpecifierSeq().declSpecifier().get(0).typeSpecifier().trailingTypeSpecifier()
-                                    .simpleTypeSpecifier();
-                            // boolean typeMutable = ugh.theTypeName() != null;
-                            for (var decl : member.memberDeclaratorList().memberDeclarator()) {
-                                // decl.declarator().noPointerDeclarator() may alternatively be used, todo
-                                CPP14Parser.PointerDeclaratorContext pd = decl.declarator().pointerDeclarator();
-                                String name = pd.noPointerDeclarator().getText();
-                                // boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
-                                varReg.registerVariable(name, VariableScope.CLASS, true);
-                            }
-                        }
-                    }
-                });
-
+        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).withSemantics(CodeSemantics::new);
         mapClass(ClassKeyContext::Class, CLASS_BEGIN, CLASS_END);
         mapClass(ClassKeyContext::Struct, STRUCT_BEGIN, STRUCT_END);  // structs are basically just classes
         visit(EnumSpecifierContext.class).map(ENUM_BEGIN, ENUM_END).withSemantics(CodeSemantics::createControl);
@@ -82,13 +65,7 @@ class CPPListener extends AbstractAntlrListener {
 
         visit(AssignmentOperatorContext.class).map(ASSIGN).withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
             varReg.setNextVariableAccessType(VariableAccessType.WRITE);
-        });  // todo variables
-        // todo use parent instead, this starts at =
-//        visit(BraceOrEqualInitializerContext.class, rule -> rule.Assign() != null).map(ASSIGN).withSemantics(CodeSemantics::new)
-//                .onEnter((rule, varReg) -> {
-//                    varReg.setNextVariableAccessType(VariableAccessType.WRITE);
-//                });
-//        ;
+        });
         visit(UnaryExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGN)
                 .withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
                     varReg.setNextVariableAccessType(VariableAccessType.READ_WRITE);
@@ -116,12 +93,14 @@ class CPPListener extends AbstractAntlrListener {
             if (parent == null)  // at this point we know parent exists
                 throw new IllegalStateException();
             // boolean typeMutable = context.theTypeName() != null; // block is duplicate to member variable register
+            variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE); // todo multiple??
+            if (parent.initDeclaratorList() == null) {
+                return;
+            }
             for (var decl : parent.initDeclaratorList().initDeclarator()) {
-                PointerDeclaratorContext pd = decl.declarator().pointerDeclarator();
-                String name = decl.declarator().getText();
-                // boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
-                variableRegistry.registerVariable(name, VariableScope.LOCAL, true);
-                variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE); // todo multiple??
+                String name = decl.declarator().pointerDeclarator().noPointerDeclarator().getText();
+                VariableScope scope = variableRegistry.inLocalScope() ? VariableScope.LOCAL : VariableScope.FILE;
+                variableRegistry.registerVariable(name, scope, true);
             }
         });
 
@@ -135,22 +114,18 @@ class CPPListener extends AbstractAntlrListener {
         }));
 
         mapApply(visit(InitDeclaratorContext.class, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null));
-        visit(InitDeclaratorContext.class,
-                rule -> rule.initializer() != null && rule.initializer().braceOrEqualInitializer() != null
-                        && rule.initializer().braceOrEqualInitializer().Assign() != null).map(ASSIGN).withSemantics(CodeSemantics::new)
-                                .onEnter((rule, varReg) -> {
-                                    varReg.setNextVariableAccessType(VariableAccessType.WRITE);
-                                });
+        visit(DeclaratorContext.class, rule -> {
+            ParserRuleContext parent = rule.getParent();
+            BraceOrEqualInitializerContext desc = getDescendant(parent, BraceOrEqualInitializerContext.class);
+            return (desc != null && desc.Assign() != null
+                    && (parent == desc.getParent() || parent == desc.getParent().getParent()));
+        }).map(ASSIGN).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
+
         visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
-            CPP14Parser.DeclSpecifierContext declSpecifier = ctx.declSpecifierSeq().declSpecifier().get(0);
-            // boolean typeMutable = declSpecifier.typeSpecifier().trailingTypeSpecifier().simpleTypeSpecifier().theTypeName() !=
-            // null;
             CPP14Parser.PointerDeclaratorContext pd = ctx.declarator().pointerDeclarator();
             String name = pd.noPointerDeclarator().getText();
-            // boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
-            varReg.registerVariable(name, VariableScope.LOCAL, true);
+            varReg.registerVariable(name, VariableScope.LOCAL, true); // todo problem: says scope local but scope only entered in method (I guess)?
             varReg.setNextVariableAccessType(VariableAccessType.WRITE);
-            // varReg.setIgnoreNextVariableAccess(true); // todo work this out, also write for method calls
         });
         visit(ConditionalExpressionContext.class, rule -> rule.Question() != null).map(QUESTIONMARK).withSemantics(CodeSemantics::new);
 
@@ -196,15 +171,8 @@ class CPPListener extends AbstractAntlrListener {
     private void registerClassVariables(ClassSpecifierContext context, VariableRegistry variableRegistry) {
         for (MemberdeclarationContext member : context.memberSpecification().memberdeclaration()) {
             if (member.memberDeclaratorList() != null) {
-                // I don't even know man
-                SimpleTypeSpecifierContext ugh = member.declSpecifierSeq().declSpecifier().get(0).typeSpecifier().trailingTypeSpecifier()
-                        .simpleTypeSpecifier();
-                // boolean typeMutable = ugh.theTypeName() != null;
                 for (var decl : member.memberDeclaratorList().memberDeclarator()) {
-                    // decl.declarator().noPointerDeclarator() may alternatively be used, todo
-                    PointerDeclaratorContext pd = decl.declarator().pointerDeclarator();
-                    String name = pd.noPointerDeclarator().getText();
-                    // boolean mutable = typeMutable || !pd.pointerOperator().isEmpty();
+                    String name = decl.declarator().pointerDeclarator().noPointerDeclarator().getText();
                     variableRegistry.registerVariable(name, VariableScope.CLASS, true);
                 }
             }
