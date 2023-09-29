@@ -36,12 +36,7 @@
           Continue with local files
         </Button>
       </div>
-      <div v-else class="space-y-5 pt-5">
-        <div
-          class="mx-auto h-16 w-16 animate-spin rounded-full border-8 border-interactable-border-light border-t-accent dark:border-interactable-border-dark dark:border-t-accent"
-        ></div>
-        <p class="text-2xl font-bold">Loading file...</p>
-      </div>
+      <LoadingCircle v-else class="space-y-5 pt-5" />
     </div>
     <VersionInfoComponent class="absolute bottom-3 left-3" />
   </div>
@@ -54,6 +49,7 @@ import { router } from '@/router'
 import { store } from '@/stores/store'
 import Button from '@/components/ButtonComponent.vue'
 import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
+import LoadingCircle from '@/components/LoadingCircle.vue'
 import { JsonFileHandler } from '@/utils/fileHandling/JsonFileHandler'
 import { ZipFileHandler } from '@/utils/fileHandling/ZipFileHandler'
 
