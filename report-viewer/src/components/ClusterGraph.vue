@@ -13,6 +13,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { EdgeLine, GraphController, GraphChart } from 'chartjs-chart-graph'
 import { store } from '@/stores/store'
 import { graphColors } from '@/utils/ColorUtils'
+import { start } from 'repl'
 
 const props = defineProps({
   cluster: {
@@ -85,8 +86,27 @@ const graphData = computed(() => {
   }
 })
 
+const yPadding = 40
+const xPadding = computed(() => {
+  const avgCharacterLength = 8
+
+  const widths = labels.value.map((label) => label.length * avgCharacterLength)
+  const maxWidth = Math.max(...widths)
+  // Space needed for the longest name, but at most 200
+  console.log(maxWidth)
+  return Math.min(200, maxWidth)
+})
+
 const graphOptions = computed(() => {
   return {
+    layout: {
+      padding: {
+        top: yPadding,
+        bottom: yPadding,
+        left: xPadding.value,
+        right: xPadding.value
+      }
+    },
     animation: false as false,
     plugins: {
       legend: { display: false },
@@ -94,12 +114,13 @@ const graphOptions = computed(() => {
         display: true,
         font: {
           weight: 'bold' as 'bold',
-          size: 16
+          size: 12
         },
         formatter: (value: any, ctx: any) => {
           return labels.value[ctx.dataIndex]
         },
-        offset: 12,
+        align: (ctx: any) => (-360 * ctx.dataIndex) / keys.value.length,
+        offset: 8,
         color: graphColors.ticksAndFont.value
       },
       tooltip: {
@@ -124,7 +145,6 @@ function drawGraph() {
     loaded.value = false
     return
   }
-  console.log(graphCanvas.value)
   chart.value = new Chart(ctx, {
     type: 'graph',
     data: graphData.value,
