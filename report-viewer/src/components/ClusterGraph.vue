@@ -13,7 +13,6 @@ import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { EdgeLine, GraphController, GraphChart } from 'chartjs-chart-graph'
 import { store } from '@/stores/store'
 import { graphColors } from '@/utils/ColorUtils'
-import { start } from 'repl'
 
 const props = defineProps({
   cluster: {
