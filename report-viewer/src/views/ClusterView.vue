@@ -14,7 +14,7 @@
     <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
       <Container class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden">
         <OptionsSelectorComponent
-          :labels="['Graph', 'Radar']"
+          :labels="clusterVisualizationOptions"
           @selectionChanged="
             (index) => (selectedClusterVisualization = index == 0 ? 'Graph' : 'Radar')
           "
@@ -68,6 +68,17 @@ const props = defineProps({
 const comparisons = [] as Array<ComparisonListElement>
 const clusterMemberList = new Map() as ClusterListElementMember
 const selectedClusterVisualization: Ref<'Graph' | 'Radar'> = ref('Graph')
+const clusterVisualizationOptions = [
+  {
+    displayValue: 'Graph',
+    tooltip: 'A graph having the average similarity between two submissions as the edges.'
+  },
+  {
+    displayValue: 'Radar',
+    tooltip:
+      'A radar chart showing the he other submissions in the cluster, relative one submission.'
+  }
+]
 const usedMetric = MetricType.AVERAGE
 
 function getComparisonFor(id1: string, id2: string) {
