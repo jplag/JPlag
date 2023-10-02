@@ -117,7 +117,7 @@
             <dependency>
                 <groupId>edu.stanford.nlp</groupId>
                 <artifactId>stanford-corenlp</artifactId>
-                <version>4.5.4</version>
+                <version>4.5.5</version>
             </dependency>
 
             <!-- LOGGER -->
