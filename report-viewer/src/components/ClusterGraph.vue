@@ -92,7 +92,6 @@ const xPadding = computed(() => {
   const widths = labels.value.map((label) => label.length * avgCharacterLength)
   const maxWidth = Math.max(...widths)
   // Space needed for the longest name, but at most 200
-  console.log(maxWidth)
   return Math.min(200, maxWidth)
 })
 
@@ -123,7 +122,13 @@ const graphOptions = computed(() => {
         color: graphColors.ticksAndFont.value
       },
       tooltip: {
-        enabled: false
+        enabled: true,
+        displayColors: false,
+        callbacks: {
+          title: () => {
+            return ''
+          }
+        }
       }
     }
   }
