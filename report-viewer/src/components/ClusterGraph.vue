@@ -91,7 +91,6 @@ const xPadding = computed(() => {
 
   const widths = labels.value.map((label) => label.length * avgCharacterLength)
   const maxWidth = Math.max(...widths)
-  console.log(maxWidth)
   // Makes sure there is always space to display a name but the padding does not get too big
   return Math.max(Math.min(200, maxWidth), 40)
 })
