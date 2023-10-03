@@ -13,7 +13,7 @@ test('Test information page', async ({ page }) => {
   expect(bodyOverview).toContain('Min Match Length: 9')
 
   // go to information page
-  await page.getByText('More').click()
+  await page.getByText('More', { exact: true }).click()
   await page.waitForURL('/info')
 
   // check displayed run options on information page

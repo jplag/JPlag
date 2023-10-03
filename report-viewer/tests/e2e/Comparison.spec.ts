@@ -6,12 +6,16 @@ test('Test comparison table and comparsion view', async ({ page }) => {
 
   await uploadFile('result_small_cluster.zip', page)
 
+  const comparisonContainer = page.getByText(
+    'Top Comparisons: Type in the name of a submission to only show comparisons that contain this submission. Fully written out names get unhidden.Hide AllSort By'
+  )
+
   // check for elements in average similarity table
   const comparisonTableAverageSorted = await page.getByText('Cluster1').textContent()
   expect(comparisonTableAverageSorted).toContain('1CA')
   expect(comparisonTableAverageSorted).toContain('2DC')
 
-  await page.getByText('Maximum Similarity').click()
+  await comparisonContainer.getByText('Maximum Similarity', { exact: true }).click()
   // check for elements in maximum similarity table
   const comparisonTableMaxSorted = await page.getByText('Cluster1').textContent()
   expect(comparisonTableMaxSorted).toContain('1CA')

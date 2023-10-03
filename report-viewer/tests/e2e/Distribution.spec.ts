@@ -20,7 +20,7 @@ test('Test all distribution combinations', async ({ page }) => {
 async function compareDistributionDiagramm(page: Page, options: string[]) {
   const distributionDiagrammContainer = page.getByText('Distribution of Comparisons:Options:')
   for (const option of options) {
-    await distributionDiagrammContainer.getByText(option).click()
+    await distributionDiagrammContainer.getByText(option).first().click()
   }
   // This timeout is so that the screenshot is taken after the animation is finished
   await page.waitForTimeout(3000)
