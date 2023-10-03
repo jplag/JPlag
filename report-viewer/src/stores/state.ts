@@ -1,3 +1,5 @@
+import type { MetricType } from '@/model/MetricType'
+
 /**
  * Local store. Stores the state of the application.
  */
@@ -63,9 +65,18 @@ export interface LoadConfiguration {
   local: boolean
   zip: boolean
   single: boolean
-  fileString: string
 }
 
 export interface UIState {
   useDarkMode: boolean
+  comparisonTableSortingMetric: MetricType
+  distributionChartConfig: DistributionChartConfig
+}
+
+/**
+ * Configuration for the distribution chart.
+ */
+export interface DistributionChartConfig {
+  metric: MetricType
+  xScale: 'linear' | 'logarithmic'
 }

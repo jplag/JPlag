@@ -15,7 +15,7 @@
       <Container class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden">
         <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
       </Container>
-      <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 overflow-hidden">
+      <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2">
         <h2>Comparisons of Cluster Members:</h2>
         <ComparisonsTable :topComparisons="comparisons" class="min-h-0 flex-1" />
       </Container>
@@ -28,35 +28,39 @@ import ClusterRadarChart from '@/components/ClusterRadarChart.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
+import type { Cluster } from '@/model/Cluster'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { MetricType } from '@/model/MetricType'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
+import type { Overview } from '@/model/Overview'
+import { computed, type PropType, type Ref } from 'vue'
 
 const props = defineProps({
-  clusterIndex: {
-    type: Number,
+  overview: {
+    type: Object as PropType<Overview>,
+    required: true
+  },
+  cluster: {
+    type: Object as PropType<Cluster>,
     required: true
   }
 })
 
-const overview = OverviewFactory.getOverview()
-const cluster = overview.clusters[props.clusterIndex]
 const comparisons = [] as Array<ComparisonListElement>
 const clusterMemberList = new Map() as ClusterListElementMember
 const usedMetric = MetricType.AVERAGE
 
 function getComparisonFor(id1: string, id2: string) {
-  return overview.topComparisons.find(
+  return props.overview.topComparisons.find(
     (c) =>
       (c.firstSubmissionId === id1 && c.secondSubmissionId === id2) ||
       (c.firstSubmissionId === id2 && c.secondSubmissionId === id1)
   )
 }
 
-for (let i = 0; i < cluster.members.length; i++) {
-  for (let j = i + 1; j < cluster.members.length; j++) {
-    const comparison = getComparisonFor(cluster.members[i], cluster.members[j])
+for (let i = 0; i < props.cluster.members.length; i++) {
+  for (let j = i + 1; j < props.cluster.members.length; j++) {
+    const comparison = getComparisonFor(props.cluster.members[i], props.cluster.members[j])
     if (comparison) {
       comparisons.push(comparison)
     }
@@ -70,7 +74,7 @@ comparisons
     c.id = counter
   })
 
-for (const member of cluster.members) {
+for (const member of props.cluster.members) {
   const membersComparisons: { matchedWith: string; similarity: number }[] = []
   comparisons
     .filter((c) => c.firstSubmissionId === member || c.secondSubmissionId === member)
@@ -83,9 +87,11 @@ for (const member of cluster.members) {
   clusterMemberList.set(member, membersComparisons)
 }
 
-const clusterListElement: ClusterListElement = {
-  averageSimilarity: cluster.averageSimilarity,
-  members: clusterMemberList,
-  strength: cluster.strength
-}
+const clusterListElement: Ref<ClusterListElement> = computed(() => {
+  return {
+    averageSimilarity: props.cluster.averageSimilarity,
+    members: clusterMemberList,
+    strength: props.cluster.strength
+  }
+})
 </script>

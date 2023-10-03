@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import FileUploadView from '@/views/FileUploadView.vue'
-import OverviewView from '@/views/OverviewView.vue'
-import ComparisonView from '@/views/ComparisonView.vue'
+import OverviewViewWrapper from '@/viewWrapper/OverviewViewWrapper.vue'
+import ComparisonViewWrapper from '@/viewWrapper/ComparisonViewWrapper.vue'
 import ErrorView from '@/views/ErrorView.vue'
-import ClusterView from '@/views/ClusterView.vue'
-import InformationView from '@/views/InformationView.vue'
+import InformationViewWrapper from '@/viewWrapper/InformationViewWrapper.vue'
+import ClusterViewWrapper from '@/viewWrapper/ClusterViewWrapper.vue'
 
 /**
  * The router is used to navigate between the different views of the application.
@@ -20,12 +20,12 @@ const router = createRouter({
     {
       path: '/overview',
       name: 'OverviewView',
-      component: OverviewView
+      component: OverviewViewWrapper
     },
     {
       path: '/comparison/:firstId/:secondId',
       name: 'ComparisonView',
-      component: ComparisonView,
+      component: ComparisonViewWrapper,
       props: true
     },
     {
@@ -36,13 +36,13 @@ const router = createRouter({
     {
       path: '/cluster/:clusterIndex',
       name: 'ClusterView',
-      component: ClusterView,
+      component: ClusterViewWrapper,
       props: true
     },
     {
       path: '/info',
       name: 'InfoView',
-      component: InformationView
+      component: InformationViewWrapper
     }
   ]
 })
