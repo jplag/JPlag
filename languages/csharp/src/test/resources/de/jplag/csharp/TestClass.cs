@@ -25,8 +25,8 @@ public class MyClass
     private int myPropertyVar;
     
     public int MyProperty
-    {
+    {//test-ignore
         get { return myPropertyVar; }
         set { myPropertyVar = value; }
-    } 
+    }//test-ignore
 }

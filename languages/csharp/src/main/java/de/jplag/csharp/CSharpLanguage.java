@@ -6,7 +6,6 @@ import de.jplag.antlr.AbstractAntlrLanguage;
 
 /**
  * C# language with full support of C# 6 features and below.
- * @author Timur Saglam
  */
 @MetaInfServices(de.jplag.Language.class)
 public class CSharpLanguage extends AbstractAntlrLanguage {

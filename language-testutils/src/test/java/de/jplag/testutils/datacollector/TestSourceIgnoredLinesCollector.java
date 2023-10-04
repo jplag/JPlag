@@ -25,6 +25,15 @@ public class TestSourceIgnoredLinesCollector {
         this.ignoreByCondition(line -> line.trim().startsWith(prefix));
     }
 
+    /**
+     * Ignores lines that match the given regular expression. Whitespaces to the left and right of the line will be trimmed
+     * first.
+     * @param regex The regular expression
+     */
+    public void ignoreLinesByRegex(String regex) {
+        this.ignoreByCondition(line -> line.trim().matches(regex));
+    }
+
     public void ignoreLinesByContains(String content) {
         this.ignoreByCondition(line -> line.contains(content));
     }

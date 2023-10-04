@@ -32,27 +32,25 @@ public class CSharpTest extends LanguageModuleTest {
 
     @Override
     protected void collectTestData(TestDataCollector collector) {
-        collector.testFile("TestClass.cs").testSourceCoverage().testTokenSequence(CLASS, CLASS_BEGIN, FIELD, CONSTRUCTOR, LOCAL_VARIABLE, METHOD,
-                METHOD_BEGIN, IF, IF_BEGIN, INVOCATION, IF_END, IF_BEGIN, INVOCATION, IF_END, METHOD_END, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN,
-                ACCESSOR_END, ACCESSOR_BEGIN, ACCESSOR_END, ACCESSORS_END, FIELD, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, RETURN, ACCESSOR_END,
-                ACCESSOR_BEGIN, ASSIGNMENT, ACCESSOR_END, ACCESSORS_END, CLASS_END);
+        collector.testFile("TestClass.cs").testSourceCoverage().testTokenSequence(CLASS, CLASS_BEGIN, FIELD, CONSTRUCTOR, METHOD_BEGIN,
+                LOCAL_VARIABLE, METHOD_END, METHOD, METHOD_BEGIN, IF, IF_BEGIN, INVOCATION, IF_END, IF, IF_BEGIN, INVOCATION, IF_END, METHOD_END,
+                PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, ACCESSOR_END, ACCESSOR_BEGIN, ACCESSOR_END, ACCESSORS_END, FIELD, PROPERTY,
+                ACCESSORS_BEGIN, ACCESSOR_BEGIN, RETURN, ACCESSOR_END, ACCESSOR_BEGIN, ASSIGNMENT, ACCESSOR_END, ACCESSORS_END, CLASS_END);
 
-        collector.testFile("AllInOneNoPreprocessor.cs")./* testSourceCoverage(). */testTokenCoverage();
+        collector.testFile("AllInOneNoPreprocessor.cs").testSourceCoverage().testTokenCoverage();
     }
 
     @Override
     protected void configureIgnoredLines(TestSourceIgnoredLinesCollector collector) {
         collector.ignoreMultipleLines("/*", "*/");
         collector.ignoreLinesByPrefix("//");
-        collector.ignoreLinesByPrefix("{");
-        collector.ignoreLinesByPrefix("}");
+        collector.ignoreLinesByRegex(".*//test-ignore");
+
+        // Using (import) as alias
+        collector.ignoreLinesByRegex("using.*=.*<.*>.*;");
+        collector.ignoreLinesByRegex("using.*=[^.]+;");
 
         collector.ignoreLinesByPrefix("extern");
-        collector.ignoreLinesByPrefix("using");
-        collector.ignoreLinesByPrefix("namespace");
-        collector.ignoreLinesByPrefix("base");
-        collector.ignoreLinesByPrefix("++");
-
-        collector.ignoreByCondition(line -> line.trim().matches("[a-zA-Z0-9]+:"));
+        collector.ignoreByCondition(line -> line.trim().matches("[a-zA-Z0-9]+:.*"));
     }
 }

@@ -50,16 +50,13 @@ namespace My
         }
 
         [method: Obsolete]
-        public A([param: Obsolete] int foo) :
-            base(1)
-        {
-        L:
-            {
+        public A([param: Obsolete] int foo) :            base(1)        {
+        L: { //test-ignore
                 int i = sizeof(int);
                 ++i;
                 var s1 = $"x {1 , -2 :d}";
                 var s2 = $@"x {1 , -2 :d}";
-            }
+            } //test-ignore
 
 
       Console.WriteLine(export.iefSupplied.command);
@@ -147,15 +144,15 @@ namespace My
             var o2 = new MyObject(var);
             var o3 = new MyObject { A = i };
             var o4 = new MyObject(@dynamic)
-            { A = 0, B = 0, C = 0 };
+            { A = 0, B = 0, C = 0 };//test-ignore
             var o5 = new { A = 0 };
             var dictionaryInitializer = new Dictionary<int, string> 
-            { 
-                {1, ""}, 
-                {2, "a"} 
-            };
+            { //test-ignore
+                {1, ""}, //test-ignore
+                {2, "a"} //test-ignore
+            };//test-ignore
             float[] a = new float[] 
-            { 0f, 1.1f };
+            { 0f, 1.1f };//test-ignore
             int[, ,] cube = { { { 111, 112, }, { 121, 122 } }, { { 211, 212 }, { 221, 222 } } };
             int[][] jagged = { { 111 }, { 121, 122 } };
             int[][,] arr = new int[5][,]; // as opposed to new int[][5,5]
@@ -164,38 +161,33 @@ namespace My
             int[] arrayTypeInference = new[] { 0, 1, };
             switch (3) { }
             switch (i)
-            {
+            {//test-ignore
                 case 0: case 1:
-                    {
+                    {//test-ignore
                         goto case 2;
-                    }
+                    }//test-ignore
                 case 2 + 3:
-                    {
+                    {//test-ignore
                         goto default;
                         break;
-                    }
+                    }//test-ignore
                 default:
-                    {
+                    {//test-ignore
                         return;
-                    }
-            }
-            while (i < 10)
-            {
+                    }//test-ignore
+            }//test-ignore
+            while (i < 10)            {
                 ++i;
                 if (true) continue;
                 break;
             }
-            do
-            {
+            do            {
                 ++i;
                 if (true) continue;
                 break;
-            }
-            while (i < 10);
-            for (int j = 0; j < 100; ++j)
-            {
-                for(;;) 
-                {
+            } while (i < 10);
+            for (int j = 0; j < 100; ++j)            {
+                for(;;)                 {
                     for (int i = 0, j = 0; i < length; i++, j++) { }
                     if (true) continue;
                     break;
@@ -204,21 +196,20 @@ namespace My
             label:
             goto label;
             label2: ;
-            foreach (var i in Items())
-            {
+            foreach (var i in Items())            {
                 if (i == 7)
                     return;
                 else
                     continue;
             }
             checked
-            {
+            {//test-ignore
                 checked(++i);
-            }
+            }//test-ignore
             unchecked
-            {
+            {//test-ignore
                 unchecked(++i);
-            }
+            }//test-ignore
             lock (sync)
                 process();
             using (var v = BeginScope())
@@ -226,59 +217,59 @@ namespace My
             using (A a = new A(), b = new A())
             using (BeginScope())
                 return;
-            yield return this.items[3];
-            yield break;
+            yield return this.items[3];//test-ignore
+            yield break; //test-ignore
             fixed (int* p = stackalloc int[100], q = &y)
-            {
+            { //test-ignore
                 *intref = 1;
-            }
+            } //test-ignore
             fixed (int* p = stackalloc int[100])
-            {
+            { //test-ignore
                 *intref = 1;
-            }
+            } //test-ignore
             unsafe
-            {
+            { //test-ignore
                 int* p = null;
-            }
+            } //test-ignore
             try
-            {
+            { //test-ignore
                 throw null;
-            }
+            } //test-ignore
             catch (System.AccessViolationException av)
-            {
+            { //test-ignore
                 throw av;
-            }
+            } //test-ignore
             catch (Exception)
-            {
+            { //test-ignore
                 throw;
-            }
+            } //test-ignore
             finally
-            {
+            { //test-ignore
                 try { } catch { }
-            }
+            } //test-ignore
             var anonymous = 
             {
                 A = 1,
                 B = 2,
                 C = 3,
-            };
+            }; //test-ignore
             var query = from c in customers
-                        let d = c
-                        where d != null
+                        let d = c//test-ignore
+                        where d != null//test-ignore
                         join c1 in customers on c1.GetHashCode() equals c.GetHashCode()
                         join c1 in customers on c1.GetHashCode() equals c.GetHashCode() into e
-                        group c by c.Country
-                            into g
+                        group c by c.Country//test-ignore
+                            into g //test-ignore
                             orderby g.Count() ascending
-                            orderby g.Key descending
+                            orderby g.Key descending //test-ignore
                             select new { Country = g.Key, CustCount = g.Count() };
             query = from c in customers
-                    select c into d
-                    select d;
+                    select c into d//test-ignore
+                    select d;//test-ignore
         }
         ~A()
-        {
-        }
+        { //test-ignore
+        } //test-ignore
         private readonly int f1;
         [Obsolete]
         [NonExisting]
@@ -291,42 +282,41 @@ namespace My
         public void Handler(object value)
         {
         }
-        public int m<T>(T t)
-          where T : class, new()
+        public int m<T>(T t) where T : class, new()
         {
             base.m(t);
             return 1;
         }
         public string P
-        {
+        { //test-ignore
             get
             {
                 return "A";
             }
             set;
-        }
+        } //test-ignore
         public abstract string P
-        {
+        { //test-ignore
             get;
-        }
+        } //test-ignore
         public abstract int this[int index]
-        {
+        { //test-ignore
             protected internal get;
             internal protected set;
-        }
+        } //test-ignore
         [method: Obsolete]
         [field: Obsolete]
         [event: Obsolete]
         public readonly event Event E;
         [event: Test]
         public event Action E1
-        {
+        { //test-ignore
             [Obsolete]
             add { value = value; }
             [Obsolete]
             [return: Obsolete]
             remove { E += Handler; E -= Handler; }
-        }
+        } //test-ignore
         public static A operator +(A first, A second)
         {
             Delegate handler = new Delegate(Handler);
@@ -354,35 +344,34 @@ namespace My
         private int f1;
         [Obsolete("Use Script instead", error: false)]
         private volatile int f2;
-        public abstract int m<T>(T t)
-          where T : struct
+        public abstract int m<T>(T t) where T : struct
         {
             return 1;
         }
         public string P
-        {
+        { //test-ignore
             get
             {
                 int value = 0;
                 return "A";
             }
             set;
-        }
+        } //test-ignore
         public abstract string P
-        {
+        { //test-ignore
             get;
-        }
+        } //test-ignore
         public abstract int this[int index]
-        {
+        { //test-ignore
             get;
             internal protected set;
-        }
+        } //test-ignore
         public event Event E;
         public static A operator +(A first, A second)
         {
             return first.Add(second);
         }
-        fixed int field[10];
+        fixed int field[10];//test-ignore
         class C
         {
         }
@@ -391,10 +380,10 @@ namespace My
     {
         void A(int value);
         string Value
-        {
+        { //test-ignore
             get;
             set;
-        }
+        } //test-ignore
         unsafe void UpdateSignatureByHashingContent([In]byte* buffer, int size);
     }
     [type: Flags]
@@ -419,16 +408,15 @@ namespace My
                 Список.Main();
                 int counter = (0 + 0);
                 int אתר = 0;
-                while (++counter++ < --exponent--)
-                {
+                while (++counter++ < --exponent--) {
                     result = result * number + +number+++++number;
-                    yield return result;
+                    yield return result;//test-ignore
                 }
             }
             static void Main()
             {
                 foreach (int i in Power(2, 8))
-                {
+                { //test-ignore
                     Console.Write("{0} ", i);
                 }
             }
@@ -439,9 +427,9 @@ namespace My
             void AsyncAnonymous() // C # 5 feature
             {
                 var task = Task.Factory.StartNew(async () =>
-                {
+                { //test-ignore
                     return await new WebClient().DownloadStringTaskAsync("http://example.com");
-                });
+                }); //test-ignore
             }
         }
     }
@@ -474,8 +462,8 @@ namespace ConsoleApplication1
             public class Foo<U> : IEnumerable<T>
             {
                 public void Method<K, V>(K k, T t, U u)
-                    where K : IList<V>, IList<T>, IList<U>
-                    where V : IList<K>
+                    where K : IList<V>, IList<T>, IList<U> //test-ignore
+                    where V : IList<K> //test-ignore
                 {
                     A<int> a;
                     M(A<B, C>(5));
@@ -492,8 +480,8 @@ namespace ConsoleApplication1
             x.Method<string, string>(" ", 5, new object());
 
             var q = from i in new int[] { 1, 2, 3, 4 }
-                    where i > 5
-                    select i;
+                    where i > 5//test-ignore
+                    select i;//test-ignore
         }
 
         public static implicit operator Test(string s)
@@ -522,9 +510,9 @@ namespace ConsoleApplication1
             Expression<Func<int>> e = () => i;
             Expression<Func<bool, Action>> e2 = b => () => { return; };
             Func<bool, bool> f = async delegate (bool a)
-            {
+            { //test-ignore
                 return await !a;
-            };
+            }; //test-ignore
             Func<int, int, int> f2 = (a, b) => 0;
             f2 = (int a, int b) => 1;
             Action a = Blah;
@@ -535,23 +523,22 @@ namespace ConsoleApplication1
         delegate Recursive Recursive(Recursive r);
         delegate Recursive Recursive<A,R>(Recursive<A,R> r);
 
-        public Type Foo
-        {
+        public Type Foo {
             [Obsolete("Name", error = false)]
-            get
+            get//test-ignore
             {
                 var result = typeof(IEnumerable<int>);
                 var t = typeof(int?) == typeof(Nullable<int>);
                 t = typeof(IEnumerable<int?[][][]>);
                 return typeof(IEnumerable<>);
             }
-            set
+            set//test-ignore
             {
                 var t = typeof(System.Int32);
                 t.ToString();
                 t = value;
             }
-        }
+        }//test-ignore
 
         public void Constants()
         {
@@ -661,10 +648,10 @@ namespace Comments.XmlComments.UndocumentedKeywords
             double d = .3;
             Point point;
             unsafe
-            {
+            {//test-ignore
                 Point* p = &point;/** &*/
                 p->x = 10;/*->*/
-            }
+            }//test-ignore
             IO::BinaryReader br = null;
             x[i: 1] = 3;
             x[i: 1, j: 5] = "str";
@@ -714,7 +701,7 @@ namespace Comments.XmlComments.UndocumentedKeywords
             s = $"{p.Name} is \"{p.Age} year{(p.Age == 1 ? "" : "s")} old";
             s = $"{(p.Age == 2 ? $"{new Person { } }" : "")}";
             s = $@"\{p.Name}
-                                   ""\";
+                                   ""\"; //test-ignore
             s = $"Color [ R={func(b: 3):#0.##}, G={G:#0.##}, B={B:#0.##}, A={A:#0.##} ]";
             
             // nameof expressions
@@ -724,31 +711,31 @@ namespace Comments.XmlComments.UndocumentedKeywords
             
             // Index initializers
             var numbers = new Dictionary<int, string> {
-                [7] = "seven",
-                [9] = "nine",
-                [13] = "thirteen"
-            };
+                [7] = "seven", //test-ignore
+                [9] = "nine", //test-ignore
+                [13] = "thirteen" //test-ignore
+            }; //test-ignore
             
             // Exception filters
             try {}
             catch (MyException e) when (myfilter(e))
-            { }
+            { } //test-ignore
             
             // Await in catch and finally blocks
             Resource res = null;
             try
-            {
+            { //test-ignore
                 res = await Resource.OpenAsync();       // You could do this.
-            } 
+            }  //test-ignore
             catch(ResourceException e)
-            {
+            { //test-ignore
                 await Resource.LogAsync(res, e);         // Now you can do this …
-            }
+            } //test-ignore
             finally
-            {
+            { //test-ignore
                 if (res != null)
                     await res.CloseAsync(); // … and this.
-            }
+            } //test-ignore
         }
     }
 }
@@ -758,12 +745,12 @@ class CSharp70
     void PatternMatching(string arg, int b)
     {
         switch (arg)
-        {
+        { //test-ignore
             case "A" when b > 50:
-            case "B" when b < 50:
+            case "B" when b < 50: //test-ignore
             default:
                 break;
-        }
+        } //test-ignore
 
         (A<B,C> D, E<F,G> H) = e;
 
@@ -777,10 +764,10 @@ class CSharp70
 
 	public static async Task LocalFunctions(string[] args)
 	{
-		string Hello2(int i)
-        {
+		string Hello2(int i) //test-ignore
+        { //test-ignore
             return args[i];
-        }
+        } //test-ignore
 
 		async Task<string> Hello<T>(T i) => await Task.FromResult(args[i]);
 		await Hello(1);
@@ -905,29 +892,29 @@ class CSharp72
     public void LeadingSeparator()
     {
         var res = 0
-        + 123      // permitted in C# 1.0 and later
-        + 1_2_3    // permitted in C# 7.0 and later
-        + 0x1_2_3  // permitted in C# 7.0 and later
-        + 0b101    // binary literals added in C# 7.0
-        + 0b1_0_1  // permitted in C# 7.0 and later
+        + 123      // permitted in C# 1.0 and later     //test-ignore
+        + 1_2_3    // permitted in C# 7.0 and later     //test-ignore
+        + 0x1_2_3  // permitted in C# 7.0 and later     //test-ignore
+        + 0b101    // binary literals added in C# 7.0     //test-ignore
+        + 0b1_0_1  // permitted in C# 7.0 and later     //test-ignore
 
         // in C# 7.2, _ is permitted after the `0x` or `0b`
-        + 0x_1_2   // permitted in C# 7.2 and later
-        + 0b_1_0_1 // permitted in C# 7.2 and later
-        ;
+        + 0x_1_2   // permitted in C# 7.2 and later     //test-ignore
+        + 0b_1_0_1 // permitted in C# 7.2 and later     //test-ignore
+        ; //test-ignore
     }
 }
 
 class CSharp73
 {
     void Blittable<T>(T value) where T : unmanaged
-    {
+    { //test-ignore
         var unmanaged = 666;
-    }
+    } //test-ignore
 
     unsafe struct IndexingMovableFixed
     {
-        public fixed int myFixedField[10];
+        public fixed int myFixedField[10]; //test-ignore
     }
 
     static IndexingMovableFixed s;
@@ -941,10 +928,10 @@ class CSharp73
     public void PatternBasedFixed()
     {
         fixed(byte* ptr = byteArray)
-        {
+        { //test-ignore
            // ptr is a native pointer to the first element of the array
            // byteArray is protected from being moved/collected by the GC for the duration of this block 
-        }
+        } //test-ignore
     }
 
     public void StackallocArrayInitializer()
@@ -979,26 +966,26 @@ namespace CSharp80
 			if (o is string { Length: 5 } s) Do();
 			
 			return lang.CountOfTokens switch
-			{
-				1 => 100,
-				2 => 200,
+			{ //test-ignore
+				1 => 100, //test-ignore
+				2 => 200, //test-ignore
 				_ => throw new global::System.Exception()
-			};
+			}; //test-ignore
 
 			var newState = (GetState(), action, hasKey) switch
-			{
-				(DoorState.Closed, Action.Open, _) => DoorState.Opened,
-				(DoorState.Opened, Action.Close, _) => DoorState.Closed,
-				(DoorState.Closed, Action.Lock, true) => DoorState.Locked,
-				(DoorState.Locked, Action.Unlock, true) => DoorState.Closed,
-				(var state, _, _) => state
-			};
+			{ //test-ignore
+				(DoorState.Closed, Action.Open, _) => DoorState.Opened, //test-ignore
+				(DoorState.Opened, Action.Close, _) => DoorState.Closed, //test-ignore
+				(DoorState.Closed, Action.Lock, true) => DoorState.Locked, //test-ignore
+				(DoorState.Locked, Action.Unlock, true) => DoorState.Closed, //test-ignore
+				(var state, _, _) => state //test-ignore
+			}; //test-ignore
 		}
 
 		async Task AsyncStreams()
 		{
 			await foreach (var item in asyncEnumerables)
-			{
+			{ //test-ignore
 			}
 		}
 
@@ -1024,10 +1011,10 @@ namespace CSharp80
 
 		void StaticLocalFunction()
 		{
-			static unsafe void Func1() {}
-			static unsafe void Func1() {}
-			async static void Func2() {}
-			static async void Func2() {}
+			static unsafe void Func1() {} //test-ignore
+			static unsafe void Func1() {} //test-ignore
+			async static void Func2() {} //test-ignore
+			static async void Func2() {} //test-ignore
 		}
 
 		void NullCoalescingAssignment()

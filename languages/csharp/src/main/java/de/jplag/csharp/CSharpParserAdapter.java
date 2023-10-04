@@ -13,7 +13,6 @@ import de.jplag.csharp.grammar.CSharpParser;
 /**
  * Parser adapter for the ANTLR 4 CSharp Parser and Lexer. It receives file to parse and passes them to the ANTLR
  * pipeline. Then it walks the produced parse tree and creates JPlag token with the {@link CSharpListener}.
- * @author Timur Saglam
  */
 public class CSharpParserAdapter extends AbstractAntlrParserAdapter<CSharpParser> {
     @Override
