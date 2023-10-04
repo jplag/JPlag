@@ -1,12 +1,5 @@
 package de.jplag.csharp;
 
-import de.jplag.testutils.LanguageModuleTest;
-import de.jplag.testutils.datacollector.TestDataCollector;
-import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static de.jplag.csharp.CSharpTokenType.ACCESSORS_BEGIN;
 import static de.jplag.csharp.CSharpTokenType.ACCESSORS_END;
 import static de.jplag.csharp.CSharpTokenType.ACCESSOR_BEGIN;
@@ -28,6 +21,10 @@ import static de.jplag.csharp.CSharpTokenType.METHOD_END;
 import static de.jplag.csharp.CSharpTokenType.PROPERTY;
 import static de.jplag.csharp.CSharpTokenType.RETURN;
 
+import de.jplag.testutils.LanguageModuleTest;
+import de.jplag.testutils.datacollector.TestDataCollector;
+import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
+
 public class CSharpTest extends LanguageModuleTest {
     public CSharpTest() {
         super(new CSharpLanguage(), CSharpTokenType.class);
@@ -35,15 +32,12 @@ public class CSharpTest extends LanguageModuleTest {
 
     @Override
     protected void collectTestData(TestDataCollector collector) {
-        collector.testFile("TestClass.cs").testSourceCoverage().testTokenSequence(CLASS, CLASS_BEGIN, FIELD, CONSTRUCTOR, LOCAL_VARIABLE, METHOD, METHOD_BEGIN, IF, IF_BEGIN,
-                INVOCATION, IF_END, IF_BEGIN, INVOCATION, IF_END, METHOD_END, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, ACCESSOR_END, ACCESSOR_BEGIN,
-                ACCESSOR_END, ACCESSORS_END, FIELD, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, RETURN, ACCESSOR_END, ACCESSOR_BEGIN, ASSIGNMENT,
-                ACCESSOR_END, ACCESSORS_END, CLASS_END);
+        collector.testFile("TestClass.cs").testSourceCoverage().testTokenSequence(CLASS, CLASS_BEGIN, FIELD, CONSTRUCTOR, LOCAL_VARIABLE, METHOD,
+                METHOD_BEGIN, IF, IF_BEGIN, INVOCATION, IF_END, IF_BEGIN, INVOCATION, IF_END, METHOD_END, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN,
+                ACCESSOR_END, ACCESSOR_BEGIN, ACCESSOR_END, ACCESSORS_END, FIELD, PROPERTY, ACCESSORS_BEGIN, ACCESSOR_BEGIN, RETURN, ACCESSOR_END,
+                ACCESSOR_BEGIN, ASSIGNMENT, ACCESSOR_END, ACCESSORS_END, CLASS_END);
 
-        ArrayList<CSharpTokenType> tokens = new ArrayList<>(List.of(CSharpTokenType.values()));
-        tokens.remove(CSharpTokenType.INTERFACE_BEGIN);
-        tokens.remove(CSharpTokenType.INTERFACE_END);
-        collector.testFile("AllInOneNoPreprocessor.cs")./*testSourceCoverage().*/testContainedTokens(tokens.toArray(CSharpTokenType[]::new));
+        collector.testFile("AllInOneNoPreprocessor.cs")./* testSourceCoverage(). */testTokenCoverage();
     }
 
     @Override
