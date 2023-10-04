@@ -97,8 +97,8 @@ class CPPListener extends AbstractAntlrListener {
             if (parent.initDeclaratorList() == null) {
                 return;
             }
-            for (var decl : parent.initDeclaratorList().initDeclarator()) {
-                String name = decl.declarator().pointerDeclarator().noPointerDeclarator().getText();
+            for (InitDeclaratorContext dec : parent.initDeclaratorList().initDeclarator()) {
+                String name = dec.declarator().pointerDeclarator().noPointerDeclarator().getText();
                 VariableScope scope = variableRegistry.inLocalScope() ? VariableScope.LOCAL : VariableScope.FILE;
                 variableRegistry.registerVariable(name, scope, true);
             }
@@ -117,15 +117,17 @@ class CPPListener extends AbstractAntlrListener {
         visit(DeclaratorContext.class, rule -> {
             ParserRuleContext parent = rule.getParent();
             BraceOrEqualInitializerContext desc = getDescendant(parent, BraceOrEqualInitializerContext.class);
-            return (desc != null && desc.Assign() != null
-                    && (parent == desc.getParent() || parent == desc.getParent().getParent()));
+            return (desc != null && desc.Assign() != null && (parent == desc.getParent() || parent == desc.getParent().getParent()));
         }).map(ASSIGN).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
 
         visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
-            CPP14Parser.PointerDeclaratorContext pd = ctx.declarator().pointerDeclarator();
-            String name = pd.noPointerDeclarator().getText();
-            varReg.registerVariable(name, VariableScope.LOCAL, true); // todo problem: says scope local but scope only entered in method (I guess)?
-            varReg.setNextVariableAccessType(VariableAccessType.WRITE);
+            // don't register parameters in function declarations, e.g. bc6h_enc lines 117-120
+            if (hasAncestor(ctx, FunctionDefinitionContext.class, SimpleDeclarationContext.class)) {
+                CPP14Parser.PointerDeclaratorContext pd = ctx.declarator().pointerDeclarator();
+                String name = pd.noPointerDeclarator().getText();
+                varReg.registerVariable(name, VariableScope.LOCAL, true);
+                varReg.setNextVariableAccessType(VariableAccessType.WRITE);
+            }
         });
         visit(ConditionalExpressionContext.class, rule -> rule.Question() != null).map(QUESTIONMARK).withSemantics(CodeSemantics::new);
 
@@ -136,9 +138,7 @@ class CPPListener extends AbstractAntlrListener {
                 });
 
         visit(UnqualifiedIdContext.class).onEnter((ctx, varReg) -> {
-            // assumption: all local variable references are unqualified
-            // may or may not be correct but good enough heuristic anyways
-            var parentCtx = ctx.getParent().getParent();
+            ParserRuleContext parentCtx = ctx.getParent().getParent();
             if (!parentCtx.getParent().getParent().getText().contains("(")) {
                 boolean isClassVariable = parentCtx.getClass() == PostfixExpressionContext.class // after dot
                         && ((PostfixExpressionContext) parentCtx).postfixExpression().getText().equals("this");
@@ -169,11 +169,17 @@ class CPPListener extends AbstractAntlrListener {
     }
 
     private void registerClassVariables(ClassSpecifierContext context, VariableRegistry variableRegistry) {
-        for (MemberdeclarationContext member : context.memberSpecification().memberdeclaration()) {
-            if (member.memberDeclaratorList() != null) {
-                for (var decl : member.memberDeclaratorList().memberDeclarator()) {
-                    String name = decl.declarator().pointerDeclarator().noPointerDeclarator().getText();
-                    variableRegistry.registerVariable(name, VariableScope.CLASS, true);
+        MemberSpecificationContext members = context.memberSpecification();
+        if (members != null) { // is null if class has no members
+            for (MemberdeclarationContext member : members.memberdeclaration()) {
+                if (member.memberDeclaratorList() != null) {
+                    for (MemberDeclaratorContext memberDec : member.memberDeclaratorList().memberDeclarator()) {
+                        DeclaratorContext dec = memberDec.declarator();
+                        if (dec != null) { // is null in some weird case, see bc6h_enc line 1100
+                            String name = dec.pointerDeclarator().noPointerDeclarator().getText();
+                            variableRegistry.registerVariable(name, VariableScope.CLASS, true);
+                        }
+                    }
                 }
             }
         }
