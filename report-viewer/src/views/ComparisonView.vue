@@ -43,7 +43,7 @@
             ? 'Submission 1'
             : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
         "
-        :highlight-language="getHighlightLanguage(language)"
+        :highlight-language="language"
         @line-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
       />
@@ -56,7 +56,7 @@
             ? 'Submission 2'
             : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
         "
-        :highlight-language="getHighlightLanguage(language)"
+        :highlight-language="language"
         @line-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
       />
@@ -67,19 +67,18 @@
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
 
-import { onMounted, ref, watch, type Ref, computed, onErrorCaptured } from 'vue'
+import { onMounted, ref, watch, type Ref, computed, onErrorCaptured, type PropType } from 'vue'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
-import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import FilesContainer from '@/components/FilesContainer.vue'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
-import { getHighlightLanguage } from '@/model/Language'
+import { HighlightLanguage } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { router } from '@/router'
 import { MetricType } from '@/model/MetricType'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
+import { Comparison } from '@/model/Comparison'
 
 const props = defineProps({
   firstId: {
@@ -89,14 +88,19 @@ const props = defineProps({
   secondId: {
     type: String,
     required: true
+  },
+  comparison: {
+    type: Object as PropType<Comparison>,
+    required: true
+  },
+  language: {
+    type: Object as PropType<HighlightLanguage>,
+    required: true
   }
 })
 
-const language = OverviewFactory.getOverview().language
-const comparison = computed(() => ComparisonFactory.getComparison(props.firstId, props.secondId))
-
-const filesOfFirst = ref(comparison.value.filesOfFirstSubmission)
-const filesOfSecond = ref(comparison.value.filesOfSecondSubmission)
+const filesOfFirst = computed(() => props.comparison.filesOfFirstSubmission)
+const filesOfSecond = computed(() => props.comparison.filesOfSecondSubmission)
 
 const panel1: Ref<typeof FilesContainer | null> = ref(null)
 const panel2: Ref<typeof FilesContainer | null> = ref(null)

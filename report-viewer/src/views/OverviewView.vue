@@ -17,7 +17,15 @@
           <TextInformation label="Min Match Length">{{
             overview.matchSensitivity
           }}</TextInformation>
-          <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+
+          <ToolTipComponent direction="left">
+            <template #default>
+              <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+            </template>
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">More information about the CLI run of JPlag</p>
+            </template>
+          </ToolTipComponent>
         </div>
       </Container>
     </div>
@@ -26,26 +34,30 @@
       <Container class="flex max-h-0 min-h-full flex-1 flex-col">
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
-          :distribution="overview.distribution[selectedDistributionDiagramMetric]"
-          :x-scale="distributionDiagramScaleX"
+          :distribution="overview.distribution[store().uiState.distributionChartConfig.metric]"
+          :x-scale="store().uiState.distributionChartConfig.xScale"
           class="h-2/3 w-full"
         />
         <div class="flex flex-grow flex-col space-y-1">
           <h3 class="text-lg underline">Options:</h3>
-          <ScrollableComponent class="flex-grow space-y-2">
-            <OptionsSelector
-              name="Metric"
-              :labels="['Average', 'Maximum']"
+          <ScrollableComponent class="h-fit flex-grow">
+            <MetricSelector
+              class="mt-2"
+              title="Metric:"
+              :defaultSelected="store().uiState.distributionChartConfig.metric"
               @selection-changed="
-                (i: number) => (selectedDistributionDiagramMetric = getMetricFromNumber(i))
+                (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
               "
             />
             <OptionsSelector
               class="mt-2"
-              name="Scale x-Axis:"
+              title="Scale x-Axis:"
               :labels="['Linear', 'Logarithmic']"
+              :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
               @selection-changed="
-                (i: number) => (distributionDiagramScaleX = i == 0 ? 'linear' : 'logarithmic')
+                (i: number) =>
+                  (store().uiState.distributionChartConfig.xScale =
+                    i == 0 ? 'linear' : 'logarithmic')
               "
             />
           </ScrollableComponent>
@@ -55,11 +67,22 @@
       <Container class="flex max-h-0 min-h-full flex-1 flex-col space-y-2">
         <div class="flex flex-row items-center space-x-8">
           <h2>Top Comparisons:</h2>
-          <SearchBarComponent
-            placeholder="Filter/Unhide Comparisons"
-            class="flex-grow"
-            @input-changed="(value) => (searchString = value)"
-          />
+          <ToolTipComponent direction="bottom" class="flex-grow">
+            <template #default>
+              <SearchBarComponent
+                placeholder="Filter/Unhide Comparisons"
+                @input-changed="(value) => (searchString = value)"
+              />
+            </template>
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">
+                Type in the name of a submission to only show comparisons that contain this
+                submission.
+              </p>
+              <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
+            </template>
+          </ToolTipComponent>
+
           <Button class="w-24" @click="changeAnnoymousForAll()">
             {{
               store().state.anonymous.size == store().getSubmissionIds.length
@@ -68,11 +91,11 @@
             }}
           </Button>
         </div>
-        <OptionsSelector
-          name="Sort By"
-          :labels="['Average Similarity', 'Maximum Similarity']"
+        <MetricSelector
+          title="Sort By:"
+          :defaultSelected="store().uiState.comparisonTableSortingMetric"
           @selection-changed="
-            (index) => (comparisonTableSortingMetric = getMetricFromNumber(index))
+            (metric: MetricType) => (store().uiState.comparisonTableSortingMetric = metric)
           "
         />
         <ComparisonsTable
@@ -86,11 +109,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref, watch, type Ref } from 'vue'
+import { computed, onErrorCaptured, ref, watch, type PropType } from 'vue'
 import { router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import Button from '@/components/ButtonComponent.vue'
@@ -99,13 +121,19 @@ import { MetricType } from '@/model/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import OptionsSelector from '@/components/OptionsSelectorComponent.vue'
+import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
+import type { Overview } from '@/model/Overview'
 
-const overview = OverviewFactory.getOverview()
+const props = defineProps({
+  overview: {
+    type: Object as PropType<Overview>,
+    required: true
+  }
+})
 
 const searchString = ref('')
-const comparisonTableSortingMetric = ref(MetricType.AVERAGE)
-const distributionDiagramScaleX: Ref<'linear' | 'logarithmic'> = ref('linear')
 
 /**
  * This funtion gets called when the search bar for the compariosn table has been updated.
@@ -134,18 +162,18 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
   comparisons.sort(
     (a, b) =>
-      b.similarities[comparisonTableSortingMetric.value] -
-      a.similarities[comparisonTableSortingMetric.value]
+      b.similarities[store().uiState.comparisonTableSortingMetric] -
+      a.similarities[store().uiState.comparisonTableSortingMetric]
   )
   let index = 0
   comparisons.forEach((c) => {
     c.sortingPlace = index++
   })
-  return overview.topComparisons
+  return props.overview.topComparisons
 }
 
 const displayedComparisons = computed(() => {
-  const comparisons = getFilteredComparisons(getSortedComparisons(overview.topComparisons))
+  const comparisons = getFilteredComparisons(getSortedComparisons(props.overview.topComparisons))
   let index = 1
   comparisons.forEach((c) => {
     c.id = index++
@@ -184,20 +212,12 @@ function changeAnnoymousForAll() {
   }
 }
 
-const selectedDistributionDiagramMetric = ref(MetricType.AVERAGE)
-
-function getMetricFromNumber(metric: number) {
-  if (metric == 0) {
-    return MetricType.AVERAGE
-  } else {
-    return MetricType.MAXIMUM
-  }
-}
-
-const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
-const submissionPathValue = hasMoreSubmissionPaths
-  ? 'Click More to see all paths'
-  : overview.submissionFolderPath[0]
+const hasMoreSubmissionPaths = computed(() => props.overview.submissionFolderPath.length > 1)
+const submissionPathValue = computed(() =>
+  hasMoreSubmissionPaths.value
+    ? 'Click More to see all paths'
+    : props.overview.submissionFolderPath[0]
+)
 
 onErrorCaptured((e) => {
   console.log(e)

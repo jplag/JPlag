@@ -1,7 +1,5 @@
 package de.jplag.typescript;
 
-import java.io.File;
-
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
@@ -9,7 +7,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.AbstractAntlrParserAdapter;
-import de.jplag.antlr.TokenCollector;
 import de.jplag.typescript.grammar.TypeScriptLexer;
 import de.jplag.typescript.grammar.TypeScriptParser;
 
@@ -17,7 +14,7 @@ import de.jplag.typescript.grammar.TypeScriptParser;
  * The Antlr adapter used for the TypeScript language module
  */
 public class TypeScriptParserAdapter extends AbstractAntlrParserAdapter<TypeScriptParser> {
-
+    private static final TypeScriptListener listener = new TypeScriptListener();
     private final boolean useStrictDefault;
 
     /**
@@ -46,7 +43,7 @@ public class TypeScriptParserAdapter extends AbstractAntlrParserAdapter<TypeScri
     }
 
     @Override
-    protected AbstractAntlrListener createListener(TokenCollector collector, File currentFile) {
-        return new TypeScriptListener(collector, currentFile);
+    protected AbstractAntlrListener getListener() {
+        return listener;
     }
 }

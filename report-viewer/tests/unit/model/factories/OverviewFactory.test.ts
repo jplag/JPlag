@@ -36,10 +36,10 @@ describe('Test JSON to Overview', () => {
     vi.spyOn(global.window, 'alert').mockImplementation(() => {})
   })
 
-  it('Post 5.0', () => {
+  it('Post 5.0', async () => {
     store.state.files['overview.json'] = JSON.stringify(validNew)
 
-    expect(OverviewFactory.getOverview()).toEqual({
+    expect(await OverviewFactory.getOverview()).toEqual({
       _submissionFolderPath: ['files'],
       _baseCodeFolderPath: '',
       _language: 'Javac based AST plugin',
@@ -134,9 +134,9 @@ describe('Test JSON to Overview', () => {
     })
   })
 
-  it('Pre 5.0', () => {
+  it('Pre 5.0', async () => {
     store.state.files['overview.json'] = JSON.stringify(validOld)
-    expect(OverviewFactory.getOverview()).toEqual({
+    expect(await OverviewFactory.getOverview()).toEqual({
       _submissionFolderPath: ['test'],
       _baseCodeFolderPath: '',
       _language: 'Javac based AST plugin',
