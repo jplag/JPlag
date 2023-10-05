@@ -23,8 +23,8 @@
         <RouterLink :to="to">
           <Interactable class="mx-auto mt-2 w-fit !border-accent-dark !bg-accent !bg-opacity-50">
             {{ routerInfo }}
-          </Interactable></RouterLink
-        >
+          </Interactable>
+        </RouterLink>
       </Container>
     </div>
   </div>

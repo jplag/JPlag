@@ -109,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref, watch, type PropType } from 'vue'
+import { computed, ref, watch, type PropType } from 'vue'
 import { router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'

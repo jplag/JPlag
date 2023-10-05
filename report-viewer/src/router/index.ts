@@ -48,4 +48,19 @@ const router = createRouter({
   ]
 })
 
+let hasHadRouterError = false
+router.onError((error) => {
+  if (hasHadRouterError) {
+    return alert('An error occurred while routing. Please reload the page.')
+  }
+  hasHadRouterError = true
+  console.error(error)
+  router.push({
+    name: 'ErrorView',
+    params: {
+      message: 'An error occurred while routing. Please reload the page.\n' + error.message
+    }
+  })
+})
+
 export { router }

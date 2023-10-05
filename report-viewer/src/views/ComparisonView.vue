@@ -67,7 +67,7 @@
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
 
-import { onMounted, ref, watch, type Ref, computed, onErrorCaptured, type PropType } from 'vue'
+import { onMounted, ref, watch, type Ref, computed, type PropType } from 'vue'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
 import FilesContainer from '@/components/FilesContainer.vue'
@@ -76,7 +76,6 @@ import Container from '@/components/ContainerComponent.vue'
 import { HighlightLanguage } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
-import { router } from '@/router'
 import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 
