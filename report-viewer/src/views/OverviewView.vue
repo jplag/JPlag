@@ -218,18 +218,4 @@ const submissionPathValue = computed(() =>
     ? 'Click More to see all paths'
     : props.overview.submissionFolderPath[0]
 )
-
-onErrorCaptured((e) => {
-  console.log(e)
-  router.push({
-    name: 'ErrorView',
-    state: {
-      message: 'Overview.json could not be found!',
-      to: '/',
-      routerInfo: 'back to FileUpload page'
-    }
-  })
-  store().clearStore()
-  return false
-})
 </script>

@@ -165,18 +165,4 @@ watch(useDarkMode, (newValue) => {
   styleElement.innerHTML = newValue ? hljsDarkMode : hljsLightMode
   styleHolderDiv.appendChild(styleElement)
 })
-
-onErrorCaptured((e) => {
-  console.log(e)
-  router.push({
-    name: 'ErrorView',
-    state: {
-      message: 'Overview.json could not be found!',
-      to: '/',
-      routerInfo: 'back to FileUpload page'
-    }
-  })
-  store().clearStore()
-  return false
-})
 </script>

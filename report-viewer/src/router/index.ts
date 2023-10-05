@@ -29,9 +29,10 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/error',
+      path: '/error/:message/:to?/:routerInfo?',
       name: 'ErrorView',
-      component: ErrorView
+      component: ErrorView,
+      props: true
     },
     {
       path: '/cluster/:clusterIndex',
