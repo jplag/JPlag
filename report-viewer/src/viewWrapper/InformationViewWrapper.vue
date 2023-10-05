@@ -14,10 +14,21 @@ import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import InformationView from '@/views/InformationView.vue'
 import type { Overview } from '@/model/Overview'
 import LoadingCircle from '@/components/LoadingCircle.vue'
+import { router } from '@/router'
 
 const overview: Ref<Overview | null> = ref(null)
 
-OverviewFactory.getOverview().then((o) => {
-  overview.value = o
-})
+OverviewFactory.getOverview()
+  .then((o) => {
+    overview.value = o
+  })
+  .catch((error) => {
+    console.error(error)
+    router.push({
+      name: 'ErrorView',
+      params: {
+        message: error.message
+      }
+    })
+  })
 </script>
