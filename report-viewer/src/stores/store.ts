@@ -48,7 +48,7 @@ const store = defineStore('store', {
      * @returns the display name of the submission
      */
     submissionDisplayName: (state) => (id: string) => {
-      return state.state.fileIdToDisplayName.get(id)
+      return state.state.fileIdToDisplayName.get(id) ?? id
     },
     /**
      * @returns the Ids of all submissions
@@ -77,6 +77,13 @@ const store = defineStore('store', {
           : undefined
         return index != undefined ? this.state.files[index] : undefined
       }
+    },
+    /**
+     * @param id the id to check for
+     * @returns whether this submission should be anonymised
+     */
+    isAnonymous: (state) => (submissionId: string) => {
+      return state.state.anonymous.has(submissionId)
     }
   },
   actions: {
