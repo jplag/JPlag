@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.jplag.Submission;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -33,6 +32,7 @@ import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
+import de.jplag.Submission;
 import de.jplag.endtoend.constants.TestDirectoryConstants;
 import de.jplag.endtoend.helper.DeltaSummaryStatistics;
 import de.jplag.endtoend.helper.FileHelper;
@@ -175,8 +175,6 @@ class EndToEndSuiteTest {
     private DynamicTest generateTest(String name, ExpectedResult expectedResult, JPlagComparison result, DeltaSummaryStatistics statistics) {
         return DynamicTest.dynamicTest(name, () -> {
             assertNotNull(result, "No comparison result could be found");
-            System.out.println("First  file tokens: " + String.join(",", getTokenNames(result.firstSubmission())));
-            System.out.println("Second file tokens: " + String.join(",", getTokenNames(result.secondSubmission())));
             List<String> errors = new ArrayList<>();
             for (SimilarityMetric metric : List.of(MIN, MAX)) {
                 double expected = expectedResult.getSimilarityForMetric(metric);
@@ -189,7 +187,7 @@ class EndToEndSuiteTest {
             if (expectedResult.resultMatchedTokenNumber() != result.getNumberOfMatchedTokens()) {
                 errors.add(formattedValidationError(INTERSECTION, expectedResult.resultMatchedTokenNumber(), result.getNumberOfMatchedTokens()));
             }
-            assertTrue(errors.isEmpty(), createValidationErrorOutput(name, errors));
+            assertTrue(errors.isEmpty(), createValidationErrorOutput(name, errors, result));
         });
     }
 
@@ -232,9 +230,11 @@ class EndToEndSuiteTest {
      * Creates the display info from the passed failed test results
      * @return formatted text for the failed comparative values of the current test
      */
-    private String createValidationErrorOutput(String name, List<String> validationErrors) {
+    private String createValidationErrorOutput(String name, List<String> validationErrors, JPlagComparison result) {
         return name + ": There were " + validationErrors.size() + " validation error(s):" + System.lineSeparator()
-                + String.join(System.lineSeparator(), validationErrors);
+                + String.join(System.lineSeparator(), validationErrors) + System.lineSeparator() + "First  file tokens: "
+                + String.join(",", getTokenNames(result.firstSubmission())) + System.lineSeparator() + "Second file tokens: "
+                + String.join(",", getTokenNames(result.secondSubmission()));
     }
 
     /**
@@ -257,7 +257,7 @@ class EndToEndSuiteTest {
 
     private List<String> getTokenNames(Submission submission) {
         return submission.getTokenList().stream().map(it -> {
-            if(Enum.class.isAssignableFrom(it.getType().getClass())) {
+            if (Enum.class.isAssignableFrom(it.getType().getClass())) {
                 return ((Enum<?>) it.getType()).name();
             } else {
                 return it.getType().getDescription();
