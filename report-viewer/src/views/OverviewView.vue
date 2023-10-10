@@ -217,7 +217,6 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
   )
 
   if (store().uiState.comparisonTableClusterSorting) {
-    console.log('CLuster')
     comparisons.sort(
       (a, b) =>
         getClusterFor(b.firstSubmissionId, b.secondSubmissionId).averageSimilarity -
