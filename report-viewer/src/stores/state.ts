@@ -70,6 +70,7 @@ export interface LoadConfiguration {
 export interface UIState {
   useDarkMode: boolean
   comparisonTableSortingMetric: MetricType
+  comparisonTableClusterSorting: boolean
   distributionChartConfig: DistributionChartConfig
 }
 

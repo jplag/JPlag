@@ -91,12 +91,11 @@
             }}
           </Button>
         </div>
-        <MetricSelector
+        <OptionsSelector
           title="Sort By:"
-          :defaultSelected="store().uiState.comparisonTableSortingMetric"
-          @selection-changed="
-            (metric: MetricType) => (store().uiState.comparisonTableSortingMetric = metric)
-          "
+          :defaultSelected="getSortingMetric()"
+          :labels="tableSortingOptions"
+          @selection-changed="(index: number) => changeSortingMetric(index)"
         />
         <ComparisonsTable
           :clusters="overview.clusters"
@@ -117,14 +116,16 @@ import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import Button from '@/components/ButtonComponent.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
-import { MetricType } from '@/model/MetricType'
+import { MetricType, metricToolTips } from '@/model/MetricType'
 import SearchBarComponent from '@/components/SearchBarComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
-import type { Overview } from '@/model/Overview'
+import { Overview } from '@/model/Overview'
+import type { Cluster } from '@/model/Cluster'
+import type { ToolTipLabel } from '@/model/ui/ToolTip'
 
 const props = defineProps({
   overview: {
@@ -134,6 +135,30 @@ const props = defineProps({
 })
 
 const searchString = ref('')
+const tableSortingMetricOptions = [MetricType.AVERAGE, MetricType.MAXIMUM]
+const tableSortingOptions = computed(() => {
+  const options: (ToolTipLabel | string)[] = tableSortingMetricOptions.map((metric) => {
+    return {
+      displayValue: metricToolTips[metric].longName,
+      tooltip: metricToolTips[metric].tooltip
+    }
+  })
+  options.push('Cluster')
+  return options
+})
+
+function changeSortingMetric(index: number) {
+  store().uiState.comparisonTableSortingMetric =
+    index < tableSortingMetricOptions.length ? tableSortingMetricOptions[index] : MetricType.AVERAGE
+  store().uiState.comparisonTableClusterSorting = tableSortingOptions.value[index] == 'Cluster'
+}
+
+function getSortingMetric() {
+  if (store().uiState.comparisonTableClusterSorting) {
+    return tableSortingOptions.value.indexOf('Cluster')
+  }
+  return tableSortingMetricOptions.indexOf(store().uiState.comparisonTableSortingMetric)
+}
 
 /**
  * This funtion gets called when the search bar for the compariosn table has been updated.
@@ -159,12 +184,46 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
   })
 }
 
+function getClusterIndexFor(id1: string, id2: string) {
+  let clusterIndex = -1
+  props.overview.clusters.forEach((c: Cluster, index: number) => {
+    if (c.members.includes(id1) && c.members.includes(id2) && c.members.length > 2) {
+      clusterIndex = index
+    }
+  })
+  return clusterIndex
+}
+
+function getClusterFor(id1: string, id2: string) {
+  const index = getClusterIndexFor(id1, id2)
+  if (index < 0) {
+    return { averageSimilarity: 0 }
+  }
+  return props.overview.clusters[index]
+}
+
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
   comparisons.sort(
     (a, b) =>
       b.similarities[store().uiState.comparisonTableSortingMetric] -
       a.similarities[store().uiState.comparisonTableSortingMetric]
   )
+
+  if (store().uiState.comparisonTableClusterSorting) {
+    console.log('CLuster')
+    comparisons.sort(
+      (a, b) =>
+        getClusterFor(b.firstSubmissionId, b.secondSubmissionId).averageSimilarity -
+        getClusterFor(a.firstSubmissionId, a.secondSubmissionId).averageSimilarity
+    )
+
+    comparisons.sort(
+      (a, b) =>
+        getClusterIndexFor(b.firstSubmissionId, b.secondSubmissionId) -
+        getClusterIndexFor(a.firstSubmissionId, a.secondSubmissionId)
+    )
+  }
+
   let index = 0
   comparisons.forEach((c) => {
     c.sortingPlace = index++

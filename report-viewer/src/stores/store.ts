@@ -23,6 +23,7 @@ const store = defineStore('store', {
     uiState: {
       useDarkMode: false,
       comparisonTableSortingMetric: MetricType.AVERAGE,
+      comparisonTableClusterSorting: false,
       distributionChartConfig: {
         metric: MetricType.AVERAGE,
         xScale: 'linear'
