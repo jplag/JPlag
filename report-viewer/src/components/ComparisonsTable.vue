@@ -67,7 +67,7 @@
                     params: { firstId: item.firstSubmissionId, secondId: item.secondSubmissionId }
                   })
                 "
-                class="flex flex-grow flex-row"
+                class="flex flex-grow cursor-pointer flex-row"
               >
                 <!-- Index in sorted list -->
                 <div class="tableCellNumber">
