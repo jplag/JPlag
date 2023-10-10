@@ -23,8 +23,8 @@ public class GreedyStringTiling {
 
     private final int minimumMatchLength;
     private final int minimumNeighborLength;
-    private JPlagOptions options;
-    private ConcurrentMap<TokenType, Integer> tokenTypeValues;
+    private final JPlagOptions options;
+    private final ConcurrentMap<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
 
     private final Map<Submission, int[]> cachedTokenValueLists = new IdentityHashMap<>();
@@ -81,9 +81,17 @@ public class GreedyStringTiling {
         if (firstSubmission.getTokenList().size() > secondSubmission.getTokenList().size()) {
             smallerSubmission = secondSubmission;
             largerSubmission = firstSubmission;
-        } else {
+        } else if (firstSubmission.getTokenList().size() < secondSubmission.getTokenList().size()) {
             smallerSubmission = firstSubmission;
             largerSubmission = secondSubmission;
+        } else {
+            if (firstSubmission.getName().compareTo(secondSubmission.getName()) < 0) {
+                smallerSubmission = firstSubmission;
+                largerSubmission = secondSubmission;
+            } else {
+                smallerSubmission = secondSubmission;
+                largerSubmission = firstSubmission;
+            }
         }
         return compareInternal(smallerSubmission, largerSubmission);
     }
