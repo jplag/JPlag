@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.jplag.Submission;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicContainer;
 import org.junit.jupiter.api.DynamicNode;
@@ -174,6 +175,8 @@ class EndToEndSuiteTest {
     private DynamicTest generateTest(String name, ExpectedResult expectedResult, JPlagComparison result, DeltaSummaryStatistics statistics) {
         return DynamicTest.dynamicTest(name, () -> {
             assertNotNull(result, "No comparison result could be found");
+            System.out.println("First  file tokens: " + String.join(",", getTokenNames(result.firstSubmission())));
+            System.out.println("Second file tokens: " + String.join(",", getTokenNames(result.secondSubmission())));
             List<String> errors = new ArrayList<>();
             for (SimilarityMetric metric : List.of(MIN, MAX)) {
                 double expected = expectedResult.getSimilarityForMetric(metric);
@@ -250,5 +253,15 @@ class EndToEndSuiteTest {
                 fail(textualSign + " deviation over all AVG similarity values:" + System.lineSeparator() + statistics);
             }
         });
+    }
+
+    private List<String> getTokenNames(Submission submission) {
+        return submission.getTokenList().stream().map(it -> {
+            if(Enum.class.isAssignableFrom(it.getType().getClass())) {
+                return ((Enum<?>) it.getType()).name();
+            } else {
+                return it.getType().getDescription();
+            }
+        }).toList();
     }
 }
