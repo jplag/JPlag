@@ -101,7 +101,14 @@
           :clusters="overview.clusters"
           :top-comparisons="displayedComparisons"
           class="min-h-0 flex-1"
-        />
+        >
+          <template #footer v-if="overview.topComparisons.length < overview.totalComparisons">
+            <p class="w-full pt-1 text-center font-bold">
+              Not all comparisons are shown. To see more, re-run JPlag with a higher maximum number
+              argument.
+            </p>
+          </template>
+        </ComparisonsTable>
       </Container>
     </div>
   </div>

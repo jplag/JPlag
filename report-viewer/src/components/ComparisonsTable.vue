@@ -41,7 +41,7 @@
     <!-- Body -->
     <div class="flex flex-grow flex-col overflow-hidden">
       <DynamicScroller v-if="topComparisons.length > 0" :items="comparisonList" :min-item-size="48">
-        <template v-slot="{ item, index, active }">
+        <template #default="{ item, index, active }">
           <DynamicScrollerItem
             :item="item"
             :active="active"
@@ -126,6 +126,10 @@
               </div>
             </div>
           </DynamicScrollerItem>
+        </template>
+
+        <template #after>
+          <slot name="footer"></slot>
         </template>
       </DynamicScroller>
     </div>
