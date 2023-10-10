@@ -12,17 +12,17 @@ public final class TestDirectoryConstants {
     }
 
     /**
+     * Base path to the resources directory
+     */
+    public static final Path BASE_PATH_TO_RESOURCES = Path.of("src", "test", "resources");
+
+    /**
      * Base path to the saved results
      */
-    public static final Path BASE_PATH_TO_RESULT_JSON = Path.of("src", "test", "resources", "results");
+    public static final Path BASE_PATH_TO_RESULT_JSON = BASE_PATH_TO_RESOURCES.resolve(Path.of("results"));
 
     /**
      * Base path to the data set descriptors
      */
-    public static final Path BASE_PATH_TO_DATA_SET_DESCRIPTORS = Path.of("src", "test", "resources", "dataSets");
-
-    /**
-     * Base path to the resources directory
-     */
-    public static final Path BASE_PATH_TO_RESOURCES = Path.of("src", "test", "resources");
+    public static final Path BASE_PATH_TO_DATA_SET_DESCRIPTORS = BASE_PATH_TO_RESOURCES.resolve(Path.of("dataSets"));
 }

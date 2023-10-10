@@ -1,5 +1,8 @@
 package de.jplag.endtoend.model;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -26,5 +29,27 @@ public record Options(@JsonProperty Integer[] minimumTokenMatches, @JsonProperty
         }
 
         return values;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Options options = (Options) o;
+        return Arrays.equals(minimumTokenMatches, options.minimumTokenMatches) && Objects.equals(baseCodeDirectory, options.baseCodeDirectory);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(baseCodeDirectory);
+        result = 31 * result + Arrays.hashCode(minimumTokenMatches);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Options{" + "minimumTokenMatches=" + Arrays.toString(minimumTokenMatches) + ", baseCodeDirectory='" + baseCodeDirectory + '\'' + '}';
     }
 }
