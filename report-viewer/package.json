@@ -23,7 +23,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "chart.js": "^4.4.0",
     "chartjs-plugin-datalabels": "^2.2.0",
-    "highlight.js": "^11.8.0",
+    "highlight.js": "^11.9.0",
     "jszip": "^3.10.0",
     "pinia": "^2.1.6",
     "slash": "^5.1.0",
