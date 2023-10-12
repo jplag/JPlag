@@ -11,6 +11,8 @@ import javax.swing.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+import de.jplag.cli.server.ReportViewer;
+
 @Timeout(value = 5, unit = TimeUnit.MINUTES)
 class ReportViewerTest {
     @Test

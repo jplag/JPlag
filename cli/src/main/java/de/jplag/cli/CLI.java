@@ -23,6 +23,7 @@ import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.cli.logger.CollectedLoggerFactory;
+import de.jplag.cli.server.ReportViewer;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
