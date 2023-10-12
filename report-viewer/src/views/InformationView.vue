@@ -34,13 +34,13 @@
           store().getSubmissionIds.length
         }}</TextInformation>
         <TextInformation label="Total Comparisons" class="pb-1">{{
-          totalComparisons
+          overview.totalComparisons
         }}</TextInformation>
         <TextInformation label="Shown Comparisons" class="pb-1">{{
-          shownComparisons
+          overview.shownComparisons
         }}</TextInformation>
         <TextInformation label="Missing Comparisons" class="pb-1">{{
-          missingComparisons
+          overview.missingComparisons
         }}</TextInformation>
       </ScrollableComponent>
     </Container>
@@ -53,16 +53,12 @@ import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
 import { store } from '@/stores/store'
 import { Overview } from '@/model/Overview'
-import { computed, type PropType } from 'vue'
+import { type PropType } from 'vue'
 
-const props = defineProps({
+defineProps({
   overview: {
     type: Object as PropType<Overview>,
     required: true
   }
 })
-
-const totalComparisons = computed(() => props.overview.totalComparisons)
-const shownComparisons = computed(() => props.overview.topComparisons.length)
-const missingComparisons = computed(() => totalComparisons.value - shownComparisons.value)
 </script>
