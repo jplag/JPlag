@@ -60,6 +60,12 @@ public class ReportViewer implements HttpHandler {
         logger.debug("Serving {}", path);
 
         ResponseData responseData = resolved.getRight().fetchData(resolved.getLeft(), exchange, this);
+        if (responseData == null) {
+            exchange.sendResponseHeaders(NOT_FOUND_RESPONSE, 0);
+            exchange.close();
+            return;
+        }
+
         InputStream inputStream = responseData.stream();
 
         if (responseData.contentType() != null) {
