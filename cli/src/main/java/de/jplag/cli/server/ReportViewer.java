@@ -1,5 +1,6 @@
 package de.jplag.cli.server;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -16,17 +17,17 @@ import com.sun.net.httpserver.HttpServer;
 public class ReportViewer implements HttpHandler {
     private static final Logger logger = LoggerFactory.getLogger(ReportViewer.class);
     private static final int SUCCESS_RESPONSE = 200;
-    private static final int METHOD_NOT_ALLOWED_RESPONSE = 405;
     private static final int NOT_FOUND_RESPONSE = 404;
 
     private final RoutingTree routingTree;
 
     private HttpServer server;
 
-    public ReportViewer() {
+    public ReportViewer(File zipFile) throws IOException {
         this.routingTree = new RoutingTree();
 
-        this.routingTree.insertRouting(new RoutingPath(""), new RoutingResources("report-viewer"));
+        this.routingTree.insertRouting("", new RoutingResources("report-viewer").or(new RoutingRedirect("index.html")));
+        this.routingTree.insertRouting("result.zip", new RoutingStaticFile(zipFile, ContentType.ZIP));
     }
 
     public int start() throws IOException {
@@ -46,12 +47,6 @@ public class ReportViewer implements HttpHandler {
     }
 
     public void handle(HttpExchange exchange) throws IOException {
-        if (!exchange.getRequestMethod().equals("GET")) {
-            exchange.sendResponseHeaders(METHOD_NOT_ALLOWED_RESPONSE, 0);
-            exchange.getResponseBody().close();
-            return;
-        }
-
         RoutingPath path = new RoutingPath(exchange.getRequestURI().getPath());
         Pair<RoutingPath, Routing> resolved = this.routingTree.resolveRouting(path);
         HttpMethod method = HttpMethod.fromName(exchange.getRequestMethod());
@@ -64,16 +59,21 @@ public class ReportViewer implements HttpHandler {
 
         logger.debug("Serving {}", path);
 
-        Pair<InputStream, ContentType> data = resolved.getRight().fetchData(resolved.getLeft(), exchange, this);
+        ResponseData responseData = resolved.getRight().fetchData(resolved.getLeft(), exchange, this);
+        InputStream inputStream = responseData.stream();
 
-        if (data.getRight() != null) {
-            exchange.getResponseHeaders().set("Content-Type", data.getRight().getValue());
+        if (responseData.contentType() != null) {
+            exchange.getResponseHeaders().set("Content-Type", responseData.contentType().getValue());
         }
-        exchange.sendResponseHeaders(SUCCESS_RESPONSE, 0);
+        exchange.sendResponseHeaders(SUCCESS_RESPONSE, responseData.size());
 
-        data.getLeft().transferTo(exchange.getResponseBody());
+        inputStream.transferTo(exchange.getResponseBody());
         exchange.getResponseBody().flush();
         exchange.getResponseBody().close();
-        data.getLeft().close();
+        inputStream.close();
+    }
+
+    public RoutingTree getRoutingTree() {
+        return routingTree;
     }
 }

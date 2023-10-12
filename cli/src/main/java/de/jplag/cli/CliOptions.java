@@ -53,6 +53,9 @@ public class CliOptions implements Runnable {
             "--result-directory"}, description = "Name of the directory in which the comparison results will be stored (default: result)%n")
     public String resultFolder = "results";
 
+    @Option(names = {"--mode"}, description = "The mode to run jplag in")
+    public JPlagMode mode = JPlagMode.RUN_AND_VIEW;
+
     @ArgGroup(heading = "Advanced%n", exclusive = false)
     public Advanced advanced = new Advanced();
 

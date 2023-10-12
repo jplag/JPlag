@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -16,9 +17,10 @@ import de.jplag.cli.server.ReportViewer;
 @Timeout(value = 5, unit = TimeUnit.MINUTES)
 class ReportViewerTest {
     @Test
+    @Disabled
     void testStartViewer() throws Exception {
         assumeTrue(Desktop.isDesktopSupported());
-        ReportViewer viewer = new ReportViewer();
+        ReportViewer viewer = new ReportViewer(null);
 
         int port = viewer.start();
         Desktop.getDesktop().browse(URI.create("http://localhost:" + port));

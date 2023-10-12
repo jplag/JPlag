@@ -15,6 +15,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,22 +80,11 @@ public final class CLI {
             ParseResult parseResult = cli.parseOptions(args);
 
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
-                JPlagOptions options = cli.buildOptionsFromArguments(parseResult);
-                JPlagResult result = JPlag.run(options);
-                ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-                reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
-
-                // ReportViewer
-                ReportViewer reportViewer = new ReportViewer();
-                int port = reportViewer.start();
-                logger.info("ReportViewer started on port http://localhost:{}", port);
-                Desktop.getDesktop().browse(URI.create("http://localhost:" + port + "/"));
-
-                // Wait for input of user
-                System.out.println("Press any key to exit...");
-                System.in.read();
-                reportViewer.stop();
-
+                switch (cli.options.mode) {
+                    case RUN -> cli.runJPlag(parseResult);
+                    case VIEWER -> cli.runViewer(null);
+                    case RUN_AND_VIEW -> cli.runViewer(cli.runJPlag(parseResult));
+                }
             }
         } catch (ExitException | IOException exception) {
             logger.error(exception.getMessage()); // do not pass exception here to keep log clean
@@ -124,6 +115,27 @@ public final class CLI {
         this.commandLine.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
         this.commandLine.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, help -> OPTION_LIST_HEADING);
         this.commandLine.setAllowSubcommandsAsOptionParameters(true);
+    }
+
+    public File runJPlag(ParseResult parseResult) throws ExitException {
+        JPlagOptions options = buildOptionsFromArguments(parseResult);
+        JPlagResult result = JPlag.run(options);
+        ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
+        return reportObjectFactory.createAndSaveReport(result, getResultFolder());
+    }
+
+    public void runViewer(File zipFile) throws IOException {
+        ReportViewer reportViewer = new ReportViewer(zipFile);
+        int port = reportViewer.start();
+        logger.info("ReportViewer started on port http://localhost:{}", port);
+        Desktop.getDesktop().browse(URI.create("http://localhost:" + port + "/"));
+
+        Terminal terminal = TerminalBuilder.terminal();
+        terminal.writer().print("Press any key to exit...");
+        terminal.writer().flush();
+        terminal.enterRawMode();
+        terminal.reader().read();
+        reportViewer.stop();
     }
 
     private List<CommandSpec> buildSubcommands() {

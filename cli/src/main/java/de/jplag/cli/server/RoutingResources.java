@@ -1,9 +1,5 @@
 package de.jplag.cli.server;
 
-import java.io.InputStream;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.sun.net.httpserver.HttpExchange;
 
 public class RoutingResources implements Routing {
@@ -22,14 +18,8 @@ public class RoutingResources implements Routing {
     }
 
     @Override
-    public Pair<InputStream, ContentType> fetchData(RoutingPath subPath, HttpExchange request, ReportViewer viewer) {
+    public ResponseData fetchData(RoutingPath subPath, HttpExchange request, ReportViewer viewer) {
         String fullPath = this.prefix + subPath.asPath();
-        InputStream stream = this.getClass().getResourceAsStream(fullPath);
-
-        if (stream == null) {
-            return null;
-        }
-
-        return Pair.of(stream, null);
+        return ResponseData.fromResourceUrl(fullPath);
     }
 }

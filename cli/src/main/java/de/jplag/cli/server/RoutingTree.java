@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class RoutingTree {
-    private RoutingTreeNode root;
+    private final RoutingTreeNode root;
 
     public RoutingTree() {
         this.root = new RoutingTreeNode();
@@ -16,12 +16,16 @@ public class RoutingTree {
         this.root.buildRouting(path, routing);
     }
 
+    public void insertRouting(String path, Routing routing) {
+        this.insertRouting(new RoutingPath(path), routing);
+    }
+
     public Pair<RoutingPath, Routing> resolveRouting(RoutingPath path) {
         return this.root.resolve(path);
     }
 
     private static class RoutingTreeNode {
-        private Map<String, RoutingTreeNode> children;
+        private final Map<String, RoutingTreeNode> children;
         private Routing routing;
 
         public RoutingTreeNode(RoutingPath building, Routing routing) {

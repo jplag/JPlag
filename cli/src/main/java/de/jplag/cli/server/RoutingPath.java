@@ -1,11 +1,13 @@
 package de.jplag.cli.server;
 
+import java.util.Arrays;
+
 public class RoutingPath {
     private final String[] components;
     private final int offset;
 
     public RoutingPath(String path) {
-        this.components = path.split("/");
+        this.components = Arrays.stream(path.split("/", 0)).filter(it -> !it.isBlank()).toArray(String[]::new);
         this.offset = 0;
     }
 

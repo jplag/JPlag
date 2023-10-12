@@ -61,8 +61,7 @@ public class ReportObjectFactory {
      * @param result The JPlagResult to be converted into a report.
      * @param path The Path to save the report to
      */
-    public void createAndSaveReport(JPlagResult result, String path) {
-
+    public File createAndSaveReport(JPlagResult result, String path) {
         try {
             logger.info("Start writing report files...");
             createDirectory(path);
@@ -76,10 +75,12 @@ public class ReportObjectFactory {
 
             logger.info("Zipping report files...");
             zipAndDelete(path);
+            return new File(path + ".zip");
         } catch (IOException e) {
             logger.error(DIRECTORY_ERROR, e, path);
         }
 
+        return null;
     }
 
     private void zipAndDelete(String path) {
