@@ -58,15 +58,6 @@ export interface SubmissionFile extends File {
   submissionId: string
 }
 
-/**
- * Load configuration is used to indicate which mode is used.
- */
-export interface LoadConfiguration {
-  local: boolean
-  zip: boolean
-  single: boolean
-}
-
 export interface UIState {
   useDarkMode: boolean
   comparisonTableSortingMetric: MetricType

@@ -27,7 +27,7 @@ public class ReportViewer implements HttpHandler {
         this.routingTree = new RoutingTree();
 
         this.routingTree.insertRouting("", new RoutingResources("report-viewer").or(new RoutingRedirect("index.html")));
-        this.routingTree.insertRouting("result.zip", new RoutingStaticFile(zipFile, ContentType.ZIP));
+        this.routingTree.insertRouting("results.zip", new RoutingStaticFile(zipFile, ContentType.ZIP));
     }
 
     public int start() throws IOException {
