@@ -60,13 +60,13 @@ function generateColorsForInterval(
 }
 
 const matchColors: { red: number; green: number; blue: number }[] = [
-  { red: 0, green: 9, blue: 255 },
-  { red: 254, green: 255, blue: 0 },
-  { red: 0, green: 255, blue: 254 },
-  { red: 255, green: 0, blue: 243 },
-  { red: 0, green: 180, blue: 180 },
-  { red: 255, green: 118, blue: 0 },
-  { red: 0, green: 255, blue: 160 }
+  { red: 255, green: 61, blue: 0 },
+  { red: 0, green: 133, blue: 255 },
+  { red: 255, green: 0, blue: 122 },
+  { red: 255, green: 245, blue: 0 },
+  { red: 0, green: 255, blue: 255 },
+  { red: 112, green: 0, blue: 255 },
+  { red: 0, green: 255, blue: 133 }
 ]
 
 function getMatchColorCount() {
