@@ -3,26 +3,33 @@
 -->
 <template>
   <div class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs">
-    <Interactable class="my-2 flex h-6 items-center whitespace-nowrap !rounded-2xl text-center">
-      Match Files: TokenCount
-    </Interactable>
+    <ToolTipComponent direction="right">
+      <template #default>
+        <OptionComponent label="Match Files: TokenCount" />
+      </template>
+      <template #tooltip>
+        <p class="whitespace-pre text-sm">Click on a match to show it in the code view.</p>
+      </template>
+    </ToolTipComponent>
+
     <div class="flex w-full flex-row space-x-1 overflow-x-auto">
-      <Interactable
-        class="my-2 flex h-6 items-center whitespace-nowrap !rounded-2xl !bg-opacity-50 text-center"
-        :style="{ background: getMatchColor(match.colorIndex as number, 0.3) }"
+      <OptionComponent
         v-for="[index, match] in matches?.entries()"
+        :style="{ background: getMatchColor(match.colorIndex as number, 0.3) }"
         v-bind:key="index"
         @click="$emit('matchSelected', match)"
-      >
-        {{ getFileName(match.firstFile) }} - {{ getFileName(match.secondFile) }}: {{ match.tokens }}
-      </Interactable>
+        :label="
+          getFileName(match.firstFile) + ' - ' + getFileName(match.secondFile) + ': ' + match.tokens
+        "
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
-import Interactable from './InteractableComponent.vue'
+import OptionComponent from './optionsSelectors/OptionComponent.vue'
+import ToolTipComponent from './ToolTipComponent.vue'
 import { getMatchColor } from '@/utils/ColorUtils'
 
 defineProps({

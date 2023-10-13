@@ -4,6 +4,7 @@
       class="max-w-screen max-h-fit min-h-screen bg-backgorund-light text-black dark:bg-backgorund-dark dark:text-amber-50"
     >
       <RouterView class="max-h-screen overflow-hidden" />
+
       <Button
         class="absolute bottom-2 right-2 flex h-12 w-12 items-center justify-center text-center"
         @click="store().changeUseDarkMode()"

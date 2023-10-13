@@ -48,15 +48,21 @@
 </template>
 
 <script setup lang="ts">
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
 import { store } from '@/stores/store'
+import { Overview } from '@/model/Overview'
+import { computed, type PropType } from 'vue'
 
-const overview = OverviewFactory.getOverview()
+const props = defineProps({
+  overview: {
+    type: Object as PropType<Overview>,
+    required: true
+  }
+})
 
-const totalComparisons = overview.totalComparisons
-const shownComparisons = overview.topComparisons.length
-const missingComparisons = totalComparisons - shownComparisons
+const totalComparisons = computed(() => props.overview.totalComparisons)
+const shownComparisons = computed(() => props.overview.topComparisons.length)
+const missingComparisons = computed(() => totalComparisons.value - shownComparisons.value)
 </script>

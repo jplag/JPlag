@@ -1,7 +1,5 @@
 package de.jplag.antlr.testLanguage;
 
-import java.io.File;
-
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
@@ -10,6 +8,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import de.jplag.antlr.*;
 
 public class TestParserAdapter extends AbstractAntlrParserAdapter<TestParser> {
+    private static final TestListener listener = new TestListener();
+
     @Override
     protected Lexer createLexer(CharStream input) {
         return new TestLexer(input);
@@ -26,7 +26,7 @@ public class TestParserAdapter extends AbstractAntlrParserAdapter<TestParser> {
     }
 
     @Override
-    protected AbstractAntlrListener createListener(TokenCollector collector, File currentFile) {
-        return new TestListener(collector, currentFile);
+    protected AbstractAntlrListener getListener() {
+        return listener;
     }
 }
