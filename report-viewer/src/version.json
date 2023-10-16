@@ -1,5 +1,10 @@
 {
   "report_viewer_version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "minimal_report_version": {
     "major": 0,
     "minor": 0,
     "patch": 0
