@@ -16,6 +16,7 @@ import de.jplag.options.SimilarityMetric;
 import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
+import de.jplag.reporting.reportobject.writer.FileWriter;
 
 /**
  * Writes {@link ComparisonReport}s of given {@link JPlagResult} to the disk under the specified path. Instantiated with
@@ -59,7 +60,7 @@ public class ComparisonReportWriter {
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId,
                     Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity()),
                     convertMatchesToReportMatches(comparison));
-            fileWriter.saveAsJSON(comparisonReport, path, fileName);
+            fileWriter.writeFile(comparisonReport, path, fileName);
         });
     }
 
