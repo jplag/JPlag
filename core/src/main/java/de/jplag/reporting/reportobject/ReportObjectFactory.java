@@ -51,6 +51,8 @@ public class ReportObjectFactory {
     public static final String OVERVIEW_FILE_NAME = "overview.json";
 
     public static final String README_FILE_NAME = "README.txt";
+    public static final String README_CONTENT = "To view the results go to https://jplag.github.io/JPlag/ and drag the generated zip file onto the page.";
+
     public static final String SUBMISSIONS_FOLDER = "files";
     public static final String SUBMISSION_FILE_INDEX_FILE_NAME = "submissionFileIndex.json";
     public static final Version REPORT_VIEWER_VERSION = JPlag.JPLAG_VERSION;
@@ -203,7 +205,7 @@ public class ReportObjectFactory {
     }
 
     private void writeReadMeFile(String path) {
-        new TextWriter().writeFile("Test content", path, README_FILE_NAME);
+        new TextWriter().writeFile(README_CONTENT, path, README_FILE_NAME);
     }
 
     private void writeSubmissionIndexFile(JPlagResult result, String path) {
