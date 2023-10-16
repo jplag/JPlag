@@ -67,7 +67,7 @@
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
 
-import { onMounted, ref, watch, type Ref, computed, type PropType } from 'vue'
+import { onMounted, ref, watch, type Ref, computed, type PropType, onErrorCaptured } from 'vue'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
 import FilesContainer from '@/components/FilesContainer.vue'
@@ -78,6 +78,7 @@ import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
+import { redirectOnError } from '@/router'
 
 const props = defineProps({
   firstId: {
@@ -163,5 +164,9 @@ watch(useDarkMode, (newValue) => {
   const styleElement = document.createElement('style')
   styleElement.innerHTML = newValue ? hljsDarkMode : hljsLightMode
   styleHolderDiv.appendChild(styleElement)
+})
+
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying comparison:\n', 'OverviewView', 'Back to overview')
 })
 </script>

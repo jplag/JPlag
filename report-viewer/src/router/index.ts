@@ -48,19 +48,30 @@ const router = createRouter({
   ]
 })
 
+function redirectOnError(
+  error: Error,
+  prefix: string = '',
+  redirectRoute: string = 'FileUploadView',
+  redirectRouteTitle: string = 'Back to file upload'
+) {
+  console.error(error)
+  router.push({
+    name: 'ErrorView',
+    params: {
+      message: prefix + error.message,
+      to: redirectRoute,
+      routerInfo: redirectRouteTitle
+    }
+  })
+}
+
 let hasHadRouterError = false
 router.onError((error) => {
   if (hasHadRouterError) {
     return alert('An error occurred while routing. Please reload the page.')
   }
   hasHadRouterError = true
-  console.error(error)
-  router.push({
-    name: 'ErrorView',
-    params: {
-      message: 'An error occurred while routing. Please reload the page.\n' + error.message
-    }
-  })
+  redirectOnError(error, 'An error occurred while routing. Please reload the page.\n')
 })
 
-export { router }
+export { router, redirectOnError }

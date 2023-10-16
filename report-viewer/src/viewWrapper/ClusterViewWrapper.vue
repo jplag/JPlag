@@ -14,7 +14,7 @@ import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import ClusterView from '@/views/ClusterView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import type { Overview } from '@/model/Overview'
-import { router } from '@/router'
+import { redirectOnError } from '@/router'
 
 const props = defineProps({
   clusterIndex: {
@@ -32,12 +32,6 @@ OverviewFactory.getOverview()
     overview.value = o
   })
   .catch((error) => {
-    console.error(error)
-    router.push({
-      name: 'ErrorView',
-      params: {
-        message: error.message
-      }
-    })
+    redirectOnError(error, 'Could not load cluster:\n', 'OverviewView', 'Back to overview')
   })
 </script>

@@ -20,7 +20,11 @@
           <h3 class="text-2xl font-bold">There was an Error!</h3>
           <p class="text-xl">{{ message }}</p>
         </div>
-        <RouterLink :to="to">
+        <RouterLink
+          :to="{
+            name: to
+          }"
+        >
           <Interactable class="mx-auto mt-2 w-fit !border-accent-dark !bg-accent !bg-opacity-50">
             {{ routerInfo }}
           </Interactable>
@@ -35,7 +39,7 @@ import Container from '@/components/ContainerComponent.vue'
 import Interactable from '@/components/InteractableComponent.vue'
 import { store } from '@/stores/store'
 
-defineProps({
+const props = defineProps({
   message: {
     type: String,
     required: true
@@ -43,7 +47,7 @@ defineProps({
   to: {
     type: String,
     required: false,
-    default: '/'
+    default: 'FileUploadView'
   },
   routerInfo: {
     type: String,

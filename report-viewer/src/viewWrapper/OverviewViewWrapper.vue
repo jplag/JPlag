@@ -14,7 +14,7 @@ import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import OverviewView from '@/views/OverviewView.vue'
 import type { Overview } from '@/model/Overview'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { router } from '@/router'
+import { redirectOnError } from '@/router'
 
 const overview: Ref<Overview | null> = ref(null)
 
@@ -23,12 +23,6 @@ OverviewFactory.getOverview()
     overview.value = o
   })
   .catch((error) => {
-    console.error(error)
-    router.push({
-      name: 'ErrorView',
-      params: {
-        message: error.message
-      }
-    })
+    redirectOnError(error, 'Could not load overview:\n')
   })
 </script>

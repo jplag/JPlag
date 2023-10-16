@@ -109,8 +109,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, type PropType } from 'vue'
-import { router } from '@/router'
+import { computed, ref, watch, type PropType, onErrorCaptured } from 'vue'
+import { redirectOnError, router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import { store } from '@/stores/store'
@@ -218,4 +218,8 @@ const submissionPathValue = computed(() =>
     ? 'Click More to see all paths'
     : props.overview.submissionFolderPath[0]
 )
+
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying overview:\n')
+})
 </script>

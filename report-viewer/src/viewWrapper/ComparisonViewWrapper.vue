@@ -22,7 +22,7 @@ import { getHighlightLanguage, type HighlightLanguage } from '@/model/Language'
 import type { Comparison } from '@/model/Comparison'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { router } from '@/router'
+import { redirectOnError } from '@/router'
 
 const props = defineProps({
   firstId: {
@@ -45,13 +45,7 @@ ComparisonFactory.getComparison(props.firstId, props.secondId)
     comparison.value = comp
   })
   .catch((error) => {
-    console.error(error)
-    router.push({
-      name: 'ErrorView',
-      params: {
-        message: error.message
-      }
-    })
+    redirectOnError(error, 'Could not load coparison:\n', 'OverviewView', 'Back to overview')
   })
 
 OverviewFactory.getOverview()
@@ -59,12 +53,6 @@ OverviewFactory.getOverview()
     language.value = getHighlightLanguage(overview.language)
   })
   .catch((error) => {
-    console.error(error)
-    router.push({
-      name: 'ErrorView',
-      params: {
-        message: error.message
-      }
-    })
+    redirectOnError(error, 'Could not load coparison:\n')
   })
 </script>
