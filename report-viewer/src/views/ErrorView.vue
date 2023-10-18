@@ -39,7 +39,7 @@ import Container from '@/components/ContainerComponent.vue'
 import Interactable from '@/components/InteractableComponent.vue'
 import { store } from '@/stores/store'
 
-const props = defineProps({
+defineProps({
   message: {
     type: String,
     required: true
