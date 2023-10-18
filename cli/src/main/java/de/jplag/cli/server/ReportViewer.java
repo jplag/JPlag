@@ -35,7 +35,7 @@ public class ReportViewer implements HttpHandler {
         if (server != null) {
             throw new IllegalStateException("Server already started");
         }
-        server = HttpServer.create(new InetSocketAddress(InetAddress.getLocalHost(), 0), 0);
+        server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
         server.createContext("/", this);
         server.setExecutor(null);
         server.start();
