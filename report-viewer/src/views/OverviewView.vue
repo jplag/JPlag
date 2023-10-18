@@ -109,11 +109,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref, watch } from 'vue'
+import { computed, onErrorCaptured, ref, watch, type PropType } from 'vue'
 import { router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import Button from '@/components/ButtonComponent.vue'
@@ -125,8 +124,14 @@ import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
+import type { Overview } from '@/model/Overview'
 
-const overview = await OverviewFactory.getOverview()
+const props = defineProps({
+  overview: {
+    type: Object as PropType<Overview>,
+    required: true
+  }
+})
 
 const searchString = ref('')
 
@@ -164,11 +169,11 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
   comparisons.forEach((c) => {
     c.sortingPlace = index++
   })
-  return overview.topComparisons
+  return props.overview.topComparisons
 }
 
 const displayedComparisons = computed(() => {
-  const comparisons = getFilteredComparisons(getSortedComparisons(overview.topComparisons))
+  const comparisons = getFilteredComparisons(getSortedComparisons(props.overview.topComparisons))
   let index = 1
   comparisons.forEach((c) => {
     c.id = index++
@@ -207,10 +212,12 @@ function changeAnnoymousForAll() {
   }
 }
 
-const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1
-const submissionPathValue = hasMoreSubmissionPaths
-  ? 'Click More to see all paths'
-  : overview.submissionFolderPath[0]
+const hasMoreSubmissionPaths = computed(() => props.overview.submissionFolderPath.length > 1)
+const submissionPathValue = computed(() =>
+  hasMoreSubmissionPaths.value
+    ? 'Click More to see all paths'
+    : props.overview.submissionFolderPath[0]
+)
 
 onErrorCaptured((e) => {
   console.log(e)

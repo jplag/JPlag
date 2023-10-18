@@ -5,6 +5,8 @@ import { ZipFileHandler } from '@/utils/fileHandling/ZipFileHandler'
  * This class provides some basic functionality for the factories.
  */
 export class BaseFactory {
+  private static zipFileName = 'results.zip'
+
   /**
    * Returns the content of a file through the stored loading type.
    * @param path - Path to the file
@@ -13,16 +15,15 @@ export class BaseFactory {
    */
   protected static async getFile(path: string): Promise<string> {
     if (store().state.localModeUsed) {
-      if (store().state.zipModeUsed) {
-        await new ZipFileHandler().handleFile(await this.getLocalFile('results.zip'))
-        return this.getFileFromStore(path)
-      } else {
-        return await (await this.getLocalFile(`/files/${path}`)).text()
-      }
+      return await (await this.getLocalFile(`/files/${path}`)).text()
     } else if (store().state.zipModeUsed) {
       return this.getFileFromStore(path)
     } else if (store().state.singleModeUsed) {
       return store().state.singleFillRawContent
+    } else if (await this.useLocalZipMode()) {
+      await new ZipFileHandler().handleFile(await this.getLocalFile(this.zipFileName))
+      store().setLoadingType('zip')
+      return this.getFileFromStore(path)
     }
     throw new Error('No loading type specified')
   }
@@ -52,5 +53,10 @@ export class BaseFactory {
     } else {
       throw new Error(`Could not find ${path} in local files.`)
     }
+  }
+
+  public static async useLocalZipMode() {
+    const response = await fetch(window.location.origin + '/' + this.zipFileName)
+    return response.status != 404
   }
 }

@@ -32,48 +32,44 @@
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
-        <Button class="mx-auto mt-8 w-fit" @click="continueWithLocal" v-if="localFiles !== 'none'">
+        <Button class="mx-auto mt-8 w-fit" @click="continueWithLocal" v-if="localFiles">
           Continue with local files
         </Button>
       </div>
-      <div v-else class="space-y-5 pt-5">
-        <div
-          class="mx-auto h-16 w-16 animate-spin rounded-full border-8 border-interactable-border-light border-t-accent dark:border-interactable-border-dark dark:border-t-accent"
-        ></div>
-        <p class="text-2xl font-bold">Loading file...</p>
-      </div>
+      <LoadingCircle v-else class="space-y-5 pt-5" />
     </div>
     <VersionInfoComponent class="absolute bottom-3 left-3" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import { store } from '@/stores/store'
 import Button from '@/components/ButtonComponent.vue'
 import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
+import LoadingCircle from '@/components/LoadingCircle.vue'
 import { JsonFileHandler } from '@/utils/fileHandling/JsonFileHandler'
 import { ZipFileHandler } from '@/utils/fileHandling/ZipFileHandler'
+import { BaseFactory } from '@/model/factories/BaseFactory'
 
 store().clearStore()
-const localFiles: Ref<'json' | 'zip' | 'none'> = ref('none')
+const localFiles = ref(false)
 // Checks whether local files exist
 fetch('/files/overview.json')
   .then((response) => {
     if (response.status == 200) {
-      localFiles.value = 'json'
+      localFiles.value = true
     }
   })
   .catch(() => {})
-fetch('/results.zip')
-  .then((response) => {
-    if (response.status == 200) {
-      localFiles.value = 'zip'
-    }
-  })
-  .catch(() => {})
+
+BaseFactory.useLocalZipMode().then((value) => {
+  if (value) {
+    navigateToOverview()
+  }
+})
 
 const loadingFiles = ref(false)
 
@@ -118,11 +114,7 @@ function navigateToComparisonView(firstId: string, secondId: string) {
  * @param file The json file to handle
  */
 async function handleJsonFile(file: Blob) {
-  store().setLoadingType({
-    local: false,
-    zip: false,
-    single: true
-  })
+  store().setLoadingType('single')
   const fileContentType = await new JsonFileHandler().handleFile(file)
   if (fileContentType.fileType === 'overview') {
     navigateToOverview()
@@ -142,11 +134,7 @@ async function handleFile(file: Blob) {
     case 'application/zip-compressed':
     case 'application/x-zip-compressed':
     case 'application/x-zip':
-      store().setLoadingType({
-        local: false,
-        zip: true,
-        single: false
-      })
+      store().setLoadingType('zip')
       await new ZipFileHandler().handleFile(file)
       return navigateToOverview()
     case 'application/json':
@@ -213,11 +201,7 @@ async function loadQueryFile(url: URL) {
  * Handles click on Continue with local files.
  */
 function continueWithLocal() {
-  store().setLoadingType({
-    local: true,
-    zip: localFiles.value === 'zip',
-    single: false
-  })
+  store().setLoadingType('local')
   navigateToOverview()
 }
 </script>
