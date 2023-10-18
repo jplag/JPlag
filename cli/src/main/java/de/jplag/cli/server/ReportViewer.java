@@ -3,6 +3,7 @@ package de.jplag.cli.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -26,7 +27,7 @@ public class ReportViewer implements HttpHandler {
     public ReportViewer(File zipFile) throws IOException {
         this.routingTree = new RoutingTree();
 
-        this.routingTree.insertRouting("", new RoutingResources("report-viewer").or(new RoutingRedirect("index.html")));
+        this.routingTree.insertRouting("", new RoutingResources("report-viewer").or(new RoutingAlias("index.html")));
         this.routingTree.insertRouting("result.zip", new RoutingStaticFile(zipFile, ContentType.ZIP));
     }
 
@@ -34,7 +35,7 @@ public class ReportViewer implements HttpHandler {
         if (server != null) {
             throw new IllegalStateException("Server already started");
         }
-        server = HttpServer.create(new InetSocketAddress(0), 0);
+        server = HttpServer.create(new InetSocketAddress(InetAddress.getLocalHost(), 0), 0);
         server.createContext("/", this);
         server.setExecutor(null);
         server.start();
