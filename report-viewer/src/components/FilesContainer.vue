@@ -3,10 +3,14 @@
 -->
 <template>
   <Container class="flex flex-col">
-    <h3 class="text-left text-lg font-bold">
-      Files of
-      {{ fileOwnerDisplayName }}:
-    </h3>
+    <div class="mb-2 mr-2 flex space-x-2">
+      <h3 class="flex-grow text-left text-lg font-bold">
+        Files of
+        {{ fileOwnerDisplayName }}:
+      </h3>
+      <Button @click="collapseAll()">Collapse All</Button>
+    </div>
+
     <ScrollableComponent class="flex-grow">
       <VueDraggableNext>
         <CodePanel
@@ -19,7 +23,7 @@
           "
           :highlight-language="highlightLanguage"
           @line-selected="(match) => $emit('lineSelected', match)"
-          class="mt-1"
+          class="mt-1 first:mt-0"
         />
       </VueDraggableNext>
     </ScrollableComponent>
@@ -30,6 +34,7 @@
 import type { SubmissionFile } from '@/stores/state'
 import CodePanel from '@/components/CodePanel.vue'
 import Container from './ContainerComponent.vue'
+import Button from './ButtonComponent.vue'
 import ScrollableComponent from './ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { ref, type PropType, type Ref } from 'vue'
@@ -81,6 +86,13 @@ function scrollTo(file: string, line: number) {
   if (fileIndex !== -1) {
     codePanels.value[fileIndex].scrollTo(line)
   }
+}
+
+/**
+ * Collapses all of the code panels.
+ */
+function collapseAll() {
+  codePanels.value.forEach((panel) => panel.collapse())
 }
 
 defineExpose({

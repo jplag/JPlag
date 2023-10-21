@@ -108,8 +108,16 @@ function scrollTo(lineNumber: number) {
   })
 }
 
+/**
+ * Collapses the container.
+ */
+function collapse() {
+  collapsed.value = true
+}
+
 defineExpose({
-  scrollTo
+  scrollTo,
+  collapse
 })
 
 /**
