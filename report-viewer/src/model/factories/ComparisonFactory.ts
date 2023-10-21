@@ -10,13 +10,8 @@ import { MetricType } from '../MetricType'
  * Factory class for creating Comparison objects
  */
 export class ComparisonFactory extends BaseFactory {
-  public static async getComparison(id1: string, id2: string): Promise<Comparison> {
-    const filePath = store().getComparisonFileName(id1, id2)
-    if (!filePath) {
-      throw new Error('Comparison file not specified')
-    }
-
-    return await this.extractComparison(JSON.parse(await this.getFile(filePath)))
+  public static async getComparison(fileName: string): Promise<Comparison> {
+    return await this.extractComparison(JSON.parse(await this.getFile(fileName)))
   }
 
   /**
