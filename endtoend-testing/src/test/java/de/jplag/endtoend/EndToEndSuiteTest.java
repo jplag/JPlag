@@ -200,7 +200,8 @@ class EndToEndSuiteTest {
      */
     private DynamicNode generateGoldStandardTest(DataSet dataSet, Map<String, JPlagComparison> comparisonMap, GoldStandard goldStandard) {
         if (goldStandard != null) {
-            Set<ComparisonIdentifier> goldStandardIdentifiers = ComparisonIdentifier.loadIdentifiersFromFile(dataSet.getGoldStandardFile());
+            Set<ComparisonIdentifier> goldStandardIdentifiers = ComparisonIdentifier
+                    .loadIdentifiersFromFile(dataSet.getGoldStandardFile().orElseThrow(), dataSet.getActualDelimiter());
             GoldStandard found = GoldStandard.buildFromComparisons(comparisonMap.values(), goldStandardIdentifiers);
 
             DynamicTest goldStandardMatch = DynamicTest.dynamicTest("gold standard included", () -> assertEquals(goldStandard.matchAverage(),

@@ -12,6 +12,8 @@ import java.util.Set;
  * @param secondName The second name
  */
 public record ComparisonIdentifier(String firstName, String secondName) {
+    private static final String INVALID_LINE_ERROR_MESSAGE = "Comparison identifier file (%s) has an invalid line: %s";
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ComparisonIdentifier other)) {
@@ -32,11 +34,14 @@ public record ComparisonIdentifier(String firstName, String secondName) {
      * @param file The file to load
      * @return The comparisons in the file
      */
-    public static Set<ComparisonIdentifier> loadIdentifiersFromFile(File file) {
+    public static Set<ComparisonIdentifier> loadIdentifiersFromFile(File file, String delimiter) {
         try (Scanner scanner = new Scanner(file)) {
             Set<ComparisonIdentifier> identifiers = new HashSet<>();
             while (scanner.hasNextLine()) {
-                String[] parts = scanner.nextLine().split(";");
+                String[] parts = scanner.nextLine().split(delimiter);
+                if (parts.length != 2) {
+                    throw new IllegalStateException(String.format(INVALID_LINE_ERROR_MESSAGE, file.getAbsolutePath(), String.join(delimiter, parts)));
+                }
                 identifiers.add(new ComparisonIdentifier(parts[0], parts[1]));
             }
             return identifiers;

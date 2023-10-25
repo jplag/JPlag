@@ -9,7 +9,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * The object contains required options for the endToEnd tests which are important for the test suite.
  */
 public record Options(@JsonProperty Integer[] minimumTokenMatches, @JsonProperty String baseCodeDirectory) {
+
     private static final int[] defaultTokenMatches = new int[] {3, 9};
+
+    /**
+     * Initializes a new options object with minimumTokenMatch and baseCodeDirectory both being null
+     */
+    public Options() {
+        this(null, null);
+    }
 
     /**
      * Builds the list of all token matches that should be checked. That means all values from minimumTokenMatches and the

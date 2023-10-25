@@ -54,9 +54,9 @@ class EndToEndGeneratorTest {
                     .collect(Collectors.toMap(TestSuiteHelper::getTestIdentifier, ExpectedResult::fromComparison));
 
             GoldStandard goldStandard = null;
-            if (dataSet.getGoldStandardFile() != null) {
+            if (dataSet.getGoldStandardFile().isPresent()) {
                 goldStandard = GoldStandard.buildFromComparisons(comparisons,
-                        ComparisonIdentifier.loadIdentifiersFromFile(dataSet.getGoldStandardFile()));
+                        ComparisonIdentifier.loadIdentifiersFromFile(dataSet.getGoldStandardFile().get(), dataSet.getActualDelimiter()));
             }
 
             resultDescriptions.add(new ResultDescription(runConfiguration.identifier(), expectedResults, goldStandard));

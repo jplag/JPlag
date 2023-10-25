@@ -1,6 +1,8 @@
 package de.jplag.endtoend.model;
 
 import java.io.File;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,7 +26,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public record DataSet(@JsonProperty(required = true) String name,
         @JsonDeserialize(using = LanguageDeserializer.class) @JsonProperty(required = true) Language language,
         @JsonProperty(required = true) DataSetFormat format, @JsonProperty String sourceDirectory, @JsonProperty String resultFile,
-        @JsonProperty String goldStandardFile, @JsonProperty Options options) {
+        @JsonProperty String goldStandardFile, @JsonProperty String goldStandardDelimiter, @JsonProperty Options options) {
+
+    private static final String DEFAULT_GOLD_STANDARD_DELIMITER = ";";
+    private static final String DEFAULT_SOURCE_DIRECTORY = "data/%s";
+    private static final String DEFAULT_RESULT_FILE_NAME = "%s.json";
 
     /**
      * Gets the source directories
@@ -41,7 +47,7 @@ public record DataSet(@JsonProperty(required = true) String name,
      */
     String actualSourceDirectory() {
         if (sourceDirectory == null) {
-            return "data/" + name;
+            return String.format(DEFAULT_SOURCE_DIRECTORY, this.name);
         }
         return sourceDirectory;
     }
@@ -52,21 +58,17 @@ public record DataSet(@JsonProperty(required = true) String name,
      */
     public File getResultFile() {
         if (resultFile == null) {
-            return new File(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile(), name + ".json");
+            return new File(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile(), String.format(DEFAULT_RESULT_FILE_NAME, this.name));
         } else {
             return new File(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile(), resultFile);
         }
     }
 
     /**
-     * @return The gold standard file. Can be null.
+     * @return The gold standard file as an optional.
      */
-    public File getGoldStandardFile() {
-        if (goldStandardFile == null) {
-            return null;
-        }
-
-        return new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), goldStandardFile);
+    public Optional<File> getGoldStandardFile() {
+        return Optional.ofNullable(this.goldStandardFile).map(name -> new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), name));
     }
 
     /**
@@ -74,10 +76,13 @@ public record DataSet(@JsonProperty(required = true) String name,
      * @return The options
      */
     public Options getOptions() {
-        if (this.options != null) {
-            return this.options;
-        } else {
-            return new Options(null, null);
-        }
+        return Objects.requireNonNullElseGet(this.options, Options::new);
+    }
+
+    /**
+     * Returns the actual delimiter, replacing null by the default value
+     */
+    public String getActualDelimiter() {
+        return Objects.requireNonNullElse(this.goldStandardDelimiter, DEFAULT_GOLD_STANDARD_DELIMITER);
     }
 }
