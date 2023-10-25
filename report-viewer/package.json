@@ -44,7 +44,7 @@
     "@vue/test-utils": "^2.4.1",
     "@vue/tsconfig": "^0.4.0",
     "autoprefixer": "^10.4.15",
-    "eslint": "^8.51.0",
+    "eslint": "^8.52.0",
     "eslint-plugin-vue": "^9.17.0",
     "husky": "^8.0.0",
     "jsdom": "^22.1.0",
