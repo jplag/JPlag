@@ -28,8 +28,8 @@
 
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
-import OptionComponent from './optionsSelectors/OptionComponent.vue'
-import ToolTipComponent from './ToolTipComponent.vue'
+import OptionComponent from '../optionsSelectors/OptionComponent.vue'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
 
 defineProps({
   /**

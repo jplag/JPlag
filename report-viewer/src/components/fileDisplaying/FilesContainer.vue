@@ -32,10 +32,10 @@
 
 <script setup lang="ts">
 import type { SubmissionFile } from '@/stores/state'
-import CodePanel from '@/components/CodePanel.vue'
-import Container from './ContainerComponent.vue'
-import Button from './ButtonComponent.vue'
-import ScrollableComponent from './ScrollableComponent.vue'
+import CodePanel from './CodePanel.vue'
+import Container from '../ContainerComponent.vue'
+import Button from '../ButtonComponent.vue'
+import ScrollableComponent from '../ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { ref, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
