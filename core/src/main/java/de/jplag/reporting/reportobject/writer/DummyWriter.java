@@ -5,9 +5,10 @@ import org.slf4j.LoggerFactory;
 
 public class DummyWriter implements FileWriter<Object> {
     private static final Logger logger = LoggerFactory.getLogger(DummyWriter.class);
+    private static final String MESSAGE = "DummyWriter writes object {} to path {} with name {} as JSON.";
 
     @Override
     public void writeFile(Object fileToSave, String folderPath, String fileName) {
-        logger.info("DummyWriter writes object " + fileToSave + " to path " + folderPath + " with name " + fileName + " as JSON.");
+        logger.info(MESSAGE, fileToSave, folderPath, fileName);
     }
 }

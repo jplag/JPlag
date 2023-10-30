@@ -24,12 +24,12 @@ import de.jplag.reporting.reportobject.writer.FileWriter;
  */
 public class ComparisonReportWriter {
 
-    private final FileWriter fileWriter;
+    private final FileWriter<Object> fileWriter;
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
 
-    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter fileWriter) {
+    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter<Object> fileWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
         this.fileWriter = fileWriter;
     }

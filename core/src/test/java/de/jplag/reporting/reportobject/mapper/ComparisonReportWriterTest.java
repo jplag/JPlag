@@ -14,7 +14,7 @@ import de.jplag.reporting.reportobject.writer.DummyWriter;
 import de.jplag.reporting.reportobject.writer.FileWriter;
 
 public class ComparisonReportWriterTest extends TestBase {
-    private final FileWriter fileWriter = new DummyWriter();
+    private final FileWriter<Object> fileWriter = new DummyWriter();
 
     @Test
     public void firsLevelOfLookupMapComplete() throws ExitException {
