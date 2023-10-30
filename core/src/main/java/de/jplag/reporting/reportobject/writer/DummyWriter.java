@@ -1,9 +1,7 @@
-package de.jplag.reporting.jsonfactory;
+package de.jplag.reporting.reportobject.writer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.jplag.reporting.reportobject.writer.FileWriter;
 
 public class DummyWriter implements FileWriter<Object> {
     private static final Logger logger = LoggerFactory.getLogger(DummyWriter.class);

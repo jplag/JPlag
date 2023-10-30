@@ -13,15 +13,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class JsonWriter implements FileWriter<Object> {
     private static final Logger logger = LoggerFactory.getLogger(JsonWriter.class);
-
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String WRITE_ERROR = "Failed to write JSON file {}";
 
     @Override
     public void writeFile(Object fileToSave, String folderPath, String fileName) {
+        Path path = Path.of(folderPath, fileName);
         try {
-            objectMapper.writeValue(Path.of(folderPath, fileName).toFile(), fileToSave);
+            objectMapper.writeValue(path.toFile(), fileToSave);
         } catch (IOException e) {
-            logger.error("Failed to save json file " + fileName + ": " + e.getMessage(), e);
+            logger.error(WRITE_ERROR, e, path);
         }
     }
 

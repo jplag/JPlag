@@ -10,7 +10,7 @@ import de.jplag.Submission;
 import de.jplag.TestBase;
 import de.jplag.exceptions.ExitException;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
-import de.jplag.reporting.jsonfactory.DummyWriter;
+import de.jplag.reporting.reportobject.writer.DummyWriter;
 import de.jplag.reporting.reportobject.writer.FileWriter;
 
 public class ComparisonReportWriterTest extends TestBase {

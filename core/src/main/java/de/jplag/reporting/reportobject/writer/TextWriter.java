@@ -18,10 +18,8 @@ public class TextWriter implements FileWriter<String> {
     @Override
     public void writeFile(String fileContent, String folderPath, String fileName) {
         String path = Path.of(folderPath, fileName).toString();
-        try {
-            BufferedWriter writer = new BufferedWriter(new java.io.FileWriter(path));
+        try (BufferedWriter writer = new BufferedWriter(new java.io.FileWriter(path))) {
             writer.write(fileContent);
-            writer.close();
         } catch (IOException e) {
             logger.error(WRITE_ERROR, e, path);
         }
