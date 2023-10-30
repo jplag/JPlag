@@ -78,8 +78,10 @@ public class GreedyStringTiling {
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
         Submission smallerSubmission;
         Submission largerSubmission;
-        Comparator<Submission> comp = Comparator.comparing((Submission s) -> s.getTokenList().size()).thenComparing(Submission::getName);
-        if (comp.compare(firstSubmission, secondSubmission) <= 0) {
+        Comparator<Submission> submissionComparator = Comparator.comparing((Submission it) -> it.getTokenList().size())
+                .thenComparing(Submission::getName);
+
+        if (submissionComparator.compare(firstSubmission, secondSubmission) <= 0) {
             smallerSubmission = firstSubmission;
             largerSubmission = secondSubmission;
         } else {
