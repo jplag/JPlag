@@ -83,24 +83,23 @@ public class FileHelper {
                     } else {
                         unzippedFile.getParentFile().mkdirs();
 
-                        InputStream inputStream = zipFile.getInputStream(entry);
-                        OutputStream outputStream = new FileOutputStream(unzippedFile);
-                        byte[] buffer = new byte[2048];
-                        int count;
-                        while ((count = inputStream.read(buffer)) > 0) {
-                            outputStream.write(buffer, 0, count);
+                        try (InputStream inputStream = zipFile.getInputStream(entry)) {
+                            try (OutputStream outputStream = new FileOutputStream(unzippedFile)) {
+                                byte[] buffer = new byte[2048];
+                                int count;
+                                while ((count = inputStream.read(buffer)) > 0) {
+                                    outputStream.write(buffer, 0, count);
 
-                            totalSizeArchive += count;
-                            totalSizeEntry += count;
+                                    totalSizeArchive += count;
+                                    totalSizeEntry += count;
 
-                            double compressionRate = (double) totalSizeEntry / entry.getCompressedSize();
-                            if (compressionRate > ZIP_THRESHOLD_RATIO) {
-                                throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
+                                    double compressionRate = (double) totalSizeEntry / entry.getCompressedSize();
+                                    if (compressionRate > ZIP_THRESHOLD_RATIO) {
+                                        throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
+                                    }
+                                }
                             }
                         }
-
-                        inputStream.close();
-                        outputStream.close();
                     }
                 }
 
