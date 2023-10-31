@@ -81,14 +81,6 @@ import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 
 const props = defineProps({
-  firstId: {
-    type: String,
-    required: true
-  },
-  secondId: {
-    type: String,
-    required: true
-  },
   comparison: {
     type: Object as PropType<Comparison>,
     required: true
@@ -99,6 +91,8 @@ const props = defineProps({
   }
 })
 
+const firstId = computed(() => props.comparison.firstSubmissionId)
+const secondId = computed(() => props.comparison.secondSubmissionId)
 const filesOfFirst = computed(() => props.comparison.filesOfFirstSubmission)
 const filesOfSecond = computed(() => props.comparison.filesOfSecondSubmission)
 

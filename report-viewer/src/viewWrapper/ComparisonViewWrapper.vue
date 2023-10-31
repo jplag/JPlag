@@ -1,11 +1,5 @@
 <template>
-  <ComparisonView
-    v-if="comparison && language"
-    :first-id="firstId"
-    :second-id="secondId"
-    :comparison="comparison"
-    :language="language"
-  />
+  <ComparisonView v-if="comparison && language" :comparison="comparison" :language="language" />
   <div
     v-else
     class="absolute bottom-0 left-0 right-0 top-0 flex flex-col items-center justify-center"
@@ -24,11 +18,7 @@ import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 
 const props = defineProps({
-  firstId: {
-    type: String,
-    required: true
-  },
-  secondId: {
+  comparisonFileName: {
     type: String,
     required: true
   }
@@ -39,7 +29,7 @@ const language: Ref<HighlightLanguage | null> = ref(null)
 
 // This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the pafe anyway.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
-ComparisonFactory.getComparison(props.firstId, props.secondId).then((comp) => {
+ComparisonFactory.getComparison(props.comparisonFileName).then((comp) => {
   comparison.value = comp
 })
 

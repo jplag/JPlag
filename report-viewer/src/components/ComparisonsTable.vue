@@ -63,7 +63,12 @@
               <RouterLink
                 :to="{
                   name: 'ComparisonView',
-                  params: { firstId: item.firstSubmissionId, secondId: item.secondSubmissionId }
+                  params: {
+                    comparisonFileName: store().getComparisonFileName(
+                      item.firstSubmissionId,
+                      item.secondSubmissionId
+                    )
+                  }
                 }"
                 class="flex flex-grow flex-row"
               >
