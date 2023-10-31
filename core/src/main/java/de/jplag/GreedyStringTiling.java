@@ -1,6 +1,7 @@
 package de.jplag;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -22,7 +23,6 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
 
     private final int minimumMatchLength;
-    private final int minimumNeighborLength;
     private final JPlagOptions options;
     private final ConcurrentMap<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
@@ -33,8 +33,8 @@ public class GreedyStringTiling {
     public GreedyStringTiling(JPlagOptions options) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
-        this.minimumNeighborLength = Math.min(Math.max(options.mergingOptions().minimumNeighborLength(), 1), options.minimumTokenMatch());
-        this.minimumMatchLength = options.mergingOptions().enabled() ? this.minimumNeighborLength : options.minimumTokenMatch();
+        int minimumNeighborLength = Math.min(Math.max(options.mergingOptions().minimumNeighborLength(), 1), options.minimumTokenMatch());
+        this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
         this.tokenTypeValues = new ConcurrentHashMap<>();
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
     }
@@ -78,20 +78,15 @@ public class GreedyStringTiling {
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
         Submission smallerSubmission;
         Submission largerSubmission;
-        if (firstSubmission.getTokenList().size() > secondSubmission.getTokenList().size()) {
-            smallerSubmission = secondSubmission;
-            largerSubmission = firstSubmission;
-        } else if (firstSubmission.getTokenList().size() < secondSubmission.getTokenList().size()) {
+        Comparator<Submission> submissionComparator = Comparator.comparing((Submission it) -> it.getTokenList().size())
+                .thenComparing(Submission::getName);
+
+        if (submissionComparator.compare(firstSubmission, secondSubmission) <= 0) {
             smallerSubmission = firstSubmission;
             largerSubmission = secondSubmission;
         } else {
-            if (firstSubmission.getName().compareTo(secondSubmission.getName()) < 0) {
-                smallerSubmission = firstSubmission;
-                largerSubmission = secondSubmission;
-            } else {
-                smallerSubmission = secondSubmission;
-                largerSubmission = firstSubmission;
-            }
+            smallerSubmission = secondSubmission;
+            largerSubmission = firstSubmission;
         }
         return compareInternal(smallerSubmission, largerSubmission);
     }
