@@ -85,16 +85,22 @@ public class FileHelper {
 
                         InputStream inputStream = zipFile.getInputStream(entry);
                         OutputStream outputStream = new FileOutputStream(unzippedFile);
-                        long count = inputStream.transferTo(outputStream);
-                        totalSizeArchive += count;
-                        totalSizeEntry += count;
+                        byte[] buffer = new byte[2048];
+                        int count;
+                        while ((count = inputStream.read(buffer)) > 0) {
+                            outputStream.write(buffer, 0, count);
+
+                            totalSizeArchive += count;
+                            totalSizeEntry += count;
+
+                            double compressionRate = (double) totalSizeEntry / entry.getCompressedSize();
+                            if (compressionRate > ZIP_THRESHOLD_RATIO) {
+                                throw new IllegalStateException(ZIP_BOMB_ERROR_MESSAGE);
+                            }
+                        }
+
                         inputStream.close();
                         outputStream.close();
-
-                        double compressionRate = (double) totalSizeEntry / entry.getCompressedSize();
-                        if (compressionRate > ZIP_THRESHOLD_RATIO) {
-                            throw new IllegalStateException(ZIP_BOMB_ERROR_MESSAGE);
-                        }
                     }
                 }
 
