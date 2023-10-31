@@ -205,16 +205,18 @@ class EndToEndSuiteTest {
                     .loadIdentifiersFromFile(dataSet.getGoldStandardFile().orElseThrow(), dataSet.getActualDelimiter());
             GoldStandard found = GoldStandard.buildFromComparisons(comparisonMap.values(), goldStandardIdentifiers);
 
-            DynamicTest goldStandardMatch = DynamicTest.dynamicTest("gold standard included", () -> assertEquals(goldStandard.matchAverage(),
-                    found.matchAverage(), EPSILON, "comparisons in gold standard have changed average similarity"));
+            DynamicTest goldStandardMatch = DynamicTest.dynamicTest("expected plagiarism comparisons average similarity",
+                    () -> assertEquals(goldStandard.matchAverage(), found.matchAverage(), EPSILON,
+                            "expected plagiarism comparisons have deviating similarities"));
 
-            DynamicTest goldStandardNonMatch = DynamicTest.dynamicTest("gold standard excluded", () -> assertEquals(goldStandard.nonMatchAverage(),
-                    found.nonMatchAverage(), EPSILON, "comparisons outside gold standard have changed average similarity"));
+            DynamicTest goldStandardNonMatch = DynamicTest.dynamicTest("expected non plagiarism comparisons average",
+                    () -> assertEquals(goldStandard.nonMatchAverage(), found.nonMatchAverage(), EPSILON,
+                            "expected non plagiarism comparisons have deviating similarities"));
 
-            return DynamicContainer.dynamicContainer("gold standard", List.of(goldStandardMatch, goldStandardNonMatch));
+            return DynamicContainer.dynamicContainer("expected plagiarism test", List.of(goldStandardMatch, goldStandardNonMatch));
         } else {
-            return DynamicTest.dynamicTest("gold standard skipped",
-                    () -> Assumptions.abort("The gold standard tests are skipped, because no gold standard is defined"));
+            return DynamicTest.dynamicTest("expected plagiarisms skipped",
+                    () -> Assumptions.abort("The expected plagiarisms test is skipped, because no expected plagiarisms are defined."));
         }
     }
 

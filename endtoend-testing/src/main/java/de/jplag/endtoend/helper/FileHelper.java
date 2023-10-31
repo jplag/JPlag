@@ -95,7 +95,7 @@ public class FileHelper {
 
                             double compressionRate = (double) totalSizeEntry / entry.getCompressedSize();
                             if (compressionRate > ZIP_THRESHOLD_RATIO) {
-                                throw new IllegalStateException(ZIP_BOMB_ERROR_MESSAGE);
+                                throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
                             }
                         }
 
@@ -105,10 +105,10 @@ public class FileHelper {
                 }
 
                 if (totalSizeArchive > ZIP_THRESHOLD_SIZE) {
-                    throw new IllegalStateException(ZIP_BOMB_ERROR_MESSAGE);
+                    throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
                 }
                 if (totalEntriesArchive > ZIP_THRESHOLD_ENTRIES) {
-                    throw new IllegalStateException();
+                    throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
                 }
             }
         }
