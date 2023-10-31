@@ -98,5 +98,6 @@ const clusterListElement: Ref<ClusterListElement> = computed(() => {
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')
+  return false
 })
 </script>

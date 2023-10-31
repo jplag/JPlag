@@ -38,6 +38,7 @@
 import Container from '@/components/ContainerComponent.vue'
 import Interactable from '@/components/InteractableComponent.vue'
 import { store } from '@/stores/store'
+import { onErrorCaptured } from 'vue'
 
 defineProps({
   message: {
@@ -54,5 +55,13 @@ defineProps({
     required: false,
     default: 'Back to file upload page'
   }
+})
+
+onErrorCaptured((error) => {
+  console.error(error)
+  alert(
+    'An error occured that could not be handeled. Please check the console for more information.'
+  )
+  return false
 })
 </script>

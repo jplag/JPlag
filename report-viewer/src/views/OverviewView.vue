@@ -221,5 +221,6 @@ const submissionPathValue = computed(() =>
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying overview:\n')
+  return false
 })
 </script>

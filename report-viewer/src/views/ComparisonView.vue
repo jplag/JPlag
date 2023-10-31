@@ -168,5 +168,6 @@ watch(useDarkMode, (newValue) => {
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying comparison:\n', 'OverviewView', 'Back to overview')
+  return false
 })
 </script>
