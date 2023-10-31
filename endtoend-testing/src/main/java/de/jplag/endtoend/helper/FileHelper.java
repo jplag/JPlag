@@ -24,7 +24,6 @@ public class FileHelper {
 
     /**
      * Returns the name of the passed file, trimming its file extension.
-     *
      * @param file is the file to obtain the name from
      * @return returns the name of the file without file extension
      */
@@ -36,7 +35,6 @@ public class FileHelper {
 
     /**
      * Creates directory if it dose not exist
-     *
      * @param directory to be created
      * @throws IOException if the directory could not be created
      */
@@ -48,7 +46,6 @@ public class FileHelper {
 
     /**
      * Creates file if it dose not exist
-     *
      * @param file to be created
      * @throws IOException if the file could not be created
      */
