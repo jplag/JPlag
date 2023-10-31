@@ -13,6 +13,10 @@ import java.util.zip.ZipFile;
  * Helper class to perform all necessary operations or functions on files or folders.
  */
 public class FileHelper {
+    private static final int ZIP_THRESHOLD_ENTRIES = 100000;
+    private static final int ZIP_THRESHOLD_SIZE = 1000000000;
+    private static final double ZIP_THRESHOLD_RATIO = 10;
+    private static final String ZIP_BOMB_ERROR_MESSAGE = "Refusing to unzip file (%s), because it seems to be a fork bomb";
 
     private FileHelper() {
         // private constructor to prevent instantiation
@@ -20,6 +24,7 @@ public class FileHelper {
 
     /**
      * Returns the name of the passed file, trimming its file extension.
+     *
      * @param file is the file to obtain the name from
      * @return returns the name of the file without file extension
      */
@@ -31,6 +36,7 @@ public class FileHelper {
 
     /**
      * Creates directory if it dose not exist
+     *
      * @param directory to be created
      * @throws IOException if the directory could not be created
      */
@@ -42,6 +48,7 @@ public class FileHelper {
 
     /**
      * Creates file if it dose not exist
+     *
      * @param file to be created
      * @throws IOException if the file could not be created
      */
@@ -60,23 +67,47 @@ public class FileHelper {
     }
 
     public static void unzip(File zip, File targetDirectory) throws IOException {
-        ZipFile zipFile = new ZipFile(zip);
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            if (entry.isDirectory()) {
-                new File(targetDirectory, entry.getName()).mkdirs();
-            } else {
-                File outputFile = new File(targetDirectory, entry.getName());
-                outputFile.getParentFile().mkdirs();
+        try (ZipFile zipFile = new ZipFile(zip)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-                InputStream inputStream = zipFile.getInputStream(entry);
-                OutputStream outputStream = new FileOutputStream(outputFile);
-                inputStream.transferTo(outputStream);
-                inputStream.close();
-                outputStream.close();
+            long totalSizeArchive = 0;
+            long totalEntriesArchive = 0;
+
+            while (entries.hasMoreElements()) {
+                totalEntriesArchive++;
+                long totalSizeEntry = 0;
+
+                ZipEntry entry = entries.nextElement();
+                File unzippedFile = new File(targetDirectory, entry.getName()).getCanonicalFile();
+
+                if (unzippedFile.getAbsolutePath().startsWith(targetDirectory.getAbsolutePath())) {
+                    if (entry.isDirectory()) {
+                        unzippedFile.mkdirs();
+                    } else {
+                        unzippedFile.getParentFile().mkdirs();
+
+                        InputStream inputStream = zipFile.getInputStream(entry);
+                        OutputStream outputStream = new FileOutputStream(unzippedFile);
+                        long count = inputStream.transferTo(outputStream);
+                        totalSizeArchive += count;
+                        totalSizeEntry += count;
+                        inputStream.close();
+                        outputStream.close();
+
+                        double compressionRate = (double) totalSizeEntry / entry.getCompressedSize();
+                        if (compressionRate > ZIP_THRESHOLD_RATIO) {
+                            throw new IllegalStateException(ZIP_BOMB_ERROR_MESSAGE);
+                        }
+                    }
+                }
+
+                if (totalSizeArchive > ZIP_THRESHOLD_SIZE) {
+                    throw new IllegalStateException(ZIP_BOMB_ERROR_MESSAGE);
+                }
+                if (totalEntriesArchive > ZIP_THRESHOLD_ENTRIES) {
+                    throw new IllegalStateException();
+                }
             }
         }
-        zipFile.close();
     }
 }

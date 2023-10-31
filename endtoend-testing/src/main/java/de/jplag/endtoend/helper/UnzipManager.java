@@ -12,13 +12,9 @@ public class UnzipManager {
     private final Map<DataSet, File> unzippedFiles;
     private static UnzipManager instance;
 
-    private static UnzipManager getInstance() {
+    private synchronized static UnzipManager getInstance() {
         if (instance == null) {
-            synchronized (UnzipManager.class) {
-                if (instance == null) {
-                    instance = new UnzipManager();
-                }
-            }
+            instance = new UnzipManager();
         }
 
         return instance;
