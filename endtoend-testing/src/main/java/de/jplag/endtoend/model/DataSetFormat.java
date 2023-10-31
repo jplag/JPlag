@@ -1,6 +1,7 @@
 package de.jplag.endtoend.model;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -14,12 +15,12 @@ public enum DataSetFormat {
      */
     PROGPEDIA {
         @Override
-        public Set<File> getSourceDirectories(DataSet dataSet) {
+        public Set<File> getSourceDirectories(DataSet dataSet) throws IOException {
             return Collections.singleton(new File(dataSet.actualSourceDirectory(), "ACCEPTED"));
         }
 
         @Override
-        public File getBaseCodeDirectory(DataSet dataSet, String directoryName) {
+        public File getBaseCodeDirectory(DataSet dataSet, String directoryName) throws IOException {
             return new File(dataSet.actualSourceDirectory(), directoryName);
         }
     },
@@ -28,8 +29,8 @@ public enum DataSetFormat {
      */
     PLAIN {
         @Override
-        public Set<File> getSourceDirectories(DataSet dataSet) {
-            return Collections.singleton(new File(dataSet.actualSourceDirectory()));
+        public Set<File> getSourceDirectories(DataSet dataSet) throws IOException {
+            return Collections.singleton(dataSet.actualSourceDirectory());
         }
 
         @Override
@@ -43,7 +44,7 @@ public enum DataSetFormat {
      * @param dataSet The data set
      * @return The source directories
      */
-    public abstract Set<File> getSourceDirectories(DataSet dataSet);
+    public abstract Set<File> getSourceDirectories(DataSet dataSet) throws IOException;
 
     /**
      * Resolves the base code directory
@@ -51,5 +52,5 @@ public enum DataSetFormat {
      * @param directoryName The name of the base code directory
      * @return The base code directory
      */
-    public abstract File getBaseCodeDirectory(DataSet dataSet, String directoryName);
+    public abstract File getBaseCodeDirectory(DataSet dataSet, String directoryName) throws IOException;
 }

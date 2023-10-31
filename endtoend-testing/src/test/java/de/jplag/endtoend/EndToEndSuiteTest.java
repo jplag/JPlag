@@ -63,7 +63,7 @@ class EndToEndSuiteTest {
      * @throws ExitException If JPlag throws an error
      */
     @TestFactory
-    Collection<DynamicContainer> endToEndTestFactory() throws ExitException {
+    Collection<DynamicContainer> endToEndTestFactory() throws ExitException, IOException {
         File descriptorDirectory = TestDirectoryConstants.BASE_PATH_TO_DATA_SET_DESCRIPTORS.toFile();
         List<File> testDescriptorFiles = Arrays.asList(Objects.requireNonNull(descriptorDirectory.listFiles()));
         List<DynamicContainer> allTests = new ArrayList<>();
@@ -90,7 +90,7 @@ class EndToEndSuiteTest {
      * @return The dynamic container containing the tests
      * @throws ExitException If JPlag throws an error
      */
-    private DynamicContainer generateTestForLanguage(Language language, List<DataSet> dataSets) throws ExitException {
+    private DynamicContainer generateTestForLanguage(Language language, List<DataSet> dataSets) throws ExitException, IOException {
         List<DynamicContainer> languageTests = new LinkedList<>();
         for (DataSet dataSet : dataSets) {
             languageTests.add(generateTestsForDataSet(dataSet));
@@ -104,7 +104,7 @@ class EndToEndSuiteTest {
      * @return The dynamic container containing the tests
      * @throws ExitException If JPlag throws an error
      */
-    private DynamicContainer generateTestsForDataSet(DataSet dataSet) throws ExitException {
+    private DynamicContainer generateTestsForDataSet(DataSet dataSet) throws ExitException, IOException {
         List<DynamicContainer> testContainers = new LinkedList<>();
         Map<String, ResultDescription> results = new HashMap<>();
         try {
@@ -136,7 +136,7 @@ class EndToEndSuiteTest {
      * @throws ExitException If JPlag throw an error
      */
     private DynamicContainer generateTestsForResultDescription(ResultDescription result, DataSet dataSet, DataSetRunConfiguration runConfiguration)
-            throws ExitException {
+            throws ExitException, IOException {
         JPlagOptions options = runConfiguration.jPlagOptions();
         JPlagResult jplagResult = JPlag.run(options);
         var comparisons = jplagResult.getAllComparisons().stream().collect(Collectors.toMap(TestSuiteHelper::getTestIdentifier, it -> it));
@@ -198,7 +198,8 @@ class EndToEndSuiteTest {
      * @param goldStandard The gold standard previously saved
      * @return The node containing the tests
      */
-    private DynamicNode generateGoldStandardTest(DataSet dataSet, Map<String, JPlagComparison> comparisonMap, GoldStandard goldStandard) {
+    private DynamicNode generateGoldStandardTest(DataSet dataSet, Map<String, JPlagComparison> comparisonMap, GoldStandard goldStandard)
+            throws IOException {
         if (goldStandard != null) {
             Set<ComparisonIdentifier> goldStandardIdentifiers = ComparisonIdentifier
                     .loadIdentifiersFromFile(dataSet.getGoldStandardFile().orElseThrow(), dataSet.getActualDelimiter());

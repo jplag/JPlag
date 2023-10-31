@@ -2,7 +2,8 @@
   "name": "progpedia",
   "language": "java",
   "format": "PROGPEDIA",
-  "goldStandardFile": "data/progpedia/plagiate.csv",
+  "storageFormat": "ZIP",
+  "goldStandardFile": "plagiate.csv",
   "options": {
     "baseCodeDirectory": "base"
   }

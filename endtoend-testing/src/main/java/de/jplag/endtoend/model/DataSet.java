@@ -1,14 +1,16 @@
 package de.jplag.endtoend.model;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import de.jplag.Language;
 import de.jplag.endtoend.constants.TestDirectoryConstants;
 import de.jplag.endtoend.helper.LanguageDeserializer;
+import de.jplag.endtoend.helper.UnzipManager;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -18,38 +20,53 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * @param name The name of the data set
  * @param language The language
  * @param format The format
- * @param sourceDirectory The source directory, may be null
+ * @param sourceLocation The source directory, may be null
  * @param resultFile The result file name, may be null
  * @param goldStandardFile The gold standard file, may be null
  * @param options The options for the jplag runs, may be null
  */
 public record DataSet(@JsonProperty(required = true) String name,
         @JsonDeserialize(using = LanguageDeserializer.class) @JsonProperty(required = true) Language language,
-        @JsonProperty(required = true) DataSetFormat format, @JsonProperty String sourceDirectory, @JsonProperty String resultFile,
-        @JsonProperty String goldStandardFile, @JsonProperty String goldStandardDelimiter, @JsonProperty Options options) {
+        @JsonProperty(required = true) DataSetFormat format, @JsonProperty String sourceLocation, @JsonProperty StorageFormat storageFormat,
+        @JsonProperty String resultFile, @JsonProperty String goldStandardFile, @JsonProperty String goldStandardDelimiter,
+        @JsonProperty Options options) {
 
     private static final String DEFAULT_GOLD_STANDARD_DELIMITER = ";";
     private static final String DEFAULT_SOURCE_DIRECTORY = "data/%s";
+    private static final String DEFAULT_SOURCE_ZIP = "data/%s.zip";
     private static final String DEFAULT_RESULT_FILE_NAME = "%s.json";
 
     /**
      * Gets the source directories
      * @return The source directories
      */
-    public Set<File> getSourceDirectories() {
-        return format.getSourceDirectories(this).stream()
-                .map(file -> new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), file.getPath())).collect(Collectors.toSet());
+    public Set<File> getSourceDirectories() throws IOException {
+        return new HashSet<>(format.getSourceDirectories(this));
     }
 
     /**
      * Helper function replacing null by the default value
      * @return The source directory
      */
-    String actualSourceDirectory() {
-        if (sourceDirectory == null) {
-            return String.format(DEFAULT_SOURCE_DIRECTORY, this.name);
+    File actualSourceDirectory() throws IOException {
+        switch (storageFormat == null ? StorageFormat.DIRECTORY : storageFormat) {
+            case DIRECTORY -> {
+                String location = sourceLocation;
+                if (location == null) {
+                    location = String.format(DEFAULT_SOURCE_DIRECTORY, this.name);
+                }
+                return new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), location);
+            }
+            case ZIP -> {
+                String location = sourceLocation;
+                if (location == null) {
+                    location = String.format(DEFAULT_SOURCE_ZIP, this.name);
+                }
+                return UnzipManager.unzipOrCache(this, new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), location));
+            }
         }
-        return sourceDirectory;
+
+        throw new IllegalStateException();
     }
 
     /**
@@ -67,8 +84,9 @@ public record DataSet(@JsonProperty(required = true) String name,
     /**
      * @return The gold standard file as an optional.
      */
-    public Optional<File> getGoldStandardFile() {
-        return Optional.ofNullable(this.goldStandardFile).map(name -> new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), name));
+    public Optional<File> getGoldStandardFile() throws IOException {
+        File actualSourceDirectory = this.actualSourceDirectory();
+        return Optional.ofNullable(this.goldStandardFile).map(name -> new File(actualSourceDirectory, name));
     }
 
     /**
