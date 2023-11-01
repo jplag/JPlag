@@ -4,17 +4,17 @@
       <h2>Run Options:</h2>
 
       <ScrollableComponent class="flex-grow px-4 pt-2">
-        <TextInformation label="Submission Folder" class="pb-1">{{
+        <TextInformation label="Submission Directory" class="pb-1">{{
           overview.submissionFolderPath.join(', ')
         }}</TextInformation>
-        <TextInformation label="Basecode Folder" class="pb-1">{{
+        <TextInformation label="Basecode Directory" class="pb-1">{{
           overview.baseCodeFolderPath
         }}</TextInformation>
         <TextInformation label="Language" class="pb-1">{{ overview.language }}</TextInformation>
         <TextInformation label="File Extentions" class="pb-1">{{
           overview.fileExtensions.join(', ')
         }}</TextInformation>
-        <TextInformation label="Minimum Token Match:" class="pb-1">{{
+        <TextInformation label="Min Token Match" class="pb-1">{{
           overview.matchSensitivity
         }}</TextInformation>
       </ScrollableComponent>
@@ -30,7 +30,7 @@
         <TextInformation label="Execution Duration" class="pb-1"
           >{{ overview.durationOfExecution }} ms</TextInformation
         >
-        <TextInformation label="Submission Count" class="pb-1">{{
+        <TextInformation label="Total Submissions" class="pb-1">{{
           store().getSubmissionIds.length
         }}</TextInformation>
         <TextInformation label="Total Comparisons" class="pb-1">{{

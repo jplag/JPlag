@@ -7,7 +7,7 @@
       <Container class="flex-grow">
         <h2>JPlag Report</h2>
         <div class="flex flex-row items-center space-x-5">
-          <TextInformation label="Directory">{{ submissionPathValue }}</TextInformation>
+          <TextInformation label="Submission Directory">{{ submissionPathValue }}</TextInformation>
           <TextInformation label="Total Submissions">{{
             store().getSubmissionIds.length
           }}</TextInformation>
@@ -37,7 +37,7 @@
             </template>
           </TextInformation>
 
-          <TextInformation label="Min Match Length">
+          <TextInformation label="Min Token Match">
             <template #default>
               {{ overview.matchSensitivity }}
             </template>
