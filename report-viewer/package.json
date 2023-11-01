@@ -45,7 +45,7 @@
     "@vue/tsconfig": "^0.4.0",
     "autoprefixer": "^10.4.15",
     "eslint": "^8.52.0",
-    "eslint-plugin-vue": "^9.18.0",
+    "eslint-plugin-vue": "^9.18.1",
     "husky": "^8.0.0",
     "jsdom": "^22.1.0",
     "lint-staged": "^15.0.2",
