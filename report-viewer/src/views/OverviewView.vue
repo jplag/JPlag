@@ -6,7 +6,7 @@
     <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
       <Container class="flex-grow">
         <h2>JPlag Report</h2>
-        <div class="flex flex-row items-center space-x-5">
+        <div class="flex flex-row items-center space-x-5 print:flex-col">
           <TextInformation label="Directory">{{ submissionPathValue }}</TextInformation>
           <TextInformation label="Total Submissions">{{
             store().getSubmissionIds.length
@@ -18,7 +18,7 @@
             overview.matchSensitivity
           }}</TextInformation>
 
-          <ToolTipComponent direction="left">
+          <ToolTipComponent direction="left" class="print:hidden">
             <template #default>
               <Button @click="router.push({ name: 'InfoView' })"> More </Button>
             </template>
@@ -30,8 +30,12 @@
       </Container>
     </div>
 
-    <div class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 p-5 pt-5">
-      <Container class="flex max-h-0 min-h-full flex-1 flex-col">
+    <div
+      class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 p-5 pt-5 print:flex-col print:space-x-0 print:space-y-5"
+    >
+      <Container
+        class="flex max-h-0 min-h-full flex-1 flex-col print:max-h-none print:min-h-0 print:flex-none"
+      >
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
           :distribution="overview.distribution[store().uiState.distributionChartConfig.metric]"
@@ -64,7 +68,9 @@
         </div>
       </Container>
 
-      <Container class="flex max-h-0 min-h-full flex-1 flex-col space-y-2">
+      <Container
+        class="flex max-h-0 min-h-full flex-1 flex-col space-y-2 print:max-h-none print:min-h-0 print:flex-none"
+      >
         <div class="flex flex-row items-center space-x-8">
           <h2>Top Comparisons:</h2>
           <ToolTipComponent direction="bottom" class="flex-grow">
@@ -83,7 +89,7 @@
             </template>
           </ToolTipComponent>
 
-          <Button class="w-24" @click="changeAnnoymousForAll()">
+          <Button class="w-24 print:hidden" @click="changeAnnoymousForAll()">
             {{
               store().state.anonymous.size == store().getSubmissionIds.length
                 ? 'Show All'
@@ -101,7 +107,7 @@
         <ComparisonsTable
           :clusters="overview.clusters"
           :top-comparisons="displayedComparisons"
-          class="min-h-0 flex-1"
+          class="min-h-0 flex-1 print:min-h-full print:flex-grow"
         />
       </Container>
     </div>

@@ -1,6 +1,6 @@
 <template>
-  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
-    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
+  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col print:space-y-5">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
       <Container class="flex-grow overflow-hidden">
         <h2>Cluster</h2>
         <div class="flex flex-row items-center space-x-5">
@@ -11,11 +11,17 @@
       </Container>
     </div>
 
-    <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
-      <Container class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden">
+    <div
+      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5 print:grow-0 print:flex-col print:space-x-0 print:space-y-5 print:p-0"
+    >
+      <Container
+        class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
+      >
         <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
       </Container>
-      <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2">
+      <Container
+        class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:max-h-full print:min-h-0 print:w-full"
+      >
         <h2>Comparisons of Cluster Members:</h2>
         <ComparisonsTable :topComparisons="comparisons" class="min-h-0 flex-1" />
       </Container>
