@@ -3,7 +3,7 @@
 -->
 <template>
   <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
-    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
       <Container class="flex-grow overflow-hidden">
         <h2>
           Comparison:
@@ -33,7 +33,9 @@
       </Container>
     </div>
     <div ref="styleholder"></div>
-    <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
+    <div
+      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5 print:space-x-1 print:p-0"
+    >
       <FilesContainer
         ref="panel1"
         :files="filesOfFirst"
@@ -45,7 +47,7 @@
         "
         :highlight-language="language"
         @line-selected="showMatchInSecond"
-        class="max-h-0 min-h-full flex-1 overflow-hidden"
+        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
       <FilesContainer
         ref="panel2"
@@ -58,7 +60,7 @@
         "
         :highlight-language="language"
         @line-selected="showMatchInFirst"
-        class="max-h-0 min-h-full flex-1 overflow-hidden"
+        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
     </div>
   </div>

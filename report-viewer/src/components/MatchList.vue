@@ -12,7 +12,9 @@
       </template>
     </ToolTipComponent>
 
-    <div class="flex w-full flex-row space-x-1 overflow-x-auto">
+    <div
+      class="print-excact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
+    >
       <OptionComponent
         :style="{ background: match.color }"
         v-for="[index, match] in matches?.entries()"
