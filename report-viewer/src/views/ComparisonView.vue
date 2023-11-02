@@ -18,6 +18,9 @@
               ? 'Submission 2'
               : store().submissionDisplayName(comparison.secondSubmissionId)
           }}
+          <Button class="float-right h-10 w-10 print:hidden" @click="print()">
+            <FontAwesomeIcon class="text-2xl" :icon="['fas', 'print']" />
+          </Button>
         </h2>
         <div class="flex flex-row">
           <TextInformation label="Average Similarity"
@@ -68,7 +71,10 @@
 
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
-
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import Button from '@/components/ButtonComponent.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faPrint } from '@fortawesome/free-solid-svg-icons'
 import { onMounted, ref, watch, type Ref, computed, onErrorCaptured, type PropType } from 'vue'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/MatchList.vue'
@@ -81,6 +87,8 @@ import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { router } from '@/router'
 import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
+
+library.add(faPrint)
 
 const props = defineProps({
   firstId: {
@@ -137,6 +145,10 @@ function showMatch(match: Match) {
 
 function isAnonymous(id: string) {
   return store().state.anonymous.has(id)
+}
+
+function print() {
+  window.print()
 }
 
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
