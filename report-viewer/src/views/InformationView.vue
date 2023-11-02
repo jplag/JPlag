@@ -1,6 +1,8 @@
 <template>
-  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-row space-x-5 p-5">
-    <Container class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden">
+  <div
+    class="absolute bottom-0 left-0 right-0 top-0 flex flex-row space-x-5 p-5 print:flex-col print:space-x-0 print:space-y-2 print:p-0"
+  >
+    <Container class="infoContainer print:!border-none">
       <h2>Run Options:</h2>
 
       <ScrollableComponent class="flex-grow px-4 pt-2">
@@ -20,7 +22,7 @@
       </ScrollableComponent>
     </Container>
 
-    <Container class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden">
+    <Container class="infoContainer print:!border-none">
       <h2>Run Data:</h2>
 
       <ScrollableComponent class="flex-grow px-4 pt-2">
@@ -66,3 +68,9 @@ const totalComparisons = computed(() => props.overview.totalComparisons)
 const shownComparisons = computed(() => props.overview.topComparisons.length)
 const missingComparisons = computed(() => totalComparisons.value - shownComparisons.value)
 </script>
+
+<style scoped lang="postcss">
+.infoContainer {
+  @apply flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none;
+}
+</style>
