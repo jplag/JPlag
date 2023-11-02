@@ -6,7 +6,7 @@
       <RouterView class="max-h-screen overflow-hidden" />
 
       <Button
-        class="absolute bottom-2 right-2 flex h-12 w-12 items-center justify-center text-center"
+        class="absolute bottom-2 right-2 flex h-12 w-12 items-center justify-center text-center print:hidden"
         @click="store().changeUseDarkMode()"
       >
         <FontAwesomeIcon
