@@ -73,7 +73,10 @@ function getMatchColorCount() {
   return matchColors.length
 }
 
-function getMatchColor(index: number, alpha: number) {
+function getMatchColor(alpha: number, index?: number) {
+  if (index == undefined) {
+    return 'rgba(0,0,0,0)'
+  }
   return `rgba(${matchColors[index].red}, ${matchColors[index].green}, ${matchColors[index].blue}, ${alpha})`
 }
 

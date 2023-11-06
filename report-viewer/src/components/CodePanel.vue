@@ -30,7 +30,7 @@
               :style="{
                 background:
                   line.match !== null
-                    ? getMatchColor(line.match.colorIndex as number, 0.3)
+                    ? getMatchColor(0.3, line.match.colorIndex)
                     : 'hsla(0, 0%, 0%, 0)'
               }"
             >

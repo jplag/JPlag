@@ -15,7 +15,7 @@
     <div class="flex w-full flex-row space-x-1 overflow-x-auto">
       <OptionComponent
         v-for="[index, match] in matches?.entries()"
-        :style="{ background: getMatchColor(match.colorIndex as number, 0.3) }"
+        :style="{ background: getMatchColor(0.3, match.colorIndex) }"
         v-bind:key="index"
         @click="$emit('matchSelected', match)"
         :label="

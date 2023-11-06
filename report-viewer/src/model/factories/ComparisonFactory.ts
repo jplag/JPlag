@@ -120,7 +120,7 @@ export class ComparisonFactory extends BaseFactory {
       .sort((a, b) => (a.secondFile > b.secondFile ? 1 : -1))
     const sortedSize = Array.from(matches).sort((a, b) => b.tokens - a.tokens)
 
-    function canColor(matchList: Match[], index: number) {
+    function isColorAvailable(matchList: Match[], index: number) {
       return (
         (index === 0 || matchList[index - 1].colorIndex !== currentColorIndex) &&
         (index === matchList.length - 1 || matchList[index + 1].colorIndex !== currentColorIndex)
@@ -133,9 +133,9 @@ export class ComparisonFactory extends BaseFactory {
       const sortedIndex = sortedSize.findIndex((match) => match === matches[i])
       const startCounter = currentColorIndex
       while (
-        !canColor(matchesFirst, firstIndex) ||
-        !canColor(matchesSecond, secondIndex) ||
-        !canColor(sortedSize, sortedIndex)
+        !isColorAvailable(matchesFirst, firstIndex) ||
+        !isColorAvailable(matchesSecond, secondIndex) ||
+        !isColorAvailable(sortedSize, sortedIndex)
       ) {
         currentColorIndex = (currentColorIndex + 1) % maxColorCount
 
