@@ -58,7 +58,7 @@ public class TokenCollector {
             variableRegistry.updateSemantics(semantics);
         } else {
             if (semanticsSupplier != null) {
-                logger.warn(String.format("Received semantics for token %s despite not expecting any", jplagType.getDescription()));
+                logger.warn("Received semantics for token {} despite not expecting any", jplagType.getDescription());
             }
             token = new Token(jplagType, this.file, line, column, length);
         }

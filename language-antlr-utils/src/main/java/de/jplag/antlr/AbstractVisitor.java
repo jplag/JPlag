@@ -17,7 +17,7 @@ import de.jplag.semantics.VariableRegistry;
  * @param <T> The type of the visited entity.
  */
 public abstract class AbstractVisitor<T> {
-    private static final Logger logger = LoggerFactory.getLogger(TokenCollector.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractVisitor.class);
 
     private final Predicate<T> condition;
     private final List<Consumer<HandlerData<T>>> entryHandlers;

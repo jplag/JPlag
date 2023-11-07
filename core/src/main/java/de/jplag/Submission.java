@@ -247,8 +247,10 @@ public class Submission implements Comparable<Submission> {
 
         try {
             tokenList = language.parse(new HashSet<>(files));
-            for (Token token : tokenList) {
-                logger.debug(String.join(" | ", token.getType().toString(), Integer.toString(token.getLine()), token.getSemantics().toString()));
+            if (logger.isDebugEnabled()) {
+                for (Token token : tokenList) {
+                    logger.debug(String.join(" | ", token.getType().toString(), Integer.toString(token.getLine()), token.getSemantics().toString()));
+                }
             }
         } catch (ParsingException e) {
             logger.warn("Failed to parse submission {} with error {}", this, e.getMessage(), e);

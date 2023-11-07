@@ -118,7 +118,7 @@ public class VariableRegistry {
      * @param mutable Whether the variable is mutable.
      */
     public void registerVariable(String variableName, VariableScope scope, boolean mutable) {
-        logger.debug("Register variable " + variableName);
+        logger.debug("Register variable {}", variableName);
         Variable variable = new Variable(variableName, scope, mutable);
         switch (scope) {
             case FILE -> fileVariables.put(variableName, variable);
@@ -139,7 +139,7 @@ public class VariableRegistry {
      * "this" keyword in Java, for example.
      */
     public void registerVariableAccess(String variableName, boolean isClassVariable) {
-        logger.debug(variableName + " " + nextVariableAccessType);
+        logger.debug("{} {}", variableName, nextVariableAccessType);
         if (ignoreNextVariableAccess) {
             ignoreNextVariableAccess = false;
             return;

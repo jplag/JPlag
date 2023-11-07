@@ -144,7 +144,7 @@ public class SubmissionSet {
 
         int tooShort = 0;
         for (Submission submission : submissions) {
-            logger.info("Parsing submission " + submission.getName());
+            logger.info("Parsing submission {}", submission.getName());
             boolean ok;
 
             logger.trace("------ Parsing submission: " + submission.getName());

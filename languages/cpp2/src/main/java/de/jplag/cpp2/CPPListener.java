@@ -42,8 +42,8 @@ class CPPListener extends AbstractAntlrListener {
                 .withSemantics(CodeSemantics::createControl);
         visit(SelectionStatementContext.class, rule -> rule.If() != null).map(IF_BEGIN, IF_END).addLocalScope()
                 .withSemantics(CodeSemantics::createControl);
-        visit(CPP14Parser.Else).map(ELSE).withSemantics(CodeSemantics::createControl);  // todo check interaction with if, variable not visible in
-                                                                                        // else!
+        // possible problem: variable from if visible in else, but in reality is not -- doesn't really matter
+        visit(CPP14Parser.Else).map(ELSE).withSemantics(CodeSemantics::createControl);
 
         visit(LabeledStatementContext.class, rule -> rule.Case() != null).map(CASE).withSemantics(CodeSemantics::createControl);
         visit(LabeledStatementContext.class, rule -> rule.Default() != null).map(DEFAULT).withSemantics(CodeSemantics::createControl);
@@ -63,19 +63,14 @@ class CPPListener extends AbstractAntlrListener {
 
         visit(TemplateDeclarationContext.class).map(GENERIC).withSemantics(CodeSemantics::new);
 
-        visit(AssignmentOperatorContext.class).map(ASSIGN).withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
-            varReg.setNextVariableAccessType(VariableAccessType.WRITE);
-        });
+        visit(AssignmentOperatorContext.class).map(ASSIGN).withSemantics(CodeSemantics::new)
+                .onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
         visit(UnaryExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGN)
-                .withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
-                    varReg.setNextVariableAccessType(VariableAccessType.READ_WRITE);
-                });
-        ;
+                .withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.READ_WRITE));
 
         visit(StaticAssertDeclarationContext.class).map(STATIC_ASSERT).withSemantics(CodeSemantics::createControl);
-        visit(EnumeratorDefinitionContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
-            varReg.setNextVariableAccessType(VariableAccessType.WRITE);
-        });
+        visit(EnumeratorDefinitionContext.class).map(VARDEF).withSemantics(CodeSemantics::new)
+                .onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
         visit(BracedInitListContext.class).map(BRACED_INIT_BEGIN, BRACED_INIT_END).withSemantics(CodeSemantics::new);
 
         visit(SimpleTypeSpecifierContext.class, rule -> {
@@ -93,7 +88,8 @@ class CPPListener extends AbstractAntlrListener {
             if (parent == null)  // at this point we know parent exists
                 throw new IllegalStateException();
             // boolean typeMutable = context.theTypeName() != null; // block is duplicate to member variable register
-            variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE); // todo multiple??
+            // possible issue: what if multiple variables are declared in the same line?
+            variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
             if (parent.initDeclaratorList() == null) {
                 return;
             }
@@ -133,9 +129,7 @@ class CPPListener extends AbstractAntlrListener {
 
         mapApply(visit(PostfixExpressionContext.class, rule -> rule.LeftParen() != null));
         visit(PostfixExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGN)
-                .withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> {
-                    varReg.setNextVariableAccessType(VariableAccessType.READ_WRITE);
-                });
+                .withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.READ_WRITE));
 
         visit(UnqualifiedIdContext.class).onEnter((ctx, varReg) -> {
             ParserRuleContext parentCtx = ctx.getParent().getParent();
