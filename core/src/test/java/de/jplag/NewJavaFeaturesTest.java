@@ -11,8 +11,8 @@ import de.jplag.exceptions.ExitException;
 public class NewJavaFeaturesTest extends TestBase {
 
     private static final int EXPECTED_MATCHES = 6; // might change if you add files to the submissions
-    private static final double EXPECTED_SIMILARITY = 0.96; // might change if you add files to the submissions
-    private static final String EXPECTED_JAVA_VERSION = "17"; // might change with newer JPlag versions
+    private static final double EXPECTED_SIMILARITY = 0.953; // might change if you add files to the submissions
+    private static final String EXPECTED_JAVA_VERSION = "21"; // might change with newer JPlag versions
 
     private static final String EXCLUSION_FILE_NAME = "blacklist.txt";
     private static final String ROOT_DIRECTORY = "NewJavaFeatures";
