@@ -42,7 +42,8 @@ public class JavacAdapter {
 
             // We need to disable annotation processing, see
             // https://stackoverflow.com/questions/72737445/system-java-compiler-behaves-different-depending-on-dependencies-defined-in-mave
-            final CompilationTask task = javac.getTask(null, fileManager, listener, List.of("-proc:none"), null, javaFiles);
+            final CompilationTask task = javac.getTask(null, fileManager, listener, List.of("-proc:none", "--enable-preview", "--release=21"), null,
+                    javaFiles);
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = trees.getSourcePositions();
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {

@@ -10,8 +10,9 @@ import de.jplag.exceptions.ExitException;
 
 public class NewJavaFeaturesTest extends TestBase {
 
-    private static final int EXPECTED_MATCHES = 6; // might change if you add files to the submissions
-    private static final double EXPECTED_SIMILARITY = 0.953; // might change if you add files to the submissions
+    private static final int EXPECTED_MATCHES = 8; // might change if you add files to the submissions
+    private static final int NUMBER_OF_TEST_FILES = 8;
+    private static final double EXPECTED_SIMILARITY = 0.971; // might change if you add files to the submissions
     private static final String EXPECTED_JAVA_VERSION = "21"; // might change with newer JPlag versions
 
     private static final String EXCLUSION_FILE_NAME = "blacklist.txt";
@@ -36,7 +37,7 @@ public class NewJavaFeaturesTest extends TestBase {
         // Ensure test input did not change:
         assertEquals(2, result.getNumberOfSubmissions(), String.format(CHANGE_MESSAGE, "Submissions"));
         for (Submission submission : result.getSubmissions().getSubmissions()) {
-            assertEquals(6, submission.getFiles().size(), String.format(CHANGE_MESSAGE, "Files"));
+            assertEquals(NUMBER_OF_TEST_FILES, submission.getFiles().size(), String.format(CHANGE_MESSAGE, "Files"));
         }
         assertEquals(1, result.getAllComparisons().size(), String.format(CHANGE_MESSAGE, "Comparisons"));
 

@@ -444,22 +444,24 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitVariable(VariableTree node, Void unused) {
-        long start = positions.getStartPosition(ast, node);
-        String name = node.getName().toString();
-        boolean inLocalScope = variableRegistry.inLocalScope();
-        // this presents a problem when classes are declared in local scopes, which can happen in ad-hoc implementations
-        CodeSemantics semantics;
-        if (inLocalScope) {
-            boolean mutable = isMutable(node.getType());
-            variableRegistry.registerVariable(name, VariableScope.LOCAL, mutable);
-            semantics = new CodeSemantics();
-        } else {
-            semantics = CodeSemantics.createKeep();
+        if (!node.getName().contentEquals("")) {
+            long start = positions.getStartPosition(ast, node);
+            String name = node.getName().toString();
+            boolean inLocalScope = variableRegistry.inLocalScope();
+            // this presents a problem when classes are declared in local scopes, which can happen in ad-hoc implementations
+            CodeSemantics semantics;
+            if (inLocalScope) {
+                boolean mutable = isMutable(node.getType());
+                variableRegistry.registerVariable(name, VariableScope.LOCAL, mutable);
+                semantics = new CodeSemantics();
+            } else {
+                semantics = CodeSemantics.createKeep();
+            }
+            addToken(JavaTokenType.J_VARDEF, start, node.toString().length(), semantics);
+            // manually add variable to semantics since identifier isn't visited
+            variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
+            variableRegistry.registerVariableAccess(name, !inLocalScope);
         }
-        addToken(JavaTokenType.J_VARDEF, start, node.toString().length(), semantics);
-        // manually add variable to semantics since identifier isn't visited
-        variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
-        variableRegistry.registerVariableAccess(name, !inLocalScope);
         return super.visitVariable(node, null);
     }
 
