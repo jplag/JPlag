@@ -19,9 +19,7 @@
       >
         <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
       </Container>
-      <Container
-        class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:max-h-full print:min-h-0 print:w-full"
-      >
+      <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:hidden">
         <h2>Comparisons of Cluster Members:</h2>
         <ComparisonsTable :topComparisons="comparisons" class="min-h-0 flex-1" />
       </Container>

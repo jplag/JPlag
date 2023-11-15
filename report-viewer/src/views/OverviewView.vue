@@ -68,9 +68,7 @@
         </div>
       </Container>
 
-      <Container
-        class="flex max-h-0 min-h-full flex-1 flex-col space-y-2 print:max-h-none print:min-h-0 print:flex-none"
-      >
+      <Container class="flex max-h-0 min-h-full flex-1 flex-col space-y-2 print:hidden">
         <div class="flex flex-row items-center space-x-8">
           <h2>Top Comparisons:</h2>
           <ToolTipComponent direction="bottom" class="flex-grow">
