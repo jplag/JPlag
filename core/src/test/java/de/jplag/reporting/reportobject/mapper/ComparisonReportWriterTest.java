@@ -11,10 +11,10 @@ import de.jplag.TestBase;
 import de.jplag.exceptions.ExitException;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.writer.DummyWriter;
-import de.jplag.reporting.reportobject.writer.FileWriter;
+import de.jplag.reporting.reportobject.writer.JsonWriter;
 
 public class ComparisonReportWriterTest extends TestBase {
-    private final FileWriter<Object> fileWriter = new DummyWriter();
+    private final JsonWriter fileWriter = new DummyWriter();
 
     @Test
     public void firsLevelOfLookupMapComplete() throws ExitException {
