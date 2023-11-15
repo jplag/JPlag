@@ -39,9 +39,9 @@
         :files="filesOfFirst"
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="
-          isAnonymous(comparison.secondSubmissionId)
+          isAnonymous(comparison.firstSubmissionId)
             ? 'Submission 1'
-            : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
+            : (store().submissionDisplayName(comparison.firstSubmissionId) as string)
         "
         :highlight-language="language"
         @line-selected="showMatchInSecond"
