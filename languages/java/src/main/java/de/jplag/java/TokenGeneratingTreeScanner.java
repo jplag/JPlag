@@ -282,7 +282,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitCase(CaseTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_CASE, start, 4, CodeSemantics.createControl());
-        return super.visitCase(node, null);
+
+        this.scan(node.getLabels(), null);
+        if (node.getGuard() != null) {
+            addToken(JavaTokenType.J_IF_BEGIN, positions.getStartPosition(ast, node.getGuard()), 0, CodeSemantics.createControl());
+        }
+        this.scan(node.getGuard(), null);
+        if (node.getCaseKind() == CaseTree.CaseKind.RULE) {
+            this.scan(node.getBody(), null);
+        } else {
+            this.scan(node.getStatements(), null);
+        }
+
+        if (node.getGuard() != null) {
+            addToken(JavaTokenType.J_IF_BEGIN, positions.getEndPosition(ast, node), 0, CodeSemantics.createControl());
+        }
+
+        return null;
     }
 
     @Override

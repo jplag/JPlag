@@ -45,7 +45,7 @@ public class JavacAdapter {
             final CompilationTask task = javac.getTask(null, fileManager, listener,
                     List.of("-proc:none", "--enable-preview", "--release=" + JavaLanguage.JAVA_VERSION), null, javaFiles);
             final Trees trees = Trees.instance(task);
-            final SourcePositions positions = trees.getSourcePositions();
+            final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
                 File file = new File(ast.getSourceFile().toUri());
                 final LineMap map = ast.getLineMap();
