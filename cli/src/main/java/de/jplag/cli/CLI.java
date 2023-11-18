@@ -5,6 +5,7 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,7 @@ import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
+import de.jplag.reporting.csv.comparisons.CsvComparisonOutput;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 import picocli.CommandLine;
@@ -78,6 +80,15 @@ public final class CLI {
                 JPlagResult result = JPlag.run(options);
                 ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
                 reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
+
+                if (cli.options.csv.print) {
+                    try {
+                        CsvComparisonOutput.writeCsvResults(result.getAllComparisons(), cli.options.csv.anonymize, new File(cli.getResultFolder()),
+                                cli.options.csv.fileName);
+                    } catch (IOException e) {
+                        logger.error("Could not write csv", e);
+                    }
+                }
             }
         } catch (ExitException exception) {
             logger.error(exception.getMessage()); // do not pass exception here to keep log clean
