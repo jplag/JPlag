@@ -45,9 +45,7 @@ public class UnzipManager {
                 target = Files.createTempDirectory(zip.getName(), attr).toFile();
             } else {
                 target = Files.createTempDirectory(zip.getName()).toFile();
-                if (!(target.setReadable(true, true) &&
-                        target.setWritable(true, true) &&
-                        target.setExecutable(true, true))) {
+                if (!(target.setReadable(true, true) && target.setWritable(true, true) && target.setExecutable(true, true))) {
                     logger.warning("Could not set permissions for temp directory (" + target.getAbsolutePath() + ").");
                 }
             }
