@@ -18,6 +18,9 @@ import de.jplag.reporting.csv.ReflectiveCsvDataMapper;
 public class CsvComparisonOutput {
     private static final String[] titles = new String[] {"submissionName1", "submissionName2", "averageSimilarity", "maxSimilarity"};
 
+    private CsvComparisonOutput() {
+    }
+
     /**
      * Writes the comparisons as a csv
      * @param comparisons The list of comparisons

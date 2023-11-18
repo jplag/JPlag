@@ -81,19 +81,23 @@ public final class CLI {
                 ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
                 reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
 
-                if (cli.options.csv.print) {
-                    try {
-                        CsvComparisonOutput.writeCsvResults(result.getAllComparisons(), cli.options.csv.anonymize, new File(cli.getResultFolder()),
-                                cli.options.csv.fileName);
-                    } catch (IOException e) {
-                        logger.error("Could not write csv", e);
-                    }
-                }
+                cli.printCsv(result);
             }
         } catch (ExitException exception) {
             logger.error(exception.getMessage()); // do not pass exception here to keep log clean
             finalizeLogger();
             System.exit(1);
+        }
+    }
+
+    private void printCsv(JPlagResult result) {
+        if (options.csv.print) {
+            try {
+                CsvComparisonOutput.writeCsvResults(result.getAllComparisons(), options.csv.anonymize, new File(getResultFolder()),
+                        options.csv.fileName);
+            } catch (IOException e) {
+                logger.error("Could not write csv", e);
+            }
         }
     }
 

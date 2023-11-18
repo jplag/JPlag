@@ -114,7 +114,7 @@ public class CsvPrinter<T> {
         String actualValue = cellValue;
         if (literalsNeeded) {
             writer.write(LITERAL);
-            actualValue = actualValue.replaceAll("\"", "\"\"");
+            actualValue = actualValue.replace("\"", "\"\"");
         }
         writer.write(actualValue);
         if (literalsNeeded) {

@@ -1,5 +1,6 @@
 package de.jplag.reporting.csv.comparisons;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +18,11 @@ public class NameMapperRandomIds implements NameMapper {
      */
     public NameMapperRandomIds() {
         this.map = new HashMap<>();
-        this.random = new Random();
+        this.random = new SecureRandom();
     }
 
     private String newId() {
-        String id = String.valueOf(Math.abs(random.nextInt()));
+        String id = String.valueOf(this.random.nextInt(0, Integer.MAX_VALUE));
 
         if (this.map.containsKey(id)) {
             return newId();
