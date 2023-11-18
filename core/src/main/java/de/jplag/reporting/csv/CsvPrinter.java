@@ -1,7 +1,9 @@
 package de.jplag.reporting.csv;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,11 +81,29 @@ public class CsvPrinter<T> {
      */
     public void printToFile(File file) throws IOException {
         try (Writer writer = FileUtils.openFileWriter(file)) {
-            this.writeTitleRow(writer);
+            this.printCsv(writer);
+        }
+    }
 
-            for (String[] datum : this.data) {
-                this.printRow(writer, datum);
+    public String printToString() throws IOException {
+        String csv;
+
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (Writer writer = new OutputStreamWriter(outputStream)) {
+                this.printCsv(writer);
             }
+
+            csv = outputStream.toString();
+        }
+
+        return csv;
+    }
+
+    private void printCsv(Writer writer) throws IOException {
+        this.writeTitleRow(writer);
+
+        for (String[] datum : this.data) {
+            this.printRow(writer, datum);
         }
     }
 
