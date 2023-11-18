@@ -63,6 +63,12 @@ public class FileHelper {
         return "The file/folder at the location [" + file.toString() + "] could not be created!";
     }
 
+    /**
+     * Unzips a given zip file into a given directory.
+     * @param zip The zip file to extract
+     * @param targetDirectory The target directory
+     * @throws IOException If io operations go wrong
+     */
     public static void unzip(File zip, File targetDirectory) throws IOException {
         try (ZipFile zipFile = new ZipFile(zip)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -72,7 +78,6 @@ public class FileHelper {
 
             while (entries.hasMoreElements()) {
                 totalEntriesArchive++;
-                long totalSizeEntry = 0;
 
                 ZipEntry entry = entries.nextElement();
                 File unzippedFile = new File(targetDirectory, entry.getName()).getCanonicalFile();
@@ -82,24 +87,7 @@ public class FileHelper {
                         unzippedFile.mkdirs();
                     } else {
                         unzippedFile.getParentFile().mkdirs();
-
-                        try (InputStream inputStream = zipFile.getInputStream(entry)) {
-                            try (OutputStream outputStream = new FileOutputStream(unzippedFile)) {
-                                byte[] buffer = new byte[2048];
-                                int count;
-                                while ((count = inputStream.read(buffer)) > 0) {
-                                    outputStream.write(buffer, 0, count);
-
-                                    totalSizeArchive += count;
-                                    totalSizeEntry += count;
-
-                                    double compressionRate = (double) totalSizeEntry / entry.getCompressedSize();
-                                    if (compressionRate > ZIP_THRESHOLD_RATIO) {
-                                        throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
-                                    }
-                                }
-                            }
-                        }
+                        totalSizeArchive += extractZipElement(entry, zipFile, zip, unzippedFile);
                     }
                 }
 
@@ -111,5 +99,28 @@ public class FileHelper {
                 }
             }
         }
+    }
+
+    private static long extractZipElement(ZipEntry entry, ZipFile zipFile, File zip, File target) throws IOException {
+        long totalSizeEntry = 0;
+
+        try (InputStream inputStream = zipFile.getInputStream(entry)) {
+            try (OutputStream outputStream = new FileOutputStream(target)) {
+                byte[] buffer = new byte[2048];
+                int count;
+                while ((count = inputStream.read(buffer)) > 0) {
+                    outputStream.write(buffer, 0, count);
+
+                    totalSizeEntry += count;
+
+                    double compressionRate = (double) totalSizeEntry / entry.getCompressedSize();
+                    if (compressionRate > ZIP_THRESHOLD_RATIO) {
+                        throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
+                    }
+                }
+            }
+        }
+
+        return totalSizeEntry;
     }
 }

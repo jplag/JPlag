@@ -20,7 +20,7 @@ public class UnzipManager {
     private static UnzipManager instance;
     private final Logger logger = Logger.getLogger("Unzip Manager");
 
-    private synchronized static UnzipManager getInstance() {
+    private static synchronized UnzipManager getInstance() {
         if (instance == null) {
             instance = new UnzipManager();
         }

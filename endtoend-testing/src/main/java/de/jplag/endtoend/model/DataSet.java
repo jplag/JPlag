@@ -49,21 +49,20 @@ public record DataSet(@JsonProperty(required = true) String name,
      * @return The source directory
      */
     File actualSourceDirectory() throws IOException {
-        switch (storageFormat == null ? StorageFormat.DIRECTORY : storageFormat) {
-            case DIRECTORY -> {
-                String location = sourceLocation;
-                if (location == null) {
-                    location = String.format(DEFAULT_SOURCE_DIRECTORY, this.name);
-                }
-                return new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), location);
+        StorageFormat actualStorageFormat = storageFormat == null ? StorageFormat.DIRECTORY : storageFormat;
+
+        if (actualStorageFormat == StorageFormat.DIRECTORY) {
+            String location = sourceLocation;
+            if (location == null) {
+                location = String.format(DEFAULT_SOURCE_DIRECTORY, this.name);
             }
-            case ZIP -> {
-                String location = sourceLocation;
-                if (location == null) {
-                    location = String.format(DEFAULT_SOURCE_ZIP, this.name);
-                }
-                return UnzipManager.unzipOrCache(this, new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), location));
+            return new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), location);
+        } else if (actualStorageFormat == StorageFormat.ZIP) {
+            String location = sourceLocation;
+            if (location == null) {
+                location = String.format(DEFAULT_SOURCE_ZIP, this.name);
             }
+            return UnzipManager.unzipOrCache(this, new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), location));
         }
 
         throw new IllegalStateException();
