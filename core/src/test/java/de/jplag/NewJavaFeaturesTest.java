@@ -7,13 +7,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
+import de.jplag.java.JavaLanguage;
 
 public class NewJavaFeaturesTest extends TestBase {
 
     private static final int EXPECTED_MATCHES = 8; // might change if you add files to the submissions
     private static final int NUMBER_OF_TEST_FILES = 8;
     private static final double EXPECTED_SIMILARITY = 0.971; // might change if you add files to the submissions
-    private static final String EXPECTED_JAVA_VERSION = "21"; // might change with newer JPlag versions
 
     private static final String EXCLUSION_FILE_NAME = "blacklist.txt";
     private static final String ROOT_DIRECTORY = "NewJavaFeatures";
@@ -29,8 +29,8 @@ public class NewJavaFeaturesTest extends TestBase {
         // pre-condition
         String actualJavaVersion = System.getProperty(JAVA_VERSION_KEY);
         boolean isCiRun = System.getenv(CI_VARIABLE) != null;
-        boolean isCorrectJavaVersion = actualJavaVersion.startsWith(EXPECTED_JAVA_VERSION);
-        assumeTrue(isCorrectJavaVersion || isCiRun, VERSION_MISMATCH_MESSAGE.formatted(actualJavaVersion, EXPECTED_JAVA_VERSION));
+        boolean isCorrectJavaVersion = actualJavaVersion.startsWith(String.valueOf(JavaLanguage.JAVA_VERSION));
+        assumeTrue(isCorrectJavaVersion || isCiRun, VERSION_MISMATCH_MESSAGE.formatted(actualJavaVersion, JavaLanguage.JAVA_VERSION));
 
         JPlagResult result = runJPlagWithExclusionFile(ROOT_DIRECTORY, EXCLUSION_FILE_NAME);
 
