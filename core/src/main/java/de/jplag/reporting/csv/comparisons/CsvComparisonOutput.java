@@ -29,7 +29,7 @@ public class CsvComparisonOutput {
      * @param fileName The base name for the file without ".csv"
      */
     public static void writeCsvResults(List<JPlagComparison> comparisons, boolean anonymize, File directory, String fileName) throws IOException {
-        NameMapper mapper = new NameMapper.DirectMapper();
+        NameMapper mapper = new NameMapper.IdentityMapper();
         directory.mkdirs();
 
         if (anonymize) {
@@ -51,8 +51,8 @@ public class CsvComparisonOutput {
 
         if (anonymize) {
             List<Map.Entry<String, String>> nameMap = mapper.getNameMap();
-            CsvDataMapper<Map.Entry<String, String>> namesMapMapper = new HardcodedCsvDataMapper<>(2, it -> new String[] {it.getKey(), it.getValue()},
-                    new String[] {"realName", "id"});
+            CsvDataMapper<Map.Entry<String, String>> namesMapMapper = new HardcodedCsvDataMapper<>(2, it -> new String[] {it.getValue(), it.getKey()},
+                    new String[] {"id", "realName"});
             CsvPrinter<Map.Entry<String, String>> namesPrinter = new CsvPrinter<>(namesMapMapper);
             namesPrinter.addRows(nameMap);
             namesPrinter.printToFile(new File(directory, fileName + "-names.csv"));
