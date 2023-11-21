@@ -133,4 +133,20 @@ function getFileDisplayName(file: SubmissionFile): string {
 .code-font {
   font-family: 'JetBrains Mono NL', monospace !important;
 }
+
+@media print {
+  table {
+    page-break-after: auto;
+  }
+  table tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+    page-break-before: auto;
+  }
+  table td {
+    page-break-inside: avoid;
+    page-break-after: auto;
+    page-break-before: auto;
+  }
+}
 </style>

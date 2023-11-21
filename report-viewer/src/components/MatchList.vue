@@ -2,7 +2,9 @@
   Table which contains all of the matches for a comparison with navigation links.
 -->
 <template>
-  <div class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs">
+  <div
+    class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
+  >
     <ToolTipComponent direction="right">
       <template #default>
         <OptionComponent label="Match Files: TokenCount" />
@@ -25,6 +27,29 @@
         "
       />
     </div>
+  </div>
+  <div class="hidden print:block">
+    <table>
+      <tr>
+        <th class="px-2 text-left">File of {{ id1 }}</th>
+        <th class="px-2 text-left">Starting Line - End Line</th>
+        <th class="px-2 text-left">File of {{ id2 }}</th>
+        <th class="px-2 text-left">Starting Line - End Line</th>
+        <th class="px-2 text-left">Token Count</th>
+      </tr>
+      <tr
+        v-for="[index, match] in matches?.entries()"
+        v-bind:key="index"
+        :style="{ background: match.color }"
+        class="print-excact"
+      >
+        <td class="px-2">{{ getFileName(match.firstFile) }}</td>
+        <td class="px-2">{{ match.startInFirst }} - {{ match.endInFirst }}</td>
+        <td class="px-2">{{ getFileName(match.secondFile) }}</td>
+        <td class="px-2">{{ match.startInSecond }} - {{ match.endInSecond }}</td>
+        <td class="px-2">{{ match.tokens }}</td>
+      </tr>
+    </table>
   </div>
 </template>
 
