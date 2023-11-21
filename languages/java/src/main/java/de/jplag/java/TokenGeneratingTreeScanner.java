@@ -295,7 +295,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         }
 
         if (node.getGuard() != null) {
-            addToken(JavaTokenType.J_IF_BEGIN, positions.getEndPosition(ast, node), 0, CodeSemantics.createControl());
+            addToken(JavaTokenType.J_IF_END, positions.getEndPosition(ast, node), 0, CodeSemantics.createControl());
         }
 
         return null;
