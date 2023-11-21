@@ -6,7 +6,9 @@
       :style="tooltipPosition"
     >
       <slot name="tooltip"></slot>
-      <div class="absolute border-4 border-solid" :style="arrowStyle"><!-- Arrow --></div>
+      <div class="absolute border-4 border-solid" :style="arrowStyle" v-if="$slots.tooltip">
+        <!-- Arrow -->
+      </div>
     </div>
   </div>
 </template>
