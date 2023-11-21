@@ -23,7 +23,7 @@ public interface NameMapper {
     /**
      * Simple implementation, that does not change the names.
      */
-    class DirectMapper implements NameMapper {
+    class IdentityMapper implements NameMapper {
         @Override
         public String map(String original) {
             return original;
