@@ -53,7 +53,7 @@ import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
 import { store } from '@/stores/store'
 import { Overview } from '@/model/Overview'
-import { computed, onErrorCaptured, type PropType } from 'vue'
+import { onErrorCaptured, type PropType } from 'vue'
 import { redirectOnError } from '@/router'
 
 defineProps({
@@ -62,9 +62,6 @@ defineProps({
     required: true
   }
 })
-
-const totalComparisons = computed(() => props.overview.totalComparisons)
-const shownComparisons = computed(() => props.overview.topComparisons.length)
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying information:\n', 'OverviewView', 'Back to overview')
