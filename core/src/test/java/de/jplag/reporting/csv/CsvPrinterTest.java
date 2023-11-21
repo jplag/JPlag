@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CsvPrinterTest {
+class CsvPrinterTest {
     private static final String EXPECTED_CSV_TEXT = "1,test1\r\n2,\"test2,\"\"x\"\"\"\r\n";
     private static final List<CsvTestItem> TEST_ITEMS = List.of(new CsvTestItem(1, "test1"), new CsvTestItem(2, "test2,\"x\""));
 
