@@ -1,16 +1,10 @@
-package de.jplag.reporting.csv;
+package de.jplag.csv;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import de.jplag.csv.CsvDataMapper;
-import de.jplag.csv.CsvPrinter;
-import de.jplag.csv.CsvValue;
-import de.jplag.csv.HardcodedCsvDataMapper;
-import de.jplag.csv.ReflectiveCsvDataMapper;
 
 class CsvPrinterTest {
     private static final String EXPECTED_CSV_TEXT = "1,test1\r\n2,\"test2,\"\"x\"\"\"\r\n";
