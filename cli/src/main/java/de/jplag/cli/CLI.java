@@ -28,7 +28,7 @@ import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
-import de.jplag.reporting.csv.comparisons.CsvComparisonOutput;
+import de.jplag.csv.comparisons.CsvComparisonOutput;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 import picocli.CommandLine;

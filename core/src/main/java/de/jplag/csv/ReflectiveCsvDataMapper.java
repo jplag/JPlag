@@ -1,4 +1,6 @@
-package de.jplag.reporting.csv;
+package de.jplag.csv;
+
+import org.apache.commons.math3.util.Pair;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +15,7 @@ import java.util.Optional;
  * @param <T> The mapped type. Mark included methods and fields with @{@link CsvValue}
  */
 public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
-    private final List<ValueGetter> values;
+    private final List<Pair<Integer, GetterFunction<T>>> values;
     private String[] titles;
 
     /**
@@ -24,7 +26,7 @@ public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
 
         for (Field field : type.getFields()) {
             if (field.getAnnotation(CsvValue.class) != null) {
-                this.values.add(new VariableValueGetter(field, field.getAnnotation(CsvValue.class).value()));
+                this.values.add(new Pair<>(field.getAnnotation(CsvValue.class).value(), field::get));
             }
         }
 
@@ -39,11 +41,11 @@ public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
                             String.format("Method %s in %s must not return void to be a csv value", method.getName(), type.getName()));
                 }
 
-                this.values.add(new MethodValueGetter(method, method.getAnnotation(CsvValue.class).value()));
+                this.values.add(new Pair<>(method.getAnnotation(CsvValue.class).value(), method::invoke));
             }
         }
 
-        this.values.sort(Comparator.comparing(it -> it.index));
+        this.values.sort(Comparator.comparing(Pair::getKey));
         this.titles = null;
     }
 
@@ -67,7 +69,7 @@ public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
 
         for (int i = 0; i < data.length; i++) {
             try {
-                data[i] = this.values.get(i).get(value);
+                data[i] = String.valueOf(this.values.get(i).getValue().get(value));
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new IllegalStateException(e);
             }
@@ -81,41 +83,7 @@ public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
         return Optional.ofNullable(this.titles);
     }
 
-    private abstract class ValueGetter {
-        private final int index;
-
-        public ValueGetter(int index) {
-            this.index = index;
-        }
-
-        abstract String get(T instance) throws IllegalAccessException, InvocationTargetException;
-    }
-
-    private class VariableValueGetter extends ValueGetter {
-        private final Field field;
-
-        public VariableValueGetter(Field field, int index) {
-            super(index);
-            this.field = field;
-        }
-
-        @Override
-        String get(T instance) throws IllegalAccessException {
-            return String.valueOf(field.get(instance));
-        }
-    }
-
-    private class MethodValueGetter extends ValueGetter {
-        private final Method method;
-
-        public MethodValueGetter(Method method, int index) {
-            super(index);
-            this.method = method;
-        }
-
-        @Override
-        String get(T instance) throws IllegalAccessException, InvocationTargetException {
-            return String.valueOf(method.invoke(instance));
-        }
+    private interface GetterFunction<T> {
+        Object get(T instance) throws IllegalAccessException, InvocationTargetException;
     }
 }

@@ -1,4 +1,4 @@
-package de.jplag.reporting.csv;
+package de.jplag.csv;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

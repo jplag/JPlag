@@ -1,4 +1,4 @@
-package de.jplag.reporting.csv;
+package de.jplag.csv;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

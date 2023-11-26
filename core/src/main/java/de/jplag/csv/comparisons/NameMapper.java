@@ -1,4 +1,4 @@
-package de.jplag.reporting.csv.comparisons;
+package de.jplag.csv.comparisons;
 
 import java.util.Collections;
 import java.util.List;

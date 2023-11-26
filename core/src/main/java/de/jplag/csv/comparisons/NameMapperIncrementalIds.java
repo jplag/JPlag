@@ -1,28 +1,26 @@
-package de.jplag.reporting.csv.comparisons;
+package de.jplag.csv.comparisons;
 
-import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Maps the real names of submissions to random ids to anonymize the data.
  */
-public class NameMapperRandomIds implements NameMapper {
+public class NameMapperIncrementalIds implements NameMapper {
     private final Map<String, String> map;
-    private final Random random;
+    private int nextId;
 
     /**
      * New instance
      */
-    public NameMapperRandomIds() {
+    public NameMapperIncrementalIds() {
         this.map = new HashMap<>();
-        this.random = new SecureRandom();
+        this.nextId = 0;
     }
 
     private String newId() {
-        String id = String.valueOf(this.random.nextInt(0, Integer.MAX_VALUE));
+        String id = String.valueOf(this.nextId++);
 
         if (this.map.containsKey(id)) {
             return newId();

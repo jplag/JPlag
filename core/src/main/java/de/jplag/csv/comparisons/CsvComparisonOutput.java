@@ -1,4 +1,4 @@
-package de.jplag.reporting.csv.comparisons;
+package de.jplag.csv.comparisons;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import de.jplag.JPlagComparison;
+import de.jplag.csv.CsvDataMapper;
+import de.jplag.csv.HardcodedCsvDataMapper;
+import de.jplag.csv.ReflectiveCsvDataMapper;
 import de.jplag.options.SimilarityMetric;
-import de.jplag.reporting.csv.CsvDataMapper;
-import de.jplag.reporting.csv.CsvPrinter;
-import de.jplag.reporting.csv.HardcodedCsvDataMapper;
-import de.jplag.reporting.csv.ReflectiveCsvDataMapper;
+import de.jplag.csv.CsvPrinter;
 
 /**
  * Frontend for writing the result comparisons as a csv.
@@ -33,7 +33,7 @@ public class CsvComparisonOutput {
         directory.mkdirs();
 
         if (anonymize) {
-            mapper = new NameMapperRandomIds();
+            mapper = new NameMapperIncrementalIds();
         }
 
         CsvDataMapper<CsvComparisonData> dataMapper = new ReflectiveCsvDataMapper<>(CsvComparisonData.class, titles);
