@@ -7,10 +7,10 @@ import java.util.Map;
 
 import de.jplag.JPlagComparison;
 import de.jplag.csv.CsvDataMapper;
+import de.jplag.csv.CsvPrinter;
 import de.jplag.csv.HardcodedCsvDataMapper;
 import de.jplag.csv.ReflectiveCsvDataMapper;
 import de.jplag.options.SimilarityMetric;
-import de.jplag.csv.CsvPrinter;
 
 /**
  * Frontend for writing the result comparisons as a csv.

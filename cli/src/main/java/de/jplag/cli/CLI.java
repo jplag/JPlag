@@ -23,12 +23,12 @@ import de.jplag.Language;
 import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
+import de.jplag.csv.comparisons.CsvComparisonOutput;
 import de.jplag.exceptions.ExitException;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
-import de.jplag.csv.comparisons.CsvComparisonOutput;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 import picocli.CommandLine;

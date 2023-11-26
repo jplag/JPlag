@@ -1,7 +1,5 @@
 package de.jplag.csv;
 
-import org.apache.commons.math3.util.Pair;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.commons.math3.util.Pair;
 
 /**
  * Mapped data automatically based on the exposed fields and methods.

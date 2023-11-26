@@ -10,5 +10,5 @@ import de.jplag.csv.CsvValue;
  * @param maxSimilarity The maximum similarity
  */
 public record CsvComparisonData(@CsvValue(1) String firstSubmissionName, @CsvValue(2) String secondSubmissionName,
-                                @CsvValue(3) double averageSimilarity, @CsvValue(4) double maxSimilarity) {
+        @CsvValue(3) double averageSimilarity, @CsvValue(4) double maxSimilarity) {
 }
