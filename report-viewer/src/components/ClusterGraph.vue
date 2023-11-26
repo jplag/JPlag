@@ -32,7 +32,9 @@ Chart.register(GraphChart)
 
 const keys = computed(() => Array.from(props.cluster.members.keys()))
 const labels = computed(() =>
-  Array.from(keys.value).map((m) => store().submissionDisplayName(m) ?? m)
+  Array.from(keys.value).map((m) =>
+    store().state.anonymous.has(m) ? 'Hidden' : store().submissionDisplayName(m) ?? m
+  )
 )
 const edges = computed(() => {
   const edges: { source: number; target: number }[] = []
@@ -87,7 +89,7 @@ const graphData = computed(() => {
 
 const yPadding = 40
 const xPadding = computed(() => {
-  const avgCharacterLength = 8
+  const avgCharacterLength = 9
 
   const widths = labels.value.map((label) => label.length * avgCharacterLength)
   const maxWidth = Math.max(...widths)
