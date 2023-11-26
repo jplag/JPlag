@@ -4,8 +4,15 @@ import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
-public class PyhtonLanguageTest extends LanguageModuleTest {
-    public PyhtonLanguageTest() {
+/**
+ * Tests for the python language module. The following tests are included:
+ * <p>
+ * 1. test all tokens occur in test_utils.py.
+ * 2. test exact sequences for log.py and unicode.py.
+ * 3. test that all relevant lines are covered in all test files.
+ */
+public class PythonLanguageTest extends LanguageModuleTest {
+    public PythonLanguageTest() {
         super(new PythonLanguage(), Python3TokenType.class);
     }
 
