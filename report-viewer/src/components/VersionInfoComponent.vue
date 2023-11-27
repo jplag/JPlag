@@ -29,19 +29,8 @@
 
 <script setup lang="ts">
 import { Version } from '@/model/Version'
-import versionJson from '@/version.json'
 import { ref } from 'vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
-
-const reportViewerVersion: Version =
-  versionJson['report_viewer_version'] !== undefined
-    ? OverviewFactory.extractVersion(versionJson['report_viewer_version'])
-    : new Version(-1, -1, -1)
-
-const minimalReportVersion: Version =
-  versionJson['minimal_report_version'] !== undefined
-    ? OverviewFactory.extractVersion(versionJson['minimal_report_version'])
-    : new Version(-1, -1, -1)
+import { minimalReportVersion, reportViewerVersion } from '@/model/Version'
 
 const newestVersion = ref(new Version(-1, -1, -1))
 

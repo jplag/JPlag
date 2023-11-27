@@ -1,3 +1,5 @@
+import versionJson from '@/version.json'
+
 /**
  * Version of the report viewer.
  */
@@ -33,4 +35,14 @@ export class Version {
   public isInvalid(): boolean {
     return this.major < 0 || this.minor < 0 || this.patch < 0
   }
+
+  public static fromJsonField(versionField: Record<string, number> | undefined): Version {
+    if (versionField) {
+      return new Version(versionField.major, versionField.minor, versionField.patch)
+    }
+    return new Version(-1, -1, -1)
+  }
 }
+
+export const reportViewerVersion = Version.fromJsonField(versionJson['report_viewer_version'])
+export const minimalReportVersion = Version.fromJsonField(versionJson['minimal_report_version'])
