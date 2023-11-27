@@ -18,10 +18,7 @@
       <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2">
         <h2>Comparisons of Cluster Members:</h2>
         <ComparisonsTable :topComparisons="comparisons" class="min-h-0 flex-1">
-          <template
-            #footer
-            v-if="comparisons.length < cluster.members.length ** 2 / 2 - cluster.members.length"
-          >
+          <template #footer v-if="comparisons.length < maxAmountOfComparisonsInCluster">
             <p class="w-full pt-1 text-center font-bold">
               Not all comparisons inside the cluster are shown. To see more, re-run JPlag with a
               higher maximum number argument.
@@ -103,5 +100,10 @@ const clusterListElement: Ref<ClusterListElement> = computed(() => {
     members: clusterMemberList,
     strength: props.cluster.strength
   }
+})
+
+/** The amount of comparisons if every single one was included */
+const maxAmountOfComparisonsInCluster = computed(() => {
+  return props.cluster.members.length ** 2 / 2 - props.cluster.members.length
 })
 </script>
