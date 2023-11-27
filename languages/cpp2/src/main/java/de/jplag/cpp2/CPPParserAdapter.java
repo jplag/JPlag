@@ -17,6 +17,10 @@ import de.jplag.cpp2.grammar.CPP14Parser;
 public class CPPParserAdapter extends AbstractAntlrParserAdapter<CPP14Parser> {
     private static final CPPListener listener = new CPPListener();
 
+    public CPPParserAdapter() {
+        super(true);
+    }
+
     @Override
     protected Lexer createLexer(CharStream input) {
         return new CPP14Lexer(input);
