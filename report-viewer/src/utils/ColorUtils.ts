@@ -59,6 +59,7 @@ function generateColorsForInterval(
   return colors
 }
 
+/** This is the list of colors that are used as the background colot of matches in the comparison view */
 const matchColors: { red: number; green: number; blue: number }[] = [
   { red: 255, green: 61, blue: 0 },
   { red: 0, green: 133, blue: 255 },

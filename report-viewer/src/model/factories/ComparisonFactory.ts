@@ -35,7 +35,7 @@ export class ComparisonFactory extends BaseFactory {
 
     const matches = json.matches as Array<Record<string, unknown>>
 
-    const unColredMatches = matches.map((match) => this.getMatch(match))
+    const unColoredMatches = matches.map((match) => this.getMatch(match))
 
     return new Comparison(
       firstSubmissionId,
@@ -43,7 +43,7 @@ export class ComparisonFactory extends BaseFactory {
       this.extractSimilarities(json),
       filesOfFirstSubmission,
       filesOfSecondSubmission,
-      this.colorMatches(unColredMatches)
+      this.colorMatches(unColoredMatches)
     )
   }
 
@@ -140,7 +140,8 @@ export class ComparisonFactory extends BaseFactory {
         currentColorIndex = (currentColorIndex + 1) % maxColorCount
 
         if (currentColorIndex == startCounter) {
-          throw 'No solution'
+          // This case should never happen, this is just a safety measure
+          throw currentColorIndex
         }
       }
       matches[i].colorIndex = currentColorIndex
