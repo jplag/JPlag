@@ -45,7 +45,7 @@ ComparisonFactory.getComparison(props.firstId, props.secondId)
     comparison.value = comp
   })
   .catch((error) => {
-    redirectOnError(error, 'Could not load coparison:\n', 'OverviewView', 'Back to overview')
+    redirectOnError(error, 'Could not load comparison:\n', 'OverviewView', 'Back to overview')
   })
 
 OverviewFactory.getOverview()
