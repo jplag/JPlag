@@ -44,6 +44,10 @@ const router = createRouter({
       path: '/info',
       name: 'InfoView',
       component: InformationViewWrapper
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/error/Could not find the requested page/FileUploadView/Back to file upload'
     }
   ]
 })
