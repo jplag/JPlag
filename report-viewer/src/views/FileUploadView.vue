@@ -37,7 +37,7 @@
         </Button>
       </div>
       <LoadingCircle v-else class="space-y-5 pt-5" />
-      <div v-if="errors.length == 0" class="text-error">
+      <div v-if="errors.length > 0" class="text-error">
         <p>{{ getErrorText() }}</p>
         <p>For more details check the console.</p>
       </div>
@@ -218,6 +218,7 @@ function continueWithLocal() {
 }
 
 function registerError(error: Error, source: fileMethod) {
+  loadingFiles.value = false
   errors.value.push({ error, source })
   console.error(error)
 }
