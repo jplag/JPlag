@@ -69,8 +69,8 @@ const graphData = computed(() => {
       {
         pointRadius: 10,
         pointHoverRadius: 10,
-        pointBackgroundColor: graphColors.contentFill,
-        pointHoverBackgroundColor: graphColors.contentFill,
+        pointBackgroundColor: graphColors.pointFill,
+        pointHoverBackgroundColor: graphColors.pointFill,
         pointBorderColor: graphColors.ticksAndFont.value,
         pointHoverBorderColor: graphColors.ticksAndFont.value,
         data: Array.from(keys.value).map((_, index) => ({
