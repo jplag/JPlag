@@ -42,9 +42,10 @@ public class JavacAdapter {
 
             // We need to disable annotation processing, see
             // https://stackoverflow.com/questions/72737445/system-java-compiler-behaves-different-depending-on-dependencies-defined-in-mave
-            final CompilationTask task = javac.getTask(null, fileManager, listener, List.of("-proc:none"), null, javaFiles);
+            final CompilationTask task = javac.getTask(null, fileManager, listener,
+                    List.of("-proc:none", "--enable-preview", "--release=" + JavaLanguage.JAVA_VERSION), null, javaFiles);
             final Trees trees = Trees.instance(task);
-            final SourcePositions positions = trees.getSourcePositions();
+            final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
                 File file = new File(ast.getSourceFile().toUri());
                 final LineMap map = ast.getLineMap();
@@ -75,8 +76,7 @@ public class JavacAdapter {
     private List<ParsingException> processErrors(Logger logger, DiagnosticCollector<Object> listener) {
         return listener.getDiagnostics().stream().filter(it -> it.getKind() == javax.tools.Diagnostic.Kind.ERROR).map(diagnosticItem -> {
             File file = null;
-            if (diagnosticItem.getSource() instanceof JavaFileObject) {
-                JavaFileObject fileObject = (JavaFileObject) diagnosticItem.getSource();
+            if (diagnosticItem.getSource() instanceof JavaFileObject fileObject) {
                 file = new File(fileObject.toUri());
             }
             logger.error("{}", diagnosticItem);
