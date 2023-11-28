@@ -62,6 +62,41 @@ function getSimilarityFromKeyIndex(firstIndex: number, secondIndex: number) {
   return match.similarity
 }
 
+const minimumSimilarity = computed(() => {
+  let minimumSimilarity = Infinity
+  props.cluster.members.forEach((member) => {
+    member.forEach((match) => {
+      if (match.similarity < minimumSimilarity) {
+        minimumSimilarity = match.similarity
+      }
+    })
+  })
+  return minimumSimilarity
+})
+
+const maximumSimilarity = computed(() => {
+  let maximumSimilarity = 0
+  props.cluster.members.forEach((member) => {
+    member.forEach((match) => {
+      if (match.similarity > maximumSimilarity) {
+        maximumSimilarity = match.similarity
+      }
+    })
+  })
+  return maximumSimilarity
+})
+
+function getClampedSimilarityFromKeyIndex(firstIndex: number, secondIndex: number) {
+  const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
+  return (
+    (similarity - minimumSimilarity.value) / (maximumSimilarity.value - minimumSimilarity.value)
+  )
+}
+
+function getEdgeAlphaFromKeyIndex(firstIndex: number, secondIndex: number) {
+  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex) * 0.7 + 0.3
+}
+
 const graphData = computed(() => {
   return {
     labels: labels.value,
@@ -79,9 +114,9 @@ const graphData = computed(() => {
         })),
         edges: edges.value,
         edgeLineBorderColor: (ctx: any) =>
-          graphColors.contentFillAlpha(getSimilarityFromKeyIndex(ctx.raw.source, ctx.raw.target)),
+          graphColors.contentFillAlpha(getEdgeAlphaFromKeyIndex(ctx.raw.source, ctx.raw.target)),
         edgeLineBorderWidth: (ctx: any) =>
-          5 * getSimilarityFromKeyIndex(ctx.raw.source, ctx.raw.target) + 1
+          5 * getClampedSimilarityFromKeyIndex(ctx.raw.source, ctx.raw.target) + 1
       }
     ]
   }
