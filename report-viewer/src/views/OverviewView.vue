@@ -219,14 +219,14 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
   if (store().uiState.comparisonTableClusterSorting) {
     comparisons.sort(
       (a, b) =>
-        getClusterFor(b.firstSubmissionId, b.secondSubmissionId).averageSimilarity -
-        getClusterFor(a.firstSubmissionId, a.secondSubmissionId).averageSimilarity
+        getClusterIndexFor(b.firstSubmissionId, b.secondSubmissionId) -
+        getClusterIndexFor(a.firstSubmissionId, a.secondSubmissionId)
     )
 
     comparisons.sort(
       (a, b) =>
-        getClusterIndexFor(b.firstSubmissionId, b.secondSubmissionId) -
-        getClusterIndexFor(a.firstSubmissionId, a.secondSubmissionId)
+        getClusterFor(b.firstSubmissionId, b.secondSubmissionId).averageSimilarity -
+        getClusterFor(a.firstSubmissionId, a.secondSubmissionId).averageSimilarity
     )
   }
 
