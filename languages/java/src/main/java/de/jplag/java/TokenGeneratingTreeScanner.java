@@ -60,6 +60,8 @@ import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
 final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
+    private final static String ANONYMOUS_VARIABLE_NAME = "";
+
     private final File file;
     private final Parser parser;
     private final LineMap map;
@@ -460,7 +462,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitVariable(VariableTree node, Void unused) {
-        if (!node.getName().contentEquals("")) {
+        if (!node.getName().contentEquals(ANONYMOUS_VARIABLE_NAME)) {
             long start = positions.getStartPosition(ast, node);
             String name = node.getName().toString();
             boolean inLocalScope = variableRegistry.inLocalScope();
