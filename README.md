@@ -21,7 +21,7 @@ In the following, a list of all supported languages with their supported languag
 
 | Language                                                   |                                                                                Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/2.-Supported-Languages) |  parser   |
 |------------------------------------------------------------|---------------------------------------------------------------------------------------:|-------------------|:-------------------------------------------------------------------:|:---------:|
-| [Java](https://www.java.com)                               |                                                                                     17 | java              |                               mature                                |   JavaC   |
+| [Java](https://www.java.com)                               |                                                                                     21 | java              |                               mature                                |   JavaC   |
 | [C/C++](https://isocpp.org)                                |                                                                                     11 | cpp               |                               legacy                                |  JavaCC   |
 | [C/C++](https://isocpp.org)                                |                                                                                     14 | cpp2              |                                beta                                 |  ANTLR 4  |
 | [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)      |                                                                                      6 | csharp            |                                beta                                 |  ANTLR 4  |
@@ -40,7 +40,7 @@ In the following, a list of all supported languages with their supported languag
 | Text (naive)                                               |                                                                                      - | text              |                               legacy                                |  CoreNLP  |
 
 ## Download and Installation
-You need Java SE 17 to run or build JPlag.
+You need Java SE 21 to run or build JPlag.
 
 ### Downloading a release
 * Download a [released version](https://github.com/jplag/jplag/releases).
