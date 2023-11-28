@@ -143,8 +143,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref, watch, type PropType } from 'vue'
-import { router } from '@/router'
+import { computed, ref, watch, type PropType, onErrorCaptured } from 'vue'
+import { redirectOnError, router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import { store } from '@/stores/store'
@@ -253,17 +253,8 @@ const submissionPathValue = computed(() =>
     : props.overview.submissionFolderPath[0]
 )
 
-onErrorCaptured((e) => {
-  console.log(e)
-  router.push({
-    name: 'ErrorView',
-    state: {
-      message: 'Overview.json could not be found!',
-      to: '/',
-      routerInfo: 'back to FileUpload page'
-    }
-  })
-  store().clearStore()
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying overview:\n')
   return false
 })
 </script>

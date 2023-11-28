@@ -53,12 +53,18 @@ import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
 import { store } from '@/stores/store'
 import { Overview } from '@/model/Overview'
-import { type PropType } from 'vue'
+import { onErrorCaptured, type PropType } from 'vue'
+import { redirectOnError } from '@/router'
 
 defineProps({
   overview: {
     type: Object as PropType<Overview>,
     required: true
   }
+})
+
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying information:\n', 'OverviewView', 'Back to overview')
+  return false
 })
 </script>
