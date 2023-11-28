@@ -5,29 +5,32 @@
       You are using a development version of the JPlag Report Viewer.
     </div>
 
-    <div v-else-if="newestVersion.compareTo(reportViewerVersion) > 0" class="text-left text-error">
-      You are using an outdated version of the JPlag Report Viewer ({{
-        reportViewerVersion.toString()
-      }}).<br />
-      Version {{ newestVersion.toString() }} is available on
-      <a href="https://github.com/jplag/JPlag/releases/latest" class="text-link underline">GitHub</a
-      >.
-    </div>
+    <div v-else>
+      <div v-if="newestVersion.compareTo(reportViewerVersion) > 0" class="text-left text-error">
+        You are using an outdated version of the JPlag Report Viewer ({{
+          reportViewerVersion.toString()
+        }}).<br />
+        Version {{ newestVersion.toString() }} is available on
+        <a href="https://github.com/jplag/JPlag/releases/latest" class="text-link underline"
+          >GitHub</a
+        >.
+      </div>
 
-    <div v-else>JPlag v{{ reportViewerVersion.toString() }}</div>
+      <div v-else>JPlag v{{ reportViewerVersion.toString() }}</div>
+
+      <div v-if="!minimalReportVersion.isInvalid()">
+        The minimal version of JPlag that is supported by the viewer is v{{
+          minimalReportVersion.toString()
+        }}.
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Version } from '@/model/Version'
-import versionJson from '@/version.json'
 import { ref } from 'vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
-
-const reportViewerVersion: Version =
-  versionJson['report_viewer_version'] !== undefined
-    ? OverviewFactory.extractVersion(versionJson['report_viewer_version'])
-    : new Version(-1, -1, -1)
+import { minimalReportVersion, reportViewerVersion } from '@/model/Version'
 
 const newestVersion = ref(new Version(-1, -1, -1))
 
