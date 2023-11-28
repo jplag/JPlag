@@ -74,8 +74,8 @@ const graphData = computed(() => {
         pointBorderColor: graphColors.ticksAndFont.value,
         pointHoverBorderColor: graphColors.ticksAndFont.value,
         data: Array.from(keys.value).map((_, index) => ({
-          x: Math.cos((2 * Math.PI * index) / keys.value.length) + 1,
-          y: Math.sin((2 * Math.PI * index) / keys.value.length) + 1
+          x: calculateXPosition(index),
+          y: calculateYPosition(index)
         })),
         edges: edges.value,
         edgeLineBorderColor: (ctx: any) =>
@@ -119,7 +119,7 @@ const graphOptions = computed(() => {
         formatter: (value: any, ctx: any) => {
           return labels.value[ctx.dataIndex]
         },
-        align: (ctx: any) => (-360 * ctx.dataIndex) / keys.value.length,
+        align: (ctx: any) => degreeAroundCircle(ctx.dataIndex),
         offset: 8,
         color: graphColors.ticksAndFont.value
       },
@@ -157,6 +157,26 @@ function drawGraph() {
     options: graphOptions.value
   })
   loaded.value = true
+}
+
+/**
+ * Calculates the x position of a key in the graph [0, 2]
+ * @param index The index of the key in the keys array
+ */
+function calculateXPosition(index: number) {
+  return Math.cos((2 * Math.PI * index) / keys.value.length) + 1
+}
+
+/**
+ * Calculates the y position of a key in the graph [0, 2]
+ * @param index The index of the key in the keys array
+ */
+function calculateYPosition(index: number) {
+  return Math.sin((2 * Math.PI * index) / keys.value.length) + 1
+}
+
+function degreeAroundCircle(index: number) {
+  return (-360 * index) / keys.value.length
 }
 
 onMounted(() => {
