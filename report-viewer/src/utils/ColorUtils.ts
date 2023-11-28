@@ -74,6 +74,10 @@ const graphColors = {
   contentFill: `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, 0.5)`,
   contentBorder: 'rgb(127, 15, 24)',
   pointFill: `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, 1)`,
+  additionalLine: computed(() => {
+    const alpha = 0.2
+    return store().uiState.useDarkMode ? `rgba(200, 200, 200, ${alpha})` : `rgba(0, 0, 0, ${alpha})`
+  }),
   contentFillAlpha(alpha: number) {
     return `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, ${alpha})`
   }

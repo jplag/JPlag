@@ -1,6 +1,14 @@
 <template>
-  <div>
+  <div class="space-y-8">
     <canvas ref="graphCanvas"></canvas>
+    <div
+      v-if="!allComparisonsPresent"
+      class="flex text-xs font-bold text-gray-500 dark:text-gray-400"
+    >
+      Not all comparisons of this cluster are present. These comparisons are indicated by the dashed
+      lines. <br />
+      To include more comparisons, increase the number of increased comparisons in the CLI.
+    </div>
     <div v-show="!loaded">Could not display graph</div>
   </div>
 </template>
@@ -38,10 +46,10 @@ const labels = computed(() =>
 )
 const edges = computed(() => {
   const edges: { source: number; target: number }[] = []
-  props.cluster.members.forEach((member, key) => {
-    member.forEach((match) => {
-      const firstIndex = keys.value.indexOf(key)
-      const secondIndex = keys.value.indexOf(match.matchedWith)
+  props.cluster.members.forEach((member1, key1) => {
+    props.cluster.members.forEach((member2, key2) => {
+      const firstIndex = keys.value.indexOf(key1)
+      const secondIndex = keys.value.indexOf(key2)
       if (firstIndex < secondIndex) {
         edges.push({ source: firstIndex, target: secondIndex })
       }
@@ -61,6 +69,16 @@ function getSimilarityFromKeyIndex(firstIndex: number, secondIndex: number) {
   }
   return match.similarity
 }
+
+const allComparisonsPresent = computed(() => {
+  let allComparisonsPresent = true
+  props.cluster.members.forEach((member) => {
+    if (member.length != props.cluster.members.size - 1) {
+      allComparisonsPresent = false
+    }
+  })
+  return allComparisonsPresent
+})
 
 const minimumSimilarity = computed(() => {
   let minimumSimilarity = Infinity
@@ -88,13 +106,44 @@ const maximumSimilarity = computed(() => {
 
 function getClampedSimilarityFromKeyIndex(firstIndex: number, secondIndex: number) {
   const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
+  if (similarity == 0) {
+    return 0
+  }
   return (
     (similarity - minimumSimilarity.value) / (maximumSimilarity.value - minimumSimilarity.value)
   )
 }
 
 function getEdgeAlphaFromKeyIndex(firstIndex: number, secondIndex: number) {
+  const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
+  if (similarity == 0) {
+    return 1
+  }
   return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex) * 0.7 + 0.3
+}
+
+function getEdgeWidth(firstIndex: number, secondIndex: number) {
+  const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
+  if (similarity == 0) {
+    return 0.5
+  }
+  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex) * 5 + 1
+}
+
+function getEdgeDashStyle(firstIndex: number, secondIndex: number) {
+  const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
+  if (similarity == 0) {
+    return [5, 8]
+  }
+  return []
+}
+
+function getEdgeColor(firstIndex: number, secondIndex: number) {
+  const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
+  if (similarity == 0) {
+    return graphColors.additionalLine.value
+  }
+  return graphColors.contentFillAlpha(getEdgeAlphaFromKeyIndex(firstIndex, secondIndex))
 }
 
 const graphData = computed(() => {
@@ -113,10 +162,9 @@ const graphData = computed(() => {
           y: calculateYPosition(index)
         })),
         edges: edges.value,
-        edgeLineBorderColor: (ctx: any) =>
-          graphColors.contentFillAlpha(getEdgeAlphaFromKeyIndex(ctx.raw.source, ctx.raw.target)),
-        edgeLineBorderWidth: (ctx: any) =>
-          5 * getClampedSimilarityFromKeyIndex(ctx.raw.source, ctx.raw.target) + 1
+        edgeLineBorderColor: (ctx: any) => getEdgeColor(ctx.raw.source, ctx.raw.target),
+        edgeLineBorderWidth: (ctx: any) => getEdgeWidth(ctx.raw.source, ctx.raw.target),
+        edgeLineBorderDash: (ctx: any) => getEdgeDashStyle(ctx.raw.source, ctx.raw.target)
       }
     ]
   }
