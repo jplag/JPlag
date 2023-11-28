@@ -1,15 +1,15 @@
 <template>
-  <div class="flex h-screen items-center text-center">
+  <div class="flex h-screen text-center">
     <div class="w-screen">
       <div>
         <img
-          class="mx-auto mt-8 h-auto w-60"
+          class="mx-auto mt-32 h-auto w-60"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
           v-if="store().uiState.useDarkMode"
         />
         <img
-          class="mx-auto mt-8 h-auto w-60"
+          class="mx-auto mt-32 h-auto w-60"
           src="@/assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
           v-else
@@ -20,9 +20,15 @@
           <h3 class="text-2xl font-bold">There was an Error!</h3>
           <p class="text-xl">{{ message }}</p>
         </div>
-        <Interactable class="mx-auto w-fit !border-accent-dark !bg-accent !bg-opacity-50">
-          <RouterLink :to="to">{{ routerInfo }}</RouterLink>
-        </Interactable>
+        <RouterLink
+          :to="{
+            name: to
+          }"
+        >
+          <Interactable class="mx-auto mt-2 w-fit !border-accent-dark !bg-accent !bg-opacity-50">
+            {{ routerInfo }}
+          </Interactable>
+        </RouterLink>
       </Container>
     </div>
   </div>
@@ -32,8 +38,30 @@
 import Container from '@/components/ContainerComponent.vue'
 import Interactable from '@/components/InteractableComponent.vue'
 import { store } from '@/stores/store'
+import { onErrorCaptured } from 'vue'
 
-const message = history.state.message as string
-const to = history.state.to as string
-const routerInfo = history.state.routerInfo as string
+defineProps({
+  message: {
+    type: String,
+    required: true
+  },
+  to: {
+    type: String,
+    required: false,
+    default: 'FileUploadView'
+  },
+  routerInfo: {
+    type: String,
+    required: false,
+    default: 'Back to file upload page'
+  }
+})
+
+onErrorCaptured((error) => {
+  console.error(error)
+  alert(
+    'An error occured that could not be handeled. Please check the console for more information.'
+  )
+  return false
+})
 </script>

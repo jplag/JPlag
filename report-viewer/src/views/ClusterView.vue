@@ -40,7 +40,8 @@ import type { ClusterListElement, ClusterListElementMember } from '@/model/Clust
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { MetricType } from '@/model/MetricType'
 import type { Overview } from '@/model/Overview'
-import { computed, type PropType, type Ref } from 'vue'
+import { redirectOnError } from '@/router'
+import { computed, onErrorCaptured, type PropType, type Ref } from 'vue'
 
 const props = defineProps({
   overview: {
@@ -105,5 +106,10 @@ const clusterListElement: Ref<ClusterListElement> = computed(() => {
 /** The amount of comparisons if every single one was included */
 const maxAmountOfComparisonsInCluster = computed(() => {
   return props.cluster.members.length ** 2 / 2 - props.cluster.members.length
+})
+
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')
+  return false
 })
 </script>

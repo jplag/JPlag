@@ -14,6 +14,7 @@ import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import ClusterView from '@/views/ClusterView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import type { Overview } from '@/model/Overview'
+import { redirectOnError } from '@/router'
 
 const props = defineProps({
   clusterIndex: {
@@ -26,7 +27,11 @@ const clusterIndex = computed(() => parseInt(props.clusterIndex))
 
 const overview: Ref<Overview | null> = ref(null)
 
-OverviewFactory.getOverview().then((o) => {
-  overview.value = o
-})
+OverviewFactory.getOverview()
+  .then((o) => {
+    overview.value = o
+  })
+  .catch((error) => {
+    redirectOnError(error, 'Could not load cluster:\n', 'OverviewView', 'Back to overview')
+  })
 </script>

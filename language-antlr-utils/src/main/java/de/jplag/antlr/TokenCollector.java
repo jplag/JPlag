@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.Token;
 import de.jplag.TokenType;
@@ -16,7 +18,8 @@ import de.jplag.semantics.VariableRegistry;
  * Collects the tokens during parsing.
  */
 public class TokenCollector {
-    private static final Logger logger = Logger.getLogger(TokenCollector.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(TokenCollector.class);
+
     private final List<Token> collected;
     private final boolean extractsSemantics;
     private File file;
@@ -39,9 +42,6 @@ public class TokenCollector {
     <T> void addToken(TokenType jplagType, Function<T, CodeSemantics> semanticsSupplier, T entity,
             Function<T, org.antlr.v4.runtime.Token> extractToken, VariableRegistry variableRegistry) {
         if (jplagType == null) {
-            if (semanticsSupplier != null) {
-                logger.warning("Received semantics, but no token type, so no token was generated and the semantics discarded");
-            }
             return;
         }
         org.antlr.v4.runtime.Token antlrToken = extractToken.apply(entity);
@@ -58,7 +58,7 @@ public class TokenCollector {
             variableRegistry.updateSemantics(semantics);
         } else {
             if (semanticsSupplier != null) {
-                logger.warning(() -> String.format("Received semantics for token %s despite not expecting any", jplagType.getDescription()));
+                logger.warn("Received semantics for token {} despite not expecting any", jplagType.getDescription());
             }
             token = new Token(jplagType, this.file, line, column, length);
         }

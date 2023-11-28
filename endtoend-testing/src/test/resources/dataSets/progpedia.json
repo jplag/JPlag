@@ -1,0 +1,10 @@
+{
+  "name": "progpedia",
+  "language": "java",
+  "format": "PROGPEDIA",
+  "storageFormat": "ZIP",
+  "goldStandardFile": "plagiate.csv",
+  "options": {
+    "baseCodeDirectory": "base"
+  }
+}
