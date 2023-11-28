@@ -21,7 +21,7 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <jdkVersion>17</jdkVersion>
+                            <jdkVersion>21</jdkVersion>
                             <javadocFriendlyComments>true</javadocFriendlyComments>
                             <packageName>de.jplag.cpp</packageName>
                             <sourceDirectory>src/main/javacc</sourceDirectory>

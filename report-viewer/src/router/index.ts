@@ -29,9 +29,10 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/error',
+      path: '/error/:message/:to?/:routerInfo?',
       name: 'ErrorView',
-      component: ErrorView
+      component: ErrorView,
+      props: true
     },
     {
       path: '/cluster/:clusterIndex',
@@ -43,8 +44,38 @@ const router = createRouter({
       path: '/info',
       name: 'InfoView',
       component: InformationViewWrapper
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/error/Could not find the requested page/FileUploadView/Back to file upload'
     }
   ]
 })
 
-export { router }
+function redirectOnError(
+  error: Error,
+  prefix: string = '',
+  redirectRoute: string = 'FileUploadView',
+  redirectRouteTitle: string = 'Back to file upload'
+) {
+  console.error(error)
+  router.push({
+    name: 'ErrorView',
+    params: {
+      message: prefix + error.message,
+      to: redirectRoute,
+      routerInfo: redirectRouteTitle
+    }
+  })
+}
+
+let hasHadRouterError = false
+router.onError((error) => {
+  if (hasHadRouterError) {
+    return alert('An error occurred while routing. Please reload the page.')
+  }
+  hasHadRouterError = true
+  redirectOnError(error, 'An error occurred while routing. Please reload the page.\n')
+})
+
+export { router, redirectOnError }

@@ -119,4 +119,12 @@ export class Overview {
   get totalComparisons() {
     return this._totalComparisons
   }
+
+  get shownComparisons() {
+    return this.topComparisons.length
+  }
+
+  get missingComparisons() {
+    return this.totalComparisons - this.shownComparisons
+  }
 }

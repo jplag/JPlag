@@ -60,6 +60,8 @@ import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
 final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
+    private final static String ANONYMOUS_VARIABLE_NAME = "";
+
     private final File file;
     private final Parser parser;
     private final LineMap map;
@@ -282,7 +284,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitCase(CaseTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_CASE, start, 4, CodeSemantics.createControl());
-        return super.visitCase(node, null);
+
+        this.scan(node.getLabels(), null);
+        if (node.getGuard() != null) {
+            addToken(JavaTokenType.J_IF_BEGIN, positions.getStartPosition(ast, node.getGuard()), 0, CodeSemantics.createControl());
+        }
+        this.scan(node.getGuard(), null);
+        if (node.getCaseKind() == CaseTree.CaseKind.RULE) {
+            this.scan(node.getBody(), null);
+        } else {
+            this.scan(node.getStatements(), null);
+        }
+
+        if (node.getGuard() != null) {
+            addToken(JavaTokenType.J_IF_END, positions.getEndPosition(ast, node), 0, CodeSemantics.createControl());
+        }
+
+        return null;
     }
 
     @Override
@@ -444,22 +462,24 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitVariable(VariableTree node, Void unused) {
-        long start = positions.getStartPosition(ast, node);
-        String name = node.getName().toString();
-        boolean inLocalScope = variableRegistry.inLocalScope();
-        // this presents a problem when classes are declared in local scopes, which can happen in ad-hoc implementations
-        CodeSemantics semantics;
-        if (inLocalScope) {
-            boolean mutable = isMutable(node.getType());
-            variableRegistry.registerVariable(name, VariableScope.LOCAL, mutable);
-            semantics = new CodeSemantics();
-        } else {
-            semantics = CodeSemantics.createKeep();
+        if (!node.getName().contentEquals(ANONYMOUS_VARIABLE_NAME)) {
+            long start = positions.getStartPosition(ast, node);
+            String name = node.getName().toString();
+            boolean inLocalScope = variableRegistry.inLocalScope();
+            // this presents a problem when classes are declared in local scopes, which can happen in ad-hoc implementations
+            CodeSemantics semantics;
+            if (inLocalScope) {
+                boolean mutable = isMutable(node.getType());
+                variableRegistry.registerVariable(name, VariableScope.LOCAL, mutable);
+                semantics = new CodeSemantics();
+            } else {
+                semantics = CodeSemantics.createKeep();
+            }
+            addToken(JavaTokenType.J_VARDEF, start, node.toString().length(), semantics);
+            // manually add variable to semantics since identifier isn't visited
+            variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
+            variableRegistry.registerVariableAccess(name, !inLocalScope);
         }
-        addToken(JavaTokenType.J_VARDEF, start, node.toString().length(), semantics);
-        // manually add variable to semantics since identifier isn't visited
-        variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
-        variableRegistry.registerVariableAccess(name, !inLocalScope);
         return super.visitVariable(node, null);
     }
 

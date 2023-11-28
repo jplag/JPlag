@@ -51,8 +51,9 @@ import type { ClusterListElement, ClusterListElementMember } from '@/model/Clust
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { MetricType } from '@/model/MetricType'
 import type { Overview } from '@/model/Overview'
-import { computed, ref, type PropType, type Ref } from 'vue'
+import { computed, ref, onErrorCaptured, type PropType, type Ref } from 'vue'
 import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
+import { redirectOnError } from '@/router'
 
 const props = defineProps({
   overview: {
@@ -124,5 +125,10 @@ const clusterListElement: Ref<ClusterListElement> = computed(() => {
     members: clusterMemberList,
     strength: props.cluster.strength
   }
+})
+
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')
+  return false
 })
 </script>

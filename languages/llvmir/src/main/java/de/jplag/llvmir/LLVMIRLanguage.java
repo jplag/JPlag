@@ -13,7 +13,7 @@ public class LLVMIRLanguage extends AbstractAntlrLanguage {
 
     private static final String NAME = "LLVMIR Parser";
     private static final String IDENTIFIER = "llvmir";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 40;
+    private static final int DEFAULT_MIN_TOKEN_MATCH = 70;
     private static final String[] FILE_EXTENSIONS = {".ll"};
 
     public LLVMIRLanguage() {
