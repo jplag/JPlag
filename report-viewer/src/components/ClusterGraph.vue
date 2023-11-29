@@ -1,14 +1,20 @@
 <template>
-  <div class="space-y-8">
-    <canvas ref="graphCanvas"></canvas>
-    <div
-      v-if="!allComparisonsPresent"
-      class="flex text-xs font-bold text-gray-500 dark:text-gray-400"
-    >
-      Not all comparisons of this cluster are present. These comparisons are indicated by the dashed
-      lines. <br />
-      To include more comparisons, increase the number of increased comparisons in the CLI.
+  <div>
+    <div>
+      <canvas ref="graphCanvas"></canvas>
+      <div
+        v-if="!allComparisonsPresent"
+        class="mt-8 text-xs font-bold text-gray-500 dark:text-gray-400"
+      >
+        <p>Hover over an edge to highlight it in the table.</p>
+        <p class="mt-2">
+          Not all comparisons of this cluster are present. These comparisons are indicated by the
+          dashed lines. <br />
+          To include more comparisons, increase the number of increased comparisons in the CLI.
+        </p>
+      </div>
     </div>
+
     <div v-show="!loaded">Could not display graph</div>
   </div>
 </template>
@@ -28,6 +34,10 @@ const props = defineProps({
     required: true
   }
 })
+
+const emit = defineEmits<{
+  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void
+}>()
 
 const graphCanvas: Ref<HTMLCanvasElement | null> = ref(null)
 const loaded = ref(false)
@@ -57,6 +67,60 @@ const edges = computed(() => {
   })
   return edges
 })
+
+type HoverableEdge = {
+  sourceId: string
+  targetId: string
+  x1: number
+  y1: number
+  x2: number
+  y2: number
+}
+
+const minHoverDistance = 0.02
+
+const hoverableEdges = computed(() => {
+  const edges: HoverableEdge[] = []
+  props.cluster.members.forEach((member, key) => {
+    member.forEach((match) => {
+      const firstIndex = keys.value.indexOf(key)
+      const secondIndex = keys.value.indexOf(match.matchedWith)
+      if (firstIndex == -1 || secondIndex == -1) {
+        console.log(`Could not find index for ${key} or ${match.matchedWith}`)
+      }
+      if (firstIndex < secondIndex) {
+        edges.push({
+          sourceId: key,
+          targetId: match.matchedWith,
+          x1: calculateXPosition(firstIndex),
+          y1: calculateYPosition(firstIndex),
+          x2: calculateXPosition(secondIndex),
+          y2: calculateYPosition(secondIndex)
+        })
+      }
+    })
+  })
+  return edges
+})
+
+function distanceToEdge(edge: HoverableEdge, p: { x: number; y: number }) {
+  const numerator = (edge.x2 - edge.x1) * (edge.y1 - p.y) - (edge.x1 - p.x) * (edge.y2 - edge.y1)
+  const denominator = Math.sqrt(Math.pow(edge.x2 - edge.x1, 2) + Math.pow(edge.y2 - edge.y1, 2))
+  return Math.abs(numerator / denominator)
+}
+
+function getClosestEdge(p: { x: number; y: number }) {
+  let closestEdge = { sourceId: '', targetId: '', x1: -1, y1: -1, x2: -1, y2: -1 }
+  let closestDistance = Infinity
+  hoverableEdges.value.forEach((edge) => {
+    const distance = distanceToEdge(edge, p)
+    if (distance < closestDistance) {
+      closestDistance = distance
+      closestEdge = edge
+    }
+  })
+  return { ...closestEdge, d: closestDistance }
+}
 
 function getSimilarityFromKeyIndex(firstIndex: number, secondIndex: number) {
   const firstSubmission = props.cluster.members.get(keys.value[firstIndex])
@@ -188,6 +252,29 @@ const graphOptions = computed(() => {
         bottom: yPadding,
         left: xPadding.value,
         right: xPadding.value
+      }
+    },
+    onHover: (event: any, elements: any) => {
+      if (!event) {
+        emit('lineHovered', null)
+        return
+      }
+      if (elements.length > 0) {
+        // Hovering over a node
+        emit('lineHovered', null)
+      } else if (chart.value != null) {
+        const closestEdge = getClosestEdge({
+          x: (chart.value as Chart).scales.x.getValueForPixel(event.x) ?? 0,
+          y: (chart.value as Chart).scales.y.getValueForPixel(event.y) ?? 0
+        })
+        if (closestEdge.d > minHoverDistance) {
+          emit('lineHovered', null)
+          return
+        }
+        emit('lineHovered', {
+          firstId: closestEdge.sourceId,
+          secondId: closestEdge.targetId
+        })
       }
     },
     animation: false as false,

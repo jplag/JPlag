@@ -30,11 +30,16 @@
           v-if="selectedClusterVisualization == 'Graph'"
           :cluster="clusterListElement"
           class="flex-grow"
+          @line-hovered="(value) => (highlightedElement = value)"
         />
       </Container>
       <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2">
         <h2>Comparisons of Cluster Members:</h2>
-        <ComparisonsTable :topComparisons="comparisons" class="min-h-0 flex-1" />
+        <ComparisonsTable
+          :topComparisons="comparisons"
+          class="min-h-0 flex-1"
+          :highlighted-row-ids="highlightedElement ?? undefined"
+        />
       </Container>
     </div>
   </div>
@@ -126,6 +131,8 @@ const clusterListElement: Ref<ClusterListElement> = computed(() => {
     strength: props.cluster.strength
   }
 })
+
+const highlightedElement: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')
