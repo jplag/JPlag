@@ -8,7 +8,10 @@
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
-      <Button @click="collapseAll()">Collapse All</Button>
+      <Button @click="collapseAll()" class="space-x-2"
+        ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
+        <p>Collapse All</p></Button
+      >
     </div>
 
     <ScrollableComponent class="flex-grow">
@@ -40,6 +43,11 @@ import { VueDraggableNext } from 'vue-draggable-next'
 import { ref, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import type { HighlightLanguage } from '@/model/Language'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+library.add(faCompressAlt)
 
 const props = defineProps({
   /**
