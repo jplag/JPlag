@@ -5,6 +5,7 @@ import { HundredValueDistribution } from '@/model/HundredValueDistribution'
 import { TenValueDistribution } from '@/model/TenValueDistribution'
 import validNew from './ValidNewOverview.json'
 import validOld from './ValidOldOverview.json'
+import outdated from './OutdatedOverview.json'
 
 const store = {
   state: {
@@ -173,5 +174,12 @@ describe('Test JSON to Overview', () => {
       _clusters: [],
       _totalComparisons: 6
     })
+  })
+})
+
+describe('Outdated JSON to Overview', () => {
+  it('Outdated version', async () => {
+    store.state.files['overview.json'] = JSON.stringify(outdated)
+    expect(() => OverviewFactory.getOverview()).rejects.toThrowError()
   })
 })

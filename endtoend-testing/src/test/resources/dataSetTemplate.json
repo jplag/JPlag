@@ -1,0 +1,13 @@
+{
+  "name": "The name of the data set.",
+  "language": "The language identifier for the data set.",
+  "format": "The format of the data set. Must be defined in de.jplag.endtoend.model.DataSetFormat.",
+  "sourceDirectory": "The root directory of the data set. The contents need to match the format.",
+  "resultFile": "(optional) The path to the result file. If not set defaults to: results/$name.json.",
+  "goldStandardFile": "(optional) Set to activate the gold standard test.",
+  "options": {
+    "_comment": "(optional) Provide to specify options for jplag",
+    "minimumTokenMatches": ["<integers> (optional) add additional minimum token matches to check for the data set. 3 and 9 are always checked."],
+    "baseCodeDirectory": "(optional) here you can provide the name of the base code directory. The exact path will be resolved using the format"
+  }
+}

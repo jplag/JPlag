@@ -35,4 +35,9 @@ public class CPPLanguage extends AbstractAntlrLanguage {
     public int minimumTokenMatch() {
         return 12;
     }
+
+    @Override
+    public boolean tokensHaveSemantics() {
+        return true;
+    }
 }

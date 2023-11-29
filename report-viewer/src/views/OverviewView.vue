@@ -7,16 +7,50 @@
       <Container class="flex-grow">
         <h2>JPlag Report</h2>
         <div class="flex flex-row items-center space-x-5">
-          <TextInformation label="Directory">{{ submissionPathValue }}</TextInformation>
+          <TextInformation label="Submission Directory">{{ submissionPathValue }}</TextInformation>
           <TextInformation label="Total Submissions">{{
             store().getSubmissionIds.length
           }}</TextInformation>
-          <TextInformation label="Total Comparisons">{{
-            overview.totalComparisons
-          }}</TextInformation>
-          <TextInformation label="Min Match Length">{{
-            overview.matchSensitivity
-          }}</TextInformation>
+
+          <TextInformation label="Shown/Total Comparisons">
+            <template #default
+              >{{ overview.shownComparisons }} / {{ overview.totalComparisons }}</template
+            >
+            <template #tooltip>
+              <div class="whitespace-pre text-sm">
+                <TextInformation label="Shown Comparisons">{{
+                  overview.shownComparisons
+                }}</TextInformation>
+                <TextInformation label="Total Comparisons">{{
+                  overview.totalComparisons
+                }}</TextInformation>
+                <div v-if="overview.missingComparisons > 0">
+                  <TextInformation label="Missing Comparisons">{{
+                    overview.missingComparisons
+                  }}</TextInformation>
+                  <p>
+                    To include more comparisons in the report modify the number of shown comparisons
+                    in the CLI.
+                  </p>
+                </div>
+              </div>
+            </template>
+          </TextInformation>
+
+          <TextInformation label="Min Token Match">
+            <template #default>
+              {{ overview.matchSensitivity }}
+            </template>
+            <template #tooltip>
+              <div class="whitespace-pre text-sm">
+                <p>
+                  Tunes the comparison sensitivity by adjusting the minimum token required to be
+                  counted as a matching section.
+                </p>
+                <p>It can be adjusted in the CLI.</p>
+              </div>
+            </template>
+          </TextInformation>
 
           <ToolTipComponent direction="left">
             <template #default>
@@ -109,8 +143,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onErrorCaptured, ref, watch, type PropType } from 'vue'
-import { router } from '@/router'
+import { computed, ref, watch, type PropType, onErrorCaptured } from 'vue'
+import { redirectOnError, router } from '@/router'
 import DistributionDiagram from '@/components/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import { store } from '@/stores/store'
@@ -219,17 +253,8 @@ const submissionPathValue = computed(() =>
     : props.overview.submissionFolderPath[0]
 )
 
-onErrorCaptured((e) => {
-  console.log(e)
-  router.push({
-    name: 'ErrorView',
-    state: {
-      message: 'Overview.json could not be found!',
-      to: '/',
-      routerInfo: 'back to FileUpload page'
-    }
-  })
-  store().clearStore()
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying overview:\n')
   return false
 })
 </script>

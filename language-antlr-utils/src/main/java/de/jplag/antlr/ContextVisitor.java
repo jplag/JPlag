@@ -17,7 +17,7 @@ import de.jplag.semantics.VariableRegistry;
  */
 public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor<T> {
     private final List<Consumer<HandlerData<T>>> exitHandlers;
-    private TokenType exitToken;
+    private TokenType exitTokenType;
     private Function<T, CodeSemantics> exitSemantics;
 
     ContextVisitor(Predicate<T> condition) {
@@ -51,7 +51,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @return Self
      */
     public ContextVisitor<T> mapExit(TokenType tokenType) {
-        exitToken = tokenType;
+        exitTokenType = tokenType;
         return this;
     }
 
@@ -89,8 +89,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
 
     @Override
     public ContextVisitor<T> withSemantics(Supplier<CodeSemantics> semantics) {
-        super.withSemantics(semantics);
-        this.exitSemantics = ignore -> semantics.get();
+        withSemantics(ignore -> semantics.get());
         return this;
     }
 
@@ -129,7 +128,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * Exit a given entity, injecting the needed dependencies.
      */
     void exit(HandlerData<T> data) {
-        addToken(data, exitToken, exitSemantics, ParserRuleContext::getStop);
+        addToken(data, exitTokenType, exitSemantics, ParserRuleContext::getStop);
         exitHandlers.forEach(handler -> handler.accept(data));
     }
 

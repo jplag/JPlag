@@ -37,13 +37,17 @@
         </Button>
       </div>
       <LoadingCircle v-else class="space-y-5 pt-5" />
+      <div v-if="errors.length > 0" class="text-error">
+        <p>{{ getErrorText() }}</p>
+        <p>For more details check the console.</p>
+      </div>
     </div>
     <VersionInfoComponent class="absolute bottom-3 left-3" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, type Ref } from 'vue'
+import { onErrorCaptured, ref, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import { store } from '@/stores/store'
@@ -72,6 +76,8 @@ fetch('/results.zip')
   .catch(() => {})
 
 const loadingFiles = ref(false)
+type fileMethod = 'query' | 'local' | 'upload' | 'unknown'
+const errors: Ref<{ error: Error; source: fileMethod }[]> = ref([])
 
 // Loads file passed in query param, if any.
 const queryParams = useRoute().query
@@ -80,12 +86,8 @@ if (typeof queryParams.file === 'string' && queryParams.file !== '') {
   try {
     queryFileURL = new URL(queryParams.file)
   } catch (e) {
-    if (e instanceof TypeError) {
-      console.warn(`Invalid URL '${queryParams.file}'`)
-      queryFileURL = null
-    } else {
-      throw e
-    }
+    registerError(e as Error, 'query')
+    queryFileURL = null
   }
 }
 if (queryFileURL !== null) {
@@ -165,8 +167,7 @@ async function uploadFileOnDrag(e: DragEvent) {
       throw new Error('Not exactly one file')
     }
   } catch (e) {
-    alert((e as Error).message)
-    throw e
+    registerError(e as Error, 'upload')
   }
 }
 
@@ -200,8 +201,7 @@ async function loadQueryFile(url: URL) {
     }
     await handleFile(await response.blob())
   } catch (e) {
-    console.warn(e)
-    alert(e)
+    registerError(e as Error, 'query')
   }
 }
 
@@ -216,71 +216,31 @@ function continueWithLocal() {
   })
   navigateToOverview()
 }
+
+function registerError(error: Error, source: fileMethod) {
+  loadingFiles.value = false
+  errors.value.push({ error, source })
+  console.error(error)
+}
+
+function getErrorText() {
+  function getSourceText(source: fileMethod) {
+    if (source == 'unknown') {
+      return 'Error:'
+    }
+    const longNames = {
+      query: 'querying files',
+      local: 'getting local files',
+      upload: 'loading files'
+    }
+    return 'Error during ' + longNames[source]
+  }
+
+  return errors.value.map((e) => `${getSourceText(e.source)}: ${e.error.message}`).join('\n')
+}
+
+onErrorCaptured((error) => {
+  registerError(error, 'unknown')
+  return false
+})
 </script>
-
-<style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background: var(--primary-color-light);
-}
-
-.drop-container {
-  background: lightgrey;
-  border: dashed dodgerblue;
-  align-items: center;
-  justify-content: space-around;
-  border-radius: 10px;
-  padding: 2%;
-}
-
-.drop-container > p {
-  color: dodgerblue;
-  text-align: center;
-}
-
-.local-files-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.local-files-text {
-  font-weight: bold;
-  color: var(--on-background-color);
-}
-
-.local-files-button {
-  font-size: large;
-  background: var(--primary-color);
-  color: var(--on-primary-color);
-  font-weight: bold;
-  padding: 5%;
-  border: none;
-  border-radius: 10px;
-  box-shadow: var(--shadow-color) 2px 3px 3px;
-}
-
-.local-files-button:hover {
-  cursor: pointer;
-  background: var(--primary-color-dark);
-}
-
-input {
-  display: none;
-}
-
-label {
-  font-weight: bold;
-  font-size: larger;
-  background: #ececec;
-  border-radius: 10px;
-  box-shadow: #777777 2px 3px 3px;
-  padding: 2%;
-  margin-top: 1%;
-}
-</style>
