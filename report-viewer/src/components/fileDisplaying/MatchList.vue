@@ -30,7 +30,7 @@
   </div>
 
   <div class="hidden print:block">
-    <table>
+    <table aria-describedby="List of matches for printing">
       <tr>
         <th class="px-2 text-left">File of {{ id1 }}</th>
         <th class="px-2 text-left">Starting Line - End Line</th>
