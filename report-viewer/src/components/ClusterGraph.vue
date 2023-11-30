@@ -327,7 +327,18 @@ function drawGraph() {
   chart.value = new Chart(ctx, {
     type: 'graph',
     data: graphData.value,
-    options: graphOptions.value
+    options: graphOptions.value,
+    plugins: [
+      {
+        id: 'onMouseOut',
+        beforeEvent(chart, args) {
+          const event = args.event
+          if (event.type === 'mouseout') {
+            emit('lineHovered', null)
+          }
+        }
+      }
+    ]
   })
   loaded.value = true
 }
