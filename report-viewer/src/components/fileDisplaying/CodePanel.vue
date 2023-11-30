@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { ref, nextTick, type PropType, computed, type Ref } from 'vue'
-import Interactable from './InteractableComponent.vue'
+import Interactable from '../InteractableComponent.vue'
 import type { Match } from '@/model/Match'
 import type { SubmissionFile } from '@/stores/state'
 import { highlight } from '@/utils/CodeHighlighter'
@@ -112,8 +112,16 @@ function scrollTo(lineNumber: number) {
   })
 }
 
+/**
+ * Collapses the container.
+ */
+function collapse() {
+  collapsed.value = true
+}
+
 defineExpose({
-  scrollTo
+  scrollTo,
+  collapse
 })
 
 /**
