@@ -7,9 +7,11 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 /**
  * Tests for the python language module. The following tests are included:
  * <p>
- * 1. test all tokens occur in test_utils.py.
- * 2. test exact sequences for log.py and unicode.py.
- * 3. test that all relevant lines are covered in all test files.
+ * <ul>
+ * <li>test all tokens occur in test_utils.py.</li>
+ * <li>test exact sequences for log.py and unicode.py.</li>
+ * <li>test that all relevant lines are covered in all test files.</li>
+ * </ul>
  */
 public class PythonLanguageTest extends LanguageModuleTest {
     public PythonLanguageTest() {
