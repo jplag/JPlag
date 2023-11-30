@@ -41,7 +41,7 @@ public class TestSourceIgnoredLinesCollector {
     public void ignoreMultipleLines(String startMarker, String endMarker) {
         boolean inMultilineIgnore = false;
 
-        for (int i = 0; i < this.relevantLines.size(); i++) {
+        for (int i = 0; i < this.originalSource.length; i++) {
             String line = this.originalSource[i];
             if (!inMultilineIgnore) {
                 if (line.trim().startsWith(startMarker)) {
