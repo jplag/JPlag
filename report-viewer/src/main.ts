@@ -16,4 +16,10 @@ app.use(createPinia())
 app.use(router)
 app.use(VueVirtualScroller)
 
+app.config.errorHandler = (err, vm, info) => {
+  console.error(err)
+  console.error(info)
+  alert('An unhandeled error occured. Please check the console for more details.')
+}
+
 app.mount('#app')

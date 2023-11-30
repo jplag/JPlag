@@ -28,7 +28,10 @@
             <td
               class="print-excact w-full"
               :style="{
-                background: line.match !== null ? line.match.color : 'hsla(0, 0%, 0%, 0)'
+                background:
+                  line.match !== null
+                    ? getMatchColor(0.3, line.match.colorIndex)
+                    : 'hsla(0, 0%, 0%, 0)'
               }"
             >
               <pre
@@ -51,11 +54,12 @@
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { ref, nextTick, type PropType, computed, type Ref } from 'vue'
-import Interactable from './InteractableComponent.vue'
+import Interactable from '../InteractableComponent.vue'
 import type { Match } from '@/model/Match'
 import type { SubmissionFile } from '@/stores/state'
 import { highlight } from '@/utils/CodeHighlighter'
 import type { HighlightLanguage } from '@/model/Language'
+import { getMatchColor } from '@/utils/ColorUtils'
 
 const props = defineProps({
   /**
@@ -112,8 +116,16 @@ function scrollTo(lineNumber: number) {
   })
 }
 
+/**
+ * Collapses the container.
+ */
+function collapse() {
+  collapsed.value = true
+}
+
 defineExpose({
-  scrollTo
+  scrollTo,
+  collapse
 })
 
 /**

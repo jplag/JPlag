@@ -6,7 +6,7 @@ export enum MetricType {
   MAXIMUM = 'MAX'
 }
 
-type MetricToolTipData = {
+export type MetricToolTipData = {
   longName: string
   shortName: string
   tooltip: string

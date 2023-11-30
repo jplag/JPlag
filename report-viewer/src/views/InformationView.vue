@@ -6,17 +6,17 @@
       <h2>Run Options:</h2>
 
       <ScrollableComponent class="flex-grow px-4 pt-2">
-        <TextInformation label="Submission Folder" class="pb-1">{{
+        <TextInformation label="Submission Directory" class="pb-1">{{
           overview.submissionFolderPath.join(', ')
         }}</TextInformation>
-        <TextInformation label="Basecode Folder" class="pb-1">{{
+        <TextInformation label="Basecode Directory" class="pb-1">{{
           overview.baseCodeFolderPath
         }}</TextInformation>
         <TextInformation label="Language" class="pb-1">{{ overview.language }}</TextInformation>
         <TextInformation label="File Extentions" class="pb-1">{{
           overview.fileExtensions.join(', ')
         }}</TextInformation>
-        <TextInformation label="Minimum Token Match:" class="pb-1">{{
+        <TextInformation label="Min Token Match" class="pb-1">{{
           overview.matchSensitivity
         }}</TextInformation>
       </ScrollableComponent>
@@ -32,17 +32,17 @@
         <TextInformation label="Execution Duration" class="pb-1"
           >{{ overview.durationOfExecution }} ms</TextInformation
         >
-        <TextInformation label="Submission Count" class="pb-1">{{
+        <TextInformation label="Total Submissions" class="pb-1">{{
           store().getSubmissionIds.length
         }}</TextInformation>
         <TextInformation label="Total Comparisons" class="pb-1">{{
-          totalComparisons
+          overview.totalComparisons
         }}</TextInformation>
         <TextInformation label="Shown Comparisons" class="pb-1">{{
-          shownComparisons
+          overview.shownComparisons
         }}</TextInformation>
         <TextInformation label="Missing Comparisons" class="pb-1">{{
-          missingComparisons
+          overview.missingComparisons
         }}</TextInformation>
       </ScrollableComponent>
     </Container>
@@ -55,18 +55,20 @@ import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
 import { store } from '@/stores/store'
 import { Overview } from '@/model/Overview'
-import { computed, type PropType } from 'vue'
+import { onErrorCaptured, type PropType } from 'vue'
+import { redirectOnError } from '@/router'
 
-const props = defineProps({
+defineProps({
   overview: {
     type: Object as PropType<Overview>,
     required: true
   }
 })
 
-const totalComparisons = computed(() => props.overview.totalComparisons)
-const shownComparisons = computed(() => props.overview.topComparisons.length)
-const missingComparisons = computed(() => totalComparisons.value - shownComparisons.value)
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying information:\n', 'OverviewView', 'Back to overview')
+  return false
+})
 </script>
 
 <style scoped lang="postcss">
