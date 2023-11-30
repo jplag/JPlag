@@ -16,6 +16,7 @@ import { getHighlightLanguage, type HighlightLanguage } from '@/model/Language'
 import type { Comparison } from '@/model/Comparison'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
+import { redirectOnError } from '@/router'
 
 const props = defineProps({
   comparisonFileName: {
@@ -29,11 +30,19 @@ const language: Ref<HighlightLanguage | null> = ref(null)
 
 // This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the pafe anyway.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
-ComparisonFactory.getComparison(props.comparisonFileName).then((comp) => {
-  comparison.value = comp
-})
+ComparisonFactory.getComparison(props.comparisonFileName)
+  .then((comp) => {
+    comparison.value = comp
+  })
+  .catch((error) => {
+    redirectOnError(error, 'Could not load comparison:\n', 'OverviewView', 'Back to overview')
+  })
 
-OverviewFactory.getOverview().then((overview) => {
-  language.value = getHighlightLanguage(overview.language)
-})
+OverviewFactory.getOverview()
+  .then((overview) => {
+    language.value = getHighlightLanguage(overview.language)
+  })
+  .catch((error) => {
+    redirectOnError(error, 'Could not load coparison:\n')
+  })
 </script>

@@ -7,10 +7,15 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Registry of variables to assist in generating token semantics.
  */
 public class VariableRegistry {
+    private static final Logger logger = LoggerFactory.getLogger(VariableRegistry.class);
+
     private CodeSemantics semantics;
     private Map<String, Variable> fileVariables;
     private Deque<Map<String, Variable>> classVariables; // map class name to map of variable names to variables
@@ -113,6 +118,7 @@ public class VariableRegistry {
      * @param mutable Whether the variable is mutable.
      */
     public void registerVariable(String variableName, VariableScope scope, boolean mutable) {
+        logger.debug("Register variable {}", variableName);
         Variable variable = new Variable(variableName, scope, mutable);
         switch (scope) {
             case FILE -> fileVariables.put(variableName, variable);
@@ -133,6 +139,7 @@ public class VariableRegistry {
      * "this" keyword in Java, for example.
      */
     public void registerVariableAccess(String variableName, boolean isClassVariable) {
+        logger.debug("{} {}", variableName, nextVariableAccessType);
         if (ignoreNextVariableAccess) {
             ignoreNextVariableAccess = false;
             return;
@@ -152,9 +159,12 @@ public class VariableRegistry {
      */
     public void addAllNonLocalVariablesAsReads() {
         Set<Variable> nonLocalVariables = new HashSet<>(fileVariables.values());
-        nonLocalVariables.addAll(classVariables.getFirst().values());
-        for (Variable variable : nonLocalVariables)
-            semantics.addRead(variable);
+        if (!classVariables.isEmpty()) {
+            nonLocalVariables.addAll(classVariables.getFirst().values());
+            for (Variable variable : nonLocalVariables) {
+                semantics.addRead(variable);
+            }
+        }
     }
 
     private Variable getVariable(String variableName) {

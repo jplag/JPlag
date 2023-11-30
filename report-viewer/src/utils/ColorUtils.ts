@@ -59,6 +59,28 @@ function generateColorsForInterval(
   return colors
 }
 
+/** This is the list of colors that are used as the background colot of matches in the comparison view */
+const matchColors: { red: number; green: number; blue: number }[] = [
+  { red: 255, green: 122, blue: 0 },
+  { red: 0, green: 133, blue: 255 },
+  { red: 255, green: 0, blue: 122 },
+  { red: 255, green: 245, blue: 0 },
+  { red: 0, green: 255, blue: 255 },
+  { red: 112, green: 0, blue: 255 },
+  { red: 0, green: 255, blue: 133 }
+]
+
+function getMatchColorCount() {
+  return matchColors.length
+}
+
+function getMatchColor(alpha: number, index?: number) {
+  if (index == undefined) {
+    return 'rgba(0,0,0,0)'
+  }
+  return `rgba(${matchColors[index].red}, ${matchColors[index].green}, ${matchColors[index].blue}, ${alpha})`
+}
+
 const graphColors = {
   ticksAndFont: computed(() => {
     return store().uiState.useDarkMode ? '#ffffff' : '#000000'
@@ -71,4 +93,4 @@ const graphColors = {
   pointFill: 'rgba(190, 22, 34, 1)'
 }
 
-export { generateColors, graphColors }
+export { generateColors, graphColors, getMatchColorCount, getMatchColor }

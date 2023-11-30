@@ -39,9 +39,9 @@
         :files="filesOfFirst"
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="
-          isAnonymous(comparison.secondSubmissionId)
+          isAnonymous(comparison.firstSubmissionId)
             ? 'Submission 1'
-            : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
+            : (store().submissionDisplayName(comparison.firstSubmissionId) as string)
         "
         :highlight-language="language"
         @line-selected="showMatchInSecond"
@@ -67,18 +67,18 @@
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
 
-import { onMounted, ref, watch, type Ref, computed, onErrorCaptured, type PropType } from 'vue'
+import { onMounted, ref, watch, type Ref, computed, type PropType, onErrorCaptured } from 'vue'
 import TextInformation from '@/components/TextInformation.vue'
-import MatchList from '@/components/MatchList.vue'
-import FilesContainer from '@/components/FilesContainer.vue'
+import MatchList from '@/components/fileDisplaying/MatchList.vue'
+import FilesContainer from '@/components/fileDisplaying/FilesContainer.vue'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import { HighlightLanguage } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
-import { router } from '@/router'
 import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
+import { redirectOnError } from '@/router'
 
 const props = defineProps({
   comparison: {
@@ -160,17 +160,8 @@ watch(useDarkMode, (newValue) => {
   styleHolderDiv.appendChild(styleElement)
 })
 
-onErrorCaptured((e) => {
-  console.log(e)
-  router.push({
-    name: 'ErrorView',
-    state: {
-      message: 'Overview.json could not be found!',
-      to: '/',
-      routerInfo: 'back to FileUpload page'
-    }
-  })
-  store().clearStore()
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying comparison:\n', 'OverviewView', 'Back to overview')
   return false
 })
 </script>

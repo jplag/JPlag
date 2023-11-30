@@ -1,7 +1,7 @@
 import { Comparison } from '../Comparison'
 import type { Match } from '../Match'
 import { store } from '@/stores/store'
-import { generateColors } from '@/utils/ColorUtils'
+import { getMatchColorCount } from '@/utils/ColorUtils'
 import slash from 'slash'
 import { BaseFactory } from './BaseFactory'
 import { MetricType } from '../MetricType'
@@ -30,11 +30,7 @@ export class ComparisonFactory extends BaseFactory {
 
     const matches = json.matches as Array<Record<string, unknown>>
 
-    const matchSaturation = 0.8
-    const matchLightness = 0.5
-    const matchAlpha = 0.3
-    const colors = generateColors(matches.length, matchSaturation, matchLightness, matchAlpha)
-    const coloredMatches = matches.map((match, index) => this.mapMatch(match, colors[index]))
+    const unColoredMatches = matches.map((match) => this.getMatch(match))
 
     return new Comparison(
       firstSubmissionId,
@@ -42,7 +38,7 @@ export class ComparisonFactory extends BaseFactory {
       this.extractSimilarities(json),
       filesOfFirstSubmission,
       filesOfSecondSubmission,
-      coloredMatches
+      this.colorMatches(unColoredMatches)
     )
   }
 
@@ -96,7 +92,7 @@ export class ComparisonFactory extends BaseFactory {
     }
   }
 
-  private static mapMatch(match: Record<string, unknown>, color: string): Match {
+  private static getMatch(match: Record<string, unknown>): Match {
     return {
       firstFile: slash(match.file1 as string),
       secondFile: slash(match.file2 as string),
@@ -104,8 +100,48 @@ export class ComparisonFactory extends BaseFactory {
       endInFirst: match.end1 as number,
       startInSecond: match.start2 as number,
       endInSecond: match.end2 as number,
-      tokens: match.tokens as number,
-      color: color
+      tokens: match.tokens as number
     }
+  }
+
+  private static colorMatches(matches: Match[]): Match[] {
+    const maxColorCount = getMatchColorCount()
+    let currentColorIndex = 0
+    const matchesFirst = Array.from(matches)
+      .sort((a, b) => a.startInFirst - b.startInFirst)
+      .sort((a, b) => (a.firstFile > b.firstFile ? 1 : -1))
+    const matchesSecond = Array.from(matches)
+      .sort((a, b) => a.startInSecond - b.startInSecond)
+      .sort((a, b) => (a.secondFile > b.secondFile ? 1 : -1))
+    const sortedSize = Array.from(matches).sort((a, b) => b.tokens - a.tokens)
+
+    function isColorAvailable(matchList: Match[], index: number) {
+      return (
+        (index === 0 || matchList[index - 1].colorIndex !== currentColorIndex) &&
+        (index === matchList.length - 1 || matchList[index + 1].colorIndex !== currentColorIndex)
+      )
+    }
+
+    for (let i = 0; i < matches.length; i++) {
+      const firstIndex = matchesFirst.findIndex((match) => match === matches[i])
+      const secondIndex = matchesSecond.findIndex((match) => match === matches[i])
+      const sortedIndex = sortedSize.findIndex((match) => match === matches[i])
+      const startCounter = currentColorIndex
+      while (
+        !isColorAvailable(matchesFirst, firstIndex) ||
+        !isColorAvailable(matchesSecond, secondIndex) ||
+        !isColorAvailable(sortedSize, sortedIndex)
+      ) {
+        currentColorIndex = (currentColorIndex + 1) % maxColorCount
+
+        if (currentColorIndex == startCounter) {
+          // This case should never happen, this is just a safety measure
+          throw currentColorIndex
+        }
+      }
+      matches[i].colorIndex = currentColorIndex
+      currentColorIndex = (currentColorIndex + 1) % maxColorCount
+    }
+    return sortedSize
   }
 }

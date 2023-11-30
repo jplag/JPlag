@@ -14,7 +14,7 @@ on:
       - "**/pom.xml"
       - "**.java"
       - "**.g4"
-  
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -41,11 +41,11 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: 20
+        java-version: 21
         distribution: 'temurin'
-      
+
     - name: Check with Spotless
       run: mvn clean spotless:check
-      
-      
+
+
 

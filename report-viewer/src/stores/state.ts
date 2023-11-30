@@ -61,6 +61,7 @@ export interface SubmissionFile extends File {
 export interface UIState {
   useDarkMode: boolean
   comparisonTableSortingMetric: MetricType
+  comparisonTableClusterSorting: boolean
   distributionChartConfig: DistributionChartConfig
 }
 

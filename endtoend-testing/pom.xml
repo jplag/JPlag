@@ -18,7 +18,6 @@
             <groupId>de.jplag</groupId>
             <artifactId>cli</artifactId>
             <version>${revision}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
