@@ -8,7 +8,7 @@
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
-      <Button @click="collapseAll()" class="space-x-2"
+      <Button @click="collapseAll()" class="space-x-2 print:hidden"
         ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
         <p>Collapse All</p></Button
       >

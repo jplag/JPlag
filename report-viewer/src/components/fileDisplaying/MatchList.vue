@@ -28,6 +28,7 @@
       />
     </div>
   </div>
+
   <div class="hidden print:block">
     <table>
       <tr>
@@ -40,7 +41,7 @@
       <tr
         v-for="[index, match] in matches?.entries()"
         v-bind:key="index"
-        :style="{ background: match.color }"
+        :style="{ background: getMatchColor(0.3, match.colorIndex) }"
         class="print-excact"
       >
         <td class="px-2">{{ getFileName(match.firstFile) }}</td>

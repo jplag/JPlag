@@ -6,7 +6,9 @@
     <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
       <Container class="flex-grow">
         <h2>JPlag Report</h2>
-        <div class="flex flex-row items-center space-x-5 print:flex-col">
+        <div
+          class="flex flex-row items-center space-x-5 print:flex-col print:items-start print:space-x-0"
+        >
           <TextInformation label="Submission Directory">{{ submissionPathValue }}</TextInformation>
           <TextInformation label="Total Submissions">{{
             store().getSubmissionIds.length
@@ -68,15 +70,15 @@
       class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 p-5 pt-5 print:flex-col print:space-x-0 print:space-y-5"
     >
       <Container
-        class="flex max-h-0 min-h-full flex-1 flex-col print:max-h-none print:min-h-0 print:flex-none"
+        class="flex max-h-0 min-h-full flex-1 flex-col print:max-h-none print:min-h-fit print:flex-none"
       >
         <h2>Distribution of Comparisons:</h2>
         <DistributionDiagram
           :distribution="overview.distribution[store().uiState.distributionChartConfig.metric]"
           :x-scale="store().uiState.distributionChartConfig.xScale"
-          class="h-2/3 w-full"
+          class="h-2/3 w-full print:h-fit print:w-fit"
         />
-        <div class="flex flex-grow flex-col space-y-1">
+        <div class="flex flex-grow flex-col space-y-1 print:grow-0">
           <h3 class="text-lg underline">Options:</h3>
           <ScrollableComponent class="h-fit flex-grow">
             <MetricSelector

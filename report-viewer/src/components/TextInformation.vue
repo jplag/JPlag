@@ -2,7 +2,7 @@
   A container displaying simple text information
 -->
 <template>
-  <div class="flex-auto">
+  <div class="flex-auto print:flex-none">
     <ToolTipComponent direction="bottom">
       <template #default>
         {{ label }}:
