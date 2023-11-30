@@ -60,18 +60,16 @@
                 'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1
               }"
             >
-              <div
-                @click="
-                  router.push({
-                    name: 'ComparisonView',
-                    params: {
-                      comparisonFileName: store().getComparisonFileName(
-                        item.firstSubmissionId,
-                        item.secondSubmissionId
-                      )
-                    }
-                  })
-                "
+              <RouterLink
+                :to="{
+                  name: 'ComparisonView',
+                  params: {
+                    comparisonFileName: store().getComparisonFileName(
+                      item.firstSubmissionId,
+                      item.secondSubmissionId
+                    )
+                  }
+                }"
                 class="flex flex-grow cursor-pointer flex-row"
               >
                 <!-- Index in sorted list -->
@@ -94,7 +92,7 @@
                     {{ (item.similarities[MetricType.MAXIMUM] * 100).toFixed(2) }}%
                   </div>
                 </div>
-              </div>
+              </RouterLink>
 
               <!-- Clusters -->
               <div class="tableCellCluster flex !flex-col items-center" v-if="displayClusters">
@@ -154,7 +152,6 @@ import { generateColors } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
 import { MetricType, metricToolTips } from '@/model/MetricType'
 import NameElement from './NameElement.vue'
-import { router } from '@/router'
 
 library.add(faUserGroup)
 
