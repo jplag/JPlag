@@ -43,7 +43,15 @@ const props = defineProps({
 
 let hasNoMember = props.cluster.members.size == 0
 
-const selectedOptions = computed(() => Array.from(props.cluster.members.keys()))
+const selectedOptions = computed(() => {
+  let options: string[] = []
+  props.cluster.members.forEach((matchedWith, key) => {
+    if (matchedWith.length >= 3) {
+      options.push(key)
+    }
+  })
+  return options
+})
 
 const idOfShownSubmission = ref(selectedOptions.value.length > 0 ? selectedOptions.value[0] : '')
 
