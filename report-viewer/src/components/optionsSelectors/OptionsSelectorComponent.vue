@@ -36,11 +36,7 @@
 import { ref } from 'vue'
 import ToolTipComponent from '../ToolTipComponent.vue'
 import OptionComponent from './OptionComponent.vue'
-
-type ToolTipLabel = {
-  displayValue: string
-  tooltip: string
-}
+import { type ToolTipLabel } from '@/model/ui/ToolTip'
 
 const props = defineProps({
   title: {

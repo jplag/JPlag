@@ -46,15 +46,15 @@
         :min-item-size="48"
         ref="dynamicScroller"
       >
-        <template v-slot="{ item, index, active }">
+        <template #default="{ item, index, active }">
           <DynamicScrollerItem
             :item="item"
             :active="active"
             :size-dependencies="[
               item.firstSubmissionId,
               item.secondSubmissionId,
-              isAnonymous(item.firstSubmissionId),
-              isAnonymous(item.secondSubmissionId)
+              store().isAnonymous(item.firstSubmissionId),
+              store().isAnonymous(item.secondSubmissionId)
             ]"
             :data-index="index"
           >
@@ -66,12 +66,14 @@
                 '!bg-accent !bg-opacity-30 ': isHighlightedRow(item)
               }"
             >
-              <RouterLink
-                :to="{
-                  name: 'ComparisonView',
-                  params: { firstId: item.firstSubmissionId, secondId: item.secondSubmissionId }
-                }"
-                class="flex flex-grow flex-row"
+              <div
+                @click="
+                  router.push({
+                    name: 'ComparisonView',
+                    params: { firstId: item.firstSubmissionId, secondId: item.secondSubmissionId }
+                  })
+                "
+                class="flex flex-grow cursor-pointer flex-row"
               >
                 <!-- Index in sorted list -->
                 <div class="tableCellNumber">
@@ -80,26 +82,8 @@
 
                 <!-- Names -->
                 <div class="tableCellName">
-                  <div
-                    class="break-anywhere w-1/2 px-2"
-                    :class="{ 'blur-[1px]': isAnonymous(item.firstSubmissionId) }"
-                  >
-                    {{
-                      isAnonymous(item.firstSubmissionId)
-                        ? 'Hidden'
-                        : displayName(item.firstSubmissionId)
-                    }}
-                  </div>
-                  <div
-                    class="break-anywhere w-1/2 px-2"
-                    :class="{ 'blur-[1px]': isAnonymous(item.secondSubmissionId) }"
-                  >
-                    {{
-                      isAnonymous(item.secondSubmissionId)
-                        ? 'Hidden'
-                        : displayName(item.secondSubmissionId)
-                    }}
-                  </div>
+                  <NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
+                  <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" />
                 </div>
 
                 <!-- Similarities -->
@@ -111,7 +95,7 @@
                     {{ (item.similarities[MetricType.MAXIMUM] * 100).toFixed(2) }}%
                   </div>
                 </div>
-              </RouterLink>
+              </div>
 
               <!-- Clusters -->
               <div class="tableCellCluster flex !flex-col items-center" v-if="displayClusters">
@@ -149,6 +133,10 @@
             </div>
           </DynamicScrollerItem>
         </template>
+
+        <template #after>
+          <slot name="footer"></slot>
+        </template>
       </DynamicScroller>
     </div>
   </div>
@@ -166,6 +154,8 @@ import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateColors } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
 import { MetricType, metricToolTips } from '@/model/MetricType'
+import NameElement from './NameElement.vue'
+import { router } from '@/router'
 
 library.add(faUserGroup)
 
@@ -187,22 +177,6 @@ const props = defineProps({
 const comparisonList = toRef(props, 'topComparisons')
 
 const displayClusters = props.clusters != undefined
-
-/**
- * @param submissionId Id to get name for
- * @returns The display name of the submission with the given id.
- */
-function displayName(submissionId: string) {
-  return store().submissionDisplayName(submissionId)
-}
-
-/**
- * @param id SubmissionId to check
- * @returns Whether the name should be hidden.
- */
-function isAnonymous(id: string) {
-  return store().state.anonymous.has(id)
-}
 
 let clusterIconColors = [] as Array<string>
 if (props.clusters != undefined) {

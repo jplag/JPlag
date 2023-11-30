@@ -39,9 +39,9 @@
         :files="filesOfFirst"
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="
-          isAnonymous(comparison.secondSubmissionId)
+          isAnonymous(comparison.firstSubmissionId)
             ? 'Submission 1'
-            : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
+            : (store().submissionDisplayName(comparison.firstSubmissionId) as string)
         "
         :highlight-language="language"
         @line-selected="showMatchInSecond"
@@ -69,8 +69,8 @@ import type { Match } from '@/model/Match'
 
 import { onMounted, ref, watch, type Ref, computed, type PropType, onErrorCaptured } from 'vue'
 import TextInformation from '@/components/TextInformation.vue'
-import MatchList from '@/components/MatchList.vue'
-import FilesContainer from '@/components/FilesContainer.vue'
+import MatchList from '@/components/fileDisplaying/MatchList.vue'
+import FilesContainer from '@/components/fileDisplaying/FilesContainer.vue'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import { HighlightLanguage } from '@/model/Language'
