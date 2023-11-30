@@ -173,6 +173,9 @@ function getClampedSimilarityFromKeyIndex(firstIndex: number, secondIndex: numbe
   if (similarity == 0) {
     return 0
   }
+  if (minimumSimilarity.value == maximumSimilarity.value) {
+    return 1
+  }
   return (
     (similarity - minimumSimilarity.value) / (maximumSimilarity.value - minimumSimilarity.value)
   )
