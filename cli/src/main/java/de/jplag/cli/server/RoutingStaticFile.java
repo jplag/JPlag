@@ -7,10 +7,18 @@ import java.io.IOException;
 
 import com.sun.net.httpserver.HttpExchange;
 
+/**
+ * Responds with a given file
+ */
 public class RoutingStaticFile implements Routing {
     private final byte[] data;
     private final ContentType contentType;
 
+    /**
+     * @param file The file to use
+     * @param contentType The type of content in the file
+     * @throws IOException If the file cannot be read
+     */
     public RoutingStaticFile(File file, ContentType contentType) throws IOException {
         if (file != null) {
             try (FileInputStream inputStream = new FileInputStream(file)) {

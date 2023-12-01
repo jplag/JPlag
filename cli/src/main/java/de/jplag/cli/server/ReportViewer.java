@@ -15,6 +15,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+/**
+ * Manages the internal report viewer. Serves the static files for the report viewer and the results.zip.
+ */
 public class ReportViewer implements HttpHandler {
     private static final Logger logger = LoggerFactory.getLogger(ReportViewer.class);
     private static final int SUCCESS_RESPONSE = 200;
@@ -24,6 +27,10 @@ public class ReportViewer implements HttpHandler {
 
     private HttpServer server;
 
+    /**
+     * @param zipFile The zip file to use for the report viewer
+     * @throws IOException If the zip file cannot be read
+     */
     public ReportViewer(File zipFile) throws IOException {
         this.routingTree = new RoutingTree();
 
@@ -31,6 +38,11 @@ public class ReportViewer implements HttpHandler {
         this.routingTree.insertRouting("results.zip", new RoutingStaticFile(zipFile, ContentType.ZIP));
     }
 
+    /**
+     * Starts the server
+     * @return The port the server runs at
+     * @throws IOException If the server cannot be started
+     */
     public int start() throws IOException {
         if (server != null) {
             throw new IllegalStateException("Server already started");
@@ -43,10 +55,18 @@ public class ReportViewer implements HttpHandler {
         return server.getAddress().getPort();
     }
 
+    /**
+     * Stops the server
+     */
     public void stop() {
         server.stop(0);
     }
 
+    /**
+     * Do not call manually. Called by the running web server.
+     * @param exchange The http reqest
+     * @throws IOException If the IO handling goes wrong
+     */
     public void handle(HttpExchange exchange) throws IOException {
         RoutingPath path = new RoutingPath(exchange.getRequestURI().getPath());
         Pair<RoutingPath, Routing> resolved = this.routingTree.resolveRouting(path);
@@ -62,6 +82,7 @@ public class ReportViewer implements HttpHandler {
 
         ResponseData responseData = resolved.getRight().fetchData(resolved.getLeft(), exchange, this);
         if (responseData == null) {
+            logger.warn("No response data found for path: " + path.asPath());
             exchange.sendResponseHeaders(NOT_FOUND_RESPONSE, 0);
             exchange.close();
             return;
@@ -80,7 +101,7 @@ public class ReportViewer implements HttpHandler {
         inputStream.close();
     }
 
-    public RoutingTree getRoutingTree() {
+    RoutingTree getRoutingTree() {
         return routingTree;
     }
 }

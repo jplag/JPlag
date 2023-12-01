@@ -60,6 +60,7 @@ public class ReportObjectFactory {
      * Creates all necessary report viewer files, writes them to the disk as zip.
      * @param result The JPlagResult to be converted into a report.
      * @param path The Path to save the report to
+     * @return The file the report was saved to. Returns null if the saving failed.
      */
     public File createAndSaveReport(JPlagResult result, String path) {
         try {

@@ -132,12 +132,6 @@
         </dependency>
     </dependencies>
     <build>
-        <resources>
-            <resource>
-                <targetPath>report-viewer</targetPath>
-                <directory>../report-viewer/dist</directory>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -177,6 +171,12 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <build>
+                <resources>
+                    <resource>
+                        <targetPath>report-viewer</targetPath>
+                        <directory>../report-viewer/dist</directory>
+                    </resource>
+                </resources>
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>

@@ -1,5 +1,8 @@
 package de.jplag.cli.server;
 
+/**
+ * The type of data
+ */
 public enum ContentType {
     HTML("text/html; charset=utf-8"),
     JS("application/javascript; charset=utf-8"),
@@ -18,6 +21,11 @@ public enum ContentType {
         return value;
     }
 
+    /**
+     * Guesses the type from the given path using the suffix after the last '.'.
+     * @param path The path to guess from
+     * @return The guessed type
+     */
     public static ContentType fromPath(String path) {
         return switch (path.substring(path.lastIndexOf('.'))) {
             case ".html" -> ContentType.HTML;

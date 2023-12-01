@@ -1,5 +1,8 @@
 package de.jplag.cli.server;
 
+/**
+ * Available http methods
+ */
 public enum HttpMethod {
     GET("GET"),
     POST("POST");
