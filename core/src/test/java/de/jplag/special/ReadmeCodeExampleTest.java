@@ -1,6 +1,7 @@
 package de.jplag.special;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Set;
 
 import org.junit.jupiter.api.Disabled;
@@ -35,10 +36,12 @@ class ReadmeCodeExampleTest {
             JPlagResult result = JPlag.run(options);
 
             // Optional
-            ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-            reportObjectFactory.createAndSaveReport(result, "/path/to/output");
+            ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File("/path/to/output"));
+            reportObjectFactory.createAndSaveReport(result);
         } catch (ExitException e) {
             // error handling here
+        } catch (FileNotFoundException e) {
+            // handle IO exception here
         }
     }
 }

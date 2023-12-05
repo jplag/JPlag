@@ -10,18 +10,18 @@ import de.jplag.Submission;
 import de.jplag.TestBase;
 import de.jplag.exceptions.ExitException;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
-import de.jplag.reporting.reportobject.writer.DummyWriter;
-import de.jplag.reporting.reportobject.writer.JsonWriter;
+import de.jplag.reporting.reportobject.writer.DummyResultWriter;
+import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 
 public class ComparisonReportWriterTest extends TestBase {
-    private final JsonWriter fileWriter = new DummyWriter();
+    private final JPlagResultWriter fileWriter = new DummyResultWriter();
 
     @Test
     public void firsLevelOfLookupMapComplete() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 
-        Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result, "");
+        Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result);
 
         firstLevelOfMapContains(stringMapMap, "A", "B", "C", "D", "E");
     }
@@ -31,7 +31,7 @@ public class ComparisonReportWriterTest extends TestBase {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 
-        Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result, "");
+        Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result);
 
         secondLevelOfMapContains(stringMapMap, "A", "B", "C", "D", "E");
         secondLevelOfMapContains(stringMapMap, "B", "A", "C", "D", "E");
