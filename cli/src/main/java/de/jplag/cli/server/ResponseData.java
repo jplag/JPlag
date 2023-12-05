@@ -2,6 +2,9 @@ package de.jplag.cli.server;
 
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Data for a http response
  * @param stream The stream containing the binary data
@@ -9,6 +12,9 @@ import java.io.InputStream;
  * @param size The total size of the data
  */
 public record ResponseData(InputStream stream, ContentType contentType, int size) {
+
+    private static final Logger logger = LoggerFactory.getLogger(ResponseData.class);
+
     /**
      * Constructor with unknown type and size. Type will be set to PLAIN.
      * @param data The binary data to respond with
@@ -41,6 +47,9 @@ public record ResponseData(InputStream stream, ContentType contentType, int size
         if (inputStream != null) {
             return new ResponseData(inputStream, ContentType.fromPath(url));
         } else {
+            logger.info(
+                    "No response data available for resource url {}. This is probably normal behaviour and the data will be pulled from a different source.",
+                    url);
             return null;
         }
     }
