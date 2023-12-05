@@ -1,5 +1,21 @@
 package de.jplag.cli;
 
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION_HEADING;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
+
+import java.io.File;
+import java.security.SecureRandom;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
@@ -12,25 +28,11 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Model.OptionSpec;
 import picocli.CommandLine.ParseResult;
-
-import java.io.File;
-import java.security.SecureRandom;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION_HEADING;
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 /**
  * Command line interface class, allows using via command line.
