@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,6 +20,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
@@ -40,7 +40,7 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 public abstract class LanguageModuleTest {
     private static final Path DEFAULT_TEST_CODE_PATH_BASE = Path.of("src", "test", "resources", "de", "jplag");
 
-    private final Logger LOG = Logger.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final TestDataCollector collector;
     private final Language language;
@@ -253,7 +253,7 @@ public abstract class LanguageModuleTest {
 
     private List<Token> parseTokens(TestData source) throws ParsingException, IOException {
         List<Token> tokens = source.parseTokens(this.language);
-        LOG.log(Level.INFO, TokenPrinter.printTokens(tokens));
+        logger.info(TokenPrinter.printTokens(tokens));
         return tokens;
     }
 
