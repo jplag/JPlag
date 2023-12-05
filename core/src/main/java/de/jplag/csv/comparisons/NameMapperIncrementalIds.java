@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Maps the real names of submissions to random ids to anonymize the data.
+ * Maps the real names of submissions to incremental ids. The ids will be in order of the queried new names.
  */
 public class NameMapperIncrementalIds implements NameMapper {
     private final Map<String, String> map;

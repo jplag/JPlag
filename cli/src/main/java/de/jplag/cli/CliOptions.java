@@ -62,9 +62,6 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "Merging of neighboring matches to increase the similarity of concealed plagiarism:%n")
     public Merging merging = new Merging();
 
-    @ArgGroup(validate = false, heading = "Csv%n")
-    public Csv csv = new Csv();
-
     /**
      * Empty run method, so picocli prints help automatically
      */
@@ -91,6 +88,9 @@ public class CliOptions implements Runnable {
                 "--similarity-threshold"}, description = "Comparison similarity threshold [0.0-1.0]:  All  comparisons  above this threshold will "
                         + "be saved (default: 0.0)%n")
         public double similarityThreshold = JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
+
+        @Option(names = "--csv-export", description = "If present, a csv export will be generated in addition to the zip file.")
+        public boolean csvExport = false;
     }
 
     public static class Clustering {
@@ -125,18 +125,6 @@ public class CliOptions implements Runnable {
         @Option(names = {"--gap-size"}, description = "Defines how many token there can be between two neighboring matches (default: 6)%n")
         public int maximumGapSize;
 
-    }
-
-    public static class Csv {
-        @Option(names = {"--csv-print"}, description = "If true, the comparisons will pre printed in a csv%n")
-        public boolean print;
-
-        @Option(names = {
-                "--csv-anonymize"}, description = "If true, the csv will contain anonymized data and a second csv will contain the actual names.%n")
-        public boolean anonymize;
-
-        @Option(names = {"--csv-file-name"}, description = "Overrides the base name of the csv file. Do not include .csv in here.%n")
-        public String fileName = "resultCsv";
     }
 
     @Option(names = {"--cluster-spectral-bandwidth"}, hidden = true)
