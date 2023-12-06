@@ -9,16 +9,17 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.endtoend.model.DataSet;
 
 public class UnzipManager {
     private final Map<DataSet, File> unzippedFiles;
     private static UnzipManager instance;
-    private final Logger logger = Logger.getLogger("Unzip Manager");
+    private final Logger logger = LoggerFactory.getLogger(UnzipManager.class);
 
     private static synchronized UnzipManager getInstance() {
         if (instance == null) {
@@ -46,7 +47,7 @@ public class UnzipManager {
             } else {
                 target = Files.createTempDirectory(zip.getName()).toFile();
                 if (!(target.setReadable(true, true) && target.setWritable(true, true) && target.setExecutable(true, true))) {
-                    logger.warning("Could not set permissions for temp directory (" + target.getAbsolutePath() + ").");
+                    logger.warn("Could not set permissions for temp directory ({}).", target.getAbsolutePath());
                 }
             }
 
