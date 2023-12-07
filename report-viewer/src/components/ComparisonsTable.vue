@@ -55,8 +55,8 @@
           v-if="topComparisons.length > 0"
           :items="displayedComparisons"
           :min-item-size="48"
-        >
-          <template #default="{ item, index, active }">
+          ref="dynamicScroller"
+          ><template #default="{ item, index, active }">
             <DynamicScrollerItem
               :item="item"
               :active="active"
@@ -72,7 +72,8 @@
               <div
                 class="tableRow"
                 :class="{
-                  'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1
+                  'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1,
+                  '!bg-accent !bg-opacity-30 ': isHighlightedRow(item)
                 }"
               >
                 <div
@@ -155,7 +156,7 @@
 <script setup lang="ts">
 import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import { computed, ref } from 'vue'
+import { type PropType, watch, computed, ref, type Ref } from 'vue'
 import { store } from '@/stores/store'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -182,6 +183,10 @@ const props = defineProps({
   header: {
     type: String,
     default: 'Top Comparisons:'
+  },
+  highlightedRowIds: {
+    type: Object as PropType<{ firstId: string; secondId: string }>,
+    required: false
   }
 })
 
@@ -287,6 +292,30 @@ function getClusterIndexesFor(id1: string, id2: string): Array<number> {
   })
   return indexes
 }
+
+function isHighlightedRow(item: ComparisonListElement) {
+  return (
+    props.highlightedRowIds != undefined &&
+    ((item.firstSubmissionId == props.highlightedRowIds.firstId &&
+      item.secondSubmissionId == props.highlightedRowIds.secondId) ||
+      (item.firstSubmissionId == props.highlightedRowIds.secondId &&
+        item.secondSubmissionId == props.highlightedRowIds.firstId))
+  )
+}
+
+const dynamicScroller: Ref<any | null> = ref(null)
+
+watch(
+  computed(() => props.highlightedRowIds),
+  (newValue, oldValue) => {
+    if (
+      newValue != undefined &&
+      (newValue?.firstId != oldValue?.firstId || newValue?.secondId != oldValue?.secondId)
+    ) {
+      dynamicScroller.value?.scrollToItem(props.topComparisons.findIndex(isHighlightedRow))
+    }
+  }
+)
 </script>
 
 <style scoped lang="postcss">
