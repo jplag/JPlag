@@ -14,8 +14,8 @@
 
     <div class="flex w-full flex-row space-x-1 overflow-x-auto">
       <OptionComponent
-        :style="{ background: match.color }"
         v-for="[index, match] in matches?.entries()"
+        :style="{ background: getMatchColor(0.3, match.colorIndex) }"
         v-bind:key="index"
         @click="$emit('matchSelected', match)"
         :label="
@@ -28,8 +28,9 @@
 
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
-import OptionComponent from './optionsSelectors/OptionComponent.vue'
-import ToolTipComponent from './ToolTipComponent.vue'
+import OptionComponent from '../optionsSelectors/OptionComponent.vue'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import { getMatchColor } from '@/utils/ColorUtils'
 
 defineProps({
   /**

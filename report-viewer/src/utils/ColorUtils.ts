@@ -59,6 +59,33 @@ function generateColorsForInterval(
   return colors
 }
 
+/** This is the list of colors that are used as the background colot of matches in the comparison view */
+const matchColors: { red: number; green: number; blue: number }[] = [
+  { red: 255, green: 122, blue: 0 },
+  { red: 0, green: 133, blue: 255 },
+  { red: 255, green: 0, blue: 122 },
+  { red: 255, green: 245, blue: 0 },
+  { red: 0, green: 255, blue: 255 },
+  { red: 112, green: 0, blue: 255 },
+  { red: 0, green: 255, blue: 133 }
+]
+
+function getMatchColorCount() {
+  return matchColors.length
+}
+
+function getMatchColor(alpha: number, index?: number) {
+  if (index == undefined) {
+    return 'rgba(0,0,0,0)'
+  }
+  return `rgba(${matchColors[index].red}, ${matchColors[index].green}, ${matchColors[index].blue}, ${alpha})`
+}
+
+const graphRGB = {
+  red: 190,
+  green: 22,
+  blue: 34
+}
 const graphColors = {
   ticksAndFont: computed(() => {
     return store().uiState.useDarkMode ? '#ffffff' : '#000000'
@@ -66,9 +93,15 @@ const graphColors = {
   gridLines: computed(() => {
     return store().uiState.useDarkMode ? 'rgba(256, 256, 256, 0.2)' : 'rgba(0, 0, 0, 0.2)'
   }),
-  contentFill: 'rgba(190, 22, 34, 0.5)',
+  contentFill: `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, 0.5)`,
   contentBorder: 'rgb(127, 15, 24)',
-  pointFill: 'rgba(190, 22, 34, 1)'
+  pointFill: `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, 1)`,
+  additionalLine: computed(() => {
+    return store().uiState.useDarkMode ? `rgba(200, 200, 200, 0.3)` : `rgba(0, 0, 0, 0.5)`
+  }),
+  contentFillAlpha(alpha: number) {
+    return `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, ${alpha})`
+  }
 }
 
-export { generateColors, graphColors }
+export { generateColors, graphColors, getMatchColorCount, getMatchColor }

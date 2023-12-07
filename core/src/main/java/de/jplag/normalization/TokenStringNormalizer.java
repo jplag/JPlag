@@ -1,5 +1,6 @@
 package de.jplag.normalization;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -20,13 +21,15 @@ public class TokenStringNormalizer {
     }
 
     /**
-     * Normalizes the token string it receives in place. Tokens representing dead code have been eliminated and tokens
-     * representing subsequent independent statements have been put in a fixed order. Works by first constructing a
-     * Normalization Graph and then turning it back into a token string.
+     * Performs token string normalization. Tokens representing dead code have been eliminated and tokens representing
+     * subsequent independent statements have been put in a fixed order. Works by first constructing a Normalization Graph
+     * and then turning it back into a token string.
+     * @param tokens The original token string, remains unaltered.
+     * @return The normalized token string.
      */
-    public static void normalize(List<Token> tokens) {
+    public static List<Token> normalize(List<Token> tokens) {
         SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph = new NormalizationGraphConstructor(tokens).get();
-        tokens.clear();
+        List<Token> normalizedTokens = new ArrayList<>(tokens.size());
         spreadKeep(normalizationGraph);
         PriorityQueue<Statement> roots = normalizationGraph.vertexSet().stream() //
                 .filter(v -> !Graphs.vertexHasPredecessors(normalizationGraph, v)) //
@@ -36,7 +39,7 @@ public class TokenStringNormalizer {
             do {
                 Statement statement = roots.poll();
                 if (statement.semantics().keep()) {
-                    tokens.addAll(statement.tokens());
+                    normalizedTokens.addAll(statement.tokens());
                 }
                 for (Statement successor : Graphs.successorListOf(normalizationGraph, statement)) {
                     normalizationGraph.removeEdge(statement, successor);
@@ -47,6 +50,7 @@ public class TokenStringNormalizer {
             } while (!roots.isEmpty());
             roots = newRoots;
         }
+        return normalizedTokens;
     }
 
     /**

@@ -2,8 +2,7 @@ import { Overview } from '../Overview'
 import type { ComparisonListElement } from '../ComparisonListElement'
 import type { Cluster } from '@/model/Cluster'
 import { store } from '@/stores/store'
-import { Version } from '../Version'
-import versionJson from '@/version.json'
+import { Version, minimalReportVersion, reportViewerVersion } from '../Version'
 import { getLanguageParser } from '../Language'
 import { Distribution } from '../Distribution'
 import { MetricType } from '../MetricType'
@@ -15,11 +14,6 @@ import { TenValueDistribution } from '../TenValueDistribution'
  * Factory class for creating Overview objects
  */
 export class OverviewFactory extends BaseFactory {
-  static reportViewerVersion: Version =
-    versionJson['report_viewer_version'] !== undefined
-      ? this.extractVersion(versionJson['report_viewer_version'] as Record<string, number>)
-      : new Version(-1, -1, -1)
-
   /**
    * Gets the overview file based on the used mode (zip, local, single).
    */
@@ -33,9 +27,9 @@ export class OverviewFactory extends BaseFactory {
    */
   private static extractOverview(json: Record<string, unknown>): Overview {
     const versionField = json.jplag_version as Record<string, number>
-    const jplagVersion = this.extractVersion(versionField)
+    const jplagVersion = Version.fromJsonField(versionField)
 
-    OverviewFactory.compareVersions(jplagVersion, this.reportViewerVersion)
+    OverviewFactory.compareVersions(jplagVersion, reportViewerVersion, minimalReportVersion)
 
     const submissionFolder = json.submission_folder_path as Array<string>
     const baseCodeFolder = json.base_code_folder_path as string
@@ -62,10 +56,6 @@ export class OverviewFactory extends BaseFactory {
       this.extractClusters(json),
       totalComparisons
     )
-  }
-
-  public static extractVersion(versionField: Record<string, number>): Version {
-    return new Version(versionField.major, versionField.minor, versionField.patch)
   }
 
   private static extractDistributions(
@@ -203,29 +193,40 @@ export class OverviewFactory extends BaseFactory {
    * @param jsonVersion the version of the json file
    * @param reportViewerVersion the version of the report viewer
    */
-  static compareVersions(jsonVersion: Version, reportViewerVersion: Version) {
+  static compareVersions(
+    jsonVersion: Version,
+    reportViewerVersion: Version,
+    minimalVersion: Version = new Version(0, 0, 0)
+  ) {
     if (sessionStorage.getItem('versionAlert') === null) {
-      if (jsonVersion.compareTo(reportViewerVersion) !== 0) {
-        if (reportViewerVersion.isInvalid()) {
-          console.warn(
-            "The report viewer's version cannot be read from version.json file. Please configure it correctly."
-          )
-        } else {
-          console.warn(
-            "The result's version tag does not fit the report viewer's version. Trying to read it anyhow but be careful."
-          )
-          alert(
-            "The result's version(" +
-              jsonVersion.toString() +
-              ") tag does not fit the report viewer's version(" +
-              reportViewerVersion.toString() +
-              '). ' +
-              'Trying to read it anyhow but be careful.'
-          )
-        }
+      if (reportViewerVersion.isInvalid()) {
+        console.warn(
+          "The report viewer's version cannot be read from version.json file. Please configure it correctly."
+        )
+      } else if (
+        !reportViewerVersion.isDevVersion() &&
+        jsonVersion.compareTo(reportViewerVersion) > 0
+      ) {
+        alert(
+          "The result's version(" +
+            jsonVersion.toString() +
+            ") is newer than the report viewer's version(" +
+            reportViewerVersion.toString() +
+            '). ' +
+            'Trying to read it anyhow but be careful.'
+        )
       }
-
       sessionStorage.setItem('versionAlert', 'true')
+    }
+    if (jsonVersion.compareTo(minimalVersion) < 0) {
+      throw (
+        "The result's version(" +
+        jsonVersion.toString() +
+        ') is older than the minimal support version of the report viewer(' +
+        reportViewerVersion.toString() +
+        '). ' +
+        'Can not read the report.'
+      )
     }
   }
 }
