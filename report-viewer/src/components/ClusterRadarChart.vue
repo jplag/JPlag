@@ -3,7 +3,7 @@
   participants in the cluster.
 -->
 <template>
-  <div class="flex max-h-full flex-col">
+  <div class="flex max-h-full flex-col overflow-hidden">
     <div
       v-if="selectedOptions.length > 0"
       class="flex max-h-full flex-grow flex-col overflow-hidden"
@@ -74,7 +74,6 @@ const selectedOptions = computed(() => {
       options.push(key)
     }
   })
-  console.log(options)
   return options
 })
 
@@ -112,9 +111,6 @@ const radarChartStyle = {
 }
 const radarChartOptions = computed(() => {
   return {
-    legend: {
-      display: false
-    },
     scales: {
       r: {
         suggestedMin: 50,
