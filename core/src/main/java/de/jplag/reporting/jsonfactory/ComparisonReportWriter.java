@@ -16,6 +16,7 @@ import de.jplag.options.SimilarityMetric;
 import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
+import de.jplag.reporting.reportobject.writer.JsonWriter;
 
 /**
  * Writes {@link ComparisonReport}s of given {@link JPlagResult} to the disk under the specified path. Instantiated with
@@ -23,12 +24,12 @@ import de.jplag.reporting.reportobject.model.Match;
  */
 public class ComparisonReportWriter {
 
-    private final FileWriter fileWriter;
+    private final JsonWriter fileWriter;
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
 
-    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter fileWriter) {
+    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, JsonWriter fileWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
         this.fileWriter = fileWriter;
     }
@@ -59,7 +60,7 @@ public class ComparisonReportWriter {
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId,
                     Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity()),
                     convertMatchesToReportMatches(comparison));
-            fileWriter.saveAsJSON(comparisonReport, path, fileName);
+            fileWriter.writeFile(comparisonReport, path, fileName);
         });
     }
 
