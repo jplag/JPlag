@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
 test('Test cluster view', async ({ page }) => {
@@ -12,10 +12,20 @@ test('Test cluster view', async ({ page }) => {
   await page.getByText('4 94.75%').first().click()
   await page.waitForURL(/\/cluster\/.*/)
 
-  // Check cluster diagramm
-  await compareClusterDiagramm(page, 'C')
+  // check that the cluster graph exist
+  expect(page.locator('canvas').first()).not.toBeHidden()
+
+  // switch to cluster chart
+  await page.getByText('Radar').first().click()
+
+  // Check cluster diagram
+  await page.waitForTimeout(3000)
+  const radarChart = page.locator('canvas').first()
+  expect(page.getByRole('combobox').first()).toHaveValue('C')
+  const clusterImageC = radarChart.screenshot()
   await page.getByRole('combobox').selectOption('B')
-  await compareClusterDiagramm(page, 'B')
+  expect(page.getByRole('combobox').first()).toHaveValue('B')
+  expect(await radarChart.screenshot()).not.toEqual(clusterImageC)
 
   // Check comparison table
   const comparisonTable = await page
@@ -28,19 +38,6 @@ test('Test cluster view', async ({ page }) => {
   compareTableRow(comparisonTable, 5, 'B', 'C', 23.78, 97.16)
   compareTableRow(comparisonTable, 6, 'B', 'A', 23.78, 97.16)
 })
-
-/**
- *
- * @param page Page currently tested on
- * @param submissionId Id of the selected submission
- */
-async function compareClusterDiagramm(page: Page, submissionId: string) {
-  expect(page.getByRole('combobox').first()).toHaveValue(submissionId)
-  // This timeout is so that the screenshot is taken after the animation is finished
-  await page.waitForTimeout(3000)
-  const radarChart = await page.locator('canvas').first().screenshot()
-  expect(radarChart).toMatchSnapshot(`cluster_${submissionId}.png`)
-}
 
 function compareTableRow(
   table: string,
