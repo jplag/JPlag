@@ -28,9 +28,7 @@ test('Test cluster view', async ({ page }) => {
   expect(await radarChart.screenshot()).not.toEqual(clusterImageC)
 
   // Check comparison table
-  const comparisonTable = await page
-    .getByText('Comparisons of Cluster Members:Submissions in Comparison')
-    .textContent()
+  const comparisonTable = await page.textContent('body')
   compareTableRow(comparisonTable, 1, 'C', 'A', 99.6, 99.6)
   compareTableRow(comparisonTable, 2, 'D', 'C', 76.06, 95.93)
   compareTableRow(comparisonTable, 3, 'D', 'A', 76.06, 95.93)
