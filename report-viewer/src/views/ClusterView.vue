@@ -34,10 +34,10 @@
         />
       </Container>
       <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2">
-        <h2>Comparisons of Cluster Members:</h2>
         <ComparisonsTable
           :topComparisons="comparisons"
           class="min-h-0 flex-1"
+          header="Comparisons of Cluster Members:"
           :highlighted-row-ids="highlightedElement ?? undefined"
         >
           <template #footer v-if="comparisons.length < maxAmountOfComparisonsInCluster">
