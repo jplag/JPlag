@@ -43,7 +43,7 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   expect(comparisonTableOverviewFilteredAC).toContain('4HiddenC')
 
   // go to comparison page
-  await page.getByRole('link', { name: '1 C A 99.60% 99.60%' }).click()
+  await page.getByText('1C').click()
   await page.waitForURL(/\/comparison\/.*/)
 
   // check for elements in comparison page
