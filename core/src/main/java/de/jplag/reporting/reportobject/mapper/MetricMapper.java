@@ -1,13 +1,10 @@
 package de.jplag.reporting.reportobject.mapper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.options.SimilarityMetric;
@@ -29,8 +26,11 @@ public class MetricMapper {
      * @return Map with key as name of metric and value as distribution
      */
     public static Map<String, List<Integer>> getDistributions(JPlagResult result) {
-        return Map.of(SimilarityMetric.AVG.name(), convertDistribution(result.getSimilarityDistribution()), SimilarityMetric.MAX.name(),
-                convertDistribution(result.getMaxSimilarityDistribution()));
+        Map<String, List<Integer>> distributions = new HashMap<>();
+        for (SimilarityMetric metric : SimilarityMetric.values()) {
+            distributions.put(metric.name(), result.calculateDistributionFor(metric));
+        }
+        return distributions;
     }
 
     /**
@@ -41,17 +41,7 @@ public class MetricMapper {
     public List<TopComparison> getTopComparisons(JPlagResult result) {
         return result.getComparisons(result.getOptions().maximumNumberOfComparisons()).stream()
                 .map(comparison -> new TopComparison(submissionToIdFunction.apply(comparison.firstSubmission()),
-                        submissionToIdFunction.apply(comparison.secondSubmission()), getComparisonMetricMap(comparison)))
+                        submissionToIdFunction.apply(comparison.secondSubmission()), SimilarityMetric.createSimilarityMap(comparison)))
                 .toList();
-    }
-
-    private Map<String, Double> getComparisonMetricMap(JPlagComparison comparison) {
-        return Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity());
-    }
-
-    private static List<Integer> convertDistribution(int[] array) {
-        List<Integer> list = new ArrayList<>(Arrays.stream(array).boxed().toList());
-        Collections.reverse(list);
-        return list;
     }
 }

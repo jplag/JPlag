@@ -1,5 +1,6 @@
 package de.jplag;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.ToDoubleFunction;
 
@@ -11,6 +12,7 @@ import de.jplag.options.SimilarityMetric;
  * Encapsulates the results of a comparison of a set of source code submissions.
  */
 public class JPlagResult {
+    private final static int SIMILARITY_DISTRIBUTION_SIZE = 100;
 
     private List<JPlagComparison> comparisons; // comparisons whose similarity was about the specified threshold
 
@@ -23,7 +25,6 @@ public class JPlagResult {
     private final int[] similarityDistribution; // 10-element array representing the similarity distribution of the detected matches.
 
     private List<ClusteringResult<Submission>> clusteringResult;
-    private final int SIMILARITY_DISTRIBUTION_SIZE = 100;
 
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         // sort by similarity (descending)
@@ -32,15 +33,6 @@ public class JPlagResult {
         this.durationInMillis = durationInMillis;
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
-    }
-
-    /**
-     * Drops elements from the comparison list to free memory. Note, that this affects the similarity distribution and is
-     * only meant to be used if you don't need the information about comparisons with lower match similarity anymore.
-     * @param limit the number of comparisons to keep in the list
-     */
-    public void dropComparisons(int limit) {
-        this.comparisons = this.getComparisons(limit);
     }
 
     public void setClusteringResult(List<ClusteringResult<Submission>> clustering) {
@@ -125,6 +117,10 @@ public class JPlagResult {
     public String toString() {
         return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getAllComparisons().size(),
                 getDuration(), getOptions().language().getName(), submissions.numberOfSubmissions());
+    }
+
+    public List<Integer> calculateDistributionFor(ToDoubleFunction<JPlagComparison> similarityMetric) {
+        return Arrays.stream(calculateDistributionFor(this.comparisons, similarityMetric)).boxed().toList();
     }
 
     /**

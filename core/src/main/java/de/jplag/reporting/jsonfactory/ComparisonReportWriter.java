@@ -53,18 +53,10 @@ public class ComparisonReportWriter {
             String secondSubmissionId = submissionToIdFunction.apply(comparison.secondSubmission());
             String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
-            var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, createMetricMap(comparison),
+            var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, SimilarityMetric.createSimilarityMap(comparison),
                     convertMatchesToReportMatches(comparison));
             fileWriter.saveAsJSON(comparisonReport, path, fileName);
         });
-    }
-
-    private Map<String, Double> createMetricMap(JPlagComparison comparison) {
-        Map<String, Double> result = new HashMap<>();
-        for (SimilarityMetric metric : SimilarityMetric.values()) {
-            result.put(metric.name(), metric.applyAsDouble(comparison));
-        }
-        return result;
     }
 
     private void addToLookUp(String firstSubmissionId, String secondSubmissionId, String fileName) {
@@ -102,7 +94,7 @@ public class ComparisonReportWriter {
         List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
         List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
 
-        Comparator<? super Token> lineComparator = (first, second) -> first.getLine() - second.getLine();
+        Comparator<? super Token> lineComparator = Comparator.comparingInt(Token::getLine);
 
         Token startOfFirst = tokensFirst.stream().min(lineComparator).orElseThrow();
         Token endOfFirst = tokensFirst.stream().max(lineComparator).orElseThrow();

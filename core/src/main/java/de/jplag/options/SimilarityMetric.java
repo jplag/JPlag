@@ -1,5 +1,7 @@
 package de.jplag.options;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.ToDoubleFunction;
 
 import de.jplag.JPlagComparison;
@@ -37,5 +39,13 @@ public enum SimilarityMetric implements ToDoubleFunction<JPlagComparison> {
     @Override
     public String toString() {
         return description;
+    }
+
+    public static Map<String, Double> createSimilarityMap(JPlagComparison comparison) {
+        Map<String, Double> result = new HashMap<>();
+        for (SimilarityMetric metric : SimilarityMetric.values()) {
+            result.put(metric.name(), metric.applyAsDouble(comparison));
+        }
+        return result;
     }
 }
