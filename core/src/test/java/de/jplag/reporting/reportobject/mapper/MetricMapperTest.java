@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,8 +56,7 @@ public class MetricMapperTest {
 
         // then
         Assertions.assertEquals(
-                List.of(new TopComparison("1", "2", Map.of("AVG", .7, "MAX", .8)), new TopComparison("3", "4", Map.of("AVG", .3, "MAX", .9))),
-                result);
+                List.of(new TopComparison("1", "2", buildSimilarityMap(.7, .8)), new TopComparison("3", "4", buildSimilarityMap(.3, .9))), result);
     }
 
     private int[] distribution(List<Integer> expectedDistribution) {
@@ -107,6 +107,16 @@ public class MetricMapperTest {
     }
 
     private record CreateSubmission(String name) {
+    }
+
+    private Map<String, Double> buildSimilarityMap(double avg, double max) {
+        Map<String, Double> map = new HashMap<>();
+        for (SimilarityMetric value : SimilarityMetric.values()) {
+            map.put(value.name(), 0d);
+        }
+        map.put(SimilarityMetric.AVG.name(), avg);
+        map.put(SimilarityMetric.MAX.name(), max);
+        return map;
     }
 
 }
