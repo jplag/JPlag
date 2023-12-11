@@ -110,31 +110,35 @@
                 <!-- Clusters -->
                 <div class="tableCellCluster flex !flex-col items-center" v-if="displayClusters">
                   <RouterLink
-                    v-for="index of getClusterIndexesFor(
-                      item.firstSubmissionId,
-                      item.secondSubmissionId
-                    )"
-                    v-bind:key="index"
+                    v-if="item.clusterIndex >= 0"
                     :to="{
                       name: 'ClusterView',
-                      params: { clusterIndex: index }
+                      params: { clusterIndex: item.clusterIndex }
                     }"
                     class="flex w-full justify-center text-center"
                   >
                     <ToolTipComponent class="w-fit" direction="left">
                       <template #default>
-                        {{ clusters?.[index].members?.length }}
+                        {{ clusters?.[item.clusterIndex].members?.length }}
                         <FontAwesomeIcon
                           :icon="['fas', 'user-group']"
-                          :style="{ color: clusterIconColors[index] }"
+                          :style="{ color: clusterIconColors[item.clusterIndex] }"
                         />
-                        {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
+                        {{
+                          (
+                            (clusters?.[item.clusterIndex].averageSimilarity as number) * 100
+                          ).toFixed(2)
+                        }}%
                       </template>
                       <template #tooltip>
                         <p class="whitespace-nowrap text-sm">
-                          {{ clusters?.[index].members?.length }} submissions in cluster with
-                          average similarity of
-                          {{ ((clusters?.[index].averageSimilarity as number) * 100).toFixed(2) }}%
+                          {{ clusters?.[item.clusterIndex].members?.length }} submissions in cluster
+                          with average similarity of
+                          {{
+                            (
+                              (clusters?.[item.clusterIndex].averageSimilarity as number) * 100
+                            ).toFixed(2)
+                          }}%
                         </p>
                       </template>
                     </ToolTipComponent>
@@ -225,16 +229,6 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
   })
 }
 
-function getClusterIndexFor(id1: string, id2: string) {
-  let clusterIndex = -1
-  props.clusters?.forEach((c: Cluster, index: number) => {
-    if (c.members.includes(id1) && c.members.includes(id2) && c.members.length > 2) {
-      clusterIndex = index
-    }
-  })
-  return clusterIndex
-}
-
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
   comparisons.sort(
     (a, b) =>
@@ -243,16 +237,12 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
   )
 
   if (store().uiState.comparisonTableClusterSorting) {
-    comparisons.sort(
-      (a, b) =>
-        getClusterIndexFor(b.firstSubmissionId, b.secondSubmissionId) -
-        getClusterIndexFor(a.firstSubmissionId, a.secondSubmissionId)
-    )
+    comparisons.sort((a, b) => b.clusterIndex - a.clusterIndex)
 
     comparisons.sort(
       (a, b) =>
-        getClusterFor(b.firstSubmissionId, b.secondSubmissionId).averageSimilarity -
-        getClusterFor(a.firstSubmissionId, a.secondSubmissionId).averageSimilarity
+        getClusterFor(b.clusterIndex).averageSimilarity -
+        getClusterFor(a.clusterIndex).averageSimilarity
     )
   }
 
@@ -263,12 +253,11 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
   return props.topComparisons
 }
 
-function getClusterFor(id1: string, id2: string) {
-  const index = getClusterIndexFor(id1, id2)
-  if (index < 0 || !props.clusters) {
+function getClusterFor(clusterIndex: number) {
+  if (clusterIndex < 0 || !props.clusters) {
     return { averageSimilarity: 0 }
   }
-  return props.clusters[index]
+  return props.clusters[clusterIndex]
 }
 
 const displayClusters = props.clusters != undefined
@@ -276,21 +265,6 @@ const displayClusters = props.clusters != undefined
 let clusterIconColors = [] as Array<string>
 if (props.clusters != undefined) {
   clusterIconColors = generateColors(props.clusters.length, 0.8, 0.5, 1)
-}
-
-/**
- * @param id1 First Id to check
- * @param id2 Second Id to check
- * @returns All clusters that contain both ids.
- */
-function getClusterIndexesFor(id1: string, id2: string): Array<number> {
-  const indexes = [] as Array<number>
-  props.clusters?.forEach((c: Cluster, index: number) => {
-    if (c.members.includes(id1) && c.members.includes(id2) && c.members.length > 2) {
-      indexes.push(index)
-    }
-  })
-  return indexes
 }
 
 function isHighlightedRow(item: ComparisonListElement) {

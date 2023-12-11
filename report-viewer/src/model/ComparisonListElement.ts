@@ -9,6 +9,7 @@ import type { MetricType } from './MetricType'
  * @property firstSubmissionId - Id of the first submission
  * @property secondSubmissionId - Id of the second submission
  * @property similarity - Similarity of the two submissions
+ * @property clusterIndex - Index of the associatedCluster in the array in the overview
  */
 export type ComparisonListElement = {
   sortingPlace: number
@@ -16,4 +17,5 @@ export type ComparisonListElement = {
   firstSubmissionId: string
   secondSubmissionId: string
   similarities: Record<MetricType, number>
+  clusterIndex: number
 }
