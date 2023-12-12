@@ -12,6 +12,10 @@ import de.jplag.csv.comparisons.CsvComparisonOutput;
 public class OutputFileGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(OutputFileGenerator.class);
 
+    private OutputFileGenerator() {
+        // Prevents default constructor
+    }
+
     /**
      * Exports the given result as csvs, if the csvExport is activated in the options. Both a full and an anonymized version
      * will be written.
