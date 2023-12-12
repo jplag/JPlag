@@ -91,6 +91,9 @@ public class CliOptions implements Runnable {
                 "--similarity-threshold"}, description = "Comparison similarity threshold [0.0-1.0]:  All  comparisons  above this threshold will "
                         + "be saved (default: 0.0)%n")
         public double similarityThreshold = JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
+
+        @Option(names = {"-P", "--port"}, description = "The port used for the internal report viewer.")
+        public int port = 1996;
     }
 
     public static class Clustering {

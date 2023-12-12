@@ -20,7 +20,7 @@ class ReportViewerTest {
     @Disabled
     void testStartViewer() throws Exception {
         assumeTrue(Desktop.isDesktopSupported());
-        ReportViewer viewer = new ReportViewer(null);
+        ReportViewer viewer = new ReportViewer(null, 0);
 
         int port = viewer.start();
         Desktop.getDesktop().browse(URI.create("http://localhost:" + port));

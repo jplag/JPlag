@@ -15,8 +15,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,16 +123,13 @@ public final class CLI {
     }
 
     public void runViewer(File zipFile) throws IOException {
-        ReportViewer reportViewer = new ReportViewer(zipFile);
+        ReportViewer reportViewer = new ReportViewer(zipFile, this.options.advanced.port);
         int port = reportViewer.start();
         logger.info("ReportViewer started on port http://localhost:{}", port);
         Desktop.getDesktop().browse(URI.create("http://localhost:" + port + "/"));
 
-        Terminal terminal = TerminalBuilder.terminal();
-        terminal.writer().print("Press any key to exit...");
-        terminal.writer().flush();
-        terminal.enterRawMode();
-        terminal.reader().read();
+        System.out.println("Press Enter kex to exit...");
+        System.in.read();
         reportViewer.stop();
     }
 

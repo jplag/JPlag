@@ -24,18 +24,21 @@ public class ReportViewer implements HttpHandler {
     private static final int NOT_FOUND_RESPONSE = 404;
 
     private final RoutingTree routingTree;
+    private final int port;
 
     private HttpServer server;
 
     /**
      * @param zipFile The zip file to use for the report viewer
+     * @param port The port to use for the server. You can use 0 to use any free port.
      * @throws IOException If the zip file cannot be read
      */
-    public ReportViewer(File zipFile) throws IOException {
+    public ReportViewer(File zipFile, int port) throws IOException {
         this.routingTree = new RoutingTree();
 
         this.routingTree.insertRouting("", new RoutingResources("report-viewer").or(new RoutingAlias("index.html")));
         this.routingTree.insertRouting("results.zip", new RoutingStaticFile(zipFile, ContentType.ZIP));
+        this.port = port;
     }
 
     /**
@@ -47,7 +50,7 @@ public class ReportViewer implements HttpHandler {
         if (server != null) {
             throw new IllegalStateException("Server already started");
         }
-        server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 1996), 0);
+        server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), this.port), 0);
         server.createContext("/", this);
         server.setExecutor(null);
         server.start();

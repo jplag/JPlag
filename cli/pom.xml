@@ -124,12 +124,6 @@
             <artifactId>picocli</artifactId>
             <version>4.7.5</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.jline</groupId>
-            <artifactId>jline</artifactId>
-            <version>3.23.0</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
