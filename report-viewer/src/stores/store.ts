@@ -10,6 +10,7 @@ const store = defineStore('store', {
     state: {
       submissionIdsToComparisonFileName: new Map<string, Map<string, string>>(),
       anonymous: new Set(),
+      anonymousIds: {},
       files: {},
       submissions: {},
       // Mode that was used to load the files
@@ -85,6 +86,28 @@ const store = defineStore('store', {
      */
     isAnonymous: (state) => (submissionId: string) => {
       return state.state.anonymous.has(submissionId)
+    },
+    /***
+     * @param id the id to check for
+     * @returns the anonymous name of the submission
+     */
+    getAnonymousName: (state) => (submissionId: string) => {
+      let number = state.state.anonymousIds[submissionId]
+      if (!number) {
+        const next = Object.keys(state.state.anonymousIds).length + 1
+        state.state.anonymousIds[submissionId] = next
+        number = next
+      }
+      return 'anon' + number
+    },
+    /**
+     * @param id the id to check for
+     * @returns the name with which the submission should be displayed
+     */
+    getDisplayName: () => (submissionId: string) => {
+      return store().isAnonymous(submissionId)
+        ? store().getAnonymousName(submissionId)
+        : store().submissionDisplayName(submissionId)
     }
   },
   actions: {
@@ -95,6 +118,7 @@ const store = defineStore('store', {
       this.state = {
         submissionIdsToComparisonFileName: new Map<string, Map<string, string>>(),
         anonymous: new Set(),
+        anonymousIds: {},
         files: {},
         submissions: {},
         localModeUsed: false,
