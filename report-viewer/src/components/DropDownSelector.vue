@@ -8,8 +8,8 @@
       @change="$emit('selectionChanged', selectedOption)"
       class="m-0 w-full cursor-pointer bg-interactable-light dark:bg-interactable-dark"
     >
-      <option v-for="option in options" :key="option">
-        {{ option }}
+      <option v-for="option in options" :key="option" :value="option">
+        {{ store().getDisplayName(option) }}
       </option>
     </select>
   </Interactable>
@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import Interactable from '@/components/InteractableComponent.vue'
+import { store } from '@/stores/store'
 import { computed, ref } from 'vue'
 
 const props = defineProps({
