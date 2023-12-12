@@ -75,7 +75,7 @@ public final class CLI {
 
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
                 JPlagOptions options = cli.buildOptionsFromArguments(parseResult);
-                JPlagResult result = JPlag.run(options);
+                JPlagResult result = new JPlag(options, new CliUiHooks()).run();
                 ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
                 reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
             }

@@ -7,6 +7,7 @@ import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.SubmissionSet;
+import de.jplag.UiHooks;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -19,7 +20,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(SubmissionSet submissionSet) {
+    public JPlagResult compareSubmissions(SubmissionSet submissionSet, UiHooks uiHooks) {
         // Initialize:
         long timeBeforeStartInMillis = System.currentTimeMillis();
         boolean withBaseCode = submissionSet.hasBaseCode();
@@ -28,8 +29,13 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         }
 
         List<SubmissionTuple> tuples = buildComparisonTuples(submissionSet.getSubmissions());
-        List<JPlagComparison> comparisons = tuples.stream().parallel().map(tuple -> compareSubmissions(tuple.left(), tuple.right()))
-                .flatMap(Optional::stream).toList();
+        uiHooks.startMultiStep(UiHooks.ProgressBarType.COMPARING, tuples.size());
+        List<JPlagComparison> comparisons = tuples.stream().parallel().map(tuple -> {
+            Optional<JPlagComparison> result = compareSubmissions(tuple.left(), tuple.right());
+            uiHooks.multiStepStep();
+            return result;
+        }).flatMap(Optional::stream).toList();
+        uiHooks.multiStepDone();
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
         return new JPlagResult(comparisons, submissionSet, durationInMillis, options);

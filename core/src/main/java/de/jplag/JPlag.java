@@ -24,6 +24,8 @@ public class JPlag {
 
     public static final Version JPLAG_VERSION = loadVersion();
 
+    private final UiHooks uiHooks;
+
     private static Version loadVersion() {
         ResourceBundle versionProperties = ResourceBundle.getBundle("de.jplag.version");
         String versionString = versionProperties.getString("version");
@@ -35,23 +37,20 @@ public class JPlag {
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
-     * @deprecated in favor of static {@link #run(JPlagOptions)}.
      * @param options determines the parameterization.
      */
-    @Deprecated(since = "4.3.0")
     public JPlag(JPlagOptions options) {
-        this.options = options;
+        this(options, UiHooks.NullUiHooks);
     }
 
     /**
-     * Main procedure, executes the comparison of source code submissions.
-     * @deprecated in favor of static {@link #run(JPlagOptions)}.
-     * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
-     * @throws ExitException if JPlag exits preemptively.
+     * Creates and initializes a JPlag instance, parameterized by a set of options.
+     * @param options determines the parameterization.
+     * @param uiHooks Used to notify the ui of state changes
      */
-    @Deprecated(since = "4.3.0")
-    public JPlagResult run() throws ExitException {
-        return run(options);
+    public JPlag(JPlagOptions options, UiHooks uiHooks) {
+        this.options = options;
+        this.uiHooks = uiHooks;
     }
 
     /**
@@ -61,17 +60,26 @@ public class JPlag {
      * @throws ExitException if JPlag exits preemptively.
      */
     public static JPlagResult run(JPlagOptions options) throws ExitException {
+        return new JPlag(options).run();
+    }
+
+    /**
+     * Main procedure, executes the comparison of source code submissions.
+     * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
+     * @throws ExitException if JPlag exits preemptively.
+     */
+    public JPlagResult run() throws ExitException {
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
-        SubmissionSet submissionSet = builder.buildSubmissionSet();
+        SubmissionSet submissionSet = builder.buildSubmissionSet(this.uiHooks);
         int submissionCount = submissionSet.numberOfSubmissions();
         if (submissionCount < 2)
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
 
         // Compare valid submissions.
-        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet, this.uiHooks);
 
         // Use Match Merging against obfuscation
         if (options.mergingOptions().enabled()) {

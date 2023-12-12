@@ -37,12 +37,14 @@ public class SubmissionSet {
     /**
      * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
+     * @param options The JPlag options
+     * @param uiHooks Used to notify the ui of state changes
      */
-    public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
+    public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options, UiHooks uiHooks) throws ExitException {
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.options = options;
-        parseAllSubmissions();
+        parseAllSubmissions(uiHooks);
         this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
     }
@@ -102,9 +104,9 @@ public class SubmissionSet {
         return allSubmissions.stream().filter(Submission::hasErrors).toList();
     }
 
-    private void parseAllSubmissions() throws ExitException {
+    private void parseAllSubmissions(UiHooks uiHooks) throws ExitException {
         try {
-            parseSubmissions(allSubmissions);
+            parseSubmissions(allSubmissions, uiHooks);
             if (baseCodeSubmission != null) {
                 parseBaseCodeSubmission(baseCodeSubmission);
             }
@@ -133,8 +135,10 @@ public class SubmissionSet {
 
     /**
      * Parse all given submissions.
+     * @param submissions The list of submissions
+     * @param uiHooks Used to notify the ui of state changes
      */
-    private void parseSubmissions(List<Submission> submissions) {
+    private void parseSubmissions(List<Submission> submissions, UiHooks uiHooks) {
         if (submissions.isEmpty()) {
             logger.warn("No submissions to parse!");
             return;
@@ -143,8 +147,8 @@ public class SubmissionSet {
         long startTime = System.currentTimeMillis();
 
         int tooShort = 0;
+        uiHooks.startMultiStep(UiHooks.ProgressBarType.PARSING, submissions.size());
         for (Submission submission : submissions) {
-            logger.info("Parsing submission {}", submission.getName());
             boolean ok;
 
             logger.trace("------ Parsing submission: " + submission.getName());
@@ -168,7 +172,9 @@ public class SubmissionSet {
             } else {
                 logger.error("ERROR -> Submission {} removed", currentSubmissionName);
             }
+            uiHooks.multiStepStep();
         }
+        uiHooks.multiStepDone();
 
         int validSubmissions = submissions.size() - errors - tooShort;
         logger.trace(validSubmissions + " submissions parsed successfully!");

@@ -12,13 +12,13 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
 class NormalizationTest extends TestBase {
-    private Map<String, List<TokenType>> tokenStringMap;
-    private List<TokenType> originalTokenString;
+    private final Map<String, List<TokenType>> tokenStringMap;
+    private final List<TokenType> originalTokenString;
 
     NormalizationTest() throws ExitException {
         JPlagOptions options = getDefaultOptions("normalization");
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
-        SubmissionSet submissionSet = builder.buildSubmissionSet();
+        SubmissionSet submissionSet = builder.buildSubmissionSet(UiHooks.NullUiHooks);
         submissionSet.normalizeSubmissions();
         Function<Submission, List<TokenType>> getTokenString = submission -> submission.getTokenList().stream().map(Token::getType).toList();
         tokenStringMap = submissionSet.getSubmissions().stream().collect(Collectors.toMap(Submission::getName, getTokenString));
