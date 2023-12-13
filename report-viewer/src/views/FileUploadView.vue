@@ -75,6 +75,7 @@ fetch('/results.zip')
   })
   .catch(() => {})
 
+document.title = 'JPlag Report Viewer'
 const loadingFiles = ref(false)
 type fileMethod = 'query' | 'local' | 'upload' | 'unknown'
 const errors: Ref<{ error: Error; source: fileMethod }[]> = ref([])

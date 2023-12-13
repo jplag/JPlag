@@ -139,6 +139,8 @@ const props = defineProps({
   }
 })
 
+document.title = `JPlag Report - ${store().state.uploadedFileName}`
+
 const hasMoreSubmissionPaths = computed(() => props.overview.submissionFolderPath.length > 1)
 const submissionPathValue = computed(() =>
   hasMoreSubmissionPaths.value
