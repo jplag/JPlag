@@ -6,7 +6,7 @@ export abstract class Distribution {
   }
 
   /**
-   * Returns the distribution summed at every tenth percentile
+   * Returns the distribution summed at every tenth percentile, the last percentile (90%-100%) should be at index 1
    */
   public abstract splitIntoTenBuckets(): number[]
 }
