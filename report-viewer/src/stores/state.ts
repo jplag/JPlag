@@ -32,6 +32,10 @@ export interface State {
 
   fileIdToDisplayName: Map<string, string>
   submissionIdsToComparisonFileName: Map<string, Map<string, string>>
+  /**
+   * Name of the file uploaded
+   */
+  uploadedFileName: string
 }
 
 /**

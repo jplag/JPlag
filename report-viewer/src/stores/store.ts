@@ -18,7 +18,8 @@ const store = defineStore('store', {
       singleModeUsed: false,
       // only used in single mode
       singleFillRawContent: '',
-      fileIdToDisplayName: new Map()
+      fileIdToDisplayName: new Map(),
+      uploadedFileName: ''
     },
     uiState: {
       useDarkMode: false,
@@ -101,7 +102,8 @@ const store = defineStore('store', {
         zipModeUsed: false,
         singleModeUsed: false,
         singleFillRawContent: '',
-        fileIdToDisplayName: new Map()
+        fileIdToDisplayName: new Map(),
+        uploadedFileName: ''
       }
     },
     /**

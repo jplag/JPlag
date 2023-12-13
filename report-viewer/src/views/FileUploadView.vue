@@ -162,6 +162,7 @@ async function uploadFileOnDrag(e: DragEvent) {
   let dropped = e.dataTransfer?.files
   try {
     if (dropped?.length === 1) {
+      store().state.uploadedFileName = dropped[0].name
       await handleFile(dropped[0])
     } else {
       throw new Error('Not exactly one file')
@@ -185,6 +186,7 @@ async function uploadFileThroughWindow() {
     if (!file) {
       return
     }
+    store().state.uploadedFileName = file.name
     handleFile(file)
   }
   input.click()
@@ -209,6 +211,7 @@ async function loadQueryFile(url: URL) {
  * Handles click on Continue with local files.
  */
 function continueWithLocal() {
+  store().state.uploadedFileName = 'results.zip'
   store().setLoadingType({
     local: true,
     zip: localFiles.value === 'zip',
@@ -219,6 +222,7 @@ function continueWithLocal() {
 
 function registerError(error: Error, source: fileMethod) {
   loadingFiles.value = false
+  store().state.uploadedFileName = ''
   errors.value.push({ error, source })
   console.error(error)
 }
