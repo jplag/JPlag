@@ -52,4 +52,9 @@ public class JavaLanguage implements de.jplag.Language {
     public boolean tokensHaveSemantics() {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return this.getIdentifier();
+    }
 }
