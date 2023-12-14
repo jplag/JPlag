@@ -85,6 +85,7 @@ public class ReportObjectFactory {
             writeOverview(result, path);
             writeSubmissionIndexFile(result, path);
             writeReadMeFile(path);
+            writeOptionsFiles(result.getOptions(), path);
 
             logger.info("Zipping report files...");
             zipAndDelete(path);
@@ -231,9 +232,9 @@ public class ReportObjectFactory {
     private void writeOptionsFiles(JPlagOptions options, String path) {
         OptionsReport report = new OptionsReport(options.language().getName(), options.minimumTokenMatch(),
                 options.submissionDirectories().stream().map(File::getPath).toList(),
-                options.oldSubmissionDirectories().stream().map(File::getPath).toList(), options.baseCodeSubmissionDirectory().getPath(),
-                options.subdirectoryName(), options.fileSuffixes(), options.exclusionFileName(), options.similarityMetric().name(),
-                options.similarityThreshold(), options.maximumNumberOfComparisons(),
+                options.oldSubmissionDirectories().stream().map(File::getPath).toList(),
+                options.hasBaseCode() ? options.baseCodeSubmissionDirectory().getPath() : "", options.subdirectoryName(), options.fileSuffixes(),
+                options.exclusionFileName(), options.similarityMetric().name(), options.similarityThreshold(), options.maximumNumberOfComparisons(),
                 new ClusterOptionsReport(options.clusteringOptions().enabled(), options.clusteringOptions().similarityMetric().name(),
                         options.clusteringOptions().spectralKernelBandwidth(), options.clusteringOptions().spectralGaussianProcessVariance(),
                         options.clusteringOptions().spectralMinRuns(), options.clusteringOptions().spectralMaxRuns(),
