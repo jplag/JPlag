@@ -15,7 +15,7 @@ export default defineConfig((userConfig: UserConfig) => {
       base = '/JPlag/'
       break
     case 'demo':
-      //base = '/Demo/'
+      base = '/Demo/'
       break
   }
   return {

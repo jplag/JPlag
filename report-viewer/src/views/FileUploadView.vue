@@ -216,7 +216,7 @@ async function loadQueryFile(url: URL) {
 function continueWithLocal() {
   store().setLoadingType({
     local: true,
-    zip: localFiles.value === 'zip' || exampleFiles.value,
+    zip: localFiles.value === 'zip',
     single: false
   })
   navigateToOverview()
