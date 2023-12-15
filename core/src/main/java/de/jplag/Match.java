@@ -16,10 +16,8 @@ public record Match(int startOfFirst, int startOfSecond, int length) {
             if ((other.startOfFirst - startOfFirst) < length) {
                 return true;
             }
-        } else {
-            if ((startOfFirst - other.startOfFirst) < other.length) {
-                return true;
-            }
+        } else if ((startOfFirst - other.startOfFirst) < other.length) {
+            return true;
         }
 
         if (startOfSecond < other.startOfSecond) {
