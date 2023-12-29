@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.jplag</groupId>
+        <artifactId>languages</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>java-cpg</artifactId>
+
+    <properties>
+        <cpg.version>v8.0.0-alpha.2</cpg.version>
+        <cpg.groupId>com.github.fraunhofer-aisec.cpg</cpg.groupId>
+        <kotlin.version>1.9.0</kotlin.version>
+    </properties>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>${cpg.groupId}</groupId>
+            <artifactId>cpg-core</artifactId>
+            <version>${cpg.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${cpg.groupId}</groupId>
+            <artifactId>cpg-language-java</artifactId>
+            <version>${cpg.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${cpg.groupId}</groupId>
+            <artifactId>cpg-analysis</artifactId>
+            <version>${cpg.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${cpg.groupId}</groupId>
+            <artifactId>cpg-neo4j</artifactId>
+            <version>${cpg.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>jplag</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                    <args>
+                        <arg>-Xcontext-receivers</arg>
+                    </args>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>
