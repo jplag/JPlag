@@ -7,7 +7,9 @@ import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.jplag.java_cpg.transformation.GraphTransformation
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern.Match
-import java.util.*
+import de.jplag.java_cpg.transformation.operations.DummyNeighbor
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass
 
 /**
@@ -24,17 +26,20 @@ class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
        @JvmStatic
        fun registerTransformation(transformation: GraphTransformation<*>) {
-           transformations.add(transformation);
+           transformations.add(transformation)
        }
 
        @JvmStatic
        fun registerTransformations(newTransformations: Array<GraphTransformation<*>>) {
-           transformations.addAll(newTransformations);
+           transformations.addAll(newTransformations)
        }
+
+       @JvmStatic
+       val LOGGER : Logger = LoggerFactory.getLogger("TransformationPass")
    }
 
     override fun accept(t: TranslationResult) {
-        val detector = CpgIsomorphismDetector();
+        val detector = CpgIsomorphismDetector()
         for (transformation : GraphTransformation<*> in transformations) {
             detector.loadGraph(t)
             instantiate(transformation, detector)
@@ -56,6 +61,19 @@ class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     }
 
     override fun cleanup() {
+        val DUMMY = DummyNeighbor.getInstance()
+        DUMMY.nextEOGEdges.removeIf { it.end == DUMMY }
+        DUMMY.prevEOGEdges.removeIf { it.start == DUMMY }
 
+        DUMMY.nextEOGEdges.map { it.end }.toList().forEach {
+            val successors = it.nextEOG.distinct()
+            val predecessors = it.prevEOG.distinct()
+            if (successors.size == 1 && successors[0] == DUMMY
+                && predecessors.size == 1 && predecessors[0] == DUMMY) {
+                LOGGER.info("The node %s got isolated and will likely be removed.".format(it))
+                DUMMY.nextEOGEdges.removeIf {e -> e.end == it}
+                DUMMY.prevEOGEdges.removeIf {e -> e.start == it}
+            }
+        }
     }
 }

@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.function.Predicate.not;
+import static de.jplag.java_cpg.transformation.operations.TransformationHelper.getEntryEdges;
+import static de.jplag.java_cpg.transformation.operations.TransformationHelper.getExitEdges;
 
 /**
  *
@@ -65,29 +66,21 @@ public record RemoveOperation<S extends Node, T extends Node>(NodePattern<? exte
         // replace EOG edges
         SubgraphWalker.Border eogOldBorders = TransformationHelper.getEogBorders(element);
 
-
         Node entry = eogOldBorders.getEntries().get(0);
         List<Node> exits = eogOldBorders.getExits();
 
-        List<Node> astNodes = SubgraphWalker.INSTANCE.flattenAST(element);
-
-        List<Node> predecessors = entry.getPrevEOG().stream().filter(not(astNodes::contains)).distinct().toList();
-        List<Node> successors = exits.stream().flatMap(node -> node.getNextEOG().stream()).filter(not(astNodes::contains)).distinct().toList();
+        List<PropertyEdge<Node>> entryEdges = getEntryEdges(element, entry);
+        List<PropertyEdge<Node>> exitEdges = getExitEdges(element, exits);
+        List<Node> successors = exitEdges.stream().map(PropertyEdge::getEnd).toList();
         if (successors.size() > 1) {
             LOGGER.warn("This AST unit has more than one successor.");
         }
         Node successorEntry = successors.get(0);
 
-        List<PropertyEdge<Node>> predEogFwEdges = predecessors.stream().flatMap(n -> n.getNextEOGEdges().stream())
-            .filter(e -> e.getEnd().equals(entry)).toList();
-
-        List<PropertyEdge<Node>> succEogBwEdge = successors.stream().flatMap(n -> n.getPrevEOGEdges().stream())
-            .filter(e -> exits.contains(e.getStart())).toList();
-
         // EOG subgraphs induced by AST subtrees can have just one valid EOG entry, but many valid EOG exits
         // Replace the exiting edges (oldTarget -->> succ) by the entering edges (pred -->> oldTarget)
-        succEogBwEdge.forEach(e -> e.getEnd().removePrevEOGEntry(e.getStart()));
-        predEogFwEdges.forEach(e -> {
+        exitEdges.forEach(e -> e.getEnd().removePrevEOGEntry(e.getStart()));
+        entryEdges.forEach(e -> {
             e.setEnd(successorEntry);
             successorEntry.addPrevEOG(e);
         });

@@ -55,7 +55,8 @@ public class PlagiarismDetectionTest {
 
     private static Stream<Arguments> getArguments() {
         return Stream.of(
-            Arguments.of("unusedVariables", new GraphTransformation[] { TransformationRepository.removeUnusedVariableDeclarationStatements(), TransformationRepository.removeUnusedVariableDeclarations(), TransformationRepository.removeEmptyDeclarationStatement() })
+            Arguments.of("unusedVariables", new GraphTransformation[] { TransformationRepository.removeUnusedVariableDeclarationStatements(), TransformationRepository.removeUnusedVariableDeclarations(), TransformationRepository.removeEmptyDeclarationStatement() }),
+            Arguments.of("negatedIf", new GraphTransformation[] { TransformationRepository.ifWithNegatedConditionResolution() })
         );
     }
 }

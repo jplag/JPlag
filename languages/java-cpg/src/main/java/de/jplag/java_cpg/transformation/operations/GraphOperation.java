@@ -16,7 +16,7 @@ import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern.Pa
 public interface GraphOperation {
     /**
      * Applies the {@link GraphOperation} on the graph represented by a {@link GraphPattern.Match} indicating which nodes are involved in the operation.
-     * @param match
+     * @param match the pattern match
      */
     void apply(GraphPattern.Match<?> match) throws TransformationException;
 
@@ -34,4 +34,8 @@ public interface GraphOperation {
      * @param <T> The child {@link Node} type
      */
     <S extends Node, T extends Node> GraphOperation instantiate(WildcardMatch<S, T> match);
+
+    default String desc(Node node) {
+        return "%s(%s)".formatted(node.getName(), node.getLocation());
+    }
 }
