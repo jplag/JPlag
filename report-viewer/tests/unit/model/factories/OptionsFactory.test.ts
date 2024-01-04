@@ -37,7 +37,7 @@ describe('Test JSON to Options', async () => {
       fileSuffixes: ['.java', '.JAVA'],
       exclusionFileName: 'ex.txt',
       similarityMetric: MetricType.AVERAGE,
-      similarityTreshold: 0.0,
+      similarityThreshold: 0.0,
       maxNumberComparisons: 500,
       clusterOptions: {
         enabled: true,
@@ -51,12 +51,12 @@ describe('Test JSON to Options', async () => {
         preprocessor: 'Cumulative Distribution Function',
         algorithm: 'Spectral',
         interClusterSimilarity: 'Average',
-        preprocessorTreshold: 0.2,
+        preprocessorThreshold: 0.2,
         preprocessorPercentile: 0.5
       },
       mergingOptions: {
         enabled: false,
-        minNeighbourLength: 0,
+        minNeighborLength: 0,
         maxGapSize: 0
       }
     })

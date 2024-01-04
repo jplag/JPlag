@@ -28,7 +28,7 @@
     "algorithm": "SPECTRAL",
     "inter_similarity": "AVERAGE",
     "preprocessor_threshold": 0.2,
-    "preprocessor_precentile": 0.5
+    "preprocessor_percentile": 0.5
   },
   "merging": {
     "enabled": false,
