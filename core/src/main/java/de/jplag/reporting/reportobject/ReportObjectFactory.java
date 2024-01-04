@@ -33,9 +33,6 @@ import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
-import de.jplag.reporting.reportobject.model.ClusterOptionsReport;
-import de.jplag.reporting.reportobject.model.MergingOptionsReport;
-import de.jplag.reporting.reportobject.model.OptionsReport;
 import de.jplag.reporting.reportobject.model.OverviewReport;
 import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
 import de.jplag.reporting.reportobject.model.Version;
@@ -230,21 +227,7 @@ public class ReportObjectFactory {
     }
 
     private void writeOptionsFiles(JPlagOptions options, String path) {
-        OptionsReport report = new OptionsReport(options.language().getName(), options.minimumTokenMatch(),
-                options.submissionDirectories().stream().map(File::getPath).toList(),
-                options.oldSubmissionDirectories().stream().map(File::getPath).toList(),
-                options.hasBaseCode() ? options.baseCodeSubmissionDirectory().getPath() : "", options.subdirectoryName(), options.fileSuffixes(),
-                options.exclusionFileName(), options.similarityMetric().name(), options.similarityThreshold(), options.maximumNumberOfComparisons(),
-                new ClusterOptionsReport(options.clusteringOptions().enabled(), options.clusteringOptions().similarityMetric().name(),
-                        options.clusteringOptions().spectralKernelBandwidth(), options.clusteringOptions().spectralGaussianProcessVariance(),
-                        options.clusteringOptions().spectralMinRuns(), options.clusteringOptions().spectralMaxRuns(),
-                        options.clusteringOptions().spectralMaxKMeansIterationPerRun(), options.clusteringOptions().agglomerativeThreshold(),
-                        options.clusteringOptions().preprocessor().name(), options.clusteringOptions().algorithm().name(),
-                        options.clusteringOptions().agglomerativeInterClusterSimilarity().name(), options.clusteringOptions().preprocessorThreshold(),
-                        options.clusteringOptions().preprocessorPercentile()),
-                new MergingOptionsReport(options.mergingOptions().enabled(), options.mergingOptions().minimumNeighborLength(),
-                        options.mergingOptions().maximumGapSize()));
-        jsonFileWriter.writeFile(report, path, OPTIONS_FILE_NAME);
+        jsonFileWriter.writeFile(options, path, OPTIONS_FILE_NAME);
     }
 
     private Set<Submission> getSubmissions(List<JPlagComparison> comparisons) {

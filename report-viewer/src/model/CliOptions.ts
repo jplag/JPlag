@@ -11,7 +11,7 @@ export interface CliOptions {
   fileSuffixes: string[]
   exclusionFileName: string
   similarityMetric: MetricType
-  similarityTreshold: number
+  similarityThreshold: number
   maxNumberComparisons: number
   clusterOptions: CliClusterOptions
   mergingOptions: CliMergingOptions
@@ -29,12 +29,12 @@ export interface CliClusterOptions {
   preprocessor: string
   algorithm: string
   interClusterSimilarity: string
-  preprocessorTreshold: number
+  preprocessorThreshold: number
   preprocessorPercentile: number
 }
 
 export interface CliMergingOptions {
   enabled: boolean
-  minNeighbourLength: number
+  minNeighborLength: number
   maxGapSize: number
 }

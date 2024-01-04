@@ -19,7 +19,7 @@ export class OptionsFactory extends BaseFactory {
       fileSuffixes: json['file_suffixes'] as string[],
       exclusionFileName: (json['exclusion_file_name'] as string) ?? '',
       similarityMetric: json['similarity_metric'] as MetricType,
-      similarityTreshold: json['similarity_threshold'] as number,
+      similarityThreshold: json['similarity_threshold'] as number,
       maxNumberComparisons: json['max_comparisons'] as number,
       clusterOptions: this.extractClusterOptions(json['cluster'] as Record<string, unknown>),
       mergingOptions: this.extractMergingOptions(json['merging'] as Record<string, unknown>)
@@ -39,15 +39,15 @@ export class OptionsFactory extends BaseFactory {
       preprocessor: this.transformWord(json['preprocessor'] as string),
       algorithm: this.transformWord(json['algorithm'] as string),
       interClusterSimilarity: this.transformWord(json['inter_similarity'] as string),
-      preprocessorTreshold: json['preprocessor_threshold'] as number,
-      preprocessorPercentile: json['preprocessor_precentile'] as number
+      preprocessorThreshold: json['preprocessor_threshold'] as number,
+      preprocessorPercentile: json['preprocessor_percentile'] as number
     }
   }
 
   private static extractMergingOptions(json: Record<string, unknown>): CliMergingOptions {
     return {
       enabled: json['enabled'] as boolean,
-      minNeighbourLength: json['min_neighbour_length'] as number,
+      minNeighborLength: json['min_neighbour_length'] as number,
       maxGapSize: json['max_gap_size'] as number
     }
   }

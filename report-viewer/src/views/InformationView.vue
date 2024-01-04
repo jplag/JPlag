@@ -12,7 +12,7 @@
             overview.baseCodeFolderPath
           }}</TextInformation>
           <TextInformation label="Language" class="pb-1">{{ overview.language }}</TextInformation>
-          <TextInformation label="File Extentions" class="pb-1">{{
+          <TextInformation label="File Extensions" class="pb-1">{{
             overview.fileExtensions.join(', ')
           }}</TextInformation>
           <TextInformation label="Min Token Match" class="pb-1">{{
@@ -42,8 +42,8 @@
           <TextInformation label="Similarity Metric">{{
             metricToolTips[options.similarityMetric].longName
           }}</TextInformation>
-          <TextInformation label="Similarity Treshold">{{
-            options.similarityTreshold
+          <TextInformation label="Similarity Threshold">{{
+            options.similarityThreshold
           }}</TextInformation>
           <TextInformation label="Max Comparison Count">{{
             options.maxNumberComparisons
@@ -86,8 +86,8 @@
             <TextInformation label="Preprocessor">{{
               options.clusterOptions.preprocessor
             }}</TextInformation>
-            <TextInformation label="Preprocessor Treshold">{{
-              options.clusterOptions.preprocessorTreshold
+            <TextInformation label="Preprocessor Threshold">{{
+              options.clusterOptions.preprocessorThreshold
             }}</TextInformation>
             <TextInformation label="Preprocessor Percentile">{{
               options.clusterOptions.preprocessorPercentile
@@ -99,8 +99,8 @@
 
           <div class="mt-5 space-y-2" v-if="options.mergingOptions.enabled">
             <h3 class="font-bold">Match Merging:</h3>
-            <TextInformation label="Min Neighbour Length">{{
-              options.mergingOptions.minNeighbourLength
+            <TextInformation label="Min Neighbor Length">{{
+              options.mergingOptions.minNeighborLength
             }}</TextInformation>
             <TextInformation label="Max Gap Size"
               >{{ options.mergingOptions.maxGapSize }} }}</TextInformation
