@@ -10,7 +10,7 @@ public enum CpgTokenType implements TokenType {
     RECORD_DECL_BEGIN("CLASS{"),
     RECORD_DECL_END("}CLASS"),
 
-    FIELD_DECL("FIELD_DECL", true),
+    FIELD_DECL("FIELD_DECL", false),
 
     METHOD_DECL_BEGIN("METHOD_DECL"),
     METHOD_PARAM("PARAM"),
@@ -39,10 +39,12 @@ public enum CpgTokenType implements TokenType {
     DO_WHILE_BLOCK_START("DW_DO{"),
     DO_WHILE_BLOCK_END("}DW_DO"),
 
-    FOR_STATEMENT_BEGIN("FOR"),
-    FOR_STATEMENT_END("}FOR"),
+    FOR_STATEMENT("FOR"),
+    FOR_BLOCK_BEGIN("FOR{"),
+    FOR_BLOCK_END("}FOR"),
     SWITCH_STATEMENT("SWITCH{"),
-    SWITCH_STATEMENT_END("}SWITCH"),
+    SWITCH_BLOCK_START("SWITCH{"),
+    SWITCH_BLOCK_END("}SWITCH"),
     CASE_STATEMENT("CASE"),
 
     BREAK("BREAK"),
@@ -53,15 +55,18 @@ public enum CpgTokenType implements TokenType {
 
     ASSERT_STATEMENT("ASSERT"),
 
-    TRY_STATEMENT_BEGIN("TRY{"),
-    TRY_STATEMENT_END("}TRY"),
+    TRY_STATEMENT("TRY{"),
+    TRY_BLOCK_START("TRY{"),
+    TRY_BLOCK_END("}TRY"),
     CATCH_CLAUSE_BEGIN("CATCH{"),
     CATCH_CLAUSE_END("}CATCH"),
     FINALLY_CLAUSE_BEGIN("FINALLY{"),
     FINALLY_CLAUSE_END("}FINALLY"),
 
 
-    ;
+    // TODO: set excluded
+    BLOCK_BEGIN("{", false),
+    BLOCK_END("}", false);
 
 
     private final boolean isExcluded;

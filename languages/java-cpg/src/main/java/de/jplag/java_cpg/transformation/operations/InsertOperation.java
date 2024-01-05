@@ -1,14 +1,17 @@
 package de.jplag.java_cpg.transformation.operations;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
-import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
+import de.fraunhofer.aisec.cpg.graph.edge.Properties;
+import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
+import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Replaces the target {@link Node} of an edge by another {@link Node}.
@@ -19,9 +22,9 @@ import java.util.Objects;
  * @param <S>             type of the parentPattern node, defined by the edge
  * @param <T>             type of the destination node, defined by the edge
  */
-public record ReplaceOperation<S extends Node, T extends Node>(NodePattern<? extends S> parentPattern,
-                                                               CpgEdge<S, T> edge,
-                                                               NodePattern<? extends T> newChildPattern) implements GraphOperation {
+public record InsertOperation<S extends Node, T extends Node>(NodePattern<? extends S> parentPattern,
+                                                              CpgNthEdge<S, T> edge,
+                                                              NodePattern<? extends T> newChildPattern) implements GraphOperation {
 
     private static final Logger LOGGER;
 
@@ -34,15 +37,16 @@ public record ReplaceOperation<S extends Node, T extends Node>(NodePattern<? ext
         S parent = match.get(parentPattern);
         // match should contain newChildPattern node because of Builder.createNewNodes()
         T newTarget = match.get(newChildPattern);
+        LOGGER.info("Insert %s into %s at position #%d".formatted(desc(newTarget), desc(parent), edge.getIndex()));
 
-        // Replace AST edge
-        T oldTarget = edge.getter().apply(parent);
-        LOGGER.info("Replace %s by %s".formatted(desc(oldTarget), desc(newTarget)));
-        if (Objects.isNull(newTarget.getLocation())) {
-            newTarget.setLocation(oldTarget.getLocation());
-        }
-        edge.setter().accept(parent, newTarget);
+        PropertyEdge<T> newEdge = new PropertyEdge<>(parent, newTarget);
+        newEdge.addProperty(Properties.INDEX, edge.getIndex());
+        newEdge.addProperty(Properties.UNREACHABLE, false);
 
+        // Set AST edge
+        List<PropertyEdge<T>> edges = edge.getMultiEdge().getAllEdges(parent);
+        edges.add(edge.getIndex(), newEdge);
+        IntStream.range(edge.getIndex(), edges.size()).forEach(i -> edges.get(i).addProperty(Properties.INDEX, i + 1));
     }
 
     @Override
@@ -52,18 +56,11 @@ public record ReplaceOperation<S extends Node, T extends Node>(NodePattern<? ext
 
     @Override
     public <S extends Node, T extends Node> GraphOperation instantiate(GraphPattern.Match.WildcardMatch<S, T> match) {
-        if (!(this.parentPattern instanceof WildcardGraphPattern<?>.ParentNodePattern && this.edge instanceof WildcardGraphPattern<?>.Edge)) {
+        if (!(this.parentPattern instanceof WildcardGraphPattern<?>.ParentNodePattern)) {
             return this;
         }
 
-        NodePattern<S> sNodePattern = match.parentPattern();
-        CpgEdge<S, ? super T> edge1 = match.edge();
-        try {
-            NodePattern<? extends T> toCopy = (NodePattern<? extends T>) newChildPattern;
-            return new ReplaceOperation<>(sNodePattern, edge1, toCopy);
-        } catch (ClassCastException e) {
-            throw new RuntimeException("The wildcard match is incompatible with the child node class %s.".formatted(newChildPattern.getClass().getSimpleName()));
-        }
+        throw new RuntimeException("Cannot apply InsertOperation with WildcardGraphPattern.ParentPattern as parentPattern. Use a surrounding Block instead.");
     }
 
 

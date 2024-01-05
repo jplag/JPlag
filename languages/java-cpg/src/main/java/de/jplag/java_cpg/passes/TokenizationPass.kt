@@ -2,7 +2,7 @@ package de.jplag.java_cpg.passes
 
 import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
-import de.fraunhofer.aisec.cpg.helpers.MeasurementHolder
+import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.jplag.Token
@@ -14,41 +14,41 @@ import de.jplag.java_cpg.visitorStrategy.NodeOrderStrategy
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.function.Consumer
-import kotlin.reflect.KClass
 
 /**
  * This pass tokenizes a TranslationResult.
  */
-class TokenizationPass(ctx: TranslationContext) : TranslationResultPass(ctx), CpgTokenConsumer {
+class TokenizationPass(ctx: TranslationContext?) : TranslationResultPass(ctx!!) {
 
-    var tokenList: MutableList<Token> = ArrayList()
-        private set
+    private val tokenList = ArrayList<Token>()
+    private val consumer: CpgTokenConsumer
+
+    init {
+        this.consumer = ConcreteCpgTokenConsumer()
+    }
 
     override fun cleanup() {
-        LoggerFactory.getLogger(MeasurementHolder::class.java).info("Found %d tokens".format(tokenList.size))
+        LoggerFactory.getLogger(TokenizationPass::class.java).info("Found %d tokens".format(tokenList.size))
     }
 
     override fun accept(translationResult: TranslationResult) {
-        val listener = CpgTokenListener(this)
-        val walker = SubgraphWalker.IterativeGraphWalker()
-        walker.strategy = NodeOrderStrategy()::getIterator
-        walker.registerOnNodeVisit(listener::visit)
-        walker.registerOnNodeExit(listener::exit)
+        val listener = CpgTokenListener(consumer)
+        val walker: SubgraphWalker.IterativeGraphWalker = SubgraphWalker.IterativeGraphWalker()
+        walker.strategy = { node: Node? -> NodeOrderStrategy().getIterator(node) }
+        walker.registerOnNodeVisit(Consumer { node: Node? -> listener.visit(node) })
+        walker.registerOnNodeExit(Consumer { t: Node -> listener.exit(t) })
         walker.iterate(translationResult)
-        callback?.accept(tokenList);
+        callback!!.accept(tokenList)
+    }
+
+    private inner class ConcreteCpgTokenConsumer : CpgTokenConsumer() {
+        override fun addToken(type: TokenType, file: File, rowBegin: Int, colBegin: Int, length: Int) {
+            val token = CpgToken(type, file, rowBegin, colBegin, length)
+            tokenList.add(token)
+        }
     }
 
     companion object {
-        @JvmStatic
-        val KClass: KClass<TokenizationPass> = TokenizationPass::class
-
-        @JvmStatic
-        var callback: Consumer<List<Token>>? = null;
+        var callback: Consumer<List<Token>>? = null
     }
-
-    override fun addToken(type: TokenType, file: File, rowBegin: Int, colBegin: Int, length: Int) {
-        val token = CpgToken(type, file, rowBegin, colBegin, length)
-        tokenList.add(token)
-    }
-
 }

@@ -35,6 +35,11 @@ class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
        }
 
        @JvmStatic
+       fun clearTransformations() {
+            transformations.clear();
+       }
+
+       @JvmStatic
        val LOGGER : Logger = LoggerFactory.getLogger("TransformationPass")
    }
 

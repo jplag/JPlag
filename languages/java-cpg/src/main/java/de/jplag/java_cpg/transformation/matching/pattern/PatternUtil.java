@@ -9,7 +9,6 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgPropertyEdge;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 
@@ -42,14 +41,14 @@ public class PatternUtil {
 
     /**
      * Creates a {@link Predicate} that checks if the related object is equal to the given value.
-     * @param propertyGetter a function to get the related object
+     * @param propertyEdge a function to get the related object
      * @param value the value to check against
      * @return the predicate
      * @param <S> the source node type
      * @param <P> the predicate type
      */
-    public static <S extends Node, P> Predicate<S> areEqual(Function<S, P> propertyGetter, P value) {
-        return s -> propertyGetter.apply(s).equals(value);
+    public static <S extends Node, P> Predicate<S> attributeEquals(CpgPropertyEdge<S, P> propertyEdge, P value) {
+        return s -> propertyEdge.get(s).equals(value);
     }
 
     /**

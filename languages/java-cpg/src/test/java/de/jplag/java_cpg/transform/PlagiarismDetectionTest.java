@@ -9,6 +9,7 @@ import de.jplag.java_cpg.Language;
 import de.jplag.java_cpg.transformation.GraphTransformation;
 import de.jplag.java_cpg.transformation.TransformationRepository;
 import de.jplag.options.JPlagOptions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,10 +54,16 @@ public class PlagiarismDetectionTest {
         Assertions.assertEquals(jPlagComparison.similarity(), 1.0);
     }
 
+    @AfterEach
+    public void resetTransformations() {
+        language.resetTransformations();
+    }
+
     private static Stream<Arguments> getArguments() {
         return Stream.of(
-            Arguments.of("unusedVariables", new GraphTransformation[] { TransformationRepository.removeUnusedVariableDeclarationStatements(), TransformationRepository.removeUnusedVariableDeclarations(), TransformationRepository.removeEmptyDeclarationStatement() }),
-            Arguments.of("negatedIf", new GraphTransformation[] { TransformationRepository.ifWithNegatedConditionResolution() })
+            Arguments.of("for2While", new GraphTransformation[] { TransformationRepository.forStatementToWhileStatement() }),
+            Arguments.of("negatedIf", new GraphTransformation[] { TransformationRepository.ifWithNegatedConditionResolution() }),
+            Arguments.of("unusedVariables", new GraphTransformation[] { TransformationRepository.removeUnusedVariableDeclarationStatements(), TransformationRepository.removeUnusedVariableDeclarations(), TransformationRepository.removeEmptyDeclarationStatement() })
         );
     }
 }

@@ -3,7 +3,6 @@ package de.jplag.java_cpg.transformation.operations;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.Properties;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
-import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
 import de.jplag.java_cpg.transformation.TransformationException;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
@@ -15,9 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Objects;
-
-import static de.jplag.java_cpg.transformation.operations.TransformationHelper.getEntryEdges;
-import static de.jplag.java_cpg.transformation.operations.TransformationHelper.getExitEdges;
 
 /**
  *
@@ -63,27 +59,6 @@ public record RemoveOperation<S extends Node, T extends Node>(NodePattern<? exte
             siblings.remove(element);
         }
 
-        // replace EOG edges
-        SubgraphWalker.Border eogOldBorders = TransformationHelper.getEogBorders(element);
-
-        Node entry = eogOldBorders.getEntries().get(0);
-        List<Node> exits = eogOldBorders.getExits();
-
-        List<PropertyEdge<Node>> entryEdges = getEntryEdges(element, entry);
-        List<PropertyEdge<Node>> exitEdges = getExitEdges(element, exits);
-        List<Node> successors = exitEdges.stream().map(PropertyEdge::getEnd).toList();
-        if (successors.size() > 1) {
-            LOGGER.warn("This AST unit has more than one successor.");
-        }
-        Node successorEntry = successors.get(0);
-
-        // EOG subgraphs induced by AST subtrees can have just one valid EOG entry, but many valid EOG exits
-        // Replace the exiting edges (oldTarget -->> succ) by the entering edges (pred -->> oldTarget)
-        exitEdges.forEach(e -> e.getEnd().removePrevEOGEntry(e.getStart()));
-        entryEdges.forEach(e -> {
-            e.setEnd(successorEntry);
-            successorEntry.addPrevEOG(e);
-        });
     }
 
     @Override

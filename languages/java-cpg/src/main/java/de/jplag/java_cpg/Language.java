@@ -62,4 +62,9 @@ public class Language implements de.jplag.Language {
     public void addTransformations(GraphTransformation<?>[] transformations) {
         this.cpgAdapter.addTransformations(transformations);
     }
+
+    public void resetTransformations() {
+        this.cpgAdapter.clearTransformations();
+        this.cpgAdapter.addTransformations(standardTransformations());
+    }
 }

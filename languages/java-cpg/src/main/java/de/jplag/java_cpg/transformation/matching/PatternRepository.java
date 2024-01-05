@@ -14,6 +14,7 @@ import de.fraunhofer.aisec.cpg.graph.types.ObjectType;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
+import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ public final class PatternRepository {
                 return create(IfStatement.class, "root",
                     related(IF_STATEMENT__CONDITION, UnaryOperator.class,
                         "condition",
-                        property(areEqual(UnaryOperator::getOperatorCode, "!")),
+                        property(PatternUtil.attributeEquals(UNARY_OPERATOR__OPERATOR_CODE, "!")),
                         related(UNARY_OPERATOR__INPUT, Expression.class, "innerCondition")),
                     related(IF_STATEMENT__THEN_STATEMENT, Statement.class, "thenStatement"),
                     related(IF_STATEMENT__ELSE_STATEMENT, Statement.class, "elseStatement")
@@ -69,7 +70,7 @@ public final class PatternRepository {
             public GraphPattern<MethodDeclaration> build() {
                 return create(MethodDeclaration.class, "methodDecl",
                     related(METHOD_DECLARATION__RECORD_DECLARATION, RecordDeclaration.class, "classDecl",
-                        related1toN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, "fieldDecl",
+                        related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, "fieldDecl",
                             related(FIELD_DECLARATION__TYPE, ObjectType.class, "fieldType")
                         ),
                         relatedExisting1ToN(RECORD_DECLARATION__METHODS, "methodDecl")
@@ -79,7 +80,7 @@ public final class PatternRepository {
                         relatedExisting(nthElement(FUNCTION_TYPE__PARAMETERS, 0), "fieldType"),
                         property(nElements(FUNCTION_TYPE__RETURN_TYPES, 1)),
                         related(nthElement(FUNCTION_TYPE__RETURN_TYPES, 0), IncompleteType.class, "voidType",
-                            property(areEqual(IncompleteType::getTypeName, "void"))
+                            property(PatternUtil.attributeEquals(INCOMPLETE_TYPE__TYPE_NAME, "void"))
                         )
                     ),
                     related(nthElement(METHOD_DECLARATION__PARAMETERS, 0), ParameterDeclaration.class, "paramDecl"),

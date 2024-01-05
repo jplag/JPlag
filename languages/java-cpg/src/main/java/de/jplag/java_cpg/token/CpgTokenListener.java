@@ -19,21 +19,23 @@ public class CpgTokenListener extends ACpgTokenListener {
 
     private final CpgTokenConsumer tokenConsumer;
     private final LinkedList<TokenType> openBlocks;
+    private final LinkedList<BlockTokens> expectedBlocks;
 
     public CpgTokenListener(CpgTokenConsumer consumer) {
         this.tokenConsumer = consumer;
-        this.openBlocks = new LinkedList<TokenType>();
+        this.expectedBlocks = new LinkedList<>();
+        this.openBlocks = new LinkedList<>();
     }
 
     @Override
     public void exit(TranslationUnitDeclaration translationUnitDeclaration) {
         tokenConsumer.addToken(FILE_END, new File(translationUnitDeclaration.getName().toString()), -1, -1, -1);
     }
-
+    
     @Override
     public void visit(ConstructorDeclaration constructorDeclaration) {
         // Constructor may be implicit standard constructor
-        openBlocks.addFirst(METHOD_BODY_END);
+        expect(METHOD_BODY_BEGIN, METHOD_BODY_END);
         tokenConsumer.addToken(METHOD_DECL_BEGIN, constructorDeclaration, false);
     }
 
@@ -123,7 +125,7 @@ public class CpgTokenListener extends ACpgTokenListener {
 
     @Override
     public void visit(MethodDeclaration methodDeclaration) {
-        openBlocks.addFirst(DO_WHILE_BLOCK_END);
+        expect(METHOD_BODY_BEGIN, METHOD_BODY_END);
         tokenConsumer.addToken(METHOD_DECL_BEGIN, methodDeclaration, false);
     }
 
@@ -228,7 +230,7 @@ public class CpgTokenListener extends ACpgTokenListener {
 
     @Override
     public void visit(DoStatement doStatement) {
-        openBlocks.addFirst(DO_WHILE_BLOCK_END);
+        expect(DO_WHILE_BLOCK_START, DO_WHILE_BLOCK_END);
         tokenConsumer.addToken(DO_WHILE_STATEMENT, doStatement, false);
     }
 
@@ -238,25 +240,15 @@ public class CpgTokenListener extends ACpgTokenListener {
     }
 
     @Override
-    public void visit(EmptyStatement emptyStatement) {
-
-    }
-
-    @Override
-    public void exit(EmptyStatement emptyStatement) {
-
-    }
-
-    @Override
     public void visit(ForEachStatement foreachStatement) {
-        openBlocks.addFirst(FOR_STATEMENT_END);
-        tokenConsumer.addToken(FOR_STATEMENT_BEGIN, foreachStatement, false);
+        expect(FOR_STATEMENT, FOR_BLOCK_END);
+        tokenConsumer.addToken(FOR_STATEMENT, foreachStatement, false);
     }
 
     @Override
     public void visit(ForStatement forStatement) {
-        openBlocks.addFirst(FOR_STATEMENT_END);
-        tokenConsumer.addToken(FOR_STATEMENT_BEGIN, forStatement, false);
+        expect(FOR_BLOCK_BEGIN , FOR_BLOCK_END);
+        tokenConsumer.addToken(FOR_STATEMENT, forStatement, false);
     }
 
     @Override
@@ -266,7 +258,7 @@ public class CpgTokenListener extends ACpgTokenListener {
 
     @Override
     public void visit(IfStatement ifStatement) {
-        openBlocks.addFirst(IF_BLOCK_END);
+        expect(IF_BLOCK_BEGIN ,IF_BLOCK_END);
         tokenConsumer.addToken(IF_STATEMENT, ifStatement, false);
     }
 
@@ -278,7 +270,7 @@ public class CpgTokenListener extends ACpgTokenListener {
 
     @Override
     public void visit(SwitchStatement switchStatement) {
-        openBlocks.addFirst(SWITCH_STATEMENT_END);
+        expect(SWITCH_BLOCK_START, SWITCH_BLOCK_END);
         tokenConsumer.addToken(SWITCH_STATEMENT, switchStatement, false);
     }
 
@@ -294,14 +286,14 @@ public class CpgTokenListener extends ACpgTokenListener {
 
     @Override
     public void visit(TryStatement tryStatement) {
-        openBlocks.addFirst(TRY_STATEMENT_END);
-        tokenConsumer.addToken(TRY_STATEMENT_BEGIN, tryStatement, false);
+        expect(TRY_BLOCK_START, TRY_BLOCK_END);
+        tokenConsumer.addToken(TRY_STATEMENT, tryStatement, false);
     }
 
     @Override
     public void visit(WhileStatement whileStatement) {
-        openBlocks.addFirst(WHILE_BLOCK_END);
-        tokenConsumer.addToken(WHILE_BLOCK_START, whileStatement, false);
+        expect(WHILE_BLOCK_START, WHILE_BLOCK_END);
+        tokenConsumer.addToken(WHILE_STATEMENT, whileStatement, false);
     }
 
     @Override
@@ -311,7 +303,14 @@ public class CpgTokenListener extends ACpgTokenListener {
 
     @Override
     public void visit(Block block) {
-
+        if (expectedBlocks.isEmpty()) {
+            tokenConsumer.addToken(BLOCK_BEGIN, block, false);
+            openBlocks.addFirst(BLOCK_END);
+        } else {
+            BlockTokens blockTokens = expectedBlocks.pop();
+            tokenConsumer.addToken(blockTokens.opening, block, false);
+            openBlocks.addFirst(blockTokens.closing);
+        }
     }
 
     @Override
@@ -338,5 +337,14 @@ public class CpgTokenListener extends ACpgTokenListener {
     public void visit(Node node) {
         super.visit(node);
     }
+
+    private void expect(CpgTokenType opening, CpgTokenType closing) {
+        if (!expectedBlocks.isEmpty()) {
+            expectedBlocks.clear();
+        }
+        expectedBlocks.addFirst(new BlockTokens(opening, closing));
+    }
+
+    private record BlockTokens(CpgTokenType opening, CpgTokenType closing) {}
 
 }

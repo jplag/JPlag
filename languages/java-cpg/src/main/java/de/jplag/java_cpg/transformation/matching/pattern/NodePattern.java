@@ -25,20 +25,20 @@ public interface NodePattern<T extends Node> {
     }
 
     /**
-     * Adds a related NodePattern to the pattern.
+     * Adds a related {@link NodePattern} to the pattern.
      *
      * @param <R>     the type of the related node
      * @param related the related NodePattern
-     * @param edge    a function to get the related node given a concrete match for this pattern
+     * @param edge    an edge to the related node given a concrete match for this pattern
      */
     <R extends Node> void addRelatedNodePattern(NodePattern<? extends R> related, CpgEdge<T, R> edge);
 
     /**
-     * Adds a related NodePattern to the pattern.
+     * Adds a related {@link NodePattern} to the pattern.
      *
      * @param <R>     the type of the related node
      * @param related the related NodePattern
-     * @param edge    a function to get candidates for the related node given a concrete match for this pattern
+     * @param edge    an edge to candidates for the related node given a concrete match for this pattern
      */
     <R extends Node> void addRelated1ToNNodePattern(NodePattern<? extends R> related, CpgMultiEdge<T, R> edge);
 
@@ -48,6 +48,15 @@ public interface NodePattern<T extends Node> {
      * @param property the property
      */
     void addProperty(Predicate<T> property);
+
+    /**
+     * Adds a sequence of {@link NodePattern}s related to this node pattern.
+     *
+     * @param <R>          the (super)type of the related nodes, as specified by the edge
+     * @param nodePatterns the node pattern
+     * @param edge         a multi edge to the list of nodes of which a subsequence shall match the nodePatterns
+     */
+    <R extends Node> void addRelated1ToNSequence(NodeListPattern<R> nodePatterns, CpgMultiEdge<T, R> edge);
 
     /**
      * Checks whether the given concrete node matches this pattern.
@@ -61,16 +70,18 @@ public interface NodePattern<T extends Node> {
     /**
      * Gets the {@link List} of 1:1-related {@link NodePattern}s of this {@link NodePattern}.
      *
-     * @return the related node patterns
+     * @return the related node pattern
      */
     List<RelatedNode<T, ?>> getRelatedNodes();
 
     /**
      * Gets the {@link List} of 1:n-related {@link NodePattern}s of this {@link NodePattern}.
      *
-     * @return the related node patterns
+     * @return the related node pattern
      */
     List<RelatedOneToNNode<T, ?>> getRelated1ToNNodes();
+
+    List<Related1ToNSequence<T, ?>> getRelated1ToNSequences();
 
     /**
      * Creates a copy of this {@link NodePattern} and all related nodes and properties.
@@ -80,13 +91,15 @@ public interface NodePattern<T extends Node> {
     NodePattern<T> deepCopy();
 
     /**
-     * Indicates whether a {@link de.jplag.java_cpg.transformation.matching.pattern.GraphPattern.Match} of this {@link NodePattern} shall be removed.
+     * Indicates whether a {@link GraphPattern.Match} of this {@link NodePattern} shall be removed.
+     *
      * @return true if the node shall be removed
      */
     boolean isToBeRemoved();
 
     /**
      * Gets a {@link Class} object for the indicated {@link Node} class.
+     *
      * @return the class object
      */
     Class<T> getRootClass();
@@ -96,8 +109,10 @@ public interface NodePattern<T extends Node> {
      */
     void markForRemoval();
 
+
     /**
      * Standard implementation of the {@link NodePattern}.
+     *
      * @param <T> The {@link Node} type of a target node.
      */
     class NodePatternImpl<T extends Node> implements NodePattern<T> {
@@ -106,6 +121,7 @@ public interface NodePattern<T extends Node> {
         private final List<Predicate<T>> properties;
         private final List<RelatedNode<T, ?>> relatedNodes;
         private final List<RelatedOneToNNode<T, ?>> related1ToNNodes;
+        private final List<Related1ToNSequence<T, ?>> related1ToNSequences;
 
         private boolean toBeRemoved = false;
 
@@ -114,6 +130,7 @@ public interface NodePattern<T extends Node> {
             this.properties = new ArrayList<>();
             this.relatedNodes = new ArrayList<>();
             this.related1ToNNodes = new ArrayList<>();
+            this.related1ToNSequences = new ArrayList<>();
         }
 
         @Override
@@ -129,6 +146,11 @@ public interface NodePattern<T extends Node> {
         @Override
         public void addProperty(Predicate<T> property) {
             properties.add(property);
+        }
+
+        @Override
+        public <R extends Node> void addRelated1ToNSequence(NodeListPattern<R> nodeListPattern, CpgMultiEdge<T, R> edge) {
+            related1ToNSequences.add(new Related1ToNSequence<>(nodeListPattern, edge));
         }
 
         @Override
@@ -186,6 +208,7 @@ public interface NodePattern<T extends Node> {
 
         /**
          * Checks the local properties of the {@link NodePattern} against the concrete {@link Node}.
+         *
          * @param node the node
          * @return true if the node has the corresponding type and properties
          */
@@ -212,12 +235,18 @@ public interface NodePattern<T extends Node> {
         }
 
         @Override
+        public List<Related1ToNSequence<T, ?>> getRelated1ToNSequences() {
+            return related1ToNSequences;
+        }
+
+        @Override
         public NodePattern<T> deepCopy() {
             NodePatternImpl<T> copy = new NodePatternImpl<>(this.clazz);
             copy.properties.addAll(this.properties);
             // TODO does a shallow copy cause trouble?
             copy.relatedNodes.addAll(this.relatedNodes);
             copy.related1ToNNodes.addAll(this.related1ToNNodes);
+            copy.related1ToNSequences.addAll(this.related1ToNSequences);
             return copy;
         }
 
@@ -267,12 +296,12 @@ public interface NodePattern<T extends Node> {
 
 
     /**
-     * Pair of a node pattern of a related node and a function to get parentPattern a reference node to a list of candidate related nodes.
+     * Pair of a node pattern of a related node and a multi edge from a reference node to a list of candidate related nodes.
      *
      * @param <T>     type of the reference node
      * @param <R>     type of the related node
      * @param pattern the pattern describing the related node
-     * @param edge    function to get the related nodes given a reference node
+     * @param edge    edge from a reference node to the related nodes
      */
     record RelatedOneToNNode<T extends Node, R extends Node>(NodePattern<? extends R> pattern,
                                                              CpgMultiEdge<T, R> edge) {
@@ -284,6 +313,25 @@ public interface NodePattern<T extends Node> {
             return pattern;
         }
 
+    }
+
+    /**
+     * Pair of a sequence of node pattern of related nodes and a multi edge from a reference node to all related nodes.
+     *
+     * @param <T>      type of the reference node
+     * @param <R>      type of the related node
+     * @param pattern the pattern describing the related nodes
+     * @param edge     edge from a reference node to the related nodes
+     */
+    record Related1ToNSequence<T extends Node, R extends Node>(NodeListPattern<R> pattern,
+                                                               CpgMultiEdge<T, R> edge) {
+        List<? extends Node> getCandidates(T from) {
+            return edge.getAllTargets(from);
+        }
+
+        NodePattern<? extends R> getPattern(int index) {
+            return pattern.get(index);
+        }
     }
 
 }

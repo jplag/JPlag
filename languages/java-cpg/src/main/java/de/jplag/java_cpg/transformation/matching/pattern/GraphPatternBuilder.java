@@ -20,8 +20,8 @@ import java.util.function.Predicate;
  */
 public abstract class GraphPatternBuilder<Root extends Node> {
 
-    private final HashMap<String, NodePattern<?>> mapping;
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphPatternBuilder.class);
+    private final HashMap<String, NodePattern<?>> mapping;
 
     /**
      * Creates a new {@link GraphPatternBuilder}.
@@ -130,16 +130,17 @@ public abstract class GraphPatternBuilder<Root extends Node> {
      * @return the pattern modification object
      */
     @SafeVarargs
-    public final <T extends Node, R extends Node, C extends R> PatternModification<T> related1toN(CpgMultiEdge<T, R> edge, Class<C> rClass, String id, PatternModification<C>... modifications) {
+    public final <T extends Node, R extends Node, C extends R> PatternModification<T> related1ToN(CpgMultiEdge<T, R> edge, Class<C> rClass, String id, PatternModification<C>... modifications) {
         return new AddRelated1ToNNode<>(edge, rClass, id, Arrays.asList(modifications));
     }
 
     /**
      * Creates a {@link PatternModification} to add a 1:1 relation to an existing {@link NodePattern}.
+     *
      * @param edge the edge establishing the relation
-     * @param id the ID of the existing target {@link NodePattern}
+     * @param id   the ID of the existing target {@link NodePattern}
+     * @param <T>  the target {@link Node} type
      * @return the pattern modification
-     * @param <T> the target {@link Node} type
      */
     public final <T extends Node> PatternModification<T> relatedExisting(CpgEdge<T, ? extends Node> edge, String id) {
         return new AddRelatedExistingNode<>(edge, id);
@@ -147,36 +148,64 @@ public abstract class GraphPatternBuilder<Root extends Node> {
 
     /**
      * Creates a {@link PatternModification} to add a 1:n relation to an existing {@link NodePattern}.
+     *
      * @param edge the multi-edge establishing the relation
-     * @param id the ID of the existing target {@link NodePattern}
+     * @param id   the ID of the existing target {@link NodePattern}
+     * @param <T>  the target {@link Node} type
+     * @param <R>  the related {@link Node} type
      * @return the pattern modification
-     * @param <T> the target {@link Node} type
      */
     public final <T extends Node, R extends Node> PatternModification<T> relatedExisting1ToN(CpgMultiEdge<T, R> edge, String id) {
         return new AddRelatedExisting1ToNNode<>(edge, id);
     }
 
     /**
-     * Creates a {@link PatternModification} to add a property to a {@link NodePattern}
+     * Creates a {@link PatternModification} to add a property to a {@link NodePattern}.
+     *
      * @param property the predicate establishing the property
+     * @param <T>      the target {@link Node} type
      * @return the pattern modification
-     * @param <T> the target {@link Node} type
      */
     public final <T extends Node> PatternModification<T> property(Predicate<T> property) {
         return new AddProperty<>(property);
     }
 
     /**
+     * Creates a {@link PatternModification} to add a sequence of related node pattern to a {@link NodePattern}.
+     *
+     * @param edge   the multi-edge establishing the relation
+     * @param tClass the (super)type class of the related nodes
+     * @param <S>    the source {@link Node} type
+     * @param <T>    the target {@link Node} type
+     * @return the pattern modification
+     */
+    @SafeVarargs
+    public final <S extends Node, T extends Node> PatternModification<S> related1ToNSequence(CpgMultiEdge<S, T> edge, Class<T> tClass, PatternListModification<T>... modifications) {
+        return new AddRelated1ToNSequence<>(edge, tClass, Arrays.asList(modifications));
+    }
+
+    @SafeVarargs
+    public final <T extends Node, C extends T> PatternListModification<T> node(Class<C> cClass, Class<T> tClass, String id, PatternModification<C>... modifications) {
+        return new AddNode<T, C>(cClass, tClass, id, Arrays.asList(modifications));
+    }
+
+    /**
      * {@link PatternModification} serve to modify a {@link NodePattern}, e.g. add relations and properties to it.
+     *
      * @param <T> the target {@link Node} type
      */
     public sealed interface PatternModification<T extends Node> {
         /**
          * Applies this {@link PatternModification} to the given target {@link NodePattern}.
-         * @param target the target {@link NodePattern}
+         *
+         * @param target  the target {@link NodePattern}
          * @param mapping the current {@link GraphPattern}'s mapping
          */
         void apply(NodePattern<T> target, Map<String, NodePattern<?>> mapping);
+    }
+
+    public sealed interface PatternListModification<T extends Node> {
+        void apply(NodeListPattern<T> target, Map<String, NodePattern<?>> mapping);
     }
 
     /**
@@ -215,6 +244,24 @@ public abstract class GraphPatternBuilder<Root extends Node> {
             target.addRelatedNodePattern(related, getter);
         }
 
+    }
+
+    final static class AddNode<T extends Node, C extends T> implements PatternListModification<T> {
+        private final Class<C> cClass;
+        private final String id;
+        private final List<PatternModification<C>> modifications;
+
+        public AddNode(Class<C> cClass, Class<T> tClass, String id, List<PatternModification<C>> modifications) {
+            this.cClass = cClass;
+            this.id = id;
+            this.modifications = modifications;
+        }
+
+        @Override
+        public void apply(NodeListPattern<T> target, Map<String, NodePattern<?>> mapping) {
+            NodePattern<C> nodePattern = createNodePattern(cClass, id, mapping, modifications);
+            target.addElement(nodePattern);
+        }
     }
 
     /**
@@ -264,7 +311,7 @@ public abstract class GraphPatternBuilder<Root extends Node> {
      * @param <S> The source {@link Node} type
      * @param <T> The target {@link Node} type, specified by the edge
      */
-    final class AddRelatedExisting1ToNNode<S extends Node, T extends Node> implements PatternModification<S> {
+    static final class AddRelatedExisting1ToNNode<S extends Node, T extends Node> implements PatternModification<S> {
 
         private final CpgMultiEdge<S, T> edge;
         private final String id;
@@ -287,15 +334,15 @@ public abstract class GraphPatternBuilder<Root extends Node> {
     }
 
     /**
-     * A {@link PatternModification} to add a node related via a CpgMultiEdge.
+     * A {@link PatternModification} to add a {@link NodePattern} related via a CpgMultiEdge.
      *
      * @param <S> The source {@link Node} type
      * @param <T> The target {@link Node} type, specified by the edge
      * @param <C> The concrete target {@link Node} type
      */
-    final class AddRelated1ToNNode<S extends Node, T extends Node, C extends T> implements PatternModification<S> {
+    static final class AddRelated1ToNNode<S extends Node, T extends Node, C extends T> implements PatternModification<S> {
         private final CpgMultiEdge<S, T> edge;
-        private final Class<C> rClass;
+        private final Class<C> cClass;
         private final String id;
         private final List<PatternModification<C>> modifications;
 
@@ -303,23 +350,42 @@ public abstract class GraphPatternBuilder<Root extends Node> {
          * Creates a new {@link AddRelated1ToNNode} object.
          *
          * @param edge          the edge connecting the source node with the target node
-         * @param rClass        the concrete class of the target node
+         * @param cClass        the concrete class of the target node
          * @param id            the id for the related node
          * @param modifications list of modifications to the target node
          */
-        public AddRelated1ToNNode(CpgMultiEdge<S, T> edge, Class<C> rClass, String id, List<PatternModification<C>> modifications) {
+        public AddRelated1ToNNode(CpgMultiEdge<S, T> edge, Class<C> cClass, String id, List<PatternModification<C>> modifications) {
             this.edge = edge;
-            this.rClass = rClass;
+            this.cClass = cClass;
             this.id = id;
             this.modifications = modifications;
         }
 
         @Override
         public void apply(NodePattern<S> target, Map<String, NodePattern<?>> mapping) {
-            NodePattern<C> related = NodePattern.forNodeType(rClass);
+            NodePattern<C> related = NodePattern.forNodeType(cClass);
             modifications.forEach(m -> m.apply(related, mapping));
             target.addRelated1ToNNodePattern(related, edge);
             mapping.put(id, related);
+        }
+    }
+
+    static final class AddRelated1ToNSequence<S extends Node, T extends Node> implements PatternModification<S> {
+        private final CpgMultiEdge<S, T> edge;
+        private final Class<T> tClass;
+        private final List<PatternListModification<T>> modifications;
+
+        public AddRelated1ToNSequence(CpgMultiEdge<S, T> edge, Class<T> tClass, List<PatternListModification<T>> modifications) {
+            this.edge = edge;
+            this.tClass = tClass;
+            this.modifications = modifications;
+        }
+
+        @Override
+        public void apply(NodePattern<S> target, Map<String, NodePattern<?>> mapping) {
+            NodeListPattern<T> nodeList = new NodeListPattern<>(tClass);
+            modifications.forEach(m -> m.apply(nodeList, mapping));
+            target.addRelated1ToNSequence(nodeList, edge);
         }
     }
 }

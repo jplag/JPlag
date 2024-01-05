@@ -2,12 +2,10 @@ package de.jplag.java_cpg.transformation;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
+import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
-import de.jplag.java_cpg.transformation.operations.CreateNodeOperation;
-import de.jplag.java_cpg.transformation.operations.GraphOperation;
-import de.jplag.java_cpg.transformation.operations.RemoveOperation;
-import de.jplag.java_cpg.transformation.operations.ReplaceOperation;
+import de.jplag.java_cpg.transformation.operations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.nthElement;
 
 /**
  * This saves all information related to a transformation on a graph.
@@ -80,23 +80,13 @@ public interface GraphTransformation<T extends Node> {
          * @param <S>        the source {@link Node} type
          */
         protected <S extends Node> void apply(NodePattern<S> pattern, GraphPattern.Match<?> match, List<GraphOperation> operations) {
-
             for (GraphOperation op : operations) {
-                if (op.getTarget().equals(pattern)) {
-                    try {
-                        op.apply(match);
-                    } catch (TransformationException e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    op.apply(match);
+                } catch (TransformationException e) {
+                    throw new RuntimeException(e);
                 }
             }
-
-            for (NodePattern.RelatedNode<S, ?> related : pattern.getRelatedNodes()) {
-                apply(related.pattern(), match, operations);
-            }
-
-            //TODO: Apply to 1:n nodes
-
         }
 
         @Override
@@ -188,13 +178,40 @@ public interface GraphTransformation<T extends Node> {
             } else {
                 // equal role name indicates type compatibility
                 newSource = (NodePattern<AT>) sourcePattern.getPattern(tgtRoleName);
-                ops.add(new ReplaceOperation<>(parent, incomingEdge, newSource));
+                if (Objects.isNull(srcRoleName)) {
+                    if (incomingEdge instanceof CpgNthEdge<P, T> nthEdge) {
+                        ops.add(new InsertOperation<>(parent, nthEdge, newSource));
+                    } else {
+                        ops.add(new SetOperation<>(parent, incomingEdge, newSource));
+                    }
+                } else {
+                    ops.add(new ReplaceOperation<>(parent, incomingEdge, newSource));
+                }
             }
             for (NodePattern.RelatedNode<AT, ?> related : newSource.getRelatedNodes()) {
                 recurse(newSource, related, target, ops);
             }
+            for (NodePattern.Related1ToNSequence<AT, ?> relatedSequence : newSource.getRelated1ToNSequences()) {
+                recurse(newSource, relatedSequence, target, ops);
+
+            }
             //TODO Refactor list of related nodes to map via CpgEdge?
 
+        }
+
+        private <S extends Node, R extends Node> void recurse(NodePattern<S> parent, NodePattern.Related1ToNSequence<S,R> sourceSequence,
+                                                              NodePattern<S> target, List<GraphOperation> ops) {
+            List<NodePattern.Related1ToNSequence<S, ?>> relatedSequences = target.getRelated1ToNSequences();
+            Optional<NodePattern.Related1ToNSequence<S, ?>> maybeNextTarget = relatedSequences.stream().filter(rel -> sourceSequence.edge().isEquivalentTo(rel.edge())).findFirst();
+            //R is guaranteed by the equal edge type
+            NodePattern.Related1ToNSequence<S, R> targetSequence = (NodePattern.Related1ToNSequence<S, R>) maybeNextTarget.get();
+
+            ArrayList<NodePattern<? extends R>> elements = sourceSequence.pattern().getElements();
+            for (int i = 0; i < elements.size(); i++) {
+                NodePattern<? extends R> nextSource = elements.get(i);
+                NodePattern<? extends R> nextTarget = targetSequence.pattern().get(i);
+                compare(nextSource, nextTarget, parent, ops, nthElement(sourceSequence.edge(), i));
+            }
         }
 
         /**
@@ -202,6 +219,7 @@ public interface GraphTransformation<T extends Node> {
          *
          * @param <S>     Type of the source node, defined by the edge
          * @param <R>     Type of the related node, defined by the edge
+         * @param parent  Parent of the next source node
          * @param related Relation in the source sourceGraph that is currently recursed into.
          * @param target  Node in the target sourceGraph that should have the same relation to another node.
          * @param ops     List to save transformations into

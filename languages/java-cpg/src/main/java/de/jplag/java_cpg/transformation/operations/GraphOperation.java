@@ -9,6 +9,9 @@ import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern.Match.WildcardMatch;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern.ParentNodePattern;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  *  A {@link GraphOperation} is an arbitrary modification on a Graph and the basic unit of a {@link GraphTransformation}.
@@ -30,12 +33,12 @@ public interface GraphOperation {
      * If the target nodes of this {@link GraphOperation} is a {@link ParentNodePattern}, then this method creates a concrete {@link GraphOperation} with the given {@link Node} and {@link IEdge} from the {@link WildcardMatch}.
      * @param match The {@link WildcardMatch} containing the concrete {@link Node} and {@link PropertyEdge} for the wildcard
      * @return The instantiated {@link GraphOperation}
-     * @param <S> The parent {@link Node} type
+     * @param <S> The parentPattern {@link Node} type
      * @param <T> The child {@link Node} type
      */
     <S extends Node, T extends Node> GraphOperation instantiate(WildcardMatch<S, T> match);
 
     default String desc(Node node) {
-        return "%s(%s)".formatted(node.getName(), node.getLocation());
+        return "%s(%s)".formatted(node.getClass().getSimpleName(), Objects.requireNonNullElse(node.getLocation(), "*new*"));
     }
 }

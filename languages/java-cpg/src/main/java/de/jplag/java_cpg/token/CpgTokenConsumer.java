@@ -16,25 +16,32 @@ import static de.jplag.SharedTokenType.FILE_END;
 /**
  *  {@link CpgTokenConsumer}s can create appropriate {@link CpgToken}s for CPG {@link Node}s.
  */
-public interface CpgTokenConsumer extends TokenConsumer {
+public abstract class CpgTokenConsumer implements TokenConsumer {
 
-    default void addToken(TokenType type, Node node, boolean isEndToken) {
+
+    private File currentFile;
+
+    public void addToken(TokenType type, Node node, boolean isEndToken) {
         logger.info(type.toString() + "/" + node.toString() );
         PhysicalLocation location = node.getLocation();
 
         File file;
         Region region;
+        int length;
         if (Objects.isNull(location)) {
-            if (includeNonLocal(type)) {
-
-            } else {
+            if (!includeNonLocal(type)) {
                 // This is a library element, not part of the submission
                 return;
             }
+            file = currentFile;
+            region = new Region();
+            length = 0;
+        } else {
+            file = new File(location.getArtifactLocation().getUri());
+            currentFile = file;
+            region = location.getRegion();
+            length = calculateLength(region);
         }
-        file = new File(location.getArtifactLocation().getUri());
-        region = location.getRegion();
-
         int line;
         int column;
         if (isEndToken) {
@@ -44,11 +51,13 @@ public interface CpgTokenConsumer extends TokenConsumer {
             line = region.startLine;
             column = region.startColumn;
         }
-        addToken(type, file, line, column, 0);
+        addToken(type, file, line, column, length);
     }
 
-    default boolean includeNonLocal(TokenType type) {
-        return List.of(FILE_END).contains(type);
+    public boolean includeNonLocal(TokenType type) {
+        // MUST return true for FILE_END, otherwise JPlag will fail
+        return true;
+        //return List.of(FILE_END).contains(type);
     }
 
     /**
@@ -57,7 +66,7 @@ public interface CpgTokenConsumer extends TokenConsumer {
      *
      *  TODO: Determine how other modules handle this
      */
-    int MULTILINE_TOKEN_LENGTH = 1024;
+    private static final int MULTILINE_TOKEN_LENGTH = 1024;
 
     private static int calculateLength(Region region) {
         if (region.getEndLine() == region.startLine) {
@@ -65,5 +74,5 @@ public interface CpgTokenConsumer extends TokenConsumer {
         } else return MULTILINE_TOKEN_LENGTH;
     }
 
-    Logger logger = LoggerFactory.getLogger(CpgTokenConsumer.class);
+    public static final Logger logger = LoggerFactory.getLogger(CpgTokenConsumer.class);
 }

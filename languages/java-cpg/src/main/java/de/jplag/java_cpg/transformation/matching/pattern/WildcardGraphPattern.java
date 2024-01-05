@@ -108,16 +108,16 @@ public class WildcardGraphPattern<T extends Node> extends GraphPattern<Node> {
         /**
          * Checks for a match of the wild card pattern starting with the parent node.
          * @param e The edge from the parent to the child
-         * @param parent the parent node
+         * @param parent the parent {@link Node}
          * @param matches the current set of open matches
-         * @param <S>
+         * @param <S> The parent {@link Node} type
          */
         private <S extends Node> void wildCardMatch(IEdge<S, ? super T> e, Node parent, List<Match<T>> matches) {
             S from = (S) parent;
             if (e instanceof CpgEdge<S, ? super T> singleEdge) {
                 Node target = singleEdge.getRelated(from);
                 if (Objects.isNull(target)) {
-                    // target is not part of the graph
+                    // target is not part of the graph or empty
                     matches.clear();
                 } else {
                     childPattern.recursiveMatch(target, matches, singleEdge);
