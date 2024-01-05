@@ -12,8 +12,8 @@
     <artifactId>java-cpg</artifactId>
 
     <properties>
-        <cpg.version>v8.0.0-alpha.2</cpg.version>
-        <cpg.groupId>com.github.fraunhofer-aisec.cpg</cpg.groupId>
+        <cpg.version>8.0.0</cpg.version>
+        <cpg.groupId>de.fraunhofer.aisec</cpg.groupId>
         <kotlin.version>1.9.0</kotlin.version>
     </properties>
 
