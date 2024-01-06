@@ -3,6 +3,7 @@ package de.jplag.java_cpg;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.java_cpg.transformation.GraphTransformation;
+import de.jplag.java_cpg.transformation.TransformationRepository;
 import org.kohsuke.MetaInfServices;
 
 import java.io.File;
@@ -52,12 +53,13 @@ public class Language implements de.jplag.Language {
     private GraphTransformation<?>[] standardTransformations() {
         return new GraphTransformation[]{
             // TODO: Specify set of standard transformations
+            TransformationRepository.removeLibraryRecords()
         };
     }
 
     /**
      * Adds the given {@link GraphTransformation}s to the list to apply to the submissions.
-     * @param transformations
+     * @param transformations the transformations
      */
     public void addTransformations(GraphTransformation<?>[] transformations) {
         this.cpgAdapter.addTransformations(transformations);

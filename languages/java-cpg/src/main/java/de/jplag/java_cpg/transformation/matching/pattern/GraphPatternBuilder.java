@@ -48,10 +48,6 @@ public abstract class GraphPatternBuilder<Root extends Node> {
      */
     public abstract GraphPattern<Root> build();
 
-    public HashMap<String, NodePattern<?>> getMapping() {
-        return mapping;
-    }
-
     /**
      * Convenience method to create a {@link NodePattern}.
      *
@@ -65,21 +61,6 @@ public abstract class GraphPatternBuilder<Root extends Node> {
     public final <T extends Node> GraphPattern<T> create(Class<T> tClass, String id, PatternModification<T>... modifications) {
         NodePattern<T> pattern = NodePattern.forNodeType(tClass);
         Arrays.asList(modifications).forEach(m -> m.apply(pattern, mapping));
-        mapping.put(id, pattern);
-        return new GraphPattern<>(pattern, mapping);
-    }
-
-    /**
-     * Convenience method to create a {@link NodePattern} and mark matches for removal.
-     *
-     * @param tClass the {@link Node} class of the pattern
-     * @param id     the ID for the pattern
-     * @param <T>    the node type
-     * @return the node pattern
-     */
-    public final <T extends Node> GraphPattern<T> remove(Class<T> tClass, String id) {
-        NodePattern<T> pattern = NodePattern.forNodeType(tClass);
-        pattern.markForRemoval();
         mapping.put(id, pattern);
         return new GraphPattern<>(pattern, mapping);
     }
@@ -99,17 +80,6 @@ public abstract class GraphPatternBuilder<Root extends Node> {
         return new WildcardGraphPattern<>(tClass, child, mapping);
     }
 
-    /**
-     * Convenience method to wrap an existing {@link GraphPattern} into a {@link WildcardGraphPattern}. The argument's
-     * root node becomes the child node of the {@link WildcardGraphPattern}.
-     *
-     * @param <T> the child {@link Node} type
-     * @return the {@link WildcardGraphPattern}
-     */
-    public final <T extends Node> GraphPattern<Node> wildcardParent(GraphPattern<T> childPattern) {
-        NodePattern<T> root = childPattern.getRoot();
-        return new WildcardGraphPattern<>(root.getRootClass(), root, mapping);
-    }
 
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> related(CpgEdge<T, R> getter, Class<C> rClass, String id, PatternModification<C>... modifications) {
@@ -124,13 +94,13 @@ public abstract class GraphPatternBuilder<Root extends Node> {
      * @param rClass        the class object indicating the specified target's class type
      * @param id            the name of the new related node pattern
      * @param modifications a list of modifications targeting the new node pattern
-     * @param <T>           the type of the source node pattern
-     * @param <R>           the type of the relation target, defined by the edge
+     * @param <S>           the type of the source node pattern
+     * @param <T>           the type of the relation target, defined by the edge
      * @param <C>           the concrete type of the related node pattern
      * @return the pattern modification object
      */
     @SafeVarargs
-    public final <T extends Node, R extends Node, C extends R> PatternModification<T> related1ToN(CpgMultiEdge<T, R> edge, Class<C> rClass, String id, PatternModification<C>... modifications) {
+    public final <S extends Node, T extends Node, C extends T> PatternModification<S> related1ToN(CpgMultiEdge<S, T> edge, Class<C> rClass, String id, PatternModification<C>... modifications) {
         return new AddRelated1ToNNode<>(edge, rClass, id, Arrays.asList(modifications));
     }
 
@@ -186,7 +156,11 @@ public abstract class GraphPatternBuilder<Root extends Node> {
 
     @SafeVarargs
     public final <T extends Node, C extends T> PatternListModification<T> node(Class<C> cClass, Class<T> tClass, String id, PatternModification<C>... modifications) {
-        return new AddNode<T, C>(cClass, tClass, id, Arrays.asList(modifications));
+        return new AddNode<>(cClass, tClass, id, Arrays.asList(modifications));
+    }
+    
+    public final <T extends Node> PatternModification<T> removeMatch() {
+        return new RemoveMatch<>();
     }
 
     /**
@@ -202,7 +176,9 @@ public abstract class GraphPatternBuilder<Root extends Node> {
          * @param mapping the current {@link GraphPattern}'s mapping
          */
         void apply(NodePattern<T> target, Map<String, NodePattern<?>> mapping);
+        
     }
+    
 
     public sealed interface PatternListModification<T extends Node> {
         void apply(NodeListPattern<T> target, Map<String, NodePattern<?>> mapping);
@@ -386,6 +362,13 @@ public abstract class GraphPatternBuilder<Root extends Node> {
             NodeListPattern<T> nodeList = new NodeListPattern<>(tClass);
             modifications.forEach(m -> m.apply(nodeList, mapping));
             target.addRelated1ToNSequence(nodeList, edge);
+        }
+    }
+
+    private static final class RemoveMatch<T extends Node> implements PatternModification<T> {
+        @Override
+        public void apply(NodePattern<T> target, Map<String, NodePattern<?>> mapping) {
+            target.markForRemoval();
         }
     }
 }

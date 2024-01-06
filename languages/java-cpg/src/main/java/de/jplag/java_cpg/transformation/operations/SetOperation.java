@@ -10,9 +10,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public record SetOperation<S extends Node, T extends Node>(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge,
-                                                           NodePattern<? extends T> newChildPattern) implements GraphOperation {
+public final class SetOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
     private static final Logger LOGGER;
+    private final NodePattern<? extends T> newChildPattern;
+
+    public SetOperation(NodePattern<? extends S> parentPattern,
+                        CpgEdge<S, T> edge,
+                        NodePattern<? extends T> newChildPattern) {
+        super(parentPattern, edge);
+        this.newChildPattern = newChildPattern;
+    }
 
     static {
         LOGGER = LoggerFactory.getLogger(RemoveOperation.class);
@@ -35,11 +42,17 @@ public record SetOperation<S extends Node, T extends Node>(NodePattern<? extends
     }
 
     @Override
-    public <S extends Node, T extends Node> GraphOperation instantiate(GraphPattern.Match.WildcardMatch<S, T> match) {
+    public <S extends Node, T extends Node> GraphOperation instantiateWildcard(GraphPattern.Match.WildcardMatch<S, T> match) {
         if (!(this.parentPattern instanceof WildcardGraphPattern<?>.ParentNodePattern)) {
             return this;
         }
 
         throw new RuntimeException("Cannot apply SetOperation with WildcardGraphPattern.ParentPattern as parentPattern.");
     }
+
+    @Override
+    public GraphOperation instantiateAny1ofNEdge(GraphPattern.Match<?> match) {
+        throw new RuntimeException("Cannot apply SetOperation with Any1ofNEdge.");
+    }
+
 }

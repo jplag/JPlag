@@ -6,30 +6,42 @@ import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
-import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 /**
  * Replaces the target {@link Node} of an edge by another {@link Node}.
  *
- * @param parentPattern   source node of the edge
- * @param edge            edge of which the target shall be replaced
- * @param newChildPattern replacement node
- * @param <S>             type of the parentPattern node, defined by the edge
- * @param <T>             type of the destination node, defined by the edge
+ * @param <S> type of the parentPattern node, defined by the edge
+ * @param <T> type of the destination node, defined by the edge
  */
-public record InsertOperation<S extends Node, T extends Node>(NodePattern<? extends S> parentPattern,
-                                                              CpgNthEdge<S, T> edge,
-                                                              NodePattern<? extends T> newChildPattern) implements GraphOperation {
+public final class InsertOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
 
     private static final Logger LOGGER;
 
     static {
         LOGGER = LoggerFactory.getLogger(RemoveOperation.class);
+    }
+
+    private final CpgNthEdge<S, T> edge;
+    private final NodePattern<? extends T> newChildPattern;
+
+
+    /**
+     * @param parentPattern   source node of the edge
+     * @param edge            edge of which the target shall be replaced
+     * @param newChildPattern replacement node
+     */
+    public InsertOperation(NodePattern<? extends S> parentPattern,
+                           CpgNthEdge<S, T> edge,
+                           NodePattern<? extends T> newChildPattern) {
+        super(parentPattern, edge);
+        this.edge = edge;
+        this.newChildPattern = newChildPattern;
     }
 
     @Override
@@ -55,13 +67,13 @@ public record InsertOperation<S extends Node, T extends Node>(NodePattern<? exte
     }
 
     @Override
-    public <S extends Node, T extends Node> GraphOperation instantiate(GraphPattern.Match.WildcardMatch<S, T> match) {
-        if (!(this.parentPattern instanceof WildcardGraphPattern<?>.ParentNodePattern)) {
-            return this;
-        }
-
+    public <S extends Node, T extends Node> GraphOperation instantiateWildcard(GraphPattern.Match.WildcardMatch<S, T> match) {
         throw new RuntimeException("Cannot apply InsertOperation with WildcardGraphPattern.ParentPattern as parentPattern. Use a surrounding Block instead.");
     }
 
+    @Override
+    public GraphOperation instantiateAny1ofNEdge(GraphPattern.Match<?> match) {
+        return null;
+    }
 
 }

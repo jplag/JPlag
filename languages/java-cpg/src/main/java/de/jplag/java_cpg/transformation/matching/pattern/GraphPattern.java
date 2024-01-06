@@ -3,6 +3,8 @@ package de.jplag.java_cpg.transformation.matching.pattern;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.jplag.java_cpg.transformation.GraphTransformation;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
+import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
+import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +36,7 @@ public class GraphPattern<T extends Node> {
 
     /**
      * Gets the root {@link NodePattern} of the {@link GraphPattern}.
-     * @return
+     * @return the root
      */
     public NodePattern<T> getRoot() {
         return root;
@@ -78,10 +80,6 @@ public class GraphPattern<T extends Node> {
         return matches;
     }
 
-    public static <T extends Node> GraphPattern<T> emptyPattern() {
-        return new GraphPattern<T>(null, Collections.emptyMap());
-    }
-
     public Collection<? extends String> getAllRoles() {
         return patternByRoleName.keySet();
     }
@@ -110,7 +108,7 @@ public class GraphPattern<T extends Node> {
 
     /**
      * Sets the root {@link NodePattern} of this {@link GraphPattern}.
-     * @param rootPattern
+     * @param rootPattern the root
      */
     protected void setRoot(NodePattern<T> rootPattern) {
         this.root = rootPattern;
@@ -134,6 +132,7 @@ public class GraphPattern<T extends Node> {
         private final Map<NodePattern<? extends Node>, Node> patternToNode;
         private final GraphPattern<T> pattern;
         private WildcardMatch<?,? super T> wildcardMatch;
+        private final Map<CpgMultiEdge<?, ?>.Any1ofNEdge, CpgEdge<?, ?>> edgeMap;
 
         /**
          * Creates a new {@link Match}.
@@ -142,6 +141,7 @@ public class GraphPattern<T extends Node> {
         public Match(GraphPattern<T> pattern) {
             this.pattern = pattern;
             patternToNode = new HashMap<>();
+            edgeMap = new HashMap<>();
         }
 
         /**
@@ -224,6 +224,10 @@ public class GraphPattern<T extends Node> {
             return wildcardMatch;
         }
 
+        public <S extends Node,T extends Node> void resolveAny1ofNEdge(CpgMultiEdge<S,T>.Any1ofNEdge any1ofNEdge, int index) {
+            this.edgeMap.put(any1ofNEdge, new CpgNthEdge<S,T>(any1ofNEdge.getMultiEdge(), index));
+        }
+
         /**
          * Creates a copy of this {@link Match} in its current state.
          * @return the copy
@@ -233,6 +237,11 @@ public class GraphPattern<T extends Node> {
             copy.patternToNode.putAll(patternToNode);
             copy.wildcardMatch = wildcardMatch;
             return copy;
+        }
+
+        public <S extends Node, T extends Node> CpgEdge<S, T> getEdge(CpgMultiEdge<S,T>.Any1ofNEdge any1OfNEdge) {
+            // key-value pairs of this map are type-compatible
+            return (CpgEdge<S, T>) this.edgeMap.get(any1OfNEdge);
         }
 
         /**

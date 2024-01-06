@@ -48,7 +48,7 @@ public class PatternUtil {
      * @param <P> the predicate type
      */
     public static <S extends Node, P> Predicate<S> attributeEquals(CpgPropertyEdge<S, P> propertyEdge, P value) {
-        return s -> propertyEdge.get(s).equals(value);
+        return s -> Objects.equals(propertyEdge.get(s), value);
     }
 
     /**

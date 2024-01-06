@@ -8,6 +8,7 @@ import de.fraunhofer.aisec.cpg.graph.types.FunctionType;
 import de.fraunhofer.aisec.cpg.graph.types.IncompleteType;
 import de.fraunhofer.aisec.cpg.graph.types.ObjectType;
 import de.fraunhofer.aisec.cpg.graph.types.Type;
+import de.fraunhofer.aisec.cpg.sarif.PhysicalLocation;
 import kotlin.Pair;
 
 import java.util.*;
@@ -28,7 +29,7 @@ public class Edges {
     /**
      * A {@link Map} to retrieve all {@link IEdge}s with a specific source and target type
      */
-    private static Map<Pair<Class<? extends Node>, Class<? extends Node>>, List<IEdge<?,?>>> fromToType;
+    private static final Map<Pair<Class<? extends Node>, Class<? extends Node>>, List<IEdge<?,?>>> fromToType;
 
     private Edges() { /* should not be instantiated */}
 
@@ -49,6 +50,7 @@ public class Edges {
     public static CpgEdge<IfStatement, Expression> IF_STATEMENT__CONDITION = new CpgEdge<>(IfStatement::getCondition, IfStatement::setCondition);
     public static CpgEdge<IfStatement, Statement> IF_STATEMENT__ELSE_STATEMENT = new CpgEdge<>(IfStatement::getElseStatement, IfStatement::setElseStatement);
     public static CpgEdge<IfStatement, Statement> IF_STATEMENT__THEN_STATEMENT = new CpgEdge<>(IfStatement::getThenStatement, IfStatement::setThenStatement);
+    public static CpgPropertyEdge<IncompleteType, String> INCOMPLETE_TYPE__TYPE_NAME = new CpgPropertyEdge<>(IncompleteType::getTypeName, null);
     public static CpgEdge<MethodDeclaration, Statement> METHOD_DECLARATION__BODY = new CpgEdge<>(MethodDeclaration::getBody, MethodDeclaration::setBody);
     public static CpgMultiEdge<MethodDeclaration, ParameterDeclaration> METHOD_DECLARATION__PARAMETERS = CpgMultiEdge.nodeValued(MethodDeclaration::getParameters);
     public static CpgEdge<MethodDeclaration, RecordDeclaration> METHOD_DECLARATION__RECORD_DECLARATION = new CpgEdge<>(MethodDeclaration::getRecordDeclaration, MethodDeclaration::setRecordDeclaration);
@@ -57,10 +59,11 @@ public class Edges {
     public static CpgEdge<ObjectType, RecordDeclaration> OBJECT_TYPE__RECORD_DECLARATION = new CpgEdge<>(ObjectType::getRecordDeclaration, ObjectType::setRecordDeclaration);
     public static CpgEdge<ParameterDeclaration, Type> PARAMETER_DECLARATION__TYPE = new CpgEdge<>(ParameterDeclaration::getType, ParameterDeclaration::setType);
     public static CpgMultiEdge<RecordDeclaration, FieldDeclaration> RECORD_DECLARATION__FIELDS = CpgMultiEdge.edgeValued(RecordDeclaration::getFieldEdges);
+    public static CpgPropertyEdge<RecordDeclaration, PhysicalLocation> RECORD_DECLARATION__LOCATION = new CpgPropertyEdge<>(RecordDeclaration::getLocation, RecordDeclaration::setLocation);
     public static CpgMultiEdge<RecordDeclaration, MethodDeclaration> RECORD_DECLARATION__METHODS = CpgMultiEdge.edgeValued(RecordDeclaration::getMethodEdges);
     public static CpgEdge<Reference, Declaration> REFERENCE__REFERS_TO = new CpgEdge<>(Reference::getRefersTo, Reference::setRefersTo);
     public static CpgMultiEdge<ReturnStatement, Expression> RETURN_STATEMENT__RETURN_VALUES = CpgMultiEdge.nodeValued(ReturnStatement::getReturnValues);
-    public static CpgPropertyEdge<IncompleteType, String> INCOMPLETE_TYPE__TYPE_NAME = new CpgPropertyEdge<>(IncompleteType::getTypeName, null);
+    public static CpgMultiEdge<TranslationUnitDeclaration, Declaration> TRANSLATION_UNIT__DECLARATIONS = CpgMultiEdge.edgeValued(TranslationUnitDeclaration::getDeclarationEdges);
     public static CpgEdge<UnaryOperator, Expression> UNARY_OPERATOR__INPUT = new CpgEdge<>(UnaryOperator::getInput, UnaryOperator::setInput);
     public static CpgPropertyEdge<UnaryOperator, String> UNARY_OPERATOR__OPERATOR_CODE = new CpgPropertyEdge<>(UnaryOperator::getOperatorCode, UnaryOperator::setOperatorCode);
     public static CpgMultiEdge<VariableDeclaration, Reference> VARIABLE_DECLARATION__USAGES = CpgMultiEdge.nodeValued(VariableDeclaration::getUsages);
@@ -99,6 +102,7 @@ public class Edges {
         register(RECORD_DECLARATION__METHODS, RecordDeclaration.class, MethodDeclaration.class);
         register(REFERENCE__REFERS_TO, Reference.class, Declaration.class);
         register(RETURN_STATEMENT__RETURN_VALUES, ReturnStatement.class, Expression.class);
+        register(TRANSLATION_UNIT__DECLARATIONS, TranslationUnitDeclaration.class, Declaration.class);
         register(UNARY_OPERATOR__INPUT, UnaryOperator.class, Expression.class);
         register(VARIABLE_DECLARATION__USAGES, VariableDeclaration.class, Reference.class);
         register(WHILE_STATEMENT__CONDITION, WhileStatement.class, Expression.class);

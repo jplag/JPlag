@@ -5,10 +5,10 @@ import de.fraunhofer.aisec.cpg.graph.edge.Properties;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 import de.jplag.java_cpg.transformation.TransformationException;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
+import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
-import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,15 +16,14 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
- * @param parentPattern
- * @param edge
- * @param <S>
- * @param <T>
+ * This operation removes a {@link Node} from its AST context.
+ * @param <S> the parent {@link Node} type
+ * @param <T> the target {@link Node} type
  */
-public record RemoveOperation<S extends Node, T extends Node>(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge) implements GraphOperation {
+public final class RemoveOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
 
-    public RemoveOperation {
+    public RemoveOperation(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge) {
+        super(parentPattern, edge);
         if (Objects.isNull(parentPattern) || Objects.isNull(edge)) {
             throw new RuntimeException("Invalid RemoveOperation: the pattern root needs to be wrapped into a WildcardParentPattern.");
         }
@@ -42,7 +41,7 @@ public record RemoveOperation<S extends Node, T extends Node>(NodePattern<? exte
         T element = edge.getter().apply(parent);
         LOGGER.info("Remove " + element.toString());
 
-        if (!(edge instanceof CpgNthEdge<S,T> nthEdge)) {
+        if (!(edge instanceof CpgNthEdge<S, T> nthEdge)) {
             edge.setter().accept(parent, null);
         } else if (nthEdge.getMultiEdge().isEdgeValued()) {
             // set edge indices of successors
@@ -67,11 +66,14 @@ public record RemoveOperation<S extends Node, T extends Node>(NodePattern<? exte
     }
 
     @Override
-    public <S extends Node, T extends Node> GraphOperation instantiate(GraphPattern.Match.WildcardMatch<S, T> match) {
-        if (this.parentPattern instanceof WildcardGraphPattern<?>.ParentNodePattern && this.edge instanceof WildcardGraphPattern<?>.Edge) {
-            return new RemoveOperation<>(match.parentPattern(), match.edge());
-        } else {
-            return this;
-        }
+    public <S extends Node, T extends Node> GraphOperation instantiateWildcard(GraphPattern.Match.WildcardMatch<S, T> match) {
+        return new RemoveOperation<>(match.parentPattern(), match.edge());
     }
+
+    @Override
+    public GraphOperation instantiateAny1ofNEdge(GraphPattern.Match<?> match) {
+        CpgMultiEdge<S, T>.Any1ofNEdge any1OfNEdge = (CpgMultiEdge<S, T>.Any1ofNEdge) edge;
+        return new RemoveOperation<>(parentPattern, match.getEdge(any1OfNEdge));
+    }
+
 }

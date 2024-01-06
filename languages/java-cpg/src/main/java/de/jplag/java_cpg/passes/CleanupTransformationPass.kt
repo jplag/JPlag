@@ -3,21 +3,21 @@ package de.jplag.java_cpg.passes
 import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
-import de.fraunhofer.aisec.cpg.passes.EvaluationOrderGraphPass
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
 import de.jplag.java_cpg.transformation.GraphTransformation
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern.Match
+import de.jplag.java_cpg.transformation.operations.DummyNeighbor
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
  * This pass handles the transformations in the pipeline of the CPG process.
  */
-@ExecuteBefore(EvaluationOrderGraphPass::class)
-class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
+@ExecuteBefore(TokenizationPass::class)
+class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     companion object {
 
@@ -40,7 +40,7 @@ class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         }
 
         @JvmStatic
-        val LOGGER: Logger = LoggerFactory.getLogger("TransformationPass")
+        val LOGGER: Logger = LoggerFactory.getLogger(CleanupTransformationPass::class.java)
     }
 
     override fun accept(t: TranslationResult) {
@@ -66,5 +66,20 @@ class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     }
 
     override fun cleanup() {
+        val DUMMY = DummyNeighbor.getInstance()
+        DUMMY.nextEOGEdges.removeIf { it.end == DUMMY }
+        DUMMY.prevEOGEdges.removeIf { it.start == DUMMY }
+
+        DUMMY.nextEOGEdges.map { it.end }.toList().forEach {
+            val successors = it.nextEOG.distinct()
+            val predecessors = it.prevEOG.distinct()
+            if (successors.size == 1 && successors[0] == DUMMY
+                && predecessors.size == 1 && predecessors[0] == DUMMY
+            ) {
+                LOGGER.info("The node %s got isolated and will likely be removed.".format(it))
+                DUMMY.nextEOGEdges.removeIf { e -> e.end == it }
+                DUMMY.prevEOGEdges.removeIf { e -> e.start == it }
+            }
+        }
     }
 }

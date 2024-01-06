@@ -35,8 +35,8 @@ class TokenizationPass(ctx: TranslationContext?) : TranslationResultPass(ctx!!) 
         val listener = CpgTokenListener(consumer)
         val walker: SubgraphWalker.IterativeGraphWalker = SubgraphWalker.IterativeGraphWalker()
         walker.strategy = { node: Node? -> NodeOrderStrategy().getIterator(node) }
-        walker.registerOnNodeVisit(Consumer { node: Node? -> listener.visit(node) })
-        walker.registerOnNodeExit(Consumer { t: Node -> listener.exit(t) })
+        walker.registerOnNodeVisit { node: Node? -> listener.visit(node) }
+        walker.registerOnNodeExit { t: Node -> listener.exit(t) }
         walker.iterate(translationResult)
         callback!!.accept(tokenList)
     }

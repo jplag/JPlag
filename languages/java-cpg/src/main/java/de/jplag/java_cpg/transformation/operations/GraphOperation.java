@@ -9,7 +9,6 @@ import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern.Match.WildcardMatch;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern.ParentNodePattern;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -36,9 +35,15 @@ public interface GraphOperation {
      * @param <S> The parentPattern {@link Node} type
      * @param <T> The child {@link Node} type
      */
-    <S extends Node, T extends Node> GraphOperation instantiate(WildcardMatch<S, T> match);
+    <S extends Node, T extends Node> GraphOperation instantiateWildcard(WildcardMatch<S, T> match);
 
     default String desc(Node node) {
         return "%s(%s)".formatted(node.getClass().getSimpleName(), Objects.requireNonNullElse(node.getLocation(), "*new*"));
     }
+
+    GraphOperation instantiateAny1ofNEdge(GraphPattern.Match<?> match);
+
+    boolean isWildcarded();
+
+    boolean isMultiEdged();
 }

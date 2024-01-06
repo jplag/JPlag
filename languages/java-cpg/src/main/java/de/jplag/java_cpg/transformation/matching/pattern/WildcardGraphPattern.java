@@ -72,9 +72,9 @@ public class WildcardGraphPattern<T extends Node> extends GraphPattern<Node> {
         private final List<IEdge<? extends Node, ? super T>> edgesToType;
 
         /**
-         * Creates a new {@link ParentNodePattern} for the given {@link NodePattern}.
+         * Creates a new {@link ParentNodePattern} for the given child {@link NodePattern}.
          * @param tClass The {@link Node} type class of the child
-         * @param child 
+         * @param child the child node pattern
          */
         public ParentNodePattern(Class<T> tClass, NodePattern<T> child) {
             super(Node.class);

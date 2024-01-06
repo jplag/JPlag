@@ -28,7 +28,22 @@ public record CreateNodeOperation<N extends Node>(GraphPattern<?> sourceGraph, S
     }
 
     @Override
-    public <S extends Node, T extends Node> GraphOperation instantiate(GraphPattern.Match.WildcardMatch<S, T> match) {
-        return this;
+    public <S extends Node, T extends Node> GraphOperation instantiateWildcard(GraphPattern.Match.WildcardMatch<S, T> match) {
+        throw new RuntimeException("Cannot instantiate CreateNodeOperation");
+    }
+
+    @Override
+    public GraphOperation instantiateAny1ofNEdge(GraphPattern.Match<?> match) {
+        throw new RuntimeException("Cannot instantiate CreateNodeOperation");
+    }
+
+    @Override
+    public boolean isWildcarded() {
+        return false;
+    }
+
+    @Override
+    public boolean isMultiEdged() {
+        return false;
     }
 }

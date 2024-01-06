@@ -2,6 +2,8 @@ package de.jplag.java_cpg.transformation;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
@@ -11,6 +13,8 @@ import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder;
 import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
 
+import static de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase.PHASE_ONE;
+import static de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase.PHASE_TWO;
 import static de.jplag.java_cpg.transformation.matching.edges.Edges.*;
 import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.*;
 
@@ -53,7 +57,7 @@ public class TransformationRepository {
             }
         }.build();
 
-        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "ifWithNegatedConditionResolution").build();
+        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "ifWithNegatedConditionResolution", PHASE_ONE).build();
     }
 
     /**
@@ -77,10 +81,12 @@ public class TransformationRepository {
         GraphPattern<Node> targetPattern = new GraphPatternBuilder<Node>() {
             @Override
             public GraphPattern<Node> build() {
-                return wildcardParent(remove(DeclarationStatement.class, "declStmt"));
+                return wildcardParent(DeclarationStatement.class, "declStmt",
+                    removeMatch()
+                );
             }
         }.build();
-        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeUnusedVariableDeclarationStatements").build();
+        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeUnusedVariableDeclarationStatements", PHASE_ONE).build();
     }
 
 
@@ -108,11 +114,13 @@ public class TransformationRepository {
         GraphPattern<Node> targetPattern = new GraphPatternBuilder<Node>() {
             @Override
             public GraphPattern<Node> build() {
-                return wildcardParent(remove(VariableDeclaration.class, "variableDecl"));
+                return wildcardParent(VariableDeclaration.class, "variableDecl",
+                    removeMatch()
+                );
             }
         }.build();
 
-        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeUnusedVariableDeclarations").build();
+        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeUnusedVariableDeclarations", PHASE_ONE).build();
     }
 
     /**
@@ -132,11 +140,12 @@ public class TransformationRepository {
         GraphPattern<Node> targetPattern = new GraphPatternBuilder<Node>() {
             @Override
             public GraphPattern<Node> build() {
-                return wildcardParent(remove(DeclarationStatement.class, "declStatement"));
+                return wildcardParent(DeclarationStatement.class, "declStatement",
+                    removeMatch());
             }
         }.build();
 
-        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeEmptyDeclarationStatement").build();
+        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeEmptyDeclarationStatement", PHASE_ONE).build();
     }
 
     /**
@@ -176,7 +185,46 @@ public class TransformationRepository {
             }
 
         }.build();
-        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "forStmtToWhileStmt").build();
+        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "forStmtToWhileStmt", PHASE_ONE).build();
 
+    }
+
+    /**
+     * Creates a {@link GraphTransformation} that inlines {@link Block}s that are not enforced by control structures.
+     * @return the graph transformation
+     */
+    public static GraphTransformation<Block> inlineInnerBlocks() {
+        new GraphPatternBuilder<Block>() {
+            @Override
+            public GraphPattern<Block> build() {
+            return create(Block.class, "outerBlock",
+                related1ToN(BLOCK__STATEMENTS, Block.class, "innerBlock")
+            );
+            }
+        }.build();
+        return null;
+    }
+
+    public static GraphTransformation<TranslationUnitDeclaration> removeLibraryRecords() {
+        GraphPattern<TranslationUnitDeclaration> sourcePattern = new GraphPatternBuilder<TranslationUnitDeclaration>() {
+            @Override
+            public GraphPattern<TranslationUnitDeclaration> build() {
+                return create(TranslationUnitDeclaration.class, "file",
+                    related1ToN(TRANSLATION_UNIT__DECLARATIONS, RecordDeclaration.class, "declaration",
+                        property(attributeEquals(RECORD_DECLARATION__LOCATION, null))));
+            }
+        }.build();
+        GraphPattern<TranslationUnitDeclaration> targetPattern = new GraphPatternBuilder<TranslationUnitDeclaration>() {
+            @Override
+            public GraphPattern<TranslationUnitDeclaration> build() {
+                return create(TranslationUnitDeclaration.class, "file",
+                    related1ToN(TRANSLATION_UNIT__DECLARATIONS, Declaration.class, "declaration",
+                        removeMatch()
+                    )
+                );
+            }
+        }.build();
+
+        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeLibraryRecords", PHASE_TWO).build();
     }
 }

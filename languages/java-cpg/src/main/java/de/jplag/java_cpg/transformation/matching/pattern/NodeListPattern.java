@@ -8,7 +8,6 @@ public class NodeListPattern<T extends Node> {
 
     private final Class<T> tClass;
     private final ArrayList<NodePattern<? extends T>> elements;
-    private int elementCount;
 
     public NodeListPattern(Class<T> tClass) {
         this.tClass = tClass;
@@ -25,5 +24,9 @@ public class NodeListPattern<T extends Node> {
 
     public ArrayList<NodePattern<? extends T>> getElements() {
         return new ArrayList<>(elements);
+    }
+
+    public int size() {
+        return elements.size();
     }
 }
