@@ -21,7 +21,6 @@ import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.Token;
-import de.jplag.UiHooks;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.strategy.ComparisonStrategy;
@@ -50,12 +49,12 @@ class MergingTest extends TestBase {
         comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
 
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
-        submissionSet = builder.buildSubmissionSet(UiHooks.NullUiHooks);
+        submissionSet = builder.buildSubmissionSet();
     }
 
     @BeforeEach
     void prepareTestState() {
-        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet, UiHooks.NullUiHooks);
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         comparisonsBefore = result.getAllComparisons();
 
         if (options.mergingOptions().enabled()) {

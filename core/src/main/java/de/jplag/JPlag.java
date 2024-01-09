@@ -24,8 +24,6 @@ public class JPlag {
 
     public static final Version JPLAG_VERSION = loadVersion();
 
-    private final UiHooks uiHooks;
-
     private static Version loadVersion() {
         ResourceBundle versionProperties = ResourceBundle.getBundle("de.jplag.version");
         String versionString = versionProperties.getString("version");
@@ -37,20 +35,9 @@ public class JPlag {
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
-     * @param options determines the parameterization.
      */
     public JPlag(JPlagOptions options) {
-        this(options, UiHooks.NullUiHooks);
-    }
-
-    /**
-     * Creates and initializes a JPlag instance, parameterized by a set of options.
-     * @param options determines the parameterization.
-     * @param uiHooks Used to notify the ui of state changes
-     */
-    public JPlag(JPlagOptions options, UiHooks uiHooks) {
         this.options = options;
-        this.uiHooks = uiHooks;
     }
 
     /**
@@ -73,13 +60,13 @@ public class JPlag {
         ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
-        SubmissionSet submissionSet = builder.buildSubmissionSet(this.uiHooks);
+        SubmissionSet submissionSet = builder.buildSubmissionSet();
         int submissionCount = submissionSet.numberOfSubmissions();
         if (submissionCount < 2)
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
 
         // Compare valid submissions.
-        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet, this.uiHooks);
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
 
         // Use Match Merging against obfuscation
         if (options.mergingOptions().enabled()) {

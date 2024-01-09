@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.logging.ProgressBar;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -38,13 +41,12 @@ public class SubmissionSet {
      * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
      * @param options The JPlag options
-     * @param uiHooks Used to notify the ui of state changes
      */
-    public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options, UiHooks uiHooks) throws ExitException {
+    public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.options = options;
-        parseAllSubmissions(uiHooks);
+        parseAllSubmissions();
         this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
     }
@@ -104,9 +106,9 @@ public class SubmissionSet {
         return allSubmissions.stream().filter(Submission::hasErrors).toList();
     }
 
-    private void parseAllSubmissions(UiHooks uiHooks) throws ExitException {
+    private void parseAllSubmissions() throws ExitException {
         try {
-            parseSubmissions(allSubmissions, uiHooks);
+            parseSubmissions(allSubmissions);
             if (baseCodeSubmission != null) {
                 parseBaseCodeSubmission(baseCodeSubmission);
             }
@@ -136,9 +138,8 @@ public class SubmissionSet {
     /**
      * Parse all given submissions.
      * @param submissions The list of submissions
-     * @param uiHooks Used to notify the ui of state changes
      */
-    private void parseSubmissions(List<Submission> submissions, UiHooks uiHooks) {
+    private void parseSubmissions(List<Submission> submissions) {
         if (submissions.isEmpty()) {
             logger.warn("No submissions to parse!");
             return;
@@ -147,7 +148,7 @@ public class SubmissionSet {
         long startTime = System.currentTimeMillis();
 
         int tooShort = 0;
-        uiHooks.startMultiStep(UiHooks.ProgressBarType.PARSING, submissions.size());
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
         for (Submission submission : submissions) {
             boolean ok;
 
@@ -172,9 +173,9 @@ public class SubmissionSet {
             } else {
                 logger.error("ERROR -> Submission {} removed", currentSubmissionName);
             }
-            uiHooks.multiStepStep();
+            progressBar.step();
         }
-        uiHooks.multiStepDone();
+        progressBar.dispose();
 
         int validSubmissions = submissions.size() - errors - tooShort;
         logger.trace(validSubmissions + " submissions parsed successfully!");

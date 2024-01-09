@@ -22,6 +22,9 @@ import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.logging.ProgressBar;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -55,11 +58,10 @@ public class SubmissionSetBuilder {
 
     /**
      * Builds a submission set for all submissions of a specific directory.
-     * @param uiHooks Used to notify the ui of state changes
      * @return the newly built submission set.
      * @throws ExitException if the directory cannot be read.
      */
-    public SubmissionSet buildSubmissionSet(UiHooks uiHooks) throws ExitException {
+    public SubmissionSet buildSubmissionSet() throws ExitException {
         Set<File> submissionDirectories = verifyRootDirectories(options.submissionDirectories(), true);
         Set<File> oldSubmissionDirectories = verifyRootDirectories(options.oldSubmissionDirectories(), false);
         checkForNonOverlappingRootDirectories(submissionDirectories, oldSubmissionDirectories);
@@ -77,13 +79,13 @@ public class SubmissionSetBuilder {
             submissionFiles.addAll(listSubmissionFiles(submissionDirectory, false));
         }
 
-        uiHooks.startMultiStep(UiHooks.ProgressBarType.LOADING, submissionFiles.size());
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.LOADING, submissionFiles.size());
         Map<File, Submission> foundSubmissions = new HashMap<>();
         for (SubmissionFileData submissionFile : submissionFiles) {
             processSubmissionFile(submissionFile, multipleRoots, foundSubmissions);
-            uiHooks.multiStepStep();
+            progressBar.step();
         }
-        uiHooks.multiStepDone();
+        progressBar.dispose();
 
         Optional<Submission> baseCodeSubmission = loadBaseCode();
         baseCodeSubmission.ifPresent(baseSubmission -> foundSubmissions.remove(baseSubmission.getRoot()));
@@ -97,7 +99,7 @@ public class SubmissionSetBuilder {
             rootFiles = options.language().customizeSubmissionOrder(rootFiles);
             submissions = new ArrayList<>(rootFiles.stream().map(foundSubmissions::get).toList());
         }
-        return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options, uiHooks);
+        return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options);
     }
 
     /**
