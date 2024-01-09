@@ -29,9 +29,9 @@ public class ComparisonReportWriter {
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
 
-    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter jPlagResultWriter) {
+    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
-        this.resultWriter = jPlagResultWriter;
+        this.resultWriter = resultWriter;
     }
 
     /**

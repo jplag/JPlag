@@ -42,12 +42,10 @@ class ReportObjectFactoryTest extends TestBase {
      * @param file The file to check
      * @return True, if file is an archive
      */
-    private static boolean isArchive(File file) {
+    private static boolean isArchive(File file) throws IOException {
         int fileSignature = 0;
-        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
-            fileSignature = raf.readInt();
-        } catch (IOException e) {
-            // handle if you like
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
+            fileSignature = randomAccessFile.readInt();
         }
         return fileSignature == 0x504B0304 || fileSignature == 0x504B0506 || fileSignature == 0x504B0708;
     }
