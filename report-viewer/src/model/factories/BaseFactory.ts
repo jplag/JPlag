@@ -50,7 +50,7 @@ export class BaseFactory {
    * @throws Error if the file could not be found
    */
   protected static async getLocalFile(path: string): Promise<Blob> {
-    const request = await fetch(window.location.origin + '/' + path)
+    const request = await fetch(`${window.location.origin}${import.meta.env.BASE_URL}${path}`)
     if (request.status == 200) {
       return request.blob()
     } else {
