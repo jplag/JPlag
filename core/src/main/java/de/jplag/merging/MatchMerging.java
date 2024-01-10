@@ -2,7 +2,9 @@ package de.jplag.merging;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
@@ -49,7 +51,8 @@ public class MatchMerging {
             Submission rightSubmission = comparison.secondSubmission().copy();
             List<Match> globalMatches = new ArrayList<>(comparison.matches());
             globalMatches.addAll(comparison.ignoredMatches());
-            globalMatches = removeTooShortMatches(mergeNeighbors(globalMatches, leftSubmission, rightSubmission));
+            globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
+            globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
             comparisonsMerged.add(new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
         }
 
@@ -65,15 +68,28 @@ public class MatchMerging {
      */
     private List<Neighbor> computeNeighbors(List<Match> globalMatches) {
         List<Neighbor> neighbors = new ArrayList<>();
-        List<Match> sortedByLeft = new ArrayList<>(globalMatches);
-        Collections.sort(sortedByLeft, (match1, match2) -> match1.startOfFirst() - match2.startOfFirst());
-        List<Match> sortedByRight = new ArrayList<>(globalMatches);
-        Collections.sort(sortedByRight, (match1, match2) -> match1.startOfSecond() - match2.startOfSecond());
-        for (int i = 0; i < sortedByLeft.size() - 1; i++) {
-            if (sortedByRight.indexOf(sortedByLeft.get(i)) == (sortedByRight.indexOf(sortedByLeft.get(i + 1)) - 1)) {
-                neighbors.add(new Neighbor(sortedByLeft.get(i), sortedByLeft.get(i + 1)));
+
+        Map<Integer, List<Match>> matchesByLeft = new HashMap<>();
+        Map<Integer, List<Match>> matchesByRight = new HashMap<>();
+
+        // Group matches by their left and right positions
+        for (Match match : globalMatches) {
+            matchesByLeft.computeIfAbsent(match.startOfFirst(), key -> new ArrayList<>()).add(match);
+            matchesByRight.computeIfAbsent(match.startOfSecond(), key -> new ArrayList<>()).add(match);
+        }
+
+        // Iterate through the matches and find neighbors
+        for (List<Match> matches : matchesByLeft.values()) {
+            for (Match match : matches) {
+                List<Match> rightMatches = matchesByRight.getOrDefault(match.startOfSecond(), Collections.emptyList());
+                for (Match rightMatch : rightMatches) {
+                    if (rightMatch != match) {
+                        neighbors.add(new Neighbor(match, rightMatch));
+                    }
+                }
             }
         }
+
         return neighbors;
     }
 
@@ -184,20 +200,5 @@ public class MatchMerging {
         }
 
         return shiftedMatches;
-    }
-
-    /**
-     * This method marks the end of the merging pipeline and removes the remaining too short matches from
-     * @param globalMatches
-     */
-    private List<Match> removeTooShortMatches(List<Match> globalMatches) {
-        List<Match> toRemove = new ArrayList<>();
-        for (Match match : globalMatches) {
-            if (match.length() < options.minimumTokenMatch()) {
-                toRemove.add(match);
-            }
-        }
-        globalMatches.removeAll(toRemove);
-        return globalMatches;
     }
 }
