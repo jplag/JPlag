@@ -20,6 +20,7 @@
           "
           title="Cluster Visualization:"
           class="mb-3"
+          v-if="canShowRadarChart"
         />
         <ClusterRadarChart
           v-if="selectedClusterVisualization == 'Radar'"
@@ -138,6 +139,12 @@ const clusterListElement: Ref<ClusterListElement> = computed(() => {
     strength: props.cluster.strength
   }
 })
+
+const canShowRadarChart = computed(
+  () =>
+    props.cluster.members.length >= 3 &&
+    props.cluster.members.some((member) => (clusterMemberList.get(member)?.length ?? 0) >= 3)
+)
 
 /** The amount of comparisons if every single one was included */
 const maxAmountOfComparisonsInCluster = computed(() => {

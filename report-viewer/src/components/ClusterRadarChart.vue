@@ -3,8 +3,11 @@
   participants in the cluster.
 -->
 <template>
-  <div class="flex max-h-full flex-col">
-    <div v-if="!hasNoMember" class="flex max-h-full flex-grow flex-col overflow-hidden">
+  <div class="flex max-h-full flex-col overflow-hidden">
+    <div
+      v-if="selectedOptions.length > 0"
+      class="flex max-h-full flex-grow flex-col overflow-hidden"
+    >
       <DropDownSelector
         :options="selectedOptions"
         @selectionChanged="(value) => (idOfShownSubmission = value)"
@@ -12,9 +15,33 @@
       <div class="flex min-h-0 flex-grow justify-center">
         <Radar :data="chartData" :options="radarChartOptions" />
       </div>
+      <div class="text-xs font-bold text-gray-500 dark:text-gray-400">
+        <p>
+          This Chart shows the average similarity of the selected submission to the other
+          submissions in the cluster. <br />
+          The submission is selectable in the dropdown above.
+        </p>
+        <p
+          v-if="
+            selectedOptions.length < memberCount ||
+            (cluster.members.get(idOfShownSubmission)?.length ?? 0) < memberCount - 1
+          "
+          class="mt-2"
+        >
+          Not all members may be selectable in the dropdown above. <br />
+          There may not be a data point for every submission in the cluster for the selected one.
+          <br />
+          This is because not all comparisons are included in the report. To include more
+          comparisons modify the number of shown comparisons in the CLI.
+        </p>
+      </div>
     </div>
-    <div v-else>
-      <span>This cluster has no members.</span>
+    <div v-else class="text-xs font-bold text-gray-500 dark:text-gray-400">
+      <p>
+        This cluster does not have enough members with enough comparisons to provide a
+        visualization. <br />
+        To include more comparisons modify the number of shown comparisons in the CLI.
+      </p>
     </div>
   </div>
 </template>
@@ -23,7 +50,6 @@
 import type { PropType, Ref } from 'vue'
 import type { ChartData } from 'chart.js'
 import type { ClusterListElement } from '@/model/ClusterListElement'
-
 import { computed, ref } from 'vue'
 import { Radar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
@@ -42,11 +68,19 @@ const props = defineProps({
   }
 })
 
-let hasNoMember = props.cluster.members.size == 0
-
-const selectedOptions = computed(() => Array.from(props.cluster.members.keys()))
+const selectedOptions = computed(() => {
+  let options: string[] = []
+  props.cluster.members.forEach((matchedWith, key) => {
+    if (matchedWith.length >= 3) {
+      options.push(key)
+    }
+  })
+  return options
+})
 
 const idOfShownSubmission = ref(selectedOptions.value.length > 0 ? selectedOptions.value[0] : '')
+
+const memberCount = computed(() => props.cluster.members.size)
 
 const labels = computed(() => {
   let matchedWith = new Array<string>()
@@ -74,9 +108,6 @@ const radarChartStyle = {
 }
 const radarChartOptions = computed(() => {
   return {
-    legend: {
-      display: false
-    },
     scales: {
       r: {
         suggestedMin: 50,
