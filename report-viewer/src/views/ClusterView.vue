@@ -17,11 +17,34 @@
       <Container
         class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
       >
-        <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
+        <OptionsSelectorComponent
+          :labels="clusterVisualizationOptions"
+          @selectionChanged="
+            (index) => (selectedClusterVisualization = index == 0 ? 'Graph' : 'Radar')
+          "
+          title="Cluster Visualization:"
+          class="mb-3"
+          v-if="canShowRadarChart"
+        />
+        <ClusterRadarChart
+          v-if="selectedClusterVisualization == 'Radar'"
+          :cluster="clusterListElement"
+          class="flex-grow"
+        />
+        <ClusterGraph
+          v-if="selectedClusterVisualization == 'Graph'"
+          :cluster="clusterListElement"
+          class="flex-grow"
+          @line-hovered="(value) => (highlightedElement = value)"
+        />
       </Container>
       <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:hidden">
-        <h2>Comparisons of Cluster Members:</h2>
-        <ComparisonsTable :topComparisons="comparisons" class="min-h-0 flex-1">
+        <ComparisonsTable
+          :topComparisons="comparisons"
+          class="min-h-0 flex-1"
+          header="Comparisons of Cluster Members:"
+          :highlighted-row-ids="highlightedElement ?? undefined"
+        >
           <template #footer v-if="comparisons.length < maxAmountOfComparisonsInCluster">
             <p class="w-full pt-1 text-center font-bold">
               Not all comparisons inside the cluster are shown. To see more, re-run JPlag with a
@@ -36,6 +59,7 @@
 
 <script setup lang="ts">
 import ClusterRadarChart from '@/components/ClusterRadarChart.vue'
+import ClusterGraph from '@/components/ClusterGraph.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
@@ -44,8 +68,9 @@ import type { ClusterListElement, ClusterListElementMember } from '@/model/Clust
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { MetricType } from '@/model/MetricType'
 import type { Overview } from '@/model/Overview'
+import { computed, ref, onErrorCaptured, type PropType, type Ref } from 'vue'
+import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import { redirectOnError } from '@/router'
-import { computed, onErrorCaptured, type PropType, type Ref } from 'vue'
 
 const props = defineProps({
   overview: {
@@ -60,6 +85,18 @@ const props = defineProps({
 
 const comparisons = [] as Array<ComparisonListElement>
 const clusterMemberList = new Map() as ClusterListElementMember
+const selectedClusterVisualization: Ref<'Graph' | 'Radar'> = ref('Graph')
+const clusterVisualizationOptions = [
+  {
+    displayValue: 'Graph',
+    tooltip: 'A graph having the average similarity between two submissions as the edges.'
+  },
+  {
+    displayValue: 'Radar',
+    tooltip:
+      'A radar chart showing the he other submissions in the cluster, relative one submission.'
+  }
+]
 const usedMetric = MetricType.AVERAGE
 
 function getComparisonFor(id1: string, id2: string) {
@@ -107,10 +144,18 @@ const clusterListElement: Ref<ClusterListElement> = computed(() => {
   }
 })
 
+const canShowRadarChart = computed(
+  () =>
+    props.cluster.members.length >= 3 &&
+    props.cluster.members.some((member) => (clusterMemberList.get(member)?.length ?? 0) >= 3)
+)
+
 /** The amount of comparisons if every single one was included */
 const maxAmountOfComparisonsInCluster = computed(() => {
   return props.cluster.members.length ** 2 / 2 - props.cluster.members.length
 })
+
+const highlightedElement: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')

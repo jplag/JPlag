@@ -39,7 +39,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Set up JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: 21
         distribution: 'temurin'
@@ -51,7 +51,7 @@ jobs:
       run: mvn clean package assembly:single
       
     - name: Upload Assembly
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "JPlag"
         path: "jplag.cli/target/jplag-*-jar-with-dependencies.jar"

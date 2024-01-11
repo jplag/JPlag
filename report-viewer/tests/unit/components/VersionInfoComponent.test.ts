@@ -1,6 +1,6 @@
 import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, it, vi, expect, beforeAll } from 'vitest'
+import { describe, it, vi, expect } from 'vitest'
 import * as versionTsFile from '@/model/Version'
 import { Version } from '@/model/Version'
 
