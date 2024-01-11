@@ -34,7 +34,7 @@
         <ClusterGraph
           v-if="selectedClusterVisualization == 'Graph'"
           :cluster="clusterListElement"
-          class="flex-grow"
+          class="flex-grow print:max-h-full print:max-w-full print:flex-grow-0"
           @line-hovered="(value) => (highlightedElement = value)"
         />
       </Container>

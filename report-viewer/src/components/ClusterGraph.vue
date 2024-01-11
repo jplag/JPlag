@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div>
-      <canvas ref="graphCanvas"></canvas>
+  <div class="print:max-h-full print:max-w-full">
+    <div class="print:max-h-full print:max-w-full">
+      <canvas ref="graphCanvas" class="print:max-h-full print:max-w-full"></canvas>
       <div
         v-if="!allComparisonsPresent"
         class="mt-8 text-xs font-bold text-gray-500 dark:text-gray-400"
