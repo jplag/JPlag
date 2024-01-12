@@ -13,7 +13,7 @@
         @selectionChanged="(value) => (idOfShownSubmission = value)"
       />
       <div class="flex min-h-0 flex-grow justify-center">
-        <Radar :data="chartData" :options="options" />
+        <Radar :data="chartData" :options="radarChartOptions" />
       </div>
       <div class="text-xs font-bold text-gray-500 dark:text-gray-400">
         <p>
@@ -56,6 +56,7 @@ import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import DropDownSelector from './DropDownSelector.vue'
 import { graphColors } from '@/utils/ColorUtils'
+import { store } from '@/stores/store'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -81,25 +82,21 @@ const idOfShownSubmission = ref(selectedOptions.value.length > 0 ? selectedOptio
 
 const memberCount = computed(() => props.cluster.members.size)
 
-/**
- * @param member The member to create the labels for.
- * @returns The labels for the member.
- */
-function createLabelsFor(member: string) {
+const labels = computed(() => {
   let matchedWith = new Array<string>()
-  props.cluster.members.get(member)?.forEach((m) => matchedWith.push(m.matchedWith))
-  return matchedWith
-}
+  props.cluster.members
+    .get(idOfShownSubmission.value)
+    ?.forEach((m) => matchedWith.push(m.matchedWith))
+  return matchedWith.map((m) => store().getDisplayName(m))
+})
 
-/**
- * @param member The member to create the data set for.
- * @returns The data set for the member.
- */
-function createDataSetFor(member: string) {
+const dataSet = computed(() => {
   let data = new Array<number>()
-  props.cluster.members.get(member)?.forEach((m) => data.push(+(m.similarity * 100).toFixed(2)))
+  props.cluster.members
+    .get(idOfShownSubmission.value)
+    ?.forEach((m) => data.push(+(m.similarity * 100).toFixed(2)))
   return data
-}
+})
 
 const radarChartStyle = {
   fill: true,
@@ -137,16 +134,14 @@ const radarChartOptions = computed(() => {
 
 const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = computed(() => {
   return {
-    labels: createLabelsFor(idOfShownSubmission.value),
+    labels: labels.value,
     datasets: [
       {
         ...radarChartStyle,
-        label: idOfShownSubmission.value,
-        data: createDataSetFor(idOfShownSubmission.value)
+        label: store().getDisplayName(idOfShownSubmission.value),
+        data: dataSet.value
       }
     ]
   }
 })
-
-const options = ref(radarChartOptions)
 </script>
