@@ -8,6 +8,9 @@
         <h2>JPlag Report</h2>
         <div class="flex flex-row items-center space-x-5">
           <TextInformation label="Submission Directory">{{ submissionPathValue }}</TextInformation>
+          <TextInformation label="Result name">{{
+            store().state.uploadedFileName
+          }}</TextInformation>
           <TextInformation label="Total Submissions">{{
             store().getSubmissionIds.length
           }}</TextInformation>
@@ -138,6 +141,8 @@ const props = defineProps({
     required: true
   }
 })
+
+document.title = `${store().state.uploadedFileName} - JPlag Report Viewer`
 
 const hasMoreSubmissionPaths = computed(() => props.overview.submissionFolderPath.length > 1)
 const submissionPathValue = computed(() =>
