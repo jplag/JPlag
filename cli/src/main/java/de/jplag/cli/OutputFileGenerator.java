@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlagResult;
 import de.jplag.csv.comparisons.CsvComparisonOutput;
 
-public class OutputFileGenerator {
+public final class OutputFileGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(OutputFileGenerator.class);
 
     private OutputFileGenerator() {
