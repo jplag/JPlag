@@ -10,7 +10,7 @@ import de.jplag.JPlagResult;
 import de.jplag.csv.comparisons.CsvComparisonOutput;
 
 public final class OutputFileGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OutputFileGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(OutputFileGenerator.class);
 
     private OutputFileGenerator() {
         // Prevents default constructor
@@ -29,7 +29,7 @@ public final class OutputFileGenerator {
                 CsvComparisonOutput.writeCsvResults(result.getAllComparisons(), false, outputRoot, "results");
                 CsvComparisonOutput.writeCsvResults(result.getAllComparisons(), true, outputRoot, "results-anonymous");
             } catch (IOException e) {
-                LOGGER.warn("Could not write csv results", e);
+                logger.warn("Could not write csv results", e);
             }
         }
     }
