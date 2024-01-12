@@ -88,6 +88,9 @@ public class CliOptions implements Runnable {
                 "--similarity-threshold"}, description = "Comparison similarity threshold [0.0-1.0]:  All  comparisons  above this threshold will "
                         + "be saved (default: ${DEFAULT-VALUE})%n")
         public double similarityThreshold = JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
+
+        @Option(names = "--csv-export", description = "If present, a csv export will be generated in addition to the zip file.")
+        public boolean csvExport = false;
     }
 
     public static class Clustering {
