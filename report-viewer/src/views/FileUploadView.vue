@@ -23,7 +23,7 @@
         />
       </div>
       <h1 class="text-7xl">JPlag Report Viewer</h1>
-      <div v-if="!hasQueryFile && !loadingFiles">
+      <div v-if="!hasQueryFile && !loadingFiles && !exampleFiles">
         <div
           class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
           @click="uploadFileThroughWindow()"
@@ -36,7 +36,10 @@
           Continue with local files
         </Button>
       </div>
-      <LoadingCircle v-else class="space-y-5 pt-5" />
+      <LoadingCircle v-else-if="loadingFiles" class="space-y-5 pt-5" />
+      <div v-else-if="exampleFiles" class="pt-5">
+        <Button class="mx-auto w-fit text-xl" @click="continueWithLocal()"> View Example </Button>
+      </div>
       <div v-if="errors.length > 0" class="text-error">
         <p>{{ getErrorText() }}</p>
         <p>For more details check the console.</p>
@@ -58,6 +61,8 @@ import { JsonFileHandler } from '@/utils/fileHandling/JsonFileHandler'
 import { ZipFileHandler } from '@/utils/fileHandling/ZipFileHandler'
 
 store().clearStore()
+
+const exampleFiles = ref(import.meta.env.MODE == 'demo')
 const localFiles: Ref<'json' | 'zip' | 'none'> = ref('none')
 // Checks whether local files exist
 fetch('/files/overview.json')

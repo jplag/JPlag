@@ -12,6 +12,7 @@
     "build-only": "vite build",
     "build-prod": "run-p type-check && vite build --mode prod",
     "build-dev": "run-p type-check && vite build --mode dev",
+    "build-demo": "run-p type-check && vite build --mode demo",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore --max-warnings 0",
     "format": "prettier --write src/",
