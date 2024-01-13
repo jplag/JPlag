@@ -93,4 +93,11 @@ public interface Language {
     default List<File> customizeSubmissionOrder(List<File> submissions) {
         return submissions;
     }
+
+    /**
+     * @return True, if tokens for this language can be normalized
+     */
+    default boolean supportsNormalization() {
+        return false;
+    }
 }

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
+import de.jplag.exceptions.ConfigurationException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.merging.MatchMerging;
@@ -61,11 +62,15 @@ public class JPlag {
      * @throws ExitException if JPlag exits preemptively.
      */
     public static JPlagResult run(JPlagOptions options) throws ExitException {
+        checkForConfigurationConsistency(options);
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+        if (options.normalize() && options.language().supportsNormalization()) {
+            submissionSet.normalizeSubmissions();
+        }
         int submissionCount = submissionSet.numberOfSubmissions();
         if (submissionCount < 2)
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
@@ -94,6 +99,12 @@ public class JPlag {
             if (options.debugParser()) {
                 logger.warn("Erroneous submissions were copied to {}", new File(JPlagOptions.ERROR_FOLDER).getAbsolutePath());
             }
+        }
+    }
+
+    private static void checkForConfigurationConsistency(JPlagOptions options) throws ConfigurationException {
+        if (options.normalize() && !options.language().supportsNormalization()) {
+            throw new ConfigurationException(String.format("The language %s cannot be used with normalization.", options.language().getName()));
         }
     }
 }
