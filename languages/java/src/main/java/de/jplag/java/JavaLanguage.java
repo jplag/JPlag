@@ -1,12 +1,13 @@
 package de.jplag.java;
 
-import de.jplag.ParsingException;
-import de.jplag.Token;
-import org.kohsuke.MetaInfServices;
-
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+
+import org.kohsuke.MetaInfServices;
+
+import de.jplag.ParsingException;
+import de.jplag.Token;
 
 /**
  * Language for Java 9 and newer.
