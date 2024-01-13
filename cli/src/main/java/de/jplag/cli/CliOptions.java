@@ -30,7 +30,7 @@ public class CliOptions implements Runnable {
     public File[] oldDirectories = new File[0];
 
     @Option(names = {"--language",
-            "-l"}, arity = "1", converter = LanguageConverter.class, completionCandidates = LanguageCandidates.class, description = "Select the language to parse the submissions (default: java). The language names are the same as the subcommands.%n")
+            "-l"}, arity = "1", converter = LanguageConverter.class, completionCandidates = LanguageCandidates.class, description = "Select the language to parse the submissions (default: ${DEFAULT-VALUE}). The language names are the same as the subcommands.%n")
     public Language language = defaultLanguage;
 
     @Option(names = {"-bc", "--bc",
@@ -46,11 +46,11 @@ public class CliOptions implements Runnable {
 
     @Option(names = {"-n",
             "--shown-comparisons"}, description = "The maximum number of comparisons that will  be  shown  in the generated report, if set "
-                    + "to -1 all comparisons will be shown (default: 100)%n")
+                    + "to -1 all comparisons will be shown (default: ${DEFAULT-VALUE})%n")
     public int shownComparisons = JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 
     @Option(names = {"-r",
-            "--result-directory"}, description = "Name of the directory in which the comparison results will be stored (default: result)%n")
+            "--result-directory"}, description = "Name of the directory in which the comparison results will be stored (default: ${DEFAULT-VALUE})%n")
     public String resultFolder = "results";
 
     @ArgGroup(heading = "Advanced%n", exclusive = false)
@@ -71,7 +71,7 @@ public class CliOptions implements Runnable {
     }
 
     public static class Advanced {
-        @Option(names = {"-d", "--debug"}, description = "Debug parser. Non-parsable files will be stored (default: false)%n")
+        @Option(names = {"-d", "--debug"}, description = "Debug parser. Non-parsable files will be stored (default: ${DEFAULT-VALUE})%n")
         public boolean debug;
 
         @Option(names = {"-s", "--subdirectory"}, description = "Look in directories <root-dir>/*/<dir> for programs%n")
@@ -86,15 +86,18 @@ public class CliOptions implements Runnable {
 
         @Option(names = {"-m",
                 "--similarity-threshold"}, description = "Comparison similarity threshold [0.0-1.0]:  All  comparisons  above this threshold will "
-                        + "be saved (default: 0.0)%n")
+                        + "be saved (default: ${DEFAULT-VALUE})%n")
         public double similarityThreshold = JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
+
+        @Option(names = "--csv-export", description = "If present, a csv export will be generated in addition to the zip file.")
+        public boolean csvExport = false;
 
         @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Only allowed if the language supports it.")
         public boolean normalize = false;
     }
 
     public static class Clustering {
-        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: false)%n")
+        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: ${DEFAULT-VALUE})%n")
         public boolean disable;
 
         @ArgGroup
@@ -105,12 +108,12 @@ public class CliOptions implements Runnable {
                     "--cluster-algorithm"}, description = "Which clustering algorithm to use. Agglomerative  merges similar submissions bottom up. "
                             + "Spectral clustering is  combined  with  Bayesian  Optimization  to  execute the k-Means "
                             + "clustering  algorithm  multiple   times,   hopefully   finding   a   \"good\"  clustering "
-                            + "automatically. (default: spectral)%n")
+                            + "automatically. (default: ${DEFAULT-VALUE})%n")
             public ClusteringAlgorithm algorithm = new ClusteringOptions().algorithm();
 
             @Option(names = {
                     "--cluster-metric"}, description = "The metric used for clustering. AVG  is  intersection  over  union, MAX can expose some "
-                            + "attempts of obfuscation. (default: MAX)%n")
+                            + "attempts of obfuscation. (default: ${DEFAULT-VALUE})%n")
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
         }
     }

@@ -17,6 +17,9 @@
         <TextInformation label="Min Token Match" class="pb-1">{{
           overview.matchSensitivity
         }}</TextInformation>
+        <TextInformation label="Result File Name">{{
+          store().state.uploadedFileName
+        }}</TextInformation>
       </ScrollableComponent>
     </Container>
 
