@@ -1,7 +1,6 @@
 package de.jplag.antlr;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Set;
@@ -69,7 +68,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
             for (ParseTree child : entryContext.children) {
                 treeWalker.walk(listener, child);
             }
-        } catch (IOException exception) {
+        } catch (Throwable exception) { // catching throwable to capture any exceptions thrown by ANTLR.
             throw new ParsingException(file, exception.getMessage(), exception);
         }
         collector.addFileEndToken();
