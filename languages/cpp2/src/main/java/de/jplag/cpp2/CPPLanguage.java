@@ -40,4 +40,9 @@ public class CPPLanguage extends AbstractAntlrLanguage {
     public boolean tokensHaveSemantics() {
         return true;
     }
+
+    @Override
+    public boolean supportsNormalization() {
+        return true;
+    }
 }
