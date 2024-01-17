@@ -4,7 +4,7 @@
 <template>
   <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
     <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
-      <Container class="flex-grow overflow-hidden">
+      <Container class="flex-grow overflow-hidden print:min-h-fit">
         <h2>
           Comparison:
           {{
@@ -18,9 +18,18 @@
               ? 'Submission 2'
               : store().submissionDisplayName(comparison.secondSubmissionId)
           }}
-          <Button class="float-right h-10 w-10 print:hidden" @click="print()">
-            <FontAwesomeIcon class="text-2xl" :icon="['fas', 'print']" />
-          </Button>
+          <ToolTipComponent direction="left" class="float-right print:hidden">
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">
+                Printing works best in landscape mode on Chromium based browsers
+              </p>
+            </template>
+            <template #default>
+              <Button class="h-10 w-10" @click="print()">
+                <FontAwesomeIcon class="text-2xl" :icon="['fas', 'print']" />
+              </Button>
+            </template>
+          </ToolTipComponent>
         </h2>
         <div class="flex flex-row">
           <TextInformation label="Average Similarity"
@@ -87,6 +96,7 @@ import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 import { redirectOnError } from '@/router'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
 
 library.add(faPrint)
 
@@ -185,3 +195,11 @@ onErrorCaptured((error) => {
   return false
 })
 </script>
+
+<style>
+@media print {
+  @page {
+    size: landscape;
+  }
+}
+</style>
