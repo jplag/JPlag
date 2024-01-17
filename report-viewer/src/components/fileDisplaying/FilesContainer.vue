@@ -2,7 +2,7 @@
   Container containing CodePanels for all of the files in a submission.
 -->
 <template>
-  <Container class="flex flex-col">
+  <Container class="flex flex-col print:!px-1">
     <div class="mb-2 mr-2 flex space-x-2">
       <h3 class="flex-grow text-left text-lg font-bold">
         Files of

@@ -2,12 +2,12 @@
   Panel which displays a submission files with its line of code.
 -->
 <template>
-  <Interactable class="mx-2 !shadow">
-    <div @click="collapsed = !collapsed" class="text-center font-bold">
+  <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
+    <div @click="collapsed = !collapsed" class="text-center font-bold print:whitespace-pre-wrap">
       {{ getFileDisplayName(file) }}
     </div>
 
-    <div class="mx-1 overflow-x-auto">
+    <div class="mx-1 overflow-x-auto print:!mx-0">
       <div class="print:display-initial w-fit min-w-full !text-xs" :class="{ hidden: collapsed }">
         <table
           v-if="file.data.trim() !== ''"
@@ -144,21 +144,5 @@ function getFileDisplayName(file: SubmissionFile): string {
 <style scoped>
 .code-font {
   font-family: 'JetBrains Mono NL', monospace !important;
-}
-
-@media print {
-  table {
-    page-break-after: auto;
-  }
-  table tr {
-    page-break-inside: avoid;
-    page-break-after: auto;
-    page-break-before: auto;
-  }
-  table td {
-    page-break-inside: avoid;
-    page-break-after: auto;
-    page-break-before: auto;
-  }
 }
 </style>
