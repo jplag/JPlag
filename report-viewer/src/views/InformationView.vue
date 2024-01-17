@@ -18,6 +18,9 @@
           <TextInformation label="Min Token Match" class="pb-1">{{
             overview.matchSensitivity
           }}</TextInformation>
+          <TextInformation label="Result File Name">{{
+            store().state.uploadedFileName
+          }}</TextInformation>
         </div>
 
         <div v-else class="space-y-2">
@@ -47,6 +50,9 @@
           }}</TextInformation>
           <TextInformation label="Max Comparison Count">{{
             options.maxNumberComparisons
+          }}</TextInformation>
+          <TextInformation label="Result File Name">{{
+            store().state.uploadedFileName
           }}</TextInformation>
 
           <div class="!mt-5 space-y-2" v-if="options.clusterOptions.enabled">

@@ -1,10 +1,7 @@
 <template>
   <div class="group relative flex items-center justify-center">
-    <div
-      class="break-anywhere"
-      :class="{ 'blur-[1px]': store().isAnonymous(props.id) && anonymousBlur }"
-    >
-      {{ store().isAnonymous(props.id) ? anonymousName : store().submissionDisplayName(id) }}
+    <div class="break-anywhere">
+      {{ store().getDisplayName(id) }}
     </div>
     <div
       class="invisible absolute right-0 top-0 z-10 flex h-full cursor-pointer items-center p-2 delay-0 group-hover:visible group-hover:delay-100"
@@ -31,16 +28,6 @@ const props = defineProps({
   id: {
     type: String,
     required: true
-  },
-  anonymousBlur: {
-    type: Boolean,
-    required: false,
-    default: true
-  },
-  anonymousName: {
-    type: String,
-    required: false,
-    default: 'Hidden'
   }
 })
 

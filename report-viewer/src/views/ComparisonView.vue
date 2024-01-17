@@ -7,17 +7,9 @@
       <Container class="flex-grow overflow-hidden">
         <h2>
           Comparison:
-          {{
-            isAnonymous(comparison.firstSubmissionId)
-              ? 'Submission 1'
-              : store().submissionDisplayName(comparison.firstSubmissionId)
-          }}
+          {{ store().getDisplayName(comparison.firstSubmissionId) }}
           -
-          {{
-            isAnonymous(comparison.secondSubmissionId)
-              ? 'Submission 2'
-              : store().submissionDisplayName(comparison.secondSubmissionId)
-          }}
+          {{ store().getDisplayName(comparison.secondSubmissionId) }}
         </h2>
         <div class="flex flex-row">
           <TextInformation label="Average Similarity"
@@ -38,11 +30,7 @@
         ref="panel1"
         :files="filesOfFirst"
         :matches="comparison.matchesInFirstSubmission"
-        :file-owner-display-name="
-          isAnonymous(comparison.firstSubmissionId)
-            ? 'Submission 1'
-            : (store().submissionDisplayName(comparison.firstSubmissionId) as string)
-        "
+        :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
         @line-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
@@ -51,11 +39,7 @@
         ref="panel2"
         :files="filesOfSecond"
         :matches="comparison.matchesInSecondSubmissions"
-        :file-owner-display-name="
-          isAnonymous(comparison.secondSubmissionId)
-            ? 'Submission 2'
-            : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
-        "
+        :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
         @line-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden"
@@ -131,10 +115,6 @@ function showMatchInSecond(match: Match) {
 function showMatch(match: Match) {
   showMatchInFirst(match)
   showMatchInSecond(match)
-}
-
-function isAnonymous(id: string) {
-  return store().state.anonymous.has(id)
 }
 
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
