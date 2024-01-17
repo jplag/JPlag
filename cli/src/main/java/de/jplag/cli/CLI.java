@@ -78,6 +78,8 @@ public final class CLI {
                 JPlagResult result = JPlag.run(options);
                 ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
                 reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
+
+                OutputFileGenerator.generateCsvOutput(result, new File(cli.getResultFolder()), cli.options);
             }
         } catch (ExitException exception) {
             logger.error(exception.getMessage()); // do not pass exception here to keep log clean
