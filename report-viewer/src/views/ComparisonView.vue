@@ -4,7 +4,7 @@
 <template>
   <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
     <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
-      <Container class="flex-grow overflow-hidden print:min-h-fit">
+      <Container class="flex-grow overflow-hidden print:min-h-fit print:overflow-visible">
         <h2>
           Comparison:
           {{
@@ -46,7 +46,7 @@
     </div>
     <div ref="styleholder"></div>
     <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5 print:space-x-1 print:p-0"
+      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5 print:space-x-1 print:p-0 print:!pt-2"
     >
       <FilesContainer
         ref="panel1"
