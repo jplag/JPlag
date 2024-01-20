@@ -1,7 +1,8 @@
 package de.jplag.javascript;
 
-import de.jplag.typescript.TypeScriptLanguage;
 import org.kohsuke.MetaInfServices;
+
+import de.jplag.typescript.TypeScriptLanguage;
 
 /**
  * Represents the JavaScript Language as a variance of TypeScript
