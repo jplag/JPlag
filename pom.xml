@@ -41,6 +41,9 @@
             <timezone>GMT+1</timezone>
         </developer>
     </developers>
+    <modules>
+        <module>languages/javascript</module>
+    </modules>
 
     <scm>
         <connection>scm:git:git://github.com/jplag/JPlag.git</connection>
