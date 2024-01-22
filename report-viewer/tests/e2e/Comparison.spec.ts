@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, Page } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
 test('Test comparison table and comparsion view', async ({ page }) => {
@@ -24,23 +24,23 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   await page.getByText('Hide All').click()
   // check for elements being hidden
   const comparisonTableOverviewHidden = await page.getByText('Cluster1').textContent()
-  expect(comparisonTableOverviewHidden).toContain('1HiddenHidden')
-  expect(comparisonTableOverviewHidden).toContain('3HiddenHidden')
-  expect(comparisonTableOverviewHidden).toContain('4HiddenHidden')
+  expect(comparisonTableOverviewHidden).toMatch(/1anon[0-9]+anon[0-9]+/)
+  expect(comparisonTableOverviewHidden).toMatch(/3anon[0-9]+anon[0-9]+/)
+  expect(comparisonTableOverviewHidden).toMatch(/4anon[0-9]+anon[0-9]+/)
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('A')
   // check for elements being unhidden and filtered
   const comparisonTableOverviewFilteredA = await page.getByText('Cluster1').textContent()
-  expect(comparisonTableOverviewFilteredA).toContain('1HiddenA')
-  expect(comparisonTableOverviewFilteredA).toContain('3HiddenA')
+  expect(comparisonTableOverviewFilteredA).toMatch(/1anon[0-9]+A/) //toContain('1HiddenA')
+  expect(comparisonTableOverviewFilteredA).toMatch(/3anon[0-9]+A/)
   // we cant check for 4Hidden because the dynamic scroller just moves it of screen, so the text is still there but not visible
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('A C')
   // check for elements being unhidden and filtered
   const comparisonTableOverviewFilteredAC = await page.getByText('Cluster1').textContent()
   expect(comparisonTableOverviewFilteredAC).toContain('1CA')
-  expect(comparisonTableOverviewFilteredAC).toContain('3HiddenA')
-  expect(comparisonTableOverviewFilteredAC).toContain('4HiddenC')
+  expect(comparisonTableOverviewFilteredAC).toMatch(/3anon[0-9]+A/)
+  expect(comparisonTableOverviewFilteredAC).toMatch(/4anon[0-9]+C/)
 
   // go to comparison page
   await page.getByText('1C').click()
@@ -55,17 +55,19 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   expect(bodyComparison).toContain('C/Match.java')
 
   // check for being able to hide and unhide elements
-  expect(bodyComparison).not.toContain('public class Match')
+  expect(await isCodeVisible(page, 'public class Match {')).toBe(false)
   await page.getByText('A/Match.java').click()
-  const bodyComparisonShowMatch = await page.locator('body').textContent()
-  expect(bodyComparisonShowMatch).toContain('public class Match')
+  expect(await isCodeVisible(page, 'public class Match {')).toBe(true)
   await page.getByText('A/Match.java').click()
-  const bodyComparisonHideMatch = await page.locator('body').textContent()
-  expect(bodyComparisonHideMatch).not.toContain('public class Match')
+  expect(await isCodeVisible(page, 'public class Match {')).toBe(false)
 
   // unhide elements by clicking match list
-  expect(bodyComparisonHideMatch).not.toContain('public class GSTiling')
+  expect(await isCodeVisible(page, 'public class GSTiling')).toBe(false)
   await page.getByText('GSTiling.java - GSTiling.java: 308').click()
-  const bodyComparisonShowGSTiling = await page.locator('body').textContent()
-  expect(bodyComparisonShowGSTiling).toContain('public class GSTiling')
+  await page.waitForTimeout(1000)
+  expect(await isCodeVisible(page, 'public class GSTiling')).toBe(true)
 })
+
+async function isCodeVisible(page: Page, codePart: string) {
+  return await page.locator('pre', { hasText: codePart }).first().isVisible()
+}
