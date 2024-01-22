@@ -17,12 +17,12 @@ public class LanguageSerializer extends StdSerializer<Language> {
         this(null);
     }
 
-    public LanguageSerializer(Class<Language> t) {
-        super(t);
+    public LanguageSerializer(Class<Language> languageClass) {
+        super(languageClass);
     }
 
     @Override
-    public void serialize(Language value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeString(value.getName());
+    public void serialize(Language language, JsonGenerator generator, SerializerProvider provider) throws IOException {
+        generator.writeString(language.getName());
     }
 }
