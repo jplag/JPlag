@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.File;
 import java.util.List;
 
-import de.jplag.exceptions.ConfigurationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import de.jplag.exceptions.ConfigurationException;
 import de.jplag.exceptions.ExitException;
 
 /**
