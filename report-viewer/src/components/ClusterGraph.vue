@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div>
-      <canvas ref="graphCanvas"></canvas>
+  <div class="print:max-h-full print:max-w-full">
+    <div class="print:max-h-full print:max-w-full">
+      <canvas ref="graphCanvas" class="print:max-h-full print:max-w-full"></canvas>
       <div
         v-if="!allComparisonsPresent"
         class="mt-8 text-xs font-bold text-gray-500 dark:text-gray-400"
@@ -49,11 +49,7 @@ Chart.register(GraphController)
 Chart.register(GraphChart)
 
 const keys = computed(() => Array.from(props.cluster.members.keys()))
-const labels = computed(() =>
-  Array.from(keys.value).map((m) =>
-    store().state.anonymous.has(m) ? 'Hidden' : store().submissionDisplayName(m) ?? m
-  )
-)
+const labels = computed(() => Array.from(keys.value).map((m) => store().getDisplayName(m)))
 const edges = computed(() => {
   const edges: { source: number; target: number }[] = []
   props.cluster.members.forEach((member1, key1) => {

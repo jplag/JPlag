@@ -28,4 +28,12 @@
   .break-anywhere {
     overflow-wrap: anywhere;
   }
+
+  .print-excact {
+    print-color-adjust: exact;
+  }
+
+  .display-initial {
+    display: initial;
+  }
 }
