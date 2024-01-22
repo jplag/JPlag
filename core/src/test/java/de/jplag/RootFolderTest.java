@@ -1,10 +1,12 @@
 package de.jplag;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.util.List;
 
+import de.jplag.exceptions.ConfigurationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -69,10 +71,7 @@ class RootFolderTest extends TestBase {
     void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
         List<String> newDirectories = List.of(getBasePath(ROOT_2));
         List<String> oldDirectories = List.of(getBasePath(ROOT_2));
-        JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it);
-        assertEquals(ROOT_COUNT_2, result.getNumberOfSubmissions());
-        int numberOfExpectedComparison = 1;
-        assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
+        assertThrows(ConfigurationException.class, () -> runJPlag(newDirectories, oldDirectories, it -> it));
     }
 
     @Test
