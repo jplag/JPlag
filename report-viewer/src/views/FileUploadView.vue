@@ -66,15 +66,14 @@ store().clearStore()
 const exampleFiles = ref(import.meta.env.MODE == 'demo')
 const localFiles = ref(false)
 // Checks whether local files exist
-fetch('/files/overview.json')
-  .then((response) => {
-    if (response.status == 200) {
-      localFiles.value = true
-    }
+BaseFactory.getLocalFile('files/overview.json')
+  .then(() => {
+    localFiles.value = true
   })
   .catch(() => {})
 
 BaseFactory.useLocalZipMode().then((value) => {
+  console.log('Using local zip mode:', value)
   if (value) {
     navigateToOverview()
   }

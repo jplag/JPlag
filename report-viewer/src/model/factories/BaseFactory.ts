@@ -50,17 +50,26 @@ export class BaseFactory {
    * @return Content of the file
    * @throws Error if the file could not be found
    */
-  protected static async getLocalFile(path: string): Promise<Blob> {
+  public static async getLocalFile(path: string): Promise<Blob> {
     const request = await fetch(`${window.location.origin}${import.meta.env.BASE_URL}${path}`)
     if (request.status == 200) {
-      return request.blob()
+      const blob = await request.blob()
+      // Check that file is not the index.html
+      if (blob.type == 'text/html') {
+        throw new Error(`Could not find ${path} in local files.`)
+      }
+      return blob
     } else {
       throw new Error(`Could not find ${path} in local files.`)
     }
   }
 
   public static async useLocalZipMode() {
-    const response = await fetch(window.location.origin + '/' + this.zipFileName)
-    return response.status != 404
+    try {
+      await this.getLocalFile(this.zipFileName)
+      return true
+    } catch (e) {
+      return false
+    }
   }
 }
