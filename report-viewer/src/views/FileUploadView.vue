@@ -75,6 +75,7 @@ BaseFactory.getLocalFile('files/overview.json')
 BaseFactory.useLocalZipMode().then((value) => {
   console.log('Using local zip mode:', value)
   if (value) {
+    store().state.uploadedFileName = BaseFactory.zipFileName
     navigateToOverview()
   }
 })
@@ -199,7 +200,7 @@ async function loadQueryFile(url: URL) {
  * Handles click on Continue with local files.
  */
 function continueWithLocal() {
-  store().state.uploadedFileName = 'results.zip'
+  store().state.uploadedFileName = BaseFactory.zipFileName
   store().setLoadingType('local')
   navigateToOverview()
 }
