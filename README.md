@@ -145,8 +145,8 @@ Clustering
 
       --cluster-skip   Skips the clustering (default: false)
 Commands:
+  c
   cpp
-  cpp2
   csharp
   emf
   emf-model
