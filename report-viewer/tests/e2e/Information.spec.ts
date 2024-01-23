@@ -21,7 +21,7 @@ test('Test information page', async ({ page }) => {
   expect(runOptions).toContain('Submission Directory: files')
   expect(runOptions).toContain('Basecode Directory:')
   expect(runOptions).toContain('Language: Javac based AST plugin')
-  expect(runOptions).toContain('File Extentions: .java, .JAVA')
+  expect(runOptions).toContain('File Extensions: .java, .JAVA')
   expect(runOptions).toContain('Min Token Match: 9')
 
   const runData = await page.getByText('Run Data:Date of Execution:').textContent()
