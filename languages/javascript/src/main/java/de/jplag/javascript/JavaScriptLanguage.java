@@ -11,6 +11,7 @@ import de.jplag.typescript.TypeScriptLanguage;
 public class JavaScriptLanguage extends TypeScriptLanguage {
 
     private static final String IDENTIFIER = "javascript";
+    private static final String NAME = "JavaScript";
 
     @Override
     public String getIdentifier() {
@@ -20,5 +21,10 @@ public class JavaScriptLanguage extends TypeScriptLanguage {
     @Override
     public String[] suffixes() {
         return new String[] {".js"};
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 }
