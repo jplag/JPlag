@@ -6,6 +6,7 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.io.File;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -58,6 +59,7 @@ public final class CLI {
 
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
+    private static final String UNKOWN_LANGAUGE_EXCEPTION = "Language %s does not exists. Available languages are: %s";
 
     private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
@@ -140,6 +142,12 @@ public final class CLI {
                 commandLine.getExecutionStrategy().execute(result);
             }
             return result;
+        } catch (CommandLine.ParameterException e) {
+            if (e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
+                throw new CliException(String.format(UNKOWN_LANGAUGE_EXCEPTION, e.getValue(),
+                        String.join(", ", LanguageLoader.getAllAvailableLanguageIdentifiers())));
+            }
+            throw new CliException("Error during parsing", e);
         } catch (CommandLine.PicocliException e) {
             throw new CliException("Error during parsing", e);
         }
