@@ -32,9 +32,27 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install and Test 🧪
+      - name: Install and Build 🔧
         working-directory: report-viewer
         run: |
           npm install
-          npx playwright install --with-deps
+          npm run build
+        
+      - name: Install playwright 🔧
+        working-directory: report-viewer
+        run: npx playwright install --with-deps
+
+      - name: Run tests 🧪
+        working-directory: report-viewer
+        run: |
           npm run test:e2e
+
+      - name: Upload test results 📤
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: |
+            report-viewer/test-results
+            report-viewer/playwright-report
+          retention-days: 30

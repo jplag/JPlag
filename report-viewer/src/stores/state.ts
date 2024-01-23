@@ -9,6 +9,10 @@ export interface State {
    */
   anonymous: Set<string>
   /**
+   * Maps the submission id to the number of anonymous ids.
+   */
+  anonymousIds: Record<string, number>
+  /**
    * Stored files if zip mode is used. Stores the files as key - file name, value - file string
    */
   files: Record<string, string>
@@ -32,6 +36,10 @@ export interface State {
 
   fileIdToDisplayName: Map<string, string>
   submissionIdsToComparisonFileName: Map<string, Map<string, string>>
+  /**
+   * Name of the file uploaded
+   */
+  uploadedFileName: string
 }
 
 /**

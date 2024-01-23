@@ -94,6 +94,9 @@ public class CliOptions implements Runnable {
 
         @Option(names = {"-P", "--port"}, description = "The port used for the internal report viewer.")
         public int port = 1996;
+
+        @Option(names = "--csv-export", description = "If present, a csv export will be generated in addition to the zip file.")
+        public boolean csvExport = false;
     }
 
     public static class Clustering {
