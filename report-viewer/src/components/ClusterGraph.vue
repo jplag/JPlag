@@ -27,6 +27,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { EdgeLine, GraphController, GraphChart } from 'chartjs-chart-graph'
 import { store } from '@/stores/store'
 import { graphColors } from '@/utils/ColorUtils'
+import { router } from '@/router'
 
 const props = defineProps({
   cluster: {
@@ -243,6 +244,8 @@ const xPadding = computed(() => {
   return Math.max(Math.min(200, maxWidth), 40)
 })
 
+const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
+
 const graphOptions = computed(() => {
   return {
     layout: {
@@ -255,24 +258,34 @@ const graphOptions = computed(() => {
     },
     onHover: (event: any, elements: any) => {
       if (!event) {
-        emit('lineHovered', null)
-        return
-      }
-      if (elements.length > 0) {
+        hoveredEdge.value = null
+      } else if (elements.length > 0) {
         // Hovering over a node
-        emit('lineHovered', null)
+        hoveredEdge.value = null
       } else if (chart.value != null) {
         const closestEdge = getClosestEdge({
           x: (chart.value as Chart).scales.x.getValueForPixel(event.x) ?? 0,
           y: (chart.value as Chart).scales.y.getValueForPixel(event.y) ?? 0
         })
         if (closestEdge.d > minHoverDistance) {
-          emit('lineHovered', null)
-          return
+          hoveredEdge.value = null
+        } else {
+          hoveredEdge.value = {
+            firstId: closestEdge.sourceId,
+            secondId: closestEdge.targetId
+          }
         }
-        emit('lineHovered', {
-          firstId: closestEdge.sourceId,
-          secondId: closestEdge.targetId
+      }
+      emit('lineHovered', hoveredEdge.value)
+    },
+    onClick: () => {
+      if (hoveredEdge.value != null) {
+        router.push({
+          name: 'ComparisonView',
+          params: {
+            firstId: hoveredEdge.value.firstId,
+            secondId: hoveredEdge.value.secondId
+          }
         })
       }
     },
