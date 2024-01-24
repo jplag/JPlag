@@ -276,6 +276,9 @@ const graphOptions = computed(() => {
           }
         }
       }
+      if (graphCanvas.value != null) {
+        graphCanvas.value.style.cursor = hoveredEdge.value != null ? 'pointer' : 'default'
+      }
       emit('lineHovered', hoveredEdge.value)
     },
     onClick: () => {
