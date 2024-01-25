@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
-import de.jplag.exceptions.ConfigurationException;
 import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
@@ -102,10 +102,10 @@ public class JPlag {
         }
     }
 
-    private static void checkForConfigurationConsistency(JPlagOptions options) throws ConfigurationException {
+    private static void checkForConfigurationConsistency(JPlagOptions options) throws RootDirectoryException {
         List<String> duplicateNames = getDuplicateSubmissionFolderNames(options);
         if (duplicateNames.size() > 0) {
-            throw new ConfigurationException(String.format("Duplicate root directory names found: %s", String.join(", ", duplicateNames)));
+            throw new RootDirectoryException(String.format("Duplicate root directory names found: %s", String.join(", ", duplicateNames)));
         }
     }
 

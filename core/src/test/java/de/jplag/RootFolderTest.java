@@ -9,8 +9,8 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.exceptions.ConfigurationException;
 import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.RootDirectoryException;
 
 /**
  * Test class for the multi-root feature and the old-new feature.
@@ -71,7 +71,7 @@ class RootFolderTest extends TestBase {
     void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
         List<String> newDirectories = List.of(getBasePath(ROOT_2));
         List<String> oldDirectories = List.of(getBasePath(ROOT_2));
-        assertThrows(ConfigurationException.class, () -> runJPlag(newDirectories, oldDirectories, it -> it));
+        assertThrows(RootDirectoryException.class, () -> runJPlag(newDirectories, oldDirectories, it -> it));
     }
 
     @Test
