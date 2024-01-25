@@ -17,26 +17,39 @@
       <Container
         class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
       >
-        <OptionsSelectorComponent
-          :labels="clusterVisualizationOptions"
-          @selectionChanged="
-            (index) => (selectedClusterVisualization = index == 0 ? 'Graph' : 'Radar')
-          "
-          title="Cluster Visualization:"
-          class="mb-3"
-          v-if="canShowRadarChart"
-        />
-        <ClusterRadarChart
-          v-if="selectedClusterVisualization == 'Radar'"
-          :cluster="clusterListElement"
-          class="flex-grow"
-        />
-        <ClusterGraph
-          v-if="selectedClusterVisualization == 'Graph'"
-          :cluster="clusterListElement"
-          class="flex-grow print:max-h-full print:max-w-full print:flex-grow-0"
-          @line-hovered="(value) => (highlightedElement = value)"
-        />
+        <div
+          class="flex max-h-full flex-col overflow-hidden print:flex-none"
+          v-if="cluster.members.length < 35"
+        >
+          <OptionsSelectorComponent
+            :labels="clusterVisualizationOptions"
+            @selectionChanged="
+              (index) => (selectedClusterVisualization = index == 0 ? 'Graph' : 'Radar')
+            "
+            title="Cluster Visualization:"
+            class="mb-3"
+            v-if="canShowRadarChart"
+          />
+          <ClusterRadarChart
+            v-if="selectedClusterVisualization == 'Radar'"
+            :cluster="clusterListElement"
+            class="flex-grow"
+          />
+          <ClusterGraph
+            v-if="selectedClusterVisualization == 'Graph'"
+            :cluster="clusterListElement"
+            class="flex-grow print:max-h-full print:max-w-full print:flex-grow-0"
+            @line-hovered="(value) => (highlightedElement = value)"
+          />
+        </div>
+        <div v-else class="mx-auto space-y-5">
+          <p class="text-center font-bold text-error">
+            The cluster has too many members to be displayed as a graph or radar chart.
+          </p>
+          <p class="text-center font-bold text-gray-500 dark:text-gray-400">
+            Consider whether this is an actual cluster or a false positive.
+          </p>
+        </div>
       </Container>
       <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:hidden">
         <ComparisonsTable
