@@ -2,6 +2,7 @@ import { ParserLanguage } from '@/model/Language'
 import hljs from 'highlight.js'
 import scheme from 'highlight.js/lib/languages/scheme'
 import llvm from 'highlight.js/lib/languages/llvm'
+import typescript from 'highlight.js/lib/languages/typescript'
 
 /**
  * Hightlights the given code with the given language.
@@ -67,6 +68,11 @@ function getHighlightLanguage(lang: ParserLanguage) {
     case ParserLanguage.LLVM:
       hljs.registerLanguage('llvm', llvm)
       return 'llvm'
+    case ParserLanguage.JAVASCRIPT:
+      return 'javascript'
+    case ParserLanguage.TYPESCRIPT:
+      hljs.registerLanguage('typescript', typescript)
+      return 'typescript'
     case ParserLanguage.JAVA:
     default:
       return 'java'

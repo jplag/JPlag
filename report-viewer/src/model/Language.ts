@@ -19,7 +19,9 @@ enum ParserLanguage {
   SWIFT = 'Swift Parser',
   TEXT = 'Text Parser (naive)',
   SCXML = 'SCXML (Statechart XML)',
-  LLVM = 'LLVMIR Parser'
+  LLVM = 'LLVMIR Parser',
+  JAVASCRIPT = 'JavaScript',
+  TYPESCRIPT = 'Typescript Parser'
 }
 
 /**
