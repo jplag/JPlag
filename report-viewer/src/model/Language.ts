@@ -4,8 +4,8 @@
 enum ParserLanguage {
   JAVA = 'Javac based AST plugin',
   PYTHON = 'Python3 Parser',
-  CPP = 'C/C++ Scanner [basic markup]',
-  CPP2 = 'C/C++ Parser',
+  C = 'C(C++) Scanner [basic markup]',
+  CPP = 'C++(C) Parser',
   C_SHARP = 'C# 6 Parser',
   EMF_METAMODEL_DYNAMIC = 'emf-dynamic',
   EMF_METAMODEL = 'EMF metamodel',
@@ -66,8 +66,8 @@ function getHighlightLanguage(language: ParserLanguage | undefined): HighlightLa
   switch (language) {
     case ParserLanguage.PYTHON:
       return HighlightLanguage.PYTHON
+    case ParserLanguage.C:
     case ParserLanguage.CPP:
-    case ParserLanguage.CPP2:
       return HighlightLanguage.CPP
     case ParserLanguage.C_SHARP:
       return HighlightLanguage.C_SHARP
