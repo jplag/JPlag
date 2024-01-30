@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.jplag.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,11 +218,22 @@ public class ReportObjectFactory {
         SubmissionFileIndex fileIndex = new SubmissionFileIndex(new HashMap<>());
 
         for (Submission submission : submissions) {
+            Map<String, Integer> tokenCounts = new HashMap<>();
+            for (Token token : submission.getTokenList()) {
+                if (token.getType().isExcludedFromMatching()) {
+                    continue;
+                }
+                String key = FilePathUtil.getRelativeSubmissionPath(token.getFile(), submission, submissionToIdFunction);
+                if (tokenCounts.containsKey(key)) {
+                    tokenCounts.put(key, tokenCounts.get(key) + 1);
+                } else {
+                    tokenCounts.put(key, 1);
+                }
+            }
+
             Map<String, SubmissionFile> submissionFileMap = new HashMap<>();
-            for (File file : submission.getFiles()) {
-                int tokenList = (int) submission.getTokenList().stream().filter(s -> s.getFile().equals(file)).count();
-                submissionFileMap.put(FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction),
-                        new SubmissionFile(tokenList));
+            for (Map.Entry<String, Integer> entry : tokenCounts.entrySet()) {
+                submissionFileMap.put(entry.getKey(), new SubmissionFile(entry.getValue()));
             }
             fileIndex.fileIndexes().put(submissionNameToIdMap.get(submission.getName()), submissionFileMap);
         }
