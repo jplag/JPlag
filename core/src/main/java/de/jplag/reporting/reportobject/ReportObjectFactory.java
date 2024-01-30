@@ -13,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +33,7 @@ import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.OverviewReport;
+import de.jplag.reporting.reportobject.model.SubmissionFile;
 import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
 import de.jplag.reporting.reportobject.model.Version;
 import de.jplag.reporting.reportobject.writer.JsonWriter;
@@ -217,11 +217,13 @@ public class ReportObjectFactory {
         SubmissionFileIndex fileIndex = new SubmissionFileIndex(new HashMap<>());
 
         for (Submission submission : submissions) {
-            List<String> filePaths = new LinkedList<>();
+            Map<String, SubmissionFile> submissionFileMap = new HashMap<>();
             for (File file : submission.getFiles()) {
-                filePaths.add(FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction));
+                int tokenList = (int) submission.getTokenList().stream().filter(s -> s.getFile().equals(file)).count();
+                submissionFileMap.put(FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction),
+                        new SubmissionFile(tokenList));
             }
-            fileIndex.fileIndexes().put(submissionNameToIdMap.get(submission.getName()), filePaths);
+            fileIndex.fileIndexes().put(submissionNameToIdMap.get(submission.getName()), submissionFileMap);
         }
         jsonFileWriter.writeFile(fileIndex, path, SUBMISSION_FILE_INDEX_FILE_NAME);
     }
