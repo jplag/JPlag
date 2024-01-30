@@ -3,8 +3,11 @@
 -->
 <template>
   <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
-    <div @click="collapsed = !collapsed" class="text-center font-bold print:whitespace-pre-wrap">
-      {{ getFileDisplayName(file) }}
+    <div @click="collapsed = !collapsed" class="flex px-2 font-bold print:whitespace-pre-wrap">
+      <span class="flex-1">{{ getFileDisplayName(file) }}</span>
+      <span v-if="!isNaN(file.matchedTokenCount) && !isNaN(file.tokenCount)"
+        >{{ ((file.matchedTokenCount / file.tokenCount) * 100).toFixed(2) }}%</span
+      >
     </div>
 
     <div class="mx-1 overflow-x-auto print:!mx-0">
