@@ -107,32 +107,23 @@ function navigateToOverview() {
   })
 }
 
-function navigateToComparisonView(firstId: string, secondId: string) {
-  router.push({
-    name: 'ComparisonView',
-    params: {
-      firstId,
-      secondId
-    }
-  })
-}
-
 /**
  * Handles a json file on drop. It read the file and passes the file string to next window.
  * @param file The json file to handle
  */
 async function handleJsonFile(file: Blob) {
+  try {
+    await new JsonFileHandler().handleFile(file)
+  } catch (e) {
+    registerError(e as Error, 'upload')
+    return
+  }
   store().setLoadingType({
     local: false,
     zip: false,
     single: true
   })
-  const fileContentType = await new JsonFileHandler().handleFile(file)
-  if (fileContentType.fileType === 'overview') {
-    navigateToOverview()
-  } else if (fileContentType.fileType === 'comparison') {
-    navigateToComparisonView(fileContentType.id1, fileContentType.id2)
-  }
+  navigateToOverview()
 }
 
 /**

@@ -3,10 +3,10 @@
     <div
       class="max-w-screen max-h-fit min-h-screen bg-backgorund-light text-black dark:bg-backgorund-dark dark:text-amber-50"
     >
-      <RouterView class="max-h-screen overflow-hidden" />
+      <RouterView class="max-h-screen overflow-hidden print:max-h-none print:overflow-visible" />
 
       <Button
-        class="absolute bottom-2 right-2 flex h-12 w-12 items-center justify-center text-center"
+        class="absolute bottom-2 right-2 flex h-12 w-12 items-center justify-center text-center print:hidden"
         @click="store().changeUseDarkMode()"
       >
         <FontAwesomeIcon
