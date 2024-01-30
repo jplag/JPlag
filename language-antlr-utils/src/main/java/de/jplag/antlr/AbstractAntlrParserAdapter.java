@@ -68,7 +68,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
             for (ParseTree child : entryContext.children) {
                 treeWalker.walk(listener, child);
             }
-        } catch (Throwable exception) { // catching throwable to capture any exceptions thrown by ANTLR.
+        } catch (Exception exception) { // catching generic exception to capture any exceptions thrown by ANTLR.
             throw new ParsingException(file, exception.getMessage(), exception);
         }
         collector.addFileEndToken();
