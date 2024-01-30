@@ -115,8 +115,6 @@ public final class CLI {
     private List<CommandSpec> buildSubcommands() {
         return LanguageLoader.getAllAvailableLanguages().values().stream().map(language -> {
             CommandSpec command = CommandSpec.create().name(language.getIdentifier());
-            command.usageMessage(new CommandLine.Model.UsageMessageSpec()
-                    .description(String.format("supports normalization: %s", language.supportsNormalization())));
 
             for (LanguageOption<?> option : language.getOptions().getOptionsAsList()) {
                 command.addOption(OptionSpec.builder(option.getNameAsUnixParameter()).type(option.getType().getJavaType())
@@ -175,7 +173,7 @@ public final class CLI {
         JPlagOptions jPlagOptions = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.options.advanced.subdirectory, suffixes, this.options.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.options.advanced.similarityThreshold, this.options.shownComparisons, clusteringOptions,
-                this.options.advanced.debug, mergingOptions, this.options.advanced.normalize);
+                this.options.advanced.debug, mergingOptions, this.options.normalize);
 
         String baseCodePath = this.options.baseCode;
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);

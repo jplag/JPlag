@@ -145,24 +145,24 @@ Clustering
 
       --cluster-skip   Skips the clustering (default: false)
 Commands:
-  cpp         supports normalization: false
-  cpp2        supports normalization: true
-  csharp      supports normalization: false
-  emf         supports normalization: false
-  emf-model   supports normalization: false
-  go          supports normalization: false
-  java        supports normalization: true
-  kotlin      supports normalization: false
-  llvmir      supports normalization: false
-  python3     supports normalization: false
-  rlang       supports normalization: false
-  rust        supports normalization: false
-  scala       supports normalization: false
-  scheme      supports normalization: false
-  scxml       supports normalization: false
-  swift       supports normalization: false
-  text        supports normalization: false
-  typescript  supports normalization: false
+  cpp
+  cpp2
+  csharp
+  emf
+  emf-model
+  go
+  java
+  kotlin
+  llvmir
+  python3
+  rlang
+  rust
+  scala
+  scheme
+  scxml
+  swift
+  text
+  typescript
 ```
 
 ### Java API

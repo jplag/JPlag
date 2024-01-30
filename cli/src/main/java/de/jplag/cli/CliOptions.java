@@ -62,6 +62,9 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "Merging of neighboring matches to increase the similarity of concealed plagiarism:%n")
     public Merging merging = new Merging();
 
+    @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
+    public boolean normalize = false;
+
     /**
      * Empty run method, so picocli prints help automatically
      */
@@ -91,9 +94,6 @@ public class CliOptions implements Runnable {
 
         @Option(names = "--csv-export", description = "If present, a csv export will be generated in addition to the zip file.")
         public boolean csvExport = false;
-
-        @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Only allowed if the language supports it.")
-        public boolean normalize = false;
     }
 
     public static class Clustering {
