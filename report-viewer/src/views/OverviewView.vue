@@ -70,7 +70,7 @@
     </div>
 
     <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 p-5 pt-5 print:flex-col print:space-x-0 print:space-y-5"
+      class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 px-5 pb-7 pt-5 print:flex-col print:space-x-0 print:space-y-5"
     >
       <Container
         class="flex max-h-0 min-h-full flex-1 flex-col print:max-h-none print:min-h-fit print:flex-none"

@@ -38,7 +38,7 @@
     </div>
     <div ref="styleholder"></div>
     <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5 print:space-x-1 print:p-0 print:!pt-2"
+      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 px-5 pb-7 pt-5 print:space-x-1 print:p-0 print:!pt-2"
     >
       <FilesContainer
         ref="panel1"
