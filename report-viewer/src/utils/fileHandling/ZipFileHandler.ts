@@ -29,7 +29,9 @@ export class ZipFileHandler extends FileHandler {
             store().saveSubmissionFile({
               submissionId: slash(submissionFileName),
               fileName: slash(fullPathFileName),
-              data: data
+              data: data,
+              tokenCount: NaN,
+              matchedTokenCount: NaN
             })
           })
         } else {

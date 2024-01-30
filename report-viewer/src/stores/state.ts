@@ -16,7 +16,7 @@ export interface State {
    * Stored files if zip mode is used. Stores the files as key - file name, value - file string
    */
   files: Record<string, string>
-  submissions: Record<string, Map<string, string>>
+  submissions: Record<string, Map<string, SubmissionFile>>
   /**
    * Indicates whether local mode is used.
    */
@@ -64,6 +64,14 @@ export interface SubmissionFile extends File {
    * The id of the submission.
    */
   submissionId: string
+  /**
+   * Number of total tokens in the file.
+   */
+  tokenCount: number
+  /**
+   * Number of tokens in the file that are matched.
+   */
+  matchedTokenCount: number
 }
 
 /**
