@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.jplag.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +27,7 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.Submission;
+import de.jplag.Token;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
