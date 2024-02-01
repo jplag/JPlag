@@ -11,7 +11,7 @@
         class="font-normal"
       >
         <template #default
-          >{{ ((file.matchedTokenCount / file.tokenCount) * 100).toFixed(2) }}%</template
+          >{{ ((file.matchedTokenCount / (file.tokenCount - 1)) * 100).toFixed(2) }}%</template
         >
         <template #tooltip
           ><p class="whitespace-nowrap text-sm">

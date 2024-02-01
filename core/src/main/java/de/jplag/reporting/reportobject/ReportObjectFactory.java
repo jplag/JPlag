@@ -220,9 +220,6 @@ public class ReportObjectFactory {
         for (Submission submission : submissions) {
             Map<String, Integer> tokenCounts = new HashMap<>();
             for (Token token : submission.getTokenList()) {
-                if (token.getType().isExcludedFromMatching()) {
-                    continue;
-                }
                 String key = FilePathUtil.getRelativeSubmissionPath(token.getFile(), submission, submissionToIdFunction);
                 if (tokenCounts.containsKey(key)) {
                     tokenCounts.put(key, tokenCounts.get(key) + 1);
